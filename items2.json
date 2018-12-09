@@ -1,0 +1,82 @@
+{
+	    "Medibang":{
+        "name":"Medibang",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Fire Alpaca":{
+        "name":"Fire Alpaca",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+
+
+    	   "Photoshop":{
+        "name":"Photoshop",
+        "type":"badges",
+        "price":"10000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Clip Studio Paint":{
+        "name":"Clip Studio Paint",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "SAI":{
+        "name":"SAI",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "DeviantArt":{
+        "name":"DeviantArt",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Pixiv":{
+        "name":"Pixiv",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Tumblr":{
+        "name":"Tumblr",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Instagram":{
+        "name":"Instagram",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Twitter":{
+        "name":"Twitter",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    },
+
+    	   "Art Station":{
+        "name":"Art Station",
+        "type":"badges",
+        "price":"1000000",
+        "desc":"Artist badges"
+    }    
+
+
+}

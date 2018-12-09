@@ -1,0 +1,21 @@
+{
+		"crimson": "#912f46",
+		"blankgray": "#545559",
+    "lightgray": "#d1d2d6",
+    "lightyellow": "#ffeca8",
+    "lightgreen": "#c5efbd",
+    "lightpink": "#f49fc7",
+    "lightblue": "#cfebfc",
+    "lightpurple": "#e1ceff",
+    "midgray": "#c7c8cc",
+    "nightmode": "#2b313a",
+    "deepnight": "#1d232d",
+		"red": "#ad3632",
+		"black": "#191919",
+    "darkmatte": "#36393F",
+    "darkblue": "#99bcbf",
+    "darkblue2": "#93b1bf",	
+		"white": "#EEEEEE",
+		"golden": "#E3964B",
+		"halloween": "#bee6e9"	
+}

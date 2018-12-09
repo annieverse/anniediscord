@@ -1,0 +1,112 @@
+{
+
+    "SPECIAL SNOWFLAKE":{
+
+        "name":"SPECIAL SNOWFLAKE",
+        "rolename":"Special Snowflake",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Special Snowflake role"
+
+},
+
+        "SENPAI":{
+        "name":"SENPAI",
+        "rolename":"Senpai",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Senpai role"
+
+    },
+
+
+        "LEWD":{
+        "name":"LEWD",
+        "rolename":"Lewd",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Lewd role"
+
+    },
+
+        "TRAP":{
+        "name":"TRAP",
+        "rolename":"Trap",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Trap role"
+
+    },
+
+    "REVERSE TRAP":{
+        "name":"REVERSE TRAP",
+        "rolename":"Reverse Trap",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Reverse Trap role"
+
+    },
+
+    "WEEB":{
+        "name":"WEEB",
+        "rolename":"Weeb",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Weeb role"
+
+    },
+
+      "LOLI":{
+          "name":"LOLI",
+          "rolename":"Loli",
+          "type":"Roles:",
+          "price":"5000",
+          "desc":"Buying this item will give you the Loli role"
+
+    },
+
+        "SHOTA":{
+            "name":"SHOTA",
+            "rolename":"Shota",
+            "type":"Roles:",
+            "price":"5000",
+            "desc":"Buying this item will give you the Shota role"
+
+    },
+
+    "LAZY POTATO":{
+        "name":"LAZY POTATO",
+        "rolename":"Lazy Potato",
+        "type":"Roles:",
+        "price":"5000",
+        "desc":"Buying this item will give you the Lazy Potato role"
+
+    },
+
+     "NO BULLI":{
+        "name":"NO BULLI",
+        "rolename":"No Bulli",
+        "type":"Roles:",
+        "price":"10000",
+        "desc":"Buying this item will give you the No Bulli role"
+
+    },
+
+    "BAKA":{
+        "name":"BAKA",
+        "rolename":"Baka",
+        "type":"Roles:",
+        "price":"15000",
+        "desc":"Buying this item will give you the Baka role"
+
+    },
+    
+    "CUSTOM ROLE":{
+      "name":"CUSTOM ROLE",
+      "rolename":"Custom Role",
+      "type":"Roles:",
+      "price":"50000",
+      "desc":"Buying this item will give you a Custom role"
+    }
+
+}
