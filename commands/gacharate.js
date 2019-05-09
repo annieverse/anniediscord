@@ -383,6 +383,7 @@ async function roll(times) {
 	    })
 	};
 
+
 	const get_loots = (probs) => {
 		let fixedrate = closestUpper(rates, probs);
 		return sql.get(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${fixedrate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
@@ -397,17 +398,15 @@ async function roll(times) {
         for (let i = 0; i < limit; i++) {
             let rate = Math.random() * 100;
             let parsed = await get_loots(rate);
-
             res_items.push(parsed.item_name)
             res_rates.push(parsed.drop_rate)
             res_rarities.push(parsed.rarity)
             res_types.push(parsed.type);
             res_aliases.push(parsed.item_alias)
 
-
             await pause(100);
 
-            if(parsed.rarity > 3) {
+            if(parsed.rarity > 4) {
             	message.channel.send(`${message.author} has pulled **${parsed.item_name}** from the lucky ticket! :tada:`)
             }
             console.log(`${message.author.tag} pulled ${res_items[i]}[${res_rarities[i]}] with rate ${rate}%`)
@@ -557,7 +556,7 @@ async function backend(container) {
 		const parsed_container = classify();
 
 		for(let key in parsed_container) {
-			const tablediff = key.startsWith(`artcoins`) ? `userdata` : key.indexOf(`card`) > -1 ? `collections` : `userinventories`;
+			const tablediff = key.indexOf(`card`) > -1 ? `collections` : `userinventories`;
 			sql.run(`UPDATE ${tablediff} SET ${key} = CASE WHEN ${key} IS NULL THEN ${parseInt(parsed_container[key])} ELSE ${key} + ${parseInt(parsed_container[key])} END WHERE userId = ${message.author.id}`);
 			await pause(500);
 		}
@@ -600,7 +599,7 @@ async function render_img(integertype) {
         			
         			backend(container);
         			message.channel.send(embed)
-         			opening.delete();
+					 opening.delete();
 
                     setTimeout(() => {
                         userRecently.delete(message.author.id);

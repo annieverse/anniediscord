@@ -148,7 +148,7 @@ class profileManager {
 		* @id of the filename
 		*/
 	getAsset(id) {
-			return fsn.readFile(`./images/${id}.jpg`);
+			return fsn.readFile(`./images/${id}.png`);
 	}
 
 	/**
@@ -156,7 +156,7 @@ class profileManager {
 		* @id of the filename
 		*/
 	getCoverAsset(id) {
-			return fsn.readFile(`./images/covers/${id}.jpg`);
+			return fsn.readFile(`./images/covers/${id}.png`);
 	}
 
 

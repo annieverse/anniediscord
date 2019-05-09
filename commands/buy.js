@@ -21,7 +21,7 @@ module.exports.run = async(bot,command, message, args)=>{
 ///
 
 const format = new formatManager(message);
-return ["playground"].includes(message.channel.name) ? initBuy()
+return ["sandbox"].includes(message.channel.name) ? initBuy()
 : format.embedWrapper(palette.darkmatte, `Unavailable access.`)
 
 async function initBuy() {
@@ -44,9 +44,10 @@ async function initBuy() {
 
     const log = async (props = {}, ...opt) => {
             props.code = !props.code ? `NULL_CODE` : props.code;
-            props.emoticon = !props.emoticon ? `ArtCoins` : props.emoticon;
+            props.emoticon = !props.emoticon ? `artcoins` : props.emoticon;
             props.image = !props.image ? null : props.image;
-    
+
+            console.log(props);
 
             const load_asset = async () => {
                 let buffer = await profile_utils.getAsset(props.image);
@@ -131,12 +132,13 @@ async function initBuy() {
     }
 
 
-
+    /*
     const shopEmbedWrapper = (desc, color=palette.darkmatte) => {
         embed1.setColor(color)
         embed1.setDescription(desc)
         return embed1;
     };
+    */
 
 
     class transaction {
@@ -147,23 +149,23 @@ async function initBuy() {
         
 
 
-        role(alias) {
+        Roles(alias) {
             return message.guild.members.get(message.author.id).addRole(message.guild.roles.find(n => n.name === alias));
         }
 
-        skin(alias) {
+        Skins(alias) {
           sql.run(`UPDATE userdata 
                   SET interfacemode ="${alias}" 
                   WHERE userId = ${message.author.id}`);
         }
 
-        cover(alias) {
+        Covers(alias) {
           sql.run(`UPDATE userdata 
                   SET cover = "${alias}"
                   WHERE userId = ${message.author.id}`);
         }
 
-        badge(alias) {
+        Badges(alias) {
             sql.run(`UPDATE userbadges 
                     SET ${slotkey[slotvalue.indexOf(null)]} = "${alias}" 
                     WHERE userId = ${message.author.id}`);
@@ -183,9 +185,11 @@ async function initBuy() {
                 sql.run(`UPDATE usercheck SET expbooster_duration = ${Date.now()} WHERE userId = ${user.id}`);
             }
 
-        withdraw(price) {
-                sql.run(`UPDATE userdata 
-                         SET artcoins = artcoins - ${parseInt(price)} 
+
+        
+        withdraw(price, currency) {
+                sql.run(`UPDATE userinventories 
+                         SET ${currency} = ${currency} - ${parseInt(price)} 
                          WHERE userId = ${message.author.id}`);
         }
 
@@ -210,7 +214,7 @@ async function initBuy() {
       
         // Returns an object of target item.
         get request_query() {
-            return sql.all(`SELECT name, upper(name), alias, type, price, desc, status, rarity 
+            return sql.all(`SELECT name, upper(name), alias, type, price, price_type, desc, status, rarity 
               FROM itemlist WHERE status = "sell" AND type = "${this.type}"`)
                 .then(rootgroup => this.lookfor(rootgroup))
         }
@@ -223,7 +227,7 @@ async function initBuy() {
     }
 
     //  Await for user confirmation before proceeding the transaction.
-    const confirmation = async (metadata, procceses = [], proc_parameters = []) => {
+    const confirmation = async (metadata, proc) => {
 
             const sufficient_balance = () => {
                 return user_data.artcoins >= metadata.price ? true : false;
@@ -236,7 +240,7 @@ async function initBuy() {
                 time: 30000,
             });
 
-                log({code:`CONFIRMATION`, image: metadata.alias}, metadata.price, metadata.name);   
+                log({code:`CONFIRMATION`, image: metadata.alias, emoticon: metadata.price_type}, metadata.price, metadata.name);   
 
 
                 collector.on(`collect`, async (msg) => {
@@ -248,9 +252,8 @@ async function initBuy() {
                         msg.delete();
                         collector.stop();
 
-                        for(let i in procceses) {
-                            procceses[i](proc_parameters[i]);
-                        }
+                        proc[metadata.type](metadata.alias);
+                        proc.withdraw(metadata.price, metadata.price_type);
 
                         log({code: `SUCCESS_E`}, metadata.name);
                     }
@@ -410,26 +413,34 @@ async function initBuy() {
         else if(args[0].toUpperCase() === 'COVER') {
 
             if(!args[1])return log({code:`MISSING_COVERNAME`})
-                ;
             const target = message.content.substring(12);
             const trans = new transaction(target, `Covers`);
             const item = await trans.pull;
 
             sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
-                .then(async data => {
-                    try {
-                       
-                        if(user_data.cover === item.alias)return log({code: `ERR_DUPLICATE`});
-                        if(user_data.artcoins < parseInt(item.price))return log({code: `ERR_INSUFFICIENT_BAL`}, `artcoins`)
-                        if(user_data.artcoins >= parseInt(item.price)) {
-                            confirmation(item, [trans.cover, trans.withdraw], [item.alias, item.price]);
-                        }
-                    }
+                .then(async metadata_user => {
+                    sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`)
+                        .then(async metadata_inventory => {
+                            try {
+
+                                //  Reject duplicate alias.
+                                if(metadata_user.cover === item.alias)return log({code: `ERR_DUPLICATE`});
+
+                                //  Insufficient balance.
+                                if(metadata_inventory[item.price_type] < parseInt(item.price))return log({code: `ERR_INSUFFICIENT_BAL`}, item.price_type)
+                                
+                                // Balance has met the condition.
+                                if(metadata_inventory[item.price_type] >= parseInt(item.price)) {
+                                    confirmation(item, trans);
+                                }
+
+                            }
                     catch(e) {
                         console.log(e)
                         return log({code:`ERR_UNKNOWN_ITEM`});
                     }
                 })   
+            })
         }//end of cover option
 
 
@@ -481,7 +492,7 @@ async function initBuy() {
         else if(!categories.includes(args[0].toUpperCase())) return log(`TYPE_OUTOFRANGE`); 
     }
 
-        //no arguments given
+        //no arguments givenn
         else return log(`TUTORIAL`);
 
     }

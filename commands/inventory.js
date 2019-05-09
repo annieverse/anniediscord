@@ -340,7 +340,7 @@ exports.run = async (bot,command, message, args) => {
                         const rarity_color = {
                             "1": palette.blankgray,
                             "2": palette.blankgray,
-                            "3": palette.green,
+                            "3": palette.blue,
                             "4": palette.purple,
                             "5": palette.red,
                         };
@@ -352,10 +352,11 @@ exports.run = async (bot,command, message, args) => {
                             .addRect(x+(dx*i)+(5*i), temporary_y, dx, dy)
                             .restore()
 
+
                             // Framehole
                             .setColor(palette.deepnight)
-                            .createBeveledClip((x+2)+(dx*i)+(5*i), temporary_y+2, dx-4, dy-4, 20)
-                            .addRect((x+2)+(dx*i)+(5*i), temporary_y+2, dx-4, dy-4)
+                            .createBeveledClip((x+3)+(dx*i)+(5*i), temporary_y+3, dx-6, dy-6, 20)
+                            .addRect((x+3)+(dx*i)+(5*i), temporary_y+3, dx-6, dy-6)
 
 
 

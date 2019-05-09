@@ -26,7 +26,7 @@ const configFormat = new formatManager(message);
 const configRank = new ranksManager(bot, message);
 let errdump = 0;
 
-return ["playground"].includes(message.channel.name) ? card() 
+return ["sandbox"].includes(message.channel.name) ? card() 
 : configFormat.embedWrapper(palette.darkmatte, `Unavailable access.`)
 
 
@@ -190,7 +190,7 @@ async function card() {
                      * 
                      */
                     .setColor(switchColor[usercolor].base)
-                    //.addCircle((baseWidth/2)+18, 255, 95) //avatar
+                    .addCircle((baseWidth/2)+18, 255, 95) //avatar
                     .addRoundImage(avatar, 208, 165, 180, 180, 90)
 
 

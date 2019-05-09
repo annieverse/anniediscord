@@ -3,6 +3,7 @@ const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 const fs = require("fs");
+const login = require("./login.json");
 require("./utils/eventHandler")(bot)
 
 const http = require('http');
@@ -42,4 +43,4 @@ fs.readdir("./commands/", (err, files) => {
         console.log(`${jsfile.length} command files have been loaded.`)
   });
 
-bot.login(process.env.TOKEN)
+bot.login(login.TOKEN)
