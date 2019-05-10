@@ -1,34 +1,58 @@
-# ANIME ARTIST UNITED - Custom Bot
----
-## Bot Name:
----
-> **Annie**
+# Annie - Art dedicated discord bot
 
 #### Special thanks to: 
- -  Akane, for your advice & critiques
-	 - I won't get any better if it wasn't from you.
-- Kitomi, for giving me the way through all of this and the unforgettable supports!
+- Akane, for your advice & harsh critiques. I won't get any better if it wasn't from you.
+- Kitomi, for giving me the way through all of this and the unforgettable supports.
 
-## **OUR TEAM**:
----
-### **Project Lead:**
-	Kitomi#0077
+### **Developer** :
+`naphnaphz#7790` & `Bait God#8677`
 
-### **Quality Assurance a.k.a QA Tester** :
-	Poppy#7929
+### **Contributor** :
 
-### **Code Maintainer** :
-	 naphnaphz#7790
-	 Bait God#8677
+`Kitomi#0077`
+`Poppy#7929`
+`Hapiikat#1361`
+`Foxling#9528`
+`Akane#6753`
+`TrojanOS#2373`
 	 
 ## **change logs** :
 
----
+
+##### **02/26/19 | 2.5.0 - >** 
+
+   >`  -Redesigned profile card  `   
+   >`  -Redesigned level card  `  
+   >`  -Added portfolio card  `  
+   >`  -Added mail & reward package command to help event team's task more easier.  `     
+   >`  -Artwork's url collection  `    
+   >`  -Newly added items :  `    
+   			 ^` - Nickname Change  `  
+   			 ^` - EXP Booster (50-100%)  `    
+   >`  -Event Participant now is in ticket category. (previous: role)  `    			
+   >`  -Various minor bugs fix  `    
+
+##### **12/02/18 | 2.4.1 - >** 
+
+   >` -Moderator commands updated`  
+   >` -update: mute command with optional options for a timer and reason`  
+   ^` -Sends a confirmation of the mute action to logs channel and a message to the user being muted that they have been muted in the guild.`  
+   >` -Added: unmute command with optional option of a reason`  
+   ^` -Sends a confirmation of the unmute action to logs channel and a message to the user being unmuted that they have been unmuted in the guild.`  
+	
+##### **12/02/18 | 2.4.0 - >** 
+
+   >` -UI card color customization (available in light and dark).`  
+   >` -update: Minor card re-design.`  
+   >` -update: Buy command with categorized items.`  
+   >` -update: Upcoming profile badges.`  
+   >` -fix: New member role bugs.`  
+   >` -fix: Novice rank bug.`  
+   >` -fix: Null item in buy command.`  
 
 ##### **11/24/18 | 2.3.0 - >** 
 
    >` -addRole & removeRole bugs fix.`
-   
    
 ##### **11/22/18 | 2.2.0 - >** 
 
@@ -119,4 +143,4 @@
 
 ##### **07/28/18 | 1.0.0 - >**
 
-   >` -Alpha. scratchs version were done by Akane.`
+   >` -Alpha scratch. (by Akane)`

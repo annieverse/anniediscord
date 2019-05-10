@@ -1,8 +1,18 @@
 const Discord = require("discord.js");
 const botconfig = require('../botconfig.json');
 const palette = require('../colorset.json');
+const formatManager = require('../utils/formatManager.js');
 
-module.exports.run = async (bot,command, message, args, dynamicMessage) => {
+module.exports.run = async (bot,command, message, args) => {
+
+
+
+const format = new formatManager(message);
+return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? initPing()
+: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+
+
+async function initPing() {
 
 	function measuringLatency(ms) {
 		const predict = ['weak', 'Fair', 'stable'];
@@ -27,6 +37,7 @@ module.exports.run = async (bot,command, message, args, dynamicMessage) => {
 		return message.channel.send(embed)
 
 			}
+}
 
 
 module.exports.help = {

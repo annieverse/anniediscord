@@ -1,11 +1,14 @@
-const Discord = require("discord.js");
+const ranksManager = require('../utils/ranksManager');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot, command, message,args)=>{
-    
+module.exports.run = async(bot, command, message)=>{
+
+        const ranks = new ranksManager(bot, message)
+
         sql.get(`SELECT * FROM userdata WHERE userId = ${message.author.id}`)
-        .then(async data => {
+        .then(async () => {
+            message.guild.member(message.author.id).addRole(await ranks.ranksCheck(0).rank);
                 sql.run(`UPDATE userdata SET currentexp = ${0} WHERE userId = ${message.author.id}`);
                 sql.run(`UPDATE userdata SET maxexp = ${100} WHERE userId = ${message.author.id}`);
                 sql.run(`UPDATE userdata SET nextexpcurve = ${150} WHERE userId = ${message.author.id}`);

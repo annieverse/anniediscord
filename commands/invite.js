@@ -3,10 +3,10 @@ const Discord = require('discord.js');
 module.exports.run = async(bot,command,message,args)=>{
 
 return message.channel.send(`Hey **${message.author.username}**, here's the link.
-	https://discord.gg/y8F4Bg2`)
+	https://discord.gg/YFaCQVn`)
 
 }
 module.exports.help={
     name:"invite",
-        aliases:[]
+        aliases:["inv", "serverinvite", "serverlink", "linkserver", "invitelink", "link"]
 }

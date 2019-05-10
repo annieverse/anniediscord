@@ -39,7 +39,7 @@ module.exports.run = async(bot,command,message,args)=>{
 
     roleEmbed.setColor(red)
     roleEmbed.setDescription(`${message.author.username}, I couldn't find that role.`)
-    let role = args[1].substring(3, 21);
+    let role = message.guild.roles.find(r => r.name === args[1].slice(0)).id;
     let gRole = message.guild.roles.get(role);
     if(!gRole) return message.channel.send(roleEmbed).then(() => console.log(role));
 

@@ -9,14 +9,18 @@ const formatManager = require('../utils/formatManager');
 
 module.exports = (bot,message) => {
 
-const nonXPChannel = ["bot", "bot-games", "music", "pokemon"];
-const format = new formatManager();
+const nonXPChannel = ["485922866689474571", "464259865930629130", "464180867083010048", "459893209875611649", "463536514887057436"];
+const artChannels =  ["459892609838481408", "459893040753016872", "460439050445258752", "461926519976230922", "460615254553001994", "538806382779170826"];
+const format = new formatManager(message);
 
 
     if(message.content.startsWith(botconfig.prefix))return;
     if(message.author.bot)return;
     if(message.channel.type == "dm")return; 
-    if(nonXPChannel.includes(message.channel.name))return;
+    if(nonXPChannel.includes(message.channel.id))return;
+
+
+experienceGains();
 
 
 /*
@@ -25,10 +29,76 @@ const format = new formatManager();
 */
 async function experienceGains() {
 
+        function attachmentCheck() {
+            try {
+                return message.attachments.first().id ? true : null
+            }
+            catch(e) {
+                return false
+            }
+        }
+
+
+
+        async function expMultiplier(min, max) {
+            let base = Math.floor(Math.random() * (max - min + 1)) + min;
+            let booster = {
+                "50%": {
+                    "multiplier": 1.5 ,
+                    "2h": 0.72e+7,
+                    "24h": 8.64e+7
+                },
+                "100%": {
+                    "multiplier": 2, 
+                    "2h": 0.72e+7,
+                    "24h": 8.64e+7
+                }
+            };
+
+            const pause = (ms) => {
+                return new Promise(resolve => setTimeout(resolve,ms));
+            }
+
+
+            function ticket() {
+                sql.get(`SELECT expbooster, expbooster_duration FROM usercheck WHERE userId = ${message.author.id}`)
+                    .then(async data => {
+                        if(data.expbooster) {
+                            let percentage = data.expbooster.replace(/ *\([^)]*\) */g, "");
+                            let limitduration = booster[percentage][/\(([^)]+)\)/.exec(data.expbooster)[1]];
+
+                            if ((data.expbooster_duration !== null) && limitduration - (Date.now() - data.expbooster_duration) > 0 ) {
+                               return base = base * booster[percentage].multiplier;
+                            }
+                            else {
+                                const embed = new Discord.RichEmbed()
+                                            .setColor(palette.darkmatte)
+                                            .setDescription(`Hello **${message.author.username}**, your **${data.expbooster}** has expired today.`)
+                                            .setFooter(`System`, bot.user.avatarURL)
+
+                                console.log(`${message.author.tag}'s item ${data.expbooster} has expired at ${Date.now()}`);
+                                sql.run(`UPDATE usercheck SET expbooster = NULL, expbooster_duration = NULL WHERE userId = ${message.author.id}`);
+                                return message.author.send(embed);
+                            }
+                        }
+                    })
+            }
+            
+            await ticket();
+            await pause(500)
+                return attachmentCheck() && artChannels.includes(message.channel.id) 
+                        ? base * 10
+                        : attachmentCheck() && (message.channel.id === "459892688016244738") 
+                        ? base * 5
+                        : base;
+            }
+
+
+
         const manager = new ranksManager(bot, message);
-        const randomexp = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
+        const randomexp = await expMultiplier(10, 15);
         const randomac = Math.ceil(Math.random() * 5);
-        const cooldown = 30000;
+        const cooldown = 60000;
         const lvlUpBonus = (lv) => lv === 0 ? 35 : 35 * lv;
 
 
@@ -53,7 +123,7 @@ async function experienceGains() {
                   sql.run(`UPDATE userdata SET artcoins = ${randomac + userdatarow.artcoins + (lvlUpBonus(userdatarow.level + 1))} WHERE userId = ${message.author.id}`);
                   sql.run(`UPDATE usercheck SET expcooldown = "True" WHERE userId = ${message.author.id}`);
 
-                  format.embedWrapper(message, palette.halloween, `<:nanamiRinWave:459981823766691840> Congratulations ${message.author}!! You are now level **${userdatarow.level + 1}** !
+                  format.embedWrapper(palette.halloween, `<:nanamiRinWave:459981823766691840> Congratulations ${message.author}!! You are now level **${userdatarow.level + 1}** !
                   **${lvlUpBonus(userdatarow.level + 1)}** AC has been added to your account.`);
 
                     message.guild.member(message.author.id).addRole(await manager.ranksCheck(userdatarow.level <= 0 ? 0 : userdatarow.level+1).rank);
@@ -101,27 +171,16 @@ async function experienceGains() {
           } else {
                 console.log(`created new profile for ${message.author.tag}.`);
                   sql.run("INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, artcoins, reputations, description, interfacemode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [message.author.id, randomexp, 100, 150, 0, 0, null, null, null]);
-                  sql.run("INSERT INTO usercheck (userId, expcooldown, repcooldown, transjson_perms, lastSecretBox, lastDaily) VALUES (?, ?, ?, ?, ?, ?)", [message.author.id, "False", 0, "False", null, null]);
+                  sql.run("INSERT INTO usercheck (userId, expcooldown) VALUES (?, ?)", [message.author.id, "False"]);
+                  sql.run(`INSERT INTO userbadges (userId) VALUES (${message.author.id})`)
+                  sql.run(`INSERT INTO userinventories (userId) VALUES (${message.author.id})`)
+                  sql.run(`INSERT INTO usereventsdata (userId) VALUES (${message.author.id})`)  
                   message.guild.member(message.author.id).addRole(await manager.ranksCheck(0).rank);
             }
           })     
 
 }; // END OF @EXPERIENCEGAINS
-
                                              
-                
-
-experienceGains();
-
-
-/*
-    *   Logging message data
-    *   that gathered throughout the guild.
-*/
-sql.get(`SELECT * FROM messagelog`).then(async => {
-    sql.run(`INSERT INTO messagelog (timestamp, user_id, channel_id, username, channel, content) VALUES (?, ?, ?, ?, ?, ?)`,
-        [Date.now(), message.author.id, message.channel.id, message.author.username, message.channel.name, message.content])
-})
 
   
 }

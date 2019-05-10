@@ -1,8 +1,7 @@
-const Discord = require('discord.js');
 const palette = require('../colorset.json');
-
-const sql = require("sqlite");
-sql.open(".data/database.sqlite");
+const userFind = require('../utils/userFinding');
+const formatManager = require('../utils/formatManager');
+const databaseManager = require('../utils/databaseManager');
 
 module.exports.run = async(bot,command,message,args)=>{
 
@@ -10,85 +9,66 @@ module.exports.run = async(bot,command,message,args)=>{
     ///
     ///  balance command
     ///    change logs:
+    ///			04/09/19 - emoji function.
+    ///         12/20/18 - Structure reworks.
+    ///         12/18/18 - Imported classes & event currency
     ///         11/12/18 - interface reworks.
     ///         10/18/18 - halloween palette.
     ///
     ///     -naphnaphz
     ///     -Frying Pan
-  /*
-  REFERENCE FOR OTHER FILES:
-  
-    const src = require('./artcoins');
-    let aliases = src.help.aliases[0];
-      if(aliases == command){
-        message.channel.send("ji");
-      }
-  */
-  
-function threeDigitsComa(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+const format = new formatManager(message)
+return ["bot", "bot-games", "cmds", "roles-shop"].includes(message.channel.name) ? checkBalance()
+: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+
+
+        async function checkBalance() {
+          const emoji = (name) => {
+            return bot.emojis.find(e => e.name === name)
+          }
+
+            if(!args[0]){
+                const dbmanager = new databaseManager(message.author.id);
+                const data = await dbmanager.userdata;
+                const eventdata = await dbmanager.pullRowData("usereventsdata", message.author.id);
+                let ac = format.threeDigitsComa(data.artcoins);
+                let mdl = format.threeDigitsComa(data.medals === null ? 0 : data.medals);
+                let frg = format.threeDigitsComa(data.fragments === null ? 0 : data.fragments);
+                let name = format.capitalizeFirstLetter(message.author.username);
+
+                    return message.channel.send(`**${name}'s Balance**`)
+                        .then(() => {
+                            format.embedWrapper(palette.golden,
+                            `${emoji(`artcoins`)} ${ac} Artcoins | ${emoji(`eventmedal`)} ${mdl} Medals | ${emoji(`fragments`)} ${frg} Fragments`);
+                        })
+            }
+            else if(args[0]){
+                try {
+                    const target = await userFind.resolve(message, message.content.substring(command.length+2))
+                    const dbmanager = new databaseManager(target.id);
+                    const data = await dbmanager.userdata;
+                    const eventdata = await dbmanager.pullRowData("usereventsdata", target.id);
+                    let ac = format.threeDigitsComa(data.artcoins);
+                    let mdl = format.threeDigitsComa(data.medals === null ? 0 : data.medals);
+                    let frg = format.threeDigitsComa(data.fragments === null ? 0 : data.fragments);
+                    let name = format.capitalizeFirstLetter(target.user.username);
+
+                    return message.channel.send(`**${name}'s Balance**`)
+                        .then(() => {
+                            format.embedWrapper(palette.golden,
+                            `${emoji(`artcoins`)} ${ac} Artcoins | ${emoji(`eventmedal`)} ${mdl} Medals | ${emoji(`fragments`)} ${frg} Fragments`);
+                        })
+                }
+                catch(e) {
+                    console.log(e)
+                    return format.embedWrapper(palette.red, `Sorry, i couldn't find the user. :(`);
+                }
+            }
+        }
 }
-
-function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-
-async function userResolvable(input) {
-
-        const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-
-        if(userPattern.test(input)) input = input.replace(userPattern, '$1');
-        let members = message.guild.members;
-        const filter = member => member.user.id === input
-            || member.displayName.toLowerCase() === input.toLowerCase()
-            || member.user.username.toLowerCase() === input.toLowerCase()
-            || member.user.tag.toLowerCase() === input.toLowerCase();
-
-        return members.filter(filter).first();
-    }
-
-
-
-
-if(!args[0]){
-
-   sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => { 
-
-    let parsedName = capitalizeFirstLetter(message.author.username);
-    let digitValue = threeDigitsComa(userdatarow.artcoins);
-    let coinEmbed = new Discord.RichEmbed()
-    .setColor(palette.halloween)
-    .setDescription(`**${parsedName}'s Balance** : <:ArtCoins:467184620107202560> ${digitValue} Artcoins`)
-        return message.channel.send(coinEmbed);
-    })
-}
-
-
-
-
-if(args[0]){
-
-    let user = await userResolvable(args[0]);
-
-    sql.get(`SELECT * FROM userdata WHERE userId =${user.id}`)
-    .then(async userdatarow => {
-
-    let digitValue = threeDigitsComa(userdatarow.artcoins);
-    let parsedName = capitalizeFirstLetter(user.user.username);
-
-    const acoinEmbed = new Discord.RichEmbed()
-    .setColor(palette.halloween)
-    .setDescription(`**${parsedName}'s Balance** : <:ArtCoins:467184620107202560> ${digitValue} Artcoins`)
-
-        return message.channel.send(acoinEmbed);
-
-    })
-  }
-}
-
 
 module.exports.help = {
     name:"balance",
-    aliases:["bal","name2","name3","naphLovesThis"]
+    aliases:["bal","credit", "money", "balanc", "credits"]
 }

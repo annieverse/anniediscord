@@ -7,11 +7,12 @@ module.exports = (bot, oldChannel, newChannel) => {
   let ESTChannel = bot.channels.get("514668748612042763");
   let MSTChannel = bot.channels.get("514673767583318037");
   let GMT08Channel = bot.channels.get("514676732247408641");
-  
+  /*
   if(oldChannel.name !== newChannel.name){
     if ((oldChannel.id != memberChannel.id) && (oldChannel.id != ESTChannel.id) && (oldChannel.id != MSTChannel.id) && (oldChannel.id != GMT08Channel.id)){
       serverUpdatesChannel.send(`Renamed ${oldChannel.name} to <#${newChannel.id}>`);
     }
   }
+*/
   
 }

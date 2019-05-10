@@ -109,6 +109,7 @@ else {
                         });
             
             await sleep(1000)
+            console.log(membersWithRole[i]);
             i++;
             payEmbed.setDescription(`⚙ | *Querying ${i}/${membersWithRole.length} users ..*
                 \`${nicknameWithRole[i]}\`

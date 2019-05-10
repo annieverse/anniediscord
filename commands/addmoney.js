@@ -33,7 +33,7 @@ let addXpEmbed7 = new Discord.RichEmbed();
     addXpEmbed.setDescription(`You don't have authorization to use this command.`)
     addXpEmbed.setFooter(`Anime Artist United | Add AC`, bicon)
 
-if (!message.member.hasPermission("ADMINISTRATOR"))return message.channel.send(addXpEmbed);
+if(!message.member.roles.find(r => r.name === 'Grand Master'))return message.channel.send(addXpEmbed);
 
 sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdatarow => {
 

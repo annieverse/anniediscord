@@ -14,11 +14,9 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "Kosugi
 
 module.exports = (bot, member) => {
 /*
-
 		* @guildMemberAdd listener.
 		* it will send canvas-generated message to welcome channel
 		* for every joined user.
-
 */
 	const members = member.guild.memberCount;
 	const botSize = member.guild.members.filter(a => a.user.bot).size;
@@ -33,54 +31,62 @@ module.exports = (bot, member) => {
 	bot.channels.get(`518245560239652867`).setName(`${userSize} members!`);		
 	
  const sendMsg = async () => {
-  welcomechnl.send(`Welcome ${user}, I am Annie the server's mascot and your personal guide here, It is a pleasure to meet you! Please read ${member.guild.channels.get('472605630788665344').toString()} & ${member.guild.channels.get('486741536827113493').toString()} for full access to the server. Feel free to DM <@507043081770631169> for any questions, our staff team will get back to you asap. Last but not least, enjoy your stay!! :tada:`,
+  welcomechnl.send(`Welcome to Anime Artists United ${user} ! Please get your roles in ${member.guild.channels.get('538843763544555528').toString()} for full access to the server, don't forget to read ${member.guild.channels.get('472605630788665344').toString()} & ${member.guild.channels.get('543310783858212884').toString()}. Last but not least enjoy your stay here! :tada:`,
 	new Attachment(await welcomeCard(user),`welcome!-${user.tag}.jpg`))
  }
 
  sendMsg();
 
-			async function welcomeCard(member) {
+async function welcomeCard(member) {
 
- 
-			const { body: avatar } = await get(member.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
+    const { body: avatar } = await get(member.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
+    let name = member.username;
 
-					return new Canvas(1200, 275) // x y
+    let canvas_x = 800;
+    let canvas_y = 220;
+    let start_x = canvas_x-775;
+    let start_y = canvas_y-200;
+    
+            let canv =  new Canvas(800, 250) // x y
+                    
+                canv.save()
+                canv.save()
+                canv.setShadowColor("rgba(28, 28, 28, 1)")
+                    .setShadowOffsetY(3)
+                    .setShadowBlur(6)
+                    .addRect(start_x+10, start_y+10, canvas_x-55, canvas_y-50)
+                    .createBeveledClip(start_x, start_y, canvas_x-40, canvas_y-40, 15)
+                    .addImage(await configProfile.getAsset('marchwelcomer'), 0, -220, 800, 1200, 600)
+                    .setShadowOffsetY(0)
+                    .setShadowBlur(0)
+                canv.context.globalAlpha = 0.5;
+                canv.setColor(palette.black)  
+                    .addRect(start_x, start_y, canvas_x-40, canvas_y-40)
+                    .restore()
 
-					.addImage(await configProfile.getAsset('kitowelcomer'), 0, 0, 1200, 365, 205)
-					.addImage(await configProfile.getAsset('welcomeoverlay'), 0, 0, 1200, 1200, 540)
 
-					.setTextAlign("left")
-					.setTextFont(`${configProfile.checkUsernameLength(member.username).welcomer}pt ${configProfile.checkAlphanumeric(member.username)}`)
-					.setColor(palette.white)
-					.addText(member.username, 540, 170)
+                    .setTextAlign("left")
+                    .setTextFont(`39pt RobotoBold`)
+                    .setColor(palette.lightgray)
+                    .addText(`${name.length >= 10 ? name.substring(0, 13)+"." : name}.`, 390, 130) //102
+                    
+                    .setTextFont(`39pt Whitney`)
+                    .setColor(palette.white)
+                    .addText('Hello,', 260, 130)
 
-					.setTextAlign("right")
-					.setTextFont("35pt Roboto")
-					.setColor(palette.halloween)
-					.addText(configFormat.ordinalSuffix(userSize), 258, 170)
+                    .setTextFont("15pt Whitney")
+                    .setColor(palette.white)
+                    .addText(`You have joined`, 280, 157)
 
-					.setColor(palette.white)
-					.setTextFont("21pt Roboto")
-					.addText('User', 268, 200)
+                    .setTextFont("16pt RobotoBold")
+                    .setColor(palette.golden)
+                    .addText(`AAU!`, 417, 160)
 
-					.setTextAlign("left")  
-					.setTextFont("18pt Roboto")
-					.addText(`${configFormat.formatedTime(d)}..`, 516, 85) 
-
-					.setTextFont("25pt Roboto")
-					.addText('has joined', (750 - configProfile.checkPosition(member.username) ), 217)
-
-					.setColor('#b3e5fc')
-
-					.setTextFont("40pt Roboto")
-					.addText('AAU !', (908 - configProfile.checkPosition(member.username) ), 230)
-
-					.setColor(palette.white)
-					.addRoundImage(avatar, 280, 20, 240, 240, 120)
-					.restore()
-
-					
-					.toBuffer()
+                    .setColor(palette.white)
+                    .addRoundImage(avatar, 125, 65, 100, 100, 50)
+                    //.addImage(await configProfile.getAsset('padoru1'), 715, 120, 90, 100, 45)
+                    
+                    return canv.toBuffer()
 }
 
 

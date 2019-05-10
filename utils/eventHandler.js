@@ -15,6 +15,8 @@ module.exports = bot =>{
   //bot.on("messageReactionRemove", async (reaction, user) => reqEvent("messageReactionRemove")(bot, reaction, user));
   bot.on("ready", async function() {reqEvent("ready") (bot)});
   bot.on("reconnecting", async () => reqEvent("reconnecting") (bot));
+  bot.on("typingStart", async (channel, user) => reqEvent("typingStart")(bot, channel, user));
+  bot.on("guildMemberUpdate", async (oldUser, newUser) => reqEvent("guildMemberUpdate")(bot, oldUser, newUser));
   //bot.on("voiceStateUpdate", async (oldMember, newMember) => reqEvent("voiceStateUpdate")(bot, oldMember, newMember));
   bot.on("warn", reqEvent("warn"));
 }

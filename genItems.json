@@ -2,14 +2,6 @@
 
     "TICKETS": {
 
-        "MOVIE TICKET":{
-        "name":"MOVIE TICKET",
-        "rolename":"Movie Ticket",
-        "type":"Tickets",
-        "price":"25",
-        "desc":"Grants access to the movie channel."
-        },
-
         "DRAWPILE TICKET":{
         "name":"DRAWPILE TICKET",
         "rolename":"Drawpile Ticket",
@@ -24,14 +16,6 @@
         "type":"Tickets",
         "price":"25",
         "desc":"Allows you to submit entries for the events."
-        },
-
-        "GAME TICKET":{
-        "name":"GAME TICKET",
-        "rolename":"Game Ticket",
-        "type":"Tickets",
-        "price":"25",
-        "desc":"Grants you access to the game channel."
         }
     },
 
@@ -41,7 +25,8 @@
             "name":"DARK",
             "rolename":"Dark",
             "type":"Skin",
-            "price":"15000",
+            "price":"7500",
+            "prevprice": "15000",
             "desc":"Get dark color for your profile card."
         },
 
@@ -49,7 +34,8 @@
             "name":"LIGHT",
             "rolename":"Light",
             "type":"Skin",
-            "price":"15000",
+            "price":"7500",
+            "prevprice": "15000",
             "desc":"Get light color for your profile card."
         }
      
@@ -62,7 +48,8 @@
             "name":"SPECIAL SNOWFLAKE",
             "rolename":"Special Snowflake",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Special Snowflake role"
 
         },
@@ -71,7 +58,8 @@
             "name":"SENPAI",
             "rolename":"Senpai",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Senpai role"
 
         },
@@ -81,7 +69,8 @@
             "name":"LEWD",
             "rolename":"Lewd",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Lewd role"
 
         },
@@ -90,7 +79,8 @@
             "name":"TRAP",
             "rolename":"Trap",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Trap role"
 
         },
@@ -99,7 +89,8 @@
             "name":"REVERSE TRAP",
             "rolename":"Reverse Trap",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Reverse Trap role"
 
         },
@@ -108,7 +99,8 @@
             "name":"WEEB",
             "rolename":"Weeb",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Weeb role"
 
         },
@@ -117,7 +109,8 @@
               "name":"LOLI",
               "rolename":"Loli",
               "type":"Roles",
-              "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
               "desc":"Buying this item will give you the Loli role"
 
         },
@@ -126,7 +119,8 @@
                 "name":"SHOTA",
                 "rolename":"Shota",
                 "type":"Roles",
-                "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
                 "desc":"Buying this item will give you the Shota role"
 
         },
@@ -135,7 +129,8 @@
             "name":"LAZY POTATO",
             "rolename":"Lazy Potato",
             "type":"Roles",
-            "price":"5000",
+            "price":"2500",
+            "prevprice":"5000",
             "desc":"Buying this item will give you the Lazy Potato role"
 
         },
@@ -144,7 +139,8 @@
             "name":"NO BULLI",
             "rolename":"No Bulli",
             "type":"Roles",
-            "price":"10000",
+            "price":"5000",
+            "prevprice":"10000",
             "desc":"Buying this item will give you the No Bulli role"
 
         },
@@ -153,7 +149,8 @@
             "name":"BAKA",
             "rolename":"Baka",
             "type":"Roles",
-            "price":"15000",
+            "price":"7500",
+            "prevprice":"15000",
             "desc":"Buying this item will give you the Baka role"
 
         },
@@ -162,7 +159,8 @@
           "name":"CUSTOM ROLE",
           "rolename":"Custom Role",
           "type":"Roles",
-          "price":"50000",
+          "price":"40000",
+          "prevprice":"50000",
           "desc":"Buying this item will give you a Custom role"
         }
 
@@ -175,7 +173,8 @@
             "rolename":"Photoshop",
             "type":"Badges",
             "id": "ps",
-            "price":"999999",
+            "price":"1500",
+            "prevprice":"3000",
             "desc":"No Photoshop No Life."
         },
 
@@ -184,8 +183,9 @@
             "rolename":"Paint Tool SAI",
             "type":"Badges",
             "id": "sai",
-            "price":"999999",
-            "desc":"Lightweight. <3"
+            "price":"1250",
+            "prevprice":"2500",
+            "desc":"Lightweight is the best. <3"
         },
 
         "CLIP STUDIO PAINT":{
@@ -193,7 +193,8 @@
             "rolename":"Clip Studio Paint",
             "type":"Badges",
             "id": "csp",
-            "price":"999999",
+             "price":"1250",
+            "prevprice":"2500",
             "desc":"How about our latest csp?"
         },
 
@@ -202,7 +203,8 @@
             "rolename":"Medibang",
             "type":"Badges",
             "id": "mdb",
-            "price":"999999",
+            "price":"1250",
+            "prevprice":"2500",
             "desc":"Medibang forever."
         },        
     
@@ -211,8 +213,121 @@
             "rolename":"Fire Alpaca",
             "type":"Badges",
             "id": "alp",
-            "price":"999999",
+            "price":"1250",
+            "prevprice":"2500",
             "desc":"Who doesn't love llama?."
+        }
+    },
+
+    "COVERS": {
+
+        "1": {
+            "name": "1",
+            "rolename": "[1]Merry Christmas",
+            "title": "Merry Christmas",
+            "type": "Covers",
+            "id": "1",
+            "price": "350",
+            "desc": "Christmas special cover."
+        },
+
+        "2": {
+            "name": "2",
+            "rolename": "[2]Maid Zero Holiday!",
+            "title": "Maid Zero Holiday!",
+            "type": "Covers",
+            "id": "2",
+            "price": "350",
+            "desc": "Christmas special cover."
+        }
+    },
+
+    "PACKAGES": {
+
+        "ACADEMIA": {
+            "name": "ACADEMIA",
+            "rolename": "Academia",
+            "type": "Packages",
+            "id": {
+                "1": "academia1",
+                "2": "academia2",
+                "3": "academia3"
+            },
+            "price": "250",
+            "desc": "Academia Badges Package Set."
+        },
+
+        "CHIBI": {
+            "name": "CHIBI",
+            "rolename": "Chibi",
+            "type": "Packages",
+            "id": {
+                "1": "chibi1",
+                "2": "chibi2",
+                "3": "chibi3"
+            },
+            "price": "250",
+            "desc": "Chibi Badges Package Set."
+        },
+
+        "CYGAMES": {
+            "name": "CYGAMES",
+            "rolename": "Cygames",
+            "type": "Packages",
+            "id": {
+                "1": "cygames1",
+                "2": "cygames2",
+                "3": "cygames3"
+            },
+            "price": "250",
+            "desc": "Cygames Badges Package Set."
+        },
+
+        "WINTER": {
+            "name": "WINTER",
+            "rolename": "Winter",
+            "type": "Packages",
+            "id": {
+                "1": "winter1",
+                "2": "winter2",
+                "3": "winter3"
+            },
+            "price": "250",
+            "desc": "Winter Badges Package Set."
+        }
+    },
+
+    "SEASONALROLES": {
+
+        
+        "SECRET SANTA":{
+
+            "name":"SECRET SANTA",
+            "rolename":"Secret Santa",
+            "type":"Roles",
+            "price":"100",
+            "desc":"Special Holiday role."
+
+        },
+
+        "ELF ON THE SHELF":{
+
+            "name":"ELF ON THE SHELF",
+            "rolename":"Elf on the Shelf",
+            "type":"Roles",
+            "price":"100",
+            "desc":"Special Holiday role."
+
+        },
+
+        "SNOW ANGEL":{
+
+            "name":"SNOW ANGEL",
+            "rolename":"Snow Angel",
+            "type":"Roles",
+            "price":"100",
+            "desc":"Special Holiday role."
+
         }
     }
 }

@@ -9,9 +9,7 @@ let sayEmbed = new Discord.RichEmbed()
 	let text = args.join(" ");
 	let textEmbed = args.slice(1).join(" ");
 
-if((message.author.id === '230034968515051520') || (message.author.id === '184396254984404992') || (message.author.id === '198360319184207873') || (message.author.id = '145367500710739969')) {
-
-
+if (message.member.hasPermission("ADMINISTRATOR")) {
 
 	if(args[0] === 'embed') {
 

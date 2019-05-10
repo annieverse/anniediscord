@@ -1,24 +1,13 @@
-class userFinding {
-	constructor(message, target) {
-		this.message = message;
-		this.target = target;
-	};
 
-	 async resolve(){
+module.exports.resolve = async (message, target) => {
 	      const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-	      if(userPattern.test(this.target)) this.target = this.target.replace(userPattern, '$1');
-	      let members = this.message.guild.members;
+	      if(userPattern.test(target)) target = target.replace(userPattern, '$1');
+	      let members = message.guild.members;
 
-	      const filter = member => member.user.id === this.target
-	          || member.displayName.toLowerCase() === this.target.toLowerCase()
-	          || member.user.username.toLowerCase() === this.target.toLowerCase()
-	          || member.user.tag.toLowerCase() === this.target.toLowerCase();
-
+	      const filter = member => member.user.id === target
+	          || member.displayName.toLowerCase() === target.toLowerCase()
+	          || member.user.username.toLowerCase() === target.toLowerCase()
+	          || member.user.tag.toLowerCase() === target.toLowerCase();
+			 
 	          return members.filter(filter).first();
 	  	}
- }
-
-
-module.exports = {
-  userFinding,
-};

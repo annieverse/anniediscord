@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
-const fs = require('fs');
-const items = JSON.parse(fs.readFileSync('items.json','utf8'));
-
+const palette = require('../colorset.json');
+const formatManager = require('../utils/formatManager');
+const databaseManager = require('../utils/databaseManager');
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
 
@@ -13,59 +13,103 @@ module.exports.run = async(bot, command, message,args) =>{
 ///     10/19/18 - integrated with buy.js updates.
 ///     09/29/18 - old roles shop.
 ///
-let bicon = bot.user.displayAvatarURL
-const embedShop = new Discord.RichEmbed()
+
+const format = new formatManager(message);
+const collection = new databaseManager(message.author.id);
+
+const moji = (mojiname) => {
+    return bot.emojis.find((x) => x.name === mojiname) 
+}
+
+const registerItems = (source, target, emoji=moji('ArtCoins')) => {
+    let categories = []; 
+
+    for (var i in source) { 
+          if (!categories.includes(source[i].type)) {
+              categories.push(source[i].type)
+          }
+      }
+
+
+    for (var i = 0; i < categories.length; i++) { 
+        var tempDesc = '';
+          for (var c in source) { 
+              if (categories[i] === source[c].type) {
+                  let priceRange = format.threeDigitsComa(source[c].price);
+                  tempDesc += `${emoji} ${priceRange} - **${source[c].name}**\n`; 
+              }
+            }
+           target.addField(categories[i], tempDesc);           
+    }
+}
+
 
 if (["roles-shop"].includes(message.channel.name)) {
-             let categories = []; // Lets define categories as an empty array so we can add to it.
-          
+  if (!args.join(" ")) { 
 
-        if (!args.join(" ")) { // Run if no item specified...
+       const page1 = new Discord.RichEmbed();
 
+       const links = {
+           roles: "https://i.redd.it/79disx5z5c8x.jpg"
+       };
 
-            for (var i in items) { 
+          page1.setDescription(`**Welcome to the Second Shop!**
+          You can buy various roles in here!\n`)
+          page1.setColor(palette.darkmatte)
+          page1.setImage(links.roles)
+          page1.setFooter(`Type >buy role <rolename> to buy one of the listed role above.`)
+          registerItems(await collection.classifyItem('Roles'), page1);
+        
+          /*
+          page2.setDescription(`**Special Holiday roles!**!\n`)
+          page2.setColor(palette.darkmatte)
+          page2.setImage('https://media.discordapp.net/attachments/508385654259056660/527588146007769102/Holiday_shop_banner.png?width=1006&height=478')
+          page2.setFooter(`Type >buy role <rolename> to buy one of the listed role above.`)
+          registerItems(await collection.classifyItem('Seasonal Roles'), page2, moji('candycane'));
+          */
 
-                if (!categories.includes(items[i].type)) {
-                    categories.push(items[i].type)
-                }   
-            }
-  
+          return message.channel.send(page1)
 
-            for (var i = 0; i < categories.length; i++) { 
-              var tempDesc = ''; 
+          /* // paged functions
+          .then(msg => {
+            msg.react('⏪').then(r => {
+            msg.react('⏩')
 
-                for (var c in items) { 
-                    if (categories[i] === items[c].type) {
+                const backwardsFilter = (reaction, user) => (reaction.emoji.name === '⏪') && (user.id === message.author.id);
+                const forwardsFilter = (reaction, user) => (reaction.emoji.name === '⏩') && (user.id === message.author.id);            
 
-                        let priceRange = items[c].price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                const backwards = msg.createReactionCollector(backwardsFilter, { time: 60000 });
+                const forwards = msg.createReactionCollector(forwardsFilter, { time: 60000 });
+                let count = 1;
 
-                        tempDesc += `<:ArtCoins:467184620107202560> ${priceRange} - **${items[c].rolename}**\n`; 
+                backwards.on('collect', r => {
+                  r.remove(message.author)
+                  count--
+                  if(count == 1) { msg.edit(page1) }
+                  else { count++ }
 
-                    }
+                });
+                forwards.on('collect',  r => {
+                  r.remove(message.author)
+                  count++
+                  if(count == 2) { msg.edit(page2) } 
+                  else { count-- }
 
-                  }
+                });
 
-                  
-                 embedShop.addField(categories[i], tempDesc);           
-
-
-                }
-
-                embedShop.setDescription(`**Welcome to the Second Shop!**
-                You can purchase various roles here!\n`)
-                embedShop.setThumbnail(bicon)
-                embedShop.setColor(0xD4AF37)
-                embedShop.setFooter(`Second Shop Merchant | Anime Artist United`, bicon)
-
-            return message.channel.send(embedShop)
-
+                setTimeout(() => {
+                    msg.clearReactions();
+                }, 60000)
+            })
+          })
+          */
   }
-}
-                embedShop.setDescription(`This command is only available in ${message.guild.channels.get('464180867083010048').toString()}.`)
-                embedShop.setColor(0xD4AF37)
-                embedShop.setFooter(`Second Shop Merchant | Anime Artist United`, bicon)
 
-            return message.channel.send(embedShop)
+
+} 
+else {
+    return format.embedWrapper(palette.darkmatte, `This shop only available in ${message.guild.channels.get('464180867083010048').toString()}.`)
+}
 }
 module.exports.help = {
     name:"r.shop",

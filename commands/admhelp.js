@@ -29,7 +29,7 @@ let admEmbed2 = new Discord.RichEmbed();
     admEmbed.setDescription(`You don't have authorization to use this command.`)
     admEmbed.setFooter(`Anime Artist United | Admin Help Section`, bicon)
 
-if(!message.member.hasPermission("ADMINISTRATOR"))return message.channel.send(admEmbed);
+if(!message.member.roles.find(r => r.name === 'Creators Council'))return message.channel.send(admEmbed);
 
     message.react("👌")
   try{
