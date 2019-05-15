@@ -175,25 +175,25 @@ class databaseUtils {
             * @param src of target array.
             * @param id of target element in given src.
             */
-        request_query(callback, itemname) {
-            return sql.all(`SELECT upper(name), alias, type, price, desc, status, rarity FROM itemlist WHERE status = "sell"`)
-                .then(rootgroup => callback(callback, itemname))
-        }
-
-
-        // Returns key-value
-        lookfor(src, name) {
-            for(let i in src) { 
-                if(src[i] === name.toUpperCase()) {
-                    return src[i]
+        itemIndexing(src, id) {
+            let srcUppercase = src.map(d => d.toUpperCase());
+            for(let y in src) {
+                if(srcUppercase[y] === id.toUpperCase()) {
+                    return src[y]
                 }
             }
         }
 
 
-        // Get item obj.
-        get_item(itemname) {
-            return this.request_query(this.lookfor, itemname)
+        /**
+            *   Get item obj.
+            * @param id of item name.
+            */
+        async getItem(id) {
+            let src = await this.wholeIndexing('itemlist', 'WHERE status = "sell"');
+            let filtered = await this.storingValueOfElement(src, 'name');
+            let itemIndex = this.itemIndexing(filtered, id)
+                return sql.get(`SELECT * FROM itemlist WHERE name = "${itemIndex.toString()}"`).then(async parsed => parsed) 
         }
 
 

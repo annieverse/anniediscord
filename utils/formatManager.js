@@ -80,7 +80,7 @@ class formatterUtils {
 			* Replace comma in a string of number.
 			* @number value
 			*/
-		threeDigitsComa(number = 0) {
+		threeDigitsComa(number) {
 				return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		}
 
@@ -118,19 +118,10 @@ class formatterUtils {
 			* @color of given hex code.
 			* @content of message content.
 			*/
-		embedWrapper(color, content, image = null) {
+		embedWrapper(color, content) {
 				embed.setColor(color)
 				embed.setDescription(content)
-
-				if(image) {
-					embed.attachFile(new Discord.Attachment(image, `preview.jpg`))
-					embed.setImage(`attachment://preview.jpg`)
-				}
-				else if(embed.file) {
-					embed.image.url = null;
-					embed.file = null
-				} 
-				return this.message.channel.send(embed);
+					return this.message.channel.send(embed);
 		}
 
 
@@ -139,7 +130,7 @@ class formatterUtils {
 			* @color of given hex code.
 			* @content of message content.
 			*/
-		embedBase(color, content) {
+		baseEmbedWrapper(color, content) {
 				embed.setColor(color)
 				embed.setDescription(content)
 					return embed;

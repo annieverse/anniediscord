@@ -2,18 +2,52 @@ const clock = require("node-emoji-clock");
 const momentTime = require("moment-timezone");
 const formatManager = require('../utils/formatManager');
 const palette = require('../colorset.json');
-const sql = require("sqlite"),
-      utils = require(`../utils/utils.js`);
-
+const sql = require("sqlite");
+const { Client, RichEmbed, Attachment } = require('discord.js');
 module.exports = bot => {
 
 
 startup();
+  
+   RecordMessage();
 
-  //sql.run(`CREATE TABLE IF NOT EXISTS clans (clanTag TEXT, clanName TEXT, clanDesc TEXT, clanLeader TEXT, clanMember1 TEXT, clanMember2 TEXT, clanMember3 TEXT, clanMember4 TEXT, clanMember5 TEXT, clanMember6 TEXT, clanMember7 TEXT, clanMember8 TEXT, clanMember9 TEXT, clanMember10 TEXT, clanMember11 TEXT, clanMember12 TEXT, clanMember13 TEXT, clanMember14 TEXT, clanMember15 TEXT)`);
-  //sql.run(`DROP TABLE clans`)
-  //sql.run(`UPDATE usercheck SET InClan=false WHERE userID=277266191540551680`)
-  //sql.run(`ALTER TABLE usercheck ADD COLUMN clanName TEXT;`)
+    function RecordMessage() { 
+      
+      setInterval(()=>{
+       let generalchat = bot.channels.get('558560556517294081'); //Moderation Records Channel
+       const embed = new RichEmbed()
+       
+      // Set the title of the field
+      .setTitle('[RECORD][X] New tab has been added.')
+      // Set the color of the embed
+      .setColor(0xFF0000)
+      // Set the main content of the embed
+      .setDescription(`Moderation Logging: Place any logged information below this tab | Minimum of one post per person in record tab. | Btw, Vezeko is awesome! <@&551603523070984222>.`);
+        
+      generalchat.send(`🔥 **LEWDISM RULEZ BABY** 🔥, <@&551603523070984222>.`)
+        .then(msg=>msg.delete())
+        .then(msg=>generalchat.send(embed))
+              
+      //generalchat.send(`**Moderation Record Tab added**, <@&551603523070984222>.`)
+      //generalchat.send(embed)
+        
+        //pin
+        //emoji
+        //ping
+        
+                  /*
+                  one_day=1000*60*60*23
+                  one_hour=1000*60*60
+                  one_minute=1000*60
+                  one_second=1000
+                  */
+            }, (1000 * 60 * 60 * 12)  );//controls how long between each spawn: Currently at daily, 24hrs.
+          }   
+
+  
+//eventLootBoxes();
+
+  
     /**
       * 
       * Fired processes on startup.
@@ -22,19 +56,13 @@ startup();
     function startup() {
 
             console.log(`${bot.user.username} is up.`)
-            bot.user.setStatus('dnd');
-
-            sql.open(`.data/database.sqlite`);
-            sql.run(`UPDATE usercheck SET expcooldown = "False"`);
-
-            setInterval(() => {
-                    let activityArr = [
-                        "maintenance"
-                        ];
-                    let activityArrIndex = Math.floor(Math.random() * (activityArr.length - 1) + 1);
-                    bot.user.setActivity(activityArr[0],{type:"PLAYING"})
-            }, 3000 );
+            bot.user.setStatus('online');
+            //bot.user.setActivity("Free 100% XP boost today!")
+            sql.get(`SELECT * FROM usercheck`).then(async () => {
+                sql.run(`UPDATE usercheck SET expcooldown = "False"`);
+            })
     }
+
 
     /**
       * 
@@ -140,11 +168,7 @@ startup();
                                 sql.run(`UPDATE usereventsdata SET collectedboxes = ${currentdata.collectedboxes + 1} WHERE userId = ${user_id}`)
                                 sql.run(`UPDATE usereventsdata SET totalboxes = ${currentdata.totalboxes + 1} WHERE userId = ${user_id}`)
                             })
-                        sql.get(`SELECT * FROM messagelog`)
-                            .then(() => {
-                                sql.run(`INSERT INTO christmasevent_log (userId, timestamp, box_location) VALUES (?, ?, ?)`,
-                                [user_id, Date.now(), msg.channel.name])
-                            })    
+    
 
                         msg.edit(format.baseEmbedWrapper(palette.halloween, `Congratulation!! <@${user_id}>, you have received a christmas box!! :tada:!`))
                         .then( msg.clearReactions() )
@@ -161,11 +185,6 @@ startup();
 
                     lootbox.on('end',() => {
                     if(!reactiondone){
-                        sql.get(`SELECT * FROM christmasevent_log`)
-                            .then(() => {
-                                sql.run(`INSERT INTO christmasevent_log (userId, timestamp, box_location) VALUES (?, ?, ?)`,
-                                [null, Date.now(), msg.channel.name])
-                            })  
                         msg.edit(format.baseEmbedWrapper(palette.darkmatte,
                             `Hmm, so quiet ..`))
                             .then( msg.clearReactions() )
@@ -214,12 +233,7 @@ startup();
                             .then(async currentdata => {
                                 sql.run(`UPDATE usereventsdata SET collectedboxes = ${currentdata.collectedboxes + 1} WHERE userId = ${user_id}`)
                                 sql.run(`UPDATE usereventsdata SET totalboxes = ${currentdata.totalboxes + 1} WHERE userId = ${user_id}`)
-                            })
-                        sql.get(`SELECT * FROM messagelog`)
-                            .then(() => {
-                                sql.run(`INSERT INTO christmasevent_log (userId, timestamp, box_location) VALUES (?, ?, ?)`,
-                                [user_id, Date.now(), msg.channel.name])
-                            })    
+                            }) 
 
                         msg.edit(format.baseEmbedWrapper(palette.halloween, `Congratulation!! <@${user_id}>, you have received a christmas box!! :tada:!`))
                         .then( msg.clearReactions() )
@@ -235,12 +249,7 @@ startup();
 
 
                     lootbox2.on('end',() => {
-                    if(!reactiondone){
-                        sql.get(`SELECT * FROM christmasevent_log`)
-                            .then(() => {
-                                sql.run(`INSERT INTO christmasevent_log (userId, timestamp, box_location) VALUES (?, ?, ?)`,
-                                [null, Date.now(), msg.channel.name])
-                            })  
+                    if(!reactiondone){ 
                         msg.edit(format.baseEmbedWrapper(palette.darkmatte,
                             `Hmm, so quiet ..`))
                             .then( msg.clearReactions() )

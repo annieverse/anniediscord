@@ -19,6 +19,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "Rob
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "RobotoBold");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
+Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
 module.exports.run = async (bot, command, message, args) => {
   
@@ -26,8 +27,8 @@ const configFormat = new formatManager(message);
 const configRank = new ranksManager(bot, message);
 let errdump = 0;
 
-return ["sandbox"].includes(message.channel.name) ? card() 
-: configFormat.embedWrapper(palette.darkmatte, `Unavailable access.`)
+return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? card() 
+: configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 
 async function card() {
@@ -51,8 +52,8 @@ async function card() {
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -69,14 +70,14 @@ async function card() {
 
             const switchColor = {
 
-                    "dark_profileskin": {
+                    "Dark": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "light_profileskin": {
+                    "Light": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,
@@ -170,14 +171,12 @@ async function card() {
                     .createBeveledClip(startPos_x, startPos_y, baseWidth, 270, 1)
                     .setColor(user.clr)
 
-                    if(!user.cov) {
+                    if(user.cov === null) {
                         canv.addRect(startPos_x, startPos_y-350, baseWidth+40, 922)
                             .addImage(await configProfile.getAsset('defaultcover1'), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER
-                    } 
-                    else {
+                    } else {
                         //canv.addImage(avatar, startPos_x, startPos_y-200, baseWidth+50, baseWidth+100, 107) // COVER HEADER   
-                        canv.addRect(startPos_x, startPos_y-350, baseWidth+40, 922)
-                        canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER   
+                        canv.addImage(await configProfile.getCoverAsset(user.cov), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER   
                     }
                     
                 canv.restore() // call stack 2
@@ -452,8 +451,8 @@ async function card() {
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -470,14 +469,14 @@ async function card() {
 
             const switchColor = {
 
-                    "dark_profileskin": {
+                    "Dark": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "light_profileskin": {
+                    "Light": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,
@@ -751,6 +750,6 @@ async function card() {
 }
 
 module.exports.help = {
-  name: ">profile",
-        aliases:[">prfl", ">profil", ">p", ">mycard", ">portfolio"]
+  name: "profile",
+        aliases:["prfl", "profil", "p", "mycard", "portfolio"]
 }

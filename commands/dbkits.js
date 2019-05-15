@@ -160,7 +160,7 @@ modifyDB();
                     try{
                         const user = await userFinding.resolve(message, args[1]);
                         let data = {
-              opt:  message.content.includes("-i") ? "item_id" : "userId",
+              opt:  message.content.includes("-i") ? "itemId" : "userId",
               id:   message.content.includes("-i") ? args[1] : user.id,
                             val:  args[2],
                             col:  args[3],
@@ -229,43 +229,6 @@ modifyDB();
                 }
             }
 
-            else if(args[0] === 'nullify') {
-                /**
-                 *      Nullifying value in a column of given ID.
-                 */
-                if(args[1]) {
-                    try {
-
-                        const user = await userFinding.resolve(message, args[1]);
-                        let data = {
-                            id:   user.id,
-                            col:  args[2],
-                            tbl:  args[3],
-                        }
-                        
-                        sql.run(`UPDATE ${data.tbl} SET ${data.col} = NULL WHERE userId = ${data.id}`)
-                        return format.embedWrapper(
-                            palette.darkmatte,
-                            `Value has been nullified in **${data.col} of ID ${data.id}**.`
-                        )
-                    }
-                    catch(e) {
-                        console.log(e);
-                        return format.embedWrapper(
-                            palette.darkmatte,
-                            '**Invalid property / format.**'
-                        ) 
-                    }
-                }
-                else { 
-                    return format.embedWrapper(
-                        palette.darkmatte,
-                        '**Nullify collumn in <id> <column> of <table>.**'
-                    ) 
-                }
-            }
-
-
             else if(args[0] === 'replace') {
                 /**
                  *      Replacing new value on given column of table.
@@ -283,7 +246,7 @@ modifyDB();
                         const user = await userFinding.resolve(message, tokenize[0]);
                         let data = {
                             id:   message.content.includes("-i") ? tokenize[0] : user.id,
-                            opt:  message.content.includes("-i") ? 'item_id' : 'userId',
+                            opt:  message.content.includes("-i") ? 'itemId' : 'userId',
                             val:  tokenize[1],
                             col:  tokenize[2],
                             tbl:  tokenize[3],
@@ -519,6 +482,6 @@ modifyDB();
 }
 
 exports.help = {
-  name: "-db",
+  name: "_db",
         aliases:[]
 }

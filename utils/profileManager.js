@@ -71,7 +71,7 @@ class profileManager {
 		* @id of badge name
 		*/
 	checkBadges(id) {
-			return id === null ? null : this.getAsset(id);
+			return id === null ? null : this.getBadge(id);
 	}
 
 
@@ -80,9 +80,7 @@ class profileManager {
 		* @data of user interfacemode
 		*/
 	checkInterface(data) {
-			return data === 'light_profileskin' ? 'light_profileskin' 
-					 : data === 'dark_profileskin' ? 'dark_profileskin' 
-					 : 'light_profileskin';
+			return data === 'Light' ? 'Light' : data === 'Dark' ? 'Dark' : 'Light';
 	}
 	
 	 
@@ -150,7 +148,7 @@ class profileManager {
 		* @id of the filename
 		*/
 	getAsset(id) {
-			return fsn.readFile(`./images/${id}.png`);
+			return fsn.readFile(`./images/${id}.jpg`);
 	}
 
 	/**
@@ -158,7 +156,7 @@ class profileManager {
 		* @id of the filename
 		*/
 	getCoverAsset(id) {
-			return fsn.readFile(`./images/covers/${id}.png`);
+			return fsn.readFile(`./images/covers/${id}.jpg`);
 	}
 
 

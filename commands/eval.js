@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const cards = require('../utils/cards-metadata.json');
 const ms = require('parse-ms');
 const moment = require('moment');
 
