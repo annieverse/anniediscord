@@ -5,7 +5,7 @@
 - Kitomi, for giving me the way through all of this and the unforgettable supports.
 
 ### **Developer** :
-`naphnaphz#7790` & `Bait God#8677`
+`naphnaphz#7790`,`Bait God#8677` & `Fwubbles#8540`
 
 ### **Contributor** :
 
@@ -17,6 +17,13 @@
 `TrojanOS#2373`
 	 
 ## **change logs** :
+
+##### **05/08/19 | 3.0.0 - >** 
+
+   >` -Major changes `
+   >` -Improved database structure `
+   >` -Grid Inventory system `
+   >` -Gacha `
 
 
 ##### **02/26/19 | 2.5.0 - >** 

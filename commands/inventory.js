@@ -37,6 +37,13 @@ exports.run = async (bot,command, message, args) => {
 
 
 
+    // Parsing emoji by its name.
+    function emoji(name) {
+        return bot.emojis.find(e => e.name === name)
+    }
+
+
+
 
 
     /**
@@ -409,7 +416,7 @@ exports.run = async (bot,command, message, args) => {
                 .then(async load => {
                     await get_inventobject();
                     await filtering_items(raw_object);
-                    const title = `**Inventory card for ${message.author.username}**`;
+                    const title = `${emoji(`AnnieWot`)} | **Inventory card for ${message.author.username}**`;
 
                     !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(message.member, filter_alias_res),`inventory-${message.author.username}.jpg`))
                     load.delete();                      

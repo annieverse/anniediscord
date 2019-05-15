@@ -80,7 +80,7 @@ class formatterUtils {
 			* Replace comma in a string of number.
 			* @number value
 			*/
-		threeDigitsComa(number) {
+		threeDigitsComa(number = 0) {
 				return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 		}
 
@@ -139,7 +139,7 @@ class formatterUtils {
 			* @color of given hex code.
 			* @content of message content.
 			*/
-		baseEmbedWrapper(color, content) {
+		embedBase(color, content) {
 				embed.setColor(color)
 				embed.setDescription(content)
 					return embed;

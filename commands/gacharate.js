@@ -1,16 +1,12 @@
 const { Canvas } = require("canvas-constructor"); 
 const { resolve, join } = require("path");
 const { Attachment } = require("discord.js"); 
-const { get } = require("snekfetch");
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
-const Color = require('color');
-const imageUrlRegex = /\?size=2048$/g; 
 const databaseManager = require('../utils/databaseManager.js');
-const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 const profileManager = require('../utils/profileManager');
-const userFinding = require('../utils/userFinding')
+const cards_metadata = require('../utils/cards-metadata.json');
 const userRecently = new Set();
 
 const sql = require('sqlite');
@@ -21,7 +17,10 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-exports.run = async (bot,command, message, args) => {
+exports.run = async (bot,command, message) => {
+
+
+const format = new formatManager(message);
 
 
 /**
@@ -32,6 +31,11 @@ function pause(ms) {
   return new Promise(resolve => setTimeout(resolve,ms));
 }
 
+
+// Parsing emoji by its name.
+const emoji = (name) => {
+    return bot.emojis.find(e => e.name === name)
+}
 
 
 /**
@@ -66,27 +70,13 @@ async function drawSingleImg(member, container) {
                     let startPos_y = 15;
                     let baseWidth = canvas_x-40;
                     let baseHeight = canvas_y-50;
-                    let barlength_xp = baseWidth-135;
-                    const { body: avatar } = await get(member.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
 
                     let canv = new Canvas(canvas_x, canvas_y) // x y
 
                 canv = canv.setColor(user.clr)
 
 
-
-                	/**
-                	*	Base Card
-                	*/
-
-
-
-                	//  DONE PUTTING CARD ASSETS, AND AVAILABLE TO BE PULLED FROM SINGLE ROLL.
-
-                	if(container.item[0].indexOf(`(card)`) > -1) {
-                		let itemcode = (container.item[0]).replace(/ *\([^)]*\) */g, "");
-                		let itemid = /\[([^)]+)\]/.exec(itemcode);
-
+                	if(container.type[0] === `card`) {
                 		canv.save()
 	                    .setShadowColor("rgba(28, 28, 28, 1)")
 	                    .setShadowOffsetY(8)
@@ -97,7 +87,7 @@ async function drawSingleImg(member, container) {
 	                    .restore() 
 	                   	.setShadowBlur(0)
 	                    .setShadowOffsetY(0) 
-	                    .addImage(await configProfile.getAsset(`card-${itemid[1]}`), startPos_x+4, startPos_y+3, baseWidth-6, baseHeight, Math.floor(baseHeight/2)) 
+	                    .addImage(await configProfile.getAsset(container.alias[0]), startPos_x+4, startPos_y+3, baseWidth-6, baseHeight, Math.floor(baseHeight/2)) 
      
 
 	                    return canv.toBuffer();   		
@@ -113,29 +103,6 @@ async function drawSingleImg(member, container) {
 	                    .addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
 	                    .setShadowBlur(0)
 	                    .setShadowOffsetY(0)
-	                    //.save()// stack 2
-
-
-
-	                    async function rarityCircle(x, y) {
-	                        const colour = {
-	                            "Common": palette.darkbrown,
-	                            "Rare": palette.darkblue,
-	                            "Super Rare": palette.purple,
-	                            "Legendary": palette.crimson
-	                        };
-
-	                        canv.setColor(colour[container.rarity[0]])
-	                            .addCircle(x-5, y-5, 9)
-
-	                            .setColor(palette.nightmode)
-	                            .addCircle(x-5, y-5, 8)  
-
-	                            .setTextAlign(`center`)
-	                            .setTextFont(`8pt RobotoBold`)  
-	                            .setColor(colour[container.rarity[0]])
-	                            .addText((container.rarity[0]).charAt(0), x-5, y-1)
-	                    }
 
 
 	                    async function visualQuantity(x, y, dx, dy, dm) {   
@@ -157,7 +124,8 @@ async function drawSingleImg(member, container) {
 	                        }
 	                       	else if(container.item[0].indexOf(`Shard`) > -1) {
                             	return canv.addImage(await configProfile.getAsset(container.alias[0]), x, y, dx, dy, dm)
-                        	}
+							}
+							else return canv.addImage(await configProfile.getAsset(container.alias[0]), x, y, dx, dy, dm)
 	                    }
 
 	                    async function textDescription(x, y) {
@@ -203,9 +171,6 @@ async function drawMultipleImg(member, container) {
                     let canvas_y = 500;
                     let startPos_x = 15;
                     let startPos_y = 15;
-                    let baseWidth = canvas_x-40;
-                    let baseHeight = canvas_y-50;
-                    const { body: avatar } = await get(member.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
 
                     let canv = new Canvas(canvas_x, canvas_y) // x y
 
@@ -268,9 +233,7 @@ async function drawMultipleImg(member, container) {
                                 else if(container.item[index].indexOf(`Magical Paper`) > -1) {
                             		return canv.addImage(await configProfile.getAsset(`magicalpaper1`), icon2icon_distancex, icon2icon_set_y, dx, dy, dm)
                         		}
-                                else if(container.item[index].indexOf(`Shard`) > -1) {
-                            		return canv.addImage(await configProfile.getAsset(container.alias[index]), icon2icon_distancex, icon2icon_set_y, dx, dy, dm)
-                        		}
+                                else return canv.addImage(await configProfile.getAsset(container.alias[index]), icon2icon_distancex, icon2icon_set_y, dx, dy, dm)
                             }
 
                             async function textDescription(x, y, index) {
@@ -285,28 +248,6 @@ async function drawMultipleImg(member, container) {
                                     .addText(`☆`.repeat(container.rarity[index]), text2text_distancex, text2text_set_y+20)
                             }
 
-                            async function rarityCircle(x, y, index) {
-                                let circle2circle_distancex = index < 1 || index === 5 ? x : index > 4 ? card2card_distancex(index-5) + (index-5 < 1 ? x : 155) : card2card_distancex(index) + 155;
-                                let circle2circle_set_y = opt === `top` ? y : set_y + 20;
-
-                                const colour = {
-                                    "Common": palette.darkbrown,
-                                    "Rare": palette.darkblue,
-                                    "Super Rare": palette.purple,
-                                    "Legendary": palette.crimson
-                                };
-
-                                canv.setColor(colour[container.rarity[index]])
-                                    .addCircle(circle2circle_distancex-5, circle2circle_set_y-5, 9)
-
-                                    .setColor(palette.nightmode)
-                                    .addCircle(circle2circle_distancex-5, circle2circle_set_y-5, 8)  
-
-                                    .setTextAlign(`center`)
-                                    .setTextFont(`8pt RobotoBold`)  
-                                    .setColor(colour[container.rarity[index]])
-                                    .addText((container.rarity[index]).charAt(0), circle2circle_distancex-5, circle2circle_set_y-1)
-                            }
 
 
                             const indexrow = {
@@ -319,8 +260,6 @@ async function drawMultipleImg(member, container) {
 	                            i > 0 ? canv.setColor(palette.darkmatte) : null;
 
 					            if(container.type[indexrow[opt][i]] === `card`) {
-				                	let itemcode = (container.item[indexrow[opt][i]]).replace(/ *\([^)]*\) */g, "");
-				                	let itemid = /\[([^)]+)\]/.exec(itemcode);
 
 					                canv.setShadowColor("rgba(28, 28, 28, 1)")
 					                    .setShadowOffsetY(8)
@@ -397,19 +336,19 @@ async function roll(times) {
         
         for (let i = 0; i < limit; i++) {
             let rate = Math.random() * 100;
-            let parsed = await get_loots(rate);
+			let parsed = await get_loots(rate);
+			
             res_items.push(parsed.item_name)
             res_rates.push(parsed.drop_rate)
             res_rarities.push(parsed.rarity)
             res_types.push(parsed.type);
-            res_aliases.push(parsed.item_alias)
+			res_aliases.push(parsed.item_alias)
+			
 
             await pause(100);
 
-            if(parsed.rarity > 4) {
-            	message.channel.send(`${message.author} has pulled **${parsed.item_name}** from the lucky ticket! :tada:`)
-            }
-            console.log(`${message.author.tag} pulled ${res_items[i]}[${res_rarities[i]}] with rate ${rate}%`)
+            if(parsed.rarity > 4)message.channel.send(`${message.author} has pulled **${parsed.item_name}** from the lucky ticket! :tada:`)
+            console.log(`${message.author.tag} pulled ${res_items[i]}[${res_rarities[i]}] on float : ${rate}`)
         }
         return {
             item: res_items,
@@ -455,6 +394,30 @@ function user_tickets() {
 		.then(async data => data.lucky_ticket === null || data.lucky_ticket < 1 ? 0 : data.lucky_ticket);
 }
 
+
+// Request user's collection data.
+function cards_collection() {
+    return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
+            .then(async data => data);
+}
+
+
+// Returns true if user has rany_card.
+async function has_rany() {
+	const data = await cards_collection();
+	const ranny_card = data.rany_card;
+	return ranny_card ? true : false;
+}
+
+
+//	Count total user's collected cards.
+async function total_collected_cards() {
+	const data = await cards_collection();
+	for(let key in data) {
+		if(!data[key])delete data[key];
+	}
+	return Object.keys(data).length;
+}
 
 
 /**
@@ -511,7 +474,7 @@ async function backend(container) {
 			Removing duplicates.
 			@categorizing
 		*/  
-	    const categorizing = (array) => {
+	    const categorizing = () => {
 	    	let tagged = tagging();
 	    	let res = tagged.filter((value, index) => tagged.indexOf(value) === index);
 	    	return res;
@@ -554,12 +517,74 @@ async function backend(container) {
 	*/
 	const storing_items = async () => {
 		const parsed_container = classify();
+		const total_cards = await total_collected_cards();
+		const has_ranny = await has_rany();
 
-		for(let key in parsed_container) {
-			const tablediff = key.indexOf(`card`) > -1 ? `collections` : `userinventories`;
-			sql.run(`UPDATE ${tablediff} SET ${key} = CASE WHEN ${key} IS NULL THEN ${parseInt(parsed_container[key])} ELSE ${key} + ${parseInt(parsed_container[key])} END WHERE userId = ${message.author.id}`);
-			await pause(500);
+
+		//	Rany's custom skill function.
+		const rany_collector_fortune = (fragment) => {
+			return fragment * (total_cards + 1);
 		}
+
+
+		//Check for card duplicates
+		const duplicate_card = async (cardname) => {
+			const card_data = await cards_collection();
+			return card_data[cardname] > 0 ? true : false;
+		}
+
+		
+		//	Run database queries.
+		const storing = async (obj) => {
+			for(let keyv in obj) {
+				const tablediff = keyv.indexOf(`card`) > -1 ? `collections` : `userinventories`;
+				sql.run(`UPDATE ${tablediff} 
+						SET ${keyv} = CASE WHEN ${keyv} IS NULL 
+										THEN ${parseInt(obj[keyv])} 
+									ELSE ${keyv} + ${parseInt(obj[keyv])} 
+									END 
+						WHERE userId = ${message.author.id}`);
+				
+				await pause(500);
+				console.log(`${keyv}-${obj[keyv]} has been registered.`)
+			}
+		}
+
+
+		//	Filtering container.
+		const preprocessing = async () => {
+			for(let key in parsed_container) {
+
+				//	Returns multiplied fragments if user has rany_card.
+				if(has_ranny && (key === `fragments`)) {
+					const new_value = rany_collector_fortune(parsed_container[key]);
+					parsed_container[key] = new_value;
+					format.embedWrapper(palette.darkmatte, `*Rany's Collector Fortune Effect.*`)
+				}
+
+				//Check for card duplicates
+				if(key.indexOf(`card`) > -1) {
+					if(await duplicate_card(key)) {
+						const convert_to_shard = key.replace(`card`, `shards`); 
+
+						//	Each card will be dismantled into 5 shards & 10k fragments.
+						storing({
+							[convert_to_shard]: 5 * parsed_container[key],
+							fragments: 10000 * parsed_container[key],
+						});
+
+						format.embedWrapper(palette.darkmatte, `You owned duplicate of **${cards_metadata[key].fullname} card**.
+				 		The new one will be dismantled into ${emoji(convert_to_shard)}**${5 * parsed_container[key]} ${convert_to_shard} & ${emoji(`fragments`)}${10000 * parsed_container[key]} Fragments.**`)
+						delete parsed_container[key];
+						continue;
+					}
+				}
+			}
+		}
+
+
+		await preprocessing();
+		storing(parsed_container);
 	}
 
 	storing_items();
@@ -614,7 +639,6 @@ async function render_img(integertype) {
 	@processing
 */
 async function processing() {
-	const format = new formatManager(message);
 	const check_attempts = await roll_attempts();
 	const user_curtickets = await user_tickets();
 

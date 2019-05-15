@@ -13,6 +13,7 @@ module.exports.run = async(bot, command, message,args) =>{
 ///     SHOP COMMAND
 ///    changes log:
 ///
+///     05/04/19 - Major reworks
 ///     02/26/19 - Ticket shop added.
 ///     12/02/18 - Interface revamp, simplifed structure & added multiple pages.
 ///     10/19/18 - integrated with buy.js updates.
@@ -23,7 +24,7 @@ module.exports.run = async(bot, command, message,args) =>{
 
 const format = new formatManager(message);
 
-return ["naph-little-house"].includes(message.channel.name) ? initShop()
+return ["sandbox"].includes(message.channel.name) ? initShop()
 : format.embedWrapper(palette.darkmatte, `Unavailable access.`)
 
 
@@ -57,79 +58,39 @@ async function initShop() {
 
 
     const links = {
-              ticketshop: "https://i.ibb.co/7tBJ8t0/ticket1-banner.png",
-              boostershop: "https://i.ibb.co/MDNG3LX/booster1-banner.png",
-              holidaydiscount: "https://media.discordapp.net/attachments/459892157600366612/526452238424604682/XmasBonus.png?width=559&height=479",
-              skinshop: "https://i.ibb.co/Mh6vsbz/SKINSHOP-NAPHNAPHZ.png",
-              badgeshop: "https://i.ibb.co/6sXpgq6/badgeshop-naphnaphz.png",
-              covershop: "https://i.ibb.co/PYcfFLR/shopcover-jan2019.png",
-              packageshop: "https://i.ibb.co/N2Jx7W7/Holiday-shop.png"
+              gacha: `https://i.ibb.co/J3WVdWw/discordaau-gachabanner.png`,
+              premiumcover: `https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png`,
+              ticket: `https://i.ibb.co/xSj6GSZ/discordaau-ticketbanner.png`,
+              expbooster: `https://i.ibb.co/QQTGvF0/discordaau-expboosterbanner.png`,
+              skin: `https://i.ibb.co/MCSDk5C/discordaau-skinbanner.png`,
+              badge: `https://i.ibb.co/bBB2pPf/discordaau-badgebanner.png`,
+              regularcover: `https://i.ibb.co/j6C06LS/discordaau-regularcover.png`,
     };
 
 
 
     //          WORKING ON NEW SHOP INTERFACE
-
     let registered_interface = [];
-    async function interface(desc = "test", color = palette.darkmatte, footer = "footer", type = "Tickets", emoji = "ArtCoins", opt1 = undefined, opt2 = undefined) {
+    async function interface(desc = "test", img, footer = "footer", type = "Tickets", emoji = "ArtCoins", opt1 = undefined, opt2 = undefined) {
             const page = new Discord.RichEmbed()
                 .setDescription(desc)
-                .setColor(color)
+                .setColor(palette.darkmatte)
                 .setFooter(footer)
+                .setImage(img)
                 registerItems(await collection.classifyItem(type, opt1, opt2), page, moji(emoji));
 
                 registered_interface.push(page);
     }
 
 
-        /*
-           const page1 = new Discord.RichEmbed();
-           const page2 = new Discord.RichEmbed();
-           const page3 = new Discord.RichEmbed();
-           const page4 = new Discord.RichEmbed();
-           const page5 = new Discord.RichEmbed();
-
-              page1.setDescription(`**Welcome to the General Shop!**
-              These are the general items you can buy with AC!\n`)
-                    .setImage(links.ticketshop)
-                    .setColor(palette.darkmatte)
-                    .setFooter(`[1 / 5] Type >buy ticket <ticketname> to buy one of the listed ticket above.`)
-                    registerItems(await collection.classifyItem('Tickets', '_rowid_ < 3'), page1);
-
-              page2.setDescription(`**Boost your social activities!**`)
-                    .setImage(links.boostershop)
-                    .setColor(palette.darkmatte)
-                    .setFooter(`[2 / 5] Type >buy ticket <ticketname> to buy one of the listed booster above`)
-                    registerItems(await collection.classifyItem('Tickets', '_rowid_ > 2', 'name DESC'), page2)
-
-              page3.setDescription(`**Customize your card color!**`)
-                    .setImage(links.skinshop)
-                    .setColor(palette.darkmatte)
-                    .setFooter(`[3 / 5] Type >buy skin <skinname> to buy one of the listed skin above`)
-                    registerItems(await collection.classifyItem('Skins'), page3)
-
-              page4.setDescription(`**Grab some badges!**`)
-                    .setImage(links.badgeshop)
-                    .setColor(palette.darkmatte)
-                    .setFooter(`[4 / 5] Type >buy badge <badgename> to buy one of the listed badge above`)
-                    registerItems(await collection.classifyItem('Badges'), page4)
-
-              page5.setDescription(`**Beautify your profile cover!**`)
-                    .setImage(links.covershop)
-                    .setColor(palette.darkmatte)
-                    .setFooter(`[5 / 5] Type >buy cover <covername> to buy one of the listed cover above`)
-                    registerItems(await collection.classifyItem('Covers', 'price > 350'), page5)
-
-                    */
-
             async function run() {
-                await interface(`Lucky Ticket`, palette.darkmatte, `[1 / 7]`, `Unique`, `ArtCoins`, `price < 130`);
-                await interface(`May Special Cover!`, palette.darkmatte, `[2 / 7]`, `Covers`, `magicalpaper`, `price < 2`);
-                await interface(`These are our general items!`, palette.darkmatte, `[3 / 7]`, `Tickets`, `ArtCoins`,`_rowid_ < 3`);
-                await interface(`Boost your social activities!`, palette.darkmatte, `[4 / 7]`, `Tickets`, `ArtCoins`, `_rowid_ > 2`, `name DESC`);
-                await interface(`Customize your card theme!`, palette.darkmatte, `[5 / 7]`, `Skins`, `ArtCoins`);
-                await interface(`Grab your artistic badges!`, palette.darkmatte, `[6 / 7]`, `Badges`, `ArtCoins`);
-                await interface(`Beautify your profile cover!`, palette.darkmatte, `[7 / 7]`, `Covers`, `ArtCoins`, `price > 350`);
+                await interface(`Lucky Ticket has come!`, links.gacha, `[1 / 7] >redeem amount`, `Unique`, `artcoins`, `price < 130`);
+                await interface(`May Special Cover!`, links.premiumcover, `[2 / 7]`, `Covers`, `magical_paper`, `price < 6`);
+                await interface(`These are our general items!`, links.ticket, `[3 / 7]`, `Tickets`, `artcoins`,`_rowid_ < 3`);
+                await interface(`Boost your social activities!`,  links.expbooster, `[4 / 7]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`);
+                await interface(`Customize your card theme!`, links.skin, `[5 / 7]`, `Skins`, `artcoins`);
+                await interface(`Grab your artistic badges!`, links.badge,  `[6 / 7]`, `Badges`, `artcoins`);
+                await interface(`Beautify your profile cover!`, links.regularcover, `[7 / 7]`, `Covers`, `artcoins`, `price > 350`);
 
 
 

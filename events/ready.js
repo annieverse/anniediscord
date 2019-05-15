@@ -24,6 +24,9 @@ startup();
             console.log(`${bot.user.username} is up.`)
             bot.user.setStatus('dnd');
 
+            sql.open(`.data/database.sqlite`);
+            sql.run(`UPDATE usercheck SET expcooldown = "False"`);
+
             setInterval(() => {
                     let activityArr = [
                         "maintenance"

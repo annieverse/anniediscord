@@ -51,8 +51,8 @@ async function card() {
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -69,14 +69,14 @@ async function card() {
 
             const switchColor = {
 
-                    "Dark": {
+                    "dark_profileskin": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "Light": {
+                    "light_profileskin": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,
@@ -275,7 +275,7 @@ async function card() {
                     const symetric_xy = 45;
                     const diameter = Math.round(symetric_xy / 2);
                     const y_badge = 556;
-                    //await setBadge(symetric_xy, diameter, y_badge);
+                    await setBadge(symetric_xy, diameter, y_badge);
 
                     async function setBadge(xy, diameter, pos_y) {
                             if(reservedSlot <= 1) {
@@ -452,8 +452,8 @@ async function card() {
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -470,14 +470,14 @@ async function card() {
 
             const switchColor = {
 
-                    "Dark": {
+                    "dark_profileskin": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "Light": {
+                    "light_profileskin": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,

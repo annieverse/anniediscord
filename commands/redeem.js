@@ -31,13 +31,13 @@ exports.run = async (bot,command, message, args) => {
         Core event of transaction.
         @redeem
     */
-    async function redeem(amount) {
+    async function redeem(amount = args[0]) {
 
         const format = new formatManager(message);
         const user = message.author;
         const sql = require('sqlite');
         sql.open('.data/database.sqlite');
-        let price = 150 * amount;
+        let price = 120 * amount;
 
 
 
@@ -60,7 +60,7 @@ exports.run = async (bot,command, message, args) => {
 
         //  Prompt message before proceeding the transaction
         const check_out = () => {
-            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${emoji(`ArtCoins`)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
+            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${emoji(`artcoins`)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
         }
 
 
@@ -84,7 +84,7 @@ exports.run = async (bot,command, message, args) => {
 
         //  Backend processes. Storing items and substracting user's credit.
         const transaction = () => {
-            sql.run(`UPDATE userdata SET artcoins = artcoins - ${price} WHERE userId = ${user.id}`);
+            sql.run(`UPDATE userinventories SET artcoins = artcoins - ${price} WHERE userId = ${user.id}`);
             sql.run(`UPDATE userinventories SET lucky_ticket = (CASE WHEN lucky_ticket IS NULL THEN ${amount} ELSE (lucky_ticket + ${amount}) END) WHERE userId = ${user.id}`);
             console.log(`${user.tag} has bought ${amount} Lucky Tickets.`)
         }
@@ -151,8 +151,8 @@ exports.run = async (bot,command, message, args) => {
         //  Wrapped function for all-balance option.
         const all_bal_transaction = async () => {
             const user_bal = await user_balance();
-            amount = Math.floor(user_bal / 150);
-            price = 150 * amount;
+            amount = Math.floor(user_bal / 120);
+            price = 120 * amount;
 
             if(!price)return log(`000`);
 
@@ -176,7 +176,7 @@ exports.run = async (bot,command, message, args) => {
 
 
             //  Return log if the amount is not defined.
-            if(amount === undefined)return log(`004`)
+            if(!amount)return log(`004`)
 
 
             //  Return log if user still in cooldown state.
@@ -192,7 +192,7 @@ exports.run = async (bot,command, message, args) => {
 
 
             //  Proceed regular transaction.
-            amount = parseInt(amount);
+            amount = parseInt(args[0]);
             check_out();
             confirmation();
         }
@@ -201,7 +201,7 @@ exports.run = async (bot,command, message, args) => {
 
     }
 
-    return redeem(args[0]);
+    return redeem();
 	
 }
 exports.help = {
