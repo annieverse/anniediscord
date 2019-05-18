@@ -14,6 +14,9 @@ module.exports.run = async(bot,command, message,args)=> {
         //
         // 
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 let payEmbed = new Discord.RichEmbed();
 let payEmbedReceipt = new Discord.RichEmbed();
 let authorReceipt = new Discord.RichEmbed();

@@ -2,6 +2,10 @@ const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const ms = require("ms");
 module.exports.run = async (bot,command, message,args)=>{
+
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 function getRoles(r) {
               const currentGuild = bot.guilds.get(message.guild.id);
               return currentGuild.roles.find(n => n.name === r)
@@ -13,10 +17,10 @@ function getRoles(r) {
     admEmbed.setDescription(`You don't have authorization to use this command.`)
     admEmbed.setFooter(`Anime Artist United | Say Message`, bicon)
   
-  if(!message.member.roles.find(r => r.name === 'Creators Council') && !message.member.roles.find(r => r.name === 'Trial Mod') && !message.member.roles.find(r => r.name === 'Channel Overseer'))return message.channel.send(admEmbed)
-  
-  if(!message.member.hasPermission("MANAGE_MESSAGES") || !message.guild.owner) return message.channel.send("You, don't have permission to use this command.");
-  
+  if(!message.member.roles.find(r => (r.name === 'Creators Council') 
+                                  || (r.name === 'Trial Mod') 
+                                  || (r.name === 'Channel Overseer') 
+                                  || (r.name === 'Tomato Fox'))) return message.channel.send(admEmbed);
   
   let mutee = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
   if(!mutee) return message.channel.send("Please provide a user to be muted.");

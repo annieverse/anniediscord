@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
-const botconfig = require(`../botconfig.json`);
 const formatManager = require('../utils/formatManager.js');
 const palette = require(`../colorset.json`);
+const fs = require(`fs`);
 
 module.exports.run = async(bot,command,message,args)=>{
 	
@@ -17,43 +17,62 @@ module.exports.run = async(bot,command,message,args)=>{
     ///
     ///     -naphnaphz
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const format = new formatManager(message);
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? initHelp()
+return ["sandbox", `bot`].includes(message.channel.name) ? initHelp()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
-function fileAliasesCheck(file) {
-	const src = require(`./${file}`)
-	return src.help.name;
+
+async function aliases() {
+// Time promise
+const pause = (ms) => {
+    return new Promise(resolve => setTimeout(resolve,ms));
+}
+    let file_arr = [];
+    fs.readdir("./commands/", (err, files) => {
+        if(err) console.log(err);
+        
+        for(let file in files) {
+            const src = require(`./${files[file]}`);
+            file_arr.push(src.help.name);
+        }
+    })
+    await pause(500)
+    return file_arr;
 };
 
 
 async function initHelp() {
+    let file_list = await aliases();
+    const formatted_list = file_list.map(e => `\`${e}\``);
+    
+
     const header = new Discord.RichEmbed()
           .setColor(palette.darkmatte)
           .setThumbnail(bot.user.displayAvatarURL)
           .setDescription(`<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation.\n\n
-    **»  General ::**
-       \`${fileAliasesCheck('profile')}\`, \`${fileAliasesCheck('setdesc')}\`, \`${fileAliasesCheck('level')}\`, \`${fileAliasesCheck('artcoins')}\`, \`${fileAliasesCheck('daily')}\`,
-       \`${fileAliasesCheck('shop')}\`, \`${fileAliasesCheck('shop2')}\`, \`${fileAliasesCheck('avatar')}\`, \`${fileAliasesCheck('buy')}\`, \`${fileAliasesCheck('pay')}\`, \`${fileAliasesCheck('convertartcoin')}\`,
+            -> **General**
+            \`balance\`, \`profile\`, \`level\`, \`daily\`, \`inventory\`
+            \`collection\`, \`rep\`, \`gift\`, \`setdesc\`, \`cartcoin\`
 
-    **»  Fun ::**
-      \`${fileAliasesCheck('fox')}\`, \`${fileAliasesCheck('ask')}\`, \`${fileAliasesCheck('secretcommand')}\`, \`${fileAliasesCheck('coinflip')}\`
+            -> **Fun**
+            \`ask\`, \`avatar\`, \`coinflip\`
 
-    **»  Server ::**
-      \`${fileAliasesCheck('time')}\`, \`${fileAliasesCheck('botinfo')}\`, \`${fileAliasesCheck('help')}\`, \`${fileAliasesCheck('leaderboard')}\`, \`${fileAliasesCheck('invite')}\`, \`${fileAliasesCheck('ping')}\`
+            -> **Shop-related**
+            \`eat\`, \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`r.shop\`
+            \`roll\`, \`multi-roll\`,
 
-    **»  Administration ::**
-      \`${fileAliasesCheck('admhelp')}\`
+            -> **Server**
+            \`stats\`, \`ping\`, \`invite\`, \`join\` 
       `);
 
-    const footer = new Discord.RichEmbed()
-            .setColor(palette.halloween)
-            .setDescription(`Need further help? Please DM <@507043081770631169>.`);
 
-
-      return message.channel.send(header).then(() => {
-          message.channel.send(footer)
-        });
+      return message.channel.send(header)
+            .then(() => {
+                format.embedWrapper(palette.halloween, `Need further help? Please DM <@507043081770631169>.`);
+            });
 }
 }
 module.exports.help = {

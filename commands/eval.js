@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
+const cards = require('../utils/cards-metadata.json');
 const ms = require('parse-ms');
 const moment = require('moment');
 
@@ -11,6 +12,10 @@ exports.run = async (bot,command, message, args) => {
     * UPDATED EVAL command  // 10 . 12 . 18  //  naphnaphz
     * UPDATED EVAL command // 10 . 18 . 18 // naphnaphz
 */
+
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const argsx = message.content.split(" ").slice(1);
 let evembed = new Discord.RichEmbed();
 const usercon = message.author.displayAvatarURL;

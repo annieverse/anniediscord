@@ -1,0 +1,212 @@
+{
+    "kitomi_card": {
+      "fullname": "Lazy Princess, Kitkat",
+      "alias": "kitomi_card",
+      "description": "Spoil me, protect me, worship me, you slave",
+      "skills": {
+        "main": {
+          "name": "Owner's Prosperity",
+          "description": "150% EXP & 200% AC boost in #general",
+          "type": "exp_ac_booster",
+          "channel": [
+            "459891664182312982"
+          ],
+          "effect": {
+            "exp": 2.5,
+            "ac": 3,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "naph_card": {
+      "fullname": "The Noble Cat, Naph",
+      "alias": "naph_card",
+      "description": "Miaw",
+      "skills": {
+        "main": {
+          "name": "White's Cat Paradise",
+          "description": "+200 passive exp per message sent by Naph in #general",
+          "type": "exp_booster",
+          "channel": [
+            "459891664182312982"
+          ],
+          "effect": {
+            "exp": 200,
+            "ac": null,
+            "status": "passive",
+            "type": "flat",
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "ami_card": {
+        "fullname": "Pastel Goth, Ami",
+        "alias": "ami_card",    
+      "description": "things I like, my pri-... Ah, Pink clothing of course!",
+      "skills": {
+        "main": {
+          "name": "False Utopia",
+          "description": "+150% exp when posting images in art channels.",
+          "type": "exp_booster",
+          "channel": [
+            "459892609838481408",
+            "459893040753016872",
+            "460439050445258752",
+            "459892688016244738",
+            "574353861800755244",
+            "461926519976230922",
+            "459893364389707777",
+            "459893388767133711",
+            "520716400097099777"
+          ],
+          "effect": {
+            "exp": 2.5,
+            "ac": null,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": true
+          }
+        }
+      }
+    },
+    "poppy_card": {
+        "fullname": "Poppy Panda",
+        "alias": "poppy_card",
+      "description": "Sleep tight and have a sweet dreams. ",
+      "skills": {
+        "main": {
+          "name": "Dreamer's Desire",
+          "description": "Daily never expires",
+          "type": "dailies_manipulate",
+          "channel": [
+            "485922866689474571"
+          ],
+          "effect": {
+            "exp": null,
+            "ac": null,
+            "status": "active",
+            "type": null,
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "foxie_card": {
+        "fullname": "The Floofiest, Foxie",
+        "alias": "foxie_card",
+      "description": "Who can beat my fluffehness?",
+      "skills": {
+        "main": {
+          "name": "Event Fever",
+          "description": "Free event participant ticket",
+          "type": "ticket_pass",
+          "channel": [
+            "460615157056405505"
+          ],
+          "effect": {
+            "exp": null,
+            "ac": null,
+            "status": "active",
+            "type": null,
+            "attachment_only": true
+          }
+        }
+      }
+    },
+    "vezeko_card": {
+        "fullname": "The Lewdism's Prince, Vezeko",
+        "alias": "vezeko_card",
+      "description": "Hehehe.. one is never enough.",
+      "skills": {
+        "main": {
+          "name": "Pleasure of Lewding",
+          "type": "exp_ac_booster",
+          "description": "150% EXP & AC in nsfw channels.",
+          "channel": [
+            "459929521957634048",
+            "524076299980111872",
+            "460484229990711306"
+          ],
+          "effect": {
+            "exp": 2.5,
+            "ac": 2.5,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "pan_card": {
+        "fullname": "The Mighty Pan",
+        "alias": "pan_card",
+      "description": "y know drink is fun. R8?",
+      "skills": {
+        "main": {
+          "name": "Party Time",
+          "description": "+150% exp in #vc-off-topic & #music",
+          "type": "exp_booster",
+          "channel": [
+            "463536514887057436",
+            "459938699606491147"
+          ],
+          "effect": {
+            "exp": 2.5,
+            "ac": null,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "rany_card": {
+        "fullname": "The Weeb Queen, Rany",
+        "alias": "rany_card",
+      "description": "Ara, Ara... it's time for Onee-san to treat you!",
+      "skills": {
+        "main": {
+          "name": "Collector's Fortune",
+          "description": "+100% fragments gained per amount of cards collected in stash",
+          "type": "fragment_booster",
+          "channel": [
+            "485922866689474571"
+          ],
+          "effect": {
+            "exp": 2,
+            "ac": null,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": false
+          }
+        }
+      }
+    },
+    "snowy_card": {
+        "fullname": "Ghosty Snowee",
+        "alias": "snowy_card",
+      "description": "Ara, Ara... it's time for Onee-san to treat you!",
+      "skills": {
+        "main": {
+          "name": "Silent Ghosty",
+          "description": "+100% XP and AC in artistic hall.",
+          "type": "fragment_booster",
+          "channel": [
+            "520716400097099777"
+          ],
+          "effect": {
+            "exp": 2,
+            "ac": 2,
+            "status": "active",
+            "type": "multiplier",
+            "attachment_only": false
+          }
+        }
+      }
+    }
+  }
+  

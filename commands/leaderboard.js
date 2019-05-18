@@ -3,6 +3,7 @@ const palette = require('../colorset.json');
 const config = require('../botconfig.json');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
+const sql = require(`sqlite`);
 
 
 module.exports.run = async(bot,_command, message, args)=> {
@@ -19,12 +20,17 @@ module.exports.run = async(bot,_command, message, args)=> {
 ///
 ///  -naphnaphz
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const format = new formatManager(message);
 
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard()
+return ["bot", "bot-games", "cmds", `sandbox`].includes(message.channel.name) ? leaderboard()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
     async function leaderboard() {
+        sql.open(`.data/database.sqlite`);
+  
         let boardEmbed = new Discord.RichEmbed();
         let boardEmbed2 = new Discord.RichEmbed();
 
@@ -45,17 +51,12 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard
                         lv: await dbmanager.indexRanking('userdata', 'currentexp', i, 'level')
                     })
                     this.acgroup.push({
-                        id: await dbmanager.indexRanking('userdata', 'artcoins',   i, 'userId'),
-                        ac: await dbmanager.indexRanking('userdata', 'artcoins',   i, 'artcoins')
+                        id: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'userId'),
+                        ac: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'artcoins')
                     }),
                     this.repgroup.push({
                         id: await dbmanager.indexRanking('userdata', 'reputations',   i, 'userId'),
                         rep: await dbmanager.indexRanking('userdata', 'reputations',   i, 'reputations')
-                    }),
-                    this.eventgroup.push({
-                        id: await dbmanager.indexRanking('usereventsdata', 'totalboxes', i, 'userId'),
-                        box:await dbmanager.indexRanking('usereventsdata', 'totalboxes', i, 'totalboxes'),
-                        cc: await dbmanager.indexRanking('usereventsdata', 'totalboxes', i, 'candycanes')
                     })
                 }
             },
@@ -64,20 +65,24 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard
                 return {
                     xpgroup: this.xpgroup,
                     acgroup: this.acgroup,
-                    eventgroup: this.eventgroup,
                     repgroup: this.repgroup,
-                    authorevent_data: await dbmanager.pullRowData('usereventsdata', message.author.id),
-                    authorindex_ev: await dbmanager.authorIndexRanking('usereventsdata', 'totalboxes'),
                     authorindex_xp: await dbmanager.authorIndexRanking('userdata', 'currentexp'),
-                    authorindex_ac: await dbmanager.authorIndexRanking('userdata', 'artcoins'),
+                    authorindex_ac: await dbmanager.authorIndexRanking('userinventories', 'artcoins'),
                     authorindex_rep: await dbmanager.authorIndexRanking('userdata', 'reputations')
                 }
             }
         }
+        
+        const pull_author_ac = () => {
+          return sql.get(`SELECT artcoins FROM userinventories WHERE userId = "${message.author.id}"`)
+                    .then(async data => data.artcoins);
+        }
+    
+
         const user = await ranking.user();
             if(!args[0]) {
                         boardEmbed.setColor(palette.halloween)
-                                .setDescription(`**${message.author.username}**, checkout our leaderboard! type \`${config.prefix}lb xp/ac/fame/event\`.`)
+                                .setDescription(`**${message.author.username}**, checkout our leaderboard! type \`${config.prefix}lb xp/ac/fame\`.`)
                                 .setFooter(`AAU Leaderboard`, message.author.displayAvatarURL)
                         return message.channel.send(boardEmbed)
             }
@@ -117,7 +122,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard
              *      
              */
             else if(args[0].includes('ac')) {
-                    let artcoinsemoji = bot.emojis.find((x) => x.name === "ArtCoins");
+                    let artcoinsemoji = bot.emojis.find((x) => x.name === "artcoins");
                     const listingRank = () => {
                         const zerospace = '\u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b';
                         let temp = '';
@@ -132,7 +137,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard
                     boardEmbed.setColor(palette.darkmatte)
                             .setDescription(await listingRank())
                     boardEmbed2.setColor(palette.halloween)
-                            .setDescription(`You are **${format.ordinalSuffix(user.authorindex_ac + 1)}** from a total of **${await dbmanager.userSize}** users. Your current AC is : ${artcoinsemoji} **${format.threeDigitsComa(authordata.artcoins)}**.`)
+                            .setDescription(`You are **${format.ordinalSuffix(user.authorindex_ac + 1)}** from a total of **${await dbmanager.userSize}** users. Your current AC is : ${artcoinsemoji} **${format.threeDigitsComa(await pull_author_ac())}**.`)
                             .setFooter(`${message.author.username} | Artcoins Leaderboard`, message.author.displayAvatarURL)
 
                         return message.channel.send(boardEmbed)
@@ -166,35 +171,6 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? leaderboard
                         return message.channel.send(boardEmbed)
                                 .then(() => message.channel.send(boardEmbed2))
             }
-
-
-            /**
-             * 
-             *      EVENT LEADERBOARD
-             *      
-             */
-            else if(args[0].includes('event')) {
-                const listingRank = () => {
-                    let ccemoji = bot.emojis.find((x) => x.name === "candycane");
-                    const zerospace = '\u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b \u200b';
-                    let temp = '';
-                    let pos = 1;
-                    for(let i = 0; i < 10; i++) {
-                        temp += `[ **${pos}** ]- [${format.nickname(user.eventgroup[i].id)}](https://discord.gg/Tjsck8F)
-                        ${zerospace} ∟......  🎁 **Collected Boxes: ${user.eventgroup[i].box}** | ${ccemoji} **${format.threeDigitsComa(user.eventgroup[i].cc === null ? 0 : user.eventgroup[i].cc)}x**\n\n`
-                        pos++
-                    }
-                    return temp;
-                }
-                boardEmbed.setColor(palette.darkmatte)
-                        .setDescription(await listingRank())
-                boardEmbed2.setColor(palette.halloween)
-                        .setDescription(`You are **${format.ordinalSuffix(user.authorindex_ev + 1)}** from a total of **${await dbmanager.userSize}** users with total : 🎁 **${format.threeDigitsComa(user.authorevent_data.totalboxes === null ? 0 : user.authorevent_data.totalboxes)}** boxes.`)
-                        .setFooter(`${message.author.username} | Christmas Event Leaderboard`, message.author.displayAvatarURL)
-                    
-                    return message.channel.send(boardEmbed)
-                            .then(() => message.channel.send(boardEmbed2))
-        }
     }
 }
 module.exports.help = {

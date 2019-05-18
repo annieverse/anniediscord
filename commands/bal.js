@@ -9,6 +9,7 @@ module.exports.run = async(bot,command,message,args)=>{
     ///
     ///  balance command
     ///    change logs:
+    ///         05/12/19 - Bug fixes & remove unnecesary variables.
     ///			04/09/19 - emoji function.
     ///         12/20/18 - Structure reworks.
     ///         12/18/18 - Imported classes & event currency
@@ -18,46 +19,43 @@ module.exports.run = async(bot,command,message,args)=>{
     ///     -naphnaphz
     ///     -Frying Pan
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const format = new formatManager(message)
-return ["bot", "bot-games", "cmds", "roles-shop"].includes(message.channel.name) ? checkBalance()
-: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name) ? init_balance()
+: null;
 
 
-        async function checkBalance() {
+        async function init_balance() {
           const emoji = (name) => {
             return bot.emojis.find(e => e.name === name)
           }
 
             if(!args[0]){
                 const dbmanager = new databaseManager(message.author.id);
-                const data = await dbmanager.userdata;
-                const eventdata = await dbmanager.pullRowData("usereventsdata", message.author.id);
+                const data = await dbmanager.pullRowData("userinventories", message.author.id);
                 let ac = format.threeDigitsComa(data.artcoins);
-                let mdl = format.threeDigitsComa(data.medals === null ? 0 : data.medals);
-                let frg = format.threeDigitsComa(data.fragments === null ? 0 : data.fragments);
                 let name = format.capitalizeFirstLetter(message.author.username);
 
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins | ${emoji(`eventmedal`)} ${mdl} Medals | ${emoji(`fragments`)} ${frg} Fragments`);
+                            `${emoji(`artcoins`)} ${ac} Artcoins`);
                         })
             }
             else if(args[0]){
                 try {
-                    const target = await userFind.resolve(message, message.content.substring(command.length+2))
+                    const target = await userFind.resolve(message, message.content.substring(command.length+2));
                     const dbmanager = new databaseManager(target.id);
-                    const data = await dbmanager.userdata;
-                    const eventdata = await dbmanager.pullRowData("usereventsdata", target.id);
+                    const data = await dbmanager.pullRowData("userinventories", target.id);
                     let ac = format.threeDigitsComa(data.artcoins);
-                    let mdl = format.threeDigitsComa(data.medals === null ? 0 : data.medals);
-                    let frg = format.threeDigitsComa(data.fragments === null ? 0 : data.fragments);
                     let name = format.capitalizeFirstLetter(target.user.username);
 
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins | ${emoji(`eventmedal`)} ${mdl} Medals | ${emoji(`fragments`)} ${frg} Fragments`);
+                            `${emoji(`artcoins`)} ${ac} Artcoins`);
                         })
                 }
                 catch(e) {
@@ -69,6 +67,6 @@ return ["bot", "bot-games", "cmds", "roles-shop"].includes(message.channel.name)
 }
 
 module.exports.help = {
-    name:"balance",
-    aliases:["bal","credit", "money", "balanc", "credits"]
+    name:"bal",
+    aliases:[`balance`, `money`, `credit`, `ball`]
 }

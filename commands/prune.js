@@ -4,10 +4,13 @@ const palette = require('../colorset.json');
 
 module.exports.run = async (bot,command, message, args) => {
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 	let embed = new Discord.RichEmbed();
 	embed.setColor(palette.darkmatte)
 	const author = message.member;
-	const modRole = message.guild.roles.find(r => r.name === 'Creators Council');
+	const modRole = message.guild.roles.find(r => (r.name === 'Creators Council') || (r.name === 'Tomato Fox'));
 
 	if(author.roles.has(modRole.id)) {
 		if(!args[0]) {

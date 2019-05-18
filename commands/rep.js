@@ -8,7 +8,8 @@ const sql = require("sqlite");
 
 module.exports.run = async(bot, _command, message, args)=> {
 
-
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
 let format = new formatManager(message);

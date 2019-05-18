@@ -2,6 +2,10 @@ const Discord = require("discord.js");
 const palette = require('../colorset.json');
 
 module.exports.run = (bot, command, message, args) => {
+
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 var authors = ['230034968515051520'];
 let embed = new Discord.RichEmbed();
 let embed2 = new Discord.RichEmbed();

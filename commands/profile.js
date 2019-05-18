@@ -19,16 +19,18 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "Rob
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "RobotoBold");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
-Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
 module.exports.run = async (bot, command, message, args) => {
+
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
 const configFormat = new formatManager(message);
 const configRank = new ranksManager(bot, message);
 let errdump = 0;
 
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? card() 
-: configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+return ["sandbox", `bot`].includes(message.channel.name) ? card() 
+: configFormat.embedWrapper(palette.darkmatte, `Unavailable access.`)
 
 
 async function card() {
@@ -43,17 +45,24 @@ async function card() {
                 * rep = userreputation, des = userdescription, ui = userinterfacemode
                 * clr = hex code of user's rank color.
                 */
+
+            const request_artcoins = () => {
+            	return sql.get(`SELECT artcoins FROM userinventories WHERE userId = "${member.id}"`)
+            			.then(async data => data.artcoins)
+            }
+
+            const user_ac = await request_artcoins();
             const userdata = await collection.userdata;
             const keys = collection.storingKey(userdata);
             const user = {
                 id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
+                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: user_ac,
                 rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -70,14 +79,14 @@ async function card() {
 
             const switchColor = {
 
-                    "Dark": {
+                    "dark_profileskin": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "Light": {
+                    "light_profileskin": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,
@@ -171,12 +180,14 @@ async function card() {
                     .createBeveledClip(startPos_x, startPos_y, baseWidth, 270, 1)
                     .setColor(user.clr)
 
-                    if(user.cov === null) {
+                    if(!user.cov) {
                         canv.addRect(startPos_x, startPos_y-350, baseWidth+40, 922)
                             .addImage(await configProfile.getAsset('defaultcover1'), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER
-                    } else {
+                    } 
+                    else {
                         //canv.addImage(avatar, startPos_x, startPos_y-200, baseWidth+50, baseWidth+100, 107) // COVER HEADER   
-                        canv.addImage(await configProfile.getCoverAsset(user.cov), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER   
+                        canv.addRect(startPos_x, startPos_y-350, baseWidth+40, 922)
+                        canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth+50, 270, 107) // COVER HEADER   
                     }
                     
                 canv.restore() // call stack 2
@@ -451,8 +462,8 @@ async function card() {
                 prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
                 cov: userdata[keys[12]], log: userdata[keys[13]],
                 get clr() { 
-                return this.ui === "Light" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-                        : this.ui === "Dark" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
+                return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+                        : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
                         : (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                 },
             }
@@ -469,14 +480,14 @@ async function card() {
 
             const switchColor = {
 
-                    "Dark": {
+                    "dark_profileskin": {
                         base: palette.nightmode,
                         border: palette.deepnight,
                         text: palette.white,
                         secondaryText: palette.lightgray
                     },
 
-                    "Light": {
+                    "light_profileskin": {
                         base: palette.white,
                         border: palette.lightgray,
                         text: palette.darkmatte,

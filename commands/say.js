@@ -3,34 +3,39 @@ const botconfig = require("../botconfig");
 const palette = require('../colorset.json');
 
 module.exports.run = async(bot,command,message,args)=>{
+
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 let sayEmbed = new Discord.RichEmbed()
 
 	let bicon = bot.user.displayAvatarURL;
 	let text = args.join(" ");
 	let textEmbed = args.slice(1).join(" ");
 
-if (message.member.hasPermission("ADMINISTRATOR")) {
+  
+if (message.member.roles.find(r => (r.name === 'Tomato Fox'))) {
 
 	if(args[0] === 'embed') {
 
 	sayEmbed.setColor(palette.halloween)
 	sayEmbed.setDescription(textEmbed)
 
-                return message.delete().then((msg)=>
+          return message.delete().then((msg)=>
 		 			msg.channel.send(sayEmbed));
 
-    }
-                message.delete();
+  }
+          message.delete();
 		 			return message.channel.send(text);
 
-	}
+}
 
 
-		sayEmbed.setColor('#ffac30')
-		sayEmbed.setDescription(`You don't have authorization to use this command.`)
-        sayEmbed.setFooter(`Anime Artist United | Say Message`, bicon)
+sayEmbed.setColor('#ffac30')
+sayEmbed.setDescription(`You don't have authorization to use this command.`)
+sayEmbed.setFooter(`Anime Artist United | Say Message`, bicon)
 
-		 return message.channel.send(sayEmbed);
+return message.channel.send(sayEmbed);
 
 }
 module.exports.help = {

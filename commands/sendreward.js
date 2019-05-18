@@ -7,11 +7,8 @@ const sql = require("sqlite");
 sql.open('.data/database.sqlite');
 module.exports.run = async(bot,command, message,args)=>{
 
-    ///   -sendreward 
-
-
-
-
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
 
@@ -19,27 +16,36 @@ sendRewardInit();
 
     async function sendRewardInit() {
 
+
+        // Parsing emoji by its name.
+        const emoji = (name) => {
+            return bot.emojis.find(e => e.name === name)
+        }
+
+
         const format = new formatManager(message);
 
         try {        
-            if(!message.member.roles.find(r => r.name === 'Grand Master'))return format.embedWrapper(palette.red, `You don't have authorization to use this command.`);
+            if(!message.member.roles.find(r => (r.name === 'Tomato Fox') 
+                                            || (r.name === 'Developer Team')))return format.embedWrapper(palette.red, `You don't have authorization to use this command.`);
             if(!args[0])return format.embedWrapper(palette.darkmatte, 'Please put the target user. (id/username/tag)')
             if(!args[1])return format.embedWrapper(palette.darkmatte, 'Please put the reward rank. (1/2/3/runnerup).')
 
                     const user = await userFinding.resolve(message, args[0]);
-                    sql.get(`SELECT * from userdata WHERE userId ="${user.id}"`).then(async userdatarow => {
+                    sql.get(`SELECT * from userinventories WHERE userId ="${user.id}"`)
+                        .then(async userdatarow => {
                         const rewards = {
-                            "1": { ac: 3000, medals: 25},
-                            "2": { ac: 1500, medals: 10},
-                            "3": { ac: 1000, medals: 5},
-                            "runnerup": { ac: 500, medals: 3}
+                            "1": { ac: 3000, luckyticket: 10},
+                            "2": { ac: 1500, luckyticket: 5},
+                            "3": { ac: 1000, luckyticket: 3},
+                            "runnerup": { ac: 500, luckyticket: 1}
                         };
 
                         let updatedac = parseInt(rewards[args[1]].ac) + userdatarow.artcoins;
-                        let updatedmedals = userdatarow.medals === null ? parseInt(rewards[args[1]].medals) :  parseInt(rewards[args[1]].medals) + userdatarow.medals;
+                        let updated_luckyticket = userdatarow.lucky_ticket === null ? parseInt(rewards[args[1]].luckyticket) :  parseInt(rewards[args[1]].luckyticket) + userdatarow.lucky_ticket;
 
-                        sql.run(`UPDATE userdata SET artcoins = ${updatedac} WHERE userId = ${user.id}`)
-                        sql.run(`UPDATE userdata SET medals = ${updatedmedals} WHERE userId = ${user.id}`)
+                        sql.run(`UPDATE userinventories SET artcoins = ${updatedac} WHERE userId = ${user.id}`)
+                        sql.run(`UPDATE userinventories SET lucky_ticket = ${updated_luckyticket} WHERE userId = ${user.id}`)
 
 
                         const embed = new Discord.RichEmbed()
@@ -49,14 +55,14 @@ sendRewardInit();
                                     Hello **${user.user.username}**, thank you for participating in this week's event! <:AnnieHug:540332226735505439> :tada:
                                     
                                     You have received the following items :
-                                    - <:ArtCoins:467184620107202560> **${format.threeDigitsComa(rewards[args[1]].ac)}x** artcoins
-                                    - <:eventmedal:530723484884664320> **${format.threeDigitsComa(rewards[args[1]].medals)}x** medals
+                                    - ${emoji(`artcoins`)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins
+                                    - ${emoji(`luckyticket`)}  **${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets
                                     `)
 
                         user.send(embed)
                         format.embedWrapper(palette.lightgreen, `Package has been successfully delivered. 
                                 ACCOUNT: **${user.user.tag}**
-                                ITEMS:  (<:ArtCoins:467184620107202560> **${format.threeDigitsComa(rewards[args[1]].ac)}x** artcoins, <:eventmedal:530723484884664320> **${format.threeDigitsComa(rewards[args[1]].medals)}x** medals)`)
+                                ITEMS:  ${emoji(`artcoins`)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins, ${emoji(`luckyticket`)}**${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets)`)
                         console.log(`${message.author.username} has given REWARD_PACKAGE(${args[1]}) to ${user.user.username}`)
                     })
             }

@@ -4,6 +4,9 @@ sql.open(".data/database.sqlite");
 
 module.exports.run = async(bot, command, message)=>{
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
         const ranks = new ranksManager(bot, message)
 
         sql.get(`SELECT * FROM userdata WHERE userId = ${message.author.id}`)

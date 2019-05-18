@@ -13,6 +13,9 @@ module.exports.run = async(bot,command, message,args)=>{
     return src.help.name;
   };
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
   const battlechoice = new Discord.RichEmbed()
     .setColor(palette.halloween)
     .setDescription("List of art challenges, please choose one.\n"+

@@ -7,6 +7,9 @@ sql.open(".data/database.sqlite");
 
 module.exports.run = async(bot,command, message, args)=> {
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const embed = new Discord.RichEmbed();
 embed.setColor(palette.blankgray)
 embed.setDescription(`Uhm sorry, you don't have authorization to access it.`)

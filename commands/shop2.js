@@ -14,6 +14,9 @@ module.exports.run = async(bot, command, message,args) =>{
 ///     09/29/18 - old roles shop.
 ///
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const format = new formatManager(message);
 const collection = new databaseManager(message.author.id);
 
@@ -21,7 +24,7 @@ const moji = (mojiname) => {
     return bot.emojis.find((x) => x.name === mojiname) 
 }
 
-const registerItems = (source, target, emoji=moji('ArtCoins')) => {
+const registerItems = (source, target, emoji=moji('artcoins')) => {
     let categories = []; 
 
     for (var i in source) { 

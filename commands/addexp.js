@@ -16,7 +16,8 @@ module.exports.run = async(bot,command, message,args)=>{
     ///     -naphnaphz
     ///     -Bait_God
     ///
-
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
     let pUser  = message.guild.member(message.mentions.users.first()||message.guild.members.get(args[0]));
@@ -35,8 +36,8 @@ let addXpEmbed7 = new Discord.RichEmbed();
     addXpEmbed.setDescription(`You don't have authorization to use this command.`)
     addXpEmbed.setFooter(`Anime Artist United | Add XP`, bicon)
 
-if(!message.member.roles.find(r => r.name === 'Grand Master'))return message.channel.send(addXpEmbed);
-
+  if(!message.member.roles.find(r => (r.name === 'Grand Master') 
+                                  || (r.name === 'Tomato Fox'))) return message.channel.send(addXpEmbed);
 
 sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdatarow => {
 

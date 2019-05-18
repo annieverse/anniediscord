@@ -20,6 +20,9 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "Kosugi
 
 module.exports.run = async (bot,_command, message, args) => {
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
 const configFormat = new formatManager(message);
 const configProfile = new profileManager(); 
 async function welcomeCard(member) {

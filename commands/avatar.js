@@ -15,6 +15,8 @@ module.exports.run = async (bot, command, message, args) => {
 //		11/03/18 - Added user finding by given input. Reaction. Major feature reworks.
 //		09/17/18 - Imported commands from naphnaphz's bot.
 
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
 return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? avatar()

@@ -14,7 +14,8 @@ module.exports.run = async(bot,command, message,args)=>{
     ///     -naphnaphz
 
     /// the same thing as i put addxp command.
-
+const env = require(`../utils/environment.json`);
+if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
     let pUser  = message.guild.member(message.mentions.users.first()||message.guild.members.get(args[0]));
@@ -33,11 +34,10 @@ let addXpEmbed7 = new Discord.RichEmbed();
     addXpEmbed.setDescription(`You don't have authorization to use this command.`)
     addXpEmbed.setFooter(`Anime Artist United | Add AC`, bicon)
 
-if(!message.member.roles.find(r => r.name === 'Grand Master'))return message.channel.send(addXpEmbed);
-
-sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdatarow => {
-
-
+  if(!message.member.roles.find(r => (r.name === 'Grand Master') 
+                                  || (r.name === 'Tomato Fox'))) return message.channel.send(addXpEmbed);
+ 
+sql.get(`SELECT artcoins FROM userinventories WHERE userId ="${pUser.id}"`).then(async userdatarow => {
 
     if(!args[1]){
         addXpEmbed.setColor('#d30000')
@@ -47,11 +47,11 @@ sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdat
     }
 
 
-    sql.get(`SELECT * from userdata WHERE userId ="${pUser.id}"`).then(async userdatarow => {
+    sql.get(`SELECT artcoins from userinventories WHERE userId ="${pUser.id}"`).then(async userdatarow => {
        let parsedData = parseInt(args[1]) + userdatarow.artcoins;
 
 
-                 sql.run(`UPDATE userdata SET artcoins = ${parsedData} WHERE userId = ${pUser.id}`)
+                 sql.run(`UPDATE userinventories SET artcoins = ${parsedData} WHERE userId = ${pUser.id}`)
 
 
         addXpEmbed.setColor('#595959')
