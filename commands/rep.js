@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const config = require('../botconfig.json');
 const palette = require('../colorset.json');
 const userFinding = require('../utils/userFinding');
 const ms = require('parse-ms');

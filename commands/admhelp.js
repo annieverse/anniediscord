@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const botconfig = require('../botconfig.json');
 
 module.exports.run = async(bot,command,message,args)=>{
 	/// admhelp.js

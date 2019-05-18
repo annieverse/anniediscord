@@ -1,5 +1,4 @@
 const Discord = require("discord.js");
-const botconfig = require(`../botconfig.json`);
 const palette = require(`../colorset.json`);
 var fs = require('fs');
 var contents = fs.readFileSync("challengelist.json","utf8");

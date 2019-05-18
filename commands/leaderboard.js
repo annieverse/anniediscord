@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const config = require('../botconfig.json');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
 const sql = require(`sqlite`);

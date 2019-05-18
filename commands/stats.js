@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const botconfig = require('../botconfig.json');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 const pkg = require('../package.json');

@@ -46,6 +46,6 @@ fs.readdir("./commands/", (err, files) => {
 
 
 //	Client token.
-const token = env.temporary_token || process.env.TOKEN;
+const token = env.temp_token || process.env.TOKEN;
 bot.login(token);
 console.log(env.dev ? `Log-in as developer-mode.` : `Prod server started.`)
