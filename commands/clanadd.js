@@ -135,7 +135,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
       if (message.content.valueOf > 25) message.channel.send(`please give a name that is less than 25 characters.`)
       if (message.content.valueOf < 25){
         clanName = message.content;
-        clanTag = await clanName.substring(0,5);
+        clanTag = clanName.substring(0,5);
         const collectortwo = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 20000 });
         message.channel.send(`Your clan name will be ${clanName} and your clan tag will be ${clanTag}. You can change your tag later.\nNow please write a short description/motto for your clan. The default motto if you type "n/a" will be "One awsome clan"`)
         collectortwo.on(`collect`,msg => {
