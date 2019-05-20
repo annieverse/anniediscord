@@ -25,13 +25,14 @@ module.exports = bot => {
         if (env.dev) {
             console.log(`${bot.user.username}[dev-mode] is alive.`)
             bot.user.setStatus('dnd');
-            bot.user.setActivity(`Maintenance.`, {
+            bot.user.setActivity(`maintenance.`, {
                 type: "LISTENING"
             });
 
         } else {
             console.log(`${bot.user.username} is up.`)
             bot.user.setStatus('online');
+            bot.user.setActivity(null);
         }
     }
 
