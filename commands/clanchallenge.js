@@ -4,6 +4,10 @@ const palette = require(`../colorset.json`);
 
 module.exports.run = async(bot,command, message,args)=>{
 
+/*
+  Lorn term down the road check docs
+*/
+
 const env = require(`../utils/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
