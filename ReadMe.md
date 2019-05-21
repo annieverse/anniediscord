@@ -25,15 +25,16 @@
 
 Supporting the core function of the biggest art community in discord,
  **Anime Artist United.**
+
  [Join the community](https://discord.gg/Tjsck8F)
 
-###Say hello to Annie.
+### Say hello to Annie.
 Dedicated-Artist Discord Bot to fulfill your artistic needs.
 We connect every artist around the discord community. 
 We help them to get potential client more easier.
 We got tons of upcoming features ahead!*
 
-###Why artist should choose Annie?
+### Why artist should choose Annie?
 - Annie biggest feature is involving with arts.
 - Fully integrated with AAU server.
 - Put your greatest portfolio to your very own profile card!
