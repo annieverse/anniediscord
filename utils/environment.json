@@ -1,7 +1,7 @@
 {
-	"dev": true,
-	"prefix": "~",
-	"temp_token": "NTE0Njg4OTY5MzU1ODIxMDc3.XOBeSQ.w7nAh1S-pBJvI-p2pWrldp_GGGE",
+	"dev": false,
+	"prefix": ">",
+	"temp_token": null,
 	"active_exp": true,
 	"administrator_id": ["230034968515051520", "277266191540551680", "294177453449019409"]
 }
