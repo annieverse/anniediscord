@@ -45,7 +45,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? getReputati
 		}
 
 		else if(!args[0]) {
-				return format.embedWrapper(palette.darkmatte, `Could you please specify the user? (example: \`${config.prefix}rep\` \`@Kitomi\`)`);
+				return format.embedWrapper(palette.darkmatte, `Could you please specify the user? (example: \`>rep\` \`@Kitomi\`)`);
 		}
 
 		else if(user.id === message.author.id) {
