@@ -91,7 +91,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             //  Substract user's artcoins by the amount of ticket fee.
             get withdraw() {
                 sql.run(`UPDATE userinventories
-                        SET artcoins = artcoins - ${this.data.balance}
+                        SET artcoins = artcoins - ${this.data.ticket_fee}
                         WHERE userId = ${this.data.user.id}`)
             }
 
