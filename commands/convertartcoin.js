@@ -124,7 +124,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                     .addField('EXP', `**${format.threeDigitsComa(parsedXpData)} / ${format.threeDigitsComa(nextLvlExp)}**`,true)
         
                     console.log(`${message.author.tag} has converted ${args[0]} ART_COINS to XP.`)
-                    return message.channel.send(format.baseEmbedWrapper(palette.darkmatte, '*Processing ..*'))
+                    return message.channel.send(format.embedBase(palette.darkmatte, '*Processing ..*'))
                        .then(async msg => {
                            msg.edit(dataembed)
                            format.embedWrapper(palette.halloween, `✅ | **${user}**, you've gained **${format.threeDigitsComa(Math.floor(parseInt(data.artcoins) / 2))}** exp!`)
@@ -159,7 +159,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                             .addField('EXP', `**${format.threeDigitsComa(parsedXpData)} / ${format.threeDigitsComa(nextLvlExp)}**`,true)
                     
                                 console.log(`${message.author.tag} has converted ${args[0]} ART_COINS to XP.`)
-                                return message.channel.send(format.baseEmbedWrapper(palette.darkmatte, '*Processing ..*'))
+                                return message.channel.send(format.embedBase(palette.darkmatte, '*Processing ..*'))
                                    .then(async msg => {
                                        msg.edit(dataembed)
                                        format.embedWrapper(palette.halloween, `✅ | **${user}**, you've gained **${format.threeDigitsComa(Math.floor(inputValue))}** exp!`)
