@@ -2,8 +2,19 @@ const reqEvent = (event) => require(`../events/${event}`)
 const env = require(`../.data/environment.json`);
 
 module.exports = bot => {
+    
     bot.on("ready", async() => reqEvent("ready")(bot));
     bot.on("message", async(message) => reqEvent("message")(bot, message));
+    bot.on("error", reqEvent("error"));
+    bot.on("raw", async (packet) => reqEvent("raw")(bot, packet));
+
+    // Need these lines to have error catcher in own file
+    let message_object;
+    bot.on('message', message => {
+        message_object = message;
+    })
+    process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
+    //
 
     if (!env.dev) {
         bot.on("guildMemberAdd", async(member) => reqEvent("guildMemberAdd")(bot, member));

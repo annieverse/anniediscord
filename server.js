@@ -1,5 +1,7 @@
 const Discord = require("discord.js");
 const env = require('./.data/environment.json');
+const moment = require('moment');
+const palette = require('./colorset.json');
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
@@ -47,5 +49,5 @@ fs.readdir("./commands/", (err, files) => {
 
 //	Client token.
 const token = env.dev ? env.temp_token : process.env.TOKEN;
-bot.login(token);
+bot.login(token)
 console.log(env.dev ? `Log-in as developer-mode.` : `Prod server started.`)

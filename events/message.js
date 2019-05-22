@@ -1,6 +1,7 @@
 const env = require(`../.data/environment.json`);
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
+const moment = require('moment')
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
@@ -15,6 +16,7 @@ module.exports = (bot, message) => {
   artChannelsFilter();
   eventChannelFilter();
   portfolioRequest();
+
 
   //  Returns true if message has an attachment.
   function attachmentCheck() {

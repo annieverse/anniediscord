@@ -7,12 +7,7 @@ const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
 exports.run = async (bot,command, message, args) => {
-/*
-    * UPDATED EVAL // 12 . 10 . 18 // naphnaphz & fryingpan
-    * UPDATED EVAL command // 11 . 01 . 18 // naphnaphz
-    * UPDATED EVAL command  // 10 . 12 . 18  //  naphnaphz
-    * UPDATED EVAL command // 10 . 18 . 18 // naphnaphz
-*/
+
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;

@@ -19,7 +19,7 @@ const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? avatar()
+return ["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name) ? avatar()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 		async function avatar() {
@@ -69,6 +69,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? avatar()
 										.then(() => message.channel.send(impressEmbed))
 				}
 				else {
+					try {
 					const user = await userFinding.resolve(message, message.content.substring(command.length+2))
 
 					avaEmbed.setAuthor(get.nickname(user.id), get.avatarURL(user.id))
@@ -80,6 +81,12 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? avatar()
 								.then(() => message.channel.startTyping())
 									.then(() => message.channel.stopTyping())
 										.then(() => message.channel.send(impressEmbed))
+					}
+					catch(Error) {
+						let res = Error;
+						console.log(res);
+						message.channel.send(`\`\`\`javascript\n${res}\n\`\`\``)
+					}
 				}
 		}
 }

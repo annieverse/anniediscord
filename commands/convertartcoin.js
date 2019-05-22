@@ -24,7 +24,7 @@ const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting()
+return ["bot", "bot-games", "sandbox"].includes(message.channel.name) ? converting()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 
