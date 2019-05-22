@@ -81,7 +81,7 @@ return ["bot", "bot-games", "cmds", `sandbox`].includes(message.channel.name) ? 
         const user = await ranking.user();
             if(!args[0]) {
                         boardEmbed.setColor(palette.halloween)
-                                .setDescription(`**${message.author.username}**, checkout our leaderboard! type \`${config.prefix}lb xp/ac/fame\`.`)
+                                .setDescription(`**${message.author.username}**, checkout our leaderboard! type \`>lb xp/ac/fame\`.`)
                                 .setFooter(`AAU Leaderboard`, message.author.displayAvatarURL)
                         return message.channel.send(boardEmbed)
             }
