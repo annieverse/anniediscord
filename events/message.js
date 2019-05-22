@@ -1,4 +1,8 @@
 const env = require(`../.data/environment.json`);
+const ranksManager = require('../utils/ranksManager');
+const formatManager = require('../utils/formatManager');
+const sql = require("sqlite");
+sql.open(".data/database.sqlite");
 
 module.exports = (bot, message) => {
 
