@@ -93,16 +93,26 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                 else {
                     return;
                 }
-        }
+        }   
 
+            //  Pulling user artcoins from their inventory.
+            const pull_ac = () => {
+                return sql.get(`SELECT artcoins FROM userinventories WHERE userId = "${message.author.id}"`);
+            }
+
+            const user_ac = await pull_ac();
 
             if(!args[0])return format.embedWrapper(palette.darkmatte, `Here's the correct usage to use the coins converter : \n\`>cartcoins\` \`<value>/all\``);
-            if((data.artcoins < args[0]) || (data.artcoins === 0))return format.embedWrapper(palette.red, `${user}, It seems you don't have enough art coins. :(`);
+            
+            // this line.
+            if((user_ac < parseInt(args[0])) || (user_ac === 0))return format.embedWrapper(palette.red, `${user}, It seems you don't have enough art coins. :(`);
+            
+            
             if(args[0] <= 1)return format.embedWrapper(palette.darkmatte, `Please put higher value! >.<`)
 
             if(args[0].includes('all')) {
 
-                let parsedXpData = Math.floor((parseInt(data.artcoins) / 2)) + data.currentexp;
+                let parsedXpData = Math.floor((parseInt(user_ac) / 2)) + data.currentexp;
                 var xpScalingCurves = curveMultiplyXP(parsedXpData, 0, 0, 150);
                 var updatedLvl = xpScalingCurves.lvl;
                 var updatedMaxExp = xpScalingCurves.b;
@@ -127,13 +137,13 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                     return message.channel.send(format.embedBase(palette.darkmatte, '*Processing ..*'))
                        .then(async msg => {
                            msg.edit(dataembed)
-                           format.embedWrapper(palette.halloween, `✅ | **${user}**, you've gained **${format.threeDigitsComa(Math.floor(parseInt(data.artcoins) / 2))}** exp!`)
+                           format.embedWrapper(palette.halloween, `✅ | **${user}**, you've gained **${format.threeDigitsComa(Math.floor(parseInt(user_ac) / 2))}** exp!`)
                        })
             }
 
 
 
-            else if ((args[0] !== 'all') && (data.artcoins >= args[0])) {
+            else if ((args[0] !== 'all') && (user_ac >= args[0])) {
                 if(isNaN(args[0]))return format.embedWrapper(palette.darkmatte, `Write the proper value please.. :(`)
 
                 let inputValue = parseInt(args[0]) / 2;  
@@ -148,7 +158,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                 sql.run(`UPDATE userdata SET level = ${updatedLvl} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET maxexp = ${nextLvlExp} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET nextexpcurve = ${updatedNextCurExp} WHERE userId = ${message.author.id}`)
-                sql.run(`UPDATE userinventories SET artcoins = ${data.artcoins - parseInt(args[0])} WHERE userId = ${message.author.id}`)
+                sql.run(`UPDATE userinventories SET artcoins = artcoins - ${parseInt(args[0])} WHERE userId = ${message.author.id}`)
 
                 await evaluateRanks(data.level, updatedLvl);
                     
