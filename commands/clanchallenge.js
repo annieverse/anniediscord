@@ -8,7 +8,7 @@ module.exports.run = async(bot,command, message,args)=>{
   Lorn term down the road check docs
 */
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function fileAliasesCheck(file) {

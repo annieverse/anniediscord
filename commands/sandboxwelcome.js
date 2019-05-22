@@ -20,7 +20,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "Kosugi
 
 module.exports.run = async (bot,_command, message, args) => {
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const configFormat = new formatManager(message);

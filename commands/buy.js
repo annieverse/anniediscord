@@ -26,7 +26,7 @@ module.exports.run = async(bot,command, message, args)=>{
 ///     09/17/18 - huge reworks in buy system. The changes will be followed by shop.js.
 ///     09/29/18 - added purchase option for role_items(items.json)
 
-const env = require(`../utils/environment.json`);
+const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     const format = new formatManager(message);

@@ -8,7 +8,7 @@ exports.run = async (bot, command, message, args) => {
 
     //  Developer Mode Evnironment
     //  Command active only for developers
-    const env = require(`../utils/environment.json`);
+    const env = require(`../.data/environment.json`);
     if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     //  Lifesaver promise. Used pretty often when calling sql API.

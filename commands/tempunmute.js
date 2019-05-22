@@ -3,7 +3,7 @@ const palette = require('../colorset.json');
 const ms = require("ms");
 module.exports.run = async (bot,command, message,args)=>{
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function getRoles(r) {

@@ -14,7 +14,7 @@ module.exports.run = async(bot, command, message,args) =>{
 ///     09/29/18 - old roles shop.
 ///
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);

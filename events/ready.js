@@ -2,7 +2,7 @@ const clock = require("node-emoji-clock");
 const momentTime = require("moment-timezone");
 const formatManager = require('../utils/formatManager');
 const palette = require('../colorset.json');
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 const sql = require("sqlite");
 const utils = require(`../utils/utils.js`);
 

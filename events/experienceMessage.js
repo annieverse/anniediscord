@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 const sql = require("sqlite");
 const palette = require(`../colorset.json`);
 const ranksManager = require('../utils/ranksManager');

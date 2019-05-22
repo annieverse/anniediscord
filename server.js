@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const env = require(`./utils/environment.json`);
+const env = require('./.data/environment.json');
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();

@@ -1,5 +1,5 @@
 const reqEvent = (event) => require(`../events/${event}`)
-const env = require(`./environment.json`);
+const env = require(`../.data/environment.json`);
 
 module.exports = bot => {
     bot.on("ready", async() => reqEvent("ready")(bot));

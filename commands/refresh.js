@@ -3,7 +3,7 @@ const palette = require('../colorset.json');
 
 module.exports.run = (bot, command, message, args) => {
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 var authors = ['230034968515051520'];

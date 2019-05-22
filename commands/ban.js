@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 module.exports.run=async(bot,command,message,args)=>{
 
-const env = require(`../utils/environment.json`);
+const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bUser=   message.guild.member(message.mentions.users.first()||message.guilds.member.get(args[0]));

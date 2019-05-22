@@ -1,4 +1,4 @@
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 
 module.exports = (bot, message) => {
 

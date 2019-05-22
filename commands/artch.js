@@ -12,7 +12,7 @@ module.exports.run = async(bot,command, message,args)=>{
     return src.help.name;
   };
 
-const env = require(`../utils/environment.json`);
+  const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   const battlechoice = new Discord.RichEmbed()

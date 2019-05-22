@@ -14,7 +14,7 @@ exports.run = async (_bot, command, message, args) => {
 
     modifyDB();
 
-    const env = require(`../utils/environment.json`);
+    const env = require(`../.data/environment.json`);
     if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
     async function modifyDB() {

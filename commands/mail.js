@@ -6,7 +6,7 @@ const formatManager = require('../utils/formatManager');
 
 exports.run = async (bot,command, message, args) => {
 
-const env = require(`../utils/environment.json`);
+const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 !message.member.roles.find(r => r.name === 'Grand Master') ? message.channel.send('Unauthorized access.')   
