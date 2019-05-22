@@ -68,20 +68,20 @@ Below are amazing people that make Annie possible!
 	 
 ### **Change logs** :
 ##### **05/16/19 | 4.0.0 - >**
-   >` - Lucky Ticket. (AAU gacha minigame) `
-   >` - Improved purchase system : `
-         ^ ` - Displaying the preview of the item. `
-         ^ ` - Confirmation prompt.`
-   >` - Artcoins migration (userdata => userinventories) `
-   >` - Custom developer mode to improve team workflow. `
-   >` - Card Council's Perk. `
-   >` - Gifting System. `
-   >` - A new way to boost your exp instantly by eating power capsule. `
-   >` - Simple >join command to participate in the server event. `
-   >` - Updated ReadMe.md. `
-   >` - Added user card collection. `
-   >` - Major structure refactor. `
-   >` - Various bug fixes. `
+   >` - Lucky Ticket. (AAU gacha minigame) `  
+   >` - Improved purchase system : `  
+         ^ ` - Displaying the preview of the item. `  
+         ^ ` - Confirmation prompt.`  
+   >` - Artcoins migration (userdata => userinventories) `  
+   >` - Custom developer mode to improve team workflow. `  
+   >` - Card Council's Perk. `  
+   >` - Gifting System. `  
+   >` - A new way to boost your exp instantly by eating power capsule. `  
+   >` - Simple >join command to participate in the server event. `  
+   >` - Updated ReadMe.md. `  
+   >` - Added user card collection. `  
+   >` - Major structure refactor. `  
+   >` - Various bug fixes. `  
 
 
 
