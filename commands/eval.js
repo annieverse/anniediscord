@@ -3,7 +3,8 @@ const palette = require('../colorset.json');
 const cards = require('../utils/cards-metadata.json');
 const ms = require('parse-ms');
 const moment = require('moment');
-
+const sql = require("sqlite");
+sql.open(".data/database.sqlite");
 
 exports.run = async (bot,command, message, args) => {
 /*
