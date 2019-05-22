@@ -27,7 +27,7 @@ const artChannels =  [
 
 const format = new formatManager(message);
 
-	  if(env.dev)return;
+    if(env.dev)return;
     if(message.content.startsWith(`>`))return;
     if(message.author.bot)return;
     if(message.channel.type == "dm")return; 
@@ -61,7 +61,7 @@ async function experienceGains() {
                 }
             },
             ac: {
-                base: Math.ceil(Math.random() * 5),
+                base: Math.ceil(Math.random() * 15),
                 bonus: 1,
                 get gained() {
                     return Math.round(this.base * this.bonus)
@@ -89,10 +89,6 @@ async function experienceGains() {
 
         //  Calculates exp and artcoins multiplier.
         const modifier = async () => {
-
-            //  Randomize integer range between min and max.
-            //let base = Math.floor(Math.random() * (max - min + 1)) + min;
-            //let base_ac = Math.ceil(Math.random() * ac_max);
 
             // Apply booster ticket if theres any.
             const ticket = () => {
@@ -416,7 +412,7 @@ async function experienceGains() {
                   sql.run("INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, artcoins, reputations, description, interfacemode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [message.author.id, randomexp, 100, 150, 0, 0, null, null, null]);
                   sql.run("INSERT INTO usercheck (userId, expcooldown) VALUES (?, ?)", [message.author.id, "False"]);
                   sql.run(`INSERT INTO userbadges (userId) VALUES (${message.author.id})`)
-                  sql.run(`INSERT INTO userinventories (userId) VALUES (${message.author.id})`)
+                  sql.run(`INSERT INTO userinventories (userId, artcoins) VALUES (${message.author.id}, 0)`)
                   message.guild.member(message.author.id).addRole(await manager.ranksCheck(0).rank);
             }
           })  
