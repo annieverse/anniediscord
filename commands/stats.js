@@ -1,14 +1,12 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
-const pkg = require('../package.json');
-const fs = require('fs');
 const ms = require('parse-ms');
 
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async(bot,command,message)=>{
 
     /// botinfo.js
     ///
@@ -27,7 +25,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
 const format = new formatManager(message);
-return ["bot", "bot-games", "naph-little-house"].includes(message.channel.name) ? initInfo()
+return ["bot", "bot-games", "naph-little-house", "sandbox"].includes(message.channel.name) ? initInfo()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 
@@ -58,12 +56,8 @@ return ["bot", "bot-games", "naph-little-house"].includes(message.channel.name) 
 	        let bicon = bot.user.displayAvatarURL;
 	        let members = message.guild.memberCount;
 	        let botSize = message.guild.members.filter(a=>a.user.bot).size;
-	        let userSize = members - botSize;
 	        let uptimeFixed = ms(bot.uptime);
-	        var timestamp = new Date,
-	                timeformat = [timestamp.getMonth()+1,timestamp.getDate(),timestamp.getFullYear()].join('/')+' '+[timestamp.getHours(),
-	                timestamp.getMinutes(),
-	                timestamp.getSeconds()].join(':');
+	        var timestamp = new Date;
 
 	        let onmem = message.guild.members.filter(a => a.user.presence.status === `online`).size;
 	        let idlemem = message.guild.members.filter(a => a.user.presence.status === `idle`).size;
