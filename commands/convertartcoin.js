@@ -97,7 +97,8 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
 
             //  Pulling user artcoins from their inventory.
             const pull_ac = () => {
-                return sql.get(`SELECT artcoins FROM userinventories WHERE userId = "${message.author.id}"`);
+                return sql.get(`SELECT artcoins FROM userinventories WHERE userId = "${message.author.id}"`)
+                    .then(async data => data.artcoins)
             }
 
             const user_ac = await pull_ac();
