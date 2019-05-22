@@ -113,7 +113,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                 sql.run(`UPDATE userdata SET level = ${updatedLvl} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET maxexp = ${nextLvlExp} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET nextexpcurve = ${updatedNextCurExp} WHERE userId = ${message.author.id}`)
-                sql.run(`UPDATE userdata SET artcoins = 0 WHERE userId = ${message.author.id}`)
+                sql.run(`UPDATE userinventories SET artcoins = 0 WHERE userId = ${message.author.id}`)
                 
                 await evaluateRanks(data.level, updatedLvl);
 
@@ -148,7 +148,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? converting(
                 sql.run(`UPDATE userdata SET level = ${updatedLvl} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET maxexp = ${nextLvlExp} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET nextexpcurve = ${updatedNextCurExp} WHERE userId = ${message.author.id}`)
-                sql.run(`UPDATE userdata SET artcoins = ${data.artcoins - parseInt(args[0])} WHERE userId = ${message.author.id}`)
+                sql.run(`UPDATE userinventories SET artcoins = ${data.artcoins - parseInt(args[0])} WHERE userId = ${message.author.id}`)
 
                 await evaluateRanks(data.level, updatedLvl);
                     
