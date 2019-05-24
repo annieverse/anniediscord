@@ -288,13 +288,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         const confirmation = async (metadata, proc, show_image = false) => {
                 const user_data = await collection.userdata;
 
-
-                // Check if the user's balance is sufficient.
-                const sufficient_balance = () => {
-                    return user_data.artcoins >= metadata.price ? true : false;
-                }
-
-
                 // Lowercase first letter and de-plural string.
                 const normalize = (string) => {
                     string = string.charAt(0).toLowerCase()+ string.slice(1);
@@ -303,7 +296,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                 }
 
 
-                const sufficient_bal = await sufficient_balance();
                 const collector = new Discord.MessageCollector(message.channel,
                 m => m.author.id === message.author.id, {
                     max: 1,
@@ -325,7 +317,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
                     // Transaction successful.
-                    if(user_input === `y` && sufficient_balance()) {
+                    if(user_input === `y`) {
                         msg.delete();
                         collector.stop();
 
@@ -340,7 +332,19 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                         msg.delete();
                         collector.stop();
                         if(user_input !== `y`)return log({code: `001`});
-                        if(!sufficient_bal)return log({code: `000`});
+                        sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
+                        .then(async metadata_user => {
+                            sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`)
+                                .then(async metadata_inventory => {
+                                    try {
+                                        //  Insufficient balance.
+                                        if(metadata_inventory[item.price_type] < parseInt(item.price)) return log({code: `ERR_INSUFFICIENT_BAL`}, item.price_type)
+                                    }
+                                    catch(e) {
+                                        return log({code: `ERR_UNKNOWN_ITEM`})
+                                    }   
+                                })
+                        }) 
                     }
                 });    
         } 

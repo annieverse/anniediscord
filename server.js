@@ -12,7 +12,6 @@ const http = require('http');
 const express = require('express');
 const app = express();
 
-
 //	Ping server
 app.get("/", (request, response) => {
     console.log(`At ${Date.now()} ping was received`);
@@ -51,3 +50,29 @@ fs.readdir("./commands/", (err, files) => {
 const token = env.dev ? env.temp_token : process.env.TOKEN;
 bot.login(token)
 console.log(env.dev ? `Log-in as developer-mode.` : `Prod server started.`)
+
+//  Bot Messaging via Console ♡
+let y = process.openStdin()
+y.addListener("data", res => {
+    let x = res.toString().trim().split(/ +/g);
+    let msg = x.join(" ")
+
+     //  Modify These Values!
+    let color = palette.red
+    let channel = "sandbox"
+    let enabletextwrapping = true; 
+
+    if(enabletextwrapping){
+        embedWrapper(channel, color, msg);
+    } else {
+        bot.channels.get(bot.channels.find(x => x.name === channel).id).send(msg);
+    }
+});
+
+let embed = new Discord.RichEmbed();
+const embedWrapper = (channel, color, content) => {
+    embed.setColor(color)
+    embed.setDescription(content)
+    let channelid = bot.channels.find(x => x.name === channel).id
+    return bot.channels.get(channelid).send(embed);
+}
