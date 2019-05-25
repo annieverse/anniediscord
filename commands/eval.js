@@ -5,6 +5,7 @@ const ms = require('parse-ms');
 const moment = require('moment');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+let func = require(`../utils/functions.js`);
 
 exports.run = async (bot,command, message, args) => {
 
@@ -28,7 +29,6 @@ const clean = (text) => {
   else
       return text;
 }
-
     try {
       const code = argsx.join(" ");
       let evaled = eval(code);
@@ -36,24 +36,29 @@ const clean = (text) => {
       if (typeof evaled !== "string")
         evaled = require("util").inspect(evaled);
 
+      
+      let evaltest = evaled;
+      //pages(message,evaltest);
+
       if(evaled.length >= 2000)
         evaled = evaled.slice(0, 1999);
       
 
       evembed.setColor(palette.halloween)
-      evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(evaled)}\n\`\`\``)
-      message.channel.send(evembed);
+      func.evalpages(message, evaltest,evembed);
+      //evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(evaled)}\n\`\`\``)
+      //message.channel.send(evembed);
 
     } catch (err) {
 
+      
       evembed.setColor(palette.darkmatte)
-      evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(err)}\n\`\`\``)
-      message.channel.send(evembed);
+      func.evalpages(message, err,evembed);
+      //evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(err)}\n\`\`\``)
+      //message.channel.send(evembed);
 
     }
-
-
-}
+};
 
 exports.help = {
   name: "eval",

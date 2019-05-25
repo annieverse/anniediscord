@@ -46,6 +46,35 @@ fs.readdir("./commands/", (err, files) => {
     console.log(`${jsfile.length} command files have been loaded.`)
 });
 
+//  Bot Messaging via Console ♡
+let y = process.openStdin()
+y.addListener("data", res => {
+    let x = res.toString().trim().split(/ +/g);
+    let msg = x.join(" ")
+
+    //  Modify These Values!
+    let color = palette.red
+    let channel = "sandbox"
+    //let channel = "general"
+    //let channel = "general-2"
+    //let channel = "vc-off-topic"
+    //let channel = "taff-hq"
+    //let enabletextwrapping = true;
+
+    if (enabletextwrapping) {
+        embedWrapper(channel, color, msg);
+    } else {
+        bot.channels.get(bot.channels.find(x => x.name === channel).id).send(msg);
+    }
+});
+
+let embed = new Discord.RichEmbed();
+const embedWrapper = (channel, color, content) => {
+    embed.setColor(color)
+    embed.setDescription(content)
+    let channelid = bot.channels.find(x => x.name === channel).id
+    return bot.channels.get(channelid).send(embed);
+}
 
 //	Client token.
 const token = env.dev ? env.temp_token : process.env.TOKEN;

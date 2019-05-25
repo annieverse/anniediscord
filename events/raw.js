@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 
 module.exports = (bot, packet) => {
-  // We don't want this to run on unrelated packets
+    // We don't want this to run on unrelated packets
     if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(packet.t)) return;
     // Grab the channel to check the message from
     const channel = bot.channels.get(packet.d.channel_id);
@@ -13,6 +13,8 @@ module.exports = (bot, packet) => {
         const emoji = packet.d.emoji.id ? `${packet.d.emoji.name}:${packet.d.emoji.id}` : packet.d.emoji.name;
         // This gives us the reaction we need to emit the event properly, in top of the message object
         const reaction = message.reactions.get(emoji);
+        // Adds the currently reacting user to the reaction's users collection.
+        if (reaction) reaction.users.set(packet.d.user_id, bot.users.get(packet.d.user_id));
         // Check which type of event it is before emitting
         if (packet.t === 'MESSAGE_REACTION_ADD') {
             bot.emit('messageReactionAdd', reaction, bot.users.get(packet.d.user_id));

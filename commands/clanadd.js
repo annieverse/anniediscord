@@ -98,8 +98,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         //
         // ADD two more columns in userdata || inClan | clanLeader
         //
-        sql.get(`UPDATE userdata SET inClan = ${true} WHERE userId = "${user.id}"`)
-        sql.get(`UPDATE userdata SET clanLeader = ${true} WHERE userId = "${user.id}"`)
+        sql.get(`UPDATE userdata SET clan = ${1} WHERE userId = "${user.id}"`)
 
 
         message.channel.send(`*Filler message*: Thank you for creating a clan`);
