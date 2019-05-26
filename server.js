@@ -80,6 +80,6 @@ const embedWrapper = (channel, color, content) => {
 }
 
 //	Client token.
-const token = env.dev ? env.temp_token : process.env.token;
+const token = env.dev ? env.temp_token : process.env.TOKEN;
 bot.login(token)
 console.log(env.dev ? `Local development server has been started.` : `Production server has been started.`)
