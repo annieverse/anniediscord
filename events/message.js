@@ -87,7 +87,7 @@ module.exports = (bot, message) => {
 
   let prefix = env.prefix;
   let messageArray = message.content.split(" ");
-  let cmd = messageArray[0];
+  let cmd = messageArray[0].toLowerCase();
   let args = messageArray.slice(1);
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));

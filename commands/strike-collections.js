@@ -45,7 +45,7 @@ exports.run = async (bot,command, message) => {
         const logtext = {
             "UNAUTHORIZED": {
                 color: palette.crimson,
-                msg: `You aren't authorized to use the feaature.`
+                msg: `You aren't authorized to use the feature.`
             },
 
             "MUTED": {

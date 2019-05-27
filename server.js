@@ -1,13 +1,11 @@
 const Discord = require("discord.js");
 const env = require('./.data/environment.json');
-const pack = require('./package.json');
 const palette = require('./colorset.json');
 const fs = require("fs");
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 require("./utils/eventHandler")(bot)
-const http = require('http');
 const express = require('express');
 const app = express();
 
@@ -19,17 +17,10 @@ app.get("/", (request, response) => {
 });
 
 
-//  Listening to the port.
-app.listen(!env.dev ? process.env.PORT : 3000);
-setInterval(() => {
-    http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
-}, 280000);
-
-
-//  Showing server's metric.
-app.use(require('express-status-monitor')({
-    title: `${pack.name}'s Performance`,
-}))
+//  To prevent PM2 from being terminated.
+const listener = app.listen(process.env.PORT, function() {
+    console.log('Your app is listening on port ' + listener.address().port);
+});
 
 
 //	Loading command modules.
@@ -52,23 +43,18 @@ fs.readdir("./commands/", (err, files) => {
     console.log(`${jsfile.length} command files have been loaded.`)
 });
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 0f8b3071e8719014de01a0149fdb0349a5d770b7
 //  Bot Messaging via Console ♡
 let y = process.openStdin()
 y.addListener("data", res => {
+    
+
+
     let x = res.toString().trim().split(/ +/g);
     let msg = x.join(" ")
 
-<<<<<<< HEAD
-    //  Modify These Values!
-    let color = palette.red
-=======
      //  Modify These Values!
     let color = palette.golden
->>>>>>> 0f8b3071e8719014de01a0149fdb0349a5d770b7
     let channel = "sandbox"
     //let channel = "general"
     //let channel = "general-2"
@@ -83,6 +69,7 @@ y.addListener("data", res => {
     }
 });
 
+
 let embed = new Discord.RichEmbed();
 const embedWrapper = (channel, color, content) => {
     embed.setColor(color)
@@ -92,10 +79,6 @@ const embedWrapper = (channel, color, content) => {
 }
 
 //	Client token.
-const token = env.dev ? env.temp_token : process.env.TOKEN;
-bot.login(token)
-<<<<<<< HEAD
-console.log(env.dev ? `Log-in as developer-mode.` : `Prod server started.`)
-=======
+const token = process.env.TOKEN ? process.env.TOKEN : env.temp_token;
 console.log(env.dev ? `Local development server has been started.` : `Production server has been started.`)
->>>>>>> 0f8b3071e8719014de01a0149fdb0349a5d770b7
+bot.login(token)
