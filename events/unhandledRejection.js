@@ -1,8 +1,9 @@
 const Discord = require("discord.js");
 const moment = require('moment');
 const palette = require('../colorset.json');
+const env = require(`../.data/environment.json`);
 
-module.exports = (bot,err,p,message) => {
+module.exports = (bot, err, p, message) => {
 
 
     //  Centralized object
@@ -41,6 +42,7 @@ module.exports = (bot,err,p,message) => {
         `)
         .setTimestamp(Date.now())
 
+<<<<<<< HEAD
         switch (err.name)
         {
             case `EvalError`:
@@ -79,5 +81,10 @@ module.exports = (bot,err,p,message) => {
             default:
 
         }
+=======
+    const env = require(`../.data/environment.json`);
+    if(env.dev) return //Disable Error Log
+    err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
+>>>>>>> 0f8b3071e8719014de01a0149fdb0349a5d770b7
     return metadata.log.send(embed);
 }

@@ -8,10 +8,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 	let embed = new Discord.RichEmbed();
 	embed.setColor(palette.darkmatte)
-	const author = message.member;
-	const modRole = message.guild.roles.find(r => (r.name === 'Creators Council') || (r.name === 'Tomato Fox'));
 
-	if(author.roles.has(modRole.id)) {
+	if(!message.member.roles.find(r => (r.name === 'Developer Team') ||(r.name === 'Creators Council'))) {
+		embed.setDescription(`You don't have authorization to use this command.`)
+		return message.channel.send(embed)
+	} else {
 		if(!args[0]) {
 			embed.setDescription(`${message.author.username}.. could you specify the number?`)
 			return message.channel.send(embed)
@@ -21,7 +22,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 		if(args[0] > 100) {
 			embed.setDescription(`Eh, i couldn't delete more than **100** messages at once!`)
 			return message.channel.send(embed)
-
 		}
 
 			message.channel.bulkDelete(args[0]);
@@ -31,10 +31,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 			return message.channel.send(embed).then((msg) => {
 				msg.delete(5000)
 		})
-	}
-	else {
-		embed.setDescription(`You don't have authorization to use this command.`)
-		return message.channel.send(embed)
 	}
 }
 
