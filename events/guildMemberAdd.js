@@ -31,7 +31,7 @@ module.exports = (bot, member) => {
 	bot.channels.get(`518245560239652867`).setName(`${configFormat.threeDigitsComa(userSize)} members!`);		
 	
  const sendMsg = async () => {
-  welcomechnl.send(`Welcome to Anime Artists United ${user} ! Please get your roles in ${member.guild.channels.get('538843763544555528').toString()} for full access to the server, don't forget to read ${member.guild.channels.get('472605630788665344').toString()} & ${member.guild.channels.get('543310783858212884').toString()}. Last but not least enjoy your stay here! :tada:`,
+  welcomechnl.send(`Welcome to Anime Artists United ${user} ! Please get your roles in ${member.guild.channels.get('538843763544555528').toString()} for full access to the server, don't forget to read ${member.guild.channels.get('472605630788665344').toString()} & ${member.guild.channels.get('575363719735803904').toString()}. Last but not least enjoy your stay here! :tada:`,
 	new Attachment(await welcomeCard(user),`welcome!-${user.tag}.jpg`))
  }
 
