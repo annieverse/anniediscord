@@ -1,34 +1,41 @@
 const Discord = require("discord.js");
 const env = require('./.data/environment.json');
-const moment = require('moment');
+const pack = require('./package.json');
 const palette = require('./colorset.json');
+const fs = require("fs");
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
-const fs = require("fs");
 require("./utils/eventHandler")(bot)
-
 const http = require('http');
 const express = require('express');
 const app = express();
 
-//	Ping server
+
+//	Ping server so it won't died cause of idling.
 app.get("/", (request, response) => {
-    console.log(`At ${Date.now()} ping was received`);
+    console.log(`${bot.ping}ms ping was received`);
     response.sendStatus(200);
 });
 
-app.listen(process.env.PORT);
+
+//  Listening to the port.
+app.listen(!env.dev ? process.env.PORT : 3000);
 setInterval(() => {
     http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`);
 }, 280000);
+
+
+//  Showing server's metric.
+app.use(require('express-status-monitor')({
+    title: `${pack.name}'s Performance`,
+}))
 
 
 //	Loading command modules.
 fs.readdir("./commands/", (err, files) => {
 
     if (err) console.log(err);
-
     let jsfile = files.filter(f => f.split(".").pop() === "js")
     if (jsfile.length <= 0) {
         console.log(`missing files`);
@@ -45,11 +52,6 @@ fs.readdir("./commands/", (err, files) => {
     console.log(`${jsfile.length} command files have been loaded.`)
 });
 
-
-//	Client token.
-const token = env.dev ? env.temp_token : process.env.TOKEN;
-bot.login(token)
-console.log(env.dev ? `Log-in as developer-mode.` : `Prod server started.`)
 
 //  Bot Messaging via Console ♡
 let y = process.openStdin()
@@ -76,3 +78,8 @@ const embedWrapper = (channel, color, content) => {
     let channelid = bot.channels.find(x => x.name === channel).id
     return bot.channels.get(channelid).send(embed);
 }
+
+//	Client token.
+const token = env.dev ? env.temp_token : process.env.TOKEN;
+bot.login(token)
+console.log(env.dev ? `Local development server has been started.` : `Production server has been started.`)

@@ -1,8 +1,9 @@
 const Discord = require("discord.js");
 const moment = require('moment');
 const palette = require('../colorset.json');
+const env = require(`../.data/environment.json`);
 
-module.exports = (bot,err,p,message) => {
+module.exports = (bot, err, p, message) => {
 
 
     //  Centralized object
