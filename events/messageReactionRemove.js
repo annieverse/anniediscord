@@ -7,7 +7,6 @@ module.exports = async (bot, reaction, user) => {
     let favoritechannel = bot.channels.get("581642059090362368"); // channel the image is sent to
 
     const rmsg = reaction.message;
-    const member = await rmsg.guild.fetchMember(user);
 
     if (user.bot) return;
 
@@ -22,19 +21,24 @@ module.exports = async (bot, reaction, user) => {
 
     if (reaction.emoji.name == "⭐" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
         let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "⭐").first();
-        if(x.count==undefined)x=0;
-        if (x.count === 2) {
+        if (rmsg.author.id == '514688969355821077') return;//make sure its not bots id
+        if(x==undefined)x=0; // if it has no likes set value to 0
+        if (x.count == 1 || x==0) { // minimum likes or no like to delete
             // Do Code Here
-            let fileSize = rmsg.attachments.first().filesize;
-            let fileSizelimit = 8000000;
-            let othermsgid;
-            if (fileSize > fileSizelimit) {
-                let attachmentFileUrl = rmsg.attachments.first().url
-                othermsgid = favoritechannel.messages.array().find(x => x.content === attachmentFileUrl).id
-            }else{
-                let attachmentFileUrl = rmsg.attachments.first().url
-                othermsgid = favoritechannel.messages.array().find(x => x.content === attachmentFileUrl).id
-            }
+
+            //let fileSize = rmsg.attachments.first().filesize;
+            //let fileSizelimit = 8000000;
+            
+            //let attachmentFileUrl = rmsg.attachments.first().url
+                //console.log(messages.array().find(x => x.content.slice(15) === rmsg.id).id)
+                //let othermsgid = messages.array().find(x => x.content.slice(15) === rmsg.id).id;
+            let othermsgid = favoritechannel.messages.array().find(x => x.content.slice(15) === rmsg.id).id;
+            
+
+            favoritechannel.fetchMessages({after:othermsgid, limit:3})
+                .then(messages => favoritechannel.bulkDelete(messages))
+                .catch(console.error);
+
             favoritechannel.fetchMessage(othermsgid)
                 .then(message => message.delete())
                 .catch(console.error);

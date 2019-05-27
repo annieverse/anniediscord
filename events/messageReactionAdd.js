@@ -24,16 +24,21 @@ module.exports = async (bot, reaction, user) => {
     let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "⭐").first();
     if (rmsg.author.id =='514688969355821077')return;//make sure its not bots id
 
-    if(x.count===3){
+    
+
+    if(x.count===2){
       // Do Code Here
       let attachment = rmsg.attachments.first().url;
-      let fileSize = rmsg.attachments.first().filesize;
-      let fileSizelimit = 8000000;
-      if (fileSize>fileSizelimit){
-        favoritechannel.send(attachment);
-      }else{
-        favoritechannel.send(attachment)
-      }
+
+      //let fileSize = rmsg.attachments.first().filesize;
+      //let fileSizelimit = 8000000;
+
+      let embed = new Discord.RichEmbed()
+        .setImage(attachment)
+        .setAuthor(rmsg.author.tag)
+
+        favoritechannel.send(`Record number: ${rmsg.id}`).then(await favoritechannel.send(embed)).then(favoritechannel.send(`_ _`).then(favoritechannel.send(`_ _`)));
+        favoritechannel.send(`${rmsg.author}`).then(msg=>msg.delete());
       
       
     }
