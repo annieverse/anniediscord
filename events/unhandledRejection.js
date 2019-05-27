@@ -38,6 +38,8 @@ module.exports = (bot,err,p,message) => {
         `)
         .setTimestamp(Date.now())
 
+    const env = require(`../.data/environment.json`);
+    if(env.dev) return //Disable Error Log
     err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
     return metadata.log.send(embed);
 }

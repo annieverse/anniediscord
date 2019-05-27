@@ -58,7 +58,7 @@ y.addListener("data", res => {
     let msg = x.join(" ")
 
      //  Modify These Values!
-    let color = palette.red
+    let color = palette.golden
     let channel = "sandbox"
     let enabletextwrapping = true; 
 
