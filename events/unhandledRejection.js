@@ -22,17 +22,15 @@ module.exports = (bot, err, p, message) => {
         dev: message.guild.roles.find(r => r.name === "Developer Team").toString()
     }
 
-
-    // Default log.
-    //console.log(p, err);
-
+    
     //replacing authors name in directory
     let x = metadata.error.split("\\");
     let y = metadata.error.replace(new RegExp(x[2],"gi"), "Developer_User");
 
+
     //  Discord log.
     const embed = new Discord.RichEmbed()
-        .setColor(`RANDOM`)
+        .setColor(palette.darkmatte)
         .setTitle("UnhandledRejection Error")
         .addField("User", metadata.user.mention,true)
         .addField("Channel", metadata.channel,true)
@@ -42,8 +40,9 @@ module.exports = (bot, err, p, message) => {
         `)
         .setTimestamp(Date.now())
 
-    const env = require(`../.data/environment.json`);
-    if(env.dev) return //Disable Error Log
+
+    //  Disable error log in dev environment.
+    if(env.dev) return
     err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
     return metadata.log.send(embed);
 }
