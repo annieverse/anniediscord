@@ -24,8 +24,8 @@ module.exports = (bot, err, p, message) => {
 
     
     //replacing authors name in directory
-    let x = metadata.error.split("\\");
-    let y = metadata.error.replace(new RegExp(x[2],"gi"), "Developer_User");
+    metadata.error = metadata.error.split("\\");
+    //let y = metadata.error.replace(new RegExp(x[2],"gi"), "Developer_User");
 
 
     //  Discord log.
@@ -36,13 +36,13 @@ module.exports = (bot, err, p, message) => {
         .addField("Channel", metadata.channel,true)
         .setDescription(`
         "${metadata.user.msg}"
-        \`\`\`javascript\n${y}\`\`\`
+        \`\`\`javascript\n${metadata.error}\n\`\`\`
         `)
         .setTimestamp(Date.now())
 
 
-    //  Disable error log in dev environment.
-    if(env.dev) return
+    //  Disable error channel logging in dev environment.
+    if(env.dev) return console.log(metadata.error);
     err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
     return metadata.log.send(embed);
 }
