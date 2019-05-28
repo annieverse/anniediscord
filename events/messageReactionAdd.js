@@ -26,7 +26,7 @@ module.exports = async (bot, reaction, user) => {
 
     
 
-    if(x.count===2){
+    if(x.count===1){
       // Do Code Here
       let attachment = rmsg.attachments.first().url;
 
@@ -35,12 +35,19 @@ module.exports = async (bot, reaction, user) => {
 
       let embed = new Discord.RichEmbed()
         .setImage(attachment)
-        .setAuthor(rmsg.author.tag)
+        .setAuthor(rmsg.author.tag, rmsg.author.avatarURL)
+        .setTimestamp()
+        .setFooter(rmsg.id);
 
-        favoritechannel.send(`Record number: ${rmsg.id}`).then(await favoritechannel.send(embed)).then(favoritechannel.send(`_ _`).then(favoritechannel.send(`_ _`)));
-        favoritechannel.send(`${rmsg.author}`).then(msg=>msg.delete());
-      
-      
+        /*  //Pan Version: 4 Messages (ID / Embed / LB / LB)
+         *
+         *  favoritechannel.send(`Record number: ${rmsg.id}`).then(await favoritechannel.send(embed)).then(favoritechannel.send(`_ _`).then(favoritechannel.send(`_ _`)));
+         *  favoritechannel.send(`${rmsg.author}`).then(msg=>msg.delete());
+         */
+
+        //Fwubbles Version: 1 Embed Message (ID in footer)
+        favoritechannel.send(embed);
+        favoritechannel.send(`${rmsg.author}`).then(msg=>msg.delete());      
     }
   }
   

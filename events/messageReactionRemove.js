@@ -5,7 +5,8 @@ sql.open(".data/database.sqlite");
 module.exports = async (bot, reaction, user) => {
 
     let favoritechannel = bot.channels.get("581642059090362368"); // channel the image is sent to
-
+    console.log(reaction)
+    if (reaction.message.partial) await reaction.message.fetch();
     const rmsg = reaction.message;
 
     if (user.bot) return;
@@ -32,14 +33,32 @@ module.exports = async (bot, reaction, user) => {
             //let attachmentFileUrl = rmsg.attachments.first().url
                 //console.log(messages.array().find(x => x.content.slice(15) === rmsg.id).id)
                 //let othermsgid = messages.array().find(x => x.content.slice(15) === rmsg.id).id;
-            let othermsgid = favoritechannel.messages.array().find(x => x.content.slice(15) === rmsg.id).id;
-            
 
-            favoritechannel.fetchMessages({after:othermsgid, limit:3})
-                .then(messages => favoritechannel.bulkDelete(messages))
-                .catch(console.error);
 
-            favoritechannel.fetchMessage(othermsgid)
+            /*  //Pan Version (Removes 4 messages)
+             *
+             *  let othermsgid = favoritechannel.messages.array().find(x => x.content.slice(15) === rmsg.id).id;
+             *
+             *  favoritechannel.fetchMessages({after:othermsgid, limit:3})
+             *      .then(messages => favoritechannel.bulkDelete(messages))
+             *      .catch(console.error);
+             *
+             *  favoritechannel.fetchMessage(othermsgid)
+             *      .then(message => message.delete())
+             *  .catch(console.error);
+             */
+
+            //Fwubbles Version (Remove single compressed message / ID in the footer)
+            let msg_array = favoritechannel.messages.array()
+            let delete_this_id;
+            for(let i = 0; i < msg_array.length; i++){
+                if(msg_array[i].embeds[0]){
+                    if(msg_array[i].embeds[0].footer.text === rmsg.id){
+                        delete_this_id = msg_array[i].id;
+                    }
+                }
+            }
+            favoritechannel.fetchMessage(delete_this_id)
                 .then(message => message.delete())
                 .catch(console.error);
             }
