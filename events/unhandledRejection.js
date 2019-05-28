@@ -35,7 +35,7 @@ module.exports = (bot, err, p, message) => {
         .addField("User", metadata.user.mention,true)
         .addField("Channel", metadata.channel,true)
         .setDescription(`
-        "${x.substring(0, 1999)}"
+        "${metadata.error}"
         \`\`\`javascript\n${y}\`\`\`
         `)
         .setTimestamp(Date.now())
