@@ -57,7 +57,7 @@ module.exports = async (bot, reaction, user) => {
 
       //  Core processes
       const main = async() => {
-        if(metadata.favs >= metadata.featured_requirement) {
+        if(metadata.favs === metadata.featured_requirement) {
           let embed = new Discord.RichEmbed()
             .setImage(metadata.artwork)
             .setAuthor(metadata.msg.author.tag, metadata.msg.author.avatarURL)
