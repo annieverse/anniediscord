@@ -16,16 +16,28 @@ module.exports = async (bot, reaction, user) => {
           "460439050445258752",
           "461926519976230922",
           "460615254553001994",
-          "538806382779170826"
+          "538806382779170826",
         ],
-        featured_channel: bot.channels.get("581642059090362368"),
-        featured_requirement: 2,
+        featured_channel: bot.channels.get("582808377864749056"),
+        featured_requirement: 4,
         msg: reaction.message,
         get artwork() {
           return this.msg.attachments.first().url;
         },
         get favs() {
-          return this.msg.reactions.filter(reaction => reaction.emoji.name == "⭐").first().count
+          reaction.fetchUsers();
+          function test(){
+            if(reaction.users.size>reaction.count){
+              return reaction.users.size;
+            } else if (reaction.users.size < reaction.count){
+              return reaction.count;
+            } else if (reaction.users.size == reaction.count) {
+              return reaction.count;
+            }
+          }
+          return test();
+          // return this.msg.reactions.filter(reaction => reaction.emoji.name == "⭐").first().count
+          // return reaction.users.size;
         }
 
       }
@@ -45,7 +57,6 @@ module.exports = async (bot, reaction, user) => {
 
       //  Core processes
       const main = async() => {
-
         if(metadata.favs >= metadata.featured_requirement) {
           let embed = new Discord.RichEmbed()
             .setImage(metadata.artwork)
@@ -69,14 +80,12 @@ module.exports = async (bot, reaction, user) => {
       const run = () => {
 
         //  Returns if current channel is not listed in arts channels.
-        if(!metadata.art_channels.includes(metadata.msg.channel.id))return;
-
+        if (!metadata.art_channels.includes(metadata.msg.channel.id)) return;
 
         //  Returns if the reaction is not a "star".
         if(reaction.emoji.name !== "⭐")return;
-        
+
         main();
-      
       }
 
       run();

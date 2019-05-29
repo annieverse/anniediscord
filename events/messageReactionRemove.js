@@ -4,9 +4,10 @@ module.exports = async (bot, reaction, user) => {
 
 
     //  Artwork featuring system
-    const feature_system_remove = async() => {
-        let favoritechannel = bot.channels.get("581642059090362368"); // channel the image is sent to
+    const feature_system_remove = async () => {
+        let favoritechannel = bot.channels.get("582808377864749056"); // channel the image is sent to
         //console.log(reaction)
+        reaction.fetchUsers();
         if (reaction.message.partial) await reaction.message.fetch();
         const rmsg = reaction.message;
 
@@ -14,26 +15,26 @@ module.exports = async (bot, reaction, user) => {
 
         const artChannels = [
             "459892609838481408",
-            "459893040753016872", 
+            "459893040753016872",
             "460439050445258752",
             "461926519976230922",
             "460615254553001994",
             "538806382779170826",
-            "565308091424571422"];
+        ];
 
         if (reaction.emoji.name == "⭐" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
-
+            reaction.fetchUsers()
             let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "⭐").first();
-            if (rmsg.author.id == '514688969355821077') return;//make sure its not bots id
-            if(x==undefined)x=0; // if it has no likes set value to 0
-            if (x.count == 1 || x==0) { // minimum likes or no like to delete
+            if (rmsg.author.id == '501461775821176832') return;//make sure its not bots id
+            if (x == undefined) x = 0; // if it has no likes set value to 0
+            if (x.count < 3 || x == 0) { // minimum likes or no like to delete
                 // Do Code Here
                 //let fileSize = rmsg.attachments.first().filesize;
                 //let fileSizelimit = 8000000;
-                
+
                 //let attachmentFileUrl = rmsg.attachments.first().url
-                    //console.log(messages.array().find(x => x.content.slice(15) === rmsg.id).id)
-                    //let othermsgid = messages.array().find(x => x.content.slice(15) === rmsg.id).id;
+                //console.log(messages.array().find(x => x.content.slice(15) === rmsg.id).id)
+                //let othermsgid = messages.array().find(x => x.content.slice(15) === rmsg.id).id;
 
 
                 /*  //Pan Version (Removes 4 messages)
@@ -57,28 +58,28 @@ module.exports = async (bot, reaction, user) => {
 
 
                 //Fwubbles Version (Remove single compressed message / ID in the footer)
-                let msg_array = favoritechannel.messages.array() // fetch messages in the channel; 
+                let msg_array = favoritechannel.messages.array() // fetch messages in the channel;
                 let msg_collection = await favoritechannel.fetchMessages()// i dunno how this method works
                 let msg_array2 = msg_collection.array();
 
                 let delete_this_id;
-                for(let i = 0; i < msg_array2.length; i++){
-                    if(msg_array2[i].embeds[0]){
-                            if(remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id){
-                                delete_this_id = msg_array2[i].id;
-                            }
+                for (let i = 0; i < msg_array2.length; i++) {
+                    if (msg_array2[i].embeds[0]) {
+                        if (remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id) {
+                            delete_this_id = msg_array2[i].id;
+                        }
                     }
                 }
 
                 /**
-                 *  Returns boolean 
+                 *  Returns boolean
                  *  If match any id.. returns true & assign the id to delete_this_id
                  *  @find_match_ID
                  */
                 const find_match_ID = () => {
-                    for(let i = 0; i < msg_array2.length; i++){
-                        if(msg_array2[i].embeds[0]){
-                            if(remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id){
+                    for (let i = 0; i < msg_array2.length; i++) {
+                        if (msg_array2[i].embeds[0]) {
+                            if (remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id) {
                                 delete_this_id = msg_array2[i].id;
                                 return true;
                             }
@@ -89,11 +90,12 @@ module.exports = async (bot, reaction, user) => {
                 favoritechannel.fetchMessage(delete_this_id)
                     .then(message => message.delete())
                     .catch(console.error);
-                }
             }
+        }
     }
 
 
     feature_system_remove();
 
 }
+
