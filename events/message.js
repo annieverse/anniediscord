@@ -56,11 +56,13 @@ module.exports = (bot, message) => {
       "460439050445258752",
       "461926519976230922",
       "460615254553001994",
-      "538806382779170826"
+      "538806382779170826",
+      "565308091424571422",
     ];
 
     if (artchannels.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
       let img = message.attachments.first();
+      message.react('⭐')
       sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
       return console.log(`${message.author.tag} has submitted "${img.filename}" in ${message.channel.name}.`)
     }

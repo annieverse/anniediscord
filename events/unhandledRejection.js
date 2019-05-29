@@ -42,7 +42,7 @@ module.exports = (bot, err, p, message) => {
 
 
     //  Disable error channel logging in dev environment.
-    if(env.dev) return console.log(metadata.error);
+    if(env.dev) return;
     err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
     return metadata.log.send(embed);
 }
