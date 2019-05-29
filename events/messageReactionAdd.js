@@ -19,7 +19,7 @@ module.exports = async (bot, reaction, user) => {
           "538806382779170826",
         ],
         featured_channel: bot.channels.get("582808377864749056"),
-        featured_requirement: 4,
+        featured_requirement: 5,
         msg: reaction.message,
         get artwork() {
           return this.msg.attachments.first().url;
@@ -47,7 +47,7 @@ module.exports = async (bot, reaction, user) => {
       const log = (props = {}) => {
         !props.code ? props.code = `UNDEFINED` : props.code;
         const logtext = {
-          NEW_FAVS: `${metadata.msg.author.username}'s work has been starred by ${user.username} in ${metadata.msg.channel.name}.`
+          NEW_FAVS: `${metadata.msg.author.username}'s work has been starred by ${user.username} in #${metadata.msg.channel.name}.`
         }
 
         let res = logtext[props.code]
@@ -86,6 +86,7 @@ module.exports = async (bot, reaction, user) => {
         if(reaction.emoji.name !== "⭐")return;
 
         main();
+
       }
 
       run();

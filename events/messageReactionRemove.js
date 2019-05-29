@@ -5,13 +5,11 @@ module.exports = async (bot, reaction, user) => {
 
     //  Artwork featuring system
     const feature_system_remove = async () => {
-        let favoritechannel = bot.channels.get("582808377864749056"); // channel the image is sent to
-        //console.log(reaction)
+        let favoritechannel = bot.channels.get("582808377864749056"); 
+
         reaction.fetchUsers();
         if (reaction.message.partial) await reaction.message.fetch();
         const rmsg = reaction.message;
-
-        //if (user.bot) return;
 
         const artChannels = [
             "459892609838481408",
@@ -71,21 +69,6 @@ module.exports = async (bot, reaction, user) => {
                     }
                 }
 
-                /**
-                 *  Returns boolean
-                 *  If match any id.. returns true & assign the id to delete_this_id
-                 *  @find_match_ID
-                 */
-                const find_match_ID = () => {
-                    for (let i = 0; i < msg_array2.length; i++) {
-                        if (msg_array2[i].embeds[0]) {
-                            if (remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id) {
-                                delete_this_id = msg_array2[i].id;
-                                return true;
-                            }
-                        }
-                    }
-                }
 
                 favoritechannel.fetchMessage(delete_this_id)
                     .then(message => message.delete())
