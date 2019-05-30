@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
+const formatManager = require(`../utils/formatManager`);
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
@@ -12,6 +13,49 @@ module.exports.run = async (bot, command, message, args) => {
         const src = require(`./${file}`)
         return src.help.name;
     };
+
+
+    const format = new formatManager(message);
+
+
+    //  Pre-defined messages.
+    function log(props = {}) {
+        const logtext = {
+            "WRONG_CHANNEL": {
+                msg: `You can create your clan in bot channels.`,
+                color: palette.red
+            },
+
+            "SUCCESSFUL": {
+                msg: `${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`,
+                color: palette.lightgreen
+            },
+
+            "LVL_TOO_LOW": {
+                msg: `I am sorry but you are not a high enough level yet.`,
+                color: palette.darkmatte,
+            },
+
+            "ALREADY_INCLAN": {
+                msg: `I am sorry but you are already in a clan.`,
+                color: palette.darkmatte,
+            },
+
+            "INSUFFICIENT_BALANCE": {
+                msg: `I am sorry but you Dont have enough AC to create a clan.`,
+                color: palette.darkmatte 
+            },
+
+            "MAX_CHARS": {
+                msg: `I am sorry but that entry exceeds the character limit.`,
+                color: palette.red
+            }
+        }
+
+        let res = logtext[props.code];
+        return format.embedWrapper(res.color, res.msg);
+    }
+
     
     /**
      * Notes for along the adventure.
@@ -91,8 +135,9 @@ module.exports.run = async (bot, command, message, args) => {
          * @returns colorCustom, maxMembers
          */
         async function userlevelcheck(){
+            
             // Check to make sure user is at least level 40
-            if (userlevel < 40) return message.channel.send("*Filler message*: I am sorry but you are not a high enough level yet.")
+            if (userlevel < 40)return log({code: `LVL_TOO_LOW`});
 
             // Sets the max members allowed in clan
             maxMembers = 5;
@@ -120,15 +165,16 @@ module.exports.run = async (bot, command, message, args) => {
         }
 
         // Test to see if the user is in a clan and if they are then exit the code
-        if (userclancheck() === true) return message.channel.send("*Filler message*: I am sorry but you are already in a clan.");
+        if (userclancheck() === true)return log({code: `ALREADY_INCLAN`});
 
         // Test to see if the user level to gather data
         userlevelcheck();
 
         // Test to see if the user has enough in their balance to create a clan
-        if (useraccheck() === false) return message.channel.send("*Filler message*: I am sorry but you Dont have enough AC to create a clan.");
+        if (useraccheck() === false)return log({code: `INSUFFICIENT_BALANCE`});
         
     }
+
 
     async function create_clan(){
 
@@ -215,10 +261,18 @@ module.exports.run = async (bot, command, message, args) => {
 
         collectorForClanName.on(`collect`, async (msg) => {
             console.log(charcheck(msg.content, 24));
-            if (charcheck(msg.content, 24)){
-                return message.channel.send(`"*Filler message*: I am sorry but that entry exceeds the character limit."`)
-            }else{
+
+            //  Returns if characters are exceeding the limit.
+            if(charcheck(msg.content, 24))return log({code: `MAX_CHARS`});
+
+            
+            const conditions = async () => {
+                
                 clanname = msg.content;
+                
+                
+
+
                 message.channel.send(`Next I will need a clan tag you wish to use.\n if you type "n/a" the default tag will be the first **5** characters of your clan name.\n**5 character limit**`)
                 collectorForClanTag.on(`collect`, async (msg) => {
                     if (msg.content.toLowerCase() === "n/a") {
@@ -233,7 +287,7 @@ module.exports.run = async (bot, command, message, args) => {
                                 clanmotto = msg.content;
                                 if(colorCustom){
                                     message.channel.send(`Since you meet the level required for a custom color would you like to choose a custom color.\nPlease type n/a for default color or type the digits you would like for your color.\n**Must be a hex color 000000**`);
-                                    collectorForClanColor.on((`collect`, async (msg) => {
+                                    collectorForClanColor.on(`collect`, async (msg) => {
                                         if(msg.content.toLowerCase() === "n/a"){
                                             color="#000000"
                                             message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
@@ -273,7 +327,7 @@ module.exports.run = async (bot, command, message, args) => {
                                                     });
                                                 });
                                         }
-                                    }))
+                                    }); // end of collectorForClanColor
                                 }else{
                                     message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
                                         .then((msg) => {
@@ -295,7 +349,7 @@ module.exports.run = async (bot, command, message, args) => {
                                 }
                                 
                                 };
-                        });
+                        }); // end of collectorForClanMotto
                     } else if (charcheck(msg.content, 5) === true) {
                         return message.channel.send(`"*Filler message*: I am sorry but that entry exceeds the character limit."`)
                     } else if (charcheck(msg.content, 5) === false) {
@@ -310,7 +364,7 @@ module.exports.run = async (bot, command, message, args) => {
                                 clanmotto = msg.content;
                                 if (colorCustom) {
                                     message.channel.send(`Since you meet the level required for a custom color would you like to choose a custom color.\nPlease type n/a for default color or type the digits you would like for your color.\n**Must be a hex color 000000**`);
-                                    collectorForClanColor.on((`collect`, async (msg) => {
+                                    collectorForClanColor.on(`collect`, async (msg) => {
                                         if (msg.content.toLowerCase() === "n/a") {
                                             color = "#000000"
                                             message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
@@ -350,7 +404,7 @@ module.exports.run = async (bot, command, message, args) => {
                                                     });
                                                 });
                                         }
-                                    }))
+                                    }); // end of collectorForClanColor
                                 } else {
                                     message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
                                         .then((msg) => {
@@ -369,36 +423,64 @@ module.exports.run = async (bot, command, message, args) => {
                                                 });
                                             });
                                         });
-                                }
+                                };
 
                             };
-                        });
+                        }); // end of collectorForClanMotto
                     };
-                });
+                }); // end of collectorForClanTag
             };
-        });
-    };
+        }); // end of collectorForClanName
 
-    /** 
-     * Send result into message event.
-     * @run
-     * */
-    async function run(){
-        // fix line below before release!!! @naph
-        if (![`sandbox`].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `You can create your clan in bot channels.`);
 
-        return message.channel.send(`\`fetching ${message.author.username} data ..\``)
+
+            }    
+ 
+    } // end of create_clan
+
+
+    //  Core process
+    async function main() {
+
+        //  Parsing required data
+        const registering_data = async() => {
+
+            //  Request userdata
+            await get_userobject();
+            await pause(200);
+            
+            //  
+            await filtering_data(raw_object);
+
+            //  Proceed to clan creation
+            await create_clan();
+            
+        }
+
+
+        //  Outputing result
+        return message.channel.send(`\`fetching ${message.author.username} clan-data ..\``)
             .then(async load => {
-                await get_userobject();
-                await pause(200);
-                await filtering_data(raw_object);
-                await create_clan();
-
-                message.channel.send(`${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`);
+                
+                await registering_data();
+                log({code: `SUCCESSFUL`});
                 load.delete();
-            })
+            })   
     }
+
+
+    //  Initializer.
+    async function run(){
+
+        // fix line below before release!!! @naph
+        if (![`sandbox`].includes(message.channel.name))return log({code: `WRONG_CHANNEL`});
+
+        main();
+
+    }
+
     run();
+
 }//end of module.exports.run
 
 module.exports.help = {

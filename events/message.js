@@ -9,15 +9,18 @@ sql.open(".data/database.sqlite");
 
 module.exports = (bot, message) => {
 
-  if (message.author.bot) return;
+  if(message.author.bot) return;
   if(message.channel.type ==='dm')return;
 
   const manager = new ranksManager(bot, message)
   const format = new formatManager(message)
 
-  artChannelsFilter();
-  eventChannelFilter();
-  portfolioRequest();
+
+  if(!env.dev) {
+    artChannelsFilter();
+    eventChannelFilter();
+    portfolioRequest();  
+  }
 
 
   //  Returns true if message has an attachment.
@@ -50,6 +53,7 @@ module.exports = (bot, message) => {
   //  Register submitted image in art channels
   //  As portfolio.
   function artChannelsFilter() {
+
     const artchannels = [
       "459892609838481408",
       "459893040753016872",

@@ -12,6 +12,11 @@ module.exports = bot => {
     startup();
 
 
+    // Bot color #2fc9b6 ORIGINAL
+    /**
+     * secret thingy, change color of role
+     */
+
     /**
      * 
      * Fired processes on startup.

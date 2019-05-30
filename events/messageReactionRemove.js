@@ -1,10 +1,12 @@
 const Discord = require("discord.js");
+const env = require(`../.data/environment.json`);
 
 module.exports = async (bot, reaction, user) => {
 
 
     //  Artwork featuring system
     const feature_system_remove = async () => {
+
         let favoritechannel = bot.channels.get("582808377864749056"); 
 
         reaction.fetchUsers();

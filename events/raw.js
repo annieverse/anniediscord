@@ -1,6 +1,11 @@
 const Discord = require("discord.js");
+const env = require(`../.data/environment.json`);
 
 module.exports = (bot, packet) => {
+
+    //  Make sure it doesn't run on developer environment.
+    if(env.dev)return;
+
     // We don't want this to run on unrelated packets
     if (!['MESSAGE_REACTION_ADD', 'MESSAGE_REACTION_REMOVE'].includes(packet.t)) return;
     
