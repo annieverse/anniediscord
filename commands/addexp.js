@@ -280,5 +280,5 @@ sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdat
 
     module.exports.help = {
         name:"addxp",
-      aliases:[]
+       aliases:[]
     }

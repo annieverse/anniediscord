@@ -9,15 +9,18 @@ sql.open(".data/database.sqlite");
 
 module.exports = (bot, message) => {
 
-  if (message.author.bot) return;
+  if(message.author.bot) return;
   if(message.channel.type ==='dm')return;
 
   const manager = new ranksManager(bot, message)
   const format = new formatManager(message)
 
-  artChannelsFilter();
-  eventChannelFilter();
-  portfolioRequest();
+
+  if(!env.dev) {
+    artChannelsFilter();
+    eventChannelFilter();
+    portfolioRequest();  
+  }
 
 
   //  Returns true if message has an attachment.
@@ -50,17 +53,20 @@ module.exports = (bot, message) => {
   //  Register submitted image in art channels
   //  As portfolio.
   function artChannelsFilter() {
+
     const artchannels = [
       "459892609838481408",
       "459893040753016872",
       "460439050445258752",
       "461926519976230922",
       "460615254553001994",
-      "538806382779170826"
+      "538806382779170826",
+      "565308091424571422",
     ];
 
     if (artchannels.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
       let img = message.attachments.first();
+      message.react('⭐')
       sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
       return console.log(`${message.author.tag} has submitted "${img.filename}" in ${message.channel.name}.`)
     }

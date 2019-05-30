@@ -74,7 +74,7 @@ async function initShop() {
 
     //          WORKING ON NEW SHOP INTERFACE
     let registered_interface = [];
-    async function interface(desc = "test", img, footer = "footer", type = "Tickets", emoji = "ArtCoins", opt1 = undefined, opt2 = undefined) {
+    async function interface_page(desc = "test", img, footer = "footer", type = "Tickets", emoji = "ArtCoins", opt1 = undefined, opt2 = undefined) {
             const page = new Discord.RichEmbed()
                 .setDescription(desc)
                 .setColor(palette.darkmatte)
@@ -87,13 +87,13 @@ async function initShop() {
 
 
             async function run() {
-                await interface(`Lucky Ticket has come!`, links.gacha, `[1 / 7] >redeem amount`, `Unique`, `artcoins`, `price < 130`);
-                await interface(`May Special Cover!`, links.premiumcover, `[2 / 7]`, `Covers`, `magical_paper`, `price < 6`);
-                await interface(`These are our general items!`, links.ticket, `[3 / 7]`, `Tickets`, `artcoins`,`_rowid_ < 3`);
-                await interface(`Boost your social activities!`,  links.expbooster, `[4 / 7]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`);
-                await interface(`Customize your card theme!`, links.skin, `[5 / 7]`, `Skins`, `artcoins`);
-                await interface(`Grab your artistic badges!`, links.badge,  `[6 / 7]`, `Badges`, `artcoins`);
-                await interface(`Beautify your profile cover!`, links.regularcover, `[7 / 7]`, `Covers`, `artcoins`, `price > 350`);
+                await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 7] >redeem amount`, `Unique`, `artcoins`, `price < 130`);
+                await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 7]`, `Covers`, `magical_paper`, `price < 6`);
+                await interface_page(`These are our general items!`, links.ticket, `[3 / 7]`, `Tickets`, `artcoins`,`_rowid_ < 3`);
+                await interface_page(`Boost your social activities!`,  links.expbooster, `[4 / 7]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`);
+                await interface_page(`Customize your card theme!`, links.skin, `[5 / 7]`, `Skins`, `artcoins`);
+                await interface_page(`Grab your artistic badges!`, links.badge,  `[6 / 7]`, `Badges`, `artcoins`);
+                await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 7]`, `Covers`, `artcoins`, `price > 350`);
 
 
 
