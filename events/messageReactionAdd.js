@@ -20,7 +20,7 @@ module.exports = async (bot, reaction, user) => {
           "538806382779170826",
         ],
         featured_channel: bot.channels.get("582808377864749056"),
-        featured_requirement: 5,
+        featured_requirement: 10,
         msg: reaction.message,
         get artwork() {
           return this.msg.attachments.first().url;
