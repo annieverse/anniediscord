@@ -34,6 +34,6 @@
     "pm2": "^3.5.1",
     "probe-image-size": "^4.0.0",
     "sqlite": "^3.0.3",
-    "superagent": "^4.0.0"
+    "superagent": "^5.0.5"
   }
 }
