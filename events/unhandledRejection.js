@@ -42,49 +42,8 @@ module.exports = (bot, err, p, message) => {
         `)
         .setTimestamp(Date.now())
 
-<<<<<<< HEAD
-        switch (err.name)
-        {
-            case `EvalError`:
-                embed.setColor(`DARK_ORANGE`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `RangeError`:
-                embed.setColor(`DARK_VIVID_PINK`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `ReferenceError`:
-                embed.setColor(`NAVY`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `SyntaxError`:
-                embed.setColor(`AQUA`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `TypeError`:
-                embed.setColor(`LUMINOUS_VIVID_PINK`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `URIError`:
-                embed.setColor(`PURPLE`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `InternalError`:
-                embed.setColor(`DARK_AQUA`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                break;
-            case `Error`:
-                embed.setColor(`DARK_RED`);
-                embed.setTitle(`UnhandledRejection Error | ${err.name}`);
-                metadata.log.send(metadata.dev)
-                break;
-            default:
-
-        }
-=======
     const env = require(`../.data/environment.json`);
     if(env.dev) return //Disable Error Log
     err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
->>>>>>> 0f8b3071e8719014de01a0149fdb0349a5d770b7
     return metadata.log.send(embed);
 }

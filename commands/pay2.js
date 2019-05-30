@@ -21,25 +21,6 @@ exports.run = async (bot, command, message, args) => {
     function emoji(name) {
         return bot.emojis.find(e => e.name === name)
     }
-      
-    const react_test = async() => {
-        const format2 = new formatManager(message);
-        let evembed = new Discord.RichEmbed();
-
-        const msg_sender = message.author;
-        let search_channel = "tempchannel";
-        let file_name = "Rain.jpg";
-        let channel_id = bot.channels.find(x => x.name === search_channel).id;
-        let message_id = bot.channels.find(x => x.name === search_channel).messages.array() // fetchMessage("582289375694684173").author; //.find(x => x.attachments.first().filename === "Rain.jpg").id
-        return format2.embedWrapper(palette.green, `Output: ${message_id.join('\n')}`);
-
-        return format2.embedWrapper(palette.green, `Here's your output ${msg_sender.username}: ${emoji(`aauinlove`)}
-                                                    - Searched Channel: \`${search_channel}\`
-                                                    - Channel ID: \`${channel_id}\`
-                                                    - Searched File: \`${file_name}\`
-                                                    - **Message ID: \`${message_id}\`**`)
-    }
-    return react_test()
 
     /****************************************************************************************************************************************************************************************************************
      * pay() COMMAND FUNCTION
@@ -332,15 +313,8 @@ exports.run = async (bot, command, message, args) => {
         const checkOut = () => {
             return log(`000`)
         }
-
-        const asyncForEach = async(array, callback) => {
-            for (let i = 0; i < array.length; i++) {
-              await callback(array[i], i, array);
-            }
-          }
-
           
-          const test = async() => {
+        const test = async() => {
             let reqest_help = false
             let target_arg_index = null
             let arg_target = null
@@ -389,7 +363,7 @@ exports.run = async (bot, command, message, args) => {
          * CORE FUNCTION PROCESSOR
          ****************************************************************************************************************************************************************************************************************/
         const run = async () => {
-            await react_test();
+            await test();
             return
 
             return format.embedWrapper(palette.red, `Here's your output ${user.username}: ${emoji(`aauinlove`)}  
