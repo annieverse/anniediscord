@@ -430,11 +430,7 @@ module.exports.run = async (bot, command, message, args) => {
                     };
                 }); // end of collectorForClanTag
             };
-        }); // end of collectorForClanName
-
-
-
-            }    
+        }); // end of collectorForClanName    
  
     } // end of create_clan
 
