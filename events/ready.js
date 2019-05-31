@@ -11,11 +11,116 @@ module.exports = bot => {
 
     startup();
 
+    //roleChange();
 
-    // Bot color #2fc9b6 ORIGINAL
+    
     /**
      * secret thingy, change color of role
      */
+    function roleChange(){
+        if(!env.dev)return;
+
+        // Bot color #2fc9b6 ORIGINAL
+        // Smol Bean #ff79ac ORIGNIAL
+        // Tomato Fox #bfa8e0 ORIGNIAL
+        /**
+         * The Varible "x" is in terms of minutes
+         * for example:
+         * 1 = 1 minute
+         * 2 = 2 minutes
+         * 6 = 6 minutes
+         * etc.
+         */
+        let x = 5;
+
+        /**
+         * The roleSelector is a list of every role you want to change.
+         */
+        let roleSelector=[
+            'Creators Council',
+            'Smol Bean',
+            'Tomato Fox'
+        ]
+
+        /**
+         * The setInterval controls how long it takes before the color changes.
+         * The setTimeout makes sure new values are assigned each time.
+         */
+        setInterval(() => {
+            setTimeout(() => {
+                autoRoleColorChange(roleSelector);
+            }, null);
+        }, 60000*x);
+
+        /**
+         * Random color for each role selected right off the bat when bot starts - initializes the changing sequence
+         */
+        autoRoleColorChange(roleSelector);
+
+        /**
+         * Pass through a array of role names and they will automically be processed and change each one to a new color.
+         * @function grabRole() 
+         * @function randomColor()
+         * @function main()
+         * @function run()
+         * @param {array} roleNameInput Array of string elements
+         */
+        function autoRoleColorChange(roleNameInput){
+
+            /**
+             * Pass through the role's name and it will return the role object
+             * @param {string} role 
+             * @returns {object} Role Object
+             */
+            async function grabRole(role){
+                return bot.guilds.get(`459891664182312980`).roles.find(n => n.name === role);
+            }
+
+            /**
+             * @returns {string} A(n) random color in hex format
+             */
+            async function randomColor(){
+                // storing all letter and digit combinations 
+                // for hex color code 
+                var letters = "0123456789ABCDEF";
+
+                // color code starts with # 
+                var color = '#';
+
+                // generating 6 times as color code consist 
+                // of 6 letter or digits 
+                for (var i = 0; i < 6; i++) {
+                    color += letters[(Math.floor(Math.random() * 16))];
+                }
+
+                return color;
+            }
+
+            /**
+             * runs the core processing of the whole function
+             * @param {string} roleName Role name
+             */
+            async function main(roleName) {
+                let color = await randomColor();
+                let role = await grabRole(roleName);
+                console.log(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`);
+                role.setColor(color);
+            }
+
+            /**
+             * Initilizes the whole function to run, by separating the array of role names and calls the main() to process them.
+             * @param {string} role Role name
+             */
+            function run(role) {
+                for (let index = 0; index < role.length; index++) {
+                    main(role[index]);
+                }
+            }
+
+            // Call the run function and start the process
+            run(roleNameInput);
+        }
+    }
 
     /**
      * 

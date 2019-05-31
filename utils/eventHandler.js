@@ -5,12 +5,14 @@ module.exports = bot => {
     
     bot.on("ready", async() => reqEvent("ready")(bot));
     bot.on("message", async(message) => reqEvent("message")(bot, message));
-    bot.on("error", reqEvent("error"));
     // Need these lines to have error catcher in own file
     let message_object;
     bot.on('message', message => {
         message_object = message;
     })
+    bot.on("error", async (e) => reqEvent("error")(bot, e, message_object));
+    bot.on("warn", async (e) => reqEvent("warn")(bot, e, message_object));
+    //bot.on("debug", async (e) => reqEvent("debug")(bot, e, message_object));
     //process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
     //
 
