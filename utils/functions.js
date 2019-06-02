@@ -143,6 +143,14 @@ module.exports = {
     */
     pause: function (ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-    }// End of pause
+    },// End of pause
+    
+    /**
+     * Returns a(n) emoji from the server based on name.
+     *  @emoji a unicode emoji
+     * */
+    emoji: (name,bot) => {
+        return bot.emojis.find(e => e.name === name);
+    },// End of emoji
 
 }

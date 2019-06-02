@@ -31,10 +31,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
   //  Check to make sure person has right lvl and money
   //
 
-  // Parsing emoji by its name.
-  function emoji(name) {
-    return bot.emojis.find(e => e.name === name)
-  }
 
   /**
       Requesting user data from sql API.
@@ -167,7 +163,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         await utils.pause(200);
         await filtering_data(raw_object);
 
-        message.channel.send(`${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`);
+        message.channel.send(`${utils.emoji(`AnnieWot`,bot)} | *Filler message*: Thank you for creating a clan`);
         load.delete();
       })
   }

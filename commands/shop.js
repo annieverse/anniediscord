@@ -33,11 +33,8 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
 async function initShop() {
     const collection = new databaseManager(message.author.id);
-    const moji = (mojiname) => {
-         return bot.emojis.find((x) => x.name === mojiname) 
-    }
-
-    const registerItems = (source, target, emoji=moji('ArtCoins')) => {
+    
+    const registerItems = (source, target, emoji=utils.emoji('ArtCoins',bot)) => {
         let categories = []; 
 
         for (var i in source) { 
@@ -81,7 +78,7 @@ async function initShop() {
                 .setColor(palette.darkmatte)
                 .setFooter(footer)
                 .setImage(img)
-                registerItems(await collection.classifyItem(type, opt1, opt2), page, moji(emoji));
+                registerItems(await collection.classifyItem(type, opt1, opt2), page, utils.emoji(emoji,bot));
 
                 registered_interface.push(page);
     }

@@ -11,16 +11,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   
     /**
-        Parsing emoji by its name.
-        @emoji
-    */
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
-
-    /**
         Redeeming functions.
         Core event of transaction.
         @redeem
@@ -55,7 +45,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
         //  Prompt message before proceeding the transaction
         const check_out = () => {
-            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${emoji(`artcoins`)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
+            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
         }
 
 

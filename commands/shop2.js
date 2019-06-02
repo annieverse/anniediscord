@@ -20,11 +20,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 const format = new formatManager(message);
 const collection = new databaseManager(message.author.id);
 
-const moji = (mojiname) => {
-    return bot.emojis.find((x) => x.name === mojiname) 
-}
-
-const registerItems = (source, target, emoji=moji('artcoins')) => {
+const registerItems = (source, target, emoji=utils.emoji('artcoins',bot)) => {
     let categories = []; 
 
     for (var i in source) { 

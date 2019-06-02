@@ -47,12 +47,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
             }
         }
 
-        // Parsing emoji by its name.
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         // Pre-defined messages
         const log = async (props = {}, ...opt) => {
 
@@ -81,7 +75,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
                 "SUCCESSFUL": {
                     color: palette.lightgreen,
-                    msg: `**${metadata.user.name}** used ${emoji(`powercapsule1`)}**${opt[0]} capsules** and gained **+${opt[1]} EXP**.`
+                    msg: `**${metadata.user.name}** used ${utils.emoji(`powercapsule1`,bot)}**${opt[0]} capsules** and gained **+${opt[1]} EXP**.`
                 }
 
             }

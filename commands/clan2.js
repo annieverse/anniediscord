@@ -60,15 +60,15 @@ module.exports.run = async (bot, command, message, args, utils) => {
             },
             "NOT_VALID_COMMAND" : {
                 color: palette.red, 
-                msg: `I cannot find that sub-command... ${emoji(`aauWallSlam`)}`
+                msg: `I cannot find that sub-command... ${utils.emoji(`aauWallSlam`,bot)}`
             },
             "TEST" : {
                 color: palette.golden, 
-                msg: `I found this sub-command! ${emoji(`aauinlove`)}`
+                msg: `I found this sub-command! ${utils.emoji(`aauinlove`,bot)}`
             },
             "ERROR" : {
                 color: palette.red, 
-                msg: `I cannot find that sub-command... ${emoji(`aauWallSlam`)}`
+                msg: `I cannot find that sub-command... ${utils.emoji(`aauWallSlam`,bot)}`
             }
         }
         const displist =[];
@@ -81,13 +81,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     /***************************************************************************************************
      * GLOBAL MICRO-FUNCTIONS
      ***************************************************************************************************/
-     
-    /*  Parsing emoji by its name.
-     *  @emoji
-     */
-    const emoji = (name) => bot.emojis.find(e => e.name === name)
-
-
+    
     /*  isValudUser() Information
      */
     const isValidUser = async(string) => await utils.userFinding(message, string);

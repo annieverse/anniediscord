@@ -10,11 +10,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     const env = require(`../.data/environment.json`);
     if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
-    //  Parsing emoji by its name.
-    //  @emoji
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
 
     /****************************************************************************************************************************************************************************************************************
      * pay() COMMAND FUNCTION
@@ -51,10 +46,10 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const log = (codelist) =>{
             const loglist = codelist.split(" ");
             const logtable = {
-                //"prompt": {color: palette.golden, msg: `**${user.username}**, you're going to pay ${emoji(`artcoins`)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `},        
+                //"prompt": {color: palette.golden, msg: `**${user.username}**, you're going to pay ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `},        
                 "TEST": {
                     color: palette.green, 
-                    msg: `TEST MESSAGE: ${target_user} | ${emoji(`artcoins`)}**${format.threeDigitsComa(amount)}**`
+                    msg: `TEST MESSAGE: ${target_user} | ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(amount)}**`
                 },
                 "LB": {
                     color: palette.white, 
@@ -89,36 +84,36 @@ module.exports.run = async (bot, command, message, args, utils) => {
                 },
                 "ARGS_UNKNOWN": {
                     color: palette.red, 
-                    msg: `I have no idea what this means... ${emoji(`aauWallSlam`)}`
+                    msg: `I have no idea what this means... ${utils.emoji(`aauWallSlam`,bot)}`
                 },
                 "VALID_TARGET_NO_AMOUNT" : {
                     color: palette.golden, 
-                    msg: `How much would you like to pay ${target_user}? ${emoji(`aauinlove`)}`
+                    msg: `How much would you like to pay ${target_user}? ${utils.emoji(`aauinlove`,bot)}`
                 },
                 "VALID_AMOUNT_NO_TARGET" : {
                     color: palette.golden, 
-                    msg: `Who would you like to pay ${emoji(`artcoins`)}**${format.threeDigitsComa(amount)}** to? ${emoji(`aauinlove`)}`
+                    msg: `Who would you like to pay ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(amount)}** to? ${utils.emoji(`aauinlove`,bot)}`
                 },
                 "INVALID_AMOUNT": {
                     color: palette.red, 
-                    msg: `That's a strange amount of **Artcoins**... ${emoji(`aauwonkyhehe`)}`
+                    msg: `That's a strange amount of **Artcoins**... ${utils.emoji(`aauwonkyhehe`,bot)}`
                 },
                 "SELF_PAYMENT": {
                     color: palette.red, 
-                    msg: `Stupid ${user.username}, why are you trying to pay yourself? ${emoji(`aauSatanialaugh`)}`
+                    msg: `Stupid ${user.username}, why are you trying to pay yourself? ${utils.emoji(`aauSatanialaugh`,bot)}`
                 },
                 "UNKNOWN_USER": {
                     color: palette.red, 
-                    msg: `I couldn't find that user... ${emoji(`aauWallSlam`)}
+                    msg: `I couldn't find that user... ${utils.emoji(`aauWallSlam`,bot)}
                     You could try again by tagging them like this: "\`${prefix}${command}\` ${user}"`
                 },
                 "INSUFFICIENT_BAL": {
                     color: palette.red, 
-                    msg: `You you don't have that many **Artcoins**... ${emoji(`aaupeek`)}`
+                    msg: `You you don't have that many **Artcoins**... ${utils.emoji(`aaupeek`,bot)}`
                 },
                 "YOUR_BALANCE" : {
                     color: palette.red, 
-                    msg: `Your balance is: ${emoji(`artcoins`)}**${format.threeDigitsComa(balance)}** Artcoins.`
+                    msg: `Your balance is: ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(balance)}** Artcoins.`
                 },
                 "ERROR": {
                     color: palette.red, 
@@ -328,7 +323,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
                     amount_arg_index = i;
                 }
             }
-            return format.embedWrapper(palette.red, `Here's your output ${user.username}: ${emoji(`aauinlove`)}
+            return format.embedWrapper(palette.red, `Here's your output ${user.username}: ${utils.emoji(`aauinlove`,bot)}
                                                      - Requesting Help: ${reqest_help}
                                                      - Target user: ${arg_target}
                                                      - Target index: ${target_arg_index}
@@ -343,7 +338,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
                     time: 30000,
                 });
                 
-                format.embedWrapper(palette.golden, `Waiting for input, ${user.username}... ${emoji(`aauinlove`)}`)
+                format.embedWrapper(palette.golden, `Waiting for input, ${user.username}... ${utils.emoji(`aauinlove`,bot)}`)
                 collector.on(`collect`, async (msg) => {
                     let user_input = msg.content.toLowerCase();
                     if (user_input){
@@ -360,7 +355,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             await test();
             return
 
-            return format.embedWrapper(palette.red, `Here's your output ${user.username}: ${emoji(`aauinlove`)}  
+            return format.embedWrapper(palette.red, `Here's your output ${user.username}: ${utils.emoji(`aauinlove`,bot)}  
             - Passed Argument Check: ${arg_check_pass}
             - Pending AC Amount: ${pending_amount}
             - Pending Target User: ${pending_target}`);

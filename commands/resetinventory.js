@@ -5,9 +5,7 @@ const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const user = message.author;
-function emoji(name) {
-    return bot.emojis.find(e => e.name === name)
-}
+
 
 
 async function reset() {
@@ -21,7 +19,7 @@ async function reset() {
 
 
     console.log(`${user.tag} inventory has been wiped out.`)
-    return message.channel.send(`${emoji(`aausugoi`)} your inventory has been wiped out-`)
+    return message.channel.send(`${utils.emoji(`aausugoi`,bot)} your inventory has been wiped out-`)
             .then(async msg => {
                 await utils.pause(3000);
                 msg.delete();

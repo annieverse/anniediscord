@@ -27,16 +27,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             event_ch: bot.channels.get(`460615157056405505`)
         }
 
-
-        // Time promise
-        
-
-        // Parsing emoji by its name.
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         // Pre-defined messages
         const log = async (props = {}) => {
 
@@ -123,20 +113,20 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 /// Temp Disabled by Fwubbles per Foxling's Request: 05/17/19
 ///               message.author.send(format.embedBase(palette.lightblue, 
-///                 `Hey **${metadata.user.name}**! Good luck and have fun with the event! ${emoji(`AnnieHug`)}
+///                 `Hey **${metadata.user.name}**! Good luck and have fun with the event! ${utils.emoji(`AnnieHug`,bot)}
 ///                 *Foxie's Event Fever Effect has been applied.*`))
               
                 message.channel.send(format.embedBase(palette.lightblue, 
-                    `Hey **${metadata.user.name}**! Good luck and have fun with the event! ${emoji(`AnnieHug`)}
+                    `Hey **${metadata.user.name}**! Good luck and have fun with the event! ${utils.emoji(`AnnieHug`,bot)}
                     *Foxie's Event Fever Effect has been applied! (Cost: 0 AC)*`))
               
-                metadata.event_ch.send(format.embedBase(palette.pink, `**floof-floof**! **${metadata.user.name}** has joined the event! ${emoji(`bongofoxy`)}`));    
+                metadata.event_ch.send(format.embedBase(palette.pink, `**floof-floof**! **${metadata.user.name}** has joined the event! ${utils.emoji(`bongofoxy`,bot)}`));    
             }
             else {
                 metadata.event_ch.send(format.embedBase(palette.golden, `**${metadata.user.name}** has joined the event!`));
                 message.author.send(format.embedBase(palette.lightblue, 
-                    `Hey **${metadata.user.name}**! ${emoji(`artcoins`)}**${metadata.ticket_fee}** has been deducted from your balance.
-                    Good luck and have fun with the event! ${emoji(`AnnieHug`)}`))
+                    `Hey **${metadata.user.name}**! ${utils.emoji(`artcoins`,bot)}**${metadata.ticket_fee}** has been deducted from your balance.
+                    Good luck and have fun with the event! ${utils.emoji(`AnnieHug`,bot)}`))
                 proc.withdraw;                    
             }
             

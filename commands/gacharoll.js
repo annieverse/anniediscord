@@ -25,13 +25,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 const format = new formatManager(message);
 const worldchnl = bot.channels.get(`459891664182312982`);
 
-
-// Parsing emoji by its name.
-const emoji = (name) => {
-    return bot.emojis.find(e => e.name === name)
-}
-
-
 /**
 	2D Card visuals built from canvas-constructor.
 	Planned to merge these functions for readability & maintainability
@@ -568,7 +561,7 @@ async function backend(container) {
 						});
 
 						format.embedWrapper(palette.darkmatte, `You owned duplicate of **${cards_metadata[key].fullname} card**.
-				 		The new one will be dismantled into ${emoji(convert_to_shard)}**${5 * parsed_container[key]} ${convert_to_shard} & ${emoji(`fragments`)}${10000 * parsed_container[key]} Fragments.**`)
+				 		The new one will be dismantled into ${utils.emoji(convert_to_shard,bot)}**${5 * parsed_container[key]} ${convert_to_shard} & ${utils.emoji(`fragments`,bot)}${10000 * parsed_container[key]} Fragments.**`)
 						delete parsed_container[key];
 						continue;
 					}

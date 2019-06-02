@@ -28,16 +28,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     const configFormat = new formatManager(message);
 
-
-    // Parsing emoji by its name.
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
-
-
-
     /**
         Requesting user inventory data from sql API.
         @get_inventobject
@@ -411,7 +401,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                     await get_inventobject();
                     await utils.pause(200);
                     await filtering_items(raw_object);
-                    const title = `${emoji(`AnnieWot`)} | **Inventory card for ${message.author.username}**`;
+                    const title = `${utils.emoji(`AnnieWot`,bot)} | **Inventory card for ${message.author.username}**`;
 
                     !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(message.member, filter_alias_res),`inventory-${message.author.username}.jpg`))
                     load.delete();                      

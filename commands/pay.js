@@ -26,11 +26,6 @@ async function initPay() {
             return result;
     }
 
-		const emoji = (name) => {
-		    return bot.emojis.find(e => e.name === name)
-		}
-
-
     function template(content, color = palette.darkmatte) {
     	let embed = new Discord.RichEmbed()
     		.setColor(color)
@@ -96,7 +91,7 @@ async function initPay() {
 	                    TRANSFER
 	                    TO ACCOUNT:  \`${user.id}\`
 	                    NAME :  **${user.user.username}**
-	                    VALUE : ${emoji(`artcoins`)} **${digitValue}**
+	                    VALUE : ${utils.emoji(`artcoins`,bot)} **${digitValue}**
 	                    This message is automatically generated after you made a
 	                    successful payment with other user.\n
 

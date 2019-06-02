@@ -16,13 +16,6 @@ sendRewardInit();
 
     async function sendRewardInit() {
 
-
-        // Parsing emoji by its name.
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         const format = new formatManager(message);
 
         try {        
@@ -55,14 +48,14 @@ sendRewardInit();
                                     Hello **${user.user.username}**, thank you for participating in this week's event! <:AnnieHug:540332226735505439> :tada:
                                     
                                     You have received the following items :
-                                    - ${emoji(`artcoins`)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins
-                                    - ${emoji(`luckyticket`)}  **${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets
+                                    - ${utils.emoji(`artcoins`,bot)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins
+                                    - ${utils.emoji(`luckyticket`,bot)}  **${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets
                                     `)
 
                         user.send(embed)
                         format.embedWrapper(palette.lightgreen, `Package has been successfully delivered. 
                                 ACCOUNT: **${user.user.tag}**
-                                ITEMS:  ${emoji(`artcoins`)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins, ${emoji(`luckyticket`)}**${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets)`)
+                                ITEMS:  ${utils.emoji(`artcoins`,bot)} **${format.threeDigitsComa(rewards[args[1]].ac)}x** Artcoins, ${utils.emoji(`luckyticket`,bot)}**${format.threeDigitsComa(rewards[args[1]].luckyticket)}x** Lucky Tickets)`)
                         console.log(`${message.author.username} has given REWARD_PACKAGE(${args[1]}) to ${user.user.username}`)
                     })
             }

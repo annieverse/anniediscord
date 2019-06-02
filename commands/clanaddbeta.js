@@ -27,7 +27,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             },
 
             "SUCCESSFUL": {
-                msg: `${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`,
+                msg: `${utils.emoji(`AnnieWot`,bot)} | *Filler message*: Thank you for creating a clan`,
                 color: palette.lightgreen
             },
 
@@ -75,13 +75,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     let colorCustom = false;
     let maxMembers;
 
-    /**
-     * Returns a(n) emoji from the server based on name.
-     *  @emoji a unicode emoji
-     * */
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
 
     /**
      * Requesting user data from sql API.

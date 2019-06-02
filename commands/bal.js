@@ -27,9 +27,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
 
         async function init_balance() {
-          const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-          }
 
             if(!args[0]){
                 const dbmanager = new databaseManager(message.author.id);
@@ -40,7 +37,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins`);
+                            `${utils.emoji(`artcoins`,bot)} ${ac} Artcoins`);
                         })
             }
             else if(args[0]){
@@ -54,7 +51,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins`);
+                            `${utils.emoji(`artcoins`,bot)} ${ac} Artcoins`);
                         })
                 }
                 catch(e) {

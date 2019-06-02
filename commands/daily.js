@@ -36,12 +36,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
 		sql.open(".data/database.sqlite");
 
-        // Returns emoji-code
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         // Request user's collection data.
         const cards_collection = () => {
             return sql.get(`SELECT poppy_card FROM collections WHERE userId = ${message.author.id}`)
@@ -80,7 +74,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 			                sql.run(`UPDATE userinventories SET artcoins = artcoins + ${amount + bonus} WHERE userId = ${message.author.id}`);
 			                    return format.embedWrapper(
 			                       	has_poppy_check ? palette.purple : palette.halloween,
-                                    `**${user}** has received ${emoji(`artcoins`)}**${amount}${isItStreaking ? `(+${bonus})` : `\u200b`}** artcoins! ${isItStreaking ? `
+                                    `**${user}** has received ${utils.emoji(`artcoins`,bot)}**${amount}${isItStreaking ? `(+${bonus})` : `\u200b`}** artcoins! ${isItStreaking ? `
                                     **${countStreak} days of consecutive claims. ${has_poppy_check ? `${skill.name} Effect.` : ``}**` : `!\u200b`}`
 	                          	)
 					 }

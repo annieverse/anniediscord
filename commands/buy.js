@@ -43,12 +43,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         const slotkey = collection.storingKey(badgesdata);
         const slotvalue = collection.storingValue(badgesdata);
         
-        // Parsing emoji by its name.
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         // Pre-defined messages
         const log = async (props = {}, ...opt) => {
 
@@ -90,7 +84,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
                     "CONFIRMATION": {
                         color: palette.golden,
-                        msg: `**${message.author.username}**, you're going to pay ${emoji(props.emoticon)}**${format.threeDigitsComa(opt[0])}** for **${opt[1]}** ${opt[2]}.\nPlease type \`y\` to confirm your purchase.`,
+                        msg: `**${message.author.username}**, you're going to pay ${utils.emoji(props.emoticon,bot)}**${format.threeDigitsComa(opt[0])}** for **${opt[1]}** ${opt[2]}.\nPlease type \`y\` to confirm your purchase.`,
                     },
 
                     "LVL_TOO_LOW": {
