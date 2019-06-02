@@ -3,12 +3,12 @@ const palette = require("../colorset.json");
 const moment = require(`moment`);
 const formatManager = require('../utils/formatManager');
 const env = require(`../.data/environment.json`);
-const userFinding = require('../utils/userFinding')
+
 
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
-exports.run = async (bot,command, message) => {
+module.exports.run = async (bot, command, message, args, utils) => {
     
     const format = new formatManager(message);
 
@@ -245,7 +245,7 @@ exports.run = async (bot,command, message) => {
         
 
         //  Returns if target is not valid member.
-        metadata.target = await userFinding.resolve(message, message.content.substring(command.length+2))
+        metadata.target = await utils.userFinding(message, message.content.substring(command.length+2))
         if(!metadata.target)return log({code: `INVALID_USER`});
 
 

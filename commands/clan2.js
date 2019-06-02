@@ -1,9 +1,8 @@
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
-const userFind = require('../utils/userFinding');
 
-exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
     //  Developer Mode Evnironment
     //  Command active only for developers
     const env = require(`../.data/environment.json`);
@@ -61,15 +60,15 @@ exports.run = async (bot, command, message, args) => {
             },
             "NOT_VALID_COMMAND" : {
                 color: palette.red, 
-                msg: `I cannot find that sub-command... ${emoji(`aauWallSlam`)}`
+                msg: `I cannot find that sub-command... ${utils.emoji(`aauWallSlam`,bot)}`
             },
             "TEST" : {
                 color: palette.golden, 
-                msg: `I found this sub-command! ${emoji(`aauinlove`)}`
+                msg: `I found this sub-command! ${utils.emoji(`aauinlove`,bot)}`
             },
             "ERROR" : {
                 color: palette.red, 
-                msg: `I cannot find that sub-command... ${emoji(`aauWallSlam`)}`
+                msg: `I cannot find that sub-command... ${utils.emoji(`aauWallSlam`,bot)}`
             }
         }
         const displist =[];
@@ -82,22 +81,10 @@ exports.run = async (bot, command, message, args) => {
     /***************************************************************************************************
      * GLOBAL MICRO-FUNCTIONS
      ***************************************************************************************************/
-     
-    /*  Lifesaver promise. Used pretty often when calling sql API.
-     *  @pause
-     */
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
     
-    /*  Parsing emoji by its name.
-     *  @emoji
-     */
-    const emoji = (name) => bot.emojis.find(e => e.name === name)
-
-
     /*  isValudUser() Information
      */
-    const isValidUser = async(string) => await userFind.resolve(message, string);
+    const isValidUser = async(string) => await utils.userFinding(message, string);
 
     
     /*  isValidSubCommand() Information

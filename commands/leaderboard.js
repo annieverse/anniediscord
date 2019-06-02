@@ -16,7 +16,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
 
-module.exports.run = async(bot,_command, message, args)=> {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 
 /// leaderboard.js

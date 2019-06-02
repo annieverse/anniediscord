@@ -4,7 +4,7 @@ const formatManager = require('../utils/formatManager');
 const cards = require('../utils/cards-metadata.json');
 const sql = require("sqlite");
 
-module.exports.run = async(bot,command,message, args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// dailyjs
     ///
@@ -35,12 +35,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
     async function dailies() {
 
 		sql.open(".data/database.sqlite");
-
-        // Returns emoji-code
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
 
         // Request user's collection data.
         const cards_collection = () => {
@@ -80,7 +74,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 			                sql.run(`UPDATE userinventories SET artcoins = artcoins + ${amount + bonus} WHERE userId = ${message.author.id}`);
 			                    return format.embedWrapper(
 			                       	has_poppy_check ? palette.purple : palette.halloween,
-                                    `**${user}** has received ${emoji(`artcoins`)}**${amount}${isItStreaking ? `(+${bonus})` : `\u200b`}** artcoins! ${isItStreaking ? `
+                                    `**${user}** has received ${utils.emoji(`artcoins`,bot)}**${amount}${isItStreaking ? `(+${bonus})` : `\u200b`}** artcoins! ${isItStreaking ? `
                                     **${countStreak} days of consecutive claims. ${has_poppy_check ? `${skill.name} Effect.` : ``}**` : `!\u200b`}`
 	                          	)
 					 }

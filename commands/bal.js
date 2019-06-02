@@ -1,9 +1,8 @@
 const palette = require('../colorset.json');
-const userFind = require('../utils/userFinding');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// artcoins.js
     ///
@@ -28,9 +27,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
 
         async function init_balance() {
-          const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-          }
 
             if(!args[0]){
                 const dbmanager = new databaseManager(message.author.id);
@@ -41,12 +37,12 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins`);
+                            `${utils.emoji(`artcoins`,bot)} ${ac} Artcoins`);
                         })
             }
             else if(args[0]){
                 try {
-                    const target = await userFind.resolve(message, message.content.substring(command.length+2));
+                    const target = await utils.userFinding(message, message.content.substring(command.length+2));
                     const dbmanager = new databaseManager(target.id);
                     const data = await dbmanager.pullRowData("userinventories", target.id);
                     let ac = format.threeDigitsComa(data.artcoins);
@@ -55,7 +51,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                     return message.channel.send(`**${name}'s Balance**`)
                         .then(() => {
                             format.embedWrapper(palette.golden,
-                            `${emoji(`artcoins`)} ${ac} Artcoins`);
+                            `${utils.emoji(`artcoins`,bot)} ${ac} Artcoins`);
                         })
                 }
                 catch(e) {

@@ -5,10 +5,8 @@ const ms = require('parse-ms');
 const moment = require('moment');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
-let func = require(`../utils/functions.js`);
 
-exports.run = async (bot,command, message, args) => {
-
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -45,7 +43,7 @@ const clean = (text) => {
       
 
       evembed.setColor(palette.halloween)
-      func.evalpages(message, evaltest,evembed);
+      utils.evalpages(message, evaltest,evembed);
       //evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(evaled)}\n\`\`\``)
       //message.channel.send(evembed);
 
@@ -53,7 +51,7 @@ const clean = (text) => {
 
       
       evembed.setColor(palette.darkmatte)
-      func.evalpages(message, err,evembed);
+      utils.evalpages(message, err,evembed);
       //evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(err)}\n\`\`\``)
       //message.channel.send(evembed);
 

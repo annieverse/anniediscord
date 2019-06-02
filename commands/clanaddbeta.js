@@ -4,7 +4,7 @@ const formatManager = require(`../utils/formatManager`);
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
     const env = require(`../.data/environment.json`);
     if (env.dev && !env.administrator_id.includes(message.author.id)) return;
@@ -27,7 +27,7 @@ module.exports.run = async (bot, command, message, args) => {
             },
 
             "SUCCESSFUL": {
-                msg: `${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`,
+                msg: `${utils.emoji(`AnnieWot`,bot)} | *Filler message*: Thank you for creating a clan`,
                 color: palette.lightgreen
             },
 
@@ -75,21 +75,6 @@ module.exports.run = async (bot, command, message, args) => {
     let colorCustom = false;
     let maxMembers;
 
-    /**
-     * Lifesaver promise. Used pretty often when calling an API.
-     * @pause
-     * */
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
-     * Returns a(n) emoji from the server based on name.
-     *  @emoji a unicode emoji
-     * */
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
 
     /**
      * Requesting user data from sql API.
@@ -443,7 +428,7 @@ module.exports.run = async (bot, command, message, args) => {
 
             //  Request userdata
             await get_userobject();
-            await pause(200);
+            await utils.pause(200);
             
             //  
             await filtering_data(raw_object);

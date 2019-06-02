@@ -97,7 +97,7 @@ module.exports = (bot, message) => {
   let args = messageArray.slice(1);
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
-
+  let utils = require(`../utils/functions.js`);
   if (!message.content.startsWith(prefix)) return;
-  if (commandfile) commandfile.run(bot, command, message, args);
+  if (commandfile) commandfile.run(bot, command, message, args,utils);
 }

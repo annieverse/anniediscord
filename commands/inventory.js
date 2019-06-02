@@ -10,7 +10,6 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 const profileManager = require('../utils/profileManager');
-const userFinding = require('../utils/userFinding')
 const userRecently = new Set();
 
 const sql = require('sqlite');
@@ -21,33 +20,13 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
     const configFormat = new formatManager(message);
-
-
-    /**
-        Lifesaver promise. Used pretty often when calling an API.
-        @pause
-    */
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve,ms));
-    }
-
-
-
-    // Parsing emoji by its name.
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
-
-
 
     /**
         Requesting user inventory data from sql API.
@@ -162,9 +141,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         assigning_items();
         eliminate_nulls();
         name_labeling();
-        await pause(100)
+        await utils.pause(100)
         get_rarities();
-        await pause(50);
+        await utils.pause(50);
 
 
         // Sorted and properly formatted.
@@ -420,9 +399,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             return message.channel.send(`\`fetching ${message.author.username} inventory ..\``)
                 .then(async load => {
                     await get_inventobject();
-                    await pause(200);
+                    await utils.pause(200);
                     await filtering_items(raw_object);
-                    const title = `${emoji(`AnnieWot`)} | **Inventory card for ${message.author.username}**`;
+                    const title = `${utils.emoji(`AnnieWot`,bot)} | **Inventory card for ${message.author.username}**`;
 
                     !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(message.member, filter_alias_res),`inventory-${message.author.username}.jpg`))
                     load.delete();                      

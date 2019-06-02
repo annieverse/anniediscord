@@ -1,12 +1,11 @@
 const palette = require('../colorset.json');
 const Discord = require('discord.js');
-const userFinding = require(`../utils/userFinding`);
 const formatManager = require(`../utils/formatManager`);
 const sql = require(`sqlite`);
 sql.open(`.data/database.sqlite`)
 
 
-exports.run = async (bot,command, message) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -16,13 +15,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 : format.embedWrapper(palette.darkmatte, `Unavailable access.`)
 
 async function init_gift() {
-
-    // Parsing emoji by its name.
-    const emoji = (name) => {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
     // Pre-defined messages.
     const log = async (props = {}, ...opt) => {
         props.code = !props.code ? "UNDEFINED" : props.code;
@@ -47,7 +39,7 @@ async function init_gift() {
             "SHORT_GUIDE": {
                 color: palette.crimson,
                 msg: `Hey **${message.author.username}**, now you can give present to your crush!
-                     Start by typing \`>gift <user>\` ${emoji(`AnnieHype`)}`
+                     Start by typing \`>gift <user>\` ${utils.emoji(`AnnieHype`,bot)}`
             },
 
             "LOCK_ACCESS": {
@@ -82,7 +74,7 @@ async function init_gift() {
 
             "SUCCESSFUL": {
                 color: palette.lightgreen,
-                msg: `**${opt[0]}** has received ${emoji(props.icon)}**${opt[1]} ${opt[2]}(+${opt[3]} reps)**`
+                msg: `**${opt[0]}** has received ${utils.emoji(props.icon,bot)}**${opt[1]} ${opt[2]}(+${opt[3]} reps)**`
             }
         }
             const res = logtext[props.code];
@@ -165,7 +157,7 @@ async function init_gift() {
         const textified = (obj) => {
             let str = ``
             for(let key in obj.gifts) {
-                str += `> ${emoji(key.toString())}**${obj.gifts[key]}x ${key}**\n`
+                str += `> ${utils.emoji(key.toString(),bot)}**${obj.gifts[key]}x ${key}**\n`
             }
             return str;
         }
@@ -264,7 +256,7 @@ async function init_gift() {
 
    // Initialization
    const run = async () => {
-        const target_user = await userFinding.resolve(message, message.content.substring(command.length+2))
+        const target_user = await utils.userFinding(message, message.content.substring(command.length+2))
         
         // Locked feature. Only accessible to creators council.
         //if(!message.member.roles.find(r => r.name === 'Creators Council'))return log({code: `LOCK_ACCESS`})

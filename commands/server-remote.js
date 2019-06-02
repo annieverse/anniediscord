@@ -5,7 +5,7 @@ const env = require('../.data/environment.json');
 const formatManager = require('../utils/formatManager');
 const fs = require("fs")
 
-exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 
     //  Centralized object
@@ -79,7 +79,7 @@ exports.run = async (bot,command, message, args) => {
 
     //  Restart the server.
     const restart_server = async (countdown) => {
-        await pause(countdown);
+        await utils.pause(countdown);
         process.exit();
     }
 

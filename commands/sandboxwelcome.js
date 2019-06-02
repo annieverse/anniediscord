@@ -9,7 +9,7 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding')
+
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Roboto.ttf")), "Roboto");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
@@ -18,7 +18,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
-module.exports.run = async (bot,_command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -85,7 +85,7 @@ async function welcomeCard(member) {
   }
 
 try {  
-    const user = await userFinding.resolve(message, message.content.substring(3));
+    const user = await utils.userFinding(message, message.content.substring(3));
     const caption = '<:Annie_Smug:523686816545636352> | Welcome card for ';
       if(!args[0]) {
         message.channel.startTyping();

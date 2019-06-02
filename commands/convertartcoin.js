@@ -7,7 +7,7 @@ const formatManager = require('../utils/formatManager');
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
 
-module.exports.run = async(bot,command, message,args)=> {
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// convertartcoin.js
     ///
