@@ -16,7 +16,7 @@ module.exports = (bot, message) => {
   const format = new formatManager(message)
 
 
-  if(!env.dev) {
+  if(env.dev) {
     artChannelsFilter();
     eventChannelFilter();
     portfolioRequest();  
@@ -66,7 +66,7 @@ module.exports = (bot, message) => {
 
     if (artchannels.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
       let img = message.attachments.first();
-      message.react('⭐')
+      message.react('❤')
       sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
       return console.log(`${message.author.tag} has submitted "${img.filename}" in ${message.channel.name}.`)
     }

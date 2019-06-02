@@ -16,6 +16,22 @@ class databaseUtils {
         }
 
 
+
+        //  Pull neccesary data at once.
+        get userMetadata() {
+            return sql.get(
+                `SELECT *
+                FROM userdata
+                INNER JOIN userinventories
+                ON userinventories.userId = userdata.userId
+                INNER JOIN usercheck
+                ON usercheck.userId = userdata.userId
+                WHERE userdata.userId = "${this.id}"`
+            )
+        }
+
+
+
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.

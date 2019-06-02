@@ -409,7 +409,7 @@ async function experienceGains() {
             })
           } else {
                 console.log(`created new profile for ${message.author.tag}.`);
-                  sql.run("INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, artcoins, reputations, description, interfacemode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [message.author.id, randomexp, 100, 150, 0, 0, null, null, null]);
+                  sql.run("INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, reputations, description, interfacemode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [message.author.id, randomexp, 100, 150, 0, null, null, null]);
                   sql.run("INSERT INTO usercheck (userId, expcooldown) VALUES (?, ?)", [message.author.id, "False"]);
                   sql.run(`INSERT INTO userbadges (userId) VALUES (${message.author.id})`)
                   sql.run(`INSERT INTO userinventories (userId, artcoins) VALUES (${message.author.id}, 0)`)

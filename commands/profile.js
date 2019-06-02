@@ -394,7 +394,7 @@ async function card() {
                     */
                 canv.setColor(palette.midgray)
                     .setTextFont(`28pt RobotoBold`)      // reputation
-                    .addText(`★`, startPos_x+390, startPos_y+320)
+                    .addText(`❤`, startPos_x+390, startPos_y+320)
                     .setTextAlign("left")
                     .setTextFont(`23pt RobotoBold`) 
                     .addText(configProfile.checkRep(user.rep), startPos_x+410, startPos_y+319)
