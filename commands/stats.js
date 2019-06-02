@@ -6,7 +6,7 @@ const ms = require('parse-ms');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command,message)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// botinfo.js
     ///
@@ -46,7 +46,7 @@ return ["bot", "bot-games", "naph-little-house", "sandbox"].includes(message.cha
 	    	sql.get(`SELECT DATETIME('now')`)
 	    		.then(async time => midnight = new Date(Object.values(time)).getTime()) ;
 
-	    	await pause(1000);
+	    	await utils.pause(1000);
 			return sql.all(`SELECT * FROM userartworks WHERE timestamp >= ${prevday} AND timestamp < ${midnight} ORDER BY timestamp DESC`)
 			.then(async artdata => res_todayarts = artdata)
 		}
@@ -89,7 +89,7 @@ return ["bot", "bot-games", "naph-little-house", "sandbox"].includes(message.cha
 	    get_todayarts();
 	    return message.channel.send(`\`Fetching annie's data ..\``)
 	    	.then(async msg => {
-	    		await pause(1000);
+	    		await utils.pause(1000);
 
 	    		msg.delete();
 	    		fetched();

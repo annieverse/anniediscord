@@ -4,21 +4,12 @@ const formatManager = require('../utils/formatManager');
 const userRecently = new Set();
 
 
-exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
-    /**
-    	Lifesaver promise. Used pretty often when calling sql API.
-    	@pause
-    */
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-
-
+  
     /**
         Parsing emoji by its name.
         @emoji

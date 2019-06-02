@@ -1,9 +1,8 @@
 const palette = require('../colorset.json');
 const databaseManager = require('../utils/databaseManager');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding');
 
-exports.run = async (_bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /**
      *   dbkits.
@@ -83,7 +82,7 @@ exports.run = async (_bot, command, message, args) => {
              *      #register
              */
             if (args[1]) {
-                const user = await userFinding.resolve(message, args[1]);
+                const user = await utils.userFinding(message, args[1]);
                 let data = {
                     id: user.id,
                     tbl: args[2],
@@ -192,7 +191,7 @@ exports.run = async (_bot, command, message, args) => {
              */
             if (args[1]) {
                 try {
-                    const user = await userFinding.resolve(message, args[1]);
+                    const user = await utils.userFinding(message, args[1]);
                     let data = {
                         opt: message.content.includes("-i") ? "item_id" : "userId",
                         id: message.content.includes("-i") ? args[1] : user.id,
@@ -228,7 +227,7 @@ exports.run = async (_bot, command, message, args) => {
              */
             if (args[1]) {
                 try {
-                    const user = await userFinding.resolve(message, args[1]);
+                    const user = await utils.userFinding(message, args[1]);
                     let data = {
                         val: args[2],
                         col: args[3],
@@ -262,7 +261,7 @@ exports.run = async (_bot, command, message, args) => {
             if (args[1]) {
                 try {
 
-                    const user = await userFinding.resolve(message, args[1]);
+                    const user = await utils.userFinding(message, args[1]);
                     let data = {
                         id: user.id,
                         col: args[2],
@@ -301,7 +300,7 @@ exports.run = async (_bot, command, message, args) => {
                         .substring(command.length + 10)
                         .split(", ");
                     console.log(tokenize);
-                    const user = await userFinding.resolve(message, tokenize[0]);
+                    const user = await utils.userFinding(message, tokenize[0]);
                     let data = {
                         id: message.content.includes("-i") ? tokenize[0] : user.id,
                         opt: message.content.includes("-i") ? 'item_id' : 'userId',
@@ -370,7 +369,7 @@ exports.run = async (_bot, command, message, args) => {
              */
             if (args[1]) {
                 try {
-                    const user = await userFinding.resolve(message, args[1]);
+                    const user = await utils.userFinding(message, args[1]);
                     let data = {
                         opt: message.content.includes('-i') ? 'itemId' : 'userId',
                         id: message.content.includes('-i') ? args[1] : user.id,

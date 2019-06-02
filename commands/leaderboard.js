@@ -5,7 +5,7 @@ const databaseManager = require('../utils/databaseManager');
 const sql = require(`sqlite`);
 
 
-module.exports.run = async(bot,_command, message, args)=> {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 /// leaderboard.js
 ///

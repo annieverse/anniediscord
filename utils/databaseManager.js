@@ -217,9 +217,7 @@ class databaseUtils {
             * @param pkg of parsed pkg object.
             */
         async packageAlias(pkg) {
-            const pause = (ms) => {
-                return new Promise(resolve => setTimeout(resolve,ms));
-            }
+            
                 let aliases = [];
                 for(let i = 1; i <= 3; i++) {
                     sql.get(`SELECT alias FROM itemlist WHERE itemId = ${(pkg[`item` + i.toString()])}`)
@@ -227,7 +225,7 @@ class databaseUtils {
 
                     if(i === 3) { break; }
                 }
-                await pause(1000)
+                await utils.pause(1000)
                 return aliases;
         }
 

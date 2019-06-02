@@ -1,9 +1,8 @@
 const palette = require('../colorset.json');
-const userFind = require('../utils/userFinding');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// artcoins.js
     ///
@@ -46,7 +45,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
             }
             else if(args[0]){
                 try {
-                    const target = await userFind.resolve(message, message.content.substring(command.length+2));
+                    const target = await utils.userFinding(message, message.content.substring(command.length+2));
                     const dbmanager = new databaseManager(target.id);
                     const data = await dbmanager.pullRowData("userinventories", target.id);
                     let ac = format.threeDigitsComa(data.artcoins);

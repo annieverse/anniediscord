@@ -10,7 +10,7 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding')
+
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
@@ -20,7 +20,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-module.exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -686,7 +686,7 @@ async function card() {
 
                    canv.restore()
                    await gridImage(startPos_x, 70, 250, 250);
-                   await pause(3000)
+                   await utils.pause(3000)
 
                    return canv.toBuffer();
 
@@ -747,7 +747,7 @@ async function card() {
                     command.startsWith(`portfolio`) ? loadStandalonePortfolio(message.member, message.author.username) : loadCard(message.member, message.author.username);
                 }
                 else {
-                    const user = await userFinding.resolve(message, message.content.substring(command.length+2))
+                    const user = await utils.userFinding(message, message.content.substring(command.length+2))
                     command.startsWith(`portfolio`) ? loadStandalonePortfolio(user, user.user.username) : loadCard(user, user.user.username);
                 }
 

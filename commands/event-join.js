@@ -4,7 +4,7 @@ const formatManager = require('../utils/formatManager');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -29,9 +29,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
         // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
+        
 
         // Parsing emoji by its name.
         const emoji = (name) => {
@@ -153,7 +151,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             const has_foxie = Object.values(await cards_collection())[0];
 
             await trans.user_balance;
-            await pause(500);
+            await utils.pause(500);
 
             //Returns if user already have unused ticket.
             if(trans.has_unused_ticket)return log({code: `DUPLICATES`});

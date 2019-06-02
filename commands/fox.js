@@ -3,7 +3,7 @@ const palette = require('../colorset.json')
 const formatManager = require('../utils/formatManager.js');
 const superagent = require("superagent");
 
-module.exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;

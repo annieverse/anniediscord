@@ -7,7 +7,7 @@ const profileManager = require('../utils/profileManager');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message, args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 /// buy.js
 
 ///     BUY COMMAND
@@ -43,13 +43,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         const slotkey = collection.storingKey(badgesdata);
         const slotvalue = collection.storingValue(badgesdata);
         
-
-        // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
-
-
         // Parsing emoji by its name.
         const emoji = (name) => {
             return bot.emojis.find(e => e.name === name)

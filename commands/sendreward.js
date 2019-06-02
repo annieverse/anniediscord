@@ -1,11 +1,11 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding');
+;
 
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
-module.exports.run = async(bot,command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -31,7 +31,7 @@ sendRewardInit();
             if(!args[0])return format.embedWrapper(palette.darkmatte, 'Please put the target user. (id/username/tag)')
             if(!args[1])return format.embedWrapper(palette.darkmatte, 'Please put the reward rank. (1/2/3/runnerup).')
 
-                    const user = await userFinding.resolve(message, args[0]);
+                    const user = await utils.userFinding(message, args[0]);
                     sql.get(`SELECT * from userinventories WHERE userId ="${user.id}"`)
                         .then(async userdatarow => {
                         const rewards = {

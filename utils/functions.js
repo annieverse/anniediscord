@@ -122,6 +122,27 @@ module.exports = {
                 })
             });
         });
-    }// End of pages
+    },// End of pages
+
+    userFinding: async (message, target) => {
+        const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
+        if (userPattern.test(target)) target = target.replace(userPattern, '$1');
+        let members = message.guild.members;
+
+        const filter = member => member.user.id === target
+            || member.displayName.toLowerCase() === target.toLowerCase()
+            || member.user.username.toLowerCase() === target.toLowerCase()
+            || member.user.tag.toLowerCase() === target.toLowerCase();
+
+        return members.filter(filter).first();
+    },// End of userFinding
+
+    /**
+        Lifesaver promise. Used pretty often when calling an API.
+        @pause
+    */
+    pause: function (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }// End of pause
 
 }

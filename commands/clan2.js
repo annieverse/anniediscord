@@ -1,9 +1,8 @@
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
-const userFind = require('../utils/userFinding');
 
-exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
     //  Developer Mode Evnironment
     //  Command active only for developers
     const env = require(`../.data/environment.json`);
@@ -83,12 +82,6 @@ exports.run = async (bot, command, message, args) => {
      * GLOBAL MICRO-FUNCTIONS
      ***************************************************************************************************/
      
-    /*  Lifesaver promise. Used pretty often when calling sql API.
-     *  @pause
-     */
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
-    
     /*  Parsing emoji by its name.
      *  @emoji
      */
@@ -97,7 +90,7 @@ exports.run = async (bot, command, message, args) => {
 
     /*  isValudUser() Information
      */
-    const isValidUser = async(string) => await userFind.resolve(message, string);
+    const isValidUser = async(string) => await utils.userFinding(message, string);
 
     
     /*  isValidSubCommand() Information

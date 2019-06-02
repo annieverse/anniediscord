@@ -82,9 +82,7 @@ async function experienceGains() {
 
 
         // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
+        
 
 
         //  Calculates exp and artcoins multiplier.
@@ -331,7 +329,7 @@ async function experienceGains() {
             }
 
             share_exp();
-            await pause(500)
+            await utils.pause(500)
         }
 
 

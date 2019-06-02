@@ -1,12 +1,11 @@
 const palette = require('../colorset.json');
 const Discord = require('discord.js');
-const userFinding = require(`../utils/userFinding`);
 const formatManager = require(`../utils/formatManager`);
 const sql = require(`sqlite`);
 sql.open(`.data/database.sqlite`)
 
 
-exports.run = async (bot,command, message) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -264,7 +263,7 @@ async function init_gift() {
 
    // Initialization
    const run = async () => {
-        const target_user = await userFinding.resolve(message, message.content.substring(command.length+2))
+        const target_user = await utils.userFinding(message, message.content.substring(command.length+2))
         
         // Locked feature. Only accessible to creators council.
         //if(!message.member.roles.find(r => r.name === 'Creators Council'))return log({code: `LOCK_ACCESS`})

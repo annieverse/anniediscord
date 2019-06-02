@@ -3,7 +3,7 @@ const formatManager = require('../utils/formatManager.js');
 const palette = require(`../colorset.json`);
 const fs = require(`fs`);
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 	
 	/// help.js
     ///
@@ -27,9 +27,7 @@ return ["sandbox", `bot`].includes(message.channel.name) ? initHelp()
 
 async function aliases() {
 // Time promise
-const pause = (ms) => {
-    return new Promise(resolve => setTimeout(resolve,ms));
-}
+
     let file_arr = [];
     fs.readdir("./commands/", (err, files) => {
         if(err) console.log(err);
@@ -39,7 +37,7 @@ const pause = (ms) => {
             file_arr.push(src.help.name);
         }
     })
-    await pause(500)
+    await utils.pause(500)
     return file_arr;
 };
 

@@ -1,10 +1,9 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding');
 
 
-module.exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 // avatar.js
 //
@@ -70,7 +69,7 @@ return ["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name) ? 
 				}
 				else {
 					try {
-					const user = await userFinding.resolve(message, message.content.substring(command.length+2))
+					const user = await utils.userFinding(message, message.content.substring(command.length+2))
 
 					avaEmbed.setAuthor(get.nickname(user.id), get.avatarURL(user.id))
 							.setImage(get.avatarURL(user.id))

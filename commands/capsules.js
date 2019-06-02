@@ -4,7 +4,7 @@ const formatManager = require('../utils/formatManager');
 const ranksManager = require('../utils/ranksManager');
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -46,13 +46,6 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                 curve: 0
             }
         }
-
-
-        // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
-
 
         // Parsing emoji by its name.
         const emoji = (name) => {
@@ -208,7 +201,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
             withdraw();
             xp.update_exp;
-            await pause(500);
+            await utils.pause(500);
             
 
             //  Update rank if current rank rank is not equal
@@ -216,10 +209,10 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
             if(xp.ranked_up) {
                 
                 xp.remove_rank;
-                await pause(500);
+                await utils.pause(500);
 
                 xp.add_rank;
-                await pause(500);
+                await utils.pause(500);
             }
             
             return log({code: `SUCCESSFUL`}, metadata.to_use, format.threeDigitsComa(metadata.total_gained))
@@ -229,7 +222,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
         // Initialize.
         const run = async () => {
             await get_capsules();
-            await pause(200);
+            await utils.pause(200);
 
             //  Locked feature.
             //if(!message.member.roles.find(r => r.name === 'Grand Master'))return;     

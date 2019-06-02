@@ -5,7 +5,7 @@ const databaseManager = require('../utils/databaseManager');
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
 
-module.exports.run = async(bot, command, message,args) =>{
+module.exports.run = async (bot, command, message, args, utils) => {
 /// shop2.js
 ///
 ///     SHOP2 COMMAND

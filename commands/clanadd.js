@@ -3,7 +3,7 @@ const palette = require(`../colorset.json`);
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -30,14 +30,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
   //
   //  Check to make sure person has right lvl and money
   //
-
-  /**
-        Lifesaver promise. Used pretty often when calling an API.
-        @pause
-    */
-  function pause(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
   // Parsing emoji by its name.
   function emoji(name) {
@@ -172,7 +164,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
     return message.channel.send(`\`fetching ${message.author.username} data ..\``)
       .then(async load => {
         await get_userobject();
-        await pause(200);
+        await utils.pause(200);
         await filtering_data(raw_object);
 
         message.channel.send(`${emoji(`AnnieWot`)} | *Filler message*: Thank you for creating a clan`);

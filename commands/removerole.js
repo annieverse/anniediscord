@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// removerole.js
     ///

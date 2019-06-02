@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 
-module.exports.run = async(bot,command,message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 	//
 	//	change logs :
 	//		11/05/18 - Bug fixes.

@@ -1,20 +1,14 @@
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
-const userFind = require('../utils/userFinding');
 
-exports.run = async (bot, command, message, args) => {
+
+module.exports.run = async (bot, command, message, args, utils) => {
 
     //  Developer Mode Evnironment
     //  Command active only for developers
     const env = require(`../.data/environment.json`);
     if(env.dev && !env.administrator_id.includes(message.author.id))return;
-
-    //  Lifesaver promise. Used pretty often when calling sql API.
-    //  @pause
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
   
     //  Parsing emoji by its name.
     //  @emoji
@@ -150,7 +144,7 @@ exports.run = async (bot, command, message, args) => {
 
         /*  isValudUser() Information
          */
-        const isValidUser = async(string) => (await userFind.resolve(message, string) ? true : false);
+        const isValidUser = async(string) => (await utils.userFinding(message, string) ? true : false);
 
         /*  isUserTarget() Information
          */
@@ -158,7 +152,7 @@ exports.run = async (bot, command, message, args) => {
 
         /*  getUserData() Information
          */
-        const getUserData = async(string) => await userFind.resolve(message, string);
+        const getUserData = async(string) => await utils.userFinding(message, string);
 
         /*  isValidValue() Information
          *  - Checks if the value is greater than 0, and not 'NaN' or 'Infinity'

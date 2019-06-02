@@ -4,7 +4,7 @@ const formatManager = require('../utils/formatManager');
 const cards = require('../utils/cards-metadata.json');
 const sql = require("sqlite");
 
-module.exports.run = async(bot,command,message, args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// dailyjs
     ///
