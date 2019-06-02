@@ -11,8 +11,7 @@ module.exports = bot => {
     bot.on('message', message => {
         message_object = message;
     })
-    //process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
-    //
+    process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
 
     if (!env.dev) {
         bot.on("guildMemberAdd", async(member) => reqEvent("guildMemberAdd")(bot, member));

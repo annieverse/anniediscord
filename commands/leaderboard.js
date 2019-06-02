@@ -7,16 +7,17 @@ const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const { get } = require("snekfetch");
 const imageUrlRegex = /\?size=2048$/g; 
-
-
+const env = require(`../.data/environment.json`);
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "RobotoBold");
+Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-black.ttf")), "RobotoBlack");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
 
 module.exports.run = async(bot,_command, message, args)=> {
+
 
 /// leaderboard.js
 ///
@@ -31,97 +32,57 @@ module.exports.run = async(bot,_command, message, args)=> {
 ///
 ///  -naphnaphz
 
-const env = require(`../.data/environment.json`);
-if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
-
-return ["bot", "bot-games", "cmds", `sandbox`].includes(message.channel.name) ? leaderboardInit()
-: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
-
-
-async function leaderboardInit() {
-
 
     //  Centralized object
     let metadata = {
         keywords: {
-            xp: [`xp`, `exp`, `lv`, `level`],
+            xp: [`xp`, `exp`, `lvl`, `level`],
             ac: [`ac`, `artcoins`, `artcoin`, `balance`],
-            rep: [`fame`, `rep`, `reputation`, `reputations`, `reps`]
+            rep: [`fame`, `rep`, `reputation`, `reputations`, `reps`],
+            arts: [`artists`, `artist`, `art`, `arts`, `artwork`]
         },
         get whole_keywords() {
-            return [...this.keywords.xp, ...this.keywords.ac, ...this.keywords.rep]
+            let arr = [];
+            for(let key in this.keywords) {
+                arr.push(...this.keywords[key]);
+            }
+            return arr;
         }
     }
-
-
-    //  Pull required data.
-    sql.open(`.data/database.sqlite`);
-    const dbmanager = new databaseManager(message.author.id);
-    metadata.user = await dbmanager.userMetadata;
-    const ranking = {
-        xpgroup: [],
-        acgroup: [],
-        repgroup: [],
-        async pullingData() {
-            for(let i = 0; i<10; i++) {
-                this.xpgroup.push({
-                    id: await dbmanager.indexRanking('userdata', 'currentexp', i, 'userId'),
-                    xp: await dbmanager.indexRanking('userdata', 'currentexp', i, 'currentexp'),
-                    lv: await dbmanager.indexRanking('userdata', 'currentexp', i, 'level')
-                })
-                this.acgroup.push({
-                    id: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'userId'),
-                    ac: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'artcoins')
-                }),
-                this.repgroup.push({
-                    id: await dbmanager.indexRanking('userdata', 'reputations',   i, 'userId'),
-                    rep: await dbmanager.indexRanking('userdata', 'reputations',   i, 'reputations')
-                })
-            }
-        },
-        async user() {
-            await this.pullingData();
-            return {
-                xpgroup: this.xpgroup,
-                acgroup: this.acgroup,
-                repgroup: this.repgroup,
-                authorindex_xp: await dbmanager.authorIndexRanking('userdata', 'currentexp'),
-                authorindex_ac: await dbmanager.authorIndexRanking('userinventories', 'artcoins'),
-                authorindex_rep: await dbmanager.authorIndexRanking('userdata', 'reputations')
-            }
-        }
-    }
-    const user = await ranking.user();
 
 
     //  Pre-defined messages.
     const log = (props = {}, ...opt) => {
-        const logtext = {
-            "SHORT_GUIDE": {
-                msg: `**${message.author.username}**, checkout our leaderboard! type \`>lb xp/ac/fame\`.`,
-                color: palette.darkmatte
-            },
+            const logtext = {
+                "SHORT_GUIDE": {
+                    msg: `Hey **${message.author.username}**! checkout our new leaderboard!
+                          \`>lb exp\` for level
+                          \`>lb ac\` for artcoins
+                          \`>lb fame\` for reputations
+                          \`>lb art\` for favorite artists`,
+                    color: palette.darkmatte
+                },
 
-            "INVALID_CATEGORY": {
-                msg: `Sorry i can't recognize that category. Try use \`lvl/ac/reps\` instead.`,
-                color: palette.darkmatte
-            },
+                "INVALID_CATEGORY": {
+                    msg: `Sorry i can't recognize that category. Try use \`lvl/ac/reps\` instead.`,
+                    color: palette.darkmatte
+                },
 
-            "AUTHOR_RANK": {
-                msg: `You are currently **${format.ordinalSuffix(opt[0] + 1)}** with total **${format.threeDigitsComa(opt[1])} ${opt[2]}**`,
-                color: palette.darkmatte
-            },
+                "AUTHOR_RANK": {
+                    msg: `You are currently **#${format.threeDigitsComa(opt[0] + 1)}** with total **${format.threeDigitsComa(opt[1])} ${opt[2]}**`,
+                    color: palette.darkmatte
+                },
 
-            "UNRANKED": {
-                msg: `You are unranked.`,
-                color: palette.darkmatte
+                "UNRANKED": {
+                    msg: `You are unranked.`,
+                    color: palette.darkmatte
+                }
             }
-        }
 
-        const res = logtext[props.code];
-        return format.embedWrapper(res.color, res.msg);
+            const res = logtext[props.code];
+            return format.embedWrapper(res.color, res.msg);
     }
 
 
@@ -146,7 +107,55 @@ async function leaderboardInit() {
             y: defined_y,
             x2: 10,
             y2: 15,
-        };
+        }
+
+
+        //  Pull required data.
+        sql.open(`.data/database.sqlite`);
+        const dbmanager = new databaseManager(message.author.id);
+        metadata.user = await dbmanager.userMetadata;
+
+        const ranking = {
+            xpgroup: [],
+            acgroup: [],
+            repgroup: [],
+            artgroup: [],
+            async pullingData() {
+                for(let i = 0; i<10; i++) {
+                    this.xpgroup.push({
+                        id: await dbmanager.indexRanking('userdata', 'currentexp', i, 'userId'),
+                        xp: await dbmanager.indexRanking('userdata', 'currentexp', i, 'currentexp'),
+                        lv: await dbmanager.indexRanking('userdata', 'currentexp', i, 'level')
+                    })
+                    this.acgroup.push({
+                        id: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'userId'),
+                        ac: await dbmanager.indexRanking('userinventories', 'artcoins',   i, 'artcoins')
+                    })
+                    this.repgroup.push({
+                        id: await dbmanager.indexRanking('userdata', 'reputations',   i, 'userId'),
+                        rep: await dbmanager.indexRanking('userdata', 'reputations',   i, 'reputations')
+                    })
+                    this.artgroup.push({
+                        id: await dbmanager.indexRanking(`userdata`, `liked_counts`, i, `userId`),
+                        liked_count: await dbmanager.indexRanking(`userdata`, `liked_counts`, i, `liked_counts`)
+                    })
+                }
+            },
+            async user() {
+                await this.pullingData();
+                return {
+                    xpgroup: this.xpgroup,
+                    acgroup: this.acgroup,
+                    repgroup: this.repgroup,
+                    artgroup: this.artgroup,
+                    authorindex_xp: await dbmanager.authorIndexRanking('userdata', 'currentexp'),
+                    authorindex_ac: await dbmanager.authorIndexRanking('userinventories', 'artcoins'),
+                    authorindex_rep: await dbmanager.authorIndexRanking('userdata', 'reputations'),
+                    authorndex_art: await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
+                }
+            }
+        }
+        const user = await ranking.user();
 
 
         let canv = new Canvas(size.x, size.y);
@@ -176,10 +185,9 @@ async function leaderboardInit() {
 
                 //  Return nickname
                 get nickname() {
-                    //this.text_check;
                     canv.setTextAlign("left")
                     canv.setColor(palette.white)
-                    canv.setTextFont(`12pt RobotoBold`)
+                    canv.setTextFont(`12pt RobotoThin`)
                     .addText(this.nickname_formatter, size.x2 + 160, this.y )
                     return this;
                 }
@@ -190,8 +198,8 @@ async function leaderboardInit() {
                     const reps = format.threeDigitsComa(user[this.group][this.index].rep);
                     this.text_check;         
                     canv.setTextAlign("right")
-                    canv.setTextFont(`15pt RobotoThin`)
-                    .addText(`${reps} ❤`, size.x - 50, this.y)  
+                    canv.setTextFont(`15pt RobotoBlack`)
+                    .addText(`${reps} ☆`, size.x - 50, this.y)  
                     return this;                    
                 }
 
@@ -199,9 +207,7 @@ async function leaderboardInit() {
                 //  Highlight if user is in the top ten list
                 get highlight() {
                     if(user[this.group][this.index].id === message.author.id) {
-
                         this.highlight_user = true;
-
                         canv.setColor(palette.golden)
                         .addRect(size.x2, this.y - 35, size.x - size.x2, 60)
                         .restore()
@@ -211,10 +217,21 @@ async function leaderboardInit() {
                 }
 
 
+                //  Returns user liked post
+                get liked() {
+                    const reps = format.threeDigitsComa(user[this.group][this.index].liked_count);
+                    this.text_check;         
+                    canv.setTextAlign(`right`)
+                    canv.setTextFont(`15pt RobotoBlack`)
+                    .addText(`${reps} ❤`, size.x - 50, this.y)  
+                    return this;              
+                }
+
+
                 //  Returns user artcoins
                 get artcoins() {
                     this.text_check;
-                    canv.setTextFont(`12pt RobotoBold`)
+                    canv.setTextFont(`15pt RobotoBlack`)
                     .setTextAlign("right")
                     .addText(format.threeDigitsComa(user[this.group][this.index].ac), size.x - 50, this.y);
                     return this;
@@ -225,7 +242,7 @@ async function leaderboardInit() {
                 get level() {
                     this.text_check;         
                     canv.setTextAlign("right")
-                    canv.setTextFont(`15pt RobotoThin`)
+                    canv.setTextFont(`15pt Robotoblack`)
                     .addText(user[this.group][this.index].lv, size.x - 50, this.y)  
                     return this;
                 }
@@ -233,7 +250,6 @@ async function leaderboardInit() {
 
                 //  Return current exp
                 get exp() {
-                    //this.text_check;
                     canv.setTextAlign("left")
                     canv.setTextFont(`12pt Whitney`)
                     canv.addText(format.threeDigitsComa(user[this.group][this.index].xp) + ` XP`, size.x2 + 160, this.y + 20)
@@ -243,10 +259,9 @@ async function leaderboardInit() {
                 
                 //  Return current ranking
                 get position() {
-                    //this.text_check;
                     canv.setColor(palette.white)
                     canv.setTextAlign("left")
-                    canv.setTextFont(`15pt RobotoBold`)
+                    canv.setTextFont(`17pt RobotoBold`)
                     canv.addText(`#${this.index + 1}`, size.x2 + 30, this.y)
                     return this;
                 }
@@ -317,7 +332,7 @@ async function leaderboardInit() {
                 //  Reputations leaderboard
                 async rep() {
                     metadata.title = `${emoji(`wowo`)} **| Popularity Leaders**`;
-                    metadata.footer_components = [user.authorindex_rep, metadata.user.reputations, `♡`];
+                    metadata.footer_components = [user.authorindex_rep, metadata.user.reputations, `☆`];
 
                     for(let i = 0; i < user.repgroup.length; i++) {
                         canv.save()
@@ -334,6 +349,28 @@ async function leaderboardInit() {
                         canv.restore();
                     }                     
                 }
+
+
+                //  Artists leaderboard
+                async arts() {
+                    metadata.title = `${emoji(`hapiicat`)} **| Artists Leaders**`;
+                    metadata.footer_components = [user.authorindex_art, metadata.user.liked_counts, `♡`];
+
+                    for(let i = 0; i < user.artgroup.length; i++) {
+                        canv.save()
+                        .save();
+        
+                        new Row(i, 65, `artgroup`)
+                        .highlight
+                        .nickname
+                        .position
+                        .liked
+                        .avatar()
+                        await pause(500);
+        
+                        canv.restore();
+                    }                     
+                }                    
 
 
                 //  Card background layer
@@ -372,7 +409,17 @@ async function leaderboardInit() {
         }
     }
 
+    
+    //  Get parent group
+    const getGroup = () => {
+        for(let key in metadata.keywords) {
+            if(metadata.keywords[key].includes(args[0].toLowerCase())) {
+                return key;
+            }
+        }
+    }
 
+    
     //  Core processes
     const main = async () => {
 
@@ -384,30 +431,28 @@ async function leaderboardInit() {
                     .then(() => {
                         load.delete();
                         log({code: metadata.footer_components[1] ? `AUTHOR_RANK` : `UNRANKED` },
-                         ...metadata.footer_components);
+                        ...metadata.footer_components);
                 })
             })
-
-    }
-
-
-    //  Get parent group
-    const getGroup = () => {
-        for(let key in metadata.keywords) {
-            if(metadata.keywords[key].includes(args[0].toLowerCase())) {
-                return key;
-            }
-        }
     }
 
 
     //  Initializer
     const run = async () => {
 
+
+        //  Returns if currently in developer environment
+        if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
+
+        //  Returns for non-bot channels
+        if(!["bot", "bot-games", "cmds", `sandbox`].includes(message.channel.name))return;
+
+
         //  Returns if no argument was specified.
         if(!args[0])return log({code: `SHORT_GUIDE`});
 
-        
+            
         //  Returns if the category is invalid.
         if(!metadata.whole_keywords.includes(args[0].toLowerCase()))return log({code: `INVALID_CATEGORY`});
 
@@ -417,8 +462,8 @@ async function leaderboardInit() {
         main();
     }
 
-    run();
-}
+    run()
+
 }
 
 module.exports.help = {

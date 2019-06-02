@@ -16,7 +16,7 @@ module.exports = (bot, message) => {
   const format = new formatManager(message)
 
 
-  if(env.dev) {
+  if(!env.dev) {
     artChannelsFilter();
     eventChannelFilter();
     portfolioRequest();  
