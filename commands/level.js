@@ -26,7 +26,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 const configFormat = new formatManager(message);
 const configRank = new ranksManager(bot, message);
 
-if (!["bot", "bot-games", "cmds"].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+if (!["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 async function profile(member) {  
   const configProfile = new profileManager();
