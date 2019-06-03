@@ -9,7 +9,7 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding')
+
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Roboto.ttf")), "Roboto");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
@@ -18,7 +18,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
-module.exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -41,11 +41,13 @@ async function profile(member) {
   const userdata = await collection.userdata;
   const keys = collection.storingKey(userdata);
   const user = {
-     id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-    crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
-    rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-    get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() }
-  }
+    id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+    crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+    rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+    prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+    cov: userdata.cover, log: userdata.last_login,
+    get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() },
+}
 
   const switchColor = {
 
@@ -258,7 +260,7 @@ async function profile(member) {
 
 
   try {  
-      const user = await userFinding.resolve(message, message.content.substring(command.length+2))
+      const user = await utils.userFinding(message, message.content.substring(command.length+2))
       const caption = '<:Annie_Smug:523686816545636352> | Level card for ';
         if(!args[0]) {
           message.channel.startTyping();

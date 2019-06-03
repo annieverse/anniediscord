@@ -12,22 +12,11 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-exports.run = async (bot,command, message) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
-
-
-
-    /**
-        Lifesaver promise. Used pretty often when calling an API.
-        @pause
-    */
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve,ms));
-    }
-
 
 
 
@@ -85,7 +74,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
         eliminate_nulls();
         labeling();
-        await pause(500);
+        await utils.pause(500);
         filtered_res = parsedbag;
     }
 

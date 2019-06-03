@@ -5,7 +5,7 @@ var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
 
 
-module.exports.run = async(bot,command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
   function fileAliasesCheck(file) {
     const src = require(`./${file}`)

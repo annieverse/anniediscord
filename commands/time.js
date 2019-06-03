@@ -4,7 +4,7 @@ const formatManager = require('../utils/formatManager');
 const clock = require("node-emoji-clock");
 const moment = require("moment-timezone");
 
-module.exports.run = async (bot, command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;

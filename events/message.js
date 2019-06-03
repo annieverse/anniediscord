@@ -66,7 +66,7 @@ module.exports = (bot, message) => {
 
     if (artchannels.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
       let img = message.attachments.first();
-      message.react('⭐')
+      message.react('❤')
       sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
       return console.log(`${message.author.tag} has submitted "${img.filename}" in ${message.channel.name}.`)
     }
@@ -97,7 +97,7 @@ module.exports = (bot, message) => {
   let args = messageArray.slice(1);
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
-
+  let utils = require(`../utils/functions.js`);
   if (!message.content.startsWith(prefix)) return;
-  if (commandfile) commandfile.run(bot, command, message, args);
+  if (commandfile) commandfile.run(bot, command, message, args,utils);
 }

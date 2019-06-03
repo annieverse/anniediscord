@@ -4,31 +4,12 @@ const formatManager = require('../utils/formatManager');
 const userRecently = new Set();
 
 
-exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
-    /**
-    	Lifesaver promise. Used pretty often when calling sql API.
-    	@pause
-    */
-    function pause(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-
-
-    /**
-        Parsing emoji by its name.
-        @emoji
-    */
-    function emoji(name) {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
-
+  
     /**
         Redeeming functions.
         Core event of transaction.
@@ -64,7 +45,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
         //  Prompt message before proceeding the transaction
         const check_out = () => {
-            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${emoji(`artcoins`)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
+            return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${utils.emoji(`artcoins`,bot)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
         }
 
 

@@ -22,9 +22,9 @@ module.exports = async (bot, reaction, user) => {
             "538806382779170826",
         ];
 
-        if (reaction.emoji.name == "⭐" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
+        if (reaction.emoji.name == "❤" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
             reaction.fetchUsers()
-            let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "⭐").first();
+            let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "❤").first();
             if (rmsg.author.id == '501461775821176832') return;//make sure its not bots id
             if (x == undefined) x = 0; // if it has no likes set value to 0
             if (x.count < 3 || x == 0) { // minimum likes or no like to delete

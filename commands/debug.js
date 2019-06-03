@@ -2,7 +2,7 @@ const ms = require('parse-ms');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 
-module.exports.run = async(bot,command,message, args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// dailyjs
     ///

@@ -2,11 +2,11 @@ const Discord = require("discord.js");
 const moment = require(`moment`);
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager.js');
-const userFinding = require('../utils/userFinding');
+;
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -25,11 +25,6 @@ async function initPay() {
             for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
             return result;
     }
-
-		const emoji = (name) => {
-		    return bot.emojis.find(e => e.name === name)
-		}
-
 
     function template(content, color = palette.darkmatte) {
     	let embed = new Discord.RichEmbed()
@@ -62,7 +57,7 @@ async function initPay() {
    	if(!args[0]) return template(`**${message.author.username}**, here's how to use pay command :\n\`>pay\`  \`user\`  \`value\``)
 
     sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`).then(async userdatarow => {
-	    const user = await userFinding.resolve(message, args[0]);
+	    const user = await utils.userFinding(message, args[0]);
 
 	    if(!args[1])return template(`**${message.author.username}**, please put the number.`)
 	    if(args[1].includes(user.id))return template(`❌ | Transaction failed.\nREASON: \`WRONG FORMAT.\``, palette.red)
@@ -96,7 +91,7 @@ async function initPay() {
 	                    TRANSFER
 	                    TO ACCOUNT:  \`${user.id}\`
 	                    NAME :  **${user.user.username}**
-	                    VALUE : ${emoji(`artcoins`)} **${digitValue}**
+	                    VALUE : ${utils.emoji(`artcoins`,bot)} **${digitValue}**
 	                    This message is automatically generated after you made a
 	                    successful payment with other user.\n
 

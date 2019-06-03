@@ -5,7 +5,7 @@ var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
 const sql = require("sqlite");
 
-module.exports.run = async(bot, command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;

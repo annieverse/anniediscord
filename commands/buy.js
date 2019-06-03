@@ -7,18 +7,19 @@ const profileManager = require('../utils/profileManager');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
-module.exports.run = async(bot,command, message, args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 /// buy.js
 
 ///     BUY COMMAND
 ///    changes log:
+///     05/30/19 - Added role level requirement
 ///     05/08/19 - Improved initBuy structure
 ///              - Transaction class
 ///              - Simplified sql syntax without losing its readability
 ///              - Stored pre-defined texts
 ///              - New transaction workflow
 ///              - Major refactor
-
+///
 ///     02/26/19 - Added ticket category.
 ///     12/31/18 - genItems.json merged into sql database.
 ///     12/02/18 - few arguments required to buy specific items, simplified structure.
@@ -42,19 +43,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         const slotkey = collection.storingKey(badgesdata);
         const slotvalue = collection.storingValue(badgesdata);
         
-
-        // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
-
-
-        // Parsing emoji by its name.
-        const emoji = (name) => {
-            return bot.emojis.find(e => e.name === name)
-        }
-
-
         // Pre-defined messages
         const log = async (props = {}, ...opt) => {
 
@@ -96,7 +84,12 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
                     "CONFIRMATION": {
                         color: palette.golden,
-                        msg: `**${message.author.username}**, you're going to pay ${emoji(props.emoticon)}**${format.threeDigitsComa(opt[0])}** for **${opt[1]}** ${opt[2]}.\nPlease type \`y\` to confirm your purchase.`,
+                        msg: `**${message.author.username}**, you're going to pay ${utils.emoji(props.emoticon,bot)}**${format.threeDigitsComa(opt[0])}** for **${opt[1]}** ${opt[2]}.\nPlease type \`y\` to confirm your purchase.`,
+                    },
+
+                    "LVL_TOO_LOW": {
+                        color: palette.darkmatte,
+                        msg: `To buy roles, you need to be atleast level **25**.`
                     },
 
                     "ERR_DUPLICATE": {
@@ -359,22 +352,29 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                 // Purchase role
                 if(key === categories[0]) {
 
+
                     if(!args[1])return log({code:`MISSING_ROLENAME`})
                     const target = message.content.substring(10);
                     const trans = new transaction(target, `Roles`);
                     const item = await trans.pull;
 
                         try {
-                            sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`)
-                                .then(async metadata_inventory => {
+                            sql.get(`SELECT level FROM userdata WHERE userId = "${message.author.id}"`)
+                                .then(async metadata_user => {
+                                sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`)
+                                    .then(async metadata_inventory => {
+                                    
+                                    //  Returns if user level doesn't meet the requirement.
+                                    if(metadata_user.level < 25)return log({code: `LVL_TOO_LOW`});    
 
-                                // Reject insufficent balance
-                                if(metadata_inventory.artcoins < parseInt(item.price))return log({code: `ERR_INSUFFICIENT_BAL`}, item.price_type)
-                              
-                                // Balance has met the condition
-                                if(metadata_inventory.artcoins >= parseInt(item.price)) {
-                                    confirmation(item, trans)
-                                }
+                                    // Reject insufficent balance
+                                    if(metadata_inventory.artcoins < parseInt(item.price))return log({code: `ERR_INSUFFICIENT_BAL`}, item.price_type)
+                                
+                                    // Balance has met the condition
+                                    if(metadata_inventory.artcoins >= parseInt(item.price)) {
+                                        confirmation(item, trans)
+                                    }
+                                })
                             })
                         }
                         catch(e) {

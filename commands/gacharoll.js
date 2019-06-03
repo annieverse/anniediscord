@@ -17,28 +17,13 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-exports.run = async (bot,command, message) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
 const worldchnl = bot.channels.get(`459891664182312982`);
-
-/**
-	Lifesaver promise. Used pretty often when calling sql API.
-	@pause
-*/
-function pause(ms) {
-  return new Promise(resolve => setTimeout(resolve,ms));
-}
-
-
-// Parsing emoji by its name.
-const emoji = (name) => {
-    return bot.emojis.find(e => e.name === name)
-}
-
 
 /**
 	2D Card visuals built from canvas-constructor.
@@ -143,7 +128,7 @@ async function drawSingleImg(member, container) {
 	                    await visualQuantity(55, 50, 100, 100, 50);
 	                    await textDescription(100, 170);
 	                    //await rarityCircle(baseWidth, startPos_y+20)
-                    	await pause(1500);
+                    	await utils.pause(1500);
 	                    return canv.toBuffer()
                 }
 }
@@ -293,7 +278,7 @@ async function drawMultipleImg(member, container) {
                         await row('top');
                         await row('bottom');                 
 
-                    await pause(1500);
+                    await utils.pause(1500);
                     return canv.toBuffer();
 }
 
@@ -347,7 +332,7 @@ async function roll(times) {
 			res_aliases.push(parsed.item_alias)
 			
 
-            await pause(100);
+            await utils.pause(100);
 
             if(parsed.rarity > 4)worldchnl.send(`${message.author} has pulled **(${`☆`.repeat(parsed.rarity)})${parsed.item_name}** from the lucky ticket! :tada:`)
             console.log(`${message.author.tag} pulled ${res_items[i]}[${res_rarities[i]}] on float : ${rate}`)
@@ -362,7 +347,7 @@ async function roll(times) {
     }
 
     get_caprates();
-    await pause(500);
+    await utils.pause(500);
     return classify(times)
 }
 
@@ -547,7 +532,7 @@ async function backend(container) {
 									END 
 						WHERE userId = ${message.author.id}`);
 				
-				await pause(500);
+				await utils.pause(500);
 				console.log(`${keyv}-${obj[keyv]} has been registered.`)
 			}
 		}
@@ -576,7 +561,7 @@ async function backend(container) {
 						});
 
 						format.embedWrapper(palette.darkmatte, `You owned duplicate of **${cards_metadata[key].fullname} card**.
-				 		The new one will be dismantled into ${emoji(convert_to_shard)}**${5 * parsed_container[key]} ${convert_to_shard} & ${emoji(`fragments`)}${10000 * parsed_container[key]} Fragments.**`)
+				 		The new one will be dismantled into ${utils.emoji(convert_to_shard,bot)}**${5 * parsed_container[key]} ${convert_to_shard} & ${utils.emoji(`fragments`,bot)}${10000 * parsed_container[key]} Fragments.**`)
 						delete parsed_container[key];
 						continue;
 					}

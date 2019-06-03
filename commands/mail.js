@@ -1,10 +1,10 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const userFinding = require('../utils/userFinding');
+;
 const formatManager = require('../utils/formatManager'); 
 
 
-exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -14,7 +14,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     async function sendMail() {
         const form = new formatManager(message);
-        const target = await userFinding.resolve(message, args[0]);
+        const target = await utils.userFinding(message, args[0]);
         const content = message.content.substring(args[0].length + 7);
         const embed = new Discord.RichEmbed()
             .setColor(palette.halloween)

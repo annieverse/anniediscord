@@ -1,11 +1,11 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const userFinding = require('../utils/userFinding');
+;
 const ms = require('parse-ms');
 const formatManager = require('../utils/formatManager');
 const sql = require("sqlite");
 
-module.exports.run = async(bot, _command, message, args)=> {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -30,7 +30,7 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? getReputati
 			}
 		}
 
-		const user = await userFinding.resolve(message, message.content.substring(5));
+		const user = await utils.userFinding(message, message.content.substring(5));
 		let cooldown = 8.64e+7;
 
 		sql.get(`SELECT * FROM usercheck WHERE userId ="${message.author.id}"`).then(async usercheckrow => {

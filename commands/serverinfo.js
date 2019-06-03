@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const ms = require("parse-ms");
 
-module.exports.run = async(bot, command, message,args)=>{
+module.exports.run = async (bot, command, message, args, utils) => {
 
     /// serverinfo.js
     ///

@@ -5,7 +5,7 @@ const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
 
-module.exports.run = async (bot,command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -14,10 +14,6 @@ return console.log(`function disabled.`);
 
 function get() {
   return sql.all(`SELECT userId, level FROM userdata`).then(async alldata => alldata);
-}
-
-function pause(ms) {
-  return new Promise(resolve => setTimeout(resolve,ms));
 }
 
 let manager = new ranksManager(bot, message);
@@ -34,7 +30,7 @@ for(let i in data) {
     let parsedname = bot.users.get(data[i].userId).tag;
     
       message.guild.member(data[i].userId).addRole(parsedrank_object);
-      await pause(1000);
+      await utils.pause(1000);
       console.log(`${parsedname} with ${parsedrank} (lv ${data[i].level})`)    
       successfulIDs++
   }

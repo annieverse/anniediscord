@@ -10,7 +10,7 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
-const userFinding = require('../utils/userFinding')
+
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
@@ -20,7 +20,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 
-module.exports.run = async (bot, command, message, args) => {
+module.exports.run = async (bot, command, message, args, utils) => {
 
 const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
@@ -52,14 +52,14 @@ async function card() {
             }
 
             const user_ac = await request_artcoins();
-            const userdata = await collection.userdata;
+            const userdata = await collection.userMetadata;
             const keys = collection.storingKey(userdata);
             const user = {
-                id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: user_ac,
-                rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-                prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
-                cov: userdata[keys[12]], log: userdata[keys[13]],
+                id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+                crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+                rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+                prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+                cov: userdata.cover, log: userdata.last_login,
                 get clr() { 
                 return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                         : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
@@ -394,7 +394,7 @@ async function card() {
                     */
                 canv.setColor(palette.midgray)
                     .setTextFont(`28pt RobotoBold`)      // reputation
-                    .addText(`★`, startPos_x+390, startPos_y+320)
+                    .addText(`❤`, startPos_x+390, startPos_y+320)
                     .setTextAlign("left")
                     .setTextFont(`23pt RobotoBold`) 
                     .addText(configProfile.checkRep(user.rep), startPos_x+410, startPos_y+319)
@@ -456,11 +456,11 @@ async function card() {
             const userdata = await collection.userdata;
             const keys = collection.storingKey(userdata);
             const user = {
-                id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
-                rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-                prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
-                cov: userdata[keys[12]], log: userdata[keys[13]],
+                id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+                crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+                rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+                prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+                cov: userdata.cover, log: userdata.last_login,
                 get clr() { 
                 return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                         : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
@@ -686,7 +686,7 @@ async function card() {
 
                    canv.restore()
                    await gridImage(startPos_x, 70, 250, 250);
-                   await pause(3000)
+                   await utils.pause(3000)
 
                    return canv.toBuffer();
 
@@ -747,7 +747,7 @@ async function card() {
                     command.startsWith(`portfolio`) ? loadStandalonePortfolio(message.member, message.author.username) : loadCard(message.member, message.author.username);
                 }
                 else {
-                    const user = await userFinding.resolve(message, message.content.substring(command.length+2))
+                    const user = await utils.userFinding(message, message.content.substring(command.length+2))
                     command.startsWith(`portfolio`) ? loadStandalonePortfolio(user, user.user.username) : loadCard(user, user.user.username);
                 }
 

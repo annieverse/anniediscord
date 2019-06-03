@@ -9,11 +9,13 @@ let cards = require(`../utils/cards-metadata.json`);
 
 module.exports = (bot,message) => {
 
+    
 const nonXPChannel = [
- "485922866689474571",
- "464259865930629130",
- "464180867083010048",
- "459893209875611649"];
+    "485922866689474571",
+    "464259865930629130",
+    "464180867083010048",
+    "459893209875611649"
+];
 
 
 const artChannels =  [
@@ -22,27 +24,16 @@ const artChannels =  [
     "460439050445258752",
     "461926519976230922",
     "460615254553001994",
-    "538806382779170826"];
+    "538806382779170826"
+];
 
 
-const format = new formatManager(message);
-
-    if(env.dev)return;
-    if(message.content.startsWith(`>`))return;
-    if(message.author.bot)return;
-    if(message.channel.type == "dm")return; 
-    if(nonXPChannel.includes(message.channel.id))return;
-    //if(message.author.username !== `naphnaphz`)return;
 
 
-experienceGains();
-
-
-/*
-    *   @experienceGains
-    *   users will gain xp through general text channels.
-*/
+//  Users will gain xp through general text channels.
 async function experienceGains() {
+        const format = new formatManager(message);
+        const manager = new ranksManager(bot, message);
         sql.open(".data/database.sqlite");
 
         // Centralized data object.
@@ -82,9 +73,7 @@ async function experienceGains() {
 
 
         // Time promise
-        const pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve,ms));
-        }
+        
 
 
         //  Calculates exp and artcoins multiplier.
@@ -106,29 +95,27 @@ async function experienceGains() {
                 };
                 sql.get(`SELECT expbooster, expbooster_duration FROM usercheck WHERE userId = ${message.author.id}`)
                     .then(async data => {
-                        if(data.expbooster) {
 
-                            metadata.has_booster = true;
-                            let percentage = data.expbooster.replace(/ *\([^)]*\) */g, "");
-                            let limitduration = booster[percentage][/\(([^)]+)\)/.exec(data.expbooster)[1]];
+                        if(!data)return;
+                        if(!data.expbooster)return metadata.has_booster = false;
+                        
+                        metadata.has_booster = true;
+                        let percentage = data.expbooster.replace(/ *\([^)]*\) */g, "");
+                        let limitduration = booster[percentage][/\(([^)]+)\)/.exec(data.expbooster)[1]];
 
-                            if ((data.expbooster_duration !== null) && limitduration - (Date.now() - data.expbooster_duration) > 0 ) {
-                                metadata.exp.bonus += booster[percentage].multiplier;
-                            }
-                            else {
-                                const embed = new Discord.RichEmbed()
-                                            .setColor(palette.darkmatte)
-                                            .setDescription(`Hello **${metadata.user.name}**, your **${data.expbooster}** ticket has expired today.`)
-                                            .setFooter(`System`, bot.user.avatarURL)
+                        if ((data.expbooster_duration !== null) && limitduration - (Date.now() - data.expbooster_duration) > 0 ) {
+                            metadata.exp.bonus += booster[percentage].multiplier;
+                        }
+                        else {
+                            const embed = new Discord.RichEmbed()
+                                    .setColor(palette.darkmatte)
+                                    .setDescription(`Hello **${metadata.user.name}**, your **${data.expbooster}** ticket has expired today.`)
+                                    .setFooter(`System`, bot.user.avatarURL)
 
                                 console.log(`${metadata.user.tag}'s item ${data.expbooster} ticket has expired at ${Date.now()}`);
                                 sql.run(`UPDATE usercheck SET expbooster = NULL, expbooster_duration = NULL WHERE userId = ${message.author.id}`);
                                 return message.author.send(embed);
                             }
-                        }
-                        else {
-                            metadata.has_booster = false;
-                        }
                     })
             }
 
@@ -331,45 +318,61 @@ async function experienceGains() {
             }
 
             share_exp();
-            await pause(500)
+            await utils.pause(500)
         }
 
 
-        const res = await modifier();
-        const randomexp = res.exp
-        const randomac = res.ac
-        const cooldown = 60000;
-        const lvlUpBonus = (lv) => lv === 0 ? 35 : 35 * lv;
-        const manager = new ranksManager(bot, message);
 
-
-        /**
-          * Wrapped user experience mechanism.
-          * @experienceMechanism.
-          */
+        //  Wrapped user experience mechanism.
         const experienceMechanism = {
             
-            
+            res: await modifier(),
+            cooldown: 60000,
+
+            get randomexp() {
+                return this.res.exp;
+            },
+
+
+            get randomac() {
+                return this.res.ac
+            },
+
+
+            lvlUpBonus(lv) {
+                return lv === 0 ? 35 : 35 * lv;  
+            },
+
             //  Few data are updated when user leveling up.
             get levelup() {
               sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
-                  sql.run(`UPDATE userdata SET currentexp = ${userdatarow.currentexp + randomexp} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE userdata SET maxexp = ${userdatarow.maxexp + userdatarow.nextexpcurve} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE userdata SET nextexpcurve = ${userdatarow.nextexpcurve + 200} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE userdata SET level = ${userdatarow.level + 1} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE userinventories SET artcoins = artcoins + ${randomac + (lvlUpBonus(userdatarow.level + 1))} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE usercheck SET expcooldown = "True" WHERE userId = ${message.author.id}`);
+
+                sql.run(`UPDATE userdata 
+                           SET currentexp = ${userdatarow.currentexp + this.randomexp},
+                               maxexp = ${userdatarow.maxexp + userdatarow.nextexpcurve},
+                               nextexpcurve = ${userdatarow.nextexpcurve + 200},
+                               level = ${userdatarow.level + 1},
+                            WHERE userId = ${message.author.id}`);
+
+                sql.run(`UPDATE userinventories 
+                         SET artcoins = artcoins + ${this.randomac + (this.lvlUpBonus(userdatarow.level + 1))} 
+                         WHERE userId = ${message.author.id}`);
+
+                sql.run(`UPDATE usercheck 
+                         SET expcooldown = "True" 
+                         WHERE userId = ${message.author.id}`);
+              
 
                   format.embedWrapper(palette.halloween, `<:nanamiRinWave:459981823766691840> Congratulations ${message.author}!! You are now level **${userdatarow.level + 1}** !
-                  **${lvlUpBonus(userdatarow.level + 1)}** AC has been added to your account.`);
+                  **${this.lvlUpBonus(userdatarow.level + 1)}** AC has been added to your account.`);
 
                     message.guild.member(message.author.id).addRole(await manager.ranksCheck(userdatarow.level <= 0 ? 0 : userdatarow.level+1).rank);
                   !(manager.ranksCheck(userdatarow.level).lvlcap).includes(userdatarow.level+1) ? null : message.guild.member(message.author.id).removeRole(await manager.ranksCheck(userdatarow.level+1).prevrank);
                     console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`);
 
-                    setTimeout(function(){ 
+                    setTimeout(() => { 
                         sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`);
-                        }, (cooldown))                       
+                    }, (this.cooldown))                       
               })
             },  
 
@@ -380,49 +383,124 @@ async function experienceGains() {
              if((metadata.user.tag === `naphnaphz#7790` )
              && (metadata.channel === cards.naph_card.skills.main.channel[0])) white_cat_paradise();
 
-              sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
-                  sql.run(`UPDATE userdata SET currentexp = ${userdatarow.currentexp + randomexp} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE userinventories SET artcoins = artcoins + ${randomac} WHERE userId = ${message.author.id}`);
-                  sql.run(`UPDATE usercheck SET expcooldown = "True" WHERE userId = ${message.author.id}`);
+              sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
+                .then(async userdatarow => {
+                
+
+                //  Set new current exp
+                  sql.run(`UPDATE userdata 
+                           SET currentexp = ${userdatarow.currentexp + this.randomexp} 
+                           WHERE userId = "${message.author.id}"`);
+
+
+                //  Add artcoins
+                  sql.run(`UPDATE userinventories 
+                          SET artcoins = artcoins + ${this.randomac} 
+                          WHERE userId = "${message.author.id}"`);
+
+
+                //  Lock cooldown
+                  sql.run(`UPDATE usercheck 
+                           SET expcooldown = "True" 
+                           WHERE userId = "${message.author.id}"`);
+
                   console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
 
                   setTimeout(function(){  
-                        sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`);
-                        }, (cooldown))
+                        sql.run(`UPDATE usercheck 
+                                 SET expcooldown = "False" 
+                                 WHERE userId = "${message.author.id}"`);
+                        }, (this.cooldown))
               })
             }
         };
 
 
-        // Initialization.
-        const run = async () => {
-          sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
-          if (userdatarow) {
-            sql.get(`SELECT * FROM usercheck WHERE userId ="${message.author.id}"`).then(async check => {
+        //  Register new user
+        const registerNewProfile = async () => {
+            console.log(`created new profile for ${message.author.tag}.`);
 
-              if (check.expcooldown === "False") {
-                  return randomexp + userdatarow.currentexp === userdatarow.maxexp 
-                      || randomexp + userdatarow.currentexp > userdatarow.maxexp 
-                       ? experienceMechanism.levelup : experienceMechanism.grind;
-                                
-              }
-            })
-          } else {
-                console.log(`created new profile for ${message.author.tag}.`);
-                  sql.run("INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, artcoins, reputations, description, interfacemode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [message.author.id, randomexp, 100, 150, 0, 0, null, null, null]);
-                  sql.run("INSERT INTO usercheck (userId, expcooldown) VALUES (?, ?)", [message.author.id, "False"]);
-                  sql.run(`INSERT INTO userbadges (userId) VALUES (${message.author.id})`)
-                  sql.run(`INSERT INTO userinventories (userId, artcoins) VALUES (${message.author.id}, 0)`)
-                  message.guild.member(message.author.id).addRole(await manager.ranksCheck(0).rank);
+
+            //  Register main-data experience points
+            sql.run(`INSERT INTO userdata (userId, currentexp, maxexp, nextexpcurve, level, reputations, description, interfacemode)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                     [message.author.id, experienceMechanism.randomexp, 100, 150, 0, 0, null, `light_profileskin`]);
+
+
+            //  Register sub-data
+            sql.run(`INSERT INTO usercheck (userId, expcooldown) 
+                    VALUES (?, ?)`,
+                    [message.author.id, "False"]);
+
+
+            //  Register badges container
+            sql.run(`INSERT INTO userbadges (userId) 
+                     VALUES ("${message.author.id}")`)
+
+
+            //  Register inventory
+            sql.run(`INSERT INTO userinventories (userId) 
+                     VALUES ("${message.author.id}")`)
+
+
+            //  Add lv 0 rank role.
+            message.guild.member(message.author.id).addRole(await manager.ranksCheck(0).rank);
+        }
+
+        
+        // Initialize
+        const run = async () => {
+          sql.get(`SELECT * 
+                   FROM userdata 
+                   INNER JOIN usercheck
+                   ON usercheck.userId = userdata.userId
+                   WHERE userdata.userId = "${message.author.id}"`)
+          .then(async userdatarow => {
+
+            //  If data not exists, register.
+            if (!userdatarow)return registerNewProfile();
+
+            if (userdatarow.expcooldown === "False") {
+                return experienceMechanism.randomexp + userdatarow.currentexp === userdatarow.maxexp 
+                || experienceMechanism.randomexp + userdatarow.currentexp > userdatarow.maxexp 
+                ? experienceMechanism.levelup : experienceMechanism.grind;     
             }
           })  
         }   
 
-
         run();
 
-}; // END OF @EXPERIENCEGAINS
-                                             
+}
+
+
+//  Initialize
+const run = () => {
+
+    //  Returns if currently in developer environment.
+    if(env.dev && !env.administrator_id.includes(message.author.id))return;
+
+
+    //  Returns if message started with command prefix.
+    if(message.content.startsWith(env.prefix))return;
+
+
+    //  Returns if the user is indicated as bot
+    if(message.author.bot)return;
+
+
+    //  Returns DM messages.
+    if(message.channel.type == "dm")return; 
+
+
+    //  Returns if message was sent in non-XP channels
+    if(nonXPChannel.includes(message.channel.id))return;
+
+
+    experienceGains();
+
+}
+       
+run();
 
   
 }
