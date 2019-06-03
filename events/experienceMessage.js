@@ -5,6 +5,7 @@ const palette = require(`../colorset.json`);
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 let cards = require(`../utils/cards-metadata.json`);
+let utils = require(`../utils/functions.js`);
 
 
 module.exports = (bot,message) => {
