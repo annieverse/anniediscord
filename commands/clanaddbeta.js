@@ -70,7 +70,7 @@ module.exports.run = async (bot, command, message, args) => {
      * @raw_object a raw container object
      * @colorCustom A boolean to allow custom color.
      * @maxMembers the max number of members allowed in a clan.
-     * */
+     */
     let raw_object;
     let colorCustom = false;
     let maxMembers;
@@ -430,11 +430,7 @@ module.exports.run = async (bot, command, message, args) => {
                     };
                 }); // end of collectorForClanTag
             };
-        }); // end of collectorForClanName
-
-
-
-            }    
+        }); // end of collectorForClanName    
  
     } // end of create_clan
 
