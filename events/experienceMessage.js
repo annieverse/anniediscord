@@ -372,7 +372,7 @@ async function experienceGains() {
 
                     setTimeout(() => { 
                         sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`);
-                    }, (cooldown))                       
+                    }, (this.cooldown))                       
               })
             },  
 
@@ -390,26 +390,26 @@ async function experienceGains() {
                 //  Set new current exp
                   sql.run(`UPDATE userdata 
                            SET currentexp = ${userdatarow.currentexp + this.randomexp} 
-                           WHERE userId = ${message.author.id}`);
+                           WHERE userId = "${message.author.id}"`);
 
 
                 //  Add artcoins
                   sql.run(`UPDATE userinventories 
                           SET artcoins = artcoins + ${this.randomac} 
-                          WHERE userId = ${message.author.id}`);
+                          WHERE userId = "${message.author.id}"`);
 
 
                 //  Lock cooldown
                   sql.run(`UPDATE usercheck 
                            SET expcooldown = "True" 
-                           WHERE userId = ${message.author.id}`);
+                           WHERE userId = "${message.author.id}"`);
 
                   console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
 
                   setTimeout(function(){  
                         sql.run(`UPDATE usercheck 
                                  SET expcooldown = "False" 
-                                 WHERE userId = ${message.author.id}`);
+                                 WHERE userId = "${message.author.id}"`);
                         }, (this.cooldown))
               })
             }
@@ -435,12 +435,12 @@ async function experienceGains() {
 
             //  Register badges container
             sql.run(`INSERT INTO userbadges (userId) 
-                     VALUES (${message.author.id})`)
+                     VALUES ("${message.author.id}")`)
 
 
             //  Register inventory
             sql.run(`INSERT INTO userinventories (userId) 
-                     VALUES (${message.author.id})`)
+                     VALUES ("${message.author.id}")`)
 
 
             //  Add lv 0 rank role.
