@@ -85,19 +85,6 @@ const format = new formatManager(message);
             return format.embedWrapper(res.color, res.msg);
     }
 
-
-    // Parsing emoji by its name.
-    const emoji = name => {
-        return bot.emojis.find(e => e.name === name)
-    }
-
-
-    //  Promise
-    const pause = (ms) => {
-        return new Promise(resolve => setTimeout(resolve,ms));
-    }
-
-
     //  Render the image
     const render = async (defined_x, defined_y) => {
 
@@ -286,7 +273,7 @@ const format = new formatManager(message);
 
                 //  Level leaderboard
                 async xp() {
-                    metadata.title = `${emoji(`aauBell`)} **| Level Leaders**`;
+                    metadata.title = `${utils.emoji(`aauBell`,bot)} **| Level Leaders**`;
                     metadata.footer_components = [user.authorindex_xp, metadata.user.currentexp, `EXP`];
 
                     for(let i = 0; i < user.xpgroup.length; i++) {
@@ -300,7 +287,7 @@ const format = new formatManager(message);
                         .level
                         .position
                         .avatar()
-                        await pause(500);
+                        await utils.pause(500);
         
                         canv.restore();
                     }  
@@ -309,8 +296,8 @@ const format = new formatManager(message);
 
                 //  Artcoins leaderboard
                 async ac() {
-                    metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`;
-                    metadata.footer_components = [user.authorindex_ac, metadata.user.artcoins, `${emoji(`artcoins`)}`];
+                    metadata.title = `${utils.emoji(`artcoins`,bot)} **| Artcoins Leaders**`;
+                    metadata.footer_components = [user.authorindex_ac, metadata.user.artcoins, `${utils.emoji(`artcoins`,bot)}`];
 
                     for(let i = 0; i < user.acgroup.length; i++) {
                         canv.save()
@@ -322,7 +309,7 @@ const format = new formatManager(message);
                         .position
                         .artcoins
                         .avatar()
-                        await pause(500);
+                        await utils.pause(500);
         
                         canv.restore();
                     } 
@@ -331,7 +318,7 @@ const format = new formatManager(message);
 
                 //  Reputations leaderboard
                 async rep() {
-                    metadata.title = `${emoji(`wowo`)} **| Popularity Leaders**`;
+                    metadata.title = `${utils.emoji(`wowo`,bot)} **| Popularity Leaders**`;
                     metadata.footer_components = [user.authorindex_rep, metadata.user.reputations, `☆`];
 
                     for(let i = 0; i < user.repgroup.length; i++) {
@@ -344,7 +331,7 @@ const format = new formatManager(message);
                         .position
                         .reputation
                         .avatar()
-                        await pause(500);
+                        await utils.pause(500);
         
                         canv.restore();
                     }                     
@@ -353,7 +340,7 @@ const format = new formatManager(message);
 
                 //  Artists leaderboard
                 async arts() {
-                    metadata.title = `${emoji(`hapiicat`)} **| Artists Leaders**`;
+                    metadata.title = `${utils.emoji(`hapiicat`,bot)} **| Artists Leaders**`;
                     metadata.footer_components = [user.authorindex_art, metadata.user.liked_counts, `♡`];
 
                     for(let i = 0; i < user.artgroup.length; i++) {
@@ -366,7 +353,7 @@ const format = new formatManager(message);
                         .position
                         .liked
                         .avatar()
-                        await pause(500);
+                        await utils.pause(500);
         
                         canv.restore();
                     }                     

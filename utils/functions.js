@@ -124,6 +124,12 @@ module.exports = {
         });
     },// End of pages
 
+    /**
+     * Finds a user by id, or tag or plain name
+     * @param {object} message message object
+     * @param target the arg for the user (id, name, mention)
+     * @returns {object} user object
+     */
     userFinding: async (message, target) => {
         const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
         if (userPattern.test(target)) target = target.replace(userPattern, '$1');
