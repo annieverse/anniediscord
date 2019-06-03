@@ -41,11 +41,13 @@ async function profile(member) {
   const userdata = await collection.userdata;
   const keys = collection.storingKey(userdata);
   const user = {
-     id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-    crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
-    rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-    get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() }
-  }
+    id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+    crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+    rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+    prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+    cov: userdata.cover, log: userdata.last_login,
+    get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() },
+}
 
   const switchColor = {
 

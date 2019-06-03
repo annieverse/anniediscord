@@ -52,14 +52,14 @@ async function card() {
             }
 
             const user_ac = await request_artcoins();
-            const userdata = await collection.userdata;
+            const userdata = await collection.userMetadata;
             const keys = collection.storingKey(userdata);
             const user = {
-                id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: user_ac,
-                rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-                prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
-                cov: userdata[keys[12]], log: userdata[keys[13]],
+                id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+                crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+                rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+                prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+                cov: userdata.cover, log: userdata.last_login,
                 get clr() { 
                 return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                         : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()
@@ -456,11 +456,11 @@ async function card() {
             const userdata = await collection.userdata;
             const keys = collection.storingKey(userdata);
             const user = {
-                id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-                crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
-                rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-                prt: userdata[keys[9]], rtg: userdata[keys[10]], rvw: userdata[keys[11]],
-                cov: userdata[keys[12]], log: userdata[keys[13]],
+                id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+                crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
+                rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
+                prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+                cov: userdata.cover, log: userdata.last_login,
                 get clr() { 
                 return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
                         : this.ui === "dark_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex()

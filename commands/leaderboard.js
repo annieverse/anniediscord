@@ -151,7 +151,7 @@ const format = new formatManager(message);
                     authorindex_xp: await dbmanager.authorIndexRanking('userdata', 'currentexp'),
                     authorindex_ac: await dbmanager.authorIndexRanking('userinventories', 'artcoins'),
                     authorindex_rep: await dbmanager.authorIndexRanking('userdata', 'reputations'),
-                    authorndex_art: await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
+                    authorindex_art: await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
                 }
             }
         }
