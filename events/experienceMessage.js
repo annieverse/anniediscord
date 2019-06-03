@@ -347,12 +347,13 @@ async function experienceGains() {
             get levelup() {
               sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
 
+                console.log(userdatarow.currentexp, userdatarow.maxexp, this.randomexp)
                 sql.run(`UPDATE userdata 
-                           SET currentexp = ${userdatarow.currentexp + this.randomexp},
-                               maxexp = ${userdatarow.maxexp + userdatarow.nextexpcurve},
-                               nextexpcurve = ${userdatarow.nextexpcurve + 200},
-                               level = ${userdatarow.level + 1},
-                            WHERE userId = ${message.author.id}`);
+                        SET currentexp = ${userdatarow.currentexp + this.randomexp},
+                            maxexp = ${userdatarow.maxexp + userdatarow.nextexpcurve},
+                            nextexpcurve = ${userdatarow.nextexpcurve + 200},
+                            level = ${userdatarow.level + 1}
+                        WHERE userId = ${message.author.id}`);
 
                 sql.run(`UPDATE userinventories 
                          SET artcoins = artcoins + ${this.randomac + (this.lvlUpBonus(userdatarow.level + 1))} 
@@ -413,7 +414,7 @@ async function experienceGains() {
                         }, (this.cooldown))
               })
             }
-        };
+        }
 
 
         //  Register new user
