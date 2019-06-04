@@ -1,9 +1,12 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const ms = require("ms");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 function getRoles(r) {
@@ -95,6 +98,10 @@ function getRoles(r) {
   
 }//end of the module
 module.exports.help = {
-    name:"mute",
-        aliases:[]
+  name:"mute",
+  aliases: [],
+  description: `mutes a user and sends them a dm`,
+  usage: `${prefix}mute @user [time]<optional (defaults to 1d if nothing supplied) <reason>`,
+  group: "Admin",
+  public: true,
 }

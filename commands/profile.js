@@ -11,6 +11,9 @@ const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
@@ -22,7 +25,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney")
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
 const configFormat = new formatManager(message);
@@ -761,6 +764,10 @@ async function card() {
 }
 
 module.exports.help = {
-  name: "profile",
-        aliases:["prfl", "profil", "p", "mycard", "portfolio"]
+    name: "profile",
+    aliases: ["prfl", "profil", "p", "mycard", "portfolio"],
+    description: `Display user's profile card`,
+    usage: `${prefix}profile [@user]<optional>`,
+    group: "General",
+    public: true,
 }

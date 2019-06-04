@@ -2,6 +2,9 @@ const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 const ms = require('parse-ms');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
@@ -20,7 +23,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -naphnaphz
     ///     -Frying Pan
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -98,5 +101,9 @@ return ["bot", "bot-games", "naph-little-house", "sandbox"].includes(message.cha
 }
 module.exports.help={
     name:"stats",
-        aliases:["status", "botinfo", "info"]
+	aliases: ["status", "botinfo", "info"],
+	description: `Gives info about the bot`,
+	usage: `${prefix}stats`,
+	group: "Server",
+	public: true,
 }

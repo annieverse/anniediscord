@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -16,7 +18,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -naphnaphz
     ///     -Bait_God
     ///
-const env = require('../.data/environment.json');
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
@@ -279,6 +281,10 @@ sql.get(`SELECT * FROM userdata WHERE userId ="${pUser.id}"`).then(async userdat
     //end of new code  
 
     module.exports.help = {
-        name:"addxp",
-       aliases:[]
+        name: "addxp",
+        aliases: [],
+        description: `Add XP to a specific user`,
+        usage: `${prefix}addxp @user <amount>`,
+        group: "Admin",
+        public: true,
     }

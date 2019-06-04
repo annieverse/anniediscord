@@ -3,6 +3,9 @@ const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 const cards = require('../utils/cards-metadata.json');
 const sql = require("sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -24,7 +27,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -Frying Pan
     ///     -Fwubbles
    
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -90,5 +93,9 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 }
 module.exports.help={
     name:"daily",
-        aliases:["dly", "daili", "dail", "dayly", "attendance", "dliy"]
+	aliases: ["dly", "daili", "dail", "dayly", "attendance", "dliy"],
+	description: `collects a daily flat rate of AC`,
+	usage: `${prefix}daily`,
+	group: "General",
+	public: true,
 }

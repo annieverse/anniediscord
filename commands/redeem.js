@@ -3,10 +3,13 @@ const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
 const userRecently = new Set();
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   
@@ -193,7 +196,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
     return redeem();
 	
 }
-exports.help = {
-  name: "redeem",
-        aliases:[]
+module.exports.help = {
+    name: "redeem",
+    aliases: [],
+    description: `Buys gacha tickets`,
+    usage: `${prefix}redeem <amount>`,
+    group: "Shop-related",
+    public: true,
 }

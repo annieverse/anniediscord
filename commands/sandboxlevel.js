@@ -9,6 +9,9 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Roboto.ttf")), "Roboto");
@@ -20,7 +23,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "Kosugi
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
 const configFormat = new formatManager(message);
@@ -229,5 +232,9 @@ const user = await utils.userFinding(message, message.content.substring(command.
 
 module.exports.help = {
   name: "l",
-        aliases:[]
+  aliases: [],
+  description: `test file for level command`,
+  usage: `${prefix}l`,
+  group: "Admin",
+  public: false,
 }

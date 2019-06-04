@@ -1,12 +1,13 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-;
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 const formatManager = require('../utils/formatManager'); 
 
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 !message.member.roles.find(r => r.name === 'Grand Master') ? message.channel.send('Unauthorized access.')   
@@ -33,7 +34,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 }
 
-exports.help = {
-  name: "mail",
-        aliases:[]
+module.exports.help = {
+    name: "mail",
+    aliases: [],
+    description: `Send a message to a specified user`,
+    usage: `${prefix}mail @user <message>`,
+    group: "Admin",
+    public: true,
 }

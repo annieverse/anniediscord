@@ -1,7 +1,10 @@
 const Discord = require("discord.js");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const user = message.author;
@@ -30,7 +33,11 @@ return message.member.roles.find(r => r.name === 'Creators Council') ? reset() :
 
 }
 
-exports.help = {
-  name: "_resetinventory",
-        aliases:[]
+module.exports.help = {
+    name: "_resetinventory",
+    aliases: [],
+    description: `resets your inventory`,
+    usage: `${prefix}_resetinventory`,
+    group: "Admin",
+    public: true,
 }

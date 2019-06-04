@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
-
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
     /// addmoney.js
@@ -14,7 +16,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -naphnaphz
 
     /// the same thing as i put addxp command.
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
@@ -104,6 +105,10 @@ sql.get(`SELECT artcoins FROM userinventories WHERE userId ="${pUser.id}"`).then
 }
     
     module.exports.help = {
-        name:"addac",
-        aliases:[]
+        name: "addac",
+        aliases: [],
+        description: `Add artcoins to specific user.`,
+        usage: `${prefix}addac @user <amount>`,
+        group: "Admin",
+        public: true,
     }

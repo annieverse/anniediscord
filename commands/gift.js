@@ -4,10 +4,13 @@ const formatManager = require(`../utils/formatManager`);
 const sql = require(`sqlite`);
 sql.open(`.data/database.sqlite`)
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -283,7 +286,11 @@ async function init_gift() {
 
 
 }
-exports.help = {
-  name: "gift",
-        aliases:[]
+module.exports.help = {
+    name: "gift",
+    aliases: [],
+    description: `gives an item from your inventory to a specified user`,
+    usage: `${prefix}gift @user`,
+    group: "General",
+    public: true,
 }

@@ -1,6 +1,9 @@
 const palette = require('../colorset.json');
 const databaseManager = require('../utils/databaseManager');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -13,7 +16,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
     modifyDB();
 
-    const env = require(`../.data/environment.json`);
+    
     if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
     async function modifyDB() {
@@ -513,5 +516,9 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 exports.help = {
     name: "db",
-    aliases: []
+    aliases: [],
+    description: `Allows to do sql queries and other commands`,
+    usage: `${prefix}db <subcommand>`,
+    group: "Admin",
+    public: true,
 }

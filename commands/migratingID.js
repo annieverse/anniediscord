@@ -3,11 +3,12 @@ const palette = require('../colorset.json');
 const ranksManager = require('../utils/ranksManager.js');
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
-
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 return console.log(`function disabled.`);
@@ -45,5 +46,9 @@ message.channel.send(`y:${successfulIDs} n:${unknownIDs}`);
 }
 module.exports.help = {
 	name: "_migrate",
-        aliases:[]
+  aliases: [],
+  description: `migrates user data`,
+  usage: `${prefix}_migrate`,
+  group: "Admin",
+  public: false,
 }

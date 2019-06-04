@@ -1,13 +1,16 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const embed = new Discord.RichEmbed();
@@ -33,6 +36,10 @@ let parsedValue = await countingIndex();
 
 }
 module.exports.help = {
-    name:"get_msglog",
-        aliases:[]
+  name:"get_msglog",
+  aliases: [],
+  description: `See the total amount of messages collected`,
+  usage: `${prefix}get_msglog`,
+  group: "Admin",
+  public: false,
 }

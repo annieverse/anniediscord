@@ -1,10 +1,13 @@
 const ranksManager = require('../utils/ranksManager');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
         const ranks = new ranksManager(bot, message)
@@ -24,7 +27,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         msg.delete(3000);
     })
 }
-    module.exports.help = {
-        name:">reset_lvl",
-        aliases:[]
-    }
+module.exports.help = {
+    name:">reset_lvl",
+    aliases: [],
+    description: `resets your level`,
+    usage: `${prefix}>reset_lvl`,
+    group: "Admin",
+    public: true,
+}

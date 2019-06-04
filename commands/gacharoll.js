@@ -9,6 +9,9 @@ const profileManager = require('../utils/profileManager');
 const cards_metadata = require('../utils/cards-metadata.json');
 const userRecently = new Set();
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
@@ -19,7 +22,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney")
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -663,7 +666,11 @@ async function processing() {
 processing();
 	
 }
-exports.help = {
-  name: "roll",
-        aliases:["multi-roll"]
+module.exports.help = {
+	name: "roll",
+	aliases: ["multi-roll"],
+	description: `rolls a gacha ticket`,
+	usage: `${prefix}roll`,
+	group: "General",
+	public: true,
 }

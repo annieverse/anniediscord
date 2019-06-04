@@ -1,6 +1,9 @@
 const Discord = require("discord.js");
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -14,7 +17,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         //
         // 
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 let payEmbed = new Discord.RichEmbed();
@@ -174,5 +177,9 @@ else {
 
 module.exports.help = {
     name:"payrole",
-        aliases:[]
+    aliases: [],
+    description: `Pays AC to a specified role`,
+    usage: `${prefix}payrole @role <amount>`,
+    group: "Admin",
+    public: true,
 }

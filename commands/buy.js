@@ -3,6 +3,8 @@ const palette = require('../colorset.json');
 const databaseManager = require('../utils/databaseManager');
 const formatManager = require('../utils/formatManager');
 const profileManager = require('../utils/profileManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
@@ -27,7 +29,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
 ///     09/17/18 - huge reworks in buy system. The changes will be followed by shop.js.
 ///     09/29/18 - added purchase option for role_items(items.json)
 
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     const format = new formatManager(message);
@@ -534,5 +535,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             
 module.exports.help = {
     name:"buy",
-        aliases:[]
+    aliases: [],
+    description: `buy an item from the shop`,
+    usage: `${prefix}buy <item>`,
+    group: "Shop-related",
+    public: true,
 }

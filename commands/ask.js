@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 	//
@@ -11,12 +13,12 @@ module.exports.run = async (bot, command, message, args, utils) => {
 	//
 	//		
 
-  const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
-return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? initAsk()
+return ["bot", "bot-games", "cmds","sandbox"].includes(message.channel.name) ? initAsk()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+
 
 
 
@@ -31,7 +33,7 @@ async function initAsk() {
       askEmbed.setDescription('Please ask a full question!')
       return message.channel.send(askEmbed);
     } 
-
+    
     let replies = ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"];
     let result = Math.floor((Math.random() * replies.length));
     let question = args.slice(0).join(" ");
@@ -45,6 +47,10 @@ async function initAsk() {
 }
 }
 module.exports.help={
-    name:"ask",
-        aliases:[]
+  name:"ask",
+  aliases: [],
+  description: `You can ask any question and Annie will answer you.`,
+  usage: `${prefix}ask <message>`,
+  group: "Fun",
+  public: true,
 }

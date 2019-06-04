@@ -2,11 +2,13 @@ const palette = require(`../colorset.json`);
 const sql = require("sqlite");
 const formatManager = require('../utils/formatManager');
 const ranksManager = require('../utils/ranksManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 sql.open(".data/database.sqlite");
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message)
@@ -238,5 +240,9 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 }
 module.exports.help = {
     name:"eat",
-    aliases:[]
+    aliases: [],
+    description: `Eats the capsules you get from gacha and gives you XP in return`,
+    usage: `${prefix}eat <amount>`,
+    group: "Shop-related",
+    public: true,
 }

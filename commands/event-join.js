@@ -1,12 +1,15 @@
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     const format = new formatManager(message);
@@ -164,5 +167,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }           
 module.exports.help = {
     name:"join",
-        aliases:[]
+    aliases: [],
+    description: `allows you to submit to an event`,
+    usage: `${prefix}join`,
+    group: "Server",
+    public: true,
 }

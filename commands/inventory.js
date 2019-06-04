@@ -12,6 +12,9 @@ const formatManager = require('../utils/formatManager');
 const profileManager = require('../utils/profileManager');
 const userRecently = new Set();
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
 
@@ -22,7 +25,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney")
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -412,7 +415,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 }
 
-exports.help = {
-  name: "inventory",
-        aliases:[]
+module.exports.help = {
+    name: "inventory",
+    aliases: [],
+    description: `Views your inventory`,
+    usage: `${prefix}inventory`,
+    group: "General",
+    public: true,
 }

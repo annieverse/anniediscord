@@ -6,6 +6,8 @@ const formatManager = require('../utils/formatManager');
 
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "RobotoBold");
@@ -15,7 +17,6 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney")
 module.exports.run = async (bot, command, message, args, utils) => {
 
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -126,7 +127,11 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 }
 
-exports.help = {
-  name: "collection",
-        aliases:[]
+module.exports.help = {
+    name: "collection",
+    aliases: [],
+    description: `View your collected cards`,
+    usage: `${prefix}collection`,
+    group: "General",
+    public: true,
 }

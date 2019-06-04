@@ -2,13 +2,16 @@ const Discord = require("discord.js");
 const moment = require(`moment`);
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager.js');
-;
+
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -102,5 +105,9 @@ async function initPay() {
 }
 module.exports.help = {
     name:"pay",
-        aliases:[]
+    aliases: [],
+    description: `Pay a specified user an amount of AC from your balance`,
+    usage: `${prefix}pay @user <amount>`,
+    group: "Shop-related",
+    public: true,
 }

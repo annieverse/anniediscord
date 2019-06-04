@@ -1,7 +1,8 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
-
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -14,7 +15,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
 //		11/03/18 - Added user finding by given input. Reaction. Major feature reworks.
 //		09/17/18 - Imported commands from naphnaphz's bot.
 
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -93,5 +93,9 @@ return ["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name) ? 
 
 module.exports.help = {
 	name: "avatar",
-        aliases:['ava', 'pfp']
+	aliases: ['ava', 'pfp'],
+	description: `Grabs your's or a specified user's avatar and displays it`,
+	usage: `${prefix}avatar [user]<optional>`,
+	group: "Fun",
+	public: true,
 }

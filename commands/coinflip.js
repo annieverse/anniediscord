@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager.js');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -28,6 +29,10 @@ async function initFlipCoin() {
 }
 }
 module.exports.help={
-    name:"flipcoin",
-        aliases:[]
+  name:"flipcoin",
+  aliases: ["cf"],
+  description: `filps a coin for heads or tails`,
+  usage: `${prefix}filpcoin`,
+  group: "Fun",
+  public: true,
 }

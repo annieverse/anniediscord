@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const env = require(`../.data/environment.json`);
+const env = require('../.data/environment.json');
 
 module.exports = async (bot, reaction, user) => {
 

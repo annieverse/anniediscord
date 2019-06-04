@@ -1,6 +1,8 @@
 
 const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -8,7 +10,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
   Lorn term down the road check docs
 */
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function fileAliasesCheck(file) {
@@ -40,6 +41,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }//end of module.exports.run
 
 module.exports.help = {
-        name:"challenge",
-        aliases:[]
+  name:"challenge",
+  aliases: [],
+  description: `choose a random theme for an art duel`,
+  usage: `${prefix}challenge @clan`,
+  group: "General",
+  public: false,
 }

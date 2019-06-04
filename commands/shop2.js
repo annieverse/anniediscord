@@ -4,6 +4,9 @@ const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 /// shop2.js
@@ -14,7 +17,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
 ///     09/29/18 - old roles shop.
 ///
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -111,6 +114,10 @@ else {
 }
 }
 module.exports.help = {
-    name:"r.shop",
-        aliases:[]
+  name:"r.shop",
+  aliases: [],
+  description: `displays buyable roles`,
+  usage: `${prefix}r.shop`,
+  group: "Shop-related",
+  public: false,
 }

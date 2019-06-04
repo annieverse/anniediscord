@@ -1,4 +1,6 @@
 const Discord = require("discord.js");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -8,7 +10,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///    change logs:
     ///       09/17/18 - rework embed. 
     ///     -naphnaphz
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
@@ -71,6 +72,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
   }
 }
 module.exports.help = {
-    name:"addrole",
-    aliases:[]
+  name:"addrole",
+  aliases: [],
+  description: `Add roles to specific user.`,
+  usage: `${prefix}addrole @user <role>`,
+  group: "Admin",
+  public: true,
 }

@@ -1,7 +1,9 @@
 const Discord = require("discord.js");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bUser=   message.guild.member(message.mentions.users.first()||message.guilds.member.get(args[0]));
@@ -25,5 +27,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }
 module.exports.help={
     name:"ban",
-        aliases:[]
+    aliases: [],
+    description: `Kick permanently.`,
+    usage: `${prefix}ban @user <reason>`,
+    group: "Admin",
+    public: true,
 }

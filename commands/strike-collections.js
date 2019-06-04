@@ -2,7 +2,10 @@ const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const moment = require(`moment`);
 const formatManager = require('../utils/formatManager');
-const env = require(`../.data/environment.json`);
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
+
 
 
 const sql = require('sqlite');
@@ -257,7 +260,11 @@ module.exports.run = async (bot, command, message, args, utils) => {
 }
 
 
-exports.help = {
-  name: "strike",
-        aliases:["strikes", "strikez"]
+module.exports.help = {
+    name: "strike",
+    aliases: ["strikes", "strikez"],
+    description: `Give a strike to a user`,
+    usage: `${prefix}strike @user`,
+    group: "Admin",
+    public: true,
 }

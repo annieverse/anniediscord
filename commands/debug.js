@@ -1,6 +1,9 @@
 const ms = require('parse-ms');
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -19,7 +22,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -naphnaphz
     ///     -Frying Pan
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 let dbg_md = args[0];    
@@ -80,5 +83,9 @@ return ["bot", "games", "cmds"].includes(message.channel.name) ? dailies()
 }
 module.exports.help={
     name:"xz",
-        aliases:[]
+	aliases: [],
+	description: `Test file for daily command`,
+	usage: `${prefix}xz`,
+	group: "Admin",
+	public: true,
 }

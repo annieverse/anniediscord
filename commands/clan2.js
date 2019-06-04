@@ -1,11 +1,12 @@
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
     //  Developer Mode Evnironment
     //  Command active only for developers
-    const env = require(`../.data/environment.json`);
     if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -204,5 +205,9 @@ module.exports.run = async (bot, command, message, args, utils) => {
 }
 exports.help = {
     name: "clan2",
-          aliases:[]
+    aliases: [],
+    description: `Allows you to get help with clans and how to start a clan`,
+    usage: `${prefix}clan2`,
+    group: "General",
+    public: false,
   }

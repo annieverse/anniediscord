@@ -1,6 +1,8 @@
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -64,5 +66,9 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
 module.exports.help = {
     name:"bal",
-    aliases:[`balance`, `money`, `credit`, `ball`]
+    aliases: [`balance`, `money`, `credit`, `ball`],
+    description: `Checks your AC balance`,
+    usage: `${prefix}bal`,
+    group: "General",
+    public: true,
 }

@@ -10,6 +10,9 @@ const databaseManager = require('../utils/databaseManager.js');
 const ranksManager = require('../utils/ranksManager');
 const profileManager = require('../utils/profileManager');
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
@@ -23,7 +26,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "Kosugi
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
 const configFormat = new formatManager(message);
@@ -743,6 +746,10 @@ async function card() {
 }
 
 module.exports.help = {
-  name: "debugp",
-        aliases:["portfolio"]
+    name: "debugp",
+    aliases: ["portfolio"],
+    description: `test file for profile command`,
+    usage: `${prefix}debugp`,
+    group: "Admin",
+    public: false,
 }

@@ -1,13 +1,14 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-;
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 const ms = require('parse-ms');
 const formatManager = require('../utils/formatManager');
 const sql = require("sqlite");
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -62,5 +63,9 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? getReputati
 }
 module.exports.help = {
     name:"rep",
-        aliases:[]
+	aliases: [],
+	description: `Gives rep to a user`,
+	usage: `${prefix}rep @user`,
+	group: "General",
+	public: true,
 }

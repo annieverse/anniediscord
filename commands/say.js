@@ -1,9 +1,12 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 let sayEmbed = new Discord.RichEmbed()
@@ -39,5 +42,9 @@ return message.channel.send(sayEmbed);
 }
 module.exports.help = {
 	name: "say",
-        aliases:[]
+	aliases: [],
+	description: `Talk through bot`,
+	usage: `${prefix}say <message>`,
+	group: "Admin",
+	public: true,
 }

@@ -4,10 +4,13 @@ var fs = require('fs');
 var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
 const sql = require("sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function fileAliasesCheck(file) {
@@ -71,6 +74,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 } //end of module.exports.run
 
 module.exports.help = {
-        name:"sub",
-        aliases:[]
+  name:"sub",
+  aliases: [],
+  description: `Shows the themes for a category`,
+  usage: `${prefix}sub <category>`,
+  group: "General",
+  public: false,
 }

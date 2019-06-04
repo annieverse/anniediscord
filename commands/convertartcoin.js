@@ -6,6 +6,8 @@ const formatManager = require('../utils/formatManager');
 
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -20,7 +22,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///
     ///     -naphnaphz
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -181,5 +182,9 @@ return ["bot", "bot-games", "sandbox"].includes(message.channel.name) ? converti
 }
 module.exports.help = {
     name:"cartcoins",
-        aliases:["convertac", "acconvert", "cartcoin"]
+    aliases: ["convertac", "acconvert", "cartcoin"],
+    description: `Converts AC into XP`,
+    usage: `${prefix}cartcoins <amount>`,
+    group: "General",
+    public: true,
 }

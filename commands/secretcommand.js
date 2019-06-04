@@ -3,10 +3,13 @@ const ms = require('parse-ms');
 
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 		let embed = new Discord.RichEmbed()
@@ -110,5 +113,9 @@ message.channel.send(`<@${tomute.id}>has been unmuted `)
 
 module.exports.help={
     name:"secretbox",
-        aliases:[]
+	aliases: [],
+	description: `Secret`,
+	usage: `${prefix}secretbox`,
+	group: "Fun",
+	public: false,
 }

@@ -1,13 +1,15 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
-;
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 
@@ -69,7 +71,11 @@ sendRewardInit();
     }
 }
     
-    module.exports.help = {
-        name:"sendreward",
-        aliases:[]
+module.exports.help = {
+    name:"sendreward",
+    aliases: [],
+    description: `Send Rewards for events`,
+    usage: `${prefix}sendreward @user <place>`,
+    group: "Admin",
+    public: true,
     }

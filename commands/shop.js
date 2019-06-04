@@ -3,6 +3,9 @@ const palette = require('../colorset.json');
 const fs = require('fs');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 const sql = require("sqlite");
 sql.open('.data/database.sqlite');
@@ -22,7 +25,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 ///     -naphnaphz
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -137,5 +140,9 @@ async function initShop() {
 }
 module.exports.help = {
     name:"shop",
-        aliases:[]
+    aliases: [],
+    description: `Items you can buy`,
+    usage: `${prefix}shop`,
+    group: "Shop-related",
+    public: true,
 }

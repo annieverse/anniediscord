@@ -1,4 +1,7 @@
 const Discord = require("discord.js");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -9,7 +12,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///       09/19/18 - rework embed. 
     ///     -naphnaphz
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
@@ -71,6 +74,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
   }
 }
 module.exports.help = {
-    name:"removerole",
-        aliases:[]
+  name:"removerole",
+  aliases: [],
+  description: `Removing user's roles.`,
+  usage: `${prefix}removerole @user @role`,
+  group: "Admin",
+  public: true,
 }

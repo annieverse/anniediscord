@@ -1,6 +1,9 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const ms = require("parse-ms");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -15,7 +18,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///     -naphnaphz
     ///     -Frying Pan
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let sicon = message.guild.iconURL;
@@ -54,5 +57,9 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }
 module.exports.help = {
     name:"serverinfo",
-        aliases:[]
+    aliases: [],
+    description: `Displays info about server`,
+    usage: `${prefix}serverinfo`,
+    group: "Server",
+    public: true,
 }

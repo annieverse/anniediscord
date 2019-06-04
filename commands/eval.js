@@ -5,10 +5,13 @@ const ms = require('parse-ms');
 const moment = require('moment');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const argsx = message.content.split(" ").slice(1);
@@ -58,7 +61,11 @@ const clean = (text) => {
     }
 };
 
-exports.help = {
+module.exports.help = {
   name: "eval",
-        aliases:[]
+  aliases: [],
+  description: `evalutes a line of code`,
+  usage: `${prefix}eval <what you want to test>`,
+  group: "Admin",
+  public: true,
 }

@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 	/// admhelp.js
@@ -11,7 +13,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     ///       
     ///
     ///     -naphnaphz
-const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 function fileAliasesCheck(file) {
@@ -74,6 +75,10 @@ if(!message.member.roles.find(r => r.name === 'Creators Council'))return message
 
 }
 module.exports.help = {
-    name:"adminhelp",
-    aliases:[]
+  name:"adminhelp",
+  aliases: [],
+  description: `A list of all admin commands`,
+  usage: `${prefix}adminhelp`,
+  group: "Admin",
+  public: true,
 }

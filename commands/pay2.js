@@ -1,13 +1,16 @@
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
     //  Developer Mode Evnironment
     //  Command active only for developers
-    const env = require(`../.data/environment.json`);
+    
     if(env.dev && !env.administrator_id.includes(message.author.id))return;
   
 
@@ -379,7 +382,11 @@ module.exports.run = async (bot, command, message, args, utils) => {
     }
     return pay();
 }
-exports.help = {
-  name: "pay2",
-        aliases:["test"]
+module.exports.help = {
+    name: "pay2",
+    aliases: ["test"],
+    description: `pay a specified user an amount of AC from your balance | Fwubbles? test file`,
+    usage: `${prefix}pay2`,
+    group: "Admin",
+    public: false,
 }

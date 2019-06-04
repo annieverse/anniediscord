@@ -1,9 +1,12 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
 const ms = require("ms");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function getRoles(r) {
@@ -54,6 +57,10 @@ let admEmbed = new Discord.RichEmbed();
 
 }//end of the module
 module.exports.help = {
-    name:"unmute",
-        aliases:[]
+  name:"unmute",
+  aliases: [],
+  description: `unmutes a user`,
+  usage: `${prefix}unmute @user [reason]<optional>`,
+  group: "Admin",
+  public: true,
 }

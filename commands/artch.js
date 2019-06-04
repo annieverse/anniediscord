@@ -3,6 +3,8 @@ const palette = require('../colorset.json');
 var fs = require('fs');
 var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 
 module.exports.run = async (bot, command, message, args, utils) => {
@@ -12,7 +14,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     return src.help.name;
   };
 
-  const env = require('../.data/environment.json');
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   const battlechoice = new Discord.RichEmbed()
@@ -84,6 +85,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }//module.exports.run
 
 module.exports.help = {
-        name:"art.ch",
-        aliases:[]
+  name:"art.ch",
+  aliases: [],
+  description: `Selects a random theme for an art duel`,
+  usage: `${prefix}art.ch`,
+  group: "General",
+  public: false,
 }

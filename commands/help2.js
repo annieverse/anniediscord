@@ -2,25 +2,12 @@ const Discord = require('discord.js');
 const formatManager = require('../utils/formatManager.js');
 const palette = require(`../colorset.json`);
 const fs = require(`fs`);
-
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
+
 module.exports.run = async (bot, command, message, args, utils) => {
 	
-	/// help.js
-    ///
-    ///  Help command
-    ///    change logs:
-    ///		  11/12/18 - Interface reworks.
-    ///	  	  11/01/18 - Added leaderboard (xp, ac) & server invite. Removed report cmd.
-    ///		  10/18/18 - Halloween palette
-    ///       09/17/18 - Major changes. Including embed structures & infos.
-    ///       
-    ///
-    ///     -naphnaphz
-
-
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -77,10 +64,10 @@ async function initHelp() {
 }
 }
 module.exports.help = {
-    name:"help",
+    name: "help2",
     aliases: [],
     description: `gives a list of current commands`,
-    usage: `${prefix}help`,
+    usage: `${prefix}help2`,
     group: "General",
-    public: true,
+    public: false,
 }

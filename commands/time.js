@@ -3,10 +3,13 @@ const palette = require('../colorset.json');
 const formatManager = require('../utils/formatManager');
 const clock = require("node-emoji-clock");
 const moment = require("moment-timezone");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -112,6 +115,10 @@ async function initTime() {
 
 
 module.exports.help = {
-    name:"time",
-        aliases:[]
+      name:"time",
+      aliases: [],
+      description: `Get the time for various spots around the world`,
+      usage: `${prefix}time`,
+      group: "Fun",
+      public: true,
 }

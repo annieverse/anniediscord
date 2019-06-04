@@ -1,9 +1,11 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
 const moment = require('moment');
-const env = require('../.data/environment.json');
 const formatManager = require('../utils/formatManager');
 const fs = require("fs")
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
@@ -179,7 +181,11 @@ module.exports.run = async (bot, command, message, args, utils) => {
     run()
     
 }
-exports.help = {
-  name: "server",
-        aliases:[]
+module.exports.help = {
+    name: "server",
+    aliases: [],
+    description: `Developer Command | remote control of bot`,
+    usage: `${prefix}server <command>`,
+    group: "Admin",
+    public: true,
 }

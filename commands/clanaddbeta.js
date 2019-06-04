@@ -3,10 +3,11 @@ const palette = require(`../colorset.json`);
 const formatManager = require(`../utils/formatManager`);
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-    const env = require(`../.data/environment.json`);
     if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
     function fileAliasesCheck(file) {
@@ -466,5 +467,9 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 module.exports.help = {
     name: "beta-createclan",
-    aliases: []
+    aliases: [],
+    description: `create a clan`,
+    usage: `${prefix}beta-createclan`,
+    group: "General",
+    public: false,
 }

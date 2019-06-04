@@ -1,14 +1,10 @@
-/*
- *This is only a template, easy to pull from when making a new command
- *
- */
-
 const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
 
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
   function fileAliasesCheck(file) {
@@ -21,6 +17,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 }//end of module.exports.run
 
 module.exports.help = {
-        name:"cclantoken",
-        aliases:[]
+  name:"cclantoken",
+  aliases: [],
+  description: `converts AC into AC`,
+  usage: `${prefix}cclantoken <amount>`,
+  group: "General",
+  public: false,
 }

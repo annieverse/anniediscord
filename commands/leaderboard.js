@@ -7,7 +7,10 @@ const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const { get } = require("snekfetch");
 const imageUrlRegex = /\?size=2048$/g; 
-const env = require(`../.data/environment.json`);
+
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-bold.ttf")), "RobotoBold");
@@ -455,5 +458,9 @@ const format = new formatManager(message);
 
 module.exports.help = {
     name:"lb",
-        aliases:['leaderboard', 'rank', 'ranking']
+    aliases: ['leaderboard', 'rank', 'ranking'],
+    description: `pulls up options for the leaderboards`,
+    usage: `${prefix}lb`,
+    group: "General",
+    public: true,
 }

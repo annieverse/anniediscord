@@ -1,8 +1,11 @@
 const Discord = require('discord.js');
 
+const env = require('../.data/environment.json');
+const prefix = env.prefix;
+
 module.exports.run = async (bot, command, message, args, utils) => {
 
-const env = require(`../.data/environment.json`);
+
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 return message.channel.send(`Hey **${message.author.username}**, here's the link.
@@ -11,5 +14,9 @@ return message.channel.send(`Hey **${message.author.username}**, here's the link
 }
 module.exports.help={
     name:"invite",
-        aliases:["inv", "serverinvite", "serverlink", "linkserver", "invitelink", "link"]
+    aliases: ["serverinvite", "serverlink", "linkserver", "invitelink", "link"],
+    description: `gives a server invite link`,
+    usage: `${prefix}invite`,
+    group: "Server",
+    public: true,
 }
