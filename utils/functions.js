@@ -37,7 +37,7 @@ module.exports = {
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
 
-            msg.react('⏪').then(async r => { // We need to make sure we start the first two reactions, this is the first one
+            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
 
                 msg.react('⏩') // This is the second one, it will run this one after the first one
 
@@ -79,12 +79,6 @@ module.exports = {
     */
     pages: function (message, pages, evembed) {
 
-        const clean = (text = ``) => {
-            if (typeof (text) === "string")
-                return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-            else
-                return text;
-        }
 
 
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
@@ -97,7 +91,7 @@ module.exports = {
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
 
-            msg.react('⏪').then(async r => { // We need to make sure we start the first two reactions, this is the first one
+            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
 
                 msg.react('⏩') // This is the second one, it will run this one after the first one
 

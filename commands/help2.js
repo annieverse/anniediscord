@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const formatManager = require('../utils/formatManager.js');
 const palette = require(`../colorset.json`);
 const env = require('../.data/environment.json');
+const fs = require('fs');
 const prefix = env.prefix;
 
 
@@ -97,7 +98,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
      * toSubCommandFunc() Information
      */
     const toSubCommandFunc = async (string) => {
-        subcommand = string.toUpperCase()
+        let subcommand = string.toUpperCase()
         const function_path = {
             "GROUPS": helpCommandGroups,
         }
@@ -142,7 +143,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             }
         })
         await utils.pause(500)
-        return file_arr;
+        return file_arr
     };
 
     /**
@@ -158,7 +159,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             }
         })
         await utils.pause(500)
-        return file_arr;
+        return file_arr
     };
 
     /**
@@ -177,7 +178,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             }
         })
         await utils.pause(500)
-        return file_arr;
+        return file_arr
     };
     mainNames()
 
@@ -191,7 +192,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const src = require(`./${file}`);
         name = src.help.name;
         await utils.pause(500)
-        return name;
+        return name
     };
 
     /**
@@ -207,7 +208,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             file_arr.push(src.help.aliases[x]);
         }
         await utils.pause(500)
-        return file_arr;
+        return file_arr
     };
     aliases()
 
@@ -221,7 +222,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const src = require(`./${file}`);
         description = src.help.description;
         await utils.pause(500)
-        return description;
+        return description
     };
     description()
     /**
@@ -234,7 +235,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const src = require(`./${file}`);
         usage = src.help.usage;
         await utils.pause(500)
-        return usage;
+        return usage
     };
     usage()
     /**
@@ -247,7 +248,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const src = require(`./${file}`);
         groupName = src.help.group;
         await utils.pause(500)
-        return groupName;
+        return groupName
     };
 
     /**
@@ -260,7 +261,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const src = require(`./${file}`);
         public = src.help.public;
         await utils.pause(500)
-        return public;
+        return public
     };
     
     /***************************************************************************************************
@@ -286,7 +287,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             loglist.forEach((code, i) => {
                 displist[i] = logtable[code].msg;
             });
-            return format.embedWrapper(logtable[loglist[loglist.length - 1]].color, `${displist.join('')}`);
+            return format.embedWrapper(logtable[loglist[loglist.length - 1]].color, `${displist.join('')}`)
         }
         helpMainLog()
 
@@ -314,7 +315,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
                 var index = fileName.indexOf(fileName[file]);
                 deleteList.push(index);
             }else{
-                return;
+                return
             }
         }
         for (let index = 0; index < deleteList.length; index++) {
@@ -333,14 +334,14 @@ module.exports.run = async (bot, command, message, args, utils) => {
                     if (group.toLowerCase() === groupname.toLowerCase()){
                         let cmdName = await mainName(fileName[file])
                         pages[page].push(cmdName);
-                        var index = fileName.indexOf(fileName[file]);
+                        index = fileName.indexOf(fileName[file]);
                         deleteList.push(index);
                     }
                 }
             }
             utils.pause(200);
             for (let index = 0; index < deleteList.length; index++) {
-                var spot = deleteList[index];
+                spot = deleteList[index];
                 if (spot > -1) {
                     fileName.splice(spot, 1);
                 }
