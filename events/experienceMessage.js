@@ -366,11 +366,12 @@ module.exports = (bot, message) => {
 
                     message.guild.member(message.author.id).addRole(await manager.ranksCheck(userdatarow.level <= 0 ? 0 : userdatarow.level + 1).rank);
                     !(manager.ranksCheck(userdatarow.level).lvlcap).includes(userdatarow.level + 1) ? null : message.guild.member(message.author.id).removeRole(await manager.ranksCheck(userdatarow.level + 1).prevrank);
-                    console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`);
 
-                    return setTimeout(() => {
+                    setTimeout(() => {
                         sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`);
                     }, (this.cooldown))
+                    
+                    return console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`);
                 })
             },
 
@@ -402,13 +403,13 @@ module.exports = (bot, message) => {
                            SET expcooldown = "True" 
                            WHERE userId = "${message.author.id}"`);
 
-                        console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
-
-                        return setTimeout(function () {
+                        setTimeout(function () {
                             sql.run(`UPDATE usercheck 
                                  SET expcooldown = "False" 
                                  WHERE userId = "${message.author.id}"`);
                         }, (this.cooldown))
+
+                        return console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
                     })
             }
         }
