@@ -24,7 +24,7 @@
     "discord-emoji": "^1.1.1",
     "discord.js": "^11.5.1",
     "express": "^4.17.1",
-    "express-status-monitor": "^1.2.5",
+    "express-status-monitor": "^1.2.6",
     "fs-nextra": "^0.4.5",
     "jimp": "^0.6.0",
     "moment": "^2.24.0",
