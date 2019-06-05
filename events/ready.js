@@ -17,7 +17,7 @@ module.exports = bot => {
      * secret thingy, change color of role
      */
     function roleChange(){
-        if(!env.dev)return;
+        //if(!env.dev)return;
 
         // Bot color #2fc9b6 ORIGINAL
         // Smol Bean #ff79ac ORIGNIAL
