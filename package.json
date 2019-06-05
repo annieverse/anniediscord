@@ -7,14 +7,14 @@
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "node test-build.js",
+    "test": "eslint .",
     "start": "pm2 start server.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon server.js"
   },
   "engines": {
     "node": "10.16.0"
   },
-  "author": "",
+  "author": "AAU_developer",
   "license": "MIT",
   "dependencies": {
     "canvas": "^2.5.0",
@@ -36,5 +36,8 @@
     "sqlite": "^3.0.2",
     "sqlite3": "^4.0.8",
     "superagent": "^5.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0"
   }
 }
