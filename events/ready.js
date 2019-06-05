@@ -49,7 +49,11 @@ module.exports = bot => {
             'b5EAD7',
             'C7CEEA',
             'F8B195',
-            'F67280'
+            'F67280',
+            '79fa72',
+            'd3fa7f',
+            'ca8ae4',
+            'fff177'
         ]
 
         /**
