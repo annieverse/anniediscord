@@ -7,7 +7,7 @@
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node server.js",
     "start": "pm2 start server.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon server.js"
   },
