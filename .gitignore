@@ -1,7 +1,4 @@
 node_modules
-.data/
+.data/database.sqlite
 package-lock.json
-utils/environment.json
 .vscode/
-events/unhandledRejection.js
-commands/help2.js
