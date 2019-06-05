@@ -1,5 +1,6 @@
 const env = require('../.data/environment.json');
-const sql = require(`sqlite`);
+const sql = require("sqlite");
+
 module.exports = bot => {
 
 
@@ -89,11 +90,34 @@ module.exports = bot => {
                 return bot.guilds.get(`459891664182312980`).roles.find(n => n.name === role);
             }
 
+            /**
+             * @returns {string} A(n) random color in hex format
+             */
+            async function randomColor(){
+                // storing all letter and digit combinations 
+                // for hex color code 
+                var letters = "0123456789ABCDEF";
+
+                // color code starts with # 
+                var color = '#';
+
+                // generating 6 times as color code consist 
+                // of 6 letter or digits 
+                for (var i = 0; i < 6; i++) {
+                    color += letters[(Math.floor(Math.random() * 16))];
+                }
+
+                return color;
+            }
             
             /**
              * @returns {string} A(n) color in hex format from the colorArray
              */
             async function setColor(){
+                
+                // storing all letter and digit combinations 
+                // for hex color code 
+                var letters = "0123456789ABCDEF";
 
                 // color code starts with # 
                 var color = '#';
@@ -103,6 +127,7 @@ module.exports = bot => {
                 
                 // Increase the count by one
                 count++;
+                if (count === colorArray.length) count = 0;
                 return color;
             }
 
@@ -137,14 +162,18 @@ module.exports = bot => {
         }
     }
 
-    // Fired processes on startup.
+    /**
+     * 
+     * Fired processes on startup.
+     * @startup
+     */
     function startup() {
 
         sql.open(`.data/database.sqlite`);
         sql.run(`UPDATE usercheck SET expcooldown = "False"`);
 
         if (env.dev) {
-            console.log(`${bot.user.username}[Dev] is alive.`)
+            console.log(`${bot.user.username}[dev-mode] is alive.`)
             bot.user.setStatus('dnd');
             bot.user.setActivity(`maintenance.`, {
                 type: "LISTENING"

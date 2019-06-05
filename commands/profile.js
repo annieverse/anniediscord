@@ -104,6 +104,10 @@ module.exports.run = async (bot, command, message, args, utils) => {
             } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
             const usercolor = configProfile.checkInterface(user.ui, member);
             const badgesdata = await collection.badges;
+
+            //  Remove userid from badges object.
+            delete badgesdata.userId;
+
             const key = Object.values(badgesdata);
             const reservedSlot = (collection.storingValue(badgesdata)).filter(x => (x !== null)).length - 1;
 

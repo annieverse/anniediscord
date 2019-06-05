@@ -5,7 +5,6 @@ const env = require(`../.data/environment.json`);
 
 module.exports = (bot, err, p, message) => {
 
-    console.log(err)
     if (typeof message == "undefined" || null){
         const metadata = {
             date: moment(Date.now()).format(`dddd, MMMM Do YYYY, h:mm:ss a`),
@@ -31,7 +30,7 @@ module.exports = (bot, err, p, message) => {
             .setTimestamp(Date.now())
 
         //  Disable error channel logging in dev environment.
-        //if (env.dev) return;
+        if (env.dev) return;
         err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
         return metadata.log.send(embed);
     }else{
@@ -68,7 +67,7 @@ module.exports = (bot, err, p, message) => {
             .setTimestamp(Date.now())
 
         //  Disable error channel logging in dev environment.
-        //if (env.dev) return;
+        if (env.dev) return;
         err.name !== "TypeError" ? metadata.log.send(metadata.dev) : null;
         return metadata.log.send(embed);
 
