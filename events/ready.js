@@ -10,7 +10,7 @@ module.exports = bot => {
 
     startup();
 
-    //roleChange();
+    roleChange();
 
     
     /**
@@ -30,16 +30,35 @@ module.exports = bot => {
          * 6 = 6 minutes
          * etc.
          */
-        let x = 5;
+        let x = 15;
 
         /**
          * The roleSelector is a list of every role you want to change.
          */
         let roleSelector=[
-            'Creators Council',
-            'Smol Bean',
-            'Tomato Fox'
+            'Ruling Star'
         ]
+        /**
+         * The colorArray is a list of every color you want to change.
+         */
+        let colorArray=[
+            'FF9AA2',
+            'FFB7B2',
+            'FFDAC1',
+            'E2F0CB',
+            'b5EAD7',
+            'C7CEEA',
+            'F8B195',
+            'F67280',
+            'C06C84',
+            '6C5B7B',
+            '355C7D'
+        ]
+
+        /**
+         * Count is used to run through the colorArray in order.
+         */
+        let count = 0;
 
         /**
          * The setInterval controls how long it takes before the color changes.
@@ -94,13 +113,38 @@ module.exports = bot => {
 
                 return color;
             }
+            
+            /**
+             * @returns {string} A(n) color in hex format from the colorArray
+             */
+            async function setColor(){
+                
+                // storing all letter and digit combinations 
+                // for hex color code 
+                var letters = "0123456789ABCDEF";
+
+                // color code starts with # 
+                var color = '#';
+
+                //assigns the color using the colorArray values
+                color += colorArray[count];
+                
+                // Increase the count by one
+                count++;
+                return color;
+            }
 
             /**
              * runs the core processing of the whole function
              * @param {string} roleName Role name
              */
             async function main(roleName) {
-                let color = await randomColor();
+
+                // For random color
+                //let color = await randomColor();
+                // Use colorArray
+                let color = await setColor();
+                
                 let role = await grabRole(roleName);
                 console.log(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`);
                 role.setColor(color);
