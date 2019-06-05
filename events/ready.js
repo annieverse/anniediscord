@@ -10,7 +10,7 @@ module.exports = bot => {
 
     startup();
 
-    roleChange();
+    //roleChange();
 
     
     /**
@@ -50,9 +50,15 @@ module.exports = bot => {
             'C7CEEA',
             'F8B195',
             'F67280',
-            'C06C84',
             '6C5B7B',
-            '355C7D'
+            '355C7D',
+            '36d1c4',
+            'a0eecc',
+            'fff2be',
+            'f6318c',
+            'FFFF00',
+            '00FF00',
+            'FF0000',
         ]
 
         /**
@@ -131,6 +137,7 @@ module.exports = bot => {
                 
                 // Increase the count by one
                 count++;
+                if (count === colorArray.length) count = 0;
                 return color;
             }
 
