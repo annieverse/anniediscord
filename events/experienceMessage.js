@@ -341,7 +341,7 @@ module.exports = (bot, message) => {
             },
 
             //  Few data are updated when user leveling up.
-            get levelup() {
+            levelup() {
                 sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
 
                     console.log(userdatarow.currentexp, userdatarow.maxexp, this.randomexp)
@@ -370,14 +370,14 @@ module.exports = (bot, message) => {
                     setTimeout(() => {
                         sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`);
                     }, (this.cooldown))
-                    
-                    return console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`);
+
+                    console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`);
                 })
             },
 
 
             // Few experience points gained while the user still below the maxexp cap.
-            get grind() {
+            grind() {
 
                 if ((metadata.user.tag === `naphnaphz#7790`) &&
                     (metadata.channel === cards.naph_card.skills.main.channel[0])) white_cat_paradise();
@@ -403,13 +403,13 @@ module.exports = (bot, message) => {
                            SET expcooldown = "True" 
                            WHERE userId = "${message.author.id}"`);
 
+                        console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
+
                         setTimeout(function () {
                             sql.run(`UPDATE usercheck 
                                  SET expcooldown = "False" 
                                  WHERE userId = "${message.author.id}"`);
-                        }, (this.cooldown))
-
-                        return console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
+                        }, (this.cooldown))                        
                     })
             }
         }
@@ -462,7 +462,7 @@ module.exports = (bot, message) => {
                     if (userdatarow.expcooldown === "False") {
                         return experienceMechanism.randomexp + userdatarow.currentexp === userdatarow.maxexp ||
                             experienceMechanism.randomexp + userdatarow.currentexp > userdatarow.maxexp ?
-                            experienceMechanism.levelup : experienceMechanism.grind;
+                            experienceMechanism.levelup() : experienceMechanism.grind();
                     }
                 })
         }
