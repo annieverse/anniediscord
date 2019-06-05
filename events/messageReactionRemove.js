@@ -1,6 +1,3 @@
-const Discord = require("discord.js");
-const env = require('../.data/environment.json');
-
 module.exports = async (bot, reaction, user) => {
 
 
@@ -58,7 +55,6 @@ module.exports = async (bot, reaction, user) => {
 
 
                 //Fwubbles Version (Remove single compressed message / ID in the footer)
-                let msg_array = favoritechannel.messages.array() // fetch messages in the channel;
                 let msg_collection = await favoritechannel.fetchMessages()// i dunno how this method works
                 let msg_array2 = msg_collection.array();
 

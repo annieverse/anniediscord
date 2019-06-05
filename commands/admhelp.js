@@ -18,7 +18,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 function fileAliasesCheck(file) {
     const src = require(`./${file}`)
     return src.help.name;
-};
+}
 
 
 let bicon = bot.user.displayAvatarURL;

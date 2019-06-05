@@ -1,9 +1,6 @@
 const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
-var fs = require('fs');
-var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
-const sql = require("sqlite");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
@@ -13,43 +10,37 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
-  function fileAliasesCheck(file) {
-    const src = require(`./${file}`)
-    return src.help.name;
-  };
-
   
   let argsUpperCased = (args.join(" ").trim()).toUpperCase();
   if (argsUpperCased.length === 0) return message.channel.send("Please provide a category");
   
   
-  let name = "name";
-  let sub = "sub";
   var length = 0;
+  let category;
  
   if ("MONSTER".includes(argsUpperCased)){
-    var category = content.MONSTER;
+    category = content.MONSTER;
     length = category.length;
   }else if ("CHALLENGES".includes(argsUpperCased)){
-    var category = content.CHALLENGES;
+    category = content.CHALLENGES;
     length = category.length;
   }else if ("ENVIRONMENT".includes(argsUpperCased)){
-    var category = content.ENVIRONMENT;
+    category = content.ENVIRONMENT;
     length = category.length;
   }else if ("THEMES".includes(argsUpperCased)){
-    var category = content.THEMES;
+    category = content.THEMES;
     length = category.length;
   }else if ("PERSONIFICATION".includes(argsUpperCased)){
-    var category = content.PERSONIFICATION;
+    category = content.PERSONIFICATION;
     length = category.length;
   }else if ("ANIME".includes(argsUpperCased)){
-    var category = content.ANIME;
+    category = content.ANIME;
     length = category.length;
   }else if ("EMOTION/MOOD".includes(argsUpperCased)){
-    var category = content.EMOTION_MOOD;
+    category = content.EMOTION_MOOD;
     length = category.length;
   }else if ("TIME PERIOD".includes(argsUpperCased)){
-    var category = content.TIME_PERIOD;
+    category = content.TIME_PERIOD;
     length = category.length;
   }
   
@@ -62,7 +53,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
     } 
   }
   
-  let bicon = bot.user.displayAvatarURL;
   let embed1 = new Discord.RichEmbed();
   
   

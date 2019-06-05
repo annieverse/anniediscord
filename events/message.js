@@ -1,9 +1,7 @@
 
 const ranksManager = require('../utils/ranksManager');
-const formatManager = require('../utils/formatManager');
 const palette = require('../colorset.json');
 const Discord = require("discord.js");
-const moment = require('moment')
 const sql = require("sqlite");
 sql.open(".data/database.sqlite"); 
 const env = require('../.data/environment.json');
@@ -14,7 +12,6 @@ module.exports = (bot, message) => {
   if(message.channel.type ==='dm')return;
 
   const manager = new ranksManager(bot, message)
-  const format = new formatManager(message)
 
 
   if(!env.dev) {

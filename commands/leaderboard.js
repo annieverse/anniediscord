@@ -162,7 +162,7 @@ const format = new formatManager(message);
 
                 //  Adapt the text to match with the background
                 get text_check() {
-                    this.highlight_user ? canv.setColor(palette.white) : canv.setColor(palette.golden);
+                    return this.highlight_user ? canv.setColor(palette.white) : canv.setColor(palette.golden);
                 }
 
 
@@ -364,7 +364,7 @@ const format = new formatManager(message);
 
 
                 //  Card background layer
-                get base() {
+                base() {
                     canv.setShadowColor("rgba(28, 28, 28, 1)")
                     .setShadowOffsetY(7)
                     .setShadowBlur(15)
@@ -385,7 +385,7 @@ const format = new formatManager(message);
 
                 //  Method selector
                 get setup() {
-                    this.base;
+                    this.base();
                     return this[this.group]();
                 }
 

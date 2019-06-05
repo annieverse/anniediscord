@@ -1,8 +1,5 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const cards = require('../utils/cards-metadata.json');
-const ms = require('parse-ms');
-const moment = require('moment');
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 const env = require('../.data/environment.json');
@@ -24,12 +21,6 @@ evembed.setFooter(`${message.author.username} | Developer Mode`, usercon)
 if(!message.member.roles.find(r => r.name === 'Developer Team'))return message.channel.send(evembed)
 
 
-const clean = (text) => {
-  if (typeof(text) === "string")
-    return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-  else
-      return text;
-}
     try {
       const code = argsx.join(" ");
       let evaled = eval(code);

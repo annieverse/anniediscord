@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const palette = require('../colorset.json');
-const fs = require('fs');
 const formatManager = require('../utils/formatManager');
 const databaseManager = require('../utils/databaseManager');
 const env = require('../.data/environment.json');
@@ -40,9 +39,9 @@ async function initShop() {
     const registerItems = (source, target, emoji=utils.emoji('ArtCoins',bot)) => {
         let categories = []; 
 
-        for (var i in source) { 
-              if (!categories.includes(source[i].type)) {
-                  categories.push(source[i].type)
+        for (var key in source) { 
+              if (!categories.includes(source[key].type)) {
+                  categories.push(source[key].type)
               }
           }
 

@@ -1,5 +1,3 @@
-const Discord = require(`discord.js`);
-
 module.exports = {
 
     /**
@@ -11,7 +9,7 @@ module.exports = {
     */
     evalpages: function (message, pageOrigin,evembed){
 
-        const clean = (text) => {
+        const clean = (text = ``) => {
             if (typeof (text) === "string")
                 return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
             else
@@ -80,6 +78,14 @@ module.exports = {
     * @returns A correctly formatted Embed
     */
     pages: function (message, pages, evembed) {
+
+        const clean = (text = ``) => {
+            if (typeof (text) === "string")
+                return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+            else
+                return text;
+        }
+
 
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
 

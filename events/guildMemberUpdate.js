@@ -1,6 +1,3 @@
-const Discord = require("discord.js");
-const ranksManager = require('../utils/ranksManager');
-
 module.exports = (bot, oldUser, newUser) => {
 
   function getRoles(r) {

@@ -25,11 +25,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
     let members = message.guild.memberCount;
     let botSize = message.guild.members.filter(a=>a.user.bot).size;
     let userSize = members - botSize;
-    let uptimeFixed = ms(bot.uptime);
-    var timestamp = new Date,
-            timeformat = [timestamp.getMonth()+1,timestamp.getDate(),timestamp.getFullYear()].join('/')+' '+[timestamp.getHours(),
-            timestamp.getMinutes(),
-            timestamp.getSeconds()].join(':');
+    var timestamp = new Date;
 
     let onmem = message.guild.members.filter(a => a.user.presence.status === `online`).size;
     let idlemem = message.guild.members.filter(a => a.user.presence.status === `idle`).size;

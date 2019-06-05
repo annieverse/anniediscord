@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const formatManager = require('../utils/formatManager');
 
 module.exports = (bot,member) => {

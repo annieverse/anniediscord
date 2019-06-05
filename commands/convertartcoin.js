@@ -9,7 +9,7 @@ sql.open('.data/database.sqlite');
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
-module.exports.run = async (bot, command, message, args, utils) => {
+module.exports.run = async (bot, command, message, args) => {
 
     /// convertartcoin.js
     ///
@@ -112,14 +112,21 @@ return ["bot", "bot-games", "sandbox"].includes(message.channel.name) ? converti
             
             if(args[0] <= 1)return format.embedWrapper(palette.darkmatte, `Please put higher value! >.<`)
 
+            let inputValue;
+            let parsedXpData
+            var xpScalingCurves;
+            var updatedLvl;
+            var updatedMaxExp;
+            var updatedNextCurExp;
+            var nextLvlExp;
             if(args[0].includes('all')) {
 
-                let parsedXpData = Math.floor((parseInt(user_ac) / 2)) + data.currentexp;
-                var xpScalingCurves = curveMultiplyXP(parsedXpData, 0, 0, 150);
-                var updatedLvl = xpScalingCurves.lvl;
-                var updatedMaxExp = xpScalingCurves.b;
-                var updatedNextCurExp = xpScalingCurves.c;
-                var nextLvlExp = updatedMaxExp;
+                parsedXpData = Math.floor((parseInt(user_ac) / 2)) + data.currentexp;
+                xpScalingCurves = curveMultiplyXP(parsedXpData, 0, 0, 150);
+                updatedLvl = xpScalingCurves.lvl;
+                updatedMaxExp = xpScalingCurves.b;
+                updatedNextCurExp = xpScalingCurves.c;
+                nextLvlExp = updatedMaxExp;
                 
                 sql.run(`UPDATE userdata SET currentexp = ${parsedXpData} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET level = ${updatedLvl} WHERE userId = ${message.author.id}`)
@@ -148,13 +155,13 @@ return ["bot", "bot-games", "sandbox"].includes(message.channel.name) ? converti
             else if ((args[0] !== 'all') && (user_ac >= args[0])) {
                 if(isNaN(args[0]))return format.embedWrapper(palette.darkmatte, `Write the proper value please.. :(`)
 
-                let inputValue = parseInt(args[0]) / 2;  
-                let parsedXpData = Math.floor(inputValue) + data.currentexp;
-                var xpScalingCurves = curveMultiplyXP(parsedXpData, 0, 0, 150);
-                var updatedLvl = xpScalingCurves.lvl;
-                var updatedMaxExp = xpScalingCurves.b;
-                var updatedNextCurExp = xpScalingCurves.c;
-                var nextLvlExp = updatedMaxExp;
+                inputValue = parseInt(args[0]) / 2;  
+                parsedXpData = Math.floor(inputValue) + data.currentexp;
+                xpScalingCurves = curveMultiplyXP(parsedXpData, 0, 0, 150);
+                updatedLvl = xpScalingCurves.lvl;
+                updatedMaxExp = xpScalingCurves.b;
+                updatedNextCurExp = xpScalingCurves.c;
+                nextLvlExp = updatedMaxExp;
 
                 sql.run(`UPDATE userdata SET currentexp = ${parsedXpData} WHERE userId = ${message.author.id}`)
                 sql.run(`UPDATE userdata SET level = ${updatedLvl} WHERE userId = ${message.author.id}`)

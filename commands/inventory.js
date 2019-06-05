@@ -1,16 +1,10 @@
 const { Canvas } = require("canvas-constructor"); 
 const { resolve, join } = require("path");
 const { Attachment } = require("discord.js"); 
-const { get } = require("snekfetch");
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
-const Color = require('color');
-const imageUrlRegex = /\?size=2048$/g; 
-const databaseManager = require('../utils/databaseManager.js');
-const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 const profileManager = require('../utils/profileManager');
-const userRecently = new Set();
 
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
@@ -165,33 +159,15 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         Inventory graphic built with canvas.
         @visual_interface
     */
-    async function visual_interface(member, itemsdata) {
+    async function visual_interface(itemsdata) {
       const configProfile = new profileManager();
-      const configRank = new ranksManager(bot, message);
-      const collection = new databaseManager(member.id);
       
-      /**
-        * id = userid, cur = currentexp, max = maxexp,
-        * crv = expcurve, lvl = userlevel, ac = userartcoins,
-        * rep = userreputation, des = userdescription, ui = userinterfacemode
-        * clr = hex code of user's rank color.
-        */
-      const userdata = await collection.userdata;
-      const keys = collection.storingKey(userdata);
-      const user = {
-         id: userdata[keys[0]], cur: userdata[keys[1]], max: userdata[keys[2]],
-        crv: userdata[keys[3]], lvl: userdata[keys[4]],  ac: userdata[keys[5]],
-        rep: userdata[keys[6]], des: userdata[keys[7]],  ui: userdata[keys[8]],
-        get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() }
-      }
 
             let canvas_x = 580;
             let canvas_y = 250;
             let startPos_x = 10;
             let startPos_y = 15;
            
-            const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
-            const usercolor = configProfile.checkInterface(user.ui, member);
 
             let canv = new Canvas(canvas_x, canvas_y) // x y
               
@@ -248,7 +224,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                 @grid       
             */
             async function grid(x, y, dx, dy, collimit) {
-                let i, curindex;
+                let i, curindex, temporary_y;
 
 
                 //  Define value for each column break.
@@ -406,7 +382,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                     await filtering_items(raw_object);
                     const title = `${utils.emoji(`AnnieWot`,bot)} | **Inventory card for ${message.author.username}**`;
 
-                    !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(message.member, filter_alias_res),`inventory-${message.author.username}.jpg`))
+                    !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(filter_alias_res),`inventory-${message.author.username}.jpg`))
                     load.delete();                      
                 })      
     }

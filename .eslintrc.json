@@ -13,5 +13,9 @@
         "ecmaVersion": 2018
     },
     "rules": {
+        "no-unused-vars": ["error", { "vars": "local", "args": "none" }],
+        "no-console": "off",
+        "no-useless-escape": "off",
+        "terms": ["todo", "fixme", "any other term"], "location": "anywhere"
     }
 }

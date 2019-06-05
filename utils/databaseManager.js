@@ -1,5 +1,6 @@
 
 const sql = require('sqlite');
+const utils = require('./functions');
 sql.open('.data/database.sqlite');
   /**
     *   Accessing database globally.
@@ -398,6 +399,6 @@ class databaseUtils {
                             .then(async data => data.findIndex(x => x.userId === this.id));
         }
 
-};
+}
 
 module.exports = databaseUtils;

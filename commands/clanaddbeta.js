@@ -10,10 +10,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
     if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
-    function fileAliasesCheck(file) {
-        const src = require(`./${file}`)
-        return src.help.name;
-    };
 
 
     const format = new formatManager(message);
@@ -164,43 +160,8 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
     async function create_clan(){
 
-        /**
-         * Local varibles that are used in this function
-         * @clanname the user's level from the container.
-         * @clantag a short string used to identify a clan.
-         * @clanmotto a short description of clan.
-         * @color custom color
-         */
-        let clanname;
-        let clantag;
-        let clanmotto;
-        let color;
 
-        /**
-         * add a role to the user with the clan name as the role name
-         * @addrole 
-         */
-        async function addrole() {
-            let user = message.author;
-            let clanrole = await message.guild.createRole({
-                name: clanname,
-                color: color,
-                permissions: []
-            })
-            user.addrole(clanrole);
-        }
 
-        /**
-         * If custom color is unlocked then the custom color will be used.
-         * @param color hex-color needed
-         */
-        async function chooseColor(color){
-            if(colorCustom){
-                color = color;
-            }else{
-                color = `#000000`;
-            }
-        }
 
         /**
          * Character limit check
@@ -215,35 +176,12 @@ module.exports.run = async (bot, command, message, args, utils) => {
             }
         }
 
-        /**
-         * Update This
-         * Character limit check
-         * @param stringlength the input string
-         * @param maxlength max length allowed
-         */
-        async function colorformat(input) {
-            if (input.startWith('#')) {
-                let x = input.slice(0);
-                if (x.length > 6) {
-                    return x.slice(6);
-                }else{
-                    return x
-                }
-            } else if (input.length>6){
-                return input.slice(6);
-            }else{
-                return input
-            }
-        }
 
         message.channel.send(`Okay so to set up your clan I need a few pieces of info from you.`) // Tell the user that we need more info
         message.channel.send(`To start, Please give a name for your clan.\n**Less than 24 characters**`)
 
         
         const collectorForClanName = new Discord.MessageCollector(message.channel,m => m.author.id === raw_object.userId, {time: 30000});
-        const collectorForClanTag = new Discord.MessageCollector(message.channel, m => m.author.id === raw_object.userId, { time: 30000 });
-        const collectorForClanMotto = new Discord.MessageCollector(message.channel, m => m.author.id === raw_object.userId, { time: 30000 });
-        const collectorForClanColor = new Discord.MessageCollector(message.channel, m => m.author.id === raw_object.userId, { time: 30000 });
 
         collectorForClanName.on(`collect`, async (msg) => {
             console.log(charcheck(msg.content, 24));
@@ -252,170 +190,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
             if(charcheck(msg.content, 24))return log({code: `MAX_CHARS`});
 
             
-            const conditions = async () => {
-                
-                clanname = msg.content;
-                
-                
-
-
-                message.channel.send(`Next I will need a clan tag you wish to use.\n if you type "n/a" the default tag will be the first **5** characters of your clan name.\n**5 character limit**`)
-                collectorForClanTag.on(`collect`, async (msg) => {
-                    if (msg.content.toLowerCase() === "n/a") {
-                        clantag = msg.content;
-                        message.channel.send(`Next I will need a clan motto you wish to use.\n if you type "n/a" the default motto will be "One Awsome clan".\n**165 character limit**`)
-                        collectorForClanMotto.on(`collect`, async (msg) => {
-                            if (msg.content.toLowerCase() === "n/a") {
-                                clanmotto = "One Awsome clan";
-                            } else if (charcheck(msg.content, 165) === true) {
-                                return message.channel.send(`"*Filler message*: I am sorry but that entry exceeds the character limit."`)
-                            } else if (charcheck(msg.content, 165) === false) {
-                                clanmotto = msg.content;
-                                if(colorCustom){
-                                    message.channel.send(`Since you meet the level required for a custom color would you like to choose a custom color.\nPlease type n/a for default color or type the digits you would like for your color.\n**Must be a hex color 000000**`);
-                                    collectorForClanColor.on(`collect`, async (msg) => {
-                                        if(msg.content.toLowerCase() === "n/a"){
-                                            color="#000000"
-                                            message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                                .then((msg) => {
-                                                    msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                        const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                        forwards.on('collect', async (r) => {
-                                                            msg.clearReactions();
-                                                            msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                            //
-                                                            // SQL Statements
-                                                            //
-                                                            sql.run(``)
-                                                        });
-                                                    });
-                                                });
-                                        }else{
-                                            color= await colorformat(msg.content);   
-                                            message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                                .then((msg) => {
-                                                    msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                        const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                        forwards.on('collect', async (r) => {
-                                                            msg.clearReactions();
-                                                            msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                            //
-                                                            // SQL Statements
-                                                            //
-                                                            sql.run(``)
-                                                        });
-                                                    });
-                                                });
-                                        }
-                                    }); // end of collectorForClanColor
-                                }else{
-                                    message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                        .then((msg) => {
-                                            msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                forwards.on('collect', async (r) => {
-                                                    msg.clearReactions();
-                                                    msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                    //
-                                                    // SQL Statements
-                                                    //
-                                                    sql.run(``)
-                                                });
-                                            });
-                                        });
-                                }
-                                
-                                };
-                        }); // end of collectorForClanMotto
-                    } else if (charcheck(msg.content, 5) === true) {
-                        return message.channel.send(`"*Filler message*: I am sorry but that entry exceeds the character limit."`)
-                    } else if (charcheck(msg.content, 5) === false) {
-                        clantag = msg.content;
-                        message.channel.send(`Next I will need a clan motto you wish to use.\n if you type "n/a" the default motto will be "One Awsome clan".\n**165 character limit**`)
-                        collectorForClanMotto.on(`collect`, async (msg) => {
-                            if (msg.content.toLowerCase() === "n/a") {
-                                clanmotto = "One Awsome clan";
-                            } else if (charcheck(msg.content, 165) === true) {
-                                return message.channel.send(`"*Filler message*: I am sorry but that entry exceeds the character limit."`)
-                            } else if (charcheck(msg.content, 165) === false) {
-                                clanmotto = msg.content;
-                                if (colorCustom) {
-                                    message.channel.send(`Since you meet the level required for a custom color would you like to choose a custom color.\nPlease type n/a for default color or type the digits you would like for your color.\n**Must be a hex color 000000**`);
-                                    collectorForClanColor.on(`collect`, async (msg) => {
-                                        if (msg.content.toLowerCase() === "n/a") {
-                                            color = "#000000"
-                                            message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                                .then((msg) => {
-                                                    msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                        const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                        forwards.on('collect', async (r) => {
-                                                            msg.clearReactions();
-                                                            msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                            //
-                                                            // SQL Statements
-                                                            //
-                                                            sql.run(``)
-                                                        });
-                                                    });
-                                                });
-                                        } else {
-                                            color = await colorformat(msg.content);
-                                            message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                                .then((msg) => {
-                                                    msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                        const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                        forwards.on('collect', async (r) => {
-                                                            msg.clearReactions();
-                                                            msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                            //
-                                                            // SQL Statements
-                                                            //
-                                                            sql.run(``)
-                                                        });
-                                                    });
-                                                });
-                                        }
-                                    }); // end of collectorForClanColor
-                                } else {
-                                    message.channel.send(`Please react with checkmark to confirm or a :X: to cancel\n By hitting **Confirm** it will take 45000 AC from your balance.`)
-                                        .then((msg) => {
-                                            msg.react('✅').then(msg.react(`❌`)).then(() => {
-
-                                                const forwardsFilter = (reaction, user) => (reaction.emoji.name === ['❌', `✅`]) && (user.id === message.author.id);
-                                                const forwards = msg.createReactionCollector(forwardsFilter, { time: 30000 });
-
-                                                forwards.on('collect', async (r) => {
-                                                    msg.clearReactions();
-                                                    msg.channel.send(`Thank you for creating a clan you can now add members.`)
-                                                    //
-                                                    // SQL Statements
-                                                    //
-                                                    sql.run(``)
-                                                });
-                                            });
-                                        });
-                                };
-
-                            };
-                        }); // end of collectorForClanMotto
-                    };
-                }); // end of collectorForClanTag
-            };
         }); // end of collectorForClanName    
  
     } // end of create_clan

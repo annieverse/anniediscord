@@ -9,10 +9,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
-function getRoles(r) {
-              const currentGuild = bot.guilds.get(message.guild.id);
-              return currentGuild.roles.find(n => n.name === r)
-            };
   message.delete();
   let bicon = bot.user.displayAvatarURL;
   let admEmbed = new Discord.RichEmbed();

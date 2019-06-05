@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
-module.exports.run = async (bot, command, message, args, utils) => {
+module.exports.run = async (bot, command, message, args) => {
 
     /// addrole.js
     ///
@@ -14,8 +14,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
     let bicon = bot.user.displayAvatarURL;
     let pUser  = message.guild.member(message.mentions.users.first()||message.guild.members.get(args[0]));
-    let mentionedUser = message.mentions.users.first();
-    let time = new Date();
     let red = "#b22727";
 
     let roleEmbed = new Discord.RichEmbed();

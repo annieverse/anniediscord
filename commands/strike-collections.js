@@ -126,21 +126,21 @@ module.exports.run = async (bot, command, message, args, utils) => {
         //  Mute user temporarily.
         get mute() {
             if(!env.dev) this.member.addRole(`467171602048745472`);
-            log({code: `MUTED`}, metadata.target.user.username);
+            return log({code: `MUTED`}, metadata.target.user.username);
         }
 
 
         //  Kick user temporarily.
         get kick() {
             if(!env.dev) this.member.kick();
-            log({code: `KICKED`}, metadata.target.user.username);
+            return log({code: `KICKED`}, metadata.target.user.username);
         }
 
 
         //  Ban user permanently.
         get ban() {
             if(!env.dev) this.member.ban();
-            log({code: `BANNED`}, metadata.records_size, metadata.target.user.username);
+            return log({code: `BANNED`}, metadata.records_size, metadata.target.user.username);
         }
 
 

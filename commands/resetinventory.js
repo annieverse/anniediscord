@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 

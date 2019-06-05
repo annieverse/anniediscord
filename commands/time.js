@@ -1,15 +1,14 @@
-const discord = require("discord.js");
-const palette = require('../colorset.json');
-const formatManager = require('../utils/formatManager');
-const clock = require("node-emoji-clock");
-const moment = require("moment-timezone");
+//const palette = require('../colorset.json');
+//const formatManager = require('../utils/formatManager');
+//const clock = require("node-emoji-clock");
+//const moment = require("moment-timezone");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
 
-module.exports.run = async (bot, command, message, args, utils) => {
+module.exports.run = async (_bot, _command, message, args) => {
 
-
+/*
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
 const format = new formatManager(message);
@@ -20,10 +19,6 @@ return ["bot", "bot-games", "cmds"].includes(message.channel.name) ? initTime()
 async function initTime() {
     message.delete(5000);
 
-      function fileAliasesCheck(file) {
-        const src = require(`./${file}`)
-        return src.help.name;
-      };
 
             var cet = moment().tz("Europe/Copenhagen");
             var est = moment().tz("America/New_York");
@@ -43,16 +38,16 @@ async function initTime() {
                                "or you can type >all to see all the availble Timezones.");
       }else if (args[0].toUpperCase() === "ALL"){
             var times = 
-                clock.timeToEmoji(cet) + " \`" + cet.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(est) + " \`" + est.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(pst) + " \`" + pst.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(mst) + " \`" + mst.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(cst) + " \`" + cst.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(hst) + " \`" + hst.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(msk) + " \`" + msk.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(gmt) + " \`" + gmt.format("h:mm A z") + "\`\n" +
-                clock.timeToEmoji(gmt07) + " \`" + gmt07.format("hh:mm A") + " GMT+07\`\n" +
-                clock.timeToEmoji(gmt08) + " \`" + gmt08.format("hh:mm A") + " GMT+08\`";
+                clock.timeToEmoji(cet) + "\`" + cet.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(est) + "\`" + est.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(pst) + "\`" + pst.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(mst) + "\`" + mst.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(cst) + "\`" + cst.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(hst) + "\`" + hst.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(msk) + "\`" + msk.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(gmt) + "\`" + gmt.format("h:mm A z") + "\`\n" +
+                clock.timeToEmoji(gmt07) + "\`" + gmt07.format("hh:mm A") + " GMT+07\`\n" +
+                clock.timeToEmoji(gmt08) + "\`" + gmt08.format("hh:mm A") + " GMT+08\`";
 
             message.channel.send(times);
       }else if (args[0].toUpperCase() === "EST"|| args[0].toUpperCase() === "KITO"|| args[0].toUpperCase() === "PAN"){
@@ -113,7 +108,8 @@ async function initTime() {
   
 }//end of the module
 
-
+*/
+}
 module.exports.help = {
       name:"time",
       aliases: [],

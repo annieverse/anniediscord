@@ -280,7 +280,6 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
         //  Await for user confirmation before proceeding the transaction.
         const confirmation = async (metadata, proc, show_image = false) => {
-                const user_data = await collection.userdata;
 
                 // Lowercase first letter and de-plural string.
                 const normalize = (string) => {
@@ -327,12 +326,12 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                         collector.stop();
                         if(user_input !== `y`)return log({code: `001`});
                         sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
-                        .then(async metadata_user => {
+                        .then(async () => {
                             sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`)
                                 .then(async metadata_inventory => {
                                     try {
                                         //  Insufficient balance.
-                                        if(metadata_inventory[item.price_type] < parseInt(item.price)) return log({code: `ERR_INSUFFICIENT_BAL`}, item.price_type)
+                                        if(metadata_inventory[metadata.price_type] < parseInt(metadata.price)) return log({code: `ERR_INSUFFICIENT_BAL`}, metadata.price_type)
                                     }
                                     catch(e) {
                                         return log({code: `ERR_UNKNOWN_ITEM`})
@@ -516,9 +515,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
                 // Purchase package
                 else if(key === categories[5]) { 
-                    return message.channel.send(shopEmbedWrapper(
-                        `I don't have any **packages** to sell at the moment.`
-                    ))
+                    return message.channel.send(`I don't have any **packages** to sell at the moment.`)
                 }
 
                 //argument is not listed as valid category

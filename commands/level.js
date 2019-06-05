@@ -42,7 +42,6 @@ async function profile(member) {
     * clr = hex code of user's rank color.
     */
   const userdata = await collection.userdata;
-  const keys = collection.storingKey(userdata);
   const user = {
     id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
     crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
@@ -78,16 +77,12 @@ async function profile(member) {
         //PAN's attempt
         let PanCurrent = user.crv === 150 ? user.max - (user.max - user.cur) : ((user.crv - 200) - (user.max - user.cur));
         const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
-        const usercolor = configProfile.checkInterface(user.ui, member);
         const calculatedBar = await configProfile.barSize(PanCurrent, user.max, user.crv, barlength_xp);
         const rankTitle = await configRank.ranksCheck(user.lvl).title;
 
         let canv = new Canvas(canvas_x, canvas_y) // x y
           
 
-        function Analogous() {
-          return usercolor === "Dark" ? Color(user.clr).lighten(0.2).saturate(0.5) : Color(user.clr).darken(0.3).desaturate(0.5) 
-        }
 
 
           /*
