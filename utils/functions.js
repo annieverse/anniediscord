@@ -92,8 +92,8 @@ module.exports = {
         //const embed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
         //.setColor(0xffffff) // You can set your color here
         evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
-        evembed.setTitle(`Debug Pages Result:`)
-        evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+        //evembed.setTitle(`Debug Pages Result:`)
+        evembed.setDescription(pages[page - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
 
