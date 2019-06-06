@@ -177,7 +177,7 @@ const format = new formatManager(message);
                 get nickname() {
                     canv.setTextAlign("left")
                     canv.setColor(palette.white)
-                    canv.setTextFont(`12pt RobotoThin`)
+                    canv.setTextFont(`12pt RobotoBlack`)
                     .addText(this.nickname_formatter, size.x2 + 160, this.y )
                     return this;
                 }
