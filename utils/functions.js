@@ -1,4 +1,11 @@
-module.exports = {
+
+
+module.exports = (bot, message) => {
+
+    const module = {};
+    const format = require(`./formatManager`);
+    const palette = require(`../colorset.json`);
+    const m = new format(message);
 
     /**
     * creates any amount of pages in a embed, when a large string is inputed ad the input
@@ -7,7 +14,7 @@ module.exports = {
     * @param evembed the vairable used for the RichEmbed
     * @returns A correctly formatted Embed
     */
-    evalpages: function (message, pageOrigin,evembed){
+    module.evalpages = (message, pageOrigin,evembed) => {
 
         const clean = (text = ``) => {
             if (typeof (text) === "string")
@@ -68,7 +75,7 @@ module.exports = {
                 })
             });
         });
-    },// End of evalpages
+    }// End of evalpages
 
     /**
     * creates any amount of pages in a embed, when a array is given as the input. Each array index is its own page. array[0] has own page, array[1] has own page and so on.
@@ -77,7 +84,7 @@ module.exports = {
     * @param evembed the vairable used for the RichEmbed
     * @returns A correctly formatted Embed
     */
-    pages: function (message, pages, evembed) {
+    module.pages = (message, pages, evembed) => {
 
 
 
@@ -122,7 +129,7 @@ module.exports = {
                 })
             });
         });
-    },// End of pages
+    }// End of pages
 
     /**
      * Finds a user by id, or tag or plain name
@@ -130,7 +137,7 @@ module.exports = {
      * @param target the arg for the user (id, name, mention)
      * @returns {object} user object
      */
-    userFinding: async (message, target) => {
+    module.userFinding = async (message, target) => {
         const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
         if (userPattern.test(target)) target = target.replace(userPattern, '$1');
         let members = message.guild.members;
@@ -141,22 +148,43 @@ module.exports = {
             || member.user.tag.toLowerCase() === target.toLowerCase();
 
         return members.filter(filter).first();
-    },// End of userFinding
+    }// End of userFinding
 
     /**
         Lifesaver promise. Used pretty often when calling an API.
         @pause
     */
-    pause: function (ms) {
+    module.pause = (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
-    },// End of pause
+    }// End of pause
     
     /**
      * Returns a(n) emoji from the server based on name.
      *  @emoji a unicode emoji
      * */
-    emoji: (name,bot) => {
+    module.emoji = (name) => {
         return bot.emojis.find(e => e.name === name);
-    },// End of emoji
+    }// End of emoji
+
+    /**
+     * 
+     * Returns username based on the id.
+     *  @name strings
+     */
+    module.name = (id) => {
+        return bot.users.get(id).username;
+    }
+
+
+    module.send = (msg = ``, color = palette.darkmatte) => {
+        return m.embedWrapper(color, msg);
+    }
+
+
+    module.commanized = (int = 0) => {
+        return m.threeDigitsComa(int);
+    }
+
+    return module;
 
 }
