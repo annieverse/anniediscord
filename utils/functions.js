@@ -171,7 +171,7 @@ module.exports = (bot, message) => {
     }
 
 
-    module.send = (color = palette.darkmatte, msg = ``) => {
+    module.send = (msg = ``, color = palette.darkmatte) => {
         return m.embedWrapper(color, msg);
     }
 
