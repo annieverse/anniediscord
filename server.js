@@ -56,8 +56,9 @@ y.addListener("data", res => {
     //let channel = "general"
     //let channel = "general-2"
     //let channel = "vc-off-topic"
-    //let channel = "taff-hq"
-    //let enabletextwrapping = true;
+    //let channel = "staff-hq"
+    let enabletextwrapping = true;
+    //let enabletextwrapping = false;
 
     bot.channels.get(bot.channels.find(x => x.name === channel).id).send(msg);
 });
