@@ -8,9 +8,9 @@ class Data {
     }
 
     async user() {
-        return this.meta.args[0] 
-        ? await this.meta.utils.userFinding(this.meta.message, this.meta.message.content.substring(this.meta.command.length + 2))
-        : this.meta.message.author;
+        return !this.meta.args[0] 
+        ? this.meta.message.author
+        : await this.meta.utils.userFinding(this.meta.message, this.meta.message.content.substring(this.meta.command.length + 2))
     }
 
 
@@ -25,8 +25,9 @@ class Data {
     }
     
     //  Pull metadata
-    get pull() {
-        return this.request().then(() => this.requested_data);
+    async pull() {
+        return await this.request()
+            .then(() => this.requested_data);
     }
     
 }

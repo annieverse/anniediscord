@@ -4,7 +4,7 @@ module.exports = (bot, message) => {
 
     const module = {};
     const format = require(`./formatManager`);
-    const palette = require(`../colorset.json`);
+    const palette = require(`./colorset.json`);
     const m = new format(message);
 
     /**
@@ -180,6 +180,9 @@ module.exports = (bot, message) => {
         return m.embedWrapper(color, msg);
     }
 
+    module.advSend = (...options) => {
+            return m.embedWrapperAdv.apply(options);
+    }
 
     module.commanized = (int = 0) => {
         return m.threeDigitsComa(int);

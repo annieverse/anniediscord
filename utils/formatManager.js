@@ -156,6 +156,27 @@ class formatterUtils {
 		return this.message.channel.send(footeredEmbed);
 	}
 
+	/**
+	 * Advanced discord message embed.
+	 */
+	embedWrapperAdv(...options) {
+		return console.log(options)
+		/*assignemnt_list = [
+			setColor,
+			setDescription,
+			setTitle,
+			setAuthor,
+			setTimestamp,
+			setFooter
+		];
+		*/
+		console.log('Inside Advances Embed Wrapper')
+		for(let i in assignemnt_list){
+			if(options[i])
+			advEmbed.assignemnt_list[i](options[i])
+		}
+		return this.message.channel.send(advEmbed);
+	}
 
 	/**
 	 * Marked down discord message embed.

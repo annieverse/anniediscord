@@ -1,14 +1,12 @@
-
 const ranksManager = require('../utils/ranksManager');
-const palette = require('../colorset.json');
-const Data = require(`../utils/userdataSelector`);
+const palette = require('../utils/colorset.json');
 const Discord = require("discord.js");
 const sql = require("sqlite");
-const ch = require(`../utils/channelsRestriction.json`);
+const ch = require(`../modules/config`);
 sql.open(".data/database.sqlite"); 
 const env = require('../.data/environment.json');
 
-module.exports = async (bot, message) => {
+module.exports = (bot, message) => {
 
   if(message.author.bot) return;
   if(message.channel.type ==='dm')return;
@@ -98,29 +96,14 @@ module.exports = async (bot, message) => {
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
   let utils = require(`../utils/functions.js`)(bot, message);
-  
-  if (!message.content.startsWith(prefix)) return;
+
   if (env.dev && !env.administrator_id.includes(message.author.id)) return;
-  if (!ch.end_user.includes(message.channel.id)) return;
+  if (!ch.bot_domain.includes(message.channel.id)) return;
+  if (!message.content.startsWith(prefix)) return;
+  if (!commandfile) return;
 
-  const meta = await new Data({bot, command, message, args, utils}).pull;
+  const Components = {bot, message, command, args, utils, palette, commandfile};
+  const cmdHandler = require(`../modules/mainComponents.js`);
+  return new cmdHandler(Components).init();
 
-  class AnnieStacks {
-      constructor() {
-        this.annie = bot;
-        this.msg = message;
-        this.cmd = command
-        this.args = args;
-        this.utils = utils;
-        this.meta = meta;
-      }
-
-      get metadata() {
-        return this;
-      }
-
-  }
-
-  const Stacks = new AnnieStacks().metadata;
-  if (commandfile) commandfile.run(Stacks);
 }

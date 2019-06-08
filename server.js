@@ -23,7 +23,7 @@ const listener = app.listen(process.env.PORT, function() {
 
 
 //	Loading command modules.
-fs.readdir("./commands/", (err, files) => {
+fs.readdir("./modules/commands/", (err, files) => {
 
     if (err) console.log(err);
     let jsfile = files.filter(f => f.split(".").pop() === "js")
@@ -33,7 +33,7 @@ fs.readdir("./commands/", (err, files) => {
     }
 
     jsfile.forEach((f) => {
-        let props = require(`./commands/${f}`);
+        let props = require(`./modules/commands/${f}`);
         bot.commands.set(props.help.name, props);
         props.help.aliases.forEach(alias => {
             bot.aliases.set(alias, props.help.name)
