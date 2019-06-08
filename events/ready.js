@@ -5,7 +5,7 @@ module.exports = bot => {
 
 
     startup();
-    roleChange();
+    //roleChange();
     
     /**
      * secret thingy, change color of role

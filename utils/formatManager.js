@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
 const moment = require('moment');
+const palette = require(`./colorset.json`);
 let embed = new Discord.RichEmbed();
+let advEmbed = new Discord.RichEmbed();
 let footeredEmbed = new Discord.RichEmbed();
 /**
  * Misc utils.
@@ -160,21 +162,14 @@ class formatterUtils {
 	 * Advanced discord message embed.
 	 */
 	embedWrapperAdv(...options) {
-		return console.log(options)
-		/*assignemnt_list = [
-			setColor,
-			setDescription,
-			setTitle,
-			setAuthor,
-			setTimestamp,
-			setFooter
-		];
-		*/
-		console.log('Inside Advances Embed Wrapper')
-		for(let i in assignemnt_list){
-			if(options[i])
-			advEmbed.assignemnt_list[i](options[i])
-		}
+
+		let footer
+		options[4] ? footer= options[4].split(",,") : footer[0]="No Footer Set"
+		advEmbed.setColor(options[0] || palette.darkmatte);
+		advEmbed.setDescription(options[1] || "I'm sorry, I dont know what to say. I am a blank Embed that has not been modified fully. . .");
+		advEmbed.setTitle(options[2] || "No Title");
+		advEmbed.setTimestamp(options[3] || Date.now());
+		if (footer.length > 1) { advEmbed.setFooter(footer[0], footer[1]) } else if (footer.length = 1) { advEmbed.setFooter(footer[0]) } else { advEmbed.setFooter(footer[0]);}
 		return this.message.channel.send(advEmbed);
 	}
 

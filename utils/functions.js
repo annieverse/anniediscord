@@ -25,14 +25,10 @@ module.exports = (bot, message) => {
 
         let pages = [];
 
-        console.log(`1: pageOrigin.length = ` + pageOrigin.length);
         for (let index = 0; index < pageOrigin.length; index += 1) {
-            console.log(index + 1 + `: pageOrigin.length = ` + pageOrigin.length);
             pages.push(pageOrigin.substr(0, 2000));
             pageOrigin = pageOrigin.slice(2000);
         }
-        console.log(`Final: pageOrigin.length = ` + pageOrigin.length);
-        console.log(`pages.length = ` + pages.length);
 
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
 
@@ -167,7 +163,6 @@ module.exports = (bot, message) => {
     }// End of emoji
 
     /**
-     * 
      * Returns username based on the id.
      *  @name strings
      */
@@ -176,12 +171,14 @@ module.exports = (bot, message) => {
     }
 
 
-    module.send = (msg = ``, color = palette.darkmatte) => {
+    module.send = (color = palette.darkmatte, msg = ``) => {
         return m.embedWrapper(color, msg);
     }
 
     module.advSend = (...options) => {
-            return m.embedWrapperAdv.apply(options);
+        //console.log(options)
+        return m.embedWrapperAdv(...options)
+            //return m.embedWrapperAdv.apply(options);
     }
 
     module.commanized = (int = 0) => {

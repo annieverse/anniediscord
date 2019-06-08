@@ -7,8 +7,8 @@
 class Ping {
 	async execute(Stacks) {
 		Stacks.message.delete()
-		//return Stacks.utils.send(`${Stacks.message.author} requested \`${Stacks.message.content}\`\n- Request taken in **${Math.round(Stacks.bot.ping)}ms**`)
-		return Stacks.utils.advSend('#0099ff','TEST','','','','TEST2')
+		return Stacks.utils.advSend('RANDOM', `${Stacks.message.author} requested \`${Stacks.message.content}\`\n- Request taken in **${Math.round(Stacks.bot.ping)}ms**`, 'Ping', Date.now(), `| AAU Ping Command,, ${Stacks.bot.user.displayAvatarURL}`)
+		//return Stacks.utils.advSend('#0099ff','Description','Title','Author',Date.now(),'Footer')
 	}
 }
 

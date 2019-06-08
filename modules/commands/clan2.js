@@ -256,31 +256,14 @@ module.exports.run = async (bot, command, message, args, utils) => {
         return format.embedWrapper(logtable[loglist[loglist.length-1]].color, `${displist.join('')}`);
     }
 
-<<<<<<< HEAD:modules/commands/clan2.js
-=======
     /***************************************************************************************************
      * GLOBAL MICRO-FUNCTIONS
      ***************************************************************************************************/
-<<<<<<< HEAD
-     
-    /*  Lifesaver promise. Used pretty often when calling sql API.
-     *  @pause
-     */
-    const pause = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
-    const getUser = async(user) => await userFind.resolve(message, user)
-    /*  Parsing emoji by its name.
-     *  @emoji
-     */
-    const emoji = (name) => bot.emojis.find(e => e.name === name)
-=======
     
     /*  isValudUser() Information
      */
     const isValidUser = async(string) => await utils.userFinding(message, string);
->>>>>>> 7bad8d6aae5670485c7c8d05e80f882a6a99fbcf:commands/clan2.js
 
->>>>>>> 6d4eb7c5656a1e07a4c1ea6f9bd28e5e7e218d33
     
     /*  isValidSubCommand() Information
      */
@@ -333,8 +316,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     }
 
 
-<<<<<<< HEAD:modules/commands/clan2.js
-=======
     /***************************************************************************************************
      * ♡♡♡ TESTING ♡♡♡
      ***************************************************************************************************/
@@ -352,7 +333,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
             } else return format.embedWrapper(palette.red, `Sorry, I dont have the required permsissions to change nicknames...`);
         } return format.embedWrapper(palette.golden, `Nickname Change: \`${global_data.prefix}${global_data.command} <Target User> <New Name>\``);
     }
->>>>>>> 7bad8d6aae5670485c7c8d05e80f882a6a99fbcf:commands/clan2.js
 
     const test2 = async() => {
         form = args[0]
@@ -424,17 +404,12 @@ module.exports.run = async (bot, command, message, args, utils) => {
     // For @Naph :)
     return clanTriage();
 }
-exports.help = {
+module.exports.help = {
     name: "clan2",
-<<<<<<< HEAD:modules/commands/clan2.js
     aliases: [],
-    description: `Allows you to get help with clans and how to start a clan`,
+    description: `Add XP to a specific user`,
     usage: `>clan2`,
-    group: "General",
+    group: "Admin",
     public: false,
   }
-=======
-          aliases:[]
-  }
   
->>>>>>> 7bad8d6aae5670485c7c8d05e80f882a6a99fbcf:commands/clan2.js

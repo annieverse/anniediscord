@@ -143,22 +143,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     };
 
     /**
-     * grabs every file in the command folder
-     * @returns {Array} file names
-     */
-    async function fileNames() {
-        let file_arr = [];
-        fs.readdir("./commands/", (err, files) => {
-            if (err) console.log(err);
-            for (let file in files) {
-                file_arr.push(files[file]);
-            }
-        })
-        await utils.pause(500)
-        return file_arr
-    };
-
-    /**
      * grabs the main name for all commands
      * @returns {Array} command names
      */
@@ -294,56 +278,11 @@ module.exports.run = async (bot, command, message, args, utils) => {
         let pages=[];
         let pageHeaderOptions = await groupNames();
         pageHeaderOptions.sort();
-        let fileName = await fileNames();
-        let group;
-        let deleteList=[];
 
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             pages.push(new Array(`**${pageHeaderOptions[x].toUpperCase()}**`))
         }
 
-        //pages[0].push("yoyo")
-        //return format.embedWrapper(palette.green, pages[0][0].substring(2, pages[0][0].length - 2).toLowerCase());
-        //return format.embedWrapper(palette.green, pages.length);
-        //return utils.pages(message, pages, embed);
-        for (let file = 0; file < fileName.length; file++) {
-            if (await public(fileName[file]) === false) {
-                var index = fileName.indexOf(fileName[file]);
-                deleteList.push(index);
-            }else{
-                return
-            }
-        }
-        for (let index = 0; index < deleteList.length; index++) {
-            var spot = deleteList[index];
-            if (spot > -1) {
-                fileName.splice(spot, 1);
-            }
-            utils.pause(200);
-        }
-        utils.pause(200);
-        for (let page = 0; page < pages.length; page++) {            
-            for (let file = 0; file < fileName.length; file++) {
-                if (await public(fileName[file])){
-                    group = await groupName(fileName[file]);
-                    let groupname = pages[page][0].substring(2, pages[page][0].length - 2);
-                    if (group.toLowerCase() === groupname.toLowerCase()){
-                        let cmdName = await mainName(fileName[file])
-                        pages[page].push(cmdName);
-                        index = fileName.indexOf(fileName[file]);
-                        deleteList.push(index);
-                    }
-                }
-            }
-            utils.pause(200);
-            for (let index = 0; index < deleteList.length; index++) {
-                spot = deleteList[index];
-                if (spot > -1) {
-                    fileName.splice(spot, 1);
-                }
-            }
-            deleteList=[];  
-        }
 
         return utils.pages(message,pages,embed);
     }
