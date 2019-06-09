@@ -2,11 +2,18 @@
  * Main module
  * @Balance outputing artcoins data
  */
-
- class Balance {
-    async execute(Stacks) {
-        return Stacks.utils.send(`**${Stacks.meta.owner}'s Balance:**
-        \n${Stacks.utils.emoji(`artcoins`)} ${Stacks.utils.commanized(Stacks.meta.data.artcoins)} Artcoins`);
+class Balance {
+    constructor(Stacks) {
+		this.author = Stacks.meta.author;
+		this.data = Stacks.meta.data;
+		this.utils = Stacks.utils;
+		this.message = Stacks.message;
+    }
+    async execute() {
+        return this.message.channel.send(`**${this.utils.name(this.author.id)}'s Balance**`)
+            .then(() => {
+                this.utils.sendEmbed(`${this.utils.emoji(`artcoins`)} ${this.utils.commanized(this.data.artcoins)} Artcoins`)
+            })
     }
 }
 
@@ -19,4 +26,6 @@ module.exports.help = {
     usage: `>bal`,
     group: "General",
     public: true,
+    required_usermetadata: true,
+    multi_user: true
 }

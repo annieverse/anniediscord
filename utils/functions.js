@@ -133,7 +133,7 @@ module.exports = (bot, message) => {
      * @param target the arg for the user (id, name, mention)
      * @returns {object} user object
      */
-    module.userFinding = async (message, target) => {
+    module.userFinding = async (target) => {
         const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
         if (userPattern.test(target)) target = target.replace(userPattern, '$1');
         let members = message.guild.members;
@@ -171,9 +171,39 @@ module.exports = (bot, message) => {
     }
 
 
-    module.send = (msg = ``, color = palette.darkmatte) => {
+    module.rangeNumber = (min, max) => {
+        return m.rangeNumber(min, max)
+    }
+
+    /** This will be the messagelog function
+     *  @param socket is the optional key
+     */
+    module.systemMessage = (msg, socket = [], color = palette.darkmatte) => {
+        for(let i = 0; i < socket.length; i++) {
+            if(msg.indexOf(`{${i}}`) != -1)msg = msg.replace(`{${i}}`, socket[i]);
+        }
         return m.embedWrapper(color, msg);
     }
+
+
+    module.sendEmbed = (msg = ``, color = palette.darkmatte) => {
+        return m.embedWrapper(color, msg);
+    }
+
+    module.avatarURL = (id) => {
+		return bot.users.get(id).avatarURL;
+    }
+    
+
+    module.nickname = (id) => {
+        return message.guild.members.get(id).displayName;
+    }
+
+
+    module.avatarWrapper = (url, author) => {
+        return m.avatarWrapper(url, author);
+    }
+
 
     module.advSend = (...options) => {
         //console.log(options)

@@ -114,6 +114,16 @@ class formatterUtils {
 	}
 
 
+	avatarWrapper(url, author) {
+		embed.setImage(url)
+		embed.setAuthor(author, url)
+		embed.setColor(palette.darkmatte)
+
+		return this.message.channel.send(embed);
+	}
+
+
+
 	/**
 	 * Wrapped simple discord message embed.
 	 * @color of given hex code.

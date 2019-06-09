@@ -1,5 +1,21 @@
 const Discord = require("discord.js");
 
+class AddRole {
+  constructor(Stacks) {
+    this.author = Stacks.meta.author;
+    this.data = Stacks.meta.data;
+    this.utils = Stacks.utils;
+    this.message = Stacks.message;
+    this.args = Stacks.args;
+    this.palette = Stacks.palette;
+    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+  }
+
+  
+
+}
+
+/*
 module.exports.run = async (...ArrayStacks) => {
 
     /// addrole.js
@@ -66,11 +82,15 @@ module.exports.run = async (...ArrayStacks) => {
     return message.channel.send(roleEmbed)
   }
 }
+*/
 module.exports.help = {
+  start: AddRole,
   name:"addrole",
   aliases: [],
   description: `Add roles to specific user.`,
   usage: `>addrole @user <role>`,
   group: "Admin",
   public: true,
+  required_usermetadata: true,   
+  multi_user: true
 }

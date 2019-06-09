@@ -33,6 +33,16 @@ class databaseUtils {
 
 
 
+        storeArtcoins(value) {
+            sql.run(`
+                UPDATE userinventories
+                SET artcoins = artcoins + ${value}
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+
+
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.

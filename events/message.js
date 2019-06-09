@@ -96,13 +96,14 @@ module.exports = (bot, message) => {
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
   let utils = require(`../utils/functions.js`)(bot, message);
+  let log = require(`../utils/predefinedMessages`);
 
   if (env.dev && !env.administrator_id.includes(message.author.id)) return;
   if (!ch.bot_domain.includes(message.channel.id)) return;
   if (!message.content.startsWith(prefix)) return;
   if (!commandfile) return;
 
-  const Components = {bot, message, command, args, utils, palette, commandfile};
+  const Components = {bot, message, command, args, utils, palette, commandfile, log};
   const cmdHandler = require(`../modules/mainComponents.js`);
   return new cmdHandler(Components).init();
 

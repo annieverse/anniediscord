@@ -1,0 +1,11 @@
+{
+    "BUY": {
+        "ERR": {
+            "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
+            "MISSING_ROLENAME": "You should include the role name!",
+            "LVL_TOO_LOW": "Sorry, to buy roles you need be at least level **25**.",
+            "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough artcoins.",
+            "INVALID_CATEGORY": "That doesn't looks like a valid category."
+        }
+    }
+}
