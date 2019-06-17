@@ -66,12 +66,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     }
 
 
-    // Lifesaver promise. Used pretty often when calling an API.
-    const pause = ms => {
-        return new Promise(resolve => setTimeout(resolve,ms));
-    }
-
-
     //  Send latest database to report channel.
     const get_database = () => {
         metadata.report.send(`Server has been shutdown at ${moment(Date.now()).format("dddd, MMMM Do YYYY, h:mm:ss a")}`,
@@ -115,7 +109,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             //  Restart server
             get rs() {
                 metadata.rs_countdown = 2000;
-                restart_server(2000);
+                return restart_server(2000);
             }
 
 
@@ -123,7 +117,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
             get live() {
                 metadata.rs_countdown = 10000;
                 user_interactions(true);
-                restart_server(metadata.rs_countdown);
+                return restart_server(metadata.rs_countdown);
             }
 
 
@@ -132,13 +126,13 @@ module.exports.run = async (bot, command, message, args, utils) => {
                 metadata.rs_countdown = 10000;
                 user_interactions(false);
                 get_database();
-                restart_server(metadata.rs_countdown);
+                return restart_server(metadata.rs_countdown);
             }
 
 
             //  Getter selector
             get run() {
-                this[this.arg];
+                return this[this.arg];
             }
 
         }

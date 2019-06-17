@@ -1,5 +1,3 @@
-const Discord = require(`discord.js`);
-
 module.exports = {
 
     /**
@@ -11,7 +9,7 @@ module.exports = {
     */
     evalpages: function (message, pageOrigin,evembed){
 
-        const clean = (text) => {
+        const clean = (text = ``) => {
             if (typeof (text) === "string")
                 return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
             else
@@ -39,7 +37,7 @@ module.exports = {
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
 
-            msg.react('⏪').then(async r => { // We need to make sure we start the first two reactions, this is the first one
+            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
 
                 msg.react('⏩') // This is the second one, it will run this one after the first one
 
@@ -81,17 +79,19 @@ module.exports = {
     */
     pages: function (message, pages, evembed) {
 
+
+
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
 
         //const embed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
         //.setColor(0xffffff) // You can set your color here
         evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
-        evembed.setTitle(`Debug Pages Result:`)
-        evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+        //evembed.setTitle(`Debug Pages Result:`)
+        evembed.setDescription(pages[page - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
 
-            msg.react('⏪').then(async r => { // We need to make sure we start the first two reactions, this is the first one
+            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
 
                 msg.react('⏩') // This is the second one, it will run this one after the first one
 

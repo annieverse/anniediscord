@@ -1,0 +1,22 @@
+{
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "rules": {
+        "no-unused-vars": ["error", { "vars": "local", "args": "none" }],
+        "no-console": "off",
+        "no-useless-escape": "off",
+        "terms": ["todo", "fixme", "any other term"], "location": "anywhere",
+        "no-extra-semi": "off"
+    }
+}

@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
-const ms = require("ms");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
@@ -9,10 +8,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
 
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
-  function getRoles(r) {
-              const currentGuild = bot.guilds.get(message.guild.id);
-              return currentGuild.roles.find(n => n.name === r)
-            };
   let bicon = bot.user.displayAvatarURL;
 let admEmbed = new Discord.RichEmbed();
   admEmbed.setColor(palette.red)

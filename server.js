@@ -1,6 +1,5 @@
 const Discord = require("discord.js");
 const env = require('./.data/environment.json');
-const palette = require('./colorset.json');
 const fs = require("fs");
 const bot = new Discord.Client();
 bot.commands = new Discord.Collection();
@@ -33,7 +32,7 @@ fs.readdir("./commands/", (err, files) => {
         return;
     }
 
-    jsfile.forEach((f, i) => {
+    jsfile.forEach((f) => {
         let props = require(`./commands/${f}`);
         bot.commands.set(props.help.name, props);
         props.help.aliases.forEach(alias => {
@@ -53,8 +52,6 @@ y.addListener("data", res => {
     let x = res.toString().trim().split(/ +/g);
     let msg = x.join(" ")
 
-     //  Modify These Values!
-    let color = palette.golden
     let channel = "sandbox"
     //let channel = "general"
     //let channel = "general-2"
@@ -62,21 +59,10 @@ y.addListener("data", res => {
     //let channel = "taff-hq"
     //let enabletextwrapping = true;
 
-    if (enabletextwrapping) {
-        embedWrapper(channel, color, msg);
-    } else {
-        bot.channels.get(bot.channels.find(x => x.name === channel).id).send(msg);
-    }
+    bot.channels.get(bot.channels.find(x => x.name === channel).id).send(msg);
 });
 
 
-let embed = new Discord.RichEmbed();
-const embedWrapper = (channel, color, content) => {
-    embed.setColor(color)
-    embed.setDescription(content)
-    let channelid = bot.channels.find(x => x.name === channel).id
-    return bot.channels.get(channelid).send(embed);
-}
 
 //	Client token.
 const token = process.env.TOKEN ? process.env.TOKEN : env.temp_token;

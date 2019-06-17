@@ -1,6 +1,4 @@
 const Discord = require('discord.js');
-const ms = require('parse-ms');
-
 const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 const env = require('../.data/environment.json');

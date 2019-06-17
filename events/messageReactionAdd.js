@@ -1,7 +1,6 @@
 const Discord = require("discord.js");
 const palette = require(`../colorset.json`);
 const sql = require(`sqlite`);
-const env = require('../.data/environment.json');
 
 module.exports = async (bot, reaction, user) => {
 

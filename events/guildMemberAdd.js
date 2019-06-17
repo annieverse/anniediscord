@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const { Attachment } = require("discord.js");
 const { get } = require("snekfetch"); 
 const { Canvas } = require("canvas-constructor");
@@ -23,7 +22,6 @@ module.exports = (bot, member) => {
 	const userSize = members - botSize;
 	const configFormat = new formatterManager();
 	const configProfile = new profileManager(); 
-	const d = Date.now();
 	const guild = member.guild;
 	const user = bot.users.get(member.id);
 	const welcomechnl = guild.channels.find(channel => channel.name === "general")

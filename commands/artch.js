@@ -1,18 +1,12 @@
 const Discord = require("discord.js");
 const palette = require('../colorset.json');
-var fs = require('fs');
-var contents = fs.readFileSync("challengelist.json","utf8");
 var content = require("../challengelist.json");
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
 
-module.exports.run = async (bot, command, message, args, utils) => {
+module.exports.run = async (bot, command, message) => {
 
-  function fileAliasesCheck(file) {
-    const src = require(`./${file}`)
-    return src.help.name;
-  };
 
 if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
@@ -41,35 +35,33 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
           }
           
           let randomNum = 0;
-          
+          let category;
           if ("MONSTER".includes(argsUpperCased)){
-            var category = content.MONSTER;
+            category = content.MONSTER;
             randomNum = category.length;
           }else if ("CHALLENGES".includes(argsUpperCased)){
-            var category = content.CHALLENGES;
+            category = content.CHALLENGES;
             randomNum = category.length;
           }else if ("ENVIRONMENT".includes(argsUpperCased)){
-            var category = content.ENVIRONMENT;
+            category = content.ENVIRONMENT;
             randomNum = category.length;
           }else if ("THEMES".includes(argsUpperCased)){
-            var category = content.THEMES;
+            category = content.THEMES;
             randomNum = category.length;
           }else if ("PERSONIFICATION".includes(argsUpperCased)){
-            var category = content.PERSONIFICATION;
+            category = content.PERSONIFICATION;
             randomNum = category.length;
           }else if ("ANIME".includes(argsUpperCased)){
-            var category = content.ANIME;
+            category = content.ANIME;
             randomNum = category.length;
           }else if ("EMOTION/MOOD".includes(argsUpperCased)){
-            var category = content.EMOTION_MOOD;
+            category = content.EMOTION_MOOD;
             randomNum = category.length;
           }else if ("TIME PERIOD".includes(argsUpperCased)){
-            var category = content.TIME_PERIOD;
+            category = content.TIME_PERIOD;
             randomNum = category.length;
           }
           
-          let name = "name";
-          let sub = "sub";
           
           let subItem = '';
 

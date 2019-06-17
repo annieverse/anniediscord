@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 const formatManager = require('../utils/formatManager.js');
 const palette = require(`../colorset.json`);
-const fs = require(`fs`);
 
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
@@ -28,26 +27,9 @@ return ["sandbox", `bot`].includes(message.channel.name) ? initHelp()
 : format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
 
-async function aliases() {
-// Time promise
-
-    let file_arr = [];
-    fs.readdir("./commands/", (err, files) => {
-        if(err) console.log(err);
-        
-        for(let file in files) {
-            const src = require(`./${files[file]}`);
-            file_arr.push(src.help.name);
-        }
-    })
-    await utils.pause(500)
-    return file_arr;
-};
 
 
 async function initHelp() {
-    let file_list = await aliases();
-    const formatted_list = file_list.map(e => `\`${e}\``);
     
 
     const header = new Discord.RichEmbed()

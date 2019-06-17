@@ -1,4 +1,3 @@
-const Discord = require("discord.js");
 const palette = require("../colorset.json");
 const formatManager = require('../utils/formatManager');
 const env = require('../.data/environment.json');
@@ -26,7 +25,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
         ]
     }
     const format = new formatManager(message);
-    const sql = require('sqlite'); 
 
 
     /***************************************************************************************************
@@ -79,13 +77,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
         return format.embedWrapper(logtable[loglist[loglist.length-1]].color, `${displist.join('')}`);
     }
 
-    /***************************************************************************************************
-     * GLOBAL MICRO-FUNCTIONS
-     ***************************************************************************************************/
-    
-    /*  isValudUser() Information
-     */
-    const isValidUser = async(string) => await utils.userFinding(message, string);
 
     
     /*  isValidSubCommand() Information
@@ -96,7 +87,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
     /*  toSubCommandFunc() Information
      */
     const toSubCommandFunc = async(string) => {
-        subcommand = string.toUpperCase()
+        let subcommand = string.toUpperCase()
         const function_path = {
             "CREATE" : clanCreate,
             "MANAGE" : clanManagement
@@ -110,23 +101,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
      ***************************************************************************************************/
     const clanCreate = async() => {
         
-        /*==========================================*
-         *  Clan Create - Output Log Handler        *
-         *==========================================*/
-        const clanCreateLog = (codelist) =>{
-            const loglist = codelist.split(" ");
-            const logtable = {
-                "TEST": {
-                    color: palette.red, 
-                    msg: `TEST MESSAGE 1`
-                },
-            }
-            const displist =[];
-            loglist.forEach((code, i) => {
-                displist[i] = logtable[code].msg;
-            });
-            return format.embedWrapper(logtable[loglist[loglist.length-1]].color, `${displist.join('')}`);
-        }
 
 
 
@@ -144,23 +118,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
      * SUBCOMMAND: CLAN MANAGEMENT - clanManagement()
      ***************************************************************************************************/
     const clanManagement = async() => {
-        /*==========================================*
-         *  Clan Management - Output Log Handler    *
-         *==========================================*/
-        const clanManagementLog = (codelist) =>{
-            const loglist = codelist.split(" ");
-            const logtable = {
-                "TEST": {
-                    color: palette.red, 
-                    msg: `TEST MESSAGE 1`
-                },
-            }
-            const displist =[];
-            loglist.forEach((code, i) => {
-                displist[i] = logtable[code].msg;
-            });
-            return format.embedWrapper(logtable[loglist[loglist.length-1]].color, `${displist.join('')}`);
-        }
 
 
 
@@ -174,13 +131,6 @@ module.exports.run = async (bot, command, message, args, utils) => {
     }
 
 
-    /***************************************************************************************************
-     * ♡♡♡ TESTING ♡♡♡
-     ***************************************************************************************************/
-    const test = async() => {
-        let test = await isValidSubCommand(args[0])
-        return format.embedWrapper(palette.red, `TEST 1: ${test}`); 
-    }
 
 
     /***************************************************************************************************

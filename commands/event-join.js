@@ -72,7 +72,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
             // Retrive user's artcoins and assign them to metadata.
             get user_balance() {
-                sql.get(`SELECT artcoins 
+                return sql.get(`SELECT artcoins 
                          FROM userinventories 
                          WHERE userId = ${this.data.user.id}`)
                         .then(async data => metadata.balance += data.artcoins)
@@ -81,7 +81,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
             //  Substract user's artcoins by the amount of ticket fee.
             get withdraw() {
-                sql.run(`UPDATE userinventories
+                return sql.run(`UPDATE userinventories
                         SET artcoins = artcoins - ${this.data.ticket_fee}
                         WHERE userId = ${this.data.user.id}`)
             }

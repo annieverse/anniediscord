@@ -10,7 +10,7 @@ module.exports = bot => {
     bot.on('message', message => {
         message_object = message;
     })
-    process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
+    //process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
     bot.on("error", async (e) => reqEvent("error")(bot, e, message_object));
     bot.on("warn", async (e) => reqEvent("warn")(bot, e, message_object));
 

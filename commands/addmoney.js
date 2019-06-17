@@ -4,7 +4,7 @@ sql.open('.data/database.sqlite');
 const env = require('../.data/environment.json');
 const prefix = env.prefix;
 
-module.exports.run = async (bot, command, message, args, utils) => {
+module.exports.run = async (bot, command, message, args) => {
 
     /// addmoney.js
     ///
@@ -28,8 +28,6 @@ let addXpEmbed2 = new Discord.RichEmbed();
 let addXpEmbed3 = new Discord.RichEmbed();
 let addXpEmbed4 = new Discord.RichEmbed();
 let addXpEmbed5 = new Discord.RichEmbed();
-let addXpEmbed6 = new Discord.RichEmbed();
-let addXpEmbed7 = new Discord.RichEmbed();
 
     addXpEmbed.setColor('#d61313')
     addXpEmbed.setDescription(`You don't have authorization to use this command.`)
@@ -38,7 +36,7 @@ let addXpEmbed7 = new Discord.RichEmbed();
   if(!message.member.roles.find(r => (r.name === 'Grand Master') 
                                   || (r.name === 'Tomato Fox'))) return message.channel.send(addXpEmbed);
  
-sql.get(`SELECT artcoins FROM userinventories WHERE userId ="${pUser.id}"`).then(async userdatarow => {
+sql.get(`SELECT artcoins FROM userinventories WHERE userId ="${pUser.id}"`).then(async () => {
 
     if(!args[1]){
         addXpEmbed.setColor('#d30000')
@@ -98,7 +96,7 @@ sql.get(`SELECT artcoins FROM userinventories WHERE userId ="${pUser.id}"`).then
             msg.edit(addXpEmbed2)).then((msg)=>
             msg.edit(addXpEmbed3)).then((msg)=>
             msg.edit(addXpEmbed4)).then((msg)=>
-            msg.edit(addXpEmbed5)).then((msg)=>
+            msg.edit(addXpEmbed5)).then(()=>
             console.log(`${message.author.username} has given ${args[1]} ART_COINS to ${mentionedUser.username}`))
     })
 })

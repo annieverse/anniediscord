@@ -10,9 +10,9 @@ const prefix = env.prefix;
 module.exports.run = async (bot, command, message, args, utils) => {
 
 
-if(env.dev && !env.administrator_id.includes(message.author.id))return;
+    if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
-  
+
     /**
         Redeeming functions.
         Core event of transaction.
@@ -32,13 +32,34 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         //  Logging result from current transaction
         const log = (code) => {
             const logtext = {
-                "000": {color: palette.red, msg: `Can't proceed. Insufficient balance.`},
-                "001": {color: palette.darkmatte, msg: `Transaction cancelled.`},
-                "002": {color: palette.lightgreen, msg:`Purchase successful. The item has been sent to your inventory.`},
-                "003": {color: palette.darkmatte, msg: `You can purchase again in 10 seconds.`},
-                "004": {color: palette.darkmatte, msg: `I'm selling Lucky Tickets! Wanna give a try? \`>redeem <amount>\`.`},
-                "005": {color: palette.red, msg: `Please put the correct amount!`},
-                "006": {color: palette.darkmatte, msg: `Put positive values.`}
+                "000": {
+                    color: palette.red,
+                    msg: `Can't proceed. Insufficient balance.`
+                },
+                "001": {
+                    color: palette.darkmatte,
+                    msg: `Transaction cancelled.`
+                },
+                "002": {
+                    color: palette.lightgreen,
+                    msg: `Purchase successful. The item has been sent to your inventory.`
+                },
+                "003": {
+                    color: palette.darkmatte,
+                    msg: `You can purchase again in 10 seconds.`
+                },
+                "004": {
+                    color: palette.darkmatte,
+                    msg: `I'm selling Lucky Tickets! Wanna give a try? \`>redeem <amount>\`.`
+                },
+                "005": {
+                    color: palette.red,
+                    msg: `Please put the correct amount!`
+                },
+                "006": {
+                    color: palette.darkmatte,
+                    msg: `Put positive values.`
+                }
             }
             return format.embedWrapper(logtext[code].color, logtext[code].msg);
         }
@@ -103,17 +124,17 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
         const confirmation = async () => {
             const sufficient_bal = await sufficient_balance();
             const collector = new Discord.MessageCollector(message.channel,
-            m => m.author.id === message.author.id, {
-                max: 1,
-                time: 30000,
-            });
+                m => m.author.id === message.author.id, {
+                    max: 1,
+                    time: 30000,
+                });
 
             collector.on(`collect`, async (msg) => {
                 let user_input = msg.content.toLowerCase();
 
 
                 // Transaction successful.
-                if(user_input === `y` && sufficient_bal) {
+                if (user_input === `y` && sufficient_bal) {
                     msg.delete();
                     collector.stop();
                     transaction();
@@ -127,10 +148,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
                     msg.delete();
                     collector.stop();
 
-                    if(user_input !== `y`)return log(`001`);
-                    if(!sufficient_bal)return log(`000`);
+                    if (user_input !== `y`) return log(`001`);
+                    if (!sufficient_bal) return log(`000`);
                 }
-            });    
+            });
         }
 
 
@@ -142,10 +163,10 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
             amount = Math.floor(user_bal / 120);
             price = 120 * amount;
 
-            if(!price)return log(`000`);
+            if (!price) return log(`000`);
 
             check_out();
-            confirmation();           
+            confirmation();
         }
 
 
@@ -161,26 +182,26 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
 
             //  Locked feature
             //if(!message.member.roles.find(r => r.name === 'Creators Council'))
-            
-            if(![`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name))return format.embedWrapper(palette.darkmatte, `Please redeem in bot channels.`);
+
+            if (![`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)) return format.embedWrapper(palette.darkmatte, `Please redeem in bot channels.`);
 
             //  Return log if the amount is not defined.
-            if(!args[0])return log(`004`)
+            if (!args[0]) return log(`004`)
 
 
             //  Return log if user still in cooldown state.
-            if(still_coolingdown())return log(`003`)
+            if (still_coolingdown()) return log(`003`)
 
 
             //  Proceed transaction with all the available balance.
-            if(args[0].includes(`all`))return all_bal_transaction();
+            if (args[0].includes(`all`)) return all_bal_transaction();
 
 
             //  Return log if the amount is not-a-number.
-            if(Number.isNaN(parseInt(args[0])))return log(`005`)
+            if (Number.isNaN(parseInt(args[0]))) return log(`005`)
 
 
-           	if(parseInt(args[0]) < 0)return log(`006`)
+            if (parseInt(args[0]) < 0) return log(`006`)
 
 
             amount = parseInt((message.content).replace(/\D/g, ``));
@@ -194,7 +215,7 @@ if(env.dev && !env.administrator_id.includes(message.author.id))return;
     }
 
     return redeem();
-	
+
 }
 module.exports.help = {
     name: "redeem",

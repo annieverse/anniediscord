@@ -96,7 +96,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
 
             //  Add rank after updating exp.
             get add_rank() {
-                message.guild.member(this.data.user.id).addRole(message.guild.roles.find(r => r.name === extension.ranksCheck(this.data.updated.lvl).title));
+                return message.guild.member(this.data.user.id).addRole(message.guild.roles.find(r => r.name === extension.ranksCheck(this.data.updated.lvl).title));
             }
 
             //  Remove previous rank if new lvl gap is greater than 5.
@@ -110,7 +110,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                 }
 
                 console.log(idpool);
-                message.guild.member(this.data.user.id).removeRoles(idpool)
+                return message.guild.member(this.data.user.id).removeRoles(idpool)
             }
 
             //  Register new exp data.
@@ -132,7 +132,7 @@ return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)
                     }
                 }
 
-                sql.get(`SELECT * FROM userdata WHERE userId = "${message.author.id}"`)
+                return sql.get(`SELECT * FROM userdata WHERE userId = "${message.author.id}"`)
                     .then(async data => {
 
                         //  Save old data

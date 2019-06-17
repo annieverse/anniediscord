@@ -93,11 +93,6 @@ var transactionCode = randomString(2, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 else {
     //Filtering the guild members only keeping those with the role
     //Then mapping the filtered array to their usernames
-    
-
-   function sleep(ms){
-        return new Promise(resolve => setTimeout(resolve,ms));
-    }
 
     payEmbed.setColor('#2d2d2d')
     payEmbed.setDescription(`⚙ | *Querying ${membersWithRole.length} users ..*`)
@@ -114,7 +109,7 @@ else {
 
                         });
             
-            await sleep(1000)
+            await utils.pause(1000)
             console.log(membersWithRole[i]);
             i++;
             payEmbed.setDescription(`⚙ | *Querying ${i}/${membersWithRole.length} users ..*

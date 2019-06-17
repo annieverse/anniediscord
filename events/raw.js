@@ -1,6 +1,3 @@
-const Discord = require("discord.js");
-const env = require('../.data/environment.json');
-
 module.exports = (bot, packet) => {
 
     // We don't want this to run on unrelated packets

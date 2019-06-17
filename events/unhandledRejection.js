@@ -5,13 +5,12 @@ const env = require(`../.data/environment.json`);
 
 module.exports = (bot, err, p, message) => {
 
-    
     if (typeof message == "undefined" || null){
         const metadata = {
             date: moment(Date.now()).format(`dddd, MMMM Do YYYY, h:mm:ss a`),
             error: err.stack,
             log: bot.channels.get("580889690677444618"),
-            dev: bot.guilds.get('459891664182312980').roles.find(r => r.name === "Developer Team").toString()
+            dev: bot.guilds.get('459891664182312980').roles.find(r => r.name === "Developer Team")
         }
 
         //replacing authors name in directory
@@ -48,7 +47,7 @@ module.exports = (bot, err, p, message) => {
             },
             channel: bot.channels.get(message.channel.id).toString(),
             log: bot.channels.get("580889690677444618"),
-            dev: message.guild.roles.find(r => r.name === "Developer Team").toString()
+            dev: bot.guilds.get('459891664182312980').roles.find(r => r.name === "Developer Team").toString()
         }
 
         //replacing authors name in directory

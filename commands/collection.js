@@ -2,7 +2,6 @@ const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const Discord = require("discord.js");
 const palette = require("../colorset.json");
-const formatManager = require('../utils/formatManager');
 
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
