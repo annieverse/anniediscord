@@ -40,5 +40,6 @@ module.exports.help = {
 	usage: `>avatar [user]<optional>`,
 	group: "Fun",
 	public: true,
-	required_usermetadata: true
+	require_usermetadata: true,
+	multi_user: false
 }

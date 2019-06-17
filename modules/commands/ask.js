@@ -4,7 +4,8 @@
    */
   class Ask {
     constructor(Stacks) {
-      this.author = Stacks.meta.author.user;
+      console.log(Stacks.data)
+      this.author = Stacks.meta.author;
       this.data = Stacks.meta.data;
       this.utils = Stacks.utils;
       this.message = Stacks.message;
@@ -12,6 +13,7 @@
       this.palette = Stacks.palette;
       this.replies = ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"];
       this.randomReplies = this.replies[Math.floor((Math.random() * this.replies.length))];
+      this.stacks = Stacks;
     }
 
 
@@ -19,7 +21,7 @@
       if (!this.args[0]) return;
       let question = this.args.slice(0).join(" ");
       return this.utils
-        .send(`${this.utils.name(this.author.id)} asked "${question}"`)
+        .sendEmbed(`${this.utils.name(this.author.id)} asked "${question}"`, this.palette.lightblue)
         .then(() => {
           this.utils.sendEmbed(`**${this.randomReplies}**`, this.palette.halloween)
         })
@@ -35,5 +37,6 @@
     usage: `>ask <message>`,
     group: "Fun",
     public: true,
-    require_usermetadata: false
+    require_usermetadata: true,
+    multi_user: false
   }

@@ -25,7 +25,7 @@ class CommandHandler {
 
   //  Pull user metadata from database.
   async requestData() {
-    if(!this.module_parameters.required_usermetadata)return;
+    if (!this.module_parameters.require_usermetadata) return;
     this.components.meta = await new Data(this.components).pull();
   }
 

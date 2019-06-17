@@ -1,0 +1,31 @@
+{
+    "team_leads":{
+        "internal_affairs": "",
+        "channel_overseer": "",
+        "art_mentor": "",
+        "public_relation": "",
+        "social_media": "",
+        "art_design": "",
+        "development": "",
+        "events": ""  
+    },
+    "teams": {
+        "internal_affairs": "",
+        "channel_overseer": "",
+        "art_mentor": "",
+        "public_relation": "",
+        "social_media": "",
+        "art_design": "",
+        "development": "",
+        "events": ""
+    },
+    "Admin":{
+        "creative_council": "",
+        "administration_manager": "",
+        "communication_manager": "",
+        "creative_assembly_manager": ""
+    },
+    "custom_roles":{
+        "tomato_fox": ""
+    }
+}

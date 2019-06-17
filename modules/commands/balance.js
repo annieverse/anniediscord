@@ -26,6 +26,6 @@ module.exports.help = {
     usage: `>bal`,
     group: "General",
     public: true,
-    required_usermetadata: true,
+    require_usermetadata: true,
     multi_user: true
 }

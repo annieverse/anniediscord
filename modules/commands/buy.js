@@ -177,6 +177,6 @@ module.exports.help = {
     usage: `>buy <item>`,
     group: "Shop-related",
     public: true,
-    required_usermetadata: true,
+    require_usermetadata: true,
     multi_user : false
 }

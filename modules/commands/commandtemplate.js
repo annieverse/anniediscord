@@ -2,18 +2,39 @@
  *This is only a template, easy to pull from when making a new command
  *
  */
-module.exports.run = async (bot, command, message, args, utils) => {
+class commandName {
+  constructor(Stacks) {
+    this.author = Stacks.meta.author;
+    this.data = Stacks.meta.data;
+    this.utils = Stacks.utils;
+    this.message = Stacks.message;
+    this.args = Stacks.args;
+    this.palette = Stacks.palette;
+    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+    this.stacks = Stacks;
+  }
 
-
-
-
-}//end of module.exports.run
+  async execute() {
+    // Add these three lines so u dont have to go through and put this./this.stacks infront of everything
+    // might have to go through if another varible is called
+    let message = this.message;
+    let bot = this.stacks.bot;
+    let palette = this.stacks.palette;
+    message;
+    bot;
+    palette;
+    //copy existing code into here
+  }
+}
 
 module.exports.help = {
-  name:"TemplateCommand",
-  aliases: [],
+  start: commandName, 
+  name:"commandtemplate", // This MUST equal the filename
+  aliases: [], // More or less this is what the user will input on discord to call the command
   description: `No function just a place holder for commands`,
   usage: `>TemplateCommand`,
   group: "Admin",
   public: false,
+  require_usermetadata: true,
+  multi_user: true
 }
