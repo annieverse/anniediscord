@@ -10,101 +10,108 @@ Canvas.registerFont(resolve(join(__dirname, "../../fonts/roboto-bold.ttf")), "Ro
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/roboto-thin.ttf")), "RobotoThin");
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/Whitney.otf")), "Whitney");
 
-module.exports.run = async (bot, command, message, args, utils) => {
-
-
-
-
-
-
-    let user_collection = {};
-    function user_cardcollection() {
-        return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
-            .then(async data => {
-                user_collection = data
-            })
+class collection {
+    constructor(Stacks) {
+        this.author = Stacks.meta.author;
+        this.data = Stacks.meta.data;
+        this.utils = Stacks.utils;
+        this.message = Stacks.message;
+        this.args = Stacks.args;
+        this.palette = Stacks.palette;
+        this.stacks = Stacks;
     }
 
-
-
-
-    let filtered_res;
-    async function filter_items(container) {
-        let bag = container, parsedbag = {};
-
-
-        delete container.userId;
-
-
-       //  Check whether the container is empty or filled.
-        const empty_bag = () => {
-            for(let i in container) {
-                if(container[i] !== null || container[i] > 0)return false;
-            }
-            return true;
-        }
-
-
-
-        //  Remove property that contain null values from an object
-        const eliminate_nulls = () => {
-            for(let i in bag) {
-                if(bag[i] === null || bag[i] < 1) { delete bag[i] }
-            }
-        }
-
-
-        // Label itemname & rarity for each item from itemlist
-        const labeling = () => {
-
-            for(let i in bag) {
-                sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
-                    .then(async data => {
-                    sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-                        .then(async secdata => parsedbag[data.name] = secdata.rarity)
+    async execute() {
+        let message = this.message;
+        let palette = this.stacks.palette;
+        let user_collection = {};
+        function user_cardcollection() {
+            return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
+                .then(async data => {
+                    user_collection = data
                 })
-            }
         }
 
-        if(empty_bag())return filtered_res = null;
 
 
-        eliminate_nulls();
-        labeling();
-        await utils.pause(500);
-        filtered_res = parsedbag;
-    }
+
+        let filtered_res;
+        async function filter_items(container) {
+            let bag = container, parsedbag = {};
 
 
-    let msg_res = [];
-    function text_interface() {
+            delete container.userId;
 
-        const body = () => {
-            const embed = new Discord.RichEmbed()
-            .setColor(palette.darkmatte);
 
-            const formatting = () => {   
-                let i = 1, content = ``;
-                for(let key in filtered_res) {
-                    content += `[${i}] ${`☆`.repeat(filtered_res[key])} - [${key}](https://discord.gg/Tjsck8F)\n`
-                    i++
+            //  Check whether the container is empty or filled.
+            const empty_bag = () => {
+                for (let i in container) {
+                    if (container[i] !== null || container[i] > 0) return false;
                 }
-                return content;
+                return true;
             }
 
-            !filtered_res ? embed.setDescription(`You don't have any collection.`) : embed.setDescription(formatting());
-            return msg_res.push(embed);
+
+
+            //  Remove property that contain null values from an object
+            const eliminate_nulls = () => {
+                for (let i in bag) {
+                    if (bag[i] === null || bag[i] < 1) { delete bag[i] }
+                }
+            }
+
+
+            // Label itemname & rarity for each item from itemlist
+            const labeling = () => {
+
+                for (let i in bag) {
+                    sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
+                        .then(async data => {
+                            sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
+                                .then(async secdata => parsedbag[data.name] = secdata.rarity)
+                        })
+                }
+            }
+
+            if (empty_bag()) return filtered_res = null;
+
+
+            eliminate_nulls();
+            labeling();
+            await utils.pause(500);
+            filtered_res = parsedbag;
         }
 
-        body();   
-    }
+
+        let msg_res = [];
+        function text_interface() {
+
+            const body = () => {
+                const embed = new Discord.RichEmbed()
+                    .setColor(palette.darkmatte);
+
+                const formatting = () => {
+                    let i = 1, content = ``;
+                    for (let key in filtered_res) {
+                        content += `[${i}] ${`☆`.repeat(filtered_res[key])} - [${key}](https://discord.gg/Tjsck8F)\n`
+                        i++
+                    }
+                    return content;
+                }
+
+                !filtered_res ? embed.setDescription(`You don't have any collection.`) : embed.setDescription(formatting());
+                return msg_res.push(embed);
+            }
+
+            body();
+        }
 
 
-    /**
-        Send result into message event. 
-        @run
-    */
-    async function run() {
+        /**
+            Send result into message event. 
+            @run
+        */
+        async function run() {
             return message.channel.send(`\`fetching ${message.author.username} card collection ..\``)
                 .then(async load => {
                     await user_cardcollection();
@@ -116,18 +123,22 @@ module.exports.run = async (bot, command, message, args, utils) => {
                             message.channel.send(msg_res[0])
                             load.delete();
                         })
-                })      
+                })
+        }
+
+        return run();
+
     }
-
-    return run();
-
 }
 
 module.exports.help = {
+    start: collection,
     name: "collection",
     aliases: [],
     description: `View your collected cards`,
     usage: `>collection`,
     group: "General",
     public: true,
+    require_usermetadata: true,
+    multi_user: true
 }

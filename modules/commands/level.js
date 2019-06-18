@@ -17,138 +17,150 @@ Canvas.registerFont(resolve(join(__dirname, "../../fonts/roboto-thin.ttf")), "Ro
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/Whitney.otf")), "Whitney");
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
-module.exports.run = async (bot, command, message, args, utils) => {
+class level {
+  constructor(Stacks) {
+    this.author = Stacks.meta.author;
+    this.data = Stacks.meta.data;
+    this.utils = Stacks.utils;
+    this.message = Stacks.message;
+    this.args = Stacks.args;
+    this.palette = Stacks.palette;
+    this.stacks = Stacks;
+  }
 
-  
-const configFormat = new formatManager(message);
-const configRank = new ranksManager(bot, message);
+  async execute() {
+    let message = this.message;
+    let bot = this.stacks.bot;
+    let palette = this.stacks.palette;
+    const configFormat = new formatManager(message);
+    const configRank = new ranksManager(bot, message);
 
-if (!["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+    if (!["bot", "bot-games", "cmds", "sandbox"].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
 
-async function profile(member) {  
-  const configProfile = new profileManager();
-  const collection = new databaseManager(member.id);
-  
-  /**
-    * id = userid, cur = currentexp, max = maxexp,
-    * crv = expcurve, lvl = userlevel, ac = userartcoins,
-    * rep = userreputation, des = userdescription, ui = userinterfacemode
-    * clr = hex code of user's rank color.
-    */
-  const userdata = await collection.userdata;
-  const user = {
-    id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
-    crv: userdata.nextexpcurve, lvl: userdata.level,  ac: userdata.artcoins,
-    rep: userdata.reputations, des: userdata.description,  ui: userdata.interfacemode,
-    prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
-    cov: userdata.cover, log: userdata.last_login,
-    get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() },
-}
+    async function profile(member) {
+      const configProfile = new profileManager();
+      const collection = new databaseManager(member.id);
 
-  const switchColor = {
+      /**
+        * id = userid, cur = currentexp, max = maxexp,
+        * crv = expcurve, lvl = userlevel, ac = userartcoins,
+        * rep = userreputation, des = userdescription, ui = userinterfacemode
+        * clr = hex code of user's rank color.
+        */
+      const userdata = await collection.userdata;
+      const user = {
+        id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+        crv: userdata.nextexpcurve, lvl: userdata.level, ac: userdata.artcoins,
+        rep: userdata.reputations, des: userdata.description, ui: userdata.interfacemode,
+        prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
+        cov: userdata.cover, log: userdata.last_login,
+        get clr() { return (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() },
+      }
+
+      const switchColor = {
 
         "Dark": {
-            base: palette.nightmode,
-            border: palette.deepnight,
-            text: palette.white,
-            secondaryText: palette.lightgray
+          base: palette.nightmode,
+          border: palette.deepnight,
+          text: palette.white,
+          secondaryText: palette.lightgray
         },
 
         "Light": {
-            base: palette.white,
-            border: palette.lightgray,
-            text: palette.darkmatte,
-            secondaryText: palette.blankgray
+          base: palette.white,
+          border: palette.lightgray,
+          text: palette.darkmatte,
+          secondaryText: palette.blankgray
         }
-  }
+      }
 
-        let canvas_x = 800;
-        let canvas_y = 260;
-        let startPos_x = 10;
-        let startPos_y = 15;
-        let barlength_xp = canvas_x-80;
-       
-        //PAN's attempt
-        let PanCurrent = user.crv === 150 ? user.max - (user.max - user.cur) : ((user.crv - 200) - (user.max - user.cur));
-        const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
-        const calculatedBar = await configProfile.barSize(PanCurrent, user.max, user.crv, barlength_xp);
-        const rankTitle = await configRank.ranksCheck(user.lvl).title;
+      let canvas_x = 800;
+      let canvas_y = 260;
+      let startPos_x = 10;
+      let startPos_y = 15;
+      let barlength_xp = canvas_x - 80;
 
-        let canv = new Canvas(canvas_x, canvas_y) // x y
-          
+      //PAN's attempt
+      let PanCurrent = user.crv === 150 ? user.max - (user.max - user.cur) : ((user.crv - 200) - (user.max - user.cur));
+      const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
+      const calculatedBar = await configProfile.barSize(PanCurrent, user.max, user.crv, barlength_xp);
+      const rankTitle = await configRank.ranksCheck(user.lvl).title;
 
+      let canv = new Canvas(canvas_x, canvas_y) // x y
 
 
-          /*
-                x = starting point from x axis (horizontal)
-                y = starting point from y axis (vertical)
-          */
 
 
-          //checkpoint_1
-        canv.save()
+      /*
+            x = starting point from x axis (horizontal)
+            y = starting point from y axis (vertical)
+      */
 
-          //checkpoint_2
-        canv.save()
 
-          //checkpoint_1
-        canv.save()
+      //checkpoint_1
+      canv.save()
 
-          //checkpoint_2
-        canv.save()
+      //checkpoint_2
+      canv.save()
 
-          //checkpoint_1
-        canv.save()
+      //checkpoint_1
+      canv.save()
 
-          //checkpoint_2
-        canv.save()
-        
+      //checkpoint_2
+      canv.save()
+
+      //checkpoint_1
+      canv.save()
+
+      //checkpoint_2
+      canv.save()
+
+
+      /**
+       *      CARD BASE
+       *      800 x 130
+       */
+      canv.setShadowColor("rgba(28, 28, 28, 1)")
+        .setShadowOffsetY(7)
+        .setShadowBlur(15)
+        .setColor(palette.darkmatte)
+
+
+        .addRect(startPos_x + 15, startPos_y + 10, canvas_x - 45, canvas_y - 45) // (x, y, x2, y2)
+        .createBeveledClip(startPos_x, startPos_y, canvas_x - 20, canvas_y - 20, 30)
+        .setShadowBlur(0)
+        .setShadowOffsetY(0)
+
+
 
         /**
-         *      CARD BASE
-         *      800 x 130
-         */
-        canv.setShadowColor("rgba(28, 28, 28, 1)")
-            .setShadowOffsetY(7)
-            .setShadowBlur(15)
-            .setColor(palette.darkmatte)
-
-
-            .addRect(startPos_x+15, startPos_y+10,canvas_x-45, canvas_y-45) // (x, y, x2, y2)
-            .createBeveledClip(startPos_x, startPos_y, canvas_x-20, canvas_y-20, 30)
-            .setShadowBlur(0)
-            .setShadowOffsetY(0)
+          *      AVATAR BASE
+          *      OVERLAY
+          */
+        .addImage(avatar, startPos_x - 20, startPos_y - 310, 800, 564 * (800 / 564), 250)
+        .save()
+      canv.context.globalAlpha = 0.9;
+      canv.setColor(palette.darkmatte)
+        .addRect(startPos_x, startPos_y, canvas_x, canvas_y)
+        .save()
+        .save()
+        .restore()
 
 
 
-       /**
-         *      AVATAR BASE
-         *      OVERLAY
-         */    
-            .addImage(avatar, startPos_x-20, startPos_y-310, 800, 564 * (800/564), 250)
-            .save()
-        canv.context.globalAlpha = 0.9;
-        canv.setColor(palette.darkmatte)
-            .addRect(startPos_x, startPos_y, canvas_x, canvas_y)
-            .save()
-            .save()
-            .restore()
-            
-
-
-       /**
-         *      EXP BAR
-         *      referenced to @barSize
-         */
-            .setColor(Color(user.clr).lighten(0.3))
-            .createBeveledClip(startPos_x+30, startPos_y+70, barlength_xp, canvas_y-240, 240)
-            .addRect(startPos_x+30, startPos_y+70, barlength_xp, canvas_y-40) // (x, y, x2, y2)     
-            .restore()
-        canv.context.globalAlpha = 0.9;
-        canv.setColor(Color(user.clr).darken(0.3))
-            .createBeveledClip(startPos_x+30, startPos_y+70, calculatedBar, canvas_y-240, 240)    
-            .addRect(startPos_x+30, startPos_y+70, calculatedBar, canvas_y-40) // (x, y, x2, y2)   
-            .restore()   
+        /**
+          *      EXP BAR
+          *      referenced to @barSize
+          */
+        .setColor(Color(user.clr).lighten(0.3))
+        .createBeveledClip(startPos_x + 30, startPos_y + 70, barlength_xp, canvas_y - 240, 240)
+        .addRect(startPos_x + 30, startPos_y + 70, barlength_xp, canvas_y - 40) // (x, y, x2, y2)     
+        .restore()
+      canv.context.globalAlpha = 0.9;
+      canv.setColor(Color(user.clr).darken(0.3))
+        .createBeveledClip(startPos_x + 30, startPos_y + 70, calculatedBar, canvas_y - 240, 240)
+        .addRect(startPos_x + 30, startPos_y + 70, calculatedBar, canvas_y - 40) // (x, y, x2, y2)   
+        .restore()
 
 
 
@@ -158,26 +170,26 @@ async function profile(member) {
          *      POS
          */
 
-            .setColor(user.clr)
-            .setTextAlign("center")
-            .setTextFont(`32pt RobotoBold`)  
-            .addText(user.lvl, startPos_x+120, startPos_y+175)
-            .setColor(switchColor["Dark"].secondaryText) 
-            .setTextFont(`10pt RobotoThin`)
-            .addText('LEVEL', startPos_x+120, startPos_y+200) 
-            
+        .setColor(user.clr)
+        .setTextAlign("center")
+        .setTextFont(`32pt RobotoBold`)
+        .addText(user.lvl, startPos_x + 120, startPos_y + 175)
+        .setColor(switchColor["Dark"].secondaryText)
+        .setTextFont(`10pt RobotoThin`)
+        .addText('LEVEL', startPos_x + 120, startPos_y + 200)
+
         /**
          *      CURRENT EXP
          *      POS
          */
 
-            .setColor(user.clr)
-            .setTextAlign("center")
-            .setTextFont(`32pt RobotoBold`)  
-            .addText(configFormat.threeDigitsComa(user.cur), startPos_x+360, startPos_y+175)
-            .setColor(switchColor["Dark"].secondaryText) 
-            .setTextFont(`10pt RobotoThin`)
-            .addText('CURRENT EXP', startPos_x+360, startPos_y+200) 
+        .setColor(user.clr)
+        .setTextAlign("center")
+        .setTextFont(`32pt RobotoBold`)
+        .addText(configFormat.threeDigitsComa(user.cur), startPos_x + 360, startPos_y + 175)
+        .setColor(switchColor["Dark"].secondaryText)
+        .setTextFont(`10pt RobotoThin`)
+        .addText('CURRENT EXP', startPos_x + 360, startPos_y + 200)
 
 
         /**
@@ -185,103 +197,105 @@ async function profile(member) {
          *      POS
          */
 
-            .setColor(user.clr)
-            .setTextAlign("center")
-            .setTextFont(`32pt RobotoBold`)  
-            .addText(configFormat.threeDigitsComa(user.max - user.cur), startPos_x+600, startPos_y+175)
-            .setColor(switchColor["Dark"].secondaryText) 
-            .setTextFont(`10pt RobotoThin`)
-            .addText('NEXT LEVEL UP', startPos_x+600, startPos_y+200) 
+        .setColor(user.clr)
+        .setTextAlign("center")
+        .setTextFont(`32pt RobotoBold`)
+        .addText(configFormat.threeDigitsComa(user.max - user.cur), startPos_x + 600, startPos_y + 175)
+        .setColor(switchColor["Dark"].secondaryText)
+        .setTextFont(`10pt RobotoThin`)
+        .addText('NEXT LEVEL UP', startPos_x + 600, startPos_y + 200)
 
 
-        /**
-          *      RANK
-          *      TITLE
-          */
+      /**
+        *      RANK
+        *      TITLE
+        */
 
-        const pos_check = startPos_x+30
-        canv.setTextAlign("left")
-            .setColor(switchColor["Dark"].secondaryText)
-            .setTextFont(`30pt Whitney`)  
-            .addText(rankTitle, pos_check, startPos_y+50)
-
-
-
-         /**
-           *      USERNAME
-           *      
-           */
-
-        const startpoint_name = (pos_check)+(canv.measureText(rankTitle).width+10);
-        canv.setTextAlign("left")
-            .setColor(switchColor["Dark"].secondaryText) 
-            .setTextFont(`30pt Whitney`)  
-            .addText((member.user.username).length >= 15 
-            ? `${(member.user.username).substring(0, 14)}...` 
-            : member.user.username, startpoint_name, startPos_y+50)
-    
+      const pos_check = startPos_x + 30
+      canv.setTextAlign("left")
+        .setColor(switchColor["Dark"].secondaryText)
+        .setTextFont(`30pt Whitney`)
+        .addText(rankTitle, pos_check, startPos_y + 50)
 
 
 
+      /**
+        *      USERNAME
+        *      
+        */
 
-        /**
-         *      PERCENTAGE
-         */
-    canv.setTextAlign("left") 
+      const startpoint_name = (pos_check) + (canv.measureText(rankTitle).width + 10);
+      canv.setTextAlign("left")
+        .setColor(switchColor["Dark"].secondaryText)
+        .setTextFont(`30pt Whitney`)
+        .addText((member.user.username).length >= 15
+          ? `${(member.user.username).substring(0, 14)}...`
+          : member.user.username, startpoint_name, startPos_y + 50)
+
+
+
+
+
+      /**
+       *      PERCENTAGE
+       */
+      canv.setTextAlign("left")
         .setColor(Color(user.clr).desaturate(0.2))
         .setTextFont(`20pt RobotoBold`)
-        if(user.crv === 150) {
-          canv.addText(`${configFormat.getPercentage(PanCurrent, user.max)}%`, calculatedBar+20, 135)
-        }
-        else if(configFormat.getPercentage(PanCurrent, user.crv) >= 90) { 
-          canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar+20, 135)
-      
-        }
-        else {
-          canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar+20, 135)
+      if (user.crv === 150) {
+        canv.addText(`${configFormat.getPercentage(PanCurrent, user.max)}%`, calculatedBar + 20, 135)
+      }
+      else if (configFormat.getPercentage(PanCurrent, user.crv) >= 90) {
+        canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar + 20, 135)
 
-        }
-        
-        
-        
-                return canv.toBuffer()
+      }
+      else {
+        canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar + 20, 135)
+
+      }
 
 
-    }             
-      
+
+      return canv.toBuffer()
 
 
-  try {  
-      const user = await utils.userFinding(message, message.content.substring(command.length+2))
+    }
+
+
+
+    try {
+      const user = await utils.userFinding(message, message.content.substring(command.length + 2))
       const caption = '<:Annie_Smug:523686816545636352> | Level card for ';
-        if(!args[0]) {
-          message.channel.startTyping();
-          return message.channel.send(`**${caption + message.author.username}.**`,
-                          new Attachment(await profile(message.member),`levelcard-${message.author.username}.jpg`))
-                          .then(() => message.channel.stopTyping() )
-                          
-        }
-        else {
-          message.channel.startTyping();
-          return message.channel.send(`**${caption + user.user.username}.**`,
-                          new Attachment(await profile(user),`levelcard-${user.user.username}.jpg`))
-                          .then(() => message.channel.stopTyping() )
-        }
-  
-  } catch(e) {
+      if (!args[0]) {
+        message.channel.startTyping();
+        return message.channel.send(`**${caption + message.author.username}.**`,
+          new Attachment(await profile(message.member), `levelcard-${message.author.username}.jpg`))
+          .then(() => message.channel.stopTyping())
+
+      }
+      else {
+        message.channel.startTyping();
+        return message.channel.send(`**${caption + user.user.username}.**`,
+          new Attachment(await profile(user), `levelcard-${user.user.username}.jpg`))
+          .then(() => message.channel.stopTyping())
+      }
+
+    } catch (e) {
       console.log(e)
       message.channel.stopTyping()
       return configFormat.embedWrapper(palette.darkmatte, `Sorry, I couldn't find that user. :(`);
     }
-
-
+  }
 }
 
 module.exports.help = {
+  start: level,
   name: "level",
   aliases: ['lvl', 'lv'],
   description: `Pulls up your level`,
   usage: `>level`,
   group: "General",
   public: true,
+  require_usermetadata: true,
+  multi_user: true
 }

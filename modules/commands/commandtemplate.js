@@ -10,7 +10,6 @@ class commandName {
     this.message = Stacks.message;
     this.args = Stacks.args;
     this.palette = Stacks.palette;
-    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
     this.stacks = Stacks;
   }
 
