@@ -3,26 +3,35 @@ const moment = require('moment');
 const formatManager = require('../../utils/formatManager');
 const fs = require("fs")
 
-
-module.exports.run = async (...ArrayStacks) => {
-
-
-    //  Centralized object
-    let metadata = {
-        report: bot.channels.get(`580889690677444618`),
-        user: {
-            id: message.author.id,
-            name: message.author.username,
-            tag: message.author.tag
-        },
-        rs_countdown: 5000,
+class serverRemote {
+    constructor(Stacks) {
+        this.utils = Stacks.utils;
+        this.message = Stacks.message;
+        this.args = Stacks.args;
+        this.palette = Stacks.palette;
+        this.stacks = Stacks;
     }
 
+    async execute() {
+        let message = this.message;
+        let bot = this.stacks.bot;
+        let palette = this.stacks.palette;
+        //  Centralized object
+        let metadata = {
+            report: bot.channels.get(`580889690677444618`),
+            user: {
+                id: message.author.id,
+                name: message.author.username,
+                tag: message.author.tag
+            },
+            rs_countdown: 5000,
+        }
 
-    // Pre-defined messages.
-    const log = async (props = {code: ``, delete_in: 0}, ...opt) => {
-        !props.delete_in ? props.delete_in = null : props.delete_in;
-        const format = new formatManager(message)
+
+        // Pre-defined messages.
+        const log = async (props = { code: ``, delete_in: 0 }, ...opt) => {
+            !props.delete_in ? props.delete_in = null : props.delete_in;
+            const format = new formatManager(message)
 
             const logtext = {
                 "SHORT_GUIDE": {
@@ -60,123 +69,127 @@ module.exports.run = async (...ArrayStacks) => {
                 .then(async cb_msg => {
                     props.delete_in ? cb_msg.delete(props.delete_in) : null;
                 })
-    }
+        }
 
 
-    //  Send latest database to report channel.
-    const get_database = () => {
-        metadata.report.send(`Server has been shutdown at ${moment(Date.now()).format("dddd, MMMM Do YYYY, h:mm:ss a")}`,
-        new Discord.Attachment(`.data/database.sqlite`, `${Date.now()}.sqlite`))
-    }
+        //  Send latest database to report channel.
+        const get_database = () => {
+            metadata.report.send(`Server has been shutdown at ${moment(Date.now()).format("dddd, MMMM Do YYYY, h:mm:ss a")}`,
+                new Discord.Attachment(`.data/database.sqlite`, `${Date.now()}.sqlite`))
+        }
 
 
-    //  Restart the server.
-    const restart_server = async (countdown) => {
-        await utils.pause(countdown);
-        process.exit();
-    }
+        //  Restart the server.
+        const restart_server = async (countdown) => {
+            await utils.pause(countdown);
+            process.exit();
+        }
 
 
-    //  Setup user interactions such as commands.
-    const user_interactions = (mode = false) => {
+        //  Setup user interactions such as commands.
+        const user_interactions = (mode = false) => {
 
-        fs.readFile(`.data/environment.json`, `utf8`, (err, data) => {
-            let obj = JSON.parse(data);
+            fs.readFile(`.data/environment.json`, `utf8`, (err, data) => {
+                let obj = JSON.parse(data);
 
-            obj.dev = mode ? false : true;
-            obj.active_exp = mode ? true : false;
-            
-            fs.writeFile(`.data/environment.json`, JSON.stringify(obj, null, 4), (err) => { 
-                console.log(`User-interaction has been set to - ${mode}.`)
+                obj.dev = mode ? false : true;
+                obj.active_exp = mode ? true : false;
+
+                fs.writeFile(`.data/environment.json`, JSON.stringify(obj, null, 4), (err) => {
+                    console.log(`User-interaction has been set to - ${mode}.`)
+                })
             })
-        })
-    }
+        }
 
 
-    //  Core processes
-    const main = async () => {
+        //  Core processes
+        const main = async () => {
 
-        class Proc {
+            class Proc {
 
-            constructor(arg) {
-                this.arg = arg.substring(1)
+                constructor(arg) {
+                    this.arg = arg.substring(1)
+                }
+
+
+                //  Restart server
+                get rs() {
+                    metadata.rs_countdown = 2000;
+                    return restart_server(2000);
+                }
+
+
+                //  Set server to production
+                get live() {
+                    metadata.rs_countdown = 10000;
+                    user_interactions(true);
+                    return restart_server(metadata.rs_countdown);
+                }
+
+
+                //  Set server to dev environment
+                get mt() {
+                    metadata.rs_countdown = 10000;
+                    user_interactions(false);
+                    get_database();
+                    return restart_server(metadata.rs_countdown);
+                }
+
+
+                //  Getter selector
+                get run() {
+                    return this[this.arg];
+                }
+
             }
 
-
-            //  Restart server
-            get rs() {
-                metadata.rs_countdown = 2000;
-                return restart_server(2000);
-            }
-
-
-            //  Set server to production
-            get live() {
-                metadata.rs_countdown = 10000;
-                user_interactions(true);
-                return restart_server(metadata.rs_countdown);
-            }
-
-
-            //  Set server to dev environment
-            get mt() {
-                metadata.rs_countdown = 10000;
-                user_interactions(false);
-                get_database();
-                return restart_server(metadata.rs_countdown);
-            }
-
-
-            //  Getter selector
-            get run() {
-                return this[this.arg];
-            }
+            const proc = new Proc(args[0])
+            proc.run;
+            message.delete();
+            log({ code: `REQUESTING`, delete_in: metadata.rs_countdown - 1000 })
 
         }
 
-        const proc = new Proc(args[0])
-        proc.run;
-        message.delete();
-        log({code: `REQUESTING`, delete_in: metadata.rs_countdown - 1000})
 
+        //  Initialization
+        const run = () => {
+            const parameters = [`-live`, `-mt`, `-rs`];
+
+            //  Returns if user is not listed in developer team.
+            if (!message.member.roles.find(r => (r.name === 'Developer Team'))) return;
+
+
+            //  Returns message if no parameter was specified.
+            if (!args[0]) return log({ code: `SHORT_GUIDE` });
+
+
+            //  Returns invalid parameter.
+            if (!parameters.includes(args[0])) return log({ code: `UNKNOWN_PARAMETER` });
+
+
+            //  Returns if already in dev environment.
+            if (env.dev && (args[0] === `-mt`)) return log({ code: `ALREADY_IN_DEV` });
+
+
+            //  Returns if already in production server.
+            if (!env.dev && (args[0] === `-live`)) return log({ code: `ALREADY_IN_PRODUCTION` });
+
+
+            return main();
+        }
+
+        run()
     }
-
-
-    //  Initialization
-    const run = () => {
-        const parameters = [`-live`, `-mt`, `-rs`];
-
-        //  Returns if user is not listed in developer team.
-        if(!message.member.roles.find(r => (r.name === 'Developer Team')))return; 
-
-
-        //  Returns message if no parameter was specified.
-        if(!args[0])return log({code: `SHORT_GUIDE`});
-
-        
-        //  Returns invalid parameter.
-        if(!parameters.includes(args[0]))return log({code: `UNKNOWN_PARAMETER`});
-
-
-        //  Returns if already in dev environment.
-        if(env.dev && (args[0] === `-mt`))return log({code: `ALREADY_IN_DEV`});
-
-
-        //  Returns if already in production server.
-        if(!env.dev && (args[0] === `-live`))return log({code: `ALREADY_IN_PRODUCTION`});
-
-
-        return main();
-    }
-
-    run()
-    
 }
+
 module.exports.help = {
-    name: "server",
-    aliases: [],
+    start: serverRemote,
+    name: "server-remote",
+    aliases: ["server"],
     description: `Developer Command | remote control of bot`,
     usage: `>server <command>`,
     group: "Admin",
     public: true,
+    require_usermetadata: false,
+    multi_user: false
 }

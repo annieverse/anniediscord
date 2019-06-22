@@ -1,36 +1,46 @@
-module.exports.run = async (bot, command, message, args, utils) => {
+class resetInventory {
+    constructor(Stacks) {
+        this.author = Stacks.meta.author;
+        this.data = Stacks.meta.data;
+        this.utils = Stacks.utils;
+        this.message = Stacks.message;
+        this.args = Stacks.args;
+        this.stacks = Stacks;
+    }
+
+    async execute() {
+        let message = this.message;
+        let bot = this.stacks.bot;
+        const user = message.author;
 
 
 
-const user = message.author;
+        async function reset() {
+
+            const sql = require('sqlite');
+            sql.open('.data/database.sqlite');
+            sql.run(`DELETE FROM userinventories WHERE userId = "${user.id}"`);
+            await utils.pause(500);
+            sql.run(`INSERT INTO userinventories (userId) VALUES ("${user.id}")`);
+            await utils.pause(500);
 
 
+            console.log(`${user.tag} inventory has been wiped out.`)
+            return message.channel.send(`${utils.emoji(`aausugoi`, bot)} your inventory has been wiped out-`)
+                .then(async msg => {
+                    await utils.pause(3000);
+                    msg.delete();
+                })
+        }
 
-async function reset() {
-
-    const sql = require('sqlite');
-    sql.open('.data/database.sqlite');
-    sql.run(`DELETE FROM userinventories WHERE userId = "${user.id}"`);
-    await utils.pause(500);
-    sql.run(`INSERT INTO userinventories (userId) VALUES ("${user.id}")`);
-    await utils.pause(500);
-
-
-    console.log(`${user.tag} inventory has been wiped out.`)
-    return message.channel.send(`${utils.emoji(`aausugoi`,bot)} your inventory has been wiped out-`)
-            .then(async msg => {
-                await utils.pause(3000);
-                msg.delete();
-    })
-}
-
-return message.member.roles.find(r => r.name === 'Creators Council') ? reset() : null
-
+        return message.member.roles.find(r => r.name === 'Creators Council') ? reset() : null
+    }
 }
 
 module.exports.help = {
-    name: "_resetinventory",
-    aliases: [],
+    start: resetInventory,
+    name: "resetinventory",
+    aliases: ["_resetinventory"],
     description: `resets your inventory`,
     usage: `>_resetinventory`,
     group: "Admin",
