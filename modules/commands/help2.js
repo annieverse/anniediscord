@@ -3,6 +3,17 @@ const formatManager = require('../../utils/formatManager.js');
 const fs = require('fs');
 
 class help2 {
+    /**
+     * Pan is reworking this file.
+     * Goals:
+     * DATE: 6/21/2019
+     * - auto updating with every command we make
+     * - combine the admin commands into this file and be able to differeniate
+     * - more as i think of em
+     * DATE:
+     * -  
+     */
+
     constructor(Stacks) {
         this.utils = Stacks.utils;
         this.message = Stacks.message;
@@ -12,8 +23,6 @@ class help2 {
     }
 
     async execute() {
-        // Add these three lines so u dont have to go through and put this./this.stacks infront of everything
-        // might have to go through if another varible is called
         let message = this.message;
         let bot = this.stacks.bot;
         let palette = this.stacks.palette;
