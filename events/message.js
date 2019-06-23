@@ -1,8 +1,8 @@
-const ranksManager = require('../utils/ranksManager');
+const ranksManager = require('../utils/ranksManager.js');
 const palette = require('../utils/colorset.json');
 const Discord = require("discord.js");
 const sql = require("sqlite");
-const ch = require(`../modules/config`);
+const ch = require(`../modules/config.json`);
 sql.open(".data/database.sqlite"); 
 const env = require('../.data/environment.json');
 
@@ -97,13 +97,14 @@ module.exports = (bot, message) => {
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
   let utils = require(`../utils/functions.js`)(bot, message);
   let log = require(`../utils/predefinedMessages`);
+  let roles = require(`../utils/role-list.json`);
 
   if (env.dev && !env.administrator_id.includes(message.author.id)) return;
   if (!ch.bot_domain.includes(message.channel.id)) return;
   if (!message.content.startsWith(prefix)) return;
   if (!commandfile) return;
 
-  const Components = {bot, message, command, args, utils, palette, commandfile, log};
+  const Components = {bot, message, command, args, utils, palette, commandfile, log, roles};
   const cmdHandler = require(`../modules/mainComponents.js`);
   return new cmdHandler(Components).init();
 

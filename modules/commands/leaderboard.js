@@ -174,7 +174,12 @@ class leaderboard {
 
                 //  Make sure the nickname length is not greater than 10 characters
                 get nickname_formatter() {
-                    let name = bot.users.get(user[this.group][this.index].id).username;
+                    let name;
+                    try {
+                        name = bot.users.get(user[this.group][this.index].id).username;
+                    } catch (err) {
+                        name = "User Left";
+                    }
                     return name.length >= 10 ? `${name.substring(0, 9)}..` : name;
                 }
 
@@ -265,7 +270,13 @@ class leaderboard {
 
                 //  Returns avatar
                 async avatar() {
-                    const { body: avatar } = await get(bot.users.get(user[this.group][this.index].id).displayAvatarURL.replace(imageUrlRegex, "?size=256"));
+                    let identify_user;
+                    try {
+                        identify_user = bot.users.get(user[this.group][this.index].id).displayAvatarURL.replace(imageUrlRegex, "?size=256");
+                    } catch (err) {
+                        identify_user = bot.user.displayAvatarURL.replace(imageUrlRegex, "?size=256");
+                    }
+                    const { body: avatar } = await get(identify_user);
                     canv.addRoundImage(await avatar, size.x2 + 80, this.y - 30, 50, 50, 25)
                     return this;
                 }

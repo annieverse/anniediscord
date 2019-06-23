@@ -1,31 +1,53 @@
 {
     "team_leads":{
         "internal_affairs": "",
-        "channel_overseer": "",
-        "art_mentor": "",
+        "channel_overseer": "459911406729560064",
+        "art_mentor": "591061405776609286",
         "public_relation": "",
         "social_media": "",
         "art_design": "",
-        "development": "",
-        "events": ""  
+        "development": "591061406548230145",
+        "events": "591050124114001952"  
     },
     "teams": {
         "internal_affairs": "",
-        "channel_overseer": "",
-        "art_mentor": "",
+        "channel_overseer": "551603523070984222",
+        "art_mentor": "512464745022881792",
         "public_relation": "",
         "social_media": "",
         "art_design": "",
-        "development": "",
-        "events": ""
+        "development": "502843277041729546",
+        "events": "507362015254413313"
     },
     "Admin":{
-        "creative_council": "",
+        "creative_council": "465587578327007233",
         "administration_manager": "",
         "communication_manager": "",
-        "creative_assembly_manager": ""
+        "creative_assembly_manager": "",
+        "grand_master":"459936023498063902"
     },
     "custom_roles":{
-        "tomato_fox": ""
+        "tomato_fox": "466441952427245580"
+    },
+    "restriction":{
+        "unverified":"588663266805415936",
+        "muted":"467171602048745472"
+    },
+    "ticket":{
+        "event_participant":"468873056362954772",
+        "nickname_change": "491279514572292096",
+        "custom_cover": "553045841833885706"        
+    },
+    "dev_roles":{
+        "dev_lead":"591061406548230145",
+        "dev_member":"502843277041729546"
+    },
+    "moderator":{
+        "channel_overseer": "551603523070984222"
+    },
+    "devbot":{
+        "yunni":"580370612401340416",
+        "yunna":"581559269066014741",
+        "friendly":"592086518890364961"
     }
 }
