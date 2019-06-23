@@ -97,5 +97,17 @@ module.exports = (bot, message) => {
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
   let utils = require(`../utils/functions.js`);
   if (!message.content.startsWith(prefix)) return;
+  if (message.content.toLowerCase() === `${prefix}boost number`) {
+    message.channel.send(`This Server has a total of ${message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).length} boosts currently!!`)
+  }
+  if (message.content.toLowerCase() === `${prefix}boost members`) {
+    message.channel.send(`These are the members currently boosting the server :D\n${message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).join('\n')}`)
+  }
+  if (message.content.toLowerCase() === `${prefix}boost level`) {
+    let count = message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).length;
+    if (count >= 2 && count < 10) message.channel.send("The current level this server boosts is: Level 1")
+    if (count >= 10 && count < 50) message.channel.send("The current level this server boosts is: Level 2")
+    if (count >= 50) message.channel.send("The current level this server for boosts is: Level 3")
+  }
   if (commandfile) commandfile.run(bot, command, message, args,utils);
 }
