@@ -56,7 +56,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
         const userLvl = await getUserDataLvl(message.member);
 
 
-        if (userLvl < 6) return message.channel.send("I'm sorry, your level isn't high enough to use this feature.")
+        if (userLvl < 5) return message.channel.send("I'm sorry, your level isn't high enough to use this feature.")
         if (!args[0]) return template(`**${message.author.username}**, here's how to use pay command :\n\`>pay\`  \`user\`  \`value\``)
 
         sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`).then(async userdatarow => {

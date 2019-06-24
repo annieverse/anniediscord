@@ -63,7 +63,6 @@ y.addListener("data", res => {
 });
 
 
-
 //	Client token.
 const token = process.env.TOKEN ? process.env.TOKEN : env.temp_token;
 console.log(env.dev ? `Local development server has been started.` : `Production server has been started.`)

@@ -563,7 +563,8 @@ module.exports.run = async (bot, command, message, args, utils) => {
                                     let smallest = width > height ? height : width;
 
 
-                                    if(smallest > dx) {
+                                    if(smallest < dx) {
+                                        console.log(`passed above`)
                                         for (let i = smallest * 0.1; smallest < dx; i + (smallest * 0.1)) {
                                             width = Math.floor(width + i);
                                             height = Math.floor(height + i);
@@ -571,6 +572,7 @@ module.exports.run = async (bot, command, message, args, utils) => {
                                         }
                                     }
                                     else {
+                                        console.log(`passed below`)
                                         for (let i = 0.90; smallest > dx + 30; i - 0.05) {
                                             width = Math.floor(width * i);
                                             height = Math.floor(height * i);
