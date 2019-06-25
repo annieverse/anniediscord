@@ -3,7 +3,7 @@ const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 
 
-class eval {
+class devEval {
   constructor(Stacks) {
     this.author = Stacks.meta.author;
     this.data = Stacks.meta.data;
@@ -61,7 +61,7 @@ class eval {
 }
 
 module.exports.help = {
-  start: eval,
+  start: devEval,
   name: "eval",
   aliases: [],
   description: `evalutes a line of code`,
