@@ -699,7 +699,7 @@ module.exports.help = {
 	name: "gacharoll",
 	aliases: ["multi-roll","roll"],
 	description: `rolls a gacha ticket`,
-	usage: `>roll`,
+	usage: `${require(`../../.data/environment.json`).prefix}roll`,
 	group: "General",
 	public: true,
 	require_usermetadata: true,

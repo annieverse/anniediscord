@@ -115,7 +115,7 @@ module.exports.help = {
     name: "pay",
     aliases: [],
     description: `Pay a specified user an amount of AC from your balance`,
-    usage: `>pay @user <amount>`,
+    usage: `${require(`../../.data/environment.json`).prefix}pay @user <amount>`,
     group: "Shop-related",
     public: true,
     require_usermetadata: true,

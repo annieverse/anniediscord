@@ -39,7 +39,7 @@ module.exports.help = {
     name:"reset-lvl",
     aliases: [">reset_lvl"],
     description: `resets your level`,
-    usage: `>>reset_lvl`,
+    usage: `${require(`../../.data/environment.json`).prefix}>reset_lvl`,
     group: "Admin",
     public: true,
     require_usermetadata: true,

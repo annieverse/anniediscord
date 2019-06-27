@@ -7,5 +7,13 @@
             "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough artcoins.",
             "INVALID_CATEGORY": "That doesn't looks like a valid category."
         }
+    },
+    "ROLE":{
+        "ERR":{
+            "WRONG":{
+                "FILE":"I'm sorry but that command/group doesn't exist, please do `help help` for more info",
+                "ROLE":"I'm sorry but you do not have the requried role for this/these command(s)"
+            }
+        }
     }
 }

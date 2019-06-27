@@ -31,7 +31,7 @@ module.exports.help = {
   name:"commandtemplate", // This MUST equal the filename
   aliases: [], // More or less this is what the user will input on discord to call the command
   description: `No function just a place holder for commands`,
-  usage: `>TemplateCommand`,
+  usage: `${require(`../../.data/environment.json`).prefix}TemplateCommand`,
   group: "Admin",
   public: false,
   require_usermetadata: true,

@@ -529,7 +529,7 @@ module.exports.help = {
     name: "dbkits",
     aliases: ["db"],
     description: `Allows to do sql queries and other commands`,
-    usage: `>db <subcommand>`,
+    usage: `${require(`../../.data/environment.json`).prefix}db <subcommand>`,
     group: "Admin",
     public: true,
     require_usermetadata: true,

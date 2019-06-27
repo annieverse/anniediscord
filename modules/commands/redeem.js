@@ -227,7 +227,7 @@ module.exports.help = {
     name: "redeem",
     aliases: [],
     description: `Buys gacha tickets`,
-    usage: `>redeem <amount>`,
+    usage: `${require(`../../.data/environment.json`).prefix}redeem <amount>`,
     group: "Shop-related",
     public: true,
     require_usermetadata: true,

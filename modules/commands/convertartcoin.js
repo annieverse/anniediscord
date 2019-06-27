@@ -204,7 +204,7 @@ module.exports.help = {
     name:"convertartcoin",
     aliases: ["convertac", "acconvert", "cartcoin","cartcoins"],
     description: `Converts AC into XP`,
-    usage: `>cartcoins <amount>`,
+    usage: `${require(`../../.data/environment.json`).prefix}cartcoins <amount>`,
     group: "General",
     public: true,
     require_usermetadata: true,

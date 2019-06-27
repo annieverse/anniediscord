@@ -31,7 +31,7 @@ module.exports.help={
     name:"secretcommand",
 	aliases: ["secretbox"],
 	description: `Secret`,
-	usage: `>secretbox`,
+	usage: `${require(`../../.data/environment.json`).prefix}secretbox`,
 	group: "Fun",
 	public: false,
 	require_usermetadata: false,

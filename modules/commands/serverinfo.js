@@ -64,7 +64,7 @@ module.exports.help = {
     name:"serverinfo",
     aliases: [],
     description: `Displays info about server`,
-    usage: `>serverinfo`,
+    usage: `${require(`../../.data/environment.json`).prefix}serverinfo`,
     group: "Server",
     public: true,
     require_usermetadata: false,

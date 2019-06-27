@@ -8,8 +8,15 @@ class help {
         this.bot = Stacks.bot;
         this.args = Stacks.args;
         this.palette = Stacks.palette;
+        this.log = Stacks.log;
+        this.role = Stacks.roles;
         this.stacks = Stacks;
         
+    }
+
+    async allowedToUse() {
+        if (this.message.member.roles.find(r => Object.keys(this.role.admin).some(i=>this.role.admin[i]==r.id))) return true;
+        return false;
     }
 
     /**
@@ -96,6 +103,24 @@ class help {
     };
 
     /**
+     * Grabs any group for a file if one exists
+     * @param {String} file file name
+     * @returns {String} string of group 
+     */
+    async group(file) {
+        let file_rst;
+        let src;
+        try {
+            src = require(`./${file}`);            
+        } catch (error) {
+            this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.FILE); return false
+        }
+        file_rst = src.help.group.toLowerCase();
+        await this.utils.pause(200)
+        return file_rst;
+    };
+
+    /**
      * Displays all avaible commands in each category
      */
     async helpAll() {
@@ -106,10 +131,20 @@ class help {
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
+        if (await this.allowedToUse()===false) deleteObjectFromArr(pageHeaderOptions)
+
+        function deleteObjectFromArr(arr) {
+            var index = arr.indexOf('admin');
+            if (index > -1) {
+                arr.splice(index, 1);
+            }
+        }
+
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             page.push(new Array())
             let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
             for (let index = 0; index < mainNames.length; index++) {
+                
                 page[x].push(`**\`${mainNames[index]}\`**`);
             }
         }
@@ -129,6 +164,9 @@ class help {
      * @param {String} group group name
      */
     async help(group) {
+        if (group === 'admin') {
+            if (await this.allowedToUse()===false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+        }
         const embed = new Discord.RichEmbed()
         .setColor(this.palette.darkmatte)
         .setThumbnail(this.bot.user.displayAvatarURL)
@@ -137,9 +175,8 @@ class help {
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
-        if (group.toLowerCase() === "help") return this.utils.sendEmbed(`My availble commands are:\n~help | To view all availble commands\n~help group | To look at one specific group of commands\nMy avaible groups are:\n**${pageHeaderOptions.join(", ")}**`)
-        if (!pageHeaderOptions.some(x => x === group.toLowerCase())) return this.utils.sendEmbed("I'm sorry but that is not a group name, please use ~help help to find out more")
-
+        if (group.toLowerCase() === "help") return this.utils.sendEmbed(`My availble commands are:\n~help | To view all availble commands\n~help group | To look at one specific group of commands\nMy avaible groups are:\n**${pageHeaderOptions.join(", ")}**\n~help command | To look at a specific command`)
+      
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             if (group.toLowerCase() === pageHeaderOptions[x]) {
                 position=x;
@@ -159,14 +196,17 @@ class help {
     }
 
     async specificCommandsHelp(cmdFile, group) {
+        if(group==='admin'){
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+        }
         const embed = new Discord.RichEmbed()
             .setColor(this.palette.darkmatte)
             .setThumbnail(this.bot.user.displayAvatarURL)
         let pages, page = [];
         page.push(new Array(`**${group.toUpperCase()}**`))
-        pages[0].push(`|command| ${cmdFile}`)
-        pages[0].push(`|usage| ${await this.usage(cmdFile)}`)
-        pages[0].push(`|description| ${await this.description(cmdFile)}`)
+        page[0].push(`|command| **\`${cmdFile}\`**`)
+        page[0].push(`|usage| ${await this.usage(cmdFile)}`)
+        page[0].push(`|description| ${await this.description(cmdFile)}`)
         pages = this.utils.chunk(page[0], 6)
         this.utils.pages(this.message, pages, embed);
         return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
@@ -177,18 +217,17 @@ class help {
         if (this.args[0] === 'help') return this.help(this.args[0]);
         let pageHeaderOptions = await this.groupNames();
         for (let x = 0; x < pageHeaderOptions.length; x++) {
-            if (this.args[0].toLowerCase() === pageHeaderOptions[x]) {
-                let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+            if (pageHeaderOptions.some(x => x === this.args[0].toLowerCase()))return this.help(this.args[0]);
+            if (await this.group(this.args[0].toLowerCase()).then(res=>res===false))return;
+            if (await this.group(this.args[0].toLowerCase()) === pageHeaderOptions[x]) {
                 for (let index = 0; index < mainNames.length; index++) {
                     if (this.args[0].toLowerCase()===mainNames[index]){
-                        return this.specificCommandHelp(mainNames[index],pageHeaderOptions[x]);
+                        return this.specificCommandsHelp(mainNames[index],pageHeaderOptions[x]);
                     }
                 }
             }
         }
-        if (!pageHeaderOptions.some(x => x === this.args[0].toLowerCase())) return this.utils.sendEmbed("I'm sorry but that is not a group name, please use ~help help to find out more")
-
-        this.help(this.args[0])
     }
 }
 
@@ -197,7 +236,7 @@ module.exports.help = {
     name: "help2",
     aliases: ["thelp"],
     description: `all avaible commands`,
-    usage: `~help`,
+    usage: `${require(`../../.data/environment.json`).prefix}help`,
     group: "general",
     public: false,
     require_usermetadata: true,

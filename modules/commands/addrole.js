@@ -88,7 +88,7 @@ module.exports.help = {
   name:"addrole",
   aliases: [],
   description: `Add roles to specific user.`,
-  usage: `>addrole @user <role>`,
+  usage: `${require(`../../.data/environment.json`).prefix}addrole @user <role>`,
   group: "Admin",
   public: true,
   required_usermetadata: true,   

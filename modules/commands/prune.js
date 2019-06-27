@@ -45,7 +45,7 @@ module.exports.help = {
 	name: "prune",
 	aliases: [],
 	description: `deletes up to 100 messages`,
-	usage: `>prune <amount>`,
+	usage: `${require(`../../.data/environment.json`).prefix}prune <amount>`,
 	group: "Admin",
 	public: true,
 	require_usermetadata: false,

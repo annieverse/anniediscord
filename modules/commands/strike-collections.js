@@ -264,7 +264,7 @@ module.exports.help = {
     name: "strike-collections",
     aliases: ["strike","strikes", "strikez"],
     description: `Give a strike to a user`,
-    usage: `>strike @user`,
+    usage: `${require(`../../.data/environment.json`).prefix}strike @user`,
     group: "Admin",
     public: true,
     require_usermetadata: true,

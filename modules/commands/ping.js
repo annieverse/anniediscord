@@ -17,7 +17,7 @@ module.exports.help = {
 	name: "ping",
 	aliases: ["pong", "p1ng", "poing"],
 	description: `Gives bot's ping`,
-	usage: `>`,
+	usage: `${require(`../../.data/environment.json`).prefix}ping`,
 	group: "Server",
 	public: true,
 	require_usermetadata: false,

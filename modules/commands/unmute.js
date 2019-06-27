@@ -62,7 +62,7 @@ module.exports.help = {
   name:"unmute",
   aliases: [],
   description: `unmutes a user`,
-  usage: `>unmute @user [reason]<optional>`,
+  usage: `${require(`../../.data/environment.json`).prefix}unmute @user [reason]<optional>`,
   group: "Admin",
   public: true,
   require_usermetadata: true,

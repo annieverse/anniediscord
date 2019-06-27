@@ -231,7 +231,7 @@ module.exports.help = {
     name: "pay2",
     aliases: ["test"],
     description: `pay a specified user an amount of AC from your balance | Fwubbles? test file`,
-    usage: `>pay2`,
+    usage: `${require(`../../.data/environment.json`).prefix}pay2`,
     group: "Admin",
     public: false,
     require_usermetadata: true,

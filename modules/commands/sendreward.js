@@ -80,7 +80,7 @@ module.exports.help = {
     name:"sendreward",
     aliases: [],
     description: `Send Rewards for events`,
-    usage: `>sendreward @user <place>`,
+    usage: `${require(`../../.data/environment.json`).prefix}sendreward @user <place>`,
     group: "Admin",
     public: true,
     require_usermetadata: true,

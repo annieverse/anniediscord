@@ -23,7 +23,7 @@ module.exports.help = {
     name: "balance",
     aliases: [`bal`, `money`, `credit`, `ball`, `ac`, `artcoin`, `artcoins`],
     description: `Checks your AC balance`,
-    usage: `>bal`,
+    usage: `${require(`../../.data/environment.json`).prefix}bal`,
     group: "General",
     public: true,
     require_usermetadata: true,
