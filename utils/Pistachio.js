@@ -12,15 +12,26 @@ const { RichEmbed, Attachment } = require(`discord.js`);
  *  so here our smol @Pistachio !
  *  
  */
-module.exports = (bot, message) => {
+module.exports = (Components) => {
+    //  Get main components to make pistachio works
+    let { bot, message } = Components;
+
     // Initialize default container
-    let container = {};
+    let container = { ...Components };
 
     //  Storing message codes
     container.code = require(`./predefinedMessages`);
 
     //  Storing colorset
     container.palette = require(`./colorset`);
+
+    //  Check for administrator authority
+    container.isAdmin = message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+
+    //  Returns username based on the id.
+    container.name = (id) => {
+        return bot.users.get(id).username;
+    }
 
     //  An emoji finder. Returns as unicode
     container.emoji = (name) => {

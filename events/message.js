@@ -95,7 +95,6 @@ module.exports = (bot, message) => {
   let args = messageArray.slice(1);
   let command = cmd.slice(prefix.length);
   let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)));
-  let utils = require(`../utils/functions.js`)(bot, message);
   let code = require(`../utils/predefinedMessages`);
   let roles = require(`../utils/role-list.json`);
 
@@ -115,7 +114,7 @@ module.exports = (bot, message) => {
     if (count >= 10 && count < 50) message.channel.send("The current level this server boosts is: Level 2")
     if (count >= 50) message.channel.send("The current level this server for boosts is: Level 3")
   }
-  const Components = {bot, message, command, args, utils, palette, commandfile, code, roles};
+  const Components = {bot, message, command, args, commandfile, roles};
   const cmdHandler = require(`../modules/mainComponents.js`);
   return new cmdHandler(Components).init();
 

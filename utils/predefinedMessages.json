@@ -9,6 +9,11 @@
         }
     },
     "REQUEST_PING": "Request received in **{0} ms**",
+    "ADDAC": {
+        "SHORT_GUIDE": "You can refill user's artcoins by typing `>addac <user> <amount>`",
+        "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. **{1}(+{2})**"
+    },
+    "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
             "WRONG":{

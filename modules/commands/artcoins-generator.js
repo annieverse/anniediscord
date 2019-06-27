@@ -5,25 +5,27 @@ const databaseManager = require(`../../utils/databaseManager`);
  */
 class ArtcoinsGenerator {
     constructor(Stacks) {
+        this.stacks = Stacks;
         this.author = Stacks.meta.author;
         this.data = Stacks.meta.data;
         this.utils = Stacks.utils;
         this.message = Stacks.message;
         this.args = Stacks.args;
-        this.palette = Stacks.palette;
-        this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
     }
 
 
     async execute() {
-        if (!this.required_roles) return;
-        if (!this.args[1]) return;
+        const { name, isAdmin, reply, code:{ ADDAC, UNAUTHORIZED_ACCESS }, commanifier } = this.stacks.pistachio;
+
+        if (!isAdmin) return reply(UNAUTHORIZED_ACCESS);
+        if (!this.args[1]) return reply(ADDAC.SHORT_GUIDE)
 
         const amount = parseInt(this.args[1]);
         new databaseManager(this.author.id).storeArtcoins(amount);
 
-        return this.utils
-            .sendEmbed(`**${this.utils.name(this.author.id)}** has received ${this.utils.emoji(`artcoins`)}**${this.utils.commanized(amount)}**.`)
+        return reply(ADDAC.SUCCESSFULL, {
+            socket: [name(this.author.id)]
+        })
     }
 }
 

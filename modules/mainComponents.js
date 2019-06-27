@@ -4,33 +4,22 @@ const Data = require(`../utils/userdataSelector`);
 
 
   /**
-  * Preferred components would be {bot, message, command, args, utils, palette};
-  * 
-  * @bot to handle discord library.
-  * @message for current message instance.
-  * @command as the command codename.
-  * @args as the commands parameters.
-  * @utils as general utilities to support the functions.
-  * @palette as hexcolor container.
+  * Command Handler
+  * @param {Object} base_components should have atleast Client/bot and Message Instance object
   */
 class CommandHandler {
-  constructor(custom_components = {}) {
-    this.components = custom_components;
-
-    this.components.pistachio = require(`../utils/Pistachio`)(this.components.bot, this.components.message)
-
-
-    this.filename = this.components.commandfile.help.name;
+  constructor(base_components = {}) {
+    this.stacks = require(`../utils/Pistachio`)(base_components)
+    this.filename = this.stacks.commandfile.help.name;
     this.path = `../modules/commands/${this.filename}.js`;
     this.module_parameters = require(this.path).help;
     this.cmd = this.module_parameters.start;
   }
 
-
   //  Pull user metadata from database.
   async requestData() {
     if (!this.module_parameters.require_usermetadata) return;
-    this.components.meta = await new Data(this.components).pull();
+    this.components.meta = await new Data(this.stacks).pull();
   }
 
 
@@ -39,7 +28,7 @@ class CommandHandler {
     try {
       this.requestData()
         .then(() => {
-          return new this.cmd(this.components).execute();
+          return new this.cmd(this.stacks).execute();
         })
     }
     catch (e) {

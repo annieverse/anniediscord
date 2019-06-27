@@ -8,7 +8,7 @@ class Ping {
 		this.stacks = Stacks;
 	}
 	async execute() {
-		const { reply, code, ping } = this.stacks.pistachio;
+		const { reply, code, ping } = this.stacks;
 		return reply(code.REQUEST_PING, {socket: [ping]})
 	}
 }
