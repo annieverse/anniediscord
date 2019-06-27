@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
-const formatManager = require('../../utils/formatManager.js');
 const fs = require('fs');
+
 class help {
     constructor(Stacks) {
         this.utils = Stacks.utils;
@@ -9,7 +9,9 @@ class help {
         this.args = Stacks.args;
         this.palette = Stacks.palette;
         this.stacks = Stacks;
+        
     }
+
     /**
      * locates all groups names
      * @returns {Array} group names
@@ -79,6 +81,7 @@ class help {
         await this.utils.pause(200)
         return file_rst;
     };
+
     /**
      * Grabs any description for a file if one exists
      * @param {String} file file name
@@ -91,26 +94,46 @@ class help {
         await this.utils.pause(200)
         return file_rst;
     };
+
+    /**
+     * Displays all avaible commands in each category
+     */
     async helpAll() {
         const embed = new Discord.RichEmbed()
         .setColor(this.palette.darkmatte)
         .setThumbnail(this.bot.user.displayAvatarURL)
-        let pages = [];
+        let page = [],pages = [];
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
         for (let x = 0; x < pageHeaderOptions.length; x++) {
-            pages.push(new Array(`**${pageHeaderOptions[x].toUpperCase()}**`))
-            pages[x].push(`- ${await this.mainNames(pageHeaderOptions[x]).then(str => str.replace(/\n/g, `\n- `))}`)
+            page.push(new Array())
+            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+            for (let index = 0; index < mainNames.length; index++) {
+                page[x].push(`**\`${mainNames[index]}\`**`);
+            }
         }
-        return this.utils.pages(this.message, pages, embed);
+        for (let i = 0;i<page.length;i++) {
+            pages.push(this.utils.chunk(page[i],6))
+            let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`;
+            pages[i].forEach((element, index) => {
+                if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
+            });
+        }   
+        this.utils.pagesDubArr(this.message, pages, embed);
+        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
     }
 
+    /**
+     * Displays all avaible commands for a specific category
+     * @param {String} group group name
+     */
     async help(group) {
         const embed = new Discord.RichEmbed()
         .setColor(this.palette.darkmatte)
         .setThumbnail(this.bot.user.displayAvatarURL)
-        let pages = [];
+        let pages,page = [];
+        let position = 0;
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
@@ -119,24 +142,52 @@ class help {
 
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             if (group.toLowerCase() === pageHeaderOptions[x]) {
-                pages.push(new Array(`**${pageHeaderOptions[x].toUpperCase()}**`))
+                position=x;
+                page.push(new Array())
                 let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
                 for (let index = 0; index < mainNames.length; index++) {
-                    let aliases = await this.aliases(mainNames[index])
-                    pages[0].push(new Array(`*${mainNames[index]}*`));
-                    pages[0].push(`|usage| ${await this.usage(mainNames[index])}`)
-                    pages[0].push(`|description| ${await this.description(mainNames[index])}`)
-                    if (typeof (aliases) === 'object') {
-                        pages[0].push(`|alias|-> ${aliases}`);
-                    }
+                    page[0].push(`**\`${mainNames[index]}\`**`);
                 }
             }
         }
-        return this.utils.pages(this.message, pages, embed);
+        pages = this.utils.chunk(page[0],6)
+        let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
+        pages.forEach((element,index) => {if(index===0){element.unshift(header)}else{element.unshift(header + `**Continued**.\n`)}
+        });
+        this.utils.pages(this.message, pages, embed);
+        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+    }
+
+    async specificCommandsHelp(cmdFile, group) {
+        const embed = new Discord.RichEmbed()
+            .setColor(this.palette.darkmatte)
+            .setThumbnail(this.bot.user.displayAvatarURL)
+        let pages, page = [];
+        page.push(new Array(`**${group.toUpperCase()}**`))
+        pages[0].push(`|command| ${cmdFile}`)
+        pages[0].push(`|usage| ${await this.usage(cmdFile)}`)
+        pages[0].push(`|description| ${await this.description(cmdFile)}`)
+        pages = this.utils.chunk(page[0], 6)
+        this.utils.pages(this.message, pages, embed);
+        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
     }
 
     async execute() {
         if (this.args.length === 0) return this.helpAll();
+        if (this.args[0] === 'help') return this.help(this.args[0]);
+        let pageHeaderOptions = await this.groupNames();
+        for (let x = 0; x < pageHeaderOptions.length; x++) {
+            if (this.args[0].toLowerCase() === pageHeaderOptions[x]) {
+                let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+                for (let index = 0; index < mainNames.length; index++) {
+                    if (this.args[0].toLowerCase()===mainNames[index]){
+                        return this.specificCommandHelp(mainNames[index],pageHeaderOptions[x]);
+                    }
+                }
+            }
+        }
+        if (!pageHeaderOptions.some(x => x === this.args[0].toLowerCase())) return this.utils.sendEmbed("I'm sorry but that is not a group name, please use ~help help to find out more")
+
         this.help(this.args[0])
     }
 }

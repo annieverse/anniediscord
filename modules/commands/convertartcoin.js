@@ -201,7 +201,7 @@ class convertAC {
 
 module.exports.help = {
     start: convertAC,
-    name:"convertartcoins",
+    name:"convertartcoin",
     aliases: ["convertac", "acconvert", "cartcoin","cartcoins"],
     description: `Converts AC into XP`,
     usage: `>cartcoins <amount>`,
