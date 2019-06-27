@@ -16,6 +16,10 @@ const Data = require(`../utils/userdataSelector`);
 class CommandHandler {
   constructor(custom_components = {}) {
     this.components = custom_components;
+
+    this.components.pistachio = require(`../utils/Pistachio`)(this.components.bot, this.components.message)
+
+
     this.filename = this.components.commandfile.help.name;
     this.path = `../modules/commands/${this.filename}.js`;
     this.module_parameters = require(this.path).help;
