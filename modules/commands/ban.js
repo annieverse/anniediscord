@@ -40,7 +40,7 @@ module.exports.help={
     name:"ban",
     aliases: [],
     description: `Kick permanently.`,
-    usage: `>ban @user <reason>`,
+    usage: `${require(`../../.data/environment.json`).prefix}ban @user <reason>`,
     group: "Admin",
     public: true,
     require_usermetadata: true,

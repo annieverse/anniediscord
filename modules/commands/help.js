@@ -71,7 +71,7 @@ module.exports.help = {
     name:"help",
     aliases: [],
     description: `gives a list of current commands`,
-    usage: `>help`,
+    usage: `${require(`../../.data/environment.json`).prefix}help`,
     group: "General",
     public: true,
     require_usermetadata: false,

@@ -102,7 +102,7 @@ module.exports.help = {
 	name: "stats",
 	aliases: ["status", "botinfo", "info"],
 	description: `Gives info about the bot`,
-	usage: `>stats`,
+	usage: `${require(`../../.data/environment.json`).prefix}stats`,
 	group: "Server",
 	public: true,
 	require_usermetadata: false,

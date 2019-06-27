@@ -43,7 +43,7 @@ module.exports.help = {
 	name:"refresh",
 	aliases: ["rs"],
 	description: `restarts Bot`,
-	usage: `>rs`,
+	usage: `${require(`../../.data/environment.json`).prefix}rs`,
 	group: "Admin",
 	public: true,
 	require_usermetadata: false,

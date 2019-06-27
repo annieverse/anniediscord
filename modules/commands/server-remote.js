@@ -187,7 +187,7 @@ module.exports.help = {
     name: "server-remote",
     aliases: ["server"],
     description: `Developer Command | remote control of bot`,
-    usage: `>server <command>`,
+    usage: `${require(`../../.data/environment.json`).prefix}server <command>`,
     group: "Admin",
     public: true,
     require_usermetadata: false,

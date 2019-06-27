@@ -39,7 +39,7 @@ module.exports.help = {
     name: "fox",
     aliases: [],
     description: `Displays a random picture of a fox.`,
-    usage: `>fox`,
+    usage: `${require(`../../.data/environment.json`).prefix}fox`,
     group: "Fun",
     public: true,
     require_usermetadata: false,

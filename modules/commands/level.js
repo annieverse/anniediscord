@@ -293,7 +293,7 @@ module.exports.help = {
   name: "level",
   aliases: ['lvl', 'lv'],
   description: `Pulls up your level`,
-  usage: `>level`,
+  usage: `${require(`../../.data/environment.json`).prefix}level`,
   group: "General",
   public: true,
   require_usermetadata: true,

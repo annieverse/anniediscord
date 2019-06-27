@@ -474,7 +474,7 @@ module.exports.help = {
     name:"leaderboard",
     aliases: ['lb','leaderboard', 'rank', 'ranking'],
     description: `pulls up options for the leaderboards`,
-    usage: `>lb`,
+    usage: `${require(`../../.data/environment.json`).prefix}lb`,
     group: "General",
     public: true,
     require_usermetadata: true,

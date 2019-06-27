@@ -33,7 +33,7 @@ module.exports.help = {
     name: "artcoins-generator",
     aliases: [`addac`, `addacs`, `addartcoin`],
     description: `Add artcoins to specific user.`,
-    usage: `>addac @user <amount>`,
+    usage: `${require(`../../.data/environment.json`).prefix}addac @user <amount>`,
     group: "Admin",
     public: true,
     required_usermetadata: true,

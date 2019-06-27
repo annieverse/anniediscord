@@ -67,7 +67,7 @@ module.exports.help = {
 	name: "rep",
 	aliases: [],
 	description: `Gives rep to a user`,
-	usage: `>rep @user`,
+	usage: `${require(`../../.data/environment.json`).prefix}rep @user`,
 	group: "General",
 	public: true,
 	require_usermetadata: true,

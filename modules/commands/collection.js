@@ -136,7 +136,7 @@ module.exports.help = {
     name: "collection",
     aliases: [],
     description: `View your collected cards`,
-    usage: `>collection`,
+    usage: `${require(`../../.data/environment.json`).prefix}collection`,
     group: "General",
     public: true,
     require_usermetadata: true,

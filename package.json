@@ -35,8 +35,8 @@
     "pm2": "^3.5.1",
     "probe-image-size": "^4.0.0",
     "sqlite": "^3.0.2",
-    "sqlite3": "^4.0.8",
-    "superagent": "^5.0.6"
+    "sqlite3": "^4.0.9",
+    "superagent": "^5.1.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0"

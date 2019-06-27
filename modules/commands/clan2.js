@@ -426,7 +426,7 @@ module.exports.help = {
     name: "clan2",
     aliases: [],
     description: `Add XP to a specific user`,
-    usage: `>clan2`,
+    usage: `${require(`../../.data/environment.json`).prefix}clan2`,
     group: "Admin",
     public: false,
     require_usermetadata: true,

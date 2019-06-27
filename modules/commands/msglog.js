@@ -43,7 +43,7 @@ module.exports.help = {
   name:"msglog",
   aliases: ["get_msglog"],
   description: `See the total amount of messages collected`,
-  usage: `>get_msglog`,
+  usage: `${require(`../../.data/environment.json`).prefix}get_msglog`,
   group: "Admin",
   public: false,
   require_usermetadata: false,

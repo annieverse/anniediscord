@@ -39,7 +39,7 @@ module.exports.help={
   name:"coinflip",
   aliases: ["cf"],
   description: `filps a coin for heads or tails`,
-  usage: `>filpcoin`,
+  usage: `${require(`../../.data/environment.json`).prefix}filpcoin`,
   group: "Fun",
   public: true,
   require_usermetadata: false,

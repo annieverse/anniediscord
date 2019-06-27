@@ -49,7 +49,7 @@ module.exports.help = {
 	name: "say",
 	aliases: [],
 	description: `Talk through bot`,
-	usage: `>say <message>`,
+	usage: `${require(`../../.data/environment.json`).prefix}say <message>`,
 	group: "Admin",
 	public: true,
 	require_usermetadata: false,

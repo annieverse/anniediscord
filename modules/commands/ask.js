@@ -4,7 +4,6 @@
    */
   class Ask {
     constructor(Stacks) {
-      console.log(Stacks.data)
       this.author = Stacks.meta.author;
       this.data = Stacks.meta.data;
       this.utils = Stacks.utils;
@@ -34,7 +33,7 @@
     name: "ask",
     aliases: [],
     description: `You can ask any question and Annie will answer you.`,
-    usage: `>ask <message>`,
+    usage: `${require(`../../.data/environment.json`).prefix}ask <message>`,
     group: "Fun",
     public: true,
     require_usermetadata: true,

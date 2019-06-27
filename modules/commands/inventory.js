@@ -404,7 +404,7 @@ module.exports.help = {
     name: "inventory",
     aliases: [],
     description: `Views your inventory`,
-    usage: `>inventory`,
+    usage: `${require(`../../.data/environment.json`).prefix}inventory`,
     group: "General",
     public: true,
     require_usermetadata: true,
