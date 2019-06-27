@@ -27,10 +27,41 @@ class databaseUtils {
                 ON userinventories.userId = userdata.userId
                 INNER JOIN usercheck
                 ON usercheck.userId = userdata.userId
+                INNER JOIN collections
+                ON collections.userId = userdata.userId
                 WHERE userdata.userId = "${this.id}"`
             )
         }
 
+        //  Accepts one level of an object. Returns sql-like string.
+        toQuery(data) {
+            let res = ``
+            for(let key in data) {
+                res += `${key} = ${key} - ${data[key]},`
+            }
+            res = res.replace(/.$/," ")
+            return res;
+        }
+        
+        //  Withdrawing multiple columns value
+        consumeMaterials(cardmeta) {
+            sql.run(`
+                UPDATE userinventories
+                SET ${this.toQuery(cardmeta)} 
+                WHERE userId = "${this.id}"
+            `)
+            return this;
+        }
+
+        //  Set one value into card column
+        registerCard(card_alias) {
+            sql.run(`
+                UPDATE collections
+                SET ${card_alias} = 1
+                WHERE userId = "${this.id}"
+            `)
+            return this;
+        }
 
 
         /**

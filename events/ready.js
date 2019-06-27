@@ -3,9 +3,8 @@ const sql = require("sqlite");
 
 module.exports = bot => {
 
-
     startup();
-    roleChange();
+    if(!env.dev) roleChange();
     
     /**
      * secret thingy, change color of role
