@@ -1,0 +1,13 @@
+{
+    "CRAFT": {
+        "CONFIRMATION": "You are going to craft {0}**1x {1}**.\n Please type `y` to confirm your decision.",
+        "INSUFFICIENT_MATERIALS": "Can't proceed request. Missing materials",
+        "DUPLICATES": "You can't craft duplicates.",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast level 5 to use craft feature.",
+        "SUCCESSFUL": "**{0}** has successfully crafted {1} **{2}** !"
+    },
+    "TRANSACTION": {
+        "CANCEL": "Transaction cancelled."
+    },
+    "LVL_TOO_LOW": "Sorry, you need to be atleast level **{0}** to use {1} feature."
+}
