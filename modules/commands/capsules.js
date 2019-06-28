@@ -19,6 +19,7 @@ class capsule {
         let message = this.message;
         let bot = this.stacks.bot;
         let palette = this.stacks.palette;
+        let utils = this.stacks
 
         const format = new formatManager(message)
         return [`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name) ? init_capsules()
@@ -205,7 +206,7 @@ class capsule {
 
                 withdraw();
                 xp.update_exp;
-                await utils.pause(500);
+                await this.stacks.pause(500);
 
 
                 //  Update rank if current rank rank is not equal
@@ -213,10 +214,10 @@ class capsule {
                 if (xp.ranked_up) {
 
                     xp.remove_rank;
-                    await utils.pause(500);
+                    await this.stacks.pause(500);
 
                     xp.add_rank;
-                    await utils.pause(500);
+                    await this.stacks.pause(500);
                 }
 
                 return log({ code: `SUCCESSFUL` }, metadata.to_use, format.threeDigitsComa(metadata.total_gained))
@@ -226,7 +227,7 @@ class capsule {
             // Initialize.
             const run = async () => {
                 await get_capsules();
-                await utils.pause(200);
+                await this.stacks.pause(200);
 
                 //  Locked feature.
                 //if(!message.member.roles.find(r => r.name === 'Grand Master'))return;     

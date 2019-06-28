@@ -5,8 +5,6 @@ sql.open(".data/database.sqlite");
 
 class devEval {
   constructor(Stacks) {
-    this.author = Stacks.meta.author;
-    this.data = Stacks.meta.data;
     this.utils = Stacks.utils;
     this.message = Stacks.message;
     this.args = Stacks.args;
@@ -21,6 +19,7 @@ class devEval {
     const argsx = message.content.split(" ").slice(1);
     let evembed = new Discord.RichEmbed();
     const usercon = message.author.displayAvatarURL;
+    let utils = this.utils;
 
     evembed.setColor(palette.red)
     evembed.setDescription(`Uhm sorry, you don't have authorization to access it.`)
@@ -44,7 +43,7 @@ class devEval {
 
 
       evembed.setColor(palette.halloween)
-      utils.evalpages(message, evaltest, evembed);
+      utils.pages(message, evaltest, evembed);
       //evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(evaled)}\n\`\`\``)
       //message.channel.send(evembed);
 

@@ -214,7 +214,7 @@ class clanaddbeta {
 
                 //  Request userdata
                 await get_userobject();
-                await utils.pause(200);
+                await this.stacks.pause(200);
 
                 //  
                 await filtering_data(raw_object);

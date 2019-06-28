@@ -48,7 +48,7 @@ class stats {
 				sql.get(`SELECT DATETIME('now')`)
 					.then(async time => midnight = new Date(Object.values(time)).getTime());
 
-				await utils.pause(1000);
+				await this.stacks.pause(1000);
 				return sql.all(`SELECT * FROM userartworks WHERE timestamp >= ${prevday} AND timestamp < ${midnight} ORDER BY timestamp DESC`)
 					.then(async artdata => res_todayarts = artdata)
 			}
@@ -88,7 +88,7 @@ class stats {
 			get_todayarts();
 			return message.channel.send(`\`Fetching annie's data ..\``)
 				.then(async msg => {
-					await utils.pause(1000);
+					await this.stacks.pause(1000);
 
 					msg.delete();
 					fetched();

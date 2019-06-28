@@ -5,11 +5,11 @@ const palette = require(`../utils/colorset.json`);
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 let cards = require(`../utils/cards-metadata.json`);
-let utils = require(`../utils/functions.js`);
 
 
 module.exports = (bot, message) => {
 
+    let utils = require(`../utils/Pistachio`)(bot, message)
 
     const nonXPChannel = [
         "485922866689474571",

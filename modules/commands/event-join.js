@@ -149,7 +149,7 @@ class eventJoin {
                 const has_foxie = Object.values(await cards_collection())[0];
 
                 await trans.user_balance;
-                await utils.pause(500);
+                await this.stacks.pause(500);
 
                 //Returns if user already have unused ticket.
                 if (trans.has_unused_ticket) return log({ code: `DUPLICATES` });
