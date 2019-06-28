@@ -1,3 +1,5 @@
+console.time(`Initialized In`);
+
 const Discord = require("discord.js");
 const env = require('./.data/environment.json');
 const fs = require("fs");

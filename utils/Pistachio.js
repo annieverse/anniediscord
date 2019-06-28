@@ -32,8 +32,14 @@ module.exports = (Components) => {
     //  Storing functions.js functions
     container.utils = require(`./functions.js`)(bot, message);
 
+    //  Storing transaction checkout handler
+    container.Checkout = require(`./TransactionCheckout`);
+    
+    //  Storing main transaction handler
+    container.Transaction = require(`./TransactionHandler`);
+
     //  Check for administrator authority
-    container.isAdmin = message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+    container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
     //  Automatically convert weird number notation into real value.
     container.trueInt = (str) => {
