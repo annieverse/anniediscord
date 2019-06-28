@@ -11,6 +11,14 @@ class help {
         this.log = Stacks.log;
         this.role = Stacks.roles;
         this.stacks = Stacks;
+        this.needHelp = `Need further help? Please DM <@507043081770631169>.`;
+        this.embed = new Discord.RichEmbed()
+    }
+
+    // This will format all embeds used in this file
+    initializeEmbed(){
+        this.embed.setColor(this.palette.darkmatte)
+        this.embed.setThumbnail(this.bot.user.displayAvatarURL);
     }
 
     async allowedToUse() {
@@ -108,9 +116,6 @@ class help {
      * Displays all avaible commands in each category
      */
     async helpAll() {
-        const embed = new Discord.RichEmbed()
-        .setColor(this.palette.darkmatte)
-        .setThumbnail(this.bot.user.displayAvatarURL)
         let page = [],pages = [];
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
@@ -139,8 +144,8 @@ class help {
                 if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
             });
         }   
-        this.utils.pages(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     /**
@@ -149,18 +154,18 @@ class help {
      */
     async help(group) {
         if (group === 'admin') {
-            if (await this.allowedToUse()===false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
         }
-        const embed = new Discord.RichEmbed()
-        .setColor(this.palette.darkmatte)
-        .setThumbnail(this.bot.user.displayAvatarURL)
+        
         let pages,page = [];
         let position = 0;
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
-        if (group.toLowerCase() === "help") return this.utils.sendEmbed(`My availble commands are:\n~help | To view all availble commands\n~help group | To look at one specific group of commands\nMy avaible groups are:\n**${pageHeaderOptions.join(", ")}**\n~help command | To look at a specific command`)
-      
+        if (group.toLowerCase() === "help") {
+            return this.utils.sendEmbed(`My available commands are:\n\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``)
+        }
+        
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             if (group.toLowerCase() === pageHeaderOptions[x]) {
                 position=x;
@@ -175,28 +180,27 @@ class help {
         let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
         pages.forEach((element,index) => {if(index===0){element.unshift(header)}else{element.unshift(header + `**Continued**.\n`)}
         });
-        this.utils.pages(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     async specificCommandsHelp(cmdFile, group) {
         if(group==='admin'){
-            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
         }
-        const embed = new Discord.RichEmbed()
-            .setColor(this.palette.darkmatte)
-            .setThumbnail(this.bot.user.displayAvatarURL)
+        
         let pages, page = [];
-        page.push(new Array(`**${group.toUpperCase()}**`))
-        page[0].push(`|command| **\`${cmdFile}\`**`)
-        page[0].push(`|usage| ${await this.usage(cmdFile)}`)
-        page[0].push(`|description| ${await this.description(cmdFile)}`)
+        page.push(new Array(`**${group.toUpperCase()}** - Group`))
+        page[0].push(`\nCommand\n\`\`\`fix\n${cmdFile}\`\`\``)
+        page[0].push(`How to use\n\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``)
+        page[0].push(`What is this command\n\`\`\`fix\n${await this.description(cmdFile)}\`\`\``)
         pages = this.utils.chunk(page[0], 6)
-        this.utils.pages(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     async execute() {
+        this.initializeEmbed();
         if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
         if (this.args[0] === 'help') return this.help(this.args[0]); // Sends a help message for the help command, ie. ${prefix}help help
         let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
