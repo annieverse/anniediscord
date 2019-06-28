@@ -4,26 +4,23 @@
    */
   class Ask {
     constructor(Stacks) {
-      this.author = Stacks.meta.author;
-      this.data = Stacks.meta.data;
-      this.utils = Stacks.utils;
-      this.message = Stacks.message;
-      this.args = Stacks.args;
-      this.palette = Stacks.palette;
-      this.replies = ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"];
-      this.randomReplies = this.replies[Math.floor((Math.random() * this.replies.length))];
       this.stacks = Stacks;
     }
 
-
     async execute() {
-      if (!this.args[0]) return;
-      let question = this.args.slice(0).join(" ");
-      return this.utils
-        .sendEmbed(`${this.utils.name(this.author.id)} asked "${question}"`, this.palette.lightblue)
-        .then(() => {
-          this.utils.sendEmbed(`**${this.randomReplies}**`, this.palette.halloween)
-        })
+      const { args, reply, code: {ASK}, choice } = this.stacks;
+      
+      //  Returns if no question was specified.
+      if (!args[0]) return reply(ASK.SHORT_GUIDE)
+
+      const question = args.slice(0).join(" ");
+      const chance = 100 - Math.floor(Math.random() * 100);
+
+      //  If chances are below 30, echo question.
+      if(chance <= 30) await reply(question + `?`)
+
+      //  Finishing answer.
+      return reply(choice(ASK.ANSWERS))
     }
   }
 
@@ -36,6 +33,6 @@
     usage: `${require(`../../.data/environment.json`).prefix}ask <message>`,
     group: "Fun",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: false,
     multi_user: false
   }

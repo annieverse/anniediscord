@@ -4,16 +4,16 @@
  */
 class Balance {
     constructor(Stacks) {
-		this.author = Stacks.meta.author;
-		this.data = Stacks.meta.data;
-		this.utils = Stacks.utils;
-		this.message = Stacks.message;
+		this.stacks = Stacks;
     }
     async execute() {
-        return this.message.channel.send(`**${this.utils.name(this.author.id)}'s Balance**`)
-            .then(() => {
-                this.utils.sendEmbed(`${this.utils.emoji(`artcoins`)} ${this.utils.commanized(this.data.artcoins)} Artcoins`)
-            })
+        const { reply, code, emoji, avatar, commanifier, meta : { author, data }} = this.stacks;
+
+        return reply(code.DISPLAY_BALANCE, {
+            socket: [emoji(`artcoins`), commanifier(data.artcoins)],
+            notch: true,
+            thumbnail: avatar(author.id)
+        })
     }
 }
 
@@ -26,6 +26,6 @@ module.exports.help = {
     usage: `${require(`../../.data/environment.json`).prefix}bal`,
     group: "General",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user: true
 }
