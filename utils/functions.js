@@ -8,128 +8,11 @@ module.exports = (bot, message) => {
     const m = new format(message);
 
     /**
-    * creates any amount of pages in a embed, when a large string is inputed ad the input
-    * @param message message object
-    * @param pageOrigin large string value
-    * @param evembed the vairable used for the RichEmbed
-    * @returns A correctly formatted Embed
-    */
-    module.evalpages = (message, pageOrigin, evembed) => {
-
-        const clean = (text = ``) => {
-            if (typeof (text) === "string")
-                return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
-            else
-                return text;
-        }
-
-        let pages = [];
-
-        for (let index = 0; index < pageOrigin.length; index += 1) {
-            pages.push(pageOrigin.substr(0, 2000));
-            pageOrigin = pageOrigin.slice(2000);
-        }
-
-        let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
-
-        //const embed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
-        //.setColor(0xffffff) // You can set your color here
-        evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
-        evembed.setTitle(`Debug Pages Result:`)
-        evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
-
-        message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
-
-            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
-
-                msg.react('⏩') // This is the second one, it will run this one after the first one
-
-                // Filters - These make sure the varibles are correct before running a part of code
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id; // We need two filters, one for forwards and one for backwards
-
-                const backwards = msg.createReactionCollector(backwardsFilter, {}); // This creates the collector, which has the filter passed through it. The time is in milliseconds so you can change that for however you want the user to be able to react
-                const forwards = msg.createReactionCollector(forwardsFilter, {}); // This is the second collector, collecting for the forwardsFilter
-
-                // Next, we need to handle the collections
-                backwards.on('collect', r => { // This runs when the backwards reaction is found
-                    r.remove(message.author.id);
-                    if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
-                    page--; // If it can go back, push back the page number
-                    evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
-                    msg.edit(evembed) // Then, we can push the edit to the message
-                })
-
-                forwards.on('collect', r => { // This runs when the forwards reaction is found
-                    r.remove(message.author.id);
-                    if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
-                    page++; // If it can go forwards, push forwards the page number
-                    evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
-                    msg.edit(evembed) // Then, we can push the edit to the message
-                })
-            });
-        });
-    }// End of evalpages
-
-    /**
-     * creates any amount of pages in a embed, when a array is given as the input. Each array index is its own page. array[0] has own page, array[1] has own page and so on.
+     * creates any amount of pages in a embed, when objects are given
+     * NOT SURE IF THIS IS USED
+     * naph lmk.
      * @param message message object
      * @param pages array set
-     * @param evembed the variable used for the RichEmbed
-     * @returns A correctly formatted Embed
-     */
-    module.pages = (message, pages, evembed) => {
-
-        let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
-
-        //const embed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
-        //.setColor(0xffffff) // You can set your color here
-        evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
-        evembed.setDescription(pages[page - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
-
-        message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
-
-            if (pages.length === 1) return;
-            msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
-
-                msg.react('⏩') // This is the second one, it will run this one after the first one
-
-                // Filters - These make sure the varibles are correct before running a part of code
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id; // We need two filters, one for forwards and one for backwards
-
-                const backwards = msg.createReactionCollector(backwardsFilter, {}); // This creates the collector, which has the filter passed through it. The time is in milliseconds so you can change that for however you want the user to be able to react
-                const forwards = msg.createReactionCollector(forwardsFilter, {}); // This is the second collector, collecting for the forwardsFilter
-
-                // Next, we need to handle the collections
-                backwards.on('collect', r => { // This runs when the backwards reaction is found
-                    r.remove(message.author.id);
-                    if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
-                    page--; // If it can go back, push back the page number
-                    evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
-                    msg.edit(evembed) // Then, we can push the edit to the message
-                })
-
-                forwards.on('collect', r => { // This runs when the forwards reaction is found
-                    r.remove(message.author.id);
-                    if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
-                    page++; // If it can go forwards, push forwards the page number
-                    evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
-                    msg.edit(evembed) // Then, we can push the edit to the message
-                })
-            });
-        });
-    }// End of pages
-
-    /**
-     * creates any amount of pages in a embed, when a array is given as the input. Each array index is its own page. array[0] has own page, array[1] has own page and so on.
-     * @param message message object
-     * @param pages array set
-     * @param evembed the variable used for the RichEmbed
      * @returns A correctly formatted Embed
      */
     module.craftingpages = async (message, pages) => {
@@ -141,6 +24,7 @@ module.exports = (bot, message) => {
             darkmatte
         } = require(`../utils/colorset`);
 
+        console.log(typeof(pages))
         const registeringEmbeds = () => {
             const keys = Object.keys(pages);
             const url = Object.values(pages);
@@ -197,28 +81,125 @@ module.exports = (bot, message) => {
     }// End of craftingpages
 
     /**
-    * creates any amount of pages in a embed, when a array of arrays is given as the input. Each array index is its own page. array[0][...] has own page, array[1][...] has own page and so on.
+    * creates any amount of pages in a embed, when a(n) array, array of arrays, or a large string is given as the input.
     * @param message message object
-    * @param pages array set
+    * @param pages array set, or large string
     * @param evembed the vairable used for the RichEmbed
     * @returns A correctly formatted Embed
     */
-    module.pagesDubArr = (message, pages, evembed) => {
-
-
-
+    module.pages = (message, pages, evembed) => {
+        
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
         let sub_pages = 1; // We will define what sub page we are on here, the default sub page will be 1. (You can change the default sub pagem, Although it is recommended to leave it at 1)
+        let evalMode = false;
+
+        const clean = (text = ``) => {
+            if (typeof (text) === "string")
+                return text.replace(/`/g, "`" + String.fromCharCode(8203)).replace(/@/g, "@" + String.fromCharCode(8203));
+            else
+                return text;
+        }
+
+        function twoDimensialFowards(){
+            if (sub_pages === pages[page - 1].length) {// We can use copy and paste since it is basically the same thing, although now it checks if the sub page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first sub page
+                sub_pages = 0;
+                if (page === pages.length) {
+                    page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
+                    page++; // If it can go forwards, push forwards the page number
+                } else {
+                    page++; // If it can go forwards, push forwards the page number
+                }
+            }
+            sub_pages++;// If it can go forwards, push forwards the sub page number
+            evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
+            if (pages[page - 1].length > 1) {
+                evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
+            } else {
+                evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+            }
+        }
+        
+        function twoDimensialBackwards() {
+            if (sub_pages === 1) { // We want to make sure if they are on the first sub page, they can't go back a sub page // CHANGED so it goes to last sub page
+                if (page === 1) {
+                    page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
+                    page-- // If it can go back, push back the page number
+                } else {
+                    page--; // If it can go back, push back the page number
+                }
+                sub_pages = pages[page - 1].length + 1;
+            }
+            sub_pages--;// If it can go back, push back the sub page number
+            evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
+            if (pages[page - 1].length > 1) {
+                evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
+            } else {
+                evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+            }
+        }
+
+        function oneDimensialFowards(){
+            if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
+            page++; // If it can go forwards, push forwards the page number
+            evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+        }
+
+        function oneDimensialBackwards(){
+            if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
+            page--; // If it can go back, push back the page number
+            evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+        }
+
+        function evalFormatBackwards(){
+            if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
+            page--; // If it can go back, push back the page number
+            evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+        }
+
+        function evalFormatForwards(){
+            if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
+            page++; // If it can go forwards, push forwards the page number
+            evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+        }
 
         if (evembed === null) {
             const evembed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
             evembed.setColor(0xffffff) // You can set your color here
         }
-        evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This is the default value, showing the default page and the amount of pages in the array.
-        evembed.setDescription(pages[page - 1][sub_pages - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+        if(typeof(pages)==="string"){
+
+            evalMode=true;
+            let devpages = [];
+
+            for (let index = 0; index < pages.length; index += 1) {
+                devpages.push(pages.substr(0, 2000));
+                pages = pages.slice(2000);
+            }
+
+            pages = devpages;
+
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
+            evembed.setTitle(`Debug Pages Result:`)
+            evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+
+        }else if (pages[page - 1][sub_pages - 1].constructor === Array) { // Tests to see if the pages input is multidemensial
+            if (pages[page - 1].length > 1) {
+                evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
+            } else {
+                evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
+            }
+            evembed.setDescription(pages[page - 1][sub_pages - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+        } else {
+            evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
+            evembed.setDescription(pages[page - 1]) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
+        }
 
         message.channel.send(evembed).then(async msg => { // Now, we will send the embed and pass the new msg object
-
+            if (pages.length === 1) return;
             msg.react('⏪').then(async () => { // We need to make sure we start the first two reactions, this is the first one
 
                 msg.react('⏩') // This is the second one, it will run this one after the first one
@@ -233,35 +214,25 @@ module.exports = (bot, message) => {
                 // Next, we need to handle the collections
                 backwards.on('collect', r => { // This runs when the backwards reaction is found
                     r.remove(message.author.id);
-                    if (sub_pages === 1) { // We want to make sure if they are on the first sub page, they can't go back a sub page // CHANGED so it goes to last sub page
-                        if (page === 1) {
-                            page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
-                            page-- // If it can go back, push back the page number
-                        } else {
-                            page--; // If it can go back, push back the page number
-                        }
-                        sub_pages = pages[page - 1].length + 1;
+                    if(evalMode){
+                        evalFormatBackwards();
+                    }else if (pages[page - 1][sub_pages - 1].constructor === Array) { // checks to see if the pages input is a two-dimensial array or not.
+                        twoDimensialBackwards();
+                    } else {
+                        oneDimensialBackwards();
                     }
-                    sub_pages--;// If it can go back, push back the sub page number
-                    evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
                     msg.edit(evembed) // Then, we can push the edit to the message
                 })
 
                 forwards.on('collect', r => { // This runs when the forwards reaction is found
                     r.remove(message.author.id);
-                    if (sub_pages === pages[page - 1].length) {// We can use copy and paste since it is basically the same thing, although now it checks if the sub page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first sub page
-                        sub_pages = 0;
-                        if (page === pages.length) {
-                            page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
-                            page++; // If it can go forwards, push forwards the page number
-                        } else {
-                            page++; // If it can go forwards, push forwards the page number
-                        }
+                    if (evalMode) {
+                        evalFormatForwards();
+                    } else if (pages[page - 1][sub_pages - 1].constructor === Array) { // checks to see if the pages input is a two-dimensial array or not.
+                        twoDimensialFowards();
+                    } else {
+                        oneDimensialFowards();
                     }
-                    sub_pages++;// If it can go forwards, push forwards the sub page number
-                    evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
-                    evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
                     msg.edit(evembed) // Then, we can push the edit to the message
                 })
             });
@@ -283,6 +254,7 @@ module.exports = (bot, message) => {
 
         return result;
     }
+
     /**
      * Finds a user by id, or tag or plain name
      * @param {object} message message object
@@ -301,31 +273,6 @@ module.exports = (bot, message) => {
 
         return members.filter(filter).first();
     }, // End of userFinding
-
-        /**
-            Lifesaver promise. Used pretty often when calling an API.
-            @pause
-        */
-        module.pause = (ms) => {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }, // End of pause
-
-        /**
-         * Returns a(n) emoji from the server based on name.
-         *  @emoji a unicode emoji
-         * */
-        module.emoji = (name) => {
-            return bot.emojis.find(e => e.name === name);
-        }// End of emoji
-
-    /**
-     * Returns username based on the id.
-     *  @name strings
-     */
-    module.name = (id) => {
-        return bot.users.get(id).username;
-    }
-
 
     module.rangeNumber = (min, max) => {
         return m.rangeNumber(min, max)
@@ -354,12 +301,6 @@ module.exports = (bot, message) => {
     module.nickname = (id) => {
         return message.guild.members.get(id).displayName;
     }
-
-
-    module.avatarWrapper = (url, author) => {
-        return m.avatarWrapper(url, author);
-    }
-
 
     module.advSend = (...options) => {
         //console.log(options)

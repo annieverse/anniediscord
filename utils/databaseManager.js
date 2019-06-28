@@ -16,7 +16,13 @@ class databaseUtils {
             this.id = id;
         }
 
-
+        /**
+         * Lifesaver promise. Used pretty often when calling an API.
+         * @pause
+         */
+        pause(ms){
+            return new Promise(resolve => setTimeout(resolve, ms));
+        } // End of pause
 
         //  Pull neccesary data at once.
         get userMetadata() {
@@ -283,7 +289,7 @@ class databaseUtils {
 
                     if(i === 3) { break; }
                 }
-                await utils.pause(1000)
+                await this.pause(1000)
                 return aliases;
         }
 

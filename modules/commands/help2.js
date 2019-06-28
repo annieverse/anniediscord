@@ -11,7 +11,14 @@ class help {
         this.log = Stacks.log;
         this.role = Stacks.roles;
         this.stacks = Stacks;
-        
+        this.needHelp = `Need further help? Please DM <@507043081770631169>.`;
+        this.embed = new Discord.RichEmbed()
+    }
+
+    // This will format all embeds used in this file
+    initializeEmbed(){
+        this.embed.setColor(this.palette.darkmatte)
+        this.embed.setThumbnail(this.bot.user.displayAvatarURL);
     }
 
     async allowedToUse() {
@@ -36,7 +43,7 @@ class help {
                 }
             }
         })
-        await this.utils.pause(200)
+        await this.stacks.pause(200)
         return file_arr
     };
     /**
@@ -56,24 +63,9 @@ class help {
                 }
             }
         })
-        await this.utils.pause(200)
+        await this.stacks.pause(200)
         file_arr = file_arr.join("\n");
         return file_arr
-    };
-    /**
-     * Grabs any aliases for a file if one exists
-     * @param {String} file file name
-     * @returns {Array} Array of aliases names 
-     */
-    async aliases(file) {
-        let file_arr = [];
-        const src = require(`./${file}`);
-        if (src.help.aliases.length === 0) return file_arr = " ";
-        for (let x = 0; x < src.help.aliases.length; x++) {
-            file_arr.push(src.help.aliases[x].toLowerCase());
-        }
-        await this.utils.pause(200)
-        return file_arr;
     };
 
     /**
@@ -85,7 +77,7 @@ class help {
         let file_rst;
         const src = require(`./${file}`);
         file_rst = src.help.usage.toLowerCase();
-        await this.utils.pause(200)
+        await this.stacks.pause(200)
         return file_rst;
     };
 
@@ -98,7 +90,7 @@ class help {
         let file_rst;
         const src = require(`./${file}`);
         file_rst = src.help.description.toLowerCase();
-        await this.utils.pause(200)
+        await this.stacks.pause(200)
         return file_rst;
     };
 
@@ -116,7 +108,7 @@ class help {
             this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.FILE); return false
         }
         file_rst = src.help.group.toLowerCase();
-        await this.utils.pause(200)
+        await this.stacks.pause(200)
         return file_rst;
     };
 
@@ -124,9 +116,6 @@ class help {
      * Displays all avaible commands in each category
      */
     async helpAll() {
-        const embed = new Discord.RichEmbed()
-        .setColor(this.palette.darkmatte)
-        .setThumbnail(this.bot.user.displayAvatarURL)
         let page = [],pages = [];
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
@@ -155,8 +144,8 @@ class help {
                 if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
             });
         }   
-        this.utils.pagesDubArr(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     /**
@@ -165,18 +154,18 @@ class help {
      */
     async help(group) {
         if (group === 'admin') {
-            if (await this.allowedToUse()===false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
         }
-        const embed = new Discord.RichEmbed()
-        .setColor(this.palette.darkmatte)
-        .setThumbnail(this.bot.user.displayAvatarURL)
+        
         let pages,page = [];
         let position = 0;
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
-        if (group.toLowerCase() === "help") return this.utils.sendEmbed(`My availble commands are:\n~help | To view all availble commands\n~help group | To look at one specific group of commands\nMy avaible groups are:\n**${pageHeaderOptions.join(", ")}**\n~help command | To look at a specific command`)
-      
+        if (group.toLowerCase() === "help") {
+            return this.utils.sendEmbed(`My available commands are:\n\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``)
+        }
+        
         for (let x = 0; x < pageHeaderOptions.length; x++) {
             if (group.toLowerCase() === pageHeaderOptions[x]) {
                 position=x;
@@ -191,39 +180,38 @@ class help {
         let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
         pages.forEach((element,index) => {if(index===0){element.unshift(header)}else{element.unshift(header + `**Continued**.\n`)}
         });
-        this.utils.pages(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     async specificCommandsHelp(cmdFile, group) {
         if(group==='admin'){
-            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.ROLE)
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
         }
-        const embed = new Discord.RichEmbed()
-            .setColor(this.palette.darkmatte)
-            .setThumbnail(this.bot.user.displayAvatarURL)
+        
         let pages, page = [];
-        page.push(new Array(`**${group.toUpperCase()}**`))
-        page[0].push(`|command| **\`${cmdFile}\`**`)
-        page[0].push(`|usage| ${await this.usage(cmdFile)}`)
-        page[0].push(`|description| ${await this.description(cmdFile)}`)
+        page.push(new Array(`**${group.toUpperCase()}** - Group`))
+        page[0].push(`\nCommand\n\`\`\`fix\n${cmdFile}\`\`\``)
+        page[0].push(`How to use\n\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``)
+        page[0].push(`What is this command\n\`\`\`fix\n${await this.description(cmdFile)}\`\`\``)
         pages = this.utils.chunk(page[0], 6)
-        this.utils.pages(this.message, pages, embed);
-        return this.utils.sendEmbed(`Need further help? Please DM <@507043081770631169>.`, this.palette.halloween)
+        this.utils.pages(this.message, pages, this.embed);
+        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
     }
 
     async execute() {
-        if (this.args.length === 0) return this.helpAll();
-        if (this.args[0] === 'help') return this.help(this.args[0]);
-        let pageHeaderOptions = await this.groupNames();
-        for (let x = 0; x < pageHeaderOptions.length; x++) {
-            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
-            if (pageHeaderOptions.some(x => x === this.args[0].toLowerCase()))return this.help(this.args[0]);
-            if (await this.group(this.args[0].toLowerCase()).then(res=>res===false))return;
-            if (await this.group(this.args[0].toLowerCase()) === pageHeaderOptions[x]) {
-                for (let index = 0; index < mainNames.length; index++) {
-                    if (this.args[0].toLowerCase()===mainNames[index]){
-                        return this.specificCommandsHelp(mainNames[index],pageHeaderOptions[x]);
+        this.initializeEmbed();
+        if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
+        if (this.args[0] === 'help') return this.help(this.args[0]); // Sends a help message for the help command, ie. ${prefix}help help
+        let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
+        for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
+            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
+            if (pageHeaderOptions.some(x => x === this.args[0].toLowerCase()))return this.help(this.args[0]); // if a group name is detected, only the commands for that group will be sent
+            if (await this.group(this.args[0].toLowerCase()).then(res=>res===false))return; // Tests for the arg being passed through, if its a valid command
+            if (await this.group(this.args[0].toLowerCase()) === pageHeaderOptions[x]) { // Tests to see if the arg being passed through is a command in a group
+                for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
+                    if (this.args[0].toLowerCase()===mainNames[index]){ // Tests for the correct file
+                        return this.specificCommandsHelp(mainNames[index],pageHeaderOptions[x]); // returns a help message for that specific command
                     }
                 }
             }

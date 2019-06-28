@@ -307,7 +307,7 @@ class leaderboard {
                             .level
                             .position
                             .avatar()
-                        await utils.pause(500);
+                        await this.stacks.pause(500);
 
                         canv.restore();
                     }
@@ -329,7 +329,7 @@ class leaderboard {
                             .position
                             .artcoins
                             .avatar()
-                        await utils.pause(500);
+                        await this.stacks.pause(500);
 
                         canv.restore();
                     }
@@ -351,7 +351,7 @@ class leaderboard {
                             .position
                             .reputation
                             .avatar()
-                        await utils.pause(500);
+                        await this.stacks.pause(500);
 
                         canv.restore();
                     }
@@ -373,7 +373,7 @@ class leaderboard {
                             .position
                             .liked
                             .avatar()
-                        await utils.pause(500);
+                        await this.stacks.pause(500);
 
                         canv.restore();
                     }

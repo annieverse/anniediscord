@@ -674,7 +674,7 @@ class profile {
 
                 canv.restore()
                 await gridImage(startPos_x, 70, 250, 250);
-                await utils.pause(3000)
+                await this.stacks.pause(3000)
 
                 return canv.toBuffer();
 

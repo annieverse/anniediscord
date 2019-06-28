@@ -149,7 +149,9 @@ module.exports = bot => {
         sql.run(`UPDATE usercheck SET expcooldown = "False"`);
 
         if (env.dev) {
-            console.log(`${bot.user.username}[dev-mode] is alive.`)
+            console.clear()
+            console.log(`Codename: ${bot.user.username}`)
+            console.timeEnd(`Initialized In`)
             bot.user.setStatus('dnd');
             bot.user.setActivity(`maintenance.`, {
                 type: "LISTENING"

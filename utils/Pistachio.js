@@ -26,8 +26,20 @@ module.exports = (Components) => {
     //  Storing colorset
     container.palette = require(`./colorset`);
 
+    //  Storing role ids
+    container.roles = require(`./role-list.json`);
+
+    //  Storing functions.js functions
+    container.utils = require(`./functions.js`)(bot, message);
+
+    //  Storing transaction checkout handler
+    container.Checkout = require(`./TransactionCheckout`);
+    
+    //  Storing main transaction handler
+    container.Transaction = require(`./TransactionHandler`);
+
     //  Check for administrator authority
-    container.isAdmin = message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+    container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
     //  Automatically convert weird number notation into real value.
     container.trueInt = (str) => {
@@ -96,6 +108,14 @@ module.exports = (Components) => {
     container.choice = (arr = []) => {
         return arr[Math.floor(Math.random() * arr.length)]
     }
+
+    /**
+     * Lifesaver promise. Used pretty often when calling an API.
+     * @pause
+     */
+    container.pause = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }, // End of pause
 
     /** Annie's custom system message.
      *  @param content as the message content

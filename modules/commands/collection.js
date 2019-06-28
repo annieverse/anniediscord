@@ -78,7 +78,7 @@ class collection {
 
             eliminate_nulls();
             labeling();
-            await utils.pause(500);
+            await this.stacks.pause(500);
             filtered_res = parsedbag;
         }
 

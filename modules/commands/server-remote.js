@@ -81,7 +81,7 @@ class serverRemote {
 
         //  Restart the server.
         const restart_server = async (countdown) => {
-            await utils.pause(countdown);
+            await this.stacks.pause(countdown);
             process.exit();
         }
 
