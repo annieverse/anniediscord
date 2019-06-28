@@ -8,8 +8,6 @@ class ArtcoinsGenerator {
         this.stacks = Stacks;
         this.author = Stacks.meta.author;
         this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
         this.args = Stacks.args;
     }
 
