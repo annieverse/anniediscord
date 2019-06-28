@@ -8,10 +8,17 @@
             "INVALID_CATEGORY": "That doesn't looks like a valid category."
         }
     },
+    "ASK": {
+        "ANSWERS": ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"],
+        "SHORT_GUIDE": "Feel free to ask me anything!"
+    },
+    "DISPLAY_BALANCE": "**Remaining Balance**\n{0} **{1}**",
     "REQUEST_PING": "Request received in **{0} ms**",
     "ADDAC": {
         "SHORT_GUIDE": "You can refill user's artcoins by typing `>addac <user> <amount>`",
-        "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. **{1}(+{2})**"
+        "MISSING_VALUES": "Please specify the amount.",
+        "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**{2}(+{3})**",
+        "NEGATIVE_VALUES": "Sorry, you can't put negative value."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{

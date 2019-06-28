@@ -1,4 +1,5 @@
 const { RichEmbed, Attachment } = require(`discord.js`);
+const databaseManager = require(`./databaseManager`);
 /**
  *  Micro framework to support Annie's structure
  *  Lightweight, portable and opinionated
@@ -25,13 +26,57 @@ module.exports = (Components) => {
     //  Storing colorset
     container.palette = require(`./colorset`);
 
+    //  Storing role ids
+    container.roles = require(`./role-list.json`);
+
+    //  Storing functions.js functions
+    container.utils = require(`./functions.js`)(bot, message);
+
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
+
+    //  Automatically convert weird number notation into real value.
+    container.trueInt = (str) => {
+        return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
+        ? Math.round(Number(str)) : NaN;
+    }
 
     //  Returns username based on the id.
     container.name = (id) => {
         return bot.users.get(id).username;
     }
+
+    //  Returns avatar URL based on the id.
+    container.avatar = (id) => {
+        return bot.users.get(id).displayAvatarURL;
+    }
+
+    //  Wrapping out avatar message.
+    container.avatarWrapper = (id) => {
+        message.react('📸')
+        const reactions = [
+			"Amazing!",
+			"I wuv it ❤",
+			"Awesome art!",
+			"Magnificent~",
+			"#2k19 #topselfie",
+			"Beautiful!!",
+			"Avatar of the day!"
+		];
+		const randomReactions = reactions[Math.floor(Math.random() * reactions.length)];
+        const [Avatar, Name] = [container.avatar(id), container.name(id)]
+        const embed = new RichEmbed()
+            .setImage(Avatar)
+            .setAuthor(Name, Avatar)
+            .setColor(container.palette.darkmatte)
+            
+    
+        return message.channel.send(embed)
+            .then(() => {
+                message.channel.send(randomReactions)
+            })
+    }
+
 
     //  An emoji finder. Returns as unicode
     container.emoji = (name) => {
@@ -47,8 +92,24 @@ module.exports = (Components) => {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    //  Initializing database class
+    container.db = (id) => new databaseManager(id);
+
     //  Outputing bot's ping
     container.ping = container.commanifier(Math.round(bot.ping));
+
+    //  Returns random index of elemenet from given array
+    container.choice = (arr = []) => {
+        return arr[Math.floor(Math.random() * arr.length)]
+    }
+
+    /**
+     * Lifesaver promise. Used pretty often when calling an API.
+     * @pause
+     */
+    container.pause = (ms) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }, // End of pause
 
     /** Annie's custom system message.
      *  @param content as the message content

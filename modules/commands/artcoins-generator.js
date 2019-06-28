@@ -1,4 +1,3 @@
-const databaseManager = require(`../../utils/databaseManager`);
 /**
  * Main module
  * @ArtcoinsGenerator Admin command to add artcoins
@@ -6,23 +5,37 @@ const databaseManager = require(`../../utils/databaseManager`);
 class ArtcoinsGenerator {
     constructor(Stacks) {
         this.stacks = Stacks;
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.args = Stacks.args;
     }
 
-
+    //  Init
     async execute() {
-        const { name, isAdmin, reply, code:{ ADDAC, UNAUTHORIZED_ACCESS }, commanifier } = this.stacks.pistachio;
 
-        if (!isAdmin) return reply(UNAUTHORIZED_ACCESS);
-        if (!this.args[1]) return reply(ADDAC.SHORT_GUIDE)
+        //  Pistachio stacks
+        const { name, args, emoji, isAdmin, trueInt, reply, commanifier, code, db, meta: { author, data } } = this.stacks;
 
-        const amount = parseInt(this.args[1]);
-        new databaseManager(this.author.id).storeArtcoins(amount);
+        //  Returns if user doesn't have admin authority
+        if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 
-        return reply(ADDAC.SUCCESSFULL, {
-            socket: [name(this.author.id)]
+        //  Returns if user not specifying any parameters
+        if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
+
+        //  Returns if user not specifying the value
+        if (!args[1]) return reply(code.ADDAC.MISSING_VALUES)
+
+        //  Returns if input is a negative value
+        if (!trueInt(args[1])) return reply(code.ADDAC.NEGATIVE_VALUES)
+
+        //  Storing new balance value
+        const amount = trueInt(args[1])
+        db(author.id).storeArtcoins(amount)
+
+        //  Finishing message
+        return reply(code.ADDAC.SUCCESSFUL, {
+            socket: [
+                name(author.id),
+                emoji(`artcoins`),
+                commanifier(data.artcoins),
+                commanifier(amount)]
         })
     }
 }

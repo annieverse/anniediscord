@@ -147,7 +147,7 @@ class gacha {
 				await visualQuantity(55, 50, 100, 100, 50);
 				await textDescription(100, 170);
 				//await rarityCircle(baseWidth, startPos_y+20)
-				await utils.pause(1500);
+				await this.stacks.pause(1500);
 				return canv.toBuffer()
 			}
 		}
@@ -301,7 +301,7 @@ class gacha {
 			await row('top');
 			await row('bottom');
 
-			await utils.pause(1500);
+			await this.stacks.pause(1500);
 			return canv.toBuffer();
 		}
 
@@ -362,7 +362,7 @@ class gacha {
 					res_aliases.push(parsed.item_alias)
 
 
-					await utils.pause(100);
+					await this.stacks.pause(100);
 
 					if (parsed.rarity > 4) worldchnl.send(`${message.author} has pulled **(${`☆`.repeat(parsed.rarity)})${parsed.item_name}** from the lucky ticket! :tada:`)
 					console.log(`${message.author.tag} pulled ${res_items[i]}[${res_rarities[i]}] on float : ${rate}`)
@@ -377,7 +377,7 @@ class gacha {
 			}
 
 			get_caprates();
-			await utils.pause(500);
+			await this.stacks.pause(500);
 			return classify(times)
 		}
 
@@ -561,7 +561,7 @@ class gacha {
 									END 
 						WHERE userId = ${message.author.id}`);
 
-						await utils.pause(500);
+						await this.stacks.pause(500);
 						console.log(`${keyv}-${obj[keyv]} has been registered.`)
 					}
 				}

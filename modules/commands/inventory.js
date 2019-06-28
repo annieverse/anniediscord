@@ -146,9 +146,9 @@ class inventory {
             assigning_items();
             eliminate_nulls();
             name_labeling();
-            await utils.pause(100)
+            await this.stacks.pause(100)
             get_rarities();
-            await utils.pause(50);
+            await this.stacks.pause(50);
 
 
             // Sorted and properly formatted.
@@ -386,7 +386,7 @@ class inventory {
             return message.channel.send(`\`fetching ${message.author.username} inventory ..\``)
                 .then(async load => {
                     await get_inventobject();
-                    await utils.pause(200);
+                    await this.stacks.pause(200);
                     await filtering_items(raw_object);
                     const title = `${utils.emoji(`AnnieWot`, bot)} | **Inventory card for ${message.author.username}**`;
 
