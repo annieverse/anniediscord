@@ -1,3 +1,8 @@
+/** Notes:
+ *  - Raw Data Message
+ *  - refactor userFind regex
+ */
+
 class clan_wrapper {
     constructor(Stacks) {
         this.stacks     = Stacks;
@@ -19,17 +24,17 @@ class clan_wrapper {
         /*  Global General-Purpose Data
          *  Put data that will be used within any sub-command 
          */
+        const Discord = require('discord.js');                      //  Temporary
+        const formatManager = require('../../utils/formatManager'); //  Temporary
+        const env = require('../../.data/environment.json');        //  Temporary
 
         const commandname = exports.help.name;
-        const env = require('../../.data/environment.json');        //  Temporary
         const prefix = env.prefix;                                  //  Temporary
-        const formatManager = require('../../utils/formatManager'); //  Temporary
         const format = new formatManager(message);                  //  Temporary
         const sql = require('sqlite');
         const sqlpath = '.data/database.sqlite';
         sql.open(sqlpath);
 
-        const Discord = require('discord.js');                      //  Temporary
         const collector = new Discord.MessageCollector(
             message.channel,
             m => m.author.id === message.author.id, {
@@ -48,6 +53,34 @@ class clan_wrapper {
             "ADMIN": { 
                 grandmaster : "459936023498063902",
             }
+        }
+
+        class Embed extends Discord.RichEmbed {
+            constructor() { super() }
+
+            //  Private Methods
+            _clearData() { for(let key in this) { typeof this[key] !== "object" ? this[key] = undefined : this[key] = [] } }
+            _formatString(input) { let s = input; return input = s.replace(/(^\s+)|(\s+$)/g,"").replace(/\n\s+/g,"\n") }
+            _formatAllStrings() {
+                for(let key1 in this) {
+                    if(typeof this[key1] === "string") this[key1] = this._formatString(this[key1])
+                    if(typeof this[key1] === "object") { for(let key2 in this[key1]) { if(typeof this[key1][key2] === "string") this[key1][key2] = this._formatString(this[key1][key2]) } }
+                    if(key1 === "fields") { this[key1].forEach((e) => { for(let key in e) { if(typeof e[key] === "string") e[key] = this._formatString(e[key]) } }) }
+                }
+            }
+
+            //  Public Methods
+            send() { this._formatAllStrings(); message.channel.send(this); this._clearData();}
+            sendTo(channel) {
+                console.log("Sent embed to target channel.")
+            }
+            sendDM(target) {
+                console.log("Sent embed to target user's private messages.")
+            }
+            sendRaw(text) { message.channel.send(this._formatString(text)); this._clearData(); }
+
+            //  Legacy Support Method
+            embedWrapper(color, text) { return this.setColor(color).setDescription(text).send(); }
         }
 
         /***************************************************************************************************
@@ -116,8 +149,8 @@ class clan_wrapper {
             async execute() {
                 args.shift();
                 if (this._name.toUpperCase() !== "HELP") invoker = this._metadata;
-                let subcommand = await new Subcommand(this._metadata).init();
-                if(subcommand.exists) return await subcommand.execute()
+                let nextsubcommand = await new Subcommand(this._metadata).init();
+                if(nextsubcommand.exists) return await nextsubcommand.execute()
                 else return this._executeSubcommand();
             }
         }
@@ -439,9 +472,12 @@ class clan_wrapper {
                 else return format.embedWrapper(palette.golden, `User Info Find: \`${prefix}${commandname} find <Blank or Target User>\``);
 
                 if (target.exists) {
+
+                    const formatblock = (string) => string.replace(/(^\s+)|(\s+$)/g,"").replace(/\n\s+/g,"\n")
+
                     let markdown = `HTTP\n`
-                    return format.embedWrapper(palette.darkmatte, 
-                        `Search Input: \`\`\`${markdown}${target.r_name}\`\`\`
+                    return format.embedWrapper(palette.darkmatte, formatblock(`
+                        Search Input: \`\`\`${markdown}${target.r_name}\`\`\`
                         User ID: \`\`\`${markdown}${target.id}\`\`\`
                         User Name: \`\`\`${markdown}${target.name} #${target.discriminator}\`\`\`
                         Nickname: \`\`\`${markdown}${target.nickname}\`\`\`
@@ -449,7 +485,8 @@ class clan_wrapper {
                         Clan Tag: \`\`\`${markdown}${target.nametag}\`\`\`
                         Level: \`\`\`${markdown}${target.level}\`\`\`
                         Balance: \`\`\`${markdown}${format.threeDigitsComa(target.artcoins)} Artcoins\`\`\`
-                        Roles: \`\`\`${markdown}${JSON.stringify(target.roles).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,' : ')}\`\`\``)
+                        Roles: \`\`\`${markdown}${JSON.stringify(target.roles).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,' : ')}\`\`\`
+                    `))
                 } else return log(`GREET_APOLOGY LB INVALID_USER`) 
 
             }
@@ -496,15 +533,16 @@ class clan_wrapper {
             },
             execute: async(metadata) => {
 
-                if (args.length === 0) target = user;
-                else if (args.length >= 1) target = await new User(args.join(" ")).init();
-                else return format.embedWrapper(palette.golden, `Test`);
-                
-                console.log(await target._isValidUser(target.r_name))
-                return
-                if (target.exists) {
-                    return format.embedWrapper(palette.green, `Nickname: ${target.nickname}`)
-                } else return format.embedWrapper(palette.red, `Could not find user: **${target.name}** ${emoji(`aauWallSlam`,bot)}`)
+                let msg = new Embed()
+                console.log(Object.keys(message.channel))
+                console.log(message.channel.name)
+                return msg
+                    .setColor('#0099ff')
+                    .setAuthor(`Author Line 1`, 'https://i.imgur.com/wSTFkRM.png')
+                    .setDescription(`   Description Line 1
+                                        Description Line 2`)
+                    .setFooter(`Sent from Channel: ${message.channel.name}`)
+                    .send()
             }
         }
 
