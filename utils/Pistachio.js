@@ -38,6 +38,9 @@ module.exports = (Components) => {
     //  Storing main transaction handler
     container.Transaction = require(`./TransactionHandler`);
 
+    //  Storing environment.json keys
+    container.environment = require('../.data/environment.json');
+
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
