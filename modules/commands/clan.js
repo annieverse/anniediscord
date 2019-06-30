@@ -40,207 +40,101 @@ class clan_wrapper {
             }
         );
 
+        //  Initialize special globals
+        let user, target, msg, cmdpath, accessmap = null;
+
         /***************************************************************************************************
          * GLOBAL CLASS / FUNCTION INITIALIZATION
          ***************************************************************************************************/
-        class Subcommand {
-            constructor (metadata) {
-                this._name = args[0];
-                this._subcommandlist = metadata.commandlist;
-                this._exists = false;
-            }
-
-
-            //  PUBLIC OUTPUT
-            get name()      { return this._name }
-            get exists()    { return this._exists }
-
-
-            //  OBTAIN: Property Container Functions
-            __get_subcommand() { this._subcommand = this._findSubcommand() }
-
-            //  UPDATE: Micro-Functions
-            __update_metadata() { this._metadata = this._subcommand.metadata }
-
-            //  REFRESH: Repull Property Containers
-            _refresh_subcommand() {
-                this.__get_subcommand();
-                this.__update_metadata();
-            }
-
-
-            //  PRIVATE UTILITY METHODS
-            _isValidSubCommand() { return this._findSubcommand() ? true : false }
-            _normalizeSubcommand() { if (this._name) { this._name = this._name.toLowerCase() } }
-            _executeSubcommand() { return this._subcommand.execute(this._metadata) }
-            _findSubcommand() {
-                let subcommand = null
-                this._subcommandlist.forEach((element) => {
-                    if (element.metadata.name === this._name 
-                        || element.metadata.alias.indexOf(this._name) >= 0) { 
-                        subcommand = element
-                    }
-                })
-                return subcommand
-            }
-
-            _checkClanStatus(value) { return accessmap.clanstatus[value] }
-            _checkRoles(value) {
-                for (let key in accessmap.roles[value]) { if (user.roles.hasOwnProperty(key)) return true }
-                return false
-            }
-            _accessGranted() {
-                let check = {
-                    "clanstatus" : this._checkClanStatus,
-                    "roles" : this._checkRoles
-                }
-                let lock = [];
-                for (let key in this._metadata.access) { lock.push(check[key](this._metadata.access[key])) }
-                return lock.every(e => e === true)
-            }
-
-
-            //  PUBLIC METHODS
-            init() {
-                this._normalizeSubcommand()
-                if (this._isValidSubCommand()) { 
-
-                    this._exists = true 
-                    this._refresh_subcommand()
-
-                } else this._exists = false 
-                return this
-            }
-            async execute() {
-                if (this._accessGranted()) {
-                    args.shift();
-                    if (this._name.toLowerCase() !== "help") invoker = this._metadata;
-                    let nextsubcommand = await new Subcommand(this._metadata).init();
-                    if (nextsubcommand.exists) return await nextsubcommand.execute()
-                    else return this._executeSubcommand();
-                } else return msg.embedWrapper(palette.red, `Sorry ${user.name}...\nYou don't have access to this command. ${emoji(`aauSatanialaugh`,bot)}`)
-            }
-        }
-
         class User {
             constructor(username) {
-                this._requestname = username;
+                this._inputname = username;
                 this._exists = false;
             }
 
-
             get exists()        { return this._exists}
-            get r_name()        { return this._requestname }
+            get inputname()     { return this._inputname }
             //  PUBLIC OUTPUT: User Class Data
-            get client()        { return this.$userclient }
-            get discriminator() { return this._discriminator }
-            get name()          { return this._name }
-            get pfp()           { return this._userprofileurl }
-            get nickname()      { return this._usernickname }
-            get id()            { return this._userid }
-            get roles()         { return this._roles }
+            get client()        { return this.$client }
+            get discriminator() { return this.$client.user.discriminator }
+            get name()          { return this.$client.user.username }
+            get pfp()           { return this.$client.user.displayAvatarURL }
+            get nickname()      { return this.$client.nickname }
+            get id()            { return this.$client.id }
+            get roles()         { return this.$client.roledata }
             //  PUBLIC OUTPUT: Server Database Data
-            get level()         { return this._userlevel }
-            get artcoins()      { return this._userbalance }
+            get level()         { return this.$userdata.level }
+            get artcoins()      { return this.$userinventories.artcoins }
             get clantag()       { return null }
             get nametag()       { return null }
-            get isLeader()      { return this._leaderStatus }
-            get isMember()      { return this._memberStatus }
-
+            get isLeader()      { return false }
+            get isMember()      { return false }
 
 
             //  OBTAIN: Property Container Functions
-            async _get_user() { this.$userclient = await this._findUser() }
-            async _get_guildMemberData() { this.$guildmember = await message.guild.members.get(this._userid) }
-            async _get_userData() { this.$userdata = await sql.get(`SELECT * FROM userdata WHERE userID = "${this._userid}"`) }
-            async _get_inventory() { this.$userinventories = await sql.get(`SELECT * FROM userinventories WHERE userID = "${this._userid}"`) }
-            async _get_userCheck() { this.$userstatus = await sql.get(`SELECT * FROM usercheck WHERE userID = "${this._userid}"`) }
-            async _get_userRoles() { 
-                let allroles = await this.$guildmember.roles.array();
-                let roles = {}; 
-                allroles.forEach(e => roles[e.id] = e.name); 
-                this._roles = roles;
+            async _get_user() { this.$client = await this._findUser() }
+            async _get_userData() { this.$userdata = await sql.get(`SELECT * FROM userdata WHERE userID = "${this.$client.id}"`) }
+            async _get_inventory() { this.$userinventories = await sql.get(`SELECT * FROM userinventories WHERE userID = "${this.$client.id}"`) }
+            async _get_userCheck() { this.$userstatus = await sql.get(`SELECT * FROM usercheck WHERE userID = "${this.$client.id}"`) }
+            async _get_userRoles() {
+                let allroles = await this.$client.roles.array();
+                this.$client.roledata = {}; 
+                allroles.forEach(e => this.$client.roledata[e.id] = e.name); 
             }
-
-
-
-            //  REFRESH: Repull Property Containers
-            async _refresh_user() { 
-                await this._get_user();
-                this._discriminator = this.$userclient.user.discriminator; 
-                this._name = this.$userclient.user.username;
-                this._userprofileurl = this.$userclient.user.displayAvatarURL;
-                this._usernickname = this.$userclient.nickname;
-                this._userid = this.$userclient.id;
-                
-                await this._get_guildMemberData();
-                await this._get_userRoles();
-            }
-            async _refresh_userData() {
-                await this._get_userData();
-                this._userlevel = this.$userdata.level; 
-            }
-            async _refresh_userInventory() {
-                await this._get_inventory();
-                this._userbalance = this.$userinventories.artcoins;
-            }
-            async _refresh_userStatus() {
-                await this._get_userCheck();
-                this._memberStatus = false;
-                this._leaderStatus = false;
-            }
-
 
 
             //  PRIVATE UTILITY METHODS
             async _isValidUser() { return await this._findUser() ? true : false }
             async _findUser() {
                 const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-                if (userPattern.test(this._requestname)) this._requestname = this._requestname.replace(userPattern, '$1');
+                if (userPattern.test(this._inputname)) this._inputname = this._inputname.replace(userPattern, '$1');
                 let members = message.guild.members;
                 const filter = member => 
-                    member.user.id                      === this._requestname ||
-                    member.displayName.toLowerCase()    === this._requestname.toLowerCase() ||
-                    member.user.username.toLowerCase()  === this._requestname.toLowerCase() ||
-                    member.user.tag.toLowerCase()       === this._requestname.toLowerCase();
+                    member.user.id                      === this._inputname ||
+                    member.displayName.toLowerCase()    === this._inputname.toLowerCase() ||
+                    member.user.username.toLowerCase()  === this._inputname.toLowerCase() ||
+                    member.user.tag.toLowerCase()       === this._inputname.toLowerCase();
                 return members.filter(filter).first();
             }
             async _botHasNicknamePerms() {(
                 message.guild.members.get(bot.user.id).hasPermission("MANAGE_NICKNAMES") || 
                 message.guild.members.get(bot.user.id).hasPermission("CHANGE_NICKNAME"));
             }
-            async _setNickname(new_nickname) {
-                await this._refresh_user();
+            async _setNickname(newnickname) {
+                await this._get_user();
                 if (await _botHasNicknamePerms()) {
-                    await this.$guildmember.setNickname(new_nickname);
-                    this._requestname = new_nickname;
-                    await this._refresh_user();
+                    await this.$client.setNickname(newnickname);
+                    this._inputname = newnickname;
+                    await this._get_user();
                 } else return msg.embedWrapper(palette.red, `Sorry, I dont have the required permsissions to change nicknames...`);
             }
-
 
 
             // PUBLIC METHODS
             async addClanTag() {}
             async removeClanTag() {}
-
             async init() {
                 if (await this._isValidUser()) {
 
                     this._exists = true;
-                    await this._refresh_user();
-                    await this._refresh_userData();
-                    await this._refresh_userInventory();
-                    await this._refresh_userStatus();
+                    await this._get_user();
+                    await this._get_userRoles();
+                    await this._get_userData();
+                    await this._get_inventory();
+                    await this._get_userCheck();
 
                 } else this._exists = false
                 return this
             }      
         }
 
+        class Member extends User {
+
+        }
+
         class Clan {
             constructor(clanname) {
-                this._requestname = clanname;
+                this._inputname = clanname;
                 this._exists = false;
             }
 
@@ -271,8 +165,125 @@ class clan_wrapper {
             }
         }
 
-        class Member extends User {
+        class Metadata {
+            constructor(name) {
+                this.name = name.toLowerCase();
+                this.alias = [];
+                this.info = undefined;
+                this.arguments = [];
+                this.name === 'help' ?
+                    this.commandlist = [] :
+                    this.commandlist = [help];
+                this.access = {
+                    clanstatus: "public",
+                    roles: "developer"
+                }
+            }
 
+            //  PRIVATE UTILITY METHOD
+            _isString(input) { return typeof input === 'string' || input instanceof String }
+            _isArray(input) { return input && typeof input === 'object' && input.constructor === Array  }
+            _isObject(input) { return input && typeof input === 'object' && input.constructor === Object }
+
+            //  PUBLIC SET DATA
+            setAlias(input) {
+                if (this._isArray(input) && input.every(this._isString)) this.alias = input;
+                if (this._isString(input)) this.alias.push(input);
+                return this
+            }
+            setInfo(input) {
+                if (this._isString(input)) this.info = input;
+                return this
+            }
+            setArguments(input) {
+                if (this._isArray(input) && input.every(this._isString)) this.arguments = input;
+                if (this._isString(input)) this.arguments.push(input);
+                return this
+            }
+            setCommandList(input) {
+                if (this._isArray(input) && input.every(this._isObject)) this.commandlist = this.commandlist.concat(input);
+                if (this._isObject(input)) this.commandlist.push(input);
+                return this
+            }
+            setAccess(input) {
+                if (this._isObject(input)) {
+                    for (let group in input) {
+                        if(accessmap[group] && accessmap[group].hasOwnProperty(input[group])) { this.access[group] = input[group] }
+                    }
+                }
+                return this
+            }
+        }
+        
+        class Subcommand {
+            constructor (metadata) {
+                this._input = args[0];
+                this._exists = false;
+                this.$invoker = metadata;
+            }
+
+
+            //  PUBLIC OUTPUT
+            get input()     { return this._input }
+            get name()      { return this.$subcommand.metadata.name }
+            get exists()    { return this._exists }
+
+            //  OBTAIN: Property Container Functions
+            _get_subcommand() { this.$subcommand = this._findSubcommand() }
+
+            //  PRIVATE UTILITY METHODS
+            _isValidSubCommand() { return this._findSubcommand() ? true : false }
+            _normalizeSubcommand() { if (this._input) { this._input = this._input.toLowerCase() } }
+            _executeSubcommand() { return this.$subcommand.execute(this.$subcommand.metadata) }
+            _findSubcommand() {
+                let subcommand = null
+                this.$invoker.commandlist.forEach((element) => {
+                    if (element.metadata.name === this._input 
+                        || element.metadata.alias.indexOf(this._input) >= 0) { 
+                        subcommand = element
+                    }
+                })
+                return subcommand
+            }
+
+            //  PRIVATE RESTRICTION METHODS
+            _checkClanStatus(value) { return accessmap.clanstatus[value] }
+            _checkRoles(value) {
+                for (let key in accessmap.roles[value]) { if (user.roles.hasOwnProperty(key)) return true }
+                return false
+            }
+            _accessGranted() {
+                let check = {
+                    "clanstatus" : this._checkClanStatus,
+                    "roles" : this._checkRoles
+                }
+                let lock = [];
+                for (let key in this.$subcommand.metadata.access) { lock.push(check[key](this.$subcommand.metadata.access[key])) }
+                return lock.every(e => e === true)
+            }
+
+
+            //  PUBLIC METHODS
+            init() {
+                this._normalizeSubcommand()
+                if (this._isValidSubCommand()) { 
+
+                    this._exists = true;
+                    this._get_subcommand();
+
+                } else this._exists = false 
+                return this
+            }
+            execute() {
+                if (this._accessGranted()) {
+                    if (this._input.toLowerCase() !== "help") cmdpath.push(this.$subcommand.metadata.name);
+                    args.shift();
+                    if (this._input.toLowerCase() === "help") this.$subcommand.metadata = this.$invoker;
+                    let nextsubcommand = new Subcommand(this.$subcommand.metadata).init();
+                    if (nextsubcommand.exists) return nextsubcommand.execute()
+                    else return this._executeSubcommand();
+                } else return msg.embedWrapper(palette.red, `Sorry ${user.name}...\nYou don't have access to this command. ${emoji(`aauSatanialaugh`,bot)}`)
+            }
         }
 
         class Embed extends Discord.RichEmbed {
@@ -330,30 +341,7 @@ class clan_wrapper {
             format_Code(message, style) { return `\`\`\`${style}\n${message}\`\`\`` }
         }
         
-        /*
-        function Clan(name) {
-            this.name = name;
-            let metadata = {
-                tag: null,
-                id: null,
-                motto: null,
-                leader_id: null,
-                max_members: 0,
-
-            }
-            let roledata = {
-                name: `『 ${this.name} 』`,
-                color: null,
-                hoist: true,
-                position: message.guild.roles.array().length - 27,
-                permission: 0x0,
-                mention: true
-            }
-
-            const init = async() => {
-
-            }
-
+        function ClanOld(name) {
             this.createClan = async() => {
                 new_role = await (message.guild.createRole(roledata, "test"));
                 metadata.id = new_role.id;
@@ -384,7 +372,34 @@ class clan_wrapper {
             }
 
         }
-        */
+
+        //  Define special globals
+        user = await new User(authorname).init();
+        msg = new Embed();
+        cmdpath = [`${prefix}${commandname}`]
+        accessmap = {
+            clanstatus : {
+                public : true,
+                member : user.isMember,
+                leader : user.isLeader
+            },
+            roles : {
+                public : { 
+                    "459891664182312980" : "@everyone"
+                },
+                developer : { 
+                    "502843277041729546" : "Development Team",
+                    "591050122876551180" : "AAU Creative Lead"
+                },
+                admin : { 
+                    "459936023498063902" : "Grand Master",
+                    "465587578327007233" : "Creators Council"
+                },
+                nobody : {
+                    "999999999999999999" : "Nonexistant Test Role"
+                }
+            }
+        }
 
         /***************************************************************************************************
          * GLOBAL OUTPUT LOG
@@ -449,18 +464,30 @@ class clan_wrapper {
          * UTILITY COMMANDS
          ***************************************************************************************************/
         let help = {
-            metadata: {
-                name: "help",
-                alias: [],
-                commandlist: [],
-                info: "Command Information Here",
-                access: {
-                    clanstatus: "public",
-                    roles: "public"
-                }
-            },
+            metadata: new Metadata("help")
+                .setInfo("Displays complete guide of invoking subcommand.")
+                .setAccess({ roles: "public" }),
+
             execute: async(metadata) => {
-                msg.embedWrapper(palette.green, `Detailed Guide for: ${invoker.name}`)
+                let style = `HTTP`
+                let commandlistdata = {}
+                metadata.commandlist.shift();
+                metadata.commandlist.forEach(e => commandlistdata[e.metadata.name] = e.metadata.info)
+                metadata.arguments.forEach((e, i)  => metadata.arguments[i] = `<${e}>`)
+
+                msg //.setAuthor(`|  Command Help`, 'https://i.imgur.com/nohkOP0.png')
+                    .setColor(palette.darkmatte)
+                    .addField(`Command Shortcut:`,      msg.format_Code(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`))
+                    .addField(`Information:`,           msg.format_Code(metadata.info, style))
+
+                if (args[0] === "DEVMODE") return msg
+                    .addField(`Formal Name:`,           msg.format_Code(metadata.name, style))
+                    .addField(`Alias:`,                 msg.format_Code(metadata.alias.join(', '), style))
+                    .addField(`Subcommand List:`,       msg.format_Code(JSON.stringify(commandlistdata).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,': '), style))
+                    .addField(`Access Permissions:`,    msg.format_Code(JSON.stringify(metadata.access).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,': '), style))
+                    .setFooter(`${user.name} | Developer Mode`)
+                    .send();
+                else return msg.send();
             }
         }
 
@@ -468,11 +495,12 @@ class clan_wrapper {
          * ♡♡♡ TESTING ♡♡♡
          ***************************************************************************************************/
         let test_userNicknameChange = {
-            metadata: {
-                name: "namechange",
-                alias: ["nickname", "change"],
-                commandlist: [help]
-            },
+            metadata: new Metadata("namechange")
+                .setAlias(["nickname", "change"])
+                .setInfo("Used to change a user's nickname.")
+                .setArguments(["username", "new nickname"])
+                .setAccess({ roles: "developer" }),
+
             execute: async(metadata) => {
 
                 if (args.length >= 2) { 
@@ -485,11 +513,12 @@ class clan_wrapper {
         }
 
         let test_userFind = {
-            metadata: {
-                name: "userfind",
-                alias: ["userdata", "userinfo", "user", "find"],
-                commandlist: [help]
-            },
+            metadata: new Metadata("userfind")
+                .setAlias(["userdata", "userinfo", "user", "find"])
+                .setInfo("Used to find all user information.")
+                .setArguments("username (optional)")
+                .setAccess({ roles: "developer" }),
+
             execute: async(metadata) => {
 
                 if (args.length === 0) target = user;
@@ -504,7 +533,7 @@ class clan_wrapper {
                     return msg
                         .setAuthor(user.name, user.pfp)
                         .setColor(palette.darkmatte)
-                        .addField(`Search Input:`,      msg.format_Code(target.r_name, style))
+                        .addField(`Search Input:`,      msg.format_Code(target.inputname, style))
                         .addField(`User ID:`,           msg.format_Code(target.id, style))
                         .addField(`User Name:`,         msg.format_Code(`${target.name}#${target.discriminator}`, style))
                         .addField(`Nickname:`,          msg.format_Code(target.nickname, style))
@@ -525,8 +554,19 @@ class clan_wrapper {
                 alias: ["send", "msg"],
                 commandlist: [help]
             },
+            metadata: new Metadata("message")
+                .setAlias(["send", "msg"])
+                .setInfo("Sends a test message.")
+                .setAccess({ roles: "developer" }),
             execute: async(metadata) => {
 
+                msg .setColor(`#0099ff`)
+                    .setAuthor(`Requested by: ${user.name}`, user.pfp)
+                    .setDescription(`Here's Naphy's favorite .gif for you. ♡`)
+                    .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
+                    .send()
+
+                return
                 if (args.length === 0) target = user;
                 else if (args.length >= 1) target = await new User(args.join(" ")).init();
 
@@ -547,12 +587,27 @@ class clan_wrapper {
             }
         }
 
+        let test_2 = {
+            metadata: new Metadata("test2")
+                .setAlias(["2", "22", "222"])
+                .setInfo("Test Info for Command: test2")
+                .setArguments("username / userid")
+                .setCommandList([
+                    test_userFind, 
+                    test_userNicknameChange,
+                    test_sendMessage])
+                .setAccess({ roles: "developer" }),
+                
+            execute: async(metadata) => {
+                msg.embedWrapper(palette.green, `Execute: ${metadata.name}`)
+            }
+        }
+
         let test_1 = {
-            metadata: {
-                name: "test1",
-                alias: ["1", "11", "111"],
-                commandlist: [help]
-            },
+            metadata: new Metadata("test1")
+                .setAlias("1")
+                .setInfo("Test Info for Test 1")
+                .setCommandList(test_2),
             execute: async(metadata) => {
                 let markdown = `HTTP\n`
                 msg.embedWrapper(palette.green,  
@@ -579,22 +634,6 @@ class clan_wrapper {
                     })
             }
         }
-
-        let test_2 = {
-            metadata: {
-                name: "test2",
-                alias: ["2"],
-                commandlist: [help],
-                access: {
-                    clanstatus: "public",
-                    roles: "nobody"
-                }
-            },
-            execute: async(metadata) => {
-                msg.embedWrapper(palette.green, "Executing Test 2!")
-            }
-        }
-
         /***************************************************************************************************
          * TIER 2 COMMANDS
          ***************************************************************************************************/
@@ -651,56 +690,24 @@ class clan_wrapper {
          * EXECUTION:
          ***************************************************************************************************/
         const triage = async() => {
-            let metadata = {
-                name: "triage",
-                alias: [],
-                info: "Command Information Here",
-                help: "How to use here!",
-                commandlist: [
-                    help,
-                    clanManagement,
-                    clanCreationInterface,
+            let metadata = new Metadata("")
+                .setInfo("Main clan interface command.")
+                .setArguments("subcommand")
+                .setCommandList([
+                    //clanManagement,
+                    //clanCreationInterface,
                     test_userNicknameChange,
                     test_userFind,
                     test_sendMessage,
                     test_1,
                     test_2
-                ]
-            }
-            invoker = metadata;
+                ])
+                .setAccess({ roles: "public" })
             let subcommand = await new Subcommand(metadata).init();
             if (subcommand.exists) return await subcommand.execute()
             else return log(`TRIAGE_HELP`)
         }
 
-
-        let user = await new User(authorname).init();
-        let target = null;
-        let msg = new Embed();
-        let invoker = null; //Required for help command!
-        const accessmap = {
-            clanstatus : {
-                public : true,
-                member : user.isMember,
-                leader : user.isLeader
-            },
-            roles : {
-                public : { 
-                    "459891664182312980" : "@everyone"
-                },
-                developer : { 
-                    "502843277041729546" : "Development Team",
-                    "591050122876551180" : "AAU Creative Lead"
-                },
-                admin : { 
-                    "459936023498063902" : "Grand Master",
-                    "465587578327007233" : "Creators Council"
-                },
-                nobody : {
-                    "999999999999999999" : "Nonexistant Test Role"
-                }
-            }
-        }
         return triage();
     }
 }
