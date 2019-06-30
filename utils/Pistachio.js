@@ -1,5 +1,6 @@
 const { RichEmbed, Attachment } = require(`discord.js`);
 const databaseManager = require(`./databaseManager`);
+const fsn = require(`fs-nextra`);
 /**
  *  Micro framework to support Annie's structure
  *  Lightweight, portable and opinionated
@@ -120,6 +121,18 @@ module.exports = (Components) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }, // End of pause
 
+    // Lowercase first letter and de-plural string.
+    container.normalizeString = (string) => {
+        string = string.charAt(0).toLowerCase() + string.slice(1);
+        string = string.slice(0, -1);
+        return string;
+    }
+
+    //  Load asset from default images dir
+    container.loadAsset = async (id) => {
+        return fsn.readFile(`./images/${id}.png`);
+    }
+
     /** Annie's custom system message.
      *  @param content as the message content
      *  @param {object} 
@@ -133,7 +146,7 @@ module.exports = (Components) => {
      *  @param thumbnail as message icon on top right
      *  @param deleteIn as countdown before the message get deleted. In seconds.
      */
-    container.reply = (content, options = {
+    container.reply = async (content, options = {
         socket: [],
         color: ``,
         image: null,
@@ -171,7 +184,7 @@ module.exports = (Components) => {
 
         //  Add image preview
         if (options.image) {
-            embed.attachFile(new Attachment(options.image, `preview.jpg`))
+            embed.attachFile(new Attachment(await container.loadAsset(options.image), `preview.jpg`))
             embed.setImage(`attachment://preview.jpg`)
         } else if (embed.file) {
             embed.image.url = null;

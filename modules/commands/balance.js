@@ -8,7 +8,6 @@ class Balance {
     }
     async execute() {
         const { reply, code, emoji, avatar, commanifier, meta : { author, data }} = this.stacks;
-
         return reply(code.DISPLAY_BALANCE, {
             socket: [emoji(`artcoins`), commanifier(data.artcoins)],
             notch: true,

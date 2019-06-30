@@ -1,12 +1,29 @@
 {
     "BUY": {
-        "ERR": {
-            "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
-            "MISSING_ROLENAME": "You should include the role name!",
-            "LVL_TOO_LOW": "Sorry, to buy roles you need be at least level **25**.",
-            "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough artcoins.",
-            "INVALID_CATEGORY": "That doesn't looks like a valid category."
-        }
+        "SHORT_GUIDE": "Checkout what you can buy in our `>shop` !",
+        "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
+        "MISSING_ROLENAME": "You should include the role name!",
+        "ROLES_LVL_TOO_LOW": "Sorry, to buy roles you need be at least level **25**.",
+        "DUPLICATE_SKIN": "You already own that skin",
+        "BADGES_LIMIT": "You have reached your max badges limit.",
+        "DUPLICATE_BADGE": "You already own that badge",
+        "DUPLICATE_COVER": "You are currently using that cover",
+        "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough {1}.",
+        "INVALID_CATEGORY": "That doesn't looks like a valid category.",
+        "MISSING_ITEMNAME": "Don't forget to specify the item name",
+        "INVALID_ITEM": "I can't find any item with that name . ."
+    },
+    "CHECKOUT": {
+        "CANCEL": "Transaction cancelled.",
+        "SUCCESSFUL": "Purchase successful!",
+        "METADATA": "You are going to buy **{0} {1}** for {2} **{3}**.\nPlease type `y` to confirm your purchase.",
+        "ERROR": "Uhh, something went wrong."
+    },
+    "CAPSULE": {
+        "SHORT_GUIDE": "You can use your power capsules and gain the exp by typing `>eat <amount>`.",
+        "INSUFFICIENT_AMOUNT": "You only have **{0}** Power Capsules.",
+        "SUCCESSFUL": "**{0}** used {1} **{2}** capsules and gained **+{3} EXP**",
+        "ZERO": "You don't have any power capsules left."
     },
     "ASK": {
         "ANSWERS": ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"],

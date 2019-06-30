@@ -1,6 +1,5 @@
 
 const sql = require('sqlite');
-const utils = require('./functions');
 sql.open('.data/database.sqlite');
   /**
     *   Accessing database globally.
@@ -38,6 +37,16 @@ class databaseUtils {
                 WHERE userdata.userId = "${this.id}"`
             )
         }
+
+
+        get userBadges() {
+            return sql.get(`
+                SELECT *
+                FROM userbadges
+                WHERE userId = "${this.id}"
+            `)
+        }
+
 
         //  Accepts one level of an object. Returns sql-like string.
         toQuery(data) {
@@ -78,7 +87,48 @@ class databaseUtils {
             `)
         }
 
+        updateSkin(newvalue) {
+            sql.run(`UPDATE userdata 
+            SET interfacemode ="${newvalue}" 
+            WHERE userId = ${this.id}`);
+        }
 
+        updateCover(newvalue) {
+            sql.run(`UPDATE userdata 
+            SET cover = "${newvalue}"
+            WHERE userId = ${this.id}`);
+        }
+
+        async updateBadge(newvalue) {
+            let badgedata = await this.userBadges;
+            let slotkey = Object.keys(badgedata);
+            let slotvalue = Object.values(badgesdata);
+            sql.run(`UPDATE userbadges 
+            SET ${slotkey[slotvalue.indexOf(null)]} = "${newvalue}" 
+            WHERE userId = ${this.id}`);
+        }
+
+        updateExpBooster(newvalue) {
+            sql.run(`UPDATE usercheck 
+            SET expbooster = "${newvalue}",
+                expbooster_duration = ${Date.now()}
+            WHERE userId = "${this.id}"`);
+        }
+
+        updateExperienceMetadata(data = {}) {
+            sql.run(`UPDATE userdata 
+            SET currentexp = ${data.currentexp},
+            level = ${data.level},
+            maxexp = ${data.maxexp},
+            nextexpcurve = ${data.nextexpcurve}
+            WHERE userId = "${this.id}"`);
+        }
+
+        withdraw(value, value_type) {
+            sql.run(`UPDATE userinventories 
+            SET ${value_type} = ${value_type} - ${value} 
+            WHERE userId = "${this.id}"`);
+        }
 
         /**
             *   Getting keys from object

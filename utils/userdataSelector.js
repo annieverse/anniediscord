@@ -14,10 +14,16 @@ class Data {
         this.requested_data = {};
     }
 
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     async request() {
         const user = await new userSelector(this.meta).get();
-        const res = new databaseManager(user.id).userMetadata;
+        const db = new databaseManager(user.id);
+        let res = await db.userMetadata;
+        res.badges = db.userBadges;
+        delete res.badges.userId;
 
         this.requested_data = {
             author: user,
