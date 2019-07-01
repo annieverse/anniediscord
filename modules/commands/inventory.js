@@ -16,8 +16,6 @@ Canvas.registerFont(resolve(join(__dirname, "../../fonts/Whitney.otf")), "Whitne
 
 class inventory {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
         this.utils = Stacks.utils;
         this.message = Stacks.message;
         this.args = Stacks.args;
@@ -26,11 +24,7 @@ class inventory {
     }
 
     async execute() {
-        // Add these three lines so u dont have to go through and put this./this.stacks infront of everything
-        // might have to go through if another varible is called
-        let message = this.message;
-        let bot = this.stacks.bot;
-        let palette = this.stacks.palette;
+        const { message, palette, pause, utils, args, bot, emoji } = this.stacks;
         const configFormat = new formatManager(message);
 
         /**
@@ -38,8 +32,7 @@ class inventory {
             @get_inventobject
         */
         let raw_object;
-        function get_inventobject() {
-            let user = message.author;
+        function get_inventobject(user) {
             return sql.get(`SELECT  * FROM userinventories WHERE userId = "${user.id}"`)
                 .then(async res => raw_object = res)
         }
@@ -146,9 +139,9 @@ class inventory {
             assigning_items();
             eliminate_nulls();
             name_labeling();
-            await this.stacks.pause(100)
+            await pause(100)
             get_rarities();
-            await this.stacks.pause(50);
+            await pause(50);
 
 
             // Sorted and properly formatted.
@@ -383,14 +376,16 @@ class inventory {
 
             if (![`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)) return configFormat.embedWrapper(palette.darkmatte, `You can check your inventory in bot channels.`);
 
-            return message.channel.send(`\`fetching ${message.author.username} inventory ..\``)
-                .then(async load => {
-                    await get_inventobject();
-                    await this.stacks.pause(200);
-                    await filtering_items(raw_object);
-                    const title = `${utils.emoji(`AnnieWot`, bot)} | **Inventory card for ${message.author.username}**`;
+            let user = await utils.userFinding(args.join(" ") || message.author.id)
 
-                    !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(filter_alias_res), `inventory-${message.author.username}.jpg`))
+            return message.channel.send(`\`fetching ${user.user.username} inventory ..\``)
+                .then(async load => {
+                    await get_inventobject(user);
+                    await pause(200);
+                    await filtering_items(raw_object);
+                    const title = `${emoji(`AnnieWot`, bot)} | **Inventory card for ${user.user.username}**`;
+
+                    !filter_alias_res ? text_interface(filter_res) : message.channel.send(title, new Attachment(await visual_interface(filter_alias_res), `inventory-${user.user.username}.jpg`))
                     load.delete();
                 })
         }

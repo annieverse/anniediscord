@@ -1,4 +1,4 @@
-const { Canvas } = require("canvas-constructor"); 
+const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const Discord = require("discord.js");
 
@@ -12,28 +12,18 @@ Canvas.registerFont(resolve(join(__dirname, "../../fonts/Whitney.otf")), "Whitne
 
 class collection {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
     }
 
     async execute() {
-        let message = this.message;
-        let palette = this.stacks.palette;
+        const { message, palette, pause, utils, args } = this.stacks;
         let user_collection = {};
-        function user_cardcollection() {
-            return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
+        function user_cardcollection(user) {
+            return sql.get(`SELECT * FROM collections WHERE userId = ${user.id}`)
                 .then(async data => {
                     user_collection = data
                 })
         }
-
-
-
 
         let filtered_res;
         async function filter_items(container) {
@@ -78,7 +68,7 @@ class collection {
 
             eliminate_nulls();
             labeling();
-            await this.stacks.pause(500);
+            await pause(500);
             filtered_res = parsedbag;
         }
 
@@ -112,13 +102,15 @@ class collection {
             @run
         */
         async function run() {
-            return message.channel.send(`\`fetching ${message.author.username} card collection ..\``)
+            let user = await utils.userFinding(args.join(" ") || message.author.id)
+            console.log(user.user.username)
+            return message.channel.send(`\`fetching ${user.user.username} card collection ..\``)
                 .then(async load => {
-                    await user_cardcollection();
+                    await user_cardcollection(user);
                     await filter_items(user_collection);
                     await text_interface();
 
-                    message.channel.send(`**${message.author.username}'s Collection**`)
+                    message.channel.send(`**${user.user.username}'s Collection**`)
                         .then(async title => {
                             message.channel.send(msg_res[0])
                             load.delete();
@@ -135,7 +127,7 @@ module.exports.help = {
     start: collection,
     name: "collection",
     aliases: [],
-    description: `View your collected cards`,
+    description: `View yours or someones collected cards`,
     usage: `${require(`../../.data/environment.json`).prefix}collection`,
     group: "General",
     public: true,

@@ -1,15 +1,10 @@
 class invite {
     constructor(Stacks) {
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
     }
 
     async execute() {
-        let message = this.message; 
-        return message.channel.send(`Hey **${message.author.username}**, here's the link.
+        return this.stacks.message.channel.send(`Hey **${this.stacks.message.author.username}**, here's the link.
 	https://discord.gg/YFaCQVn`)
     }
 }

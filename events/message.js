@@ -101,19 +101,6 @@ module.exports = (bot, message) => {
   if (!message.content.startsWith(prefix)) return;
   if (!commandfile) return;
 
-  //these commands are temporary so people can look up boost numbers and info... because we dont use master version, its a work around
-  if (message.content.toLowerCase() === `${prefix}boost number`) {
-    message.channel.send(`This Server has a total of ${message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).length} boosts currently!!`)
-  }
-  if (message.content.toLowerCase() === `${prefix}boost members`) {
-    message.channel.send(`These are the members currently boosting the server :D\n${message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).join('\n')}`)
-  }
-  if (message.content.toLowerCase() === `${prefix}boost level`) {
-    let count = message.guild.roles.find(n => n.id === "585550404197285889").members.map(m => m.user.tag).length;
-    if (count >= 2 && count < 10) message.channel.send("The current level this server boosts is: Level 1")
-    if (count >= 10 && count < 50) message.channel.send("The current level this server boosts is: Level 2")
-    if (count >= 50) message.channel.send("The current level this server for boosts is: Level 3")
-  }
   const Components = {bot, message, command, args, commandfile};
   const cmdHandler = require(`../modules/mainComponents.js`);
   return new cmdHandler(Components).init();
