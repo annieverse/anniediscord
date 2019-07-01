@@ -45,6 +45,9 @@ module.exports = (Components) => {
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
+    //  Check for developer authority
+    container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
+
     //  Automatically convert weird number notation into real value.
     container.trueInt = (str) => {
         return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 

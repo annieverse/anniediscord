@@ -25,6 +25,19 @@
         "SUCCESSFUL": "**{0}** used {1} **{2}** capsules and gained **+{3} EXP**",
         "ZERO": "You don't have any power capsules left."
     },
+    "CARTCOIN": {
+        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:2**",
+        "INSUFFICIENT_AMOUNT": "You only have {0}**{1}** artcoins. Grind harder!",
+        "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
+        "SUCCESSFUL": "**{0}** has converted {1} **{2}** artcoins and gained **+{3} EXP**"
+    },
+    "DAILY": {
+        "IN_COOLDOWN": "You can take your dailies again **{0}**",
+        "CLAIMED": "**{0}** has received {1} **{2}{3}** artcoins!\n{4}{5}"
+    },
+    "EVAL": {
+        "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"
+    },
     "ASK": {
         "ANSWERS": ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"],
         "SHORT_GUIDE": "Feel free to ask me anything!"

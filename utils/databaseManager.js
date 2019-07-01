@@ -124,6 +124,19 @@ class databaseUtils {
             WHERE userId = "${this.id}"`);
         }
 
+        updateDailies(dly_metadata) {
+            //  Update daily date
+            sql.run(`UPDATE usercheck
+                     SET totaldailystreak = ${dly_metadata.countStreak},
+                     lastdaily = "${Date.now()}"
+                     WHERE userId = ${this.id}`);
+            
+            //  Update dailies reward
+            sql.run(`UPDATE userinventories
+                     SET artcoins = artcoins + ${dly_metadata.amount + dly_metadata.bonus}
+                     WHERE userId = "${this.id}"`);
+        }
+
         withdraw(value, value_type) {
             sql.run(`UPDATE userinventories 
             SET ${value_type} = ${value_type} - ${value} 
