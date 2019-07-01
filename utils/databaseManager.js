@@ -143,6 +143,14 @@ class databaseUtils {
             WHERE userId = "${this.id}"`);
         }
 
+        get luckyTicketDropRates() {
+            return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
+        }
+
+        lootGroupByRate(rate) {
+            return sql.all(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
+        }
+
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.

@@ -56,6 +56,18 @@
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**{2}(+{3})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value."
     },
+    "GACHA": {
+        "OPENING_WORDS": [
+            "is opening their precious card",
+            "seems really curious",
+            "may the RNG bless you",
+            "close your eyes",
+            "do you know what's lying behind this card?",
+            "i feel strange feelings",
+            "wooowieeee",
+            "flip flip flap!"
+            ]
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{

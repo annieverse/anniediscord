@@ -45,6 +45,12 @@ module.exports = (Components) => {
     //  Get event-discussion channel object
     container.eventLobby = bot.channels.get(`460615157056405505`);
 
+    //  Get general aau channel object
+    container.world = bot.channels.get(`459891664182312982`);
+
+    //  Check if current channel is included in gacha-allowed list
+    container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
+
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
@@ -126,6 +132,13 @@ module.exports = (Components) => {
     //  Format numbers with more than 3 digits
     container.commanifier = (number = 0) => {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    //  Get closest upper element from an array
+    container.closestUpper = (array, val) => {
+        return Math.min.apply(null, array.filter(function (v) {
+            return v > val
+        }))
     }
 
     //  Initializing database class
