@@ -42,11 +42,34 @@ module.exports = (Components) => {
     //  Storing environment.json keys
     container.environment = require('../.data/environment.json');
 
+    //  Get event-discussion channel object
+    container.eventLobby = bot.channels.get(`460615157056405505`);
+
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
     //  Check for developer authority
     container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
+
+    /**
+     * To check whether the user has the said role or not
+     * @param {String} rolename for role name code
+     * @return {Boolean} of role
+     * @hasRole
+     */
+    container.hasRole = (rolename = ``) => {
+        return message.member.roles.find(role => role.name === rolename)
+    }
+
+    /**
+     * Returning of given role name
+     * @param {String} rolename for role name code
+     * @return {Object} of role
+     * @addRole
+     */
+    container.addRole = (rolename = ``) => {
+        return message.guild.member(message.author.id).addRole(message.guild.roles.find(r => r.name === rolename))
+    }
 
     //  Automatically convert weird number notation into real value.
     container.trueInt = (str) => {

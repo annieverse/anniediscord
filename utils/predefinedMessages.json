@@ -35,6 +35,12 @@
         "IN_COOLDOWN": "You can take your dailies again **{0}**",
         "CLAIMED": "**{0}** has received {1} **{2}{3}** artcoins!\n{4}{5}"
     },
+    "EVJOIN": {
+        "ALREADY_HAS": "**{0}** you have unused ticket, go submit your art now!",
+        "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event.",
+        "SUCCESSFUL": "**{0}** has joined the event.\n{1}{2}",
+        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing."
+    },
     "EVAL": {
         "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"
     },
