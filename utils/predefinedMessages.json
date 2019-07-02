@@ -76,5 +76,14 @@
                 "ROLE":"I'm sorry but you do not have the requried role for this/these command(s)"
             }
         }
+    },
+    "ADDROLE":{
+        "NO_USER":"Uhm, can you specify the user please.",
+        "NO_USER_FOUND":"Sorry {0}, I couldn't find that user.",
+        "NO_ROLE_SPECIFIED":"Can you specify a role please.",
+        "NO_ROLE_FOUND":"Sorry {0}, but I couldn't find that role.",
+        "HAS_ROLE_ALREADY":"I'm Sorry but {0} has that role already.",
+        "DMS_LOCKED":"Congrats to {0} they have been given the role **{1}**. I tried to DM them, but their DMs are locked. T__T",
+        "ROLE_ADDED":"Gratz {0}! You have been given the role **{1}**"
     }
 }

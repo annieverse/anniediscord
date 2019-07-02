@@ -1,96 +1,59 @@
-const Discord = require("discord.js");
-
 class AddRole {
   constructor(Stacks) {
-    console.log(Stacks.meta)
-    this.author = Stacks.meta.author;
-    this.data = Stacks.meta.data;
-    this.utils = Stacks.utils;
-    this.message = Stacks.message;
-    this.args = Stacks.args;
-    this.palette = Stacks.palette;
-    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
     this.stacks = Stacks;
+    this.required_roles = Stacks.message.member.roles.find(r => Object.keys(this.stacks.roles.admin).some(i => this.stacks.roles.admin[i] === r.id));
   }
 
   async execute() {
-    /// addrole.js
-    ///
-    ///  ADDROLE COMMAND
-    ///    change logs:
-    ///       09/17/18 - rework embed. 
-    ///     -naphnaphz
 
-    let message = this.message;
-    let bot = this.stacks.bot;
-
-    let bicon = bot.user.displayAvatarURL;
-    let pUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(this.args[0]));
-    let red = "#b22727";
-
-    let roleEmbed = new Discord.RichEmbed();
-
-    roleEmbed.setColor(red)
-    roleEmbed.setDescription(`You don't have authorization to use this command.`)
-    roleEmbed.setFooter(`Anime Artist United | Add Role`, bicon)
-    if (!message.member.hasPermission("MANAGE_ROLES")) return message.channel.send(roleEmbed);
-
-    roleEmbed.setColor(red)
-    roleEmbed.setDescription(`Uhm, can you specify the user?`)
-    if (!this.args[0]) return message.channel.send(roleEmbed);
-
-
-    roleEmbed.setColor(red)
-    roleEmbed.setDescription(`Sorry ${message.author.username}, I couldn't find that user.`)
-    if (!pUser) return message.channel.send(roleEmbed);
-
-
-    roleEmbed.setColor(red)
-    roleEmbed.setDescription(`Can you specify the role?`)
-    if (!this.args[1]) return message.channel.send(roleEmbed);
-
-
-    roleEmbed.setColor(red)
-    roleEmbed.setDescription(`${message.author.username}, I couldn't find that role.`)
-    let role = this.args[1].substring(3, 21);
-    let gRole = message.guild.roles.get(role);
-    if (!gRole) return message.channel.send(roleEmbed).then(() => console.log(role));
-
-
-    roleEmbed.setColor('#d61313')
-    roleEmbed.setDescription(`${pUser} already has that role.`)
-    if (pUser.roles.has(gRole.id)) return message.channel.send(roleEmbed);
-
-
-    await (pUser.addRole(gRole.id));
-    message.react("👌")
+    if (!this.stacks.message.member.hasPermission("MANAGE_ROLES") || this.required_roles) return this.stacks.utils.sendEmbed(this.stacks.code.UNAUTHORIZED_ACCESS, this.stacks.palette.red);
+    if (!this.stacks.args[0]) return this.stacks.utils.sendEmbed(this.stacks.code.ADDROLE.NO_USER, this.stacks.palette.red);
+    let pUser = await this.stacks.utils.userFinding(this.stacks.args[0] || this.stacks.message.mentions.users.first())
+    if (!pUser || pUser === null) return this.stacks.reply(this.stacks.code.ADDROLE.NO_USER_FOUND, {
+      socket: [this.stacks.message.author],
+      color: this.stacks.palette.red
+    });
+    if (!this.stacks.args[1]) return this.stacks.utils.sendEmbed(this.stacks.code.ADDROLE.NO_ROLE_SPECIFIED, this.stacks.palette.red);
+    let role = this.stacks.args[1].substring(3, 21);
+    let gRole = this.stacks.message.guild.roles.get(role);
+    if (!gRole) return this.stacks.reply(this.stacks.code.ADDROLE.NO_ROLE_FOUND, {
+      socket: [this.stacks.message.author],
+      color: this.stacks.palette.red
+    });
+    if (this.stacks.hasRole(gRole.name)) return this.stacks.reply(this.stacks.code.ADDROLE.HAS_ROLE_ALREADY, {
+      socket: [this.stacks.message.author],
+      color: this.stacks.palette.red
+    });
+    await (this.stacks.addRole(gRole.name, pUser.id));
+    this.stacks.message.react("👌")
     try {
-
-      roleEmbed.setColor('#a3edd0')
-      roleEmbed.setDescription(`Gratz <@${pUser.id}> !
-      You have been given the role **${gRole.name}**`)
-      roleEmbed.setFooter(`Anime Artist United | New Role | Given by ${message.author.username}`, bicon)
-      await pUser.send(roleEmbed)
-
+      this.stacks.reply(this.stacks.code.ADDROLE.ROLE_ADDED, {
+        color: this.stacks.palette.green,
+        field: pUser,
+        socket: [pUser, gRole.name]
+      }).catch(() => {
+        return this.stacks.reply(this.stacks.code.ADDROLE.DMS_LOCKED, {
+          color: this.stacks.palette.green,
+          socket: [pUser, gRole.name]
+        })
+      })
     } catch (e) {
-
-      roleEmbed.setColor('#5178a5')
-      roleEmbed.setDescription(`Congrats to <@${pUser.id}>!! they have been given the role **${gRole.name}**.
-     I tried to DM them, but their DMs are locked. T__T`)
-      roleEmbed.setFooter(`Anime Artist United | New Role | Given by ${message.author.username}`, bicon)
-      return message.channel.send(roleEmbed)
+      return this.stacks.reply(this.stacks.code.ADDROLE.DMS_LOCKED, {
+        color: this.stacks.palette.green,
+        socket: [pUser, gRole.name]
+      })
     }
   }
 }
 
 module.exports.help = {
   start: AddRole,
-  name:"addrole",
+  name: "addrole",
   aliases: [],
   description: `Add roles to specific user.`,
-  usage: `${require(`../../.data/environment.json`).prefix}addrole @user <role>`,
+  usage: `${require(`../../.data/environment.json`).prefix}addrole @user @role`,
   group: "Admin",
   public: true,
-  required_usermetadata: true,   
-  multi_user: true
+  required_usermetadata: false,
+  multi_user: false
 }

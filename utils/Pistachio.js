@@ -73,8 +73,8 @@ module.exports = (Components) => {
      * @return {Object} of role
      * @addRole
      */
-    container.addRole = (rolename = ``) => {
-        return message.guild.member(message.author.id).addRole(message.guild.roles.find(r => r.name === rolename))
+    container.addRole = (rolename = ``, user = message.author.id) => {
+        return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
     }
 
     //  Automatically convert weird number notation into real value.
@@ -242,6 +242,6 @@ module.exports = (Components) => {
                 msg.delete(options.deleteIn)
             })
     }
-
+    
     return container;
 }
