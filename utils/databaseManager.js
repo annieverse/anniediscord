@@ -148,7 +148,44 @@ class databaseUtils {
         }
 
         lootGroupByRate(rate) {
-            return sql.all(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
+            return sql.get(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
+        }
+
+
+        /**
+		Subtracting tickets by result of roll_type().
+        @substract_ticket
+		*/
+		withdrawLuckyTicket(amount = 0) {
+            sql.run(`UPDATE userinventories
+             SET lucky_ticket = lucky_ticket - ${amount}
+             WHERE userId = ${this.id}`)
+        }
+        
+        //	Count total user's collected cards.
+		async totalCollectedCards() {
+			const data = await sql.get(`SELECT * FROM collections WHERE userId = ${this.id}`);
+			for (let key in data) {
+				if (!data[key]) delete data[key];
+			}
+			return Object.keys(data).length;
+        }
+        
+
+        /**
+         *  Storing rolled items straight into user inventory
+         *  @param {Object} obj as parsed object of roll metadata
+         */
+        async storingUserGachaMetadata(obj = {}) {
+            for (let keyv in obj) {
+                const tablediff = keyv.indexOf(`card`) > -1 ? `collections` : `userinventories`;
+                sql.run(`UPDATE ${tablediff} 
+                         SET ${keyv} = CASE WHEN ${keyv} IS NULL 
+                            THEN ${parseInt(obj[keyv])} 
+                            ELSE ${keyv} + ${parseInt(obj[keyv])} 
+                         END 
+                         WHERE userId = "${this.id}"`);
+            }
         }
 
         /**

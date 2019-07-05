@@ -22,7 +22,10 @@ class Data {
         const user = await new userSelector(this.meta).get();
         const db = new databaseManager(user.id);
         let res = await db.userMetadata;
+
+        res.total_cards = await db.totalCollectedCards()
         res.badges = db.userBadges;
+
         delete res.badges.userId;
 
         this.requested_data = {

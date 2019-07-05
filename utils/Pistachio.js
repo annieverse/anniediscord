@@ -42,11 +42,17 @@ module.exports = (Components) => {
     //  Storing environment.json keys
     container.environment = require('../.data/environment.json');
 
+    //  Storing cards data
+    container.metacards = require(`./cards-metadata`);
+
     //  Get event-discussion channel object
     container.eventLobby = bot.channels.get(`460615157056405505`);
 
     //  Get general aau channel object
     container.world = bot.channels.get(`459891664182312982`);
+
+    //  Get gacha-unlocked channel
+    container.gachaField = bot.channels.get(`578518964439744512`)
 
     //  Check if current channel is included in gacha-allowed list
     container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
@@ -141,6 +147,12 @@ module.exports = (Components) => {
         }))
     }
 
+    //  Removing first few non-alphabet character from string
+    container.relabel = (str) => {
+        let res = str.replace(/[^A-Za-z]+/, '')
+        return res;
+    }
+
     //  Initializing database class
     container.db = (id) => new databaseManager(id);
 
@@ -160,6 +172,7 @@ module.exports = (Components) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }, // End of pause
 
+
     // Lowercase first letter and de-plural string.
     container.normalizeString = (string) => {
         string = string.charAt(0).toLowerCase() + string.slice(1);
@@ -174,16 +187,17 @@ module.exports = (Components) => {
 
     /** Annie's custom system message.
      *  @param content as the message content
-     *  @param {object} 
-     *  @param socket is the optional message modifier. Array
-     *  @param color for the embed color. Hex code
-     *  @param field as the message field target (GuildChannel/DM). Object
-     *  @param image as the attachment url. Buffer
-     *  @param simplified as non embed message toggle. Boolean
-     *  @param thumbnail as embed icon. StringuRL
-     *  @param notch as huge blank space on top and bottom
-     *  @param thumbnail as message icon on top right
-     *  @param deleteIn as countdown before the message get deleted. In seconds.
+     *  @param {Array} socket is the optional message modifier. Array
+     *  @param {ColorResolvable} color for the embed color. Hex code
+     *  @param {Object} field as the message field target (GuildChannel/DM). Object
+     *  @param {ImageBuffer} image as the attachment url. Buffer
+     *  @param {Boolean} simplified as non embed message toggle. Boolean
+     *  @param {ImageURL} thumbnail as embed icon. StringuRL
+     *  @param {Boolean} notch as huge blank space on top and bottom
+     *  @param {ImageBuffer|ImageURL} thumbnail as message icon on top right
+     *  @param {Integer} deleteIn as countdown before the message get deleted. In seconds.
+     *  @param {Boolean} prebuffer as indicator if parameter supply in "image" already contains image buffer.
+     *  @param {String} header use header in an embed.
      */
     container.reply = async (content, options = {
         socket: [],
@@ -194,6 +208,8 @@ module.exports = (Components) => {
         notch: false,
         thumbnail: null,
         deleteIn: 0,
+        prebuffer: false,
+        header: null
     }) => {
         options.socket = !options.socket ? [] : options.socket;
         options.color = !options.color ? container.palette.darkmatte : options.color;
@@ -202,6 +218,8 @@ module.exports = (Components) => {
         options.simplified = !options.simplified ? false : options.simplified;
         options.thumbnail = !options.thumbnail ? null : options.thumbnail;
         options.notch = !options.notch ? false : options.notch;
+        options.prebuffer = !options.prebuffer ? false : options.prebuffer;
+        options.header = !options.header ? null : options.header;
 
         //  Socketing
         for (let i = 0; i < options.socket.length; i++) {
@@ -209,7 +227,7 @@ module.exports = (Components) => {
         }
 
         //  Returns simple message w/o embed
-        if (options.simplified) return options.field.send(content);
+        if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await container.loadAsset(options.image)) : null);
 
         //  Add notch/chin
         if (options.notch) content = `\u200C\n${content}\n\u200C`;
@@ -220,10 +238,12 @@ module.exports = (Components) => {
             .setDescription(content)
             .setThumbnail(options.thumbnail)
 
+        //  Add header
+        if(options.header) embed.setAuthor(options.header, container.avatar(message.author.id))
 
         //  Add image preview
         if (options.image) {
-            embed.attachFile(new Attachment(await container.loadAsset(options.image), `preview.jpg`))
+            embed.attachFile(new Attachment(options.prebuffer ? options.image : await container.loadAsset(options.image), `preview.jpg`))
             embed.setImage(`attachment://preview.jpg`)
         } else if (embed.file) {
             embed.image.url = null;
