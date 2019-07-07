@@ -73,6 +73,17 @@
         "INSUFFICIENT_TICKET": "You can't do multi-roll with less than **10 Lucky Tickets**!",
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
+    "GIFT": {
+        "SHORT_GUIDE": "You now able to gift your crush in the server by typing `>gift <user>`! {0}",
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "SELF_TARGETING": "Aw, sadly you can't gift yourself.",
+        "INSUFFICIENT_AMOUNT": "You don't have that much item.",
+        "INVALID_ITEM": "I don't think thats a valid item..",
+        "INVALID_FORMAT": "Please use proper format so i can parse your request.",
+        "SUCCESSFUL": "**{0}** has received {1}**{2} {3}(+{4} reps)**",
+        "FETCHING": "Fetching available gifts ..",
+        "UNAVAILABLE": "You don't have any gifts at the moment."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{

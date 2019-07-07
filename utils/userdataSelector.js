@@ -19,18 +19,26 @@ class Data {
     }
 
     async request() {
-        const user = await new userSelector(this.meta).get();
-        const db = new databaseManager(user.id);
-        let res = await db.userMetadata;
+        try {
+            const user = await new userSelector(this.meta).get();
+            const db = new databaseManager(user.id);
+            let res = await db.userMetadata;
 
-        res.total_cards = await db.totalCollectedCards()
-        res.badges = db.userBadges;
+            res.total_cards = await db.totalCollectedCards()
+            res.badges = db.userBadges;
 
-        delete res.badges.userId;
+            delete res.badges.userId;
 
-        this.requested_data = {
-            author: user,
-            data: await res
+            this.requested_data = {
+                author: user,
+                data: await res
+            }
+        }
+        catch(e) {
+            this.requested_data = {
+                author: null,
+                data: null
+            }
         }
     }
     

@@ -1,4 +1,4 @@
-const { RichEmbed, Attachment } = require(`discord.js`);
+const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`);
 const databaseManager = require(`./databaseManager`);
 const fsn = require(`fs-nextra`);
 /**
@@ -45,6 +45,9 @@ module.exports = (Components) => {
     //  Storing cards data
     container.metacards = require(`./cards-metadata`);
 
+    //  Get user metadata manager
+    container.Data = require(`./userdataSelector`)
+
     //  Get event-discussion channel object
     container.eventLobby = bot.channels.get(`460615157056405505`);
 
@@ -62,6 +65,19 @@ module.exports = (Components) => {
 
     //  Check for developer authority
     container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
+
+    
+    /**
+     *  Instant message collector
+     *  @param {Default} max only catch 1 response
+     *  @param {Default} time 60 seconds timeout
+     */
+    container.collector = new MessageCollector(message.channel,
+        m => m.author.id === message.author.id, {
+            max: 1,
+            time: 60000,
+        });
+
 
     /**
      * To check whether the user has the said role or not
@@ -180,10 +196,55 @@ module.exports = (Components) => {
         return string;
     }
 
+    //  Inside this statement only available to use when required_usermetada is true.
+    if(Components.meta.author) {
+        //  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
+        container.selfTargeting = Components.meta.author.id === message.author.id ? true : false;
+    }
+
     //  Load asset from default images dir
     container.loadAsset = async (id) => {
         return fsn.readFile(`./images/${id}.png`);
     }
+
+
+    /**
+     *  Request mutation data
+     *  @param {String} id target user's id. Message author is the default id. 
+     */
+    container.reqData = async (id = message.author.id) => {
+        const mutatedComponents = {args: [id], message: message, commandfile: {help: {multi_user: false}}}
+        const metadata = await new container.Data(mutatedComponents).pull()
+        return metadata
+    }
+
+    /**
+     *  Prettify result of user's owned gifts
+     *  @param {Object} metadata Gifts metadata. Giving information of each reps point.
+     *  @param {Object} userInventory User inventories metadata.
+     */
+    container.parsingAvailableGifts = (metadata = {}, userInventory = {}) => {
+        let obj = {};
+        let itemdata = ``
+        let giftItems = Object.keys(metadata)
+
+        //  Store items
+        for (let i = 0; i < giftItems.length; i++) {
+            if (userInventory[giftItems[i]] > 0) obj[giftItems[i]] = userInventory[giftItems[i]]
+        }
+        
+        //  Parse string
+        for (let key in obj) {
+            itemdata += `> ${container.emoji(key.toString())}**${obj[key]}x ${key}**\n`
+        }
+
+        //  Returns
+        if (itemdata.length < 1) return null;
+
+        let str = `${itemdata}\n\n Above are all your available gifts. Please type **<amount> <itemname>** to send the gift.`
+        return str;
+    }
+
 
     /** Annie's custom system message.
      *  @param content as the message content

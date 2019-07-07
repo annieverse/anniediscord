@@ -1,0 +1,11 @@
+# 5.0.0
+- Developer Environment
+        - Moving Pistachio importion to after the requestedData() callback, so components initialization can be prioritized & gracefully loaded.
+        - Added default meta properties in base components.
+        - userdataSelector.js : Added default properties if method failing to retrieve requested metadata.
+        - userSelector.js : Added default null value if method failing to retrieve user.
+        - Added sub-pistachio with dynamic requirements.
+        - A lot of new Pistachio's functions.
+        - Updated database manager.
+- Last Trace 
+        - Gift.js (finished)

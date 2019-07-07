@@ -101,7 +101,7 @@ module.exports = (bot, message) => {
   if (!message.content.startsWith(prefix)) return;
   if (!commandfile) return;
 
-  const Components = {bot, message, command, args, commandfile};
+  const Components = {bot, message, command, args, commandfile, meta: {author: null, data: null}};
   const cmdHandler = require(`../modules/mainComponents.js`);
   return new cmdHandler(Components).init();
 

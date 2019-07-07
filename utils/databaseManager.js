@@ -188,6 +188,21 @@ class databaseUtils {
             }
         }
 
+
+        /**
+         * Adding user reputation points
+         * @param {Integer} amount Updated/added amount of user's reputation points
+         */
+        addReputations(amount = 0) {
+            return sql.run(`UPDATE userdata
+                            SET reputations = CASE WHEN reputations IS NULL
+                                                THEN ${amount}
+                                              ELSE reputations + ${amount}
+                                            END
+                            WHERE userId = "${this.id}"`)
+        }
+
+        
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.

@@ -18,16 +18,21 @@ class userSelector {
      * @returns {object} user object
      */
     async findUser(target) {
-        const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-        if (userPattern.test(target)) target = target.replace(userPattern, '$1');
-        let members = this.message.guild.members;
+        try {
+            const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
+            if (userPattern.test(target)) target = target.replace(userPattern, '$1');
+            let members = this.message.guild.members;
 
-        const filter = member => member.user.id === target ||
-            member.displayName.toLowerCase() === target.toLowerCase() ||
-            member.user.username.toLowerCase() === target.toLowerCase() ||
-            member.user.tag.toLowerCase() === target.toLowerCase();
+            const filter = member => member.user.id === target ||
+                member.displayName.toLowerCase() === target.toLowerCase() ||
+                member.user.username.toLowerCase() === target.toLowerCase() ||
+                member.user.tag.toLowerCase() === target.toLowerCase();
 
-        return members.filter(filter).first();
+            return members.filter(filter).first();
+        }
+        catch(e) {
+            return null;
+        }
     }
 
     async get(){
