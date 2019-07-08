@@ -7,5 +7,6 @@
         - Added sub-pistachio with dynamic requirements.
         - A lot of new Pistachio's functions.
         - Updated database manager.
+        - userSelector.js : pass any user into userFind() method for meta structure consistency.
 - Last Trace 
         - Gift.js (finished)

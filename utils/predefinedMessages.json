@@ -97,6 +97,10 @@
         "AUTHOR_RANK": "You are currently **{0}#** with total **{1}** {2}",
         "UNRANKED": "You are unranked."
     },
+    "LEVELCARD": {
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
+        "INVALID_USER": "Sorry, i couldn't find that user."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
