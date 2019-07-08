@@ -1,22 +1,30 @@
-class invite {
+/**
+ * Main module
+ * @ServerInvitation as one-type command to server invite link.
+ */
+class ServerInvitation {
     constructor(Stacks) {
         this.stacks = Stacks;
+        this.link = `https://discord.gg/YFaCQVn`;
     }
 
+    /**
+     *  Initializer method
+     */
     async execute() {
-        return this.stacks.message.channel.send(`Hey **${this.stacks.message.author.username}**, here's the link.
-	https://discord.gg/YFaCQVn`)
+        const { reply } = this.stacks
+        return reply(this.link, {simplified: true})
     }
 }
 
 module.exports.help={
-    start: invite,
+    start: ServerInvitation,
     name:"invite",
     aliases: ["serverinvite", "serverlink", "linkserver", "invitelink", "link"],
     description: `gives a server invite link`,
     usage: `${require(`../../.data/environment.json`).prefix}invite`,
     group: "Server",
     public: true,
-    require_usermetadata: false,
+    required_usermetadata: false,
     multi_user: false
 }
