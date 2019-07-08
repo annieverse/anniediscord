@@ -202,6 +202,13 @@ class databaseUtils {
                             WHERE userId = "${this.id}"`)
         }
 
+
+        get inventory() {
+            return sql.get(`
+                SELECT *
+                FROM userinventories
+                WHERE userId = "${this.id}"`)
+        }
         
         /**
             *   Getting keys from object

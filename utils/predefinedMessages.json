@@ -84,6 +84,12 @@
         "FETCHING": "Fetching available gifts ..",
         "UNAVAILABLE": "You don't have any gifts at the moment."
     },
+    "INVENTORY": {
+        "FETCHING": "`fetching {0} inventory . .`",
+        "EMPTY": "You don't have any items in the bag.",
+        "HEADER": "{0} | **Inventory card for {1}**",
+        "INVALID_USER": "Sorry i couldn't find that user."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
