@@ -1,7 +1,7 @@
 
 /**
 *   Main module
-*   @Mail Anonymous-administrator direct message trough annie.
+*   @Mail Anonymous-administrator direct message through annie.
 */
 class Mail {
     constructor(Stacks) {

@@ -108,6 +108,19 @@
         "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
         "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
     },
+    "PAY": {
+        "SHORT_GUIDE": "Pay-feature let you share your artcoins with other user!\nStart by typing `>pay <user>`",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{0}** to use this feature.",
+        "INVALID_USER": "Sorry, I couldn't find that account.",
+        "SELF_TARGETING": "You can't pay yourself.",
+        "USER_CONFIRMATION": "You are going to transfer your artcoins to **{0}**'s account. Please type the amount.",
+        "CANCELLED": "Transaction cancelled.",
+        "INVALID_AMOUNT": "You need to put a valid number.",
+        "EXCEEDING_BALANCE": "Your current balance isn't enough to continue the transaction.",
+        "CONFIRMATION": "{0}**+{1}** -> **{2}'s Balance**?\ntype `y` to confirm your transaction.",
+        "SUCCESSFUL": "Transaction successful.",
+        "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{

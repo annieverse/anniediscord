@@ -80,6 +80,19 @@ module.exports = (Components) => {
 
 
     /**
+     *  (Multi-layering)Instant message collector
+     *  @param {Object} msg current message instance
+     *  @param {Default} max only catch 1 response
+     *  @param {Default} time 60 seconds timeout
+     */
+    container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
+        m => m.author.id === msg.author.id, {
+            max: 1,
+            time: 60000,
+        });
+
+
+    /**
      * To check whether the user has the said role or not
      * @param {String} rolename for role name code
      * @return {Boolean} of role

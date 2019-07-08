@@ -1,123 +1,122 @@
-const Discord = require("discord.js");
-const moment = require(`moment`);
-const formatManager = require('../../utils/formatManager.js');
 
-const sql = require("sqlite");
-sql.open(".data/database.sqlite");
-
-class pay {
+/**
+*   Main module
+*   @Pay sharing artcoins with other user.
+*/
+class Pay {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
+        this.requirement_level = 5;
     }
 
+
+    /**
+     *  Get sender's author object and inventory metadata.
+     */
+    async assignSenderMetadata() {
+        const { reqData } = this.stacks;
+        const res = await reqData();
+        this.senderMeta = res;
+    }
+
+
+    /**
+     *  Initializer method
+     */
     async execute() {
-        let message = this.message;
-        let bot = this.stacks.bot;
-        let palette = this.stacks.palette;
-        const format = new formatManager(message);
-        return ["bot", "bot-games", "cmds", `sandbox`].includes(message.channel.name) ? initPay() :
-            format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get('485922866689474571').toString()}.`)
+        const { args, db, avatar, multicollector, commanifier, emoji, reply, collector, selfTargeting, name, trueInt, palette, code: {PAY}, meta: {author} } = this.stacks;
 
 
-
-        async function initPay() {
-
-            function randomString(length, chars) {
-                var result = '';
-                for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-                return result;
-            }
-
-            function template(content, color = palette.darkmatte) {
-                let embed = new Discord.RichEmbed()
-                    .setColor(color)
-                    .setDescription(content)
-                    .setFooter(`AAU Bank`, bot.user.displayAvatarURL)
-
-                return message.channel.send(embed);
-            }
+        //  Returns as guide user doesn't specify any parameter
+        if (!args[0]) return reply(PAY.SHORT_GUIDE)
+        //  Get sender metadata
+        await this.assignSenderMetadata();
+        //  Returns if user level is below the requirement
+        if (this.senderMeta.data.level < this.requirement_level) return reply(PAY.LVL_TOO_LOW, {socket: [this.requirement_level]})
+        //  Returns if target is invalid
+        if (!author) return reply(PAY.INVALID_USER)
+        //  Returns if user trying to pay themselves
+        if (selfTargeting) return reply(PAY.SELF_TARGETING)
 
 
-            // this returning data lvl from userdata.
-            function getUserDataLvl(user) {
-                return sql.get(`SELECT * FROM userdata WHERE userId ="${user.id}"`)
-                    .then(data => data.level);
-            }
+        //  User confirmation
+        reply(PAY.USER_CONFIRMATION, {socket: [name(author.id)], color: palette.golden})
+        .then(async targetInfo => {
 
-            /// Fwubbles Integer Check Testing
-            const isValidCount = (msg) => {
-                return !Number.isNaN(Number(msg)) && !(Math.round(Number(msg)) <= 0) && Number.isFinite(Number(msg));
-            }
-            const getPosInt = (msg) => {
-                return !Number.isNaN(Number(msg)) && !(Math.round(Number(msg)) <= 0) && Number.isFinite(Number(msg)) ? Math.round(Number(msg)) : NaN;
-            }
+            collector.on(`collect`, async msg => {
+                let input = msg.content.toLowerCase();
+                let amount = trueInt(input)
+                
+                //  Register second listener
+                let confirmation = multicollector(msg)
+                
+                //  Closing connections
+                targetInfo.delete();
+                collector.stop();
+                
 
-            const userLvl = await getUserDataLvl(message.member);
-
-
-            if (userLvl < 6) return message.channel.send("I'm sorry, your level isn't high enough to use this feature.")
-            if (!args[0]) return template(`**${message.author.username}**, here's how to use pay command :\n\`>pay\`  \`user\`  \`value\``)
-
-            sql.get(`SELECT * FROM userinventories WHERE userId = "${message.author.id}"`).then(async userdatarow => {
-                const user = await utils.userFinding(message, args[0]);
-
-                if (!args[1]) return template(`**${message.author.username}**, please put the number.`)
-                if (args[1].includes(user.id)) return template(`❌ | Transaction failed.\nREASON: \`WRONG FORMAT.\``, palette.red)
-                if (user.id === message.author.id) return template(`I know what you did there, ${message.author.username}.`);
-                if (userdatarow.artcoins < args[1]) return template(`❌ | Transaction failed.\nREASON: \`NOT ENOUGH BALANCE.\``);
+                //  Returns if user asked to cancel the transaction
+                if(input.startsWith(`n`)) return reply(PAY.CANCELLED)
+                //  Returns if input is invalid
+                if (!amount) return reply(PAY.INVALID_AMOUNT)
+                //  Returns if sender's balance is below the specified input
+                if (this.senderMeta.data.artcoins < amount) return reply(PAY.EXCEEDING_BALANCE)
 
 
-                if (user.id !== message.author.id) {
+                msg.delete();
+                //  Amount confirmation
+                reply(PAY.CONFIRMATION, {
+                    socket: [emoji(`artcoins`), commanifier(amount), name(author.id)],
+                    color: palette.golden,
+                    notch: true,
+                    thumbnail: avatar(author.id)
+                })
+                .then(() => {
 
-                    let transactionCode2 = randomString(5, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-                    let transactionCode = randomString(2, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-                    let digitValue = format.threeDigitsComa(getPosInt(args[1]));
-                    let timestamp = moment(Date.now()).format(`MMMM Do YYYY, h:mm:ss a`);
+                    confirmation.on(`collect`, async confmsg => {
+                        let confinput = confmsg.content.toLowerCase();
 
-                    console.log(args[1]);
-                    const update_data = () => {
-                        sql.run(`UPDATE userinventories SET artcoins = artcoins - ${parseInt(getPosInt(args[1]))} WHERE userId = "${message.author.id}"`);
-                        sql.run(`UPDATE userinventories SET artcoins = artcoins + ${parseInt(getPosInt(args[1]))} WHERE userId = "${user.id}"`);
-                        console.log(`Transaction successful. ID : ${message.author.username}, ${user.user.username}`)
-                    }
+                        //  Closing connections
+                        confmsg.delete();
+                        confirmation.stop();
 
-                    /// Fwubbles Integer Check Test
-                    if (!isValidCount(args[1])) return format.embedWrapper(palette.red, `Please enter a valid amount.`);
 
-                    update_data();
+                        //  Returns if user asked to cancel the transaction
+                        if (!confinput.startsWith(`y`)) return reply(PAY.CANCELLED)
+                        //  Store target's artcoins balance
+                        await db(author.id).storeArtcoins(amount)
+                        //  Withdraw sender's artcoins balance
+                        await db(this.senderMeta.author.id).withdraw(amount, `artcoins`)
 
-                    return template(`
-	                    ✅ | Transaction successful.
-	                    ${timestamp}\n
-	                    TRANSACTION ID : ${transactionCode}-${transactionCode2}
-	                    TRANSFER
-	                    TO ACCOUNT:  \`${user.id}\`
-	                    NAME :  **${user.user.username}**
-	                    VALUE : ${utils.emoji(`artcoins`, bot)} **${digitValue}**
-	                    This message is automatically generated after you made a
-	                    successful payment with other user.\n
 
-	                    If you have any trouble, please DM the available councils`, palette.lightgreen)
-                }
+                        //  Transaction successful
+                        reply(PAY.SUCCESSFUL, {color: palette.lightgreen})
+
+
+                        try {
+                            //  Notify target through dm
+                            return reply(PAY.TARGET_NOTIFICATION, {
+                                socket: [name(this.senderMeta.author.id), emoji(`artcoins`), commanifier(amount)],
+                                field: author
+                            })
+                        }
+                        //  Incase the target locked their dm, it will be handled here.
+                        catch(e) {}
+                    })
+                })
             })
-        }
+        })
     }
 }
 
 module.exports.help = {
-    start: pay,
+    start: Pay,
     name: "pay",
-    aliases: [],
+    aliases: [`pay`, `transfer`, `transfers`, `share`],
     description: `Pay a specified user an amount of AC from your balance`,
     usage: `${require(`../../.data/environment.json`).prefix}pay @user <amount>`,
     group: "Shop-related",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user: true
 }
