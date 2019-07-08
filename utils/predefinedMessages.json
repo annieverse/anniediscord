@@ -90,6 +90,13 @@
         "HEADER": "{0} | **Inventory card for {1}**",
         "INVALID_USER": "Sorry i couldn't find that user."
     },
+    "LEADERBOARD": {
+        "SHORT_GUIDE": "Hey, checkout our server leaderboard! below are the available categories:\n\n`>lb xp` for level ranking\n`>lb ac` for artcoins ranking\n`>lb fame` for reputations ranking\n`>lb artist` for popular artists ranking",
+        "INVALID_CATEGORY": "Sorry i can't find anything from that category",
+        "FETCHING": "`fetching {0} leaderboard data . .`",
+        "AUTHOR_RANK": "You are currently **{0}#** with total **{1}** {2}",
+        "UNRANKED": "You are unranked."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
