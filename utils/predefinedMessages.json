@@ -101,6 +101,13 @@
         "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
         "INVALID_USER": "Sorry, i couldn't find that user."
     },
+    "MAIL": {
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "PROMPT": "Message will be send to **{0}**. Now please type the content of the message.",
+        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{0}**.",
+        "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
+        "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
