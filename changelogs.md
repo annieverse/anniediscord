@@ -9,4 +9,4 @@
         - Updated database manager.
         - userSelector.js : pass any user into userFind() method for meta structure consistency.
 - Last Trace 
-        - Gift.js (finished)
+        - Pay.js (finished)
