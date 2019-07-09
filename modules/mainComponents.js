@@ -9,7 +9,7 @@ const Data = require(`../utils/userdataSelector`);
   */
 class CommandHandler {
   constructor(base_components = {}) {
-    this.stacks = require(`../utils/Pistachio`)(base_components)
+    this.stacks = base_components
     this.filename = this.stacks.commandfile.help.name;
     this.path = `../modules/commands/${this.filename}.js`;
     this.module_parameters = require(this.path).help;
@@ -28,7 +28,7 @@ class CommandHandler {
     try {
       this.requestData()
         .then(() => {
-          return new this.cmd(this.stacks).execute();
+          return new this.cmd(require(`../utils/Pistachio`)(this.stacks)).execute();
         })
     }
     catch (e) {

@@ -1,235 +1,85 @@
-const Discord = require("discord.js");
-const formatManager = require('../../utils/formatManager');
-const userRecently = new Set();
-
-class redeem {
+/**
+ * Main module
+ * @Redeem redeeming lucky tickets.
+ */
+class Redeem {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
+        this.ticket_price = 120;
+        this.db = Stacks.db(Stacks.meta.author.id);
     }
 
+
+    /**
+     *  Initializer method
+     */
     async execute() {
-        let message = this.message;
-        let bot = this.stacks.bot;
-        let palette = this.stacks.palette;
-        /**
-        Redeeming functions.
-        Core event of transaction.
-        @redeem
-    */
-        async function redeem(amount = parseInt((message.content).replace(/\D/g, ``))) {
+        const { args, commanifier, palette, emoji, trueInt, collector, reply, code: {REDEEM}, meta: {data} } = this.stacks;
 
-            const format = new formatManager(message);
-            const user = message.author;
-            const sql = require('sqlite');
-            sql.open('.data/database.sqlite');
-            let price = 120 * amount;
 
+        //  Returns as short-guide if user doesn't specify any parameters
+        if (!args[0]) return reply(REDEEM.SHORT_GUIDE)
 
 
+        //  Integer check. Also allowed to use <all> parameter
+        let amount = args[0].startsWith(`all`) ? Math.floor(data.artcoins/this.ticket_price) : trueInt(args[0])
+        //  Calculate price
+        let price = amount * this.ticket_price;
 
-            //  Logging result from current transaction
-            const log = (code) => {
-                const logtext = {
-                    "000": {
-                        color: palette.red,
-                        msg: `Can't proceed. Insufficient balance.`
-                    },
-                    "001": {
-                        color: palette.darkmatte,
-                        msg: `Transaction cancelled.`
-                    },
-                    "002": {
-                        color: palette.lightgreen,
-                        msg: `Purchase successful. The item has been sent to your inventory.`
-                    },
-                    "003": {
-                        color: palette.darkmatte,
-                        msg: `You can purchase again in 10 seconds.`
-                    },
-                    "004": {
-                        color: palette.darkmatte,
-                        msg: `I'm selling Lucky Tickets! Wanna give a try? \`>redeem <amount>\`.`
-                    },
-                    "005": {
-                        color: palette.red,
-                        msg: `Please put the correct amount!`
-                    },
-                    "006": {
-                        color: palette.darkmatte,
-                        msg: `Put positive values.`
-                    }
-                }
-                return format.embedWrapper(logtext[code].color, logtext[code].msg);
-            }
 
+        //  Returns if user inputted an invalid type of number
+        if (!amount) return reply(REDEEM.INVALID_AMOUNT)
+        //  Returns if user balance is below the calculated price.
+        if (data.artcoins < price) return reply(REDEEM.INSUFFICIENT_BALANCE, {
+            socket: [emoji(`artcoins`), commanifier(price - data.artcoins)]
+        })
 
 
+        //  Confirmation
+        reply(REDEEM.CONFIRMATION, {
+            socket: [emoji(`artcoins`), commanifier(price), emoji(`lucky_tickets`), commanifier(amount)],
+            color: palette.golden,
+            notch: true
+        })
+        .then(async confirmation => {
+            collector.on(`collect`, async msg => {
+                let input = msg.content.toLowerCase();
 
-            //  Prompt message before proceeding the transaction
-            const check_out = () => {
-                return format.embedWrapper(palette.golden, `**${user.username}**, you're going to pay ${utils.emoji(`artcoins`, bot)}**${format.threeDigitsComa(price)}** for **${amount}** Lucky Tickets? \nplease type \`y\` to confirm your purchase. `)
-            }
+                //  Close connections
+                confirmation.delete()
+                collector.stop();
+                msg.delete();
 
 
+                //  Returns if user attempted to cancel the transaction
+                if (!input.startsWith(`y`)) return reply(REDEEM.CANCELLED)
 
-            //  User current balance. Returns an integer.
-            const user_balance = () => {
-                return sql.get(`SELECT artcoins FROM userdata WHERE userId = ${user.id}`)
-                    .then(async data => data.artcoins)
-            }
 
+                //  Update Lucky Tickets
+                await this.db.addLuckyTickets(amount)
+                //  Withdraw artcoins
+                await this.db.withdraw(price, `artcoins`)
 
 
-            //  Check if user has sufficient balance. Returns boolean.
-            const sufficient_balance = () => {
-                return sql.get(`SELECT artcoins FROM userinventories WHERE userId = ${user.id}`)
-                    .then(async data => data.artcoins >= price ? true : false)
-            }
+                //  Redeem successful
+                return reply(REDEEM.SUCCESSFUL, {
+                    socket: [emoji(`lucky_tickets`), commanifier(amount)],
+                    color: palette.lightgreen
+                })
 
-
-
-
-            //  Backend processes. Storing items and substracting user's credit.
-            const transaction = () => {
-                sql.run(`UPDATE userinventories SET artcoins = artcoins - ${price} WHERE userId = ${user.id}`);
-                sql.run(`UPDATE userinventories SET lucky_ticket = (CASE WHEN lucky_ticket IS NULL THEN ${amount} ELSE (lucky_ticket + ${amount}) END) WHERE userId = ${user.id}`);
-                console.log(`${user.tag} has bought ${amount} Lucky Tickets.`)
-            }
-
-
-
-
-            //  Check if user still in coolingdown state. Returns boolean.
-            const still_coolingdown = () => {
-                return userRecently.has(user.id) ? true : false;
-            }
-
-
-
-
-            //  Put 10 seconds interval per transaction.
-            const coolingdown = () => {
-                userRecently.add(user.id);
-                setTimeout(() => {
-                    userRecently.delete(user.id);
-                }, 10000)
-            }
-
-
-
-
-            //  Listening to user's confirmation
-            const confirmation = async () => {
-                const sufficient_bal = await sufficient_balance();
-                const collector = new Discord.MessageCollector(message.channel,
-                    m => m.author.id === message.author.id, {
-                        max: 1,
-                        time: 30000,
-                    });
-
-                collector.on(`collect`, async (msg) => {
-                    let user_input = msg.content.toLowerCase();
-
-
-                    // Transaction successful.
-                    if (user_input === `y` && sufficient_bal) {
-                        msg.delete();
-                        collector.stop();
-                        transaction();
-                        coolingdown();
-
-                        return log(`002`);
-                    }
-
-                    // Transaction failed.
-                    else {
-                        msg.delete();
-                        collector.stop();
-
-                        if (user_input !== `y`) return log(`001`);
-                        if (!sufficient_bal) return log(`000`);
-                    }
-                });
-            }
-
-
-
-
-            //  Wrapped function for all-balance option.
-            const all_bal_transaction = async () => {
-                const user_bal = await user_balance();
-                amount = Math.floor(user_bal / 120);
-                price = 120 * amount;
-
-                if (!price) return log(`000`);
-
-                check_out();
-                confirmation();
-            }
-
-
-
-
-            /** 
-                Core function. 
-                Runs all processes above.
-                @run
-            */
-            const run = () => {
-
-
-                //  Locked feature
-                //if(!message.member.roles.find(r => r.name === 'Creators Council'))
-
-                if (![`sandbox`, `bot`, `gacha-house`, `games`].includes(message.channel.name)) return format.embedWrapper(palette.darkmatte, `Please redeem in bot channels.`);
-
-                //  Return log if the amount is not defined.
-                if (!args[0]) return log(`004`)
-
-
-                //  Return log if user still in cooldown state.
-                if (still_coolingdown()) return log(`003`)
-
-
-                //  Proceed transaction with all the available balance.
-                if (args[0].includes(`all`)) return all_bal_transaction();
-
-
-                //  Return log if the amount is not-a-number.
-                if (Number.isNaN(parseInt(args[0]))) return log(`005`)
-
-
-                if (parseInt(args[0]) < 0) return log(`006`)
-
-
-                amount = parseInt((message.content).replace(/\D/g, ``));
-
-                check_out();
-                confirmation();
-            }
-
-            run();
-
-        }
-
-        return redeem();
+            })
+        })
     }
 }
 
 module.exports.help = {
-    start: redeem,
+    start: Redeem,
     name: "redeem",
     aliases: [],
     description: `Buys gacha tickets`,
     usage: `${require(`../../.data/environment.json`).prefix}redeem <amount>`,
     group: "Shop-related",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user: false
 }

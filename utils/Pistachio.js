@@ -1,5 +1,6 @@
-const { RichEmbed, Attachment } = require(`discord.js`);
+const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`);
 const databaseManager = require(`./databaseManager`);
+const fsn = require(`fs-nextra`);
 /**
  *  Micro framework to support Annie's structure
  *  Lightweight, portable and opinionated
@@ -41,8 +42,82 @@ module.exports = (Components) => {
     //  Storing environment.json keys
     container.environment = require('../.data/environment.json');
 
+    //  Storing cards data
+    container.metacards = require(`./cards-metadata`);
+
+    //  Get user metadata manager
+    container.Data = require(`./userdataSelector`)
+
+    //  Get event-discussion channel object
+    container.eventLobby = bot.channels.get(`460615157056405505`);
+
+    //  Get general aau channel object
+    container.world = bot.channels.get(`459891664182312982`);
+
+    //  Get gacha-unlocked channel
+    container.gachaField = bot.channels.get(`578518964439744512`)
+
+    //  Check if current channel is included in gacha-allowed list
+    container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
+
     //  Check for administrator authority
     container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
+
+    //  Check for developer authority
+    container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
+
+
+    /**
+     *  Delete bulk of messages in current channel
+     *  @param {Integer} amount must be atleast above zero.
+     */
+    container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
+
+    
+    /**
+     *  Instant message collector
+     *  @param {Default} max only catch 1 response
+     *  @param {Default} time 60 seconds timeout
+     */
+    container.collector = new MessageCollector(message.channel,
+        m => m.author.id === message.author.id, {
+            max: 1,
+            time: 60000,
+        });
+
+
+    /**
+     *  (Multi-layering)Instant message collector
+     *  @param {Object} msg current message instance
+     *  @param {Default} max only catch 1 response
+     *  @param {Default} time 60 seconds timeout
+     */
+    container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
+        m => m.author.id === msg.author.id, {
+            max: 1,
+            time: 60000,
+        });
+
+
+    /**
+     * To check whether the user has the said role or not
+     * @param {String} rolename for role name code
+     * @return {Boolean} of role
+     * @hasRole
+     */
+    container.hasRole = (rolename = ``) => {
+        return message.member.roles.find(role => role.name === rolename)
+    }
+
+    /**
+     * Returning of given role name
+     * @param {String} rolename for role name code
+     * @return {Object} of role
+     * @addRole
+     */
+    container.addRole = (rolename = ``, user = message.author.id) => {
+        return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
+    }
 
     //  Automatically convert weird number notation into real value.
     container.trueInt = (str) => {
@@ -101,6 +176,19 @@ module.exports = (Components) => {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    //  Get closest upper element from an array
+    container.closestUpper = (array, val) => {
+        return Math.min.apply(null, array.filter(function (v) {
+            return v > val
+        }))
+    }
+
+    //  Removing first few non-alphabet character from string
+    container.relabel = (str) => {
+        let res = str.replace(/[^A-Za-z]+/, '')
+        return res;
+    }
+
     //  Initializing database class
     container.db = (id) => new databaseManager(id);
 
@@ -120,20 +208,79 @@ module.exports = (Components) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     }, // End of pause
 
+
+    // Lowercase first letter and de-plural string.
+    container.normalizeString = (string) => {
+        string = string.charAt(0).toLowerCase() + string.slice(1);
+        string = string.slice(0, -1);
+        return string;
+    }
+
+    //  Inside this statement only available to use when required_usermetada is true.
+    if(Components.meta.author) {
+        //  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
+        container.selfTargeting = Components.meta.author.id === message.author.id ? true : false;
+    }
+
+    //  Load asset from default images dir
+    container.loadAsset = async (id) => {
+        return fsn.readFile(`./images/${id}.png`);
+    }
+
+
+    /**
+     *  Request mutation data
+     *  @param {String} id target user's id. Message author is the default id. 
+     */
+    container.reqData = async (id = message.author.id) => {
+        const mutatedComponents = {args: [id], message: message, commandfile: {help: {multi_user: false}}}
+        const metadata = await new container.Data(mutatedComponents).pull()
+        return metadata
+    }
+
+    /**
+     *  Prettify result of user's owned gifts
+     *  @param {Object} metadata Gifts metadata. Giving information of each reps point.
+     *  @param {Object} userInventory User inventories metadata.
+     */
+    container.parsingAvailableGifts = (metadata = {}, userInventory = {}) => {
+        let obj = {};
+        let itemdata = ``
+        let giftItems = Object.keys(metadata)
+
+        //  Store items
+        for (let i = 0; i < giftItems.length; i++) {
+            if (userInventory[giftItems[i]] > 0) obj[giftItems[i]] = userInventory[giftItems[i]]
+        }
+        
+        //  Parse string
+        for (let key in obj) {
+            itemdata += `> ${container.emoji(key.toString())}**${obj[key]}x ${key}**\n`
+        }
+
+        //  Returns
+        if (itemdata.length < 1) return null;
+
+        let str = `${itemdata}\n\n Above are all your available gifts. Please type **<amount> <itemname>** to send the gift.`
+        return str;
+    }
+
+
     /** Annie's custom system message.
      *  @param content as the message content
-     *  @param {object} 
-     *  @param socket is the optional message modifier. Array
-     *  @param color for the embed color. Hex code
-     *  @param field as the message field target (GuildChannel/DM). Object
-     *  @param image as the attachment url. Buffer
-     *  @param simplified as non embed message toggle. Boolean
-     *  @param thumbnail as embed icon. StringuRL
-     *  @param notch as huge blank space on top and bottom
-     *  @param thumbnail as message icon on top right
-     *  @param deleteIn as countdown before the message get deleted. In seconds.
+     *  @param {Array} socket is the optional message modifier. Array
+     *  @param {ColorResolvable} color for the embed color. Hex code
+     *  @param {Object} field as the message field target (GuildChannel/DM). Object
+     *  @param {ImageBuffer} image as the attachment url. Buffer
+     *  @param {Boolean} simplified as non embed message toggle. Boolean
+     *  @param {ImageURL} thumbnail as embed icon. StringuRL
+     *  @param {Boolean} notch as huge blank space on top and bottom
+     *  @param {ImageBuffer|ImageURL} thumbnail as message icon on top right
+     *  @param {Integer} deleteIn as countdown before the message get deleted. In seconds.
+     *  @param {Boolean} prebuffer as indicator if parameter supply in "image" already contains image buffer.
+     *  @param {String} header use header in an embed.
      */
-    container.reply = (content, options = {
+    container.reply = async (content, options = {
         socket: [],
         color: ``,
         image: null,
@@ -142,6 +289,8 @@ module.exports = (Components) => {
         notch: false,
         thumbnail: null,
         deleteIn: 0,
+        prebuffer: false,
+        header: null
     }) => {
         options.socket = !options.socket ? [] : options.socket;
         options.color = !options.color ? container.palette.darkmatte : options.color;
@@ -150,6 +299,8 @@ module.exports = (Components) => {
         options.simplified = !options.simplified ? false : options.simplified;
         options.thumbnail = !options.thumbnail ? null : options.thumbnail;
         options.notch = !options.notch ? false : options.notch;
+        options.prebuffer = !options.prebuffer ? false : options.prebuffer;
+        options.header = !options.header ? null : options.header;
 
         //  Socketing
         for (let i = 0; i < options.socket.length; i++) {
@@ -157,7 +308,7 @@ module.exports = (Components) => {
         }
 
         //  Returns simple message w/o embed
-        if (options.simplified) return options.field.send(content);
+        if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await container.loadAsset(options.image)) : null);
 
         //  Add notch/chin
         if (options.notch) content = `\u200C\n${content}\n\u200C`;
@@ -168,10 +319,12 @@ module.exports = (Components) => {
             .setDescription(content)
             .setThumbnail(options.thumbnail)
 
+        //  Add header
+        if(options.header) embed.setAuthor(options.header, container.avatar(message.author.id))
 
         //  Add image preview
         if (options.image) {
-            embed.attachFile(new Attachment(options.image, `preview.jpg`))
+            embed.attachFile(new Attachment(options.prebuffer ? options.image : await container.loadAsset(options.image), `preview.jpg`))
             embed.setImage(`attachment://preview.jpg`)
         } else if (embed.file) {
             embed.image.url = null;
@@ -190,6 +343,6 @@ module.exports = (Components) => {
                 msg.delete(options.deleteIn)
             })
     }
-
+    
     return container;
 }

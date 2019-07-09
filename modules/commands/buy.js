@@ -1,5 +1,6 @@
 const Transaction = require(`../../utils/TransactionHandler`);
 const Checkout = require(`../../utils/TransactionCheckout`);
+const preview = require(`../../utils/config/itemPreview`);
 
 /**
  * Main module
@@ -7,165 +8,74 @@ const Checkout = require(`../../utils/TransactionCheckout`);
  */
 class Buy {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.args = Stacks.args;
-        this.message = Stacks.message;
-        this.log = Stacks.log.BUY;
-        this.reply = Stacks.utils.systemMessage;
-        this.categories = ['ROLE', 'TICKET', 'SKIN', 'BADGE', 'COVER', 'PACKAGE'];
+        this.stacks = Stacks;
+        this.categories = ['ROLE', 'TICKET', 'SKIN', 'BADGE', 'COVER'];
     }
 
-
+    /**
+     * Initializer method
+     * @Execute
+     */
     async execute() {
 
-        if (!this.args[0]) return this.reply(
-            this.log.ERR.MISSING_CATEGORY,
-            [this.utils.name(this.author.id)]
-        )
+        const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks;
 
-        let key = this.args[0].toUpperCase();
+        //  Returns no parametered input
+        if (!args[0]) return reply(BUY.SHORT_GUIDE)
 
-        // Purchase role
-        if (key === this.categories[0]) {
+        const key = args[0].toUpperCase();
 
-            if (!this.args[1]) return this.reply(this.log.ERR.MISSING_ROLENAME)
+        //  Returns if category is invalid
+        if (!this.categories.includes(key)) return reply(BUY.INVALID_CATEGORY)
 
-            const target = this.message.content.substring(10);
-            const trans = new Transaction(target, `Roles`);
-            const item = await trans.pull;
+        //  Returns if item is invalid
+        if (!args[1]) return reply(BUY.MISSING_ITEMNAME)
 
-            try {
-                //  Returns if user level doesn't meet the requirement.
-                if (this.data.level < 25) return this.reply(this.log.ERR.LVL_TOO_LOW);
+        let transactionComponents = {
+            itemname: message.content.substring(message.content.indexOf(args[1])).toLowerCase(),
+            type: args[0].charAt(0).toUpperCase() + args[0].slice(1) + `s`,
+            message: message,
+            author: author,
+            usermetadata: data
+        }
+        const slotvalue = Object.keys(data.badges);
 
-                // Reject insufficent balance
-                if (this.data.artcoins < parseInt(item.price)) return this.reply(this.log.ERR.INSUFFICIENT_BALANCE);
+        let transaction = new Transaction(transactionComponents)
+        let item = await transaction.pull;
 
-                // Balance has met the condition
-                if (this.data.artcoins >= parseInt(item.price)) {
-                    new Checkout(item, trans)
-                }
+        //  Returns if item is not valid
+        if (!item) return reply(BUY.INVALID_ITEM)
 
-            } catch (e) {
-                return
-            }
+        let checkoutComponents = {
+            itemdata: item,
+            transaction: transaction,
+            preview: preview[key] ? item.alias : null,
+            stacks: this.stacks,
+            msg: message,
+            user: author
         }
 
+        //  Returns if user lvl doesn't meet requirement to buy roles
+        if (transactionComponents.type === `Roles` && data.level < 25) return reply(BUY.ROLES_LVL_TOO_LOW)
+        
+        //  Reject duplicate skin.
+        if (transactionComponents.type === `Skins` && data.interfacemode === item.alias) return reply(BUY.DUPLICATE_SKIN)
 
-        // Purchase ticket
-        else if (key === this.categories[1]) {
+        //  No available slots left
+        if (transactionComponents.type === `Badges` && slotvalue.indexOf(null) === -1) return reply(BUY.BADGES_LIMIT)
 
-            if (!this.args[1]) return
-            const target = this.message.content.substring(12);
-            const trans = new Transaction(target, `Tickets`, this.message, this.author);
-            const item = await trans.pull;
+        //  Reject duplicate badge alias
+        if (transactionComponents.type === `Badges` && slotvalue.includes(item.alias)) return reply(BUY.DUPLICATE_BADGE)
 
-            try {
-                //  Insufficient balance
-                if (this.data.artcoins < parseInt(item.price)) return
+        //  Reject duplicate cover alias.
+        if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
 
-                //  Balance has met the condition
-                if (this.data.artcoins >= parseInt(item.price)) {
-                    console.log(`yay passed!`)
-                    new Checkout(item, trans, this.message, this.author).run()
-                }
-            } catch (e) {
-                return
-            }
-        }
+        //  Returns if balance is insufficent
+        if (data[item.price_type] < item.price) return reply(BUY.INSUFFICIENT_BALANCE, {
+            socket: [name(author.id), item.price_type]
+        })
 
-
-        // Purchase skin
-        else if (key === this.categories[2]) {
-
-            if (!this.args[1]) return
-            const target = this.message.content.substring(10);
-            const trans = new Transaction(target, `Skins`);
-            const item = await trans.pull;
-
-            try {
-                //  Reject duplicate alias.
-                if (this.data.interfacemode === item.alias) return
-
-                //  Insufficient balance.
-                if (this.data[item.price_type] < parseInt(item.price)) return
-
-                // Balance has met the condition.
-                if (this.data[item.price_type] >= parseInt(item.price)) {
-                    new Checkout(item, trans);
-                }
-            } catch (e) {
-                return
-            }
-
-        }
-
-
-        //  Purchase badge
-        else if (key === this.categories[3]) {
-
-            if (!this.args[1]) return
-            const target = this.message.content.substring(11);
-            const trans = new Transaction(target, `Badges`);
-            const item = await trans.pull;
-
-            // Badges-related variables
-            const databaseManager = require(`../../utils/databaseManager`);
-            const badgesdata = await new databaseManager(this.author.id).badges;
-            const slotkey = Object.keys(badgesdata);
-            const slotvalue = Object.values(badgesdata);
-
-            try {
-
-                //  No available slots left
-                if (slotvalue.indexOf(null) === -1) return
-
-                //  Reject duplicate alias
-                if (slotvalue.includes(item.alias)) return
-
-                //  Insufficient balance
-                if (this.data.artcoins < parseInt(item.price)) return
-
-                // Balance has met the condition
-                if (this.data.artcoins >= parseInt(item.price)) {
-                    new Checkout(item, trans, true)
-                }
-            } catch (e) {
-                return
-            }
-        }
-
-
-        // Purchase cover
-        else if (key === this.categories[4]) {
-
-            if (!this.args[1]) return
-            const target = this.message.content.substring(11);
-            const trans = new Transaction(target, `Covers`);
-            const item = await trans.pull;
-
-            try {
-
-                //  Reject duplicate alias.
-                if (this.data.cover === item.alias) return
-
-                //  Insufficient balance.
-                if (this.data[item.price_type] < parseInt(item.price)) return
-
-                // Balance has met the condition.
-                if (this.data[item.price_type] >= parseInt(item.price)) {
-                    new Checkout(item, trans, true);
-                }
-
-            } catch (e) {
-                return
-            }
-        }
-
-        //argument is not listed as valid category
-        else return this.reply(this.log.ERR.INVALID_CATEGORY);
+        return new Checkout(checkoutComponents).confirmation();
     }
 }
 
@@ -177,6 +87,6 @@ module.exports.help = {
     usage: `${require(`../../.data/environment.json`).prefix}buy <item>`,
     group: "Shop-related",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user : false
 }

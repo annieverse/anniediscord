@@ -1,166 +1,148 @@
 const Discord = require('discord.js');
+const fs = require('fs');
 
 class adminHelp {
   constructor(Stacks) {
-    this.author = Stacks.meta.author;
-    this.data = Stacks.meta.data;
-    this.utils = Stacks.utils;
-    this.message = Stacks.message;
-    this.args = Stacks.args;
-    this.palette = Stacks.palette;
-    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
     this.stacks = Stacks;
+    this.required_roles = Stacks.message.member.roles.find(r => Object.keys(this.stacks.roles.admin).some(i => this.stacks.roles.admin[i] !== r.id));
+    this.bicon = Stacks.bot.user.displayAvatarURL;
+    this.admEmbed = new Discord.RichEmbed();
+    this.admEmbed2 = new Discord.RichEmbed();
+  }
+
+  /**
+     * locates all groups names
+     * @returns {Array} group names
+     */
+  async groupNames() {
+    let file_arr = [];
+    fs.readdir("./modules/commands/", (err, files) => {
+      if (err) console.log(err);
+      const src = require(`./${files[0]}`);
+      file_arr.push(src.help.group.toLowerCase());
+      for (let file in files) {
+        const src = require(`./${files[file]}`);
+        if (!file_arr.includes(src.help.group.toLowerCase())) {
+          file_arr.push(src.help.group.toLowerCase());
+        }
+      }
+    })
+    await this.stacks.pause(200)
+    return file_arr
+  };
+
+  /**
+   * grabs the main name for all commands
+   * @returns {string} command names joined by \n
+   */
+  async mainNames(groupname) {
+
+    let file_arr = [];
+    fs.readdir("./modules/commands/", (err, files) => {
+      if (err) console.log(err);
+
+      for (let file in files) {
+        const src = require(`./${files[file]}`);
+        if (src.help.group.toLowerCase() === groupname) {
+          if (src.help.public) { file_arr.push(src.help.name.toLowerCase()); }
+        }
+      }
+    })
+    await this.stacks.pause(200)
+    file_arr = file_arr.join("\n");
+    return file_arr
+  };
+
+  /**
+     * Grabs any description for a file if one exists
+     * @param {String} file file name
+     * @returns {String} string of description 
+     */
+  async description(file) {
+    let file_rst;
+    const src = require(`./${file}`);
+    file_rst = src.help.description.toLowerCase();
+    await this.stacks.pause(200)
+    return file_rst;
+  };
+
+  /**
+     * Displays all avaible commands for a specific category
+     * @param {String} group group name
+     */
+  async help() {
+    let group = 'admin';
+
+    let pages, page = [];
+    let position = 0;
+    let pageHeaderOptions = await this.groupNames();
+    pageHeaderOptions.sort();
+
+    for (let x = 0; x < pageHeaderOptions.length; x++) {
+      if (group.toLowerCase() === pageHeaderOptions[x]) {
+        position = x;
+        page.push(new Array())
+        let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+        for (let index = 0; index < mainNames.length; index++) {
+          page[0].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
+        }
+      }
+    }
+    pages = this.stacks.utils.chunk(page[0], 10)
+    let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
+    pages.forEach((element, index) => {
+      if (index === 0) { element.unshift(header + `[${index + 1}/${pages.length}]`) } else { element.unshift(header + `[${index + 1}/${pages.length}]\n **Continued**.\n`) }
+    });
+    return pages
+  }
+
+  noAthorization() {
+    this.admEmbed.setColor(this.stacks.palette.red);
+    this.admEmbed.setDescription(`You don't have authorization to use this command.`);
+    this.admEmbed.setFooter(`Anime Artist United | Admin Help Section`, this.bicon);
+    this.stacks.message.channel.send(this.admEmbed);
+  }
+
+  sendDMComfirmation() {
+    this.admEmbed2.setDescription(`I've sent you the DM!`);
+    this.admEmbed2.setColor(this.stacks.palette.halloween);
+    this.admEmbed2.setFooter("Anime Artist United | Admin Help Section", this.bicon);
+    this.stacks.message.channel.send(this.admEmbed2);
+  }
+
+  failedDM_ERROR() {
+    this.admEmbed.setColor('#5178a5')
+    this.admEmbed.setDescription(`I tried to DM you ${this.stacks.message.author.username}, but your DMs are locked. T__T`)
+    this.admEmbed.setFooter(`Anime Artist United | Admin Help Section`, this.bicon)
+    return this.stacks.message.channel.send(this.admEmbed)
+  }
+
+  initializeEmbed() {
+    this.admEmbed.setColor(this.stacks.palette.darkmatte)
+    this.admEmbed.setThumbnail(this.stacks.bot.user.displayAvatarURL)
   }
 
   async execute() {
-    /// admhelp.js
-    ///
-    ///  Admin Help command
-    ///    change logs:
-    ///       11/12/18 - Interface reworks & minor bug fixes.
-    ///       09/18/18 - Help command for admin.
-    ///       
-    ///
-    ///     -naphnaphz
-
-    let message = this.message;
-    let bot = this.stacks.bot;
-
-    function fileAliasesCheck(file) {
-      const src = require(`./${file}`)
-      return src.help.name;
-    }
-
-
-    let bicon = bot.user.displayAvatarURL;
-    let admEmbed = new Discord.RichEmbed();
-    let admEmbed2 = new Discord.RichEmbed();
-
-
-    admEmbed.setColor(this.palette.red)
-    admEmbed.setDescription(`You don't have authorization to use this command.`)
-    admEmbed.setFooter(`Anime Artist United | Admin Help Section`, bicon)
-
-    if (!message.member.roles.find(r => r.name === 'Creators Council')) return message.channel.send(admEmbed);
-
-    message.react("👌")
+    if (this.required_roles) return this.noAthorization();
+    this.stacks.message.react("👌")
     try {
-
-      admEmbed.setDescription(`
-        <:AnnieHi:501524470692053002> **Hello, ${message.author.username}!**\nBelow are my administrator-level commands. Please use it wisely!\n
-
-        >\`${fileAliasesCheck('addrole')}\`
-        Add roles to specific user.\n
-        >\`${fileAliasesCheck('removerole')}\`
-        Removing user's roles.\n
-        >\`${fileAliasesCheck('payToRole')}\`
-        Send specific amount of artcoins to group of users.\n
-        >\`${fileAliasesCheck('ban')}\`
-        Kick permanently.\n
-        >\`${fileAliasesCheck('eval')}\`
-        Evaluating Annie's code through message.
-
-        Actually, I still have more hidden commands!
-        DM **Development Team Member** for any further informations.\n
-        `)
-
-      admEmbed.setColor(this.palette.darkmatte)
-      admEmbed.setThumbnail(bot.user.displayAvatarURL)
-
-      admEmbed2.setDescription(`I've sent you the DM!`)
-      admEmbed2.setColor(this.palette.halloween)
-      admEmbed2.setFooter("Anime Artist United | Admin Help Section", bicon)
-      await message.author.send(admEmbed).then((msg) => message.channel.send(admEmbed2));
-
+      let pages = await this.help();
+      pages.forEach((element, index) => { this.admEmbed.setDescription(element); if (index === pages.length - 1) { this.stacks.message.author.send(this.admEmbed) } else { this.stacks.message.author.send(this.admEmbed).then(() => this.sendDMComfirmation()); } });
     } catch (e) {
-      console.log(`[ERROR LOG for adminhelp.js`)
-      console.log(e)
-      admEmbed.setColor('#5178a5')
-      admEmbed.setDescription(`I tried to DM you ${message.author.username}, but your DMs are locked. T__T`)
-      admEmbed.setFooter(`Anime Artist United | Admin Help Section`, bicon)
-      return message.channel.send(admEmbed)
+      console.log(`[ERROR LOG for adminhelp.js\n\n${await e}\n`)
+      this.failedDM_ERROR();
     }
-    
   }
 }
-/*
-module.exports.run = async (...ArrayStacks) => {
-	/// admhelp.js
-    ///
-    ///  Admin Help command
-    ///    change logs:
-    ///       11/12/18 - Interface reworks & minor bug fixes.
-    ///       09/18/18 - Help command for admin.
-    ///       
-    ///
-    ///     -naphnaphz
 
-function fileAliasesCheck(file) {
-    const src = require(`./${file}`)
-    return src.help.name;
-}
-
-
-let bicon = bot.user.displayAvatarURL;
-let admEmbed = new Discord.RichEmbed();
-let admEmbed2 = new Discord.RichEmbed();
-
-
-    admEmbed.setColor(palette.red)
-    admEmbed.setDescription(`You don't have authorization to use this command.`)
-    admEmbed.setFooter(`Anime Artist United | Admin Help Section`, bicon)
-
-if(!message.member.roles.find(r => r.name === 'Creators Council'))return message.channel.send(admEmbed);
-
-    message.react("👌")
-  try{
-
-	admEmbed.setDescription(`
-        <:AnnieHi:501524470692053002> **Hello, ${message.author.username}!**\nBelow are my administrator-level commands. Please use it wisely!\n
-
-        >\`${fileAliasesCheck('addrole')}\`
-        Add roles to specific user.\n
-        >\`${fileAliasesCheck('removerole')}\`
-        Removing user's roles.\n
-        >\`${fileAliasesCheck('addexp')}\`
-        Add XP to specific user.\n
-        >\`${fileAliasesCheck('addmoney')}\`
-        Add artcoins to specific user.\n
-        >\`${fileAliasesCheck('payToRole')}\`
-        Send specific amount of artcoins to group of users.\n
-        >\`${fileAliasesCheck('ban')}\`
-        Kick permanently.\n
-        >\`${fileAliasesCheck('eval')}\`
-        Evaluating Annie's code through message.
-
-        Actually, I still have more hidden commands!
-        DM **naphnaphz#7790** for any further informations.\n
-        `)
-
-	admEmbed.setColor(palette.darkmatte)
-    admEmbed.setThumbnail(bot.user.displayAvatarURL)
-
-	admEmbed2.setDescription(`I've sent you the DM!`)
-	admEmbed2.setColor(palette.halloween)
-	admEmbed2.setFooter("Anime Artist United | Admin Help Section", bicon)
-    await message.author.send(admEmbed).then((msg) => message.channel.send(admEmbed2));
-
-  }catch(e){
-
-    admEmbed.setColor('#5178a5')
-    admEmbed.setDescription(`I tried to DM you ${message.author.username}, but your DMs are locked. T__T`)
-    admEmbed.setFooter(`Anime Artist United | Admin Help Section`, bicon)
-    return message.channel.send(admEmbed)
-  }
-}*/
 module.exports.help = {
-  start:adminHelp,
-  name:"adminhelp",
-  aliases: [],
-  description: `A list of all admin commands`,
+  start: adminHelp,
+  name: "adminhelp",
+  aliases: ["ahelp"],
+  description: `A list of all admin commands sent by dm`,
   usage: `${require(`../../.data/environment.json`).prefix}adminhelp`,
   group: "Admin",
   public: true,
-  required_usermetadata: true,
-  multi_user: true
+  required_usermetadata: false,
+  multi_user: false
 }

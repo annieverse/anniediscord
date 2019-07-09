@@ -1,6 +1,5 @@
 
 const sql = require('sqlite');
-const utils = require('./functions');
 sql.open('.data/database.sqlite');
   /**
     *   Accessing database globally.
@@ -38,6 +37,16 @@ class databaseUtils {
                 WHERE userdata.userId = "${this.id}"`
             )
         }
+
+
+        get userBadges() {
+            return sql.get(`
+                SELECT *
+                FROM userbadges
+                WHERE userId = "${this.id}"
+            `)
+        }
+
 
         //  Accepts one level of an object. Returns sql-like string.
         toQuery(data) {
@@ -78,8 +87,150 @@ class databaseUtils {
             `)
         }
 
+        updateSkin(newvalue) {
+            sql.run(`UPDATE userdata 
+            SET interfacemode ="${newvalue}" 
+            WHERE userId = ${this.id}`);
+        }
+
+        updateCover(newvalue) {
+            sql.run(`UPDATE userdata 
+            SET cover = "${newvalue}"
+            WHERE userId = ${this.id}`);
+        }
+
+        async updateBadge(newvalue) {
+            let badgedata = await this.userBadges;
+            let slotkey = Object.keys(badgedata);
+            let slotvalue = Object.values(badgesdata);
+            sql.run(`UPDATE userbadges 
+            SET ${slotkey[slotvalue.indexOf(null)]} = "${newvalue}" 
+            WHERE userId = ${this.id}`);
+        }
+
+        updateExpBooster(newvalue) {
+            sql.run(`UPDATE usercheck 
+            SET expbooster = "${newvalue}",
+                expbooster_duration = ${Date.now()}
+            WHERE userId = "${this.id}"`);
+        }
+
+        updateExperienceMetadata(data = {}) {
+            sql.run(`UPDATE userdata 
+            SET currentexp = ${data.currentexp},
+            level = ${data.level},
+            maxexp = ${data.maxexp},
+            nextexpcurve = ${data.nextexpcurve}
+            WHERE userId = "${this.id}"`);
+        }
+
+        updateDailies(dly_metadata) {
+            //  Update daily date
+            sql.run(`UPDATE usercheck
+                     SET totaldailystreak = ${dly_metadata.countStreak},
+                     lastdaily = "${Date.now()}"
+                     WHERE userId = ${this.id}`);
+            
+            //  Update dailies reward
+            sql.run(`UPDATE userinventories
+                     SET artcoins = artcoins + ${dly_metadata.amount + dly_metadata.bonus}
+                     WHERE userId = "${this.id}"`);
+        }
+
+        updateReps(dly_metadata) {
+            //  Update daily date
+            sql.run(`UPDATE usercheck
+                     SET repcooldown = "${Date.now()}"
+                     WHERE userId = ${this.id}`);
+            
+            //  Update dailies reward
+            sql.run(`UPDATE userdata
+                     SET reputations = reputations + ${dly_metadata.amount}
+                     WHERE userId = "${dly_metadata.target_id}"`);
+        }
+
+        withdraw(value, value_type) {
+            sql.run(`UPDATE userinventories 
+            SET ${value_type} = ${value_type} - ${value} 
+            WHERE userId = "${this.id}"`);
+        }
+
+        addLuckyTickets(amount = 0) {
+            sql.run(`
+                UPDATE userinventories
+                SET lucky_ticket = lucky_ticket + ${amount}
+                WHERE userId = "${this.id}"
+            `)
+        }
 
 
+        get luckyTicketDropRates() {
+            return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
+        }
+
+        lootGroupByRate(rate) {
+            return sql.get(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
+        }
+
+
+        /**
+		Subtracting tickets by result of roll_type().
+        @substract_ticket
+		*/
+		withdrawLuckyTicket(amount = 0) {
+            sql.run(`UPDATE userinventories
+             SET lucky_ticket = lucky_ticket - ${amount}
+             WHERE userId = ${this.id}`)
+        }
+        
+        //	Count total user's collected cards.
+		async totalCollectedCards() {
+			const data = await sql.get(`SELECT * FROM collections WHERE userId = ${this.id}`);
+			for (let key in data) {
+				if (!data[key]) delete data[key];
+			}
+			return Object.keys(data).length;
+        }
+        
+
+        /**
+         *  Storing rolled items straight into user inventory
+         *  @param {Object} obj as parsed object of roll metadata
+         */
+        async storingUserGachaMetadata(obj = {}) {
+            for (let keyv in obj) {
+                const tablediff = keyv.indexOf(`card`) > -1 ? `collections` : `userinventories`;
+                sql.run(`UPDATE ${tablediff} 
+                         SET ${keyv} = CASE WHEN ${keyv} IS NULL 
+                            THEN ${parseInt(obj[keyv])} 
+                            ELSE ${keyv} + ${parseInt(obj[keyv])} 
+                         END 
+                         WHERE userId = "${this.id}"`);
+            }
+        }
+
+
+        /**
+         * Adding user reputation points
+         * @param {Integer} amount Updated/added amount of user's reputation points
+         */
+        addReputations(amount = 0) {
+            return sql.run(`UPDATE userdata
+                            SET reputations = CASE WHEN reputations IS NULL
+                                                THEN ${amount}
+                                              ELSE reputations + ${amount}
+                                            END
+                            WHERE userId = "${this.id}"`)
+        }
+
+
+        get inventory() {
+            return sql.get(`
+                SELECT *
+                FROM userinventories
+                WHERE userId = "${this.id}"`)
+        }
+        
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.

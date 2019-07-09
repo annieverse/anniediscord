@@ -1,52 +1,55 @@
-const Discord = require('discord.js');
-const formatManager = require('../../utils/formatManager'); 
 
-class mail {
+/**
+*   Main module
+*   @Mail Anonymous-administrator direct message through annie.
+*/
+class Mail {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
     }
 
+    /**
+     *  Initializer method
+     */
     async execute() {
-        let message = this.message;
-        let palette = this.stacks.palette;
-        !message.member.roles.find(r => r.name === 'Grand Master') ? message.channel.send('Unauthorized access.')
-            : sendMail()
+        const { isAdmin, code, reply, args, palette, collector, name, meta: {author} } = this.stacks;
 
-        async function sendMail() {
-            const form = new formatManager(message);
-            const target = await utils.userFinding(message, args[0]);
-            const content = message.content.substring(args[0].length + 7);
-            const embed = new Discord.RichEmbed()
-                .setColor(palette.halloween)
-                .setFooter(`[Admin]${message.author.username}`, message.author.displayAvatarURL)
-                .setDescription(content)
+        //  Returns if user doesn't have admin authority
+        if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+        //  Returns as guide if user doesn't specify any parameter.
+        if (!args[0]) return reply(code.MAIL.SHORT_GUIDE)
+        //  Returns if target user is invalid.
+        if (!author) return reply(code.MAIL.INVALID_USER)
 
+        //  Confirmation message.
+        reply(code.MAIL.PROMPT, {socket: [name(author.id)]})
+
+        collector.on(`collect`, msg => {
+            //  Close connection
+            collector.stop()
             try {
-                target.send(embed)
-                form.embedWrapper(palette.darkmatte, `Message has been sent to **${target.user.tag}.**`)
+                //  Send message to target
+                reply(msg, {field: author})
+                //  Show notification if message has been successfully delivered.
+                reply(code.MAIL.SUCCESSFUL, {socket: [name(author.id)], color: palette.lightgreen})
+            }
+            catch(e) {
+                //  Handles the error caused by locked dms setting.
+                reply(code.MAIL.UNSUCCESSFUL, {color: palette.red})
+            }
 
-            }
-            catch (e) {
-                form.embedWrapper(palette.darkmatte, `Can't proceed. Their dms are locked.`)
-            }
-        }
+        })
     }
 }
 
 module.exports.help = {
-    start: mail,
+    start: Mail,
     name: "mail",
     aliases: [],
     description: `Send a message to a specified user`,
     usage: `${require(`../../.data/environment.json`).prefix}mail @user <message>`,
     group: "Admin",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user: true
 }

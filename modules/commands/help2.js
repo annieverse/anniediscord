@@ -46,6 +46,7 @@ class help {
         await this.stacks.pause(200)
         return file_arr
     };
+
     /**
      * grabs the main name for all commands
      * @returns {string} command names joined by \n
@@ -102,15 +103,37 @@ class help {
     async group(file) {
         let file_rst;
         let src;
-        try {
+        //try {
             src = require(`./${file}`);            
-        } catch (error) {
-            this.utils.sendEmbed(this.log.ROLE.ERR.WRONG.FILE); return false
-        }
+        //} catch (error) {
+            //console.log(`in this.group()`)
+          //  this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE); return false
+        //}
         file_rst = src.help.group.toLowerCase();
         await this.stacks.pause(200)
         return file_rst;
     };
+
+    /**
+     * Grabs any file name baised on an alias or file inputed
+     * @param {String} cmd file name
+     * @returns {String} string of file
+     */
+    async returnFileName(cmd){
+        let file_name = cmd;
+        fs.readdir("./modules/commands/", (err, files) => {
+            if (err) console.log(err);
+            for (let file in files) {
+                const src = require(`./${files[file]}`);
+                if (src.help.name.toLowerCase() === cmd.toLowerCase || src.help.aliases.includes(cmd.toLowerCase())) {
+                    file_name = src.help.name;
+                    continue;
+                }
+            }
+        });
+        await this.stacks.pause(200)
+        return file_name;
+    }
 
     /**
      * Displays all avaible commands in each category
@@ -134,7 +157,7 @@ class help {
             let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
             for (let index = 0; index < mainNames.length; index++) {
                 
-                page[x].push(`**\`${mainNames[index]}\`**`);
+                page[x].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
             }
         }
         for (let i = 0;i<page.length;i++) {
@@ -172,7 +195,7 @@ class help {
                 page.push(new Array())
                 let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
                 for (let index = 0; index < mainNames.length; index++) {
-                    page[0].push(`**\`${mainNames[index]}\`**`);
+                    page[0].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
                 }
             }
         }
@@ -186,9 +209,8 @@ class help {
 
     async specificCommandsHelp(cmdFile, group) {
         if(group==='admin'){
-            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE);
         }
-        
         let pages, page = [];
         page.push(new Array(`**${group.toUpperCase()}** - Group`))
         page[0].push(`\nCommand\n\`\`\`fix\n${cmdFile}\`\`\``)
@@ -201,16 +223,24 @@ class help {
 
     async execute() {
         this.initializeEmbed();
-        if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
-        if (this.args[0] === 'help') return this.help(this.args[0]); // Sends a help message for the help command, ie. ${prefix}help help
+        let file = await this.returnFileName(this.args[0].toLowerCase());
         let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
+        if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
+        if (file === 'help') return this.help(file.toLowerCase()); // Sends a help message for the help command, ie. ${prefix}help help
         for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
             let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
-            if (pageHeaderOptions.some(x => x === this.args[0].toLowerCase()))return this.help(this.args[0]); // if a group name is detected, only the commands for that group will be sent
-            if (await this.group(this.args[0].toLowerCase()).then(res=>res===false))return; // Tests for the arg being passed through, if its a valid command
-            if (await this.group(this.args[0].toLowerCase()) === pageHeaderOptions[x]) { // Tests to see if the arg being passed through is a command in a group
+            if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file); // if a group name is detected, only the commands for that group will be sent
+            // Set the Group name if their is a groups name availiable 
+            let group_name;
+            try {
+                group_name = await this.group(file.toLowerCase());
+            } catch (err) {
+                group_name = undefined;
+            }
+            if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
+            if ( group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
                 for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
-                    if (this.args[0].toLowerCase()===mainNames[index]){ // Tests for the correct file
+                    if (file.toLowerCase()===mainNames[index]){ // Tests for the correct file
                         return this.specificCommandsHelp(mainNames[index],pageHeaderOptions[x]); // returns a help message for that specific command
                     }
                 }

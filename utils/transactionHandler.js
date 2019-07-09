@@ -1,78 +1,58 @@
    const sql = require(`sqlite`);
    sql.open(`.data/database.sqlite`);
+   const databaseManager = require(`./databaseManager`);
 
 
    // Supporting transaction workflow. Initialized on each different category.
    class Transaction {
-       constructor(itemname, type, msg, user) {
+       constructor({itemname, type, message, author}) {
            this.itemname = itemname;
            this.type = type;
-           this.message = msg;
-           this.author = user;
+           this.message = message;
+           this.author = author;
+           this.db = new databaseManager(this.author.id)
        }
 
 
        // Adding role
        Roles(data) {
-           return this.message.guild.members.get(this.author.id).addRole(this.message.guild.roles.find(n => n.name === data.name));
+            this.message.guild.members.get(this.author.id).addRole(this.message.guild.roles.find(n => n.name === data.name));
        }
 
 
        // Updating profile interface
        Skins(data) {
-           sql.run(`UPDATE userdata 
-                            SET interfacemode ="${data.alias}" 
-                            WHERE userId = ${this.author.id}`);
+            this.db.updateSkin(data.alias)
        }
 
 
        //  Updating cover alias.
        Covers(data) {
-           sql.run(`UPDATE userdata 
-                            SET cover = "${data.alias}"
-                            WHERE userId = ${this.author.id}`);
+            this.db.updateCover(data.alias)
        }
 
 
        // Updating badges column
        Badges(data) {
-           sql.run(`UPDATE userbadges 
-                                SET ${slotkey[slotvalue.indexOf(null)]} = "${data.alias}" 
-                                WHERE userId = ${this.author.id}`);
+            this.db.updateBadge(data.alias)
        }
+
 
        // Applying EXP booster.
        Exp_booster(data) {
-           sql.run(`UPDATE usercheck 
-                                SET expbooster = "${data.alias}",
-                                    expbooster_duration = ${Date.now()}
-                                WHERE userId = ${this.author.id}`);
+            this.db.updateExpBooster(data.alias)
        }
 
 
        // Parsing ticket-model item
        Tickets(data) {
-           return this[data.unique_type](data)
+            this[data.unique_type](data)
        }
 
 
-       // Updating multiple badges.
-       multiple_badges(src, user) {
-           let idx = parseInt(slotvalue.indexOf(null));
-           for (let i in src) {
-               sql.run(`UPDATE userbadges 
-                                        SET ${slotkey[idx + parseInt(i)]} ="${src[parseInt(i)]}" 
-                                        WHERE userId = ${user.id}`);
-           }
-       }
-
-
-
-       //  Withdrawing the balance
-       withdraw(price, currency) {
-           sql.run(`UPDATE userinventories 
-                     SET ${currency} = ${currency} - ${parseInt(price)} 
-                     WHERE userId = ${this.author.id}`);
+       //  Withdrawing balance
+       withdraw(data) {
+            this.db.withdraw(data.price, data.price_type)
        }
 
 

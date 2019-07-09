@@ -1,12 +1,48 @@
 {
     "BUY": {
-        "ERR": {
-            "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
-            "MISSING_ROLENAME": "You should include the role name!",
-            "LVL_TOO_LOW": "Sorry, to buy roles you need be at least level **25**.",
-            "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough artcoins.",
-            "INVALID_CATEGORY": "That doesn't looks like a valid category."
-        }
+        "SHORT_GUIDE": "Checkout what you can buy in our `>shop` !",
+        "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
+        "MISSING_ROLENAME": "You should include the role name!",
+        "ROLES_LVL_TOO_LOW": "Sorry, to buy roles you need be at least level **25**.",
+        "DUPLICATE_SKIN": "You already own that skin",
+        "BADGES_LIMIT": "You have reached your max badges limit.",
+        "DUPLICATE_BADGE": "You already own that badge",
+        "DUPLICATE_COVER": "You are currently using that cover",
+        "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough {1}.",
+        "INVALID_CATEGORY": "That doesn't looks like a valid category.",
+        "MISSING_ITEMNAME": "Don't forget to specify the item name",
+        "INVALID_ITEM": "I can't find any item with that name . ."
+    },
+    "CHECKOUT": {
+        "CANCEL": "Transaction cancelled.",
+        "SUCCESSFUL": "Purchase successful!",
+        "METADATA": "You are going to buy **{0} {1}** for {2} **{3}**.\nPlease type `y` to confirm your purchase.",
+        "ERROR": "Uhh, something went wrong."
+    },
+    "CAPSULE": {
+        "SHORT_GUIDE": "You can use your power capsules and gain the exp by typing `>eat <amount>`.",
+        "INSUFFICIENT_AMOUNT": "You only have **{0}** Power Capsules.",
+        "SUCCESSFUL": "**{0}** used {1} **{2}** capsules and gained **+{3} EXP**",
+        "ZERO": "You don't have any power capsules left."
+    },
+    "CARTCOIN": {
+        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:2**",
+        "INSUFFICIENT_AMOUNT": "You only have {0}**{1}** artcoins. Grind harder!",
+        "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
+        "SUCCESSFUL": "**{0}** has converted {1} **{2}** artcoins and gained **+{3} EXP**"
+    },
+    "DAILY": {
+        "IN_COOLDOWN": "You can take your dailies again **{0}**",
+        "CLAIMED": "**{0}** has received {1} **{2}{3}** artcoins!\n{4}{5}"
+    },
+    "EVJOIN": {
+        "ALREADY_HAS": "**{0}** you have unused ticket, go submit your art now!",
+        "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event.",
+        "SUCCESSFUL": "**{0}** has joined the event.\n{1}{2}",
+        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing."
+    },
+    "EVAL": {
+        "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"
     },
     "ASK": {
         "ANSWERS": ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"],
@@ -20,6 +56,102 @@
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**{2}(+{3})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value."
     },
+    "GACHA": {
+        "OPENING_WORDS": [
+            " *{0} is opening their precious card*",
+            " *{0} seems really curious*",
+            " *{0}, may the RNG bless you*",
+            " *{0}, close your eyes*",
+            " *{0}, do you know what's lying behind this card?*",
+            " *I feel strange feelings*",
+            " *wooowieeee*",
+            " *flip flip flap!*"
+            ],
+        "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**{2} {3} & {4}{5} Fragments.**",
+        "UNALLOWED_ACCESS": "Please do your roll in {0}",
+        "ZERO_TICKET": "You don't have any lucky tickets!",
+        "INSUFFICIENT_TICKET": "You can't do multi-roll with less than **10 Lucky Tickets**!",
+        "COOLING_DOWN": "Your next roll still in cooldown."
+    },
+    "GIFT": {
+        "SHORT_GUIDE": "You now able to gift your crush in the server by typing `>gift <user>`! {0}",
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "SELF_TARGETING": "Aw, sadly you can't gift yourself.",
+        "INSUFFICIENT_AMOUNT": "You don't have that much item.",
+        "INVALID_ITEM": "I don't think thats a valid item..",
+        "INVALID_FORMAT": "Please use proper format so i can parse your request.",
+        "SUCCESSFUL": "**{0}** has received {1}**{2} {3}(+{4} reps)**",
+        "FETCHING": "Fetching available gifts ..",
+        "UNAVAILABLE": "You don't have any gifts at the moment."
+    },
+    "INVENTORY": {
+        "FETCHING": "`fetching {0} inventory . .`",
+        "EMPTY": "You don't have any items in the bag.",
+        "HEADER": "{0} | **Inventory card for {1}**",
+        "INVALID_USER": "Sorry i couldn't find that user."
+    },
+    "LEADERBOARD": {
+        "SHORT_GUIDE": "Hey, checkout our server leaderboard! below are the available categories:\n\n`>lb xp` for level ranking\n`>lb ac` for artcoins ranking\n`>lb fame` for reputations ranking\n`>lb artist` for popular artists ranking",
+        "INVALID_CATEGORY": "Sorry i can't find anything from that category",
+        "FETCHING": "`fetching {0} leaderboard data . .`",
+        "AUTHOR_RANK": "You are currently **{0}#** with total **{1}** {2}",
+        "UNRANKED": "You are unranked."
+    },
+    "LEVELCARD": {
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
+        "INVALID_USER": "Sorry, i couldn't find that user."
+    },
+    "MAIL": {
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "PROMPT": "Message will be send to **{0}**. Now please type the content of the message.",
+        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{0}**.",
+        "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
+        "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
+    },
+    "PAY": {
+        "SHORT_GUIDE": "Pay-feature let you share your artcoins with other user!\nStart by typing `>pay <user>`",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{0}** to use this feature.",
+        "INVALID_USER": "Sorry, I couldn't find that account.",
+        "SELF_TARGETING": "You can't pay yourself.",
+        "USER_CONFIRMATION": "You are going to transfer your artcoins to **{0}**'s account. Please type the amount.",
+        "CANCELLED": "Transaction cancelled.",
+        "INVALID_AMOUNT": "You need to put a valid number.",
+        "EXCEEDING_BALANCE": "Your current balance isn't enough to continue the transaction.",
+        "CONFIRMATION": "{0}**+{1}** -> **{2}'s Balance**?\ntype `y` to confirm your transaction.",
+        "SUCCESSFUL": "Transaction successful.",
+        "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
+    },
+    "PROFILECARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
+    },
+    "PORTFOLIOCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Portfolio card for {0}**",
+        "LVL_TOO_LOW": "The user need to be atleast lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s portfolio data . .`"
+    },
+    "PRUNE": {
+        "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
+        "INVALID_AMOUNT": "Please put a valid number.",
+        "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
+        "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
+    },
+    "REDEEM": {
+        "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
+        "INVALID_AMOUNT": "Please put a valid amount.",
+        "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
+        "CANCELLED": "Transaction cancelled.",
+        "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
+        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
+    },
+    "REP": {
+        "IN_COOLDOWN": "You can give reputation point again **{0}**",
+        "SHORT_GUIDE": "Who you are going to rep today? `>rep <user>`",
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "SELF_TARGETING": "You can't rep yourself, baka.",
+        "SUCCESSFUL": "**{0}** has received **+☆** from **{1}**."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
@@ -28,5 +160,17 @@
                 "ROLE":"I'm sorry but you do not have the requried role for this/these command(s)"
             }
         }
+    },
+    "SYS_NOTIFICATION": {
+        "FIVESTAR_PULL": "{0} has pulled {1} **{2}(☆☆☆☆☆)** from the Lucky Ticket! :tada:"
+    },
+    "ADDROLE":{
+        "NO_USER":"Uhm, can you specify the user please.",
+        "NO_USER_FOUND":"Sorry {0}, I couldn't find that user.",
+        "NO_ROLE_SPECIFIED":"Can you specify a role please.",
+        "NO_ROLE_FOUND":"Sorry {0}, but I couldn't find that role.",
+        "HAS_ROLE_ALREADY":"I'm Sorry but {0} has that role already.",
+        "DMS_LOCKED":"Congrats to {0} they have been given the role **{1}**. I tried to DM them, but their DMs are locked. T__T",
+        "ROLE_ADDED":"Gratz {0}! You have been given the role **{1}**"
     }
 }

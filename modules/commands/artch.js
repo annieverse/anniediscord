@@ -3,24 +3,18 @@ var content = require("../../utils/challengelist.json");
 
 class artChallenge {
   constructor(Stacks) {
-    this.author = Stacks.meta.author;
-    this.data = Stacks.meta.data;
-    this.utils = Stacks.utils;
-    this.message = Stacks.message;
-    this.args = Stacks.args;
-    this.palette = Stacks.palette;
-    this.required_roles = this.message.member.roles.find(r => (r.name === 'Grand Master') || (r.name === 'Tomato Fox'));
     this.stacks = Stacks;
   }
 
   async execute() {
-    let message = this.message;
+    let message = this.stacks.message;
+    let timer = 60;
 
     const battlechoice = new Discord.RichEmbed()
-      .setColor(this.palette.halloween)
-      .setDescription("List of art challenges, please choose one.\n" +
+      .setColor(this.stacks.palette.halloween)
+      battlechoice.setDescription("List of art challenges, please choose one.\n" +
         "you can view their sub-category by typing >sub{category name}\n\n" +
-        "20 seconds to type the category, you wish the theme to be.\n\n" +
+        `${timer} seconds to type the category, you wish the theme to be.\n\n` +
         "-Monster\n\n" +
         "-Challenges\n\n" +
         "-Enviroment\n\n" +
@@ -31,7 +25,7 @@ class artChallenge {
         "-Time Period");
 
     message.channel.send(battlechoice);
-    const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 20000 });
+    const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: timer*1000 });
     collector.on('collect', message => {
       let argsUpperCased = message.content.toUpperCase();
       function getRndInteger(min, max) {
@@ -84,6 +78,6 @@ module.exports.help = {
   usage: `${require(`../../.data/environment.json`).prefix}art.ch`,
   group: "General",
   public: false,
-  required_usermetadata: true,
-  multi_user: true
+  required_usermetadata: false,
+  multi_user: false
 }

@@ -5,12 +5,15 @@ module.exports = (bot, message) => {
     const module = {};
     const format = require(`./formatManager`);
     const palette = require(`./colorset.json`);
+    const { RichEmbed } = require(`discord.js`);
     const m = new format(message);
 
     /**
      * creates any amount of pages in a embed, when objects are given
      * NOT SURE IF THIS IS USED
      * naph lmk.
+     * Yes its used, but this one is outdated and missing some codes.
+     * The real one that we gonna use is currently in master branch.
      * @param message message object
      * @param pages array set
      * @returns A correctly formatted Embed
@@ -84,11 +87,14 @@ module.exports = (bot, message) => {
     * creates any amount of pages in a embed, when a(n) array, array of arrays, or a large string is given as the input.
     * @param message message object
     * @param pages array set, or large string
-    * @param evembed the vairable used for the RichEmbed
+    * @param customembed the vairable used for the RichEmbed
     * @returns A correctly formatted Embed
     */
-    module.pages = (message, pages, evembed) => {
+    module.pages = (message = {}, pages = ``, customembed = null) => {
         
+        // if customembed is not defined, it will initialize new RichEmbed.
+        let evembed = customembed || new RichEmbed().setColor(palette.darkmatte)
+
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
         let sub_pages = 1; // We will define what sub page we are on here, the default sub page will be 1. (You can change the default sub pagem, Although it is recommended to leave it at 1)
         let evalMode = false;
@@ -183,7 +189,6 @@ module.exports = (bot, message) => {
             pages = devpages;
 
             evembed.setFooter(`Page ${page} of ${pages.length}`) // This is the default value, showing the default page and the amount of pages in the array.
-            evembed.setTitle(`Debug Pages Result:`)
             evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // This sets the description as the default page (we are subtracting 1 since arrays start at 0)
 
         }else if (pages[page - 1][sub_pages - 1].constructor === Array) { // Tests to see if the pages input is multidemensial
