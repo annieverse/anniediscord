@@ -1,5 +1,7 @@
 /** Notes:
  *  - refactor userFind regex
+ *  - Locked DM
+ *  - log() into Embed()
  */
 
 class clan_wrapper {
@@ -14,6 +16,7 @@ class clan_wrapper {
         let code        = this.stacks.code;
         let palette     = this.stacks.palette;
         let emoji       = this.stacks.emoji;
+        let pause       = this.stacks.pause;
 
         
         /***************************************************************************************************
@@ -27,11 +30,16 @@ class clan_wrapper {
 
         const commandname = exports.help.name;
         const prefix = env.prefix;                                  //  Temporary
+        
+        const delay = 750;
+        const promptcolor = ``;
+        const collectorcolor = palette.green;
 
         const sql = require('sqlite');
         const sqlpath = '.data/database.sqlite';
         sql.open(sqlpath);
 
+        const authorfilter = m => m.author.id === message.author.id;
         const collector = new Discord.MessageCollector(
             message.channel,
             m => m.author.id === message.author.id, {
@@ -41,7 +49,7 @@ class clan_wrapper {
         );
 
         //  Initialize special globals
-        let user, target, msg, cmdpath, accessmap = null;
+        let user, target, msg, cmdpath, accessmap
 
         /***************************************************************************************************
          * GLOBAL CLASS / FUNCTION INITIALIZATION
@@ -96,17 +104,16 @@ class clan_wrapper {
                     member.user.tag.toLowerCase()       === this._inputname.toLowerCase();
                 return members.filter(filter).first();
             }
-            async _botHasNicknamePerms() {(
-                message.guild.members.get(bot.user.id).hasPermission("MANAGE_NICKNAMES") || 
-                message.guild.members.get(bot.user.id).hasPermission("CHANGE_NICKNAME"));
+            async _botHasNicknamePerms() {
+                return message.guild.members.get(bot.user.id).hasPermission("MANAGE_NICKNAMES") &&
+                message.guild.members.get(bot.user.id).hasPermission("CHANGE_NICKNAME");
             }
             async _setNickname(newnickname) {
                 await this._get_user();
-                if (await _botHasNicknamePerms()) {
+                if (await this._botHasNicknamePerms()) {
                     await this.$client.setNickname(newnickname);
-                    this._inputname = newnickname;
                     await this._get_user();
-                } else return msg.embedWrapper(palette.red, `Sorry, I dont have the required permsissions to change nicknames...`);
+                } else throw error;
             }
 
 
@@ -169,15 +176,19 @@ class clan_wrapper {
             constructor(name) {
                 this.name = name.toLowerCase();
                 this.alias = [];
-                this.info = undefined;
+                this.info = "Command Information not set.";
                 this.arguments = [];
-                this.name === 'help' ?
-                    this.commandlist = [] :
-                    this.commandlist = [help];
+                this.name === 'help' 
+                    ? this.commandlist = [] 
+                    : this.commandlist = [help];
                 this.access = {
                     clanstatus: "public",
                     roles: "developer"
-                }
+                };
+                this.input = { 
+                    prompt: `Prompt message not set.`,
+                    require: false 
+                };
             }
 
             //  PRIVATE UTILITY METHOD
@@ -208,25 +219,36 @@ class clan_wrapper {
             setAccess(input) {
                 if (this._isObject(input)) {
                     for (let group in input) {
-                        if(accessmap[group] && accessmap[group].hasOwnProperty(input[group])) { this.access[group] = input[group] }
+                        if (accessmap[group] && accessmap[group].hasOwnProperty(input[group])) { this.access[group] = input[group] }
                     }
+                }
+                return this
+            }
+            setInput(input) {
+                for (let group in input) {
+                    if (this.input.hasOwnProperty(group) && typeof this.input[group] === typeof input[group])
+                    this.input[group] = input[group];
                 }
                 return this
             }
         }
         
         class Subcommand {
-            constructor (metadata) {
-                this._input = args[0];
+            constructor (metadata, input = args[0]) {
+                this._input = input;
                 this._exists = false;
                 this.$invoker = metadata;
             }
-
 
             //  PUBLIC OUTPUT
             get input()     { return this._input }
             get name()      { return this.$subcommand.metadata.name }
             get exists()    { return this._exists }
+
+            set input(input) {
+                this._input = input;
+                this.init();
+            }
 
             //  OBTAIN: Property Container Functions
             _get_subcommand() { this.$subcommand = this._findSubcommand() }
@@ -234,14 +256,10 @@ class clan_wrapper {
             //  PRIVATE UTILITY METHODS
             _isValidSubCommand() { return this._findSubcommand() ? true : false }
             _normalizeSubcommand() { if (this._input) { this._input = this._input.toLowerCase() } }
-            _executeSubcommand() { return this.$subcommand.execute(this.$subcommand.metadata) }
             _findSubcommand() {
-                let subcommand = null
+                let subcommand = null;
                 this.$invoker.commandlist.forEach((element) => {
-                    if (element.metadata.name === this._input 
-                        || element.metadata.alias.indexOf(this._input) >= 0) { 
-                        subcommand = element
-                    }
+                    if (element.metadata.name === this._input || element.metadata.alias.indexOf(this._input) >= 0) { subcommand = element }
                 })
                 return subcommand
             }
@@ -252,7 +270,7 @@ class clan_wrapper {
                 for (let key in accessmap.roles[value]) { if (user.roles.hasOwnProperty(key)) return true }
                 return false
             }
-            _accessGranted() {
+            accessGranted() {
                 let check = {
                     "clanstatus" : this._checkClanStatus,
                     "roles" : this._checkRoles
@@ -264,6 +282,19 @@ class clan_wrapper {
 
 
             //  PUBLIC METHODS
+            formattedinvokerCommandList() {
+                let longest = 0
+                let outputlist = []
+                let list = this.$invoker.commandlist
+                for (let e of list) { if (e.metadata.name.length > longest) longest = e.metadata.name.length }
+                for (let e of list) {
+                    let tab = ''
+                    for (let i = 0; i < longest - e.metadata.name.length; i++) {tab += ' '}
+                    if (new Subcommand(this.$invoker, e.metadata.name).init().accessGranted())
+                    outputlist.push(`• ${e.metadata.name} ${tab}: ${e.metadata.info}`)
+                }
+                return outputlist.join(`\n`);
+            }
             init() {
                 this._normalizeSubcommand()
                 if (this._isValidSubCommand()) { 
@@ -274,24 +305,97 @@ class clan_wrapper {
                 } else this._exists = false 
                 return this
             }
-            execute() {
-                if (this._accessGranted()) {
-                    if (this._input.toLowerCase() !== "help") cmdpath.push(this.$subcommand.metadata.name);
+            async execute() {
+                if (!this.accessGranted()) return msg.embedWrapper(palette.red, `Sorry ${user.name}...\nYou don't have access to this command. ${emoji(`aauSatanialaugh`,bot)}`)
+                else {
                     args.shift();
-                    if (this._input.toLowerCase() === "help") this.$subcommand.metadata = this.$invoker;
-                    let nextsubcommand = new Subcommand(this.$subcommand.metadata).init();
-                    if (nextsubcommand.exists) return nextsubcommand.execute()
-                    else return this._executeSubcommand();
-                } else return msg.embedWrapper(palette.red, `Sorry ${user.name}...\nYou don't have access to this command. ${emoji(`aauSatanialaugh`,bot)}`)
+                    
+                    let current = false;
+                    let next = false;
+                    let collect = false;
+                    if (args[0]) {
+                        
+                        if (new Subcommand(this.$subcommand.metadata).init().exists) next = true
+                        else if (this.$subcommand.metadata.arguments.length - args.length <= 0) current = true
+                        else await msg.embedWrapper(promptcolor, this.$subcommand.metadata.input.prompt).then(async prompt => {
+                            collect = true;
+                            for (let e of this.$subcommand.metadata.arguments.slice(args.length)) {
+                                await pause(delay)
+                                msg .clearData()
+                                    .setColor(collectorcolor)
+                                    .setDescription(`${user.name}, please enter: ${msg.codeBlock(e,`CSS`,`**`)}`)
+                                    .setFooter(`To terminate this session: \'exit\'`)
+                                    
+                                await msg.send().then(async m => {
+                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
+                                        .then(collected => {
+                                            collected.first().delete();
+                                            m.delete();
+                                            args.push(collected.first().content);
+                                            current = true;
+                                            ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return current = false });
+                                        })
+                                        .catch(() => { m.delete(); return current = false; });
+                                });
+                                if (!current) break;
+                            } //prompt.delete()
+                        })
+
+                    } else {
+
+                        if (!this.$subcommand.metadata.input.require) current = true
+                        else await msg.embedWrapper(promptcolor, this.$subcommand.metadata.input.prompt).then(async prompt => {
+                            collect = true;
+                            for (let [i, e] of this.$subcommand.metadata.arguments.entries()) {
+                                let request = `${user.name}, please enter: ${msg.codeBlock(e,`CSS`,`**`)}`
+                                let append = `\n*You may alternatively enter a valid **\`<subcommand>\`** such as **\`HELP\`**.`
+                                if (i === 0) request = request.concat(append)
+                                msg .clearData()
+                                    .setColor(collectorcolor)
+                                    .setDescription(request)
+                                    .setFooter(`To terminate this session: \'exit\'`)
+                                
+                                await pause(delay)
+                                await msg.send().then(async m => {
+                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
+                                    .then(collected => {
+                                        collected.first().delete();
+                                        m.delete();
+                                        args.push(collected.first().content);
+                                        current = true;
+                                        ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return next = current = false });
+                                        if (i === 0 && new Subcommand(this.$subcommand.metadata).init().exists) { next = true; return current = false; }
+                                    })
+                                    .catch(() => { m.delete(); return next = current = false; });
+                                });
+                                if (!current) break;
+                            } //prompt.delete() 
+                        })
+
+                    }
+                    
+                    if (this._input.toLowerCase() !== "help") cmdpath.push(this.name)
+                    if (collect) await pause(delay)
+                    if (current) {
+                        this._input.toLowerCase() === 'help' 
+                            ? this.$subcommand.execute(this.$invoker) 
+                            : this.$subcommand.execute(this.$subcommand.metadata)
+                    }
+                    else if (next) {
+                        let nextsubcommand = new Subcommand(this.$subcommand.metadata).init()
+                        return nextsubcommand.execute(nextsubcommand.metadata)
+                    }
+                }
             }
+
+
         }
 
         class Embed extends Discord.RichEmbed {
             constructor() { super() }
 
             //  Private Methods
-            _clearData() { for (let key in this) { typeof this[key] !== "object" ? this[key] = undefined : this[key] = [] } }
-            _formatString(input) { let s = input; return input = s.replace(/(^\s+)|(\s+$)/g,"").replace(/\n\s+/g,"\n") }
+            _formatString(input) { let s = input; return input = s.replace(/(^\s+)|(\s+$)/g,"").replace(/\n[ \t]+/g,"\n") }
             _formatAllStrings() {
                 for (let key1 in this) {
                     if (typeof this[key1] === "string") this[key1] = this._formatString(this[key1])
@@ -303,42 +407,33 @@ class clan_wrapper {
             //  Public Methods
             send() { 
                 this._formatAllStrings(); 
-                message.channel.send(this); 
-                this._clearData(); 
+                return message.channel.send(this); 
             }
             sendTo(channel) {
                 this._formatAllStrings();
-                /^\d+$/.test(channel) ?
+                return /^\d+$/.test(channel) ?
                     bot.channels.find(x => x.id === channel).send(this) :
                     bot.channels.find(x => x.name === channel.toLowerCase()).send(this);
-                this._clearData();
             }
             sendDM(target) {
                 this._formatAllStrings(); 
-                target.client.send(this);
-                this._clearData();
+                return target.client.send(this);
             }   
-            sendRaw(text) { 
-                message.channel.send(this._formatString(text)); 
-                this._clearData(); 
-            }
+            sendRaw(text) { return message.channel.send(this._formatString(text)); }
             sendRawTo(channel, text) {
-                /^\d+$/.test(channel) ?
-                bot.channels.find(x => x.id === channel).send(this._formatString(text)) :
-                bot.channels.find(x => x.name === channel.toLowerCase()).send(this._formatString(text));
-                this._clearData();
+                return /^\d+$/.test(channel) ?
+                    bot.channels.find(x => x.id === channel).send(this._formatString(text)) :
+                    bot.channels.find(x => x.name === channel.toLowerCase()).send(this._formatString(text));
             }
-            sendRawDM(target, text) {
-                target.client.send(this._formatString(text));
-                this._clearData();
-            }
+            sendRawDM(target, text) { return target.client.send(this._formatString(text)); }
             
             //  Legacy Support Method
-            embedWrapper(color, text) { return this.setColor(color).setDescription(text).send(); }
+            embedWrapper(color, text) { return this.clearData().setColor(color).setDescription(this._formatString(text)).send() }
 
             //  Utility Methods
-            format_Comma(x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-            format_Code(message, style) { return `\`\`\`${style}\n${message}\`\`\`` }
+            clearData() { for (let key in this) { typeof this[key] !== "object" ? this[key] = undefined : this[key] = [] }; return this}
+            formatComma(x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+            codeBlock(message, style = ``, markdown = ``) { return `${markdown}\`\`\`${style}\n${message}\`\`\`${markdown.split("").reverse().join("")}` }
         }
         
         function ClanOld(name) {
@@ -465,26 +560,30 @@ class clan_wrapper {
          ***************************************************************************************************/
         let help = {
             metadata: new Metadata("help")
-                .setInfo("Displays complete guide of invoking subcommand.")
+                .setInfo("Displays complete guide of this subcommand.")
                 .setAccess({ roles: "public" }),
 
             execute: async(metadata) => {
+
                 let style = `HTTP`
-                let commandlistdata = {}
-                metadata.commandlist.shift();
-                metadata.commandlist.forEach(e => commandlistdata[e.metadata.name] = e.metadata.info)
+                let bold = `**`
                 metadata.arguments.forEach((e, i)  => metadata.arguments[i] = `<${e}>`)
 
-                msg //.setAuthor(`|  Command Help`, 'https://i.imgur.com/nohkOP0.png')
+                msg .clearData()
                     .setColor(palette.darkmatte)
-                    .addField(`Command Shortcut:`,      msg.format_Code(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`))
-                    .addField(`Information:`,           msg.format_Code(metadata.info, style))
+                    .setDescription(`
+                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`, bold)}
+                        Information:        ${msg.codeBlock(metadata.info, style, bold)}
+                        Subcommands List:   ${msg.codeBlock(new Subcommand(metadata).formattedinvokerCommandList(), style, bold)}`)
 
                 if (args[0] === "DEVMODE") return msg
-                    .addField(`Formal Name:`,           msg.format_Code(metadata.name, style))
-                    .addField(`Alias:`,                 msg.format_Code(metadata.alias.join(', '), style))
-                    .addField(`Subcommand List:`,       msg.format_Code(JSON.stringify(commandlistdata).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,': '), style))
-                    .addField(`Access Permissions:`,    msg.format_Code(JSON.stringify(metadata.access).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,': '), style))
+                    .setDescription(`
+                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`, bold)}
+                        Information:        ${msg.codeBlock(metadata.info, style, bold)}
+                        Formal Name:        ${msg.codeBlock(metadata.name, style, bold)}
+                        Alias:              ${msg.codeBlock(metadata.alias.length ? metadata.alias.join(', ') : `--`, style, bold)}
+                        Subcommand List:    ${msg.codeBlock(new Subcommand(metadata).formattedinvokerCommandList(), style, bold)}
+                        Access Permissions: ${msg.codeBlock(JSON.stringify(metadata.access).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,': '), style, bold)}`)
                     .setFooter(`${user.name} | Developer Mode`)
                     .send();
                 else return msg.send();
@@ -497,18 +596,29 @@ class clan_wrapper {
         let test_userNicknameChange = {
             metadata: new Metadata("namechange")
                 .setAlias(["nickname", "change"])
-                .setInfo("Used to change a user's nickname.")
-                .setArguments(["username", "new nickname"])
-                .setAccess({ roles: "developer" }),
+                .setInfo("Change a user's nickname.")
+                .setArguments(["username, current nickname or id", "new nickname"])
+                .setAccess({ roles: "admin" })
+                .setInput({ 
+                    prompt: `
+                        __**User Nickname Change**__
+
+                        Hello ${user.name}, I required the following information:
+                        ${msg.codeBlock(`• username, current nickname or id\n• new nickname`,`fix`,`**`)}`,
+                    require: true
+                }),
 
             execute: async(metadata) => {
-
-                if (args.length >= 2) { 
-                    target = await new User(args[0]).init();
-                    args.shift()
-                } else return msg.embedWrapper(palette.golden, `Nickname Change: \`${prefix}${commandname} namechange <Target User> <New Name>\``);
-                await target._setNickname(args.join(" "))
-
+                target = await new User(args[0]).init();
+                if (target.exists) {
+                    let old_nickname = target.nickname;
+                    try {
+                        await target._setNickname(args[1])
+                        msg.embedWrapper('#0099ff', `
+                            Old Nickname: ${msg.codeBlock(old_nickname,`yaml`,`**`)}
+                            New Nickname: ${msg.codeBlock(target.nickname,`yaml`,`**`)}`)
+                    } catch (e) { return msg.embedWrapper(palette.red, `Sorry ${user.name}... I couldn't change this user's nickname!`) }
+                } else return msg.embedWrapper(palette.red, `Sorry, I couldn't find: \`${target.inputname}\``)
             }
         }
 
@@ -527,21 +637,20 @@ class clan_wrapper {
 
                 if (target.exists) {
 
-                    const formatblock = (string) => string.replace(/(^\s+)|(\s+$)/g,"").replace(/\n\s+/g,"\n")
-
                     let style = `HTTP`
                     return msg
+                        .clearData()
                         .setAuthor(user.name, user.pfp)
                         .setColor(palette.darkmatte)
-                        .addField(`Search Input:`,      msg.format_Code(target.inputname, style))
-                        .addField(`User ID:`,           msg.format_Code(target.id, style))
-                        .addField(`User Name:`,         msg.format_Code(`${target.name}#${target.discriminator}`, style))
-                        .addField(`Nickname:`,          msg.format_Code(target.nickname, style))
-                        .addField(`Profile Image URL:`, msg.format_Code(target.pfp, style))
-                        .addField(`Clan Tag:`,          msg.format_Code(target.nametag, style))
-                        .addField(`Level:`,             msg.format_Code(target.level, style))
-                        .addField(`Balance:`,           msg.format_Code(`${msg.format_Comma(target.artcoins)} Artcoins`, style))
-                        .addField(`Roles:`,             msg.format_Code(JSON.stringify(target.roles).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,' : '), style))
+                        .addField(`Search Input:`,      msg.codeBlock(target.inputname, style))
+                        .addField(`User ID:`,           msg.codeBlock(target.id, style))
+                        .addField(`User Name:`,         msg.codeBlock(`${target.name}#${target.discriminator}`, style))
+                        .addField(`Nickname:`,          msg.codeBlock(target.nickname, style))
+                        .addField(`Profile Image URL:`, msg.codeBlock(target.pfp, style))
+                        .addField(`Clan Tag:`,          msg.codeBlock(target.nametag, style))
+                        .addField(`Level:`,             msg.codeBlock(target.level, style))
+                        .addField(`Balance:`,           msg.codeBlock(`${msg.formatComma(target.artcoins)} Artcoins`, style))
+                        .addField(`Roles:`,             msg.codeBlock(JSON.stringify(target.roles).replace(/{|"|}/g,'').replace(/,/g,'\n').replace(/:/g,' : '), style))
                         .send()
                 } else return log(`GREET_APOLOGY LB INVALID_USER`) 
 
@@ -560,28 +669,32 @@ class clan_wrapper {
                 .setAccess({ roles: "developer" }),
             execute: async(metadata) => {
 
-                msg .setColor(`#0099ff`)
+                msg .clearData()
+                    .setColor(`#0099ff`)
                     .setAuthor(`Requested by: ${user.name}`, user.pfp)
                     .setDescription(`Here's Naphy's favorite .gif for you. ♡`)
                     .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
                     .send()
 
                 return
+                
                 if (args.length === 0) target = user;
                 else if (args.length >= 1) target = await new User(args.join(" ")).init();
 
                 if (target.exists) {
-                    msg.setDescription(`Sending DM to: ${target.client}`)
-                            .setColor(palette.green)
-                            .send()
+                    msg .clearData()
+                        .setDescription(`Sending DM to: ${target.client}`)
+                        .setColor(palette.green)
+                        .send()
 
-                    msg.setColor(`#0099ff`)
-                            .setAuthor(`Message from: ${user.name}`, user.pfp)
-                            .setDescription(`   Hey there~
-                                                Thanks for being my labrat!
-                                                Here's a .gif for you. ♡`)
-                            .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
-                            .sendDM(target)
+                    msg .clearData()
+                        .setColor(`#0099ff`)
+                        .setAuthor(`Message from: ${user.name}`, user.pfp)
+                        .setDescription(`   Hey there~
+                                            Thanks for being my labrat!
+                                            Here's a .gif for you. ♡`)
+                        .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
+                        .sendDM(target)
                 }
                 return
             }
@@ -590,16 +703,20 @@ class clan_wrapper {
         let test_2 = {
             metadata: new Metadata("test2")
                 .setAlias(["2", "22", "222"])
-                .setInfo("Test Info for Command: test2")
+                .setInfo("Test Info for Test 2")
                 .setArguments("username / userid")
                 .setCommandList([
                     test_userFind, 
                     test_userNicknameChange,
                     test_sendMessage])
-                .setAccess({ roles: "developer" }),
+                .setAccess({ roles: "nobody" })
+                .setInput({ 
+                    prompt: "Test Prompt Message",
+                    require: false
+                }),
                 
             execute: async(metadata) => {
-                msg.embedWrapper(palette.green, `Execute: ${metadata.name}`)
+                msg.embedWrapper(palette.red, `Test Message`)
             }
         }
 
@@ -689,8 +806,8 @@ class clan_wrapper {
         /***************************************************************************************************
          * EXECUTION:
          ***************************************************************************************************/
-        const triage = async() => {
-            let metadata = new Metadata("")
+        let clanMain = {
+            metadata: new Metadata("clan")
                 .setInfo("Main clan interface command.")
                 .setArguments("subcommand")
                 .setCommandList([
@@ -702,13 +819,55 @@ class clan_wrapper {
                     test_1,
                     test_2
                 ])
-                .setAccess({ roles: "public" })
-            let subcommand = await new Subcommand(metadata).init();
-            if (subcommand.exists) return await subcommand.execute()
-            else return log(`TRIAGE_HELP`)
-        }
+                .setAccess({ roles: "public" }),
+            execute: async() => {
 
-        return triage();
+                let subcommand = await new Subcommand(clanMain.metadata).init();
+                if (subcommand.exists) return await subcommand.execute()
+                else msg.sendRaw(`\`Loading Clan Interface . .\``).then(async loading => {
+                    args = [];
+                    await msg 
+                        .clearData()
+                        .attachFiles(['./images/clan_banner.png'])
+                        .setColor(promptcolor)
+                        .setDescription(`${msg.codeBlock(new Subcommand(clanMain.metadata).formattedinvokerCommandList(),`HTTP`,`**`)}`)
+                        .send()
+                        .then(async claninterface => {
+                            loading.delete()
+
+                            await pause(delay)
+                            let subcommand
+                            let terminate = false
+                            msg .clearData()
+                                .setColor(collectorcolor)
+                                .setDescription(msg.codeBlock(`subcommand?`,`CSS`,`**`))
+                                .setFooter(`Terminate: Type \'exit\'`)
+
+                            await msg.send().then(async m => {
+                                await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
+                                .then(async collected => {
+                                    collected.first().delete(); 
+                                    m.delete();
+                                    args.push(collected.first().content);
+                                    ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return terminate = true });
+                                    subcommand = await new Subcommand(clanMain.metadata).init();
+                                    if (!terminate && !subcommand.exists) {
+                                        await pause(delay)
+                                        msg.embedWrapper(palette.darkmatte, `Sorry ${user.name}, **\`${args[0]}\`** is not a valid subcommand.`)
+                                        return terminate = true;
+                                    }
+                                })
+                                .catch(() => { m.delete(); return terminate = true; });
+                            });
+                            
+                            await pause(delay)
+                            if (!terminate) return subcommand.execute()
+                        })
+                })
+            }
+        }
+            
+        return clanMain.execute();
     }
 }
 
