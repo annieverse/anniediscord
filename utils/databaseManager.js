@@ -143,6 +143,15 @@ class databaseUtils {
             WHERE userId = "${this.id}"`);
         }
 
+        addLuckyTickets(amount = 0) {
+            sql.run(`
+                UPDATE userinventories
+                SET lucky_ticket = lucky_ticket + ${amount}
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+
         get luckyTicketDropRates() {
             return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
         }

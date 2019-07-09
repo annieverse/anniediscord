@@ -137,6 +137,14 @@
         "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
         "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
     },
+    "REDEEM": {
+        "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
+        "INVALID_AMOUNT": "Please put a valid amount.",
+        "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
+        "CANCELLED": "Transaction cancelled.",
+        "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
+        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
