@@ -137,6 +137,18 @@ class databaseUtils {
                      WHERE userId = "${this.id}"`);
         }
 
+        updateReps(dly_metadata) {
+            //  Update daily date
+            sql.run(`UPDATE usercheck
+                     SET repcooldown = "${Date.now()}"
+                     WHERE userId = ${this.id}`);
+            
+            //  Update dailies reward
+            sql.run(`UPDATE userdata
+                     SET reputations = reputations + ${dly_metadata.amount}
+                     WHERE userId = "${dly_metadata.target_id}"`);
+        }
+
         withdraw(value, value_type) {
             sql.run(`UPDATE userinventories 
             SET ${value_type} = ${value_type} - ${value} 

@@ -145,6 +145,13 @@
         "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
         "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
     },
+    "REP": {
+        "IN_COOLDOWN": "You can give reputation point again **{0}**",
+        "SHORT_GUIDE": "Who you are going to rep today? `>rep <user>`",
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "SELF_TARGETING": "You can't rep yourself, baka.",
+        "SUCCESSFUL": "**{0}** has received **+☆** from **{1}**."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
