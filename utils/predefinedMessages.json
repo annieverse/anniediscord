@@ -121,6 +121,10 @@
         "SUCCESSFUL": "Transaction successful.",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
     },
+    "PROFILECARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{
