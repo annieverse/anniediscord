@@ -2,12 +2,13 @@ const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const { get } = require("snekfetch");
 const Color = require('color');
-const imageUrlRegex = /\?size=2048$/g; 
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
-const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
+const probe = require(`probe-image-size`)
+const sql = require(`sqlite`);
+sql.open(`.data/database.sqlite`)
 
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Roboto.ttf")), "Roboto");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-medium.ttf")), "RobotoMedium");
@@ -16,9 +17,11 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/roboto-thin.ttf")), "Robot
 Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney");
 Canvas.registerFont(resolve(join(__dirname, "../fonts/KosugiMaru.ttf")), "KosugiMaru");
 
-async function portfolio(member) {
+async function portfolio(stacks, member) {
     const configProfile = new profileManager();
     const collection = new databaseManager(member.id);
+    const configRank = new rankManager(stacks.bot, stacks.message)
+    const { pause } = stacks;
 
 
     /**
@@ -145,7 +148,7 @@ async function portfolio(member) {
                             let smallest = width > height ? height : width;
 
 
-                            if (smallest > dx) {
+                            if (smallest < dx) {
                                 for (let i = smallest * 0.1; smallest < dx; i + (smallest * 0.1)) {
                                     width = Math.floor(width + i);
                                     height = Math.floor(height + i);
@@ -160,19 +163,17 @@ async function portfolio(member) {
                             }
 
 
-
                             let {
                                 body: photo
                             } = await get(src);
                             let highest = width > height ? width : height;
                             canv.setColor(switchColor[usercolor].border)
                                 .createBeveledClip(posx + suffix, posy, dx, dy, 0)
-                                .addImage(await photo, posx + suffix, posy, width, height, Math.round(highest))
+                                .addImage(await photo, posx + suffix, posy, width, height, 1)
                                 .restore();
                         } catch (e) {
-                            console.log(err);
+                            //console.log(err);
                             sql.run(`DELETE FROM userartworks WHERE url = "${src}"`);
-                            errdump = 1;
                         }
                     })
                 }
@@ -249,7 +250,7 @@ async function portfolio(member) {
 
     canv.restore()
     await gridImage(startPos_x, 70, 250, 250);
-    await this.stacks.pause(3000)
+    await pause(10000)
 
     return canv.toBuffer();
 

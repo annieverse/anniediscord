@@ -36,7 +36,7 @@ class userSelector {
     }
 
     async get(){
-        return !this.args[0] || !this.cmd.multi_user ? await this.findUser(this.message.author.id) : await this.findUser(this.args[0]);
+        return !this.args[0] || !this.cmd.multi_user ? await this.findUser(this.message.author.id) : await this.findUser(this.message.content.slice(this.message.content.indexOf(this.args[0])));
     }
 }
 

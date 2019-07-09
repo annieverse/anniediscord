@@ -125,6 +125,18 @@
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
     },
+    "PORTFOLIOCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Portfolio card for {0}**",
+        "LVL_TOO_LOW": "The user need to be atleast lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s portfolio data . .`"
+    },
+    "PRUNE": {
+        "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
+        "INVALID_AMOUNT": "Please put a valid number.",
+        "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
+        "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "ROLE":{
         "ERR":{

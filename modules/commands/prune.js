@@ -1,53 +1,55 @@
-const Discord = require("discord.js");
-class prune {
+/**
+ * Main module
+ * @Prune administrator-level bulk messages deletion.
+ */
+class Prune {
 	constructor(Stacks) {
-		this.utils = Stacks.utils;
-		this.message = Stacks.message;
-		this.args = Stacks.args;
-		this.palette = Stacks.palette;
 		this.stacks = Stacks;
 	}
 
+
+	/**
+     *  Initializer method
+     */
 	async execute() {
-		let message = this.message;
-		let palette = this.stacks.palette;
-		let embed = new Discord.RichEmbed();
-		embed.setColor(palette.darkmatte)
+		const { isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks;
 
-		if (!message.member.roles.find(r => (r.name === 'Developer Team') || (r.name === 'Creators Council'))) {
-			embed.setDescription(`You don't have authorization to use this command.`)
-			return message.channel.send(embed)
-		} else {
-			if (!args[0]) {
-				embed.setDescription(`${message.author.username}.. could you specify the number?`)
-				return message.channel.send(embed)
-			}
 
-			args[0] = parseInt(args[0]) + 1;
-			if (args[0] > 100) {
-				embed.setDescription(`Eh, i couldn't delete more than **100** messages at once!`)
-				return message.channel.send(embed)
-			}
+		//	Returns if user doesn't have administrator authority
+		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+		//	Returns if user doesn't specify any parameter
+		if (!args[0]) return reply(code.PRUNE.SHORT_GUIDE)
 
-			message.channel.bulkDelete(args[0]);
 
-			embed.setColor(palette.halloween)
-			embed.setDescription(`Yay! I've deleted **${args[0] - 1}** messages!`)
-			return message.channel.send(embed).then((msg) => {
-				msg.delete(5000)
-			})
-		}
+		let amount = trueInt(args[0])
+
+
+		//	Returns if inputted value is invalid
+		if (!amount) return reply(code.PRUNE.INVALID_AMOUNT)
+		//	Returns if inputted value is exceeding the limit(100)
+		if (amount > 100) return reply(code.PRUNE.EXCEEDING_LIMIT)
+
+
+		//	Delete a requested amount of messages.
+		deleteMessages(amount + 1)
+		
+
+		//	Successful
+		return reply(code.PRUNE.SUCCESSFUL, {
+			socket: [amount],
+			deleteIn: 5
+		})
 	}
 }
 
 module.exports.help = {
-	start: prune,
+	start: Prune,
 	name: "prune",
 	aliases: [],
 	description: `deletes up to 100 messages`,
 	usage: `${require(`../../.data/environment.json`).prefix}prune <amount>`,
 	group: "Admin",
 	public: true,
-	require_usermetadata: false,
+	required_usermetadata: false,
 	multi_user: false
 }

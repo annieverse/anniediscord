@@ -66,6 +66,13 @@ module.exports = (Components) => {
     //  Check for developer authority
     container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
 
+
+    /**
+     *  Delete bulk of messages in current channel
+     *  @param {Integer} amount must be atleast above zero.
+     */
+    container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
+
     
     /**
      *  Instant message collector
