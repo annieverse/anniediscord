@@ -53,7 +53,7 @@ module.exports = (bot, message) => {
             },
             channel: message.channel.id,
             exp: {
-                base: (Math.round(Math.random() * (15 - 10 + 1)) + 10) * 2,
+                base: (Math.round(Math.random() * (15 - 10 + 1)) + 10),
                 bonus: 1,
                 get gained() {
                     return Math.round(this.base * this.bonus)
