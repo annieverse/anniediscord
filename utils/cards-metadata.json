@@ -7,12 +7,13 @@
     "description": "I'm not small! you are just too high.",
     "req_materials": {
       "blue_crayon": 1,
-      "fragments": 50000
+      "rubies": 100,
+      "annie_shards": 30
     },
     "skills": {
       "main": {
         "name": "Charming Talks",
-        "description": "Unlocked exp gaining when using Annie's command.",
+        "description": "Unlocked exp when using Annie's commands",
         "type": "exp_booster",
         "channel": [
           "485922866689474571",
@@ -36,22 +37,21 @@
     "url": "https://i.ibb.co/bsF4m7N/1-kitomi-card.png",
     "description": "Spoil me, protect me, worship me, you slave",
     "req_materials": {
-      "matcha_chocolate_bar": 1,
+      "chocolate_bar": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "kitomi_shards": 30
     },
     "skills": {
       "main": {
         "name": "Owner's Prosperity",
-        "description": "150% EXP & 200% AC boost in #general",
+        "description": "150% EXP & AC boost in #general",
         "type": "exp_ac_booster",
         "channel": [
           "459891664182312982"
         ],
         "effect": {
           "exp": 2.5,
-          "ac": 3,
+          "ac": 2.5,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -66,9 +66,8 @@
     "description": "Miaw",
     "url": "https://i.ibb.co/VmJrpRS/1-naph-card.png",
     "req_materials": {
-      "oreo_icecream": 1,
+      "teddy_bear": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "naph_shards": 30
     },
     "skills": {
@@ -96,15 +95,14 @@
     "description": "things I like, my pri-... Ah, Pink clothing of course!",
     "url": "https://i.ibb.co/x6K8XL7/1-ami-card.png",
     "req_materials": {
-      "red_velvet_cupcake": 1,
+      "rose": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "ami_shards": 30
     },
     "skills": {
       "main": {
         "name": "False Utopia",
-        "description": "+150% exp when posting images in art channels.",
+        "description": "+200% exp when posting images in art channels.",
         "type": "exp_booster",
         "channel": [
           "459892609838481408",
@@ -118,7 +116,7 @@
           "520716400097099777"
         ],
         "effect": {
-          "exp": 2.5,
+          "exp": 3,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -134,9 +132,8 @@
     "description": "Sleep tight and have a sweet dreams. ",
     "url": "https://i.ibb.co/Ld1B0GP/1-poppy-card.png",
     "req_materials": {
-      "sweet_and_sour_pork": 1,
+      "teddy_bear": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "poppy_shards": 30
     },
     "skills": {
@@ -164,9 +161,8 @@
     "description": "Who can beat my fluffehness?",
     "url": "https://i.ibb.co/LRXZWGD/1-foxie-card.png",
     "req_materials": {
-      "strawberry_chocolate_pudding_cake": 1,
+      "chocolate_box": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "foxie_shards": 30
     },
     "skills": {
@@ -194,24 +190,23 @@
     "description": "Hehehe.. one is never enough.",
     "url": "https://i.ibb.co/3WYbxCD/1-vezeko-card.png",
     "req_materials": {
-      "taco": 1,
+      "rose": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "vezeko_shards": 30
     },
     "skills": {
       "main": {
         "name": "Pleasure of Lewding",
-        "type": "exp_ac_booster",
-        "description": "150% EXP & AC in nsfw channels.",
+        "type": "exp_booster",
+        "description": "500% AC bonus in nsfw channels.",
         "channel": [
           "459929521957634048",
           "524076299980111872",
           "460484229990711306"
         ],
         "effect": {
-          "exp": 2.5,
-          "ac": 2.5,
+          "exp": null,
+          "ac": 6,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -257,24 +252,24 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
-      "ramen": 1,
+      "lucky_ticket": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "rany_shards": 30
     },
     "skills": {
       "main": {
         "name": "Collector's Fortune",
-        "description": "+100% fragments gained per amount of cards collected in stash",
-        "type": "fragment_booster",
+        "description": "Get double bonus when redeeming lucky tickets",
+        "type": "luckyticket_bonus",
         "channel": [
-          "485922866689474571"
+          "485922866689474571",
+          "578518964439744512"
         ],
         "effect": {
-          "exp": 2,
+          "exp": null,
           "ac": null,
           "status": "active",
-          "type": "multiplier",
+          "type": null,
           "attachment_only": false
         }
       }
@@ -284,25 +279,24 @@
     "fullname": "Ghosty Snowee",
     "alias": "snowy_card",
     "rarity": "★★★★★",
-    "description": "Ara, Ara... it's time for Onee-san to treat you!",
+    "description": ". . .",
     "url": "https://i.ibb.co/5jb36Gp/1-snowy-card.png",
     "req_materials": {
-      "shaved_ice": 1,
+      "teddy_bear": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "snowy_shards": 30
     },
     "skills": {
       "main": {
         "name": "Silent Ghosty",
-        "description": "+100% XP and AC in artistic hall.",
-        "type": "fragment_booster",
+        "description": "+50% XP in #general",
+        "type": "exp_booster",
         "channel": [
-          "520716400097099777"
+          "459891664182312982"
         ],
         "effect": {
-          "exp": 2,
-          "ac": 2,
+          "exp": 1.5,
+          "ac": null,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false

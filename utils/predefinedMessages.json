@@ -154,6 +154,7 @@
         "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
         "CANCELLED": "Transaction cancelled.",
         "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
+        "COLLECTOR_FORTUNE": "Ara ara, redeem successful! {0}**{1}(+{2}) Lucky Tickets** have been added into your inventory.\nGained tickets are doubled with Rany's Blessing.",
         "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
     },
     "REP": {

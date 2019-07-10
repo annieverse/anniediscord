@@ -17,6 +17,7 @@ module.exports = async (bot, reaction, user) => {
             "461926519976230922",
             "460615254553001994",
             "538806382779170826",
+            "591025246258200685"
         ];
 
         if (reaction.emoji.name == "❤" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels

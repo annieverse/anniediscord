@@ -39,7 +39,7 @@ class Gift {
         await this.assignSenderMetadata();
 
         // No parameters given
-        if (!args[0]) return reply(GIFT.SHORT_GUIDE);
+        if (!args[0]) return reply(GIFT.SHORT_GUIDE, {socket: emoji(`HeartPeek`)});
 
         // Invalid target
         if (!this.author) return reply(GIFT.INVALID_USER);
