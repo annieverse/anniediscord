@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const { Attachment } = require('discord.js')
 const formatManager = require('../../utils/formatManager');
 const databaseManager = require('../../utils/databaseManager');
 const sql = require(`sqlite`);
@@ -8,6 +9,11 @@ const { get } = require("snekfetch");
 const imageUrlRegex = /\?size=2048$/g;
 const ms = require('parse-ms');
 const cards = require('../../utils/cards-metadata.json');
+const request = require('request')
+const cheerio = require(`cheerio`);
+const { loadImage } = require('canvas')
+
+const probe = require(`probe-image-size`)
 
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/roboto-medium.ttf")), "RobotoMedium");
 Canvas.registerFont(resolve(join(__dirname, "../../fonts/roboto-bold.ttf")), "RobotoBold");
@@ -22,7 +28,7 @@ class leaderboard {
 
     async execute() {
 
-        const { message, palette, pause, utils, args, bot, emoji } = this.stacks;
+        const { message, palette, pause, args, bot, emoji } = this.stacks;
 
         /// leaderboard.js
         ///
@@ -140,9 +146,9 @@ class leaderboard {
                         }
                     }
 
-                    
+
                 },
-                
+
                 async user() {
                     await this.pullingData();
                     return {
@@ -156,7 +162,7 @@ class leaderboard {
                         authorindex_art: await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
                     }
                 },
-                async personToDelete(personId,array) {
+                async personToDelete(personId, array) {
                     if (array.some(x => x.id === personId)) {
                         for (let index = 0; index < array.length; index++) {
                             const personToDelete = array[index];
@@ -588,10 +594,232 @@ class daily {
     }
 }
 
+class test {
+    constructor(Stacks) {
+        this.stacks = Stacks;
+    }
+
+    async addRole() {
+        if (!this.stacks.message.member.hasPermission("MANAGE_ROLES") || this.required_roles) return this.stacks.utils.sendEmbed(this.stacks.code.UNAUTHORIZED_ACCESS, this.stacks.palette.red);
+        if (!this.stacks.args[0]) return this.stacks.utils.sendEmbed(this.stacks.code.ADDROLE.NO_USER, this.stacks.palette.red);
+        let pUser = await this.stacks.utils.userFinding(this.stacks.args[0] || this.stacks.message.mentions.users.first())
+        if (!pUser || pUser === null) return this.stacks.reply(this.stacks.code.ADDROLE.NO_USER_FOUND, {
+            socket: [this.stacks.message.author],
+            color: this.stacks.palette.red
+        });
+        if (!this.stacks.args[1]) return this.stacks.utils.sendEmbed(this.stacks.code.ADDROLE.NO_ROLE_SPECIFIED, this.stacks.palette.red);
+        let role = this.stacks.args[1].substring(3, 21);
+        let gRole = this.stacks.message.guild.roles.get(role);
+        if (!gRole) return this.stacks.reply(this.stacks.code.ADDROLE.NO_ROLE_FOUND, {
+            socket: [this.stacks.message.author],
+            color: this.stacks.palette.red
+        });
+        if (this.stacks.hasRole(gRole.name)) return this.stacks.reply(this.stacks.code.ADDROLE.HAS_ROLE_ALREADY, {
+            socket: [this.stacks.message.author],
+            color: this.stacks.palette.red
+        });
+        await (this.stacks.addRole(gRole.name, pUser.id));
+        this.stacks.message.react("👌")
+        try {
+            this.stacks.reply(this.stacks.code.ADDROLE.ROLE_ADDED, {
+                color: this.stacks.palette.green,
+                field: pUser,
+                socket: [pUser, gRole.name]
+            }).catch(() => {
+                return this.stacks.reply(this.stacks.code.ADDROLE.DMS_LOCKED, {
+                    color: this.stacks.palette.green,
+                    socket: [pUser, gRole.name]
+                })
+            })
+        } catch (e) {
+            return this.stacks.reply(this.stacks.code.ADDROLE.DMS_LOCKED, {
+                color: this.stacks.palette.green,
+                socket: [pUser, gRole.name]
+            })
+        }
+    }
+    async execute() {
+        const { message, bot } = this.stacks;
+        this.addRole();
+    }
+}
+
+class imageSearch {
+    constructor(Stacks) {
+        this.stacks = Stacks;
+    }
+
+    async execute() {
+
+        const { message, bot, args } = this.stacks;
+
+        image(message, args)
+
+        function image(message, parts) {
+
+            /* extract search query from message */
+
+            var search = parts.join(" "); // Slices of the command part of the array ["!image", "cute", "dog"] ---> ["cute", "dog"] ---> "cute dog"
+
+            var options = {
+                url: "http://results.dogpile.com/serp?qc=images&q=" + search,
+                method: "GET",
+                headers: {
+                    "Accept": "text/html",
+                    "User-Agent": "Chrome"
+                }
+            };
+
+            request(options, async function (error, response, responseBody) {
+                if (error) {
+                    // handle error
+                    return;
+                }
+
+                /* Extract image URLs from responseBody using cheerio */
+
+                var $ = cheerio.load(responseBody); // load responseBody into cheerio (jQuery)
+
+                // In this search engine they use ".image a.link" as their css selector for image links
+                var links = $(".image a.link");
+
+                // We want to fetch the URLs not the DOM nodes, we do this with jQuery's .attr() function
+                // this line might be hard to understand but it goes thru all the links (DOM) and stores each url in an array called urls
+                var urls = new Array(links.length).fill(0).map((v, i) => links.eq(i).attr("href"));
+                //console.log(urls);
+
+                if (!urls.length) {
+                    // Handle no results
+                    return;
+                }
+
+                var item = urls[Math.floor(Math.random() * urls.length)];
+                item = urls[0]
+                await canvas()
+                
+                async function canvas(){
+                    try {
+                        const buffer = await profile(item);
+                        let filename = `SomeImage.jpg`;
+                        let attachment = new Attachment(buffer.canvOne, filename);
+                        await message.channel.send(attachment);
+
+                    } catch (error) {
+                        return message.channel.send(`An error ocurred: **${error.message}**`);
+                    }
+
+                    async function profile(image) {
+                        try {
+                            //let myimg = await loadImage(urls[0])
+                            //console.log(myimg)
+
+                            probe(urls[0]);
+
+                            probe(src, async (err, data) => {
+                                let suffix=0
+                                try {
+                                    if (err) console.log(err);
+                                    let width = data.width;
+                                    let height = data.height;
+                                    let smallest = width > height ? height : width;
+
+
+                                    if (smallest < dx) {
+                                        for (let i = smallest * 0.1; smallest < dx; i + (smallest * 0.1)) {
+                                            width = Math.floor(width + i);
+                                            height = Math.floor(height + i);
+                                            smallest = Math.floor(smallest + i);
+                                        }
+                                    } else {
+                                        for (let i = 0.90; smallest > dx + 30; i - 0.05) {
+                                            width = Math.floor(width * i);
+                                            height = Math.floor(height * i);
+                                            smallest = Math.floor(smallest * i);
+                                        }
+                                    }
+
+                                    let {
+                                        body: photo
+                                    } = await get(src);
+                                    let highest = width > height ? width : height;
+
+
+                                    canvOne.addImage(await photo, 0, 0, width, height, 1)
+                                    canvOne.toBuffer();
+
+                                } catch (e) {
+                                    //console.log(err);
+
+                                }
+                            })
+                            /*
+                            var scale = Math.min((200 / myimg.width), (200 / myimg.height));
+                            myimg.width = myimg.width * scale;
+                            myimg.height = myimg.height * scale;
+                            */
+                            const canvOne = new Canvas(700,900);
+                            
+                            return { canvOne };
+                        } catch (error) {
+                            await message.channel.send(`An error occurred: **${error.message}**`);
+                        }
+
+                        let dx = 250;
+                        let dy = 250;
+                        async function aspectRatio(src, suffix) {
+                            return 
+                        }
+                    }
+                }
+                
+                // Send result
+                //message.channel.send(urls[0]);
+            });
+        }
+    }
+}
+
+class xp {
+    constructor(Stacks) {
+        this.stacks = Stacks;
+    }
+
+    /**
+     * Main experience formula used in Annie's level system
+     * @param {Integer} x current exp
+     * @param {Integer} level current level
+     * @param {Integer} b current max exp/cap exp
+     * @param {integer} c current curve exp until next exp cap
+     * @formula
+     */
+    formula(x, level, b, c){
+        for (let i = 150; i !== x; i += c) {
+            b += c;
+            c += 200;
+            level++;
+            if (i > x) {
+                break;
+            }
+        }
+        return {
+            x: x,
+            level: level,
+            b: b,
+            c: c
+
+        }
+    }
+
+
+    async execute() {
+
+    }
+}
+
 module.exports.help = {
-    start: daily,
-    name: "PansSandbox",
-    aliases: ["_sandbox"],
+    start: imageSearch,
+    name: "pansSandbox",
+    aliases: ["_-"],
     description: `Pans testing grounds`,
     usage: `${require(`../../.data/environment.json`).prefix}_collection`,
     group: "General",
