@@ -48,7 +48,7 @@ class sendEventReward {
             collector.on(`collect`, async msg => {
                 let input = msg.content.toLowerCase();
 
-                
+
                 //  Close connections
                 collector.stop();
                 msg.delete();
