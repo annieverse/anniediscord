@@ -5,30 +5,11 @@ const sql = require("sqlite");
 sql.open(".data/database.sqlite");
 class stats {
 	constructor(Stacks) {
-		this.utils = Stacks.utils;
-		this.message = Stacks.message;
-		this.args = Stacks.args;
-		this.palette = Stacks.palette;
 		this.stacks = Stacks;
 	}
 
 	async execute() {
-		let message = this.message;
-		let bot = this.stacks.bot;
-		let palette = this.stacks.palette;
-		/// botinfo.js
-		///
-		///  stats command
-		///    change logs:
-		///		  04/13/19 - slight API info changes.
-		///       11/08/18 - Major reworks. More data have been added.
-		///       10/18/18 - embed changes. removed global status
-		///       09/18/18 - Showing few bot data. Including status presence & system usage.
-		///
-		///     -naphnaphz
-		///     -Frying Pan
-
-
+		const { message, bot, palette, pause } = this.stacks
 
 		const format = new formatManager(message);
 		return ["bot", "bot-games", "naph-little-house", "sandbox"].includes(message.channel.name) ? initInfo() :
@@ -48,7 +29,7 @@ class stats {
 				sql.get(`SELECT DATETIME('now')`)
 					.then(async time => midnight = new Date(Object.values(time)).getTime());
 
-				await this.stacks.pause(1000);
+				await pause(1000);
 				return sql.all(`SELECT * FROM userartworks WHERE timestamp >= ${prevday} AND timestamp < ${midnight} ORDER BY timestamp DESC`)
 					.then(async artdata => res_todayarts = artdata)
 			}
@@ -88,7 +69,7 @@ class stats {
 			get_todayarts();
 			return message.channel.send(`\`Fetching annie's data ..\``)
 				.then(async msg => {
-					await this.stacks.pause(1000);
+					await pause(1000);
 
 					msg.delete();
 					fetched();

@@ -8,5 +8,4 @@
         - A lot of new Pistachio's functions.
         - Updated database manager.
         - userSelector.js : pass any user into userFind() method for meta structure consistency.
-- Last Trace 
-        - Pay.js (finished)
+        - Commands have been converted into classes structure

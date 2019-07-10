@@ -66,6 +66,9 @@ module.exports = (Components) => {
     //  Check for developer authority
     container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
 
+    //  Check for event team authority
+    container.isEventManager = message.member.roles.find(r => r.name === `Events Team`);
+
 
     /**
      *  Delete bulk of messages in current channel

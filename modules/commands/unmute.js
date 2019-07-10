@@ -1,19 +1,12 @@
 const Discord = require("discord.js");
 class unmute {
   constructor(Stacks) {
-    this.author = Stacks.meta.author;
-    this.data = Stacks.meta.data;
-    this.utils = Stacks.utils;
-    this.message = Stacks.message;
-    this.args = Stacks.args;
-    this.palette = Stacks.palette;
     this.stacks = Stacks;
   }
 
   async execute() {
-    let message = this.message;
-    let bot = this.stacks.bot;
-    let palette = this.stacks.palette;
+    const { message, bot, palette, args } = this.stacks
+
     let bicon = bot.user.displayAvatarURL;
     let admEmbed = new Discord.RichEmbed();
     admEmbed.setColor(palette.red)
@@ -65,6 +58,6 @@ module.exports.help = {
   usage: `${require(`../../.data/environment.json`).prefix}unmute @user [reason]<optional>`,
   group: "Admin",
   public: true,
-  require_usermetadata: true,
+  required_usermetadata: true,
   multi_user: true
 }

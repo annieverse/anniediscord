@@ -149,6 +149,34 @@ class databaseUtils {
                      WHERE userId = "${dly_metadata.target_id}"`);
         }
 
+        resetExperiencePoints() {
+            sql.run(`
+                UPDATE userdata
+                SET currentexp = 0,
+                maxexp = 100,
+                nextexpcurve = 150,
+                level = 0,
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+        resetInventory() {
+            //  Remove old entry
+            sql.run(`DELETE FROM userinventories WHERE userId = "${this.id}"`);
+            //  Add new entry
+            sql.run(`INSERT INTO userinventories (userId) VALUES ("${this.id}")`);
+        }
+
+        deliverRewardItems(metadata = {}) {
+            sql.run(`
+                UPDATE userinventories
+                SET artcoins = artcoins + ${metadata.artcoins},
+                lucky_ticket = lucky_ticket + ${metadata.lucky_ticket}
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+
         withdraw(value, value_type) {
             sql.run(`UPDATE userinventories 
             SET ${value_type} = ${value_type} - ${value} 

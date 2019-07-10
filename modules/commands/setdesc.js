@@ -26,7 +26,7 @@ class setDesc {
 		const descriptionArguments = message.content.substring(9);
 		const embed = new Discord.RichEmbed();
 
-		if (!args[0]) {
+		if (!this.args[0]) {
 			embed.setColor(palette.darkmatte)
 			embed.setDescription(`Here's the example on how to create your own profile description!\n\n\`>setdesc\` \`I'm AAU Artist!\``)
 

@@ -1,9 +1,9 @@
 
 /**
  * Main module
- * @ExperienceReset reset user's experience metadata.
+ * @resetInventory reset user's inventory metadata
  */
-class ExperienceReset {
+class resetInventory {
     constructor(Stacks) {
         this.stacks = Stacks;
     }
@@ -22,24 +22,24 @@ class ExperienceReset {
 
 
         //  Update exp metadata
-        await db(author.id).resetExperiencePoints()
+        await db(author.id).resetInventory()
 
 
         //  Successful
-        return reply(code.RESET_EXP, {
+        return reply(code.RESET_INVENTORY, {
             socket: [name(author.id)]
         })
     }
 }
 
 module.exports.help = {
-    start: ExperienceReset,
-    name:"reset-lvl",
-    aliases: ["reset_lvl"],
-    description: `resets your level`,
-    usage: `${require(`../../.data/environment.json`).prefix}>reset_lvl`,
+    start: resetInventory,
+    name: "reset-inventory",
+    aliases: ["_resetinventory"],
+    description: `resets your inventory`,
+    usage: `${require(`../../.data/environment.json`).prefix}_resetinventory`,
     group: "Admin",
-    public: true,
-    required_usermetadata: true,
-    multi_user: true
+	public: true,
+	required_usermetadata: true,
+	multi_user: true
 }

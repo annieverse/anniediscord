@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const moment = require('moment');
 const formatManager = require('../../utils/formatManager');
 const fs = require("fs")
+const env = require(`../../.data/environment`)
 
 class serverRemote {
     constructor(Stacks) {
@@ -143,7 +144,7 @@ class serverRemote {
 
             }
 
-            const proc = new Proc(args[0])
+            const proc = new Proc(this.args[0])
             proc.run;
             message.delete();
             log({ code: `REQUESTING`, delete_in: metadata.rs_countdown - 1000 })
@@ -160,19 +161,19 @@ class serverRemote {
 
 
             //  Returns message if no parameter was specified.
-            if (!args[0]) return log({ code: `SHORT_GUIDE` });
+            if (!this.args[0]) return log({ code: `SHORT_GUIDE` });
 
 
             //  Returns invalid parameter.
-            if (!parameters.includes(args[0])) return log({ code: `UNKNOWN_PARAMETER` });
+            if (!parameters.includes(this.args[0])) return log({ code: `UNKNOWN_PARAMETER` });
 
 
             //  Returns if already in dev environment.
-            if (env.dev && (args[0] === `-mt`)) return log({ code: `ALREADY_IN_DEV` });
+            if (env.dev && (this.args[0] === `-mt`)) return log({ code: `ALREADY_IN_DEV` });
 
 
             //  Returns if already in production server.
-            if (!env.dev && (args[0] === `-live`)) return log({ code: `ALREADY_IN_PRODUCTION` });
+            if (!env.dev && (this.args[0] === `-live`)) return log({ code: `ALREADY_IN_PRODUCTION` });
 
 
             return main();
@@ -190,6 +191,6 @@ module.exports.help = {
     usage: `${require(`../../.data/environment.json`).prefix}server <command>`,
     group: "Admin",
     public: true,
-    require_usermetadata: false,
+    required_usermetadata: false,
     multi_user: false
 }

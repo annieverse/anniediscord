@@ -48,13 +48,24 @@
         "ANSWERS": ["Yes.", "No.", "I don't know.", "You", "Well, probably.", "Not sure.", "Definitely!"],
         "SHORT_GUIDE": "Feel free to ask me anything!"
     },
+    "CRAFT": {
+        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",
+        "DUPLICATES": "You can't craft duplicates!",
+        "INSUFFICIENT_MATERIALS": "Can't proceed crafting. Missing materials.",
+        "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
+    },  
     "DISPLAY_BALANCE": "**Remaining Balance**\n{0} **{1}**",
+    "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
+    "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
+    "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
     "ADDAC": {
         "SHORT_GUIDE": "You can refill user's artcoins by typing `>addac <user> <amount>`",
         "MISSING_VALUES": "Please specify the amount.",
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**{2}(+{3})**",
-        "NEGATIVE_VALUES": "Sorry, you can't put negative value."
+        "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
+        "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount"
     },
     "GACHA": {
         "OPENING_WORDS": [
@@ -153,6 +164,13 @@
         "SUCCESSFUL": "**{0}** has received **+☆** from **{1}**."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
+    "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",
+    "DISTREWARD": {
+        "CONFIRMATION": "🎁 🡆 **{0}'s Inventory** ?\nPlease type the reward ranking",
+        "SUCCESSFUL": "**{0}** has successfully received **{1}** package!",
+        "SHORT_GUIDE": "You can start distributing event rewards by typing `>sendreward <user>`",
+        "INVALID_REWARD": "Sorry, i can't find any package for that rank."
+    },
     "ROLE":{
         "ERR":{
             "WRONG":{
@@ -163,6 +181,9 @@
     },
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(☆☆☆☆☆)** from the Lucky Ticket! :tada:"
+    },
+    "SAY": {
+        "SHORT_GUIDE": "I'll follow your words, **{0}**!"
     },
     "ADDROLE":{
         "NO_USER":"Uhm, can you specify the user please.",

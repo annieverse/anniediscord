@@ -36,7 +36,7 @@
     "description": "Miaw",
     "url": "https://i.ibb.co/VmJrpRS/1-naph-card.png",
     "req_materials": {
-      "white_chocolate_cookie": 1,
+      "oreo_icecream": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "naph_shards": 30
@@ -104,7 +104,7 @@
     "description": "Sleep tight and have a sweet dreams. ",
     "url": "https://i.ibb.co/Ld1B0GP/1-poppy-card.png",
     "req_materials": {
-      "roasted_bamboo": 1,
+      "sweet_and_sour_pork": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "poppy_shards": 30
@@ -134,7 +134,7 @@
     "description": "Who can beat my fluffehness?",
     "url": "https://i.ibb.co/LRXZWGD/1-foxie-card.png",
     "req_materials": {
-      "strawberry_donut": 1,
+      "strawberry_chocolate_pudding_cake": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "foxie_shards": 30
@@ -164,7 +164,7 @@
     "description": "Hehehe.. one is never enough.",
     "url": "https://i.ibb.co/3WYbxCD/1-vezeko-card.png",
     "req_materials": {
-      "mayonnaise": 1,
+      "taco": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "vezeko_shards": 30
@@ -196,7 +196,7 @@
     "description": "y know drink is fun. R8?",
     "url": "https://i.ibb.co/ZdtjNZD/1-pan-card.png",
     "req_materials": {
-      "bagels": 1,
+      "bacon": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "pan_shards": 30
@@ -227,7 +227,7 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
-      "spicy_ramen": 1,
+      "ramen": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "rany_shards": 30
@@ -257,7 +257,7 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/5jb36Gp/1-snowy-card.png",
     "req_materials": {
-      "snowflake_cake": 1,
+      "shaved_ice": 1,
       "fragments": 50000,
       "artcoins": 5000,
       "snowy_shards": 30

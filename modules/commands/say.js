@@ -1,57 +1,41 @@
-const Discord = require('discord.js');
-class say {
+
+/**
+ * Main module
+ * @Say function bundler to talk through bot
+ */
+class Say {
 	constructor(Stacks) {
-		this.utils = Stacks.utils;
-		this.message = Stacks.message;
-		this.args = Stacks.args;
-		this.palette = Stacks.palette;
 		this.stacks = Stacks;
 	}
 
+
+	/**
+     *	Initializer method
+     */
 	async execute() {
-		let message = this.message;
-		let bot = this.stacks.bot;
-		let palette = this.stacks.palette;
-		let sayEmbed = new Discord.RichEmbed()
+		const { isAdmin, code, name, reply, args, message, meta: {author} } = this.stacks;
 
-		let bicon = bot.user.displayAvatarURL;
-		let text = args.join(" ");
-		let textEmbed = args.slice(1).join(" ");
-
-
-		if (message.member.roles.find(r => (r.name === 'Tomato Fox'))) {
-
-			if (args[0] === 'embed') {
-
-				sayEmbed.setColor(palette.halloween)
-				sayEmbed.setDescription(textEmbed)
-
-				return message.delete().then((msg) =>
-					msg.channel.send(sayEmbed));
-
-			}
-			message.delete();
-			return message.channel.send(text);
-
-		}
-
-
-		sayEmbed.setColor('#ffac30')
-		sayEmbed.setDescription(`You don't have authorization to use this command.`)
-		sayEmbed.setFooter(`Anime Artist United | Say Message`, bicon)
-
-		return message.channel.send(sayEmbed);
+        //  Returns if user has no admin authority
+		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+		//	Returns as short-guide if user's custom message length is zero.
+		if (!args[0]) return reply(code.SAY.SHORT_GUIDE, {socket: [name(author.id)]})
+		//	Parse custom message
+		let content = message.content.slice(message.content.indexOf(args[0]))
+		//	Hide author message
+		message.delete()
+		//	Send custom message
+		return reply(content)
 	}
 }
 
 module.exports.help = {
-	start: say,
+	start: Say,
 	name: "say",
 	aliases: [],
 	description: `Talk through bot`,
 	usage: `${require(`../../.data/environment.json`).prefix}say <message>`,
 	group: "Admin",
 	public: true,
-	require_usermetadata: false,
+	required_usermetadata: true,
 	multi_user: false
 }

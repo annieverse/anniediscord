@@ -7,10 +7,6 @@ const moment = require(`moment`);
 class Rep {
 	constructor(Stacks) {
 		this.stacks = Stacks;
-		this.senderMeta = {
-			data: null,
-			author: null
-		}
 	}
 
 
@@ -38,15 +34,12 @@ class Rep {
 		//	Centralized metadata
 		let metadata = {
 			cooldown: 8.64e+7,
-			amount: 1,
-			get inCooldown() {
-				return (this.senderMeta.data.repcooldown !== null) && this.cooldown - (Date.now() - this.senderMeta.data.repcooldown) > 0 ? true : false;
-			}
+			amount: 1
 		}
 
 
 		//	Returns if user rep duration still in cooldown
-		if (metadata.inCooldown) return reply(REP.IN_COOLDOWN, {
+		if ((this.senderMeta.data.repcooldown !== null) && metadata.cooldown - (Date.now() - this.senderMeta.data.repcooldown) > 0) return reply(REP.IN_COOLDOWN, {
 			socket: [moment(data.repcooldown + metadata.cooldown).fromNow()],
 			color: palette.red
 		})

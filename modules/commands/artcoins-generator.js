@@ -9,33 +9,51 @@ class ArtcoinsGenerator {
 
     //  Init
     async execute() {
+        const { name, args, collector, palette, emoji, isAdmin, avatar, trueInt, reply, commanifier, code, db, meta: { author, data } } = this.stacks;
 
-        //  Pistachio stacks
-        const { name, args, emoji, isAdmin, trueInt, reply, commanifier, code, db, meta: { author, data } } = this.stacks;
-
+        
         //  Returns if user doesn't have admin authority
         if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 
         //  Returns if user not specifying any parameters
         if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
 
-        //  Returns if user not specifying the value
-        if (!args[1]) return reply(code.ADDAC.MISSING_VALUES)
+        //  Returns if target is invalid
+        if (!author) return reply(code.INVALID_USER)
 
-        //  Returns if input is a negative value
-        if (!trueInt(args[1])) return reply(code.ADDAC.NEGATIVE_VALUES)
 
-        //  Storing new balance value
-        const amount = trueInt(args[1])
-        db(author.id).storeArtcoins(amount)
+        //  Confirmation
+        reply(code.ADDAC.CONFIRMATION, {
+            socket: [emoji(`artcoins`), name(author.id)],
+            thumbnail: avatar(author.id),
+            color: palette.golden,
+            notch: true
+        })
+        .then(async confirmation => {
+            collector.on(`collect`, async msg => {
+                let input = msg.content.toLowerCase()
+                let amount = trueInt(input)
 
-        //  Finishing message
-        return reply(code.ADDAC.SUCCESSFUL, {
-            socket: [
-                name(author.id),
-                emoji(`artcoins`),
-                commanifier(data.artcoins),
-                commanifier(amount)]
+                //  Close connections
+                confirmation.delete()
+                collector.stop()
+                
+
+                //  Returns if input is a negative value
+                if (!amount) return reply(code.ADDAC.NEGATIVE_VALUES)
+
+                //  Storing new balance value
+                db(author.id).storeArtcoins(amount)
+
+                //  Successful
+                return reply(code.ADDAC.SUCCESSFUL, {
+                    socket: [
+                        name(author.id),
+                        emoji(`artcoins`),
+                        commanifier(data.artcoins),
+                        commanifier(amount)]
+                })
+            })
         })
     }
 }

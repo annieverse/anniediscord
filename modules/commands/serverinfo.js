@@ -67,6 +67,6 @@ module.exports.help = {
     usage: `${require(`../../.data/environment.json`).prefix}serverinfo`,
     group: "Server",
     public: true,
-    require_usermetadata: false,
+    required_usermetadata: false,
     multi_user: false
 }

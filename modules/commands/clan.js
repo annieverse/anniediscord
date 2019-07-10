@@ -9,7 +9,7 @@ class clan_wrapper {
         this.stacks     = Stacks;
     }
     async execute() {
-        let authorname  = this.stacks.meta.author.username
+        let authorname  = this.stacks.meta.author.user.username
         let bot         = this.stacks.bot;
         let message     = this.stacks.message;
         let args        = this.stacks.args;
@@ -31,8 +31,9 @@ class clan_wrapper {
         const commandname = exports.help.name;
         const prefix = env.prefix;                                  //  Temporary
         
-        const delay = 750;
-        const promptcolor = ``;
+        const delay = 200;
+        const timeout1 = 60000;
+        const promptcolor = palette.darkmatte;
         const collectorcolor = palette.green;
 
         const sql = require('sqlite');
@@ -55,13 +56,13 @@ class clan_wrapper {
          * GLOBAL CLASS / FUNCTION INITIALIZATION
          ***************************************************************************************************/
         class User {
-            constructor(username) {
-                this._inputname = username;
+            constructor(search) {
+                this._input = search;
                 this._exists = false;
             }
 
             get exists()        { return this._exists}
-            get inputname()     { return this._inputname }
+            get input()         { return this._input }
             //  PUBLIC OUTPUT: User Class Data
             get client()        { return this.$client }
             get discriminator() { return this.$client.user.discriminator }
@@ -95,13 +96,13 @@ class clan_wrapper {
             async _isValidUser() { return await this._findUser() ? true : false }
             async _findUser() {
                 const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-                if (userPattern.test(this._inputname)) this._inputname = this._inputname.replace(userPattern, '$1');
+                if (userPattern.test(this._input)) this._input = this._input.replace(userPattern, '$1');
                 let members = message.guild.members;
-                const filter = member => 
-                    member.user.id                      === this._inputname ||
-                    member.displayName.toLowerCase()    === this._inputname.toLowerCase() ||
-                    member.user.username.toLowerCase()  === this._inputname.toLowerCase() ||
-                    member.user.tag.toLowerCase()       === this._inputname.toLowerCase();
+                const filter = member =>
+                    member.user.id === this._input ||
+                    member.displayName.toLowerCase() === this._input.toLowerCase() ||
+                    member.user.username.toLowerCase() === this._input.toLowerCase() ||
+                    member.user.tag.toLowerCase() === this._input.toLowerCase();
                 return members.filter(filter).first();
             }
             async _botHasNicknamePerms() {
@@ -140,36 +141,80 @@ class clan_wrapper {
         }
 
         class Clan {
-            constructor(clanname) {
-                this._inputname = clanname;
+            constructor(search) {
+                this._input = search;
                 this._exists = false;
             }
 
             //  PUBLIC OUTPUT
-            get something() {return "something"}
+            get input()         { return this._input }
+            get exists()        { return this._exists }
 
-            //  PUBLIC INPUT
-            set something(something) {something}
+            get data()          { return this.$data }
+            get id()            { return this.$data.id }
+            get name()          { return this.$data.name }
+            get tag()           { return this.$data.tag }
+            get motto()         { return this.$data.motto }
+            get color()         { return this.$data.color }
+            get leaderid()      { return this.$data.leader }
+            get maxmembers()    { return this.$data.maxmembers }
+            get foundingdate()  { return this.$data.foundingdate }
+
+            get members()       { return this.$members}
 
             //  OBTAIN: Property Container Functions
-            async _get_clan() {}
-
-            //  UPDATE: Micro-Functions
-            async _update_clan() {} //Temp
-
-            //  REFRESH: Repull Property Containers
-            async _refresh_something() {}
+            async _get_clanData() { this.$data = await this._findClan() }
 
             //  PRIVATE UTILITY METHODS
-            async _isValidClan() {}
+            async _isValidClan() { return await this._findClan() ? true : false}
+            async _findClan() {
+                return await sql.get(`
+                    SELECT * 
+                    FROM clandata 
+                    WHERE replace(lower(name), ' ', '') = '${this._input.toLowerCase().replace(' ','')}' 
+                    OR replace(lower(tag), ' ', '') = '${this._input.toLowerCase().replace(' ','')}'
+                    OR id = '${this._input}'`)
+            }
 
             //  PUBLIC METHODS
             async init() {
+                if (await this._isValidClan()) {
 
-            }
-            async create() {
+                    this._exists = true;
+                    await this._get_clanData();
 
+                } else this._exists = false;
+                return this
             }
+            async setName(name) {
+
+                return this
+            }
+            async setTag(tag) {
+
+                return this
+            }
+            async setColor(color) {
+
+                return this
+            }
+            async setMotto(motto) {
+
+                return this
+            }
+            async setLeader(leader) {
+
+                return this
+            }
+            async addMember(member) {
+
+                return this
+            }
+            async removeMember(member) {
+
+                return this
+            }
+
         }
 
         class Metadata {
@@ -183,11 +228,12 @@ class clan_wrapper {
                     : this.commandlist = [help];
                 this.access = {
                     clanstatus: "public",
-                    roles: "developer"
+                    roles: "developer",
+                    level: -1
                 };
                 this.input = { 
                     prompt: `Prompt message not set.`,
-                    require: false 
+                    require: false
                 };
             }
 
@@ -219,7 +265,8 @@ class clan_wrapper {
             setAccess(input) {
                 if (this._isObject(input)) {
                     for (let group in input) {
-                        if (accessmap[group] && accessmap[group].hasOwnProperty(input[group])) { this.access[group] = input[group] }
+                        if (this.access[group] && this.access.hasOwnProperty(group) && typeof this.access[group] === typeof input[group])
+                        this.access[group] = input[group];
                     }
                 }
                 return this
@@ -234,8 +281,8 @@ class clan_wrapper {
         }
         
         class Subcommand {
-            constructor (metadata, input = args[0]) {
-                this._input = input;
+            constructor (metadata, search = args[0]) {
+                this._input = search;
                 this._exists = false;
                 this.$invoker = metadata;
             }
@@ -270,10 +317,12 @@ class clan_wrapper {
                 for (let key in accessmap.roles[value]) { if (user.roles.hasOwnProperty(key)) return true }
                 return false
             }
+            _checkLevel(value) { return user.level >= value }
             accessGranted() {
                 let check = {
                     "clanstatus" : this._checkClanStatus,
-                    "roles" : this._checkRoles
+                    "roles" : this._checkRoles,
+                    "level" : this._checkLevel
                 }
                 let lock = [];
                 for (let key in this.$subcommand.metadata.access) { lock.push(check[key](this.$subcommand.metadata.access[key])) }
@@ -323,22 +372,25 @@ class clan_wrapper {
                                 await pause(delay)
                                 msg .clearData()
                                     .setColor(collectorcolor)
-                                    .setDescription(`${user.name}, please enter: ${msg.codeBlock(e,`CSS`,`**`)}`)
-                                    .setFooter(`To terminate this session: \'exit\'`)
+                                    .setDescription(msg.codeBlock(`${e}?`,`CSS`,`**`))
+                                    .setFooter(`Type \'cancel\' to quit.`)
                                     
                                 await msg.send().then(async m => {
-                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
-                                        .then(collected => {
-                                            collected.first().delete();
-                                            m.delete();
+                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: timeout1, errors: ['time']})
+                                        .then(async collected => {
+                                            await pause(delay)
+                                            await collected.first().delete();
+                                            await m.delete();
                                             args.push(collected.first().content);
                                             current = true;
                                             ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return current = false });
                                         })
-                                        .catch(() => { m.delete(); return current = false; });
+                                        .catch(async () => { await m.delete(); return current = false; });
                                 });
                                 if (!current) break;
-                            } //prompt.delete()
+                            }
+                            //await pause(delay) 
+                            //await prompt.delete()
                         })
 
                     } else {
@@ -347,29 +399,31 @@ class clan_wrapper {
                         else await msg.embedWrapper(promptcolor, this.$subcommand.metadata.input.prompt).then(async prompt => {
                             collect = true;
                             for (let [i, e] of this.$subcommand.metadata.arguments.entries()) {
-                                let request = `${user.name}, please enter: ${msg.codeBlock(e,`CSS`,`**`)}`
-                                let append = `\n*You may alternatively enter a valid **\`<subcommand>\`** such as **\`HELP\`**.`
-                                if (i === 0) request = request.concat(append)
+                                let append = ` / subcommand`
+                                if (i === 0) e = e.concat(append)
                                 msg .clearData()
                                     .setColor(collectorcolor)
-                                    .setDescription(request)
-                                    .setFooter(`To terminate this session: \'exit\'`)
+                                    .setDescription(msg.codeBlock(`${e}?`,`CSS`,`**`))
+                                    .setFooter(`Type \'cancel\' to quit.`)
                                 
                                 await pause(delay)
                                 await msg.send().then(async m => {
-                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
-                                    .then(collected => {
-                                        collected.first().delete();
-                                        m.delete();
+                                    await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: timeout1, errors: ['time']})
+                                    .then(async collected => {
+                                        await pause(delay)
+                                        await collected.first().delete();
+                                        await m.delete();
                                         args.push(collected.first().content);
                                         current = true;
                                         ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return next = current = false });
                                         if (i === 0 && new Subcommand(this.$subcommand.metadata).init().exists) { next = true; return current = false; }
                                     })
-                                    .catch(() => { m.delete(); return next = current = false; });
+                                    .catch(async () => { m.delete(); return next = current = false; });
                                 });
                                 if (!current) break;
-                            } //prompt.delete() 
+                            }
+                            //await pause(delay) 
+                            //await prompt.delete() 
                         })
 
                     }
@@ -433,17 +487,10 @@ class clan_wrapper {
             //  Utility Methods
             clearData() { for (let key in this) { typeof this[key] !== "object" ? this[key] = undefined : this[key] = [] }; return this}
             formatComma(x) { return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-            codeBlock(message, style = ``, markdown = ``) { return `${markdown}\`\`\`${style}\n${message}\`\`\`${markdown.split("").reverse().join("")}` }
+            codeBlock(message, style = ``, markdown = ``) { return `${markdown}\`\`\`${style}\n${this._formatString(message)}\`\`\`${markdown.split("").reverse().join("")}` }
         }
         
         function ClanOld(name) {
-            this.createClan = async() => {
-                new_role = await (message.guild.createRole(roledata, "test"));
-                metadata.id = new_role.id;
-                metadata.leader_id = message.author.id;
-                sql.run(`INSERT INTO clandata (id, name, tag, motto, leader, maxmember, color, foundingdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
-                [new_role.id, this.name, metadata.tag, metadata.motto, metadata.leader_id, metadata.max_members, roledata.color, Date.now()])
-            }
 
             this.addMember = async(user_id) => {
                 let target = message.guild.members.array().find(x => x.id === user_id)
@@ -489,6 +536,12 @@ class clan_wrapper {
                 admin : { 
                     "459936023498063902" : "Grand Master",
                     "465587578327007233" : "Creators Council"
+                },
+                bot : {
+                    "459924414885265419" : "Bot"
+                },
+                test : {
+                    "598213651077267469" : "Beta"
                 },
                 nobody : {
                     "999999999999999999" : "Nonexistant Test Role"
@@ -572,13 +625,13 @@ class clan_wrapper {
                 msg .clearData()
                     .setColor(palette.darkmatte)
                     .setDescription(`
-                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`, bold)}
+                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `yaml`, bold)}
                         Information:        ${msg.codeBlock(metadata.info, style, bold)}
                         Subcommands List:   ${msg.codeBlock(new Subcommand(metadata).formattedinvokerCommandList(), style, bold)}`)
 
                 if (args[0] === "DEVMODE") return msg
                     .setDescription(`
-                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `elm`, bold)}
+                        Command Shortcut:   ${msg.codeBlock(`${cmdpath.join(' ')} ${metadata.arguments.join(' ')}`, `yaml`, bold)}
                         Information:        ${msg.codeBlock(metadata.info, style, bold)}
                         Formal Name:        ${msg.codeBlock(metadata.name, style, bold)}
                         Alias:              ${msg.codeBlock(metadata.alias.length ? metadata.alias.join(', ') : `--`, style, bold)}
@@ -597,14 +650,10 @@ class clan_wrapper {
             metadata: new Metadata("namechange")
                 .setAlias(["nickname", "change"])
                 .setInfo("Change a user's nickname.")
-                .setArguments(["username, current nickname or id", "new nickname"])
-                .setAccess({ roles: "admin" })
+                .setArguments(["target user", "new nickname"])
+                .setAccess({ roles: "test" })
                 .setInput({ 
-                    prompt: `
-                        __**User Nickname Change**__
-
-                        Hello ${user.name}, I required the following information:
-                        ${msg.codeBlock(`• username, current nickname or id\n• new nickname`,`fix`,`**`)}`,
+                    prompt: msg.codeBlock(`[Target User] 🡆 [New Nickname]`,`ini`,`**`),
                     require: true
                 }),
 
@@ -614,11 +663,13 @@ class clan_wrapper {
                     let old_nickname = target.nickname;
                     try {
                         await target._setNickname(args[1])
-                        msg.embedWrapper('#0099ff', `
-                            Old Nickname: ${msg.codeBlock(old_nickname,`yaml`,`**`)}
-                            New Nickname: ${msg.codeBlock(target.nickname,`yaml`,`**`)}`)
+                        msg .clearData()
+                            .setColor('#0099ff')
+                            .setDescription(msg.codeBlock(`[${old_nickname}] 🡆 [${target.nickname}]`,`ini`,`**`))
+                            .setFooter(`Completed.`)
+                            .send()
                     } catch (e) { return msg.embedWrapper(palette.red, `Sorry ${user.name}... I couldn't change this user's nickname!`) }
-                } else return msg.embedWrapper(palette.red, `Sorry, I couldn't find: \`${target.inputname}\``)
+                } else return msg.embedWrapper(palette.red, `Sorry, I couldn't find: \`${target.input}\``)
             }
         }
 
@@ -627,7 +678,7 @@ class clan_wrapper {
                 .setAlias(["userdata", "userinfo", "user", "find"])
                 .setInfo("Used to find all user information.")
                 .setArguments("username (optional)")
-                .setAccess({ roles: "developer" }),
+                .setAccess({ roles: "test" }),
 
             execute: async(metadata) => {
 
@@ -642,7 +693,7 @@ class clan_wrapper {
                         .clearData()
                         .setAuthor(user.name, user.pfp)
                         .setColor(palette.darkmatte)
-                        .addField(`Search Input:`,      msg.codeBlock(target.inputname, style))
+                        .addField(`Search Input:`,      msg.codeBlock(target.input, style))
                         .addField(`User ID:`,           msg.codeBlock(target.id, style))
                         .addField(`User Name:`,         msg.codeBlock(`${target.name}#${target.discriminator}`, style))
                         .addField(`Nickname:`,          msg.codeBlock(target.nickname, style))
@@ -666,37 +717,26 @@ class clan_wrapper {
             metadata: new Metadata("message")
                 .setAlias(["send", "msg"])
                 .setInfo("Sends a test message.")
-                .setAccess({ roles: "developer" }),
+                .setAccess({ roles: "test" }),
             execute: async(metadata) => {
 
-                msg .clearData()
+                return msg 
+                    .clearData()
                     .setColor(`#0099ff`)
                     .setAuthor(`Requested by: ${user.name}`, user.pfp)
                     .setDescription(`Here's Naphy's favorite .gif for you. ♡`)
                     .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
                     .send()
 
-                return
-                
-                if (args.length === 0) target = user;
-                else if (args.length >= 1) target = await new User(args.join(" ")).init();
+            }
+        }
 
-                if (target.exists) {
-                    msg .clearData()
-                        .setDescription(`Sending DM to: ${target.client}`)
-                        .setColor(palette.green)
-                        .send()
-
-                    msg .clearData()
-                        .setColor(`#0099ff`)
-                        .setAuthor(`Message from: ${user.name}`, user.pfp)
-                        .setDescription(`   Hey there~
-                                            Thanks for being my labrat!
-                                            Here's a .gif for you. ♡`)
-                        .setImage(`https://i.kym-cdn.com/photos/images/newsfeed/000/751/316/ede.gif`)
-                        .sendDM(target)
-                }
-                return
+        let test_botCommand = {
+            metadata: new Metadata("bot_command")
+                .setInfo("Only availible to \'bot\' role.")
+                .setAccess({ roles: "bot" }),
+            execute: async(metadata) => {
+                msg.embedWrapper(palette.white, `Hello, I see you are a bot!`)
             }
         }
 
@@ -704,19 +744,16 @@ class clan_wrapper {
             metadata: new Metadata("test2")
                 .setAlias(["2", "22", "222"])
                 .setInfo("Test Info for Test 2")
-                .setArguments("username / userid")
-                .setCommandList([
-                    test_userFind, 
-                    test_userNicknameChange,
-                    test_sendMessage])
-                .setAccess({ roles: "nobody" })
+                .setArguments("clan name")
+                .setAccess({ roles: "test" })
                 .setInput({ 
-                    prompt: "Test Prompt Message",
-                    require: false
+                    prompt: msg.codeBlock(`[Clan Name] 🡆 Find Clan Data`,`ini`,`**`),
+                    require: true
                 }),
                 
             execute: async(metadata) => {
-                msg.embedWrapper(palette.red, `Test Message`)
+                let clan = await new Clan(args[0]).init();
+                console.log(clan)
             }
         }
 
@@ -724,7 +761,8 @@ class clan_wrapper {
             metadata: new Metadata("test1")
                 .setAlias("1")
                 .setInfo("Test Info for Test 1")
-                .setCommandList(test_2),
+                .setCommandList(test_2)
+                .setAccess({ roles: "test" }),
             execute: async(metadata) => {
                 let markdown = `HTTP\n`
                 msg.embedWrapper(palette.green,  
@@ -758,36 +796,64 @@ class clan_wrapper {
         /***************************************************************************************************
          * TIER 1 COMMANDS
          ***************************************************************************************************/
-        let clanCreationInterface = { 
-            metadata: {
-                name: "create",
-                alias: ["creation", "make"],
-                commandlist: [help]
-            },
-            execute: async(metadata) => {
-                return msg.embedWrapper(palette.green, `Executing Clan Create.`)
+        let clanCreation = { 
+            metadata: new Metadata("create")
+                .setAlias("make")
+                .setInfo("Clan Create Info Here.")
+                .setArguments(["Clan Name","Clan Tag","Clan Motto"])
+                .setAccess({ 
+                    roles: "developer",
+                    level: -1
+                })
+                .setInput({
+                    prompt: msg.codeBlock(`[Clan Information] 🡆 Create New Clan`,`ini`,`**`),
+                    require: true
+                }),
 
-                if (args.length >= 4) {
-                    //let user = new User(global_data.user.username)
-                    let clan = new Clan(args[0])
-                    args.shift()
-                    clan.tag = args[0]
-                    args.shift()
-                    clan.color = args[0]
-                    args.shift()
-                    clan.motto = args.join(" ")
-            
-                    await clan.createClan();
-                    
-                    msg.embedWrapper(palette.green, `**Clan Created! (ID: ${await clan.id})**
-                                                        **Clan Name:** ${await clan.name}
-                                                        **Clan Tag:** ${await clan.tag}
-                                                        **Color:** #${(await clan.color).toString(16)}
-                                                        **Motto:** ${await clan.motto}
-                                                        **Leader ID:** ${await clan.leader_id}`) 
-            
-                    await clan.addMember(await user.id)
-                } return msg.embedWrapper(palette.golden, `Clan Creation: \`${prefix}${commandname} create <Clan Name> <Tag> <Color> <Motto>\``);
+            execute: async(metadata) => {
+
+                let name = args[0]
+                let tag = args[1].slice(0,10)
+                let motto = args[2]
+
+                let roledata = {
+                    name: args[0],
+                    position: message.guild.roles.find(x => x.id === '598256155235582047').position - 1,
+                    permissions: 0x00,
+                }
+
+                msg .clearData()
+                    .setColor(palette.golden)
+                    .setDescription(msg.codeBlock(`
+                        • Name  : ${name}
+                        • Tag   : ${tag}
+                        • Motto : ${motto}`,`HTTP`,`**`))
+                    .setFooter(`Confirm? ( Y / N )`)
+                    .send()
+                    .then(async confimration => {
+                        await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: timeout1 })
+                        .then(async collected => {
+
+                            await pause(delay)
+                            await collected.first().delete();
+                            await confimration.delete();
+                            if (collected.first().content.toLowerCase() === 'y' || collected.first().content.toLowerCase() === 'yes')
+                                msg.sendRaw(`\`Creating new clan . .\``).then(async loading => {
+
+                                    let clanrole = await (message.guild.createRole(roledata, `New Clan Created!`));
+                                    await sql.run(`INSERT INTO clandata (id, name, tag, motto, color, leader, maxmembers, foundingdate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                                    [clanrole.id, name, tag, motto, null, user.id, 5, Date.now()])
+                                    await loading.delete()
+                                    msg .clearData()
+                                        .setColor(palette.darkmatte)
+                                        .setDescription(msg.codeBlock(`[${name}] 🡆 New Clan Created!`,`ini`,`**`))
+                                        .setFooter(`Completed.`)
+                                        .send()
+                                    return
+                                })
+                        })
+                    })
+
             }
             
         } 
@@ -812,7 +878,8 @@ class clan_wrapper {
                 .setArguments("subcommand")
                 .setCommandList([
                     //clanManagement,
-                    //clanCreationInterface,
+                    clanCreation,
+                    test_botCommand,
                     test_userNicknameChange,
                     test_userFind,
                     test_sendMessage,
@@ -820,50 +887,53 @@ class clan_wrapper {
                     test_2
                 ])
                 .setAccess({ roles: "public" }),
+
             execute: async() => {
 
                 let subcommand = await new Subcommand(clanMain.metadata).init();
                 if (subcommand.exists) return await subcommand.execute()
                 else msg.sendRaw(`\`Loading Clan Interface . .\``).then(async loading => {
                     args = [];
-                    await msg 
+                    await msg
                         .clearData()
                         .attachFiles(['./images/clan_banner.png'])
                         .setColor(promptcolor)
                         .setDescription(`${msg.codeBlock(new Subcommand(clanMain.metadata).formattedinvokerCommandList(),`HTTP`,`**`)}`)
                         .send()
                         .then(async claninterface => {
-                            loading.delete()
-
+                            await loading.delete()
                             await pause(delay)
                             let subcommand
                             let terminate = false
                             msg .clearData()
                                 .setColor(collectorcolor)
                                 .setDescription(msg.codeBlock(`subcommand?`,`CSS`,`**`))
-                                .setFooter(`Terminate: Type \'exit\'`)
+                                .setFooter(`Type \'cancel\' to quit.`)
 
                             await msg.send().then(async m => {
-                                await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: 30000, errors: ['time']})
+                                await message.channel.awaitMessages(authorfilter, { maxMatches: 1, time: timeout1, errors: ['time']})
                                 .then(async collected => {
-                                    collected.first().delete(); 
-                                    m.delete();
+                                    await pause(delay)
+                                    await collected.first().delete();
+                                    await m.delete();
                                     args.push(collected.first().content);
                                     ["CANCEL", "EXIT", "QUIT"].forEach(e => { if (e === collected.first().content.toUpperCase()) return terminate = true });
                                     subcommand = await new Subcommand(clanMain.metadata).init();
                                     if (!terminate && !subcommand.exists) {
                                         await pause(delay)
-                                        msg.embedWrapper(palette.darkmatte, `Sorry ${user.name}, **\`${args[0]}\`** is not a valid subcommand.`)
+                                        msg.embedWrapper(palette.darkmatte, `**\`${args[0]}\`** is not a valid subcommand.`)
                                         return terminate = true;
                                     }
                                 })
-                                .catch(() => { m.delete(); return terminate = true; });
+                                .catch(async () => { await m.delete(); return terminate = true; });
                             });
                             
+                            //await claninterface.delete()
                             await pause(delay)
                             if (!terminate) return subcommand.execute()
                         })
                 })
+
             }
         }
             

@@ -3,21 +3,14 @@ const moment = require(`moment`);
 const formatManager = require('../../utils/formatManager');
 const sql = require('sqlite');
 sql.open('.data/database.sqlite');
+const env = require(`../../.data/environment`)
 class strikeCollection {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
-        this.utils = Stacks.utils;
-        this.message = Stacks.message;
-        this.args = Stacks.args;
-        this.palette = Stacks.palette;
         this.stacks = Stacks;
     }
 
     async execute() {
-        let message = this.message;
-        let bot = this.stacks.bot;
-        let palette = this.stacks.palette;
+        const { message, bot, palette, command, utils } = this.stacks
         const format = new formatManager(message);
 
         /**
@@ -248,7 +241,7 @@ class strikeCollection {
 
 
             //  Returns if target is not valid member.
-            metadata.target = await utils.userFinding(message, message.content.substring(command.length + 2))
+            metadata.target = await utils.userFinding(message.content.substring(command.length + 2))
             if (!metadata.target) return log({ code: `INVALID_USER` });
 
 
@@ -267,6 +260,6 @@ module.exports.help = {
     usage: `${require(`../../.data/environment.json`).prefix}strike @user`,
     group: "Admin",
     public: true,
-    require_usermetadata: true,
+    required_usermetadata: true,
     multi_user: true
 }
