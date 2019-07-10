@@ -38,16 +38,16 @@ class Buy {
             author: author,
             usermetadata: data
         }
-        const slotvalue = Object.keys(data.badges);
-
         let transaction = new Transaction(transactionComponents)
         let item = await transaction.pull;
+
+        //  Returns if item is not valid
+        if (!item) return reply(BUY.INVALID_ITEM)
+
         let badgesOnLimit = Object.values(await data.badges).indexOf(null) === -1
         let badgesHaveDuplicate = Object.values(await data.badges).includes(item.alias)
 
 
-        //  Returns if item is not valid
-        if (!item) return reply(BUY.INVALID_ITEM)
 
         let checkoutComponents = {
             itemdata: item,
