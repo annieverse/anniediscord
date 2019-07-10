@@ -9,7 +9,6 @@ let cards = require(`../utils/cards-metadata.json`);
 
 module.exports = (bot, message) => {
 
-    let utils = require(`../utils/Pistachio`)(bot, message)
 
     const nonXPChannel = [
         "485922866689474571",
@@ -312,7 +311,7 @@ module.exports = (bot, message) => {
 
 
             //  Update experience point.
-            const share_exp = () => {
+            const share_exp = async () => {
                 for (let id in group) {
                     console.log(`${get_name(group[id].userId)} receiving shared ${exp_amount} xp from the appearance of white cat.`)
                     sql.run(`UPDATE userdata
@@ -321,8 +320,7 @@ module.exports = (bot, message) => {
                 }
             }
 
-            share_exp();
-            await utils.pause(500)
+            await share_exp();
         }
 
 
