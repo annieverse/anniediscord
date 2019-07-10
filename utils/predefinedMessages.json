@@ -16,7 +16,7 @@
     "CHECKOUT": {
         "CANCEL": "Transaction cancelled.",
         "SUCCESSFUL": "Purchase successful!",
-        "METADATA": "You are going to buy **{0} {1}** for {2} **{3}**.\nPlease type `y` to confirm your purchase.",
+        "METADATA": "{2}**{3}** 🡆 **{0} {1}** ?\nPlease type `y` to confirm your purchase.",
         "ERROR": "Uhh, something went wrong."
     },
     "CAPSULE": {
@@ -161,7 +161,7 @@
         "SHORT_GUIDE": "Who you are going to rep today? `>rep <user>`",
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "SELF_TARGETING": "You can't rep yourself, baka.",
-        "SUCCESSFUL": "**{0}** has received **+☆** from **{1}**."
+        "SUCCESSFUL": "**{0}** has received **+★** from **{1}**."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",

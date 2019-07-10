@@ -42,7 +42,8 @@ class Checkout {
                 commanifier(this.itemdata.price)
             ],
             color: palette.golden,
-            image: this.preview
+            image: this.preview,
+            notch: true
         })
         .then(async cmeta => {
             this.collector.on(`collect`, async (msg) => {

@@ -42,6 +42,9 @@ class Buy {
 
         let transaction = new Transaction(transactionComponents)
         let item = await transaction.pull;
+        let badgesOnLimit = Object.values(await data.badges).indexOf(null) === -1
+        let badgesHaveDuplicate = Object.values(await data.badges).includes(item.alias)
+
 
         //  Returns if item is not valid
         if (!item) return reply(BUY.INVALID_ITEM)
@@ -62,10 +65,10 @@ class Buy {
         if (transactionComponents.type === `Skins` && data.interfacemode === item.alias) return reply(BUY.DUPLICATE_SKIN)
 
         //  No available slots left
-        if (transactionComponents.type === `Badges` && slotvalue.indexOf(null) === -1) return reply(BUY.BADGES_LIMIT)
+        if (transactionComponents.type === `Badges` && badgesOnLimit) return reply(BUY.BADGES_LIMIT)
 
         //  Reject duplicate badge alias
-        if (transactionComponents.type === `Badges` && slotvalue.includes(item.alias)) return reply(BUY.DUPLICATE_BADGE)
+        if (transactionComponents.type === `Badges` && badgesHaveDuplicate) return reply(BUY.DUPLICATE_BADGE)
 
         //  Reject duplicate cover alias.
         if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
