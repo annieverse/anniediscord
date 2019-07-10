@@ -71,7 +71,7 @@ class Capsule {
         return reply(CAPSULE.SUCCESSFUL, {
             socket: [
                 name(author.id),
-                emoji(`powercapsule1`),
+                emoji(`power_capsule`),
                 commanifier(metadata.to_use),
                 commanifier(metadata.total_gained)
             ],

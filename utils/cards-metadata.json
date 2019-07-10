@@ -3,7 +3,7 @@
     "fullname": "Little Annie",
     "alias": "annie_card",
     "rarity": "★★★★★",
-    "url": "https://i.ibb.co/4JkJm8h/annie-card.png",
+    "url": "https://i.ibb.co/bzD6RWW/annie-card.png",
     "description": "I'm not small! you are just too high.",
     "req_materials": {
       "blue_crayon": 1,
@@ -221,9 +221,8 @@
     "description": "y know drink is fun. R8?",
     "url": "https://i.ibb.co/ZdtjNZD/1-pan-card.png",
     "req_materials": {
-      "bacon": 1,
+      "rose": 100,
       "fragments": 50000,
-      "artcoins": 5000,
       "pan_shards": 30
     },
     "skills": {
@@ -252,7 +251,7 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
-      "lucky_ticket": 100,
+      "lucky_tickets": 100,
       "fragments": 50000,
       "rany_shards": 30
     },
