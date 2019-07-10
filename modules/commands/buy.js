@@ -1,5 +1,5 @@
-const Transaction = require(`../../utils/TransactionHandler`);
-const Checkout = require(`../../utils/TransactionCheckout`);
+const Transaction = require(`../../utils/transactionHandler`);
+const Checkout = require(`../../utils/transactionCheckout`);
 const preview = require(`../../utils/config/itemPreview`);
 
 /**
