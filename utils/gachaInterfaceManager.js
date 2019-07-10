@@ -60,7 +60,7 @@ class gachaGUI {
         this.canv.addText(this.container.item[index], x, y)
         //  Rarity
         this.canv.setTextFont(`9pt Whitney`)
-        this.canv.addText(`☆`.repeat(this.container.rarity[index]), x, y + 15)
+        this.canv.addText(`★`.repeat(this.container.rarity[index]), x, y + 15)
     }
 
 

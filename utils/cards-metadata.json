@@ -1,4 +1,34 @@
 {
+  "annie_card": {
+    "fullname": "Little Annie",
+    "alias": "annie_card",
+    "rarity": "★★★★★",
+    "url": "https://i.ibb.co/4JkJm8h/annie-card.png",
+    "description": "I'm not small! you are just too high.",
+    "req_materials": {
+      "blue_crayon": 1,
+      "fragments": 50000
+    },
+    "skills": {
+      "main": {
+        "name": "Charming Talks",
+        "description": "Unlocked exp gaining when using Annie's command.",
+        "type": "exp_booster",
+        "channel": [
+          "485922866689474571",
+          "578518964439744512",
+          "565308091424571422"
+        ],
+        "effect": {
+          "exp": 1,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
+        }
+      }
+    }
+  },
   "kitomi_card": {
     "fullname": "Lazy Princess, Kitomi",
     "alias": "kitomi_card",

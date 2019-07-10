@@ -29,6 +29,13 @@ module.exports = (bot, message) => {
     ];
 
 
+    const cardinventory = async () => {
+        return sql.get(`
+         SELECT *
+         FROM collections 
+         WHERE userId = "${message.auhtor.id}"
+        `)
+    }
 
 
     //  Users will gain xp through general text channels.
@@ -473,12 +480,18 @@ module.exports = (bot, message) => {
 
 
     //  Initialize
-    const run = () => {
+    const run = async () => {
+        let usercards = await cardinventory();
+
 
         //  Returns if currently in developer environment.
         if (env.dev && !env.administrator_id.includes(message.author.id)) return;
 
 
+        //  Execute experienceGains() immediately if user had Annie card.
+        if (usercards.annie_card) return experienceGains();
+
+        
         //  Returns if message started with command prefix.
         if (message.content.startsWith(env.prefix)) return;
 
