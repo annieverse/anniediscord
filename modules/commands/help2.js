@@ -212,20 +212,18 @@ class help {
             if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE);
         }
         let pages, page = [];
-        page.push(new Array(`**${group.toUpperCase()}** - Group`))
-        page[0].push(`\nCommand\n\`\`\`fix\n${cmdFile}\`\`\``)
-        page[0].push(`How to use\n\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``)
-        page[0].push(`What is this command\n\`\`\`fix\n${await this.description(cmdFile)}\`\`\``)
+        this.embed.setFooter(`<required>|[optional]`)
+        page.push(new Array(`\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``))
+        page[0].push(`Information\n\`\`\`ymal\n${await this.description(cmdFile)}\`\`\``)
         pages = this.utils.chunk(page[0], 6)
-        this.utils.pages(this.message, pages, this.embed);
-        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
+        return this.utils.pages(this.message, pages, this.embed);
     }
 
     async execute() {
         this.initializeEmbed();
-        let file = await this.returnFileName(this.args[0].toLowerCase());
-        let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
         if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
+        let file = await this.returnFileName(this.args[0].toLowerCase()); // grabs the file name of a command
+        let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
         if (file === 'help') return this.help(file.toLowerCase()); // Sends a help message for the help command, ie. ${prefix}help help
         for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
             let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
