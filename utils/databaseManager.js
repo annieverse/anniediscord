@@ -102,7 +102,7 @@ class databaseUtils {
         async updateBadge(newvalue) {
             let badgedata = await this.userBadges;
             let slotkey = Object.keys(badgedata);
-            let slotvalue = Object.values(badgesdata);
+            let slotvalue = Object.values(badgedata);
             sql.run(`UPDATE userbadges 
             SET ${slotkey[slotvalue.indexOf(null)]} = "${newvalue}" 
             WHERE userId = ${this.id}`);

@@ -118,7 +118,7 @@ const render = async (stacks, metadata) => {
             this.text_check;
             canv.setTextAlign("right")
             canv.setTextFont(`15pt RobotoBlack`)
-                .addText(`${reps} ☆`, size.x - 50, this.y)
+                .addText(`${reps} ★`, size.x - 50, this.y)
             return this;
         }
 

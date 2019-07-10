@@ -54,6 +54,20 @@ class Redeem {
                 //  Returns if user attempted to cancel the transaction
                 if (!input.startsWith(`y`)) return reply(REDEEM.CANCELLED)
 
+                //  Add collector fortune buffs if user has rany card
+                if (data.rany_card) {
+                    //  Update Lucky Tickets
+                    await this.db.addLuckyTickets(amount * 2)
+                    //  Withdraw artcoins
+                    await this.db.withdraw(price, `artcoins`)
+
+                    //  Redeem successful
+                    return reply(REDEEM.COLLECTOR_FORTUNE, {
+                        socket: [emoji(`lucky_tickets`), commanifier(amount), commanifier(amount)],
+                        color: palette.crimson,
+                        notch: true
+                    })
+                }
 
                 //  Update Lucky Tickets
                 await this.db.addLuckyTickets(amount)

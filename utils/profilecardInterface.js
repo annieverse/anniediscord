@@ -200,7 +200,7 @@ async function profile(stacks, member) {
          * 
          */
         .restore()
-    if (reservedSlot >= 1) {
+    if (reservedSlot >= 0) {
         canv.createBeveledClip(startPos_x + 70, 490, 220, 40, 30) // role window
             .setColor(Color(user.clr).darken(0.3))
             .addRect(startPos_x + 70, 490, 220, 40)
@@ -255,26 +255,26 @@ async function profile(stacks, member) {
      */
     const symetric_xy = 45;
     const diameter = Math.round(symetric_xy / 2);
-    const y_badge = 556;
+    const y_badge = 558;
     await setBadge(symetric_xy, diameter, y_badge);
 
     async function setBadge(xy, diameter, pos_y) {
 
-        if (reservedSlot <= 1) {
+        if (reservedSlot <= 0) {
             canv.addImage(await configProfile.checkBadges(key[0]), startPos_x + 258, pos_y, xy, xy, diameter)
-        } else if (reservedSlot == 2) {
+        } else if (reservedSlot == 1) {
             canv.addImage(await configProfile.checkBadges(key[0]), startPos_x + 243, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[1]), startPos_x + 293, pos_y, xy, xy, diameter)
-        } else if (reservedSlot == 3) {
+        } else if (reservedSlot == 2) {
             canv.addImage(await configProfile.checkBadges(key[0]), startPos_x + 208, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[1]), startPos_x + 258, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[2]), startPos_x + 308, pos_y, xy, xy, diameter)
-        } else if (reservedSlot === 4) {
+        } else if (reservedSlot === 3) {
             canv.addImage(await configProfile.checkBadges(key[0]), startPos_x + 193, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[1]), startPos_x + 243, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[2]), startPos_x + 293, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[3]), startPos_x + 343, pos_y, xy, xy, diameter)
-        } else if (reservedSlot === 5) {
+        } else if (reservedSlot === 4) {
             canv.addImage(await configProfile.checkBadges(key[0]), startPos_x + 158, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[1]), startPos_x + 208, pos_y, xy, xy, diameter)
                 .addImage(await configProfile.checkBadges(key[2]), startPos_x + 258, pos_y, xy, xy, diameter)
@@ -316,7 +316,7 @@ async function profile(stacks, member) {
      *    TITLE
      * 
      */
-    if (reservedSlot >= 1) {
+    if (reservedSlot >= 0) {
         canv.setColor(palette.white)
             .setTextFont(`15pt RobotoBold`) // role window - role name
             .addText(configRank.ranksCheck(user.lvl).title, 195, 517)
@@ -358,7 +358,7 @@ async function profile(stacks, member) {
      */
     canv.setColor(palette.midgray)
         .setTextFont(`28pt RobotoBold`) // reputation
-        .addText(`☆`, startPos_x + 390, startPos_y + 320)
+        .addText(`★`, startPos_x + 390, startPos_y + 320)
         .setTextAlign("left")
         .setTextFont(`23pt RobotoBold`)
         .addText(configProfile.checkRep(user.rep), startPos_x + 410, startPos_y + 319)
@@ -391,7 +391,7 @@ async function profile(stacks, member) {
      *    @TEXTS that surrounding the bar.
      * 
      */
-    if (reservedSlot >= 1) {
+    if (reservedSlot >= 0) {
         canv.setTextFont("14pt RobotoBold") // required exp to next lvl
             .setTextAlign("center")
             .addText(`${configFormat.threeDigitsComa(user.cur)} XP`, baseWidth - 155, 517)

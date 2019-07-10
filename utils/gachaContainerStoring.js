@@ -25,9 +25,6 @@ class gachaContainerStoring {
     additionalChecks(src = {}) {
         const { metacards, emoji, reply, code: {GACHA}, meta: { data } } = this.stacks;
         for (let key in src) {
-
-            //	Multiply amount of fragments for user who had rany_card
-            if (data.rany_card && (key === `fragments`)) src[key] = src[key] * (data.total_cards + 1);
     
             //Check for card duplicates
             if (key.indexOf(`card`) > -1) {

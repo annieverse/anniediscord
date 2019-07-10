@@ -72,18 +72,31 @@ module.exports = (bot, message) => {
 
 
   //  Check if message is event-submission.
-  function eventChannelFilter() {
+  async function eventChannelFilter() {
     let submissionchannel = bot.channels.get('460615254553001994');
     let eventchannel = bot.channels.get('460615157056405505');
     if (message.channel.id === submissionchannel.id && attachmentCheck()) {
       let role = manager.getRoles('Event Participant');
       let user = message.guild.member(message.author.id);
+      let embed = new Discord.RichEmbed()
+      //  Get user's card metadata
+      let carddata = await sql.get(`SELECT * FROM collections WHERE userId = "${message.author.id}"`)
+
+      //  Remove ticket
       user.removeRole(role)
 
-      let embed = new Discord.RichEmbed()
-        .setColor(palette.golden)
-        .setTimestamp(Date.now())
-        .setDescription(`**${message.author.username}** has submitted some work! <:AnnieHype:523196958882529280>`)
+      if (carddata.foxie_card) {
+        //  Give 10 Chocolate Box if user has foxie card
+        sql.run(`UPDATE userinventories SET chocolate_box = chocolate_box + 10 WHERE userId = "${message.author.id}"`)
+        embed.setColor(palette.pink)
+        embed.setTimestamp(Date.now())
+        embed.setDescription(`**${message.author.username}** has submitted some work! ${bot.emojis.find(e => e.name === `bongofoxy`)}`)
+        return eventchannel.send(embed)
+      }
+
+        embed.setColor(palette.golden)
+        embed.setTimestamp(Date.now())
+        embed.setDescription(`**${message.author.username}** has submitted some work! <:AnnieHype:523196958882529280>`)
       return eventchannel.send(embed);
     }
   }

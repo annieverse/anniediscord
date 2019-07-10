@@ -18,6 +18,7 @@ module.exports = async (bot, reaction, user) => {
           "460615254553001994",
           "538806382779170826",
           "565308091424571422",
+          "591025246258200685"
         ],
         featured_channel: bot.channels.get("582808377864749056"),
         featured_requirement: 10,
