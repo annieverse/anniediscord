@@ -141,7 +141,7 @@ class clan_wrapper {
         }
 
         class Clan {
-            constructor(search) {
+            constructor(search = null) {
                 this._input = search;
                 this._exists = false;
             }
@@ -541,7 +541,7 @@ class clan_wrapper {
                     "459924414885265419" : "Bot"
                 },
                 test : {
-                    "598213651077267469" : "Beta"
+                    "598213651077267469" : "Beta Tester"
                 },
                 nobody : {
                     "999999999999999999" : "Nonexistant Test Role"
@@ -614,7 +614,7 @@ class clan_wrapper {
         let help = {
             metadata: new Metadata("help")
                 .setInfo("Displays complete guide of this subcommand.")
-                .setAccess({ roles: "public" }),
+                .setAccess({ roles: "test" }),
 
             execute: async(metadata) => {
 
@@ -651,7 +651,7 @@ class clan_wrapper {
                 .setAlias(["nickname", "change"])
                 .setInfo("Change a user's nickname.")
                 .setArguments(["target user", "new nickname"])
-                .setAccess({ roles: "test" })
+                .setAccess({ roles: "developer" })
                 .setInput({ 
                     prompt: msg.codeBlock(`[Target User] 🡆 [New Nickname]`,`ini`,`**`),
                     require: true
@@ -678,7 +678,7 @@ class clan_wrapper {
                 .setAlias(["userdata", "userinfo", "user", "find"])
                 .setInfo("Used to find all user information.")
                 .setArguments("username (optional)")
-                .setAccess({ roles: "test" }),
+                .setAccess({ roles: "developer" }),
 
             execute: async(metadata) => {
 
@@ -709,15 +709,11 @@ class clan_wrapper {
         }
 
         let test_sendMessage = {
-            metadata: {
-                name: "message",
-                alias: ["send", "msg"],
-                commandlist: [help]
-            },
             metadata: new Metadata("message")
                 .setAlias(["send", "msg"])
                 .setInfo("Sends a test message.")
-                .setAccess({ roles: "test" }),
+                .setAccess({ roles: "developer" }),
+
             execute: async(metadata) => {
 
                 return msg 
@@ -735,6 +731,7 @@ class clan_wrapper {
             metadata: new Metadata("bot_command")
                 .setInfo("Only availible to \'bot\' role.")
                 .setAccess({ roles: "bot" }),
+
             execute: async(metadata) => {
                 msg.embedWrapper(palette.white, `Hello, I see you are a bot!`)
             }
@@ -745,7 +742,7 @@ class clan_wrapper {
                 .setAlias(["2", "22", "222"])
                 .setInfo("Test Info for Test 2")
                 .setArguments("clan name")
-                .setAccess({ roles: "test" })
+                .setAccess({ roles: "developer" })
                 .setInput({ 
                     prompt: msg.codeBlock(`[Clan Name] 🡆 Find Clan Data`,`ini`,`**`),
                     require: true
@@ -762,7 +759,8 @@ class clan_wrapper {
                 .setAlias("1")
                 .setInfo("Test Info for Test 1")
                 .setCommandList(test_2)
-                .setAccess({ roles: "test" }),
+                .setAccess({ roles: "developer" }),
+
             execute: async(metadata) => {
                 let markdown = `HTTP\n`
                 msg.embedWrapper(palette.green,  
@@ -802,7 +800,7 @@ class clan_wrapper {
                 .setInfo("Clan Create Info Here.")
                 .setArguments(["Clan Name","Clan Tag","Clan Motto"])
                 .setAccess({ 
-                    roles: "developer",
+                    roles: "test",
                     level: -1
                 })
                 .setInput({
