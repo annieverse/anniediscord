@@ -73,7 +73,7 @@ class Gacha {
 	 * 	Initializer
 	 */
 	async execute() {
-		const { message, name, reply, palette, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks;
+		const { message, name, reply, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks;
 
 
 		//	Returns if current channel is not in gacha-allowed list
