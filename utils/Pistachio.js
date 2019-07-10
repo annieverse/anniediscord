@@ -34,10 +34,10 @@ module.exports = (Components) => {
     container.utils = require(`./functions.js`)(bot, message);
 
     //  Storing transaction checkout handler
-    container.Checkout = require(`./TransactionCheckout`);
+    container.Checkout = require(`./transactionCheckout`);
     
     //  Storing main transaction handler
-    container.Transaction = require(`./TransactionHandler`);
+    container.Transaction = require(`./transactionHandler`);
 
     //  Storing environment.json keys
     container.environment = require('../.data/environment.json');
