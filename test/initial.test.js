@@ -9,11 +9,6 @@ describe(`Initial check-up`, () => {
         expect(require(`dotenv`).config()).to.not.be.undefined;
     })
 
-    //  Check token availability.
-    it(`Token validation`, () => {
-        expect(process.env.TOKEN).to.be.not.undefined;
-    })
-
     describe(`Transaction handling`, () => {
         let msg = `>buy role baka potato`;
         let prefix = `>`
