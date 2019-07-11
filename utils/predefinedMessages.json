@@ -172,6 +172,9 @@
         "SHORT_GUIDE": "You can start distributing event rewards by typing `>sendreward <user>`",
         "INVALID_REWARD": "Sorry, i can't find any package for that rank."
     },
+    "HELP":{
+        "FETCHING": "<a:aaublobcatdance:557682758344769578> `fetching . . .`"
+    },
     "ROLE":{
         "ERR":{
             "WRONG":{

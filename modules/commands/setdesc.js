@@ -22,8 +22,7 @@ class setDesc {
 				})
 		}
 
-
-		const descriptionArguments = message.content.substring(9);
+		const descriptionArguments = message.content.substring(this.stacks.command.length+2);
 		const embed = new Discord.RichEmbed();
 
 		if (!this.args[0]) {
@@ -50,7 +49,7 @@ class setDesc {
 module.exports.help = {
 	start: setDesc,
 	name: "setdesc",
-	aliases: [],
+	aliases: ["sd"],
 	description: `Set description for profile card`,
 	usage: `${require(`../../.data/environment.json`).prefix}setdesc <message>`,
 	group: "General",

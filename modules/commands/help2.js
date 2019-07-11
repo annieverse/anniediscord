@@ -16,13 +16,13 @@ class help {
     }
 
     // This will format all embeds used in this file
-    initializeEmbed(){
+    initializeEmbed() {
         this.embed.setColor(this.palette.darkmatte)
         this.embed.setThumbnail(this.bot.user.displayAvatarURL);
     }
 
     async allowedToUse() {
-        if (this.message.member.roles.find(r => Object.keys(this.role.admin).some(i=>this.role.admin[i]==r.id))) return true;
+        if (this.message.member.roles.find(r => Object.keys(this.role.admin).some(i => this.role.admin[i] == r.id))) return true;
         return false;
     }
 
@@ -60,7 +60,7 @@ class help {
             for (let file in files) {
                 const src = require(`./${files[file]}`);
                 if (src.help.group.toLowerCase() === groupname) {
-                    if (src.help.public) { file_arr.push(src.help.name.toLowerCase());}
+                    if (src.help.public) { file_arr.push(src.help.name.toLowerCase()); }
                 }
             }
         })
@@ -104,10 +104,10 @@ class help {
         let file_rst;
         let src;
         //try {
-            src = require(`./${file}`);            
+        src = require(`./${file}`);
         //} catch (error) {
-            //console.log(`in this.group()`)
-          //  this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE); return false
+        //console.log(`in this.group()`)
+        //  this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE); return false
         //}
         file_rst = src.help.group.toLowerCase();
         await this.stacks.pause(200)
@@ -119,7 +119,7 @@ class help {
      * @param {String} cmd file name
      * @returns {String} string of file
      */
-    async returnFileName(cmd){
+    async returnFileName(cmd) {
         let file_name = cmd;
         fs.readdir("./modules/commands/", (err, files) => {
             if (err) console.log(err);
@@ -135,115 +135,178 @@ class help {
         return file_name;
     }
 
+    deleteObjectFromArr(arr,obj) {
+        var index = arr.indexOf(obj);
+        if (index > -1) {
+            arr.splice(index, 1);
+        }
+    }
     /**
      * Displays all avaible commands in each category
      */
-    async helpAll() {
-        let page = [],pages = [];
-        let pageHeaderOptions = await this.groupNames();
-        pageHeaderOptions.sort();
+    async helpAll(dmState) {
+        this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
+            let page = [], pages = [];
+            let pageHeaderOptions = await this.groupNames();
+            pageHeaderOptions.sort();
 
-        if (await this.allowedToUse()===false) deleteObjectFromArr(pageHeaderOptions)
+            if (await this.allowedToUse() === false) deleteObjectFromArr(pageHeaderOptions)
 
-        function deleteObjectFromArr(arr) {
-            var index = arr.indexOf('admin');
-            if (index > -1) {
-                arr.splice(index, 1);
+            function deleteObjectFromArr(arr) {
+                var index = arr.indexOf('admin');
+                if (index > -1) {
+                    arr.splice(index, 1);
+                }
             }
-        }
 
-        for (let x = 0; x < pageHeaderOptions.length; x++) {
-            page.push(new Array())
-            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
-            for (let index = 0; index < mainNames.length; index++) {
-                
-                page[x].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
+            for (let x = 0; x < pageHeaderOptions.length; x++) {
+                page.push(new Array())
+                let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+                for (let index = 0; index < mainNames.length; index++) {
+
+                    page[x].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
+                }
             }
-        }
-        for (let i = 0;i<page.length;i++) {
-            pages.push(this.utils.chunk(page[i],6))
-            let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`;
-            pages[i].forEach((element, index) => {
-                if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
-            });
-        }   
-        this.utils.pages(this.message, pages, this.embed);
-        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
+            for (let i = 0; i < page.length; i++) {
+                pages.push(this.utils.chunk(page[i], 10))
+                let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`;
+                pages[i].forEach((element, index) => {
+                    if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
+                });
+            }
+
+            this.utils.pages(this.message, pages, this.embed);
+            this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            return load.delete();
+        })
+
     }
 
     /**
      * Displays all avaible commands for a specific category
      * @param {String} group group name
      */
-    async help(group) {
-        if (group === 'admin') {
-            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
-        }
-        
-        let pages,page = [];
-        let position = 0;
+    async help(group, dmState) {
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
         if (group.toLowerCase() === "help") {
             return this.utils.sendEmbed(`My available commands are:\n\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``)
         }
-        
-        for (let x = 0; x < pageHeaderOptions.length; x++) {
-            if (group.toLowerCase() === pageHeaderOptions[x]) {
-                position=x;
-                page.push(new Array())
-                let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
-                for (let index = 0; index < mainNames.length; index++) {
-                    page[0].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
+
+        if (group === 'admin') {
+            if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
+        }
+
+        this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
+            let pages, page = [];
+            let position = 0;
+
+
+            for (let x = 0; x < pageHeaderOptions.length; x++) {
+                if (group.toLowerCase() === pageHeaderOptions[x]) {
+                    position = x;
+                    page.push(new Array())
+                    let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
+                    for (let index = 0; index < mainNames.length; index++) {
+                        page[0].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
+                    }
                 }
             }
-        }
-        pages = this.utils.chunk(page[0],6)
-        let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
-        pages.forEach((element,index) => {if(index===0){element.unshift(header)}else{element.unshift(header + `**Continued**.\n`)}
-        });
-        this.utils.pages(this.message, pages, this.embed);
-        return this.utils.sendEmbed(this.needHelp, this.palette.halloween)
+            pages = this.utils.chunk(page[0], 6)
+            let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
+            pages.forEach((element, index) => {
+                if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
+            });
+            this.utils.pages(this.message, pages, this.embed);
+            this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            return load.delete();
+        })
     }
 
-    async specificCommandsHelp(cmdFile, group) {
-        if(group==='admin'){
+    async specificCommandsHelp(cmdFile, group, dmState) {
+        if (group === 'admin') {
             if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE);
         }
-        let pages, page = [];
-        this.embed.setFooter(`<required>|[optional]`)
-        page.push(new Array(`\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``))
-        page[0].push(`Information\n\`\`\`ymal\n${await this.description(cmdFile)}\`\`\``)
-        pages = this.utils.chunk(page[0], 6)
-        return this.utils.pages(this.message, pages, this.embed);
+        this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
+            let pages, page = [];
+            this.embed.setFooter(`<required>|[optional]`)
+            page.push(new Array(`\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``))
+            page[0].push(`Information\n\`\`\`ymal\n${await this.description(cmdFile)}\`\`\``)
+            pages = this.utils.chunk(page[0], 6)
+            this.utils.pages(this.message, pages, this.embed);
+            return load.delete();
+        })
     }
 
-    async execute() {
-        this.initializeEmbed();
-        if (this.args.length === 0) return this.helpAll(); // Sends the basic overall help of all available commands and groups, when no args are detected
-        let file = await this.returnFileName(this.args[0].toLowerCase()); // grabs the file name of a command
-        let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
-        if (file === 'help') return this.help(file.toLowerCase()); // Sends a help message for the help command, ie. ${prefix}help help
-        for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
-            let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
-            if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file); // if a group name is detected, only the commands for that group will be sent
-            // Set the Group name if their is a groups name availiable 
-            let group_name;
-            try {
-                group_name = await this.group(file.toLowerCase());
-            } catch (err) {
-                group_name = undefined;
-            }
-            if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
-            if ( group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
-                for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
-                    if (file.toLowerCase()===mainNames[index]){ // Tests for the correct file
-                        return this.specificCommandsHelp(mainNames[index],pageHeaderOptions[x]); // returns a help message for that specific command
+    async startUp() {
+        let page, pages = [];
+        let pageHeaderOptions = await this.groupNames();
+        pageHeaderOptions.sort();
+        let prefix = require(`../../.data/environment.json`).prefix;
+        let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`;
+        let advanceHelpMenuHelp = `**My available commands are:**\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``
+        let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\``;
+        let other_info = `If you would like the messages for advanced help to go to your dms please type --dm with the command (ie. ${prefix}help general --dm)\n\n`
+        let starterCommands = `
+            ⇨ **General**
+            \`balance\`, \`profile\`, \`daily\`, \`inventory\`, \`collection\`, \`rep\`, \`gift\`
+
+            ⇨ **Fun**
+            \`ask\`, \`avatar\`
+
+            ⇨ **Shop-related**
+            \`eat\`, \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\`, \`multi-roll\`,
+
+            ⇨ **Server**
+            \`stats\`, \`ping\`, \`invite\`, \`join\` 
+            `;
+
+        page = header + starterCommands + `\n` + other_info + advanceHelpMenu
+        pages.push(page)
+        pages.push(advanceHelpMenuHelp)
+        this.utils.pages(this.message, pages, this.embed);
+    }
+
+    async helpCenter(){
+        let dm = false;
+        let obj = '--dm'
+        if (this.args.some(value=>value.toLowerCase()==='--dm')){
+            this.deleteObjectFromArr(this.args,obj)
+            this.test();
+        }else{
+            if (this.args[0] === 'all') return this.helpAll(dm); // Sends the basic overall help of all available commands and groups, when no args are detected
+            let file = await this.returnFileName(this.args[0].toLowerCase()); // grabs the file name of a command
+            let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
+            if (file === 'help') return this.help(file.toLowerCase(), dm); // Sends a help message for the help command, ie. ${prefix}help help
+            for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
+                let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
+                if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file); // if a group name is detected, only the commands for that group will be sent
+                // Set the Group name if their is a groups name availiable 
+                let group_name;
+                try {
+                    group_name = await this.group(file.toLowerCase());
+                } catch (err) {
+                    group_name = undefined;
+                }
+                if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
+                if (group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
+                    for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
+                        if (file.toLowerCase() === mainNames[index]) { // Tests for the correct file
+                            return this.specificCommandsHelp(mainNames[index], pageHeaderOptions[x], dm); // returns a help message for that specific command
+                        }
                     }
                 }
             }
         }
+    }
+
+    async execute() {
+        this.initializeEmbed();
+        if (this.args.length === 0) return this.startUp();
+        this.helpCenter();
+
+        
     }
 }
 

@@ -784,6 +784,40 @@ class xp {
         this.stacks = Stacks;
     }
 
+    async chart(cur_XP, cur_LEVEL, cur_CAP, cur_CURVE) {
+        let chart = {
+            exp : cur_XP,
+            level : cur_LEVEL,
+            cap : cur_CAP,
+            curve : cur_CURVE
+        }
+
+        let chartArr = [];
+
+        // starting values
+        let q = 438573; // xp
+        let lvl = 0; // level
+        let w = 100; // cap
+        let e = 150; // curve
+
+        for (let index = 0; index < 100; index++) {
+            let formula = await this.formula(q,lvl,w,e);
+            chart.exp = formula.x;
+            chart.level = formula.level;
+            chart.cap = formula.b;
+            chart.curve = formula.c;
+
+            q = formula.x;
+            lvl = formula.level;
+            w = formula.b;
+            e = formula.c;
+
+            chartArr.push(`exp: ${chart.exp} ↺ level: ${chart.level} ↺ cap: ${chart.cap} ↺ curve: ${chart.curve} \n`)
+        }
+
+        console.log(chartArr)
+        
+    }
     /**
      * Main experience formula used in Annie's level system
      * @param {Integer} x current exp
@@ -801,6 +835,7 @@ class xp {
                 break;
             }
         }
+        
         return {
             x: x,
             level: level,
@@ -812,12 +847,12 @@ class xp {
 
 
     async execute() {
-
+        await this.chart(0,0,0,0);
     }
 }
 
 module.exports.help = {
-    start: imageSearch,
+    start: xp,
     name: "pansSandbox",
     aliases: ["_-"],
     description: `Pans testing grounds`,

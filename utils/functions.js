@@ -96,7 +96,8 @@ module.exports = (bot, message) => {
         let evembed = customembed || new RichEmbed().setColor(palette.darkmatte)
 
         let footerText;
-        if (evembed.footer.text !== undefined) footerText = evembed.footer.text;
+        let footerBoolean = undefined;
+        if (evembed.footer !== undefined) {footerText = evembed.footer.text;footerBoolean=null}
         let page = 1; // We will define what page we are on here, the default page will be 1. (You can change the default page)
         let sub_pages = 1; // We will define what sub page we are on here, the default sub page will be 1. (You can change the default sub pagem, Although it is recommended to leave it at 1)
         let evalMode = false;
@@ -121,14 +122,14 @@ module.exports = (bot, message) => {
             sub_pages++;// If it can go forwards, push forwards the sub page number
             evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
             if (pages[page - 1].length > 1) {
-                if (evembed.footer.text === undefined) {
-                    evembed.setFooter(`${footerText} | Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
+                if (footerBoolean === undefined) {
+                    evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
                 } else {
                     evembed.setFooter(`${footerText} | Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
 
                 }
             } else {
-                if (evembed.footer.text === undefined) {
+                if (footerBoolean === undefined) {
                     evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
                 } else {
                     evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -150,14 +151,14 @@ module.exports = (bot, message) => {
             sub_pages--;// If it can go back, push back the sub page number
             evembed.setDescription(pages[page - 1][sub_pages - 1]) // Just like setting the first one, reset the Description to the new page
             if (pages[page - 1].length > 1) {
-                if (evembed.footer.text === undefined) {
-                    evembed.setFooter(`${footerText} | Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
+                if (footerBoolean === undefined) {
+                    evembed.setFooter(`Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
                 } else {
                     evembed.setFooter(`${footerText} | Page ${page}.${sub_pages} of ${pages.length} (${sub_pages}/${pages[page - 1].length})`) // This also sets the footer to view the current pagenumber
 
                 }
             } else {
-                if (evembed.footer.text === undefined) {
+                if (footerBoolean === undefined) {
                     evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
                 } else {
                     evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -170,7 +171,7 @@ module.exports = (bot, message) => {
             if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
             page++; // If it can go forwards, push forwards the page number
             evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
-            if (evembed.footer.text === undefined) {
+            if (footerBoolean === undefined) {
                 evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
             } else {
                 evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -182,7 +183,7 @@ module.exports = (bot, message) => {
             if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
             page--; // If it can go back, push back the page number
             evembed.setDescription(pages[page - 1]) // Just like setting the first one, reset the Description to the new page
-            if (evembed.footer.text === undefined) {
+            if (footerBoolean === undefined) {
                 evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
             } else {
                 evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -194,7 +195,7 @@ module.exports = (bot, message) => {
             if (page === 1) page = pages.length + 1; // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
             page--; // If it can go back, push back the page number
             evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
-            if (evembed.footer.text === undefined) {
+            if (footerBoolean === undefined) {
                 evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
             } else {
                 evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -206,7 +207,7 @@ module.exports = (bot, message) => {
             if (page === pages.length) page = 0; // We can use copy and paste since it is basically the same thing, although now it checks if the page is currently on the highest possible, so it can't go any higher. // CHANGED so it goe to first page
             page++; // If it can go forwards, push forwards the page number
             evembed.setDescription(`**Output**\n\`\`\`autohotkey\n${clean(pages[page - 1])}\n\`\`\``) // Just like setting the first one, reset the Description to the new page
-            if (evembed.footer.text === undefined) {
+            if (footerBoolean === undefined) {
                 evembed.setFooter(`Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
             } else {
                 evembed.setFooter(`${footerText} | Page ${page} of ${pages.length}`) // This also sets the footer to view the current pagenumber
@@ -218,7 +219,8 @@ module.exports = (bot, message) => {
             const evembed = new Discord.RichEmbed() // Define a new embed, if you are on the `stable` branch it will be new Discord.RichEmbed()
             evembed.setColor(0xffffff) // You can set your color here
         }
-        if (evembed.footer.text === undefined) {
+
+        if (footerBoolean === undefined) {
             if (typeof (pages) === "string") {
 
                 evalMode = true;

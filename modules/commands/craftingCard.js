@@ -57,6 +57,9 @@ class Craft {
             const items = Object.keys(obj)
             const values = Object.values(obj);
             for (let i = 0; i < items.length; i++) {
+                if (this.data[items[i]]===null) {
+                    this.data[items[i]] = "0"
+                }
                 let rowtext = `(${commanifier(this.data[items[i]])} / ${commanifier(values[i])})\n`;
                 res += this.data[items[i]] < values[i] ? `- ${emoji(items[i])} ${rowtext}` :
                     `- ${emoji(items[i])} [${rowtext}](https://discord.gg/Tjsck8F)`;
