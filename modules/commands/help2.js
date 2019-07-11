@@ -12,13 +12,13 @@ class help {
         this.role = Stacks.roles;
         this.stacks = Stacks;
         this.needHelp = `Need further help? Please DM <@507043081770631169>.`;
-        this.embed = new Discord.RichEmbed()
+        this.embed = new Discord.RichEmbed();
+        this.dm = false
     }
 
     // This will format all embeds used in this file
     initializeEmbed() {
         this.embed.setColor(this.palette.darkmatte)
-        this.embed.setThumbnail(this.bot.user.displayAvatarURL);
     }
 
     async allowedToUse() {
@@ -103,12 +103,7 @@ class help {
     async group(file) {
         let file_rst;
         let src;
-        //try {
         src = require(`./${file}`);
-        //} catch (error) {
-        //console.log(`in this.group()`)
-        //  this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE); return false
-        //}
         file_rst = src.help.group.toLowerCase();
         await this.stacks.pause(200)
         return file_rst;
@@ -135,12 +130,13 @@ class help {
         return file_name;
     }
 
-    deleteObjectFromArr(arr,obj) {
+    deleteObjectFromArr(arr, obj) {
         var index = arr.indexOf(obj);
         if (index > -1) {
             arr.splice(index, 1);
         }
     }
+
     /**
      * Displays all avaible commands in each category
      */
@@ -163,20 +159,42 @@ class help {
                 page.push(new Array())
                 let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`));
                 for (let index = 0; index < mainNames.length; index++) {
-
                     page[x].push(`**\`${mainNames[index]}\`** : ${await this.description(mainNames[index])}`);
                 }
             }
-            for (let i = 0; i < page.length; i++) {
-                pages.push(this.utils.chunk(page[i], 10))
-                let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`;
-                pages[i].forEach((element, index) => {
-                    if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
-                });
-            }
 
-            this.utils.pages(this.message, pages, this.embed);
-            this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            if (dmState) {
+                for (let i = 0; i < page.length; i++) {
+                    pages.push(this.utils.chunk(page[i], 10))
+                    let header = `\n**Below are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.**\n`;
+                    pages[i].forEach((element, index) => {
+                        if (index === 0) { element.unshift(header) }
+                    });
+                }
+                let newPageEdit = []
+
+                pages.forEach((element) => {
+                    element.forEach((obj) => {
+                        newPageEdit.push(obj.join('\n'))
+                    })
+                })
+                let splitPages = this.utils.chunk(newPageEdit, 2)
+                this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
+                splitPages.forEach(element => {
+                    this.stacks.reply(element, { field: this.stacks.message.author })
+                })
+
+            } else {
+                for (let i = 0; i < page.length; i++) {
+                    pages.push(this.utils.chunk(page[i], 6))
+                    let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`;
+                    pages[i].forEach((element, index) => {
+                        if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
+                    });
+                }
+                this.utils.pages(this.message, pages, this.embed);
+                this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            }
             return load.delete();
         })
 
@@ -201,8 +219,6 @@ class help {
         this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
             let pages, page = [];
             let position = 0;
-
-
             for (let x = 0; x < pageHeaderOptions.length; x++) {
                 if (group.toLowerCase() === pageHeaderOptions[x]) {
                     position = x;
@@ -213,13 +229,31 @@ class help {
                     }
                 }
             }
-            pages = this.utils.chunk(page[0], 6)
             let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`;
-            pages.forEach((element, index) => {
-                if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
-            });
-            this.utils.pages(this.message, pages, this.embed);
-            this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            pages = this.utils.chunk(page[0], 10)
+
+            if (dmState) {
+                let newPage = []
+                console.log(pages.length)
+                pages[0].unshift(header)
+                if (pages.length > 1) {
+                    pages.forEach((element) => {
+                        newPage.push(element.join("\n"));
+                    });
+                } else {
+                    newPage.push(pages.join(pages[0].join('\n')))
+                }
+                this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
+                newPage.forEach(element => {
+                    this.stacks.reply(element, { field: this.stacks.message.author })
+                })
+            } else {
+                pages.forEach((element, index) => {
+                    if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
+                });
+                this.utils.pages(this.message, pages, this.embed);
+                this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+            }
             return load.delete();
         })
     }
@@ -234,20 +268,24 @@ class help {
             page.push(new Array(`\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``))
             page[0].push(`Information\n\`\`\`ymal\n${await this.description(cmdFile)}\`\`\``)
             pages = this.utils.chunk(page[0], 6)
-            this.utils.pages(this.message, pages, this.embed);
+            if (dmState) {
+                this.stacks.reply(pages[0], { field: this.stacks.message.author, footer: `<required>|[optional]` })
+            } else {
+                this.utils.pages(this.message, pages, this.embed);
+            }
             return load.delete();
         })
     }
 
-    async startUp() {
+    async startUp(dmState) {
         let page, pages = [];
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
         let prefix = require(`../../.data/environment.json`).prefix;
         let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`;
         let advanceHelpMenuHelp = `**My available commands are:**\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``
-        let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\``;
-        let other_info = `If you would like the messages for advanced help to go to your dms please type --dm with the command (ie. ${prefix}help general --dm)\n\n`
+        let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\`\n`;
+        let other_info = `If you would like the messages for advanced help to go to your dms please type \`--dm\` with the command (ie. ${prefix}help general --dm)\n\n`
         let starterCommands = `
             ⇨ **General**
             \`balance\`, \`profile\`, \`daily\`, \`inventory\`, \`collection\`, \`rep\`, \`gift\`
@@ -265,23 +303,31 @@ class help {
         page = header + starterCommands + `\n` + other_info + advanceHelpMenu
         pages.push(page)
         pages.push(advanceHelpMenuHelp)
-        this.utils.pages(this.message, pages, this.embed);
+        if (dmState) {
+            this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
+            this.stacks.reply(pages, { field: this.stacks.message.author })
+            //this.utils.pages(this.message, pages, this.embed);
+        } else {
+            this.utils.pages(this.message, pages, this.embed);
+        }
     }
 
-    async helpCenter(){
-        let dm = false;
+    async helpCenter() {
+
         let obj = '--dm'
-        if (this.args.some(value=>value.toLowerCase()==='--dm')){
-            this.deleteObjectFromArr(this.args,obj)
-            this.test();
-        }else{
-            if (this.args[0] === 'all') return this.helpAll(dm); // Sends the basic overall help of all available commands and groups, when no args are detected
+        if (this.args.some(value => value.toLowerCase() === '--dm')) {
+            this.deleteObjectFromArr(this.args, obj)
+            this.dm = true;
+            this.helpCenter();
+        } else {
+            if (this.args.length === 0) return this.startUp(this.dm);
+            if (this.args[0] === 'all') return this.helpAll(this.dm); // Sends the basic overall help of all available commands and groups, when no args are detected
             let file = await this.returnFileName(this.args[0].toLowerCase()); // grabs the file name of a command
             let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
-            if (file === 'help') return this.help(file.toLowerCase(), dm); // Sends a help message for the help command, ie. ${prefix}help help
+            if (file === 'help') return this.help(file.toLowerCase(), this.dm); // Sends a help message for the help command, ie. ${prefix}help help
             for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
                 let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
-                if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file); // if a group name is detected, only the commands for that group will be sent
+                if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file, this.dm); // if a group name is detected, only the commands for that group will be sent
                 // Set the Group name if their is a groups name availiable 
                 let group_name;
                 try {
@@ -293,7 +339,7 @@ class help {
                 if (group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
                     for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
                         if (file.toLowerCase() === mainNames[index]) { // Tests for the correct file
-                            return this.specificCommandsHelp(mainNames[index], pageHeaderOptions[x], dm); // returns a help message for that specific command
+                            return this.specificCommandsHelp(mainNames[index], pageHeaderOptions[x], this.dm); // returns a help message for that specific command
                         }
                     }
                 }
@@ -306,7 +352,7 @@ class help {
         if (this.args.length === 0) return this.startUp();
         this.helpCenter();
 
-        
+
     }
 }
 

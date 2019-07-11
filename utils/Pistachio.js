@@ -293,7 +293,8 @@ module.exports = (Components) => {
         thumbnail: null,
         deleteIn: 0,
         prebuffer: false,
-        header: null
+        header: null,
+        footer: null
     }) => {
         options.socket = !options.socket ? [] : options.socket;
         options.color = !options.color ? container.palette.darkmatte : options.color;
@@ -304,6 +305,7 @@ module.exports = (Components) => {
         options.notch = !options.notch ? false : options.notch;
         options.prebuffer = !options.prebuffer ? false : options.prebuffer;
         options.header = !options.header ? null : options.header;
+        options.footer = !options.footer ? null : options.footer;
 
         //  Socketing
         for (let i = 0; i < options.socket.length; i++) {
@@ -324,6 +326,9 @@ module.exports = (Components) => {
 
         //  Add header
         if(options.header) embed.setAuthor(options.header, container.avatar(message.author.id))
+
+        //  Add footer
+        if (options.footer) embed.setFooter(options.footer);
 
         //  Add image preview
         if (options.image) {
