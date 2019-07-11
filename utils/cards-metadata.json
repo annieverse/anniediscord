@@ -251,7 +251,7 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
-      "lucky_tickets": 100,
+      "lucky_ticket": 100,
       "fragments": 50000,
       "rany_shards": 30
     },

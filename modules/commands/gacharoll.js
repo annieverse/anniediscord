@@ -73,7 +73,7 @@ class Gacha {
 	 * 	Initializer
 	 */
 	async execute() {
-		const { message, name, reply, palette, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks;
+		const { message, name, reply, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks;
 
 
 		//	Returns if current channel is not in gacha-allowed list
@@ -111,13 +111,10 @@ class Gacha {
 
 			opening.delete();
 			//	Render result
-			reply(this.data.rany_card ? `` : `**${name(this.author.id)} used ${this.roll_type} Lucky Tickets!**`, {
+			reply(`**${name(this.author.id)} used ${this.roll_type} Lucky Tickets!**`, {
 				image: renderResult,
 				prebuffer: true,
-				header: this.data.rany_card 
-				? `${name(this.author.id)} used ${this.roll_type} Lucky Tickets!`: null,
-				simplified: this.data.rany_card ? false : true,
-				color: this.data.rany_card ? palette.crimson : null,
+				simplified: true,
 			})
 
 			//	Unlock cooldown

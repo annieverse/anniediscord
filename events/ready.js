@@ -160,7 +160,7 @@ module.exports = bot => {
         } else {
             console.log(`${bot.user.username} is up.`)
             bot.user.setStatus('online');
-            bot.user.setActivity(`100% EXP Boost in all channels!`);
+            bot.user.setActivity(null);
         }
     }
 

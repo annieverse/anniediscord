@@ -22,8 +22,8 @@ class gachaContainerStoring {
      *  Filtering duplicates and checks for rany card.
      *  @param {Object} src as source object to be filtered
      */
-    additionalChecks(src = {}) {
-        const { metacards, emoji, reply, code: {GACHA}, meta: { data } } = this.stacks;
+    async additionalChecks(src = {}) {
+        const { metacards, emoji, db, reply, code: {GACHA}, meta: { data } } = this.stacks;
         for (let key in src) {
     
             //Check for card duplicates
@@ -32,10 +32,10 @@ class gachaContainerStoring {
                     const convert_to_shard = key.replace(`card`, `shards`);
     
                     //	Each card will be dismantled into 5 shards & 10k fragments.
-                    storing({
+                    await this.db.storingUserGachaMetadata({
                         [convert_to_shard]: 5 * src[key],
                         fragments: 10000 * src[key],
-                    });
+                    })
     
                     reply(GACHA.DUPLICATE_CARDS, {
                         socket: [

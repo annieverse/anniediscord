@@ -37,7 +37,7 @@ class Redeem {
 
         //  Confirmation
         reply(REDEEM.CONFIRMATION, {
-            socket: [emoji(`artcoins`), commanifier(price), emoji(`lucky_tickets`), commanifier(amount)],
+            socket: [emoji(`artcoins`), commanifier(price), emoji(`lucky_ticket`), commanifier(amount)],
             color: palette.golden,
             notch: true
         })
@@ -63,7 +63,7 @@ class Redeem {
 
                     //  Redeem successful
                     return reply(REDEEM.COLLECTOR_FORTUNE, {
-                        socket: [emoji(`lucky_tickets`), commanifier(amount), commanifier(amount)],
+                        socket: [emoji(`lucky_ticket`), commanifier(amount), commanifier(amount)],
                         color: palette.crimson,
                         notch: true
                     })
@@ -77,7 +77,7 @@ class Redeem {
 
                 //  Redeem successful
                 return reply(REDEEM.SUCCESSFUL, {
-                    socket: [emoji(`lucky_tickets`), commanifier(amount)],
+                    socket: [emoji(`lucky_ticket`), commanifier(amount)],
                     color: palette.lightgreen
                 })
 

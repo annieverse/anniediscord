@@ -5,11 +5,10 @@ const palette = require(`../utils/colorset.json`);
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
 let cards = require(`../utils/cards-metadata.json`);
-
+sql.open(`.data/database.sqlite`)
 
 module.exports = (bot, message) => {
 
-    let utils = require(`../utils/Pistachio`)(bot, message)
 
     const nonXPChannel = [
         "485922866689474571",
@@ -29,20 +28,13 @@ module.exports = (bot, message) => {
     ];
 
 
-    const cardinventory = async () => {
-        return sql.get(`
-         SELECT *
-         FROM collections 
-         WHERE userId = "${message.auhtor.id}"
-        `)
-    }
+
 
 
     //  Users will gain xp through general text channels.
     async function experienceGains() {
         const format = new formatManager(message);
         const manager = new ranksManager(bot, message);
-        sql.open(".data/database.sqlite");
 
         // Centralized data object.
         let metadata = {
@@ -53,7 +45,7 @@ module.exports = (bot, message) => {
             },
             channel: message.channel.id,
             exp: {
-                base: (Math.round(Math.random() * (15 - 10 + 1)) + 10) * 2,
+                base: (Math.round(Math.random() * (15 - 10 + 1)) + 10),
                 bonus: 1,
                 get gained() {
                     return Math.round(this.base * this.bonus)
@@ -312,7 +304,7 @@ module.exports = (bot, message) => {
 
 
             //  Update experience point.
-            const share_exp = () => {
+            const share_exp = async () => {
                 for (let id in group) {
                     console.log(`${get_name(group[id].userId)} receiving shared ${exp_amount} xp from the appearance of white cat.`)
                     sql.run(`UPDATE userdata
@@ -321,8 +313,7 @@ module.exports = (bot, message) => {
                 }
             }
 
-            share_exp();
-            await utils.pause(500)
+            await share_exp();
         }
 
 
@@ -481,15 +472,21 @@ module.exports = (bot, message) => {
 
     //  Initialize
     const run = async () => {
+        const cardinventory = () => {
+            return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
+            .then(async data => data);
+        }
         let usercards = await cardinventory();
+
+        
+        //  Execute experienceGains() immediately if user had Annie card.
+        if (usercards) {
+            if (usercards.annie_card) return experienceGains();
+        }
 
 
         //  Returns if currently in developer environment.
         if (env.dev && !env.administrator_id.includes(message.author.id)) return;
-
-
-        //  Execute experienceGains() immediately if user had Annie card.
-        if (usercards.annie_card) return experienceGains();
 
         
         //  Returns if message started with command prefix.
