@@ -358,7 +358,18 @@ class databaseUtils {
                             })
         }
 
-
+        /**
+         * Extendable function to add values to any table
+         * 
+         * @param {string} tablename the name of the table
+         * @param {string} columnnames the name of the columns ie. 'col1, col2, col3, etc'
+         * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
+         */
+        addValues(tablename, columnnames, values){
+            return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`).then(()=>{
+                console.log(`ADDED ${values} VALUES INTO ${columnnames} of Table: ${tablename}`)
+            })
+        }
             /**
             *   Subtract value on column of table.
             * @param tablename of target table.

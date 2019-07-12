@@ -2,6 +2,7 @@
  * Main module
  * @DeveloperTool as function to runs custom code on the fly
  */
+const Discord = require('discord.js')
 class DeveloperTool {
     constructor(Stacks) {
       this.stacks = Stacks;

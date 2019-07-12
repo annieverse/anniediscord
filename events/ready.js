@@ -5,7 +5,7 @@ module.exports = bot => {
 
     startup();
     if(!env.dev) roleChange();
-    
+    //if(env.dev) autoStatus();
     /**
      * secret thingy, change color of role
      */
@@ -135,6 +135,43 @@ module.exports = bot => {
 
             // Call the run function and start the process
             run(roleNameInput);
+        }
+    }
+
+    function autoStatus(){
+        let x = 1; // number of minutes
+        setInterval(data,60000*x);
+        sql.open(`.data/database.sqlite`);
+        
+        function data(){
+            sql.get(`SELECT * FROM eventData ORDER BY start_time`).then(data=>{
+                if (!data) return bot.user.setActivity(null);
+                let event = data.event
+                let time = data.start_time
+                let status = data.status
+                let currentTime = (new Date());
+                //sql.run(`DELETE FROM eventData WHERE event = '${event}'`);
+                if (status === 'ended') {
+                    sql.run(`DELETE FROM eventData WHERE status = 'ended' AND event = '${event}' AND start_time = ${time}`).then(() => {
+                        console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+                    })
+                }
+                if (bot.user.presence.game.name===event) return console.log(`already playing ${event}`)
+                if ((time > currentTime.getTime()) && (status !== undefined || status !== null || status !== 'ended')){
+                    bot.user.setActivity(`${event}`, {
+                        type: "WATCHING"
+                    });
+                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
+                }
+                if ((time < currentTime.getTime()) && (status !== undefined || status !== null || status !== 'ended')) {
+                    bot.user.setActivity(`${event}`, {
+                        type: "PLAYING"
+                    });
+                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
+                }
+                
+
+            })
         }
     }
 

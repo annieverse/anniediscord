@@ -197,5 +197,9 @@
         "HAS_ROLE_ALREADY":"I'm Sorry but {0} has that role already.",
         "DMS_LOCKED":"Congrats to {0} they have been given the role **{1}**. I tried to DM them, but their DMs are locked. T__T",
         "ROLE_ADDED":"Gratz {0}! You have been given the role **{1}**"
+    },
+    "EVENT_MANAGER":{
+        "SHORT_GUIDE":"You can add,remove,update,end a event by doing\n`add <Event Name> <Start Time> [status]`\n`remove <Event Name>`\n`update <Event Name> <field you want to update> <update to>`\n`end <Event Name>`",
+        "WRONG_FORMAT":"You have given me the wrong format please format your entry like this:\n{0}"
     }
 }

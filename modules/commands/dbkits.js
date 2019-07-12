@@ -3,8 +3,6 @@ const formatManager = require('../../utils/formatManager');
 
 class dbkits {
     constructor(Stacks) {
-        this.author = Stacks.meta.author;
-        this.data = Stacks.meta.data;
         this.utils = Stacks.utils;
         this.message = Stacks.message;
         this.args = Stacks.args;
@@ -17,6 +15,7 @@ class dbkits {
         let message = this.message;
         let bot = this.stacks.bot;
         let palette = this.stacks.palette;
+        let args = this.args
         /**
          * dbkits.
          * @utils direct edit/view database.
@@ -526,6 +525,7 @@ class dbkits {
 }
 
 module.exports.help = {
+    start:dbkits,
     name: "dbkits",
     aliases: ["db"],
     description: `Allows to do sql queries and other commands`,
