@@ -2,7 +2,7 @@ const { Attachment } = require("discord.js");
 const { get } = require("snekfetch"); 
 const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
-const palette = require(`../colorset.json`);
+const palette = require(`../utils/colerset.json`);
 const imageUrlRegex = /\?size=2048$/g;
 const profileManager = require('../utils/profileManager');
 const formatterManager = require('../utils/formatManager');
