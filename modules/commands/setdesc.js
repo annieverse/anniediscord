@@ -18,11 +18,11 @@ class setDesc {
 		function profileDescription(userid, desc) {
 			sql.get(`SELECT * FROM userdata WHERE userId=${userid}`)
 				.then(async data => {
-					sql.run(`UPDATE userdata SET description = "${desc}" WHERE userId=${userid}`);
+					sql.run('UPDATE userdata SET description = ? WHERE userId = ?', [desc, userid])
 				})
 		}
 
-		const descriptionArguments = message.content.substring(this.stacks.command.length+2);
+		let descriptionArguments = message.content.substring(this.stacks.command.length+2);
 		const embed = new Discord.RichEmbed();
 
 		if (!this.args[0]) {
@@ -37,6 +37,7 @@ class setDesc {
 			return message.channel.send(embed)
 		} else {
 			await profileDescription(message.author.id, descriptionArguments);
+
 			embed.setColor(palette.halloween)
 			embed.setDescription(`Hello **${message.author.username}**, your profile description has been set to \`${descriptionArguments}\``)
 

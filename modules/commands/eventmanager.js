@@ -13,7 +13,7 @@ class addEvent extends databaseManager{
         const { message, multicollector, collector} = this.stacks;
 
         // Ask how to use multi-collector
-    
+       
         
     }
 
@@ -57,7 +57,7 @@ class addEvent extends databaseManager{
             this.removeEvent(args[1], args[2], args[3])
         } else {
             this.stacks.reply(this.stacks.code.EVENT_MANAGER.SHORT_GUIDE, {
-                footer:'<required>[optional]'
+                footer:'<required>|[optional]'
             })
         }
     }
@@ -74,7 +74,7 @@ module.exports.help = {
     start: addEvent,
     name: "eventmanager", // This MUST equal the filename
     aliases: ["addevent", "ae"], // More or less this is what the user will input on discord to call the command
-    description: `add a event with a time ti display :)`,
+    description: `Add a event with a time to display :)`,
     usage: `${require(`../../.data/environment.json`).prefix}TemplateCommand`,
     group: "Admin",
     public: false,

@@ -31,7 +31,7 @@ module.exports.help = {
     start: serverBoost,
     name: "serverboostinfo",
     aliases: ["sb", "serverboost"],
-    description: `displays info about server boost level`,
+    description: `Displays info about server boost level.`,
     usage: `${require(`../../.data/environment.json`).prefix}sb members | level | number`,
     group: "General",
     public: true,

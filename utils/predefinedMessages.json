@@ -173,7 +173,7 @@
         "INVALID_REWARD": "Sorry, i can't find any package for that rank."
     },
     "HELP":{
-        "FETCHING": "<a:aaublobcatdance:557682758344769578> `fetching . . .`"
+        "FETCHING": "`Fetching `<a:AAUloading:599409998342127616>"
     },
     "ROLE":{
         "ERR":{
