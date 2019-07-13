@@ -205,6 +205,7 @@ class help {
      * @param {String} group group name
      */
     async help(group, dmState) {
+        console.log("in help group")
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
@@ -236,13 +237,9 @@ class help {
                 let newPage = []
                 console.log(pages.length)
                 pages[0].unshift(header)
-                if (pages.length > 1) {
-                    pages.forEach((element) => {
-                        newPage.push(element.join("\n"));
-                    });
-                } else {
-                    newPage.push(pages.join(pages[0].join('\n')))
-                }
+                pages.forEach((element) => {
+                    newPage.push(element.join("\n"));
+                });
                 this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
                 newPage.forEach(element => {
                     this.stacks.reply(element, { field: this.stacks.message.author })
@@ -281,22 +278,26 @@ class help {
         let page, pages = [];
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
+        let General = await this.mainNames('general').then(str => str.split(`\n`));
+        let Fun = await this.mainNames('fun').then(str => str.split(`\n`));
+        let Shop_Related = await this.mainNames('shop-related').then(str => str.split(`\n`));
+        let server = await this.mainNames('server').then(str => str.split(`\n`));
         let prefix = require(`../../.data/environment.json`).prefix;
         let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`;
         let advanceHelpMenuHelp = `**My available commands are:**\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(", ")}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``
         let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\`\n`;
         let other_info = `If you would like the messages for advanced help to go to your dms please type \`--dm\` with the command (ie. ${prefix}help general --dm)\n\n`
         let starterCommands = `
-            ⇨ **General**
+            ⇨ **General** [7/${General.length}]
             \`balance\`, \`profile\`, \`daily\`, \`inventory\`, \`collection\`, \`rep\`, \`gift\`
 
-            ⇨ **Fun**
+            ⇨ **Fun** [2/${Fun.length}]
             \`ask\`, \`avatar\`
 
-            ⇨ **Shop-related**
-            \`eat\`, \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\`, \`multi-roll\`,
+            ⇨ **Shop-related** [5/${Shop_Related.length}]
+            \`eat\` (capsules), \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\` - For Gacha, \`multi-roll\` - For Gacha,
 
-            ⇨ **Server**
+            ⇨ **Server** [4/${server.length}]
             \`stats\`, \`ping\`, \`invite\`, \`join\` 
             `;
 
@@ -321,13 +322,17 @@ class help {
             this.helpCenter();
         } else {
             if (this.args.length === 0) return this.startUp(this.dm);
+
             if (this.args[0] === 'all') return this.helpAll(this.dm); // Sends the basic overall help of all available commands and groups, when no args are detected
+            
             let file = await this.returnFileName(this.args[0].toLowerCase()); // grabs the file name of a command
             let pageHeaderOptions = await this.groupNames(); // Intializes the groups for all commands
-            if (file === 'help') return this.help(file.toLowerCase(), this.dm); // Sends a help message for the help command, ie. ${prefix}help help
+            if (this.args[0].toLowerCase() === 'help') return this.help(this.args[0].toLowerCase(), this.dm); // Sends a help message for the help command, ie. ${prefix}help help
+            
             for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
                 let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)); // Gets all available commands and assigns them to their groups
-                if (pageHeaderOptions.some(x => x === file.toLowerCase())) return this.help(file, this.dm); // if a group name is detected, only the commands for that group will be sent
+                if (pageHeaderOptions.some(x => x.toLowerCase() === this.args[0].toLowerCase())) return this.help(this.args[0].toLowerCase(), this.dm); // if a group name is detected, only the commands for that group will be sent
+
                 // Set the Group name if their is a groups name availiable 
                 let group_name;
                 try {

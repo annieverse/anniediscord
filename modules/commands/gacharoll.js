@@ -131,7 +131,7 @@ module.exports.help = {
 	aliases: ["multi-roll","roll"],
 	description: `rolls a gacha ticket`,
 	usage: `${require(`../../.data/environment.json`).prefix}roll`,
-	group: "General",
+	group: "shop-related",
 	public: true,
 	required_usermetadata: true,
 	multi_user: false
