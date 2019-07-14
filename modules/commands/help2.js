@@ -27,6 +27,18 @@ class help {
     }
 
     /**
+     * Formats a string to have a captial first letter and a period at the end
+     * @param {string} string 
+     */
+    formatDescription(string) {
+        if (string.charAt(string.length - 1) === '.') {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        } else {
+            return string.charAt(0).toUpperCase() + string.slice(1) + '.';
+        }
+    }
+
+    /**
      * locates all groups names
      * @returns {Array} group names
      */
@@ -91,6 +103,7 @@ class help {
         let file_rst;
         const src = require(`./${file}`);
         file_rst = src.help.description.toLowerCase();
+        file_rst = this.formatDescription(file_rst);
         await this.stacks.pause(200)
         return file_rst;
     };
@@ -205,7 +218,6 @@ class help {
      * @param {String} group group name
      */
     async help(group, dmState) {
-        console.log("in help group")
         let pageHeaderOptions = await this.groupNames();
         pageHeaderOptions.sort();
 
@@ -235,7 +247,6 @@ class help {
 
             if (dmState) {
                 let newPage = []
-                console.log(pages.length)
                 pages[0].unshift(header)
                 pages.forEach((element) => {
                     newPage.push(element.join("\n"));
@@ -294,8 +305,8 @@ class help {
             ⇨ **Fun** [2/${Fun.length}]
             \`ask\`, \`avatar\`
 
-            ⇨ **Shop-related** [5/${Shop_Related.length}]
-            \`eat\` (capsules), \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\` - For Gacha, \`multi-roll\` - For Gacha,
+            ⇨ **Shop-related** [6/${Shop_Related.length}]
+            \`eat\` (capsules), \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\` (gacharoll), \`multi-roll\` (gacharoll),
 
             ⇨ **Server** [4/${server.length}]
             \`stats\`, \`ping\`, \`invite\`, \`join\` 

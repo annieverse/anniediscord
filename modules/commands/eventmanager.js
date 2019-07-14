@@ -11,9 +11,33 @@ class addEvent extends databaseManager{
      */
     addEvent() {
         const { message, multicollector, collector} = this.stacks;
-
+/*
         // Ask how to use multi-collector
-       
+        message.channel.send("event name please?")
+        multicollector("now the date formated like this: 1/5/19 1:00").on('collect', async (msg)=>{
+           let messageOne = msg.content;
+           console.log(messageOne)
+       })*/
+
+        message.channel.send('bla').then((msg1) => {
+            var collector2 = multicollector(msg1)
+
+            collector2.on('collect', (msg1) => {
+
+                message.channel.send('alb').then((msg2) => {
+                    let collector3 = multicollector(msg2)
+                    collector3.on('collect', (msg2) => {
+                        console.log('msg2')
+                        console.log(msg2.content)
+                    })
+                    console.log('msg1')
+                    console.log(msg1.content)
+                })
+
+            })
+        })
+
+            
         
     }
 
