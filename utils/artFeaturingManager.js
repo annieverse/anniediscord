@@ -24,7 +24,7 @@ class HeartCollector {
         this.stacks = require(`./Pistachio`)(this.components);
         this.metadata = {
             featured_channel: Stacks.bot.channels.get("582808377864749056"),
-            featured_requirement: 5,
+            featured_requirement: 10,
             main_emoji: `❤`,
             msg: Stacks.reaction.message,
             get artwork() {
