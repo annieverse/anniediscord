@@ -148,13 +148,15 @@ class HeartCollector {
         if (this.metadata.heartsTooLow) return
 
         
-        //  Send post to #featured
-        reply(this.metadata.caption + `\n\u200b`, {
-            prebuffer: true,
-            image: this.metadata.artwork,
-            field: this.metadata.featured_channel,
-            customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
-        })
+        if (this.metadata.favs === this.metadata.featured_requirement) {
+            //  Send post to #featured
+            reply(this.metadata.caption + `\n\u200b`, {
+                prebuffer: true,
+                image: this.metadata.artwork,
+                field: this.metadata.featured_channel,
+                customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
+            }) 
+        }
     }
 
 
