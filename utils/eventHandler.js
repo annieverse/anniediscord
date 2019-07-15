@@ -9,17 +9,15 @@ module.exports = bot => {
     bot.on('message', message => {
         message_object = message;
     })
-    //process.on('unhandledRejection', (err, p) => reqEvent("unhandledRejection")(bot,err,p,message_object));
     bot.on("error", async (e) => reqEvent("error")(bot, e, message_object));
     bot.on("warn", async (e) => reqEvent("warn")(bot, e, message_object));
 
-
     if (!env.dev) {
+        bot.on("messageReactionAdd", async (reaction, user) => reqEvent("messageReactionAdd")({bot, reaction, user, message_object}));
+        bot.on("messageReactionRemove", async (reaction, user) => reqEvent("messageReactionRemove")({bot, reaction, user, message_object}));
         bot.on("guildMemberAdd", async(member) => reqEvent("guildMemberAdd")(bot, member));
         bot.on("guildMemberRemove", async(member) => reqEvent("guildMemberRemove")(bot, member));
         bot.on("guildMemberUpdate", async(oldUser, newUser) => reqEvent("guildMemberUpdate")(bot, oldUser, newUser));    
-        bot.on("messageReactionAdd", async (reaction, user) => reqEvent("messageReactionAdd")(bot, reaction, user));
-        bot.on("messageReactionRemove", async (reaction, user) => reqEvent("messageReactionRemove")(bot, reaction, user));
         bot.on("raw", async (packet) => reqEvent("raw")(bot, packet));
     }
 

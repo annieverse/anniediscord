@@ -258,6 +258,15 @@ class databaseUtils {
                 FROM userinventories
                 WHERE userId = "${this.id}"`)
         }
+
+        //  Store new heart point
+        addHeart() {
+            sql.run(`
+            UPDATE userdata 
+            SET liked_counts = liked_counts + 1 
+            WHERE userId = "${this.id}"
+            `)
+        }
         
         /**
             *   Getting keys from object

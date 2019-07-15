@@ -15,11 +15,10 @@ module.exports = (bot, message) => {
 
 
   if(!env.dev) {
-    artChannelsFilter();
     eventChannelFilter();
-    portfolioRequest();  
+    portfolioRequest(); 
+    artChannelsFilter(); 
   }
-
 
   //  Returns true if message has an attachment.
   function attachmentCheck() {
