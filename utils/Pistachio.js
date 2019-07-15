@@ -57,69 +57,74 @@ module.exports = (Components) => {
     //  Get gacha-unlocked channel
     container.gachaField = bot.channels.get(`578518964439744512`)
 
-    //  Check if current channel is included in gacha-allowed list
-    container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
+    //  Sub-pistachio which require channel or member properties from message.
+    if (message.channel || message.member) {
 
-    //  Check for administrator authority
-    container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
+        //  Check if current channel is included in gacha-allowed list
+        container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
 
-    //  Check for developer authority
-    container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
+        //  Check for administrator authority
+        container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
 
-    //  Check for event team authority
-    container.isEventManager = message.member.roles.find(r => r.name === `Events Team`);
+        //  Check for developer authority
+        container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
 
-
-    /**
-     *  Delete bulk of messages in current channel
-     *  @param {Integer} amount must be atleast above zero.
-     */
-    container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
-
-    
-    /**
-     *  Instant message collector
-     *  @param {Default} max only catch 1 response
-     *  @param {Default} time 60 seconds timeout
-     */
-    container.collector = new MessageCollector(message.channel,
-        m => m.author.id === message.author.id, {
-            max: 1,
-            time: 60000,
-        });
+        //  Check for event team authority
+        container.isEventManager = message.member.roles.find(r => r.name === `Events Team`);
 
 
-    /**
-     *  (Multi-layering)Instant message collector
-     *  @param {Object} msg current message instance
-     *  @param {Default} max only catch 1 response
-     *  @param {Default} time 60 seconds timeout
-     */
-    container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
-        m => m.author.id === msg.author.id, {
-            max: 1,
-            time: 60000,
-        });
+        /**
+         *  Delete bulk of messages in current channel
+         *  @param {Integer} amount must be atleast above zero.
+         */
+        container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
+
+        
+        /**
+         *  Instant message collector
+         *  @param {Default} max only catch 1 response
+         *  @param {Default} time 60 seconds timeout
+         */
+        container.collector = new MessageCollector(message.channel,
+            m => m.author.id === message.author.id, {
+                max: 1,
+                time: 60000,
+            });
 
 
-    /**
-     * To check whether the user has the said role or not
-     * @param {String} rolename for role name code
-     * @return {Boolean} of role
-     * @hasRole
-     */
-    container.hasRole = (rolename = ``) => {
-        return message.member.roles.find(role => role.name === rolename)
-    }
+        /**
+         *  (Multi-layering)Instant message collector
+         *  @param {Object} msg current message instance
+         *  @param {Default} max only catch 1 response
+         *  @param {Default} time 60 seconds timeout
+         */
+        container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
+            m => m.author.id === msg.author.id, {
+                max: 1,
+                time: 60000,
+            });
 
-    /**
-     * Returning of given role name
-     * @param {String} rolename for role name code
-     * @return {Object} of role
-     * @addRole
-     */
-    container.addRole = (rolename = ``, user = message.author.id) => {
-        return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
+
+        /**
+         * To check whether the user has the said role or not
+         * @param {String} rolename for role name code
+         * @return {Boolean} of role
+         * @hasRole
+         */
+        container.hasRole = (rolename = ``) => {
+            return message.member.roles.find(role => role.name === rolename)
+        }
+
+        /**
+         * Returning of given role name
+         * @param {String} rolename for role name code
+         * @return {Object} of role
+         * @addRole
+         */
+        container.addRole = (rolename = ``, user = message.author.id) => {
+            return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
+        }
+
     }
 
     //  Automatically convert weird number notation into real value.
@@ -282,6 +287,7 @@ module.exports = (Components) => {
      *  @param {Integer} deleteIn as countdown before the message get deleted. In seconds.
      *  @param {Boolean} prebuffer as indicator if parameter supply in "image" already contains image buffer.
      *  @param {String} header use header in an embed.
+     *  @param {Array} customHeader First index as header text and second index as header icon.
      */
     container.reply = async (content, options = {
         socket: [],
@@ -294,7 +300,8 @@ module.exports = (Components) => {
         deleteIn: 0,
         prebuffer: false,
         header: null,
-        footer: null
+        footer: null,
+        customHeader: null
     }) => {
         options.socket = !options.socket ? [] : options.socket;
         options.color = !options.color ? container.palette.darkmatte : options.color;
@@ -306,6 +313,7 @@ module.exports = (Components) => {
         options.prebuffer = !options.prebuffer ? false : options.prebuffer;
         options.header = !options.header ? null : options.header;
         options.footer = !options.footer ? null : options.footer;
+        options.customHeader = !options.customHeader ? null : options.customHeader
 
         //  Socketing
         for (let i = 0; i < options.socket.length; i++) {
@@ -326,6 +334,9 @@ module.exports = (Components) => {
 
         //  Add header
         if(options.header) embed.setAuthor(options.header, container.avatar(message.author.id))
+
+        //  Custom header
+        if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
 
         //  Add footer
         if (options.footer) embed.setFooter(options.footer);

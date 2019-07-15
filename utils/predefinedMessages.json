@@ -56,6 +56,11 @@
         "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
     },  
     "DISPLAY_BALANCE": "**Remaining Balance**\n{0} **{1}**",
+    "FEATURED": {
+        "FIRST_LIKE": "**{0}** liked your post.",
+        "LIKED": "**{0}** and **{1} others** liked your post.",
+        "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
+    },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",

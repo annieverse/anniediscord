@@ -16,6 +16,7 @@ module.exports = (bot, packet) => {
         // Adds the currently reacting user to the reaction's users collection.
         if (reaction) reaction.users.set(packet.d.user_id, bot.users.get(packet.d.user_id));
         // Check which type of event it is before emitting
+
         if (packet.t === 'MESSAGE_REACTION_ADD') {
             bot.emit('messageReactionAdd', reaction, bot.users.get(packet.d.user_id));
         }

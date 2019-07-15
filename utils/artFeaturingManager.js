@@ -1,5 +1,12 @@
 const { dev, administrator_id } = require(`../.data/environment`);
 const { art_domain } = require(`../modules/config`);
+const KeyvClient = require(`keyv`);
+const keyv = new KeyvClient();
+
+
+// Handle DB connection errors
+keyv.on('error', err => console.log('Connection Error', err));
+
 
 /**
  *  Handles #Featured system
@@ -7,42 +14,40 @@ const { art_domain } = require(`../modules/config`);
  */
 class HeartCollector {
     constructor(Stacks) {
-        this.stacks = Stacks;
-    }
-
-    /**
-     *  Register new heart and check for feature
-     */
-    async Add() {
-        const { bot, reaction, user, message_object } = this.stacks
-        //  Mutation pistachio
-        const { reply, db } = require(`./Pistachio`)({
-            bot,
-            message: message_object,
-            meta: {
-                author: null
-            }
-        })
-
-        //  Centralized Object.
-        let metadata = {
-            featured_channel: bot.channels.get("582808377864749056"),
-            featured_requirement: 2,
+        this.components = { 
+            user: Stacks.user, 
+            reaction: Stacks.reaction, 
+            bot:Stacks.bot, 
+            message:Stacks.reaction.message, 
+            meta: {author:null}
+        };
+        this.stacks = require(`./Pistachio`)(this.components);
+        this.metadata = {
+            featured_channel: Stacks.bot.channels.get("582808377864749056"),
+            featured_requirement: 5,
             main_emoji: `❤`,
-            msg: reaction.message,
+            msg: Stacks.reaction.message,
             get artwork() {
                 return this.msg.attachments.first().url;
             },
+            get caption() {
+                //  Return blank caption
+                if (!this.msg.content) return ``
+                //  Chop caption with length exceed 180 characters.
+                if (this.msg.content.length >= 180) return this.msg.content.substring(0, 180) + `. .`
+
+                return this.msg.content;
+            },
             get favs() {
-                reaction.fetchUsers();
+                Stacks.reaction.fetchUsers();
 
                 function test() {
-                    if (reaction.users.size > reaction.count) {
-                        return reaction.users.size;
-                    } else if (reaction.users.size < reaction.count) {
-                        return reaction.count;
-                    } else if (reaction.users.size == reaction.count) {
-                        return reaction.count;
+                    if (Stacks.reaction.users.size > Stacks.reaction.count) {
+                        return Stacks.reaction.users.size;
+                    } else if (Stacks.reaction.users.size < Stacks.reaction.count) {
+                        return Stacks.reaction.count;
+                    } else if (Stacks.reaction.users.size == Stacks.reaction.count) {
+                        return Stacks.reaction.count;
                     }
                 }
                 return test();
@@ -51,46 +56,104 @@ class HeartCollector {
                 return this.favs < this.featured_requirement;
             },
             get notAuthorizedSandboxUser() {
-                return dev && !administrator_id.includes(user.id)
+                return dev && !administrator_id.includes(Stacks.user.id)
             },
             get unmatchEmoji() {
-                return reaction.emoji.name !== this.main_emoji
+                return Stacks.reaction.emoji.name !== this.main_emoji
             },
             get nonArtChannels() {
                 return !art_domain.includes(this.msg.channel.id)
             },
             get selfLiking() {
-                return this.msg.author.id === user.id
+                return this.msg.author.id === Stacks.user.id
             }
 
         }
+    }
 
+
+    /**
+     *  Send post notification to user's DM.
+     */
+    notification() {
+        //  Mutation pistachio
+        const { reply, code:{FEATURED}, bot, user } = this.stacks
+
+        //  Returns if user react is a this.bot
+        if (bot.user.id === user.id) return;
+
+        try {
+            //  If heart count is below or equal two.
+            if (this.metadata.favs <= 2) {
+                return reply(FEATURED.FIRST_LIKE, {
+                    socket: [user.username],
+                    thumbnail: this.metadata.artwork,
+                    field: this.metadata.msg.author,
+                    notch: true
+                })
+            }
+            //  If user heart counts are sufficient to be featured
+            if (this.metadata.favs === this.metadata.featured_requirement) {
+                return reply(FEATURED.SUCCESSFUL, {
+                    socket: [this.metadata.msg.author.username, this.metadata.msg.channel],
+                    thumbnail: this.metadata.artwork,
+                    field: this.metadata.msg.author,
+                    notch: true
+                })
+            }
+            //  Regular notification
+            return reply(FEATURED.LIKED, {
+                socket: [user.username, this.metadata.favs - 1],
+                thumbnail: this.metadata.artwork,
+                field: this.metadata.msg.author,
+                notch: true
+            })
+        }
+        catch(e) {}
+    }
+
+
+    /**
+     *  Register new heart and check for feature
+     */
+    async Add() {
+        //  Mutation pistachio
+        const { reply, avatar, db, reaction, user } = this.stacks
+
+        //  Returns if user is not authorized in development server
+        if (this.metadata.notAuthorizedSandboxUser) return
 
         //  Returns if current channel is not listed in arts channels.
-        if (metadata.nonArtChannels) return
+        if (this.metadata.nonArtChannels) return
 
-        //  Returns if the reaction is not MATCH.
-        if (metadata.unmatchEmoji) return
+        //  Returns if the reaction is unmatch.
+        if (this.metadata.unmatchEmoji) return
 
         //  Returns if user trying to heart their own post
-        //if (metadata.selfLiking) return reaction.remove(user);
+        if (this.metadata.selfLiking) return reaction.remove(user)
 
-        //  Returns if heart counts don't hit right in the requirements.
-        if (metadata.heartsTooLow) return
+        //  Returns if user has recently liked the post
+        if (await keyv.get(user.id)) return
 
-        //  Returns if user is not authorized in dev mode
-        if (metadata.notAuthorizedSandboxUser) return
+        //  Store recent user id to avoid double notification spam. Restored in 1 hour.
+        keyv.set(user.id, `reacted`, 3600000)
 
+        //  Send notification to user based on heart counts
+        this.notification();
 
         //  Store new heart
-        await db(metadata.msg.author.id).addHeart();
+        await db(this.metadata.msg.author.id).addHeart();
 
+        //  Returns if heart counts don't hit right in the requirements.
+        if (this.metadata.heartsTooLow) return
 
+        
         //  Send post to #featured
-        reply(`[\u200b](${metadata.msg.id})`, {
+        reply(this.metadata.caption + `\n\u200b`, {
             prebuffer: true,
-            image: metadata.artwork,
-            field: metadata.featured_channel
+            image: this.metadata.artwork,
+            field: this.metadata.featured_channel,
+            customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
         })
     }
 
@@ -100,50 +163,17 @@ class HeartCollector {
      */
     async Remove() {
         const { bot, reaction } = this.stacks
-        
-        let favoritechannel = bot.channels.get("582808377864749056"); 
 
         reaction.fetchUsers();
         if (reaction.message.partial) await reaction.message.fetch();
         const rmsg = reaction.message;
 
-        const artChannels = [
-            "459892609838481408",
-            "459893040753016872",
-            "460439050445258752",
-            "461926519976230922",
-            "460615254553001994",
-            "538806382779170826",
-            "591025246258200685"
-        ];
-
-        if (reaction.emoji.name == "❤" && artChannels.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
+        if (reaction.emoji.name == this.metadata.main_emoji && art_domain.includes(rmsg.channel.id)) { // change rmsg.channel.id == "530223957534703636" for the art channels
             reaction.fetchUsers()
             let x = rmsg.reactions.filter(reaction => reaction.emoji.name == "❤").first();
-            if (rmsg.author.id == '501461775821176832') return;//make sure its not bots id
+            if (rmsg.author.id == bot.user.id) return;//make sure its not this.bots id
             if (x == undefined) x = 0; // if it has no likes set value to 0
             if (x.count < 3 || x == 0) { // minimum likes or no like to delete
-                // Do Code Here
-                //let fileSize = rmsg.attachments.first().filesize;
-                //let fileSizelimit = 8000000;
-
-                //let attachmentFileUrl = rmsg.attachments.first().url
-                //console.log(messages.array().find(x => x.content.slice(15) === rmsg.id).id)
-                //let othermsgid = messages.array().find(x => x.content.slice(15) === rmsg.id).id;
-
-
-                /*  //Pan Version (Removes 4 messages)
-                *
-                *  let othermsgid = favoritechannel.messages.array().find(x => x.content.slice(15) === rmsg.id).id;
-                *
-                *  favoritechannel.fetchMessages({after:othermsgid, limit:3})
-                *      .then(messages => favoritechannel.bulkDelete(messages))
-                *      .catch(console.error);
-                *
-                *  favoritechannel.fetchMessage(othermsgid)
-                *      .then(message => message.delete())
-                *  .catch(console.error);
-                */
 
                 //  Normalizing the string.
                 const remove_symbols = (str) => {
@@ -151,24 +181,30 @@ class HeartCollector {
                     return new_str;
                 }
 
-
                 //Fwubbles Version (Remove single compressed message / ID in the footer)
-                let msg_collection = await favoritechannel.fetchMessages()// i dunno how this method works
+                let msg_collection = await this.metadata.featured_channel.fetchMessages()// i dunno how this method works
                 let msg_array2 = msg_collection.array();
 
                 let delete_this_id;
                 for (let i = 0; i < msg_array2.length; i++) {
-                    if (msg_array2[i].embeds[0]) {
-                        if (remove_symbols(msg_array2[i].embeds[0].description) === rmsg.id) {
-                            delete_this_id = msg_array2[i].id;
-                        }
-                    }
+                    //  Skip if embed is not available
+                    if (!msg_array2[i].embeds[0].description) continue;
+                    //  Skip if the given ID is not match
+                    if (remove_symbols(msg_array2[i].embeds[0].description) !== rmsg.id) continue;
+                    //  Assign ID 
+                    delete_this_id = msg_array2[i].id;
                 }
 
+                try {
+                    //  Skip if no deleteable ID found
+                    if (!delete_this_id) return;
 
-                favoritechannel.fetchMessage(delete_this_id)
+                    this.metadata.featured_channel.fetchMessage(delete_this_id)
                     .then(message => message.delete())
-                    .catch(console.error);
+                }
+                catch(e) {
+                    throw e;
+                }
             }
         }
     }

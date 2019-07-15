@@ -11,7 +11,7 @@ module.exports = bot => {
     })
     bot.on("error", async (e) => reqEvent("error")(bot, e, message_object));
     bot.on("warn", async (e) => reqEvent("warn")(bot, e, message_object));
-
+    
     if (!env.dev) {
         bot.on("messageReactionAdd", async (reaction, user) => reqEvent("messageReactionAdd")({bot, reaction, user, message_object}));
         bot.on("messageReactionRemove", async (reaction, user) => reqEvent("messageReactionRemove")({bot, reaction, user, message_object}));

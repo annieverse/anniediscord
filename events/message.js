@@ -5,6 +5,7 @@ const sql = require("sqlite");
 const ch = require(`../modules/config.json`);
 sql.open(".data/database.sqlite"); 
 const env = require('../.data/environment.json');
+const { art_domain } = require(`../modules/config`)
 
 module.exports = (bot, message) => {
 
@@ -50,18 +51,7 @@ module.exports = (bot, message) => {
   //  Register submitted image in art channels
   //  As portfolio.
   function artChannelsFilter() {
-
-    const artchannels = [
-      "459892609838481408",
-      "459893040753016872",
-      "460439050445258752",
-      "461926519976230922",
-      "460615254553001994",
-      "538806382779170826",
-      "565308091424571422",
-    ];
-
-    if (artchannels.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
+    if (art_domain.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
       let img = message.attachments.first();
       message.react('❤')
       sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
