@@ -255,8 +255,6 @@ module.exports = (bot, message) => {
                         if (skill_data.exp) metadata.exp.bonus += skill_data.exp;
                         if (skill_data.ac) metadata.ac.bonus += skill_data.ac;
 
-                        console.log(metadata)
-
                         metadata.buffs = data;
                     }
 
@@ -343,7 +341,6 @@ module.exports = (bot, message) => {
             levelup() {
                 sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`).then(async userdatarow => {
 
-                    console.log(userdatarow.currentexp, userdatarow.maxexp, this.randomexp)
                     sql.run(`UPDATE userdata 
                         SET currentexp = ${userdatarow.currentexp + this.randomexp},
                             maxexp = ${userdatarow.maxexp + userdatarow.nextexpcurve},
@@ -381,7 +378,6 @@ module.exports = (bot, message) => {
                 if ((metadata.user.tag === `naphnaphz#7790`) &&
                     (metadata.channel === cards.naph_card.skills.main.channel[0])) white_cat_paradise();
 
-                    console.log(metadata)
 
                 sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
                     .then(async userdatarow => {
