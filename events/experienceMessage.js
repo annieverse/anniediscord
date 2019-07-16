@@ -307,7 +307,7 @@ module.exports = (bot, message) => {
                     sql.run(`UPDATE userdata
                              SET currentexp = currentexp + ${exp_amount}
                              WHERE userId = ${group[id].userId}
-                             ON`)
+                            `)
                 }
                 console.log(`${Object.keys(group).length} users have received 200 EXP from Naph's White Cat Paradise.`)
             }
