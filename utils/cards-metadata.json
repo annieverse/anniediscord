@@ -7,7 +7,7 @@
     "description": "I'm not small! you are just too high.",
     "req_materials": {
       "blue_crayon": 1,
-      "rubies": 100,
+      "rubies": 10,
       "annie_shards": 30
     },
     "skills": {
@@ -21,7 +21,7 @@
           "565308091424571422"
         ],
         "effect": {
-          "exp": 1,
+          "exp": 0,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -37,7 +37,7 @@
     "url": "https://i.ibb.co/bsF4m7N/1-kitomi-card.png",
     "description": "Spoil me, protect me, worship me, you slave",
     "req_materials": {
-      "chocolate_bar": 100,
+      "chocolate_bar": 50,
       "fragments": 50000,
       "kitomi_shards": 30
     },
@@ -66,7 +66,7 @@
     "description": "Miaw",
     "url": "https://i.ibb.co/VmJrpRS/1-naph-card.png",
     "req_materials": {
-      "teddy_bear": 100,
+      "teddy_bear": 50,
       "fragments": 50000,
       "naph_shards": 30
     },
@@ -95,7 +95,7 @@
     "description": "things I like, my pri-... Ah, Pink clothing of course!",
     "url": "https://i.ibb.co/x6K8XL7/1-ami-card.png",
     "req_materials": {
-      "rose": 100,
+      "rose": 50,
       "fragments": 50000,
       "ami_shards": 30
     },
@@ -116,7 +116,7 @@
           "520716400097099777"
         ],
         "effect": {
-          "exp": 3,
+          "exp": 2,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -132,7 +132,7 @@
     "description": "Sleep tight and have a sweet dreams. ",
     "url": "https://i.ibb.co/Ld1B0GP/1-poppy-card.png",
     "req_materials": {
-      "teddy_bear": 100,
+      "teddy_bear": 50,
       "fragments": 50000,
       "poppy_shards": 30
     },
@@ -161,7 +161,7 @@
     "description": "Who can beat my fluffehness?",
     "url": "https://i.ibb.co/LRXZWGD/1-foxie-card.png",
     "req_materials": {
-      "chocolate_box": 100,
+      "chocolate_box": 50,
       "fragments": 50000,
       "foxie_shards": 30
     },
@@ -190,7 +190,7 @@
     "description": "Hehehe.. one is never enough.",
     "url": "https://i.ibb.co/3WYbxCD/1-vezeko-card.png",
     "req_materials": {
-      "rose": 100,
+      "rose": 50,
       "fragments": 50000,
       "vezeko_shards": 30
     },
@@ -202,11 +202,12 @@
         "channel": [
           "459929521957634048",
           "524076299980111872",
-          "460484229990711306"
+          "460484229990711306",
+          "600041262023835672"
         ],
         "effect": {
           "exp": null,
-          "ac": 6,
+          "ac": 5,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -221,7 +222,7 @@
     "description": "y know drink is fun. R8?",
     "url": "https://i.ibb.co/ZdtjNZD/1-pan-card.png",
     "req_materials": {
-      "rose": 100,
+      "rose": 50,
       "fragments": 50000,
       "pan_shards": 30
     },
@@ -235,7 +236,7 @@
           "459938699606491147"
         ],
         "effect": {
-          "exp": 2.5,
+          "exp": 1.5,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -251,8 +252,8 @@
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
-      "lucky_ticket": 100,
-      "fragments": 50000,
+      "lucky_ticket": 500,
+      "rubies": 10,
       "rany_shards": 30
     },
     "skills": {
@@ -281,7 +282,7 @@
     "description": ". . .",
     "url": "https://i.ibb.co/5jb36Gp/1-snowy-card.png",
     "req_materials": {
-      "teddy_bear": 100,
+      "teddy_bear": 50,
       "fragments": 50000,
       "snowy_shards": 30
     },
@@ -294,7 +295,7 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 1.5,
+          "exp": 0.5,
           "ac": null,
           "status": "active",
           "type": "multiplier",

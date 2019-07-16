@@ -255,6 +255,8 @@ module.exports = (bot, message) => {
                         if (skill_data.exp) metadata.exp.bonus += skill_data.exp;
                         if (skill_data.ac) metadata.ac.bonus += skill_data.ac;
 
+                        console.log(metadata)
+
                         metadata.buffs = data;
                     }
 
@@ -284,7 +286,6 @@ module.exports = (bot, message) => {
         // Naph's custom passive-buff.
         const white_cat_paradise = async () => {
 
-            console.log(`passed`);
 
             // Retrieve user who had naph_card in their collection.
             const followers = () => {
@@ -299,18 +300,18 @@ module.exports = (bot, message) => {
             let exp_amount = cards.naph_card.skills.main.effect.exp;
 
 
-            //  Get user tag.
-            const get_name = (id) => bot.users.get(id).tag;
-
-
             //  Update experience point.
             const share_exp = async () => {
                 for (let id in group) {
-                    console.log(`${get_name(group[id].userId)} receiving shared ${exp_amount} xp from the appearance of white cat.`)
+                    //  Skip if member is unavailable in the server.
+                    if (!bot.users.get(group[id].userId)) continue;
+
                     sql.run(`UPDATE userdata
                              SET currentexp = currentexp + ${exp_amount}
-                             WHERE userId = ${group[id].userId}`)
+                             WHERE userId = ${group[id].userId}
+                             ON`)
                 }
+                console.log(`${Object.keys(group).length} users have received 200 EXP from Naph's White Cat Paradise.`)
             }
 
             await share_exp();
@@ -379,6 +380,8 @@ module.exports = (bot, message) => {
 
                 if ((metadata.user.tag === `naphnaphz#7790`) &&
                     (metadata.channel === cards.naph_card.skills.main.channel[0])) white_cat_paradise();
+
+                    console.log(metadata)
 
                 sql.get(`SELECT * FROM userdata WHERE userId ="${message.author.id}"`)
                     .then(async userdatarow => {
