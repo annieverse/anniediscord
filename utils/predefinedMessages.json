@@ -131,6 +131,10 @@
         "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
         "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
     },
+    "EVENT": {
+        "END": "Okay! the rest **{0}** participants ticket has been taken down.",
+        "END_NOPARTICIPANTLEFT": "All participants have successfully participated in the event! Goodjob **{0}**!"
+    },
     "PAY": {
         "SHORT_GUIDE": "Pay-feature let you share your artcoins with other user!\nStart by typing `>pay <user>`",
         "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{0}** to use this feature.",
