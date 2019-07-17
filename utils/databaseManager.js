@@ -270,54 +270,72 @@ class databaseUtils {
             SET liked_counts = liked_counts + 1 
             WHERE userId = "${this.id}"
             `)
-    }
+        }
 
-    /**
-        *   Getting keys from object
-        * @src: an object of data to be pulled from.
-        */
-    storingKey(src) {
-        let container = [];
-        for (let i in src) { container.push(i) }
-        return container;
-    }
+        //  Enable user's notification
+        enableNotification() {
+            sql.run(`
+                UPDATE userdata
+                SET get_notification = 1
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+        //  Disabled user's notification
+        disableNotification() {
+            sql.run(`
+                UPDATE userdata
+                SET get_notification = 0
+                WHERE userId = "${this.id}"
+            `)
+        }
+        
+        /**
+            *   Getting keys from object
+            * @src: an object of data to be pulled from.
+            */
+        storingKey(src) {
+            let container = [];
+                for(let i in src) { container.push(i) }
+                return container;
+            }
+
+            
+        /**
+            *   Getting value from object keys
+            * @src: an object of data to be pulled from.
+            */
+        storingValue(src) {
+            let container = [];
+                    for(let q in src) { container.push(src[q]) }
+                    return container; 
+            }
 
 
-    /**
-        *   Getting value from object keys
-        * @src: an object of data to be pulled from.
-        */
-    storingValue(src) {
-        let container = [];
-        for (let q in src) { container.push(src[q]) }
-        return container;
-    }
+        /**
+            *   Getting value from object keys
+            * @src: an object of data to be pulled from.
+            * @ele: target key.
+            */
+        storingValueOfElement(src, ele) {
+                let container = [];
+                    for(let q in src) { container.push(src[q][ele]) }
+                    return container; 
+            }
+                
 
-
-    /**
-        *   Getting value from object keys
-        * @src: an object of data to be pulled from.
-        * @ele: target key.
-        */
-    storingValueOfElement(src, ele) {
-        let container = [];
-        for (let q in src) { container.push(src[q][ele]) }
-        return container;
-    }
-
-
-    /**
-    *   Register new item.
-    *   @param name of item name.
-    *   @param alias of item source alias.
-    *   @param type of item type.
-    *   @param price of item price.
-    *   @param description of item description.
-    */
-    registerItem(name, alias, type, price, description) {
-        return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
-            .then(() => console.log(`New item: ${name} has been registered. With values of ${alias, type, price, description}.`))
-    }
+            /**
+            *   Register new item.
+            *   @param name of item name.
+            *   @param alias of item source alias.
+            *   @param type of item type.
+            *   @param price of item price.
+            *   @param description of item description.
+            */
+        registerItem(name, alias, type, price, description) {
+                return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
+                .then(() => console.log(`New item: ${name} has been registered. With values of ${alias, type, price, description}.`)) 
+        }
 
 
 

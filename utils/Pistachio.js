@@ -57,8 +57,8 @@ module.exports = (Components) => {
     //  Get gacha-unlocked channel
     container.gachaField = bot.channels.get(`578518964439744512`)
 
-    //  Sub-pistachio which require channel or member properties from message.
-    if (message.channel || message.member) {
+    //  Sub-pistachio which require guild properties and not in DM.
+    if (message.member && (message.channel.type !== `dm`)) {
 
         //  Check if current channel is included in gacha-allowed list
         container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
