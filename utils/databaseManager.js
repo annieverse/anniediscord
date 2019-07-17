@@ -267,6 +267,24 @@ class databaseUtils {
             WHERE userId = "${this.id}"
             `)
         }
+
+        //  Enable user's notification
+        enableNotification() {
+            sql.run(`
+                UPDATE userdata
+                SET get_notification = 1
+                WHERE userId = "${this.id}"
+            `)
+        }
+
+        //  Disabled user's notification
+        disableNotification() {
+            sql.run(`
+                UPDATE userdata
+                SET get_notification = 0
+                WHERE userId = "${this.id}"
+            `)
+        }
         
         /**
             *   Getting keys from object

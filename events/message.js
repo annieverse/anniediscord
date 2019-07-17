@@ -6,15 +6,22 @@ const ch = require(`../modules/config.json`);
 sql.open(".data/database.sqlite"); 
 const env = require('../.data/environment.json');
 const { art_domain } = require(`../modules/config`)
+const dmOptions = require(`../utils/dmConfig/options`)
+const Notification = require(`../utils/dmConfig/index`)
+const KeyvClient = require(`keyv`);
+const keyv = new KeyvClient();
+
+
+// Handle DB connection errors
+keyv.on('error', err => console.log('Connection Error', err));
+
+
 
 module.exports = (bot, message) => {
+  //  Returns if message is coming from bot
+  if (message.author.bot) return;
 
-  if(message.author.bot) return;
-  if(message.channel.type ==='dm')return;
-
-  const manager = new ranksManager(bot, message)
-
-
+  //  Runs specific channel functions when in prod server
   if(!env.dev) {
     eventChannelFilter();
     portfolioRequest(); 
@@ -62,6 +69,7 @@ module.exports = (bot, message) => {
 
   //  Check if message is event-submission.
   async function eventChannelFilter() {
+    const manager = new ranksManager(bot, message)
     let submissionchannel = bot.channels.get('460615254553001994');
     let eventchannel = bot.channels.get('460615157056405505');
     if (message.channel.id === submissionchannel.id && attachmentCheck()) {
@@ -90,6 +98,39 @@ module.exports = (bot, message) => {
     }
   }
 
+  async function dmInterface() {
+
+    //  Initialize mutated pistachio
+    const Stacks = require(`../utils/Pistachio`)({bot, message, meta:{author:null}})
+    const { reply, code:{DM} } = Stacks;
+    const actionId = `dmconfig:${message.author.id}`
+
+    //  Get user options parameter
+    const params = (message.content.toLowerCase()).split(` `)
+
+    //  Returns if parameter is too short
+    if (params.length < 1) return;
+
+    //  Returns if parent option is not available
+    if (!dmOptions[params[0]]) return reply(DM.UNAVAILABLE_OPTION, {field: message.author})
+
+    //  Returns if sub option is not available
+    if (!dmOptions[params[0]].includes(params[1])) return reply(DM.UNAVAILABLE_OPTION, {field: message.author})
+    
+    //  Returns if user has recently make changes
+    if (await keyv.get(actionId)) return reply(DM.COOLING_DOWN, {field: message.author})
+
+    //  Store recent changes to avoid database lock. Restored in 5 seconds.
+    keyv.set(actionId, `1`, 5000)
+
+    //  Run config
+    return new Notification(Stacks)[params[0]]()
+
+  }
+
+
+  //  Handle direct message type
+  if(message.channel.type ==='dm') return dmInterface()
 
   let prefix = env.prefix;
   let messageArray = message.content.split(" ");
@@ -102,6 +143,7 @@ module.exports = (bot, message) => {
   if (!ch.bot_domain.includes(message.channel.id)) return;
   if (!message.content.startsWith(prefix)) return;
   if (!commandfile) return;
+
 
   const Components = {bot, message, command, args, commandfile, meta: {author: null, data: null}};
   const cmdHandler = require(`../modules/mainComponents.js`);

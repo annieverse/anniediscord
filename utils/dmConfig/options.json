@@ -1,0 +1,4 @@
+{
+    "enable": ["notification", "notifications"],
+    "disable": ["notification", "notifications"]
+}

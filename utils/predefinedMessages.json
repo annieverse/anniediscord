@@ -31,6 +31,13 @@
         "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
         "SUCCESSFUL": "**{0}** has converted {1} **{2}** artcoins and gained **+{3} EXP**"
     },
+    "DM": {
+        "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
+        "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",
+        "NOTIFICATION_ENABLED": "Your setting has been saved. I'll keep you posted with your post engagements!",
+        "ERROR": "Something went wrong ..",
+        "COOLING_DOWN": "You can make changes again in 5 seconds."
+    },
     "DAILY": {
         "IN_COOLDOWN": "You can take your dailies again **{0}**",
         "CLAIMED": "**{0}** has received {1} **{2}{3}** artcoins!\n{4}{5}"

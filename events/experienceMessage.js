@@ -471,6 +471,14 @@ module.exports = (bot, message) => {
 
     //  Initialize
     const run = async () => {
+
+        //  Returns if message is coming from DM
+        if (message.channel.type === `dm`) return;
+
+        //  Returns if the user is indicated as bot
+        if (message.author.bot) return;
+
+
         const cardinventory = () => {
             return sql.get(`SELECT * FROM collections WHERE userId = ${message.author.id}`)
             .then(async data => data);
@@ -483,22 +491,11 @@ module.exports = (bot, message) => {
             if (usercards.annie_card) return experienceGains();
         }
 
-
         //  Returns if currently in developer environment.
         if (env.dev && !env.administrator_id.includes(message.author.id)) return;
-
         
         //  Returns if message started with command prefix.
         if (message.content.startsWith(env.prefix)) return;
-
-
-        //  Returns if the user is indicated as bot
-        if (message.author.bot) return;
-
-
-        //  Returns DM messages.
-        if (message.channel.type == "dm") return;
-
 
         //  Returns if message was sent in non-XP channels
         if (nonXPChannel.includes(message.channel.id)) return;

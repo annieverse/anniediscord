@@ -1,5 +1,6 @@
 const { dev, administrator_id } = require(`../.data/environment`);
 const { art_domain } = require(`../modules/config`);
+const database = require(`../utils/databaseManager`);
 const KeyvClient = require(`keyv`);
 const keyv = new KeyvClient();
 
@@ -69,18 +70,32 @@ class HeartCollector {
             }
 
         }
+        this.reactid = `${this.metadata.artwork}:${this.components.user.id}`,
+        this.notificationTimeout = 3600000
+    }
+
+
+    /**
+     *  Pull user metadata (temporary)
+     */
+    get userdata() {
+        return new database(this.metadata.msg.author.id).userMetadata
     }
 
 
     /**
      *  Send post notification to user's DM.
      */
-    notification() {
+    async notification() {
         //  Mutation pistachio
         const { reply, code:{FEATURED}, bot, user } = this.stacks
+        const { get_notification } = await this.userdata
 
         //  Returns if user react is a this.bot
         if (bot.user.id === user.id) return;
+
+        //  Returns if user has disabled their notification
+        if (!get_notification) return;
 
         try {
             //  If heart count is below or equal two.
@@ -133,10 +148,10 @@ class HeartCollector {
         if (this.metadata.selfLiking) return reaction.remove(user)
 
         //  Returns if user has recently liked the post
-        if (await keyv.get(user.id)) return
+        if (await keyv.get(this.reactid)) return
 
-        //  Store recent user id to avoid double notification spam. Restored in 1 hour.
-        keyv.set(user.id, `reacted`, 3600000)
+        //  Store recent reaction to avoid double notification spam. Restored in 1 hour.
+        keyv.set(this.reactid, `1`, this.notificationTimeout)
 
         //  Send notification to user based on heart counts
         this.notification();
@@ -144,12 +159,8 @@ class HeartCollector {
         //  Store new heart
         await db(this.metadata.msg.author.id).addHeart();
 
-        //  Returns if heart counts don't hit right in the requirements.
-        if (this.metadata.heartsTooLow) return
-
-        
+        //  Send post to #featured if heart counts hitting the requirement
         if (this.metadata.favs === this.metadata.featured_requirement) {
-            //  Send post to #featured
             reply(this.metadata.caption + `\n\u200b`, {
                 prebuffer: true,
                 image: this.metadata.artwork,
