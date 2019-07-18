@@ -5,7 +5,7 @@ module.exports = bot => {
 
     startup();
     if(!env.dev) roleChange();
-    if(env.dev) autoStatus();
+    //if(env.dev) autoStatus();
     /**
      * secret thingy, change color of role
      */
