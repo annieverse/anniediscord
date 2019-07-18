@@ -176,7 +176,24 @@ module.exports = bot => {
                     })
                 }
                 
-                if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
+                if (bufferTime.after > currentTime.getTime()) {
+                    if (env.dev) {
+                        bot.user.setStatus('dnd');
+                        bot.user.setActivity(`maintenance.`, {
+                            type: "LISTENING"
+                        });
+
+                    } else {
+                        bot.user.setStatus('online');
+                        bot.user.setActivity(null);
+                    }
+                    sql.run(`UPDATE eventData SET status = 'ended' WHERE event = '${event}' and start_time = ${time}`).then(() => {
+                        sql.run(`DELETE FROM eventData WHERE status = 'ended' AND event = '${event}' AND start_time = ${time}`).then(() => {
+                            console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+                        })
+                    })
+                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
+                } else if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
 
                 // Find the distance between now and the count down date
                 var distance = bufferTime.start-currentTime.getTime()
@@ -196,25 +213,7 @@ module.exports = bot => {
                         type: "PLAYING"
                     });
                     return console.log(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
-                } else if (bufferTime.after > currentTime.getTime()){
-                    if (env.dev) {
-                        bot.user.setStatus('dnd');
-                        bot.user.setActivity(`maintenance.`, {
-                            type: "LISTENING"
-                        });
-
-                    } else {
-                        bot.user.setStatus('online');
-                        bot.user.setActivity(null);
-                    }
-                    sql.run(`UPDATE eventData SET status = 'ended' WHERE event = '${event}' and start_time = ${time}`).then(() => {
-                        sql.run(`DELETE FROM eventData WHERE status = 'ended' AND event = '${event}' AND start_time = ${time}`).then(() => {
-                            console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
-                        })
-                    })
-                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
-                }              
-
+                }     
             })
         }
     }
