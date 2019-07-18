@@ -6,7 +6,7 @@ const keyv = new KeyvClient();
 
 
 // Handle DB connection errors
-keyv.on('error', err => console.log('Connection Error', err));
+keyv.on('error', err => console.log('Connection Err', err));
 
 
 /**
