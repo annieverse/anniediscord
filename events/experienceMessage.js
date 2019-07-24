@@ -488,7 +488,7 @@ module.exports = (bot, message) => {
         
         //  Execute experienceGains() immediately if user had Annie card.
         if (usercards) {
-            if (usercards.annie_card) return experienceGains();
+            if (usercards.annie_card && message.content.startsWith(env.prefix)) return experienceGains();
         }
 
         //  Returns if currently in developer environment.
