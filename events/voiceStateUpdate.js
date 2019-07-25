@@ -29,6 +29,7 @@ module.exports = (bot, oldMember, newMember) => {
      * 
      * NOTES:
      * I have created the skeleton. the If statements including the terms afk in them refer to the afk channel if the server sets one up
+     * If user is muted then end session
      * 
      * Questions [put your questions under this line]:
      *
