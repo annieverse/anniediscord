@@ -290,6 +290,25 @@ class databaseUtils {
             `)
         }
         
+        //  Check if post already stored in featured list
+        featuredPostMetadata(url) {
+            return sql.get(`
+                SELECT *
+                FROM featured_post
+                WHERE url = "${url}"
+            `)
+        }
+
+        //  Register new featured post metadata
+        registerPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
+            sql.run(`
+                INSERT INTO featured_post
+                (timestamp, url, author, channel, heart_counts, last_heart_timestamp)
+                VALUES (?, ?, ?, ?, ?, ?)`,
+                [timestamp, url, author, channel, heart_counts, last_heart_timestamp]
+            )
+        }
+
         /**
             *   Getting keys from object
             * @src: an object of data to be pulled from.
