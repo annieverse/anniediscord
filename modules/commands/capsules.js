@@ -66,6 +66,8 @@ class Capsule {
             await xp.addRank();
         }
 
+        // Add AC on level up
+        await xp.updatingAC()
 
         //  Done
         return reply(CAPSULE.SUCCESSFUL, {
