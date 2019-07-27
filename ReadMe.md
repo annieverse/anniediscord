@@ -31,13 +31,13 @@ We got tons of upcoming features ahead!*
 Below are amazing people that make Annie possible!
 
 ### **Developer** 
-![naphnaphz#7790][naph]![Fwubbles#8540][fwub]![Bait God#8677][pan]
+![naphnaphz#7790][naph]![Fwubbles#8540][fwub]![Bait God#8677][pan]![hugonun#0422][hugo]
 
 
 [fwub]: https://cdn.discordapp.com/avatars/294177453449019409/2fe4ee79df734b6e7824069d4e19f7b5.png?size=128
 [naph]: https://cdn.discordapp.com/avatars/230034968515051520/f71d3f9be536f6f4fed646dc8670d644.png?size=128
 [pan]: https://cdn.discordapp.com/avatars/277266191540551680/d8c76120788366540552d977122a862d.png?size=128
-
+[hugo]: https://cdn.discordapp.com/avatars/476391416268849175/ccd23e89da05b4a5ecd4c3ae637a39f7.png?size=128
 
 
 ### **Contributor**
