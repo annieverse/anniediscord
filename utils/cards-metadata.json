@@ -7,8 +7,8 @@
     "description": "I'm not small! you are just too high.",
     "req_materials": {
       "blue_crayon": 1,
-      "rubies": 10,
-      "annie_shards": 30
+      "rubies": 100,
+      "annie_shards": 20
     },
     "skills": {
       "main": {
@@ -37,9 +37,9 @@
     "url": "https://i.ibb.co/bsF4m7N/1-kitomi-card.png",
     "description": "Spoil me, protect me, worship me, you slave",
     "req_materials": {
-      "chocolate_bar": 50,
-      "fragments": 50000,
-      "kitomi_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "kitomi_shards": 20
     },
     "skills": {
       "main": {
@@ -66,9 +66,9 @@
     "description": "Miaw",
     "url": "https://i.ibb.co/VmJrpRS/1-naph-card.png",
     "req_materials": {
-      "teddy_bear": 50,
-      "fragments": 50000,
-      "naph_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "naph_shards": 20
     },
     "skills": {
       "main": {
@@ -95,9 +95,9 @@
     "description": "things I like, my pri-... Ah, Pink clothing of course!",
     "url": "https://i.ibb.co/x6K8XL7/1-ami-card.png",
     "req_materials": {
-      "rose": 50,
-      "fragments": 50000,
-      "ami_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "ami_shards": 20
     },
     "skills": {
       "main": {
@@ -132,9 +132,9 @@
     "description": "Sleep tight and have a sweet dreams. ",
     "url": "https://i.ibb.co/Ld1B0GP/1-poppy-card.png",
     "req_materials": {
-      "teddy_bear": 50,
-      "fragments": 50000,
-      "poppy_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "poppy_shards": 20
     },
     "skills": {
       "main": {
@@ -161,9 +161,9 @@
     "description": "Who can beat my fluffehness?",
     "url": "https://i.ibb.co/LRXZWGD/1-foxie-card.png",
     "req_materials": {
-      "chocolate_box": 50,
-      "fragments": 50000,
-      "foxie_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "foxie_shards": 20
     },
     "skills": {
       "main": {
@@ -190,9 +190,9 @@
     "description": "Hehehe.. one is never enough.",
     "url": "https://i.ibb.co/3WYbxCD/1-vezeko-card.png",
     "req_materials": {
-      "rose": 50,
-      "fragments": 50000,
-      "vezeko_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "vezeko_shards": 20
     },
     "skills": {
       "main": {
@@ -222,8 +222,8 @@
     "description": "y know drink is fun. R8?",
     "url": "https://i.ibb.co/ZdtjNZD/1-pan-card.png",
     "req_materials": {
-      "rose": 50,
-      "fragments": 50000,
+      "fragments": 30000,
+      "rubies": 100,
       "pan_shards": 30
     },
     "skills": {
@@ -253,8 +253,7 @@
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
       "lucky_ticket": 500,
-      "rubies": 10,
-      "rany_shards": 30
+      "rany_shards": 20
     },
     "skills": {
       "main": {
@@ -282,9 +281,9 @@
     "description": ". . .",
     "url": "https://i.ibb.co/5jb36Gp/1-snowy-card.png",
     "req_materials": {
-      "teddy_bear": 50,
-      "fragments": 50000,
-      "snowy_shards": 30
+      "fragments": 30000,
+      "rubies": 100,
+      "snowy_shards": 20
     },
     "skills": {
       "main": {
