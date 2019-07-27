@@ -44,7 +44,7 @@
     "skills": {
       "main": {
         "name": "Owner's Prosperity",
-        "description": "150% EXP & AC boost in #general",
+        "description": "100% EXP & AC boost in #general",
         "type": "exp_ac_booster",
         "channel": [
           "459891664182312982"
@@ -73,7 +73,7 @@
     "skills": {
       "main": {
         "name": "White's Cat Paradise",
-        "description": "+200 passive exp per message sent by Naph in #general",
+        "description": "+100 passive exp per message sent by Naph in #general",
         "type": "exp_booster",
         "channel": [
           "459891664182312982"
