@@ -50,8 +50,8 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 2.5,
-          "ac": 2.5,
+          "exp": 2,
+          "ac": 2,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -79,7 +79,7 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 200,
+          "exp": 100,
           "ac": null,
           "status": "passive",
           "type": "flat",
