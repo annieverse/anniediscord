@@ -234,8 +234,8 @@ module.exports = bot => {
         //  Register iteminventory if not exist.
         sql.run(`
             CREATE TABLE IF NOT EXISTS item_inventory (
-                itemid INTEGER NOT NULL DEFAULT 0,
-                userid TEXT NOT NULL DEFAULT 0,
+                item_id INTEGER NOT NULL DEFAULT 0,
+                user_id TEXT NOT NULL DEFAULT 0,
                 quantity INTEGER NOT NULL DEFAULT 0
             )
         `)
