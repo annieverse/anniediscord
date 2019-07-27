@@ -4,8 +4,10 @@ const sql = require("sqlite");
 module.exports = bot => {
 
     startup();
+    databasePreparation();
     if(!env.dev) roleChange();
-    //if(env.dev) autoStatus();
+
+
     /**
      * secret thingy, change color of role
      */
@@ -138,6 +140,7 @@ module.exports = bot => {
         }
     }
 
+
     function autoStatus(){
         let x = 1; // number of minutes
         setInterval(data,60000*x);
@@ -217,6 +220,27 @@ module.exports = bot => {
             })
         }
     }
+
+
+    /**
+     *  
+     * Database table check
+     * @databasePreparation
+     */
+    function databasePreparation() {
+
+        sql.open(`.data/database.sqlite`);
+
+        //  Register iteminventory if not exist.
+        sql.run(`
+            CREATE TABLE IF NOT EXISTS item_inventory (
+                itemid INTEGER NOT NULL DEFAULT 0,
+                userid TEXT NOT NULL DEFAULT 0,
+                quantity INTEGER NOT NULL DEFAULT 0
+            )
+        `)
+    }
+
 
     /**
      * 

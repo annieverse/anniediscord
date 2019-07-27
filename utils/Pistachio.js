@@ -64,7 +64,7 @@ module.exports = (Components) => {
         container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name);
 
         //  Check for administrator authority
-        container.isAdmin = message.member.roles.find(r => r.name === 'Creators Council');
+        container.isAdmin = message.member.roles.find(r => (r.name === 'Creators Council') || (r.name === 'Channel Overseer'));
 
         //  Check for developer authority
         container.isDev = message.member.roles.find(r => r.name === 'Developer Team');
