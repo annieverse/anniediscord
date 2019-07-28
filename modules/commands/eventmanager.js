@@ -295,8 +295,8 @@ class addEvent extends databaseManager {
 
     async execute() {
         const { reply } = this.stacks;
-        //await thia.makeSureTableExists();
-        //if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
+        //await this.makeSureTableExists();
+        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
         return this.helpCenter();
     }
 }

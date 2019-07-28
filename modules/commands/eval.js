@@ -13,7 +13,7 @@ class DeveloperTool {
      * @Execute
      */
     async execute() {
-      const {palette, isDev, message, args, utils:{pages}, code: {EVAL}, reply} = this.stacks;
+      const {bot,palette, isDev, message, args, utils:{pages}, code: {EVAL}, reply} = this.stacks;
 
       //  Returns if the author is not in dev team.
       if (!isDev) return reply(EVAL.UNKNOWN_AUTHOR, { color: palette.red })

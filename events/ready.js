@@ -5,7 +5,7 @@ module.exports = bot => {
 
     startup();
     if(!env.dev) roleChange();
-    //if(env.dev) autoStatus();
+    if(env.dev) autoStatus();
     /**
      * secret thingy, change color of role
      */
@@ -139,6 +139,9 @@ module.exports = bot => {
     }
 
     function autoStatus(){
+
+        let datell = (new Date()).toString()
+        console.log(datell)
         let x = 1; // number of minutes
         setInterval(data,60000*x);
         sql.open(`.data/database.sqlite`);
@@ -164,7 +167,6 @@ module.exports = bot => {
                     after: time + 1.8e+7,
                     start: time
                 }
-                let eventDateObject = new Date(time);
                 // watching = type 3
                 // playing = type 0
 
@@ -176,7 +178,12 @@ module.exports = bot => {
                     })
                 }
                 
+                
+                console.log(bufferTime.after)
+                console.log(currentTime.getTime())
+                console.log(bufferTime.after > bufferTime.start)
                 if (bufferTime.after > currentTime.getTime()) {
+                    console.log("after?")
                     if (env.dev) {
                         bot.user.setStatus('dnd');
                         bot.user.setActivity(`maintenance.`, {
@@ -193,8 +200,9 @@ module.exports = bot => {
                         })
                     })
                     return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
-                } else if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
-
+                } else if (bot.user.presence.game !== null){
+                    if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
+                }
                 // Find the distance between now and the count down date
                 var distance = bufferTime.start-currentTime.getTime()
                 // Time calculations for days, hours, minutes and seconds
@@ -233,9 +241,12 @@ module.exports = bot => {
             console.log(`Codename: ${bot.user.username}`)
             console.timeEnd(`Initialized In`)
             bot.user.setStatus('dnd');
+            bot.user.setActivity(null);
+            /*
             bot.user.setActivity(`maintenance.`, {
                 type: "LISTENING"
             });
+            */
 
         } else {
             console.log(`${bot.user.username} is up.`)
