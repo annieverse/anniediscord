@@ -63,7 +63,7 @@ class addEvent extends databaseManager {
                         if (forthMsg.content.toLowerCase() === 'y') {
                             this.addValues('eventData', `event, start_time, status`, `'${eventName}', ${date.valueOf()}, 'waiting'`);
                             reply(`The event __${eventName}__ has been added and will display when the time is close.`)
-                        } else if (forthMsg.content.toLowerCase() === 'n') {
+                        } else {
                             reply('Please start over, this event has not been added.')
                         }
 
@@ -249,7 +249,7 @@ class addEvent extends databaseManager {
                                     reply(`The new date and time for the event: __${parsed.event}__ is ${eventDate.toDateString()} At ${this.addZero(eventDate.getHours())}:${this.addZero(eventDate.getMinutes())}`)
                                     break;
                             }
-                        } else if (forthMsg.toLowerCase() === 'n') {
+                        } else {
                             reply('Please start over, this event has not been edited.')
                         }
                         forthCollector.stop();
