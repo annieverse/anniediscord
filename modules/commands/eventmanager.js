@@ -19,6 +19,7 @@ class addEvent extends databaseManager {
      * adds a event to the db
      */
     addEvent() {
+        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
         const { message, multicollector, collector, reply } = this.stacks;
 
         let eventName;
@@ -82,6 +83,7 @@ class addEvent extends databaseManager {
      * @param {string} event 
      */
     async endEvent(event) {
+        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
         const { reply } = this.stacks;
         // Make sure an event exists
         let parsed = await this.pullRowData('eventData', `'${event}'`, 'event')
@@ -101,6 +103,7 @@ class addEvent extends databaseManager {
      * @param {string} event 
      */
     async removeEvent(event) {
+        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
         const { reply } = this.stacks;
         // Make sure an event exists
         let parsed = await this.pullRowData('eventData', `'${event}'`, 'event')
@@ -141,7 +144,7 @@ class addEvent extends databaseManager {
         let res = '';
         data.forEach(element => {
             let date = new Date(element.start_time)
-            res += `Event: __${element.event}__, Date ${date.toDateString()} At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())}\n`
+            res += `Event: __${element.event}__, Date: ${date.toDateString()} At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())}\n`
         });
         try {
             reply(res)
@@ -154,6 +157,7 @@ class addEvent extends databaseManager {
      * update the name or date/time of a event
      */
     async updateEvent() {
+        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
         const { multicollector, collector, reply } = this.stacks;
         let eventName;
         // Ask how to use multi-collector
@@ -283,6 +287,18 @@ class addEvent extends databaseManager {
         }
     }
 
+    publicHelpCenter() {
+        const { args, reply } = this.stacks;
+        if (args[0] === 'lookup') {
+            return this.eventLookUp(args.slice(1).join(' '))
+        } else if (args[0] === 'lookup-all') {
+            return this.showAllEvents()
+        } else {
+            return reply(this.stacks.code.EVENT_MANAGER.PUBLIC_SHORT_GUIDE, {
+                footer: '<required>|[optional]'
+            })
+        }
+    }
     async makeSureTableExists(){
         try {
             await this.registerTable('eventData', 'event', 'TEXT');
@@ -294,10 +310,12 @@ class addEvent extends databaseManager {
     }
 
     async execute() {
-        const { reply } = this.stacks;
         //await this.makeSureTableExists();
-        if (!this.required_roles) return reply("I'm sorry but you do not have permission to use this command")
-        return this.helpCenter();
+        if (!this.required_roles){
+            return this.publicHelpCenter();
+        } else{
+            return this.helpCenter();
+        }
     }
 }
 
