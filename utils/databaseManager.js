@@ -611,9 +611,9 @@ class databaseUtils {
         * @param tablename of target table.
         * @param columnname of sorted descendant column. 
         */
-    authorIndexRanking(tablename, columnname) {
+    authorIndexRanking(tablename, columnname, id = this.id) {
         return sql.all(`SELECT userId FROM ${tablename} ORDER BY ${columnname} DESC`)
-            .then(async x => x.findIndex(z => z.userId === this.id))
+            .then(async x => x.findIndex(z => z.userId === id))
     }
 
 

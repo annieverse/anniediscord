@@ -1,7 +1,7 @@
-const { Canvas } = require("canvas-constructor"); 
+const { Canvas } = require("canvas-constructor");
 const { resolve, join } = require("path");
 const { get } = require("snekfetch");
-const imageUrlRegex = /\?size=2048$/g; 
+const imageUrlRegex = /\?size=2048$/g;
 const databaseManager = require(`./databaseManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`);
@@ -14,7 +14,7 @@ Canvas.registerFont(resolve(join(__dirname, "../fonts/Whitney.otf")), "Whitney")
 
 //  Render the image
 const render = async (stacks, metadata) => {
-    const { db, palette, bot, emoji, commanifier, meta: {data, author} } = stacks;
+    const { db, palette, bot, emoji, commanifier, meta: { data, author } } = stacks;
 
     //  Canvas metadata
     const size = {
@@ -26,7 +26,7 @@ const render = async (stacks, metadata) => {
 
 
     //  Pull required data.
-   const dbmanager = db(author.id);
+    const dbmanager = db(author.id);
     metadata.user = data
 
     const ranking = {
@@ -34,6 +34,7 @@ const render = async (stacks, metadata) => {
         acgroup: [],
         repgroup: [],
         artgroup: [],
+        limit: 10,
         async pullingData() {
             for (let i = 0; i < 10; i++) {
                 this.xpgroup.push({
@@ -62,6 +63,7 @@ const render = async (stacks, metadata) => {
                 acgroup: this.acgroup,
                 repgroup: this.repgroup,
                 artgroup: this.artgroup,
+                limit: this.limit,
                 authorindex_xp: await dbmanager.authorIndexRanking('userdata', 'currentexp'),
                 authorindex_ac: await dbmanager.authorIndexRanking('userinventories', 'artcoins'),
                 authorindex_rep: await dbmanager.authorIndexRanking('userdata', 'reputations'),
@@ -232,10 +234,37 @@ const render = async (stacks, metadata) => {
             }
         }
 
+        deleteObjectFromArr(arr, obj) {
+            var index = arr.indexOf(obj);
+            if (index > -1) {
+                arr.splice(index, 1);
+            }
+        }
+
+        async removeMemberFromListACgroup(id) {
+            let index;
+            for (let i = 0; i < user.acgroup.length; i++) {
+                if(user.acgroup[i].id === id) {
+                    index = i;
+                }
+            }
+            this.deleteObjectFromArr(user.acgroup, user.acgroup[index]);
+            user.limit++;
+            user.acgroup.push({
+                id: await dbmanager.indexRanking('userinventories', 'artcoins', user.limit, 'userId'),
+                ac: await dbmanager.indexRanking('userinventories', 'artcoins', user.limit, 'artcoins')
+            })
+        }
 
         //  Artcoins leaderboard
         async ac() {
+
+            this.removeMemberFromListACgroup('277266191540551680');
+
             metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`;
+            
+            if (user.authorindex_ac > (await dbmanager.authorIndexRanking('userinventories', 'artcoins', `277266191540551680`))) user.authorindex_ac--;
+
             metadata.footer_components = [user.authorindex_ac + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)];
 
             for (let i = 0; i < user.acgroup.length; i++) {
@@ -324,7 +353,7 @@ const render = async (stacks, metadata) => {
 
     }
 
-    
+
     await new Leaderboard(metadata.selected_group).setup;
     metadata.img = canv.toBuffer()
     return metadata
