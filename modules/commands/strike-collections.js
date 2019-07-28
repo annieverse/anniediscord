@@ -232,8 +232,10 @@ class strikeCollection {
         //  Initial process
         const run = async () => {
 
-            //  Returns when the message comes from non-staff channel.
-            if (![`sandbox`, `naph-little-house`, `staff-hq`].includes(message.channel.name)) return log({ code: `UNAUTHORIZED` });
+            const { isAdmin } = this.stacks;
+
+            //  Returns when the user doesn't have admin authority.
+            if (!isAdmin) return log({ code: `UNAUTHORIZED` });
 
 
             //  Returns tutorial

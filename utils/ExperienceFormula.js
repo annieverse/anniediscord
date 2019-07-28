@@ -1,5 +1,7 @@
 const ranksManager = require(`./ranksManager`);
 const databaseManager = require(`./databaseManager`);
+const formatManager = require('./formatManager');
+const palette = require(`./colorset.json`);
 
 /**
  * Experience formula wrapper.
@@ -11,6 +13,7 @@ class Experience {
         this.message = data.message;
         this.ranks = new ranksManager(data.bot, data.message);
         this.db = new databaseManager(data.message.author.id);
+        
     }
 
     //  Add new rank if user new exp is above threeshold.
@@ -69,15 +72,43 @@ class Experience {
 
         //  Store new values
         this.db.updateExperienceMetadata(this.data.updated)
-}
+    }
 
-// Returns true if new_rank is different from previous one.
-get rankUp() {
-    let new_rank = this.ranks.ranksCheck(this.data.updated.level).title;
-    let old_rank = this.ranks.ranksCheck(this.data.previous.level).title;
+    // Add AC (on level up)
+    updatingAC() {
+        // If new level
+        if(this.data.updated.level !== this.data.previous.level) {
+            // For each level
+            for(let i=0;i<this.data.updated.level-this.data.previous.level;i++) {
+                // Timeout to not spam Discord's server too much
+                setTimeout(() => {
+                    const updatedlevel = this.data.previous.level+i+1
+                    const bonusac = () => {
+                        return updatedlevel === 0 ? 35 : 35 * updatedlevel;
+                    }
 
-    return new_rank !== old_rank ? true : false;
-}
+                    // Add AC
+                    this.db.storeArtcoins(bonusac())
+
+                    // Send message
+                    const format = new formatManager(this.message);
+                    format.embedWrapper(palette.halloween, `<:nanamiRinWave:459981823766691840> Congratulations ${this.message.author}!! You are now level **${updatedlevel}** !
+                **${bonusac()}** AC has been added to your account.`);
+
+                    console.log(`USER:${this.message.author.tag}, LV:${updatedlevel}, CH:${this.message.channel.name}`);
+                }, (800))
+            }
+        }
+    }
+
+    // Returns true if new_rank is different from previous one.
+    get rankUp() {
+        let new_rank = this.ranks.ranksCheck(this.data.updated.level).title;
+        let old_rank = this.ranks.ranksCheck(this.data.previous.level).title;
+
+        return new_rank !== old_rank ? true : false;
+    }
+
 }
 
 module.exports = Experience;

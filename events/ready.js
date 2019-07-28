@@ -4,6 +4,7 @@ const sql = require("sqlite");
 module.exports = bot => {
 
     startup();
+    databasePreparation();
     if(!env.dev) roleChange();
     if(env.dev) autoStatus();
     /**
@@ -138,6 +139,7 @@ module.exports = bot => {
         }
     }
 
+
     function autoStatus(){
 
         let datell = (new Date()).toString()
@@ -225,6 +227,27 @@ module.exports = bot => {
             })
         }
     }
+
+
+    /**
+     *  
+     * Database table check
+     * @databasePreparation
+     */
+    function databasePreparation() {
+
+        sql.open(`.data/database.sqlite`);
+
+        //  Register iteminventory if not exist.
+        sql.run(`
+            CREATE TABLE IF NOT EXISTS item_inventory (
+                item_id INTEGER NOT NULL DEFAULT 0,
+                user_id TEXT NOT NULL DEFAULT 0,
+                quantity INTEGER NOT NULL DEFAULT 0
+            )
+        `)
+    }
+
 
     /**
      * 
