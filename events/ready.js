@@ -7,21 +7,15 @@ module.exports = bot => {
     databasePreparation();
     if(!env.dev) roleChange();
     if(env.dev) autoStatus();
+
     /**
      * secret thingy, change color of role
      */
     function roleChange(){
-        //if(!env.dev)return;
-
-        // Bot color #2fc9b6 ORIGINAL
-        // Smol Bean #ff79ac ORIGNIAL
-        // Tomato Fox #bfa8e0 ORIGNIAL
         /**
          * The Varible "x" is in terms of minutes
          * for example:
          * 1 = 1 minute
-         * 2 = 2 minutes
-         * 6 = 6 minutes
          * etc.
          */
         let x = 15;
@@ -142,8 +136,6 @@ module.exports = bot => {
 
     function autoStatus(){
 
-        let datell = (new Date()).toString()
-        console.log(datell)
         let x = 1; // number of minutes
         setInterval(data,60000*x);
         sql.open(`.data/database.sqlite`);
@@ -165,13 +157,12 @@ module.exports = bot => {
                 let status = data.status
                 let currentTime = (new Date());
                 let bufferTime = {
-                    before: time - 1.8e+7,
-                    after: time + 1.8e+7,
-                    start: time
+                    before: (new Date(time - 1.8e+7)),
+                    after: (new Date(time + 7.2e+6)),
+                    start: (new Date(time))
                 }
                 // watching = type 3
                 // playing = type 0
-
 
                 //sql.run(`DELETE FROM eventData WHERE event = '${event}'`);
                 if (status === 'ended') {
@@ -180,11 +171,7 @@ module.exports = bot => {
                     })
                 }
                 
-                
-                console.log(bufferTime.after)
-                console.log(currentTime.getTime())
-                console.log(bufferTime.after > bufferTime.start)
-                if (bufferTime.after > currentTime.getTime()) {
+                if (bufferTime.after < currentTime) {
                     console.log("after?")
                     if (env.dev) {
                         bot.user.setStatus('dnd');
@@ -206,19 +193,19 @@ module.exports = bot => {
                     if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
                 }
                 // Find the distance between now and the count down date
-                var distance = bufferTime.start-currentTime.getTime()
+                var distance = bufferTime.start.getTime()-currentTime.getTime() 
                 // Time calculations for days, hours, minutes and seconds
                 var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 
-                if (bufferTime.before < currentTime.getTime() && bufferTime.start > currentTime.getTime() ){
+                if (bufferTime.before < currentTime  && bufferTime.start > currentTime  ){
                     
                     let countDown = `${hours}h ${minutes}m`
                     bot.user.setActivity(`[EVENT] ${event} in ${countDown}`, {
                         type: "WATCHING"
                     });
                     return console.log(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
-                } else if (bufferTime.start < currentTime.getTime() && bufferTime.after > currentTime.getTime()) {
+                } else if (bufferTime.start < currentTime  && bufferTime.after > currentTime ) {
                     bot.user.setActivity(`[EVENT] ${event}`, {
                         type: "PLAYING"
                     });

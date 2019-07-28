@@ -35,7 +35,7 @@ class addEvent extends databaseManager {
             if (parsed === undefined) parsed = { event: 'placeholder' }
             if (parsed.event === eventName) return reply(`I'm sorry but that event already exists please start over and choose a different name`)
             // Next Collector
-            reply("Now the date formated like this please: 1/5 [month/date] Mar 20")
+            reply("Now the date formated like this please: 1/5 or Mar 20 [month/date]", { footer: `The current date and time is: ${(new Date()).toString()}` })
             // Initialize second collector using first collector's msg object
             const secondCollector = multicollector(msg)
 
@@ -43,7 +43,7 @@ class addEvent extends databaseManager {
                 // Handle message
                 date = secondMsg.content + `/${curYear} `;
                 // Next Collector
-                reply("Now the time formated like this please: 12:00 [hour:minutes] 13:20 [24 hour format]")
+                reply("Now the time formated like this please: 12:00 [hour:minutes] [24 hour format]",{footer:`The current date and time is: ${(new Date()).toString()}`})
                 // Initialize second collector using first collector's msg object
                 const thirdCollector = multicollector(secondMsg)
 
@@ -61,7 +61,7 @@ class addEvent extends databaseManager {
 
                     forthCollector.on(`collect`, forthMsg => {
                         if (forthMsg.content.toLowerCase() === 'y') {
-                            this.addValues('eventData', `event, start_time, status`, `'${eventName}', ${date.getTime()}, 'waiting'`);
+                            this.addValues('eventData', `event, start_time, status`, `'${eventName}', ${date.valueOf()}, 'waiting'`);
                             reply(`The event __${eventName}__ has been added and will display when the time is close.`)
                         } else if (forthMsg.content.toLowerCase() === 'n') {
                             reply('Please start over, this event has not been added.')
@@ -141,7 +141,7 @@ class addEvent extends databaseManager {
         let res = '';
         data.forEach(element => {
             let date = new Date(element.start_time)
-            res += `Event: __${element.event}__, Date ${date.toDateString()} At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())}`
+            res += `Event: __${element.event}__, Date ${date.toDateString()} At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())}\n`
         });
         try {
             reply(res)
@@ -181,11 +181,11 @@ class addEvent extends databaseManager {
                         break;
                     case 'date':
                         field = 'date'
-                        reply("Please give the date formated like this please: 1/5 [month/date] Mar 20")
+                        reply("Please give the date formated like this please: 1/5 or Mar 20 [month/date]")
                         break;
                     case 'time':
                         field = 'time'
-                        reply("Please give the time formated like this please: 12:00 [hour:minutes] 13:20 [24 hour format]")
+                        reply("Please give the time formated like this please: 12:00 [hour:minutes] [24 hour format]")
                         break;
                 }
                 // Initialize second collector using first collector's msg object
@@ -207,7 +207,7 @@ class addEvent extends databaseManager {
                             newDay = newDate.getDate();
                             eventDate.setMonth(newMonth)
                             eventDate.setDate(newDay)
-                            newStart_time = eventDate.getTime();
+                            newStart_time = eventDate.valueOf();
                             reply(`Is this correct for the new time?\n${eventDate.toDateString()} At ${this.addZero(eventDate.getHours())}:${this.addZero(eventDate.getMinutes())}`, { footer: 'y / n' })
                             break;
                         case 'time':
@@ -217,7 +217,7 @@ class addEvent extends databaseManager {
                             newMinutes = parts[1]
                             eventDate.setHours(newHours)
                             eventDate.setMinutes(newMinutes)
-                            newStart_time = eventDate.getTime();
+                            newStart_time = eventDate.valueOf();
                             reply(`Is this correct for the new time?\n${eventDate.toDateString()} At ${this.addZero(eventDate.getHours())}:${this.addZero(eventDate.getMinutes())}`, { footer: 'y / n' })
                             break;
                     }
@@ -286,7 +286,7 @@ class addEvent extends databaseManager {
     async makeSureTableExists(){
         try {
             await this.registerTable('eventData', 'event', 'TEXT');
-            await this.registerColumn('eventData', 'start_time', 'INT');
+            await this.registerColumn('eventData', 'start_time', 'INTEGER');
             await this.registerColumn('eventData', 'status', 'TEXT');
         } catch (error) {
             console.log(error.message)
