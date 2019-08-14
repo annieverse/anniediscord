@@ -144,7 +144,7 @@ module.exports = bot => {
         sql.open(`.data/database.sqlite`);
         
         function data(){
-            sql.get(`SELECT * FROM eventData ORDER BY start_time`).then(data=>{
+            sql.get(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(data=>{
                 if (!data) {
                     if (env.dev) {
                         return bot.user.setActivity(`maintenance.`, {
@@ -155,7 +155,7 @@ module.exports = bot => {
                         return bot.user.setActivity(null);
                     }
                 }
-                let event = data.event
+                let event = data.name
                 let time = data.start_time
                 let status = data.status
                 let currentTime = (new Date());
@@ -167,15 +167,13 @@ module.exports = bot => {
                 // watching = type 3
                 // playing = type 0
 
-                //sql.run(`DELETE FROM eventData WHERE event = '${event}'`);
                 if (status === 'ended') {
-                    sql.run(`DELETE FROM eventData WHERE status = 'ended' AND event = '${event}' AND start_time = ${time}`).then(() => {
+                    sql.run(`DELETE FROM event_data WHERE active = 1 AND name = '${event}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
                         return console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
                     })
                 }
                 
                 if (bufferTime.after < currentTime) {
-                    console.log("after?")
                     if (env.dev) {
                         bot.user.setStatus('dnd');
                         bot.user.setActivity(`maintenance.`, {
@@ -186,11 +184,16 @@ module.exports = bot => {
                         bot.user.setStatus('online');
                         bot.user.setActivity(null);
                     }
-                    sql.run(`UPDATE eventData SET status = 'ended' WHERE event = '${event}' and start_time = ${time}`).then(() => {
-                        sql.run(`DELETE FROM eventData WHERE status = 'ended' AND event = '${event}' AND start_time = ${time}`).then(() => {
-                            console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+                    if (data.repeat_after === 0){
+                        sql.run(`UPDATE event_data SET active = 1 WHERE name = '${event}' and start_time = ${time}`).then(() => {
+                            sql.run(`DELETE FROM event_data WHERE status = 1 AND name = '${event}' AND start_time = ${time}`).then(() => {
+                                console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+                            })
                         })
-                    })
+                    } else {
+                        let diff = data.length-time
+                        sql.run(`UPDATE event_data SET start_time = ${time+data.length} AND length = ${diff} WHERE name = '${event}' and start_time = ${time}`)
+                    }
                     return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
                 } else if (bot.user.presence.game !== null){
                     if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
