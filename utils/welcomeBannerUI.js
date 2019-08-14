@@ -26,10 +26,9 @@ class Banner {
 
 
     async render() {
-
-        const { body: avatar } = await get(this.member.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
+        const user = this.bot.users.get(this.member.id)
+        const { body: avatar } = await get(user.displayAvatarURL.replace(imageUrlRegex, "?size=512"));
         const configProfile = new profileManager();
-        const user = this.bot.users.get(this.member.id);
 
         this.ch.send(`Welcome to **Anime Artists United** ${user} ! Please get your roles in <#538843763544555528> for full access to the server, don't forget to read <#608608699572944896> & <#575363719735803904>. Last but not least enjoy your stay here! :tada:`,
             new Attachment(await welcomeCard(), `welcome!-${user.tag}.jpg`))

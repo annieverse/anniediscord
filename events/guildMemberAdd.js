@@ -6,6 +6,6 @@ module.exports = (bot, member) => {
             * it will send canvas-generated message to welcome channel
             * for every joined user.
     */
-    new Banner({bot, member, channel:`459891664182312982`}).render()
+    new Banner({bot:bot, member:member, channel:`459891664182312982`}).render()
 
 }
