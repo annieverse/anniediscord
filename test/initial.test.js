@@ -2,7 +2,6 @@
 /* eslint-disable  */
 const assert = require(`assert`);
 const { expect } = require(`chai`);
-const { Client } = require(`discord.js`)
 
 describe(`Initial check-up`, () => {
 
