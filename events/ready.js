@@ -4,12 +4,11 @@ const sql = require("sqlite");
 module.exports = bot => {
 
     startup();
-    databasePreparation();
-    if(!env.dev) roleChange();
-    if(!env.dev) autoStatus();
+
 
     /**
      * secret thingy, change color of role
+     * @roleChange
      */
     function roleChange(){
         /**
@@ -134,6 +133,10 @@ module.exports = bot => {
     }
 
 
+    /**
+     *  Automatically change current bot status presence
+     *  @autoStatus
+     */
     function autoStatus(){
 
         let x = 1; // number of minutes
@@ -218,12 +221,15 @@ module.exports = bot => {
 
     /**
      *  
-     * Database table check
-     * @databasePreparation
+     * Database table check & schema preparation
+     * @setupDatabase
      */
-    function databasePreparation() {
+    function setupDatabase() {
 
-        sql.open(`.data/database.sqlite`);
+        sql.open(`.data/database.sqlite`)
+
+        //  Set all cooldown to zero
+        sql.run(`UPDATE usercheck SET expcooldown = "False"`);
 
         //  Register iteminventory if not exist.
         sql.run(`
@@ -233,7 +239,33 @@ module.exports = bot => {
                 quantity INTEGER NOT NULL DEFAULT 0
             )
         `)
+        
+        sql.close()
     }
+
+
+    /**
+     *  
+     * Experimental features
+     * @experimentalFeatures
+     */
+    async function experimentalFeatures(framework=null) {
+
+        //  Returns if no framework to test
+        if (!framework) return
+
+
+        let label = `Framework has passed the test with time taken`
+
+        try {
+            console.time(label)
+            await framework
+            console.timeEnd(label)
+        }
+        catch(e) { 
+            console.log(`Custom test has failed to run because ${e}`) 
+        }
+    }   
 
 
     /**
@@ -243,22 +275,28 @@ module.exports = bot => {
      */
     function startup() {
 
-        sql.open(`.data/database.sqlite`);
-        sql.run(`UPDATE usercheck SET expcooldown = "False"`);
-
         if (env.dev) {
             console.clear()
             console.log(`Codename: ${bot.user.username}`)
             console.timeEnd(`Initialized In`)
             bot.user.setStatus('dnd');
-            bot.user.setActivity(null);
-            /*
             bot.user.setActivity(`maintenance.`, {
                 type: "LISTENING"
             });
-            */
+            /**
+             *  Add the feature you want to test inside parameter.
+             *  @param {Function/Variable} framework
+             */
+            experimentalFeatures()
 
         } else {
+            /**
+             *  Prepare extensions. Only ran on production server.
+             */
+            setupDatabase()
+            roleChange()
+            autoStatus()
+
             console.log(`${bot.user.username} is up.`)
             bot.user.setStatus('online');
             bot.user.setActivity(null);

@@ -3,7 +3,6 @@ console.time(`Initialized In`);
 const { Client } = require("discord.js");
 let bot = new Client();
 const modulesLoader = require(`./utils/modulesLoader`);
-const consoleChat = require(`./utils/consoleChat`);
 const express = require('express');
 const app = express();
 
@@ -21,9 +20,6 @@ require(`dotenv`).config()
 
 //  Start events.
 require("./utils/eventHandler")(bot)
-
-//  Bot Messaging via Console ♡
-consoleChat(bot)
 
 //	Login.
 bot.login(process.env.TOKEN)

@@ -2,12 +2,14 @@
 /* eslint-disable  */
 const assert = require(`assert`);
 const { expect } = require(`chai`);
+const { Client } = require(`discord.js`)
 
 describe(`Initial check-up`, () => {
 
     it(`Load environment variables`, () => {
         expect(require(`dotenv`).config()).to.not.be.undefined;
     })
+
 
     describe(`Transaction handling`, () => {
         let msg = `>buy role baka potato`;
