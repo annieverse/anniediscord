@@ -11,10 +11,12 @@ class Experience {
     constructor(data) {
         this.data = data;
         this.message = data.message;
-        this.ranks = new ranksManager(data.bot, data.message);
+        
+        this.ranks = new ranksManager(data.bot, data.message.guild.member);
         this.db = new databaseManager(data.message.author.id);
         
     }
+
 
     //  Add new rank if user new exp is above threeshold.
     addRank() {
@@ -107,6 +109,20 @@ class Experience {
         let old_rank = this.ranks.ranksCheck(this.data.previous.level).title;
 
         return new_rank !== old_rank ? true : false;
+    }
+
+    // Automate the process
+    async runAndUpdate() {
+        await this.updatingExp()
+
+        //  Update rank if current rank rank is not equal with the new rank.
+        if (this.rankUp) {
+            await this.removeRank();
+            await this.addRank();
+        }
+
+        // Add AC on level up
+        await this.updatingAC()
     }
 
 }

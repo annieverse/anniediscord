@@ -192,7 +192,7 @@ module.exports = bot => {
                         })
                     } else {
                         let diff = data.length-time
-                        sql.run(`UPDATE event_data SET start_time = ${time+data.length} AND length = ${diff} WHERE name = '${event}' and start_time = ${time}`)
+                        sql.run(`UPDATE event_data SET start_time = ${time+data.length}, length = ${diff} WHERE name = '${event}' AND start_time = ${time}`)
                     }
                     return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
                 } else if (bot.user.presence.game !== null){
@@ -229,8 +229,9 @@ module.exports = bot => {
      */
     function setupDatabase() {
 
-        sql.open(`.data/database.sqlite`)
+        sql.open(`.data/database.sqlite`);
 
+        sql.run(`DROP TABLE IF EXISTS eventData`);
         //  Set all cooldown to zero
         sql.run(`UPDATE usercheck SET expcooldown = "False"`);
 
@@ -241,9 +242,23 @@ module.exports = bot => {
                 user_id TEXT NOT NULL DEFAULT 0,
                 quantity INTEGER NOT NULL DEFAULT 0
             )
-        `)
+        `);
         
-        sql.close()
+        sql.run(`CREATE TABLE event_data (
+                name TEXT NOT NULL,
+                desc TEXT NOT NULL,
+                category TEXT NOT NULL,
+                prizes TEXT NOT NULL,
+                start_time INTEGER NOT NULL DEFAULT 0,
+                length INTEGER NOT NULL DEFAULT 0,
+                organizers TEXT NOT NULL,
+                repeat_after INTEGER NOT NULL DEFAULT 0,
+                active INTEGER NOT NULL DEFAULT 0,
+                occurance INTEGER NUT NULL DEFAULT 1
+            )
+        `);
+
+        sql.close();
     }
 
 
