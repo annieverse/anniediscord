@@ -115,6 +115,11 @@ class HeartCollector {
                     notch: true
             })
 
+            /*  These post like notification will be disabled temporary
+                to experiment about does this feature giving negative impact
+                toward user.
+                - naphnaphz.
+                
             //  First or two liked.
             if (this.metadata.favs <= 2) return reply(
                 FEATURED.FIRST_LIKE, {
@@ -131,6 +136,7 @@ class HeartCollector {
                 field: this.metadata.msg.author,
                 notch: true
             })
+            */
         }
         catch(e) {}
     }

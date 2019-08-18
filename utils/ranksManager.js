@@ -75,7 +75,8 @@
             "60": this.getRoles('Earthwork Alchemist'),
             "70": this.getRoles('Canvas Conqueror'),
             "85": this.getRoles('Fame Dweller'),
-            "100": this.getRoles('The Creator')
+            "100": this.getRoles('The Creator'),
+            "180": this.getRoles('Altered Pencilian')
 
       };
 
