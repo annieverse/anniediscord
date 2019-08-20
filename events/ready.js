@@ -21,9 +21,10 @@ module.exports = bot => {
 
         /**
          * The roleSelector is a list of every role you want to change.
+         * TODO: Use group id instead of group name.
          */
         let roleSelector=[
-            'Ruling Star'
+            '☆ Shining Rich Star ☆'
         ]
         /**
          * The colorArray is a list of every color you want to change.
