@@ -36,6 +36,7 @@ class strikeCollection {
             },
             records_size: 0,
             current_date: 0,
+            last_entry: null
         }
 
 
@@ -66,12 +67,17 @@ class strikeCollection {
 
                 "INSIGHTS": {
                     color: palette.crimson,
-                    msg: `Hey **${opt[0]}**, here's the strike data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new strike.`
+                    msg: `Hey **${opt[0]}**, here's the strike data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new strike. Type \`-\` to remove the most recent strike.`
                 },
 
                 "NEW_ENTRY_SUCCESSFUL": {
                     color: palette.darkmatte,
                     msg: `Thankyou **${opt[0]}**! your report has been registered.`
+                },
+
+                "ENTRY_DELETED": {
+                    color: palette.darkmatte,
+                    msg: `Thankyou **${opt[0]}**! the most recent record for **${opt[1]}** has been deleted.`
                 },
 
                 "TOO_SHORT": {
@@ -156,6 +162,17 @@ class strikeCollection {
                     VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}")`)
             }
 
+            //  Delete user's newest strike record
+            get unregister() {
+                console.log(`${metadata.admin.name} has removed a strike from ${metadata.target.id}.`)
+                sql.run(`DELETE FROM strike_list
+                    WHERE timestamp = ${metadata.last_entry.timestamp}
+                    AND assigned_by = "${metadata.last_entry.assigned_by}"
+                    AND userId = "${metadata.last_entry.userId}"
+                    AND reason = "${metadata.last_entry.reason}"`)
+                return log({ code: `ENTRY_DELETED` }, metadata.admin.name, metadata.target.user.username);
+            }
+
         }
 
 
@@ -165,6 +182,7 @@ class strikeCollection {
             let query = new Query(message.guild.members.get(metadata.target.id));
             let res_view = await query.view
             metadata.records_size = res_view.length;
+            if (res_view.length > 0) metadata.last_entry = res_view[0];
 
 
             //  Display parsed result from available user's strike record.
@@ -209,7 +227,7 @@ class strikeCollection {
 
                 //  Register new strike record
                 if (input.startsWith(`+`)) {
-                    metadata.reason = input.substring(2);
+                    metadata.reason = input.substring(1).trim();
                     metadata.current_date = Date.now();
                     metadata.records_size = res_view.length + 1;
 
@@ -218,6 +236,13 @@ class strikeCollection {
 
                     //  Give penalty to the user based on their total records.
                     query.penalty;
+                    collector.stop();
+                }
+                else if (input.startsWith(`-`)) {
+                    if (metadata.records_size > 0) {
+                        metadata.records_size--;
+                        query.unregister;
+                    }
                     collector.stop();
                 }
                 else {
@@ -243,7 +268,7 @@ class strikeCollection {
 
 
             //  Returns if target is not valid member.
-            metadata.target = await utils.userFinding(message.content.substring(command.length + 2))
+            metadata.target = await utils.userFinding(message.content.substring(command.length + env.prefix.length + 1))
             if (!metadata.target) return log({ code: `INVALID_USER` });
 
 
