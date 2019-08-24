@@ -1,6 +1,6 @@
 const Discord = require(`discord.js`)
 const moment = require(`moment`)
-const palette = require(`./colorset.json`)
+const palette = require(`./colorset.json.js`)
 let embed = new Discord.RichEmbed()
 let advEmbed = new Discord.RichEmbed()
 let footeredEmbed = new Discord.RichEmbed()

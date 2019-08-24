@@ -4,7 +4,7 @@ module.exports = (bot, message) => {
 
 	const module = {}
 	const format = require(`./formatManager`)
-	const palette = require(`./colorset.json`)
+	const palette = require(`./colorset.json.js`)
 	const { RichEmbed } = require(`discord.js`)
 	const m = new format(message)
 
@@ -25,7 +25,7 @@ module.exports = (bot, message) => {
 		} = require(`discord.js`)
 		const {
 			darkmatte
-		} = require(`../utils/colorset`)
+		} = require(`./colorset`)
 
 		console.log(typeof (pages))
 		const registeringEmbeds = () => {

@@ -1,6 +1,6 @@
 const { dev, administrator_id } = require(`../.data/environment`)
 const { art_domain } = require(`../modules/config`)
-const database = require(`../utils/databaseManager`)
+const database = require(`./databaseManager`)
 const KeyvClient = require(`keyv`)
 const keyv = new KeyvClient()
 

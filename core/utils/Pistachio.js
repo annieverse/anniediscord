@@ -28,10 +28,10 @@ module.exports = (Components) => {
 	container.palette = require(`./colorset`)
 
 	//  Storing role ids
-	container.roles = require(`./role-list.json`)
+	container.roles = require(`./role-list.json.js`)
 
 	//  Storing functions.js functions
-	container.utils = require(`./functions.js`)(bot, message)
+	container.utils = require(`./functions.js.js`)(bot, message)
 
 	//  Storing transaction checkout handler
 	container.Checkout = require(`./transactionCheckout`)
