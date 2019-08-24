@@ -1,9 +1,25 @@
 ##### **08/24/19 | 5.0.0 - >**
 
-   >` - Card Rebalance `   
-   >` - Beta voice-chat exp `  
-   >` - Added Profile Sticker for seasonal halloween event `   
-   >` - Disabled Post Engagement Notification `
+   >` - Card Rebalance :`   
+         > 1. `Kitomi[Owner's Prosperity] effect has been    nerfed greatly. (150% -> 50%)  `   
+         >2. `Naph[White's Cat Paradise] effect has been halved. (100EXP -> 50EXP) `  
+         >3. `Vezeko[Lewding Pleasure] effect has been halved. (500% -> 250%)   `  
+         >4. `Pan[Party Time] effect revamp:  `  
+            --- Previous: **150%+ EXP** in #vc-off-topic & #music   
+            --- New: **50%+ EXP** per minute while talking or connected in vc channels.  
+         >5. `Ami[False Utopia] effect has been removed.`  
+         >6. `Snowy[Silent Ghosty] effect has been removed.`
+
+   >` - New 5-star card (collectibles) :`    
+      > 1. `Nezuko(★★★★★)`
+      > 2. `Shiro(★★★★★)`
+
+   >` - Now you are able to gain exp by talking in voice-channel `  
+   >` - Added Profile Sticker. `   
+   >` - Disabled Post Engagement Notification `    
+   >` - New Rank has been added. "Altered Pencilian"`    
+   >` - Nitro Booster role name has been changed to "☆ Shining Rich Star ☆"`  
+   >` - Various bug fixes` 
 
 
 

@@ -1,9 +1,13 @@
 
 /* eslint-disable  */
-const assert = require(`assert`);
 const { expect } = require(`chai`);
 
-describe(`Initial check-up`, () => {
+describe(`Initial check`, () => {
+
+    //  Load env variables
+    require(`dotenv`).config()
+
+
 
     it(`Load environment variables`, () => {
         expect(require(`dotenv`).config()).to.not.be.undefined;
