@@ -9,7 +9,15 @@ module.exports = bot => {
 	bot.on(`ready`, async() => reqEvent(`ready`)(bot))
 	bot.on(`error`, async (e) => reqEvent(`error`)(bot, e, message_object))
 	bot.on(`warn`, async (e) => reqEvent(`warn`)(bot, e, message_object))
-	if (env.dev) bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
+	
+
+
+	/**
+	 * 	Will be enabled once the cpu-leak issue has been fixed.
+	 */
+	//if (env.dev) bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
+
+
 
 	if (!env.dev) {
 		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))

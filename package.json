@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "eslint .",
-    "start": "pm2 start server.js --no-daemon --max-memory-restart 400M",
-    "beta": "nodemon server.js"
+    "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
+    "beta": "nodemon index.js"
   },
   "engines": {
     "node": "10.16.0"
