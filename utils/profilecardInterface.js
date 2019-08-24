@@ -39,6 +39,7 @@ async function profile(stacks, member) {
         rtg: userdata.rating,
         likecount: userdata.liked_counts,
         cov: userdata.cover,
+        stic: userdata.sticker,
         log: userdata.last_login,
         get clr() {
             return this.ui === "light_profileskin" ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() :
@@ -53,14 +54,16 @@ async function profile(stacks, member) {
             base: palette.nightmode,
             border: palette.deepnight,
             text: palette.white,
-            secondaryText: palette.lightgray
+            secondaryText: palette.lightgray,
+            sticker: 'dark'
         },
 
         "light_profileskin": {
             base: palette.white,
             border: palette.lightgray,
             text: palette.darkmatte,
-            secondaryText: palette.blankgray
+            secondaryText: palette.blankgray,
+            sticker: 'light'
         }
     }
 
@@ -144,22 +147,25 @@ async function profile(stacks, member) {
         //.addRect(startPos_x, startPos_y+215, baseWidth, 55) // badges area
         .save() // stack 2
 
+    /**
+     *    PROFILE
+     *    STICKER
+     *
+     */
+    if (user.stic) {
+        canv.addImage(await configProfile.getAsset(user.stic+switchColor[usercolor].sticker), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
+    }
 
         /**
          *    PROFILE
          *    HEADER COVER
          * 
          */
-        .createBeveledClip(startPos_x, startPos_y, baseWidth, 270, 1)
-        .setColor(user.clr)
 
     if (!user.cov) {
-        canv.addRect(startPos_x, startPos_y - 350, baseWidth + 40, 922)
-            .addImage(await configProfile.getAsset('defaultcover1'), startPos_x, startPos_y, baseWidth + 50, 270, 107) // COVER HEADER
+        canv.addImage(await configProfile.getAsset('defaultcover1'), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
     } else {
-        //canv.addImage(avatar, startPos_x, startPos_y-200, baseWidth+50, baseWidth+100, 107) // COVER HEADER   
-        canv.addRect(startPos_x, startPos_y - 350, baseWidth + 40, 922)
-        canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth + 50, 270, 107) // COVER HEADER   
+        canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
     }
 
     canv.restore() // call stack 2
