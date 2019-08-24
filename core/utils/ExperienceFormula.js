@@ -35,7 +35,7 @@ class Experience {
 			maxexp: 0,
 			nextexpcurve: 0
 		},
-		previous: {
+		user: {
 			currentexp: 0,
 			level: 0,
 			maxexp: 0,
@@ -54,14 +54,14 @@ class Experience {
 		this.message.guild.member(this.data.message.author.id).addRole(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.data.updated.level).title))
 	}
 
-	//  Remove previous rank if new level gap is greater than ranks threeshold.
+	//  Remove user rank if new level gap is greater than ranks threeshold.
 	removeRank() {
-		const previousDuplicateRanks = (this.ranks.ranksCheck(this.data.updated.level).lvlcap)
+		const userDuplicateRanks = (this.ranks.ranksCheck(this.data.updated.level).lvlcap)
 			.filter(val => val < this.data.updated.level)
 
 		let idpool = []
-		for (let i in previousDuplicateRanks) {
-			idpool.push(((this.ranks.ranksCheck(previousDuplicateRanks[i]).rank).id).toString())
+		for (let i in userDuplicateRanks) {
+			idpool.push(((this.ranks.ranksCheck(userDuplicateRanks[i]).rank).id).toString())
 		}
 		return this.message.guild.member(this.data.message.author.id).removeRoles(idpool)
 	}
@@ -110,12 +110,12 @@ class Experience {
 	// Add AC (on level up)
 	updatingAC() {
 		// If new level
-		if (this.data.updated.level !== this.data.previous.level) {
+		if (this.data.updated.level !== this.data.user.level) {
 			// For each level
-			for (let i = 0; i < this.data.updated.level - this.data.previous.level; i++) {
+			for (let i = 0; i < this.data.updated.level - this.data.user.level; i++) {
 				// Timeout to not spam Discord's server too much
 				setTimeout(() => {
-					const updatedlevel = this.data.previous.level + i + 1
+					const updatedlevel = this.data.user.level + i + 1
 					const bonusac = () => {
 						return updatedlevel === 0 ? 35 : 35 * updatedlevel
 					}
@@ -134,10 +134,10 @@ class Experience {
 		}
 	}
 
-	// Returns true if new_rank is different from previous one.
+	// Returns true if new_rank is different from user one.
 	get rankUp() {
 		let new_rank = this.ranks.ranksCheck(this.data.updated.level).title
-		let old_rank = this.ranks.ranksCheck(this.data.previous.level).title
+		let old_rank = this.ranks.ranksCheck(this.data.user.level).title
 
 		return new_rank !== old_rank ? true : false
 	}

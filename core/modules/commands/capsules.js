@@ -24,7 +24,7 @@ class Capsule {
 			get total_gained() {
 				return this.exp_per_capsule * this.to_use
 			},
-			previous: {
+			user: {
 				currentexp: data.currentexp,
 				level: data.level,
 				maxexp: data.maxexp,
@@ -52,22 +52,8 @@ class Capsule {
 
         
 		//  Use exp framework
-		const xp = new Experience(metadata)
+		await new Experience(metadata).runAndUpdate()
 
-
-		//  Withdraw capsules and get calculated new exp metadata
-		await db(author.id).withdraw(metadata.to_use, `power_capsules`)
-		await xp.updatingExp()
-
-
-		//  Update rank if current rank rank is not equal with the new rank.
-		if (xp.rankUp) {
-			await xp.removeRank()
-			await xp.addRank()
-		}
-
-		// Add AC on level up
-		await xp.updatingAC()
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {

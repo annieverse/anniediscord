@@ -26,7 +26,7 @@ class convertingArtcoins {
 			get total_gained() {
 				return this.to_use / 2
 			},
-			previous: {
+			user: {
 				currentexp: data.currentexp,
 				level: data.level,
 				maxexp: data.maxexp,
@@ -50,19 +50,7 @@ class convertingArtcoins {
                 
 
 		//  Use exp framework
-		const xp = new Experience(metadata)
-
-
-		//  Withdraw capsules and get calculated new exp metadata
-		await db(author.id).withdraw(metadata.to_use, `artcoins`)
-		await xp.updatingExp()
-
-
-		//  Update rank if current rank rank is not equal with the new rank.
-		if (xp.rankUp) {
-			await xp.removeRank()
-			await xp.addRank()
-		}
+		await new Experience(metadata).runAndUpdate()
 
 
 		//  Done
