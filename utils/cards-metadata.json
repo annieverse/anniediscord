@@ -50,8 +50,8 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 2,
-          "ac": 2,
+          "exp": 0.5,
+          "ac": 0.5,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -79,7 +79,7 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 100,
+          "exp": 50,
           "ac": null,
           "status": "passive",
           "type": "flat",
@@ -115,12 +115,19 @@
           "459893388767133711",
           "520716400097099777"
         ],
-        "effect": {
+        "effects": {
           "exp": 2,
           "ac": null,
           "status": "active",
           "type": "multiplier",
           "attachment_only": true
+        },
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
     }
@@ -207,7 +214,7 @@
         ],
         "effect": {
           "exp": null,
-          "ac": 5,
+          "ac": 2.5,
           "status": "active",
           "type": "multiplier",
           "attachment_only": false
@@ -233,10 +240,13 @@
         "type": "exp_booster",
         "channel": [
           "463536514887057436",
-          "459938699606491147"
+          "459938699606491147",
+          "459891664182312984",
+          "469708618913153026",
+          "601254607443984415"
         ],
         "effect": {
-          "exp": 1.5,
+          "exp": 0.5,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -293,8 +303,15 @@
         "channel": [
           "459891664182312982"
         ],
-        "effect": {
+        "effects": {
           "exp": 0.5,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
+        },
+        "effect": {
+          "exp": null,
           "ac": null,
           "status": "active",
           "type": "multiplier",

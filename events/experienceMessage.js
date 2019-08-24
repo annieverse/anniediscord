@@ -4,6 +4,7 @@ const sql = require("sqlite");
 const palette = require(`../utils/colorset.json`);
 const ranksManager = require('../utils/ranksManager');
 const formatManager = require('../utils/formatManager');
+const Experience = require(`../utils/ExperienceFormula`);
 let cards = require(`../utils/cards-metadata.json`);
 sql.open(`.data/database.sqlite`)
 

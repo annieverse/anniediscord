@@ -40,7 +40,7 @@ class Rep {
 
 		//	Returns if user rep duration still in cooldown
 		if ((this.senderMeta.data.repcooldown !== null) && metadata.cooldown - (Date.now() - this.senderMeta.data.repcooldown) > 0) return reply(REP.IN_COOLDOWN, {
-			socket: [moment(data.repcooldown + metadata.cooldown).fromNow()],
+			socket: [moment(this.senderMeta.data.repcooldown + metadata.cooldown).fromNow()],
 			color: palette.red
 		})
 		//	Returns short-guide if user doesn't specify any parameter
