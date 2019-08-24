@@ -146,7 +146,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getBadge(id) {
-		return fsn.readFile(`./images/badges/${id}.jpg`)
+		return fsn.readFile(`./core/images/badges/${id}.jpg`)
 	}
 
 
@@ -155,7 +155,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getAsset(id) {
-		return fsn.readFile(`./images/${id}.png`)
+		return fsn.readFile(`./core/images/${id}.png`)
 	}
 
 	/**
@@ -163,7 +163,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getCoverAsset(id) {
-		return fsn.readFile(`./images/covers/${id}.png`)
+		return fsn.readFile(`./core/images/covers/${id}.png`)
 	}
 
 
