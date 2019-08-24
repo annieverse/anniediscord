@@ -7,8 +7,8 @@
          >4. `Pan[Party Time] effect revamp:  `  
             --- Previous: **150%+ EXP** in #vc-off-topic & #music   
             --- New: **50%+ EXP** per minute while talking or connected in vc channels.  
-         >5. `Ami[False Utopia] effect has been removed.`  
-         >6. `Snowy[Silent Ghosty] effect has been removed.`
+         >5. `Ami[False Utopia] now only collectible.`     
+         >6. `Snowy[Silent Ghosty] now only collectible.`   
 
    >` - New 5-star card (collectibles) :`    
       > 1. `Nezuko(★★★★★)`
@@ -18,7 +18,8 @@
    >` - Added Profile Sticker. `   
    >` - Disabled Post Engagement Notification `    
    >` - New Rank has been added. "Altered Pencilian"`    
-   >` - Nitro Booster role name has been changed to "☆ Shining Rich Star ☆"`  
+   >` - Nitro Booster role name has been changed to "☆ Shining Rich Star ☆"`
+   >` - Duplicate card will return you a few amount of artcoins.`      
    >` - Various bug fixes` 
 
 

@@ -319,5 +319,55 @@
         }
       }
     }
+  },
+  "shiro_card": {
+    "fullname": "Shiro",
+    "alias": "shiro_card",
+    "rarity": "★★★★★",
+    "description": "No game no life",
+    "url": "https://i.ibb.co/jWSprn1/shiro-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effects": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "nezuko_card": {
+    "fullname": "Nezuko",
+    "alias": "nezuko_card",
+    "rarity": "★★★★★",
+    "description": "rawr!",
+    "url": "https://i.ibb.co/GCVHGvD/nezuko-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effects": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
   }
 }

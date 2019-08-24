@@ -67,7 +67,7 @@ module.exports = (Components) => {
 		container.isAdmin = message.member.roles.find(r => (r.name === `Creators Council`) || (r.name === `Channel Overseer`))
 
 		//  Check for developer authority
-		container.isDev = message.member.roles.find(r => r.name === `Developer Team`)
+		container.isDev = message.member.roles.find(r => (r.name === `Developer Team`) || (r.name === `Grand Master`))
 
 		//  Check for event team authority
 		container.isEventManager = message.member.roles.find(r => r.name === `Events Team`)
@@ -232,7 +232,7 @@ module.exports = (Components) => {
 
 	//  Load asset from default images dir
 	container.loadAsset = async (id) => {
-		return fsn.readFile(`./images/${id}.png`)
+		return fsn.readFile(`./core/images/${id}.png`)
 	}
 
 

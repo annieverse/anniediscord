@@ -39,22 +39,14 @@ class gachaContainerStoring {
 			//Check for card duplicates
 			if (key.indexOf(`card`) > -1) {
 				if (data[key]) {
-					const convert_to_shard = key.replace(`card`, `shards`)
 
-					//	Each card will be dismantled into 5 shards & 10k fragments.
-					await this.db.storingUserGachaMetadata({
-						[convert_to_shard]: 5 * src[key],
-						fragments: 10000 * src[key],
-					})
+					//	Each card will be dismantled into artcoins.
+					await this.db.storeArtcoins(10000)
 
 					reply(GACHA.DUPLICATE_CARDS, {
 						socket: [
 							metacards[key].fullname,
-							emoji(convert_to_shard),
-							5 * src[key],
-							convert_to_shard,
-							emoji(`fragments`),
-							10000 * src[key]
+							emoji(`artcoins`)
 						]
 					})
 
