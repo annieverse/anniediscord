@@ -34,7 +34,7 @@ module.exports.help = {
 	name: `profile`,
 	aliases: [`prfl`, `profil`, `p`, `mycard`],
 	description: `Display user's profile card`,
-	usage: `${require(`../../.data/environment.json`).prefix}profile [@user]<optional>`,
+	usage: `profile [@user]<optional>`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

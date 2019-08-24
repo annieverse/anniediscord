@@ -67,7 +67,7 @@ module.exports.help = {
 	name: `daily`,
 	aliases: [`dly`, `daili`, `dail`, `dayly`, `attendance`, `dliy`],
 	description: `collects a daily flat rate of AC`,
-	usage: `${require(`../../.data/environment.json`).prefix}daily`,
+	usage: `daily`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

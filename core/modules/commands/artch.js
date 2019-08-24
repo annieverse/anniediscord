@@ -75,7 +75,7 @@ module.exports.help = {
 	name:`artch`,
 	aliases: [`art.ch`],
 	description: `Selects a random theme for an art duel`,
-	usage: `${require(`../../.data/environment.json`).prefix}art.ch`,
+	usage: `art.ch`,
 	group: `General`,
 	public: false,
 	required_usermetadata: false,

@@ -1,14 +1,12 @@
 const reqEvent = (event) => require(`../events/${event}.js`)
-const env = require(`../.data/environment.json`)
+const env = require(`../../.data/environment.json`)
 
 module.exports = bot => {
-    
-	bot.on(`ready`, async() => reqEvent(`ready`)(bot))
-	// Need these lines to have error catcher in own file
+	
+	//	Cached message
 	let message_object
-	bot.on(`message`, message => {
-		message_object = message
-	})
+
+	bot.on(`ready`, async() => reqEvent(`ready`)(bot))
 	bot.on(`error`, async (e) => reqEvent(`error`)(bot, e, message_object))
 	bot.on(`warn`, async (e) => reqEvent(`warn`)(bot, e, message_object))
 	if (env.dev) bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
@@ -23,5 +21,8 @@ module.exports = bot => {
 	}
 
 	if (env.active_exp) bot.on(`message`, async(message) => reqEvent(`experienceMessage`)(bot, message))
-	bot.on(`message`, async(message) => reqEvent(`message`)(bot, message))
+	bot.on(`message`, async(message) => {
+		message_object = message
+		reqEvent(`message`)(bot, message)
+	})
 }

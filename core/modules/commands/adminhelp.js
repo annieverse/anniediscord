@@ -140,7 +140,7 @@ module.exports.help = {
 	name: `adminhelp`,
 	aliases: [`ahelp`],
 	description: `A list of all admin commands sent by dm`,
-	usage: `${require(`../../.data/environment.json`).prefix}adminhelp`,
+	usage: `adminhelp`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: false,

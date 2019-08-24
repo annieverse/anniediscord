@@ -2,7 +2,7 @@ const Discord = require(`discord.js`)
 const moment = require(`moment`)
 const formatManager = require(`../../utils/formatManager`)
 const fs = require(`fs`)
-const env = require(`../../.data/environment`)
+const env = require(`../../../.data/environment`)
 
 class serverRemote {
 	constructor(Stacks) {
@@ -188,7 +188,7 @@ module.exports.help = {
 	name: `server-remote`,
 	aliases: [`server`],
 	description: `Developer Command | remote control of bot`,
-	usage: `${require(`../../.data/environment.json`).prefix}server <command>`,
+	usage: `server <command>`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: false,

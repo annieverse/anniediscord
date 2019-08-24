@@ -117,7 +117,7 @@ module.exports.help = {
 	name: `gift`,
 	aliases: [],
 	description: `gives an item from your inventory to a specified user`,
-	usage: `${require(`../../.data/environment.json`).prefix}gift @user`,
+	usage: `gift @user`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

@@ -62,7 +62,7 @@ module.exports.help = {
 	name: `weeklyevent`, // 
 	aliases: [], 
 	description: `check the time left on the weekly event`,
-	usage: `${require(`../../.data/environment.json`).prefix}weeklyevent`,
+	usage: `weeklyevent`,
 	group: `general`,
 	public: false,
 	require_usermetadata: false,

@@ -48,7 +48,7 @@ module.exports.help = {
 	name: `inventory`,
 	aliases: [],
 	description: `Views your inventory`,
-	usage: `${require(`../../.data/environment.json`).prefix}inventory`,
+	usage: `inventory`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

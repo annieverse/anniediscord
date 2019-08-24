@@ -18,7 +18,7 @@ module.exports.help = {
 	name: `screenshare`, // This MUST equal the filename
 	aliases: [], // More or less this is what the user will input on discord to call the command
 	description: `gives a link to screen share in the server`,
-	usage: `${require(`../../.data/environment.json`).prefix}screenshare`,
+	usage: `screenshare`,
 	group: `general`,
 	public: true,
 	require_usermetadata: false,

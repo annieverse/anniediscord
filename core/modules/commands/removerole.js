@@ -87,7 +87,7 @@ module.exports.help = {
 	name:`removerole`,
 	aliases: [],
 	description: `Removing user's roles.`,
-	usage: `${require(`../../.data/environment.json`).prefix}removerole @user @role`,
+	usage: ` removerole @user @role`,
 	group: `Admin`,
 	public: true,
 	require_usermetadata: true,

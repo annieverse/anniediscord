@@ -22,7 +22,7 @@ module.exports.help={
 	name:`invite`,
 	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `link`],
 	description: `gives a server invite link`,
-	usage: `${require(`../../.data/environment.json`).prefix}invite`,
+	usage: `invite`,
 	group: `Server`,
 	public: true,
 	required_usermetadata: false,

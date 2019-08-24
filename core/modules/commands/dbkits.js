@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
-const databaseManager = require(`../../this.utils/databaseManager`)
-const formatManager = require(`../../this.utils/formatManager`)
+const databaseManager = require(`../../utils/databaseManager`)
+const formatManager = require(`../../utils/formatManager`)
 
 class dbkits {
 	constructor(Stacks) {
@@ -529,7 +529,7 @@ module.exports.help = {
 	name: `dbkits`,
 	aliases: [`db`],
 	description: `Allows to do sql queries and other commands`,
-	usage: `${require(`../../.data/environment.json`).prefix}db <subcommand>`,
+	usage: `db <subcommand>`,
 	group: `Admin`,
 	public: true,
 	require_usermetadata: true,

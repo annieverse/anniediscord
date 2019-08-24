@@ -59,7 +59,7 @@ module.exports.help = {
 	name:`event-join`,
 	aliases: [`join`],
 	description: `allows you to submit to an event`,
-	usage: `${require(`../../.data/environment.json`).prefix}join`,
+	usage: `join`,
 	group: `Server`,
 	public: true,
 	required_usermetadata: true,

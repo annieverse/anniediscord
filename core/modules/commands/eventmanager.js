@@ -572,7 +572,7 @@ module.exports.help = {
 	name: `eventmanager`,
 	aliases: [`event`, `e`],
 	description: `Add a event with a time to display :)`,
-	usage: `${require(`../../.data/environment.json`).prefix}event`,
+	usage: `event`,
 	group: `general`,
 	public: true,
 	require_usermetadata: false,

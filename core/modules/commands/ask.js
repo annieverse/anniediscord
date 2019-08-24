@@ -30,7 +30,7 @@ module.exports.help = {
 	name: `ask`,
 	aliases: [],
 	description: `You can ask any question and Annie will answer you.`,
-	usage: `${require(`../../.data/environment.json`).prefix}ask <message>`,
+	usage: `ask <message>`,
 	group: `Fun`,
 	public: true,
 	required_usermetadata: false,

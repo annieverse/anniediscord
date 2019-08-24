@@ -256,7 +256,7 @@ module.exports.help = {
 	name: `clanaddbeta`,
 	aliases: [],
 	description: `create a clan`,
-	usage: `${require(`../../.data/environment.json`).prefix}beta-createclan`,
+	usage: `beta-createclan`,
 	group: `General`,
 	public: false,
 	require_usermetadata: true,

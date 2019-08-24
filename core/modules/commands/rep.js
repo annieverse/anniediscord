@@ -70,7 +70,7 @@ module.exports.help = {
 	name: `rep`,
 	aliases: [],
 	description: `Gives rep to a user`,
-	usage: `${require(`../../.data/environment.json`).prefix}rep @user`,
+	usage: ` rep @user`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

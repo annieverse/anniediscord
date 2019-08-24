@@ -86,7 +86,7 @@ module.exports.help = {
 	name: `capsules`,
 	aliases: [`eat`],
 	description: `Eats the capsules you get from gacha and gives you XP in return`,
-	usage: `${require(`../../.data/environment.json`).prefix}eat <amount>`,
+	usage: `eat <amount>`,
 	group: `Shop-related`,
 	public: true,
 	required_usermetadata: true,

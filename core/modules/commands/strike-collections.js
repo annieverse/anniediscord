@@ -3,7 +3,7 @@ const moment = require(`moment`)
 const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
-const env = require(`../../.data/environment`)
+const env = require(`../../../.data/environment`)
 class strikeCollection {
 	constructor(Stacks) {
 		this.stacks = Stacks
@@ -284,7 +284,7 @@ module.exports.help = {
 	name: `strike-collections`,
 	aliases: [`strike`,`strikes`, `strikez`],
 	description: `Give a strike to a user`,
-	usage: `${require(`../../.data/environment.json`).prefix}strike @user`,
+	usage: `strike @user`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,

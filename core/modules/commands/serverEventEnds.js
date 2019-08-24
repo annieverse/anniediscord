@@ -45,7 +45,7 @@ module.exports.help = {
 	name:`serverEventEnds`,
 	aliases: [`eventend`],
 	description: `Take all expired tickets from event participant`,
-	usage: `${require(`../../.data/environment.json`).prefix}eventend`,
+	usage: `eventend`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,

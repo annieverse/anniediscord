@@ -1,1 +1,1 @@
-require(`./core/server`)
+require(`./core/server`)()

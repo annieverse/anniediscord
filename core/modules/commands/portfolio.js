@@ -44,7 +44,7 @@ module.exports.help = {
 	name: `portfolio`,
 	aliases: [`portfolio`, `protofolio`],
 	description: `Display user's portfolio card`,
-	usage: `${require(`../../.data/environment.json`).prefix}portfolio [@user]<optional>`,
+	usage: `portfolio [@user]<optional>`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

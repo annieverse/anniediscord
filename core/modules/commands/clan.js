@@ -947,7 +947,7 @@ module.exports.help = {
 	name: `clan`,
 	aliases: [`guild`, `yuuni`, `yunyun`, `yun`],
 	description: `Clans`,
-	usage: `${require(`../../.data/environment.json`).prefix}clan2`,
+	usage: `clan2`,
 	group: `Admin`,
 	public: false,
 	required_usermetadata: true,

@@ -4,7 +4,7 @@ module.exports = (bot, message) => {
 
 	const module = {}
 	const format = require(`./formatManager`)
-	const palette = require(`./colorset.json.js`)
+	const palette = require(`./colorset`)
 	const { RichEmbed } = require(`discord.js`)
 	const m = new format(message)
 

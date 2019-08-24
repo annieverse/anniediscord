@@ -70,7 +70,7 @@ module.exports.help = {
 	name:`subcategory`,
 	aliases: [`sub`],
 	description: `Shows the themes for a category`,
-	usage: `${require(`../../.data/environment.json`).prefix}sub <category>`,
+	usage: `sub <category>`,
 	group: `General`,
 	public: false,
 	require_usermetadata: false,

@@ -87,7 +87,7 @@ module.exports.help = {
 	name: `buy`,
 	aliases: [],
 	description: `buy an item from the shop`,
-	usage: `${require(`../../.data/environment.json`).prefix}buy <item>`,
+	usage: `buy <item>`,
 	group: `Shop-related`,
 	public: true,
 	required_usermetadata: true,

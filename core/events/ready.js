@@ -1,4 +1,4 @@
-const env = require(`../.data/environment.json`)
+const env = require(`../../.data/environment.json`)
 const sql = require(`sqlite`)
 
 module.exports = bot => {

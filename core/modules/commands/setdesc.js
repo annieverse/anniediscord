@@ -52,7 +52,7 @@ module.exports.help = {
 	name: `setdesc`,
 	aliases: [`sd`],
 	description: `Set description for profile card`,
-	usage: `${require(`../../.data/environment.json`).prefix}setdesc <message>`,
+	usage: `setdesc <message>`,
 	group: `General`,
 	public: true,
 	require_usermetadata: true,

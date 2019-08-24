@@ -106,7 +106,7 @@ module.exports.help = {
 	name:`mute`,
 	aliases: [],
 	description: `mutes a user and sends them a dm`,
-	usage: `${require(`../../.data/environment.json`).prefix}mute @user [time]<optional (defaults to 1d if nothing supplied) <reason>`,
+	usage: `mute @user [time]<optional (defaults to 1d if nothing supplied) <reason>`,
 	group: `Admin`,
 	public: true,
 	require_usermetadata: true,

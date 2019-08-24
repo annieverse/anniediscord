@@ -35,7 +35,7 @@ module.exports.help = {
 	name: `eval`,
 	aliases: [],
 	description: `evalutes a line of code`,
-	usage: `${require(`../../.data/environment.json`).prefix}eval <what you want to test>`,
+	usage: `eval <what you want to test>`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,

@@ -8,9 +8,9 @@ class modulesLoader {
 		Client.commands = new Collection()
 		Client.aliases = new Collection()
 
-		readdir(`./modules/commands/`, (err, files) => {
+		readdir(`./core/modules/commands/`, (err, files) => {
 
-			if (err) throw err
+			if (err) return console.log(`Modules failed to load.`)
 			let jsfile = files.filter(f => f.split(`.`).pop() === `js`)
 			if (jsfile.length <= 0) return
 

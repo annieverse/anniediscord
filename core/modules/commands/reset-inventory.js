@@ -37,7 +37,7 @@ module.exports.help = {
 	name: `reset-inventory`,
 	aliases: [`_resetinventory`],
 	description: `resets your inventory`,
-	usage: `${require(`../../.data/environment.json`).prefix}_resetinventory`,
+	usage: `_resetinventory`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,

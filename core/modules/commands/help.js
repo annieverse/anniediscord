@@ -377,7 +377,7 @@ module.exports.help = {
 	name: `help`,
 	aliases: [`thelp`],
 	description: `all avaible commands`,
-	usage: `${require(`../../.data/environment.json`).prefix}help`,
+	usage: `help`,
 	group: `general`,
 	public: false,
 	require_usermetadata: true,

@@ -91,7 +91,7 @@ module.exports.help = {
 	name: `redeem`,
 	aliases: [],
 	description: `Buys gacha tickets`,
-	usage: `${require(`../../.data/environment.json`).prefix}redeem <amount>`,
+	usage: ` redeem <amount>`,
 	group: `Shop-related`,
 	public: true,
 	required_usermetadata: true,

@@ -28,10 +28,10 @@ module.exports = (Components) => {
 	container.palette = require(`./colorset`)
 
 	//  Storing role ids
-	container.roles = require(`./role-list.json.js`)
+	container.roles = require(`./role-list`)
 
 	//  Storing functions.js functions
-	container.utils = require(`./functions.js.js`)(bot, message)
+	container.utils = require(`./functions`)(bot, message)
 
 	//  Storing transaction checkout handler
 	container.Checkout = require(`./transactionCheckout`)
@@ -40,7 +40,7 @@ module.exports = (Components) => {
 	container.Transaction = require(`./transactionHandler`)
 
 	//  Storing environment.json keys
-	container.environment = require(`../.data/environment.json`)
+	container.environment = require(`../../.data/environment.json`)
 
 	//  Storing cards data
 	container.metacards = require(`./cards-metadata`)

@@ -19,7 +19,7 @@ module.exports.help = {
 	name: `avatar`,
 	aliases: [`ava`, `pfp`],
 	description: `Grabs your's or a specified user's avatar and displays it`,
-	usage: `${require(`../../.data/environment.json`).prefix}avatar [user]`,
+	usage: `avatar [user]`,
 	group: `Fun`,
 	public: true,
 	required_usermetadata: true,

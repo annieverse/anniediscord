@@ -47,7 +47,7 @@ module.exports.help = {
 	name: `mail`,
 	aliases: [],
 	description: `Send a message to a specified user`,
-	usage: `${require(`../../.data/environment.json`).prefix}mail @user <message>`,
+	usage: `mail @user <message>`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,
