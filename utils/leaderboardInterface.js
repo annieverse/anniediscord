@@ -263,8 +263,7 @@ const render = async (stacks, metadata) => {
 
             metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`;
             
-            if (user.authorindex_ac > (await dbmanager.authorIndexRanking('userinventories', 'artcoins', `277266191540551680`))) user.authorindex_ac--;
-
+            if (user.authorindex_ac > (await dbmanager.authorIndexRanking('userinventories', 'artcoins', `277266191540551680`))) user.authorindex_ac-=2;
             metadata.footer_components = [user.authorindex_ac + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)];
 
             for (let i = 0; i < user.acgroup.length; i++) {

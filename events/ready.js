@@ -24,7 +24,7 @@ module.exports = bot => {
          * TODO: Use group id instead of group name.
          */
         let roleSelector=[
-            '☆ Shining Rich Star ☆'
+            '585550404197285889'
         ]
         /**
          * The colorArray is a list of every color you want to change.
@@ -80,7 +80,7 @@ module.exports = bot => {
              * @returns {object} Role Object
              */
             async function grabRole(role){
-                return bot.guilds.get(`459891664182312980`).roles.find(n => n.name === role);
+                return bot.guilds.get(`459891664182312980`).roles.find(n => n.id === role);
             }
 
             
