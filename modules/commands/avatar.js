@@ -7,7 +7,7 @@ class Avatar {
 		this.stacks = Stacks
 	}
 	async execute() {
-		const { avatarWrapper, meta: { author } } = this.stacks;
+		const { avatarWrapper, meta: { author } } = this.stacks
 		return avatarWrapper(author.id)
 	}
 }
@@ -16,11 +16,11 @@ class Avatar {
 
 module.exports.help = {
 	start: Avatar,
-	name: "avatar",
-	aliases: ['ava', 'pfp'],
+	name: `avatar`,
+	aliases: [`ava`, `pfp`],
 	description: `Grabs your's or a specified user's avatar and displays it`,
 	usage: `${require(`../../.data/environment.json`).prefix}avatar [user]`,
-	group: "Fun",
+	group: `Fun`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: true

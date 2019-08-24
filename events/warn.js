@@ -1,5 +1,5 @@
-module.exports = (bot, e, message_object) => {
-    let testChannel = bot.channels.get('581642059090362368');
-    testChannel.send(e);
-    console.warn(e);
-};
+module.exports = (bot, e) => {
+	let testChannel = bot.channels.get(`581642059090362368`)
+	testChannel.send(e)
+	console.warn(e)
+}

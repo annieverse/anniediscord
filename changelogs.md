@@ -1,3 +1,12 @@
+##### **08/24/19 | 5.0.0 - >**
+
+   >` - Card Rebalance `   
+   >` - Beta voice-chat exp `  
+   >` - Added Profile Sticker for seasonal halloween event `   
+   >` - Disabled Post Engagement Notification `
+
+
+
 ##### **05/16/19 | 4.0.0 - >**
    >` - Lucky Ticket. (AAU gacha minigame) `  
    >` - Improved purchase system : `  

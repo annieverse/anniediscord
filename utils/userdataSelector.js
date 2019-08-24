@@ -1,6 +1,6 @@
-`use strict`;
-const databaseManager = require(`./databaseManager`);
-const userSelector = require(`./userSelector`);
+`use strict`
+const databaseManager = require(`./databaseManager`)
+const userSelector = require(`./userSelector`)
 
 /**
  *  Centralized Collections
@@ -9,44 +9,44 @@ const userSelector = require(`./userSelector`);
  *  @returns {Object}
  */
 class Data {
-    constructor(meta = {}) {
-        this.meta = meta;
-        this.requested_data = {};
-    }
+	constructor(meta = {}) {
+		this.meta = meta
+		this.requested_data = {}
+	}
 
-    delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+	delay(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms))
+	}
 
-    async request() {
-        try {
-            const user = await new userSelector(this.meta).get();
-            const db = new databaseManager(user.id);
-            let res = await db.userMetadata;
+	async request() {
+		try {
+			const user = await new userSelector(this.meta).get()
+			const db = new databaseManager(user.id)
+			let res = await db.userMetadata
 
-            res.total_cards = await db.totalCollectedCards()
-            res.badges = db.userBadges;
+			res.total_cards = await db.totalCollectedCards()
+			res.badges = db.userBadges
 
-            delete res.badges.userId;
+			delete res.badges.userId
 
-            this.requested_data = {
-                author: user,
-                data: await res
-            }
-        }
-        catch(e) {
-            this.requested_data = {
-                author: null,
-                data: null
-            }
-        }
-    }
+			this.requested_data = {
+				author: user,
+				data: await res
+			}
+		}
+		catch(e) {
+			this.requested_data = {
+				author: null,
+				data: null
+			}
+		}
+	}
     
-    //  Pull metadata
-    async pull() {
-        return await this.request()
-            .then(() => this.requested_data);
-    }
+	//  Pull metadata
+	async pull() {
+		return await this.request()
+			.then(() => this.requested_data)
+	}
     
 }
 

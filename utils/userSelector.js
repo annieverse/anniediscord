@@ -1,4 +1,4 @@
-`use-strict`;
+`use-strict`
 
 /**
  * Handles user selection.
@@ -6,38 +6,38 @@
  * @args as a chunks of message
  */
 class userSelector {
-    constructor(meta) {
-        this.args = meta.args;
-        this.message = meta.message;
-        this.cmd = meta.commandfile.help;
-    }
+	constructor(meta) {
+		this.args = meta.args
+		this.message = meta.message
+		this.cmd = meta.commandfile.help
+	}
 
-    /**
+	/**
      * Finds a user by id, or tag or plain name
      * @param target the arg for the user (id, name, mention)
      * @returns {object} user object
      */
-    async findUser(target) {
-        try {
-            const userPattern = /^(?:<@!?)?([0-9]+)>?$/;
-            if (userPattern.test(target)) target = target.replace(userPattern, '$1');
-            let members = this.message.guild.members;
+	async findUser(target) {
+		try {
+			const userPattern = /^(?:<@!?)?([0-9]+)>?$/
+			if (userPattern.test(target)) target = target.replace(userPattern, `$1`)
+			let members = this.message.guild.members
 
-            const filter = member => member.user.id === target ||
+			const filter = member => member.user.id === target ||
                 member.displayName.toLowerCase() === target.toLowerCase() ||
                 member.user.username.toLowerCase() === target.toLowerCase() ||
-                member.user.tag.toLowerCase() === target.toLowerCase();
+                member.user.tag.toLowerCase() === target.toLowerCase()
 
-            return members.filter(filter).first();
-        }
-        catch(e) {
-            return null;
-        }
-    }
+			return members.filter(filter).first()
+		}
+		catch(e) {
+			return null
+		}
+	}
 
-    async get(){
-        return !this.args[0] || !this.cmd.multi_user ? await this.findUser(this.message.author.id) : await this.findUser(this.message.content.slice(this.message.content.indexOf(this.args[0])));
-    }
+	async get(){
+		return !this.args[0] || !this.cmd.multi_user ? await this.findUser(this.message.author.id) : await this.findUser(this.message.content.slice(this.message.content.indexOf(this.args[0])))
+	}
 }
 
 module.exports = userSelector

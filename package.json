@@ -1,13 +1,10 @@
 {
-  "//1": "describes your app and its dependencies",
-  "//2": "https://docs.npmjs.com/files/package.json",
-  "//3": "updating this file will download and update your packages",
   "name": "anniediscord",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
+    "test": "eslint . & mocha",
     "start": "pm2 start server.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon server.js"
   },
@@ -39,6 +36,7 @@
     "superagent": "^5.1.0"
   },
   "devDependencies": {
-    "eslint": "^6.2.1"
+    "eslint": "^5.16.0",
+    "nodemon": "^1.19.1"
   }
 }

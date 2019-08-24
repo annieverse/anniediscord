@@ -1,3 +1,3 @@
-module.exports = (bot, channel, user) => {
+module.exports = () => {
 
 }

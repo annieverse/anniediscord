@@ -1,3 +1,3 @@
-module.exports = bot => {
-    console.log(`Reconnecting at ${new Date()}.`);
-};
+module.exports = () => {
+	console.log(`Reconnecting at ${new Date()}.`)
+}

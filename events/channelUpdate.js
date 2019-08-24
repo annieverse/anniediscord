@@ -1,2 +1,2 @@
-module.exports = (bot, oldChannel, newChannel) => {
+module.exports = () => {
 }

@@ -1,149 +1,148 @@
-const KeyvClient = require(`keyv`);
-const database = require(`../utils/databaseManager`);
+const KeyvClient = require(`keyv`)
+const database = require(`../utils/databaseManager`)
 const experience = require(`../utils/ExperienceFormula`)
-const keyv = new KeyvClient();
-const sql = require("sqlite");
+const keyv = new KeyvClient()
+const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
-const env = require(`../.data/environment.json`);
 
 module.exports = (bot, oldMember, newMember) => {
-    // Handle DB connection errors
-    keyv.on('error', err => console.log('Connection Err', err));
+	// Handle DB connection errors
+	keyv.on(`error`, err => console.log(`Connection Err`, err))
 
-    // Set the minimum amount of time needed to recieve xp
-    let minimumTime = 30; //amount of minutes
+	// Set the minimum amount of time needed to recieve xp
+	let minimumTime = 30 //amount of minutes
 
-    // Grabs the channel object and assigns them to a varible
-    let newMemberChannel = newMember.voiceChannel;
-    let oldMemberChannel = oldMember.voiceChannel;
+	// Grabs the channel object and assigns them to a varible
+	let newMemberChannel = newMember.voiceChannel
+	let oldMemberChannel = oldMember.voiceChannel
 
-    // db connection
-    let db = new database(newMember.user.id)
+	// db connection
+	let db = new database(newMember.user.id)
 
-    // grabs a afk channel if one exists, if not do nothing (No exp for being in vc)
-    let afkChannel = bot.channels.get(bot.guilds.get(newMember.guild.id).afkChannelID);
-    if (!afkChannel) return console.log("There is no afk channel so, I cannot give xp to those in vc currently until I learn how to do so :)")
+	// grabs a afk channel if one exists, if not do nothing (No exp for being in vc)
+	let afkChannel = bot.channels.get(bot.guilds.get(newMember.guild.id).afkChannelID)
+	if (!afkChannel) return console.log(`There is no afk channel so, I cannot give xp to those in vc currently until I learn how to do so :)`)
 
-    // Checks to make sure the user is not a bot
-    if (oldMember.user.bot || newMember.user.bot) return
+	// Checks to make sure the user is not a bot
+	if (oldMember.user.bot || newMember.user.bot) return
 
-    /**
+	/**
      * for when a user joins a VC
      * @joinVC
      */
-    async function joinVC() { if (newMemberChannel.id !== afkChannel.id) return keyv.set(newMember.user.id, new Date()) }
+	async function joinVC() { if (newMemberChannel.id !== afkChannel.id) return keyv.set(newMember.user.id, new Date()) }
 
-    /**
+	/**
      * for when a user leaves a VC
      * @leaveVC
      */
-    async function leaveVC() {
-        if (oldMemberChannel.id !== afkChannel.id) {
+	async function leaveVC() {
+		if (oldMemberChannel.id !== afkChannel.id) {
 
-            let TimeJoined = new Date(await keyv.get(oldMember.user.id))
-            let currentTime = new Date();
+			let TimeJoined = new Date(await keyv.get(oldMember.user.id))
+			let currentTime = new Date()
 
-            // Find the distance between now and the count down date
-            var distance = currentTime.getTime() - TimeJoined.getTime()
+			// Find the distance between now and the count down date
+			var distance = currentTime.getTime() - TimeJoined.getTime()
 
-            // For Total amount of minutes
-            var totalMinutes = Math.floor(distance / (1000 * 60));
-            // Tests to see if the user has been in for atleast 30 minutes (the coolDown time)(minimumTime)
-            if (totalMinutes < minimumTime) return keyv.delete(oldMember.user.id)
+			// For Total amount of minutes
+			var totalMinutes = Math.floor(distance / (1000 * 60))
+			// Tests to see if the user has been in for atleast 30 minutes (the coolDown time)(minimumTime)
+			if (totalMinutes < minimumTime) return keyv.delete(oldMember.user.id)
 
-            //Keep below for future
-            // Time calculations for days, hours, minutes and seconds
-            //var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            //var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            //var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            //var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+			//Keep below for future
+			// Time calculations for days, hours, minutes and seconds
+			//var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			//var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			//var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			//var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            //  pull userdata 
-            let data = await db.userMetadata
-            // Metadata that gonna be passed to Experience Class parameters
-            // These are default values. Tweak on your choice.
-            let metadata = {
-                applyTicketBuffs: true,
-                applyCardBuffs: true,
+			//  pull userdata 
+			let data = await db.userMetadata
+			// Metadata that gonna be passed to Experience Class parameters
+			// These are default values. Tweak on your choice.
+			let metadata = {
+				applyTicketBuffs: true,
+				applyCardBuffs: true,
 
-                //  Check Pan Card in this property
-                cardCollections: {},
+				//  Check Pan Card in this property
+				cardCollections: {},
                 
-                bonus: 1,
-                bot: bot,
-                user: data,
-                message: {
-                    author: {
-                        id: oldMember.user.id,
-                        tag: oldMember.user.tag,
-                        username: oldMember.user.username
-                    },
-                    guild: oldMember.guild,
-                    channel: oldMemberChannel
-                },
-                total_gained: Math.floor(totalMinutes/2),
-                updated: {
-                    currentexp: 0,
-                    level: 0,
-                    maxexp: 0,
-                    nextexpcurve: 0
-                },
-                previous: {
-                    currentexp: data.currentexp,
-                    level: data.level,
-                    maxexp: data.maxexp,
-                    nextexpcurve: data.nextexpcurve
-                }
-            }
+				bonus: 1,
+				bot: bot,
+				user: data,
+				message: {
+					author: {
+						id: oldMember.user.id,
+						tag: oldMember.user.tag,
+						username: oldMember.user.username
+					},
+					guild: oldMember.guild,
+					channel: oldMemberChannel
+				},
+				total_gained: Math.floor(totalMinutes/2),
+				updated: {
+					currentexp: 0,
+					level: 0,
+					maxexp: 0,
+					nextexpcurve: 0
+				},
+				previous: {
+					currentexp: data.currentexp,
+					level: data.level,
+					maxexp: data.maxexp,
+					nextexpcurve: data.nextexpcurve
+				}
+			}
 
-            // Request user's collection data.
-            const cards_collection = () => {
-                return sql.get(`SELECT * FROM collections WHERE userId = ${oldMember.user.id}`)
-                    .then(async data => data);
-            }
-
-
-            const card_stacks = await cards_collection();
+			// Request user's collection data.
+			const cards_collection = () => {
+				return sql.get(`SELECT * FROM collections WHERE userId = ${oldMember.user.id}`)
+					.then(async data => data)
+			}
 
 
-            //  Return new user collections if false.
-            const data_availability = () => {
-                try {
-                    delete card_stacks.userId;
-                    metadata.collections = card_stacks;
-                } catch (e) {
-                    sql.run(`INSERT INTO collections(userId) VALUES(${oldMember.user.id})`);
-                }
-            }
+			const card_stacks = await cards_collection()
 
-            data_availability();
-            metadata.cardCollections = card_stacks
 
-            // Store the exp
-            await new experience(metadata).runAndUpdate()
+			//  Return new user collections if false.
+			const data_availability = () => {
+				try {
+					delete card_stacks.userId
+					metadata.collections = card_stacks
+				} catch (e) {
+					sql.run(`INSERT INTO collections(userId) VALUES(${oldMember.user.id})`)
+				}
+			}
 
-            // Delete from record when the transaction is over
-            keyv.delete(oldMember.user.id)
-        }
-    }
+			data_availability()
+			metadata.cardCollections = card_stacks
 
-    /**
+			// Store the exp
+			await new experience(metadata).runAndUpdate()
+
+			// Delete from record when the transaction is over
+			keyv.delete(oldMember.user.id)
+		}
+	}
+
+	/**
      * For when a user changes/switches VC channels
      * @changeVC
      */
-    async function changeVC() { if (newMemberChannel.id === afkChannel.id) { leaveVC(); } else if ((newMemberChannel.id === afkChannel.id) && (oldMemberChannel.id !== afkChannel.id)) { joinVC(); } }
+	async function changeVC() { if (newMemberChannel.id === afkChannel.id) { leaveVC() } else if ((newMemberChannel.id === afkChannel.id) && (oldMemberChannel.id !== afkChannel.id)) { joinVC() } }
 
 
-    // execute joining vc
-    let isJoin = !oldMemberChannel && newMemberChannel
-    if (isJoin) return joinVC()
+	// execute joining vc
+	let isJoin = !oldMemberChannel && newMemberChannel
+	if (isJoin) return joinVC()
 
-    // execute leaving vc
-    let isLeave = oldMemberChannel && !newMemberChannel
-    if (isLeave) return leaveVC()
+	// execute leaving vc
+	let isLeave = oldMemberChannel && !newMemberChannel
+	if (isLeave) return leaveVC()
 
-    // switching vc
-    let isSwitch = (oldMemberChannel.id != newMemberChannel.id) || (newMemberChannel.id != oldMemberChannel.id)
-    if (isSwitch) return changeVC()
+	// switching vc
+	let isSwitch = (oldMemberChannel.id != newMemberChannel.id) || (newMemberChannel.id != oldMemberChannel.id)
+	if (isSwitch) return changeVC()
 
 }

@@ -1,70 +1,70 @@
-const env = require('../.data/environment.json');
-const sql = require("sqlite");
+const env = require(`../.data/environment.json`)
+const sql = require(`sqlite`)
 
 module.exports = bot => {
 
-    startup();
+	startup()
 
 
-    /**
+	/**
      * secret thingy, change color of role
      * @roleChange
      */
-    function roleChange(){
-        /**
+	function roleChange(){
+		/**
          * The Varible "x" is in terms of minutes
          * for example:
          * 1 = 1 minute
          * etc.
          */
-        let x = 15;
+		let x = 15
 
-        /**
+		/**
          * The roleSelector is a list of every role you want to change.
          * TODO: Use group id instead of group name.
          */
-        let roleSelector=[
-            '585550404197285889'
-        ]
-        /**
+		let roleSelector=[
+			`585550404197285889`
+		]
+		/**
          * The colorArray is a list of every color you want to change.
          */
-        let colorArray=[
-            'FF9AA2',
-            'FFB7B2',
-            'FFDAC1',
-            'E2F0CB',
-            'b5EAD7',
-            'C7CEEA',
-            'F8B195',
-            'F67280',
-            '79fa72',
-            'd3fa7f',
-            'ca8ae4',
-            'fff177'
-        ]
+		let colorArray=[
+			`FF9AA2`,
+			`FFB7B2`,
+			`FFDAC1`,
+			`E2F0CB`,
+			`b5EAD7`,
+			`C7CEEA`,
+			`F8B195`,
+			`F67280`,
+			`79fa72`,
+			`d3fa7f`,
+			`ca8ae4`,
+			`fff177`
+		]
 
-        /**
+		/**
          * Count is used to run through the colorArray in order.
          */
-        let count = 0;
+		let count = 0
 
-        /**
+		/**
          * The setInterval controls how long it takes before the color changes.
          * The setTimeout makes sure new values are assigned each time.
          */
-        setInterval(() => {
-            setTimeout(() => {
-                autoRoleColorChange(roleSelector);
-            }, null);
-        }, 60000*x);
+		setInterval(() => {
+			setTimeout(() => {
+				autoRoleColorChange(roleSelector)
+			}, null)
+		}, 60000*x)
 
-        /**
+		/**
          * Random color for each role selected right off the bat when bot starts - initializes the changing sequence
          */
-        autoRoleColorChange(roleSelector);
+		autoRoleColorChange(roleSelector)
 
-        /**
+		/**
          * Pass through a array of role names and they will automically be processed and change each one to a new color.
          * @function grabRole() 
          * @function randomColor()
@@ -72,180 +72,180 @@ module.exports = bot => {
          * @function run()
          * @param {array} roleNameInput Array of string elements
          */
-        function autoRoleColorChange(roleNameInput){
+		function autoRoleColorChange(roleNameInput){
 
-            /**
+			/**
              * Pass through the role's name and it will return the role object
              * @param {string} role 
              * @returns {object} Role Object
              */
-            async function grabRole(role){
-                return bot.guilds.get(`459891664182312980`).roles.find(n => n.id === role);
-            }
+			async function grabRole(role){
+				return bot.guilds.get(`459891664182312980`).roles.find(n => n.id === role)
+			}
 
             
-            /**
+			/**
              * @returns {string} A(n) color in hex format from the colorArray
              */
-            async function setColor(){
+			async function setColor(){
                 
 
-                // color code starts with # 
-                var color = '#';
+				// color code starts with # 
+				var color = `#`
 
-                //assigns the color using the colorArray values
-                color += colorArray[count];
+				//assigns the color using the colorArray values
+				color += colorArray[count]
                 
-                // Increase the count by one
-                count++;
-                if (count === colorArray.length) count = 0;
-                return color;
-            }
+				// Increase the count by one
+				count++
+				if (count === colorArray.length) count = 0
+				return color
+			}
 
-            /**
+			/**
              * runs the core processing of the whole function
              * @param {string} roleName Role name
              */
-            async function main(roleName) {
+			async function main(roleName) {
 
-                // For random color
-                //let color = await randomColor();
-                // Use colorArray
-                let color = await setColor();
+				// For random color
+				//let color = await randomColor();
+				// Use colorArray
+				let color = await setColor()
                 
-                let role = await grabRole(roleName);
-                console.log(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`);
-                role.setColor(color);
-            }
+				let role = await grabRole(roleName)
+				console.log(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
+				role.setColor(color)
+			}
 
-            /**
+			/**
              * Initilizes the whole function to run, by separating the array of role names and calls the main() to process them.
              * @param {string} role Role name
              */
-            function run(role) {
-                for (let index = 0; index < role.length; index++) {
-                    main(role[index]);
-                }
-            }
+			function run(role) {
+				for (let index = 0; index < role.length; index++) {
+					main(role[index])
+				}
+			}
 
-            // Call the run function and start the process
-            run(roleNameInput);
-        }
-    }
+			// Call the run function and start the process
+			run(roleNameInput)
+		}
+	}
 
 
-    /**
+	/**
      *  Automatically change current bot status presence
      *  @autoStatus
      */
-    function autoStatus(){
+	function autoStatus(){
 
-        let x = 1; // number of minutes
-        setInterval(data,60000*x);
-        sql.open(`.data/database.sqlite`);
+		let x = 1 // number of minutes
+		setInterval(data,60000*x)
+		sql.open(`.data/database.sqlite`)
         
-        function data(){
-            sql.get(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(data=>{
-                if (!data) {
-                    if (env.dev) {
-                        return bot.user.setActivity(`maintenance.`, {
-                            type: "LISTENING"
-                        });
+		function data(){
+			sql.get(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(data=>{
+				if (!data) {
+					if (env.dev) {
+						return bot.user.setActivity(`maintenance.`, {
+							type: `LISTENING`
+						})
 
-                    } else {
-                        return bot.user.setActivity(null);
-                    }
-                }
-                let event = data.name
-                let time = data.start_time
-                let status = data.status
-                let currentTime = (new Date());
-                let bufferTime = {
-                    before: (new Date(time - 1.8e+7)),
-                    after: (new Date(time + 7.2e+6)),
-                    start: (new Date(time))
-                }
-                // watching = type 3
-                // playing = type 0
+					} else {
+						return bot.user.setActivity(null)
+					}
+				}
+				let event = data.name
+				let time = data.start_time
+				let status = data.status
+				let currentTime = (new Date())
+				let bufferTime = {
+					before: (new Date(time - 1.8e+7)),
+					after: (new Date(time + 7.2e+6)),
+					start: (new Date(time))
+				}
+				// watching = type 3
+				// playing = type 0
 
-                if (status === 'ended') {
-                    sql.run(`DELETE FROM event_data WHERE active = 1 AND name = '${event}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
-                        return console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
-                    })
-                }
+				if (status === `ended`) {
+					sql.run(`DELETE FROM event_data WHERE active = 1 AND name = '${event}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
+						return console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+					})
+				}
                 
-                if (bufferTime.after < currentTime) {
-                    if (env.dev) {
-                        bot.user.setStatus('dnd');
-                        bot.user.setActivity(`maintenance.`, {
-                            type: "LISTENING"
-                        });
+				if (bufferTime.after < currentTime) {
+					if (env.dev) {
+						bot.user.setStatus(`dnd`)
+						bot.user.setActivity(`maintenance.`, {
+							type: `LISTENING`
+						})
 
-                    } else {
-                        bot.user.setStatus('online');
-                        bot.user.setActivity(null);
-                    }
-                    if (data.repeat_after === 0){
-                        sql.run(`UPDATE event_data SET active = 1 WHERE name = '${event}' and start_time = ${time}`).then(() => {
-                            sql.run(`DELETE FROM event_data WHERE status = 1 AND name = '${event}' AND start_time = ${time}`).then(() => {
-                                console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
-                            })
-                        })
-                    } else {
-                        let diff = data.length-time
-                        sql.run(`UPDATE event_data SET start_time = ${time+data.length}, length = ${diff} WHERE name = '${event}' AND start_time = ${time}`)
-                    }
-                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
-                } else if (bot.user.presence.game !== null){
-                    if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return;
-                }
-                // Find the distance between now and the count down date
-                var distance = bufferTime.start.getTime()-currentTime.getTime() 
-                // Time calculations for days, hours, minutes and seconds
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+					} else {
+						bot.user.setStatus(`online`)
+						bot.user.setActivity(null)
+					}
+					if (data.repeat_after === 0){
+						sql.run(`UPDATE event_data SET active = 1 WHERE name = '${event}' and start_time = ${time}`).then(() => {
+							sql.run(`DELETE FROM event_data WHERE status = 1 AND name = '${event}' AND start_time = ${time}`).then(() => {
+								console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+							})
+						})
+					} else {
+						let diff = data.length-time
+						sql.run(`UPDATE event_data SET start_time = ${time+data.length}, length = ${diff} WHERE name = '${event}' AND start_time = ${time}`)
+					}
+					return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
+				} else if (bot.user.presence.game !== null){
+					if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return
+				}
+				// Find the distance between now and the count down date
+				var distance = bufferTime.start.getTime()-currentTime.getTime() 
+				// Time calculations for days, hours, minutes and seconds
+				var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+				var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
                 
-                if (bufferTime.before < currentTime  && bufferTime.start > currentTime  ){
+				if (bufferTime.before < currentTime  && bufferTime.start > currentTime  ){
                     
-                    let countDown = `${hours}h ${minutes}m`
-                    bot.user.setActivity(`[EVENT] ${event} in ${countDown}`, {
-                        type: "WATCHING"
-                    });
-                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
-                } else if (bufferTime.start < currentTime  && bufferTime.after > currentTime ) {
-                    bot.user.setActivity(`[EVENT] ${event}`, {
-                        type: "PLAYING"
-                    });
-                    return console.log(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
-                }     
-            })
-        }
-    }
+					let countDown = `${hours}h ${minutes}m`
+					bot.user.setActivity(`[EVENT] ${event} in ${countDown}`, {
+						type: `WATCHING`
+					})
+					return console.log(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
+				} else if (bufferTime.start < currentTime  && bufferTime.after > currentTime ) {
+					bot.user.setActivity(`[EVENT] ${event}`, {
+						type: `PLAYING`
+					})
+					return console.log(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
+				}     
+			})
+		}
+	}
 
 
-    /**
+	/**
      *  
      * Database table check & schema preparation
      * @setupDatabase
      */
-    function setupDatabase() {
+	function setupDatabase() {
 
-        sql.open(`.data/database.sqlite`);
+		sql.open(`.data/database.sqlite`)
 
-        sql.run(`DROP TABLE IF EXISTS eventData`);
-        //  Set all cooldown to zero
-        sql.run(`UPDATE usercheck SET expcooldown = "False"`);
+		sql.run(`DROP TABLE IF EXISTS eventData`)
+		//  Set all cooldown to zero
+		sql.run(`UPDATE usercheck SET expcooldown = "False"`)
 
-        //  Register iteminventory if not exist.
-        sql.run(`
+		//  Register iteminventory if not exist.
+		sql.run(`
             CREATE TABLE IF NOT EXISTS item_inventory (
                 item_id INTEGER NOT NULL DEFAULT 0,
                 user_id TEXT NOT NULL DEFAULT 0,
                 quantity INTEGER NOT NULL DEFAULT 0
             )
-        `);
+        `)
         
-        sql.run(`CREATE TABLE event_data (
+		sql.run(`CREATE TABLE event_data (
                 name TEXT NOT NULL,
                 desc TEXT NOT NULL,
                 category TEXT NOT NULL,
@@ -257,69 +257,69 @@ module.exports = bot => {
                 active INTEGER NOT NULL DEFAULT 0,
                 occurance INTEGER NUT NULL DEFAULT 1
             )
-        `);
+        `)
 
-        sql.close();
-    }
+		sql.close()
+	}
 
 
-    /**
+	/**
      *  
      * Experimental features
      * @experimentalFeatures
      */
-    async function experimentalFeatures(framework=null) {
+	async function experimentalFeatures(framework=null) {
 
-        //  Returns if no framework to test
-        if (!framework) return
-
-
-        let label = `Framework has passed the test with time taken`
-
-        try {
-            console.time(label)
-            await framework
-            console.timeEnd(label)
-        }
-        catch(e) { 
-            console.log(`Custom test has failed to run because ${e}`) 
-        }
-    }   
+		//  Returns if no framework to test
+		if (!framework) return
 
 
-    /**
+		let label = `Framework has passed the test with time taken`
+
+		try {
+			console.time(label)
+			await framework
+			console.timeEnd(label)
+		}
+		catch(e) { 
+			console.log(`Custom test has failed to run because ${e}`) 
+		}
+	}   
+
+
+	/**
      * 
      * Fired processes on startup.
      * @startup
      */
-    function startup() {
+	function startup() {
 
-        if (env.dev) {
-            console.clear()
-            console.log(`Codename: ${bot.user.username}`)
-            console.timeEnd(`Initialized In`)
-            bot.user.setStatus('dnd');
-            bot.user.setActivity(`maintenance.`, {
-                type: "LISTENING"
-            });
-            /**
+		if (env.dev) {
+			console.clear()
+			console.log(`Codename: ${bot.user.username}`)
+			console.timeEnd(`Initialized In`)
+			bot.user.setStatus(`dnd`)
+			bot.user.setActivity(`maintenance.`, {
+				type: `LISTENING`
+			})
+			/**
              *  Add the feature you want to test inside parameter.
              *  @param {Function/Variable} framework
              */
-            experimentalFeatures()
+			experimentalFeatures()
 
-        } else {
-            /**
+		} else {
+			/**
              *  Prepare extensions. Only ran on production server.
              */
-            setupDatabase()
-            roleChange()
-            autoStatus()
+			setupDatabase()
+			roleChange()
+			autoStatus()
 
-            console.log(`${bot.user.username} is up.`)
-            bot.user.setStatus('online');
-            bot.user.setActivity(null);
-        }
-    }
+			console.log(`${bot.user.username} is up.`)
+			bot.user.setStatus(`online`)
+			bot.user.setActivity(null)
+		}
+	}
 
 }

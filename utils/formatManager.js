@@ -1,9 +1,9 @@
-const Discord = require('discord.js');
-const moment = require('moment');
-const palette = require(`./colorset.json`);
-let embed = new Discord.RichEmbed();
-let advEmbed = new Discord.RichEmbed();
-let footeredEmbed = new Discord.RichEmbed();
+const Discord = require(`discord.js`)
+const moment = require(`moment`)
+const palette = require(`./colorset.json`)
+let embed = new Discord.RichEmbed()
+let advEmbed = new Discord.RichEmbed()
+let footeredEmbed = new Discord.RichEmbed()
 /**
  * Misc utils.
  * {formatterUtils}
@@ -24,7 +24,7 @@ class formatterUtils {
 	 */
 	nickname(id) {
 		try {
-			return this.message.guild.members.get(id).displayName;
+			return this.message.guild.members.get(id).displayName
 		} catch (e) {
 			return `User unavailable. (ID: ${id})`
 		}
@@ -35,7 +35,7 @@ class formatterUtils {
 	 * @timestamp of given unix time.
 	 */
 	formatedTime(timestamp) {
-		return moment(timestamp).format("dddd, Do MMMM YYYY");
+		return moment(timestamp).format(`dddd, Do MMMM YYYY`)
 	}
 
 
@@ -45,7 +45,7 @@ class formatterUtils {
 	 * @param max of maximum value.
 	 */
 	rangeNumber(min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min + 1)) + min
 	}
 
 
@@ -54,7 +54,7 @@ class formatterUtils {
 	 * @param array of given array.
 	 */
 	randomize(array) {
-		return array[Math.floor(Math.random() * array.length)];
+		return array[Math.floor(Math.random() * array.length)]
 	}
 
 
@@ -63,7 +63,7 @@ class formatterUtils {
 	 * @num of given value
 	 */
 	formatK(num) {
-		return num > 999999 ? (num / 1000000).toFixed(1) + 'M' : num > 999 ? (num / 1000).toFixed(1) + 'K' : num
+		return num > 999999 ? (num / 1000000).toFixed(1) + `M` : num > 999 ? (num / 1000).toFixed(1) + `K` : num
 	}
 
 
@@ -73,7 +73,7 @@ class formatterUtils {
 	 * @total of whole percent
 	 */
 	getPercentage(portion, total) {
-		return (Math.floor((portion * 100) / total)).toFixed();
+		return (Math.floor((portion * 100) / total)).toFixed()
 	}
 
 
@@ -82,7 +82,7 @@ class formatterUtils {
 	 * @number value
 	 */
 	threeDigitsComa(number = 0) {
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
 	}
 
 
@@ -92,17 +92,17 @@ class formatterUtils {
 	 */
 	ordinalSuffix(i) {
 		var j = i % 10,
-			k = i % 100;
+			k = i % 100
 		if (j == 1 && k != 11) {
-			return i + "st";
+			return i + `st`
 		}
 		if (j == 2 && k != 12) {
-			return i + "nd";
+			return i + `nd`
 		}
 		if (j == 3 && k != 13) {
-			return i + "rd";
+			return i + `rd`
 		}
-		return i + "th";
+		return i + `th`
 	}
 
 	/**
@@ -110,7 +110,7 @@ class formatterUtils {
 	 * @param string.
 	 */
 	capitalizeFirstLetter(string) {
-		return string.charAt(0).toUpperCase() + string.slice(1);
+		return string.charAt(0).toUpperCase() + string.slice(1)
 	}
 
 
@@ -119,7 +119,7 @@ class formatterUtils {
 		embed.setAuthor(author, url)
 		embed.setColor(palette.darkmatte)
 
-		return this.message.channel.send(embed);
+		return this.message.channel.send(embed)
 	}
 
 
@@ -137,10 +137,10 @@ class formatterUtils {
 			embed.attachFile(new Discord.Attachment(image, `preview.jpg`))
 			embed.setImage(`attachment://preview.jpg`)
 		} else if (embed.file) {
-			embed.image.url = null;
+			embed.image.url = null
 			embed.file = null
 		}
-		return this.message.channel.send(embed);
+		return this.message.channel.send(embed)
 	}
 
 
@@ -152,7 +152,7 @@ class formatterUtils {
 	embedBase(color, content) {
 		embed.setColor(color)
 		embed.setDescription(content)
-		return embed;
+		return embed
 	}
 
 
@@ -165,7 +165,7 @@ class formatterUtils {
 		footeredEmbed.setColor(color)
 		footeredEmbed.setDescription(content)
 		footeredEmbed.setFooter(`${this.message.author.username} | Developer Mode`, this.message.author.displayAvatarURL)
-		return this.message.channel.send(footeredEmbed);
+		return this.message.channel.send(footeredEmbed)
 	}
 
 	/**
@@ -174,13 +174,13 @@ class formatterUtils {
 	embedWrapperAdv(...options) {
 
 		let footer
-		options[4] ? footer= options[4].split(",,") : footer[0]="No Footer Set"
-		advEmbed.setColor(options[0] || palette.darkmatte);
-		advEmbed.setDescription(options[1] || "I'm sorry, I dont know what to say. I am a blank Embed that has not been modified fully. . .");
-		advEmbed.setTitle(options[2] || "No Title");
-		advEmbed.setTimestamp(options[3] || Date.now());
-		if (footer.length > 1) { advEmbed.setFooter(footer[0], footer[1]) } else if (footer.length = 1) { advEmbed.setFooter(footer[0]) } else { advEmbed.setFooter(footer[0]);}
-		return this.message.channel.send(advEmbed);
+		options[4] ? footer= options[4].split(`,,`) : footer[0]=`No Footer Set`
+		advEmbed.setColor(options[0] || palette.darkmatte)
+		advEmbed.setDescription(options[1] || `I'm sorry, I dont know what to say. I am a blank Embed that has not been modified fully. . .`)
+		advEmbed.setTitle(options[2] || `No Title`)
+		advEmbed.setTimestamp(options[3] || Date.now())
+		if (footer.length > 1) { advEmbed.setFooter(footer[0], footer[1]) } else if (footer.length == 1) { advEmbed.setFooter(footer[0]) } else { advEmbed.setFooter(footer[0])}
+		return this.message.channel.send(advEmbed)
 	}
 
 	/**
@@ -191,9 +191,9 @@ class formatterUtils {
 	markdown(color, content) {
 		embed.setColor(color)
 		embed.setDescription(`\`\`\`json\n${content}\n\`\`\``)
-		return this.message.channel.send(embed);
+		return this.message.channel.send(embed)
 	}
 
 }
 
-module.exports = formatterUtils;
+module.exports = formatterUtils

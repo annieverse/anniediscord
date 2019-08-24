@@ -4,7 +4,7 @@
  */
 class Prune {
 	constructor(Stacks) {
-		this.stacks = Stacks;
+		this.stacks = Stacks
 	}
 
 
@@ -12,7 +12,7 @@ class Prune {
      *  Initializer method
      */
 	async execute() {
-		const { isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks;
+		const { isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks
 
 
 		//	Returns if user doesn't have administrator authority
@@ -44,11 +44,11 @@ class Prune {
 
 module.exports.help = {
 	start: Prune,
-	name: "prune",
+	name: `prune`,
 	aliases: [],
 	description: `deletes up to 100 messages`,
 	usage: `${require(`../../.data/environment.json`).prefix}prune <amount>`,
-	group: "Admin",
+	group: `Admin`,
 	public: true,
 	required_usermetadata: false,
 	multi_user: false

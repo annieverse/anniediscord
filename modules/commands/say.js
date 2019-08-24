@@ -5,7 +5,7 @@
  */
 class Say {
 	constructor(Stacks) {
-		this.stacks = Stacks;
+		this.stacks = Stacks
 	}
 
 
@@ -13,9 +13,9 @@ class Say {
      *	Initializer method
      */
 	async execute() {
-		const { isAdmin, code, name, reply, args, message, meta: {author} } = this.stacks;
+		const { isAdmin, code, name, reply, args, message, meta: {author} } = this.stacks
 
-        //  Returns if user has no admin authority
+		//  Returns if user has no admin authority
 		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 		//	Returns as short-guide if user's custom message length is zero.
 		if (!args[0]) return reply(code.SAY.SHORT_GUIDE, {socket: [name(author.id)]})
@@ -30,11 +30,11 @@ class Say {
 
 module.exports.help = {
 	start: Say,
-	name: "say",
+	name: `say`,
 	aliases: [],
 	description: `Talk through bot`,
 	usage: `${require(`../../.data/environment.json`).prefix}say <message>`,
-	group: "Admin",
+	group: `Admin`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: false

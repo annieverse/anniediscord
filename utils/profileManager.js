@@ -1,4 +1,4 @@
-const fsn = require("fs-nextra");
+const fsn = require(`fs-nextra`)
 /**
  * Managing utils for profile card.
  * {profileManger}
@@ -12,17 +12,17 @@ class profileManager {
 	 * @numlines of paragraph.
 	 */
 	formatString(string, numlines) {
-		var paraLength = Math.round((string.length) / numlines);
-		var paragraphs = [];
+		var paraLength = Math.round((string.length) / numlines)
+		var paragraphs = []
 		for (var i = 0; i < numlines; i++) {
-			var marker = paraLength;
+			var marker = paraLength
 			//if the marker is right after a space, move marker back one character
-			if (string.charAt(marker - 1) == " ") {
-				marker--;
+			if (string.charAt(marker - 1) == ` `) {
+				marker--
 			}
 			//move marker to end of a word if it's in the middle
-			while (string.charAt(marker) != " " && string.charAt(marker) != "") {
-				marker++;
+			while (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
+				marker++
 			}
 			var nextPara = string.substring(0, marker)
 			paragraphs.push(nextPara)
@@ -31,18 +31,18 @@ class profileManager {
 		if (numlines === 1) {
 			return {
 				first: paragraphs[0]
-			};
+			}
 		} else if (numlines === 2) {
 			return {
 				first: paragraphs[0],
 				second: paragraphs[1]
-			};
+			}
 		} else if (numlines === 3) {
 			return {
 				first: paragraphs[0],
 				second: paragraphs[1],
 				third: paragraphs[2]
-			};
+			}
 		}
 	}
 
@@ -52,7 +52,7 @@ class profileManager {
 	 * @string of user description
 	 */
 	checkDesc(string) {
-		return string === null ? `A proud member of AAU!` : string;
+		return string === null ? `A proud member of AAU!` : string
 	}
 
 
@@ -61,7 +61,7 @@ class profileManager {
 	 * @int of user reputation
 	 */
 	checkRep(int) {
-		return int === null ? 0 : int;
+		return int === null ? 0 : int
 	}
 
 
@@ -70,7 +70,7 @@ class profileManager {
 	 * @id of badge name
 	 */
 	checkBadges(id) {
-		return id === null ? null : this.getAsset(id);
+		return id === null ? null : this.getAsset(id)
 	}
 
 
@@ -79,9 +79,9 @@ class profileManager {
 	 * @data of user interfacemode
 	 */
 	checkInterface(data) {
-		return data === 'light_profileskin' ? 'light_profileskin' :
-			data === 'dark_profileskin' ? 'dark_profileskin' :
-			'light_profileskin';
+		return data === `light_profileskin` ? `light_profileskin` :
+			data === `dark_profileskin` ? `dark_profileskin` :
+				`light_profileskin`
 	}
 
 
@@ -90,8 +90,8 @@ class profileManager {
 	 * @data of user interfacemode
 	 */
 	checkAlphanumeric(string) {
-		const format = /^[a-z0-9]+$/i;
-		return format.test(string) === true ? 'Roboto' : 'KosugiMaru';
+		const format = /^[a-z0-9]+$/i
+		return format.test(string) === true ? `Roboto` : `KosugiMaru`
 	}
 
 
@@ -100,7 +100,7 @@ class profileManager {
 	 * @char of given username
 	 */
 	checkPosition(char) {
-		return char.length <= 4 ? 120 : char.length <= 6 ? 80 : 0;
+		return char.length <= 4 ? 120 : char.length <= 6 ? 80 : 0
 	}
 
 
@@ -111,15 +111,15 @@ class profileManager {
 	checkUsernameLength(name) {
 		return {
 			get profiler() {
-				return name.length > 10 ? 26 - (Math.floor((name.length - 11) / 2)) : 26;
+				return name.length > 10 ? 26 - (Math.floor((name.length - 11) / 2)) : 26
 			},
 			get welcomer() {
-				return name.length > 8 ? 74 - (2 * (name.length - 10)) : 74;
+				return name.length > 8 ? 74 - (2 * (name.length - 10)) : 74
 			},
 			get leveler() {
-				return name.length > 10 ? 30 - (name.length - 10) : 30;
+				return name.length > 10 ? 30 - (name.length - 10) : 30
 			},
-		};
+		}
 	}
 
 
@@ -134,9 +134,9 @@ class profileManager {
 		//current = curve === 150 ? max-(max-current) : (curve-(max-current)); 
 		//PanCurrent, user.max)
 		if (curve === 150) {
-			return Math.floor(((Math.floor((current * 100) / max).toFixed()) / 100) * barlength);
+			return Math.floor(((Math.floor((current * 100) / max).toFixed()) / 100) * barlength)
 		} else {
-			return Math.floor(((Math.floor((current * 100) / curve).toFixed()) / 100) * barlength);
+			return Math.floor(((Math.floor((current * 100) / curve).toFixed()) / 100) * barlength)
 		}
 	}
 
@@ -146,7 +146,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getBadge(id) {
-		return fsn.readFile(`./images/badges/${id}.jpg`);
+		return fsn.readFile(`./images/badges/${id}.jpg`)
 	}
 
 
@@ -155,7 +155,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getAsset(id) {
-		return fsn.readFile(`./images/${id}.png`);
+		return fsn.readFile(`./images/${id}.png`)
 	}
 
 	/**
@@ -163,10 +163,10 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getCoverAsset(id) {
-		return fsn.readFile(`./images/covers/${id}.png`);
+		return fsn.readFile(`./images/covers/${id}.png`)
 	}
 
 
 }
 
-module.exports = profileManager;
+module.exports = profileManager

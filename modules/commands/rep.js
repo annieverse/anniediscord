@@ -1,4 +1,4 @@
-const moment = require(`moment`);
+const moment = require(`moment`)
 
 /**
  * Main module
@@ -6,25 +6,25 @@ const moment = require(`moment`);
  */
 class Rep {
 	constructor(Stacks) {
-		this.stacks = Stacks;
+		this.stacks = Stacks
 	}
 
 
-    /**
+	/**
      *  Get sender's author object and inventory metadata.
      */
-    async assignSenderMetadata() {
-        const { reqData } = this.stacks;
-        const res = await reqData();
-        this.senderMeta = res
-    }
+	async assignSenderMetadata() {
+		const { reqData } = this.stacks
+		const res = await reqData()
+		this.senderMeta = res
+	}
 
 
-    /**
+	/**
      *	Initializer method
      */
 	async execute() {
-		const { args, reply, db, name, selfTargeting, palette, code: {REP}, meta: {author, data} } = this.stacks;
+		const { args, reply, db, name, selfTargeting, palette, code: {REP}, meta: {author} } = this.stacks
 
 
 		//	Get sender's metadata
@@ -52,7 +52,7 @@ class Rep {
 
 
 		//	Assign target id into metadata
-		metadata.target_id = author.id;
+		metadata.target_id = author.id
 		//	Update database
 		await db(this.senderMeta.author.id).updateReps(metadata)
 
@@ -67,11 +67,11 @@ class Rep {
 
 module.exports.help = {
 	start: Rep,
-	name: "rep",
+	name: `rep`,
 	aliases: [],
 	description: `Gives rep to a user`,
 	usage: `${require(`../../.data/environment.json`).prefix}rep @user`,
-	group: "General",
+	group: `General`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: true

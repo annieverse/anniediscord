@@ -1,6 +1,6 @@
-const ms = require('parse-ms');
-const cards = require('../../utils/cards-metadata.json');
-const moment = require(`moment`);
+const ms = require(`parse-ms`)
+const cards = require(`../../utils/cards-metadata.json`)
+const moment = require(`moment`)
 
 /**
  * Main module
@@ -8,15 +8,15 @@ const moment = require(`moment`);
  */
 class Daily {
 	constructor(Stacks) {
-		this.stacks = Stacks;
+		this.stacks = Stacks
 	}
 
-    /**
+	/**
      * Initializer method
      * @Execute
      */
 	async execute() {
-		const { reply, palette, name, emoji, commanifier, code:{DAILY}, db, meta: { author, data } } = this.stacks;
+		const { reply, palette, name, emoji, commanifier, code:{DAILY}, db, meta: { author, data } } = this.stacks
 
 		let metadata = {
 			cooldown: 8.64e+7,
@@ -24,16 +24,16 @@ class Daily {
 			amount: 250,
 			skill: cards.poppy_card.skills.main,
 			get isItStreaking() {
-				return data.poppy_card ? true : ms(this.streakcooldown - (Date.now() - data.lastdaily)).days >= 1 ? true : false;
+				return data.poppy_card ? true : ms(this.streakcooldown - (Date.now() - data.lastdaily)).days >= 1 ? true : false
 			},
 			get countStreak() {
 				return data.totaldailystreak < 1 ? 1 : this.isItStreaking ? data.totaldailystreak + 1 : 0
 			},
 			get bonus() {
-				return this.countStreak !== 0 ? 12 * this.countStreak : 0;
+				return this.countStreak !== 0 ? 12 * this.countStreak : 0
 			},
 			get inCooldown() {
-				return (data.lastdaily !== null) && this.cooldown - (Date.now() - data.lastdaily) > 0 ? true : false;
+				return (data.lastdaily !== null) && this.cooldown - (Date.now() - data.lastdaily) > 0 ? true : false
 			}
 		}
 
@@ -58,17 +58,17 @@ class Daily {
 			],
 			color : data.poppy_card ? palette.purple : palette.blue,
 			notch : data.poppy_card ? true : false
-		});
+		})
 	}
 }
 
 module.exports.help = {
 	start: Daily,
-	name: "daily",
-	aliases: ["dly", "daili", "dail", "dayly", "attendance", "dliy"],
+	name: `daily`,
+	aliases: [`dly`, `daili`, `dail`, `dayly`, `attendance`, `dliy`],
 	description: `collects a daily flat rate of AC`,
 	usage: `${require(`../../.data/environment.json`).prefix}daily`,
-	group: "General",
+	group: `General`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: true
