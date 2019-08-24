@@ -1,4 +1,4 @@
-const { dev, administrator_id } = require(`../.data/environment`)
+const { dev, administrator_id } = require(`../../.data/environment`)
 const { art_domain } = require(`../modules/config`)
 const database = require(`./databaseManager`)
 const KeyvClient = require(`keyv`)
