@@ -115,28 +115,24 @@ class HeartCollector {
 					notch: true
 				})
 
-			/*  These post like notification will be disabled temporary
-                to experiment about does this feature giving negative impact
-                toward user.
-                - naphnaphz.
                 
-            //  First or two liked.
-            if (this.metadata.favs <= 2) return reply(
-                FEATURED.FIRST_LIKE, {
-                    socket: [user.username],
-                    thumbnail: this.metadata.artwork,
-                    field: this.metadata.msg.author,
-                    notch: true
-            })
+			//  First or two liked.
+			if (this.metadata.favs <= 2) return reply(
+				FEATURED.FIRST_LIKE, {
+					socket: [user.username],
+					thumbnail: this.metadata.artwork,
+					field: this.metadata.msg.author,
+					notch: true
+				})
 
-            //  Regular notification
-            return reply(FEATURED.LIKED, {
-                socket: [user.username, this.metadata.favs - 1],
-                thumbnail: this.metadata.artwork,
-                field: this.metadata.msg.author,
-                notch: true
-            })
-            */
+
+			//  Regular notification
+			return reply(FEATURED.LIKED, {
+				socket: [user.username, this.metadata.favs - 1],
+				thumbnail: this.metadata.artwork,
+				field: this.metadata.msg.author,
+				notch: true
+			})
 		}
 		catch(e) { return }
 	}
