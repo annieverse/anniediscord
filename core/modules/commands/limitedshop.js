@@ -82,7 +82,7 @@ class Limitedshop {
 			let shopcurrency = shopdata ? shopdata.currency : `artcoins`
 			//TODO emotes dont work REEEEEEEEEEEEEEEEE
 
-			bot.channels.get(`614819522310045718`).setName(shoptype + `-shop`)
+			bot.channels.get(`614819522310045718`).setName(shoptype + `  shop`)
 			const page = new Discord.RichEmbed()
 				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
 				.setColor(palette.darkmatte)

@@ -70,7 +70,7 @@ class Transaction {
 	get request_query() {
 		let itemstatus = `sell`
 		if (this.message.channel.id == `614819522310045718`) {
-			itemstatus = this.message.channel.name.split(`-`)[0]+`-sale`
+			itemstatus = this.message.channel.name.split(`  `)[0]+`-sale`
 		}
 		return sql.all(`SELECT name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
                                         FROM itemlist 
