@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
 
 /**
@@ -15,7 +16,7 @@ class convertingArtcoins {
      */
 	async execute() {
 		const { bot, message, args, palette, trueInt, name, emoji, commanifier, reply, code:{CARTCOIN}, meta:{author, data} } = this.stacks
-        
+		return reply(`command is disabled temporary, sorry for the inconvenice`)
 		//  Returns as guide if user doesn't specify any parameters
 		if (!args[0]) return reply(CARTCOIN.SHORT_GUIDE)
         

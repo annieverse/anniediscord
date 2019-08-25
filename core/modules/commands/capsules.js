@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
 /**
  * Main module
@@ -14,7 +15,7 @@ class Capsule {
      */
 	async execute() {
 		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
-
+		return reply(`command is disabled temporary, sorry for the inconvenice`)
 		//  Centralized data object
 		let metadata = {
 			bot: bot,
@@ -40,6 +41,7 @@ class Capsule {
 
 
 		//  Returns if user doesn't have any capsule to use.
+		// eslint-disable-next-line no-unreachable
 		if (!data.power_capsules) return reply(CAPSULE.ZERO)
 
 		//  Returns as guide if amount is not specified or invalid.
