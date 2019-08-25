@@ -44,7 +44,7 @@ class help {
      */
 	async groupNames() {
 		let file_arr = []
-		fs.readdir(`./modules/commands/`, (err, files) => {
+		fs.readdir(`./core/modules/commands/`, (err, files) => {
 			if (err) console.log(err)
 			const src = require(`./${files[0]}`)
 			file_arr.push(src.help.group.toLowerCase())
@@ -293,7 +293,7 @@ class help {
 		let Fun = await this.mainNames(`fun`).then(str => str.split(`\n`))
 		let Shop_Related = await this.mainNames(`shop-related`).then(str => str.split(`\n`))
 		let server = await this.mainNames(`server`).then(str => str.split(`\n`))
-		let prefix = require(`../../.data/environment.json`).prefix
+		let prefix = require(`../../../.data/environment.json`).prefix
 		let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`
 		let advanceHelpMenuHelp = `**My available commands are:**\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(`, `)}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``
 		let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\`\n`
