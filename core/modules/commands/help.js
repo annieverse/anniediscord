@@ -14,6 +14,7 @@ class help {
 		this.needHelp = `Need further help? Please DM <@507043081770631169>.`
 		this.embed = new Discord.RichEmbed()
 		this.dm = false
+		this.pathForCommands = `./core/modules/commands/`
 	}
 
 	// This will format all embeds used in this file
@@ -44,7 +45,7 @@ class help {
      */
 	async groupNames() {
 		let file_arr = []
-		fs.readdir(`./core/modules/commands/`, (err, files) => {
+		fs.readdir(this.pathForCommands, (err, files) => {
 			if (err) console.log(err)
 			const src = require(`./${files[0]}`)
 			file_arr.push(src.help.group.toLowerCase())
@@ -66,7 +67,7 @@ class help {
 	async mainNames(groupname) {
 
 		let file_arr = []
-		fs.readdir(`./modules/commands/`, (err, files) => {
+		fs.readdir(this.pathForCommands, (err, files) => {
 			if (err) console.log(err)
 
 			for (let file in files) {
@@ -129,7 +130,7 @@ class help {
      */
 	async returnFileName(cmd) {
 		let file_name = cmd
-		fs.readdir(`./modules/commands/`, (err, files) => {
+		fs.readdir(this.pathForCommands, (err, files) => {
 			if (err) console.log(err)
 			for (let file in files) {
 				const src = require(`./${files[file]}`)
@@ -367,8 +368,6 @@ class help {
 		this.initializeEmbed()
 		if (this.args.length === 0) return this.startUp()
 		this.helpCenter()
-
-
 	}
 }
 

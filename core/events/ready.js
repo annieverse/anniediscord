@@ -245,7 +245,7 @@ module.exports = bot => {
             )
         `)
         
-		sql.run(`CREATE TABLE event_data (
+		sql.run(`CREATE TABLE IF NOT EXISTS event_data (
                 name TEXT NOT NULL,
                 desc TEXT NOT NULL,
                 category TEXT NOT NULL,
