@@ -487,6 +487,14 @@ class databaseUtils {
 		return sql.all(`SELECT name, type, price, desc FROM itemlist WHERE type = "${type.toString()}" AND status = "sell" AND ${opt} ORDER BY ${order}`).then(async parsed => parsed)
 	}
 
+	/**
+	 *     Registering item type into shop.
+	 *   @param status of item type.
+	 *     @param opt of additional filter option. (default: "price < 999999")
+	 */
+	classifyLdtItem(status, opt = `price > 0`, order = `price ASC`) {
+		return sql.all(`SELECT name, type, price, desc FROM itemlist WHERE status = "${status.toString()}-sale" AND ${opt} GROUP BY type ORDER BY ${order}`).then(async parsed => parsed)
+	}
 
 
 	/**
