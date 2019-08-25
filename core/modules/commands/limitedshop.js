@@ -26,7 +26,7 @@ class Limitedshop {
                 },
                 'christmas': {
                     'emote': 'christmas_tree',
-                    'currency': 'artcoins',
+                    'currency': 'artcoins',//TODO
                     'shopname': "Christmas Limited Shop"
                 },
                 'new-years': {
@@ -61,8 +61,19 @@ class Limitedshop {
                 }
         }
 
+        //TODO enable ONLY buy command in 614819522310045718
+        //TODO possible delete messages after each buy command?
+        /*
+        * TODOs before opening shops
+        * Upload and link shop banner for shop type with instructions >buy <category> <id>
+        * Upload and define emotes and currencies in const events
+        * Create column for currency in idk userdata?
+        * Fill itemlist with shop items; use status for labels (e.g. halloween-sale); labels need to end with "sale"
+        * Upload items to /core/images folder
+        * Uncomment stuff in open so that it actually gets opened to the public
+        * */
         const stock = async () => {
-            bot.channels.get('614819522310045718').bulkDelete(5);
+            bot.channels.get('614819522310045718').bulkDelete(10);
             let shoptype = (args.length>=2) ? args[1] : getShopType();
             let shopdata = events[shoptype];
             let shopname = shopdata ? shopdata.shopname : shoptype.replace(/^\w/, c => c.toUpperCase()) + " Limited Shop";
@@ -75,19 +86,30 @@ class Limitedshop {
                 .setDescription('The '+shopname+' is here! '+ shopemote)
                 .setColor(palette.darkmatte)
                 .attachFile('core/images/shop-'+shoptype+'-cov.png')
-                .setImage('https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png')//TODO real instructions >buy <category> <id>
+                .setImage('https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png')//TODO placeholder
             const collection = new databaseManager(message.member.id)
             let numitems = getItems(await collection.classifyLdtItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
             page.setFooter('We have '+numitems+' limited items in store!')
-            bot.channels.get('614819522310045718').send(page)
+            //bot.channels.get('614819522310045718').send(page)
         }
         const open = async () => {
-            //TODO make channel 614819522310045718 public
+            //make channel 614819522310045718 public to @everyone
+            //TODO uncomment this when the time comes; be careful when using this
+            //TODO because we want the limited shop to be a surprise!
+            /*bot.channels.get('614819522310045718').overwritePermissions(
+                bot.channels.get('614819522310045718').guild.defaultRole,
+                { VIEW_CHANNEL: true }
+                );*/
+
         }
 
         const close = async () => {
-            //make message "store closed bla" or ig we dont need this since we prune the shop before opening anyway
+            //TODO make message "store closed bla" or ig we dont need this since we prune the shop before opening anyway
             //make channel 614819522310045718 private
+            /*bot.channels.get('614819522310045718').overwritePermissions(
+                bot.channels.get('614819522310045718').guild.defaultRole,
+                { VIEW_CHANNEL: false }
+            );*/
         }
 
         /*
