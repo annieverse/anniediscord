@@ -14,7 +14,7 @@ class convertingArtcoins {
      * @Execute
      */
 	async execute() {
-		const { bot, message, args, palette, trueInt, name, emoji, commanifier, reply, db, code:{CARTCOIN}, meta:{author, data} } = this.stacks
+		const { bot, message, args, palette, trueInt, name, emoji, commanifier, reply, code:{CARTCOIN}, meta:{author, data} } = this.stacks
         
 		//  Returns as guide if user doesn't specify any parameters
 		if (!args[0]) return reply(CARTCOIN.SHORT_GUIDE)

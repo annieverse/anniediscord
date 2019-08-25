@@ -13,7 +13,7 @@ class Capsule {
      * @Execute
      */
 	async execute() {
-		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE},db,meta: {author,data} } = this.stacks
+		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
 
 		//  Centralized data object
 		let metadata = {

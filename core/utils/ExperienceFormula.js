@@ -18,8 +18,8 @@ class Experience {
 		applyCardBuffs: false,
 		cardCollections: {},
 		bonus: 1,
-		bot: {},
 		user: {},
+		bot: {},
 		message: {
 			author: {
 				id: ``,
@@ -30,12 +30,6 @@ class Experience {
 		},
 		total_gained: 0,
 		updated: {
-			currentexp: 0,
-			level: 0,
-			maxexp: 0,
-			nextexpcurve: 0
-		},
-		user: {
 			currentexp: 0,
 			level: 0,
 			maxexp: 0,
