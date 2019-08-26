@@ -55,7 +55,7 @@ class convertingArtcoins extends databaseManager {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 
-		this.subtractValue('userinventories', 'artcoins', metadata.to_use, author.id)
+		this.subtractValue(`userinventories`, `artcoins`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CARTCOIN.SUCCESSFUL, {

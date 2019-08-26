@@ -60,7 +60,7 @@ class Capsule extends databaseManager {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 		
-		this.subtractValue('userinventories', 'power_capsules', metadata.to_use, author.id)
+		this.subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {
