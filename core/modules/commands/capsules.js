@@ -1,11 +1,14 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
+const databaseManager = require(`../../utils/databaseManager.js`)
+
 /**
  * Main module
  * @Capsule as function to use exp capsules
  */
-class Capsule {
+class Capsule extends databaseManager {
 	constructor(Stacks) {
+		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -15,7 +18,8 @@ class Capsule {
      */
 	async execute() {
 		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
-		return reply(`command is disabled temporary, sorry for the inconvenice`)
+		//this.testFunction()
+		//return reply(`command is disabled temporary, sorry for the inconvenice`)
 		//  Centralized data object
 		let metadata = {
 			bot: bot,
@@ -55,7 +59,8 @@ class Capsule {
         
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
-
+		
+		this.subtractValue('userinventories', 'power_capsules', metadata.to_use, author.id)
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {

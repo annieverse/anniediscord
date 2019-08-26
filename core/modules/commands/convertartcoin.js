@@ -1,12 +1,14 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
+const databaseManager = require(`../../utils/databaseManager.js`)
 
 /**
  * Main module
  * @convertingArtcoins as function to convert artcoins into experience points.
  */
-class convertingArtcoins {
+class convertingArtcoins extends databaseManager {
 	constructor(Stacks) {
+		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -16,7 +18,7 @@ class convertingArtcoins {
      */
 	async execute() {
 		const { bot, message, args, palette, trueInt, name, emoji, commanifier, reply, code:{CARTCOIN}, meta:{author, data} } = this.stacks
-		return reply(`command is disabled temporary, sorry for the inconvenice`)
+		//return reply(`command is disabled temporary, sorry for the inconvenice`)
 		//  Returns as guide if user doesn't specify any parameters
 		if (!args[0]) return reply(CARTCOIN.SHORT_GUIDE)
         
@@ -53,6 +55,7 @@ class convertingArtcoins {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 
+		this.subtractValue('userinventories', 'artcoins', metadata.to_use, author.id)
 
 		//  Done
 		return reply(CARTCOIN.SUCCESSFUL, {
