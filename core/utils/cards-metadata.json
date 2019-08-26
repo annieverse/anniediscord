@@ -335,7 +335,7 @@
         "description": null,
         "type": null,
         "channel": [],
-        "effects": {
+        "effect": {
           "exp": null,
           "ac": null,
           "status": null,
@@ -360,7 +360,7 @@
         "description": null,
         "type": null,
         "channel": [],
-        "effects": {
+        "effect": {
           "exp": null,
           "ac": null,
           "status": null,
