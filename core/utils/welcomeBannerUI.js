@@ -21,7 +21,7 @@ class Banner {
 
 	updateCounter() {
 		const { threeDigitsComa } = new formatterManager()
-		this.counter.setName(`${threeDigitsComa(this.member.guild.memberCount)} members!`)
+		this.counter.setName(`˗ˏˋ ${threeDigitsComa(this.member.guild.memberCount)} Artists!! ˎˊ˗`)
 	}
 
 
