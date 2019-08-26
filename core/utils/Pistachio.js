@@ -61,7 +61,7 @@ module.exports = (Components) => {
 	if (message.member && (message.channel.type !== `dm`)) {
 
 		//  Check if current channel is included in gacha-allowed list
-		container.isGachaField = [`gacha-house`, `sandbox`].includes(message.channel.name)
+		container.isGachaField = [bot.channels.get(`578518964439744512`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
 
 		//  Check for administrator authority
 		container.isAdmin = message.member.roles.find(r => (r.name === `Creators Council`) || (r.name === `Channel Overseer`))
