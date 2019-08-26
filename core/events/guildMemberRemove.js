@@ -8,5 +8,5 @@ module.exports = (bot,member) => {
 	const configFormat = new formatManager()
 
 	let memberCountUpdate = bot.channels.get(`518245560239652867`)
-	memberCountUpdate.setName(`${configFormat.threeDigitsComa(userSize)} members!`)
+	memberCountUpdate.setName(`˗ˏˋ ${configFormat.threeDigitsComa(userSize)} Artists!! ˎˊ˗`)
 }
