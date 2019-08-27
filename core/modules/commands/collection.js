@@ -19,7 +19,7 @@ class collection {
 		const { message, palette, pause, utils, args } = this.stacks
 		let user_collection = {}
 		function user_cardcollection(user) {
-			return sql.get(`SELECT * FROM collections WHERE userId = ${user.id}`)
+			return sql.all(`SELECT * FROM item_inventory WHERE user_id = ${user.id}`)
 				.then(async data => {
 					user_collection = data
 				})
@@ -30,23 +30,25 @@ class collection {
 			let bag = container, parsedbag = {}
 
 
-			delete container.userId
+			container.forEach(element => {
+				delete element.user_id
+			});
+			//delete container.userId
 
 
 			//  Check whether the container is empty or filled.
 			const empty_bag = () => {
 				for (let i in container) {
-					if (container[i] !== null || container[i] > 0) return false
+					if (container[i].quantity !== null || container[i].quantity > 0) return false
 				}
 				return true
 			}
 
 
-
 			//  Remove property that contain null values from an object
 			const eliminate_nulls = () => {
 				for (let i in bag) {
-					if (bag[i] === null || bag[i] < 1) { delete bag[i] }
+					if (bag[i].quantity === null || bag[i].quantity < 1) { delete bag[i] }
 				}
 			}
 
@@ -55,10 +57,12 @@ class collection {
 			const labeling = () => {
 
 				for (let i in bag) {
-					sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
+					sql.get(`SELECT name FROM itemlist WHERE itemId = "${bag[i].item_id}" AND type = "Card"`)
 						.then(async data => {
+							try {
 							sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-								.then(async secdata => parsedbag[data.name] = secdata.rarity)
+								.then(async secdata => {try { parsedbag[data.name] = secdata.rarity } catch (e) {delete bag[i]}} )
+							} catch (e) { delete bag[i] }
 						})
 				}
 			}

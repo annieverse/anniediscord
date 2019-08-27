@@ -263,6 +263,13 @@ class databaseUtils {
                 WHERE userId = "${this.id}"`)
 	}
 
+	get inventory2() {
+		return sql.all(`
+                SELECT *
+                FROM item_inventory
+                WHERE user_id = "${this.id}"`)
+	}
+
 	//  Store new heart point
 	addHeart() {
 		sql.run(`
