@@ -12,7 +12,7 @@ class stats {
 		const { message, bot, palette, pause } = this.stacks
 
 		const format = new formatManager(message)
-		return [`bot`, `bot-games`, `naph-little-house`, `sandbox`].includes(message.channel.name) ? initInfo() :
+		return [`485922866689474571`, `614737097454125056`].includes(message.channel.name) ? initInfo() :
 			format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get(`485922866689474571`).toString()}.`)
 
 
