@@ -140,9 +140,12 @@ module.exports = (bot, message) => {
 	let commandfile = bot.commands.get(cmd.slice(prefix.length)) || bot.commands.get(bot.aliases.get(cmd.slice(prefix.length)))
 
 	if (env.dev && !env.administrator_id.includes(message.author.id)) return
-	if (!ch.bot_domain.includes(message.channel.id)) return
 	if (!message.content.startsWith(prefix)) return
+	if (!ch.bot_domain.includes(message.channel.id)) return
 	if (!commandfile) return
+	/*If the channel is restricted to some cmds only; check if cmd has channel enabled*/
+	if ((ch.special_bot_domain.includes(message.channel.id) && !commandfile.help.special_channels) ||
+		(ch.special_bot_domain.includes(message.channel.id) && !commandfile.help.special_channels.includes(message.channel.id))) return
 
 
 	const Components = {bot, message, command, args, commandfile, meta: {author: null, data: null}}

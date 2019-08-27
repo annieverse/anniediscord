@@ -91,5 +91,6 @@ module.exports.help = {
 	group: `Shop-related`,
 	public: true,
 	required_usermetadata: true,
-	multi_user : false
+	multi_user : false,
+	special_channels: [`614819522310045718`]
 }
