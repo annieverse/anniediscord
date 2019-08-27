@@ -8,7 +8,8 @@ class commandName {
 	}
 
 	async execute() {
-		const {} = this.stacks;
+		const {reply} = this.stacks
+		reply()
 	}
 }
 
