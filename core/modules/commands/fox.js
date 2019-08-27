@@ -15,7 +15,7 @@ class fox {
 		let message = this.message
 		let palette = this.stacks.palette
 		const format = new formatManager(message)
-		return [`bot`, `bot-games`, `cmds`, `sandbox`].includes(message.channel.name) ? initFox()
+		return [`485922866689474571`, `614737097454125056`].includes(message.channel.name) ? initFox()
 			: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get(`485922866689474571`).toString()}.`)
 
 		async function initFox() {
