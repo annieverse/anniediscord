@@ -32,7 +32,7 @@ class collection {
 
 			container.forEach(element => {
 				delete element.user_id
-			});
+			})
 			//delete container.userId
 
 
@@ -60,8 +60,8 @@ class collection {
 					sql.get(`SELECT name FROM itemlist WHERE itemId = "${bag[i].item_id}" AND type = "Card"`)
 						.then(async data => {
 							try {
-							sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-								.then(async secdata => {try { parsedbag[data.name] = secdata.rarity } catch (e) {delete bag[i]}} )
+								sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
+									.then(async secdata => {try { parsedbag[data.name] = secdata.rarity } catch (e) {delete bag[i]}} )
 							} catch (e) { delete bag[i] }
 						})
 				}

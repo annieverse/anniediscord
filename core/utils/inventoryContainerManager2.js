@@ -15,7 +15,7 @@ async function filtering_items(container) {
 
 	container.forEach(element => {
 		delete element.user_id
-	});
+	})
 	console.log(container)
 
 
