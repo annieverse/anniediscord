@@ -72,9 +72,6 @@ class Limitedshop {
 			}
 		}
 
-		//TODO enable ONLY buy command in 614819522310045718
-		//TODO possible delete messages after each buy command?
-		//TODO also delete messages that are not from bot and not >buy?
 		/*
         * TODOs before opening shops
         * Upload and link shop banner for shop type with instructions >buy <category> <id>
@@ -88,6 +85,7 @@ class Limitedshop {
 		let shopname
 		let shopemote
 		let shopcurrency
+		let cleartimeout
 
 		const initShopData = () => {
 			//if (bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel open to public
@@ -106,7 +104,9 @@ class Limitedshop {
 		/**
 		 * Creates a column in userinventories for the special currency. Start value: 0
 		 */
-		const createCurr = async () => {
+		const createCurr = () => {
+			reply(`Creating currency `+shopcurrency+`...`)
+			//TODO probably put the sql statements somewhere more fitting
 			sql.all(`SELECT ${shopcurrency} FROM userinventories`)
 				.then(() => { //column already exists
 					reply(`Currency ${shopcurrency} already exists`)
@@ -121,9 +121,7 @@ class Limitedshop {
 						.catch(() =>{
 							reply(`Couldn't create currency ${shopcurrency}`)
 						})
-				}
-				)
-
+				})
 		}
 
 		/**
@@ -132,8 +130,8 @@ class Limitedshop {
 		 * Formats the shop with shop name, banner, etc, and all the sale items
 		 */
 		const stock = async () => {
+			reply(`Stocking the shop...`)
 			//TODO emotes dont work REEEEEEEEEEEEEEEEE
-			bot.channels.get(`614819522310045718`).setName(shoptype + `  shop`)
 			const page = new Discord.RichEmbed()
 				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
 				.setColor(palette.darkmatte)
@@ -142,59 +140,114 @@ class Limitedshop {
 			const collection = new databaseManager(message.member.id)
 			let numitems = getItems(await collection.classifyLdtItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
 			page.setFooter(`We have ` + numitems + ` limited items in store!`)
-			bot.channels.get(`614819522310045718`).send(page)
+			await bot.channels.get(`614819522310045718`).send(page)
+			reply(`Finished stocking`)
 		}
 
 		/**
 		 * Sets the limited shop channel to public
 		 */
 		const open = async () => {
+			reply(`Opening shop to the public...`)
+			//if (bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel already open
+			//TODO uncomment the other and remove this temp hack
+			if (bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween`) {//channel already open
+				reply(`Channel is already open`)
+				return
+			}
+
 			//make channel 614819522310045718 public to @everyone
 			//TODO uncomment this when the time comes; be careful when using this
 			// because we want the limited shop to be a surprise!
-			/*bot.channels.get(`614819522310045718`).overwritePermissions(
+			/*await bot.channels.get(`614819522310045718`).overwritePermissions(
                 bot.channels.get(`614819522310045718`).guild.defaultRole,
                 { VIEW_CHANNEL: true }
                 );*/
+			await bot.channels.get(`614819522310045718`).setName(shoptype + `  shop`)
 
+			reply(`Scheduling clearing messages once per day...`)
+			cleartimeout = setInterval(() => {
+				clear()
+				//if (!bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel closed
+				//TODO uncomment the other and remove this temp hack
+				if (bot.channels.get(`614819522310045718`).name.split(`  `)[0]!==`halloween`) {//channel closed
+					reply(`Stopping scheduled message deletion`)
+					clearInterval(cleartimeout)
+				}
+			}, 8.64e+7)//24 h = 8.64e+7 ms
 		}
-
 		/**
 		 * Converts any leftover special currency back into AC at a third of the value
 		 * (That's a shitty conversion rate)
 		 */
 		const destroyCurr = async () => {
+			reply(`Destroying currency `+shopcurrency+`...`)
 			//in the case that a special shop doesn't use special currency do nothing
 			if (shopcurrency==`artcoins`) return
-			sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
+			await sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
 				.then((data) => {
 					for (var i=0;i<data.length;i++) {
 						let newac = data[i].artcoins + Math.floor(data[i][shopcurrency] * events[shoptype].currencyACvalue/3)
 						sql.all(`UPDATE userinventories SET ${shopcurrency} = 0, artcoins = ${newac} WHERE userId = ${data[i].userId}`)
 					}
 				})
-			//TODO do we even delete the whole column?
-
+			//TODO delete even the whole column?
 		}
 
 		/**
 		 * Closes the shop to the public
 		 * Renames the shop channel name to closed shop
 		 */
-		const close = async () => {
-			//TODO maybe on >ltdshop close set time for 1 week; notify everyone who still has special currency,
-			// only close shop and convert currency after the week?
-			//TODO make message "store closed bla" or ig we dont need this since we prune the shop before opening anyway
-			//make channel 614819522310045718 private
-			/*bot.channels.get(`614819522310045718`).overwritePermissions(
-                bot.channels.get(`614819522310045718`).guild.defaultRole,
-                { VIEW_CHANNEL: false }
-            );*/
-			destroyCurr()
-			bot.channels.get(`614819522310045718`).setName(`closed  shop`)
+		const close = () => {
+			reply(`Scheduling shop for deletion in 1 week...`)
+			//schedule shop for deletion in one week
+			setTimeout(async ()=>{
+				//make channel 614819522310045718 private
+				reply(`Setting shop to private...`)
+				await bot.channels.get(`614819522310045718`).overwritePermissions(
+					bot.channels.get(`614819522310045718`).guild.defaultRole,
+					{ VIEW_CHANNEL: false }
+				)
+				reply(`Setting shop name to closed...`)
+				await bot.channels.get(`614819522310045718`).setName(`closed  shop`)
+				await destroyCurr()
+			}, 20000)//1 week = 6,048e+8 ms
+
+			//ping all users who still have currency
+			//TODO probably better if DM, cause we clean the channel periodically
+			reply(`Ping everyone with remaining currency...`)
+			sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
+				.then((data) => {
+					if (data.length!=0) {
+						var users = ``
+						for (var i=0;i<data.length;i++) {
+							users+= `<@`+data[i].userId+`> `
+						}
+						bot.channels.get(`614819522310045718`).send(
+							`ATTENTION!\n`+
+							users+
+							`\n You haven't spent all of your `+shopcurrency+`.`+
+							`\n The store will close in exactly one week, and your `+shopcurrency+` will be destroyed!`+
+							`\n So what are you waiting for? BUY BUY BUY!`)
+					}
+				})
 		}
 
 		/**
+		 * Deletes all messages but the first one (first being shop message)
+		 * Message counter resets on bot restart
+		 * Also limit is at 100 messages according to docs
+		 */
+		const clear = () => {
+			bot.channels.get(`614819522310045718`).fetchMessages({limit:100}).then((msgs) => {
+				if (msgs.size>1) {
+					bot.channels.get(`614819522310045718`).bulkDelete(msgs.size - 1)
+				}
+			})
+		}
+
+		/**
+		 * Helper method for stock()
          * If the stocker is too fukken lazy to specify the shop type
          * we will stock the shop for the upcoming event from the list below (approximately)
             * Halloween: 31.10
@@ -256,20 +309,24 @@ class Limitedshop {
 			return source.length
 		}
 
+
 		/**
 		 * Start method
 		 */
 		const run = () => {
-			const helpmsg = `To stock, open, or close the shop, type >ltdshop stock/open/close respectively`
+			const helpmsg = `To stock, open, close, or clear the shop, type >ltdshop stock/open/close/clear respectively`
 			if (!args) return reply(helpmsg)
 			initShopData()
 			if (args[0] == `stock`) {
-				bot.channels.get(`614819522310045718`).bulkDelete(5)
+				clear()
+				bot.channels.get(`614819522310045718`).bulkDelete(1)
 				createCurr()
 			} else if (args[0] == `open`) {
 				open()
 			} else if (args[0] == `close`) {
 				close()
+			} else if (args[0] == `clear`) {
+				clear()
 			} else {
 				return reply(helpmsg)
 			}
