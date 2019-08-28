@@ -499,10 +499,41 @@ class databaseUtils {
 	 *   @param status of item type.
 	 *     @param opt of additional filter option. (default: "price < 999999")
 	 */
-	classifyLdtItem(status, opt = `price > 0`, order = `price ASC`) {
+	classifyLtdItem(status, opt = `price > 0`, order = `price ASC`) {
 		return sql.all(`SELECT name, type, price, desc FROM itemlist WHERE status = "${status.toString()}-sale" AND ${opt} GROUP BY type ORDER BY ${order}`).then(async parsed => parsed)
 	}
 
+	/**
+	 *     Get column of the currency
+	 *   @param currency type
+	 */
+	getCurrency(currency) {
+		return sql.all(`SELECT ${currency} FROM userinventories`)
+	}
+
+	/**
+	 *     Create column of the currency
+	 *   @param currency type
+	 */
+	makeCurrency(currency) {
+		return sql.all(`ALTER TABLE userinventories ADD ${currency} INTEGER DEFAULT 0`)
+	}
+
+	/**
+	 *     Get users with more than 0 currency
+	 *   @param currency type
+	 */
+	getUsersWithCurrency(currency) {
+		return sql.all(`SELECT * FROM userinventories WHERE ${currency} > 0`)
+	}
+
+	/**
+	 *     Sets currency to 0 and increases AC
+	 *   @param currency type
+	 */
+	convertCurrencyToAc(currency, newac, userId) {
+		return sql.all(`UPDATE userinventories SET ${currency} = 0, artcoins = ${newac} WHERE userId = ${userId}`)
+	}
 
 	/**
         *   Find item on given array.

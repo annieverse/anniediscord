@@ -3,8 +3,6 @@ const databaseManager = require(`../../utils/databaseManager`)
 const formatManager = require(`../../utils/formatManager`)
 const env = require(`../../../.data/environment`)
 const moment = require(`moment`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 
 /**
  * Main module
@@ -78,7 +76,6 @@ class Limitedshop {
         * Upload and define emotes and currencies in const events
         * Fill itemlist with shop items; use status for labels (e.g. halloween-sale); labels need to end with "sale"
         * Upload items to /core/images folder
-        * Uncomment stuff in open so that it actually gets opened to the public
         * */
 		let shoptype
 		let shopdata
@@ -86,11 +83,13 @@ class Limitedshop {
 		let shopemote
 		let shopcurrency
 		let cleartimeout
+		let db
 
 		const initShopData = () => {
-			//if (bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel open to public
-			//TODO uncomment the other and remove this temp hack
-			if (bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween`) {//channel open to public
+			db = new databaseManager(message.member.id)
+			//TODO hack while we cant set shops public
+			var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
+			if (opened) {//channel open to public
 				shoptype = (args.length >= 2) ? args[1] : bot.channels.get(`614819522310045718`).name.split(`  `)[0]
 			} else {
 				shoptype = (args.length >= 2) ? args[1] : getShopType()
@@ -106,14 +105,13 @@ class Limitedshop {
 		 */
 		const createCurr = () => {
 			reply(`Creating currency `+shopcurrency+`...`)
-			//TODO probably put the sql statements somewhere more fitting
-			sql.all(`SELECT ${shopcurrency} FROM userinventories`)
+			db.getCurrency(shopcurrency)
 				.then(() => { //column already exists
 					reply(`Currency ${shopcurrency} already exists`)
 					stock()
 				})
 				.catch(() => { //column doesn't exist
-					sql.all(`ALTER TABLE userinventories ADD ${shopcurrency} INTEGER DEFAULT 0`) //add column
+					db.makeCurrency(shopcurrency)
 						.then(() => { //on successfully created
 							reply(`Created currency ${shopcurrency}`)
 							stock()
@@ -137,8 +135,7 @@ class Limitedshop {
 				.setColor(palette.darkmatte)
 				.attachFile(`core/images/shop-` + shoptype + `-cov.png`)
 				.setImage(`https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png`)//TODO placeholder
-			const collection = new databaseManager(message.member.id)
-			let numitems = getItems(await collection.classifyLdtItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
+			let numitems = getItems(await db.classifyLtdItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
 			page.setFooter(`We have ` + numitems + ` limited items in store!`)
 			await bot.channels.get(`614819522310045718`).send(page)
 			reply(`Finished stocking`)
@@ -149,28 +146,28 @@ class Limitedshop {
 		 */
 		const open = async () => {
 			reply(`Opening shop to the public...`)
-			//if (bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel already open
-			//TODO uncomment the other and remove this temp hack
-			if (bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween`) {//channel already open
+			//TODO hack while we cant set shops public
+			var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
+			if (opened) {//channel open to public
 				reply(`Channel is already open`)
 				return
 			}
 
 			//make channel 614819522310045718 public to @everyone
-			//TODO uncomment this when the time comes; be careful when using this
-			// because we want the limited shop to be a surprise!
-			/*await bot.channels.get(`614819522310045718`).overwritePermissions(
-                bot.channels.get(`614819522310045718`).guild.defaultRole,
-                { VIEW_CHANNEL: true }
-                );*/
+			if(!env.dev) {
+				await bot.channels.get(`614819522310045718`).overwritePermissions(
+					bot.channels.get(`614819522310045718`).guild.defaultRole,
+					{ VIEW_CHANNEL: true }
+				)
+			}
 			await bot.channels.get(`614819522310045718`).setName(shoptype + `  shop`)
 
 			reply(`Scheduling clearing messages once per day...`)
 			cleartimeout = setInterval(() => {
 				clear()
-				//if (!bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL) {//channel closed
-				//TODO uncomment the other and remove this temp hack
-				if (bot.channels.get(`614819522310045718`).name.split(`  `)[0]!==`halloween`) {//channel closed
+				//TODO hack while we cant set shops public
+				var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
+				if (!opened) {//channel open to public
 					reply(`Stopping scheduled message deletion`)
 					clearInterval(cleartimeout)
 				}
@@ -184,13 +181,14 @@ class Limitedshop {
 			reply(`Destroying currency `+shopcurrency+`...`)
 			//in the case that a special shop doesn't use special currency do nothing
 			if (shopcurrency==`artcoins`) return
-			await sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
+			await db.getUsersWithCurrency(shopcurrency)
 				.then((data) => {
 					for (var i=0;i<data.length;i++) {
 						let newac = data[i].artcoins + Math.floor(data[i][shopcurrency] * events[shoptype].currencyACvalue/3)
-						sql.all(`UPDATE userinventories SET ${shopcurrency} = 0, artcoins = ${newac} WHERE userId = ${data[i].userId}`)
+						db.convertCurrencyToAc(shopcurrency, newac, data[i].userId)
 					}
 				})
+			reply(`Done`)
 			//TODO delete even the whole column?
 		}
 
@@ -215,16 +213,18 @@ class Limitedshop {
 
 			//DM all users who still have currency
 			reply(`Ping everyone with remaining currency...`)
-			sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
+			db.getUsersWithCurrency(shopcurrency)
 				.then(async (data) => {
 					for (var i=0;i<data.length;i++) {
-						//TODO uncomment; be careful with this; we dont want to spoil surprise
-						/*var user = await bot.fetchUser(data[i].userId)
-						user.send(`ATTENTION!\n`+
-							`\n You haven't spent all of your `+shopcurrency+`.`+
-							`\n The store will close in exactly one week, and your `+shopcurrency+` will be destroyed!`+
-							`\n So what are you waiting for? BUY BUY BUY!`)*/
+						if(!env.dev) {
+							var user = await bot.fetchUser(data[i].userId)
+							user.send(`ATTENTION!\n`+
+								`\n You haven't spent all of your `+shopcurrency+`.`+
+								`\n The store will close in exactly one week, and your `+shopcurrency+` will be destroyed!`+
+								`\n So what are you waiting for? BUY BUY BUY!`)
+						}
 					}
+					reply(`Done`)
 				})
 		}
 
