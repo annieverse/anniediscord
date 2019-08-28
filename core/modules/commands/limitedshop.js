@@ -211,7 +211,7 @@ class Limitedshop {
 				reply(`Setting shop name to closed...`)
 				await bot.channels.get(`614819522310045718`).setName(`closed  shop`)
 				await destroyCurr()
-			}, 20000)//1 week = 6,048e+8 ms
+			}, 6.048e+8)//1 week = 6.048e+8 ms
 
 			//DM all users who still have currency
 			reply(`Ping everyone with remaining currency...`)
