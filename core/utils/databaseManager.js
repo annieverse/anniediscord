@@ -292,7 +292,7 @@ class databaseUtils {
 	disableNotification() {
 		sql.run(`
                 UPDATE userdata
-                SET get_notification = 0
+                SET get_notification = -1
                 WHERE userId = "${this.id}"
             `)
 	}

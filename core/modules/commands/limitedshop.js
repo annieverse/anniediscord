@@ -213,22 +213,17 @@ class Limitedshop {
 				await destroyCurr()
 			}, 20000)//1 week = 6,048e+8 ms
 
-			//ping all users who still have currency
-			//TODO probably better if DM, cause we clean the channel periodically
+			//DM all users who still have currency
 			reply(`Ping everyone with remaining currency...`)
 			sql.all(`SELECT * FROM userinventories WHERE ${shopcurrency} > 0`)
-				.then((data) => {
-					if (data.length!=0) {
-						var users = ``
-						for (var i=0;i<data.length;i++) {
-							users+= `<@`+data[i].userId+`> `
-						}
-						bot.channels.get(`614819522310045718`).send(
-							`ATTENTION!\n`+
-							users+
+				.then(async (data) => {
+					for (var i=0;i<data.length;i++) {
+						//TODO uncomment; be careful with this; we dont want to spoil surprise
+						/*var user = await bot.fetchUser(data[i].userId)
+						user.send(`ATTENTION!\n`+
 							`\n You haven't spent all of your `+shopcurrency+`.`+
 							`\n The store will close in exactly one week, and your `+shopcurrency+` will be destroyed!`+
-							`\n So what are you waiting for? BUY BUY BUY!`)
+							`\n So what are you waiting for? BUY BUY BUY!`)*/
 					}
 				})
 		}

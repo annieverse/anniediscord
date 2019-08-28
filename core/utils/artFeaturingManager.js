@@ -97,27 +97,30 @@ class HeartCollector {
 		const { get_notification } = await this.db.userMetadata
 		const postmeta = await this.featuredPost
 
-
 		//  Returns if user react is a this.bot
 		if (bot.user.id === user.id) return
 		//  Returns if user has disabled their notification
-		if (!get_notification) return
-
+		if (get_notification==`-1`) return //-1 = explicit no
+		var once = null
+		if (get_notification==`0`) {//0 = default
+			once = `**Do you want to continue receiving notifications for likes, like this?** \n\n`+
+			`If no, you need to do nothing. I will stop sending you notifications. \n`+
+			`If yes, please reply with "**enable notifications**" below. \n\n`+
+			`You can disable notifications with "**disable notifications**" again.`
+		}
 
 		try {
-
 			//  Featured notification
-			if (!this.metadata.heartsTooLow && !postmeta) return reply(
+			if (!this.metadata.heartsTooLow && !postmeta) reply(
 				FEATURED.SUCCESSFUL, {
 					socket: [this.metadata.msg.author.username, this.metadata.msg.channel],
 					thumbnail: this.metadata.artwork,
 					field: this.metadata.msg.author,
 					notch: true
 				})
-
                 
 			//  First or two liked.
-			if (this.metadata.favs <= 2) return reply(
+			else if (this.metadata.favs <= 2) reply(
 				FEATURED.FIRST_LIKE, {
 					socket: [user.username],
 					thumbnail: this.metadata.artwork,
@@ -125,14 +128,17 @@ class HeartCollector {
 					notch: true
 				})
 
-
 			//  Regular notification
-			return reply(FEATURED.LIKED, {
+			else reply(FEATURED.LIKED, {
 				socket: [user.username, this.metadata.favs - 1],
 				thumbnail: this.metadata.artwork,
 				field: this.metadata.msg.author,
 				notch: true
 			})
+
+			if (once) reply(once, {field: this.metadata.msg.author})
+			await this.db.disableNotification()
+			return
 		}
 		catch(e) { return }
 	}
@@ -144,7 +150,6 @@ class HeartCollector {
 	async Add() {
 		//  Mutation pistachio
 		const { reply, avatar, reaction, user } = this.stacks
-
 
 		//  Returns if the reaction is unmatch.
 		if (this.metadata.unmatchEmoji) return
@@ -158,7 +163,6 @@ class HeartCollector {
 		if (this.metadata.selfLiking) return reaction.remove(user)
 		//  Returns if user has recently liked the post
 		if (await keyv.get(this.reactid)) return
-
 
 		//  Store recent reaction to avoid double notification spam. Restored in 1 hour.
 		keyv.set(this.reactid, `1`, this.notificationTimeout)
