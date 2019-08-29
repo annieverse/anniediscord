@@ -1,21 +1,6 @@
 version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
 
-  # Storing test metadata
-  store_test_metadata:
-    working_directory: ~/project # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
-    steps:
-      - run:
-          command: |
-            mkdir -p ~/reports
-            eslint ./src/ --format junit --output-file ~/reports/eslint.xml
-          when: always
-      - store_test_results:
-          path: ~/reports
-      - store_artifacts:
-          path: ~/reports   
 
 
   build: # runs not using Workflows must have a `build` job as entry point
@@ -54,4 +39,11 @@ jobs: # a collection of steps
 
       # Finishing
       - run:
-        - store_test_metadata
+        command: |
+              mkdir -p ~/reports
+              eslint ./src/ --format junit --output-file ~/reports/eslint.xml
+            when: always
+        - store_test_results:
+            path: ~/reports
+        - store_artifacts:
+            path: ~/reports   
