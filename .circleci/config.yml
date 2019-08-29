@@ -1,21 +1,40 @@
 version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
+
+  # Storing test metadata
+  store_test_metadata:
+    steps:
+      - run:
+          command: |
+            mkdir -p ~/reports
+            eslint ./src/ --format junit --output-file ~/reports/eslint.xml
+          when: always
+      - store_test_results:
+          path: ~/reports
+      - store_artifacts:
+          path: ~/reports   
+
+
   build: # runs not using Workflows must have a `build` job as entry point
     working_directory: ~/project # directory where steps will run
     docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
     steps: # a collection of executable commands
 
+
       - checkout # special step to check out source code to working directory
+
 
        # special step to restore the dependency cache
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
 
+
       # Installing dependencies
       - run:
           name: Installing dependencies
           command: npm install
+
 
       # special step to save the dependency cache
       - save_cache:
@@ -23,16 +42,13 @@ jobs: # a collection of steps
           paths:
             - ./node_modules
 
-      # run eslint
-      - run:
-          name: Code Syntax check
-          command: eslint . --fix
 
-      # run unit testing
+      # run eslint & mocha
       - run:
-          name: Unit Testing
-          command: mocha
+          name: Codestyle check & Unit Test
+          command: npm test
+
 
       # Finishing
-      - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: test-results.xml
+      - run:
+        - store_test_metadata
