@@ -42,7 +42,7 @@ jobs: # a collection of steps
         command: |
               mkdir -p ~/reports
               eslint ./src/ --format junit --output-file ~/reports/eslint.xml
-            when: always
+          when: always
         - store_test_results:
             path: ~/reports
         - store_artifacts:
