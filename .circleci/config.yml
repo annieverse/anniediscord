@@ -1,8 +1,7 @@
 version: 2 # use CircleCI 2.0
+
+
 jobs: # a collection of steps
-
-
-
   build: # runs not using Workflows must have a `build` job as entry point
     working_directory: ~/project # directory where steps will run
     docker: # run the steps with Docker
@@ -36,3 +35,27 @@ jobs: # a collection of steps
           name: Codestyle check & Unit Test
           command: npm test
   
+
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/project
+    steps:
+      run:
+        name: Deploy to Production
+        command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust/anniediscord"
+
+
+
+# Pipeline
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+        requires:
+          - build
+        filters:
+          branches:
+            only: master
