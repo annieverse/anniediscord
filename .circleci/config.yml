@@ -8,11 +8,6 @@ jobs: # a collection of steps
 
       - checkout # special step to check out source code to working directory
 
-      # Updating npm
-      - run:
-          name: Updating npm
-          command: 'sudo npm install -g npm@latest'
-
        # special step to restore the dependency cache
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
