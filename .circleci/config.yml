@@ -4,13 +4,12 @@
 #
 version: 2
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:10.16.0
 
+  # Init
+  initialize:
     working_directory: ~/repo
-
+    docker:
+      - image: circleci/node:10.16.0
     steps:
       - checkout
 
@@ -26,4 +25,29 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: npm test
+  
+  # Eslint run
+  code_linting:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:10.16.0
+    steps:
+      - run:
+          - name: Code Syntax check
+          - command: eslint . --fix
+
+
+# Pipeline
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - initialize
+      - code_linting:
+        requires:
+          - initialize
+      - store_test_results:
+          path: test-results.xml
+          requires:
+            - initialize
+            - code_linting
