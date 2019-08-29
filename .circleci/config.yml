@@ -6,7 +6,7 @@ workflows:
   build-and-deploy:
     jobs:
       - build
-      - deploy:
+      - deploying_to_production:
           requires:
             - build
           filters:
@@ -46,7 +46,7 @@ jobs: # a collection of steps
       - run:
           name: Codestyle check & Unit Test
           command: npm test
-  deploy:
+  deploying_to_production:
     docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
     working_directory: ~/project
@@ -54,4 +54,4 @@ jobs: # a collection of steps
       - checkout
       - run:
           name: Deploy to Production
-          command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust/anniediscord"
+          command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
