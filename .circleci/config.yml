@@ -7,11 +7,11 @@ workflows:
     jobs:
       - build
       - deploy:
-        requires:
-          - build
-        filters:
-          branches:
-            only: master
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
 jobs: # a collection of steps
   build: # runs not using Workflows must have a `build` job as entry point
@@ -52,6 +52,6 @@ jobs: # a collection of steps
     working_directory: ~/project
     steps:
       - checkout
-      run:
-        name: Deploy to Production
-        command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust/anniediscord"
+      - run:
+          name: Deploy to Production
+          command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust/anniediscord"
