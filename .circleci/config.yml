@@ -47,7 +47,7 @@ jobs: # a collection of steps
           name: Codestyle check & Unit Test
           command: npm test
   deploy:
-   docker: # run the steps with Docker
+    docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
     working_directory: ~/project
     steps:
