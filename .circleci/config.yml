@@ -1,53 +1,43 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
-jobs:
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    working_directory: ~/repo # directory where steps will run
+    docker: # run the steps with Docker
+      - image: circleci/node:4.8.2 # ...with this image as the primary container; this is where all `steps` will run
+    steps: # a collection of executable commands
 
-  # Init
-  initialize:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/node:10.16.0
-    steps:
-      - checkout
+      - checkout # special step to check out source code to working directory
 
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-
-      - run: npm install
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-  
-  # Eslint run
-  code_linting:
-    working_directory: ~/repo
-    docker:
-      - image: circleci/node:10.16.0
-    steps:
+      # Updating npm
       - run:
-          - name: Code Syntax check
-          - command: eslint . --fix
+          name: Updating npm
+          command: 'sudo npm install -g npm@latest'
 
+       # special step to restore the dependency cache
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
 
-# Pipeline
-workflows:
-  version: 2
-  pipeline:
-    jobs:
-      - initialize
-      - code_linting:
-        requires:
-          - initialize
-      - store_test_results:
+      # Installing dependencies
+      - run:
+          name: Installing dependencies
+          command: npm install
+
+      # special step to save the dependency cache
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+
+      # run eslint
+      - run:
+          name: Code Syntax check
+          command: eslint . --fix
+
+      # run unit testing
+      - run:
+          name: Unit Testing
+          command: mocha
+
+      # Finishing
+      - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: test-results.xml
-          requires:
-            - initialize
-            - code_linting
