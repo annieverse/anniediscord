@@ -163,7 +163,10 @@ async function profile(stacks, member) {
          */
 
 	if (!user.cov) {
-		canv.addImage(await configProfile.getAsset(`defaultcover1`), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
+		canv
+			.addRect(startPos_x, startPos_y, baseWidth, 270)
+			.setColor(switchColor[usercolor].base)
+			.addImage(await configProfile.getAsset(`defaultcover1`), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
 	} else {
 		canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
 	}
