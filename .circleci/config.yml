@@ -36,6 +36,10 @@ jobs:
   # Code style & syntax check
   linting:
     <<: *defaults
+    - restore_cache:
+        keys: 
+          - v1-dependency-cache-{{ checksum "package.json" }}
+          - v1-dependency-cache-
     steps:
       - checkout
       - run: 
