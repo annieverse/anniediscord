@@ -60,6 +60,8 @@ jobs:
       - image: circleci/node:10.16.3
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run linting
 
   # Test predefined micro functions
@@ -69,9 +71,10 @@ jobs:
       - image: circleci/node:10.16.3
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run: npm run unit-test
 
-      - checkout # special step to check out source code to working directory
 
   # Deploying to production
   deploying:
