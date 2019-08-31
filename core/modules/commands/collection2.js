@@ -1,3 +1,10 @@
+/**
+ * 	I changed this file name to avoid wrong indexing.
+ * 	Reference to module.exports.help.name
+ *  -naph
+ * 
+ */
+
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const Discord = require(`discord.js`)
@@ -129,7 +136,7 @@ class collection {
 
 module.exports.help = {
 	start: collection,
-	name: `collection`,
+	name: `collectionBackup`,
 	aliases: [],
 	description: `View yours or someones collected cards`,
 	usage: `collection`,

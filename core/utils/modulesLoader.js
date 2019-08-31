@@ -1,29 +1,36 @@
 console.time(`Commands Loaded`)
-const { readdir } = require(`fs`)
+const { readdirSync } = require(`fs`)
 const { Collection } = require(`discord.js`)
+const commandsPath = `./core/modules/commands/`
 
 class modulesLoader {
-	//	Loading command modules.
+
+
+	/**
+	 * 	Get all files in commands directory
+	 */
+	get fetchSource() {
+		return readdirSync(commandsPath)
+	}
+
+
+	/**
+	 * 	Assigning fetchSource() result to @Client
+	 */
 	register(Client) {
 		Client.commands = new Collection()
 		Client.aliases = new Collection()
 
-		readdir(`./core/modules/commands/`, (err, files) => {
+		let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
 
-			if (err) return console.log(`Modules failed to load.`)
-			let jsfile = files.filter(f => f.split(`.`).pop() === `js`)
-			if (jsfile.length <= 0) return
-
-			jsfile.forEach((f) => {
-				let props = require(`../modules/commands/${f}`)
-				Client.commands.set(props.help.name, props)
-				props.help.aliases.forEach(alias => {
-					Client.aliases.set(alias, props.help.name)
-				})
+		jsfile.forEach((f) => {
+			let props = require(`../modules/commands/${f}`)
+			Client.commands.set(props.help.name, props)
+			props.help.aliases.forEach(alias => {
+				Client.aliases.set(alias, props.help.name)
 			})
 		})
 
-		console.timeEnd(`Commands Loaded`)
 		return Client
 	}
 }

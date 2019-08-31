@@ -302,6 +302,8 @@ module.exports = bot => {
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
+
+
 			/**
              *  Add the feature you want to test inside parameter.
              *  @param {Function/Variable} framework
@@ -312,13 +314,14 @@ module.exports = bot => {
 			/**
              *  Prepare extensions. Only ran on production server.
              */
-			setupDatabase()
-			roleChange()
-			autoStatus()
-
 			console.log(`${bot.user.username} is up.`)
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
+
+
+			setupDatabase()
+			roleChange()
+			autoStatus()
 		}
 	}
 
