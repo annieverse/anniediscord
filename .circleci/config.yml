@@ -43,7 +43,7 @@ jobs:
             - v1-dependency-cache-
       - run: 
           name: Running ESlint
-          command: npm run linting
+          command: npm test
 
 
   # Test predefined micro functions
