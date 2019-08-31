@@ -1,7 +1,7 @@
 version: 2 # use CircleCI 2.0
 
 defaults: &defaults
-  working_directory: ~/anniediscord
+  working_directory: ~/repo
   docker:
     - image: circleci/node:10.16.3
 
@@ -30,7 +30,7 @@ jobs:
       - save_cache:
           key: v1-dependency-cache-{{ checksum "package.json" }}
           paths:
-            - ./node_modules
+            - node_modules
 
 
   # Code style & syntax check
