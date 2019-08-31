@@ -3,8 +3,8 @@ version: 2 # use CircleCI 2.0
 # Pipeline
 workflows:
   version: 2
-  jobs:
-
+  pipeline:
+    jobs:
     # First, installing dependencies.
     - build
 
@@ -28,57 +28,48 @@ workflows:
           branches:
             only: master
 
-
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
-
-
   # Installing required dependencies
   build:
     working_directory: ~/project # directory where steps will run
     docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
     steps: # a collection of executable commands
-
-
       - checkout # special step to check out source code to working directory
 
-
-       # special step to restore the dependency cache
+      # special step to restore the dependency cache
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-
 
       # Installing dependencies
       - run:
           name: Installing dependencies
           command: npm install
 
-
       # special step to save the dependency cache
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-  
+
   # Code style & syntax check
   linting:
-    working_directory: ~/project 
-    docker: 
-      - image: circleci/node:10.16.3 
+    working_directory: ~/project
+    docker:
+      - image: circleci/node:10.16.3
     steps:
       - checkout
       - run: npm run linting
 
   # Test predefined micro functions
   unit_test:
-    working_directory: ~/project 
-    docker: 
-      - image: circleci/node:10.16.3 
-    steps: 
+    working_directory: ~/project
+    docker:
+      - image: circleci/node:10.16.3
+    steps:
       - checkout
       - run: npm run unit-test
-
 
       - checkout # special step to check out source code to working directory
 
