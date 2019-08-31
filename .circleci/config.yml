@@ -14,7 +14,7 @@ jobs:
 
       # special step to restore the dependency cache
       - restore_cache:
-          key: 
+          keys: 
             - v1-dependency-cache-{{ checksum "package.json" }}
             - v1-dependency-cache-
 
@@ -25,7 +25,7 @@ jobs:
 
       # special step to save the dependency cache
       - save_cache:
-          key: v1-dependency-cache-{{ checksum "package.json" }}
+          keys: v1-dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
 
@@ -38,7 +38,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: 
+          keys: 
             - v1-dependency-cache-{{ checksum "package.json" }}
             - v1-dependency-cache-
       - run: 
@@ -54,7 +54,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: 
+          keys: 
             - v1-dependency-cache-{{ checksum "package.json" }}
             - v1-dependency-cache-
       - run: 
