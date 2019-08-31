@@ -83,7 +83,6 @@ workflows:
           requires:
             - build
             - linting
-            - unit_test
           filters:
             branches:
               only: master
