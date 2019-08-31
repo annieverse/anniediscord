@@ -48,7 +48,7 @@ jobs:
 
   # Test predefined micro functions
   unit_test:
-    working_directory: ~/project
+    working_directory: ~/project/test
     docker:
       - image: circleci/node:10.16.3
     steps:
@@ -59,9 +59,7 @@ jobs:
             - v1-dependency-cache-
       - run: 
           name: Running a Unit Test
-          commands: |
-          ls
-          npm run unit-test
+          command: npm run unit-test
 
 
   # Deploying to production
