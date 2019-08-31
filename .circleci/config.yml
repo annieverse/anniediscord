@@ -59,10 +59,9 @@ jobs:
     docker:
       - image: circleci/node:10.16.3
     steps:
-      - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - commands: eslint .
+      - run: npm run linting
 
   # Test predefined micro functions
   unit_test:
@@ -70,10 +69,9 @@ jobs:
     docker:
       - image: circleci/node:10.16.3
     steps:
-      - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - commands: mocha
+      - run: npm run unit-test
 
 
   # Deploying to production
