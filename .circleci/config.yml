@@ -21,7 +21,7 @@ jobs:
       # Installing dependencies
       - run:
           name: Installing dependencies
-          command: npm i && npm i -d
+          command: npm install
 
       # special step to save the dependency cache
       - save_cache:
@@ -32,9 +32,9 @@ jobs:
 
   # Code style & syntax check
   linting:
-    working_directory: ~/project
     docker:
       - image: circleci/node:10.16.3
+    working_directory: ~/project
     steps:
       - checkout
       - restore_cache:
@@ -48,9 +48,9 @@ jobs:
 
   # Test predefined micro functions
   unit_test:
-    working_directory: ~/project/test
     docker:
       - image: circleci/node:10.16.3
+    working_directory: ~/project
     steps:
       - checkout
       - restore_cache:
