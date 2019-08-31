@@ -59,7 +59,7 @@ jobs:
             - v1-dependency-cache-
       - run: 
           name: Running a Unit Test
-          command: |
+          commands: |
           ls
           npm run unit-test
 
