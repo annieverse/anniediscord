@@ -62,7 +62,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: eslint .
+      - commands: eslint .
 
   # Test predefined micro functions
   unit_test:
@@ -73,7 +73,7 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
-      - run: mocha
+      - commands: mocha
 
 
   # Deploying to production
