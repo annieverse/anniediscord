@@ -114,7 +114,7 @@
         "INVALID_USER": "Sorry i couldn't find that user."
     },
     "LEADERBOARD": {
-        "SHORT_GUIDE": "Hey, checkout our server leaderboard! below are the available categories:\n\n`>lb xp` for level ranking\n`>lb ac` for artcoins ranking\n`>lb fame` for reputations ranking\n`>lb artist` for popular artists ranking",
+        "SHORT_GUIDE": "Hey, checkout our server leaderboard! below are the available categories:\n\n`>lb xp` for level ranking\n`>lb ac` for artcoins ranking\n`>lb fame` for reputations ranking\n`>lb artist` for popular artists ranking\n`>lb weeb` for completed anime ranking",
         "INVALID_CATEGORY": "Sorry i can't find anything from that category",
         "FETCHING": "`fetching {0} leaderboard data . .`",
         "AUTHOR_RANK": "You are currently **{0}#** with total **{1}** {2}",

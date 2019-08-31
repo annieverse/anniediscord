@@ -2,6 +2,7 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const imageUrlRegex = /\?size=2048$/g
+const fetch = require(`node-fetch`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
@@ -29,52 +30,104 @@ const render = async (stacks, metadata) => {
 	metadata.user = data
 
 	const ranking = {
-		xpgroup: [],
-		acgroup: [],
-		repgroup: [],
-		artgroup: [],
+		group: [],
 		limit: 9,
-		async pullingData() {
+		async pullingXp() {
 			for (let i = 0; i < 10; i++) {
-				this.xpgroup.push({
+				this.group.push({
 					id: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `userId`),
 					xp: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `currentexp`),
 					lv: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `level`)
 				})
-				this.acgroup.push({
+			}
+		},
+		async pullingAc() {
+			for (let i = 0; i < 10; i++) {
+				this.group.push({
 					id: await dbmanager.indexRanking(`userinventories`, `artcoins`, i, `userId`),
 					ac: await dbmanager.indexRanking(`userinventories`, `artcoins`, i, `artcoins`)
 				})
-				this.repgroup.push({
+			}
+		},
+		async pullingRep() {
+			for (let i = 0; i < 10; i++) {
+				this.group.push({
 					id: await dbmanager.indexRanking(`userdata`, `reputations`, i, `userId`),
 					rep: await dbmanager.indexRanking(`userdata`, `reputations`, i, `reputations`)
 				})
-				this.artgroup.push({
+			}
+		},
+		async pullingArt() {
+			for (let i = 0; i < 10; i++) {
+				this.group.push({
 					id: await dbmanager.indexRanking(`userdata`, `liked_counts`, i, `userId`),
 					liked_count: await dbmanager.indexRanking(`userdata`, `liked_counts`, i, `liked_counts`)
 				})
 			}
 		},
-		async user() {
-			await this.pullingData()
-			return {
-				xpgroup: this.xpgroup,
-				acgroup: this.acgroup,
-				repgroup: this.repgroup,
-				artgroup: this.artgroup,
-				limit: this.limit,
-				authorindex_xp: await dbmanager.authorIndexRanking(`userdata`, `currentexp`),
-				authorindex_ac: await dbmanager.authorIndexRanking(`userinventories`, `artcoins`),
-				authorindex_rep: await dbmanager.authorIndexRanking(`userdata`, `reputations`),
-				authorindex_art: await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
+		async getNumOfAnime(link, startIndex, animes) {
+			var response = await fetch(`https://api.jikan.moe/v3/user/`+link+`/animelist/completed?page=`+startIndex)
+			var responsejson = await response.json()
+			if (responsejson && responsejson.anime) {
+				var numOfAnime = animes + responsejson.anime.length
+				if (responsejson.anime.length == 300) {
+					numOfAnime = await this.getNumOfAnime(link, startIndex+1, animes + responsejson.anime.length)
+				}
+				return numOfAnime
 			}
+			return animes
+		},
+		async pullingAnime() {
+			var array = []
+			var users = await sql.all(`SELECT * FROM userdata WHERE anime_link <> ""`)
+			for(var i=0;i<users.length;i++) {
+				var userlink = users[i].anime_link.split(`https://myanimelist.net/profile/`)
+				if (userlink.length==2) {
+					var num = await this.getNumOfAnime(userlink[1], 1, 0)
+					array.push({id: users[i].userId, anime: num})
+				}
+			}
+			array.sort((a, b) => (a.anime > b.anime? -1 :(b.anime > a.anime ? 1 : 0)))
+			this.group = array
+		},
+		async user(selected_group) {
+			var u = {limit: this.limit}
+			if (selected_group==`xp`) {
+				await this.pullingXp()
+				u.group = this.group
+				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `currentexp`)
+				return u
+			}
+			if (selected_group==`ac`) {
+				await this.pullingAc()
+				u.group = this.group
+				u.authorindex = await dbmanager.authorIndexRanking(`userinventories`, `artcoins`)
+				return u
+			}
+			if (selected_group==`rep`) {
+				await this.pullingRep()
+				u.group = this.group
+				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `reputations`)
+				return u
+			}
+			if (selected_group==`arts`) {
+				await this.pullingArt()
+				u.group = this.group
+				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
+				return u
+			}
+			if (selected_group==`weeb`) {
+				await this.pullingAnime()
+				u.group = this.group
+				u.authorindex = this.group.findIndex((data)=>data.id==metadata.user.userId)
+				return u
+			}
+
 		}
 	}
-	const user = await ranking.user()
-
+	const user = await ranking.user(metadata.selected_group)
 
 	let canv = new Canvas(size.x, size.y)
-
 
 	//  Bundled functions for each row rendering task.
 	class Row {
@@ -95,7 +148,7 @@ const render = async (stacks, metadata) => {
 		get nickname_formatter() {
 			let name
 			try {
-				name = bot.users.get(user[this.group][this.index].id).username
+				name = bot.users.get(user.group[this.index].id).username
 			} catch (err) {
 				name = `User Left`
 			}
@@ -115,7 +168,7 @@ const render = async (stacks, metadata) => {
 
 		//  Returns reputation points
 		get reputation() {
-			const reps = commanifier(user[this.group][this.index].rep)
+			const reps = commanifier(user.group[this.index].rep)
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt RobotoBlack`)
@@ -126,7 +179,7 @@ const render = async (stacks, metadata) => {
 
 		//  Highlight if user is in the top ten list
 		get highlight() {
-			if (user[this.group][this.index].id === author.id) {
+			if (user.group[this.index].id === author.id) {
 				this.highlight_user = true
 				canv.setColor(palette.golden)
 					.addRect(size.x2, this.y - 35, size.x - size.x2, 60)
@@ -139,11 +192,21 @@ const render = async (stacks, metadata) => {
 
 		//  Returns user liked post
 		get liked() {
-			const reps = commanifier(user[this.group][this.index].liked_count)
+			const reps = commanifier(user.group[this.index].liked_count)
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt RobotoBlack`)
 				.addText(`${reps} ❤`, size.x - 50, this.y)
+			return this
+		}
+
+		//  Returns user watched anime
+		get anime() {
+			const reps = commanifier(user.group[this.index].anime)
+			this.text_check
+			canv.setTextAlign(`right`)
+			canv.setTextFont(`15pt RobotoBlack`)
+				.addText(`${reps}`, size.x - 50, this.y)
 			return this
 		}
 
@@ -153,7 +216,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextFont(`15pt RobotoBlack`)
 				.setTextAlign(`right`)
-				.addText(commanifier(user[this.group][this.index].ac), size.x - 50, this.y)
+				.addText(commanifier(user.group[this.index].ac), size.x - 50, this.y)
 			return this
 		}
 
@@ -163,7 +226,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt Robotoblack`)
-				.addText(user[this.group][this.index].lv, size.x - 50, this.y)
+				.addText(user.group[this.index].lv, size.x - 50, this.y)
 			return this
 		}
 
@@ -172,7 +235,7 @@ const render = async (stacks, metadata) => {
 		get exp() {
 			canv.setTextAlign(`left`)
 			canv.setTextFont(`12pt Whitney`)
-			canv.addText(commanifier(user[this.group][this.index].xp) + ` XP`, size.x2 + 160, this.y + 20)
+			canv.addText(commanifier(user.group[this.index].xp) + ` XP`, size.x2 + 160, this.y + 20)
 			return this
 		}
 
@@ -191,7 +254,7 @@ const render = async (stacks, metadata) => {
 		async avatar() {
 			let identify_user
 			try {
-				identify_user = bot.users.get(user[this.group][this.index].id).displayAvatarURL.replace(imageUrlRegex, `?size=256`)
+				identify_user = bot.users.get(user.group[this.index].id).displayAvatarURL.replace(imageUrlRegex, `?size=256`)
 			} catch (err) {
 				identify_user = bot.user.displayAvatarURL.replace(imageUrlRegex, `?size=256`)
 			}
@@ -215,13 +278,13 @@ const render = async (stacks, metadata) => {
 		//  Level leaderboard
 		async xp() {
 			metadata.title = `${emoji(`aauBell`)} **| Level Leaders**`
-			metadata.footer_components = [user.authorindex_xp + 1, commanifier(metadata.user.currentexp), `EXP`]
+			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.currentexp), `EXP`]
 
-			for (let i = 0; i < user.xpgroup.length; i++) {
+			for (let i = 0; i < user.group.length; i++) {
 				canv.save()
 					.save()
 
-				await new Row(i, 65, `xpgroup`)
+				await new Row(i, 65, `group`)
 					.highlight
 					.nickname
 					.exp
@@ -242,14 +305,14 @@ const render = async (stacks, metadata) => {
 
 		async removeMemberFromListACgroup(id) {
 			let index
-			for (let i = 0; i < user.acgroup.length; i++) {
-				if(user.acgroup[i].id === id) {
+			for (let i = 0; i < user.group.length; i++) {
+				if(user.group[i].id === id) {
 					index = i
 				}
 			}
-			this.deleteObjectFromArr(user.acgroup, user.acgroup[index])
+			this.deleteObjectFromArr(user.group, user.group[index])
 			user.limit++
-			user.acgroup.push({
+			user.group.push({
 				id: await dbmanager.indexRanking(`userinventories`, `artcoins`, user.limit, `userId`),
 				ac: await dbmanager.indexRanking(`userinventories`, `artcoins`, user.limit, `artcoins`)
 			})
@@ -262,10 +325,10 @@ const render = async (stacks, metadata) => {
 
 			metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`
             
-			if (user.authorindex_ac > (await dbmanager.authorIndexRanking(`userinventories`, `artcoins`, `277266191540551680`))) user.authorindex_ac-=1
-			metadata.footer_components = [user.authorindex_ac + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)]
+			if (user.authorindex > (await dbmanager.authorIndexRanking(`userinventories`, `artcoins`, `277266191540551680`))) user.authorindex-=1
+			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)]
 
-			for (let i = 0; i < user.acgroup.length; i++) {
+			for (let i = 0; i < user.group.length; i++) {
 				canv.save()
 					.save()
 
@@ -284,9 +347,9 @@ const render = async (stacks, metadata) => {
 		//  Reputations leaderboard
 		async rep() {
 			metadata.title = `${emoji(`wowo`)} **| Popularity Leaders**`
-			metadata.footer_components = [user.authorindex_rep + 1, commanifier(metadata.user.reputations), `☆`]
+			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.reputations), `☆`]
 
-			for (let i = 0; i < user.repgroup.length; i++) {
+			for (let i = 0; i < user.group.length; i++) {
 				canv.save()
 					.save()
 
@@ -305,9 +368,9 @@ const render = async (stacks, metadata) => {
 		//  Artists leaderboard
 		async arts() {
 			metadata.title = `${emoji(`hapiicat`)} **| Artists Leaders**`
-			metadata.footer_components = [user.authorindex_art + 1, commanifier(metadata.user.liked_counts), `♡`]
+			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.liked_counts), `♡`]
 
-			for (let i = 0; i < user.artgroup.length; i++) {
+			for (let i = 0; i < user.group.length; i++) {
 				canv.save()
 					.save()
 
@@ -316,6 +379,26 @@ const render = async (stacks, metadata) => {
 					.nickname
 					.position
 					.liked
+					.avatar()
+
+				canv.restore()
+			}
+		}
+
+		//  Weeb leaderboard
+		async weeb() {
+			metadata.title = `${emoji(`culture`)} **| Weeb Leaders**`
+			metadata.footer_components = [user.authorindex + 1, commanifier(user.authorindex > -1 ? user.group[user.authorindex].anime : 0), `completed anime`]
+
+			for (let i = 0; i < Math.min(user.group.length, 10); i++) {
+				canv.save()
+					.save()
+
+				await new Row(i, 65, `group`)
+					.highlight
+					.nickname
+					.position
+					.anime
 					.avatar()
 
 				canv.restore()
