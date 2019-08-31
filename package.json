@@ -39,7 +39,7 @@
     "superagent": "^5.1.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.3.0",
     "nodemon": "^1.19.1"
   }
 }
