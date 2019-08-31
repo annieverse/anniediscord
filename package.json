@@ -6,7 +6,7 @@
   "scripts": {
     "test": "eslint . --fix && mocha",
     "linting": "eslint .",
-    "unit-test": "mocha",
+    "unit-test": "mocha test",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon index.js"
   },
