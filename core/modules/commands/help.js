@@ -14,7 +14,7 @@ class help {
 		this.needHelp = `Need further help? Please DM <@507043081770631169>.`
 		this.embed = new Discord.RichEmbed()
 		this.dm = false
-		this.pathForCommands = `./core/modules/commands/`
+		this.pathForCommands = Stacks.paths.help_js
 	}
 
 	// This will format all embeds used in this file

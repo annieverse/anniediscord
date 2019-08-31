@@ -24,6 +24,9 @@ module.exports = (Components) => {
 	//  Storing message codes
 	container.code = require(`./predefinedMessages`)
 
+	// Storing file paths
+	container.paths = require(`./filePaths.json`)
+
 	//  Storing colorset
 	container.palette = require(`./colorset`)
 

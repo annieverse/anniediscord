@@ -8,6 +8,7 @@ class adminHelp {
 		this.bicon = Stacks.bot.user.displayAvatarURL
 		this.admEmbed = new Discord.RichEmbed()
 		this.admEmbed2 = new Discord.RichEmbed()
+		this.filePath = Stacks.paths.Adminhelp_js
 	}
 
 	/**
@@ -16,7 +17,7 @@ class adminHelp {
      */
 	async groupNames() {
 		let file_arr = []
-		fs.readdir(`./modules/commands/`, (err, files) => {
+		fs.readdir(this.filePath, (err, files) => {
 			if (err) console.log(err)
 			const src = require(`./${files[0]}`)
 			file_arr.push(src.help.group.toLowerCase())
@@ -38,7 +39,7 @@ class adminHelp {
 	async mainNames(groupname) {
 
 		let file_arr = []
-		fs.readdir(`./modules/commands/`, (err, files) => {
+		fs.readdir(this.filePath, (err, files) => {
 			if (err) console.log(err)
 
 			for (let file in files) {
