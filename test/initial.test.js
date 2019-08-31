@@ -1,7 +1,6 @@
 /* eslint-disable  */
-const {
-    expect
-} = require(`chai`);
+const { expect } = require(`chai`)
+const sinon = require(`sinon`)
 
 /**
  *  Test method should be independent
@@ -9,16 +8,17 @@ const {
  */
 describe(`Initial check`, () => {
 
+
     describe(`modulesLoader`, () => {
         testLoadingCommands()
+    })
+    describe(`Module (Buy.js)`, () => {
+        userTransactionParameters()
     })
 
 
 
 
-    function loadEnvironmentVariables() {
-        require(`dotenv`).config()
-    }
 
 
     /**
@@ -50,32 +50,9 @@ describe(`Initial check`, () => {
 
 
     /**
-     *  Test calling the event handler
-     *  @testCallingEventListener
+     *  Double checking user input
+     *  @userTransactionParameters
      */
-    function testCallingEventListener() {
-        require(`../core/utils/eventHandler`)(bot)
-    }
-
-
-    /**
-     *  Logging the bot
-     *  @testBotLogin
-     */
-    function testBotLogin() {
-        bot.login(process.env.TOKEN || process.env.LOGIN_TOKEN)
-    }
-
-
-    /**
-     *  Terminate bot
-     *  @terminateClient
-     */
-    function terminateBot() {
-        bot.destroy()
-    }
-
-
     function userTransactionParameters() {
         describe(`Transaction handling`, () => {
                 let msg = `>buy role baka potato`;

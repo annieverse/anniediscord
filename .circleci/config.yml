@@ -3,18 +3,38 @@ version: 2 # use CircleCI 2.0
 # Pipeline
 workflows:
   version: 2
-  build-and-deploy:
-    jobs:
-      - build
-      - deploying_to_production:
-          requires:
-            - build
+  jobs:
+
+    # First, installing dependencies.
+    - build
+
+    # Check for code style & syntax consistency. Requires build to finish.
+    - linting:
+        requires:
+          - build
+
+    # Testing unit functions.
+    - unit_test:
+        requires:
+          - build
+
+    # Once everything is done, time to deploy it to the production.
+    - deploying_to_production:
+        requires:
+          - build
+          - linting
+          - unit_test
           filters:
             branches:
               only: master
 
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
+
+# Predefined jobs that going to be used as pipeline's workflow.
+jobs:
+
+
+  # Installing required dependencies
+  build:
     working_directory: ~/project # directory where steps will run
     docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
@@ -40,13 +60,30 @@ jobs: # a collection of steps
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+  
+  # Code style & syntax check
+  linting:
+    working_directory: ~/project 
+    docker: 
+      - image: circleci/node:10.16.3 
+    steps:
+      - checkout
+      - run: npm run linting
+
+  # Test predefined micro functions
+  unit_test:
+    working_directory: ~/project 
+    docker: 
+      - image: circleci/node:10.16.3 
+    steps: 
+      - checkout
+      - run: npm run unit-test
 
 
-      # run eslint & mocha
-      - run:
-          name: Codestyle check & Unit Test
-          command: npm test
-  deploying_to_production:
+      - checkout # special step to check out source code to working directory
+
+  # Deploying to production
+  deploying:
     docker: # run the steps with Docker
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
     working_directory: ~/project

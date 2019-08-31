@@ -410,6 +410,18 @@ async function profile(stacks, member) {
 			.addText(`${configFormat.threeDigitsComa(user.cur)} XP`, baseWidth - 155, 547)
 	}
 
+
+	/**
+	 * 
+	 * 	Add blue verified badge if user has received total 1,000 hearts
+	 * 
+	 */
+	const verifiedStartingPoint = canv.measureText(member.user.username).width + 300
+	if (userdata.liked_counts >= 1000) {
+		canv.addImage(await configProfile.getAsset(`verified_badge`), verifiedStartingPoint, 355, 30, 30, 15)
+	}
+
+
 	return canv.toBuffer()
 
 

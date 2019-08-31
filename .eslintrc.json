@@ -16,10 +16,7 @@
         "no-mixed-spaces-and-tabs": "off",
 		"no-irregular-whitespace" : "off",
         "no-console": "off",
-        "indent": [
-            "error",
-            "tab"
-        ],
+        "indent": "off",
         "linebreak-style": "off",
         "quotes": [
             "error",

@@ -18,8 +18,12 @@ keyv.on(`error`, err => console.log(`Connection Error`, err))
 
 
 module.exports = (bot, message) => {
+
 	//  Returns if message is coming from bot
 	if (message.author.bot) return
+
+	//  Handle direct message type
+	if(message.channel.type ===`dm`) return dmInterface()
 
 	//  Runs specific channel functions when in prod server
 	if(!env.dev) {
@@ -128,9 +132,6 @@ module.exports = (bot, message) => {
 
 	}
 
-
-	//  Handle direct message type
-	if(message.channel.type ===`dm`) return dmInterface()
 
 	let prefix = env.prefix
 	let messageArray = message.content.split(` `)
