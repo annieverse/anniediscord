@@ -169,6 +169,16 @@ async function profile(stacks, member) {
 					`A R T  A P P R E C I A T O R`, startPos_x + 48, 410)
 
 	/**
+	 *
+	 * 	Add blue verified badge if user has received total 1,000 hearts
+	 *
+	 */
+	const verifiedStartingPoint = canv.measureText(member.user.username).width * 2.72 + 5
+	if (user.likecount >= 1000) {
+		canv.addImage(await configProfile.getAsset(`verified_badge`), startPos_x + 42 + verifiedStartingPoint, 355, 30, 30)
+	}
+
+	/**
 	 *    RANK TITLE
 	 */
 	canv.setColor(user.clr)
@@ -216,17 +226,6 @@ async function profile(stacks, member) {
 		.addText(`HEARTS`, 115, 557) // left point
 		.addText(`LEVEL`, 295, 557) // middle point
 		.addText(`FAME`, 477, 557) // right point
-
-	/**
-	 * 
-	 * 	Add blue verified badge if user has received total 1,000 hearts
-	 * 
-	 */
-	const verifiedStartingPoint = canv.measureText(member.user.username).width + 300
-	if (userdata.liked_counts >= 1000) {
-		canv.addImage(await configProfile.getAsset(`verified_badge`), verifiedStartingPoint, 355, 30, 30, 15)
-	}
-
 
 	return canv.toBuffer()
 
