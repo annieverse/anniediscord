@@ -1,89 +1,63 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const Discord = require(`discord.js`)
-
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
-
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
-
 class collection {
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
-
 	async execute() {
 		const { message, palette, pause, utils, args } = this.stacks
 		let user_collection = {}
 		function user_cardcollection(user) {
-			return sql.all(`SELECT * FROM item_inventory WHERE user_id = ${user.id}`)
+			return sql.get(`SELECT * FROM collections WHERE userId = ${user.id}`)
 				.then(async data => {
 					user_collection = data
 				})
 		}
-
 		let filtered_res
 		async function filter_items(container) {
 			let bag = container, parsedbag = {}
-
-
-			container.forEach(element => {
-				delete element.user_id
-			})
-			//delete container.userId
-
-
+			delete container.userId
 			//  Check whether the container is empty or filled.
 			const empty_bag = () => {
 				for (let i in container) {
-					if (container[i].quantity !== null || container[i].quantity > 0) return false
+					if (container[i] !== null || container[i] > 0) return false
 				}
 				return true
 			}
-
-
 			//  Remove property that contain null values from an object
 			const eliminate_nulls = () => {
 				for (let i in bag) {
-					if (bag[i].quantity === null || bag[i].quantity < 1) { delete bag[i] }
+					if (bag[i] === null || bag[i] < 1) { delete bag[i] }
 				}
 			}
-
-
 			// Label itemname & rarity for each item from itemlist
 			const labeling = () => {
-
 				for (let i in bag) {
-					sql.get(`SELECT name FROM itemlist WHERE itemId = "${bag[i].item_id}" AND type = "Card"`)
+					sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
 						.then(async data => {
-							try {
-								sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-									.then(async secdata => {try { parsedbag[data.name] = secdata.rarity } catch (e) {delete bag[i]}} )
-							} catch (e) { delete bag[i] }
+							sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
+								.then(async secdata => parsedbag[data.name] = secdata.rarity)
 						})
 				}
 			}
-
 			if (empty_bag()) return filtered_res = null
-
-
 			eliminate_nulls()
 			labeling()
 			await pause(500)
 			filtered_res = parsedbag
 		}
-
-
 		let msg_res = []
 		function text_interface() {
-
 			const body = () => {
 				const embed = new Discord.RichEmbed()
 					.setColor(palette.darkmatte)
-
 				const formatting = () => {
 					let i = 1, content = ``
 					for (let key in filtered_res) {
@@ -92,15 +66,11 @@ class collection {
 					}
 					return content
 				}
-
 				!filtered_res ? embed.setDescription(`You don't have any collection.`) : embed.setDescription(formatting())
 				return msg_res.push(embed)
 			}
-
 			body()
 		}
-
-
 		/**
             Send result into message event. 
             @run
@@ -113,7 +83,6 @@ class collection {
 					await user_cardcollection(user)
 					await filter_items(user_collection)
 					await text_interface()
-
 					message.channel.send(`**${user.user.username}'s Collection**`)
 						.then(async () => {
 							message.channel.send(msg_res[0])
@@ -121,17 +90,15 @@ class collection {
 						})
 				})
 		}
-
 		return run()
-
 	}
 }
-
 module.exports.help = {
 	start: collection,
 	name: `collection`,
 	aliases: [],
 	description: `View yours or someones collected cards`,
+	usage: `${require(`../../.data/environment.json`).prefix}collection`,
 	usage: `collection`,
 	group: `General`,
 	public: true,
