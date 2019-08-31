@@ -78,11 +78,6 @@ workflows:
           requires:
             - build
 
-      # Testing unit functions.
-      - unit_test:
-          requires:
-            - build
-
       # Once everything is done, time to deploy it to the production.
       - deploying:
           requires:
