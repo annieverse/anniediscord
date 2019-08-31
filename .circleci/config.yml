@@ -45,7 +45,7 @@ jobs:
       # Installing dependencies
       - run:
           name: Installing dependencies
-          command: npm install
+          command: npm i && npm i -d
 
       # special step to save the dependency cache
       - save_cache:
