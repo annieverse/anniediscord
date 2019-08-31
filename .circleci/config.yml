@@ -1,7 +1,7 @@
 version: 2 # use CircleCI 2.0
 
 defaults: &defaults
-  working_directory: ~/repo
+  working_directory: ~/anniediscord
   docker:
     - image: circleci/node:10.16.3
 
