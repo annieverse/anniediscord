@@ -24,9 +24,9 @@ workflows:
           - build
           - linting
           - unit_test
-          filters:
-            branches:
-              only: master
+        filters:
+          branches:
+            only: master
 
 
 # Predefined jobs that going to be used as pipeline's workflow.
