@@ -36,12 +36,12 @@ jobs:
   # Code style & syntax check
   linting:
     <<: *defaults
-    - restore_cache:
+    steps:
+      - checkout
+      - restore_cache:
         keys: 
           - v1-dependency-cache-{{ checksum "package.json" }}
           - v1-dependency-cache-
-    steps:
-      - checkout
       - run: 
           name: Running ESlint
           command: npm run linting
