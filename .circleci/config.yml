@@ -28,8 +28,11 @@ workflows:
           branches:
             only: master
 
+
+
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
+
   # Installing required dependencies
   build:
     working_directory: ~/project # directory where steps will run
@@ -40,7 +43,9 @@ jobs:
 
       # special step to restore the dependency cache
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
 
       # Installing dependencies
       - run:
@@ -49,9 +54,10 @@ jobs:
 
       # special step to save the dependency cache
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: v1-dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
+
 
   # Code style & syntax check
   linting:
@@ -59,9 +65,15 @@ jobs:
     docker:
       - image: circleci/node:10.16.3
     steps:
+      - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run linting
+          key: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
+      - run: 
+          name: Running ESlint
+          command: npm run linting
+
 
   # Test predefined micro functions
   unit_test:
@@ -69,9 +81,14 @@ jobs:
     docker:
       - image: circleci/node:10.16.3
     steps:
+      - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run unit-test
+          key: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
+      - run: 
+          name: Running a Unit Test
+          command: npm run unit-test
 
 
   # Deploying to production
