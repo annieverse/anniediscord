@@ -1,34 +1,5 @@
 version: 2 # use CircleCI 2.0
 
-# Pipeline
-workflows:
-  version: 2
-  pipeline:
-    jobs:
-    # First, installing dependencies.
-    - build
-
-    # Check for code style & syntax consistency. Requires build to finish.
-    - linting:
-        requires:
-          - build
-
-    # Testing unit functions.
-    - unit_test:
-        requires:
-          - build
-
-    # Once everything is done, time to deploy it to the production.
-    - deploying_to_production:
-        requires:
-          - build
-          - linting
-          - unit_test
-        filters:
-          branches:
-            only: master
-
-
 
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
@@ -101,3 +72,34 @@ jobs:
       - run:
           name: Deploy to Production
           command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
+
+
+
+
+# Pipeline
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      # First, installing dependencies.
+      - build
+
+      # Check for code style & syntax consistency. Requires build to finish.
+      - linting:
+          requires:
+            - build
+
+      # Testing unit functions.
+      - unit_test:
+          requires:
+            - build
+
+      # Once everything is done, time to deploy it to the production.
+      - deploying:
+          requires:
+            - build
+            - linting
+            - unit_test
+          filters:
+            branches:
+              only: master
