@@ -4,7 +4,7 @@
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "eslint . --fix && mocha",
+    "test": "eslint . && mocha",
     "linting": "eslint .",
     "unit-test": "mocha",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",

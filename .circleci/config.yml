@@ -1,88 +1,92 @@
 version: 2 # use CircleCI 2.0
 
-# Pipeline
-workflows:
-  version: 2
-  pipeline:
-    jobs:
-    # First, installing dependencies.
-    - build
+defaults: &defaults
+  working_directory: ~/project
+  docker:
+    - image: circleci/node:10.16.3
 
-    # Check for code style & syntax consistency. Requires build to finish.
-    - linting:
-        requires:
-          - build
-
-    # Testing unit functions.
-    - unit_test:
-        requires:
-          - build
-
-    # Once everything is done, time to deploy it to the production.
-    - deploying_to_production:
-        requires:
-          - build
-          - linting
-          - unit_test
-        filters:
-          branches:
-            only: master
 
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
+
   # Installing required dependencies
   build:
-    working_directory: ~/project # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
+    <<: *defaults
     steps: # a collection of executable commands
       - checkout # special step to check out source code to working directory
 
       # special step to restore the dependency cache
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
 
       # Installing dependencies
       - run:
           name: Installing dependencies
-          command: npm i && npm i -d
+          command: npm install
 
       # special step to save the dependency cache
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: v1-dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
 
+
   # Code style & syntax check
   linting:
-    working_directory: ~/project
-    docker:
-      - image: circleci/node:10.16.3
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run linting
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
+      - run: 
+          name: Running ESlint
+          command: npm run linting
+
 
   # Test predefined micro functions
   unit_test:
-    working_directory: ~/project
-    docker:
-      - image: circleci/node:10.16.3
+    <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run: npm run unit-test
+      - run: 
+          name: Running a Unit Test
+          command: npm run unit-test
 
 
   # Deploying to production
   deploying:
-    docker: # run the steps with Docker
-      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
-    working_directory: ~/project
+    <<: *defaults
     steps:
       - checkout
       - run:
           name: Deploy to Production
           command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
+
+
+
+
+# Pipeline
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      # First, installing dependencies.
+      - build
+
+      # Check for code style & syntax consistency. Requires build to finish.
+      - linting:
+          requires:
+            - build
+
+      # Once everything is done, time to deploy it to the production.
+      - deploying:
+          requires:
+            - build
+            - linting
+          filters:
+            branches:
+              only: master
