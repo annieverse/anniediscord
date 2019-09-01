@@ -6,14 +6,6 @@ module.exports = () => {
 	const modulesLoader = require(`./utils/modulesLoader`)
 	const express = require(`express`)
 	const app = express()
-	const http = require(`http`)
-	http.createServer((req, res) => {
-	res.writeHead(200, {
-		'Content-type': `text/plain`
-	})
-		res.write(`Hey`)
-		res.end()
-	}).listen(4000)
     
 	//  Loads .env variables
 	require(`dotenv`).config()
