@@ -14,35 +14,29 @@ class profileManager {
 	formatString(string, numlines) {
 		var paraLength = Math.round((string.length) / numlines)
 		var paragraphs = []
+		var marker = paraLength
 		for (var i = 0; i < numlines; i++) {
-			var marker = paraLength
 			//if the marker is right after a space, move marker back one character
 			if (string.charAt(marker - 1) == ` `) {
 				marker--
 			}
 			//move marker to end of a word if it's in the middle
 			while (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
-				marker++
+				marker--
 			}
 			var nextPara = string.substring(0, marker)
+
 			paragraphs.push(nextPara)
 			string = string.substring((nextPara.length + 1), string.length)
 		}
-		if (numlines === 1) {
-			return {
-				first: paragraphs[0]
-			}
-		} else if (numlines === 2) {
-			return {
-				first: paragraphs[0],
-				second: paragraphs[1]
-			}
-		} else if (numlines === 3) {
-			return {
-				first: paragraphs[0],
-				second: paragraphs[1],
-				third: paragraphs[2]
-			}
+		if (string) {
+			paragraphs.push(string)
+		}
+		return {
+			first: paragraphs[0],
+			second: paragraphs[1]?paragraphs[1]:``,
+			third: paragraphs[2]?paragraphs[2]:``,
+			fourth: paragraphs[3]?paragraphs[3]:``
 		}
 	}
 

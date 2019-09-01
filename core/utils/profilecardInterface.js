@@ -67,8 +67,8 @@ async function profile(stacks, member) {
 		}
 	}
 
-	let canvas_x = 580//560
-	let canvas_y = 600//730
+	let canvas_x = 320//280
+	let canvas_y = 420//380
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -103,7 +103,7 @@ async function profile(stacks, member) {
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
 		.setColor(switchColor[usercolor].base)
-		.addRect(startPos_x + 5, startPos_y + 5, baseWidth - 10, baseHeight - 10) // (x, y, x2, y2)
+		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
 		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
 		.setShadowBlur(0)
@@ -113,43 +113,40 @@ async function profile(stacks, member) {
 	/**
      *    PROFILE STICKER
      */
-	if (user.stic) {
+	/*if (user.stic) {
 		canv.addImage(await configProfile.getAsset(user.stic+switchColor[usercolor].sticker), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
-	}
+	}*/
 
 	/**
          *    PROFILE HEADER COVER
          */
 
 	if (!user.cov) {
-		canv.addRect(startPos_x, startPos_y, baseWidth, 270)
+		canv.addRect(startPos_x, startPos_y, baseWidth, 194)
 			.setColor(switchColor[usercolor].base)
-			.addImage(await configProfile.getAsset(`defaultcover1`), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
+			.addImage(await configProfile.getAsset(`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 	} else {
-		canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth, 270, 107) // COVER HEADER
+		canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 	}
-
-
 
 	/**
          *    USER AVATAR
          */
-		canv.setColor(switchColor[usercolor].base)
-		.addCircle(startPos_x + 132, 255, 95) //avatar
-		.addRoundImage(avatar, startPos_x + 42, 165, 180, 180, 90)
-
+	canv.setColor(switchColor[usercolor].base)
+		.addCircle(startPos_x + 70, 200, 52) //avatar
+		.addRoundImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
 	/**
      *    BADGES COLLECTION
      */
-	const symetric_xy = 40
+	const symetric_xy = 18
 	const diameter = Math.round(symetric_xy / 2)
-	const y_badge = 290
+	const y_badge = 208
 	await setBadge(symetric_xy, diameter, y_badge)
 
 	async function setBadge(xy, diameter, pos_y) {
 		for (var i=0; i<=reservedSlot; i++) {
-			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 230 + i*50, pos_y, xy, xy, diameter)
+			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
 		}
 	}
 
@@ -158,35 +155,35 @@ async function profile(stacks, member) {
 	 */
 	canv.setColor(switchColor[usercolor].secondaryText)
 		.setTextAlign(`center`)
-		.setTextFont(`${configProfile.checkUsernameLength(member.user.username).profiler}pt RobotoBold`) // NICKNAME
-		.addText(member.user.username, startPos_x + 132, 385)
+		.setTextFont(`14pt RobotoBold`) // NICKNAME
+		.addText(member.user.username, startPos_x + 70, 272)
 
 		.setColor(user.clr)
-		.setTextFont(`10pt RobotoBold`)
+		.setTextFont(`5pt RobotoBold`)
 		.addText(member.roles.find(r => r.name === `Digital`) ? `D I G I T A L   A R T I S T` :
 			member.roles.find(r => r.name === `Traditional`) ? `T R A D I T I O N A L  A R T I S T` :
 				member.roles.find(r => r.name === `Mixed`) ? `G E N E R A L  A R T I S T` :
-					`A R T  A P P R E C I A T O R`, startPos_x + 132, 410)
+					`A R T  A P P R E C I A T O R`, startPos_x + 70, 286)
 
 	/**
 	 *
 	 * 	Add blue verified badge if user has received total 1,000 hearts
 	 *
 	 */
-	const verifiedStartingPoint = canv.measureText(member.user.username).width * 2.72 + 5
+	const verifiedStartingPoint = canv.measureText(member.user.username).width * 1.3 + 2
 	if (user.likecount >= 1000) {
-		canv.addImage(await configProfile.getAsset(`verified_badge`), startPos_x + 42 + verifiedStartingPoint, 355, 30, 30)
+		canv.addImage(await configProfile.getAsset(`verified_badge`), startPos_x + 70 + verifiedStartingPoint, 256, 16, 16)
 	}
 
 	/**
 	 *    RANK TITLE
 	 */
 	canv.setColor(user.clr)
-		.createBeveledClip(startPos_x + 270, startPos_y + 355, 250, 38, 25)
-		.addRect(startPos_x + 270, startPos_y + 355, 250, 38)
+		.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
+		.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 		.setColor(palette.white)
-		.setTextFont(`15pt RobotoBold`) // role window - role name
-		.addText(configRank.ranksCheck(user.lvl).title, startPos_x + 395, startPos_y + 380)
+		.setTextFont(`8pt RobotoBold`) // role window - role name
+		.addText(configRank.ranksCheck(user.lvl).title, startPos_x + 215, startPos_y + 264)
 		.restore()
 
 	/**
@@ -194,20 +191,20 @@ async function profile(stacks, member) {
 	 */
 	canv.setColor(switchColor[usercolor].secondaryText)
 		.setTextAlign(`left`)
+		.setTextFont(`8pt Roboto`)
 	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length < 55) {
-		canv.setTextFont(`15pt Roboto`) // profile description.
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 50, 448)
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 31, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).second, 31, 317)
 	} else if (configProfile.checkDesc(user.des).length > 55 && configProfile.checkDesc(user.des).length < 110) {
-		canv.setTextFont(`14pt Roboto`) // profile description.
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 50, 448)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 50, 468)
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 31, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 31, 317)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).third, 31, 327)
 	} else if (configProfile.checkDesc(user.des).length > 110 && configProfile.checkDesc(user.des).length < 165) {
-		canv.setTextFont(`12pt Roboto`) // profile description.
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 50, 443)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 50, 458)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 50, 473)
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 31, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 31, 317)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 31, 327)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).fourth, 31, 337)
 	}
-
 	/**
          *    THREE BOXES
          *    HEART, LVL, REP
@@ -215,16 +212,16 @@ async function profile(stacks, member) {
          */
 		canv.setTextAlign(`center`)
 		.setColor(user.clr)
-		.setTextFont(`35pt RobotoMedium`)
-		.addText(configFormat.formatK(user.likecount), 115, 532) // left point // rank
-		.addText(user.lvl, 295, 532) // middle point // level
-		.addText(configFormat.formatK(user.rep), 477, 532) // right point // AC
+		.setTextFont(`20pt RobotoMedium`)
+		.addText(configFormat.formatK(user.likecount), 70, 370) // left point // rank
+		.addText(user.lvl, 160, 370) // middle point // level
+		.addText(configFormat.formatK(user.rep), 250, 370) // right point // AC
 
 		.setColor(switchColor[usercolor].secondaryText)
-		.setTextFont(`12pt Whitney`)
-		.addText(`HEARTS`, 115, 557) // left point
-		.addText(`LEVEL`, 295, 557) // middle point
-		.addText(`FAME`, 477, 557) // right point
+		.setTextFont(`8pt Whitney`)
+		.addText(`HEARTS`, 70, 390) // left point
+		.addText(`LEVEL`, 160, 390) // middle point
+		.addText(`FAME`, 250, 390) // right point
 
 	return canv.toBuffer()
 
