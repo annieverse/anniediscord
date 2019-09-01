@@ -136,8 +136,10 @@ class HeartCollector {
 				notch: true
 			})
 
-			if (once) reply(once, {field: this.metadata.msg.author})
-			await this.db.disableNotification()
+			if (once) {
+				reply(once, {field: this.metadata.msg.author})
+				await this.db.disableNotification()
+			}
 			return
 		}
 		catch(e) { return }
