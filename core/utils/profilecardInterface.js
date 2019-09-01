@@ -157,16 +157,16 @@ async function profile(stacks, member) {
 	 *    USERNAME
 	 */
 	canv.setColor(switchColor[usercolor].secondaryText)
-		.setTextAlign(`left`)
+		.setTextAlign(`center`)
 		.setTextFont(`${configProfile.checkUsernameLength(member.user.username).profiler}pt RobotoBold`) // NICKNAME
-		.addText(member.user.username, startPos_x + 42, 385)
+		.addText(member.user.username, startPos_x + 132, 385)
 
 		.setColor(user.clr)
 		.setTextFont(`10pt RobotoBold`)
 		.addText(member.roles.find(r => r.name === `Digital`) ? `D I G I T A L   A R T I S T` :
 			member.roles.find(r => r.name === `Traditional`) ? `T R A D I T I O N A L  A R T I S T` :
 				member.roles.find(r => r.name === `Mixed`) ? `G E N E R A L  A R T I S T` :
-					`A R T  A P P R E C I A T O R`, startPos_x + 48, 410)
+					`A R T  A P P R E C I A T O R`, startPos_x + 132, 410)
 
 	/**
 	 *
@@ -185,7 +185,6 @@ async function profile(stacks, member) {
 		.createBeveledClip(startPos_x + 270, startPos_y + 355, 250, 38, 25)
 		.addRect(startPos_x + 270, startPos_y + 355, 250, 38)
 		.setColor(palette.white)
-		.setTextAlign(`center`)
 		.setTextFont(`15pt RobotoBold`) // role window - role name
 		.addText(configRank.ranksCheck(user.lvl).title, startPos_x + 395, startPos_y + 380)
 		.restore()
