@@ -2,6 +2,7 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
+const moment = require(`moment`)
 const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
@@ -112,15 +113,12 @@ async function portfolio(stacks, member) {
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
 		.addText(`Recent Post`, 55, 35)
-		.setTextAlign(`right`)
-		.setTextFont(`11pt Whitney`)
-		.addText(`TODO ago`, baseWidth - 5, 35)
 		.setColor(switchColor[usercolor].border)
 		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
 
 	async function gridImage(posx, posy, dx, dy) {
-		var res = await sql.all(`SELECT url FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
+		var res = await sql.all(`SELECT * FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
 		async function aspectRatio(src) {
 			var proberes = await probe(src)
 			try {
@@ -130,8 +128,6 @@ async function portfolio(stacks, member) {
 				let {
 					body: photo
 				} = await get(src)
-				canv.setColor(switchColor[usercolor].border)
-					.addRect(posx, posy, dx, dy)
 				if (width > height) {
 					canv.addImage(photo, posx - ((width * dy / height) - dx)/2, posy, width * dy / height, dy,1)
 				} else {
@@ -144,21 +140,30 @@ async function portfolio(stacks, member) {
 		}
 
 		async function nullCollection() {
-			canv.setColor(switchColor[usercolor].secondaryText)
-				.setTextAlign(`center`)
-				.setTextFont(`15pt RobotoBold`)
-				.addText(`No post yet.`, (baseWidth / 2) + 25, 230)
+			canv.addText(`No artworks yet!`, (baseWidth / 2) + 10, 100)
+				.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
+				.setColor(switchColor[usercolor].border)
+				.addRect(posx, posy, dx, dy)
 				.addImage(await configProfile.getAsset(`anniewot`), 350, 125, 80, 80, 40)
 		}
 
+		canv.setColor(switchColor[usercolor].secondaryText)
+			.setTextAlign(`right`)
+			.setTextFont(`11pt Whitney`)
+			.addText(moment(res[0].timestamp).fromNow(), baseWidth - 5, 35)
+			.setTextAlign(`center`)
+			.setTextFont(`10pt Roboto`)
 		if (res.length < 1) {
 			await nullCollection()
 		} else {
+			canv.addText(`My newest artwork!`, (baseWidth / 2) + 10, 100)
+				.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
+				.setColor(switchColor[usercolor].border)
+				.addRect(posx, posy, dx, dy)
 			await aspectRatio(res[0].url)
 		}
 	}
 
-	canv.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
 	await gridImage(startPos_x, 110, baseWidth, baseWidth)
 
 	return canv.toBuffer()
