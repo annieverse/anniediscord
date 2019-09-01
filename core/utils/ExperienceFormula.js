@@ -255,6 +255,13 @@ class Experience {
 		}
 	}
 
+	
+	//	Derivative class purpose
+	set addMetadata(mtdt = {}) {
+		this.data = mtdt
+	}
+
+
 	// Automate the process
 	async runAndUpdate() {
 		//  Add & calculate bonuses from card if prompted

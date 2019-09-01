@@ -4,6 +4,7 @@ module.exports = () => {
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
 	const modulesLoader = require(`./utils/modulesLoader`)
+	const Database = require(`./utils/databaseManager`)
 	const express = require(`express`)
 	const app = express()
     
@@ -18,6 +19,9 @@ module.exports = () => {
     
 	//	Loading command modules.
 	bot = new modulesLoader().register(bot)
+
+	//	Loading database manager
+	bot.db = new Database()
 
 	//  Start events.
 	require(`./utils/eventHandler`)(bot)

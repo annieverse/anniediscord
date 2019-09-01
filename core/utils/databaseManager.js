@@ -1,6 +1,6 @@
-
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const sql = require(`sqlite3`).verbose()
+//	Opening connection
+let db = new sql.Database(`.data/database.sqlite`, sql.OPEN_READWRITE)
 /**
   *   Accessing database globally.
   *   {databaseUtils}
@@ -15,6 +15,78 @@ class databaseUtils {
 		this.id = id
 	}
 
+
+	/**
+	 * 	Standard low method for executing sql query
+	 * 	@privateMethod
+	 * 	@param {String|SQL} stmt
+	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
+	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
+	 * 	@param {ArrayOfString} supplies parameters to be used in sql statement.
+	 */
+	async _query(stmt=``, type=`get`, supplies=[]) {
+
+		//	Return if no statement has found
+		if (!stmt) return null
+
+		try {
+			//	Run query
+			let result = await db[type](stmt, supplies)
+			console.log(supplies, result)
+
+			return result
+			
+		}
+		catch (e) {
+			console.log(e.message)
+			//	Give null if query cannot be parsed
+			return null
+		}
+
+	}
+
+
+	/**
+	 * 	Assign user id as class property.
+	 * 	@Setter
+	 * 	@param {String|ID} id of userid
+	 */
+	set setUser(id = ``) {
+		this.id = id
+	}
+
+
+	/**
+	 * 	Defacto method for updating experience point
+	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
+	 */
+	updateExperienceMetadata(data = {}) {
+		this._query(`
+			UPDATE userdata 
+			SET currentexp = ?
+			, level = ?
+			, maxexp = ?
+			, nextexpcurve = ?
+			WHERE userId = "?"`
+			, `run`
+			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, this.id])
+	}
+
+
+	/**
+	 * 	Register into userdata if not present
+	 * 	@param {String|ID} id user id
+	 */
+	validatingNewUser(id = this.id) {
+		this._query(`
+			INSERT OR IGNORE
+			INTO "userdata" (userId)
+			VALUES (?)`
+			, `run`
+			, [id])		
+	}
+
+
 	/**
      * Lifesaver promise. Used pretty often when calling an API.
      * @pause
@@ -25,17 +97,18 @@ class databaseUtils {
 
 	//  Pull neccesary data at once.
 	get userMetadata() {
-		return sql.get(
-			`SELECT *
-                FROM userdata
-                INNER JOIN userinventories
-                ON userinventories.userId = userdata.userId
-                INNER JOIN usercheck
-                ON usercheck.userId = userdata.userId
-                INNER JOIN collections
-                ON collections.userId = userdata.userId
-                WHERE userdata.userId = "${this.id}"`
-		)
+		return this._query(`
+			SELECT *
+			FROM userdata
+            INNER JOIN userinventories
+        	ON userinventories.userId = userdata.userId
+        	INNER JOIN usercheck
+            ON usercheck.userId = userdata.userId
+            INNER JOIN collections
+            ON collections.userId = userdata.userId
+            WHERE userdata.userId = ?`
+		, `get`
+		, [this.id])
 	}
 
 
@@ -112,15 +185,6 @@ class databaseUtils {
 		sql.run(`UPDATE usercheck 
             SET expbooster = "${newvalue}",
                 expbooster_duration = ${Date.now()}
-            WHERE userId = "${this.id}"`)
-	}
-
-	updateExperienceMetadata(data = {}) {
-		sql.run(`UPDATE userdata 
-            SET currentexp = ${data.currentexp},
-            level = ${data.level},
-            maxexp = ${data.maxexp},
-            nextexpcurve = ${data.nextexpcurve}
             WHERE userId = "${this.id}"`)
 	}
 
