@@ -112,7 +112,6 @@ module.exports = (bot, message) => {
 								.setDescription(`Hello **${metadata.user.name}**, your **${data.expbooster}** ticket has expired today.`)
 								.setFooter(`System`, bot.user.avatarURL)
 
-							console.log(`${metadata.user.tag}'s item ${data.expbooster} ticket has expired at ${Date.now()}`)
 							sql.run(`UPDATE usercheck SET expbooster = NULL, expbooster_duration = NULL WHERE userId = ${message.author.id}`)
 							return message.author.send(embed)
 						}
@@ -311,7 +310,6 @@ module.exports = (bot, message) => {
                              WHERE userId = ${group[id].userId}
                             `)
 				}
-				console.log(`${Object.keys(group).length} users have received 200 EXP from Naph's White Cat Paradise.`)
 			}
 
 			await share_exp()
@@ -368,8 +366,6 @@ module.exports = (bot, message) => {
 					setTimeout(() => {
 						sql.run(`UPDATE usercheck SET expcooldown = "False" WHERE userId = ${message.author.id}`)
 					}, (this.cooldown))
-
-					console.log(`USER:${message.author.tag}, LV:${userdatarow.level+1}, CH:${message.channel.name}`)
 				})
 			},
 
@@ -402,8 +398,6 @@ module.exports = (bot, message) => {
                            SET expcooldown = "True" 
                            WHERE userId = "${message.author.id}"`)
 
-						console.log(`USER:${metadata.user.name}, XP_GAINED:${metadata.exp.gained}, AC_GAINED:${metadata.ac.gained}, CH:${message.channel.name}`)
-
 						setTimeout(function () {
 							sql.run(`UPDATE usercheck 
                                  SET expcooldown = "False" 
@@ -416,7 +410,6 @@ module.exports = (bot, message) => {
 
 		//  Register new user
 		const registerNewProfile = async () => {
-			console.log(`created new profile for ${message.author.tag}.`)
 
 
 			//  Register main-data experience points
