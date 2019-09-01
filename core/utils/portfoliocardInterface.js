@@ -2,6 +2,7 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
+const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
@@ -21,7 +22,6 @@ async function portfolio(stacks, member) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configRank = new rankManager(stacks.bot, stacks.message)
-	const { pause } = stacks
 
 
 	/**
@@ -70,186 +70,96 @@ async function portfolio(stacks, member) {
 		}
 	}
 
-	let canvas_x = 790
-	let canvas_y = 355
-	let startPos_x = 15
-	let startPos_y = 15
-	let baseWidth = canvas_x - 40
-	let baseHeight = canvas_y - 50
+	let canvas_x = 320//280
+	let canvas_y = 420//380
+	let startPos_x = 10
+	let startPos_y = 10
+	let baseWidth = canvas_x - 20
+	let baseHeight = canvas_y - 20
 
+	const {
+		body: avatar
+	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	const usercolor = configProfile.checkInterface(user.ui, member)
-
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
 
-
-	canv = canv.setColor(user.clr)
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.save() // checkpoint
-
-		.setColor(user.clr)
-		.save() // stack 1
-
-
 	/**
-         *    CARD BASE
-         *    850 x 400
-         * 
-         */
-		.setShadowColor(`rgba(28, 28, 28, 1)`)
-		.setShadowOffsetY(12)
-		.setShadowBlur(18)
-		.setColor(palette.darkmatte)
-		.addRect(startPos_x + 10, startPos_y + 10, baseWidth - 20, baseHeight - 20) // (x, y, x2, y2)
-		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
+	 *    CARD BASE
+	 *    850 x 400
+	 */
+	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
+		.setShadowOffsetY(5)
+		.setShadowBlur(10)
 		.setColor(switchColor[usercolor].base)
+		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
+		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
 		.setShadowBlur(0)
 		.setShadowOffsetY(0)
-		.save() // stack 2
+		.save()
 
+	/**
+	 *    USER
+	 *    AVATAR
+	 */
+	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
 
+	/**
+	 *    TITLE BAR
+	 */
+		.setColor(switchColor[usercolor].secondaryText)
+		.setTextAlign(`left`)
+		.setTextFont(`11pt RobotoBold`)
+		.addText(`Recent Post`, 55, 35)
+		.setTextAlign(`right`)
+		.setTextFont(`11pt Whitney`)
+		.addText(`TODO ago`, baseWidth - 5, 35)
+		.setColor(switchColor[usercolor].border)
+		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
 
 	async function gridImage(posx, posy, dx, dy) {
-		return sql.all(`SELECT url FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
-			.then(async res => {
-
-
-				async function aspectRatio(src, suffix) {
-					return probe(src, async (err, data) => {
-						try {
-							if (err) throw err
-							let width = data.width
-							let height = data.height
-							let smallest = width > height ? height : width
-
-
-							if (smallest < dx) {
-								for (let i = smallest * 0.1; smallest < dx; i + (smallest * 0.1)) {
-									width = Math.floor(width + i)
-									height = Math.floor(height + i)
-									smallest = Math.floor(smallest + i)
-								}
-							} else {
-								for (let i = 0.90; smallest > dx + 30; i - 0.05) {
-									width = Math.floor(width * i)
-									height = Math.floor(height * i)
-									smallest = Math.floor(smallest * i)
-								}
-							}
-
-
-							let {
-								body: photo
-							} = await get(src)
-							canv.setColor(switchColor[usercolor].border)
-								.createBeveledClip(posx + suffix, posy, dx, dy, 0)
-								.addImage(await photo, posx + suffix, posy, width, height, 1)
-								.restore()
-						} catch (e) {
-							//console.log(err);
-							sql.run(`DELETE FROM userartworks WHERE url = "${src}"`)
-						}
-					})
-				}
-
-				async function nullCollection() {
-					canv.setColor(switchColor[usercolor].secondaryText)
-						.setTextAlign(`center`)
-						.setTextFont(`15pt RobotoBold`)
-						.addText(`No post yet.`, (baseWidth / 2) + 25, 230)
-						.addImage(await configProfile.getAsset(`anniewot`), 350, 125, 80, 80, 40)
-				}
-
-
-				if (res.length < 1) {
-					return nullCollection()
+		var res = await sql.all(`SELECT url FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
+		async function aspectRatio(src) {
+			var proberes = await probe(src)
+			try {
+				//if (err) throw err
+				let width = proberes.width
+				let height = proberes.height
+				let {
+					body: photo
+				} = await get(src)
+				canv.setColor(switchColor[usercolor].border)
+					.addRect(posx, posy, dx, dy)
+				if (width > height) {
+					canv.addImage(photo, posx - ((width * dy / height) - dx)/2, posy, width * dy / height, dy,1)
 				} else {
-					canv.setColor(switchColor[usercolor].border)
-						.addRect(posx, posy, dx, dy)
-						.addRect(posx + (dx * 1) + 2, posy, dx, dy)
-						.addRect(posx + (dx * 2) + 4, posy, dx, dy)
-
-						.save()
-						.save()
-						.save()
-						.save()
-						.save()
-						.save()
-						.save()
-
-					if (res.length === 1) {
-						await aspectRatio(res[0].url, 0)
-					} else if (res.length == 2) {
-						await aspectRatio(res[0].url, 0)
-						await aspectRatio(res[1].url, (dx * 1) + 2)
-
-					} else if (res.length >= 3) {
-						await aspectRatio(res[0].url, 0)
-						await aspectRatio(res[1].url, (dx * 1) + 2)
-						await aspectRatio(res[2].url, (dx * 2) + 4)
-					}
-
+					canv.addImage(photo, posx, posy - ((height * dx / width) - dy)/2, dx, height * dx / width,1)
 				}
-			})
+			} catch (e) {
+				//console.log(err);
+				sql.run(`DELETE FROM userartworks WHERE url = "${src}"`)
+			}
+		}
+
+		async function nullCollection() {
+			canv.setColor(switchColor[usercolor].secondaryText)
+				.setTextAlign(`center`)
+				.setTextFont(`15pt RobotoBold`)
+				.addText(`No post yet.`, (baseWidth / 2) + 25, 230)
+				.addImage(await configProfile.getAsset(`anniewot`), 350, 125, 80, 80, 40)
+		}
+
+		if (res.length < 1) {
+			await nullCollection()
+		} else {
+			await aspectRatio(res[0].url)
+		}
 	}
 
-	/**
-     *    USER
-     *    AVATAR
-     * 
-     */
-	//canv.addRoundImage(avatar, 30, 30, 40, 40, 20)
-
-	/**
-     *    title
-     * 
-     */
-	canv.setColor(user.clr)
-		.setTextAlign(`left`)
-		.setTextFont(`15pt Whitney`)
-		.addText(`Portfolio`, (baseWidth / 2) + 25, 50)
-
-
-	/**
-         *    nickname
-         * 
-         */
-		.setColor(switchColor[usercolor].secondaryText)
-		.setTextAlign(`right`)
-		.setTextFont(`15pt Whitney`)
-		.addText(`${member.user.username} |`, (baseWidth / 2) + 20, 50)
-
-
-
-
-	canv.restore()
-	await gridImage(startPos_x, 70, 250, 250)
-	await pause(10000)
+	canv.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
+	await gridImage(startPos_x, 110, baseWidth, baseWidth)
 
 	return canv.toBuffer()
 

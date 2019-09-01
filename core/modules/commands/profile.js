@@ -1,4 +1,5 @@
 const profile = require(`../../utils/profilecardInterface`)
+const portfolio = require(`../../utils/portfoliocardInterface`)
 
 /**
  * Main module
@@ -15,7 +16,7 @@ class Profile {
      */
 	async execute() {
 		const { reply, name, code: {PROFILECARD}, meta: {author} } = this.stacks
-		const pages = [profile]
+		const pages = [profile, portfolio]
 
 		//  Returns if user is invalid
 		if (!author) return reply(PROFILECARD.INVALID_USER)
@@ -41,23 +42,33 @@ class Profile {
 					})
 					let count = 0
 
-					backwards.on(`collect`, r => {
+					backwards.on(`collect`, async r => {
 						r.remove(author)
 						count--
 
 						if (pages[count]) {
-							//TODO
+							reply(PROFILECARD.HEADER, {
+								socket: [name(author.id)],
+								image: await pages[count](this.stacks, author),
+								prebuffer: true,
+								simplified: true
+							})
 						} else {
 							count++
 						}
 
 					})
-					forwards.on(`collect`, r => {
+					forwards.on(`collect`, async r => {
 						r.remove(author)
 						count++
 
 						if (pages[count]) {
-							//TODO
+							reply(PROFILECARD.HEADER, {
+								socket: [name(author.id)],
+								image: await pages[count](this.stacks, author),
+								prebuffer: true,
+								simplified: true
+							})
 						} else {
 							count--
 						}
