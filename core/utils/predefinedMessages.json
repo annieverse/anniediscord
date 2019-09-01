@@ -155,8 +155,26 @@
     "PORTFOLIOCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Portfolio card for {0}**",
-        "LVL_TOO_LOW": "The user need to be atleast lv **{0}** to unlock this feature.",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
         "FETCHING": "`Fetching {0}'s portfolio data . .`"
+    },
+    "BADGECARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s badge data . .`"
+    },
+    "RELATIONSHIPCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Relationship card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s badge data . .`"
+    },
+    "STATCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Stat card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s stat data . .`"
     },
     "PRUNE": {
         "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",

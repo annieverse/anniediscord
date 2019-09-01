@@ -144,9 +144,15 @@ async function profile(stacks, member) {
 	const y_badge = 208
 	await setBadge(symetric_xy, diameter, y_badge)
 
+	//we can fit 8 badges; if user has more display a plus or something
 	async function setBadge(xy, diameter, pos_y) {
-		for (var i=0; i<=reservedSlot; i++) {
+		for (var i=0; i<=Math.min(reservedSlot, 6); i++) {
 			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
+		}
+		if (reservedSlot == 7) {
+			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
+		} else if (reservedSlot > 7) {
+			canv.addImage(await configProfile.getAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
 		}
 	}
 
