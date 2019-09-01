@@ -20,18 +20,13 @@ class Profile {
      */
 	async execute() {
 		const {message, command, reply, name, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
-        var pages = [profile]
-        var pagetitles = [PROFILECARD]
-        if (data.level > this.portfolio_lv) {
-            pages.push(portfolio)
-            pagetitles.push(PORTFOLIOCARD)
+        var pages = [{gui: profile, card: PROFILECARD, alias: `profile`}]
+        if (data && data.level > this.portfolio_lv) {
+            pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
         }
-        pages.push(badge)
-        pagetitles.push(BADGECARD)
-        pages.push(relation)
-        pagetitles.push(RELATIONSHIPCARD)
-        pages.push(stat)
-        pagetitles.push(STATCARD)
+        pages.push({gui: badge, card: BADGECARD, alias: `badge`})
+        pages.push({gui: relation, card: RELATIONSHIPCARD, alias: `relation`})
+        pages.push({gui: stat, card: STATCARD, alias: `stat`})
 
         let count = 0
         //  Returns if user is invalid or lvl too low
@@ -41,32 +36,32 @@ class Profile {
                 if (!author) return reply(PORTFOLIOCARD.INVALID_USER)
                 //  Returns if user level is below the requirement
                 if (data.level < this.portfolio_lv) return reply(PORTFOLIOCARD.LVL_TOO_LOW, {socket: [this.portfolio_lv]})
-                count = pages.findIndex(portfolio)
+                count = pages.findIndex((e) => e.alias == `portfolio`)
                 break
             case `badges`:
             case `badge`:
                 if (!author) return reply(BADGECARD.INVALID_USER)
-                count = pages.findIndex(badge)
+                count = pages.findIndex((e) => e.alias == `badge`)
                 break
             case `relationship`:
             case `relation`:
             case `rel`:
                 if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
-                count = pages.findIndex(relation)
+                count = pages.findIndex((e) => e.alias == `relation`)
                 break
             case `stats`:
             case `stat`:
                 if (!author) return reply(STATCARD.INVALID_USER)
-                count = pages.findIndex(stat)
+                count = pages.findIndex((e) => e.alias == `stat`)
                 break
         default:
             if (!author) return reply(PROFILECARD.INVALID_USER)
         }
 
         const getPage = async (ctr) => {
-            return reply(pagetitles[ctr].HEADER, {
+            return reply(pages[ctr].card.HEADER, {
                 socket: [name(author.id)],
-                image: await pages[ctr](this.stacks, author),
+                image: await pages[ctr].gui(this.stacks, author),
                 prebuffer: true,
                 simplified: true
             }).then(msg => {

@@ -1,11 +1,13 @@
-const { Canvas } = require(`canvas-constructor`) 
+const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
+const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
+const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
@@ -18,9 +20,11 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function portfolio(stacks, member) {
+	const {bot} = stacks
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configRank = new rankManager(stacks.bot, stacks.message)
+	const configFormat = new formatManager(stacks.message)
 
 
 	/**
@@ -53,7 +57,6 @@ async function portfolio(stacks, member) {
 	}
 
 	const switchColor = {
-
 		"dark_profileskin": {
 			base: palette.nightmode,
 			border: palette.deepnight,
@@ -98,21 +101,55 @@ async function portfolio(stacks, member) {
 		.setShadowOffsetY(0)
 		.save()
 
+	var gradient = canv.createLinearGradient(baseWidth/2, 350, baseWidth/2-10, 0)
+	gradient.addColorStop(0, user.clr)
+	gradient.addColorStop(1, `transparent`)
 	/**
 	 *    USER
 	 *    AVATAR
 	 */
-	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
+	canv.createBeveledClip(startPos_x, startPos_y-100, baseWidth+100, 360, 100, 1)
+		.setColor(user.clr)
+		.setGlobalAlpha(0.5)
+		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
+		.setGlobalAlpha(0.25)
+		.addImage(avatar, startPos_x, startPos_y-10, baseWidth, baseWidth)
+		.setGlobalAlpha(1)
+		.setColor(gradient)
+		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 
-	/**
-	 *    TITLE BAR
-	 */
+		.setColor(switchColor[usercolor].base)
+		.setTextAlign(`Left`)
+		.setTextFont(`9pt RobotoBold`)
+		.addText(`Last online`, startPos_x + 23, 88)
+
+		.setTextFont(`14pt Roboto`)
+		.addText(`🕑`, startPos_x + 87, 85)
+
+		.setTextFont(`20pt RobotoBold`)
+		.addText(moment(user.log).fromNow(), startPos_x + 30, 115)
+
+		.setTextAlign(`end`)
+		.setTextFont(`9pt RobotoBold`)
+		.addText(`Current experience points`, baseWidth - 13, 180)
+
+		.setTextFont(`24pt RobotoBold`)
+		.addText(configFormat.threeDigitsComa(user.cur) + ` EXP`, baseWidth - 13, 210)
+		.restore()
+
 		.setColor(switchColor[usercolor].secondaryText)
-		.setTextAlign(`left`)
-		.setTextFont(`11pt RobotoBold`)
-		.addText(`Statistics`, 55, 35)
-		.setColor(switchColor[usercolor].border)
-		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
+		.setTextAlign(`Left`)
+		.setTextFont(`9pt RobotoBold`)
+		.addText(`Ranking`, startPos_x + 28, 290)
+
+		.setColor(user.clr)
+		.setTextFont(`33pt RobotoBold`)
+		.addText(configFormat.ordinalSuffix(await collection.ranking + 1), startPos_x + 33, 350)
+
+		.setColor(switchColor[usercolor].secondaryText)
+		.setTextFont(`9pt RobotoBold`)
+		.addText(`from a total of `+configFormat.threeDigitsComa(bot.users.size)+` members`, startPos_x + 38, 366)
+
 
 	return canv.toBuffer()
 
