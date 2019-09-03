@@ -297,6 +297,11 @@ module.exports = bot => {
 		if (env.dev) {
 			console.clear()
 			console.log(`Codename: ${bot.user.username}`)
+
+			bot.logger.info({
+				Codename: bot.user.username,
+				Action: `has sucessfully logged in.`
+			})
 			console.timeEnd(`Initialized In`)
 			bot.user.setStatus(`dnd`)
 			bot.user.setActivity(`maintenance.`, {

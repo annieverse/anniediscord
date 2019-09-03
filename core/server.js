@@ -29,6 +29,9 @@ module.exports = () => {
 	//	Initialize in-memory keyv
 	bot.keyv = new KeyvClient()
 
+	//	Initialize logger
+	bot.logger = require(`./utils/config/winston`)
+
 	//	Initialize environment config
 	bot.env = require(`../.data/environment`)
 

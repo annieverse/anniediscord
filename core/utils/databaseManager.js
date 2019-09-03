@@ -1,4 +1,5 @@
 const sql = require(`sqlite`)
+const logger = require(`./config/winston`)
 
 /**
   *   Accessing database globally.
@@ -54,8 +55,7 @@ class databaseUtils {
 			
 		}
 		catch (e) {
-			console.log(e)
-			//	Give null if query cannot be parsed
+			logger.info(e)
 			return null
 		}
 
