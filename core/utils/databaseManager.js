@@ -54,7 +54,7 @@ class databaseUtils {
 			
 		}
 		catch (e) {
-			console.log(e.message)
+			console.log(e)
 			//	Give null if query cannot be parsed
 			return null
 		}

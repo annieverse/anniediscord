@@ -18,8 +18,7 @@ class Capsule extends databaseManager {
      */
 	async execute() {
 		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
-		//this.testFunction()
-		//return reply(`command is disabled temporary, sorry for the inconvenice`)
+
 		//  Centralized data object
 		let metadata = {
 			bot: bot,
@@ -29,12 +28,7 @@ class Capsule extends databaseManager {
 			get total_gained() {
 				return this.exp_per_capsule * this.to_use
 			},
-			user: {
-				currentexp: data.currentexp,
-				level: data.level,
-				maxexp: data.maxexp,
-				nextexpcurve: data.nextexpcurve
-			},
+			meta: {author, data},
 			updated: {
 				currentexp: 0,
 				level: 0,

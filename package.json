@@ -1,12 +1,12 @@
 {
   "name": "anniediscord",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "eslint . && mocha",
-    "linting": "eslint .",
-    "unit-test": "mocha",
+    "test": "npm run linting && npm run unit-test && echo 'Finished.'",
+    "linting": "eslint . ",
+    "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon index.js"
   },

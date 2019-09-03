@@ -82,11 +82,17 @@ workflows:
           requires:
             - build
 
+      # Verifying the modules.
+      - unit_test:
+          requires:
+            - build
+
       # Once everything is done, time to deploy it to the production.
       - deploying:
           requires:
             - build
             - linting
+            - unit_test
           filters:
             branches:
               only: master

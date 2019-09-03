@@ -29,12 +29,7 @@ class convertingArtcoins extends databaseManager {
 			get total_gained() {
 				return this.to_use / 2
 			},
-			user: {
-				currentexp: data.currentexp,
-				level: data.level,
-				maxexp: data.maxexp,
-				nextexpcurve: data.nextexpcurve
-			},
+			meta: {author, data},
 			updated: {
 				currentexp: 0,
 				level: 0,

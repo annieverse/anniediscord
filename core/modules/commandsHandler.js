@@ -148,8 +148,8 @@ class CommandsHandler extends Controller {
 				.then(async () => {
 
 					//	Baked/Ready-use Components
-					const { bot, message, command, args, commandfile, meta } = this.data
-					const Pistachified = new Pistachio({bot, message, command, args, commandfile, meta}).bag()
+					const { bot, message, command, args, fullArgs, commandfile, meta } = this.data
+					const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
 					await new this.cmd(Pistachified).execute()
 				})

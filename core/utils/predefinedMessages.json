@@ -42,6 +42,13 @@
         "IN_COOLDOWN": "You can take your dailies again **{0}**",
         "CLAIMED": "**{0}** has received {1} **{2}{3}** artcoins!\n{4}{5}"
     },
+    "DBKITS": {
+        "UNAUTHORIZED": "You are not authorized to access this area.",
+        "AUTHORIZED": "Welcome back **{0}**! Tackle my database, senpai.",
+        "ERROR": "**Ops, something went wrong.**\n\n",
+        "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
+        "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
+    },
     "EVJOIN": {
         "ALREADY_HAS": "**{0}** you have unused ticket, go submit your art now!",
         "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event.",
