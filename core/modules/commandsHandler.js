@@ -1,0 +1,166 @@
+`use-strict`
+
+const Controller = require(`../utils/MessageController`)
+const Data = require(`../utils/userdataSelector`)
+const User = require(`../utils/userSelector`)
+const Pistachio = require(`../utils/Pistachio`)
+const env = require(`../../.data/environment`)
+const { special_bot_domain } = require(`./config`)
+
+
+/**
+  * Commands Handler
+  * @param {Object} data preferably follow the structure in `stacks` variable (./events/message.js)
+  */ 
+class CommandsHandler extends Controller {
+	constructor(data) {
+		super(data)
+
+
+		/**
+		 * 	Command-related properties will be stored inside <data>, not in root object <this>.
+		 * 	Sounds inconsistent, but in order to avoid errors in command modules.
+		 */
+		//	Get command prefix
+		this.data.prefix = env.prefix
+
+		//	Tokenize message
+		this.data.messageArray = data.message.content.split(` `)
+
+		//	Get which command is being used
+		this.data.cmd = this.data.messageArray[0].toLowerCase()
+
+		//	Get user command parameter <Tokenized>
+		this.data.args = this.data.messageArray.slice(1)
+
+		//	Get user command parameter <FullWords>
+		this.data.fullArgs = this.data.args.join(` `)
+
+		//	Removing the prefix, now only the command name
+		this.data.command = this.data.cmd.slice(this.data.prefix.length)
+
+		//	Get command file from bot registry
+		this.data.commandfile = data.bot.commands.get(this.data.cmd.slice(this.data.prefix.length)) 
+		|| data.bot.commands.get(data.bot.aliases.get(this.data.cmd.slice(this.data.prefix.length)))
+		
+		//	Get file name
+		this.filename = this.data.commandfile.help.name
+
+		//	Ref to file path
+		this.path = `../modules/commands/${this.filename}.js`
+
+		//	Get the available properties
+		this.module_parameters = require(this.path).help
+
+		//	Module invoker
+		this.cmd = this.module_parameters.start
+
+		//	Benchmark label
+		this.data.benchmarkLabel = this.data.fullArgs ? this.data.fullArgs : this.data.meta.author.username
+	
+	}
+
+
+	/**
+	 * 	Verifying if the required properties are already stored
+	 * 	@propertiesAreReady
+	 */
+	async componentsAreReady() {
+
+		try {
+			if (!this.data.meta.author) return false
+			if (!this.data.meta.data) return false
+			if (!this.data.command) return false
+			if (!this.data.args) return false
+			if (!this.data.commandfile) return false
+
+			return true
+		}
+		catch (e) {
+			console.error(e)
+		}
+	}
+
+
+	/**
+	 * 	Preparing components and double checking
+	 * 	@prepare
+	 */
+	async prepare() {
+
+		//	Return if command is invalid or doesn't exists.
+		if (!this.data.commandfile) return
+
+		// If the channel is restricted to some cmds only; check if cmd has channel enabled
+		if ((special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels) ||
+		(special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels.includes(this.data.message.channel.id))) return
+
+		//	Double-check
+		if (this.componentsAreReady()) return this.init()
+
+	}
+
+
+	/**
+	 * 	Pulling user author & metadata from database
+	 * 	@requestData
+	 */
+	async requestData() {
+
+
+		/**
+		 * Only pulling the author if user doesn't specify the target.
+		 * 
+		 * Q: Wait, why pulling the user again? aren't they just the same person?
+		 * A: Yes they are, but somehow it returns different structure if we were using
+		 * original data from <message.author> that will broke the synchonization between
+		 * user. (author/other user)
+		 * 
+		 * For instance, If you were looking for .displayAvatar() or .username, etc. `message.author` 
+		 * can be pulled directly using `author.displayAvatar()` or `author.username`. 
+		 * Unfortunately this won't work on returned object from userFinding(),
+		 * since they are on different layer. 
+		 * 
+		 * -------
+		 * How to resolve the problem (The possible solution)
+		 * -------
+		 * 1. Transform the data in User() Class so they are match with how you would expect from `message.author`.
+		 * 
+		 */
+		if (!this.data.fullArgs) {
+			this.data.meta.author = await new User(this.data).get()
+			return
+		}
+
+		//	Proceed to both data pulling
+		this.data.meta = await new Data(this.data).pull()
+
+	}
+
+
+	/**
+	 * 	Running the command
+	 * 	@init
+	 */
+	async init() {
+		try {
+			await this.requestData()
+				.then(async () => {
+
+					//	Baked/Ready-use Components
+					const { bot, message, command, args, commandfile, meta } = this.data
+					const Pistachified = new Pistachio({bot, message, command, args, commandfile, meta}).bag()
+
+					await new this.cmd(Pistachified).execute()
+				})
+		}
+		catch (e) {
+			console.log(e)
+		}
+	}
+
+
+}
+
+
+module.exports = CommandsHandler

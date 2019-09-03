@@ -1,54 +1,52 @@
-const ranksManager = require(`./ranksManager`)
-const databaseManager = require(`./databaseManager`)
-const formatManager = require(`./formatManager`)
-const palette = require(`./colorset.json`)
-const booster = require(`./config/ticketbooster`)
+let booster = require(`./config/ticketbooster`)
 let cards = require(`../utils/cards-metadata.json`)
+let Controller = require(`./MessageController`)
 
 /**
  * Experience formula wrapper. Standalone Class.
  * new value -> process -> update.
  * 
+ * Please follow the default constructor metadata structure in order to make 
+ * the class working as expected
+ * 
  * @Experience
  */
-class Experience {
+class Experience extends Controller {
 
 	constructor(metadata = {
-		applyTicketBuffs: false,
-		applyCardBuffs: false,
-		cardCollections: {},
-		bonus: 1,
-		user: {},
-		bot: {},
-		message: {
-			author: {
-				id: ``,
-				tag: ``,
-				username: ``
-			},
-			guild: {}
-		},
-		total_gained: 0,
-		updated: {
-			currentexp: 0,
-			level: 0,
-			maxexp: 0,
-			nextexpcurve: 0
-		}
-	}) {
-		this.data = metadata
-		this.message = metadata.message
-		this.ranks = new ranksManager(metadata.bot, metadata.message)
-		this.db = new databaseManager(metadata.message.author.id)
-
+			datatype: `DEFAULT_MSG`,
+			pistachio: require(`./Pistachio`)({}),
+			applyTicketBuffs: true,
+			applyCardBuffs: true,
+			bonus: 0,
+			user: {},
+			bot: {},
+			message: {},
+			total_gained: Math.round(Math.random() * (15 - 10 + 1)) + 10,
+			updated: {
+				currentexp: 0,
+				level: 0,
+				maxexp: 0,
+				nextexpcurve: 0
+		}}) {
+		super(metadata)
+		this.label = `expcd:${this.message.author.id}`
 	}
 
-	//  Add new rank if user new exp is above threeshold.
+
+	/**
+	 * 	Add new rank
+	 * 	@addRank
+	 */
 	addRank() {
 		this.message.guild.member(this.data.message.author.id).addRole(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.data.updated.level).title))
 	}
 
-	//  Remove user rank if new level gap is greater than ranks threeshold.
+	
+	/**
+	 * 	Removing duplicate rank
+	 * 	@removeRank
+	 */
 	removeRank() {
 		const userDuplicateRanks = (this.ranks.ranksCheck(this.data.updated.level).lvlcap)
 			.filter(val => val < this.data.updated.level)
@@ -60,7 +58,11 @@ class Experience {
 		return this.message.guild.member(this.data.message.author.id).removeRoles(idpool)
 	}
 
-	//  Register new exp data.
+
+	/**
+	 * 	Calculate and register new exp value based on predefined formula
+	 * 	@updatingExp
+	 */
 	updatingExp() {
 		/**
          * Main experience formula used in Annie's level system
@@ -89,7 +91,7 @@ class Experience {
 		}
 		//  Apply bonus if available
 		if (this.data.bonus > 0) this.data.total_gained = this.data.total_gained * this.data.bonus
-		const accumulatedCurrent = Math.round(this.data.total_gained + this.data.user.currentexp)
+		const accumulatedCurrent = Math.round(this.data.total_gained + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
 		this.data.updated.currentexp = accumulatedCurrent
@@ -101,82 +103,101 @@ class Experience {
 		this.db.updateExperienceMetadata(this.data.updated)
 	}
 
-	// Add AC (on level up)
-	updatingAC() {
-		// If new level
-		if (this.data.updated.level !== this.data.user.level) {
-			// For each level
-			for (let i = 0; i < this.data.updated.level - this.data.user.level; i++) {
-				// Timeout to not spam Discord's server too much
-				setTimeout(() => {
-					const updatedlevel = this.data.user.level + i + 1
-					const bonusac = () => {
-						return updatedlevel === 0 ? 35 : 35 * updatedlevel
-					}
 
-					// Add AC
-					this.db.storeArtcoins(bonusac())
+	/**
+	 * 	Artcoins reward on level up
+	 * 	@updatingArtcoins
+	 */
+	updatingArtcoins() {
 
-					// Send message
-					const format = new formatManager(this.message)
-					format.embedWrapper(palette.halloween, `<:nanamiRinWave:459981823766691840> Congratulations ${this.message.author}!! You are now level **${updatedlevel}** !
-                **${bonusac()}** AC has been added to your account.`)
+		//	Return if they are still on same rank
+		if (this.data.updated.level == this.meta.data.level) return
 
-					console.log(`USER:${this.message.author.tag}, LV:${updatedlevel}, CH:${this.message.channel.name}`)
-				}, (800))
-			}
+		// For each level
+		for (let i = 0; i < this.data.updated.level - this.meta.data.level; i++) {
+
+			const updatedlevel = this.meta.data.level + i + 1
+			const bonusac = () => updatedlevel === 0 ? 35 : 35 * updatedlevel
+
+			// Add AC
+			this.db.storeArtcoins(bonusac())
+
+			//	Send levelup message
+			this.reply(this.code.LEVELUP, {
+				socket: [
+					this.emoji(`AnnieYay`),
+					this.meta.author,
+					updatedlevel
+				],
+				color: this.color.blue
+			})
 		}
 	}
 
-	// Returns true if new_rank is different from user one.
+
+	/**
+	 * 	Check if the current rank is same/different with the previous one.
+	 * 	Returns Boolean.
+	 * 	@rankUp
+	 */
 	get rankUp() {
 		let new_rank = this.ranks.ranksCheck(this.data.updated.level).title
-		let old_rank = this.ranks.ranksCheck(this.data.user.level).title
+		let old_rank = this.ranks.ranksCheck(this.meta.data.level).title
 
 		return new_rank !== old_rank ? true : false
 	}
 
-	// Apply booster ticket if theres any.
+
+	/**
+	 * 	Check for exp booster ticket.
+	 * 	If there's any, assign to the total boost.
+	 * 	@ticketBuffs
+	 */
 	async ticketBuffs() {
+		try {
+			//  Extract required data
+			const { expbooster, expbooster_duration } = this.meta.data
 
-		//  Extract required data
-		const { expbooster, expbooster_duration } = this.data.user
+			//  skip if user doesn't have any booster that currently active.
+			if (!expbooster) return
 
-		//  skip if user doesn't have any booster that currently active.
-		if (!expbooster) return
+			let percentage = expbooster.replace(/ *\([^)]*\) */g, ``)
+			let limitduration = booster[percentage][/\(([^)]+)\)/.exec(expbooster)[1]]
+			let boosterStillValid = expbooster_duration && limitduration - (Date.now() - expbooster_duration) > 0
 
-
-		let percentage = expbooster.replace(/ *\([^)]*\) */g, ``)
-		let limitduration = booster[percentage][/\(([^)]+)\)/.exec(expbooster)[1]]
-		let boosterStillValid = expbooster_duration && limitduration - (Date.now() - expbooster_duration) > 0
-
-		//  Assign bonus if booster still active
-		if (boosterStillValid) this.data.bonus += booster[percentage].multiplier
+			//	Assign boost if booster still valid
+			if (boosterStillValid) this.data.bonus += booster[percentage].multiplier 
+		}
+		catch (e) {
+			return
+		}
 	}
 
-	// Apply council's card perks if theres any.
+
+	/**
+	 * 	Get user collected card and find which has buff with exp related.
+	 * 	And apply the effect.
+	 * 	@cardBuffs
+	 */
 	async cardBuffs() {
 
-		//  Extract card collections 
-		const card_stacks = this.data.cardCollections
+		/**
+		 * 	Find card in user data based on the following requirements:
+		 * 	1.) The last part of the key must starts with _card (or just "card" also works)
+		 * 	2.) The value should be true (not null, negative or zero)
+		 * 	@cardStacks
+		 */
+		const cardStacks = Object
+			.entries(this.meta.data)
+			.filter(value => value[0].endsWith(`_card`) && value[1])
+			.reduce((result, [key, value]) => Object.assign(result, {[key]: value}), {})
 
-		// Returns true if user has no cards
-		const empty_collections = () => {
-			for (let key in card_stacks) {
-				if (card_stacks[key]) return false
-			}
-			return true
-		}
 
-
-		// Remove unneccesary properties.
-		const eliminate_nulls = () => {
-			for (let key in card_stacks) {
-				if (!card_stacks[key]) delete card_stacks[key]
-			}
-		}
-
-		// Filtering cards
+		/**
+		 * 	Legacy code.
+		 * 	Won't touch yet.
+		 * 	@get_metadata
+		 */
 		const get_metadata = () => {
 			let arr = []
 
@@ -223,7 +244,7 @@ class Experience {
 
 			}
 
-			for (let key in card_stacks) {
+			for (let key in cardStacks) {
 				const req = new requirements(cards[key])
 				req.user_channel = this.data.message.channel
 				if (req.met_condition) {
@@ -235,14 +256,9 @@ class Experience {
 
 		}
 
-		//  Returns user has no collections.
-		if (empty_collections()) return
-		eliminate_nulls()
-
 
 		// Loop over and active the card's skills.
 		let filtered_card_stack = get_metadata()
-
 		//  Returns if no buffs are available to use
 		if (filtered_card_stack.length < 1) return
 
@@ -255,15 +271,29 @@ class Experience {
 		}
 	}
 
-	
-	//	Derivative class purpose
-	set addMetadata(mtdt = {}) {
-		this.data = mtdt
+
+	/**
+	 * 	Handle exp cooldown if prompted
+	 * 	@inCoolingdown
+	 */
+	async inCoolingdown() {
+		//	If cooldown is not set, ignore this method.
+		if (!this.data.cooldown) return false
+
+		if (await this.keyv.get(this.label)) return true
+
+		this.keyv.set(this.label, `1`, this.data.cooldown.exp)
+		return false
 	}
 
 
-	// Automate the process
+	/**
+	 * 	Aggregate and automating all the process in this class
+	 * 	@runAndUpdate
+	 */
 	async runAndUpdate() {
+		//	Check if its still in cooling down state
+		if (await this.inCoolingdown()) return
 		//  Add & calculate bonuses from card if prompted
 		if (this.data.applyCardBuffs) await this.cardBuffs()
 		//  Add & calculate bonuses from ticket if prompted
@@ -281,8 +311,18 @@ class Experience {
 		}
 
 		// Add Artcoin on level up
-		await this.updatingAC()
+		await this.updatingArtcoins()
+
+		//	Logging
+		console.log(`
+		user: ${this.data.message.author.tag}
+		exp: ${this.data.total_gained}
+		type: ${this.data.datatype}
+		booster: ${this.data.bonus}
+		`)
 	}
+
+
 }
 
 module.exports = Experience

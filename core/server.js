@@ -1,13 +1,16 @@
 module.exports = () => {
+	
 	//  Initialize startup modules
 	console.time(`Initialized In`)
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
 	const modulesLoader = require(`./utils/modulesLoader`)
 	const Database = require(`./utils/databaseManager`)
+	const KeyvClient = require(`keyv`)
 	const express = require(`express`)
 	const app = express()
-    
+
+	
 	//  Loads .env variables
 	require(`dotenv`).config()
 
@@ -20,8 +23,14 @@ module.exports = () => {
 	//	Loading command modules.
 	bot = new modulesLoader().register(bot)
 
-	//	Loading database manager
-	bot.db = new Database()
+	//	Initializing db connection
+	bot.db = new Database().connect()
+
+	//	Initialize in-memory keyv
+	bot.keyv = new KeyvClient()
+
+	//	Initialize environment config
+	bot.env = require(`../.data/environment`)
 
 	//  Start events.
 	require(`./utils/eventHandler`)(bot)

@@ -9,6 +9,10 @@ module.exports = bot => {
 	bot.on(`ready`, async() => reqEvent(`ready`)(bot))
 	bot.on(`error`, async (e) => reqEvent(`error`)(bot, e, message_object))
 	bot.on(`warn`, async (e) => reqEvent(`warn`)(bot, e, message_object))
+	bot.on(`message`, async(message) => {
+		message_object = message
+		reqEvent(`message`)(bot, message)
+	})
 	
 
 
@@ -27,10 +31,4 @@ module.exports = bot => {
 		bot.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({bot, reaction, user, message_object}))
 		bot.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({bot, reaction, user, message_object}))    
 	}
-
-	if (env.active_exp) bot.on(`message`, async(message) => reqEvent(`experienceMessage`)(bot, message))
-	bot.on(`message`, async(message) => {
-		message_object = message
-		reqEvent(`message`)(bot, message)
-	})
 }

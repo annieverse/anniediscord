@@ -1,6 +1,5 @@
-const sql = require(`sqlite3`).verbose()
-//	Opening connection
-let db = new sql.Database(`.data/database.sqlite`, sql.OPEN_READWRITE)
+const sql = require(`sqlite`)
+
 /**
   *   Accessing database globally.
   *   {databaseUtils}
@@ -13,6 +12,23 @@ class databaseUtils {
         */
 	constructor(id) {
 		this.id = id
+	}
+
+
+	/**
+	 * 	Opening connection
+	 *	Use caching mode to prevent performance reduction.
+	 *	@connect
+	 */
+	connect() {
+		try {
+			sql.open(`.data/database.sqlite`, {cached: true})
+			console.log(`Database successfully connected`)
+			return this
+		}
+		catch (e) {
+			return console.error(`Database has failed to connect. ${e.message}`)
+		}
 	}
 
 
@@ -30,10 +46,10 @@ class databaseUtils {
 		if (!stmt) return null
 
 		try {
-			//	Run query
-			let result = await db[type](stmt, supplies)
-			console.log(supplies, result)
 
+			//	Run query
+			let result = await sql[type](stmt, supplies)
+			//	Returning query result
 			return result
 			
 		}
@@ -67,7 +83,7 @@ class databaseUtils {
 			, level = ?
 			, maxexp = ?
 			, nextexpcurve = ?
-			WHERE userId = "?"`
+			WHERE userId = ?`
 			, `run`
 			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, this.id])
 	}
@@ -109,6 +125,44 @@ class databaseUtils {
             WHERE userdata.userId = ?`
 		, `get`
 		, [this.id])
+	}
+
+
+	/**
+	 * 	Registering post metadata
+	 * 	@param {String|ID} userId
+	 * 	@param {ResolvableURL} url
+	 * 	@param {String|ID} location
+	 * 	@registerPost
+	 */
+	registerPost({userId=``, url=``, location=``}) {
+		this._query(`
+			INSERT INTO userartworks (
+				userId
+				, url
+				, timestamp
+				, location
+			)
+			VALUES (?, ?, datetime('now'), ?)`,
+			`run`
+			, [userId, url, location]
+		)
+	}
+
+
+	/**
+	 * 	Sending 10 chocolate boxes
+	 * 	@param {String|ID} id
+	 * 	@sendTenChocolateBoxes
+	 */
+	sendTenChocolateBoxes(id = this.id) {
+		this._query(`
+			UPDATE userinventories
+			SET chocolate_box = chocolate_box + 10
+			WHERE userId = ?`,
+			`run`
+			, [id]
+		)		
 	}
 
 
@@ -371,7 +425,7 @@ class databaseUtils {
 	}
 
 	//  Register new featured post metadata
-	registerPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
+	registerFeaturedPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
 		sql.run(`
                 INSERT INTO featured_post
                 (timestamp, url, author, channel, heart_counts, last_heart_timestamp)

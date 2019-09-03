@@ -1,41 +1,39 @@
 `use strict`
-const databaseManager = require(`./databaseManager`)
 const userSelector = require(`./userSelector`)
 
 /**
- *  Centralized Collections
  *  This where user-related data stored.
  *  @param {Object} meta as source to be merged with.
  *  @returns {Object}
  */
 class Data {
-	constructor(meta = {}) {
-		this.meta = meta
-		this.requested_data = {}
-	}
-
-	delay(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms))
+	constructor(data) {
+		this.data = data
+		this.db = data.bot.db
+		this.requestedData = {}
 	}
 
 	async request() {
 		try {
-			const user = await new userSelector(this.meta).get()
-			const db = new databaseManager(user.id)
-			let res = await db.userMetadata
+			const user = await new userSelector(this.data).get()
 
-			res.total_cards = await db.totalCollectedCards()
-			res.badges = db.userBadges
+			//	Assign ID
+			this.db.setUser = user.id
+
+			//	Get main metadata
+			let res = await this.db.userMetadata
+			res.total_cards = await this.db.totalCollectedCards()
+			res.badges = this.db.userBadges
 
 			delete res.badges.userId
 
-			this.requested_data = {
+			this.requestedData = {
 				author: user,
 				data: await res
 			}
 		}
 		catch(e) {
-			this.requested_data = {
+			this.requestedData = {
 				author: null,
 				data: null
 			}
@@ -45,7 +43,7 @@ class Data {
 	//  Pull metadata
 	async pull() {
 		return await this.request()
-			.then(() => this.requested_data)
+			.then(() => this.requestedData)
 	}
     
 }

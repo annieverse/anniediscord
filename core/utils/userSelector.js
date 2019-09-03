@@ -6,10 +6,10 @@
  * @args as a chunks of message
  */
 class userSelector {
-	constructor(meta) {
-		this.args = meta.args
-		this.message = meta.message
-		this.cmd = meta.commandfile.help
+	constructor(data) {
+		this.args = data.args
+		this.message = data.message
+		this.cmd = data.commandfile.help
 	}
 
 	/**
