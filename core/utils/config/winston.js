@@ -1,5 +1,5 @@
 const env = require(`../../../.data/environment`)
-const { loggers, format, transports } = require(`winston`)
+const { createLogger, format, transports } = require(`winston`)
 const winstonDailyRotateFile = require(`winston-daily-rotate-file`)
 const { combine, printf } = format
 
@@ -47,7 +47,7 @@ const consoleFormat = combine(
  *  Register transport
  *  @loggersAdd
  */
-loggers.add(`main`, {
+const loggers = createLogger({
     exitOnError: false,
     transports: [
         

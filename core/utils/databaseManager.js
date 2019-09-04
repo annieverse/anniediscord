@@ -1,5 +1,5 @@
 const sql = require(`sqlite`)
-const logger = require(`./config/winston`).loggers.get(`main`)
+const logger = require(`./config/winston`)
 
 /**
   *   Accessing database globally.

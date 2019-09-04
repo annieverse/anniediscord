@@ -20,7 +20,7 @@ module.exports = () => {
 	app.listen(process.env.PORT)
 
 	//	Initialize logger
-	bot.logger = require(`./utils/config/winston`).loggers.get(`main`)
+	bot.logger = require(`./utils/config/winston`)
 
 	//	Initializing db connection
 	bot.db = new Database().connect()

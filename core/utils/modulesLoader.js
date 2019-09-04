@@ -1,7 +1,7 @@
 const { readdirSync } = require(`fs`)
 const { Collection } = require(`discord.js`)
 const commandsPath = `./core/modules/commands/`
-const logger = require(`./config/winston`).loggers.get(`main`)
+const logger = require(`./config/winston`)
 
 class modulesLoader {
 
