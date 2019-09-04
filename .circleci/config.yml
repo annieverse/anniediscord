@@ -3,7 +3,7 @@ version: 2 # use CircleCI 2.0
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: circleci/node:10.16.3
+    - image: circleci/node:10.16.0
 
 
 # Predefined jobs that going to be used as pipeline's workflow.
