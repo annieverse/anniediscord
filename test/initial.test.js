@@ -25,8 +25,63 @@ describe(`Initial check`, () => {
      *  @testCommandsLoading
      */
     function testLoadingCommands() {
-        const modulesLoader = require(`../core/utils/modulesLoader`)
-        const Loader = new modulesLoader()
+        const { readdirSync } = require(`fs`)
+        const { Collection } = require(`discord.js`)
+        const commandsPath = `./core/modules/commands/`
+
+    
+        class mockModulesLoader {
+
+            /**
+             * 	Get all files in commands directory
+             */
+            get fetchSource() {
+                return readdirSync(commandsPath)
+            }
+
+
+            /**
+             * 	Assigning fetchSource() result to @Client
+             */
+            register(Client) {
+
+                //	Initialize new collection in the client
+                Client.commands = new Collection()
+                Client.aliases = new Collection()
+
+                try {
+
+                    //	Get all the .js files
+                    let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
+
+
+                    //	Recursively registering commands
+                    jsfile.forEach((f) => {
+                        let props = require(`../core/modules/commands/${f}`)
+                        Client.commands.set(props.help.name, props)
+                        props.help.aliases.forEach(alias => {
+                            Client.aliases.set(alias, props.help.name)
+                        })
+                    })
+
+
+                    //	Log & Return the updated client
+                    logger.info(`${jsfile.length} command modules loaded`)
+                    return Client
+
+                }
+                catch (e) {
+
+                    //	Log & return the old client
+                    logger.error(`Failed to load commands module > `, e)
+                    return Client
+
+                }
+            }
+        }
+
+
+        const Loader = new mockModulesLoader()
         const MockClient = Loader.register({})
         const commandsArray = Loader.fetchSource
 
