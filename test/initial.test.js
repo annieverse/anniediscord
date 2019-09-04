@@ -24,7 +24,7 @@ describe(`Initial check`, () => {
      *  Test whether the app able to load commands correctly or not
      *  @testCommandsLoading
      */
-    function testLoadingCommands() {
+    async function testLoadingCommands() {
         const { readdirSync } = require(`fs`)
         const { Collection } = require(`discord.js`)
         const commandsPath = `./core/modules/commands/`
@@ -80,7 +80,6 @@ describe(`Initial check`, () => {
 
 
         const Loader = new mockModulesLoader()
-        const MockClient = Loader.register({})
         const commandsArray = Loader.fetchSource
 
 
@@ -95,7 +94,8 @@ describe(`Initial check`, () => {
         /**
          *  Verifying both container
          */
-        it(`Verify all the available commands have been properly loaded`, () => {
+        it(`Verify all the available commands have been properly loaded`, async () => {
+            const MockClient = await Loader.register({})
             expect(MockClient.commands.size).to.equal(commandsArray.length)
         })
     }
