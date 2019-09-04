@@ -49,37 +49,36 @@ describe(`Initial check`, () => {
                 Client.commands = new Collection()
                 Client.aliases = new Collection()
 
-                try {
 
-                    //	Get all the .js files
-                    let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
+                //	Get all the .js files
+                let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
 
 
-                    //	Recursively registering commands
-                    jsfile.forEach((f) => {
-                        let props = require(`../core/modules/commands/${f}`)
-                        Client.commands.set(props.help.name, props)
-                        props.help.aliases.forEach(alias => {
-                            Client.aliases.set(alias, props.help.name)
-                        })
+                //	Recursively registering commands
+                jsfile.forEach((f) => {
+                    let props = {
+                        help: {
+                            name: f,
+                            aliases: [f+1, f+2, f+3]
+                        }
+                    }
+
+                    Client.commands.set(props.help.name, props)
+                    props.help.aliases.forEach(alias => {
+                        Client.aliases.set(alias, props.help.name)
                     })
+                })
 
 
-                    //	Log & Return the updated client
-                    return Client
+                //	Log & Return the updated client
+                return Client
 
-                }
-                catch (e) {
-
-                    //	Log & return the old client
-                    return Client
-
-                }
             }
         }
 
 
         const Loader = new mockModulesLoader()
+        const MockClient = Loader.register({})
         const commandsArray = Loader.fetchSource
 
 
@@ -94,8 +93,7 @@ describe(`Initial check`, () => {
         /**
          *  Verifying both container
          */
-        it(`Verify all the available commands have been properly loaded`, async () => {
-            const MockClient = await Loader.register({})
+        it(`Verify all the available commands have been properly loaded`,  () => {
             expect(MockClient.commands.size).to.equal(commandsArray.length)
         })
     }
