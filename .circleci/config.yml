@@ -9,7 +9,7 @@ defaults: &defaults
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
 
-  # Installing required dependencies
+  # Installing required dependencies and run test
   build:
     <<: *defaults
     steps: # a collection of executable commands
@@ -32,30 +32,12 @@ jobs:
           paths:
             - ./node_modules
 
-
-  # Code style & syntax check
-  linting:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - v1-dependency-cache-{{ checksum "package.json" }}
-            - v1-dependency-cache-
+      # Code style & syntax check
       - run: 
           name: Running ESlint
           command: npm run linting
 
-
-  # Test predefined micro functions
-  unit_test:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - v1-dependency-cache-{{ checksum "package.json" }}
-            - v1-dependency-cache-
+      # Test predefined micro functions
       - run: 
           name: Running a Unit Test
           command: npm run unit-test
@@ -78,25 +60,13 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      # First, installing dependencies.
+      # First, installing dependencies and run the test
       - build
-
-      # Check for code style & syntax consistency. Requires build to finish.
-      - linting:
-          requires:
-            - build
-
-      # Verifying the modules.
-      - unit_test:
-          requires:
-            - build
 
       # Once everything is done, time to deploy it to the production.
       - deploying:
           requires:
             - build
-            - linting
-            - unit_test
           filters:
             branches:
               only: master
