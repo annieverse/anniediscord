@@ -1,6 +1,5 @@
 /* eslint-disable  */
 const { expect } = require(`chai`)
-const sinon = require(`sinon`)
 
 /**
  *  Test method should be independent
@@ -13,7 +12,7 @@ describe(`Initial check`, () => {
         testLoadingCommands()
     })
     describe(`Module (Buy.js)`, () => {
-        userTransactionParameters()
+        userParameters()
     })
 
 
@@ -51,14 +50,12 @@ describe(`Initial check`, () => {
 
     /**
      *  Double checking user input
-     *  @userTransactionParameters
+     *  @userParameters
      */
-    function userTransactionParameters() {
-        describe(`Transaction handling`, () => {
+    function userParameters() {
+        describe(`User Parameter`, () => {
                 let msg = `>buy role baka potato`;
-                let prefix = `>`
                 let msgArray = msg.split(" ");
-                let cmd = msgArray[0].toLowerCase();
                 let args = msgArray.slice(1);
 
                 describe(`args : [${args}]`, () => {

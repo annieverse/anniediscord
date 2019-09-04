@@ -3,13 +3,13 @@ version: 2 # use CircleCI 2.0
 defaults: &defaults
   working_directory: ~/project
   docker:
-    - image: circleci/node:10.16.0
+    - image: circleci/node:10.16.3
 
 
 # Predefined jobs that going to be used as pipeline's workflow.
 jobs:
 
-  # Installing required dependencies and run test
+  # Installing required dependencies
   build:
     <<: *defaults
     steps: # a collection of executable commands
@@ -32,10 +32,33 @@ jobs:
           paths:
             - ./node_modules
 
-      # Test
+
+  # Code style & syntax check
+  linting:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
       - run: 
-          name: Running ESlint and Unit-Test
-          command: npm test
+          name: Running ESlint
+          command: npm run linting
+
+
+  # Test predefined micro functions
+  unit_test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
+      - run: 
+          name: Running a Unit Test
+          command: npm run unit-test
 
 
   # Deploying to production
@@ -55,13 +78,25 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      # First, installing dependencies and run the test
+      # First, installing dependencies.
       - build
+
+      # Check for code style & syntax consistency. Requires build to finish.
+      - linting:
+          requires:
+            - build
+
+      # Verifying the modules.
+      - unit_test:
+          requires:
+            - build
 
       # Once everything is done, time to deploy it to the production.
       - deploying:
           requires:
             - build
+            - linting
+            - unit_test
           filters:
             branches:
               only: master

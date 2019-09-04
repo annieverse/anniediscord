@@ -1,4 +1,3 @@
-const env = require(`../../../.data/environment`)
 const { loggers, format, transports } = require(`winston`)
 const winstonDailyRotateFile = require(`winston-daily-rotate-file`)
 const { combine, printf } = format
@@ -64,7 +63,7 @@ loggers.add(`main`, {
         /**
          *  Also Add console logging if currently in dev environment
          */
-        env.dev ? new transports.Console({
+        process.env.DEV ? new transports.Console({
             level: `info`,
             format: consoleFormat
         }) : null
