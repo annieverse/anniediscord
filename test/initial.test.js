@@ -66,14 +66,12 @@ describe(`Initial check`, () => {
 
 
                     //	Log & Return the updated client
-                    logger.info(`${jsfile.length} command modules loaded`)
                     return Client
 
                 }
                 catch (e) {
 
                     //	Log & return the old client
-                    logger.error(`Failed to load commands module > `, e)
                     return Client
 
                 }
