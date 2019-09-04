@@ -1,8 +1,4 @@
-const env = require(`../../../.data/environment`)
-const { createLogger, format, transports } = require(`winston`)
-const winstonDailyRotateFile = require(`winston-daily-rotate-file`)
-const { combine, printf } = format
-
+const winston = require(`winston`)
 
 /**
  *  By default, logger already initialized in Annie's Client Object, so you
@@ -16,61 +12,11 @@ const { combine, printf } = format
  *  4. `logger.verbose()` - Probably you want display more verbose-like/complicated data.
  *  5. `logger.debug()` - Debugging purpose. Mostly used in development.
  *  6. `logger.silly()` - console.log('yay passed the function.')
+ * 
+ * 
+ *  Fallback version*
  */
 
 
-/**
- *  Define the display format for log files
- *  @fileFormat
- */
-const fileFormat = combine(
-    format.timestamp(),
-    format.align(),
-    printf(data => `${data.timestamp} [${data.level}]: ${data.message}`)
-)
 
-
-/**
- *  Define the display format for console
- *  @consoleFormat
- */
-const consoleFormat = combine(
-    format.prettyPrint(),
-    format.colorize(),
-    format.timestamp(),
-    format.align(),
-    printf(data => `${data.timestamp} [${data.level}]: ${data.message}`)
-)
-
-
-/**
- *  Register transport
- *  @loggersAdd
- */
-const loggers = createLogger({
-    exitOnError: false,
-    transports: [
-        
-        /**
-         *  This will store the log based on current date
-         */
-        new winstonDailyRotateFile({
-            filename: `./logs/records-%DATE%.log`,
-            datePattern: `YYYY-MM-DD`,
-            level: `info`,
-            format: fileFormat
-        }),
-
-        /**
-         *  Also Add console logging if currently in dev environment
-         */
-        env.dev ? new transports.Console({
-            level: `info`,
-            format: consoleFormat
-        }) : null
-
-    ],
-})
-
-
-module.exports = loggers
+module.exports = winston
