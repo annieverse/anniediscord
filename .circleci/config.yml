@@ -32,15 +32,10 @@ jobs:
           paths:
             - ./node_modules
 
-      # Code style & syntax check
+      # Test
       - run: 
-          name: Running ESlint
-          command: npm run linting
-
-      # Test predefined micro functions
-      - run: 
-          name: Running a Unit Test
-          command: npm run unit-test
+          name: Running ESlint and Unit-Test
+          command: npm test
 
 
   # Deploying to production
