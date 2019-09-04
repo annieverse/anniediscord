@@ -10,7 +10,7 @@ class strikeCollection {
 	}
 
 	async execute() {
-		const { message, bot, palette, command, utils } = this.stacks
+		const { message, bot, bot:{logger}, palette, command, utils } = this.stacks
 		const format = new formatManager(message)
 
 		/**
@@ -157,14 +157,14 @@ class strikeCollection {
 
 			//  Add new user's strike record
 			get register() {
-				console.log(`${metadata.admin.name} has reported ${metadata.target.id}.`)
+				logger.info(`${metadata.admin.name} has reported ${metadata.target.id}.`)
 				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason)
                     VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}")`)
 			}
 
 			//  Delete user's newest strike record
 			get unregister() {
-				console.log(`${metadata.admin.name} has removed a strike from ${metadata.target.id}.`)
+				logger.info(`${metadata.admin.name} has removed a strike from ${metadata.target.id}.`)
 				sql.run(`DELETE FROM strike_list
                     WHERE timestamp = ${metadata.last_entry.timestamp}
                     AND assigned_by = "${metadata.last_entry.assigned_by}"

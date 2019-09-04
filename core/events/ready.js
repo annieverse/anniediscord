@@ -1,7 +1,7 @@
-const env = require(`../../.data/environment.json`)
-const sql = require(`sqlite`)
-
 module.exports = bot => {
+
+	//	Extract required part from Client
+	const { db, env, logger } = bot
 
 	startup()
 
@@ -114,7 +114,7 @@ module.exports = bot => {
 				let color = await setColor()
                 
 				let role = await grabRole(roleName)
-				console.log(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
+				logger.info(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
 				role.setColor(color)
 			}
 
@@ -137,7 +137,13 @@ module.exports = bot => {
 	/**
      *  Automatically change current bot status presence
      *  @autoStatus
+	 * 
+	 * 	--	Disabled Temporary --
+	 * 
+	 * 	Note:
+	 * 	1. Please rework this function to integrate with databaseManager. 
      */
+	/*
 	function autoStatus(){
 
 		let x = 1 // number of minutes
@@ -221,6 +227,7 @@ module.exports = bot => {
 			})
 		}
 	}
+	*/
 
 
 	/**
@@ -230,61 +237,10 @@ module.exports = bot => {
      */
 	function setupDatabase() {
 
-		sql.open(`.data/database.sqlite`)
+		//	Reset whole server cooldown to false/zero.
+		db.resetCooldown()
 
-		sql.run(`DROP TABLE IF EXISTS eventData`)
-		//  Set all cooldown to zero
-		sql.run(`UPDATE usercheck SET expcooldown = "False"`)
-
-		//  Register iteminventory if not exist.
-		sql.run(`
-            CREATE TABLE IF NOT EXISTS item_inventory (
-                item_id INTEGER NOT NULL DEFAULT 0,
-                user_id TEXT NOT NULL DEFAULT 0,
-                quantity INTEGER NOT NULL DEFAULT 0
-            )
-        `)
-        
-		sql.run(`CREATE TABLE IF NOT EXISTS event_data (
-                name TEXT NOT NULL,
-                desc TEXT NOT NULL,
-                category TEXT NOT NULL,
-                prizes TEXT NOT NULL,
-                start_time INTEGER NOT NULL DEFAULT 0,
-                length INTEGER NOT NULL DEFAULT 0,
-                organizers TEXT NOT NULL,
-                repeat_after INTEGER NOT NULL DEFAULT 0,
-                active INTEGER NOT NULL DEFAULT 0,
-                occurance INTEGER NUT NULL DEFAULT 1
-            )
-        `)
-
-		sql.close()
 	}
-
-
-	/**
-     *  
-     * Experimental features
-     * @experimentalFeatures
-     */
-	async function experimentalFeatures(framework=null) {
-
-		//  Returns if no framework to test
-		if (!framework) return
-
-
-		let label = `Framework has passed the test with time taken`
-
-		try {
-			console.time(label)
-			await framework
-			console.timeEnd(label)
-		}
-		catch(e) { 
-			console.log(`Custom test has failed to run because ${e}`) 
-		}
-	}   
 
 
 	/**
@@ -294,39 +250,29 @@ module.exports = bot => {
      */
 	function startup() {
 
-		if (env.dev) {
-			console.clear()
-			console.log(`Codename: ${bot.user.username}`)
 
-			bot.logger.info({
-				Codename: bot.user.username,
-				Action: `has sucessfully logged in.`
-			})
-			console.timeEnd(`Initialized In`)
+		/**
+		 *	Only run on development server 
+		 */
+		if (env.dev) {
+			logger.info(`${bot.user.username} has sucessfully logged in.`)
 			bot.user.setStatus(`dnd`)
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
 
-
-			/**
-             *  Add the feature you want to test inside parameter.
-             *  @param {Function/Variable} framework
-             */
-			experimentalFeatures()
-
 		} else {
+
 			/**
-             *  Prepare extensions. Only ran on production server.
+             *  Production server
              */
-			console.log(`${bot.user.username} is up.`)
+			logger.info(`${bot.user.username} has sucessfully logged in.`)
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
 
 
 			setupDatabase()
 			roleChange()
-			autoStatus()
 		}
 	}
 

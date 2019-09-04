@@ -77,7 +77,7 @@ class CommandsHandler extends Controller {
 			return true
 		}
 		catch (e) {
-			console.error(e)
+			this.logger.error(`Command's Components are failed to load. > `, e)
 		}
 	}
 
@@ -155,7 +155,7 @@ class CommandsHandler extends Controller {
 				})
 		}
 		catch (e) {
-			console.log(e)
+			this.logger.error(`Failed to run ${this.filename}. > `, e)
 		}
 	}
 

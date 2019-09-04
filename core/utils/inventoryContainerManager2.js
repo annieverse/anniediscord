@@ -16,7 +16,7 @@ async function filtering_items(container) {
 	container.forEach(element => {
 		delete element.user_id
 	})
-	console.log(container)
+
 
 
 	//  Register all properties and values from container to be used in variable bag
@@ -111,8 +111,8 @@ async function filtering_items(container) {
 	await get_alias()
 	await get_rarities()
 
-	console.log(parsedbag)
-	console.log(raritybag)
+
+	
 	// Sorted and properly formatted.
 	await sort_order(bag, 0, raritybag)
 	await sort_order(parsedbag, 1, raritybag)

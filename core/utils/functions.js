@@ -27,7 +27,6 @@ module.exports = (bot, message) => {
 			darkmatte
 		} = require(`./colorset`)
 
-		console.log(typeof (pages))
 		const registeringEmbeds = () => {
 			const keys = Object.keys(pages)
 			const url = Object.values(pages)

@@ -1,13 +1,12 @@
-const KeyvClient = require(`keyv`)
 const database = require(`../utils/databaseManager`)
 const experience = require(`../utils/ExperienceFormula`)
-const keyv = new KeyvClient()
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
 module.exports = (bot, oldMember, newMember) => {
-	// Handle DB connection errors
-	keyv.on(`error`, err => console.log(`Connection Err`, err))
+
+	//	Get keyv and logger from @Client
+	const { keyv, logger } = bot
 
 	// Set the minimum amount of time needed to recieve xp
 	let minimumTime = 30 //amount of minutes
@@ -21,7 +20,7 @@ module.exports = (bot, oldMember, newMember) => {
 
 	// grabs a afk channel if one exists, if not do nothing (No exp for being in vc)
 	let afkChannel = bot.channels.get(bot.guilds.get(newMember.guild.id).afkChannelID)
-	if (!afkChannel) return console.log(`There is no afk channel so, I cannot give xp to those in vc currently until I learn how to do so :)`)
+	if (!afkChannel) return logger.warn(`There is no afk channel so, I cannot give xp to those in vc currently until I learn how to do so :)`)
 
 	// Checks to make sure the user is not a bot
 	if (oldMember.user.bot || newMember.user.bot) return

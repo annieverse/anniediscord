@@ -30,7 +30,7 @@ class unmute {
 		mutee.removeRole(muterole.id).then(() => {
 			message.delete()
 			mutee.send(`Hello, you have been unmuted in ${message.guild.name}\n
-                for: ${reason}\n`).catch(err => console.log(err))
+                for: ${reason}\n`).catch(err => bot.logger.info(`Unmute notification has failed to send. > `, err))
 		})
 		//end of create role
 

@@ -1,7 +1,6 @@
 module.exports = () => {
 	
 	//  Initialize startup modules
-	console.time(`Initialized In`)
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
 	const modulesLoader = require(`./utils/modulesLoader`)
@@ -19,9 +18,9 @@ module.exports = () => {
 
 	//  To prevent PM2 from being terminated.
 	app.listen(process.env.PORT)
-    
-	//	Loading command modules.
-	bot = new modulesLoader().register(bot)
+
+	//	Initialize logger
+	bot.logger = require(`./utils/config/winston`).loggers.get(`main`)
 
 	//	Initializing db connection
 	bot.db = new Database().connect()
@@ -29,11 +28,11 @@ module.exports = () => {
 	//	Initialize in-memory keyv
 	bot.keyv = new KeyvClient()
 
-	//	Initialize logger
-	bot.logger = require(`./utils/config/winston`)
-
 	//	Initialize environment config
 	bot.env = require(`../.data/environment`)
+
+	//	Loading command modules.
+	bot = new modulesLoader().register(bot)
 
 	//  Start events.
 	require(`./utils/eventHandler`)(bot)

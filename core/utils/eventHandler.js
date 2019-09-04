@@ -24,6 +24,8 @@ module.exports = bot => {
 
 
 	if (!env.dev) {
+		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))
+		bot.on(`disconnect`, (bot) => reqEvent(`disconnect`)(bot))
 		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))
 		bot.on(`guildMemberRemove`, async(member) => reqEvent(`guildMemberRemove`)(bot, member))
 		bot.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(bot, oldUser, newUser))    

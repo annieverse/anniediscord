@@ -54,7 +54,7 @@ async function visual_interface(itemsdata) {
 		try {
 			return configProfile.getAsset(id)
 		} catch (e) {
-			console.log(e)
+			return
 		}
 	}
 

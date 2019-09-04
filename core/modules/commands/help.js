@@ -15,6 +15,7 @@ class help {
 		this.embed = new Discord.RichEmbed()
 		this.dm = false
 		this.pathForCommands = Stacks.paths.help_js
+		this.logger = Stacks.bot.logger
 	}
 
 	// This will format all embeds used in this file
@@ -46,7 +47,7 @@ class help {
 	async groupNames() {
 		let file_arr = []
 		fs.readdir(this.pathForCommands, (err, files) => {
-			if (err) console.log(err)
+			if (err) this.logger.error(`Failed to grouping help commands. > `, err)
 			const src = require(`./${files[0]}`)
 			file_arr.push(src.help.group.toLowerCase())
 			for (let file in files) {
@@ -68,7 +69,7 @@ class help {
 
 		let file_arr = []
 		fs.readdir(this.pathForCommands, (err, files) => {
-			if (err) console.log(err)
+			if (err) this.logger.error(`Failed to retrieve mainNames for help command. > `, err)
 
 			for (let file in files) {
 				const src = require(`./${files[file]}`)
@@ -131,7 +132,7 @@ class help {
 	async returnFileName(cmd) {
 		let file_name = cmd
 		fs.readdir(this.pathForCommands, (err, files) => {
-			if (err) console.log(err)
+			if (err) this.logger.error(`Failed to retrieve the fileName for help command. > `, err)
 			for (let file in files) {
 				const src = require(`./${files[file]}`)
 				if (src.help.name.toLowerCase() === cmd.toLowerCase || src.help.aliases.includes(cmd.toLowerCase())) {

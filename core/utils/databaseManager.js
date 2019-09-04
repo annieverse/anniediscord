@@ -1,5 +1,5 @@
 const sql = require(`sqlite`)
-const logger = require(`./config/winston`)
+const logger = require(`./config/winston`).loggers.get(`main`)
 
 /**
   *   Accessing database globally.
@@ -18,17 +18,17 @@ class databaseUtils {
 
 	/**
 	 * 	Opening connection
-	 *	Use caching mode to prevent performance reduction.
+	 *	Use caching mode to save time on next queries.
 	 *	@connect
 	 */
 	connect() {
 		try {
 			sql.open(`.data/database.sqlite`, {cached: true})
-			console.log(`Database successfully connected`)
+			logger.info(`Database successfully connected`)
 			return this
 		}
 		catch (e) {
-			return console.error(`Database has failed to connect. ${e.message}`)
+			logger.error(`Database has failed to connect > `, e)
 		}
 	}
 
@@ -55,7 +55,7 @@ class databaseUtils {
 			
 		}
 		catch (e) {
-			logger.info(e)
+			logger.error(`Database._query() has failed to run. > `, e)
 			return null
 		}
 
@@ -91,15 +91,32 @@ class databaseUtils {
 
 	/**
 	 * 	Register into userdata if not present
-	 * 	@param {String|ID} id user id
+	 * 	@param {String|ID} id user id. Use class default prop if not provided.
 	 */
-	validatingNewUser(id = this.id) {
-		this._query(`
+	async validatingNewUser(id = this.id) {
+		const res = await this._query(`
 			INSERT OR IGNORE
-			INTO "userdata" (userId)
-			VALUES (?)`
+			INTO "userdata" (userId, registered_date)
+			VALUES (?, datetime('now'))`
 			, `run`
-			, [id])		
+			, [id]
+		)		
+
+		//	Check if there's a change or not
+		logger.debug(res)
+	}
+
+
+	/**
+	 * 	Set all cooldown to zero
+	 * 	@resetCooldown
+	 */
+	resetCooldown() {
+		this._query(`
+			UPDATE usercheck
+			SET expcooldown = "False"`
+			, `run`
+		)
 	}
 
 
@@ -478,7 +495,6 @@ class databaseUtils {
             */
 	registerItem(name, alias, type, price, description) {
 		return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
-			.then(() => console.log(`New item: ${name} has been registered. With values of ${alias, type, price, description}.`)) 
 	}
 
 
@@ -490,7 +506,6 @@ class databaseUtils {
         */
 	registeringId(tablename, id) {
 		return sql.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
-			.then(() => console.log(`New ID: ${id}, has been registered into ${tablename}.`))
 	}
 
 
@@ -502,7 +517,6 @@ class databaseUtils {
         */
 	registerColumn(tablename, columnname, type) {
 		return sql.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
-			.then(() => console.log(`New COLUMN: ${columnname}-${type}, has been registered into ${tablename}.`))
 	}
 
 
@@ -514,7 +528,6 @@ class databaseUtils {
     */
 	registerTable(tablename, columnname, type) {
 		return sql.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
-			.then(() => console.log(`New TABLE: ${tablename} has been created. With default COLUMN: ${columnname}-${type}.`))
 	}
 
 
@@ -529,7 +542,6 @@ class databaseUtils {
 		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
 			.then(async currentdata => {
 				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
-					.then(() => console.log(`ADDED ${value} VALUE on ${columnname} of ID: ${id}.`))
 			})
 	}
 
@@ -541,16 +553,12 @@ class databaseUtils {
      * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
      */
 	addValues(tablename, columnnames, values) {
-		//console.log(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
-		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`).then(() => {
-			console.log(`ADDED ${values} VALUES INTO ${columnnames} of Table: ${tablename}`)
-		})
+		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
 	}
 
 	updateValue(tablename, columnNameToUpdate, value, columnname, id) {
 		try {
 			sql.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
-				.then(() => console.log(`UPDATED ${id} VALUE on ${columnname} to: ${value}.`))
 		} catch (error) { throw error }
 	}
 	/**
@@ -564,7 +572,6 @@ class databaseUtils {
 		return sql.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
 			.then(async currentdata => {
 				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
-					.then(() => console.log(`SUBTRACT ${value} VALUE on ${columnname} of ID: ${id}.`))
 			})
 	}
 
@@ -579,7 +586,6 @@ class databaseUtils {
      */
 	replaceValue(tablename, columnname, value, id, idtype = `userId`) {
 		return sql.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
-			.then(() => console.log(`New value (${value}) has been placed in ${id}-${columnname}.`))
 	}
 
 
@@ -747,7 +753,6 @@ class databaseUtils {
         */
 	removeRowData(tablename, id, idtype = `userId`) {
 		return sql.run(`DELETE FROM ${tablename} WHERE ${idtype} = ${id}`)
-			.then(() => console.log(`ID: ${id} OF GROUP: ${tablename} has been successfully removed.**`))
 	}
 
 

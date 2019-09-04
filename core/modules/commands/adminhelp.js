@@ -9,6 +9,7 @@ class adminHelp {
 		this.admEmbed = new Discord.RichEmbed()
 		this.admEmbed2 = new Discord.RichEmbed()
 		this.filePath = Stacks.paths.Adminhelp_js
+		this.logger = Stacks.bot.logger
 	}
 
 	/**
@@ -18,7 +19,7 @@ class adminHelp {
 	async groupNames() {
 		let file_arr = []
 		fs.readdir(this.filePath, (err, files) => {
-			if (err) console.log(err)
+			if (err) this.logger.error(`Failed to retrieve groupNames for admin help command. > `, err)
 			const src = require(`./${files[0]}`)
 			file_arr.push(src.help.group.toLowerCase())
 			for (let file in files) {
@@ -40,7 +41,7 @@ class adminHelp {
 
 		let file_arr = []
 		fs.readdir(this.filePath, (err, files) => {
-			if (err) console.log(err)
+			if (err) this.logger.error(`Failed to retrieve mainNames for admin help command. > `, err)
 
 			for (let file in files) {
 				const src = require(`./${files[file]}`)
@@ -130,7 +131,7 @@ class adminHelp {
 			let pages = await this.help()
 			pages.forEach((element, index) => { this.admEmbed.setDescription(element); if (index === pages.length - 1) { this.stacks.message.author.send(this.admEmbed) } else { this.stacks.message.author.send(this.admEmbed).then(() => this.sendDMComfirmation()) } })
 		} catch (e) {
-			console.log(`[ERROR LOG for adminhelp.js\n\n${await e}\n`)
+			this.logger.error(`Admin-Help command has failed to run. > `, e)
 			this.failedDM_ERROR()
 		}
 	}

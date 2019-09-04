@@ -292,36 +292,41 @@ class Experience extends Controller {
 	 * 	@runAndUpdate
 	 */
 	async runAndUpdate() {
-		//	Check if its still in cooling down state
-		if (await this.inCoolingdown()) return
-		//  Add & calculate bonuses from card if prompted
-		if (this.data.applyCardBuffs) await this.cardBuffs()
-		//  Add & calculate bonuses from ticket if prompted
-		if (this.data.applyTicketBuffs) await this.ticketBuffs()
+
+		try {
+			//	Check if its still in cooling down state
+			if (await this.inCoolingdown()) return
+			//  Add & calculate bonuses from card if prompted
+			if (this.data.applyCardBuffs) await this.cardBuffs()
+			//  Add & calculate bonuses from ticket if prompted
+			if (this.data.applyTicketBuffs) await this.ticketBuffs()
 
 
-		//  Calculate overall exp
-		await this.updatingExp()
+			//  Calculate overall exp
+			await this.updatingExp()
 
 
-		//  Update rank if current rank rank is not equal with the new rank.
-		if (this.rankUp) {
-			await this.removeRank()
-			await this.addRank()
+			//  Update rank if current rank rank is not equal with the new rank.
+			if (this.rankUp) {
+				await this.removeRank()
+				await this.addRank()
+			}
+
+			// Add Artcoin on level up
+			await this.updatingArtcoins()
+
+			//	Save record
+			this.logger.info(`${this.author.tag} has received ${this.data.total_gained} EXP in ${this.message.channel.name}`)
+
+		}
+		catch (e) {
+
+			//	Catch possible error
+			this.logger.error(`Failed to parse exp in ExperienceFormula.js. > ${e.stack}`)
+
 		}
 
-		// Add Artcoin on level up
-		await this.updatingArtcoins()
-
-		//	Logging
-		console.log(`
-		user: ${this.data.message.author.tag}
-		exp: ${this.data.total_gained}
-		type: ${this.data.datatype}
-		booster: ${this.data.bonus}
-		`)
 	}
-
 
 }
 

@@ -9,6 +9,7 @@ ___
 > - KISS/MAL leaderboard
 > - Better coverage with CI/CD
 > - Verified Badge
+> - Winston's logging system
 
 ## **08/24/19 | 5.0.0 - >**
 

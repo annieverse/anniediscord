@@ -33,7 +33,6 @@ class weeklyEventTimer extends databaseManager {
 	}
 
 	async countDown(data){
-		console.log((await data).length)
 		let currentTime = (new Date())
 		// Find the distance between now and the count down date
 		var distance = this.getTime((await data).length) - this.getTime(currentTime.valueOf())

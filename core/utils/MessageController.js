@@ -27,6 +27,8 @@ class MessageController {
         this.emoji = data.emoji
         this.code = data.code
         this.meta = data.meta
+        this.author = data.meta.author
+        this.logger = data.bot.logger
     }
 
 
