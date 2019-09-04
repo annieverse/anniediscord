@@ -52,6 +52,10 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - restore_cache:
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
       - run: 
           name: Running a Unit Test
           command: npm run unit-test
