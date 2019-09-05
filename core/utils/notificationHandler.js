@@ -18,11 +18,11 @@ class Notification extends Controller {
 			//  Set get_notification to zero
 			await this.db.disableNotification()
 			//  Successful
-			return this.reply(this.code.dm.NOTIFICATION_DISABLED, {field: this.meta.author})
+			return this.reply(this.code.DM.NOTIFICATION_DISABLED, {field: this.meta.author})
 		}
 		catch(e) {
 			//  Incase the database queries are busy
-			return this.reply(this.code.dm.ERROR)
+			return this.reply(this.code.DM.ERROR)
 		}
 	}
 
@@ -35,11 +35,11 @@ class Notification extends Controller {
 			//  Set get_notification to one
 			await this.db.enableNotification()
 			//  Successful
-			return this.reply(this.code.dm.NOTIFICATION_ENABLED, {field: this.meta.author})
+			return this.reply(this.code.DM.NOTIFICATION_ENABLED, {field: this.meta.author})
 		}
 		catch(e) {
 			//  Incase the database queries are busy
-			return this.reply(this.code.dm.ERROR)
+			return this.reply(this.code.DM.ERROR)
 		}
 	}
 
