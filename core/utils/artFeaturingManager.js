@@ -1,6 +1,7 @@
 const { dev, administrator_id } = require(`../../.data/environment`)
 const { art_domain } = require(`../modules/config`)
 const database = require(`./databaseManager`)
+const Pistachio = require(`./Pistachio`)
 
 /**
  *  Handles #Featured system
@@ -17,7 +18,7 @@ class HeartCollector {
 		}
 		this.keyv = Stacks.bot.keyv
 		this.logger = Stacks.bot.logger
-		this.stacks = require(`./Pistachio`)(this.components)
+		this.stacks = new Pistachio(this.components).bag()
 		this.metadata = {
 			timestamp: Date.now(),
 			featured_channel: Stacks.bot.channels.get(`582808377864749056`),
