@@ -752,13 +752,13 @@ class databaseUtils {
 	 *   Pull user's relationships with other members
 	 */
 	get relationships() {
-		return sql.all(`SELECT reverseType AS "relation", userId2 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
+		return sql.all(`SELECT reverseType AS "relation", userId2 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
 						FROM relationship
 						JOIN relationshiptype
 						ON relationship.relationType = relationshiptype.typeId
 						WHERE userId1 = ${this.id}
 						UNION
-						SELECT type AS "relation", userId1 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
+						SELECT type AS "relation", userId1 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
 						FROM relationship
 						JOIN relationshiptype
 						ON relationship.relationType = relationshiptype.typeId
