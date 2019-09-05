@@ -28,8 +28,8 @@ module.exports = (bot, message) => {
 	//  Runs specific channel functions when in prod server
 	if(!env.dev) {
 		eventChannelFilter()
-		portfolioRequest() 
-		artChannelsFilter() 
+		portfolioRequest()
+		artChannelsFilter()
 	}
 
 	//  Returns true if message has an attachment.
@@ -50,10 +50,11 @@ module.exports = (bot, message) => {
 				id: message.author.id,
 				tag: message.author.tag,
 				loc: message.channel.name,
+				msg: message.content,
 				date: Date.now()
 			}
 			message.react(`✅`)
-			sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [user.id, user.img, user.date, user.loc])
+			sql.run(`INSERT INTO userartworks (userId, url, timestamp, location, description) VALUES (?, ?, ?, ?, ?)`, [user.id, user.img, user.date, user.loc, user.msg])
 			return console.log(`${user.tag} has submitted "${user.img}" through #myportfolio in ${user.loc}.`)
 		}
 	}
@@ -65,7 +66,7 @@ module.exports = (bot, message) => {
 		if (art_domain.includes(message.channel.id) && attachmentCheck() && !message.content.includes(`#myportfolio`)) {
 			let img = message.attachments.first()
 			message.react(`❤`)
-			sql.run(`INSERT INTO userartworks (userId, url, timestamp, location) VALUES (?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name])
+			sql.run(`INSERT INTO userartworks (userId, url, timestamp, location, description) VALUES (?, ?, ?, ?, ?)`, [message.author.id, img.url, Date.now(), message.channel.name, message.content])
 			return console.log(`${message.author.tag} has submitted "${img.filename}" in ${message.channel.name}.`)
 		}
 	}

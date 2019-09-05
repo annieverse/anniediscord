@@ -155,8 +155,16 @@ async function portfolio(stacks, member) {
 		if (res.length < 1) {
 			await nullCollection()
 		} else {
-			canv.addText(`My newest artwork!`, (baseWidth / 2) + 10, 100)
-				.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
+            var description = `My newest artwork!`
+				if (res[0].description) {
+					if (res[0].description.length>56) {
+						description = res[0].description.substring(0, 56)+`...`
+					} else {
+						description = res[0].description
+					}
+				}
+            canv.addText(description, (baseWidth / 2) + 10, 100)
+			    .createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
 				.setColor(switchColor[usercolor].border)
 				.addRect(posx, posy, dx, dy)
 			await aspectRatio(res[0].url)
