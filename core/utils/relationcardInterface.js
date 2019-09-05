@@ -129,7 +129,7 @@ async function portfolio(stacks, member) {
 		userName: relUser.username,
         relStart: relations[0].relationStart,
         relPoints: relations[0].relationPoints,
-        gift: relations[0].gift
+        gift: relations[0].gift ? relations[0].gift : `None yet :(`
 
 	}
 
