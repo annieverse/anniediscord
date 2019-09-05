@@ -38,7 +38,7 @@
     "sqlite": "^3.0.2",
     "sqlite3": "^4.1.0",
     "superagent": "^5.1.0",
-    "winston": "2.*",
+    "winston": "3.*",
     "winston-daily-rotate-file": "^3.10.0"
   },
   "devDependencies": {
