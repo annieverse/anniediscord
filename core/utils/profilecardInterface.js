@@ -22,8 +22,6 @@ async function profile(stacks, member) {
 	const configFormat = new formatManager(stacks.message)
 	const configRank = new rankManager(stacks.bot, stacks.message)
 
-
-
 	const userdata = await collection.userMetadata
 	const user = {
 		id: userdata.userId,
@@ -97,7 +95,6 @@ async function profile(stacks, member) {
 
 	/**
 	 *    CARD BASE
-	 *    600 x 750
 	 */
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)

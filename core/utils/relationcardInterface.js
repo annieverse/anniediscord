@@ -3,12 +3,12 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
+const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
+const formatManager = require(`./formatManager`)
 const rankManager = require(`./ranksManager`)
 const palette = require(`./colorset`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -21,7 +21,7 @@ async function portfolio(stacks, member) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configRank = new rankManager(stacks.bot, stacks.message)
-
+    const configFormat = new formatManager(stacks.message)
 
 	/**
      * id = userid, cur = currentexp, max = maxexp,
@@ -51,6 +51,7 @@ async function portfolio(stacks, member) {
 					(Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
 		},
 	}
+	const relations = await collection.relationships
 
 	const switchColor = {
 
@@ -85,7 +86,6 @@ async function portfolio(stacks, member) {
 
 	/**
 	 *    CARD BASE
-	 *    850 x 400
 	 */
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
@@ -113,6 +113,45 @@ async function portfolio(stacks, member) {
 		.addText(`Relationship`, 55, 35)
 		.setColor(switchColor[usercolor].border)
 		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
+
+	if (relations.length == 0) {
+		return canv.toBuffer()
+	}
+
+	//for now we only do the feature for 1 relationship, so take first entry; but database entry is made to be extendable
+	const relUser = await stacks.bot.fetchUser(relations[0].userId)
+	const {
+		body: userAvatar
+	} = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+	const relationship = {
+		type: relations[0].relation,
+		userId : relations[0].userId,
+		userName: relUser.username,
+        relStart: relations[0].relationStart,
+        relPoints: relations[0].relationPoints,
+        gift: relations[0].gift
+
+	}
+
+
+	canv.addRoundImage(userAvatar, 40, 60, 60, 60, 30)
+		.setTextAlign(`left`)
+		.setTextFont(`18pt RobotoBold`)
+		.setColor(user.clr)
+		.addText(relationship.userName, 110, 93)
+		.setColor(switchColor[usercolor].secondaryText)
+		.setTextFont(`8pt RobotoBold`)
+		.addText(`Relation type: `+relationship.type, 110, 110)
+		.setTextAlign(`right`)
+		.setTextFont(`10pt RobotoBold`)
+		.addText(`In a relation since`, 283, 163)
+		.addText(`Love points`, 283, 233)
+		.addText(`Recently received gift`, 283, 303)
+		.setColor(user.clr)
+		.setTextFont(`20pt RobotoBold`)
+		.addText(moment(relationship.relStart).fromNow(), 283, 193)
+		.addText(configFormat.formatK(relationship.relPoints), 283, 263)
+		.addText(relationship.gift, 283, 333)
 
 	return canv.toBuffer()
 

@@ -87,7 +87,6 @@ async function portfolio(stacks, member) {
 
 	/**
 	 *    CARD BASE
-	 *    850 x 400
 	 */
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)

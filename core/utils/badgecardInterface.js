@@ -7,8 +7,6 @@ const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
 const palette = require(`./colorset`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -91,7 +89,6 @@ async function portfolio(stacks, member) {
 
 	/**
 	 *    CARD BASE
-	 *    850 x 400
 	 */
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)

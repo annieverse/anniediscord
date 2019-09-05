@@ -740,12 +740,30 @@ class databaseUtils {
 
 
 	/**
-        *   Pull user ranking data counted from all indexes.
-        * @this.queryingAll
-        */
+	 *   Pull user ranking data counted from all indexes.
+	 * @this.queryingAll
+	 */
 	get ranking() {
 		return this.queryingAll
 			.then(async data => data.findIndex(x => x.userId === this.id))
+	}
+
+	/**
+	 *   Pull user's relationships with other members
+	 */
+	get relationships() {
+		return sql.all(`SELECT reverseType AS "relation", userId2 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
+						FROM relationship
+						JOIN relationshiptype
+						ON relationship.relationType = relationshiptype.typeId
+						WHERE userId1 = ${this.id}
+						UNION
+						SELECT type AS "relation", userId1 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
+						FROM relationship
+						JOIN relationshiptype
+						ON relationship.relationType = relationshiptype.typeId
+						WHERE userId2 = ${this.id}`)
+			.then(async parsed => parsed)
 	}
 
 }
