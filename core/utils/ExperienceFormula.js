@@ -1,7 +1,6 @@
 let booster = require(`./config/ticketbooster`)
 let cards = require(`../utils/cards-metadata.json`)
 let Controller = require(`./MessageController`)
-let config = require(`../modules/config.json`)
 
 /**
  * Experience formula wrapper. Standalone Class.
@@ -19,7 +18,6 @@ class Experience extends Controller {
 			pistachio: require(`./Pistachio`)({}),
 			applyTicketBuffs: true,
 			applyCardBuffs: true,
-			getArtcoins:true,
 			bonus: 0,
 			user: {},
 			bot: {},
@@ -32,6 +30,7 @@ class Experience extends Controller {
 				nextexpcurve: 0
 		}}) {
 		super(metadata)
+
 		this.label = `expcd:${this.message.author.id}`
 	}
 
@@ -94,7 +93,7 @@ class Experience extends Controller {
 		//  Apply bonus if available
 		if (this.data.bonus > 0) this.data.total_gained = this.data.total_gained * this.data.bonus
 		//  Apply boost if artwork in art channel
-		if (this.message.attachments.size > 0 && config[`art_domain`].includes(this.message.channel.id)) {
+		if (super.isArtPost) {
 			this.data.total_gained = this.data.total_gained * 10
 		}
 		const accumulatedCurrent = Math.round(this.data.total_gained + this.meta.data.currentexp)
@@ -115,7 +114,6 @@ class Experience extends Controller {
 	 * 	@updatingArtcoins
 	 */
 	updatingArtcoins() {
-
 		this.db.storeArtcoins(this.data.total_gained)
 		//	Return if they are still on same rank
 		if (this.data.updated.level == this.meta.data.level) return
@@ -304,6 +302,7 @@ class Experience extends Controller {
 		try {
 			//	Check if its still in cooling down state
 			if (await this.inCoolingdown()) return
+
 			//  Add & calculate bonuses from card if prompted
 			if (this.data.applyCardBuffs) await this.cardBuffs()
 			//  Add & calculate bonuses from ticket if prompted
