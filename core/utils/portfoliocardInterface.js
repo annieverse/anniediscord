@@ -71,8 +71,8 @@ async function portfolio(stacks, member) {
 		}
 	}
 
-	let canvas_x = 320//280
-	let canvas_y = 420//380
+	let canvas_x = 320//300
+	let canvas_y = 420//400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20

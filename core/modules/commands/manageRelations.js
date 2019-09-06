@@ -19,29 +19,60 @@ class ManageRelations {
 
         const collection = new databaseManager(author.id)
 
-        async function getRel() {
+        async function getRelationship() {
             const relations = await collection.relationships
             const embed = new Discord.RichEmbed().setColor(palette.darkmatte)
             const formatting = async () => {
                 var content = ``
                 for (var i = 0; i < relations.length; i++) {
-                    content += `[${i + 1}] Me: ${relations[i].myrelation} - ${name(relations[i].userId)}: ${relations[i].theirrelation}\n`
+                    content += `[${i + 1}] Me: ${relations[i].myRelation} - ${name(relations[i].theirUserId)}: ${relations[i].theirRelation}\n`
                 }
                 return content
             }
 
-            relations.length==0 ? embed.setDescription(`You're not in any relations. :(`) : embed.setDescription(await formatting())
+            relations.length==0 ? embed.setDescription(`You're not in any relationships. :(`) : embed.setDescription(await formatting())
 
-            await message.channel.send(`**${name(author.id)}'s Collection**`)
+            await message.channel.send(`**${name(author.id)}'s Relations**`)
             await message.channel.send(embed)
             if (author.id == message.author.id) {
-                message.channel.send(`To add a relation type >addrel username. To remove a relation type >delrel username`)
+                reply(`To add a relationship, type \`>addrel username\`.\n
+                To remove a relationship, type \`>delrel username\`.\n
+                To set one relationship as your main relationship, type the number of the relationship.`, {
+                    color: palette.golden,
+                    notch: true
+                })
+
+                const collector = new Discord.MessageCollector(message.channel,
+                    m => m.author.id === message.author.id, {
+                        max: 1,
+                        time: 60000,
+                    })
+
+                collector.on(`collect`, async (msg) => {
+                    let input = msg.content
+                    if (relations[input-1]) {
+                        collection.setMainRelationship(relations[input-1].theirUserId).then(
+                            reply(`Main relationship changed!`, {
+                                color: palette.green,
+                                notch: true
+                            }))
+                    } else if (Number.isInteger(input)) {
+                        reply(`Main relationship change unsuccessful.`, {
+                            color: palette.red,
+                            notch: true
+                        })
+                    }
+                    collector.stop()
+                })
             }
         }
 
-        async function addRel() {
+        async function addRelationship() {
             if (author.id == message.author.id) {
-                return message.channel.send(`You can't be in a relationship with yourself!`)
+                return reply(`You can't be in a relationship with yourself!`, {
+                    color: palette.red,
+                    notch: true
+                })
             }
 
             const relationtypes = await collection.relationshipTypes
@@ -56,7 +87,7 @@ class ManageRelations {
 
             embed.setDescription(await formatting())
 
-            await message.channel.send(`**What's your relationship title?**`)
+            await message.channel.send(`**What's your relationship title? Type the number**`)
             message.channel.send(embed)
 
             const collector = new Discord.MessageCollector(message.channel,
@@ -69,18 +100,35 @@ class ManageRelations {
                 let input = msg.content
                 if (relationtypes[input-1]) {
                     collection.setRelationship(input, message.author.id).then(
-                        message.channel.send(`Relationship status set successfully! Now ${name(author.id)} only needs to set their status.`))
+                        reply(`Relationship status set successfully!\n
+                        When ${name(author.id)}, sets their status, it's official!`, {
+                            color: palette.green,
+                            notch: true
+                        }))
                 } else {
-                    message.channel.send(`Relationship status couldn't be set.`)
+                    reply(`Relationship status couldn't be set.`, {
+                        color: palette.red,
+                        notch: true
+                    })
                 }
+                collector.stop()
             })
         }
 
-        async function delRel() {
+        async function deleteRelationship() {
             if (author.id == message.author.id) {
-                return message.channel.send(`You can't delete a relationship with yourself!`)
+                return reply(`You can't delete a relationship with yourself!`, {
+                    color: palette.red,
+                    notch: true
+                })
             }
-            message.channel.send(`Are you sure you want to delete this relationship? You will lose all your relation points and data :(\nPlease type y to confirm.`)
+            reply(`Are you sure you want to delete this relationship?\n
+            You will lose all your relation points and data :(\n
+            Your partner would be sad.\n
+            Please type \`y\` to confirm.`, {
+                color: palette.golden,
+                notch: true
+            })
 
             const collector = new Discord.MessageCollector(message.channel,
                 m => m.author.id === message.author.id, {
@@ -92,24 +140,31 @@ class ManageRelations {
                 let input = msg.content
                 if (input==`y`) {
                     collection.deleteRelationship(message.author.id).then(
-                        message.channel.send(`Relationship status deleted. Bye bye.`))
+                        reply(`Relationship status deleted. Bye bye.`, {
+                            color: palette.green,
+                            notch: true
+                        }))
                 } else {
-                    message.channel.send(`Deletion aborted.`)
+                    reply(`Deletion aborted.`, {
+                        color: palette.red,
+                        notch: true
+                    })
                 }
+                collector.stop()
             })
         }
 
         switch(command) {
             case `addrel`:
             case `addrels`:
-                addRel()
+                addRelationship()
                 break
             case `delrel`:
             case `delrels`:
-                delRel()
+                deleteRelationship()
                 break
             default:
-                getRel()
+                getRelationship()
         }
     }
 }
@@ -118,8 +173,8 @@ class ManageRelations {
 module.exports.help = {
     start: ManageRelations,
     name: `managerelations`,
-    aliases: [`managerel`, `managerels`, `getrel`, `getrels`, `addrel`, `addrels`, `delrel`, `delrels`],
-    description: `Manages the relations a user can have`,
+    aliases: [`viewrel`, `viewrels`, `seerel`, `seerels`, `getrel`, `getrels`, `addrel`, `addrels`, `delrel`, `delrels`],
+    description: `Manages the relationships a user can be in`,
     usage: `managerelations`,
     group: `Fun`,
     public: true,

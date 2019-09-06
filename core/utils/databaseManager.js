@@ -749,25 +749,42 @@ class databaseUtils {
 	}
 
     /**
-     *   Pull user's relationships with other members
+     *   Pull user's relationships with other members with main relationship on top if it exists
      */
     get relationships() {
-        return sql.all(`SELECT isMain, r1.type AS "myrelation", r2.type AS "theirrelation", userId2 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
-						FROM relationship
+        return sql.all(`SELECT CASE WHEN EXISTS(SELECT 1
+                        	FROM mainrelationship main
+                        	WHERE r.userId1 = main.userId1
+                        	AND r.userId2 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+                        r1.type AS "myRelation", r2.type AS "theirRelation",
+                        userId1 as "myUserId", userId2 AS "theirUserId",
+                        relationStart, relationPoints, recentReceived AS "gift"
+						FROM relationship r
 						JOIN relationshiptype r1
-						ON relationship.relationType1 = r1.typeId
+						ON r.relationType1 = r1.typeId
 						JOIN relationshiptype r2
-						ON relationship.relationType2 = r2.typeId
-						WHERE userId1 = ${this.id} AND relationType1 > 0 AND relationType2 > 0 
+						ON r.relationType2 = r2.typeId
+						WHERE r.userId1 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
+						 
 						UNION
-						SELECT isMain, r1.type AS "myrelation", r2.type AS "theirrelation", userId1 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
-						FROM relationship
+						
+						SELECT CASE WHEN EXISTS(SELECT 1
+                        	FROM mainrelationship main
+                        	WHERE userId2 = main.userId1
+                        	AND userId1 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+                        r1.type AS "myRelation", r2.type AS "theirRelation",
+                        userId2 as "myUserId", userId1 AS "theirUserId",
+                        relationStart, relationPoints, recentGifted AS "gift"
+						FROM relationship r
 						JOIN relationshiptype r1
-						ON relationship.relationType2 = r1.typeId
+						ON r.relationType2 = r1.typeId
 						JOIN relationshiptype r2
-						ON relationship.relationType1 = r2.typeId
-						WHERE userId2 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
-						ORDER BY isMain DESC`)
+						ON r.relationType1 = r2.typeId
+						WHERE r.userId2 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
+						
+						
+						ORDER BY isMain DESC
+                   		`)
             .then(async parsed => parsed)
     }
 
@@ -781,26 +798,26 @@ class databaseUtils {
 
 	async setRelationship(relType, userId) {
 		var res = await sql.all(`SELECT * FROM relationship WHERE userId1 = "${this.id}" AND userId2 = "${userId}"`)
-		console.log(res)
-		if (res.length>0) {
-			return sql.run(`
-                UPDATE relationship
-                SET relationType1 = ${relType} 
-                WHERE userId1 = "${this.id}" AND userId2 = "${userId}"
-            `)
-		}
-		res = await sql.all(`SELECT * FROM relationship WHERE userId2 = "${this.id}" AND userId1 = "${userId}"`)
-		console.log(res)
+
 		if (res.length>0) {
 			return sql.run(`
                 UPDATE relationship
                 SET relationType2 = ${relType} 
+                WHERE userId1 = "${this.id}" AND userId2 = "${userId}"
+            `)
+		}
+		res = await sql.all(`SELECT * FROM relationship WHERE userId2 = "${this.id}" AND userId1 = "${userId}"`)
+
+		if (res.length>0) {
+			return sql.run(`
+                UPDATE relationship
+                SET relationType1 = ${relType} 
                 WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
             `)
 		}
 		return sql.run(`
                 INSERT INTO relationship
-                (userId1, userId2, relationType1, relationStart)
+                (userId1, userId2, relationType2, relationStart)
                 VALUES (?, ?, ?, ?)`,
 			[this.id, userId, relType, Date.now()]
 		)
@@ -809,7 +826,46 @@ class databaseUtils {
 
 	deleteRelationship(userId) {
 		return sql.run(`DELETE FROM relationship
-		WHERE (userId1 = "${this.id}" AND userId2 = "${userId}") OR (userId2 = "${this.id}" AND userId1 = "${userId}")`)
+						WHERE (userId1 = "${this.id}" AND userId2 = "${userId}")
+						OR (userId2 = "${this.id}" AND userId1 = "${userId}")`).then(
+				sql.run(`
+					DELETE FROM mainrelationship 
+					WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
+				`)
+		)
+	}
+
+
+	async setMainRelationship(userId) {
+		var res = await sql.all(`SELECT * FROM mainrelationship WHERE userId1 = "${this.id}"`)
+		if (res.length > 0) {
+			return sql.run(`
+                UPDATE mainrelationship
+                SET userId2 = ${userId} 
+                WHERE userId1 = "${this.id}"
+            `)
+		}
+		return sql.run(`
+                INSERT INTO mainrelationship
+                (userId1, userId2)
+                VALUES (?, ?)`,
+			[this.id, userId])
+	}
+
+
+	async setRelationshipGift(userId, amount, gift) {
+		await sql.run(`
+                UPDATE relationship
+                SET relationPoints = relationPoints + ${amount}
+                AND recentReceived = "${gift}"
+                WHERE userId1 = "${this.id}" AND userId2 = "${userId}"
+            `)
+		await sql.run(`
+                UPDATE relationship
+                SET relationPoints = relationPoints + ${amount}
+                AND recentGifted = "${gift}"
+                WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
+            `)
 	}
 
 

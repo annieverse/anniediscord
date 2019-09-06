@@ -70,8 +70,8 @@ async function portfolio(stacks, member) {
 		}
 	}
 
-	let canvas_x = 320//280
-	let canvas_y = 420//380
+	let canvas_x = 320//300
+	let canvas_y = 420//400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -119,12 +119,12 @@ async function portfolio(stacks, member) {
 	}
 
 	//for now we only do the feature for 1 relationship, so take first entry; but database entry is made to be extendable
-	const relUser = await stacks.bot.fetchUser(relations[0].userId)
+	const relUser = await stacks.bot.fetchUser(relations[0].theirUserId)
 	const {
 		body: userAvatar
 	} = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	const relationship = {
-		type: relations[0].theirrelation,
+		type: relations[0].theirRelation,
 		userId : relations[0].userId,
 		userName: relUser.username,
         relStart: relations[0].relationStart,

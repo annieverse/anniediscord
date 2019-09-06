@@ -74,24 +74,24 @@ class Profile {
                     const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
 
                     backwards.on(`collect`, async r => {
-                        r.remove(author)
                         count--
                         if (count < 0) {
                             count = pages.length - 1
                         }
+                        await msg.delete()
                         getPage(count)
 
                     })
                     forwards.on(`collect`, async r => {
-                        r.remove(author)
                         count++
                         if (count > pages.length - 1) {
                             count = 0
                         }
+                        await msg.delete()
                         getPage(count)
                     })
                     setTimeout(() => {
-                        msg.clearReactions()
+                        if (!msg.deleted) msg.clearReactions()
                     }, 60000)
                 })
             })
