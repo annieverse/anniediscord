@@ -75,7 +75,7 @@
         "LIKED": "**{0}** and **{1} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
     },
-    "LEVELUP": "{0} Congratulations {1}!! You are now level **{2}** !",
+    "LEVELUP": "{0} Congratulations {1}!! You are now level **{2}**\n**{3}** AC has been added to your account!",
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",

@@ -1,6 +1,7 @@
 let booster = require(`./config/ticketbooster`)
 let cards = require(`../utils/cards-metadata.json`)
 let Controller = require(`./MessageController`)
+let config = require(`../modules/config.json`)
 
 /**
  * Experience formula wrapper. Standalone Class.
@@ -18,6 +19,7 @@ class Experience extends Controller {
 			pistachio: require(`./Pistachio`)({}),
 			applyTicketBuffs: true,
 			applyCardBuffs: true,
+			getArtcoins:true,
 			bonus: 0,
 			user: {},
 			bot: {},
@@ -91,6 +93,10 @@ class Experience extends Controller {
 		}
 		//  Apply bonus if available
 		if (this.data.bonus > 0) this.data.total_gained = this.data.total_gained * this.data.bonus
+		//  Apply boost if artwork in art channel
+		if (this.message.attachments.size > 0 && config[`art_domain`].includes(this.message.channel.id)) {
+			this.data.total_gained = this.data.total_gained * 10
+		}
 		const accumulatedCurrent = Math.round(this.data.total_gained + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
@@ -110,28 +116,30 @@ class Experience extends Controller {
 	 */
 	updatingArtcoins() {
 
+		this.db.storeArtcoins(this.data.total_gained)
 		//	Return if they are still on same rank
 		if (this.data.updated.level == this.meta.data.level) return
 
 		// For each level
-		for (let i = 0; i < this.data.updated.level - this.meta.data.level; i++) {
-
-			const updatedlevel = this.meta.data.level + i + 1
-			const bonusac = () => updatedlevel === 0 ? 35 : 35 * updatedlevel
+		for (let i = this.meta.data.level + 1; i <= this.data.updated.level; i++) {
+			const updatedlevel = i
+			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
 			// Add AC
-			this.db.storeArtcoins(bonusac())
+			this.db.storeArtcoins(bonusac)
 
 			//	Send levelup message
 			this.reply(this.code.LEVELUP, {
 				socket: [
 					this.emoji(`AnnieYay`),
 					this.meta.author,
-					updatedlevel
+					updatedlevel,
+					bonusac
 				],
 				color: this.color.blue
 			})
 		}
+
 	}
 
 
@@ -305,15 +313,14 @@ class Experience extends Controller {
 			//  Calculate overall exp
 			await this.updatingExp()
 
+			// Add Artcoin
+			await this.updatingArtcoins()
 
 			//  Update rank if current rank rank is not equal with the new rank.
 			if (this.rankUp) {
 				await this.removeRank()
 				await this.addRank()
 			}
-
-			// Add Artcoin on level up
-			await this.updatingArtcoins()
 
 			//	Save record
 			this.logger.info(`${this.author.tag} has received ${this.data.total_gained} EXP in ${this.message.channel.name}`)

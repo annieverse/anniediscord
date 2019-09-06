@@ -21,6 +21,7 @@ module.exports = async (bot, message) => {
 		applyTicketBuffs: true,
 		applyCardBuffs: true,
 		bonus: 0,
+		getArtcoins: true,
 		meta: {
 			author: message.author,
 			data: data
