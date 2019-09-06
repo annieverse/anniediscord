@@ -748,23 +748,70 @@ class databaseUtils {
 			.then(async data => data.findIndex(x => x.userId === this.id))
 	}
 
-	/**
-	 *   Pull user's relationships with other members
-	 */
-	get relationships() {
-		return sql.all(`SELECT reverseType AS "relation", userId2 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
+    /**
+     *   Pull user's relationships with other members
+     */
+    get relationships() {
+        return sql.all(`SELECT isMain, r1.type AS "myrelation", r2.type AS "theirrelation", userId2 AS "userId", relationStart, relationPoints, recentReceived AS "gift"
 						FROM relationship
-						JOIN relationshiptype
-						ON relationship.relationType = relationshiptype.typeId
-						WHERE userId1 = ${this.id}
+						JOIN relationshiptype r1
+						ON relationship.relationType1 = r1.typeId
+						JOIN relationshiptype r2
+						ON relationship.relationType2 = r2.typeId
+						WHERE userId1 = ${this.id} AND relationType1 > 0 AND relationType2 > 0 
 						UNION
-						SELECT type AS "relation", userId1 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
+						SELECT isMain, r1.type AS "myrelation", r2.type AS "theirrelation", userId1 AS "userId", relationStart, relationPoints, recentGifted AS "gift"
 						FROM relationship
-						JOIN relationshiptype
-						ON relationship.relationType = relationshiptype.typeId
-						WHERE userId2 = ${this.id}`)
-			.then(async parsed => parsed)
+						JOIN relationshiptype r1
+						ON relationship.relationType2 = r1.typeId
+						JOIN relationshiptype r2
+						ON relationship.relationType1 = r2.typeId
+						WHERE userId2 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
+						ORDER BY isMain DESC`)
+            .then(async parsed => parsed)
+    }
+
+    /**
+     *   Pull available relationship types
+     */
+    get relationshipTypes() {
+        return sql.all(`SELECT * FROM relationshiptype ORDER BY typeId ASC`)
+            .then(async parsed => parsed)
+    }
+
+	async setRelationship(relType, userId) {
+		var res = await sql.all(`SELECT * FROM relationship WHERE userId1 = "${this.id}" AND userId2 = "${userId}"`)
+		console.log(res)
+		if (res.length>0) {
+			return sql.run(`
+                UPDATE relationship
+                SET relationType1 = ${relType} 
+                WHERE userId1 = "${this.id}" AND userId2 = "${userId}"
+            `)
+		}
+		res = await sql.all(`SELECT * FROM relationship WHERE userId2 = "${this.id}" AND userId1 = "${userId}"`)
+		console.log(res)
+		if (res.length>0) {
+			return sql.run(`
+                UPDATE relationship
+                SET relationType2 = ${relType} 
+                WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
+            `)
+		}
+		return sql.run(`
+                INSERT INTO relationship
+                (userId1, userId2, relationType1, relationStart)
+                VALUES (?, ?, ?, ?)`,
+			[this.id, userId, relType, Date.now()]
+		)
 	}
+
+
+	deleteRelationship(userId) {
+		return sql.run(`DELETE FROM relationship
+		WHERE (userId1 = "${this.id}" AND userId2 = "${userId}") OR (userId2 = "${this.id}" AND userId1 = "${userId}")`)
+	}
+
 
 }
 

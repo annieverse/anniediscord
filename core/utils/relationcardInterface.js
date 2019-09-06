@@ -124,7 +124,7 @@ async function portfolio(stacks, member) {
 		body: userAvatar
 	} = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	const relationship = {
-		type: relations[0].relation,
+		type: relations[0].theirrelation,
 		userId : relations[0].userId,
 		userName: relUser.username,
         relStart: relations[0].relationStart,
@@ -141,17 +141,20 @@ async function portfolio(stacks, member) {
 		.addText(relationship.userName, 110, 93)
 		.setColor(switchColor[usercolor].secondaryText)
 		.setTextFont(`8pt RobotoBold`)
-		.addText(`Relation type: `+relationship.type, 110, 110)
+		.addText(`My `+relationship.type, 110, 110)
 		.setTextAlign(`right`)
 		.setTextFont(`10pt RobotoBold`)
 		.addText(`In a relation since`, 283, 163)
-		.addText(`Love points`, 283, 233)
+		.addText(`❤ Love points`, 283, 233)
 		.addText(`Recently received gift`, 283, 303)
 		.setColor(user.clr)
 		.setTextFont(`20pt RobotoBold`)
 		.addText(moment(relationship.relStart).fromNow(), 283, 193)
 		.addText(configFormat.formatK(relationship.relPoints), 283, 263)
 		.addText(relationship.gift, 283, 333)
+		.setTextAlign(`left`)
+		.setTextFont(`10pt RobotoBold`)
+		.addText(`I'm in a total of `+relations.length+` relations ❤`, 30, 390)
 
 	return canv.toBuffer()
 
