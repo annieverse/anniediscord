@@ -179,7 +179,7 @@ class HeartCollector {
 		//  Returns if post already in #featured
 		if (await this.featuredPost) return
 		//  Register post metadata
-		await this.db.registerPost(this.metadata.postComponents)
+		await this.db.registerFeaturedPost(this.metadata.postComponents)
 
         
 		//  Send post to #featured
