@@ -100,8 +100,7 @@ class databaseUtils {
 			VALUES (?, datetime('now'))`
 			, `run`
 			, [id]
-		)	
-		/*
+		)
 		this._query(`
 			INSERT OR IGNORE
 			INTO "collections" (userId)
@@ -109,7 +108,6 @@ class databaseUtils {
 			, `run`
 			, [id]
 		)
-		*/	
 		this._query(`
 			INSERT OR IGNORE
 			INTO "userinventories" (userId)
@@ -246,7 +244,7 @@ class databaseUtils {
 	storeArtcoins(value) {
 		sql.run(`
                 UPDATE userinventories
-                SET artcoins = ROUND(artcoins + ${value})
+                SET artcoins = artcoins + ${value}
                 WHERE userId = "${this.id}"
             `)
 	}
