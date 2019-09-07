@@ -26,7 +26,7 @@ class convertingArtcoins extends databaseManager {
 			bot: bot,
 			message: message,
 			to_use: args[0].startsWith(`all`) ? data.artcoins : trueInt(args[0]),
-			get total_gained() {
+			get total_gained_exp() {
 				return this.to_use / 2
 			},
 			meta: {author, data},
@@ -58,7 +58,7 @@ class convertingArtcoins extends databaseManager {
 				name(author.id),
 				emoji(`artcoins`),
 				commanifier(metadata.to_use),
-				commanifier(metadata.total_gained)
+				commanifier(metadata.total_gained_exp)
 			],
 			color: palette.lightgreen
 		})

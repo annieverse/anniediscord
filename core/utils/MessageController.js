@@ -129,7 +129,7 @@ class MessageController {
      *  @isAllowedGainArtcoin
      */
     get isGainingArtcoins() {
-        return nonxp_domain.includes(this.message.channel.id) && env.active_exp ? false : true
+        return nonxp_domain.includes(this.message.channel.id) && this.data.gainArtcoins ? false : true
     }
 
 

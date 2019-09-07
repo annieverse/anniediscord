@@ -25,7 +25,7 @@ class Capsule extends databaseManager {
 			message: message,
 			exp_per_capsule: 150,
 			to_use: trueInt(args[0]),
-			get total_gained() {
+			get total_gained_exp() {
 				return this.exp_per_capsule * this.to_use
 			},
 			meta: {author, data},
@@ -62,7 +62,7 @@ class Capsule extends databaseManager {
 				name(author.id),
 				emoji(`power_capsule`),
 				commanifier(metadata.to_use),
-				commanifier(metadata.total_gained)
+				commanifier(metadata.total_gained_exp)
 			],
 			color: palette.lightgreen
 		})
