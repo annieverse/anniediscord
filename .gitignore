@@ -6,3 +6,4 @@ logs
 package-lock.json
 .vscode/
 modules/commands/pans_sandbox
+logs.txt
