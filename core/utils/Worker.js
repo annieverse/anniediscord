@@ -5,6 +5,7 @@ const EventSubmission = require(`./eventSubmissionManager`)
 const Portfolio = require(`./portfolioManager`)
 const Commands = require(`../modules/commandsHandler`)
 const DM = require(`./directMessageInterface`)
+const Artcoins = require(`./artcoinGains`)
 
 
 /**
@@ -22,7 +23,7 @@ class Worker extends Controller {
      *  Basic flow
      *  @default
      */
-    default() {
+    async default() {
 
         //  Ignore any user interaction in dev environment
         if (super.isUserInDevEnvironment) return
@@ -48,8 +49,19 @@ class Worker extends Controller {
         //  Handle message that has prefix or bot related.
         if (super.isCommandMessage) return new Commands(this.data).prepare()
 
+
+        /** -----------------------------------------------------------------
+         *  Beyond this point require cooling-down state mechanism.
+         *  -----------------------------------------------------------------
+         */ 
+        if (await super.isCoolingDown()) return
+
+
         //  Handle experience system
-        if (super.inExpChannel) return new Experience(this.data).runAndUpdate()       
+        if (super.inExpChannel) new Experience(this.data).runAndUpdate()     
+        
+        //  Handle artcoins gaining on regular message
+        if (super.isGainingArtcoins) new Artcoins(this.data).default()
     }
 
 }

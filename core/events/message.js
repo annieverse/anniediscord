@@ -17,9 +17,10 @@ module.exports = async (bot, message) => {
 	 * Also remember, this is only used outside of command-environment.
 	 */
 	let stacks = new Pistachio({
-		datatype: `DEFAULT_MSG`,
+		label: `msg-${message.author.id}`,
 		applyTicketBuffs: true,
 		applyCardBuffs: true,
+		gainArtcoins: true,
 		bonus: 0,
 		meta: {
 			author: message.author,
@@ -27,9 +28,7 @@ module.exports = async (bot, message) => {
 		},
 		bot: bot,
 		message: message,
-		cooldown: {
-			exp: 30000
-		},
+		cooldown: 30000,
 		total_gained: Math.round(Math.random() * (15 - 10 + 1)) + 10,
 		updated: {
 			currentexp: 0,

@@ -29,6 +29,8 @@ class MessageController {
         this.meta = data.meta
         this.author = data.meta.author
         this.logger = data.bot.logger
+        this.label = data.label
+        this.cd = data.cooldown
     }
 
 
@@ -119,6 +121,28 @@ class MessageController {
         return this.message.content.includes(`#portfolio`) && this._hasAttachment() ? true : false
     }
 
+
+    /**
+     *  Check if current action is prompted to gain artcoin
+     *  @isAllowedGainArtcoin
+     */
+    get isGainingArtcoins() {
+        return this.data.gainArtcoins ? true : false
+    }
+
+
+    /**
+     *  Global cooldown for message exp/ac gain.
+     *  Only active when its prompted.
+     *  @isCoolingDown
+     */
+    async isCoolingDown() {
+		//	If cooldown is not set, ignore this method.
+        if (!this.cd) return false
+        if (await this.keyv.get(this.label)) return true
+		await this.keyv.set(this.label, `1`, this.cd)
+		return false       
+    }
 
 }
 

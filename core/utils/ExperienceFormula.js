@@ -1,6 +1,7 @@
 let booster = require(`./config/ticketbooster`)
 let cards = require(`../utils/cards-metadata.json`)
 let Controller = require(`./MessageController`)
+let Artcoins = require(`./artcoinGains`)
 
 /**
  * Experience formula wrapper. Standalone Class.
@@ -30,8 +31,6 @@ class Experience extends Controller {
 				nextexpcurve: 0
 		}}) {
 		super(metadata)
-
-		this.label = `expcd:${this.message.author.id}`
 	}
 
 
@@ -90,12 +89,14 @@ class Experience extends Controller {
 
 			}
 		}
+
+
 		//  Apply bonus if available
 		if (this.data.bonus > 0) this.data.total_gained = this.data.total_gained * this.data.bonus
 		//  Apply boost if artwork in art channel
-		if (super.isArtPost) {
-			this.data.total_gained = this.data.total_gained * 10
-		}
+		if (super.isArtPost) this.data.total_gained = this.data.total_gained * 10
+
+		
 		const accumulatedCurrent = Math.round(this.data.total_gained + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
@@ -106,38 +107,6 @@ class Experience extends Controller {
 
 		//  Store new values
 		this.db.updateExperienceMetadata(this.data.updated)
-	}
-
-
-	/**
-	 * 	Artcoins reward on level up
-	 * 	@updatingArtcoins
-	 */
-	updatingArtcoins() {
-		this.db.storeArtcoins(this.data.total_gained)
-		//	Return if they are still on same rank
-		if (this.data.updated.level == this.meta.data.level) return
-
-		// For each level
-		for (let i = this.meta.data.level + 1; i <= this.data.updated.level; i++) {
-			const updatedlevel = i
-			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
-
-			// Add AC
-			this.db.storeArtcoins(bonusac)
-
-			//	Send levelup message
-			this.reply(this.code.LEVELUP, {
-				socket: [
-					this.emoji(`AnnieYay`),
-					this.meta.author,
-					updatedlevel,
-					bonusac
-				],
-				color: this.color.blue
-			})
-		}
-
 	}
 
 
@@ -279,29 +248,13 @@ class Experience extends Controller {
 
 
 	/**
-	 * 	Handle exp cooldown if prompted
-	 * 	@inCoolingdown
-	 */
-	async inCoolingdown() {
-		//	If cooldown is not set, ignore this method.
-		if (!this.data.cooldown) return false
-
-		if (await this.keyv.get(this.label)) return true
-
-		this.keyv.set(this.label, `1`, this.data.cooldown.exp)
-		return false
-	}
-
-
-	/**
 	 * 	Aggregate and automating all the process in this class
 	 * 	@runAndUpdate
 	 */
 	async runAndUpdate() {
 
 		try {
-			//	Check if its still in cooling down state
-			if (await this.inCoolingdown()) return
+
 
 			//  Add & calculate bonuses from card if prompted
 			if (this.data.applyCardBuffs) await this.cardBuffs()
@@ -312,14 +265,14 @@ class Experience extends Controller {
 			//  Calculate overall exp
 			await this.updatingExp()
 
-			// Add Artcoin
-			await this.updatingArtcoins()
 
 			//  Update rank if current rank rank is not equal with the new rank.
 			if (this.rankUp) {
 				await this.removeRank()
 				await this.addRank()
+				new Artcoins(this).onLevelUp()
 			}
+
 
 			//	Save record
 			this.logger.info(`${this.author.tag} has received ${this.data.total_gained} EXP in ${this.message.channel.name}`)
