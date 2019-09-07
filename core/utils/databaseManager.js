@@ -223,7 +223,7 @@ class databaseUtils {
 	storeArtcoins(value) {
 		sql.run(`
                 UPDATE userinventories
-                SET artcoins = artcoins + ${value}
+                SET artcoins = ROUND(artcoins + ${value})
                 WHERE userId = "${this.id}"
             `)
 	}
