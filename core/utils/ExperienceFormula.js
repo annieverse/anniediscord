@@ -97,7 +97,7 @@ class Experience extends Controller {
 		if (super.isArtPost) this.data.total_gained = this.data.total_gained * 10
 
 		
-		const accumulatedCurrent = Math.round(this.data.total_gained + this.meta.data.currentexp)
+		const accumulatedCurrent = Math.floor(this.data.total_gained + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
 		this.data.updated.currentexp = accumulatedCurrent

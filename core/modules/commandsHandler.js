@@ -44,7 +44,7 @@ class CommandsHandler extends Controller {
 		|| data.bot.commands.get(data.bot.aliases.get(this.data.cmd.slice(this.data.prefix.length)))
 		
 		//	Get file name
-		this.filename = this.data.commandfile.help.name
+		this.filename = this.data.commandfile ? this.data.commandfile.help.name : null
 
 		//	Ref to file path
 		this.path = `../modules/commands/${this.filename}.js`

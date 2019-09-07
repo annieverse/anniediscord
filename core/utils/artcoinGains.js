@@ -16,8 +16,8 @@ class Artcoins extends Controller {
         super(data)
         //  data can be from ExperienceFormula or directly from Worker.js
         this.data = data
-        //  Base amount (1~6)
-        this.totalGainedArtcoins = Math.round(Math.random() * (5 - 1 + 1)) + 5
+        //  Base amount (1~5)
+        this.totalGainedArtcoins = Math.floor(Math.random() * 6) + 1
     }
 
 

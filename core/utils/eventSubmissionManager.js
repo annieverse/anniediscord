@@ -10,6 +10,7 @@ class SubmissionManager extends Controller {
         super(data)
         this.eventTicket = data.message.guild.roles.find(r => r.name === `Event Participant`)
         this.eventLobby = data.bot.channels.get(event_lobby[0])
+        this.code = this.code.EVENT_SUBMISSION
     }
 
 
