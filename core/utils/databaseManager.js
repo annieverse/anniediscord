@@ -121,7 +121,7 @@ class databaseUtils {
 			INSERT OR IGNORE
             INTO "usercheck"(userId)
             VALUES(?)`
-			, run
+			, `run`
 			, [id]
 		)
 	}
