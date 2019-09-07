@@ -20,7 +20,6 @@ module.exports = async (bot, message) => {
 		label: `msg-${message.author.id}`,
 		applyTicketBuffs: true,
 		applyCardBuffs: true,
-		gainArtcoins: true,
 		bonus: 0,
 		meta: {
 			author: message.author,
@@ -29,7 +28,8 @@ module.exports = async (bot, message) => {
 		bot: bot,
 		message: message,
 		cooldown: 30000,
-		total_gained: Math.round(Math.random() * (15 - 10 + 1)) + 10,
+		total_gained_exp: Math.round(Math.random() * (15 - 10 + 1)) + 10,
+		total_gained_ac: Math.round(Math.random() * (15 - 10 + 1)) + 10,
 		updated: {
 			currentexp: 0,
 			level: 0,

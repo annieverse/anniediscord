@@ -17,7 +17,7 @@ class Artcoins extends Controller {
         //  data can be from ExperienceFormula or directly from Worker.js
         this.data = data
         //  Base amount (10~15)
-        this.totalGainedArtcoins = Math.round(Math.random() * (15 - 10 + 1)) + 10
+        this.totalGainedArtcoins = data.total_gained_ac
     }
 
 
@@ -26,6 +26,7 @@ class Artcoins extends Controller {
      *  @default
      */
     default() {
+    	//TODO card buff
         this.db.storeArtcoins(this.totalGainedArtcoins)
 		this.logger.info(`${this.author.tag} has received ${this.totalGainedArtcoins} AC in ${this.message.channel.name}`)
     }

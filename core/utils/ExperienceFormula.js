@@ -14,7 +14,7 @@ let Artcoins = require(`./artcoinGains`)
  */
 class Experience extends Controller {
 
-	constructor(metadata = {
+	constructor(data = {
 			datatype: `DEFAULT_MSG`,
 			pistachio: require(`./Pistachio`)({}),
 			applyTicketBuffs: true,
@@ -23,14 +23,14 @@ class Experience extends Controller {
 			user: {},
 			bot: {},
 			message: {},
-			total_gained: Math.round(Math.random() * (15 - 10 + 1)) + 10,
+			total_gained_exp: data.total_gained_exp,
 			updated: {
 				currentexp: 0,
 				level: 0,
 				maxexp: 0,
 				nextexpcurve: 0
 		}}) {
-		super(metadata)
+		super(data)
 	}
 
 
@@ -90,14 +90,13 @@ class Experience extends Controller {
 			}
 		}
 
-
 		//  Apply bonus if available
-		if (this.data.bonus > 0) this.data.total_gained = this.data.total_gained * this.data.bonus
+		if (this.data.bonus > 0) this.data.total_gained_exp = this.data.total_gained_exp * this.data.bonus
 		//  Apply boost if artwork in art channel
-		if (super.isArtPost) this.data.total_gained = this.data.total_gained * 10
+		if (super.isArtPost) this.data.total_gained_exp = this.data.total_gained_exp * 10
 
 		
-		const accumulatedCurrent = Math.floor(this.data.total_gained + this.meta.data.currentexp)
+		const accumulatedCurrent = Math.floor(this.data.total_gained_exp + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
 		this.data.updated.currentexp = accumulatedCurrent
@@ -255,7 +254,6 @@ class Experience extends Controller {
 
 		try {
 
-
 			//  Add & calculate bonuses from card if prompted
 			if (this.data.applyCardBuffs) await this.cardBuffs()
 			//  Add & calculate bonuses from ticket if prompted
@@ -275,7 +273,7 @@ class Experience extends Controller {
 
 
 			//	Save record
-			this.logger.info(`${this.author.tag} has received ${this.data.total_gained} EXP in ${this.message.channel.name}`)
+			this.logger.info(`${this.author.tag} has received ${this.data.total_gained_exp} EXP in ${this.message.channel.name}`)
 
 		}
 		catch (e) {

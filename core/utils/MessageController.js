@@ -76,7 +76,9 @@ class MessageController {
      * 	@notInExpChannel
      */
     get inExpChannel() {
-        return nonxp_domain.includes(this.message.channel.id) && env.active_exp ? false : true
+        if (this.message.content.startsWith(env.prefix) && this.meta.data.annie_card) return true
+        if (nonxp_domain.includes(this.message.channel.id) && env.active_exp) return false
+        return true
     }
 
 
@@ -127,7 +129,7 @@ class MessageController {
      *  @isAllowedGainArtcoin
      */
     get isGainingArtcoins() {
-        return this.data.gainArtcoins ? true : false
+        return nonxp_domain.includes(this.message.channel.id) && env.active_exp ? false : true
     }
 
 
