@@ -101,7 +101,6 @@ class databaseUtils {
 			, `run`
 			, [id]
 		)	
-		/*
 		this._query(`
 			INSERT OR IGNORE
 			INTO "collections" (userId)
@@ -109,7 +108,6 @@ class databaseUtils {
 			, `run`
 			, [id]
 		)
-		*/	
 		this._query(`
 			INSERT OR IGNORE
 			INTO "userinventories" (userId)
