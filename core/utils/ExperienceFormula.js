@@ -96,7 +96,7 @@ class Experience extends Controller {
 		if (super.isArtPost) this.data.total_gained_exp = this.data.total_gained_exp * 10
 
 		
-		const accumulatedCurrent = Math.floor(this.data.total_gained_exp + this.meta.data.currentexp)
+		const accumulatedCurrent = Math.floor(this.data.total_gained_exp + this.data.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
 		this.data.updated.currentexp = accumulatedCurrent
@@ -116,7 +116,7 @@ class Experience extends Controller {
 	 */
 	get rankUp() {
 		let new_rank = this.ranks.ranksCheck(this.data.updated.level).title
-		let old_rank = this.ranks.ranksCheck(this.meta.data.level).title
+		let old_rank = this.ranks.ranksCheck(this.data.meta.data.level).title
 
 		return new_rank !== old_rank ? true : false
 	}
@@ -130,7 +130,7 @@ class Experience extends Controller {
 	async ticketBuffs() {
 		try {
 			//  Extract required data
-			const { expbooster, expbooster_duration } = this.meta.data
+			const { expbooster, expbooster_duration } = this.data.meta.data
 
 			//  skip if user doesn't have any booster that currently active.
 			if (!expbooster) return
@@ -162,7 +162,7 @@ class Experience extends Controller {
 		 * 	@cardStacks
 		 */
 		const cardStacks = Object
-			.entries(this.meta.data)
+			.entries(this.data.meta.data)
 			.filter(value => value[0].endsWith(`_card`) && value[1])
 			.reduce((result, [key, value]) => Object.assign(result, {[key]: value}), {})
 
@@ -262,14 +262,15 @@ class Experience extends Controller {
 
 			//  Calculate overall exp
 			await this.updatingExp()
-
+			new Artcoins(this.data).onLevelUp()
 
 			//  Update rank if current rank rank is not equal with the new rank.
+			// ! NOT if current level is not equal with new level !
 			if (this.rankUp) {
 				await this.removeRank()
 				await this.addRank()
-				new Artcoins(this).onLevelUp()
 			}
+
 
 
 			//	Save record

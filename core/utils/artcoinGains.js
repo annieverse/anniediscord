@@ -37,12 +37,11 @@ class Artcoins extends Controller {
 	 * 	@onLevelUp
 	 */
 	onLevelUp() {
-
-		//	Return if they are still on same rank
-		if (this.data.updated.level == this.meta.data.level) return
+		//	Return if they are still on same level
+		if (this.data.updated.level == this.data.meta.data.level) return
 
 		// For each level
-		for (let i = this.meta.data.level + 1; i <= this.data.updated.level; i++) {
+		for (let i = this.data.meta.data.level + 1; i <= this.data.updated.level; i++) {
 			const updatedlevel = i
 			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
