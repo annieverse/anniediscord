@@ -43,6 +43,8 @@ class CommandsHandler extends Controller {
 		this.data.commandfile = data.bot.commands.get(this.data.cmd.slice(this.data.prefix.length)) 
 		|| data.bot.commands.get(data.bot.aliases.get(this.data.cmd.slice(this.data.prefix.length)))
 		
+		if (!this.data.commandfile) return
+
 		//	Get file name
 		this.filename = this.data.commandfile ? this.data.commandfile.help.name : null
 
