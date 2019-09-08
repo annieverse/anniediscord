@@ -79,7 +79,7 @@ module.exports = (bot, oldMember, newMember) => {
 					guild: oldMember.guild,
 					channel: oldMemberChannel
 				},
-				total_gained: Math.floor(totalMinutes/2),
+				total_gained_exp: Math.floor(totalMinutes/2),
 				updated: {
 					currentexp: 0,
 					level: 0,

@@ -1,5 +1,5 @@
 
-![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m783366252-e0564c4fd39202b75cc0bdbc?style=flat-square)
+![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m782972040-ebd3a5bae3dd47d4ffd800b0?style=flat-square)
 [![CircleCI](https://circleci.com/gh/klerikdust/anniediscord.svg?style=svg)](https://circleci.com/gh/klerikdust/anniediscord)
 ![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
 ![LastCommit](https://img.shields.io/github/last-commit/klerikdust/anniediscord.svg?style=flat-square)
