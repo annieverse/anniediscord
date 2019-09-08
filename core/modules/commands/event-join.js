@@ -29,7 +29,7 @@ class oneClickEventJoin {
 		})
 
 		//  Returns if user's balance doesn't meet the requirement.
-		if (data.artcoins < metadata.ticket_fee) return reply(EVJOIN.INSUFFICIENT_BALANCE)
+		if (!data.foxie_card && data.artcoins < metadata.ticket_fee) return reply(EVJOIN.INSUFFICIENT_BALANCE)
 
         
 		//  Deduct user's balance if user hadn't foxie card
