@@ -270,6 +270,8 @@ class Experience extends Controller {
 				await this.addRank()
 			}
 
+
+
 			//	Save record
 			this.logger.info(`${this.author.tag} has received ${this.data.total_gained_exp} EXP in ${this.message.channel.name}`)
 			this.logger.info(`${this.author.tag} now has ${this.data.updated.currentexp} EXP`)
