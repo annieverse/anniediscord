@@ -32,8 +32,8 @@ class animeManager {
             }
             return animes
         } catch (e) {
-            console.error(`Couldn't get KITSU json`)
-            console.error(e)
+            this.logger.error(`Couldn't get MAL json`)
+            this.logger.error(e)
             return 0
         }
     }
@@ -45,8 +45,8 @@ class animeManager {
             var data = responsejson.data.find(d => d.attributes.kind==`anime-amount-consumed`)
             return data.attributes.statsData.completed
         } catch (e) {
-            console.error(`Couldn't get KITSU json`)
-            console.error(e)
+            this.logger.error(`Couldn't get KITSU json`)
+            this.logger.error(e)
             return 0
         }
     }
