@@ -15,11 +15,17 @@ class addAnime {
     async execute() {
         let message = this.message
         let palette = this.stacks.palette
-        function profileDescription(userid, desc) {
-            sql.get(`SELECT * FROM userdata WHERE userId=${userid}`)
-                .then(() => {
-                    sql.run(`UPDATE userdata SET anime_link = ? WHERE userId = ?`, [desc, userid])
-                })
+        function setAnimeLink(userid, link) {
+            return sql.run(`UPDATE userdata SET anime_link = ? WHERE userId = ?`, [link, userid]).then(() => {
+                var sitename
+                if (link.startsWith(`https://myanimelist.net/profile/`)) {
+                    sitename = `mal`
+                }
+                if (link.startsWith(`https://kitsu.io/users/`)) {
+                    sitename = `kitsu`
+                }
+                if (sitename) sql.run(`UPDATE userbadges SET slotanime = ? WHERE userId = ?`, [sitename, userid])
+            })
         }
 
         let descriptionArguments = message.content.substring(this.stacks.command.length+2).trim()
@@ -39,7 +45,7 @@ class addAnime {
 
             return message.channel.send(embed)
         } else {
-            await profileDescription(message.author.id, descriptionArguments)
+            setAnimeLink(message.author.id, descriptionArguments)
 
             embed.setColor(palette.halloween)
             embed.setDescription(`Hello **${message.author.username}**, your anime link has been set to \`${descriptionArguments}\``)

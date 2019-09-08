@@ -70,6 +70,16 @@ const render = async (stacks, metadata) => {
 			var users = await sql.all(`SELECT * FROM userdata WHERE anime_link <> ""`)
 			var api = new animeManager()
 			for(var i=0;i<users.length;i++) {
+
+				var sitename
+				if (users[i].anime_link.startsWith(`https://myanimelist.net/profile/`)) {
+					sitename = `mal`
+				}
+				if (users[i].anime_link.startsWith(`https://kitsu.io/users/`)) {
+					sitename = `kitsu`
+				}
+				if (sitename) sql.run(`UPDATE userbadges SET slotanime = ? WHERE userId = ?`, [sitename, users[i].anime_link])
+
 				var num = await api.getNumOfAnime(users[i].anime_link)
 				if (num!=0) {
 					array.push({id: users[i].userId, anime: num})

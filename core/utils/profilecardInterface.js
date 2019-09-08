@@ -83,7 +83,7 @@ async function profile(stacks, member) {
 	//  Remove userid from badges object.
 	delete badgesdata.userId
 
-	const key = Object.values(badgesdata)
+	const key = Object.values(badgesdata).filter(e => e!==null)
 	const reservedSlot = (collection.storingValue(badgesdata)).filter(x => (x !== null)).length - 1
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
