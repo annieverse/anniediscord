@@ -70,7 +70,7 @@ class profileManager {
 	 * @id of badge name
 	 */
 	checkBadges(id) {
-		return id === null ? null : this.getAsset(id)
+		return !id ? null : this.getAsset(id)
 	}
 
 
