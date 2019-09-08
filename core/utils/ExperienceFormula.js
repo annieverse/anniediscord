@@ -95,7 +95,7 @@ class Experience extends Controller {
 		//  Apply boost if artwork in art channel
 		if (super.isArtPost) this.data.total_gained_exp = this.data.total_gained_exp * 10
 
-		
+
 		const accumulatedCurrent = Math.floor(this.data.total_gained_exp + this.data.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
@@ -253,7 +253,6 @@ class Experience extends Controller {
 	async runAndUpdate() {
 
 		try {
-
 			//  Add & calculate bonuses from card if prompted
 			if (this.data.applyCardBuffs) await this.cardBuffs()
 			//  Add & calculate bonuses from ticket if prompted
@@ -271,10 +270,9 @@ class Experience extends Controller {
 				await this.addRank()
 			}
 
-
-
 			//	Save record
 			this.logger.info(`${this.author.tag} has received ${this.data.total_gained_exp} EXP in ${this.message.channel.name}`)
+			this.logger.info(`${this.author.tag} now has ${this.data.updated.currentexp} EXP`)
 
 		}
 		catch (e) {

@@ -7,5 +7,6 @@ module.exports = (bot, member) => {
             * for every joined user.
     */
 	new Banner({bot:bot, member:member, channel:`459891664182312982`}).render()
+	member.addRole(`460826503819558914`)
 
 }
