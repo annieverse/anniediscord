@@ -24,8 +24,8 @@ require(`winston-daily-rotate-file`)
   *  Main format
   */
 const customFormat = printf(({ level, message, timestamp }) => {
-    return `${timestamp} [${level}]: ${message}`;
-  });
+    return `${timestamp} [${level}]: ${message}`
+  })
 
 
 /**
