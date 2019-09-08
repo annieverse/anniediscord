@@ -93,29 +93,29 @@ class databaseUtils {
 	 * 	Register into userdata if not present
 	 * 	@param {String|ID} id user id. Use class default prop if not provided.
 	 */
-	validatingNewUser(id = this.id) {
-		this._query(`
+	async validatingNewUser(id = this.id) {
+		await this._query(`
 			INSERT OR IGNORE
 			INTO "userdata" (userId, registered_date)
 			VALUES (?, datetime('now'))`
 			, `run`
 			, [id]
 		)
-		this._query(`
+		await this._query(`
 			INSERT OR IGNORE
 			INTO "collections" (userId)
 			VALUES (?)`
 			, `run`
 			, [id]
 		)
-		this._query(`
+		await this._query(`
 			INSERT OR IGNORE
 			INTO "userinventories" (userId)
 			VALUES (?)`
 			, `run`
 			, [id]
 		)
-		this._query(`
+		await this._query(`
 			INSERT OR IGNORE
             INTO "usercheck"(userId)
             VALUES(?)`
