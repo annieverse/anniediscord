@@ -12,7 +12,7 @@ class collection {
 		this.stacks = Stacks
 	}
 	async execute() {
-		const { message, palette, pause, utils, args } = this.stacks
+		const { message, palette, pause, utils, emoji, relabel, args } = this.stacks
 		let user_collection = {}
 		function user_cardcollection(user) {
 			return sql.get(`SELECT * FROM collections WHERE userId = ${user.id}`)
@@ -42,8 +42,8 @@ class collection {
 				for (let i in bag) {
 					sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
 						.then(async data => {
-							sql.get(`SELECT rarity FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-								.then(async secdata => parsedbag[data.name] = secdata.rarity)
+							sql.get(`SELECT rarity, item_alias FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
+								.then(async secdata => parsedbag[data.name] = [secdata.rarity, secdata.item_alias])
 						})
 				}
 			}
@@ -61,7 +61,7 @@ class collection {
 				const formatting = () => {
 					let i = 1, content = ``
 					for (let key in filtered_res) {
-						content += `[${i}] ${`☆`.repeat(filtered_res[key])} - [${key}](https://discord.gg/Tjsck8F)\n`
+						content += `[${i}] ${`☆`.repeat(filtered_res[key][0])} - ${emoji(relabel(filtered_res[key][1]))} [${key}](https://discord.gg/Tjsck8F)\n`
 						i++
 					}
 					return content
