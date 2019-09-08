@@ -74,7 +74,7 @@ class help {
 			for (let file in files) {
 				const src = require(`./${files[file]}`)
 				if (src.help.group.toLowerCase() === groupname) {
-					if (src.help.public) { file_arr.push(src.help.name.toLowerCase()) }
+					if (src.help.public) { file_arr.push(src.help.name) }
 				}
 			}
 		})
@@ -338,25 +338,26 @@ class help {
 
 			if (this.args[0] === `all`) return this.helpAll(this.dm) // Sends the basic overall help of all available commands and groups, when no args are detected
             
-			let file = await this.returnFileName(this.args[0].toLowerCase()) // grabs the file name of a command
+			let file = await this.returnFileName(this.args[0]) // grabs the file name of a command
 			let pageHeaderOptions = await this.groupNames() // Intializes the groups for all commands
 			if (this.args[0].toLowerCase() === `help`) return this.help(this.args[0].toLowerCase(), this.dm) // Sends a help message for the help command, ie. ${prefix}help help
             
 			for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
 				let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)) // Gets all available commands and assigns them to their groups
-				if (pageHeaderOptions.some(x => x.toLowerCase() === this.args[0].toLowerCase())) return this.help(this.args[0].toLowerCase(), this.dm) // if a group name is detected, only the commands for that group will be sent
-
+				if (pageHeaderOptions.some(x => x.toLowerCase() === this.args[0].toLowerCase())) return this.help(this.args[0], this.dm) // if a group name is detected, only the commands for that group will be sent
+				
 				// Set the Group name if their is a groups name availiable 
 				let group_name
 				try {
-					group_name = await this.group(file.toLowerCase())
+					group_name = await this.group(file)
 				} catch (err) {
 					group_name = undefined
 				}
 				if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
 				if (group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
 					for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
-						if (file.toLowerCase() === mainNames[index]) { // Tests for the correct file
+						console.log(mainNames[index])
+						if (file === mainNames[index]) { // Tests for the correct file
 							return this.specificCommandsHelp(mainNames[index], pageHeaderOptions[x], this.dm) // returns a help message for that specific command
 						}
 					}
