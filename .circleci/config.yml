@@ -78,18 +78,32 @@ workflows:
   version: 2
   pipeline:
     jobs:
+
+
       # First, installing dependencies.
-      - build
+      - build:
+          branches:
+            only: 
+              - master
+
 
       # Check for code style & syntax consistency. Requires build to finish.
       - linting:
           requires:
-            - build
+            - build:
+          branches:
+            only: 
+              - master
 
-      # Verifying the modules.
+
+      # Verifying the modules work as expected.
       - unit_test:
           requires:
-            - build
+            - build:
+          branches:
+            only: 
+              - master
+
 
       # Once everything is done, time to deploy it to the production.
       - deploying:
@@ -97,6 +111,6 @@ workflows:
             - build
             - linting
             - unit_test
-          filters:
-            branches:
-              only: master
+          branches:
+            only: 
+              - master
