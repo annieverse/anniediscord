@@ -2,7 +2,7 @@
  *This is only a template, easy to pull from when making a new command
  *
  */
-class commandName {
+class MaintenanceUpdate {
     constructor(Stacks) {
         this.stacks = Stacks
     }
@@ -15,7 +15,7 @@ class commandName {
 }
 
 module.exports.help = {
-    start: commandName,
+    start: MaintenanceUpdate,
     name: `maintenanceupdate`, // This MUST equal the filename
     aliases: [`maintenance`], // More or less this is what the user will input on discord to call the command
     description: `give ac to users for a maintance break`,
