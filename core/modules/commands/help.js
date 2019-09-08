@@ -356,7 +356,6 @@ class help {
 				if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
 				if (group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
 					for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
-						console.log(mainNames[index])
 						if (file === mainNames[index]) { // Tests for the correct file
 							return this.specificCommandsHelp(mainNames[index], pageHeaderOptions[x], this.dm) // returns a help message for that specific command
 						}
