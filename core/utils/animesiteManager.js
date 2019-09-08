@@ -20,23 +20,35 @@ class animeManager {
     }
 
     async getMalNumOfAnime(user, startIndex, animes) {
-        var response = await fetch(`https://api.jikan.moe/v3/user/`+user+`/animelist/completed?page=`+startIndex)
-        var responsejson = await response.json()
-        if (responsejson && responsejson.anime) {
-            var numOfAnime = animes + responsejson.anime.length
-            if (responsejson.anime.length == 300) {
-                numOfAnime = await this.getMalNumOfAnime(user, startIndex+1, animes + responsejson.anime.length)
+        try {
+            var response = await fetch(`https://api.jikan.moe/v3/user/`+user+`/animelist/completed?page=`+startIndex)
+            var responsejson = await response.json()
+            if (responsejson && responsejson.anime) {
+                var numOfAnime = animes + responsejson.anime.length
+                if (responsejson.anime.length == 300) {
+                    numOfAnime = await this.getMalNumOfAnime(user, startIndex+1, animes + responsejson.anime.length)
+                }
+                return numOfAnime
             }
-            return numOfAnime
+            return animes
+        } catch (e) {
+            this.logger.error(`Couldn't get MAL json`)
+            this.logger.error(e)
+            return 0
         }
-        return animes
     }
 
     async getKitsuNumOfAnime(user) {
-        var response = await fetch(`https://kitsu.io/api/edge/users/`+user+`/stats`)
-        var responsejson = await response.json()
-        var data = responsejson.data.find(d => d.attributes.kind==`anime-amount-consumed`)
-        return data.attributes.statsData.completed
+        try {
+            var response = await fetch(`https://kitsu.io/api/edge/users/`+user+`/stats`)
+            var responsejson = await response.json()
+            var data = responsejson.data.find(d => d.attributes.kind==`anime-amount-consumed`)
+            return data.attributes.statsData.completed
+        } catch (e) {
+            this.logger.error(`Couldn't get KITSU json`)
+            this.logger.error(e)
+            return 0
+        }
     }
 
 }

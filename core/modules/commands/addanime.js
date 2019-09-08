@@ -27,7 +27,9 @@ class addAnime {
 
         if (!this.args[0]) {
             embed.setColor(palette.darkmatte)
-            embed.setDescription(`Here's the example on how to add the Link to your anime site!\n\n\`>addanime\` \`https://myanimelist.net/profile/username\``)
+            embed.setDescription(`Here's the example on how to add the Link to your anime site!\n\n
+            \`>addanime\` \`https://myanimelist.net/profile/yourusername\`
+            \`>addanime\` \`https://kitsu.io/api/edge/users/1234567\``)
 
             return message.channel.send(embed)
         } else if (!descriptionArguments.startsWith(`https://myanimelist.net/profile/`) &&
