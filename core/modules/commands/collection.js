@@ -61,7 +61,7 @@ class collection {
 				const formatting = () => {
 					let i = 1, content = ``
 					for (let key in filtered_res) {
-						content += `[${i}] ${`☆`.repeat(filtered_res[key][0])} - ${emoji(relabel(filtered_res[key][1]))} [${key}](https://discord.gg/Tjsck8F)\n`
+						content += `[${i}] ${`☆`.repeat(filtered_res[key][0])} - ${emoji(relabel(filtered_res[key][1]))} [${key}](https://discord.gg/Tjsck8F)\n\n`
 						i++
 					}
 					return content
