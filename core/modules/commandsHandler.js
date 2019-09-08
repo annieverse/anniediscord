@@ -154,7 +154,7 @@ class CommandsHandler extends Controller {
 					const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
 					await new this.cmd(Pistachified).execute()
-					this.logger.error(`${this.data.message.author.tag} has ran ${this.filename}.`)
+					this.logger.info(`${this.data.message.author.tag} has ran ${this.filename}.`)
 				})
 		}
 		catch (e) {
