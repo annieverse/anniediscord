@@ -78,7 +78,7 @@ const render = async (stacks, metadata) => {
 				if (users[i].anime_link.startsWith(`https://kitsu.io/users/`)) {
 					sitename = `kitsu`
 				}
-				if (sitename) sql.run(`UPDATE userbadges SET slotanime = ? WHERE userId = ?`, [sitename, users[i].anime_link])
+				if (sitename) sql.run(`UPDATE userbadges SET slotanime = ? WHERE userId = ?`, [sitename, users[i].userId])
 
 				var num = await api.getNumOfAnime(users[i].anime_link)
 				if (num!=0) {
