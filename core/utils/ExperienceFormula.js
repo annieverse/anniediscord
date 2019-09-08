@@ -104,6 +104,15 @@ class Experience extends Controller {
 		this.data.updated.maxexp = main.b
 		this.data.updated.nextexpcurve = main.c
 
+		//Temporary logs to figure out lvl glitch
+//		if (this.data.updated.currentexp < this.data.meta.data.currentexp) {
+		this.logger.info(`Message author id: ${this.data.message.author.id}`)
+		this.logger.info(`Meta author id: ${this.data.meta.author.id}`)
+		this.logger.info(`Author name: ${this.author.tag}`)
+		this.logger.info(`Old exp: ${this.data.meta.data.currentexp}`)
+		this.logger.info(`New exp: ${this.data.updated.currentexp}`)
+//		}
+
 		//  Store new values
 		this.db.updateExperienceMetadata(this.data.updated)
 	}
