@@ -36,7 +36,7 @@ class animeManager {
         var response = await fetch(`https://kitsu.io/api/edge/users/`+user+`/stats`)
         var responsejson = await response.json()
         var data = responsejson.data.find(d => d.attributes.kind==`anime-amount-consumed`)
-        return data.attributes.statsData.media
+        return data.attributes.statsData.completed
     }
 
 }
