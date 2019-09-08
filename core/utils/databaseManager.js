@@ -209,6 +209,12 @@ class databaseUtils {
             `)
 	}
 
+	get maintenanceUpdate(){
+		return sql.run(`
+				UPDATE userinventories
+				SET artcoins = artcoins + 1000 
+			`)
+	}
 
 	//  Accepts one level of an object. Returns sql-like string.
 	toQuery(data) {
