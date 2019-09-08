@@ -30,9 +30,10 @@ class addAnime {
             embed.setDescription(`Here's the example on how to add the Link to your anime site!\n\n\`>addanime\` \`https://myanimelist.net/profile/username\``)
 
             return message.channel.send(embed)
-        } else if (!descriptionArguments.startsWith(`https://myanimelist.net/profile/`)) {
+        } else if (!descriptionArguments.startsWith(`https://myanimelist.net/profile/`) &&
+                   !descriptionArguments.startsWith(`https://kitsu.io/users/`)) {
             embed.setColor(palette.darkmatte)
-            embed.setDescription(`Right now you can only set MAL profile links. To have your site added, request in #suggestions`)
+            embed.setDescription(`Right now you can only set MAL and KITSU profile links. To have your site added, request in #suggestions`)
 
             return message.channel.send(embed)
         } else {
