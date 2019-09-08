@@ -7,7 +7,7 @@
     "test": "npm run linting && npm run unit-test && echo 'Finished.'",
     "linting": "eslint . ",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
-    "start": "pm2 start index.js --no-daemon --max-memory-restart 400M -l ./logs.txt --log-date-format 'MM-DD HH:mm'",
+    "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon index.js"
   },
   "engines": {
@@ -38,7 +38,7 @@
     "sqlite": "^3.0.2",
     "sqlite3": "^4.1.0",
     "superagent": "^5.1.0",
-    "winston": "2.*",
+    "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
   },
   "devDependencies": {
