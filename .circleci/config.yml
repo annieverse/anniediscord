@@ -91,7 +91,7 @@ workflows:
       - linting:
           requires:
             - build:
-           filters:
+          filters:
             branches:
               only: master
 
