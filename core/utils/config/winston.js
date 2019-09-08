@@ -33,7 +33,7 @@ const customFormat = printf(({ level, message, timestamp }) => {
  */
 winston.add(new winston.transports.DailyRotateFile({    
     filename: `./logs/%DATE%.log`,
-    datePattern: `YYYY-MM-DD-HH`,
+    datePattern: `YYYY-MM-DD`,
     maxSize: `20m`,
     maxFiles: `14d`,
     format: combine(
