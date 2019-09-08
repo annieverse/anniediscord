@@ -82,35 +82,35 @@ workflows:
 
       # First, installing dependencies.
       - build:
-          branches:
-            only: 
-              - master
+          filters:
+            branches:
+              only: master
 
 
       # Check for code style & syntax consistency. Requires build to finish.
       - linting:
           requires:
             - build:
-          branches:
-            only: 
-              - master
+           filters:
+            branches:
+              only: master
 
 
-      # Verifying the modules work as expected.
+      # Verifying the modules to work as expected.
       - unit_test:
           requires:
             - build:
-          branches:
-            only: 
-              - master
+          filters:
+            branches:
+              only: master
 
-
+                    
       # Once everything is done, time to deploy it to the production.
       - deploying:
           requires:
             - build
             - linting
             - unit_test
-          branches:
-            only: 
-              - master
+          filters:
+            branches:
+              only: master
