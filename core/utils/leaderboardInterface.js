@@ -2,7 +2,7 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const imageUrlRegex = /\?size=2048$/g
-const fetch = require(`node-fetch`)
+const animeManager = require(`./animesiteManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
@@ -65,25 +65,13 @@ const render = async (stacks, metadata) => {
 				})
 			}
 		},
-		async getNumOfAnime(link, startIndex, animes) {
-			var response = await fetch(`https://api.jikan.moe/v3/user/`+link+`/animelist/completed?page=`+startIndex)
-			var responsejson = await response.json()
-			if (responsejson && responsejson.anime) {
-				var numOfAnime = animes + responsejson.anime.length
-				if (responsejson.anime.length == 300) {
-					numOfAnime = await this.getNumOfAnime(link, startIndex+1, animes + responsejson.anime.length)
-				}
-				return numOfAnime
-			}
-			return animes
-		},
 		async pullingAnime() {
 			var array = []
 			var users = await sql.all(`SELECT * FROM userdata WHERE anime_link <> ""`)
+			var api = new animeManager()
 			for(var i=0;i<users.length;i++) {
-				var userlink = users[i].anime_link.split(`https://myanimelist.net/profile/`)
-				if (userlink.length==2) {
-					var num = await this.getNumOfAnime(userlink[1], 1, 0)
+				var num = await api.getNumOfAnime(users[i].anime_link)
+				if (num!=0) {
 					array.push({id: users[i].userId, anime: num})
 				}
 			}
