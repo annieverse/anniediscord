@@ -115,6 +115,11 @@
         "FETCHING": "Fetching available gifts ..",
         "UNAVAILABLE": "You don't have any gifts at the moment."
     },
+    "GETLOG": {
+        "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
+        "ERR": "Ops, something went wrong,..",
+        "RETURNING": "Hello **{0}**, here's your log request."
+    },
     "INVENTORY": {
         "FETCHING": "`fetching {0} inventory . .`",
         "EMPTY": "You don't have any items in the bag.",
