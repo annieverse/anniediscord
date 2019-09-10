@@ -24,7 +24,7 @@ async function profile(stacks, member) {
 
 
 
-	const userdata = await collection.userMetadata
+	const userdata = await collection.userMetadata()
 	const user = {
 		id: userdata.userId,
 		cur: userdata.currentexp,

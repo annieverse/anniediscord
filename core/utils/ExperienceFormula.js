@@ -107,12 +107,9 @@ class Experience extends Controller {
 		//temp TODO remove
 		this.logger.info(`Old exp: ${this.data.meta.data.currentexp}`)
 		this.logger.info(`New exp: ${this.data.updated.currentexp}`)
-		if (this.author.id != this.db.id) {
-			this.logger.error(`${this.author.id} not equals ${this.db.id}`)
-		}
 
 		//  Store new values
-		this.db.updateExperienceMetadata(this.data.updated)
+		this.db.updateExperienceMetadata(this.data.updated, this.author.id)
 	}
 
 

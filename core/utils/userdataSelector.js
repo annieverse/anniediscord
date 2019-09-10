@@ -17,13 +17,10 @@ class Data {
 		try {
 			const user = await new userSelector(this.data).get()
 
-			//	Assign ID
-			this.db.setUser = user.id
-
 			//	Get main metadata
-			let res = await this.db.userMetadata
-			res.total_cards = await this.db.totalCollectedCards()
-			res.badges = this.db.userBadges
+			let res = await this.db.userMetadata(user.id)
+			res.total_cards = await this.db.totalCollectedCards(user.id)
+			res.badges = await this.db.userBadges(user.id)
 
 			delete res.badges.userId
 

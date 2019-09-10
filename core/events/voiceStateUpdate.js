@@ -57,7 +57,7 @@ module.exports = (bot, oldMember, newMember) => {
 			//var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
 			//  pull userdata 
-			let data = await db.userMetadata
+			let data = await db.userMetadata()
 			// Metadata that gonna be passed to Experience Class parameters
 			// These are default values. Tweak on your choice.
 			let metadata = {

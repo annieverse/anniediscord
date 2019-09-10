@@ -28,11 +28,7 @@ class Artcoins extends Controller {
     default() {
     	//TODO card buff
 
-		//temp TODO remove
-		if (this.author.id != this.db.id) {
-			this.logger.error(`${this.author.id} not equals ${this.db.id}`)
-		}
-        this.db.storeArtcoins(this.totalGainedArtcoins)
+        this.db.storeArtcoins(this.totalGainedArtcoins, this.author.id)
 		this.logger.info(`${this.author.tag} has received ${this.totalGainedArtcoins} AC in ${this.message.channel.name}`)
     }
 
@@ -50,12 +46,8 @@ class Artcoins extends Controller {
 			const updatedlevel = i
 			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
-			//temp TODO remove
-			if (this.author.id != this.db.id) {
-				this.logger.error(`${this.author.id} not equals ${this.db.id}`)
-			}
 			// Add AC
-			this.db.storeArtcoins(bonusac)
+			this.db.storeArtcoins(bonusac, this.author.id)
 
 			//	Send levelup message
 			this.reply(this.code.LEVELUP, {

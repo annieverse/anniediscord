@@ -90,7 +90,7 @@ class HeartCollector {
 	async notification() {
 		//  Mutation pistachio
 		const { reply, code:{FEATURED}, bot, user } = this.stacks
-		const { get_notification } = await this.db.userMetadata
+		const { get_notification } = await this.db.userMetadata(user.id)
 		const postmeta = await this.featuredPost
 
 		//  Returns if user react is a this.bot

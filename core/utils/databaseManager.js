@@ -76,7 +76,7 @@ class databaseUtils {
 	 * 	Defacto method for updating experience point
 	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
 	 */
-	updateExperienceMetadata(data = {}) {
+	updateExperienceMetadata(data = {}, userId = this.id) {
 		this._query(`
 			UPDATE userdata 
 			SET currentexp = ?
@@ -85,7 +85,7 @@ class databaseUtils {
 			, nextexpcurve = ?
 			WHERE userId = ?`
 			, `run`
-			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, this.id])
+			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, userId])
 	}
 
 
@@ -147,8 +147,8 @@ class databaseUtils {
 	} // End of pause
 
 	//  Pull neccesary data at once.
-	get userMetadata() {
-		return this._query(`
+	userMetadata(userId = this.id) {
+		return sql.get(`
 			SELECT *
 			FROM userdata
             INNER JOIN userinventories
@@ -157,9 +157,8 @@ class databaseUtils {
             ON usercheck.userId = userdata.userId
             INNER JOIN collections
             ON collections.userId = userdata.userId
-            WHERE userdata.userId = ?`
-		, `get`
-		, [this.id])
+            WHERE userdata.userId = "${userId}"`)
+			.then(async parsed => parsed)
 	}
 
 
@@ -190,23 +189,23 @@ class databaseUtils {
 	 * 	@param {String|ID} id
 	 * 	@sendTenChocolateBoxes
 	 */
-	sendTenChocolateBoxes(id = this.id) {
+	sendTenChocolateBoxes(userId = this.id) {
 		this._query(`
 			UPDATE userinventories
 			SET chocolate_box = chocolate_box + 10
 			WHERE userId = ?`,
 			`run`
-			, [id]
+			, [userId]
 		)		
 	}
 
 
-	get userBadges() {
+	userBadges(userId = this.id) {
 		return sql.get(`
                 SELECT *
                 FROM userbadges
-                WHERE userId = "${this.id}"
-            `)
+                WHERE userId = "${userId}"
+            `).then(async parsed => parsed)
 	}
 
 	get maintenanceUpdate(){
@@ -247,11 +246,11 @@ class databaseUtils {
 	}
 
 
-	storeArtcoins(value) {
+	storeArtcoins(value, userId = this.id) {
 		sql.run(`
                 UPDATE userinventories
                 SET artcoins = artcoins + ${value}
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
 
@@ -268,7 +267,7 @@ class databaseUtils {
 	}
 
 	async updateBadge(newvalue) {
-		let badgedata = await this.userBadges
+		let badgedata = await this.userBadges()
 		let slotkey = Object.keys(badgedata)
 		let slotvalue = Object.values(badgedata)
 		sql.run(`UPDATE userbadges 
@@ -375,8 +374,8 @@ class databaseUtils {
 	}
 
 	//	Count total user's collected cards.
-	async totalCollectedCards() {
-		const data = await sql.get(`SELECT * FROM collections WHERE userId = ${this.id}`)
+	async totalCollectedCards(userId = this.id) {
+		const data = await sql.get(`SELECT * FROM collections WHERE userId = ${userId}`)
 		for (let key in data) {
 			if (!data[key]) delete data[key]
 		}

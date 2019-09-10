@@ -22,9 +22,7 @@ async function profile(stacks, member) {
 	const configFormat = new formatManager(stacks.message)
 	const configRank = new rankManager(stacks.bot, stacks.message)
 
-
-
-	const userdata = await collection.userMetadata
+	const userdata = await collection.userMetadata()
 	const user = {
 		id: userdata.userId,
 		cur: userdata.currentexp,
