@@ -51,7 +51,7 @@ class Artcoins extends Controller {
 			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
 			//temp TODO remove
-			if (this.data.author.id != this.db.id) {
+			if (this.author.id != this.db.id) {
 				this.logger.error(`${this.author.id} not equals ${this.db.id}`)
 			}
 			// Add AC
