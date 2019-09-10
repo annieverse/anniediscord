@@ -78,8 +78,6 @@ class serverRemote {
 		const get_database = () => {
 			metadata.report.send(`Server has been shutdown at ${moment(Date.now()).format(`dddd, MMMM Do YYYY, h:mm:ss a`)}`,
 				new Discord.Attachment(`.data/database.sqlite`, `${Date.now()}.sqlite`))
-			metadata.report.send(`Here are the logs:`,
-				new Discord.Attachment(`logs.txt`, `${Date.now()}-logs.txt`))
 		}
 
 
