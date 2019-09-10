@@ -29,7 +29,7 @@ class Artcoins extends Controller {
     	//TODO card buff
 
 		//temp TODO remove
-		if (this.data.author.id != this.db.id) {
+		if (this.author.id != this.db.id) {
 			this.logger.error(`${this.author.id} not equals ${this.db.id}`)
 		}
         this.db.storeArtcoins(this.totalGainedArtcoins)
