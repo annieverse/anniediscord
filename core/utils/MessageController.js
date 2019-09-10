@@ -17,7 +17,6 @@ class MessageController {
     constructor(data) {
         this.data = data
 		this.message = data.message
-		data.bot.db.setUser = data.message.author.id
 		this.db = data.bot.db
         this.keyv = data.bot.keyv
         this.env = data.bot.env
