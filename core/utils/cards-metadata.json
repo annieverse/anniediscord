@@ -50,7 +50,7 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 2.5,
+          "exp": 0.5,
           "ac": 0.5,
           "status": "active",
           "type": "multiplier",
