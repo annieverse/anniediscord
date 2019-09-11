@@ -1,5 +1,4 @@
 let booster = require(`./config/ticketbooster`)
-let cards = require(`../utils/cards-metadata.json`)
 let Controller = require(`./MessageController`)
 let Artcoins = require(`./artcoinGains`)
 
@@ -19,7 +18,7 @@ class Experience extends Controller {
 			pistachio: require(`./Pistachio`)({}),
 			applyTicketBuffs: true,
 			applyCardBuffs: true,
-			bonus: 0,
+			exp_factor: 1,
 			user: {},
 			bot: {},
 			message: {},
@@ -91,7 +90,7 @@ class Experience extends Controller {
 		}
 
 		//  Apply bonus if available
-		if (this.data.bonus > 0) this.data.total_gained_exp = this.data.total_gained_exp * this.data.bonus
+		this.data.total_gained_exp = this.data.total_gained_exp * this.data.exp_factor
 		//  Apply boost if artwork in art channel
 		if (super.isArtPost) this.data.total_gained_exp = this.data.total_gained_exp * 10
 
@@ -144,7 +143,7 @@ class Experience extends Controller {
 			let boosterStillValid = expbooster_duration && limitduration - (Date.now() - expbooster_duration) > 0
 
 			//	Assign boost if booster still valid
-			if (boosterStillValid) this.data.bonus += booster[percentage].multiplier 
+			if (boosterStillValid) this.data.exp_factor += booster[percentage].multiplier
 		}
 		catch (e) {
 			return
@@ -152,102 +151,6 @@ class Experience extends Controller {
 	}
 
 
-	/**
-	 * 	Get user collected card and find which has buff with exp related.
-	 * 	And apply the effect.
-	 * 	@cardBuffs
-	 */
-	async cardBuffs() {
-
-		/**
-		 * 	Find card in user data based on the following requirements:
-		 * 	1.) The last part of the key must starts with _card (or just "card" also works)
-		 * 	2.) The value should be true (not null, negative or zero)
-		 * 	@cardStacks
-		 */
-		const cardStacks = Object
-			.entries(this.data.meta.data)
-			.filter(value => value[0].endsWith(`_card`) && value[1])
-			.reduce((result, [key, value]) => Object.assign(result, {[key]: value}), {})
-
-
-		/**
-		 * 	Legacy code.
-		 * 	Won't touch yet.
-		 * 	@get_metadata
-		 */
-		const get_metadata = () => {
-			let arr = []
-
-			class requirements {
-
-				constructor(carddata) {
-					this.data = carddata
-				}
-
-				//  Returns true if the message should has attachment. 
-				get attachment_required() {
-					return this.data.skills.main.effect.attachment_only ? true : false
-				}
-
-
-				//  Returns true if the card is active-typing exp booster.
-				get exp_multiplier_type() {
-					const booster_type = [`exp_booster`, `exp_ac_booster`]
-					return booster_type.includes(this.data.skills.main.type) &&
-                        this.data.skills.main.effect.status === `active` ?
-						true : false
-				}
-
-				set user_channel(userChannel){
-					this.channel = userChannel
-				}
-
-				//  Returns true if channel is the correct card's activation channel.
-				get true_channel() {
-					return this.data.skills.main.channel.includes(this.channel.id) ? true : false
-				}
-
-
-				// Conditional check
-				get met_condition() {
-					//  exp_booster in right channel?
-					if (this.exp_multiplier_type && this.true_channel) {
-						return true
-					}
-
-					//  No conditions have met.
-					else return false
-				}
-
-			}
-
-			for (let key in cardStacks) {
-				const req = new requirements(cards[key])
-				req.user_channel = this.data.message.channel
-				if (req.met_condition) {
-					arr.push(cards[key])
-				}
-			}
-
-			return arr
-
-		}
-
-
-		// Loop over and active the card's skills.
-		let filtered_card_stack = get_metadata()
-		//  Returns if no buffs are available to use
-		if (filtered_card_stack.length < 1) return
-
-
-		for (let key in filtered_card_stack) {
-			//  Get skill metadata
-			const skill_data = filtered_card_stack[key].skills.main.effect
-			//  Assign bonus
-			if (skill_data.exp) this.data.bonus += skill_data.exp
-		}
-	}
 
 
 	/**
@@ -258,7 +161,10 @@ class Experience extends Controller {
 
 		try {
 			//  Add & calculate bonuses from card if prompted
-			if (this.data.applyCardBuffs) await this.cardBuffs()
+			if (this.data.applyCardBuffs) {
+				var bonus = super.cardBuffs()
+				this.data.exp_factor += bonus.exp
+			}
 			//  Add & calculate bonuses from ticket if prompted
 			if (this.data.applyTicketBuffs) await this.ticketBuffs()
 
@@ -274,10 +180,9 @@ class Experience extends Controller {
 				await this.addRank()
 			}
 
-
-
 			//	Save record
 			this.logger.info(`${this.author.tag} has received ${this.data.total_gained_exp} EXP in ${this.message.channel.name}`)
+			this.logger.info(`A bonus factor of ${this.exp_factor} was applied`)
 			this.logger.info(`${this.author.tag} now has ${this.data.updated.currentexp} EXP`)
 
 		}

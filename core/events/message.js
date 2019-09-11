@@ -15,7 +15,8 @@ module.exports = async (bot, message) => {
 		label: `msg-${message.author.id}`,
 		applyTicketBuffs: true,
 		applyCardBuffs: true,
-		bonus: 0,
+		ac_factor: 1,
+		exp_factor: 1,
 		gainArtcoins: true,
 		meta: {
 			author: message.author,

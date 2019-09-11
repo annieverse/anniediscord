@@ -16,8 +16,9 @@ class Artcoins extends Controller {
         super(data)
         //  data can be from ExperienceFormula or directly from Worker.js
         this.data = data
+		this.ac_factor = 1
         //  Base amount (10~15)
-        this.totalGainedArtcoins = data.total_gained_ac
+        this.total_gained_ac = data.total_gained_ac
     }
 
 
@@ -25,11 +26,19 @@ class Artcoins extends Controller {
      *  Default way to gain artcoins from regular message.
      *  @default
      */
-    default() {
-    	//TODO card buff
+    async runAndUpdate() {
+		//  Add & calculate bonuses from card if prompted
+		if (this.data.applyCardBuffs) {
+			var bonus = super.cardBuffs()
+			this.ac_factor += bonus.ac
+			//  Apply bonus if available
+			this.total_gained_ac = this.total_gained_ac * this.ac_factor
+		}
+		if (super.isArtPost) this.total_gained_ac = this.total_gained_ac * 10
 
-        this.db.storeArtcoins(this.totalGainedArtcoins, this.author.id)
-		this.logger.info(`${this.author.tag} has received ${this.totalGainedArtcoins} AC in ${this.message.channel.name}`)
+        this.db.storeArtcoins(Math.floor(this.total_gained_ac), this.author.id)
+		this.logger.info(`${this.author.tag} has received ${this.total_gained_ac} AC in ${this.message.channel.name}`)
+		this.logger.info(`A bonus factor of ${this.ac_factor} was applied`)
     }
 
 
