@@ -161,7 +161,7 @@ class MessageController {
          * 	@cardStacks
          */
         const cardStacks = Object
-            .entries(this.data.meta.data)
+            .entries(this.meta.data)
             .filter(value => value[0].endsWith(`_card`) && value[1])
             .reduce((result, [key, value]) => Object.assign(result, {[key]: value}), {})
 
@@ -218,7 +218,7 @@ class MessageController {
 
             for (let key in cardStacks) {
                 const req = new requirements(cards[key])
-                req.user_channel = this.data.message.channel
+                req.user_channel = this.message.channel
                 if (req.met_condition) {
                     arr.push(cards[key])
                 }
@@ -228,13 +228,13 @@ class MessageController {
 
         }
 
+        var bonus = {exp:0, ac:0}
 
         // Loop over and active the card's skills.
         let filtered_card_stack = get_metadata()
         //  Returns if no buffs are available to use
-        if (filtered_card_stack.length < 1) return
+        if (filtered_card_stack.length < 1) return bonus
 
-        var bonus = {exp:0, ac:0}
 
         for (let key in filtered_card_stack) {
             //  Get skill metadata

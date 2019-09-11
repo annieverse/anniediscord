@@ -13,32 +13,31 @@ let Artcoins = require(`./artcoinGains`)
  */
 class Experience extends Controller {
 
-	constructor(data = {
-			datatype: `DEFAULT_MSG`,
-			pistachio: require(`./Pistachio`)({}),
-			applyTicketBuffs: true,
-			applyCardBuffs: true,
-			exp_factor: 1,
-			user: {},
-			bot: {},
-			message: {},
-			total_gained_exp: data.total_gained_exp,
-			updated: {
-				currentexp: 0,
-				level: 0,
-				maxexp: 0,
-				nextexpcurve: 0
-		}}) {
-		super(data)
-	}
 
+	constructor(data) {
+		super(data)
+		this.data = data
+		this.applyTicketBuffs = data.applyTicketBuffs
+		this.applyCardBuffs = data.applyCardBuffs
+		this.exp_factor = data.exp_factor
+		this.message = data.message
+		this.meta = data.meta
+		this.total_gained_exp = data.total_gained_exp
+		this.updated = {
+			currentexp: 0,
+			level: 0,
+			maxexp: 0,
+			nextexpcurve: 0
+		}
+		this.data.updated = this.updated
+	}
 
 	/**
 	 * 	Add new rank
 	 * 	@addRank
 	 */
 	addRank() {
-		this.message.guild.member(this.data.message.author.id).addRole(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.data.updated.level).title))
+		this.message.guild.member(this.message.author.id).addRole(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.updated.level).title))
 	}
 
 	
@@ -47,14 +46,14 @@ class Experience extends Controller {
 	 * 	@removeRank
 	 */
 	removeRank() {
-		const userDuplicateRanks = (this.ranks.ranksCheck(this.data.updated.level).lvlcap)
-			.filter(val => val < this.data.updated.level)
+		const userDuplicateRanks = (this.ranks.ranksCheck(this.updated.level).lvlcap)
+			.filter(val => val < this.updated.level)
 
 		let idpool = []
 		for (let i in userDuplicateRanks) {
 			idpool.push(((this.ranks.ranksCheck(userDuplicateRanks[i]).rank).id).toString())
 		}
-		return this.message.guild.member(this.data.message.author.id).removeRoles(idpool)
+		return this.message.guild.member(this.message.author.id).removeRoles(idpool)
 	}
 
 
@@ -90,25 +89,21 @@ class Experience extends Controller {
 		}
 
 		//  Apply bonus if available
-		this.data.total_gained_exp = this.data.total_gained_exp * this.data.exp_factor
+		this.total_gained_exp = this.total_gained_exp * this.exp_factor
 		//  Apply boost if artwork in art channel
-		if (super.isArtPost) this.data.total_gained_exp = this.data.total_gained_exp * 10
+		if (super.isArtPost) this.total_gained_exp = this.total_gained_exp * 10
 
 
-		const accumulatedCurrent = Math.floor(this.data.total_gained_exp + this.data.meta.data.currentexp)
+		const accumulatedCurrent = Math.floor(this.total_gained_exp + this.meta.data.currentexp)
 		const main = formula(accumulatedCurrent, 0, 0, 150)
 		//  Save new data
-		this.data.updated.currentexp = accumulatedCurrent
-		this.data.updated.level = main.level
-		this.data.updated.maxexp = main.b
-		this.data.updated.nextexpcurve = main.c
-
-		//temp TODO remove
-		this.logger.info(`Old exp: ${this.data.meta.data.currentexp}`)
-		this.logger.info(`New exp: ${this.data.updated.currentexp}`)
+		this.updated.currentexp = accumulatedCurrent
+		this.updated.level = main.level
+		this.updated.maxexp = main.b
+		this.updated.nextexpcurve = main.c
 
 		//  Store new values
-		this.db.updateExperienceMetadata(this.data.updated, this.author.id)
+		this.db.updateExperienceMetadata(this.updated, this.author.id)
 	}
 
 
@@ -118,8 +113,8 @@ class Experience extends Controller {
 	 * 	@rankUp
 	 */
 	get rankUp() {
-		let new_rank = this.ranks.ranksCheck(this.data.updated.level).title
-		let old_rank = this.ranks.ranksCheck(this.data.meta.data.level).title
+		let new_rank = this.ranks.ranksCheck(this.updated.level).title
+		let old_rank = this.ranks.ranksCheck(this.meta.data.level).title
 
 		return new_rank !== old_rank ? true : false
 	}
@@ -133,7 +128,7 @@ class Experience extends Controller {
 	async ticketBuffs() {
 		try {
 			//  Extract required data
-			const { expbooster, expbooster_duration } = this.data.meta.data
+			const { expbooster, expbooster_duration } = this.meta.data
 
 			//  skip if user doesn't have any booster that currently active.
 			if (!expbooster) return
@@ -143,7 +138,7 @@ class Experience extends Controller {
 			let boosterStillValid = expbooster_duration && limitduration - (Date.now() - expbooster_duration) > 0
 
 			//	Assign boost if booster still valid
-			if (boosterStillValid) this.data.exp_factor += booster[percentage].multiplier
+			if (boosterStillValid) this.exp_factor += booster[percentage].multiplier
 		}
 		catch (e) {
 			return
@@ -161,12 +156,12 @@ class Experience extends Controller {
 
 		try {
 			//  Add & calculate bonuses from card if prompted
-			if (this.data.applyCardBuffs) {
+			if (this.applyCardBuffs) {
 				var bonus = super.cardBuffs()
-				this.data.exp_factor += bonus.exp
+				this.exp_factor += bonus.exp
 			}
 			//  Add & calculate bonuses from ticket if prompted
-			if (this.data.applyTicketBuffs) await this.ticketBuffs()
+			if (this.applyTicketBuffs) await this.ticketBuffs()
 
 
 			//  Calculate overall exp
@@ -181,9 +176,9 @@ class Experience extends Controller {
 			}
 
 			//	Save record
-			this.logger.info(`${this.author.tag} has received ${this.data.total_gained_exp} EXP in ${this.message.channel.name}`)
-			this.logger.info(`A bonus factor of ${this.exp_factor} was applied`)
-			this.logger.info(`${this.author.tag} now has ${this.data.updated.currentexp} EXP`)
+			this.logger.info(`${this.author.tag}: received ${this.total_gained_exp} EXP in ${this.message.channel.name}`)
+			this.logger.info(`${this.author.tag}: received bonus factor of ${this.exp_factor}`)
+			this.logger.info(`${this.author.tag}: ${this.updated.currentexp} EXP`)
 
 		}
 		catch (e) {
