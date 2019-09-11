@@ -4,6 +4,7 @@
 ![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m782972040-ebd3a5bae3dd47d4ffd800b0?style=flat-square)
 ![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
 ![LastCommit](https://img.shields.io/github/last-commit/klerikdust/anniediscord.svg?style=flat-square)
+
 ![annie](https://cdn.discordapp.com/avatars/501461775821176832/1d5c3c23e639a5461d6b1dc44d04836b.png?size=256)
 
 Supporting the core function of the biggest art community in discord,
