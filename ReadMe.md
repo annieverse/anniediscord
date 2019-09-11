@@ -71,3 +71,7 @@ Below are amazing people that make Annie possible!
 `TrojanOS#2373` - (Ex) Developer - "Introducing Sqlite to Annie."
 
 . . . *and many others*
+
+## **Support**
+
+Checkout the development progress in our [Trello Board !](https://trello.com/invite/b/jBbOIqQA/06d7a06899e3904f03b9c161552e9af6/annie-pipeline)
