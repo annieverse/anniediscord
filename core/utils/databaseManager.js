@@ -438,20 +438,20 @@ class databaseUtils {
 	}
 
 	//  Enable user's notification
-	enableNotification() {
+	enableNotification(userId=this.id) {
 		sql.run(`
                 UPDATE userdata
                 SET get_notification = 1
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
 
 	//  Disabled user's notification
-	disableNotification() {
+	disableNotification(userId=this.id) {
 		sql.run(`
                 UPDATE userdata
                 SET get_notification = -1
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
         

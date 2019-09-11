@@ -90,7 +90,7 @@ class HeartCollector {
 	async notification() {
 		//  Mutation pistachio
 		const { reply, code:{FEATURED}, bot, user } = this.stacks
-		const { get_notification } = await this.db.userMetadata(user.id)
+		const { get_notification } = await this.db.userMetadata(this.metadata.msg.author.id)
 		const postmeta = await this.featuredPost
 
 		//  Returns if user react is a this.bot
@@ -134,7 +134,7 @@ class HeartCollector {
 
 			if (once) {
 				reply(once, {field: this.metadata.msg.author})
-				await this.db.disableNotification()
+				await this.db.disableNotification(this.metadata.msg.author.id)
 			}
 			return
 		}

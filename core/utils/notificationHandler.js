@@ -16,7 +16,7 @@ class Notification extends Controller {
 	async disable() {
 		try {
 			//  Set get_notification to zero
-			await this.db.disableNotification()
+			await this.db.disableNotification(this.meta.author.id)
 			//  Successful
 			return this.reply(this.code.DM.NOTIFICATION_DISABLED, {field: this.meta.author})
 		}
@@ -33,7 +33,7 @@ class Notification extends Controller {
 	async enable() {
 		try {
 			//  Set get_notification to one
-			await this.db.enableNotification()
+			await this.db.enableNotification(this.meta.author.id)
 			//  Successful
 			return this.reply(this.code.DM.NOTIFICATION_ENABLED, {field: this.meta.author})
 		}
