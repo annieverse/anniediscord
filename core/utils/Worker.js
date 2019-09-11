@@ -62,7 +62,7 @@ class Worker extends Controller {
         if (super.inExpChannel) new Experience(this.data).runAndUpdate()     
         
         //  Handle artcoins gaining on regular message
-        if (super.isGainingArtcoins) new Artcoins(this.data).default()
+        if (super.isGainingArtcoins) new Artcoins(this.data).runAndUpdate()
     }
 
 }

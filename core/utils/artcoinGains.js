@@ -13,11 +13,14 @@ const Controller = require(`../utils/MessageController`)
  */
 class Artcoins extends Controller {
     constructor(data) {
-        super(data)
+		super(data)
         //  data can be from ExperienceFormula or directly from Worker.js
         this.data = data
-        //  Base amount (10~15)
-        this.totalGainedArtcoins = data.total_gained_ac
+		this.ac_factor = data.ac_factor
+        this.total_gained_ac = data.total_gained_ac
+		this.applyCardBuffs = data.applyCardBuffs
+		this.updated = data.updated
+		this.meta = data.meta
     }
 
 
@@ -25,11 +28,19 @@ class Artcoins extends Controller {
      *  Default way to gain artcoins from regular message.
      *  @default
      */
-    default() {
-    	//TODO card buff
+    async runAndUpdate() {
+		//  Add & calculate bonuses from card if prompted
+		if (this.applyCardBuffs) {
+			var bonus = super.cardBuffs()
+			this.ac_factor += bonus.ac
+			//  Apply bonus if available
+			this.total_gained_ac = this.total_gained_ac * this.ac_factor
+		}
+		if (super.isArtPost) this.total_gained_ac = this.total_gained_ac * 10
 
-        this.db.storeArtcoins(this.totalGainedArtcoins, this.author.id)
-		this.logger.info(`${this.author.tag} has received ${this.totalGainedArtcoins} AC in ${this.message.channel.name}`)
+        this.db.storeArtcoins(Math.floor(this.total_gained_ac), this.author.id)
+		this.logger.info(`${this.author.tag}: received ${this.total_gained_ac} AC in ${this.message.channel.name}`)
+		this.logger.info(`${this.author.tag}: received bonus factor of ${this.ac_factor}`)
     }
 
 
@@ -39,10 +50,10 @@ class Artcoins extends Controller {
 	 */
 	onLevelUp() {
 		//	Return if they are still on same level
-		if (this.data.updated.level == this.data.meta.data.level) return
+		if (this.updated.level == this.meta.data.level) return
 
 		// For each level
-		for (let i = this.data.meta.data.level + 1; i <= this.data.updated.level; i++) {
+		for (let i = this.meta.data.level + 1; i <= this.updated.level; i++) {
 			const updatedlevel = i
 			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
@@ -60,7 +71,7 @@ class Artcoins extends Controller {
 				color: this.color.blue
             })
             
-            this.logger.info(`${this.author.tag} has levelup to LVL ${updatedlevel} in ${this.message.channel.name}`)
+            this.logger.info(`${this.author.tag}: level up to LVL ${updatedlevel} in ${this.message.channel.name}`)
 		}
 	}
 }
