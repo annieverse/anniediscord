@@ -134,7 +134,7 @@ class HeartCollector {
 
 			if (once) {
 				reply(once, {field: this.metadata.msg.author})
-				await this.db.disableNotification()
+				await this.db.disableNotification(user.id)
 			}
 			return
 		}
