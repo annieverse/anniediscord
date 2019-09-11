@@ -96,7 +96,7 @@ class databaseUtils {
 	async validatingNewUser(id = this.id) {
 		await this._query(`
 			INSERT OR IGNORE
-			INTO "userdata" (userId, registered_date, level, current_exp)
+			INTO "userdata" (userId, registered_date, level, currentexp)
 			VALUES (?, datetime('now'), 0, 0)`
 			, `run`
 			, [id]
