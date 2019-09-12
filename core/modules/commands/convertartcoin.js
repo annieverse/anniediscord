@@ -1,14 +1,12 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
-const databaseManager = require(`../../utils/databaseManager.js`)
-
+const db = require(`../../utils/databaseManager`)
 /**
  * Main module
  * @convertingArtcoins as function to convert artcoins into experience points.
  */
-class convertingArtcoins extends databaseManager {
+class convertingArtcoins {
 	constructor(Stacks) {
-		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -50,7 +48,7 @@ class convertingArtcoins extends databaseManager {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 
-		this.subtractValue(`userinventories`, `artcoins`, metadata.to_use, author.id)
+		new db().subtractValue(`userinventories`, `artcoins`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CARTCOIN.SUCCESSFUL, {

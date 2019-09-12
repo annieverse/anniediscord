@@ -1,20 +1,22 @@
+const db = require(`../../utils/databaseManager`)
+
 class MaintenanceUpdate {
     constructor(Stacks) {
         this.stacks = Stacks
     }
 
     async execute() {
-        const { reply,db,meta:{author} } = this.stacks
-        db(author.id).maintenanceUpdate
+        const { reply } = this.stacks
+        new db().maintenanceUpdate()
         reply(`Reward given`,{deleteIn:5000})
     }
 }
 
 module.exports.help = {
     start: MaintenanceUpdate,
-    name: `maintenanceUpdate`, 
+    name: `maintenanceupdate`,
     aliases: [`maintenance`], 
-    description: `give ac to users for a maintance break`,
+    description: `gives ac to users for a maintenance break`,
     usage: `maintenance`,
     group: `Admin`,
     public: true,

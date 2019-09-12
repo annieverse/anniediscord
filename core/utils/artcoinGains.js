@@ -16,7 +16,7 @@ class Artcoins extends Controller {
 		super(data)
         //  data can be from ExperienceFormula or directly from Worker.js
         this.data = data
-		this.ac_factor = data.ac_factor
+		this.ac_factor = data.ac_factor ? data.ac_factor : 1
         this.total_gained_ac = data.total_gained_ac
 		this.applyCardBuffs = data.applyCardBuffs
 		this.updated = data.updated
