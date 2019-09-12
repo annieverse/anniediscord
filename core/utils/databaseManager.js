@@ -208,7 +208,7 @@ class databaseUtils {
             `).then(async parsed => parsed)
 	}
 
-	get maintenanceUpdate(){
+	maintenanceUpdate(){
 		return sql.run(`
 				UPDATE userinventories
 				SET artcoins = artcoins + 1000 

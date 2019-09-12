@@ -19,17 +19,11 @@ class Experience extends Controller {
 		this.data = data
 		this.applyTicketBuffs = data.applyTicketBuffs
 		this.applyCardBuffs = data.applyCardBuffs
-		this.exp_factor = data.exp_factor
+		this.exp_factor = data.exp_factor ? data.exp_factor : 1
 		this.message = data.message
 		this.meta = data.meta
 		this.total_gained_exp = data.total_gained_exp
-		this.updated = {
-			currentexp: 0,
-			level: 0,
-			maxexp: 0,
-			nextexpcurve: 0
-		}
-		this.data.updated = this.updated
+		this.updated = this.data.updated
 	}
 
 	/**

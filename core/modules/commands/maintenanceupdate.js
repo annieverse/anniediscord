@@ -4,8 +4,8 @@ class MaintenanceUpdate {
     }
 
     async execute() {
-        const { reply,db,meta:{author} } = this.stacks
-        db(author.id).maintenanceUpdate
+        const { reply, db } = this.stacks
+        db.maintenanceUpdate()
         reply(`Reward given`,{deleteIn:5000})
     }
 }

@@ -1,14 +1,13 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
-const databaseManager = require(`../../utils/databaseManager.js`)
+const db = require(`../../utils/databaseManager`)
 
 /**
  * Main module
  * @Capsule as function to use exp capsules
  */
-class Capsule extends databaseManager {
+class Capsule {
 	constructor(Stacks) {
-		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -53,8 +52,8 @@ class Capsule extends databaseManager {
         
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
-		
-		this.subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
+
+		new db().subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {
