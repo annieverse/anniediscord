@@ -13,7 +13,7 @@ module.exports = (bot, oldUser, newUser) => {
 	let muted = getRoles(`muted`)
 	let eventParticipant = getRoles(`Event Participant`)
 	let apprenticeship = getRoles(`Apprenticeship`)
-	let classRoomChannel = bot.channels.get(`565308091424571422`)
+	let classRoomChannel = bot.channels.get(`621705949429891074`)
 
 	
 
