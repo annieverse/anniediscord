@@ -6,9 +6,7 @@ module.exports = (bot, oldUser, newUser) => {
 	function getRoles(r) {
 		return bot.guilds.get(`459891664182312980`).roles.find(n => n.name === r)
 	}
-	function getRolesById(r) {
-		return bot.guilds.get(`459891664182312980`).roles.find(n => n.id === r)
-	}
+
 	let ticket = getRoles(`Nickname Changer`)
 	let muted = getRoles(`muted`)
 	let eventParticipant = getRoles(`Event Participant`)
