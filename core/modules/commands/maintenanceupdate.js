@@ -14,9 +14,9 @@ class MaintenanceUpdate {
 
 module.exports.help = {
     start: MaintenanceUpdate,
-    name: `maintenanceUpdate`, 
+    name: `maintenanceupdate`,
     aliases: [`maintenance`], 
-    description: `give ac to users for a maintance break`,
+    description: `gives ac to users for a maintenance break`,
     usage: `maintenance`,
     group: `Admin`,
     public: true,
