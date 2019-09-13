@@ -22,11 +22,9 @@ class Data {
 			res.total_cards = await this.db.totalCollectedCards(user.id)
 			res.badges = await this.db.userBadges(user.id)
 
-			delete res.badges.userId
-
 			this.requestedData = {
 				author: user,
-				data: await res
+				data: res
 			}
 		}
 		catch(e) {
