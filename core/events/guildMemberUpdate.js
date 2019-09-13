@@ -19,10 +19,6 @@ module.exports = (bot, oldUser, newUser) => {
 
 		classRoomChannel.send(`${newUser} joined the classroom.`)
 	}
-	if (oldUser.roles.has(apprenticeship.id)) {
-		logger.info(`${oldUser.user.nickname} joined the classroom.`)
-		classRoomChannel.send(`${oldUser} joined the classroom.`)
-	}
 	if( newUser.roles.has(ticket.id) && (oldUser.nickname !== newUser.nickname) ) {
 		logger.info(`${newUser.nickname} used the nickname changer ticket.`)
 		newUser.removeRole(ticket)
