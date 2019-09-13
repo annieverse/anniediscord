@@ -6,16 +6,20 @@ module.exports = (bot, oldUser, newUser) => {
 	function getRoles(r) {
 		return bot.guilds.get(`459891664182312980`).roles.find(n => n.name === r)
 	}
-
+	
 	let ticket = getRoles(`Nickname Changer`)
 	let muted = getRoles(`muted`)
 	let eventParticipant = getRoles(`Event Participant`)
 	let apprenticeship = getRoles(`Apprenticeship`)
-	let classRoomChannel = bot.channels.get(`621705949429891074`)
+	let classRoomChannel = bot.channels.get(`622066583002677270`)
 
 	if (newUser.roles.has(apprenticeship.id)) {
-		logger.info(`${newUser.user.username} joined the classroom.`)
+		logger.info(`${newUser.user.nickname} joined the classroom.`)
 		classRoomChannel.send(`${newUser} joined the classroom.`)
+	}
+	if (oldUser.roles.has(apprenticeship.id)) {
+		logger.info(`${oldUser.user.nickname} joined the classroom.`)
+		classRoomChannel.send(`${oldUser} joined the classroom.`)
 	}
 	if( newUser.roles.has(ticket.id) && (oldUser.nickname !== newUser.nickname) ) {
 		logger.info(`${newUser.nickname} used the nickname changer ticket.`)
