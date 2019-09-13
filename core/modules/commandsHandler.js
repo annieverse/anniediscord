@@ -16,6 +16,7 @@ class CommandsHandler extends Controller {
 	constructor(data) {
 		super(data)
 
+		this.data.cmdExecTime = process.hrtime()
 
 		/**
 		 * 	Command-related properties will be stored inside <data>, not in root object <this>.
@@ -43,23 +44,8 @@ class CommandsHandler extends Controller {
 		this.data.commandfile = data.bot.commands.get(this.data.cmd.slice(this.data.prefix.length)) 
 		|| data.bot.commands.get(data.bot.aliases.get(this.data.cmd.slice(this.data.prefix.length)))
 
-		//	File validation
-		if (!this.data.commandfile) {
-			this.reply(`Sorry i couldn't find any command with that name.`)
-			return this.logger.error(`${this.data.message.author.tag} trying to use invalid command (${this.data.command}) in #${this.data.message.channel.name}`)
-		}
-
 		//	Get file name
 		this.filename = this.data.commandfile ? this.data.commandfile.help.name : null
-
-		//	Ref to file path
-		this.path = `../modules/commands/${this.filename}.js`
-
-		//	Get the available properties
-		this.module_parameters = require(this.path).help
-
-		//	Module invoker
-		this.cmd = this.module_parameters.start
 
 		//	Benchmark label
 		this.data.benchmarkLabel = this.data.fullArgs ? this.data.fullArgs : this.data.meta.author.username
@@ -93,6 +79,20 @@ class CommandsHandler extends Controller {
 	 * 	@prepare
 	 */
 	async prepare() {
+
+		//	File validation
+		if (!this.data.commandfile) return this.logger.error(`${this.data.message.author.tag} trying to use invalid command (${this.data.command}) in #${this.data.message.channel.name}`)
+
+
+		//	Ref to file path
+		this.path = `../modules/commands/${this.filename}.js`
+
+		//	Get the available properties
+		this.module_parameters = require(this.path).help
+		
+		//	Module invoker
+		this.cmd = this.module_parameters.start
+
 
 		// If the channel is restricted to some cmds only; check if cmd has channel enabled
 		if ((special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels) ||
@@ -155,11 +155,11 @@ class CommandsHandler extends Controller {
 					const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
 					await new this.cmd(Pistachified).execute()
-					this.logger.info(`${this.data.message.author.tag} has ran ${this.filename}.`)
+					this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${this.filename} command. (${this.getBenchmark(process.hrtime(this.data.cmdExecTime))})`)
 				})
 		}
 		catch (e) {
-			this.logger.error(`${this.data.message.author.tag} has failed to run ${this.filename}. > ${e.stack}`)
+			this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. > ${e.stack}`)
 		}
 	}
 

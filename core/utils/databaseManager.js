@@ -8,11 +8,13 @@ const logger = require(`./config/winston`)
 class databaseUtils {
 
 	/**
-        *   id represent userId in userdata column.
-        * @this.id
+        *  id represent userId in userdata column.
+        *  @this.id
+		*  @client is optional. for experimental purpose.
         */
-	constructor(id) {
+	constructor(id, client) {
 		this.id = id
+		this.client = client
 	}
 
 
@@ -23,12 +25,13 @@ class databaseUtils {
 	 */
 	connect() {
 		try {
+			let initdb = process.hrtime()
 			sql.open(`.data/database.sqlite`, {cached: true})
-			logger.info(`Database successfully connected`)
+			logger.info(`Database successfully connected (${this.client.getBenchmark(process.hrtime(initdb))})`)
 			return this
 		}
 		catch (e) {
-			logger.error(`Database has failed to connect > `, e)
+			logger.error(`Database has failed to connect > ${e.stack}`)
 		}
 	}
 
@@ -55,7 +58,7 @@ class databaseUtils {
 			
 		}
 		catch (e) {
-			logger.error(`Database._query() has failed to run. > `, e)
+			logger.error(`Database._query() has failed to run. > ${e.stack}`)
 			return null
 		}
 

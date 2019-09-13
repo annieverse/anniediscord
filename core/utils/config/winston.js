@@ -1,6 +1,6 @@
 const env = require(`../../../.data/environment`)
 const winston = require(`winston`)
-const { combine, timestamp, printf, colorize } = winston.format
+const { combine, label, timestamp, printf, colorize } = winston.format
 require(`winston-daily-rotate-file`)
 
 /**

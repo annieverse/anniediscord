@@ -18,6 +18,7 @@ class modulesLoader {
 	 * 	Assigning fetchSource() result to @Client
 	 */
 	register(Client) {
+		let initModulesLoad = process.hrtime()
 
 		//	Initialize new collection in the client
 		Client.commands = new Collection()
@@ -40,14 +41,14 @@ class modulesLoader {
 
 
 			//	Log & Return the updated client
-			logger.info(`${jsfile.length} command modules loaded`)
+			logger.info(`${jsfile.length} command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
 			return Client
 
 		}
 		catch (e) {
 
 			//	Log & return the old client
-			logger.error(`Failed to load commands module > `, e)
+			logger.error(`Failed to load commands module > ${e.stack}`)
 			return Client
 
 		}

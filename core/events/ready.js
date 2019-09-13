@@ -255,7 +255,7 @@ module.exports = bot => {
 		 *	Only run on development server 
 		 */
 		if (env.dev) {
-			logger.info(`${bot.user.username} has sucessfully logged in.`)
+			logger.info(`${bot.user.username} up in dev environment. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`dnd`)
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
@@ -266,7 +266,7 @@ module.exports = bot => {
 			/**
              *  Production server
              */
-			logger.info(`${bot.user.username} has sucessfully logged in.`)
+			logger.info(`${bot.user.username}up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
 

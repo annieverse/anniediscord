@@ -31,6 +31,7 @@ class MessageController {
         this.logger = data.bot.logger
         this.label = data.label
         this.cd = data.cooldown
+        this.getBenchmark = data.bot.getBenchmark
     }
 
 
