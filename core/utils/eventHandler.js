@@ -4,7 +4,7 @@ const env = require(`../../.data/environment.json`)
 module.exports = bot => {
 
 	//	Handle global rejection
-	process.on('unhandledRejection', (err) => reqEvent("unhandledRejection")(bot, err))
+	process.on(`unhandledRejection`, (err) => reqEvent(`unhandledRejection`)(bot, err))
 
 	//	Cached message
 	let message_object
