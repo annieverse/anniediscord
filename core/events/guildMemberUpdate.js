@@ -12,7 +12,7 @@ module.exports = (bot, oldUser, newUser) => {
 	let eventParticipant = getRoles(`Event Participant`)
 	let apprenticeship = getRoles(`Apprenticeship`)
 
-	let classRoomChannel = bot.channels.get(`622066583002677270`)
+	let classRoomChannel = bot.channels.get(`621705949429891074`)
 
 	if (newUser.roles.has(apprenticeship.id) && !oldUser.roles.has(apprenticeship.id)) {
 		logger.info(`${newUser.user.username} joined the classroom.`)
