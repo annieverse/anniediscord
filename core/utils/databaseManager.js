@@ -61,17 +61,6 @@ class databaseUtils {
 
 	}
 
-
-	/**
-	 * 	Assign user id as class property.
-	 * 	@Setter
-	 * 	@param {String|ID} id of userid
-	 */
-	set setUser(id = ``) {
-		this.id = id
-	}
-
-
 	/**
 	 * 	Defacto method for updating experience point
 	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
