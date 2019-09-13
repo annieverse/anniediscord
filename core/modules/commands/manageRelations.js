@@ -124,8 +124,8 @@ class ManageRelations {
                     notch: true
                 })
             }
-            reply(`Are you sure you want to delete this relationship?\n
-            You will lose all your relation points and data :(\n
+            //You will lose all your relation points and data :(
+                reply(`Are you sure you want to delete this relationship?\n
             Your partner would be sad.\n
             Please type \`y\` to confirm.`, {
                 color: palette.golden,

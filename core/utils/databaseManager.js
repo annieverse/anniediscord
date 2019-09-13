@@ -971,9 +971,9 @@ class databaseUtils {
 		}
 		return sql.run(`
                 INSERT INTO relationship
-                (userId1, userId2, relationType2, relationStart)
-                VALUES (?, ?, ?, ?)`,
-			[this.id, userId, relType, Date.now()]
+                (userId1, userId2, relationType2)
+                VALUES (?, ?, ?)`,
+			[this.id, userId, relType]//relationStart
 		)
 	}
 

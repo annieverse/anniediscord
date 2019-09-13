@@ -24,7 +24,6 @@ class Worker extends Controller {
      *  @default
      */
     async default() {
-
         //  Ignore any user interaction in dev environment
         if (super.isUserInDevEnvironment) return
         
@@ -48,7 +47,6 @@ class Worker extends Controller {
 
         //  Handle message that has prefix or bot related.
         if (super.isCommandMessage) new Commands(this.data).prepare()
-
 
         /** -----------------------------------------------------------------
          *  Beyond this point require cooling-down state mechanism.

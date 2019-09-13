@@ -176,3 +176,334 @@
 2019-09-13T14:18:18.771Z [info]: ametotaiyou#8308: received 16 EXP in 🍉ˋˏ┋  sandbox
 2019-09-13T14:18:18.772Z [info]: ametotaiyou#8308: received bonus factor of 1
 2019-09-13T14:18:18.773Z [info]: ametotaiyou#8308: 554470 EXP
+2019-09-13T20:15:26.940Z [info]: Database successfully connected
+2019-09-13T20:15:27.621Z [info]: 62 command modules loaded
+2019-09-13T20:15:30.275Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:15:35.401Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:15:39.897Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:15:45.034Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:15:45.093Z [info]: ametotaiyou#8308: received 15 AC in 🍉ˋˏ┋  developer
+2019-09-13T20:15:45.094Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:15:45.099Z [info]: ametotaiyou#8308: received 14 EXP in 🍉ˋˏ┋  developer
+2019-09-13T20:15:45.100Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:15:45.101Z [info]: ametotaiyou#8308: 469916 EXP
+2019-09-13T20:15:55.298Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:15:59.055Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:01.618Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:02.696Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:05.448Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:12.278Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:14.098Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:17.857Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:31.720Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:16:34.297Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named registered_date
+2019-09-13T20:17:15.279Z [info]: Database successfully connected
+2019-09-13T20:17:15.867Z [info]: 62 command modules loaded
+2019-09-13T20:17:17.204Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:17:44.905Z [info]: ametotaiyou#8308: received 12 AC in 🍉ˋˏ┋  developer
+2019-09-13T20:17:44.907Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:17:44.914Z [info]: ametotaiyou#8308: received 13 EXP in 🍉ˋˏ┋  developer
+2019-09-13T20:17:44.914Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:17:44.915Z [info]: ametotaiyou#8308: 469929 EXP
+2019-09-13T20:17:49.483Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:17:49.993Z [error]: TypeError: Cannot read property 'name' of undefined
+    at ranksManager.ranksCheck (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ranksManager.js:84:55)
+    at Object.get clr [as clr] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:45:24)
+    at Object.profile [as gui] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:122:22)
+2019-09-13T20:19:02.245Z [info]: Database successfully connected
+2019-09-13T20:19:02.924Z [info]: 62 command modules loaded
+2019-09-13T20:19:04.296Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:19:13.736Z [info]: ametotaiyou#8308: received 10 AC in 🍉ˋˏ┋  developer
+2019-09-13T20:19:13.739Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:19:13.743Z [info]: ametotaiyou#8308: received 12 EXP in 🍉ˋˏ┋  developer
+2019-09-13T20:19:13.744Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:19:13.744Z [info]: ametotaiyou#8308: 469941 EXP
+2019-09-13T20:19:21.853Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:19:22.238Z [error]: TypeError: Cannot read property 'name' of undefined
+    at ranksManager.ranksCheck (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ranksManager.js:84:55)
+    at Object.get clr [as clr] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:45:24)
+    at Object.profile [as gui] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:122:22)
+2019-09-13T20:19:49.192Z [info]: Database successfully connected
+2019-09-13T20:19:49.959Z [info]: 62 command modules loaded
+2019-09-13T20:19:53.327Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:19:55.835Z [info]: undefined: received 11 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:19:55.837Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:19:55.842Z [info]: undefined: received 11 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:19:55.842Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:19:55.843Z [info]: undefined: 469952 EXP
+2019-09-13T20:19:55.874Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:19:56.306Z [error]: TypeError: Cannot read property 'name' of undefined
+    at ranksManager.ranksCheck (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ranksManager.js:84:55)
+    at Object.get clr [as clr] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:45:24)
+    at Object.profile [as gui] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:164:18)
+2019-09-13T20:20:19.748Z [info]: Database successfully connected
+2019-09-13T20:20:20.803Z [info]: 62 command modules loaded
+2019-09-13T20:20:22.266Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:20:22.976Z [info]: undefined: received 15 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:20:22.978Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:20:22.982Z [info]: undefined: received 11 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:20:22.983Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:20:22.983Z [info]: undefined: 469963 EXP
+2019-09-13T20:20:23.015Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:20:23.460Z [error]: TypeError: Cannot read property 'name' of undefined
+    at ranksManager.ranksCheck (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ranksManager.js:84:55)
+    at Object.get clr [as clr] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:46:24)
+    at Object.profile [as gui] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\profilecardInterface.js:165:18)
+2019-09-13T20:20:50.532Z [info]: Database successfully connected
+2019-09-13T20:20:51.133Z [info]: 62 command modules loaded
+2019-09-13T20:20:52.552Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:20:55.139Z [info]: undefined: received 13 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:20:55.141Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:20:55.144Z [info]: undefined: received 11 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:20:55.145Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:20:55.146Z [info]: undefined: 469974 EXP
+2019-09-13T20:20:55.180Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:22:05.677Z [info]: Database successfully connected
+2019-09-13T20:22:06.256Z [info]: 62 command modules loaded
+2019-09-13T20:22:09.563Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:22:19.522Z [info]: Database successfully connected
+2019-09-13T20:22:20.441Z [info]: 62 command modules loaded
+2019-09-13T20:22:25.270Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:22:39.311Z [info]: Database successfully connected
+2019-09-13T20:22:39.884Z [info]: 62 command modules loaded
+2019-09-13T20:22:41.349Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:22:54.208Z [info]: Database successfully connected
+2019-09-13T20:22:54.789Z [info]: 62 command modules loaded
+2019-09-13T20:22:56.289Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:23:11.677Z [info]: Database successfully connected
+2019-09-13T20:23:12.499Z [info]: 62 command modules loaded
+2019-09-13T20:23:13.958Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:23:16.572Z [info]: undefined: received 11 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:23:16.574Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:23:16.577Z [info]: undefined: received 11 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:23:16.580Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:23:16.581Z [info]: undefined: 469985 EXP
+2019-09-13T20:23:16.616Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:23:19.864Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:23:19.867Z [error]: TypeError: collection.userdata is not a function
+    at Object.portfolio [as gui] (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\portfoliocardInterface.js:34:36)
+    at getPage (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:100:41)
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:136:9)
+2019-09-13T20:23:45.079Z [info]: Database successfully connected
+2019-09-13T20:23:45.728Z [info]: 62 command modules loaded
+2019-09-13T20:23:47.799Z [info]: Database successfully connected
+2019-09-13T20:23:48.856Z [info]: 62 command modules loaded
+2019-09-13T20:23:52.315Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:24:18.293Z [info]: Database successfully connected
+2019-09-13T20:24:18.873Z [info]: 62 command modules loaded
+2019-09-13T20:24:20.239Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:24:23.718Z [info]: undefined: received 15 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:24:23.719Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:24:23.725Z [info]: undefined: received 13 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:24:23.728Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:24:23.729Z [info]: undefined: 469998 EXP
+2019-09-13T20:24:23.762Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:24:48.084Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:26:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:25:41.964Z [info]: Database successfully connected
+2019-09-13T20:25:42.565Z [info]: 62 command modules loaded
+2019-09-13T20:25:43.925Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:26:37.219Z [info]: Database successfully connected
+2019-09-13T20:26:37.523Z [error]: Failed to load commands module > Unexpected end of input
+2019-09-13T20:26:38.891Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:26:56.608Z [info]: Database successfully connected
+2019-09-13T20:26:57.261Z [info]: 62 command modules loaded
+2019-09-13T20:26:59.264Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:27:46.587Z [info]: Database successfully connected
+2019-09-13T20:27:47.187Z [info]: 62 command modules loaded
+2019-09-13T20:27:48.509Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:27:52.834Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-13T20:27:52.840Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:23:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:27:52.843Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:64:62)
+2019-09-13T20:28:49.333Z [info]: Database successfully connected
+2019-09-13T20:28:49.952Z [info]: 62 command modules loaded
+2019-09-13T20:28:51.387Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:29:04.596Z [info]: Database successfully connected
+2019-09-13T20:29:05.382Z [info]: 62 command modules loaded
+2019-09-13T20:29:06.697Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:29:09.171Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:62:59)
+2019-09-13T20:29:09.178Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:29:09.181Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:65:62)
+2019-09-13T20:29:17.170Z [info]: Database successfully connected
+2019-09-13T20:29:17.762Z [info]: 62 command modules loaded
+2019-09-13T20:29:19.098Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:30:05.949Z [info]: Database successfully connected
+2019-09-13T20:30:07.089Z [info]: 62 command modules loaded
+2019-09-13T20:30:08.426Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:30:09.574Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:168:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-13T20:30:09.578Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:30:09.580Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:168:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:64:62)
+2019-09-13T20:30:35.170Z [info]: Database successfully connected
+2019-09-13T20:30:35.835Z [info]: 62 command modules loaded
+2019-09-13T20:30:37.316Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:30:43.876Z [info]: Database successfully connected
+2019-09-13T20:30:44.484Z [info]: 62 command modules loaded
+2019-09-13T20:30:45.824Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:30:49.177Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:62:59)
+2019-09-13T20:30:49.179Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:30:49.184Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:65:62)
+2019-09-13T20:30:57.594Z [info]: Database successfully connected
+2019-09-13T20:30:58.209Z [info]: 62 command modules loaded
+2019-09-13T20:30:59.557Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:32:46.620Z [info]: Database successfully connected
+2019-09-13T20:32:47.224Z [info]: 62 command modules loaded
+2019-09-13T20:32:48.561Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:32:49.214Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-13T20:32:49.217Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:32:49.218Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:64:62)
+2019-09-13T20:33:03.044Z [info]: Database successfully connected
+2019-09-13T20:33:03.660Z [info]: 62 command modules loaded
+2019-09-13T20:33:04.954Z [info]: Database successfully connected
+2019-09-13T20:33:05.557Z [info]: 62 command modules loaded
+2019-09-13T20:33:06.883Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:33:36.227Z [info]: Database successfully connected
+2019-09-13T20:33:36.840Z [info]: 62 command modules loaded
+2019-09-13T20:33:39.320Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:33:41.043Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:63:59)
+2019-09-13T20:33:41.056Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:33:41.060Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:66:62)
+2019-09-13T20:34:12.581Z [info]: Database successfully connected
+2019-09-13T20:34:13.180Z [info]: 62 command modules loaded
+2019-09-13T20:34:14.476Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:34:15.297Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:63:59)
+2019-09-13T20:34:15.302Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:34:15.304Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:66:62)
+2019-09-13T20:34:33.393Z [info]: Database successfully connected
+2019-09-13T20:34:34.134Z [info]: 62 command modules loaded
+2019-09-13T20:34:35.498Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:34:36.775Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Experience.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:154:23)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:63:59)
+2019-09-13T20:34:36.778Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:34:36.780Z [error]: TypeError: Cannot convert undefined or null to object
+    at Function.entries (<anonymous>)
+    at Artcoins.cardBuffs (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\MessageController.js:167:14)
+    at Artcoins.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\artcoinGains.js:34:22)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:66:62)
+2019-09-13T20:37:54.332Z [info]: Database successfully connected
+2019-09-13T20:37:55.037Z [info]: 62 command modules loaded
+2019-09-13T20:37:57.917Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:37:58.883Z [info]: undefined: received 11 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:37:58.884Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:37:58.888Z [info]: undefined: received 15 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:37:58.889Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:37:58.889Z [info]: undefined: 470013 EXP
+2019-09-13T20:37:58.929Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:38:07.096Z [error]: ametotaiyou#8308 has failed to run profile. > TypeError: Cannot read property 'userId' of null
+    at Profile.execute (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commands\profile.js:22:53)
+    at requestData.then (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\modules\commandsHandler.js:157:39)
+2019-09-13T20:38:19.611Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:38:39.950Z [info]: ametotaiyou#8308: received 11 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:38:39.951Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:38:39.952Z [info]: ametotaiyou#8308: received 15 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:38:39.952Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:38:39.953Z [info]: ametotaiyou#8308: 470028 EXP
+2019-09-13T20:38:40.000Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:38:52.963Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:39:26.354Z [info]: ametotaiyou#8308 has ran managerelations.
+2019-09-13T20:39:26.355Z [info]: undefined: received 10 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:39:26.355Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:39:26.356Z [info]: undefined: received 13 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:39:26.357Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:39:26.357Z [info]: undefined: 470041 EXP
+2019-09-13T20:39:35.783Z [info]: ametotaiyou#8308 has ran managerelations.
+2019-09-13T20:39:48.346Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:42:00.007Z [info]: Database successfully connected
+2019-09-13T20:42:00.669Z [info]: 62 command modules loaded
+2019-09-13T20:42:01.997Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:42:13.482Z [info]: ametotaiyou#8308 has ran managerelations.
+2019-09-13T20:42:13.485Z [info]: undefined: received 12 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:42:13.486Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:42:13.490Z [info]: undefined: received 11 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:42:13.491Z [info]: undefined: received bonus factor of 1
+2019-09-13T20:42:13.491Z [info]: undefined: 470052 EXP
+2019-09-13T20:42:26.748Z [info]: ametotaiyou#8308 has ran managerelations.
+2019-09-13T20:42:34.314Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:43:47.593Z [info]: Database successfully connected
+2019-09-13T20:43:48.183Z [info]: 62 command modules loaded
+2019-09-13T20:43:49.519Z [info]: ameannie has sucessfully logged in.
+2019-09-13T20:43:53.447Z [info]: ametotaiyou#8308: received 13 AC in 🍉ˋˏ┋  sandbox
+2019-09-13T20:43:53.449Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:43:53.454Z [info]: ametotaiyou#8308: received 13 EXP in 🍉ˋˏ┋  sandbox
+2019-09-13T20:43:53.455Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-13T20:43:53.455Z [info]: ametotaiyou#8308: 470065 EXP
+2019-09-13T20:43:53.516Z [info]: ametotaiyou#8308 has ran managerelations.
+2019-09-13T20:44:03.705Z [info]: ametotaiyou#8308 has ran profile.
+2019-09-13T20:44:28.128Z [info]: Database successfully connected
+2019-09-13T20:44:28.726Z [info]: 62 command modules loaded
+2019-09-13T20:44:30.113Z [info]: ameannie has sucessfully logged in.

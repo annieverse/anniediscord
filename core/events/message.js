@@ -35,7 +35,6 @@ module.exports = async (bot, message) => {
 		}
 	}).bag()
 
-
 	//	Check for message flow
 	new Worker(stacks).default()
 

@@ -6,10 +6,6 @@ const friend = require(`../../utils/friendcardInterface`)
 const stat = require(`../../utils/statcardInterface`)
 const databaseManager = require(`../../utils/databaseManager`)
 
-/**
- * Main module
- * @Profile Display detailed user personal card.
- */
 class Profile {
 	constructor(Stacks) {
 		this.stacks = Stacks

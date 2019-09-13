@@ -31,7 +31,7 @@ async function stat(stacks, member) {
      * rep = userreputation, des = userdescription, ui = userinterfacemode
      * clr = hex code of user's rank color.
      */
-	const userdata = await collection.userdata
+	const userdata = await collection.userMetadata()
 	const user = {
 		id: userdata.userId,
 		cur: userdata.currentexp,
@@ -48,9 +48,9 @@ async function stat(stacks, member) {
 		cov: userdata.cover,
 		log: userdata.last_login,
 		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
+				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
+					(Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
 		},
 	}
 
