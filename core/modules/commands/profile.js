@@ -109,7 +109,7 @@ class Profile {
                     const backwards = msg.createReactionCollector(backwardsFilter, {time: 60000})
                     const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
 
-                    backwards.on(`collect`, async r => {
+                    backwards.on(`collect`, async () => {
                         count--
                         if (count < 0) {
                             count = pages.length - 1
@@ -118,7 +118,7 @@ class Profile {
                         getPage(count)
 
                     })
-                    forwards.on(`collect`, async r => {
+                    forwards.on(`collect`, async () => {
                         count++
                         if (count > pages.length - 1) {
                             count = 0
