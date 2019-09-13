@@ -1,7 +1,8 @@
 const profile = require(`../../utils/profilecardInterface`)
 const portfolio = require(`../../utils/portfoliocardInterface`)
 const badge = require(`../../utils/badgecardInterface`)
-const relation = require(`../../utils/relationcardInterface`)
+const family = require(`../../utils/familycardInterface`)
+const friend = require(`../../utils/friendcardInterface`)
 const stat = require(`../../utils/statcardInterface`)
 
 /**
@@ -25,7 +26,8 @@ class Profile {
             pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
         }
         pages.push({gui: badge, card: BADGECARD, alias: `badge`})
-        pages.push({gui: relation, card: RELATIONSHIPCARD, alias: `relation`})
+        pages.push({gui: family, card: RELATIONSHIPCARD, alias: `family`})
+        pages.push({gui: friend, card: RELATIONSHIPCARD, alias: `friend`})
         pages.push({gui: stat, card: STATCARD, alias: `stat`})
 
         let count = 0
@@ -43,11 +45,14 @@ class Profile {
                 if (!author) return reply(BADGECARD.INVALID_USER)
                 count = pages.findIndex((e) => e.alias == `badge`)
                 break
-            case `relationship`:
-            case `relation`:
-            case `rel`:
+            case `family`:
                 if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `relation`)
+                count = pages.findIndex((e) => e.alias == `family`)
+                break
+            case `friend`:
+            case `friends`:
+                if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
+                count = pages.findIndex((e) => e.alias == `friends`)
                 break
             case `stats`:
             case `stat`:
@@ -104,7 +109,7 @@ class Profile {
 module.exports.help = {
 	start: Profile,
 	name: `profile`,
-	aliases: [`profile`, `p`, `mycard`, `timeline`, `portfolio`, `badges`, `badge`, `relationship`, `relation`, `rel`, `stats`, `stat`],
+	aliases: [`profile`, `p`, `mycard`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`, `stats`, `stat`],
 	description: `Display user's profile card, including timeline, badges, relationship, and statistics`,
 	usage: `profile [@user]<optional>`,
 	group: `General`,

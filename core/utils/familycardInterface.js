@@ -17,7 +17,7 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `Robot
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
-async function portfolio(stacks, member) {
+async function family(stacks, member) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configRank = new rankManager(stacks.bot, stacks.message)
@@ -53,8 +53,15 @@ async function portfolio(stacks, member) {
 	}
 	const relations = await collection.relationships
 
-	const switchColor = {
+	const familyrelations = relations.filter((e) => {
+		if (e.theirRelation == `bestie`) return false
+		if (e.theirRelation == `soulmate`) return false
+		if (e.theirRelation == `senpai`) return false
+		if (e.theirRelation == `kouhai`) return false
+		return true
+	})
 
+	const switchColor = {
 		"dark_profileskin": {
 			base: palette.nightmode,
 			border: palette.deepnight,
@@ -87,7 +94,9 @@ async function portfolio(stacks, member) {
 	/**
 	 *    CARD BASE
 	 */
-	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
+	canv = canv
+        .setStroke(switchColor[usercolor].secondaryText)
+        .setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
 		.setColor(switchColor[usercolor].base)
@@ -99,8 +108,7 @@ async function portfolio(stacks, member) {
 		.save()
 
 	/**
-	 *    USER
-	 *    AVATAR
+	 *    USER AVATAR
 	 */
 	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
 
@@ -114,50 +122,75 @@ async function portfolio(stacks, member) {
 		.setColor(switchColor[usercolor].border)
 		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
-	if (relations.length == 0) {
-		return canv.toBuffer()
-	}
+    const leftNode = (username, avatar, relation, x, y) => {
+        if (member.user.username==username) {
+            canv.setColor(user.clr)
+                .addCircle(x + 23, y + 19, 22)
+        }
+        canv.setColor(switchColor[usercolor].secondaryText)
+            .addRoundImage(avatar, x + 4, y, 38, 38, 19)
+            .setColor(switchColor[usercolor].secondaryText)
+            .setTextAlign(`right`)
+            .setTextFont(`10pt RobotoBold`)
+            .addText(username, x, y + 35)
+            .setTextFont(`5pt RobotoBold`)
+            .addText(relation, x + 13, y + 45)
+    }
+    const rightNode = (username, avatar, relation, x, y) => {
+        if (member.user.username==username) {
+            canv.setColor(user.clr)
+                .addCircle(x + 23, y + 19, 22)
+        }
+        canv.setColor(switchColor[usercolor].secondaryText)
+            .addRoundImage(avatar, x + 4, y, 38, 38, 19)
+            .setColor(switchColor[usercolor].secondaryText)
+            .setTextAlign(`left`)
+            .setTextFont(`10pt RobotoBold`)
+            .addText(username, x + 46, y + 35)
+            .setTextFont(`5pt RobotoBold`)
+            .addText(relation, x + 33, y + 45)
+    }
 
-	//for now we only do the feature for 1 relationship, so take first entry; but database entry is made to be extendable
-	const relUser = await stacks.bot.fetchUser(relations[0].theirUserId)
-	const {
-		body: userAvatar
-	} = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const relationship = {
-		type: relations[0].theirRelation,
-		userId : relations[0].userId,
-		userName: relUser.username,
-        relStart: relations[0].relationStart,
-        relPoints: relations[0].relationPoints,
-        gift: relations[0].gift ? relations[0].gift : `None yet :(`
-
-	}
+    const connectTwoNodes = (x1, y1, x2, y2) => {
+        canv.beginPath()
+            .moveTo(x1 + 23, y1 + 20)
+            .lineTo(x2 + 23, y2 + 20)
+            .stroke()
+    }
 
 
-	canv.addRoundImage(userAvatar, 40, 60, 60, 60, 30)
-		.setTextAlign(`left`)
-		.setTextFont(`18pt RobotoBold`)
-		.setColor(user.clr)
-		.addText(relationship.userName, 110, 93)
-		.setColor(switchColor[usercolor].secondaryText)
-		.setTextFont(`8pt RobotoBold`)
-		.addText(`My `+relationship.type, 110, 110)
-		.setTextAlign(`right`)
-		.setTextFont(`10pt RobotoBold`)
-		.addText(`In a relation since`, 283, 163)
-		.addText(`❤ Love points`, 283, 233)
-		.addText(`Recently received gift`, 283, 303)
-		.setColor(user.clr)
-		.setTextFont(`20pt RobotoBold`)
-		.addText(moment(relationship.relStart).fromNow(), 283, 193)
-		.addText(configFormat.formatK(relationship.relPoints), 283, 263)
-		.addText(relationship.gift, 283, 333)
-		.setTextAlign(`left`)
+    //if (relations.length == 0) {
+    //	return canv.toBuffer()
+    //}
+
+    const partner = familyrelations.find((e) => e.theirRelation == `husband` || `wife`)
+    if (partner) {
+        var partnerUser = await stacks.bot.fetchUser(partner.theirUserId)
+        const {
+            body: userAvatar
+        } = await get(partnerUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+        if (familyrelations.length == 1) {
+            connectTwoNodes(100, 170, 170, 170)
+            leftNode(member.user.username, avatar, partner.myRelation, 100, 170)
+            rightNode(partnerUser.username, userAvatar, partner.theirRelation, 170, 170)
+        }
+
+    }
+
+    //leftNode(`ametotaiyou`,avatar, `Blabla`, 100, 100)
+    //rightNode(`Placeholder`,avatar, `Blabla`, 170, 100)
+    //leftNode(`ametotaiyou`,avatar, `Blabla`, 135, 180)
+    //connectThreeNodes(100, 100, 170, 100, 135, 180)
+    //connectTwoNodes(100, 100, 170, 100)
+
+
+    canv.setTextAlign(`left`)
 		.setTextFont(`10pt RobotoBold`)
 		.addText(`I'm in a total of `+relations.length+` relations ❤`, 30, 390)
+
 
 	return canv.toBuffer()
 
 }
 
-module.exports = portfolio
+module.exports = family

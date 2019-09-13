@@ -1,0 +1,638 @@
+2019-09-10T22:05:33.001Z [info]: Database successfully connected
+2019-09-10T22:05:33.556Z [info]: 62 command modules loaded
+2019-09-10T22:05:34.928Z [info]: ameannie has sucessfully logged in.
+2019-09-10T22:06:02.643Z [info]: ametotaiyou#8308 has received 14 AC in general
+2019-09-10T22:06:02.644Z [info]: Old exp: 533658
+2019-09-10T22:06:02.645Z [info]: New exp: 533668
+2019-09-10T22:06:02.648Z [info]: ametotaiyou#8308 has received 10 EXP in general
+2019-09-10T22:06:02.649Z [info]: ametotaiyou#8308 now has 533668 EXP
+2019-09-10T22:07:33.257Z [info]: ametotaiyou#8308 has received 14 AC in 🍉ˋˏ┋  developer
+2019-09-10T22:07:33.258Z [info]: Old exp: 533668
+2019-09-10T22:07:33.258Z [info]: New exp: 533679
+2019-09-10T22:07:33.259Z [info]: ametotaiyou#8308 has received 11 EXP in 🍉ˋˏ┋  developer
+2019-09-10T22:07:33.260Z [info]: ametotaiyou#8308 now has 533679 EXP
+2019-09-10T22:08:38.387Z [info]: ametotaiyou#8308 has received 15 AC in general
+2019-09-10T22:08:38.388Z [info]: Old exp: 533679
+2019-09-10T22:08:38.388Z [info]: New exp: 533694
+2019-09-10T22:08:38.389Z [info]: ametotaiyou#8308 has received 15 EXP in general
+2019-09-10T22:08:38.389Z [info]: ametotaiyou#8308 now has 533694 EXP
+2019-09-11T18:44:00.300Z [info]: Database successfully connected
+2019-09-11T18:44:01.163Z [info]: 62 command modules loaded
+2019-09-11T18:44:02.646Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:44:04.378Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named current_exp
+2019-09-11T18:44:12.203Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named current_exp
+2019-09-11T18:44:19.165Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named current_exp
+2019-09-11T18:44:19.934Z [error]: Database._query() has failed to run. > SQLITE_ERROR: table userdata has no column named current_exp
+2019-09-11T18:44:54.911Z [info]: Database successfully connected
+2019-09-11T18:44:56.344Z [info]: 62 command modules loaded
+2019-09-11T18:44:57.788Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:45:00.750Z [info]: ametotaiyou#8308 has received 10 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:45:00.752Z [info]: Old exp: 533694
+2019-09-11T18:45:00.753Z [info]: New exp: 533709
+2019-09-11T18:45:00.760Z [info]: ametotaiyou#8308 has received 15 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:45:00.761Z [info]: ametotaiyou#8308 now has 533709 EXP
+2019-09-11T18:45:34.688Z [info]: ametotaiyou#8308 has received 13 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:45:34.690Z [info]: Old exp: 533709
+2019-09-11T18:45:34.690Z [info]: New exp: 533720
+2019-09-11T18:45:34.691Z [info]: ametotaiyou#8308 has received 11 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:45:34.692Z [info]: ametotaiyou#8308 now has 533720 EXP
+2019-09-11T18:47:09.215Z [info]: Database successfully connected
+2019-09-11T18:47:09.916Z [info]: 62 command modules loaded
+2019-09-11T18:47:12.856Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:47:41.792Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:47:41.793Z [info]: Old exp: 533720
+2019-09-11T18:47:41.794Z [info]: New exp: 533731
+2019-09-11T18:47:41.800Z [info]: ametotaiyou#8308 has received 11 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:47:41.803Z [info]: ametotaiyou#8308 now has 533731 EXP
+2019-09-11T18:48:14.274Z [info]: ametotaiyou#8308 has received 12 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:48:14.275Z [info]: Old exp: 533731
+2019-09-11T18:48:14.275Z [info]: New exp: 533841
+2019-09-11T18:48:14.276Z [info]: ametotaiyou#8308 has received 110 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:48:14.276Z [info]: ametotaiyou#8308 now has 533841 EXP
+2019-09-11T18:49:31.472Z [info]: Database successfully connected
+2019-09-11T18:49:32.395Z [info]: 62 command modules loaded
+2019-09-11T18:49:33.855Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:49:57.191Z [info]: Database successfully connected
+2019-09-11T18:49:57.833Z [info]: 62 command modules loaded
+2019-09-11T18:49:59.264Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:50:04.496Z [info]: Database successfully connected
+2019-09-11T18:50:05.521Z [info]: 62 command modules loaded
+2019-09-11T18:50:07.046Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:50:13.107Z [info]: Database successfully connected
+2019-09-11T18:50:13.901Z [info]: 62 command modules loaded
+2019-09-11T18:50:15.324Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:50:22.014Z [info]: ametotaiyou#8308 has received 11 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:50:22.016Z [info]: Old exp: 533841
+2019-09-11T18:50:22.017Z [info]: New exp: 533853
+2019-09-11T18:50:22.019Z [info]: ametotaiyou#8308 has received 12 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:50:22.020Z [info]: ametotaiyou#8308 now has 533853 EXP
+2019-09-11T18:52:48.121Z [info]: Database successfully connected
+2019-09-11T18:52:48.666Z [info]: 62 command modules loaded
+2019-09-11T18:52:50.111Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:53:08.296Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:53:08.298Z [info]: Old exp: 533853
+2019-09-11T18:53:08.298Z [info]: New exp: 533867
+2019-09-11T18:53:08.305Z [info]: ametotaiyou#8308 has received 14 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:53:08.306Z [info]: ametotaiyou#8308 now has 533867 EXP
+2019-09-11T18:54:29.385Z [info]: Database successfully connected
+2019-09-11T18:54:29.976Z [info]: 62 command modules loaded
+2019-09-11T18:54:33.040Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:54:44.229Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T18:54:44.231Z [info]: Old exp: 533867
+2019-09-11T18:54:44.232Z [info]: New exp: 533977
+2019-09-11T18:54:44.239Z [info]: ametotaiyou#8308 has received 110 EXP in 🍉ˋˏ┋  developer
+2019-09-11T18:54:44.239Z [info]: ametotaiyou#8308 now has 533977 EXP
+2019-09-11T18:56:00.374Z [info]: Database successfully connected
+2019-09-11T18:56:01.290Z [info]: 62 command modules loaded
+2019-09-11T18:56:02.710Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:56:06.396Z [info]: Database successfully connected
+2019-09-11T18:56:07.110Z [info]: 62 command modules loaded
+2019-09-11T18:56:08.700Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:56:10.941Z [info]: Database successfully connected
+2019-09-11T18:56:11.541Z [info]: 62 command modules loaded
+2019-09-11T18:56:13.673Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:56:40.933Z [info]: Database successfully connected
+2019-09-11T18:56:41.815Z [info]: 62 command modules loaded
+2019-09-11T18:56:43.216Z [info]: ameannie has sucessfully logged in.
+2019-09-11T18:56:55.234Z [info]: Database successfully connected
+2019-09-11T18:56:55.831Z [info]: 62 command modules loaded
+2019-09-11T18:56:57.332Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:01:53.199Z [info]: Database successfully connected
+2019-09-11T19:01:53.921Z [info]: 62 command modules loaded
+2019-09-11T19:01:55.310Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:02:12.584Z [info]: ametotaiyou#8308 has received 14 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:02:12.585Z [info]: Old exp: 533977
+2019-09-11T19:02:12.585Z [info]: New exp: 534117
+2019-09-11T19:02:12.589Z [info]: ametotaiyou#8308 has received 140 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:02:12.590Z [info]: ametotaiyou#8308 now has 534117 EXP
+2019-09-11T19:03:04.239Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:03:04.240Z [info]: Old exp: 534117
+2019-09-11T19:03:04.241Z [info]: New exp: 534257
+2019-09-11T19:03:04.241Z [info]: ametotaiyou#8308 has received 140 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:03:04.242Z [info]: ametotaiyou#8308 now has 534257 EXP
+2019-09-11T19:04:46.608Z [info]: Database successfully connected
+2019-09-11T19:04:47.124Z [info]: 62 command modules loaded
+2019-09-11T19:04:50.333Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:07:50.823Z [info]: Database successfully connected
+2019-09-11T19:07:51.467Z [info]: 62 command modules loaded
+2019-09-11T19:07:52.797Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:09:58.349Z [info]: Database successfully connected
+2019-09-11T19:09:59.011Z [info]: 62 command modules loaded
+2019-09-11T19:10:00.383Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:10:33.596Z [info]: Database successfully connected
+2019-09-11T19:10:34.136Z [info]: 62 command modules loaded
+2019-09-11T19:10:35.580Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:11:41.022Z [info]: ametotaiyou#8308 has received 11 AC in 🍉ˋˏ┋  sandbox
+2019-09-11T19:11:41.024Z [info]: Old exp: 534257
+2019-09-11T19:11:41.024Z [info]: New exp: 534267
+2019-09-11T19:11:41.028Z [info]: ametotaiyou#8308 has received 10 EXP in 🍉ˋˏ┋  sandbox
+2019-09-11T19:11:41.028Z [info]: ametotaiyou#8308 now has 534267 EXP
+2019-09-11T19:12:25.361Z [info]: ametotaiyou#8308 has received 10 AC in 🍉ˋˏ┋  sandbox
+2019-09-11T19:12:25.361Z [info]: Old exp: 534267
+2019-09-11T19:12:25.361Z [info]: New exp: 534281
+2019-09-11T19:12:25.362Z [info]: ametotaiyou#8308 has received 14 EXP in 🍉ˋˏ┋  sandbox
+2019-09-11T19:12:25.363Z [info]: ametotaiyou#8308 now has 534281 EXP
+2019-09-11T19:13:26.421Z [info]: ametotaiyou#8308 has received 11 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:13:26.421Z [info]: Old exp: 534281
+2019-09-11T19:13:26.422Z [info]: New exp: 534293
+2019-09-11T19:13:26.422Z [info]: ametotaiyou#8308 has received 12 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:13:26.423Z [info]: ametotaiyou#8308 now has 534293 EXP
+2019-09-11T19:14:15.461Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:14:15.462Z [info]: Old exp: 534293
+2019-09-11T19:14:15.462Z [info]: New exp: 534423
+2019-09-11T19:14:15.464Z [info]: ametotaiyou#8308 has received 130 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:14:15.464Z [info]: ametotaiyou#8308 now has 534423 EXP
+2019-09-11T19:22:17.044Z [info]: Database successfully connected
+2019-09-11T19:22:17.605Z [info]: 62 command modules loaded
+2019-09-11T19:22:18.974Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:22:42.111Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:22:42.112Z [info]: Old exp: 534423
+2019-09-11T19:22:42.113Z [info]: New exp: 534543
+2019-09-11T19:22:42.119Z [info]: ametotaiyou#8308 has received 120 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:22:42.120Z [info]: ametotaiyou#8308 now has 534543 EXP
+2019-09-11T19:22:53.126Z [info]: Database successfully connected
+2019-09-11T19:22:53.680Z [info]: 62 command modules loaded
+2019-09-11T19:42:04.459Z [info]: Database successfully connected
+2019-09-11T19:42:04.985Z [info]: 62 command modules loaded
+2019-09-11T19:42:07.407Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:42:26.695Z [info]: ametotaiyou#8308 has received 150 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:42:26.696Z [info]: Old exp: 534543
+2019-09-11T19:42:26.697Z [info]: New exp: 534693
+2019-09-11T19:42:26.705Z [info]: ametotaiyou#8308 has received 150 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:42:26.712Z [info]: ametotaiyou#8308 now has 534693 EXP
+2019-09-11T19:42:48.219Z [info]: ametotaiyou#8308 has ran balance.
+2019-09-11T19:43:22.120Z [info]: Database successfully connected
+2019-09-11T19:43:22.677Z [info]: 62 command modules loaded
+2019-09-11T19:43:24.124Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:43:31.811Z [info]: ametotaiyou#8308 has received 150 AC in 🍉ˋˏ┋  developer
+2019-09-11T19:43:31.812Z [info]: Old exp: 534693
+2019-09-11T19:43:31.815Z [info]: New exp: 534853
+2019-09-11T19:43:31.819Z [info]: ametotaiyou#8308 has received 160 EXP in 🍉ˋˏ┋  developer
+2019-09-11T19:43:31.819Z [info]: ametotaiyou#8308 now has 534853 EXP
+2019-09-11T19:43:54.313Z [info]: Database successfully connected
+2019-09-11T19:43:55.248Z [info]: 62 command modules loaded
+2019-09-11T19:43:57.564Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:44:48.805Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:49.849Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:50.993Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:52.085Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:55.394Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:56.420Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:57.478Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:58.493Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:44:59.595Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:45:00.686Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:45:14.645Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:165:33)
+2019-09-11T19:45:15.466Z [info]: ametotaiyou#8308 has ran collection.
+2019-09-11T19:46:28.548Z [info]: Database successfully connected
+2019-09-11T19:46:29.663Z [info]: 62 command modules loaded
+2019-09-11T19:46:31.098Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:46:36.571Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:165:33)
+2019-09-11T19:46:37.333Z [info]: ametotaiyou#8308 has ran collection.
+2019-09-11T19:47:26.619Z [info]: Database successfully connected
+2019-09-11T19:47:27.160Z [info]: 62 command modules loaded
+2019-09-11T19:47:28.502Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:47:50.001Z [info]: Database successfully connected
+2019-09-11T19:47:50.540Z [info]: 62 command modules loaded
+2019-09-11T19:47:52.984Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:48:04.778Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:166:34)
+2019-09-11T19:48:26.615Z [info]: Database successfully connected
+2019-09-11T19:48:27.179Z [info]: 62 command modules loaded
+2019-09-11T19:48:29.470Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:48:42.764Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:166:34)
+2019-09-11T19:49:27.774Z [info]: Database successfully connected
+2019-09-11T19:49:28.531Z [info]: 62 command modules loaded
+2019-09-11T19:49:29.919Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:49:34.010Z [info]: Database successfully connected
+2019-09-11T19:49:34.669Z [info]: 62 command modules loaded
+2019-09-11T19:49:36.598Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:49:47.086Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:50:11.519Z [info]: Database successfully connected
+2019-09-11T19:50:12.045Z [info]: 62 command modules loaded
+2019-09-11T19:50:13.722Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:50:15.587Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:51:38.804Z [info]: Database successfully connected
+2019-09-11T19:51:39.400Z [info]: 62 command modules loaded
+2019-09-11T19:51:40.759Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:51:43.648Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:52:38.770Z [info]: Database successfully connected
+2019-09-11T19:52:39.421Z [info]: 62 command modules loaded
+2019-09-11T19:52:40.788Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:55:10.550Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:55:28.823Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:55:29.851Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:55:30.964Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:55:32.015Z [error]: Database._query() has failed to run. > SQLITE_BUSY: database is locked
+2019-09-11T19:55:49.249Z [info]: Database successfully connected
+2019-09-11T19:55:49.900Z [info]: 62 command modules loaded
+2019-09-11T19:55:51.239Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:56:10.074Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:57:08.234Z [info]: Database successfully connected
+2019-09-11T19:57:08.893Z [info]: 62 command modules loaded
+2019-09-11T19:57:10.257Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:57:16.991Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:167:34)
+2019-09-11T19:57:45.360Z [info]: Database successfully connected
+2019-09-11T19:57:45.915Z [info]: 62 command modules loaded
+2019-09-11T19:57:47.239Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:57:59.947Z [info]: Database successfully connected
+2019-09-11T19:58:00.578Z [info]: 62 command modules loaded
+2019-09-11T19:58:02.337Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:58:03.860Z [info]: Database successfully connected
+2019-09-11T19:58:04.387Z [info]: 62 command modules loaded
+2019-09-11T19:58:07.052Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:58:13.595Z [info]: Database successfully connected
+2019-09-11T19:58:14.169Z [info]: 62 command modules loaded
+2019-09-11T19:58:16.035Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:59:08.035Z [info]: ametotaiyou#8308 has received 12 AC in music
+2019-09-11T19:59:08.038Z [info]: Old exp: 534853
+2019-09-11T19:59:08.039Z [info]: New exp: 534869
+2019-09-11T19:59:08.043Z [info]: ametotaiyou#8308 has received 16 EXP in music
+2019-09-11T19:59:08.044Z [info]: ametotaiyou#8308 now has 534869 EXP
+2019-09-11T19:59:29.895Z [info]: Database successfully connected
+2019-09-11T19:59:30.578Z [info]: 62 command modules loaded
+2019-09-11T19:59:33.213Z [info]: Database successfully connected
+2019-09-11T19:59:33.827Z [info]: 62 command modules loaded
+2019-09-11T19:59:37.141Z [info]: ameannie has sucessfully logged in.
+2019-09-11T19:59:49.363Z [info]: ametotaiyou#8308 has received 6.5 AC in general
+2019-09-11T19:59:49.364Z [info]: Old exp: 534869
+2019-09-11T19:59:49.364Z [info]: New exp: 534885
+2019-09-11T19:59:49.367Z [info]: ametotaiyou#8308 has received 16 EXP in general
+2019-09-11T19:59:49.368Z [info]: ametotaiyou#8308 now has 534885 EXP
+2019-09-11T20:02:30.551Z [info]: Database successfully connected
+2019-09-11T20:02:31.143Z [info]: 62 command modules loaded
+2019-09-11T20:02:33.037Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:02:39.450Z [info]: ametotaiyou#8308 has received 7.5 AC in general
+2019-09-11T20:02:39.451Z [info]: Old exp: 534885
+2019-09-11T20:02:39.451Z [info]: New exp: 534897
+2019-09-11T20:02:39.454Z [info]: ametotaiyou#8308 has received 12 EXP in general
+2019-09-11T20:02:39.454Z [info]: ametotaiyou#8308 now has 534897 EXP
+2019-09-11T20:03:13.012Z [info]: Database successfully connected
+2019-09-11T20:03:13.702Z [info]: 62 command modules loaded
+2019-09-11T20:03:15.243Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:03:26.922Z [info]: ametotaiyou#8308 has received 11 AC in 🍉ˋˏ┋  developer
+2019-09-11T20:03:26.923Z [info]: Old exp: 534897
+2019-09-11T20:03:26.925Z [info]: New exp: 534910
+2019-09-11T20:03:26.932Z [info]: ametotaiyou#8308 has received 13 EXP in 🍉ˋˏ┋  developer
+2019-09-11T20:03:26.933Z [info]: ametotaiyou#8308 now has 534910 EXP
+2019-09-11T20:04:41.144Z [info]: Database successfully connected
+2019-09-11T20:04:41.715Z [info]: 62 command modules loaded
+2019-09-11T20:04:43.872Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:04:52.465Z [info]: Database successfully connected
+2019-09-11T20:04:53.271Z [info]: 62 command modules loaded
+2019-09-11T20:04:54.828Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:05:05.421Z [info]: ametotaiyou#8308 has received 18 AC in general
+2019-09-11T20:07:41.701Z [info]: Database successfully connected
+2019-09-11T20:07:42.296Z [info]: 62 command modules loaded
+2019-09-11T20:07:43.679Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:07:49.692Z [info]: ametotaiyou#8308 has received 19.5 AC in general
+2019-09-11T20:09:11.873Z [info]: Database successfully connected
+2019-09-11T20:09:12.607Z [info]: 62 command modules loaded
+2019-09-11T20:09:14.052Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:09:24.220Z [info]: ametotaiyou#8308 has received 24 AC in general
+2019-09-11T20:10:18.930Z [info]: Database successfully connected
+2019-09-11T20:10:19.513Z [info]: 62 command modules loaded
+2019-09-11T20:10:20.840Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:10:30.350Z [info]: Database successfully connected
+2019-09-11T20:10:30.958Z [info]: 62 command modules loaded
+2019-09-11T20:10:32.519Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:10:40.301Z [info]: Database successfully connected
+2019-09-11T20:10:40.977Z [info]: 62 command modules loaded
+2019-09-11T20:10:42.374Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:10:50.361Z [info]: ametotaiyou#8308 has received 21 AC in general
+2019-09-11T20:12:51.603Z [info]: Database successfully connected
+2019-09-11T20:12:52.375Z [info]: 62 command modules loaded
+2019-09-11T20:12:53.860Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:13:02.005Z [info]: ametotaiyou#8308 has received 16.5 AC in general
+2019-09-11T20:13:35.919Z [info]: Database successfully connected
+2019-09-11T20:13:36.556Z [info]: 62 command modules loaded
+2019-09-11T20:13:37.986Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:13:46.973Z [info]: ametotaiyou#8308 has received 22.5 AC in general
+2019-09-11T20:14:33.619Z [info]: Database successfully connected
+2019-09-11T20:14:34.198Z [info]: 62 command modules loaded
+2019-09-11T20:14:36.619Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:14:56.603Z [info]: ametotaiyou#8308 has received 19.5 AC in general
+2019-09-11T20:18:27.969Z [info]: Database successfully connected
+2019-09-11T20:18:28.588Z [info]: 62 command modules loaded
+2019-09-11T20:18:29.998Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:18:32.133Z [info]: ametotaiyou#8308 has received 22.5 AC in general
+2019-09-11T20:19:07.123Z [info]: Database successfully connected
+2019-09-11T20:19:07.797Z [info]: 62 command modules loaded
+2019-09-11T20:19:09.153Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:19:14.206Z [info]: ametotaiyou#8308 has received 19.5 AC in general
+2019-09-11T20:19:53.692Z [info]: Database successfully connected
+2019-09-11T20:19:54.585Z [info]: 62 command modules loaded
+2019-09-11T20:19:56.073Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:20:02.078Z [info]: ametotaiyou#8308 has received 21 AC in general
+2019-09-11T20:21:05.207Z [info]: Database successfully connected
+2019-09-11T20:21:05.768Z [info]: 62 command modules loaded
+2019-09-11T20:21:07.135Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:24:53.411Z [info]: Database successfully connected
+2019-09-11T20:24:54.284Z [info]: 62 command modules loaded
+2019-09-11T20:24:55.930Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:25:24.356Z [info]: Database successfully connected
+2019-09-11T20:25:25.066Z [info]: 62 command modules loaded
+2019-09-11T20:25:26.380Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:25:33.515Z [info]: ametotaiyou#8308 has received 18 AC in general
+2019-09-11T20:25:33.517Z [info]: Old exp: 534910
+2019-09-11T20:25:33.518Z [info]: New exp: 534923
+2019-09-11T20:25:33.525Z [info]: ametotaiyou#8308 has received 13 EXP in general
+2019-09-11T20:25:33.527Z [info]: ametotaiyou#8308 now has 534923 EXP
+2019-09-11T20:26:08.882Z [info]: Database successfully connected
+2019-09-11T20:26:09.451Z [info]: 62 command modules loaded
+2019-09-11T20:26:10.854Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:26:29.111Z [info]: ametotaiyou#8308 has received 21 AC in general
+2019-09-11T20:26:29.113Z [info]: Old exp: 534923
+2019-09-11T20:26:29.114Z [info]: New exp: 534935
+2019-09-11T20:26:29.119Z [info]: ametotaiyou#8308 has received 12 EXP in general
+2019-09-11T20:26:29.120Z [info]: ametotaiyou#8308 now has 534935 EXP
+2019-09-11T20:27:19.213Z [info]: Database successfully connected
+2019-09-11T20:27:19.960Z [info]: 62 command modules loaded
+2019-09-11T20:27:21.891Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:27:29.541Z [info]: Database successfully connected
+2019-09-11T20:27:30.127Z [info]: 62 command modules loaded
+2019-09-11T20:27:32.585Z [info]: Database successfully connected
+2019-09-11T20:27:33.240Z [info]: 62 command modules loaded
+2019-09-11T20:27:36.612Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:27:42.062Z [info]: ametotaiyou#8308 has received 22.5 AC in general
+2019-09-11T20:27:42.063Z [info]: Old exp: 534935
+2019-09-11T20:27:42.064Z [info]: New exp: 534950
+2019-09-11T20:27:42.067Z [info]: ametotaiyou#8308 has received 15 EXP in general
+2019-09-11T20:27:42.068Z [info]: ametotaiyou#8308 now has 534950 EXP
+2019-09-11T20:28:24.798Z [info]: Database successfully connected
+2019-09-11T20:28:25.377Z [info]: 62 command modules loaded
+2019-09-11T20:28:27.442Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:28:33.555Z [info]: Database successfully connected
+2019-09-11T20:28:34.116Z [info]: 62 command modules loaded
+2019-09-11T20:28:35.442Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:28:55.102Z [info]: Database successfully connected
+2019-09-11T20:28:55.656Z [info]: 62 command modules loaded
+2019-09-11T20:28:56.975Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:29:15.467Z [info]: Database successfully connected
+2019-09-11T20:29:16.024Z [info]: 62 command modules loaded
+2019-09-11T20:29:17.357Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:29:30.416Z [info]: Database successfully connected
+2019-09-11T20:29:31.078Z [info]: 62 command modules loaded
+2019-09-11T20:29:33.066Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:30:08.781Z [info]: Database successfully connected
+2019-09-11T20:30:09.332Z [info]: 62 command modules loaded
+2019-09-11T20:30:10.769Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:30:27.997Z [info]: Database successfully connected
+2019-09-11T20:30:28.539Z [info]: 62 command modules loaded
+2019-09-11T20:30:29.904Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:30:32.623Z [info]: Database successfully connected
+2019-09-11T20:30:33.446Z [info]: 62 command modules loaded
+2019-09-11T20:30:35.106Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:30:44.110Z [info]: Database successfully connected
+2019-09-11T20:30:44.660Z [info]: 62 command modules loaded
+2019-09-11T20:30:46.049Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:30:49.950Z [info]: Database successfully connected
+2019-09-11T20:30:50.507Z [info]: 62 command modules loaded
+2019-09-11T20:30:52.268Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:31:17.100Z [info]: Database successfully connected
+2019-09-11T20:31:17.677Z [info]: 62 command modules loaded
+2019-09-11T20:31:20.866Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:31:31.025Z [info]: ametotaiyou#8308 has received 22.5 AC in general
+2019-09-11T20:31:31.027Z [info]: Old exp: 534950
+2019-09-11T20:31:31.027Z [info]: New exp: 534972
+2019-09-11T20:31:31.034Z [info]: ametotaiyou#8308 has received 22.5 EXP in general
+2019-09-11T20:31:31.035Z [info]: ametotaiyou#8308 now has 534972 EXP
+2019-09-11T20:31:59.761Z [info]: Database successfully connected
+2019-09-11T20:32:00.798Z [info]: 62 command modules loaded
+2019-09-11T20:32:02.403Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:32:28.836Z [info]: Database successfully connected
+2019-09-11T20:32:29.394Z [info]: 62 command modules loaded
+2019-09-11T20:32:30.707Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:32:41.166Z [info]: ametotaiyou#8308 has received 15 AC in general
+2019-09-11T20:32:41.168Z [info]: Old exp: 534972
+2019-09-11T20:32:41.168Z [info]: New exp: 534991
+2019-09-11T20:32:41.176Z [info]: ametotaiyou#8308 has received 19.5 EXP in general
+2019-09-11T20:32:41.177Z [info]: ametotaiyou#8308 now has 534991 EXP
+2019-09-11T20:33:41.469Z [info]: Database successfully connected
+2019-09-11T20:33:42.065Z [info]: 62 command modules loaded
+2019-09-11T20:33:43.362Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:34:11.131Z [info]: Database successfully connected
+2019-09-11T20:34:11.950Z [info]: 62 command modules loaded
+2019-09-11T20:34:14.279Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:34:16.331Z [info]: ametotaiyou#8308 has received 19.5 AC in general
+2019-09-11T20:34:16.334Z [info]: Old exp: 534991
+2019-09-11T20:34:16.335Z [info]: New exp: 535012
+2019-09-11T20:34:16.341Z [info]: ametotaiyou#8308 has received 21 EXP in general
+2019-09-11T20:34:16.342Z [info]: ametotaiyou#8308 now has 535012 EXP
+2019-09-11T20:35:50.892Z [info]: Database successfully connected
+2019-09-11T20:35:51.488Z [info]: 62 command modules loaded
+2019-09-11T20:35:52.801Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:35:56.748Z [info]: ametotaiyou#8308 has received 16.5 AC in general
+2019-09-11T20:35:56.751Z [info]: Old exp: 535012
+2019-09-11T20:35:56.752Z [info]: New exp: 535027
+2019-09-11T20:35:56.761Z [info]: ametotaiyou#8308 has received 15 EXP in general
+2019-09-11T20:35:56.763Z [info]: ametotaiyou#8308 now has 535027 EXP
+2019-09-11T20:36:44.529Z [info]: ametotaiyou#8308 has received 15 AC in general
+2019-09-11T20:36:44.532Z [info]: Old exp: 535027
+2019-09-11T20:36:44.533Z [info]: New exp: 535043
+2019-09-11T20:36:44.536Z [info]: ametotaiyou#8308 has received 16.5 EXP in general
+2019-09-11T20:36:44.536Z [info]: ametotaiyou#8308 now has 535043 EXP
+2019-09-11T20:37:37.533Z [info]: ametotaiyou#8308 has received 19.5 AC in general
+2019-09-11T20:37:37.549Z [info]: Old exp: 535043
+2019-09-11T20:37:37.550Z [info]: New exp: 535067
+2019-09-11T20:37:37.552Z [info]: ametotaiyou#8308 has received 24 EXP in general
+2019-09-11T20:37:37.555Z [info]: ametotaiyou#8308 now has 535067 EXP
+2019-09-11T20:38:19.217Z [info]: ametotaiyou#8308 has received 52.5 AC in lewd  general
+2019-09-11T20:38:19.218Z [info]: Old exp: 535067
+2019-09-11T20:38:19.219Z [info]: New exp: 535081
+2019-09-11T20:38:19.220Z [info]: ametotaiyou#8308 has received 14 EXP in lewd  general
+2019-09-11T20:38:19.221Z [info]: ametotaiyou#8308 now has 535081 EXP
+2019-09-11T20:38:51.201Z [info]: ametotaiyou#8308 has received 11 AC in 🍉ˋˏ┋  developer
+2019-09-11T20:38:51.202Z [info]: Old exp: 535081
+2019-09-11T20:38:51.203Z [info]: New exp: 535096
+2019-09-11T20:38:51.208Z [info]: ametotaiyou#8308 has received 15 EXP in 🍉ˋˏ┋  developer
+2019-09-11T20:38:51.209Z [info]: ametotaiyou#8308 now has 535096 EXP
+2019-09-11T20:40:36.623Z [info]: Database successfully connected
+2019-09-11T20:40:37.247Z [info]: 62 command modules loaded
+2019-09-11T20:50:58.174Z [info]: Database successfully connected
+2019-09-11T20:50:58.744Z [info]: 62 command modules loaded
+2019-09-11T20:51:00.157Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:51:15.995Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:163:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T20:53:46.239Z [info]: Database successfully connected
+2019-09-11T20:53:47.137Z [info]: 62 command modules loaded
+2019-09-11T20:53:48.903Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:53:55.059Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:163:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T20:54:45.321Z [info]: Database successfully connected
+2019-09-11T20:54:45.911Z [info]: 62 command modules loaded
+2019-09-11T20:54:47.283Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:54:53.093Z [info]: Database successfully connected
+2019-09-11T20:54:53.725Z [info]: 62 command modules loaded
+2019-09-11T20:54:55.099Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:56:27.271Z [info]: Database successfully connected
+2019-09-11T20:56:28.029Z [info]: 62 command modules loaded
+2019-09-11T20:56:29.545Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:57:07.933Z [info]: Database successfully connected
+2019-09-11T20:57:08.579Z [info]: 62 command modules loaded
+2019-09-11T20:57:10.671Z [info]: Database successfully connected
+2019-09-11T20:57:11.252Z [info]: 62 command modules loaded
+2019-09-11T20:57:15.034Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:57:40.404Z [info]: Database successfully connected
+2019-09-11T20:57:40.979Z [info]: 62 command modules loaded
+2019-09-11T20:57:42.309Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:57:51.215Z [info]: ametotaiyou#8308 has received 14 AC in music
+2019-09-11T20:57:51.216Z [info]: A bonus factor of 1 was applied
+2019-09-11T20:57:51.218Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot set property 'currentexp' of undefined
+    at Experience.updatingExp (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:99:27)
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:171:15)
+2019-09-11T20:58:22.471Z [info]: Database successfully connected
+2019-09-11T20:58:23.269Z [info]: 62 command modules loaded
+2019-09-11T20:58:24.743Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:58:28.476Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:163:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T20:58:37.489Z [info]: Database successfully connected
+2019-09-11T20:58:38.144Z [info]: 62 command modules loaded
+2019-09-11T20:58:39.914Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:58:41.515Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:164:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T20:59:01.958Z [info]: Database successfully connected
+2019-09-11T20:59:02.581Z [info]: 62 command modules loaded
+2019-09-11T20:59:03.893Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:59:08.653Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:165:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T20:59:46.014Z [info]: Database successfully connected
+2019-09-11T20:59:46.666Z [info]: 62 command modules loaded
+2019-09-11T20:59:48.170Z [info]: ameannie has sucessfully logged in.
+2019-09-11T20:59:55.044Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:164:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T21:01:24.428Z [info]: Database successfully connected
+2019-09-11T21:01:25.031Z [info]: 62 command modules loaded
+2019-09-11T21:01:26.359Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:01:30.732Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:164:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T21:03:30.083Z [info]: Database successfully connected
+2019-09-11T21:03:30.666Z [info]: 62 command modules loaded
+2019-09-11T21:03:32.134Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:03:34.324Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:164:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+2019-09-11T21:04:03.483Z [info]: Database successfully connected
+2019-09-11T21:04:04.214Z [info]: 62 command modules loaded
+2019-09-11T21:04:05.605Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:04:15.461Z [info]: Database successfully connected
+2019-09-11T21:04:16.050Z [info]: 62 command modules loaded
+2019-09-11T21:04:17.467Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:04:17.948Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:164:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+    at module.exports (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\events\message.js:40:28)
+2019-09-11T21:04:38.757Z [info]: Database successfully connected
+2019-09-11T21:04:39.319Z [info]: 62 command modules loaded
+2019-09-11T21:04:40.700Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:04:51.236Z [info]: Database successfully connected
+2019-09-11T21:04:51.787Z [info]: 62 command modules loaded
+2019-09-11T21:04:53.139Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:05:04.655Z [info]: ametotaiyou#8308 has received 22.5 AC in general
+2019-09-11T21:05:04.656Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:05:04.658Z [info]: Old exp: 535096
+2019-09-11T21:05:04.659Z [info]: New exp: 535115
+2019-09-11T21:05:04.667Z [info]: ametotaiyou#8308 has received 19.5 EXP in general
+2019-09-11T21:05:04.668Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:05:04.669Z [info]: ametotaiyou#8308 now has 535115 EXP
+2019-09-11T21:05:30.151Z [info]: Database successfully connected
+2019-09-11T21:05:30.772Z [info]: 62 command modules loaded
+2019-09-11T21:05:32.071Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:05:38.888Z [info]: Database successfully connected
+2019-09-11T21:05:39.496Z [info]: 62 command modules loaded
+2019-09-11T21:05:40.776Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:06:05.573Z [info]: Database successfully connected
+2019-09-11T21:06:06.194Z [info]: 62 command modules loaded
+2019-09-11T21:06:08.913Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:06:41.319Z [info]: Database successfully connected
+2019-09-11T21:06:41.895Z [info]: 62 command modules loaded
+2019-09-11T21:06:43.385Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:06:51.994Z [info]: ametotaiyou#8308 has received 21 AC in general
+2019-09-11T21:06:51.996Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:06:51.997Z [info]: Old exp: 535115
+2019-09-11T21:06:51.998Z [info]: New exp: 535131
+2019-09-11T21:06:52.006Z [info]: ametotaiyou#8308 has received 16.5 EXP in general
+2019-09-11T21:06:52.007Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:06:52.007Z [info]: ametotaiyou#8308 now has 535131 EXP
+2019-09-11T21:07:07.491Z [info]: Database successfully connected
+2019-09-11T21:07:08.041Z [info]: 62 command modules loaded
+2019-09-11T21:07:09.314Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:07:18.326Z [info]: Database successfully connected
+2019-09-11T21:07:19.088Z [info]: 62 command modules loaded
+2019-09-11T21:07:20.408Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:08:20.256Z [info]: ametotaiyou#8308 has received 56 AC in lewd  general
+2019-09-11T21:08:20.260Z [info]: A bonus factor of 3.5 was applied
+2019-09-11T21:08:20.261Z [info]: Old exp: 535131
+2019-09-11T21:08:20.262Z [info]: New exp: 535142
+2019-09-11T21:08:20.267Z [info]: ametotaiyou#8308 has received 11 EXP in lewd  general
+2019-09-11T21:08:20.268Z [info]: A bonus factor of 1 was applied
+2019-09-11T21:08:20.271Z [info]: ametotaiyou#8308 now has 535142 EXP
+2019-09-11T21:08:41.289Z [info]: ametotaiyou#8308 has received 15 AC in general
+2019-09-11T21:08:41.290Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:08:41.291Z [info]: Old exp: 535142
+2019-09-11T21:08:41.294Z [info]: New exp: 535157
+2019-09-11T21:08:41.295Z [info]: ametotaiyou#8308 has received 15 EXP in general
+2019-09-11T21:08:41.296Z [info]: A bonus factor of 1.5 was applied
+2019-09-11T21:08:41.296Z [info]: ametotaiyou#8308 now has 535157 EXP
+2019-09-11T21:08:56.820Z [error]: Failed to parse exp in ExperienceFormula.js. > TypeError: Cannot read property 'exp' of undefined
+    at Experience.runAndUpdate (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\ExperienceFormula.js:165:30)
+    at Worker.default (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\utils\Worker.js:61:59)
+    at module.exports (C:\Users\Lena\Pictures\01 Projects\AAU\anniediscord\core\events\message.js:40:28)
+2019-09-11T21:09:27.803Z [info]: Database successfully connected
+2019-09-11T21:09:28.493Z [info]: 62 command modules loaded
+2019-09-11T21:09:30.077Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:09:39.109Z [info]: Database successfully connected
+2019-09-11T21:09:39.696Z [info]: 62 command modules loaded
+2019-09-11T21:09:40.971Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:09:44.611Z [info]: ametotaiyou#8308 has received 15 AC in 🍉ˋˏ┋  sandbox
+2019-09-11T21:09:44.613Z [info]: A bonus factor of 1 was applied
+2019-09-11T21:09:44.615Z [info]: Old exp: 535157
+2019-09-11T21:09:44.616Z [info]: New exp: 535167
+2019-09-11T21:09:44.621Z [info]: ametotaiyou#8308 has received 10 EXP in 🍉ˋˏ┋  sandbox
+2019-09-11T21:09:44.621Z [info]: A bonus factor of 1 was applied
+2019-09-11T21:09:44.623Z [info]: ametotaiyou#8308 now has 535167 EXP
+2019-09-11T21:10:57.664Z [info]: Database successfully connected
+2019-09-11T21:10:58.240Z [info]: 62 command modules loaded
+2019-09-11T21:10:59.545Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:11:51.387Z [info]: Database successfully connected
+2019-09-11T21:11:51.951Z [info]: 62 command modules loaded
+2019-09-11T21:11:53.380Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:16:02.832Z [info]: ametotaiyou#8308: received 15 AC in 🍉ˋˏ┋  sandbox
+2019-09-11T21:16:02.835Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-11T21:16:02.836Z [info]: Old exp: 535167
+2019-09-11T21:16:02.837Z [info]: New exp: 535182
+2019-09-11T21:16:02.844Z [info]: ametotaiyou#8308: received 15 EXP in 🍉ˋˏ┋  sandbox
+2019-09-11T21:16:02.845Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-11T21:16:02.846Z [info]: ametotaiyou#8308: 535182 EXP
+2019-09-11T21:16:38.919Z [info]: Database successfully connected
+2019-09-11T21:16:39.698Z [info]: 62 command modules loaded
+2019-09-11T21:16:41.070Z [info]: ameannie has sucessfully logged in.
+2019-09-11T21:17:16.330Z [info]: ametotaiyou#8308: received 15 AC in 🍉ˋˏ┋  sandbox
+2019-09-11T21:17:16.335Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-11T21:17:16.345Z [info]: ametotaiyou#8308: received 12 EXP in 🍉ˋˏ┋  sandbox
+2019-09-11T21:17:16.346Z [info]: ametotaiyou#8308: received bonus factor of 1
+2019-09-11T21:17:16.347Z [info]: ametotaiyou#8308: 535194 EXP
+2019-09-11T21:17:29.355Z [info]: ametotaiyou#8308: received 21 AC in general
+2019-09-11T21:17:29.356Z [info]: ametotaiyou#8308: received bonus factor of 1.5
+2019-09-11T21:17:29.358Z [info]: ametotaiyou#8308: received 22.5 EXP in general
+2019-09-11T21:17:29.359Z [info]: ametotaiyou#8308: received bonus factor of 1.5
+2019-09-11T21:17:29.359Z [info]: ametotaiyou#8308: 535216 EXP
+2019-09-11T21:17:41.635Z [info]: Database successfully connected
+2019-09-11T21:17:42.198Z [info]: 62 command modules loaded
+2019-09-11T21:17:45.415Z [info]: ameannie has sucessfully logged in.
