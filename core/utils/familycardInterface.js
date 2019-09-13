@@ -1,12 +1,10 @@
-const { Canvas } = require(`canvas-constructor`) 
+const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
-const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const formatManager = require(`./formatManager`)
 const rankManager = require(`./ranksManager`)
 const palette = require(`./colorset`)
 
@@ -17,180 +15,140 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `Robot
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
-async function family(stacks, member) {
-	const configProfile = new profileManager()
-	const collection = new databaseManager(member.id)
-	const configRank = new rankManager(stacks.bot, stacks.message)
-    const configFormat = new formatManager(stacks.message)
+async function relation(stacks, member) {
+    const configProfile = new profileManager()
+    const collection = new databaseManager(member.id)
+    const configRank = new rankManager(stacks.bot, stacks.message)
 
-	/**
+    /**
      * id = userid, cur = currentexp, max = maxexp,
      * crv = expcurve, lvl = userlevel, ac = userartcoins,
      * rep = userreputation, des = userdescription, ui = userinterfacemode
      * clr = hex code of user's rank color.
      */
-	const userdata = await collection.userdata
-	const user = {
-		id: userdata.userId,
-		cur: userdata.currentexp,
-		max: userdata.maxexp,
-		crv: userdata.nextexpcurve,
-		lvl: userdata.level,
-		ac: userdata.artcoins,
-		rep: userdata.reputations,
-		des: userdata.description,
-		ui: userdata.interfacemode,
-		prt: userdata.partner,
-		rtg: userdata.rating,
-		likecount: userdata.liked_counts,
-		cov: userdata.cover,
-		log: userdata.last_login,
-		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
-		},
-	}
-	const relations = await collection.relationships
-
-	const familyrelations = relations.filter((e) => {
-		if (e.theirRelation == `bestie`) return false
-		if (e.theirRelation == `soulmate`) return false
-		if (e.theirRelation == `senpai`) return false
-		if (e.theirRelation == `kouhai`) return false
-		return true
-	})
-
-	const switchColor = {
-		"dark_profileskin": {
-			base: palette.nightmode,
-			border: palette.deepnight,
-			text: palette.white,
-			secondaryText: palette.lightgray
-		},
-
-		"light_profileskin": {
-			base: palette.white,
-			border: palette.lightgray,
-			text: palette.darkmatte,
-			secondaryText: palette.blankgray
-		}
-	}
-
-	let canvas_x = 320//300
-	let canvas_y = 420//400
-	let startPos_x = 10
-	let startPos_y = 10
-	let baseWidth = canvas_x - 20
-	let baseHeight = canvas_y - 20
-
-	const {
-		body: avatar
-	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const usercolor = configProfile.checkInterface(user.ui, member)
-
-	let canv = new Canvas(canvas_x, canvas_y) // x y
-
-	/**
-	 *    CARD BASE
-	 */
-	canv = canv
-        .setStroke(switchColor[usercolor].secondaryText)
-        .setShadowColor(`rgba(28, 28, 28, 1)`)
-		.setShadowOffsetY(5)
-		.setShadowBlur(10)
-		.setColor(switchColor[usercolor].base)
-		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
-		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
-		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
-		.setShadowBlur(0)
-		.setShadowOffsetY(0)
-		.save()
-
-	/**
-	 *    USER AVATAR
-	 */
-	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
-
-	/**
-	 *    TITLE BAR
-	 */
-		.setColor(switchColor[usercolor].secondaryText)
-		.setTextAlign(`left`)
-		.setTextFont(`11pt RobotoBold`)
-		.addText(`Relationship`, 55, 35)
-		.setColor(switchColor[usercolor].border)
-		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
-
-    const leftNode = (username, avatar, relation, x, y) => {
-        if (member.user.username==username) {
-            canv.setColor(user.clr)
-                .addCircle(x + 23, y + 19, 22)
-        }
-        canv.setColor(switchColor[usercolor].secondaryText)
-            .addRoundImage(avatar, x + 4, y, 38, 38, 19)
-            .setColor(switchColor[usercolor].secondaryText)
-            .setTextAlign(`right`)
-            .setTextFont(`10pt RobotoBold`)
-            .addText(username, x, y + 35)
-            .setTextFont(`5pt RobotoBold`)
-            .addText(relation, x + 13, y + 45)
+    const userdata = await collection.userdata
+    const user = {
+        id: userdata.userId,
+        cur: userdata.currentexp,
+        max: userdata.maxexp,
+        crv: userdata.nextexpcurve,
+        lvl: userdata.level,
+        ac: userdata.artcoins,
+        rep: userdata.reputations,
+        des: userdata.description,
+        ui: userdata.interfacemode,
+        prt: userdata.partner,
+        rtg: userdata.rating,
+        likecount: userdata.liked_counts,
+        cov: userdata.cover,
+        log: userdata.last_login,
+        get clr() {
+            return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex() :
+                this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.1)).hex() :
+                    (Color(configRank.ranksCheck(this.lvl).color).desaturate(0.2)).hex()
+        },
     }
-    const rightNode = (username, avatar, relation, x, y) => {
-        if (member.user.username==username) {
-            canv.setColor(user.clr)
-                .addCircle(x + 23, y + 19, 22)
+    const relations = await collection.relationships
+
+    const familyrelations = relations.filter((e) => {
+        if (e.theirRelation == `bestie`) return false
+        if (e.theirRelation == `soulmate`) return false
+        if (e.theirRelation == `senpai`) return false
+        if (e.theirRelation == `kouhai`) return false
+        return true
+    })
+    const switchColor = {
+
+        "dark_profileskin": {
+            base: palette.nightmode,
+            border: palette.deepnight,
+            text: palette.white,
+            secondaryText: palette.lightgray
+        },
+
+        "light_profileskin": {
+            base: palette.white,
+            border: palette.lightgray,
+            text: palette.darkmatte,
+            secondaryText: palette.blankgray
         }
-        canv.setColor(switchColor[usercolor].secondaryText)
+    }
+
+    let canvas_x = 320//300
+    let canvas_y = 420//400
+    let startPos_x = 10
+    let startPos_y = 10
+    let baseWidth = canvas_x - 20
+    let baseHeight = canvas_y - 20
+
+    const {
+        body: avatar
+    } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+    const usercolor = configProfile.checkInterface(user.ui, member)
+
+    let canv = new Canvas(canvas_x, canvas_y) // x y
+
+    /**
+     *    CARD BASE
+     */
+    canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
+        .setShadowOffsetY(5)
+        .setShadowBlur(10)
+        .setColor(switchColor[usercolor].base)
+        .addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
+        .createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
+        .addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
+        .setShadowBlur(0)
+        .setShadowOffsetY(0)
+        .save()
+
+    /**
+     *    USER
+     *    AVATAR
+     */
+    canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
+
+    /**
+     *    TITLE BAR
+     */
+        .setColor(switchColor[usercolor].secondaryText)
+        .setTextAlign(`left`)
+        .setTextFont(`11pt RobotoBold`)
+        .addText(`Family`, 55, 35)
+        .setColor(switchColor[usercolor].border)
+        .addRect(startPos_x, 48, baseWidth, 2) // bottom border
+
+    if (relations.length == 0) {
+        return canv.toBuffer()
+    }
+
+
+    const listEntry = (username, avatar, relation, x, y) => {
+        canv.setColor(user.clr)
             .addRoundImage(avatar, x + 4, y, 38, 38, 19)
-            .setColor(switchColor[usercolor].secondaryText)
             .setTextAlign(`left`)
-            .setTextFont(`10pt RobotoBold`)
-            .addText(username, x + 46, y + 35)
-            .setTextFont(`5pt RobotoBold`)
-            .addText(relation, x + 33, y + 45)
+            .setTextFont(`13pt RobotoBold`)
+            .addText(username, x + 50, y + 20)
+            .setColor(switchColor[usercolor].secondaryText)
+            .setTextFont(`8pt RobotoBold`)
+            .addText(relation, x + 50, y + 34)
     }
 
-    const connectTwoNodes = (x1, y1, x2, y2) => {
-        canv.beginPath()
-            .moveTo(x1 + 23, y1 + 20)
-            .lineTo(x2 + 23, y2 + 20)
-            .stroke()
-    }
-
-
-    //if (relations.length == 0) {
-    //	return canv.toBuffer()
-    //}
-
-    const partner = familyrelations.find((e) => e.theirRelation == `husband` || `wife`)
-    if (partner) {
-        var partnerUser = await stacks.bot.fetchUser(partner.theirUserId)
+    for (var i=0;i<Math.min(familyrelations.length, 6); i++) {
+        var relUser = await stacks.bot.fetchUser(familyrelations[i].theirUserId)
         const {
             body: userAvatar
-        } = await get(partnerUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-        if (familyrelations.length == 1) {
-            connectTwoNodes(100, 170, 170, 170)
-            leftNode(member.user.username, avatar, partner.myRelation, 100, 170)
-            rightNode(partnerUser.username, userAvatar, partner.theirRelation, 170, 170)
-        }
-
+        } = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+        listEntry(relUser.username, userAvatar, familyrelations[i].theirRelation, 30, 70 + i*30)
     }
 
-    //leftNode(`ametotaiyou`,avatar, `Blabla`, 100, 100)
-    //rightNode(`Placeholder`,avatar, `Blabla`, 170, 100)
-    //leftNode(`ametotaiyou`,avatar, `Blabla`, 135, 180)
-    //connectThreeNodes(100, 100, 170, 100, 135, 180)
-    //connectTwoNodes(100, 100, 170, 100)
-
-
     canv.setTextAlign(`left`)
-		.setTextFont(`10pt RobotoBold`)
-		.addText(`I'm in a total of `+relations.length+` relations ❤`, 30, 390)
+        .setTextFont(`10pt RobotoBold`)
+        .addText(`I have a total of `+familyrelations.length+` family members ❤`, 30, 390)
 
 
-	return canv.toBuffer()
+    return canv.toBuffer()
 
 }
 
-module.exports = family
+module.exports = relation

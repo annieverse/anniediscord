@@ -3,10 +3,8 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
-const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const formatManager = require(`./formatManager`)
 const rankManager = require(`./ranksManager`)
 const palette = require(`./colorset`)
 
@@ -17,11 +15,10 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `Robot
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
-async function relation(stacks, member) {
+async function friend(stacks, member) {
     const configProfile = new profileManager()
     const collection = new databaseManager(member.id)
     const configRank = new rankManager(stacks.bot, stacks.message)
-    const configFormat = new formatManager(stacks.message)
 
     /**
      * id = userid, cur = currentexp, max = maxexp,
@@ -53,6 +50,13 @@ async function relation(stacks, member) {
     }
     const relations = await collection.relationships
 
+    const friendrelations = relations.filter((e) => {
+        if (e.theirRelation == `bestie`) return true
+        if (e.theirRelation == `soulmate`) return true
+        if (e.theirRelation == `senpai`) return true
+        if (e.theirRelation == `kouhai`) return true
+        return false
+    })
     const switchColor = {
 
         "dark_profileskin": {
@@ -110,7 +114,7 @@ async function relation(stacks, member) {
         .setColor(switchColor[usercolor].secondaryText)
         .setTextAlign(`left`)
         .setTextFont(`11pt RobotoBold`)
-        .addText(`Relationship`, 55, 35)
+        .addText(`Friends`, 55, 35)
         .setColor(switchColor[usercolor].border)
         .addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
@@ -118,46 +122,33 @@ async function relation(stacks, member) {
         return canv.toBuffer()
     }
 
-    //for now we only do the feature for 1 relationship, so take first entry; but database entry is made to be extendable
-    const relUser = await stacks.bot.fetchUser(relations[0].theirUserId)
-    const {
-        body: userAvatar
-    } = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-    const relationship = {
-        type: relations[0].theirRelation,
-        userId : relations[0].userId,
-        userName: relUser.username,
-        relStart: relations[0].relationStart,
-        relPoints: relations[0].relationPoints,
-        gift: relations[0].gift ? relations[0].gift : `None yet :(`
 
+    const listEntry = (username, avatar, relation, x, y) => {
+        canv.setColor(user.clr)
+            .addRoundImage(avatar, x + 4, y, 38, 38, 19)
+            .setTextAlign(`left`)
+            .setTextFont(`13pt RobotoBold`)
+            .addText(username, x + 50, y + 20)
+            .setColor(switchColor[usercolor].secondaryText)
+            .setTextFont(`8pt RobotoBold`)
+            .addText(relation, x + 50, y + 34)
     }
 
+    for (var i=0;i<Math.min(friendrelations.length, 6); i++) {
+        var relUser = await stacks.bot.fetchUser(friendrelations[i].theirUserId)
+        const {
+            body: userAvatar
+        } = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+        listEntry(relUser.username, userAvatar, friendrelations[i].theirRelation, 30, 70 + i*30)
+    }
 
-    canv.addRoundImage(userAvatar, 40, 60, 60, 60, 30)
-        .setTextAlign(`left`)
-        .setTextFont(`18pt RobotoBold`)
-        .setColor(user.clr)
-        .addText(relationship.userName, 110, 93)
-        .setColor(switchColor[usercolor].secondaryText)
-        .setTextFont(`8pt RobotoBold`)
-        .addText(`My `+relationship.type, 110, 110)
-        .setTextAlign(`right`)
+    canv.setTextAlign(`left`)
         .setTextFont(`10pt RobotoBold`)
-        .addText(`In a relation since`, 283, 163)
-        .addText(`❤ Love points`, 283, 233)
-        .addText(`Recently received gift`, 283, 303)
-        .setColor(user.clr)
-        .setTextFont(`20pt RobotoBold`)
-        .addText(moment(relationship.relStart).fromNow(), 283, 193)
-        .addText(configFormat.formatK(relationship.relPoints), 283, 263)
-        .addText(relationship.gift, 283, 333)
-        .setTextAlign(`left`)
-        .setTextFont(`10pt RobotoBold`)
-        .addText(`I'm in a total of `+relations.length+` relations ❤`, 30, 390)
+        .addText(`I have a total of `+friendrelations.length+` friends ❤`, 30, 390)
+
 
     return canv.toBuffer()
 
 }
 
-module.exports = relation
+module.exports = friend

@@ -4,6 +4,7 @@ const badge = require(`../../utils/badgecardInterface`)
 const family = require(`../../utils/familycardInterface`)
 const friend = require(`../../utils/friendcardInterface`)
 const stat = require(`../../utils/statcardInterface`)
+const databaseManager = require(`../../utils/databaseManager`)
 
 /**
  * Main module
@@ -21,13 +22,41 @@ class Profile {
      */
 	async execute() {
 		const {message, command, reply, name, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
+
+        const collection = new databaseManager(data.userId)
+        const badgesdata = await collection.badges
+        delete badgesdata.userId
+        const key = Object.values(badgesdata).filter(e => e)
+        const relations = await collection.relationships
+        const familyrelations = relations.filter((e) => {
+            if (e.theirRelation == `bestie`) return false
+            if (e.theirRelation == `soulmate`) return false
+            if (e.theirRelation == `senpai`) return false
+            if (e.theirRelation == `kouhai`) return false
+            return true
+        })
+        const friendrelations = relations.filter((e) => {
+            if (e.theirRelation == `bestie`) return true
+            if (e.theirRelation == `soulmate`) return true
+            if (e.theirRelation == `senpai`) return true
+            if (e.theirRelation == `kouhai`) return true
+            return false
+        })
+
+        /*Don't add empty pages, and also don't add page if lvl not high enough*/
         var pages = [{gui: profile, card: PROFILECARD, alias: `profile`}]
         if (data && data.level > this.portfolio_lv) {
             pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
         }
-        pages.push({gui: badge, card: BADGECARD, alias: `badge`})
-        pages.push({gui: family, card: RELATIONSHIPCARD, alias: `family`})
-        pages.push({gui: friend, card: RELATIONSHIPCARD, alias: `friend`})
+        if (key.length > 0 && key[0] != null) {
+            pages.push({gui: badge, card: BADGECARD, alias: `badge`})
+        }
+        if (familyrelations.length > 0) {
+            pages.push({gui: family, card: RELATIONSHIPCARD, alias: `family`})
+        }
+        if (friendrelations.length > 0) {
+            pages.push({gui: friend, card: RELATIONSHIPCARD, alias: `friend`})
+        }
         pages.push({gui: stat, card: STATCARD, alias: `stat`})
 
         let count = 0
@@ -52,7 +81,7 @@ class Profile {
             case `friend`:
             case `friends`:
                 if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `friends`)
+                count = pages.findIndex((e) => e.alias == `friend`)
                 break
             case `stats`:
             case `stat`:
@@ -64,6 +93,8 @@ class Profile {
         }
 
         const getPage = async (ctr) => {
+            if (!pages[ctr]) return reply (`Couldn't find that card. Either the card is empty or level locked.`)
+
             return reply(pages[ctr].card.HEADER, {
                 socket: [name(author.id)],
                 image: await pages[ctr].gui(this.stacks, author),

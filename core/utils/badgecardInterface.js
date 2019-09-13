@@ -102,8 +102,7 @@ async function badge(stacks, member) {
 		.save()
 
 	/**
-	 *    USER
-	 *    AVATAR
+	 *    USER AVATAR
 	 */
 	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
 
