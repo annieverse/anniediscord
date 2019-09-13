@@ -753,7 +753,6 @@ class clan_wrapper {
                 
 			execute: async(metadata) => {
 				let clan = await new Clan(args[0]).init()
-				console.log(clan)
 			}
 		}
 

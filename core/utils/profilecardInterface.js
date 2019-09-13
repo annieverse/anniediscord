@@ -1,8 +1,8 @@
-const { Canvas } = require(`canvas-constructor`) 
+const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
-const imageUrlRegex = /\?size=2048$/g 
+const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
@@ -108,15 +108,15 @@ async function profile(stacks, member) {
 		.save()
 
 	/**
-     *    PROFILE STICKER
-     */
+	 *    PROFILE STICKER
+	 */
 	/*if (user.stic) {
 		canv.addImage(await configProfile.getAsset(user.stic+switchColor[usercolor].sticker), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
 	}*/
 
 	/**
-         *    PROFILE HEADER COVER
-         */
+	 *    PROFILE HEADER COVER
+	 */
 
 	if (!user.cov) {
 		canv.setColor(user.clr)
@@ -127,15 +127,15 @@ async function profile(stacks, member) {
 	}
 
 	/**
-         *    USER AVATAR
-         */
+	 *    USER AVATAR
+	 */
 	canv.setColor(switchColor[usercolor].base)
 		.addCircle(startPos_x + 70, 200, 52) //avatar
 		.addRoundImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
 	/**
-     *    BADGES COLLECTION
-     */
+	 *    BADGES COLLECTION
+	 */
 	const symetric_xy = 18
 	const diameter = Math.round(symetric_xy / 2)
 	const y_badge = 208
@@ -209,11 +209,11 @@ async function profile(stacks, member) {
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).fourth, 31, 337)
 	}
 	/**
-         *    THREE BOXES
-         *    HEART, LVL, REP
-         * 
-         */
-		canv.setTextAlign(`center`)
+	 *    THREE BOXES
+	 *    HEART, LVL, REP
+	 *
+	 */
+	canv.setTextAlign(`center`)
 		.setColor(user.clr)
 		.setTextFont(`20pt RobotoMedium`)
 		.addText(configFormat.formatK(user.likecount), 70, 370) // left point // rank

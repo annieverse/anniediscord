@@ -1,6 +1,5 @@
 /* eslint-disable  */
 const { expect } = require(`chai`)
-const sinon = require(`sinon`)
 
 /**
  *  Test method should be independent
@@ -13,7 +12,7 @@ describe(`Initial check`, () => {
         testLoadingCommands()
     })
     describe(`Module (Buy.js)`, () => {
-        userTransactionParameters()
+        userParameters()
     })
 
 
@@ -25,9 +24,60 @@ describe(`Initial check`, () => {
      *  Test whether the app able to load commands correctly or not
      *  @testCommandsLoading
      */
-    function testLoadingCommands() {
-        const modulesLoader = require(`../core/utils/modulesLoader`)
-        const Loader = new modulesLoader()
+    async function testLoadingCommands() {
+        const { readdirSync } = require(`fs`)
+        const { Collection } = require(`discord.js`)
+        const commandsPath = `./core/modules/commands/`
+
+    
+        class mockModulesLoader {
+
+            /**
+             * 	Get all files in commands directory
+             */
+            get fetchSource() {
+                return readdirSync(commandsPath)
+            }
+
+
+            /**
+             * 	Assigning fetchSource() result to @Client
+             */
+            register(Client) {
+
+                //	Initialize new collection in the client
+                Client.commands = new Collection()
+                Client.aliases = new Collection()
+
+
+                //	Get all the .js files
+                let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
+
+
+                //	Recursively registering commands
+                jsfile.forEach((f) => {
+                    let props = {
+                        help: {
+                            name: f,
+                            aliases: [f+1, f+2, f+3]
+                        }
+                    }
+
+                    Client.commands.set(props.help.name, props)
+                    props.help.aliases.forEach(alias => {
+                        Client.aliases.set(alias, props.help.name)
+                    })
+                })
+
+
+                //	Log & Return the updated client
+                return Client
+
+            }
+        }
+
+
+        const Loader = new mockModulesLoader()
         const MockClient = Loader.register({})
         const commandsArray = Loader.fetchSource
 
@@ -43,7 +93,7 @@ describe(`Initial check`, () => {
         /**
          *  Verifying both container
          */
-        it(`Verify all the available commands have been properly loaded`, () => {
+        it(`Verify all the available commands have been properly loaded`,  () => {
             expect(MockClient.commands.size).to.equal(commandsArray.length)
         })
     }
@@ -51,14 +101,12 @@ describe(`Initial check`, () => {
 
     /**
      *  Double checking user input
-     *  @userTransactionParameters
+     *  @userParameters
      */
-    function userTransactionParameters() {
-        describe(`Transaction handling`, () => {
+    function userParameters() {
+        describe(`User Parameter`, () => {
                 let msg = `>buy role baka potato`;
-                let prefix = `>`
                 let msgArray = msg.split(" ");
-                let cmd = msgArray[0].toLowerCase();
                 let args = msgArray.slice(1);
 
                 describe(`args : [${args}]`, () => {

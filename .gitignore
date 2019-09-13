@@ -1,7 +1,9 @@
 node_modules
+logs
 .idea/
 .data/
 .env
 package-lock.json
 .vscode/
 modules/commands/pans_sandbox
+logs.txt

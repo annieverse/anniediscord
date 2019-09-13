@@ -1,6 +1,6 @@
-
 const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const logger = require(`./config/winston`)
+
 /**
   *   Accessing database globally.
   *   {databaseUtils}
@@ -15,6 +15,136 @@ class databaseUtils {
 		this.id = id
 	}
 
+
+	/**
+	 * 	Opening connection
+	 *	Use caching mode to save time on next queries.
+	 *	@connect
+	 */
+	connect() {
+		try {
+			sql.open(`.data/database.sqlite`, {cached: true})
+			logger.info(`Database successfully connected`)
+			return this
+		}
+		catch (e) {
+			logger.error(`Database has failed to connect > `, e)
+		}
+	}
+
+
+	/**
+	 * 	Standard low method for executing sql query
+	 * 	@privateMethod
+	 * 	@param {String|SQL} stmt
+	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
+	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
+	 * 	@param {ArrayOfString} supplies parameters to be used in sql statement.
+	 */
+	async _query(stmt=``, type=`get`, supplies=[]) {
+
+		//	Return if no statement has found
+		if (!stmt) return null
+
+		try {
+
+			//	Run query
+			let result = await sql[type](stmt, supplies)
+			//	Returning query result
+			return result
+			
+		}
+		catch (e) {
+			logger.error(`Database._query() has failed to run. > `, e)
+			return null
+		}
+
+	}
+
+
+	/**
+	 * 	Assign user id as class property.
+	 * 	@Setter
+	 * 	@param {String|ID} id of userid
+	 */
+	set setUser(id = ``) {
+		this.id = id
+	}
+
+
+	/**
+	 * 	Defacto method for updating experience point
+	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
+	 */
+	updateExperienceMetadata(data = {}, userId = this.id) {
+		this._query(`
+			UPDATE userdata 
+			SET currentexp = ?
+			, level = ?
+			, maxexp = ?
+			, nextexpcurve = ?
+			WHERE userId = ?`
+			, `run`
+			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, userId])
+	}
+
+
+	/**
+	 * 	Register into userdata if not present
+	 * 	@param {String|ID} id user id. Use class default prop if not provided.
+	 */
+	async validatingNewUser(id = this.id) {
+		await this._query(`
+			INSERT OR IGNORE
+			INTO "userdata" (userId, registered_date, level, currentexp)
+			VALUES (?, datetime('now'), 0, 0)`
+			, `run`
+			, [id]
+		)
+		await this._query(`
+			INSERT OR IGNORE
+			INTO "collections" (userId)
+			VALUES (?)`
+			, `run`
+			, [id]
+		)
+		await this._query(`
+			INSERT OR IGNORE
+			INTO "userinventories" (userId)
+			VALUES (?)`
+			, `run`
+			, [id]
+		)
+		await this._query(`
+			INSERT OR IGNORE
+            INTO "usercheck"(userId)
+            VALUES(?)`
+			, `run`
+			, [id]
+		)
+		await this._query(`
+			INSERT OR IGNORE
+            INTO "userbadges"(userId)
+            VALUES(?)`
+			, `run`
+			, [id]
+		)
+	}
+
+
+	/**
+	 * 	Set all cooldown to zero
+	 * 	@resetCooldown
+	 */
+	resetCooldown() {
+		this._query(`
+			UPDATE usercheck
+			SET expcooldown = "False"`
+			, `run`
+		)
+	}
+
+
 	/**
      * Lifesaver promise. Used pretty often when calling an API.
      * @pause
@@ -24,29 +154,73 @@ class databaseUtils {
 	} // End of pause
 
 	//  Pull neccesary data at once.
-	get userMetadata() {
-		return sql.get(
-			`SELECT *
-                FROM userdata
-                INNER JOIN userinventories
-                ON userinventories.userId = userdata.userId
-                INNER JOIN usercheck
-                ON usercheck.userId = userdata.userId
-                INNER JOIN collections
-                ON collections.userId = userdata.userId
-                WHERE userdata.userId = "${this.id}"`
+	userMetadata(userId = this.id) {
+		return sql.get(`
+			SELECT *
+			FROM userdata
+            INNER JOIN userinventories
+        	ON userinventories.userId = userdata.userId
+        	INNER JOIN usercheck
+            ON usercheck.userId = userdata.userId
+            INNER JOIN collections
+            ON collections.userId = userdata.userId
+            WHERE userdata.userId = "${userId}"`)
+			.then(async parsed => parsed)
+	}
+
+
+	/**
+	 * 	Registering post metadata
+	 * 	@param {String|ID} userId
+	 * 	@param {ResolvableURL} url
+	 * 	@param {String|ID} location
+	 * 	@registerPost
+	 */
+	registerPost({userId=``, url=``, location=``}) {
+		this._query(`
+			INSERT INTO userartworks (
+				userId
+				, url
+				, timestamp
+				, location
+			)
+			VALUES (?, ?, datetime('now'), ?)`,
+			`run`
+			, [userId, url, location]
 		)
 	}
 
 
-	get userBadges() {
+	/**
+	 * 	Sending 10 chocolate boxes
+	 * 	@param {String|ID} id
+	 * 	@sendTenChocolateBoxes
+	 */
+	sendTenChocolateBoxes(userId = this.id) {
+		this._query(`
+			UPDATE userinventories
+			SET chocolate_box = chocolate_box + 10
+			WHERE userId = ?`,
+			`run`
+			, [userId]
+		)		
+	}
+
+
+	userBadges(userId = this.id) {
 		return sql.get(`
                 SELECT *
                 FROM userbadges
-                WHERE userId = "${this.id}"
-            `)
+                WHERE userId = "${userId}"
+            `).then(async parsed => parsed)
 	}
 
+	maintenanceUpdate(){
+		return sql.run(`
+				UPDATE userinventories
+				SET artcoins = artcoins + 1000 
+			`)
+	}
 
 	//  Accepts one level of an object. Returns sql-like string.
 	toQuery(data) {
@@ -79,11 +253,11 @@ class databaseUtils {
 	}
 
 
-	storeArtcoins(value) {
+	storeArtcoins(value, userId = this.id) {
 		sql.run(`
                 UPDATE userinventories
                 SET artcoins = artcoins + ${value}
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
 
@@ -100,7 +274,7 @@ class databaseUtils {
 	}
 
 	async updateBadge(newvalue) {
-		let badgedata = await this.userBadges
+		let badgedata = await this.userBadges()
 		let slotkey = Object.keys(badgedata)
 		let slotvalue = Object.values(badgedata)
 		sql.run(`UPDATE userbadges 
@@ -112,15 +286,6 @@ class databaseUtils {
 		sql.run(`UPDATE usercheck 
             SET expbooster = "${newvalue}",
                 expbooster_duration = ${Date.now()}
-            WHERE userId = "${this.id}"`)
-	}
-
-	updateExperienceMetadata(data = {}) {
-		sql.run(`UPDATE userdata 
-            SET currentexp = ${data.currentexp},
-            level = ${data.level},
-            maxexp = ${data.maxexp},
-            nextexpcurve = ${data.nextexpcurve}
             WHERE userId = "${this.id}"`)
 	}
 
@@ -216,8 +381,8 @@ class databaseUtils {
 	}
 
 	//	Count total user's collected cards.
-	async totalCollectedCards() {
-		const data = await sql.get(`SELECT * FROM collections WHERE userId = ${this.id}`)
+	async totalCollectedCards(userId = this.id) {
+		const data = await sql.get(`SELECT * FROM collections WHERE userId = ${userId}`)
 		for (let key in data) {
 			if (!data[key]) delete data[key]
 		}
@@ -280,20 +445,20 @@ class databaseUtils {
 	}
 
 	//  Enable user's notification
-	enableNotification() {
+	enableNotification(userId=this.id) {
 		sql.run(`
                 UPDATE userdata
                 SET get_notification = 1
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
 
 	//  Disabled user's notification
-	disableNotification() {
+	disableNotification(userId=this.id) {
 		sql.run(`
                 UPDATE userdata
                 SET get_notification = -1
-                WHERE userId = "${this.id}"
+                WHERE userId = "${userId}"
             `)
 	}
         
@@ -307,7 +472,7 @@ class databaseUtils {
 	}
 
 	//  Register new featured post metadata
-	registerPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
+	registerFeaturedPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
 		sql.run(`
                 INSERT INTO featured_post
                 (timestamp, url, author, channel, heart_counts, last_heart_timestamp)
@@ -360,7 +525,6 @@ class databaseUtils {
             */
 	registerItem(name, alias, type, price, description) {
 		return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
-			.then(() => console.log(`New item: ${name} has been registered. With values of ${alias, type, price, description}.`)) 
 	}
 
 
@@ -372,7 +536,6 @@ class databaseUtils {
         */
 	registeringId(tablename, id) {
 		return sql.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
-			.then(() => console.log(`New ID: ${id}, has been registered into ${tablename}.`))
 	}
 
 
@@ -384,7 +547,6 @@ class databaseUtils {
         */
 	registerColumn(tablename, columnname, type) {
 		return sql.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
-			.then(() => console.log(`New COLUMN: ${columnname}-${type}, has been registered into ${tablename}.`))
 	}
 
 
@@ -396,7 +558,6 @@ class databaseUtils {
     */
 	registerTable(tablename, columnname, type) {
 		return sql.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
-			.then(() => console.log(`New TABLE: ${tablename} has been created. With default COLUMN: ${columnname}-${type}.`))
 	}
 
 
@@ -411,7 +572,6 @@ class databaseUtils {
 		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
 			.then(async currentdata => {
 				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
-					.then(() => console.log(`ADDED ${value} VALUE on ${columnname} of ID: ${id}.`))
 			})
 	}
 
@@ -423,16 +583,12 @@ class databaseUtils {
      * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
      */
 	addValues(tablename, columnnames, values) {
-		//console.log(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
-		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`).then(() => {
-			console.log(`ADDED ${values} VALUES INTO ${columnnames} of Table: ${tablename}`)
-		})
+		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
 	}
 
 	updateValue(tablename, columnNameToUpdate, value, columnname, id) {
 		try {
 			sql.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
-				.then(() => console.log(`UPDATED ${id} VALUE on ${columnname} to: ${value}.`))
 		} catch (error) { throw error }
 	}
 	/**
@@ -446,7 +602,6 @@ class databaseUtils {
 		return sql.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
 			.then(async currentdata => {
 				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
-					.then(() => console.log(`SUBTRACT ${value} VALUE on ${columnname} of ID: ${id}.`))
 			})
 	}
 
@@ -461,7 +616,6 @@ class databaseUtils {
      */
 	replaceValue(tablename, columnname, value, id, idtype = `userId`) {
 		return sql.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
-			.then(() => console.log(`New value (${value}) has been placed in ${id}-${columnname}.`))
 	}
 
 
@@ -629,7 +783,6 @@ class databaseUtils {
         */
 	removeRowData(tablename, id, idtype = `userId`) {
 		return sql.run(`DELETE FROM ${tablename} WHERE ${idtype} = ${id}`)
-			.then(() => console.log(`ID: ${id} OF GROUP: ${tablename} has been successfully removed.**`))
 	}
 
 

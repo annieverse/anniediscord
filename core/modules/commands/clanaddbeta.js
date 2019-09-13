@@ -195,7 +195,6 @@ class clanaddbeta {
 			const collectorForClanName = new Discord.MessageCollector(message.channel, m => m.author.id === raw_object.userId, { time: 30000 })
 
 			collectorForClanName.on(`collect`, async (msg) => {
-				console.log(charcheck(msg.content, 24))
 
 				//  Returns if characters are exceeding the limit.
 				if (charcheck(msg.content, 24)) return log({ code: `MAX_CHARS` })

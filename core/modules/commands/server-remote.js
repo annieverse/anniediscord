@@ -11,6 +11,7 @@ class serverRemote {
 		this.args = Stacks.args
 		this.palette = Stacks.palette
 		this.stacks = Stacks
+		this.logger = Stacks.bot.logger
 	}
 
 	async execute() {
@@ -97,7 +98,7 @@ class serverRemote {
 				obj.active_exp = mode ? true : false
 
 				fs.writeFile(`.data/environment.json`, JSON.stringify(obj, null, 4), () => {
-					console.log(`User-interaction has been set to - ${mode}.`)
+					this.logger.info(`Shutting down the server, ..`)
 				})
 			})
 		}

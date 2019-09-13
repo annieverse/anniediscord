@@ -1,7 +1,7 @@
-console.time(`Commands Loaded`)
 const { readdirSync } = require(`fs`)
 const { Collection } = require(`discord.js`)
 const commandsPath = `./core/modules/commands/`
+const logger = require(`./config/winston`)
 
 class modulesLoader {
 
@@ -18,20 +18,39 @@ class modulesLoader {
 	 * 	Assigning fetchSource() result to @Client
 	 */
 	register(Client) {
+
+		//	Initialize new collection in the client
 		Client.commands = new Collection()
 		Client.aliases = new Collection()
 
-		let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
+		try {
 
-		jsfile.forEach((f) => {
-			let props = require(`../modules/commands/${f}`)
-			Client.commands.set(props.help.name, props)
-			props.help.aliases.forEach(alias => {
-				Client.aliases.set(alias, props.help.name)
+			//	Get all the .js files
+			let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
+
+
+			//	Recursively registering commands
+			jsfile.forEach((f) => {
+				let props = require(`../modules/commands/${f}`)
+				Client.commands.set(props.help.name, props)
+				props.help.aliases.forEach(alias => {
+					Client.aliases.set(alias, props.help.name)
+				})
 			})
-		})
 
-		return Client
+
+			//	Log & Return the updated client
+			logger.info(`${jsfile.length} command modules loaded`)
+			return Client
+
+		}
+		catch (e) {
+
+			//	Log & return the old client
+			logger.error(`Failed to load commands module > `, e)
+			return Client
+
+		}
 	}
 }
 

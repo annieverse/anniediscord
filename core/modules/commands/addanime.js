@@ -15,11 +15,17 @@ class addAnime {
     async execute() {
         let message = this.message
         let palette = this.stacks.palette
-        function profileDescription(userid, desc) {
-            sql.get(`SELECT * FROM userdata WHERE userId=${userid}`)
-                .then(() => {
-                    sql.run(`UPDATE userdata SET anime_link = ? WHERE userId = ?`, [desc, userid])
-                })
+        function setAnimeLink(userid, link) {
+            return sql.run(`UPDATE userdata SET anime_link = ? WHERE userId = ?`, [link, userid]).then(() => {
+                var sitename
+                if (link.startsWith(`https://myanimelist.net/profile/`)) {
+                    sitename = `mal`
+                }
+                if (link.startsWith(`https://kitsu.io/users/`)) {
+                    sitename = `kitsu`
+                }
+                if (sitename) sql.run(`UPDATE userbadges SET slotanime = ? WHERE userId = ?`, [sitename, userid])
+            })
         }
 
         let descriptionArguments = message.content.substring(this.stacks.command.length+2).trim()
@@ -27,16 +33,19 @@ class addAnime {
 
         if (!this.args[0]) {
             embed.setColor(palette.darkmatte)
-            embed.setDescription(`Here's the example on how to add the Link to your anime site!\n\n\`>addanime\` \`https://myanimelist.net/profile/username\``)
+            embed.setDescription(`Here's the example on how to add the Link to your anime site!\n\n
+            \`>addanime\` \`https://myanimelist.net/profile/yourusername\`
+            \`>addanime\` \`https://kitsu.io/users/1234567\``)
 
             return message.channel.send(embed)
-        } else if (!descriptionArguments.startsWith(`https://myanimelist.net/profile/`)) {
+        } else if (!descriptionArguments.startsWith(`https://myanimelist.net/profile/`) &&
+                   !descriptionArguments.startsWith(`https://kitsu.io/users/`)) {
             embed.setColor(palette.darkmatte)
-            embed.setDescription(`Right now you can only set MAL profile links. To have your site added, request in #suggestions`)
+            embed.setDescription(`Right now you can only set MAL and KITSU profile links. To have your site added, request in #suggestions`)
 
             return message.channel.send(embed)
         } else {
-            await profileDescription(message.author.id, descriptionArguments)
+            setAnimeLink(message.author.id, descriptionArguments)
 
             embed.setColor(palette.halloween)
             embed.setDescription(`Hello **${message.author.username}**, your anime link has been set to \`${descriptionArguments}\``)

@@ -8,6 +8,7 @@ class removeRole {
 		this.message = Stacks.message
 		this.args = Stacks.this.args
 		this.stacks = Stacks
+		this.logger = Stacks.bot.logger
 	}
 
 	async execute() {
@@ -54,7 +55,7 @@ class removeRole {
 		roleEmbed.setDescription(`${message.author.username}, I couldn't find that role.`)
 		let role = message.guild.roles.find(r => r.name === this.args[1].slice(0)).id
 		let gRole = message.guild.roles.get(role)
-		if (!gRole) return message.channel.send(roleEmbed).then(() => console.log(role))
+		if (!gRole) return message.channel.send(roleEmbed)
 
 
 		roleEmbed.setColor(`#d61313`)

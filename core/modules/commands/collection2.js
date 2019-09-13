@@ -114,7 +114,6 @@ class collection {
         */
 		async function run() {
 			let user = await utils.userFinding(args.join(` `) || message.author.id)
-			console.log(user.user.username)
 			return message.channel.send(`\`fetching ${user.user.username} card collection ..\``)
 				.then(async load => {
 					await user_cardcollection(user)

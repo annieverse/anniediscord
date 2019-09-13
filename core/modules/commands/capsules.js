@@ -1,14 +1,13 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
-const databaseManager = require(`../../utils/databaseManager.js`)
+const db = require(`../../utils/databaseManager`)
 
 /**
  * Main module
  * @Capsule as function to use exp capsules
  */
-class Capsule extends databaseManager {
+class Capsule {
 	constructor(Stacks) {
-		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -18,23 +17,17 @@ class Capsule extends databaseManager {
      */
 	async execute() {
 		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
-		//this.testFunction()
-		//return reply(`command is disabled temporary, sorry for the inconvenice`)
+
 		//  Centralized data object
 		let metadata = {
 			bot: bot,
 			message: message,
 			exp_per_capsule: 150,
 			to_use: trueInt(args[0]),
-			get total_gained() {
+			get total_gained_exp() {
 				return this.exp_per_capsule * this.to_use
 			},
-			user: {
-				currentexp: data.currentexp,
-				level: data.level,
-				maxexp: data.maxexp,
-				nextexpcurve: data.nextexpcurve
-			},
+			meta: {author, data},
 			updated: {
 				currentexp: 0,
 				level: 0,
@@ -59,8 +52,8 @@ class Capsule extends databaseManager {
         
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
-		
-		this.subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
+
+		new db().subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {
@@ -68,7 +61,7 @@ class Capsule extends databaseManager {
 				name(author.id),
 				emoji(`power_capsule`),
 				commanifier(metadata.to_use),
-				commanifier(metadata.total_gained)
+				commanifier(metadata.total_gained_exp)
 			],
 			color: palette.lightgreen
 		})

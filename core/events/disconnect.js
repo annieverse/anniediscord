@@ -1,3 +1,3 @@
-module.exports = () => {
-	console.log(`you have been disconnected at ${new Date()}.`)
+module.exports = (bot) => {
+	bot.logger.info(`Annie has been disconnected,..`)
 }

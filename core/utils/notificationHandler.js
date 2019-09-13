@@ -1,16 +1,12 @@
 `use-strict`
-
+const Controller = require(`./MessageController`)
 /**
  *  Toggle options for enable/disable notification
  *  @Class
  */
-class Notification {
-	constructor(Stacks) {
-		this.stacks = Stacks
-		this.author = Stacks.message.author
-		this.db = Stacks.db(Stacks.message.author.id)
-		this.reply = Stacks.reply
-		this.dm = Stacks.code.DM
+class Notification extends Controller {
+	constructor(data) {
+		super(data)
 	}
 
 
@@ -20,13 +16,13 @@ class Notification {
 	async disable() {
 		try {
 			//  Set get_notification to zero
-			await this.db.disableNotification()
+			await this.db.disableNotification(this.meta.author.id)
 			//  Successful
-			return this.reply(this.dm.NOTIFICATION_DISABLED, {field: this.author})
+			return this.reply(this.code.DM.NOTIFICATION_DISABLED, {field: this.meta.author})
 		}
 		catch(e) {
 			//  Incase the database queries are busy
-			return this.reply(this.dm.ERROR)
+			return this.reply(this.code.DM.ERROR)
 		}
 	}
 
@@ -37,13 +33,13 @@ class Notification {
 	async enable() {
 		try {
 			//  Set get_notification to one
-			await this.db.enableNotification()
+			await this.db.enableNotification(this.meta.author.id)
 			//  Successful
-			return this.reply(this.dm.NOTIFICATION_ENABLED, {field: this.author})
+			return this.reply(this.code.DM.NOTIFICATION_ENABLED, {field: this.meta.author})
 		}
 		catch(e) {
 			//  Incase the database queries are busy
-			return this.reply(this.dm.ERROR)
+			return this.reply(this.code.DM.ERROR)
 		}
 	}
 

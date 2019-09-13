@@ -1,14 +1,12 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
-const databaseManager = require(`../../utils/databaseManager.js`)
-
+const db = require(`../../utils/databaseManager`)
 /**
  * Main module
  * @convertingArtcoins as function to convert artcoins into experience points.
  */
-class convertingArtcoins extends databaseManager {
+class convertingArtcoins {
 	constructor(Stacks) {
-		super(Stacks.meta.author.id)
 		this.stacks = Stacks
 	}
 
@@ -26,15 +24,10 @@ class convertingArtcoins extends databaseManager {
 			bot: bot,
 			message: message,
 			to_use: args[0].startsWith(`all`) ? data.artcoins : trueInt(args[0]),
-			get total_gained() {
+			get total_gained_exp() {
 				return this.to_use / 2
 			},
-			user: {
-				currentexp: data.currentexp,
-				level: data.level,
-				maxexp: data.maxexp,
-				nextexpcurve: data.nextexpcurve
-			},
+			meta: {author, data},
 			updated: {
 				currentexp: 0,
 				level: 0,
@@ -55,7 +48,7 @@ class convertingArtcoins extends databaseManager {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 
-		this.subtractValue(`userinventories`, `artcoins`, metadata.to_use, author.id)
+		new db().subtractValue(`userinventories`, `artcoins`, metadata.to_use, author.id)
 
 		//  Done
 		return reply(CARTCOIN.SUCCESSFUL, {
@@ -63,7 +56,7 @@ class convertingArtcoins extends databaseManager {
 				name(author.id),
 				emoji(`artcoins`),
 				commanifier(metadata.to_use),
-				commanifier(metadata.total_gained)
+				commanifier(metadata.total_gained_exp)
 			],
 			color: palette.lightgreen
 		})

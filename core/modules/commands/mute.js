@@ -10,6 +10,7 @@ class mute {
 		this.this.args = Stacks.this.args
 		this.palette = Stacks.palette
 		this.stacks = Stacks
+		this.logger = Stacks.bot.logger
 	}
 
 	async execute() {
@@ -67,14 +68,15 @@ class mute {
 					})
 				})
 			} catch (e) {
-				console.log(e.stack)
+				this.logger.error(`Failed to create muted role. > `, e)
 			}
 		}
 
 		mutee.addRole(muterole.id).then(() => {
 			message.delete()
 			mutee.send(`Hello, you have been muted in ${message.guild.name}\n
-                for: ${reason}\nfor: ${mutetime}: **Or** until a staff member unmutes.`).catch(err => console.log(err))
+				for: ${reason}\nfor: ${mutetime}: **Or** until a staff member unmutes.`)
+				.catch(err => this.logger.error(`Mute notification has failed to send. > `, err))
 		})
 		//end of create role
 
