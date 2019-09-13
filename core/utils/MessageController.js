@@ -66,8 +66,11 @@ class MessageController {
      * 	@isCommandMessage
      */
     get isCommandMessage() {
-        return this.message.content.startsWith(env.prefix) 
-        && bot_domain.includes(this.message.channel.id) ? true : false
+        if (!this.message.content.startsWith(env.prefix)) return false
+        if (!bot_domain.includes(this.message.channel.id)) return false
+        if (this.message.content.length <= env.prefix.length) return false
+
+        return true
     }
 
 

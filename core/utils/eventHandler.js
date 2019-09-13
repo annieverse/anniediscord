@@ -2,7 +2,10 @@ const reqEvent = (event) => require(`../events/${event}.js`)
 const env = require(`../../.data/environment.json`)
 
 module.exports = bot => {
-	
+
+	//	Handle global rejection
+	process.on('unhandledRejection', (err) => reqEvent("unhandledRejection")(bot, err))
+
 	//	Cached message
 	let message_object
 
@@ -31,4 +34,5 @@ module.exports = bot => {
 		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
 		bot.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({bot, reaction, user, message_object}))
 	}
+
 }

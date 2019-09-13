@@ -42,8 +42,12 @@ class CommandsHandler extends Controller {
 		//	Get command file from bot registry
 		this.data.commandfile = data.bot.commands.get(this.data.cmd.slice(this.data.prefix.length)) 
 		|| data.bot.commands.get(data.bot.aliases.get(this.data.cmd.slice(this.data.prefix.length)))
-		
-		if (!this.data.commandfile) return
+
+		//	File validation
+		if (!this.data.commandfile) {
+			this.reply(`Sorry i couldn't find any command with that name.`)
+			return this.logger.error(`${this.data.message.author.tag} trying to use invalid command (${this.data.command}) in #${this.data.message.channel.name}`)
+		}
 
 		//	Get file name
 		this.filename = this.data.commandfile ? this.data.commandfile.help.name : null
@@ -89,9 +93,6 @@ class CommandsHandler extends Controller {
 	 * 	@prepare
 	 */
 	async prepare() {
-
-		//	Return if command is invalid or doesn't exists.
-		if (!this.data.commandfile) return
 
 		// If the channel is restricted to some cmds only; check if cmd has channel enabled
 		if ((special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels) ||
