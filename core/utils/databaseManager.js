@@ -125,6 +125,13 @@ class databaseUtils {
 			, `run`
 			, [id]
 		)
+		await this._query(`
+			INSERT OR IGNORE
+            INTO "userbadges"(userId)
+            VALUES(?)`
+			, `run`
+			, [id]
+		)
 	}
 
 
