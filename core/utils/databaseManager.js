@@ -752,13 +752,9 @@ class databaseUtils {
      *   Pull user's relationships with other members with main relationship on top if it exists
      */
     get relationships() {
-        return sql.all(`SELECT CASE WHEN EXISTS(SELECT 1
-                        	FROM mainrelationship main
-                        	WHERE r.userId1 = main.userId1
-                        	AND r.userId2 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+        return sql.all(`SELECT 
                         r1.type AS "myRelation", r2.type AS "theirRelation",
-                        userId1 as "myUserId", userId2 AS "theirUserId",
-                        relationStart, relationPoints, recentReceived AS "gift"
+                        userId1 as "myUserId", userId2 AS "theirUserId"
 						FROM relationship r
 						JOIN relationshiptype r1
 						ON r.relationType1 = r1.typeId
@@ -768,24 +764,29 @@ class databaseUtils {
 						 
 						UNION
 						
-						SELECT CASE WHEN EXISTS(SELECT 1
-                        	FROM mainrelationship main
-                        	WHERE userId2 = main.userId1
-                        	AND userId1 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+						SELECT 
                         r1.type AS "myRelation", r2.type AS "theirRelation",
-                        userId2 as "myUserId", userId1 AS "theirUserId",
-                        relationStart, relationPoints, recentGifted AS "gift"
+                        userId2 as "myUserId", userId1 AS "theirUserId"
 						FROM relationship r
 						JOIN relationshiptype r1
 						ON r.relationType2 = r1.typeId
 						JOIN relationshiptype r2
 						ON r.relationType1 = r2.typeId
 						WHERE r.userId2 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
-						
-						
-						ORDER BY isMain DESC
                    		`)
             .then(async parsed => parsed)
+		/*
+		* CASE WHEN EXISTS(SELECT 1
+                        	FROM mainrelationship main
+                        	WHERE r.userId1 = main.userId1
+                        	AND r.userId2 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+                        	* relationStart, relationPoints, recentReceived AS "gift"
+        * CASE WHEN EXISTS(SELECT 1
+                        	FROM mainrelationship main
+                        	WHERE userId2 = main.userId1
+                        	AND userId1 = main.userId2) THEN 1 ELSE 0 END AS isMain,
+                        	* relationStart, relationPoints, recentGifted AS "gift"
+		* ORDER BY isMain DESC*/
     }
 
     /**
@@ -827,15 +828,17 @@ class databaseUtils {
 	deleteRelationship(userId) {
 		return sql.run(`DELETE FROM relationship
 						WHERE (userId1 = "${this.id}" AND userId2 = "${userId}")
-						OR (userId2 = "${this.id}" AND userId1 = "${userId}")`).then(
+						OR (userId2 = "${this.id}" AND userId1 = "${userId}")`)
+			/*.then(
 				sql.run(`
 					DELETE FROM mainrelationship 
 					WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
 				`)
 		)
+			 */
 	}
 
-
+	/*
 	async setMainRelationship(userId) {
 		var res = await sql.all(`SELECT * FROM mainrelationship WHERE userId1 = "${this.id}"`)
 		if (res.length > 0) {
@@ -867,6 +870,7 @@ class databaseUtils {
                 WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
             `)
 	}
+	*/
 
 
 }

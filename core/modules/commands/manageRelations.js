@@ -35,13 +35,14 @@ class ManageRelations {
             await message.channel.send(`**${name(author.id)}'s Relations**`)
             await message.channel.send(embed)
             if (author.id == message.author.id) {
+                /*To set one relationship as your main relationship, type the number of the relationship.*/
                 reply(`To add a relationship, type \`>addrel username\`.\n
-                To remove a relationship, type \`>delrel username\`.\n
-                To set one relationship as your main relationship, type the number of the relationship.`, {
+                To remove a relationship, type \`>delrel username\`.\n`, {
                     color: palette.golden,
                     notch: true
                 })
 
+                /*
                 const collector = new Discord.MessageCollector(message.channel,
                     m => m.author.id === message.author.id, {
                         max: 1,
@@ -64,6 +65,7 @@ class ManageRelations {
                     }
                     collector.stop()
                 })
+                */
             }
         }
 
