@@ -33,6 +33,7 @@ class Worker extends Controller {
 
 
         //  These are only run on production server
+        
         if (!this.env.dev) {
             //  React and collect if its an art post
             if (super.isArtPost) new CollectPost(this.data).run()
