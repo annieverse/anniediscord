@@ -85,8 +85,8 @@ class databaseUtils {
 	async validatingNewUser(id = this.id) {
 		await this._query(`
 			INSERT OR IGNORE
-			INTO "userdata" (userId, registered_date, level, currentexp)
-			VALUES (?, datetime('now'), 0, 0)`
+			INTO "userdata" (userId, registered_date)
+			VALUES (?, datetime('now'))`
 			, `run`
 			, [id]
 		)
@@ -291,16 +291,13 @@ class databaseUtils {
                      WHERE userId = "${this.id}"`)
 	}
 
-	updateReps(dly_metadata) {
+	async updateReps(dly_metadata) {
 		//  Update daily date
 		sql.run(`UPDATE usercheck
                      SET repcooldown = "${Date.now()}"
                      WHERE userId = ${this.id}`)
 
-		//  Update dailies reward
-		sql.run(`UPDATE userdata
-                     SET reputations = reputations + ${dly_metadata.amount}
-                     WHERE userId = "${dly_metadata.target_id}"`)
+		await this.addReputations(dly_metadata.amount, dly_metadata.target_id)
 	}
 
 	resetExperiencePoints() {
@@ -400,13 +397,13 @@ class databaseUtils {
      * Adding user reputation points
      * @param {Integer} amount Updated/added amount of user's reputation points
      */
-	addReputations(amount = 0) {
+	addReputations(amount = 0, userId = this.id) {
 		return sql.run(`UPDATE userdata
                             SET reputations = CASE WHEN reputations IS NULL
                                                 THEN ${amount}
                                               ELSE reputations + ${amount}
                                             END
-                            WHERE userId = "${this.id}"`)
+                            WHERE userId = "${userId}"`)
 	}
 
 

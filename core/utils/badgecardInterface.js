@@ -82,8 +82,7 @@ async function badge(stacks, member) {
 
 	delete badgesdata.userId
 
-	const key = Object.values(badgesdata)
-	const reservedSlot = (collection.storingValue(badgesdata)).filter(x => (x !== null)).length - 1
+	const key = Object.values(badgesdata).filter(x => x)
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
 
@@ -123,13 +122,13 @@ async function badge(stacks, member) {
 
 	//we can fit 20 badges; if user has more display a plus or something
 	async function setBadge(xy, diameter, pos_y) {
-		for (var i=0; i<=Math.min(reservedSlot, 18); i++) {
+		for (var i=0; i<=Math.min(key.length, 18); i++) {
 			var j = Math.floor(i/4)
 			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
 		}
-		if (reservedSlot == 19) {
+		if (key.length == 19) {
 			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
-		} else if (reservedSlot > 19) {
+		} else if (key.length > 19) {
 			canv.addImage(await configProfile.getAsset(`plus`), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		}
 	}

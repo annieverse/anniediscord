@@ -63,7 +63,7 @@ class formatterUtils {
 	 * @num of given value
 	 */
 	formatK(num) {
-		return num > 999999 ? (num / 1000000).toFixed(1) + `M` : num > 999 ? (num / 1000).toFixed(1) + `K` : num
+		return !num ? 0 : ( num > 999999 ? (num / 1000000).toFixed(1) + `M` : num > 999 ? (num / 1000).toFixed(1) + `K` : num)
 	}
 
 

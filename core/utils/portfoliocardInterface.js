@@ -119,8 +119,8 @@ async function portfolio(stacks, member) {
 	async function gridImage(posx, posy, dx, dy) {
 		var res = await sql.all(`SELECT * FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
 		async function aspectRatio(src) {
-			var proberes = await probe(src)
 			try {
+				var proberes = await probe(src)
 				//if (err) throw err
 				let width = proberes.width
 				let height = proberes.height
