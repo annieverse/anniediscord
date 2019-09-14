@@ -38,9 +38,8 @@ class Artcoins extends Controller {
 		}
 		if (super.isArtPost) this.total_gained_ac = this.total_gained_ac * 10
 
-        this.db.storeArtcoins(Math.floor(this.total_gained_ac), this.author.id)
-		this.logger.info(`${this.author.tag}: received ${this.total_gained_ac} AC in ${this.message.channel.name}`)
-		this.logger.info(`${this.author.tag}: received bonus factor of ${this.ac_factor}`)
+		this.db.storeArtcoins(Math.floor(this.total_gained_ac), this.author.id)
+		this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_ac} AC(${(this.ac_factor-1) * 100}% bonus). (${this.data.commanifier(this.meta.data.artcoins)} --> ${this.data.commanifier(this.meta.data.artcoins + this.total_gained_ac)})`)
     }
 
 

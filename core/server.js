@@ -3,6 +3,7 @@ module.exports = () => {
 	//  Initialize startup modules
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
+	bot.startupInit = process.hrtime()
 	const modulesLoader = require(`./utils/modulesLoader`)
 	const Database = require(`./utils/databaseManager`)
 	const KeyvClient = require(`keyv`)
@@ -19,11 +20,16 @@ module.exports = () => {
 	//  To prevent PM2 from being terminated.
 	app.listen(process.env.PORT)
 
+	//	Default benchmark result converter
+	bot.getBenchmark = (measure) => {
+		return `${(measure[0] * 1000) + (measure[1] / 1e6)} ms`
+	  }
+
 	//	Initialize logger
 	bot.logger = require(`./utils/config/winston`)
 
 	//	Initializing db connection
-	bot.db = new Database().connect()
+	bot.db = new Database(null, bot).connect()
 
 	//	Initialize in-memory keyv
 	bot.keyv = new KeyvClient()
