@@ -82,7 +82,8 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only: 
+                - master
 
       # Check for code style & syntax consistency. Requires build to finish.
       - linting:
@@ -90,7 +91,8 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: 
+                - master
 
       # Verifying the modules.
       - unit_test:
@@ -98,7 +100,8 @@ workflows:
             - build
           filters:
             branches:
-              only: master
+              only: 
+                - master
 
       # Once everything is done, time to deploy it to the production.
       - deploying:
@@ -108,4 +111,5 @@ workflows:
             - unit_test
           filters:
             branches:
-              only: master
+              only: 
+                - master
