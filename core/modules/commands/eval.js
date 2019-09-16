@@ -20,7 +20,7 @@ class DeveloperTool {
 		if (!isDev) return reply(EVAL.UNKNOWN_AUTHOR, { color: palette.red })
 
 		try {
-			let evaled = eval(args.join(` `))
+			let evaled = await eval(args.join(` `))
 			if (typeof evaled !== `string`) evaled = require(`util`).inspect(evaled)
 			return pages(message, evaled)
 
