@@ -16,7 +16,6 @@ module.exports = bot => {
 		message_object = message
 		reqEvent(`message`)(bot, message)
 	})
-	bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 
 
 	
@@ -29,6 +28,7 @@ module.exports = bot => {
 
 	
 	if (!env.dev) {
+		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))
 		bot.on(`disconnect`, (bot) => reqEvent(`disconnect`)(bot))
 		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))
