@@ -174,7 +174,7 @@ class ManageRelations {
 
 module.exports.help = {
     start: ManageRelations,
-    name: `managerelations`,
+    name: `manageRelations`,
     aliases: [`viewrel`, `viewrels`, `seerel`, `seerels`, `getrel`, `getrels`, `addrel`, `addrels`, `delrel`, `delrels`],
     description: `Manages the relationships a user can be in`,
     usage: `managerelations`,
