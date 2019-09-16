@@ -29,7 +29,7 @@ async function stat(stacks, member) {
      * id = userid, cur = currentexp, max = maxexp,
      * crv = expcurve, lvl = userlevel, ac = userartcoins,
      * rep = userreputation, des = userdescription, ui = userinterfacemode
-     * clr = hex code of user's rank color.
+     * clr = hex code of user`s rank color.
      */
 	const userdata = await collection.userMetadata()
 	const user = {
@@ -82,6 +82,15 @@ async function stat(stacks, member) {
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	const usercolor = configProfile.checkInterface(user.ui, member)
 
+
+	/**
+	 * 	Get author last online
+	 *  @getLastOnline
+	 */
+	const getLastOnline = () => bot.users.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : 'No data retrieved.'
+
+
+
 	let canv = new Canvas(canvas_x, canvas_y) // x y
 
 	/**
@@ -124,7 +133,7 @@ async function stat(stacks, member) {
 		.addText(`🕑`, startPos_x + 87, 85)
 
 		.setTextFont(`20pt RobotoBold`)
-		.addText(moment(user.log).fromNow(), startPos_x + 30, 115)
+		.addText(getLastOnline(), startPos_x + 30, 115)
 
 		.setTextAlign(`end`)
 		.setTextFont(`9pt RobotoBold`)

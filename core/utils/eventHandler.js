@@ -16,7 +16,10 @@ module.exports = bot => {
 		message_object = message
 		reqEvent(`message`)(bot, message)
 	})
+	bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 
+
+	
 	/**
 	 * 	Will be enabled once the cpu-leak issue has been fixed.
 	 */

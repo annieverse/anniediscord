@@ -82,6 +82,39 @@ class databaseUtils {
 
 
 	/**
+	 * 	Validating if user has been registered or not.
+	 * 	Returns boolean
+	 * 	@param {String|ID} id user id. Use class default prop if not provided.
+	 */
+	async validateUser(id = this.id) {
+		let res = await this._query(`
+			SELECT COUNT(*) userId
+			FROM userdata
+			WHERE userId = ?`
+			, `get`
+			, [id])
+
+		//	This returns numbers 0 || 1. But i prefer to have it in true Boolean form.
+		return res.userId ? true : false
+	}
+
+
+	/**
+	 * 	Set user's last_login.
+	 * 	@param {Date|Timestamp} timestamp presence update time.
+	 * 	@param {String|ID} id user id. Use class default prop if not provided.
+	 */
+	async updateLastLogin(timestamp = Date.now(), id = this.id) {
+		await this._query(`
+			UPDATE userdata
+			SET last_login = ?
+			WHERE userId = ?`
+			, `run`
+			, [timestamp, id])
+	}
+
+
+	/**
 	 * 	Register into userdata if not present
 	 * 	@param {String|ID} id user id. Use class default prop if not provided.
 	 */
