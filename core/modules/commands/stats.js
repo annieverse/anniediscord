@@ -81,11 +81,11 @@ class stats {
 module.exports.help = {
 	start: stats,
 	name: `stats`,
-	aliases: [`status`, `botinfo`, `info`],
+	aliases: [`anniestatus`, `botinfo`, `annieinfo`],
 	description: `Gives info about the bot`,
-	usage: `stats`,
+	usage: `anniestats`,
 	group: `server`,
 	public: true,
-	require_usermetadata: false,
+	required_usermetadata: false,
 	multi_user: false
 }

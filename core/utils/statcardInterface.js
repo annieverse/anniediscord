@@ -87,7 +87,7 @@ async function stat(stacks, member) {
 	 * 	Get author last online
 	 *  @getLastOnline
 	 */
-	const getLastOnline = () => bot.users.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : 'No data retrieved.'
+	const getLastOnline = () => bot.users.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : `No data retrieved.`
 
 
 

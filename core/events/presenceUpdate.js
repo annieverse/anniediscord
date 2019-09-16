@@ -17,7 +17,7 @@ module.exports = async ({bot, newMember}) => {
 
 
     //  Return if current presence is not offline
-    if (newMember.presence.status != 'offline') return
+    if (newMember.presence.status != `offline`) return
 
     const { db, keyv } = bot
     const user = await db.validateUser(newMember.id)
