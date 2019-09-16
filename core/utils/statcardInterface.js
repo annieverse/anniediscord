@@ -129,8 +129,9 @@ async function stat(stacks, member) {
 		.setTextFont(`9pt RobotoBold`)
 		.addText(`Last online`, startPos_x + 23, 88)
 
-		.setTextFont(`14pt Roboto`)
-		.addText(`🕑`, startPos_x + 87, 85)
+		//	Disabled emoji
+		//.setTextFont(`14pt Roboto`)
+		//.addText(`🕑`, startPos_x + 87, 85)
 
 		.setTextFont(`20pt RobotoBold`)
 		.addText(getLastOnline(), startPos_x + 30, 115)
