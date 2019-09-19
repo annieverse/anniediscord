@@ -18,7 +18,7 @@ module.exports = async(Components) => {
         const member = await rmsg.guild.fetchMember(user)
 
         const ApprenticeKey = `621714766947287052`
-        const Announcements = `614737097454125056`
+        const Announcements = `459892157600366612`
 
         //    Ignore message outside of #announcements channel.
         if (rmsg.channel.id != Announcements) return
