@@ -117,13 +117,9 @@ async function profile(stacks, member) {
 	 *    PROFILE HEADER COVER
 	 */
 
-	if (!user.cov) {
-		canv.setColor(user.clr)
-			.addRect(startPos_x, startPos_y, baseWidth, 194)
-			.addImage(await configProfile.getAsset(`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
-	} else {
-		canv.addImage(await configProfile.getAsset(user.cov), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
-	}
+	canv.setColor(user.clr)
+		.addRect(startPos_x, startPos_y, baseWidth, 194)
+		.addImage(await configProfile.getAsset(user.cov?user.cov:`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 
 	/**
 	 *    USER AVATAR
