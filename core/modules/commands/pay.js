@@ -24,7 +24,7 @@ class Pay {
      *  Initializer method
      */
 	async execute() {
-		const { args, db, avatar, multicollector, commanifier, emoji, reply, collector, selfTargeting, name, trueInt, palette, code: {PAY}, meta: {author} } = this.stacks
+		const { bot, args, db, avatar, multicollector, commanifier, emoji, reply, collector, selfTargeting, name, trueInt, palette, code: {PAY}, meta: {author, data} } = this.stacks
 
 
 		//  Returns as guide user doesn't specify any parameter
@@ -91,6 +91,7 @@ class Pay {
 
 								//  Transaction successful
 								reply(PAY.SUCCESSFUL, {color: palette.lightgreen})
+								bot.logger.info(`[TRANSACTION] ${this.senderMeta.author.user.tag}(${commanifier(this.senderMeta.data.artcoins)} => ${commanifier(this.senderMeta.data.artcoins - amount)}) sent ${commanifier(amount)} ARTCOINS to ${author.user.tag}(${commanifier(data.artcoins)} => ${commanifier(data.artcoins + amount)})`)
 
 
 								try {
