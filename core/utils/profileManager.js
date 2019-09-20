@@ -20,7 +20,7 @@ class profileManager {
 			if (string.charAt(marker - 1) == ` `) {
 				marker--
 			}
-			//move marker to end of a word if it's in the middle
+			//move marker to start of a word if it's in the middle
 			while (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
 				marker--
 			}
