@@ -139,7 +139,7 @@ async function friend(stacks, member) {
         const {
             body: userAvatar
         } = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-        listEntry(relUser.username, userAvatar, friendrelations[i].theirRelation, 30, 70 + i*30)
+        listEntry(relUser.username, userAvatar, friendrelations[i].theirRelation, 30, 70 + i*33)
     }
 
     canv.setTextAlign(`left`)
