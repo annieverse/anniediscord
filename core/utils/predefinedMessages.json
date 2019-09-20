@@ -118,7 +118,7 @@
     "GETLOG": {
         "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
         "ERR": "Ops, something went wrong,..",
-        "RETURNING": "Hello **{0}**, here's your log request."
+        "RETURNING": "Hello **{0}**, here's your requested file."
     },
     "INVENTORY": {
         "FETCHING": "`fetching {0} inventory . .`",
