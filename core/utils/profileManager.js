@@ -20,7 +20,16 @@ class profileManager {
 			if (string.charAt(marker - 1) == ` `) {
 				marker--
 			}
-			//move marker to start of a word if it's in the middle
+
+			//if marker is in middle of word, try moving to the back of the word
+			//but at most 5 characters
+			for (var j=0; j<5;j++) {
+				if (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
+					marker = marker+j
+				}
+			}
+
+			//if can't move to back of word, more to front instead
 			while (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
 				marker--
 			}
