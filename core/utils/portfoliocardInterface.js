@@ -157,14 +157,33 @@ async function portfolio(stacks, member) {
 		} else {
             var description = `My newest artwork!`
 				if (res.description) {
-					if (res.description.length>46) {
-						description = res.description.substring(0, 46)+`...`
-					} else {
-						description = res.description
-					}
+					description = res.description.replace(/<[^>]*>?/gm, ``)
 				}
-            canv.addText(description, (baseWidth / 2) + 10, 100)
-			    .createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
+
+			if (description.length > 0 && description.length <= 50) {
+				if (configProfile.formatString(description, 1).second) {
+					canv.addText(configProfile.formatString(description, 1).first, (baseWidth / 2) + 10, 85)
+						.addText(configProfile.formatString(description, 1).second, (baseWidth / 2) + 10, 100)
+				} else {
+					canv.addText(configProfile.formatString(description, 1).first, (baseWidth / 2) + 10, 100)
+				}
+
+			} else if (description.length > 50 && description.length <= 100) {
+				if (configProfile.formatString(description, 2).third) {
+					canv.addText(configProfile.formatString(description, 2).first, (baseWidth / 2) + 10, 70)
+						.addText(configProfile.formatString(description, 2).second, (baseWidth / 2) + 10, 85)
+						.addText(configProfile.formatString(description, 2).third, (baseWidth / 2) + 10, 100)
+				} else {
+					canv.addText(configProfile.formatString(description, 2).first, (baseWidth / 2) + 10, 85)
+						.addText(configProfile.formatString(description, 2).second, (baseWidth / 2) + 10, 100)
+				}
+			} else if (description.length > 100) {
+				canv.addText(configProfile.formatString(description, 3).first, (baseWidth / 2) + 10, 70)
+					.addText(configProfile.formatString(description, 3).second, (baseWidth / 2) + 10, 85)
+					.addText(configProfile.formatString(description, 3).third+`...`, (baseWidth / 2) + 10, 100)
+			}
+
+            canv.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
 				.setColor(switchColor[usercolor].border)
 				.addRect(posx, posy, dx, dy)
 			await aspectRatio(res.url)

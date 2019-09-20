@@ -196,14 +196,14 @@ async function profile(stacks, member) {
 	canv.setColor(switchColor[usercolor].secondaryText)
 		.setTextAlign(`left`)
 		.setTextFont(`8pt Roboto`)
-	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length < 55) {
+	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length <= 55) {
 		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 31, 307)
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).second, 31, 317)
-	} else if (configProfile.checkDesc(user.des).length > 55 && configProfile.checkDesc(user.des).length < 110) {
+	} else if (configProfile.checkDesc(user.des).length > 55 && configProfile.checkDesc(user.des).length <= 110) {
 		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 31, 307)
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 31, 317)
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).third, 31, 327)
-	} else if (configProfile.checkDesc(user.des).length > 110 && configProfile.checkDesc(user.des).length < 165) {
+	} else if (configProfile.checkDesc(user.des).length > 110 && configProfile.checkDesc(user.des).length <= 165) {
 		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 31, 307)
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 31, 317)
 			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 31, 327)
