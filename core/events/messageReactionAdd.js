@@ -2,7 +2,7 @@ const Heart = require(`../utils/artFeaturingManager`)
 
 module.exports = async(Components) => {
     new Heart(Components).Add()
-    classRoom()
+    //classRoom()
 
 
     /**
@@ -30,8 +30,8 @@ module.exports = async(Components) => {
         if (member.roles.find(x => x.id == ApprenticeKey)) return
 
         //    Assign key, send notification.
-    	bot.logger.info(`${rmsg.author.tag} has received Apprenticeship Key.`)
+    	bot.logger.info(`${user.author.tag} has received Apprenticeship Key.`)
         await member.addRole(ApprenticeKey)
-        return classRoomChannel.send(`${rmsg.author} has joined the classroom!`)
+        return classRoomChannel.send(`${user.author} has joined the classroom!`)
     }
 }
