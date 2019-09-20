@@ -32,6 +32,5 @@ module.exports = async ({bot, newMember}) => {
     //  2 minutes cooling down
     await keyv.set(`presenceUpdate-${newMember.id}`, 1, 120000)
     await db.updateLastLogin(Now, newMember.id)
-    
-    bot.logger.info(`${newMember.user.tag} has logged out. (Timestamp: ${Now})`)
+
 }
