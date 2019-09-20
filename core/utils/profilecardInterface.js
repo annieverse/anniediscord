@@ -153,8 +153,14 @@ async function profile(stacks, member) {
 	 */
 	canv.setColor(switchColor[usercolor].secondaryText)
 		.setTextAlign(`center`)
-		.setTextFont(`14pt RobotoBold`) // NICKNAME
-		.addText(member.user.username, startPos_x + 70, 272)
+		if (member.user.username.length <= 10) {
+			canv.setTextFont(`14pt RobotoBold`)
+		} else if (member.user.username.length <= 20) {
+			canv.setTextFont(`12pt RobotoBold`)
+		} else {
+			canv.setTextFont(`10pt RobotoBold`)
+		}
+	canv.addText(member.user.username, startPos_x + 70, 272)
 
 		.setColor(user.clr)
 		.setTextFont(`5pt RobotoBold`)
