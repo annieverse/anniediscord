@@ -9,7 +9,6 @@ const databaseManager = require(`../../utils/databaseManager`)
 class Profile {
 	constructor(Stacks) {
 		this.stacks = Stacks
-        this.portfolio_lv = 35
 	}
 
 	//          WORKING ON NEW SHOP INTERFACE
@@ -20,6 +19,7 @@ class Profile {
 		const {message, command, reply, name, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
 
         const collection = new databaseManager(data.userId)
+        const userartworks = await collection.userArtworks()
         const badgesdata = await collection.badges
         delete badgesdata.userId
         const key = Object.values(badgesdata).filter(e => e)
@@ -39,9 +39,9 @@ class Profile {
             return false
         })
 
-        /*Don't add empty pages, and also don't add page if lvl not high enough*/
+        /*Don't add empty pages*/
         var pages = [{gui: profile, card: PROFILECARD, alias: `profile`}]
-        if (data && data.level > this.portfolio_lv) {
+        if (userartworks) {
             pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
         }
         if (key.length > 0 && key[0] != null) {
@@ -61,8 +61,6 @@ class Profile {
             case `timeline`:
             case `portfolio`:
                 if (!author) return reply(PORTFOLIOCARD.INVALID_USER)
-                //  Returns if user level is below the requirement
-                if (data.level < this.portfolio_lv) return reply(PORTFOLIOCARD.LVL_TOO_LOW, {socket: [this.portfolio_lv]})
                 count = pages.findIndex((e) => e.alias == `portfolio`)
                 break
             case `badges`:
@@ -89,7 +87,7 @@ class Profile {
         }
 
         const getPage = async (ctr) => {
-            if (!pages[ctr]) return reply (`Couldn't find that card. Either the card is empty or level locked.`)
+            if (!pages[ctr]) return reply (`Couldn't find that card. It's probably empty.`)
 
             return reply(pages[ctr].card.HEADER, {
                 socket: [name(author.id)],

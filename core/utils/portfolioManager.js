@@ -17,7 +17,8 @@ class Portfolio extends Controller {
         this.db.registerPost({
             userId: this.meta.author.id,
             url: this.url,
-            location: this.message.channel.name
+            location: this.message.channel.name,
+            description: this.message.content
         })
     }
 }

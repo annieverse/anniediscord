@@ -201,20 +201,29 @@ class databaseUtils {
 	 * 	@param {String|ID} location
 	 * 	@registerPost
 	 */
-	registerPost({userId=``, url=``, location=``}) {
+	registerPost({userId=``, url=``, location=``, description=``}) {
 		this._query(`
 			INSERT INTO userartworks (
 				userId
 				, url
 				, timestamp
 				, location
+				, description
 			)
-			VALUES (?, ?, datetime('now'), ?)`,
+			VALUES (?, ?, datetime('now'), ?, ?)`,
 			`run`
-			, [userId, url, location]
+			, [userId, url, location, description]
 		)
 	}
 
+	userArtworks(userId = this.id) {
+		return sql.get(`
+                SELECT *
+                FROM userartworks
+                WHERE userId = "${userId}"
+                ORDER BY timestamp DESC
+            `).then(async parsed => parsed)
+	}
 
 	/**
 	 * 	Sending 10 chocolate boxes
@@ -230,7 +239,6 @@ class databaseUtils {
 			, [userId]
 		)		
 	}
-
 
 	userBadges(userId = this.id) {
 		return sql.get(`

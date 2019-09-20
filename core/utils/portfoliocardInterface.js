@@ -117,7 +117,7 @@ async function portfolio(stacks, member) {
 
 
 	async function gridImage(posx, posy, dx, dy) {
-		var res = await sql.all(`SELECT * FROM userartworks WHERE userId = ${member.id} ORDER BY timestamp DESC`)
+		var res = await collection.userArtworks()
 		async function aspectRatio(src) {
 			try {
 				var proberes = await probe(src)
@@ -149,25 +149,25 @@ async function portfolio(stacks, member) {
 		canv.setColor(switchColor[usercolor].secondaryText)
 			.setTextAlign(`right`)
 			.setTextFont(`11pt Whitney`)
-			.addText(moment(res[0].timestamp).fromNow(), baseWidth - 5, 35)
+			.addText(moment(res.timestamp).fromNow(), baseWidth - 5, 35)
 			.setTextAlign(`center`)
 			.setTextFont(`10pt Roboto`)
-		if (res.length < 1) {
+		if (!res) {
 			await nullCollection()
 		} else {
             var description = `My newest artwork!`
-				if (res[0].description) {
-					if (res[0].description.length>56) {
-						description = res[0].description.substring(0, 56)+`...`
+				if (res.description) {
+					if (res.description.length>46) {
+						description = res.description.substring(0, 46)+`...`
 					} else {
-						description = res[0].description
+						description = res.description
 					}
 				}
             canv.addText(description, (baseWidth / 2) + 10, 100)
 			    .createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
 				.setColor(switchColor[usercolor].border)
 				.addRect(posx, posy, dx, dy)
-			await aspectRatio(res[0].url)
+			await aspectRatio(res.url)
 		}
 	}
 
