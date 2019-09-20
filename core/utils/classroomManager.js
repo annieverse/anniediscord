@@ -4,7 +4,7 @@ module.exports = async (Components) => {
      *	This function can be wrapped into its own class.
      *	@classRoom
      */
-        const { bot, reaction, user, rmsg } = Components
+        const { bot, reaction, user } = Components
         let classRoomChannel = bot.channels.get(`621705949429891074`)
         const rmsg = reaction.message
         const member = await rmsg.guild.fetchMember(user)
