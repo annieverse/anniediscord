@@ -1,4 +1,4 @@
-const { version, name } = require(`../../../package`)
+const { version } = require(`../../../package`)
 module.exports = `
                      
 ,---.          o     
