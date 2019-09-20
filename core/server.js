@@ -4,46 +4,35 @@ module.exports = () => {
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
 	bot.startupInit = process.hrtime()
+	const ascii = require(`./utils/config/startupAscii`)
+	const benchmark = require(`./utils/benchmarkConverter`)
 	const modulesLoader = require(`./utils/modulesLoader`)
 	const Database = require(`./utils/databaseManager`)
 	const KeyvClient = require(`keyv`)
 	const express = require(`express`)
+	const environment = require(`../.data/environment`)
+	const winston = require(`./utils/config/winston`)
 	const app = express()
 
 	
-	//  Loads .env variables
+	if (environment.dev) winston.info(ascii)
+
+
 	require(`dotenv`).config()
-
-	//	Ping server so it won't died cause of idling.
 	app.get(`/`, (request, response) => response.sendStatus(200))
-
-	//  To prevent PM2 from being terminated.
 	app.listen(process.env.PORT)
 
-	//	Default benchmark result converter
-	bot.getBenchmark = (measure) => {
-		return `${(measure[0] * 1000) + (measure[1] / 1e6)} ms`
-	  }
 
-	//	Initialize logger
-	bot.logger = require(`./utils/config/winston`)
-
-	//	Initializing db connection
+	//	Initialize @Client custom props
+	bot.getBenchmark = benchmark
+	bot.logger = winston
+	bot.env = environment
 	bot.db = new Database(null, bot).connect()
-
-	//	Initialize in-memory keyv
 	bot.keyv = new KeyvClient()
-
-	//	Initialize environment config
-	bot.env = require(`../.data/environment`)
-
-	//	Loading command modules.
 	bot = new modulesLoader().register(bot)
 
-	//  Start events.
-	require(`./utils/eventHandler`)(bot)
 
-	//	Login.
+	require(`./utils/eventHandler`)(bot)
 	bot.login(process.env.TOKEN)
 
 }
