@@ -134,7 +134,7 @@ async function friend(stacks, member) {
             .addText(relation, x + 50, y + 34)
     }
 
-    for (var i=0;i<Math.min(friendrelations.length, 6); i++) {
+    for (var i=0;i<Math.min(friendrelations.length, 9); i++) {
         var relUser = await stacks.bot.fetchUser(friendrelations[i].theirUserId)
         const {
             body: userAvatar

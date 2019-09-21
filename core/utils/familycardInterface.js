@@ -134,7 +134,7 @@ async function relation(stacks, member) {
             .addText(relation, x + 50, y + 34)
     }
 
-    for (var i=0;i<Math.min(familyrelations.length, 6); i++) {
+    for (var i=0;i<Math.min(familyrelations.length, 9); i++) {
         var relUser = await stacks.bot.fetchUser(familyrelations[i].theirUserId)
         const {
             body: userAvatar
