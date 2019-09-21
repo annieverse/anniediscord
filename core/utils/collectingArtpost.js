@@ -24,7 +24,8 @@ class collectPost extends MessageController {
         this.db.registerPost({
             userId: this.data.message.author.id,
             url: img.url,
-            location: this.data.message.channel.name
+            location: this.data.message.channel.name,
+            description: this.data.message.content
         })
     }
 
