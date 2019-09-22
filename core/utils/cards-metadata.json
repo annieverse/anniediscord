@@ -44,7 +44,7 @@
     "skills": {
       "main": {
         "name": "Owner's Prosperity",
-        "description": "100% EXP & AC boost in #general",
+        "description": "+50% EXP & AC boost in #general",
         "type": "exp_ac_booster",
         "channel": [
           "459891664182312982"
@@ -73,7 +73,7 @@
     "skills": {
       "main": {
         "name": "White's Cat Paradise",
-        "description": "+100 passive exp per message sent by Naph in #general",
+        "description": "+50 passive exp per message sent by Naph in #general",
         "type": "exp_booster",
         "channel": [
           "459891664182312982"
@@ -175,7 +175,7 @@
     "skills": {
       "main": {
         "name": "Event Fever",
-        "description": "Free event participant ticket",
+        "description": "Free event participant ticket & 10 chocolate boxes per event submission",
         "type": "ticket_pass",
         "channel": [
           "460615157056405505"
@@ -205,7 +205,7 @@
       "main": {
         "name": "Pleasure of Lewding",
         "type": "exp_booster",
-        "description": "500% AC bonus in nsfw channels.",
+        "description": "+250% AC bonus in nsfw channels.",
         "channel": [
           "459929521957634048",
           "524076299980111872",
@@ -236,7 +236,7 @@
     "skills": {
       "main": {
         "name": "Party Time",
-        "description": "+150% exp in #vc-off-topic & #music",
+        "description": "+50% exp in #vc-off-topic & #music",
         "type": "exp_booster",
         "channel": [
           "463536514887057436",
@@ -298,7 +298,7 @@
     "skills": {
       "main": {
         "name": "Silent Ghosty",
-        "description": "+50% XP in #general",
+        "description": null,
         "type": "exp_booster",
         "channel": [
           "459891664182312982"
