@@ -30,15 +30,12 @@ We got tons of upcoming features ahead!*
 
 Below are amazing people that make Annie possible!
 
-| ![1][naph]| ![1][pan] |
-| :----: | :----: |
-| **Naph** | **Panpan** |
-| Project Manager | Lead Developer |
+| ![1][naph]| ![2][pan] | ![3][hugo]| ![4][ame] | ![5][dwarf] | ![6][fwub] |
+| :----: | :----: | :----: | :----: | :----: | :----: |
+| **Naph** | **Panpan** | **Hugonun** | **Ame** | **Secretdwarf** | **Fwubbles**
+| Product Manager | Lead Developer | Developer | Developer | Developer | Developer
 
-| ![2][hugo]| ![4][ame] | ![5][dwarf] |
-| :----: | :----: | :----: |
-| **Hugonun** | **Ame** | **Secretdwarf** |
-| Developer | Developer | Developer |
+[fwub]: https://cdn.discordapp.com/avatars/294177453449019409/1444c86e06e454161857f74edd60a1b9.jpg?size=128
 
 [naph]: https://cdn.discordapp.com/avatars/230034968515051520/90119a1bf45d46e2b8418886b67e90d4.png?size=128
 
@@ -50,27 +47,30 @@ Below are amazing people that make Annie possible!
 
 [dwarf]: https://cdn.discordapp.com/avatars/596421558856056853/2bf3c57e9e104acd3f78a45f16ff25d5.png?size=128
 
-## **Contributor**  
+## **Contributor**
 
-`Kitomi#0077` - AAU Founder
-
-`Poppy#7929` - Creative Leader
-
-`Ami#1337` - (Ex) Creative Leader
-
-`snow-puffs#9912` - (Ex) Creative Member & Moderator
-
-`Foxling#9528` - Creative Member
-
-`Hapiikat#1361` - The Original Annie's Character Designer
-
-`Akane#6753` - First creator of AAU bot (Annie's Alpha Codename)
-
-`Fwubbles#8540` - (Ex) Developer - "Clan Project Leader"
-
-`TrojanOS#2373` - (Ex) Developer - "Introducing Sqlite to Annie."
+| ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] |
+| :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
+| **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** |
+| AAU Founder | Lead Creative | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Alpha Creator | Ex Developer
 
 . . . *and many others*
+
+[kitomi]: https://cdn.discordapp.com/avatars/184396254984404992/24c4e564d263d29b3738c342f5b8d0b2.jpg?size=128
+
+[ralu]: https://cdn.discordapp.com/avatars/91856786293805056/8afacb06844b5808853f018b232078ed.jpg?size=128
+
+[poppy]: https://cdn.discordapp.com/avatars/198360319184207873/a_e4533f4c6f2ca6bd1fdeccc1e68e23d7.gif
+
+[snow]: https://i.ibb.co/Jz4d4Hj/snow-1-1.png
+
+[foxie]: https://cdn.discordapp.com/avatars/234835633099505664/a74fce47c95b5ccc23ef755499560612.jpg?size=128
+
+[hapii]: https://cdn.discordapp.com/avatars/145367500710739969/80770ff32da51e35aeec569d248ea486.jpg?size=128
+
+[akane]: https://i.ibb.co/Xydv8rV/akane-1.png
+
+[trojanos]: https://i.ibb.co/Xzcb8B9/1-1.png
 
 ## **Support**
 
