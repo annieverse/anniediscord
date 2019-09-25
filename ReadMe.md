@@ -32,7 +32,7 @@ Below are amazing people that make Annie possible!
 
 | ![1][naph]| ![2][pan] | ![4][ame] | ![5][dwarf] | ![6][fwub] |
 | :----: | :----: | :----: | :----: | :----: | :----: |
-| **Naph** | **Panpan** | **Ane** | **Dwarf** | **Fwubbles**
+| **Naph** | **Panpan** | **Ane** | **Dwarf** | **Fwubbles** |
 | Product Manager | Lead Developer | Developer | Developer | Developer |
 
 ## **Contributor**
