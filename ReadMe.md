@@ -30,10 +30,19 @@ We got tons of upcoming features ahead!*
 
 Below are amazing people that make Annie possible!
 
-| ![1][naph]| ![2][pan] | ![3][hugo]| ![4][ame] | ![5][dwarf] | ![6][fwub] |
+| ![1][naph]| ![2][pan] | ![4][ame] | ![5][dwarf] | ![6][fwub] |
 | :----: | :----: | :----: | :----: | :----: | :----: |
-| **Naph** | **Panpan** | **Hugonun** | **Ame** | **Secretdwarf** | **Fwubbles**
-| Product Manager | Lead Developer | Developer | Developer | Developer | Developer
+| **Naph** | **Panpan** | **Ane** | **Dwarf** | **Fwubbles**
+| Product Manager | Lead Developer | Developer | Developer | Developer |
+
+## **Contributor**
+
+| ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] | ![9][hugo] |
+| :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
+| **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** | **Hugo** |
+| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer | Beta Tester
+
+. . . *and many others*
 
 [fwub]: https://cdn.discordapp.com/avatars/294177453449019409/1444c86e06e454161857f74edd60a1b9.jpg?size=128
 
@@ -46,15 +55,6 @@ Below are amazing people that make Annie possible!
 [ame]: https://cdn.discordapp.com/avatars/510246523939061760/a_33d70fc6e5c3978c57333fe5bb1672a2.gif
 
 [dwarf]: https://cdn.discordapp.com/avatars/596421558856056853/2bf3c57e9e104acd3f78a45f16ff25d5.png?size=128
-
-## **Contributor**
-
-| ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] |
-| :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** |
-| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer
-
-. . . *and many others*
 
 [kitomi]: https://cdn.discordapp.com/avatars/184396254984404992/24c4e564d263d29b3738c342f5b8d0b2.jpg?size=128
 
