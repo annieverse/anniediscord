@@ -143,7 +143,7 @@ class MessageController {
      *  @isCoolingDown
      */
     async isCoolingDown() {
-		//	If cooldown is not set, ignore this method.
+        if (env.DISABLE_COOLDOWN) return false
         if (!this.cd) return false
         if (await this.keyv.get(this.label)) return true
 		await this.keyv.set(this.label, `1`, this.cd)

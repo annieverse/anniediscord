@@ -344,15 +344,16 @@ class databaseUtils {
 		await this.addReputations(dly_metadata.amount, dly_metadata.target_id)
 	}
 
-	resetExperiencePoints() {
-		sql.run(`
+	resetExperiencePoints(id = this.id) {
+		this._query(`
                 UPDATE userdata
                 SET currentexp = 0,
                 maxexp = 100,
                 nextexpcurve = 150,
-                level = 0,
-                WHERE userId = "${this.id}"
-            `)
+                level = 0
+                WHERE userId = ?`
+            ,`run`
+            , [id])
 	}
 
 	resetInventory() {

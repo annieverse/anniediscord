@@ -66,6 +66,9 @@ class Experience extends Controller {
          */
 		const formula = (x, level, b, c) => {
 			for (let i = 150; i !== x; i += c) {
+
+				if (x < 100) break
+
 				b += c
 				c += 200
 				level++
@@ -89,7 +92,7 @@ class Experience extends Controller {
 
 
 		const accumulatedCurrent = Math.floor(this.total_gained_exp + this.meta.data.currentexp)
-		const main = formula(accumulatedCurrent, 0, 0, 150)
+		const main = formula(accumulatedCurrent, 0, 100, 150)
 		//  Save new data
 		this.updated.currentexp = accumulatedCurrent
 		this.updated.level = main.level

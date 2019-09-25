@@ -46,7 +46,7 @@ class Worker extends Controller {
         if (super.isDirectMessage) return new DM(this.data).run()
 
         //  Handle message that has prefix or bot related.
-        if (super.isCommandMessage) new Commands(this.data).prepare()
+        if (super.isCommandMessage) return new Commands(this.data).prepare()
 
         /** -----------------------------------------------------------------
          *  Beyond this point require cooling-down state mechanism.
