@@ -52,7 +52,7 @@ Below are amazing people that make Annie possible!
 | ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] |
 | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
 | **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** |
-| AAU Founder | Lead Creative | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Alpha Creator | Ex Developer
+| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer
 
 . . . *and many others*
 
