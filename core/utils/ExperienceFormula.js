@@ -68,10 +68,11 @@ class Experience extends Controller {
 			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
 			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
             var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
-			level = Math.round(level) + 1
+			level = Math.floor(level)
             var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
             var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
             var nextexpcurve = maxexp - minexp
+			level = level + 1
 
 			return {
             	level:level,
@@ -79,7 +80,6 @@ class Experience extends Controller {
 				nextexpcurve:nextexpcurve
 			}
         }
-
 		//  Apply bonus if available
 		this.total_gained_exp = this.total_gained_exp * this.exp_factor
 		//  Apply boost if artwork in art channel
@@ -87,7 +87,7 @@ class Experience extends Controller {
 
 
 		const accumulatedCurrent = Math.floor(this.total_gained_exp + this.meta.data.currentexp)
-		const main = formula(accumulatedCurrent, 0, 100, 150)
+		const main = formula(accumulatedCurrent)
 		//  Save new data
 		this.updated.currentexp = accumulatedCurrent
 		this.updated.level = main.level
