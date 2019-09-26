@@ -58,32 +58,27 @@ class Experience extends Controller {
 	updatingExp() {
 		/**
          * Main experience formula used in Annie's level system
-         * @param {Integer} x current exp
+         * @param {Integer} currexp current exp
          * @param {Integer} level current level
-         * @param {Integer} b current max exp/cap exp
-         * @param {integer} c current curve exp until next exp cap
+         * @param {Integer} maxexp current max exp/cap exp
+         * @param {integer} nextexpcurve current curve exp until next exp cap
          * @formula
          */
-		const formula = (x, level, b, c) => {
-			for (let i = 150; i !== x; i += c) {
+		const formula = (exp) => {
+			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
+            var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.round(level) + 1
+            var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+            var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+            var nextexpcurve = maxexp - minexp
 
-				if (x < 100) break
-
-				b += c
-				c += 200
-				level++
-				if (i > x) {
-					break
-				}
-			}
 			return {
-				x: x,
-				level: level,
-				b: b,
-				c: c
-
+            	level:level,
+				maxexp:maxexp,
+				nextexpcurve:nextexpcurve
 			}
-		}
+        }
 
 		//  Apply bonus if available
 		this.total_gained_exp = this.total_gained_exp * this.exp_factor
@@ -96,8 +91,8 @@ class Experience extends Controller {
 		//  Save new data
 		this.updated.currentexp = accumulatedCurrent
 		this.updated.level = main.level
-		this.updated.maxexp = main.b
-		this.updated.nextexpcurve = main.c
+		this.updated.maxexp = main.maxexp
+		this.updated.nextexpcurve = main.nextexpcurve
 
 		//  Store new values
 		this.db.updateExperienceMetadata(this.updated, this.author.id)
