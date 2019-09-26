@@ -65,6 +65,14 @@ class Experience extends Controller {
          * @formula
          */
 		const formula = (exp) => {
+			if (exp < 100) {
+				return {
+					level:0,
+					maxexp:100,
+					nextexpcurve:100 - exp
+				}
+			}
+
 			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
 			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
             var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
