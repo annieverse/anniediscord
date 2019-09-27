@@ -120,7 +120,9 @@ class MessageController {
 
 
     get isNaphMsg() {
-        //in general and by Naph
+        //  Bypass in dev mode
+        if (env.dev && this.message.author.id==`230034968515051520`) return true
+        //  in general and by Naph
         return this.message.channel.id==`459891664182312982` && this.message.author.id==`230034968515051520` ? true : false
     }
 

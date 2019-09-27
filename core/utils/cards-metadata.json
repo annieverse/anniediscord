@@ -60,7 +60,7 @@
     }
   },
   "naph_card": {
-    "fullname": "The Noble Cat, Naph",
+    "fullname": "The White Cat, Naph",
     "alias": "naph_card",
     "rarity": "★★★★★",
     "description": "Miaw",
@@ -79,7 +79,7 @@
           "459891664182312982"
         ],
         "effect": {
-          "exp": 50,
+          "exp": 15,
           "ac": null,
           "status": "passive",
           "type": "flat",

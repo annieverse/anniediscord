@@ -31,6 +31,11 @@
         "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
         "SUCCESSFUL": "**{0}** has converted {1} **{2}** artcoins and gained **+{3} EXP**"
     },
+    "CATEXP": {
+        "UNAVAILABLE": "You don't have any exp to claim.",
+        "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
+        "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}"
+    },
     "DM": {
         "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
         "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",

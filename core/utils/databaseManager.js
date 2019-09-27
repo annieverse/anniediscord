@@ -42,7 +42,7 @@ class databaseUtils {
 	 * 	@param {String|SQL} stmt
 	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
-	 * 	@param {ArrayOfString} supplies parameters to be used in sql statement.
+	 * 	@param {ArrayOfString|Object} supplies parameters to be used in sql statement.
 	 */
 	async _query(stmt=``, type=`get`, supplies=[]) {
 
@@ -154,6 +154,24 @@ class databaseUtils {
 			, `run`
 			, [id]
 		)
+	}
+
+
+	/**
+	 * 	Distribute exp based on Naph's buff.
+	 * 	@whiteCatParadise
+	 */
+	async whiteCatParadise() {
+		const meta = this.client.cardBuff.naph_card.skills.main
+		const res = await this._query(`
+			UPDATE userdata
+			SET currentexp = currentexp + ?
+			WHERE userId IN (SELECT userId FROM collections WHERE naph_card = 1)`
+			, `run`
+			, [meta.effect.exp]
+		)
+
+		logger.info(`[${meta.name}] : ${res.stmt.changes} users have received ${meta.effect.exp} EXP`)
 	}
 
 
@@ -376,6 +394,12 @@ class databaseUtils {
 	withdraw(value, value_type) {
 		sql.run(`UPDATE userinventories 
             SET ${value_type} = ${value_type} - ${value} 
+            WHERE userId = "${this.id}"`)
+	}
+
+	withdrawCatExp(value, value_type) {
+		this._query(`UPDATE userdata 
+            SET catexp = 0
             WHERE userId = "${this.id}"`)
 	}
 

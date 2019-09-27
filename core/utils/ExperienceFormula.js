@@ -156,22 +156,7 @@ class Experience extends Controller {
 	async runAndUpdate() {
 
 		try {
-			if (super.isNaphMsg) {
-				sql.all(`
-					SELECT userId
-					FROM collections
-					WHERE naph_card = 1
-				`).then((users) => {
-				    for (var i in users) {
-                        sql.run(`
-                            UPDATE userdata
-                            SET currentexp = currentexp + 50
-                            WHERE userId = "${users[i].userId}"
-                        `)
-						this.logger.info(`[Naph card boost] ${users[i].userId}: received 50 EXP`)
-                    }
-                })
-			}
+			if (super.isNaphMsg) this.db.whiteCatParadise()
 
 			//  Add & calculate bonuses from card if prompted
 			if (this.applyCardBuffs) {

@@ -12,6 +12,7 @@ module.exports = () => {
 	const express = require(`express`)
 	const environment = require(`../.data/environment`)
 	const winston = require(`./utils/config/winston`)
+	const cards = require(`./utils/cards-metadata`)
 	const app = express()
 
 	
@@ -24,6 +25,7 @@ module.exports = () => {
 
 
 	//	Initialize @Client custom props
+	bot.cardBuff = cards
 	bot.getBenchmark = benchmark
 	bot.logger = winston
 	bot.env = environment
