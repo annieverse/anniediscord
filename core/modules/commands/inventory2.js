@@ -21,12 +21,8 @@ class Inventory {
 		//  Returns if user is invalid
 		if (!this.author) return reply(INVENTORY.INVALID_USER)
 		//  Get user's inventory metadata
-		let Inventory = await db(this.author.id).inventory2
-		//  Cleaning up metadata
-		let res = await filteringInventory(Inventory)
-		//  Returns if user don't have any items
-		if (!res.filter_oringal_res) return reply(INVENTORY.EMPTY)
-        
+		let Inventory = await filteringInventory(await db(this.author.id).inventory2)
+
 
 		//  Display result
 		return reply(INVENTORY.FETCHING, {socket: [name(this.author.id)], simplified: true})
@@ -34,7 +30,7 @@ class Inventory {
 
 				reply(INVENTORY.HEADER, {
 					socket: [emoji(`AnnieWot`), name(this.author.id)],
-					image: await GUI(res),
+					image: await GUI(Inventory),
 					prebuffer: true,
 					simplified: true
 				})
@@ -46,7 +42,7 @@ class Inventory {
 module.exports.help = {
 	start: Inventory,
 	name: `inventory2`,
-	aliases: [],
+	aliases: [`inventory2`, `inv`],
 	description: `Views your inventory`,
 	usage: `inventory2`,
 	group: `General`,

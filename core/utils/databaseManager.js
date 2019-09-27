@@ -266,6 +266,17 @@ class databaseUtils {
             `).then(async parsed => parsed)
 	}
 
+
+	getItemMetadata(id = 0) {
+		return this._query(`
+			SELECT *
+			FROM itemlist 
+			WHERE itemId IN ?`
+			, `all`
+			, [id]
+		)
+	}
+
 	maintenanceUpdate(){
 		return sql.run(`
 				UPDATE userinventories
@@ -479,10 +490,14 @@ class databaseUtils {
 	}
 
 	get inventory2() {
-		return sql.all(`
+		return this._query(`
                 SELECT *
-                FROM item_inventory
-                WHERE user_id = "${this.id}"`)
+				FROM item_inventory
+				INNER JOIN itemlist
+				ON itemlist.itemId = item_inventory.item_id
+				WHERE item_inventory.user_id = ?`
+				, `all`
+				, [this.id])
 	}
 
 	//  Store new heart point
