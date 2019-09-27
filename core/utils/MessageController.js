@@ -119,6 +119,12 @@ class MessageController {
     }
 
 
+    get isNaphMsg() {
+        //in general and by Naph
+        return this.message.channel.id==`459891664182312982` && this.message.author.id==`230034968515051520` ? true : false
+    }
+
+
     /**
      *  Check if it sent to event-submission channel
      *  @isEventSubmission

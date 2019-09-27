@@ -1,6 +1,7 @@
 let booster = require(`./config/ticketbooster`)
 let Controller = require(`./MessageController`)
 let Artcoins = require(`./artcoinGains`)
+const sql = require(`sqlite`)
 
 /**
  * Experience formula wrapper. Standalone Class.
@@ -155,6 +156,22 @@ class Experience extends Controller {
 	async runAndUpdate() {
 
 		try {
+			if (super.isNaphMsg()) {
+				sql.all(`
+					SELECT userId
+					FROM collections
+					WHERE naph_card = 1
+				`).then((users) => {
+				    for (var i in users) {
+                        sql.run(`
+                            UPDATE userdata
+                            SET currentexp = currentexp + 50
+                            WHERE userId = "${users[i].userId}"
+                        `)
+                    }
+                })
+			}
+
 			//  Add & calculate bonuses from card if prompted
 			if (this.applyCardBuffs) {
 				var bonus = super.cardBuffs()

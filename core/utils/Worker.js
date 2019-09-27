@@ -52,7 +52,7 @@ class Worker extends Controller {
          *  Beyond this point require cooling-down state mechanism.
          *  -----------------------------------------------------------------
          */ 
-        if (await super.isCoolingDown()) return
+        //if (await super.isCoolingDown()) return
 
 
         //  Handle experience system
