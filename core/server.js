@@ -1,6 +1,6 @@
 module.exports = () => {
 	
-	//  Initialize startup modules
+	//Initialize startup modules
 	const { Client } = require(`discord.js`)
 	let bot = new Client()
 	bot.startupInit = process.hrtime()
@@ -31,6 +31,7 @@ module.exports = () => {
 	bot.env = environment
 	bot.db = new Database(null, bot).connect()
 	bot.keyv = new KeyvClient()
+	bot.cards = cards
 	bot = new modulesLoader().register(bot)
 
 

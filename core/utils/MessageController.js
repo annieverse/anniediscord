@@ -1,6 +1,5 @@
 const ranksManager = require(`./ranksManager`)
 const env = require(`../../.data/environment.json`)
-const cards = require(`../utils/cards-metadata.json`)
 const {
     art_domain,
     nonxp_domain,
@@ -17,6 +16,7 @@ const {
 class MessageController {
     constructor(data) {
         this.data = data
+        this.bot = data.bot
 		this.message = data.message
 		this.db = data.bot.db
         this.keyv = data.bot.keyv
@@ -119,11 +119,26 @@ class MessageController {
     }
 
 
+    /**
+     *  Check if it's a message by Naph in general
+     *  @isArtPost
+     */
     get isNaphMsg() {
+<<<<<<< HEAD
         //  Bypass in dev mode
         if (env.dev && this.message.author.id==`230034968515051520`) return true
         //  in general and by Naph
+=======
+>>>>>>> 3844c749e821ec1335fe9baacc098c8c11757dca
         return this.message.channel.id==`459891664182312982` && this.message.author.id==`230034968515051520` ? true : false
+    }
+
+    /**
+     *  Check if it's a message by Ralu in an art channel
+     *  @isArtPost
+     */
+    get isRaluMsg() {
+        return this.bot.cards.ami_card.skills.main.channel.includes(this.message.channel.id) && this.message.author.id==`91856786293805056` ? true : false
     }
 
 
@@ -163,8 +178,13 @@ class MessageController {
         if (env.DISABLE_COOLDOWN) return false
         if (!this.cd) return false
         if (await this.keyv.get(this.label)) return true
-		await this.keyv.set(this.label, `1`, this.cd)
-		return false       
+        await this.keyv.set(this.label, `1`, this.cd)
+        return false
+    }
+
+    async isRaluBuffActive() {
+        if (await this.keyv.get(`ralubuff`)) return true
+        return false
     }
 
 
@@ -238,10 +258,10 @@ class MessageController {
             }
 
             for (let key in cardStacks) {
-                const req = new requirements(cards[key])
+                const req = new requirements(this.bot.cards[key])
                 req.user_channel = this.message.channel
                 if (req.met_condition) {
-                    arr.push(cards[key])
+                    arr.push(this.bot.cards[key])
                 }
             }
 

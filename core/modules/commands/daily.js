@@ -1,5 +1,4 @@
 const ms = require(`parse-ms`)
-const cards = require(`../../utils/cards-metadata.json`)
 const moment = require(`moment`)
 
 /**
@@ -16,13 +15,13 @@ class Daily {
      * @Execute
      */
 	async execute() {
-		const { reply, palette, name, emoji, commanifier, code:{DAILY}, db, meta: { author, data } } = this.stacks
+		const {bot, reply, palette, name, emoji, commanifier, code:{DAILY}, db, meta: { author, data } } = this.stacks
 
 		let metadata = {
 			cooldown: 8.64e+7,
 			streakcooldown: 25.92e+7,
 			amount: 250,
-			skill: cards.poppy_card.skills.main,
+			skill: bot.cards.poppy_card.skills.main,
 			get isItStreaking() {
 				return data.poppy_card ? true : ms(this.streakcooldown - (Date.now() - data.lastdaily)).days >= 1 ? true : false
 			},
