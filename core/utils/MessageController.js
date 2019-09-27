@@ -124,12 +124,9 @@ class MessageController {
      *  @isArtPost
      */
     get isNaphMsg() {
-<<<<<<< HEAD
         //  Bypass in dev mode
         if (env.dev && this.message.author.id==`230034968515051520`) return true
         //  in general and by Naph
-=======
->>>>>>> 3844c749e821ec1335fe9baacc098c8c11757dca
         return this.message.channel.id==`459891664182312982` && this.message.author.id==`230034968515051520` ? true : false
     }
 

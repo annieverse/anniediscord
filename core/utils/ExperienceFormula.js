@@ -1,7 +1,6 @@
 let booster = require(`./config/ticketbooster`)
 let Controller = require(`./MessageController`)
 let Artcoins = require(`./artcoinGains`)
-const sql = require(`sqlite`)
 
 /**
  * Experience formula wrapper. Standalone Class.

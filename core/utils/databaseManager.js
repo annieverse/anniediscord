@@ -397,11 +397,6 @@ class databaseUtils {
             WHERE userId = "${this.id}"`)
 	}
 
-	withdrawCatExp(value, value_type) {
-		this._query(`UPDATE userdata 
-            SET catexp = 0
-            WHERE userId = "${this.id}"`)
-	}
 
 	async addLuckyTickets(amount = 0) {
 		// Fwubbles Hotfix
