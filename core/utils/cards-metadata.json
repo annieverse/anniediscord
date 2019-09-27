@@ -105,23 +105,9 @@
         "description": "+200% exp when posting images in art channels.",
         "type": "exp_booster",
         "channel": [
-          "459892609838481408",
-          "459893040753016872",
-          "460439050445258752",
-          "459892688016244738",
-          "574353861800755244",
-          "461926519976230922",
-          "459893364389707777",
-          "459893388767133711",
-          "520716400097099777"
+          "520716400097099777",
+          "574353861800755244"
         ],
-        "effects": {
-          "exp": 2,
-          "ac": null,
-          "status": "active",
-          "type": "multiplier",
-          "attachment_only": true
-        },
         "effect": {
           "exp": 0,
           "ac": null,
@@ -152,7 +138,7 @@
           "485922866689474571"
         ],
         "effect": {
-          "exp": 0,
+          "exp": null,
           "ac": null,
           "status": "active",
           "type": null,

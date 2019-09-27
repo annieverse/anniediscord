@@ -132,7 +132,7 @@ class MessageController {
      *  @isArtPost
      */
     get isRaluMsg() {
-        return art_domain.includes(this.message.channel.id) && this.message.author.id==`91856786293805056` ? true : false
+        return this.bot.cards.ami_card.skills.main.channel.includes(this.message.channel.id) && this.message.author.id==`91856786293805056` ? true : false
     }
 
 
