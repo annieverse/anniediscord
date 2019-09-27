@@ -123,7 +123,7 @@
           "attachment_only": true
         },
         "effect": {
-          "exp": null,
+          "exp": 0,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -152,7 +152,7 @@
           "485922866689474571"
         ],
         "effect": {
-          "exp": null,
+          "exp": 0,
           "ac": null,
           "status": "active",
           "type": null,
