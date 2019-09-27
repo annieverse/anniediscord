@@ -111,6 +111,15 @@ class MessageController {
 
 
     /**
+     *  Check if it's an art post and sent in an art boosted channel
+     *  @isArtPost
+     */
+    get isBoostedArtPost() {
+        return this.message.channel.id==`626927282602377226` && this._hasAttachment() ? true : false
+    }
+
+
+    /**
      *  Check if it sent to event-submission channel
      *  @isEventSubmission
      */
