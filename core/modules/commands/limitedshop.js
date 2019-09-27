@@ -3,6 +3,7 @@ const databaseManager = require(`../../utils/databaseManager`)
 const formatManager = require(`../../utils/formatManager`)
 const env = require(`../../../.data/environment`)
 const moment = require(`moment`)
+const events = require(`../../utils/event-metadata`)
 
 /**
  * Main module
@@ -19,57 +20,6 @@ class Limitedshop {
 
 		const args = message.content.substring(command.length + env.prefix.length + 1).split(` `)
 		const format = new formatManager(message)
-		const events = {
-			'halloween': {
-				'emote': `ghost`,
-				'currency': `candy`,
-				'currencyACvalue': 100,
-				'shopname': `Halloween Limited Shop`
-			},
-			'christmas': {
-				'emote': `christmas_tree`,
-				'currency': `artcoins`,//TODO
-				'currencyACvalue': 100,
-				'shopname': `Christmas Limited Shop`
-			},
-			'new-years': {
-				'emote': `tada`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `New Years Limited Shop`
-			},
-			'valentines': {
-				'emote': `hearts`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `Valentines Day Limited Shop`
-			},
-			'sping': {
-				'emote': `tulip`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `Spring Limited Shop`
-			},
-			'easter': {
-				'emote': `rabbit`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `Easter Limited Shop`
-			},
-			'annieversary': {
-				'emote': `AnnieHype`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `Annieversary Limited Shop`
-			},
-			'summer': {
-				'emote': `sunny`,
-				'currency': `artcoins`,
-				'currencyACvalue': 100,
-				'shopname': `Summer Limited Shop`
-			}
-		}
-
 		/*
         * TODOs before opening shops
         * Upload and link shop banner for shop type with instructions >buy <category> <id>
@@ -77,6 +27,8 @@ class Limitedshop {
         * Fill itemlist with shop items; use status for labels (e.g. halloween-sale); labels need to end with "sale"
         * Upload items to /core/images folder
         * */
+		let shopchannel = bot.channels.get(`614819522310045718`)
+
 		let shoptype
 		let shopdata
 		let shopname
@@ -85,17 +37,23 @@ class Limitedshop {
 		let cleartimeout
 		let db
 
-		const initShopData = () => {
+		//in dev mode, the shop only gets opened to creators council
+		let creatorscouncilrole = shopchannel.guild.roles.find((e) => e.id==`465587578327007233`)
+		let everyonerole = shopchannel.guild.defaultRole
+
+		//set timeouts for dev mode lower for easier testing
+		let onedaytimeout = env.dev ? 10000 : 8.64e+7 //24 h = 8.64e+7 ms
+		let oneweektimeout = env.dev ? 0 : 6.048e+8 //1 week = 6.048e+8 ms
+
+		//special character to make channel names appear without -
+		let channelspace = `  `
+
+		const initShopData = (type) => {
 			db = new databaseManager(message.member.id)
-			//TODO hack while we cant set shops public
-			var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
-			if (opened) {//channel open to public
-				shoptype = (args.length >= 2) ? args[1] : bot.channels.get(`614819522310045718`).name.split(`  `)[0]
-			} else {
-				shoptype = (args.length >= 2) ? args[1] : getShopType()
-			}
+
+			shoptype = type ? type : getShopType(shopchannel.name)
 			shopdata = events[shoptype]
-			shopname = shopdata ? shopdata.shopname : shoptype.replace(/^\w/, c => c.toUpperCase()) + ` Limited Shop`
+			shopname = shopdata ? shopdata.emoteUnicode + `┋` + shopdata.shopname.replace(/ /g, channelspace) : shoptype + channelspace + `shop`
 			shopemote = shopdata ? emoji(shopdata.emote) : emoji(`AnnieHype`)
 			shopcurrency = shopdata ? shopdata.currency : `artcoins`
 		}
@@ -129,7 +87,7 @@ class Limitedshop {
 		 */
 		const stock = async () => {
 			reply(`Stocking the shop...`)
-			//TODO emotes dont work REEEEEEEEEEEEEEEEE
+
 			const page = new Discord.RichEmbed()
 				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
 				.setColor(palette.darkmatte)
@@ -137,8 +95,9 @@ class Limitedshop {
 				.setImage(`https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png`)//TODO placeholder
 			let numitems = getItems(await db.classifyLtdItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
 			page.setFooter(`We have ` + numitems + ` limited items in store!`)
-			await bot.channels.get(`614819522310045718`).send(page)
+			await shopchannel.send(page)
 			reply(`Finished stocking`)
+			await shopchannel.setName(shopname)
 		}
 
 		/**
@@ -146,8 +105,8 @@ class Limitedshop {
 		 */
 		const open = async () => {
 			reply(`Opening shop to the public...`)
-			//TODO hack while we cant set shops public
-			var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
+
+			var opened = env.dev ? creatorscouncilrole.VIEW_CHANNEL : everyonerole.VIEW_CHANNEL
 			if (opened) {//channel open to public
 				reply(`Channel is already open`)
 				return
@@ -155,23 +114,20 @@ class Limitedshop {
 
 			//make channel 614819522310045718 public to @everyone
 			if(!env.dev) {
-				await bot.channels.get(`614819522310045718`).overwritePermissions(
-					bot.channels.get(`614819522310045718`).guild.defaultRole,
-					{ VIEW_CHANNEL: true }
-				)
+				await shopchannel.overwritePermissions(everyonerole, { VIEW_CHANNEL: true })
+			} else {
+				await shopchannel.overwritePermissions(creatorscouncilrole, { VIEW_CHANNEL: true })
 			}
-			await bot.channels.get(`614819522310045718`).setName(shoptype + `  shop`)
 
 			reply(`Scheduling clearing messages once per day...`)
 			cleartimeout = setInterval(() => {
 				clear()
-				//TODO hack while we cant set shops public
-				var opened = env.dev ? bot.channels.get(`614819522310045718`).name.split(`  `)[0]==`halloween` : bot.channels.get(`614819522310045718`).guild.defaultRole.VIEW_CHANNEL
+				var opened = env.dev ? creatorscouncilrole.VIEW_CHANNEL : everyonerole.VIEW_CHANNEL
 				if (!opened) {//channel open to public
 					reply(`Stopping scheduled message deletion`)
 					clearInterval(cleartimeout)
 				}
-			}, 8.64e+7)//24 h = 8.64e+7 ms
+			}, onedaytimeout)
 		}
 		/**
 		 * Converts any leftover special currency back into AC at a third of the value
@@ -202,14 +158,12 @@ class Limitedshop {
 			setTimeout(async ()=>{
 				//make channel 614819522310045718 private
 				reply(`Setting shop to private...`)
-				await bot.channels.get(`614819522310045718`).overwritePermissions(
-					bot.channels.get(`614819522310045718`).guild.defaultRole,
-					{ VIEW_CHANNEL: false }
-				)
+				await shopchannel.overwritePermissions(everyonerole, { VIEW_CHANNEL: false })
+				await shopchannel.overwritePermissions(creatorscouncilrole, { VIEW_CHANNEL: false })
 				reply(`Setting shop name to closed...`)
-				await bot.channels.get(`614819522310045718`).setName(`closed  shop`)
+				await shopchannel.setName(`closed`+channelspace+`shop`)
 				await destroyCurr()
-			}, 6.048e+8)//1 week = 6.048e+8 ms
+			}, oneweektimeout)
 
 			//DM all users who still have currency
 			reply(`Ping everyone with remaining currency...`)
@@ -234,9 +188,9 @@ class Limitedshop {
 		 * Also limit is at 100 messages according to docs
 		 */
 		const clear = () => {
-			bot.channels.get(`614819522310045718`).fetchMessages({limit:100}).then((msgs) => {
+			shopchannel.fetchMessages({limit:100}).then((msgs) => {
 				if (msgs.size>1) {
-					bot.channels.get(`614819522310045718`).bulkDelete(msgs.size - 1)
+					shopchannel.bulkDelete(msgs.size - 1)
 				}
 			})
 		}
@@ -254,7 +208,15 @@ class Limitedshop {
             * Annieversary: 22.06 (or 23.06 idk)
             * Summer: 21.06 - 23.09
          * */
-		const getShopType = () => {
+		const getShopType = (shopname) => {
+			if (shopname) {
+				for (var key in events) {
+					if (events.hasOwnProperty(key)) {
+						if (shopname.toLowerCase().includes(key)) return key
+					}
+				}
+			}
+
 			let month = moment().month()
 			let day = moment().date()
 			switch (month) {
@@ -311,10 +273,10 @@ class Limitedshop {
 		const run = () => {
 			const helpmsg = `To stock, open, close, or clear the shop, type >ltdshop stock/open/close/clear respectively`
 			if (!args) return reply(helpmsg)
-			initShopData()
+			initShopData(args[1])
 			if (args[0] == `stock`) {
 				clear()
-				bot.channels.get(`614819522310045718`).bulkDelete(1)
+				shopchannel.bulkDelete(1)
 				createCurr()
 			} else if (args[0] == `open`) {
 				open()
