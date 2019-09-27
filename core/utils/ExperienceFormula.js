@@ -168,6 +168,7 @@ class Experience extends Controller {
                             SET currentexp = currentexp + 50
                             WHERE userId = "${users[i].userId}"
                         `)
+						this.logger.info(`[Naph card boost] ${users[i].userId}: received 50 EXP`)
                     }
                 })
 			}
