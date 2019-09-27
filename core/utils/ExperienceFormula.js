@@ -156,7 +156,7 @@ class Experience extends Controller {
 	async runAndUpdate() {
 
 		try {
-			if (super.isNaphMsg()) {
+			if (super.isNaphMsg) {
 				sql.all(`
 					SELECT userId
 					FROM collections
