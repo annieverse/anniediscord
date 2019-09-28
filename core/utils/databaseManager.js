@@ -162,7 +162,7 @@ class databaseUtils {
 	 * 	@whiteCatParadise
 	 */
 	async whiteCatParadise() {
-		const meta = this.client.cardBuff.naph_card.skills.main
+		const meta = this.client.cards.naph_card.skills.main
 		const res = await this._query(`
 			UPDATE userdata
 			SET currentexp = currentexp + ?
