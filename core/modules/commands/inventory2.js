@@ -16,14 +16,14 @@ class Inventory {
      *  Initialzer method
      */
 	async execute() {
-		const { code: {INVENTORY}, db, name, reply, emoji } = this.stacks
+		const { code: {INVENTORY}, bot:{db}, name, reply, emoji } = this.stacks
 
 
 		//  Returns if user is invalid
 		if (!this.author) return reply(INVENTORY.INVALID_USER)
 		//  Get user's inventory metadata
 		let Inventory = Filter({
-			container: await db(this.author.id).inventory2,
+			container: await db.pullInventory(this.author.id),
 			strict: true
 		})
 

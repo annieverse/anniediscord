@@ -13,11 +13,10 @@ class Data {
 		this.requestedData = {}
 	}
 
+
 	async request() {
 		try {
 			const user = await new userSelector(this.data).get()
-
-			//	Get main metadata
 			let res = await this.db.userMetadata(user.id)
 			res.total_cards = await this.db.totalCollectedCards(user.id)
 			res.badges = await this.db.userBadges(user.id)
@@ -39,8 +38,8 @@ class Data {
     
 	//  Pull metadata
 	async pull() {
-		return await this.request()
-			.then(() => this.requestedData)
+		await this.request()
+		return this.requestedData
 	}
     
 }

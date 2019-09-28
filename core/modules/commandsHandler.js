@@ -148,15 +148,12 @@ class CommandsHandler extends Controller {
 	async init() {
 		try {
 			await this.requestData()
-				.then(async () => {
+			//	Baked/Ready-use Components
+			const { bot, message, command, args, fullArgs, commandfile, meta } = this.data
+			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
-					//	Baked/Ready-use Components
-					const { bot, message, command, args, fullArgs, commandfile, meta } = this.data
-					const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
-
-					await new this.cmd(Pistachified).execute()
-					this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${this.filename} command. (${this.getBenchmark(process.hrtime(this.data.cmdExecTime))})`)
-				})
+			await new this.cmd(Pistachified).execute()
+			this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${this.filename} command. (${this.getBenchmark(process.hrtime(this.data.cmdExecTime))})`)
 		}
 		catch (e) {
 			this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. > ${e.stack}`)

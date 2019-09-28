@@ -64,6 +64,21 @@ class databaseUtils {
 
 	}
 
+
+	/**
+	 * 	Parsing raw result from this.pullInventory().
+	 * 	@privateMethod
+	 * 	@param {Object} data inventory metadata
+	 */
+	_transformInventory(data = {}) {
+		let obj = {}
+		for (let i = 0; i < data.length; i++) {
+			obj[data[i].alias] = data[i].quantity
+		}
+		return obj
+	}
+
+
 	/**
 	 * 	Defacto method for updating experience point
 	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
@@ -196,19 +211,22 @@ class databaseUtils {
 		return new Promise(resolve => setTimeout(resolve, ms))
 	} // End of pause
 
+
 	//  Pull neccesary data at once.
-	userMetadata(userId = this.id) {
-		return sql.get(`
+	async userMetadata(userId = this.id) {
+		let main = await this._query(`
 			SELECT *
 			FROM userdata
-            INNER JOIN userinventories
-        	ON userinventories.userId = userdata.userId
-        	INNER JOIN usercheck
-            ON usercheck.userId = userdata.userId
-            INNER JOIN collections
-            ON collections.userId = userdata.userId
-            WHERE userdata.userId = "${userId}"`)
-			.then(async parsed => parsed)
+			INNER JOIN usercheck
+			ON usercheck.userId = userdata.userId
+			WHERE userdata.userId = ?`
+			, `get`
+			, [userId]
+		)
+
+		let inventory = await this.pullInventory(userId)
+
+		return {...main, ...this._transformInventory(inventory)}
 	}
 
 
@@ -316,11 +334,14 @@ class databaseUtils {
 
 
 	storeArtcoins(value, userId = this.id) {
-		sql.run(`
-                UPDATE userinventories
-                SET artcoins = artcoins + ${value}
-                WHERE userId = "${userId}"
-            `)
+		this._query(`
+			INSERT INTO item_inventory (item_id, user_id, quantity)
+			VALUES (52, ?, ?)
+			ON CONFLICT(user_id)
+			DO UPDATE SET quantity = quantity + ?
+			WHERE item_id = 52`
+			, `run`
+			, [userId, value, value])
 	}
 
 	updateSkin(newvalue) {
@@ -489,7 +510,7 @@ class databaseUtils {
                 WHERE userId = "${this.id}"`)
 	}
 
-	get inventory2() {
+	pullInventory(id = this.id) {
 		return this._query(`
                 SELECT *
 				FROM item_inventory
@@ -497,7 +518,7 @@ class databaseUtils {
 				ON itemlist.itemId = item_inventory.item_id
 				WHERE item_inventory.user_id = ?`
 				, `all`
-				, [this.id])
+				, [id])
 	}
 
 	//  Store new heart point
