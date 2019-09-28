@@ -25,13 +25,12 @@ module.exports = () => {
 
 
 	//	Initialize @Client custom props
-	bot.cardBuff = cards
+	bot.cards = cards
 	bot.getBenchmark = benchmark
 	bot.logger = winston
 	bot.env = environment
 	bot.db = new Database(null, bot).connect()
 	bot.keyv = new KeyvClient()
-	bot.cards = cards
 	bot = new modulesLoader().register(bot)
 
 

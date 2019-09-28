@@ -1,6 +1,7 @@
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 const databaseManager = require(`./databaseManager`)
+const events = require(`./event-metadata`)
 
 
 // Supporting transaction workflow. Initialized on each different category.
@@ -70,7 +71,14 @@ class Transaction {
 	get request_query() {
 		let itemstatus = `sell`
 		if (this.message.channel.id == `614819522310045718`) {
-			itemstatus = this.message.channel.name.split(`  `)[0]+`-sale`
+			for (var key in events) {
+				if (events.hasOwnProperty(key)) {
+					if (this.message.channel.toLowerCase().includes(key)) {
+						itemstatus = key+`-sale`
+						break
+					}
+				}
+			}
 		}
 		return sql.all(`SELECT name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
                                         FROM itemlist 
