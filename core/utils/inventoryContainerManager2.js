@@ -3,12 +3,14 @@
  * 	@param {Object} container user inventory metadata
  * 	@Wrangle
  */
-const Wrangle = (container) => {
-	//  Removing unavailable items (0/null/undefined)
-	let Filtered = (obj) => obj.filter(prop => prop.quantity != false)
+const Wrangle = ({container={}, strict=false}) => {
+	//  Only remove unavailable items (0/null/undefined)
+	let DefaultFilter = (obj) => obj.filter(prop => prop.quantity != false)
+	//	Additionally excluding card from result if prompted
+	let AdvancedFilter = (obj) => obj.filter(prop => (prop.quantity != false) && (prop.type != `Card`))
 	//	Sorting object (descending)
 	let Sorted = (obj) => obj.sort((a,b) => (a.quantity < b.quantity) ? 1 : ((b.quantity < a.quantity) ? -1 : 0))
-	return Sorted(Filtered(container))
+	return strict ? Sorted(AdvancedFilter(container)) : Sorted(DefaultFilter(container))
 }
 
 module.exports = Wrangle

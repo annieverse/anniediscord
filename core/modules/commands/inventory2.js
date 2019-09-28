@@ -1,4 +1,4 @@
-const filteringInventory = require(`../../utils/inventoryContainerManager2`)
+const Filter = require(`../../utils/inventoryContainerManager2`)
 const GUI = require(`../../utils/inventoryInterface2`)
 
 /**
@@ -8,6 +8,7 @@ const GUI = require(`../../utils/inventoryInterface2`)
 class Inventory {
 	constructor(Stacks) {
 		this.author = Stacks.meta.author
+		this.theme = Stacks.meta.data.interfacemode
 		this.stacks = Stacks
 	}
 
@@ -21,7 +22,10 @@ class Inventory {
 		//  Returns if user is invalid
 		if (!this.author) return reply(INVENTORY.INVALID_USER)
 		//  Get user's inventory metadata
-		let Inventory = await filteringInventory(await db(this.author.id).inventory2)
+		let Inventory = Filter({
+			container: await db(this.author.id).inventory2,
+			strict: true
+		})
 
 
 		//  Display result
@@ -30,7 +34,7 @@ class Inventory {
 
 				reply(INVENTORY.HEADER, {
 					socket: [emoji(`AnnieWot`), name(this.author.id)],
-					image: await GUI(Inventory),
+					image: await GUI(Inventory, this.theme),
 					prebuffer: true,
 					simplified: true
 				})
