@@ -190,7 +190,7 @@ class Experience extends Controller {
 			}
 
 			//	Save record
-			this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_exp} EXP(${(this.exp_factor-1) * 100}% bonus). (${this.data.commanifier(this.meta.data.currentexp)} --> ${this.data.commanifier(this.updated.currentexp)})`)
+			this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_exp} EXP(${(this.exp_factor === 1 ? 0 : this.exp_factor-2) * 100}% bonus). (${this.data.commanifier(this.meta.data.currentexp)} --> ${this.data.commanifier(this.updated.currentexp)})`)
 
 		}
 		catch (e) {
