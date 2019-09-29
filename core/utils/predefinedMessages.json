@@ -89,7 +89,7 @@
         "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
     },
     "LEVELUP": "{0} {1} has level up to **{2}**!",
-    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LVL)**, awesome!",
+    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!",
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
