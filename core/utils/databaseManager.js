@@ -214,20 +214,6 @@ class databaseUtils {
 		)
 		await this._query(`
 			INSERT OR IGNORE
-			INTO "collections" (userId)
-			VALUES (?)`
-			, `run`
-			, [id]
-		)
-		await this._query(`
-			INSERT OR IGNORE
-			INTO "userinventories" (userId)
-			VALUES (?)`
-			, `run`
-			, [id]
-		)
-		await this._query(`
-			INSERT OR IGNORE
             INTO "usercheck"(userId)
             VALUES(?)`
 			, `run`
