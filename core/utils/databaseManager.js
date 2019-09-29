@@ -186,6 +186,21 @@ class databaseUtils {
 
 
 	/**
+	 * 	Reset expiring user exp booster.
+	 * 	@resetExpBooster
+	 */
+	resetExpBooster() {
+		this._query(`
+			UPDATE usercheck
+			SET expbooster = NULL, expbooster_duration = NULL
+			WHERE userId = ?`
+			, `run`
+			, [this.id]
+		)
+	}
+
+
+	/**
 	 * 	Register into userdata if not present
 	 * 	@param {String|ID} id user id. Use class default prop if not provided.
 	 */
