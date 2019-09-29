@@ -71,7 +71,7 @@ class Experience extends Controller {
 				return {
 					level:0,
 					maxexp:100,
-					nextexpcurve:100 - exp
+					nextexpcurve:100
 				}
 			}
 

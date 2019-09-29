@@ -112,6 +112,7 @@ async function profile(stacks, member) {
 	/*if (user.stic) {
 		canv.addImage(await configProfile.getAsset(user.stic+switchColor[usercolor].sticker), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
 	}*/
+	//canv.addImage(await configProfile.getAsset(`AAU_Profile_Theme_Pumpkin`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 
 	/**
 	 *    PROFILE HEADER COVER
