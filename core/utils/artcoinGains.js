@@ -62,7 +62,7 @@ class Artcoins extends Controller {
 			return this.reply(this.code.LEVELUP_JUMP, {
 				socket: [
 					this.emoji(`AnnieDab`),
-					this.data.name(this.meta.author.id),
+					this.meta.author,
 					this.updated.level,
 					threeshold
 				],
