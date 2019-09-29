@@ -13,7 +13,7 @@ class resetInventory {
      *	Initializer method
      */
 	async execute() {
-		const { isAdmin, code, name, reply, db, meta: {author} } = this.stacks
+		const { isAdmin, code, name, reply, bot:{db}, meta: {author} } = this.stacks
 
 		//  Returns if user has no admin authority
 		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
@@ -22,7 +22,7 @@ class resetInventory {
 
 
 		//  Update exp metadata
-		await db(author.id).resetInventory()
+		await db.setUser(author.id).resetInventory()
 
 
 		//  Successful

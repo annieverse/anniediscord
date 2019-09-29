@@ -9,7 +9,7 @@ class ArtcoinsGenerator {
 
 	//  Init
 	async execute() {
-		const { name, args, collector, palette, emoji, isAdmin, avatar, trueInt, reply, commanifier, code, db, meta: { author, data } } = this.stacks
+		const { name, args, collector, palette, emoji, isAdmin, avatar, trueInt, reply, commanifier, code, bot:{db}, meta: { author, data } } = this.stacks
 
         
 		//  Returns if user doesn't have admin authority
@@ -43,7 +43,7 @@ class ArtcoinsGenerator {
 					if (!amount) return reply(code.ADDAC.NEGATIVE_VALUES)
 
 					//  Storing new balance value
-					db(author.id).storeArtcoins(amount)
+					db.setUser(author.id).storeArtcoins(amount)
 
 					//  Successful
 					return reply(code.ADDAC.SUCCESSFUL, {

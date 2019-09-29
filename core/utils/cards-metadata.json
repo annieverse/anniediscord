@@ -2,7 +2,7 @@
   "annie_card": {
     "fullname": "Little Annie",
     "alias": "annie_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "url": "https://i.ibb.co/bzD6RWW/annie-card.png",
     "description": "I'm not small! you are just too high.",
     "req_materials": {
@@ -33,7 +33,7 @@
   "kitomi_card": {
     "fullname": "Lazy Princess, Kitomi",
     "alias": "kitomi_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "url": "https://i.ibb.co/bsF4m7N/1-kitomi-card.png",
     "description": "Spoil me, protect me, worship me, you slave",
     "req_materials": {
@@ -62,7 +62,7 @@
   "naph_card": {
     "fullname": "The White Cat, Naph",
     "alias": "naph_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "Miaw",
     "url": "https://i.ibb.co/VmJrpRS/1-naph-card.png",
     "req_materials": {
@@ -91,7 +91,7 @@
   "ami_card": {
     "fullname": "Pastel Goth, Ami",
     "alias": "ami_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "things I like, my pri-... Ah, Pink clothing of course!",
     "url": "https://i.ibb.co/x6K8XL7/1-ami-card.png",
     "req_materials": {
@@ -121,7 +121,7 @@
   "poppy_card": {
     "fullname": "Poppy Panda",
     "alias": "poppy_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "Sleep tight and have a sweet dreams. ",
     "url": "https://i.ibb.co/Ld1B0GP/1-poppy-card.png",
     "req_materials": {
@@ -150,7 +150,7 @@
   "foxie_card": {
     "fullname": "The Floofiest, Foxie",
     "alias": "foxie_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "Who can beat my fluffehness?",
     "url": "https://i.ibb.co/LRXZWGD/1-foxie-card.png",
     "req_materials": {
@@ -179,7 +179,7 @@
   "vezeko_card": {
     "fullname": "The Lewdism's Prince, Vezeko",
     "alias": "vezeko_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "Hehehe.. one is never enough.",
     "url": "https://i.ibb.co/3WYbxCD/1-vezeko-card.png",
     "req_materials": {
@@ -211,7 +211,7 @@
   "pan_card": {
     "fullname": "The Mighty Pan",
     "alias": "pan_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "y know drink is fun. R8?",
     "url": "https://i.ibb.co/ZdtjNZD/1-pan-card.png",
     "req_materials": {
@@ -244,7 +244,7 @@
   "rany_card": {
     "fullname": "The Weeb Queen, Rany",
     "alias": "rany_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": "Ara, Ara... it's time for Onee-san to treat you!",
     "url": "https://i.ibb.co/8jPdrmq/1-rany-card.png",
     "req_materials": {
@@ -273,7 +273,7 @@
   "snowy_card": {
     "fullname": "Ghosty Snowee",
     "alias": "snowy_card",
-    "rarity": "★★★★★",
+    "rarity": "5",
     "description": ". . .",
     "url": "https://i.ibb.co/5jb36Gp/1-snowy-card.png",
     "req_materials": {
@@ -306,10 +306,10 @@
       }
     }
   },
-  "shiro_card": {
+  "raluver_shiro_card": {
     "fullname": "Shiro",
     "alias": "shiro_card",
-    "rarity": "★★★★★",
+    "rarity": "4",
     "description": "No game no life",
     "url": "https://i.ibb.co/jWSprn1/shiro-card.png",
     "req_materials": {
@@ -331,10 +331,60 @@
       }
     }
   },
-  "nezuko_card": {
+  "raluver_nezuko_card": {
     "fullname": "Nezuko",
     "alias": "nezuko_card",
-    "rarity": "★★★★★",
+    "rarity": "4",
+    "description": "rawr!",
+    "url": "https://i.ibb.co/GCVHGvD/nezuko-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "poppyver_shiro_card": {
+    "fullname": "Shiro",
+    "alias": "shiro_card",
+    "rarity": "4",
+    "description": "No game no life",
+    "url": "https://i.ibb.co/jWSprn1/shiro-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "poppyver_nezuko_card": {
+    "fullname": "Nezuko",
+    "alias": "nezuko_card",
+    "rarity": "4",
     "description": "rawr!",
     "url": "https://i.ibb.co/GCVHGvD/nezuko-card.png",
     "req_materials": {

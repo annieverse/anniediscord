@@ -6,17 +6,19 @@ const moment = require(`moment`)
  * @Daily as function to handle user dailies loot
  */
 class Daily {
+
+
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
 
+	
 	/**
      * Initializer method
      * @Execute
      */
 	async execute() {
-		const {bot, reply, palette, name, emoji, commanifier, code:{DAILY}, db, meta: { author, data } } = this.stacks
-
+		const {bot, reply, palette, name, emoji, commanifier, code:{DAILY}, bot:{db}, meta: { author, data } } = this.stacks
 		let metadata = {
 			cooldown: 8.64e+7,
 			streakcooldown: 25.92e+7,
@@ -35,17 +37,13 @@ class Daily {
 				return (data.lastdaily !== null) && this.cooldown - (Date.now() - data.lastdaily) > 0 ? true : false
 			}
 		}
-
 		//	Returns if user dailies duration still in cooldown
 		if (metadata.inCooldown) return reply(DAILY.IN_COOLDOWN, {
 			socket: [moment(data.lastdaily + metadata.cooldown).fromNow()],
 			color: palette.red
 		})
-
 		//	Update data
-		db(author.id).updateDailies(metadata)
-
-		//	Dailies claimed
+		db.setUser(author.id).updateDailies(metadata)
 		return reply(DAILY.CLAIMED, {
 			socket: [
 				name(author.id),
@@ -60,6 +58,7 @@ class Daily {
 		})
 	}
 }
+
 
 module.exports.help = {
 	start: Daily,

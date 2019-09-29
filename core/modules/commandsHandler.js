@@ -148,7 +148,8 @@ class CommandsHandler extends Controller {
 	async init() {
 		try {
 			await this.requestData()
-			//	Baked/Ready-use Components
+			//	Set default id for db access
+			this.bot.db = this.bot.db.setUser(this.data.meta.author.id)
 			const { bot, message, command, args, fullArgs, commandfile, meta } = this.data
 			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 

@@ -7,6 +7,7 @@ const logger = require(`./config/winston`)
   */
 class databaseUtils {
 
+
 	/**
         *  id represent userId in userdata column.
         *  @this.id
@@ -58,7 +59,7 @@ class databaseUtils {
 			
 		}
 		catch (e) {
-			logger.error(`Database._query() has failed to run. > ${e.stack}`)
+			logger.error(`Database._query() has failed to run. > ${e.stack}\n${stmt}`)
 			return null
 		}
 
@@ -76,6 +77,61 @@ class databaseUtils {
 			obj[data[i].alias] = data[i].quantity
 		}
 		return obj
+	}
+
+
+	/**
+	 * 	Reversed mechanism from `._transformInventory()`.
+	 * 	@privateMethod
+	 * 	@param {Object} src transformed inventory metadata
+	 */
+	async _detransformInventory(src = {}) {
+		const newInventory = []
+		const keys = Object.keys(src)
+		const meta = await this._query(`
+			SELECT *
+			FROM itemlist
+			WHERE alias IN (${keys.map(() => `?`).join(`, `)})`
+			, `all`
+			, keys
+		)
+		for (let metaKey in meta) {
+			for (let srcKey in src) {
+				if(meta[metaKey].alias === srcKey) newInventory.push({...meta[metaKey], quantity:src[srcKey]})
+			}
+		}
+		return newInventory
+	}
+
+
+	/**
+	 * 	Standard low method for writing to item_inventory
+	 *  @privateMethod
+	 *  @param {Number|ID} itemId item id
+	 *  @param {Number} value amount to be stored
+	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
+	 *  @param {String|ID} userId user id
+	 */
+	async _updateInventory({itemId, value=0, operation=`+`, userId=this.id}) {
+		//	Return if itemId is not specified
+		if (!itemId) return {stored: false}
+		//	Insert if no data entry exists.
+		await this._query(`
+			INSERT INTO item_inventory (item_id, user_id)
+			SELECT $itemId, $userId
+			WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
+			, `run`
+			, {$userId: userId, $itemId: itemId}
+		)
+		//	Try to update available row. It won't crash if no row is found.
+		await this._query(`
+			UPDATE item_inventory
+			SET quantity = quantity ${operation} ?
+			WHERE item_id = ? AND user_id = ?`
+			, `run`
+			, [value, itemId, userId]
+		)
+		return {stored: true}
 	}
 
 
@@ -332,17 +388,42 @@ class databaseUtils {
 		return this
 	}
 
-
-	storeArtcoins(value, userId = this.id) {
-		this._query(`
-			INSERT INTO item_inventory (item_id, user_id, quantity)
-			VALUES (52, ?, ?)
-			ON CONFLICT(user_id)
-			DO UPDATE SET quantity = quantity + ?
-			WHERE item_id = 52`
-			, `run`
-			, [userId, value, value])
+	
+	/**
+	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
+	 * 	@param {Number|UserArtcoins} artcoins ac
+	 *  @param {Number|UserGachaTicket} lucky_ticket ticket
+	 *  @deliverRewardItems
+	 */
+	async deliverRewardItems({artcoins, lucky_ticket}) {
+		await this.storeArtcoins(artcoins)
+		await this.addLuckyTickets(lucky_ticket)
+		return this
 	}
+
+
+	/**
+	 * 	Updating user lucky ticket. Support method chaining.
+	 * 	@param {Number} value amount of lucky ticket to be given
+	 * 	@addLuckyTickets
+	 */
+	async addLuckyTickets(value = 0) {
+		await this._updateInventory({itemId: 71, value:value, operation:`+`})
+		return this
+	}
+
+
+	/**
+	 * 	Add user artcoins. Supports method chaining.
+	 * 	@param {Number} value of the artcoins to be given
+	 * 	@param {String|ID} userId of the user id
+	 * 	@storeArtcoins
+	 */
+	async storeArtcoins(value) {
+		await this._updateInventory({itemId: 52, value: value, operation: `+`})
+		return this
+	}
+
 
 	updateSkin(newvalue) {
 		sql.run(`UPDATE userdata 
@@ -372,18 +453,27 @@ class databaseUtils {
             WHERE userId = "${this.id}"`)
 	}
 
+
+	/**
+	 * 	Updating dailies metadata. Supports method chaining.
+	 * 	@param {Object} dly_metadata returned metadata from daily.js
+	 *  @updateDailies
+	 */
 	updateDailies(dly_metadata) {
 		//  Update daily date
-		sql.run(`UPDATE usercheck
-                     SET totaldailystreak = ${dly_metadata.countStreak},
-                     lastdaily = "${Date.now()}"
-                     WHERE userId = ${this.id}`)
-
+		this._query(`
+			UPDATE usercheck
+            SET totaldailystreak = ${dly_metadata.countStreak},
+            lastdaily = "${Date.now()}"
+			WHERE userId = ?`
+			, `run`
+			, [this.id]
+		)
 		//  Update dailies reward
-		sql.run(`UPDATE userinventories
-                     SET artcoins = artcoins + ${dly_metadata.amount + dly_metadata.bonus}
-                     WHERE userId = "${this.id}"`)
+		this.storeArtcoins(dly_metadata.amount + dly_metadata.bonus)
+		return this
 	}
+
 
 	async updateReps(dly_metadata) {
 		//  Update daily date
@@ -406,41 +496,49 @@ class databaseUtils {
             , [id])
 	}
 
+
+	/**
+	 * 	Delete user inventory entries. Supports method chaining.
+	 * 	@resetInventory
+	 */
 	resetInventory() {
-		//  Remove old entry
-		sql.run(`DELETE FROM userinventories WHERE userId = "${this.id}"`)
-		//  Add new entry
-		sql.run(`INSERT INTO userinventories (userId) VALUES ("${this.id}")`)
-	}
-
-	deliverRewardItems(metadata = {}) {
-		sql.run(`
-                UPDATE userinventories
-                SET artcoins = artcoins + ${metadata.artcoins},
-                lucky_ticket = lucky_ticket + ${metadata.lucky_ticket}
-                WHERE userId = "${this.id}"
-            `)
+		this._query(`
+			DELETE FROM item_inventory
+			WHERE user_id = ?`
+			, `run`
+			, [this.id]
+		)
+		return this
 	}
 
 
-	withdraw(value, value_type) {
-		sql.run(`UPDATE userinventories 
-            SET ${value_type} = ${value_type} - ${value} 
-            WHERE userId = "${this.id}"`)
+	/**
+	 * 	Withdrawing specific item from user inventory
+	 * 	@param {Number} value as amount to be withdraw
+	 * 	@param {Number} item_id as item id reference
+	 * 
+	 */
+	withdraw(value, item_id) {
+		this._query(`
+			UPDATE item_inventory 
+            SET quantity = quantity - ?
+			WHERE item_id = ? AND user_id = ?`
+			, `run`
+			, [value, item_id, this.id]
+		)
 	}
 
 
-	async addLuckyTickets(amount = 0) {
-		// Fwubbles Hotfix
-		let ticketcount
-		let oldcount = (await sql.get(`SELECT lucky_ticket FROM userinventories WHERE userId = "${this.id}"`)).lucky_ticket
-		oldcount === null ? ticketcount = amount : ticketcount = oldcount + amount
-		sql.run(`
-                UPDATE userinventories
-                SET lucky_ticket = ${ticketcount}
-                WHERE userId = "${this.id}"
-            `)
+	/**
+	 * 	Set default db author. Supports method chaining.
+	 * 	@param {String|ID} id user id
+	 * 	@setUser
+	 */
+	setUser(id) {
+		this.id = id
+		return this
 	}
+
 
 
 	get luckyTicketDropRates() {
@@ -453,14 +551,14 @@ class databaseUtils {
 
 
 	/**
-    Subtracting tickets by result of roll_type().
-    @substract_ticket
+     * Subtracting tickets by result of roll_type().
+	 * @param {Number} value amount to be subtracted
+     * @substract_ticket
     */
-	withdrawLuckyTicket(amount = 0) {
-		sql.run(`UPDATE userinventories
-             SET lucky_ticket = lucky_ticket - ${amount}
-             WHERE userId = ${this.id}`)
+	withdrawLuckyTicket(value = 0) {
+		this._updateInventory({itemId: 71, value: value, operation:`-`})
 	}
+
 
 	//	Count total user's collected cards.
 	async totalCollectedCards(userId = this.id) {
@@ -474,17 +572,12 @@ class databaseUtils {
 
 	/**
      *  Storing rolled items straight into user inventory
-     *  @param {Object} obj as parsed object of roll metadata
+     *  @param {Object} obj as parsed object of roll metadata (require baking in `._detransformInventory()`).
      */
 	async storingUserGachaMetadata(obj = {}) {
-		for (let keyv in obj) {
-			const tablediff = keyv.indexOf(`card`) > -1 ? `collections` : `userinventories`
-			sql.run(`UPDATE ${tablediff} 
-                         SET ${keyv} = CASE WHEN ${keyv} IS NULL 
-                            THEN ${parseInt(obj[keyv])} 
-                            ELSE ${keyv} + ${parseInt(obj[keyv])} 
-                         END 
-                         WHERE userId = "${this.id}"`)
+		for (let key in obj) {
+			let data = obj[key]
+			await this._updateInventory({itemId: data.itemId, value: data.quantity})
 		}
 	}
 

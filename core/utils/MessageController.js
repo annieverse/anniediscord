@@ -18,7 +18,6 @@ class MessageController {
         this.data = data
         this.bot = data.bot
 		this.message = data.message
-		this.db = data.bot.db
         this.keyv = data.bot.keyv
         this.env = data.bot.env
         this.ranks = new ranksManager(data.bot, data.message)
@@ -27,7 +26,9 @@ class MessageController {
         this.emoji = data.emoji
         this.code = data.code
         this.meta = data.meta
-        this.author = data.meta.author
+        //  Optional condition: if data from author(parent) can't be pulled, then use user(child).
+        this.author = data.meta.author.username ? data.meta.author : data.meta.author.user
+        this.db = data.bot.db.setUser(this.author.id)
         this.logger = data.bot.logger
         this.label = data.label
         this.cd = data.cooldown
@@ -226,6 +227,7 @@ class MessageController {
                 //  Returns true if the card is active-typing exp booster.
                 get exp_multiplier_type() {
                     const booster_type = [`exp_booster`, `exp_ac_booster`]
+                    if (this.data.rarity < 5) return false
                     return booster_type.includes(this.data.skills.main.type) &&
                     this.data.skills.main.effect.status === `active` ?
                         true : false

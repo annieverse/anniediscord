@@ -53,7 +53,7 @@ class Transaction {
 
 	//  Withdrawing balance
 	withdraw(data) {
-		this.db.withdraw(data.price, data.price_type)
+		this.db.withdraw(data.price, data.itemId)
 	}
 
 

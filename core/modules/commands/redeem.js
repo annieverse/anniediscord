@@ -6,7 +6,7 @@ class Redeem {
 	constructor(Stacks) {
 		this.stacks = Stacks
 		this.ticket_price = 120
-		this.db = Stacks.db(Stacks.meta.author.id)
+		this.db = Stacks.bot.db.setUser(Stacks.meta.author.id)
 	}
 
 
@@ -59,7 +59,7 @@ class Redeem {
 						//  Update Lucky Tickets
 						await this.db.addLuckyTickets(amount * 2)
 						//  Withdraw artcoins
-						await this.db.withdraw(price, `artcoins`)
+						await this.db.withdraw(price, 52)
 
 						//  Redeem successful
 						return reply(REDEEM.COLLECTOR_FORTUNE, {
@@ -72,7 +72,7 @@ class Redeem {
 					//  Update Lucky Tickets
 					await this.db.addLuckyTickets(amount)
 					//  Withdraw artcoins
-					await this.db.withdraw(price, `artcoins`)
+					await this.db.withdraw(price, 52)
 
 
 					//  Redeem successful

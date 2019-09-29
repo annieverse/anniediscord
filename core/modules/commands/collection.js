@@ -1,105 +1,94 @@
-const { Canvas } = require(`canvas-constructor`)
-const { resolve, join } = require(`path`)
-const Discord = require(`discord.js`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
-class collection {
+
+/**
+ * 	Display user card collection
+ * 	@collection
+ */
+class Collection {
+
+	
 	constructor(Stacks) {
 		this.stacks = Stacks
+		this.db = Stacks.bot.db.setUser(Stacks.meta.author.id)
 	}
+
+
+	/**
+	 * 	Filtering card from user inventory. Fyi, this doesn't have any to do with external db calling.
+	 * 	@param {Object} data user metadata.
+	 * 	@getCardFromInventory
+	 */
+	filterCardFromInventory(data) {
+		return Object.keys(data)
+		.filter(key => key.endsWith(`_card`))
+		.reduce((obj, key) => {
+			obj[key] = data[key]
+			return obj
+		}, {})
+	}
+
+
+	/**
+	 * 	Pulling card metadata from itemlist
+	 * 	@param {Object} data collection of card with quantity value.
+	 *  @retrieveCardMetadata
+	 */
+	retrieveCardMetadata(data) {
+		const ref = Object.keys(data)
+		return this.db._query(`
+			SELECT *
+			FROM itemlist
+			WHERE alias IN (${ref.map(() => `?`).join(`, `)})`
+			, `all`
+			, ref
+		)
+	}
+
+
+	/**
+	 * 	Prettify result to be displayed to user
+	 * 	@param {Object} data returned collection from @retrieveCardMetadata
+	 * 	@prettifyResult
+	 */
+	prettifyResult(data) {
+		let { emoji } = this.stacks
+		let content = ``
+		let i = 1
+		for (let key in data) {
+			content += `[${i}] ${`★`.repeat(data[key].rarity)} - ${emoji(data[key].alias)} [${data[key].name}](https://discord.gg/Tjsck8F)\n\n`
+			i++
+		}
+		return content
+	}
+	
+
+	/**
+	 * 	Execute function
+	 *  @execute
+	 */
 	async execute() {
-		const { message, palette, pause, utils, emoji, relabel, args } = this.stacks
-		let user_collection = {}
-		function user_cardcollection(user) {
-			return sql.get(`SELECT * FROM collections WHERE userId = ${user.id}`)
-				.then(async data => {
-					user_collection = data
-				})
-		}
-		let filtered_res
-		async function filter_items(container) {
-			let bag = container, parsedbag = {}
-			delete container.userId
-			//  Check whether the container is empty or filled.
-			const empty_bag = () => {
-				for (let i in container) {
-					if (container[i] !== null || container[i] > 0) return false
-				}
-				return true
-			}
-			//  Remove property that contain null values from an object
-			const eliminate_nulls = () => {
-				for (let i in bag) {
-					if (bag[i] === null || bag[i] < 1) { delete bag[i] }
-				}
-			}
-			// Label itemname & rarity for each item from itemlist
-			const labeling = () => {
-				for (let i in bag) {
-					sql.get(`SELECT name FROM itemlist WHERE alias = "${i}"`)
-						.then(async data => {
-							sql.get(`SELECT rarity, item_alias FROM luckyticket_rewards_pool WHERE item_name = "${data.name}"`)
-								.then(async secdata => parsedbag[data.name] = [secdata.rarity, secdata.item_alias])
-						})
-				}
-			}
-			if (empty_bag()) return filtered_res = null
-			eliminate_nulls()
-			labeling()
-			await pause(500)
-			filtered_res = parsedbag
-		}
-		let msg_res = []
-		function text_interface() {
-			const body = () => {
-				const embed = new Discord.RichEmbed()
-					.setColor(palette.darkmatte)
-				const formatting = () => {
-					let i = 1, content = ``
-					for (let key in filtered_res) {
-						content += `[${i}] ${`☆`.repeat(filtered_res[key][0])} - ${emoji(relabel(filtered_res[key][1]))} [${key}](https://discord.gg/Tjsck8F)\n\n`
-						i++
-					}
-					return content
-				}
-				!filtered_res ? embed.setDescription(`You don't have any collection.`) : embed.setDescription(formatting())
-				return msg_res.push(embed)
-			}
-			body()
-		}
-		/**
-            Send result into message event. 
-            @run
-        */
-		async function run() {
-			let user = await utils.userFinding(args.join(` `) || message.author.id)
-			return message.channel.send(`\`fetching ${user.user.username} card collection ..\``)
-				.then(async load => {
-					await user_cardcollection(user)
-					await filter_items(user_collection)
-					await text_interface()
-					message.channel.send(`**${user.user.username}'s Collection**`)
-						.then(async () => {
-							message.channel.send(msg_res[0])
-							load.delete()
-						})
-				})
-		}
-		return run()
+		const { code:{COLLECTION}, emoji, reply, name, meta:{author,data} } = this.stacks
+		return reply(COLLECTION.FETCHING, {socket:[name(author.id)], simplified: true})
+			.then(async load => {	
+			const cards = this.filterCardFromInventory(data)
+			load.delete()
+			//	Return if user don't have any card
+			if (Object.keys(cards).length < 1) return reply(COLLECTION.EMPTY)
+			//	Card Author
+			reply(COLLECTION.HEADER, {socket:[emoji(`AnnieWot`), name(author.id)], simplified: true})
+			return reply(this.prettifyResult(await this.retrieveCardMetadata(cards)))
+		})
 	}
 }
+
+
 module.exports.help = {
-	start: collection,
+	start: Collection,
 	name: `collection`,
-	aliases: [],
+	aliases: ["collection", "mycard", "card"],
 	description: `View yours or someones collected cards`,
 	usage: `collection`,
 	group: `General`,
 	public: true,
-	require_usermetadata: true,
+	required_usermetadata: true,
 	multi_user: true
 }

@@ -1,6 +1,5 @@
 /* eslint-disable no-unreachable */
 const Experience = require(`../../utils/ExperienceFormula`)
-const db = require(`../../utils/databaseManager`)
 
 /**
  * Main module
@@ -16,34 +15,24 @@ class Capsule {
      * @Execute
      */
 	async execute() {
-		const { bot, message, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
-
+		const { db, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
 		//  Centralized data object
 		let metadata = {
-			bot: bot,
-			message: message,
+			...this.stacks,
 			exp_per_capsule: 150,
 			to_use: trueInt(args[0]),
-			get total_gained_exp() {
-				return this.exp_per_capsule * this.to_use
-			},
-			meta: {author, data},
+			get total_gained_exp() { return this.exp_per_capsule * this.to_use },
 			updated: {
 				currentexp: 0,
-				level: 0,
 				maxexp: 0,
-				nextexpcurve: 0
-			}
-		}   
-
-
+				nextexpcurve: 0,
+				level: 0
+			},
+		}
 		//  Returns if user doesn't have any capsule to use.
-		// eslint-disable-next-line no-unreachable
 		if (!data.power_capsules) return reply(CAPSULE.ZERO)
-
 		//  Returns as guide if amount is not specified or invalid.
 		if (!metadata.to_use) return reply(CAPSULE.SHORT_GUIDE)
-
 		//  Returns if owned capsule is lower than the amount of going to be used..
 		if (data.power_capsules < metadata.to_use) return reply(CAPSULE.INSUFFICIENT_AMOUNT, {
 			socket: [data.power_capsules]
@@ -53,7 +42,7 @@ class Capsule {
 		//  Use exp framework
 		await new Experience(metadata).runAndUpdate()
 
-		new db().subtractValue(`userinventories`, `power_capsules`, metadata.to_use, author.id)
+		db(author.id).withdraw(metadata.to_use, 70)
 
 		//  Done
 		return reply(CAPSULE.SUCCESSFUL, {

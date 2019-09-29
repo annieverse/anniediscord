@@ -1,4 +1,5 @@
 const { MessageCollector } = require(`discord.js`)
+const logger = require(`./config/winston`)
 
 
 //  Await for user confirmation before proceeding the transaction.
@@ -66,7 +67,8 @@ class Checkout {
 					}
 					catch(e) {
 						//  Handle unexpected error process
-						return reply(CHECKOUT.ERROR, {color: palette.red})
+						reply(CHECKOUT.ERROR, {color: palette.red})
+						logger.error(`${this.author.user.tag} has failed to do transaction. > ${e.stack}`)
 					}
 				})
 			})

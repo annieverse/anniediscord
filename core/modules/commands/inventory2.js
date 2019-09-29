@@ -33,7 +33,7 @@ class Inventory {
 			.then(async load => {
 
 				reply(INVENTORY.HEADER, {
-					socket: [emoji(`AnnieWot`), name(this.author.id)],
+					socket: [emoji(`AnnieYandere`), name(this.author.id)],
 					image: await GUI(Inventory, this.theme),
 					prebuffer: true,
 					simplified: true

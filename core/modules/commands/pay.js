@@ -86,7 +86,7 @@ class Pay {
 								//  Store target's artcoins balance
 								await db(author.id).storeArtcoins(amount)
 								//  Withdraw sender's artcoins balance
-								await db(this.senderMeta.author.id).withdraw(amount, `artcoins`)
+								await db(this.senderMeta.author.id).withdraw(amount, 52)
 
 
 								//  Transaction successful

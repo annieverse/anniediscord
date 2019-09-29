@@ -41,7 +41,7 @@ class Artcoins extends Controller {
 		if (super.isArtPost) this.total_gained_ac = this.total_gained_ac * 10
 		if (super.isBoostedArtPost) this.total_gained_ac = this.total_gained_ac * 2
 
-		this.db.storeArtcoins(Math.floor(this.total_gained_ac), this.author.id)
+		this.db.storeArtcoins(Math.floor(this.total_gained_ac))
 		this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_ac} AC(${(this.ac_factor-1) * 100}% bonus). (${this.data.commanifier(this.meta.data.artcoins)} --> ${this.data.commanifier(this.meta.data.artcoins + this.total_gained_ac)})`)
     }
 
@@ -54,24 +54,39 @@ class Artcoins extends Controller {
 		//	Return if they are still on same level
 		if (this.updated.level == this.meta.data.level) return
 
+		let isLvlJump = (this.updated.level - this.meta.data.level) > 1 
+		if (isLvlJump) {
+			const threeshold = this.updated.level - this.meta.data.level
+			const bonusac = (35 * this.updated.level)
+			this.db.storeArtcoins(bonusac)
+			return this.reply(this.code.LEVELUP_JUMP, {
+				socket: [
+					this.emoji(`AnnieDab`),
+					this.data.name(this.meta.author.id),
+					this.updated.level,
+					threeshold
+				],
+				color: this.color.lightblue
+			})
+		}
+
 		// For each level
 		for (let i = this.meta.data.level + 1; i <= this.updated.level; i++) {
 			const updatedlevel = i
 			const bonusac = updatedlevel === 0 ? 35 : 35 * updatedlevel
 
 			// Add AC
-			this.db.storeArtcoins(bonusac, this.author.id)
+			this.db.storeArtcoins(bonusac)
 
 			//	Send levelup message
 			this.reply(this.code.LEVELUP, {
 				socket: [
 					this.emoji(`AnnieYay`),
 					this.meta.author,
-					updatedlevel,
-					bonusac
+					updatedlevel
 				],
 				color: this.color.blue
-            })
+			})
             
             this.logger.info(`${this.author.tag}: level up to LVL ${updatedlevel} in ${this.message.channel.name}`)
 		}

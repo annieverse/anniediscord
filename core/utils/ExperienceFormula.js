@@ -170,7 +170,7 @@ class Experience extends Controller {
 			this.handlePassiveTicketBoost()
 
 			//  Add & calculate bonuses from card if prompted
-			if (this.applyCardBuffs) {
+			if (!this.applyCardBuffs) {
 				var bonus = super.cardBuffs()
 				this.exp_factor += bonus.exp
 			}

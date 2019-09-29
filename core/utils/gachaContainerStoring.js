@@ -2,7 +2,7 @@ class gachaContainerStoring {
 	constructor(Stacks, container) {
 		this.stacks = Stacks
 		this.container = container
-		this.db = Stacks.db(Stacks.meta.author.id)
+		this.db = Stacks.bot.db.setUser(Stacks.meta.author.id)
 	}
 
 
@@ -118,8 +118,10 @@ class gachaContainerStoring {
 		await this.additionalChecks(parsed_container)
 		//  Withdrawing user's lucky tickets based on roll type
 		await this.db.withdrawLuckyTicket(this.container.roll_type)
+		//	Transformed data
+		let containerWithDetailedMetadata = await this.db._detransformInventory(parsed_container)
 		//  Store inventory data
-		await this.db.storingUserGachaMetadata(parsed_container)
+		await this.db.storingUserGachaMetadata(containerWithDetailedMetadata)
 	}
 }
 

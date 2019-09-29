@@ -36,6 +36,11 @@
         "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
         "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}"
     },
+    "COLLECTION": {
+        "FETCHING": "`fetching {0} card collection ..`",
+        "HEADER": "{0} **| {1} Card Collection**",
+        "EMPTY": "You don't have any collection. Go test your luck with our gacha!`"
+    },
     "DM": {
         "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
         "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",
@@ -80,7 +85,8 @@
         "LIKED": "**{0}** and **{1} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
     },
-    "LEVELUP": "{0} Congratulations {1}!! You are now level **{2}**\n**{3}** AC has been added to your account!",
+    "LEVELUP": "{0} {1} has level up to **{2}**!",
+    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LVL)**, awesome!",
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",

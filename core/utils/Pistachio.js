@@ -210,9 +210,6 @@ class Pistachio {
 			return res
 		}
 
-		//  Initializing database class
-		container.db = (id) => new databaseManager(id)
-
 		//  Outputing bot's ping
 		container.ping = container.commanifier(Math.round(bot.ping))
 
@@ -241,6 +238,8 @@ class Pistachio {
 		if(this.components.meta.author) {
 			//  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
 			container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
+			//  Initializing database class
+			container.db = (id = meta.author.id) => new databaseManager(id)
 		}
 
 		//  Load asset from default images dir
