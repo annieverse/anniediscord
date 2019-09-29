@@ -34,7 +34,7 @@ class ranksManager {
     * Level gap between ranks
     * @cap
     */ 
-		const cap = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 85, 100]
+		const cap = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 85, 100, 180]
 
 		/**
     * Filtering nearest below given value of an array.
