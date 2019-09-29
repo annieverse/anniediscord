@@ -115,7 +115,7 @@ class gachaContainerStoring {
 		//  Parse & merge roll data
 		let parsed_container = this.mergingItems
 		//  Wait for another item conditions check
-		await this.additionalChecks(parsed_container)
+		//await this.additionalChecks(parsed_container)
 		//  Withdrawing user's lucky tickets based on roll type
 		await this.db.withdrawLuckyTicket(this.container.roll_type)
 		//	Transformed data
