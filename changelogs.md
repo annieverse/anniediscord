@@ -15,10 +15,10 @@ ___
 * We've removed auto-disassemble when getting duplicates. It means you now able to collect more than 1 of the same card.
 * 5-star now has rainbow frame. 4-star kept using golden frame.
 * New Illustration for **Nezuko** and **Shiro** Card (4-star)
-* **Nezuko** and **Shiro** has two version which made by different artist (Ralu & Poppy).
+* **Nezuko** and **Shiro** have two versions, made by different artist (Ralu & Poppy).
 * Added **Ralu** Card (5-star) to Cardpedia, but still unobtainable from Lucky Ticket.
 * **Kitomi[Owner Prosperity]** skill name has been changed to **[Princess Prosperity]**. Effect remains unchanged.
-* **Naph[White's Cat Paradise]** skill effect has been greatly nerfed (50 FLATEXP => 15 FLATEXP).
+* **Naph[White's Cat Paradise]** skill effect has been greatly nerfed (50 FLAT EXP => 15 FLAT EXP).
 * **Vezeko[Pleasure of Lewding]** skill name has been changed to **[One Night Pleasure]**.
 * **Annie[Charming Talks]** skill effect has been changed as follows :
   * Previous : Unlocked experience gains when using bot command.
@@ -30,7 +30,7 @@ ___
 * Inventory UI has been redesigned.
 * Inventory now able to carry up to 42 items.
 * We've added native theming for inventory which it's color will follow your current profile skin.
-* As a result of optimized inventory system, now your items sorting order is working properly.
+* As a result of optimized inventory system, now your items sorting order works properly now.
 
 > **Profile**
 
@@ -50,7 +50,7 @@ ___
 
 > **Events**
 
-* #inktober channel giving 200~300 Artcoin to the user per submission.
+* #inktober channel gives 200~300 Artcoin per submission.
 
 ## **09/04/19 | 5.0.1 - >**
 
