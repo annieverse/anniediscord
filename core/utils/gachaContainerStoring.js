@@ -2,7 +2,8 @@ class gachaContainerStoring {
 	constructor(Stacks, container) {
 		this.stacks = Stacks
 		this.container = container
-		this.db = Stacks.bot.db.setUser(Stacks.meta.author.id)
+		this.author = Stacks.meta.author
+		this.db = Stacks.bot.db
 	}
 
 
@@ -41,7 +42,7 @@ class gachaContainerStoring {
 				if (data[key]) {
 
 					//	Each card will be dismantled into artcoins.
-					await this.db.storeArtcoins(10000)
+					//await this.db.storeArtcoins(10000)
 
 					reply(GACHA.DUPLICATE_CARDS, {
 						socket: [
@@ -113,15 +114,15 @@ class gachaContainerStoring {
 	 */
 	async run() {
 		//  Parse & merge roll data
-		let parsed_container = this.mergingItems
+		let rawContainer = this.mergingItems
 		//  Wait for another item conditions check
 		//await this.additionalChecks(parsed_container)
 		//  Withdrawing user's lucky tickets based on roll type
-		await this.db.withdrawLuckyTicket(this.container.roll_type)
+		await this.db.setUser(this.author.id).withdrawLuckyTicket(this.container.roll_type)
 		//	Transformed data
-		let containerWithDetailedMetadata = await this.db._detransformInventory(parsed_container)
+		let containerWithDetailedMetadata = await this.db._detransformInventory(rawContainer)
 		//  Store inventory data
-		await this.db.storingUserGachaMetadata(containerWithDetailedMetadata)
+		await this.db.setUser(this.author.id).storingUserGachaMetadata(containerWithDetailedMetadata, this.author.id)
 	}
 }
 

@@ -115,22 +115,26 @@ class databaseUtils {
 	async _updateInventory({itemId, value=0, operation=`+`, userId=this.id}) {
 		//	Return if itemId is not specified
 		if (!itemId) return {stored: false}
-		//	Insert if no data entry exists.
-		await this._query(`
-			INSERT INTO item_inventory (item_id, user_id)
-			SELECT $itemId, $userId
-			WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, {$userId: userId, $itemId: itemId}
-		)
-		//	Try to update available row. It won't crash if no row is found.
-		await this._query(`
-			UPDATE item_inventory
-			SET quantity = quantity ${operation} ?
-			WHERE item_id = ? AND user_id = ?`
-			, `run`
-			, [value, itemId, userId]
-		)
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO item_inventory (item_id, user_id)
+				SELECT $itemId, $userId
+				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
+				, `run`
+				, {$userId: userId, $itemId: itemId}
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE item_inventory
+				SET quantity = quantity ${operation} ?
+				WHERE item_id = ? AND user_id = ?`
+				, `run`
+				, [value, itemId, userId]
+			)
+		}
+
+		logger.info(`[._updateInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
 		return {stored: true}
 	}
 
@@ -595,11 +599,12 @@ class databaseUtils {
 	/**
      *  Storing rolled items straight into user inventory
      *  @param {Object} obj as parsed object of roll metadata (require baking in `._detransformInventory()`).
+	 *  @param {String|ID} userid for userId consistency, better to insert the id.
      */
-	async storingUserGachaMetadata(obj = {}) {
+	async storingUserGachaMetadata(obj = {}, userid=this.id) {
 		for (let key in obj) {
 			let data = obj[key]
-			await this._updateInventory({itemId: data.itemId, value: data.quantity})
+			await this._updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
 		}
 	}
 

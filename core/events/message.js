@@ -1,12 +1,13 @@
 const Worker = require(`../utils/Worker`)
 const Pistachio = require(`../utils/Pistachio`)
 module.exports = async (bot, message) => {
+
+	//	Ignore bot
+	if (message.author.bot) return
 	//	Register new data if its a new user, else ignore.
 	await bot.db.validatingNewUser(message.author.id)
-
 	//	Retrieve user metadata from db
 	const data = await bot.db.userMetadata(message.author.id)
-
 	/**
 	 * This used to supply the required metadata in Message Controller.
 	 * Also remember, this is only used outside of command-environment.
