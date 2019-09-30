@@ -30,7 +30,7 @@ class Gift {
      *  Initializer method
      */
 	async execute() {
-		const { code: {GIFT}, args, palette, emoji, name, reply, db, collector, trueInt, selfTargeting, parsingAvailableGifts } = this.stacks
+		const { code: {GIFT}, bot:{db}, args, palette, emoji, name, reply, collector, trueInt, selfTargeting, parsingAvailableGifts } = this.stacks
         
 		//  Centralized data
 		let metadata = {}
@@ -91,11 +91,11 @@ class Gift {
 							//  Closing the connections
 							collector.stop()
 
-
+							let itemData = await db.getItemMetadata(metadata.item_to_send)
 							//  Send reputation points
-							db(this.author.id).addReputations(metadata.counted_reps)
+							db.setUser(this.author.id).addReputations(metadata.counted_reps)
 							//  Withdraw sender's gifts
-							db(this.senderMeta.author.id).withdraw(metadata.amount_to_send, metadata.item_to_send)
+							db.setUser(this.senderMeta.author.id).withdraw(metadata.amount_to_send, itemData[0].itemId)
 
                     
 							//  Gifting successful

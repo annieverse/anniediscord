@@ -342,15 +342,35 @@ class databaseUtils {
 	}
 
 
-	getItemMetadata(id = 0) {
+	/**
+	 * 	Getting item metadata from db. Supports dynamic search.
+	 * 	@param {Number|String} keyword ref either itemId or item alias.
+	 * 	@getItemMetadata
+	 */
+	getItemMetadata(keyword = 0) {
+
+		let arrayOfKeyword = []
+		arrayOfKeyword[0] = keyword
+
+		if (typeof keyword === `string`) {
+			return this._query(`
+				SELECT *
+				FROM itemlist 
+				WHERE alias IN (${arrayOfKeyword.map(() => `?`).join(`, `)})`
+				, `all`
+				, arrayOfKeyword
+			)		
+		}
+
 		return this._query(`
 			SELECT *
 			FROM itemlist 
-			WHERE itemId IN ?`
+			WHERE itemId IN (${arrayOfKeyword.map(() => `?`).join(`, `)})`
 			, `all`
-			, [id]
+			, arrayOfKeyword
 		)
 	}
+
 
 	maintenanceUpdate(){
 		return sql.run(`
