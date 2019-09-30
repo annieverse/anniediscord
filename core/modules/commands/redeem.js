@@ -6,7 +6,6 @@ class Redeem {
 	constructor(Stacks) {
 		this.stacks = Stacks
 		this.ticket_price = 120
-		this.db = Stacks.bot.db.setUser(Stacks.meta.author.id)
 	}
 
 
@@ -14,7 +13,7 @@ class Redeem {
      *  Initializer method
      */
 	async execute() {
-		const { args, commanifier, palette, emoji, trueInt, collector, reply, code: {REDEEM}, meta: {data} } = this.stacks
+		const { args, commanifier, bot:{db}, palette, emoji, trueInt, collector, reply, code: {REDEEM}, meta: {data, author} } = this.stacks
 
 
 		//  Returns as short-guide if user doesn't specify any parameters
@@ -70,9 +69,9 @@ class Redeem {
 					}
 
 					//  Update Lucky Tickets
-					await this.db.addLuckyTickets(amount)
+					db.setUser(author.id).addLuckyTickets(amount)
 					//  Withdraw artcoins
-					await this.db.withdraw(price, 52)
+					db.setUser(author.id).withdraw(price, 52)
 
 
 					//  Redeem successful

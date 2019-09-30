@@ -534,19 +534,20 @@ class databaseUtils {
 
 
 	/**
-	 * 	Withdrawing specific item from user inventory
+	 * 	Withdrawing specific item from user inventory. Supports method chaining.
 	 * 	@param {Number} value as amount to be withdraw
 	 * 	@param {Number} item_id as item id reference
 	 * 
 	 */
-	withdraw(value, item_id) {
-		this._query(`
+	async withdraw(value, item_id) {
+		await this._query(`
 			UPDATE item_inventory 
             SET quantity = quantity - ?
 			WHERE item_id = ? AND user_id = ?`
 			, `run`
 			, [value, item_id, this.id]
 		)
+		return this
 	}
 
 

@@ -239,6 +239,8 @@ class MessageController {
 
                 //  Returns true if channel is the correct card's activation channel.
                 get true_channel() {
+                    //  Always return true for "all" categorized channel
+                    if (this.data.skills.main.channel.includes(`all`)) return true
                     return this.data.skills.main.channel.includes(this.channel.id) ? true : false
                 }
 
