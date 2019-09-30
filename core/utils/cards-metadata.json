@@ -13,15 +13,11 @@
     "skills": {
       "main": {
         "name": "Charming Talks",
-        "description": "Unlocked exp when using Annie's commands",
+        "description": "Gain 5% EXP boost in every channel",
         "type": "exp_booster",
-        "channel": [
-          "485922866689474571",
-          "578518964439744512",
-          "565308091424571422"
-        ],
+        "channel": ["all"],
         "effect": {
-          "exp": 0,
+          "exp": 0.05,
           "ac": null,
           "status": "active",
           "type": "multiplier",
@@ -43,7 +39,7 @@
     },
     "skills": {
       "main": {
-        "name": "Owner's Prosperity",
+        "name": "Princess Prosperity",
         "description": "+50% EXP & AC boost in #general",
         "type": "exp_ac_booster",
         "channel": [
@@ -189,7 +185,7 @@
     },
     "skills": {
       "main": {
-        "name": "Pleasure of Lewding",
+        "name": "One Night Pleasure",
         "type": "exp_booster",
         "description": "+250% AC bonus in nsfw channels.",
         "channel": [
