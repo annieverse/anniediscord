@@ -84,7 +84,7 @@ class Collection {
 module.exports.help = {
 	start: Collection,
 	name: `collection`,
-	aliases: ["collection", "mycard", "card"],
+	aliases: [`collection`, `mycard`, `card`],
 	description: `View yours or someones collected cards`,
 	usage: `collection`,
 	group: `General`,

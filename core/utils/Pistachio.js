@@ -239,9 +239,8 @@ class Pistachio {
 			//  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
 			container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
 			//  Initializing database class
-			container.db = (id = meta.author.id) => new databaseManager(id)
+			container.db = (id = this.components.meta.author.id) => new databaseManager(id)
 		}
-
 		//  Load asset from default images dir
 		container.loadAsset = async (id) => {
 			return fsn.readFile(`./core/images/${id}.png`)
