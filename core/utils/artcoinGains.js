@@ -57,16 +57,22 @@ class Artcoins extends Controller {
 		let isLvlJump = (this.updated.level - this.meta.data.level) > 1 
 		if (isLvlJump) {
 			const threeshold = this.updated.level - this.meta.data.level
-			const bonusac = (35 * this.updated.level)
+			let bonusac = 0
+			//	Accumulate bonus
+			for (let i = 0; i<threeshold; i++) bonusac += 35 * (this.meta.data.level + i)
+
 			this.db.storeArtcoins(bonusac)
 			return this.reply(this.code.LEVELUP_JUMP, {
 				socket: [
 					this.emoji(`AnnieDab`),
 					this.meta.author,
 					this.updated.level,
-					threeshold
+					threeshold,
+					this.emoji(`artcoins`),
+					this.data.commanifier(bonusac)
 				],
-				color: this.color.lightblue
+				color: this.color.lightblue,
+				deleteIn: 30
 			})
 		}
 
@@ -83,9 +89,12 @@ class Artcoins extends Controller {
 				socket: [
 					this.emoji(`AnnieYay`),
 					this.meta.author,
-					updatedlevel
+					updatedlevel,
+					this.emoji(`artcoins`),
+					this.data.commanifier(bonusac)
 				],
-				color: this.color.blue
+				color: this.color.blue,
+				deleteIn: 30
 			})
             
             this.logger.info(`${this.author.tag}: level up to LVL ${updatedlevel} in ${this.message.channel.name}`)

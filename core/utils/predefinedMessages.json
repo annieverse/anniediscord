@@ -88,8 +88,8 @@
         "LIKED": "**{0}** and **{1} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
     },
-    "LEVELUP": "{0} {1} has level up to **{2}**!",
-    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!",
+    "LEVELUP": "{0} {1} has leveled up to **{2}**!\nhere's your **{3} {4} ** reward.",
+    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!\n here's your **{4} {5} ** reward. ",
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
