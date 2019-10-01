@@ -4,4 +4,3 @@ node_modules
 .env
 package-lock.json
 .vscode/
-modules/commands/pans_sandbox
