@@ -20,7 +20,14 @@ class serverBoost {
 		this.stacks.utils.sendEmbed(message)
 	}
 
+	helpCenter(){
+		this.stacks.reply(this.stacks.code.SERVER_BOOST.SHORT_GUIDE,{
+			socket: [this.stacks.command, this.stacks.command, this.stacks.command]
+		})
+	}
+
 	async execute() {
+		if (!this.stacks.args[0]) return this.helpCenter()
 		if ([`level`, `lvl`, `l`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostLevel()
 		if ([`member`, `mem`, `m`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostMembers()
 		if ([`boost`, `boo`, `b`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostNum()
@@ -30,7 +37,7 @@ class serverBoost {
 module.exports.help = {
 	start: serverBoost,
 	name: `serverboostinfo`,
-	aliases: [`sb`, `serverboost`],
+	aliases: [`sb`, `serverboost`,`sboost`],
 	description: `Displays info about server boost level.`,
 	usage: `sb members | level | number`,
 	group: `General`,

@@ -267,5 +267,8 @@
         "PUBLIC_SHORT_GUIDE":"You can look up a event by doing\n`lookup <event>`\n`lookup-all`",
         "SHORT_GUIDE":"You can add,remove,update,end a event by doing\n`add <Event Name> <Start Time> [status]`\n`remove <Event Name>`\n`update <Event Name> <field you want to update> <update to>`\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
         "WRONG_FORMAT":"You have given me the wrong format please format your entry like this:\n{0}"
+    },
+    "SERVER_BOOST":{
+        "SHORT_GUIDE":"Availible commands are:\n {0} boost - to see just the number of boosts the server has\n {1} level - to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
     }
 }
