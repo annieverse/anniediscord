@@ -467,7 +467,7 @@ class addEvent extends databaseManager {
 						reply(`Is this new value correct? \`${thirdMsg.content}\``, { footer: `y or n` })
 						break
 					case `active`:
-						thirdMsg.content.toLowerCase() === `yes` ? defaultValues.active : thirdMsg.content.toLowerCase() === `no` ? options.active = 1 : errorHasOccured()
+						thirdMsg.content.toLowerCase() === `yes` ? options.active = defaultValues.active : thirdMsg.content.toLowerCase() === `no` ? options.active = 1 : errorHasOccured()
 						reply(`Is this new value correct? \`${thirdMsg.content}\``, { footer: `y or n` })
 						break
 					case `occurance`:

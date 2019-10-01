@@ -50,8 +50,9 @@ class weeklyEventTimer extends databaseManager {
      * F.ex: data[0].name or data[1].name
      */
 	async execute() {
-		const {reply} = this.stacks
+		const {reply, bot: { logger } } = this.stacks
 		if ((await this.data()) === (null || undefined)) return reply(`I'm sorry but no weekly event is recorded.`)
+		if ((await this.data()).active == 1) return reply(`I'm sorry but no weekly event currently active.`)
 		reply(await this.countDown(this.data()))
 	}
 }
@@ -59,7 +60,7 @@ class weeklyEventTimer extends databaseManager {
 module.exports.help = {
 	start: weeklyEventTimer,
 	name: `weeklyevent`, // 
-	aliases: [], 
+	aliases: ['weekly'], 
 	description: `check the time left on the weekly event`,
 	usage: `weeklyevent`,
 	group: `general`,
