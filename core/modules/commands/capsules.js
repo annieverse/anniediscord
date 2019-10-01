@@ -17,6 +17,8 @@ class Capsule {
 	async execute() {
 		const { db, palette,reply,name,trueInt,args,commanifier,emoji,code: {CAPSULE}, meta: {author,data} } = this.stacks
 		//  Centralized data object
+        var tmp = true
+        if (tmp) reply(`Eat command is currently disabled`)
 		let metadata = {
 			...this.stacks,
 			exp_per_capsule: 150,
