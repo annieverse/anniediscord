@@ -4,33 +4,38 @@ class serverBoost {
 	}
 
 	boostNum() {
-		this.stacks.utils.sendEmbed(`This Server has a total of ${this.stacks.message.guild.roles.find(n => n.id === `585550404197285889`).members.map(m => m.user.tag).length} boosts currently!!`)
+		const { reply } = this.stacks
+		return reply(`This Server has a total of ${this.stacks.message.guild.roles.find(n => n.id === `585550404197285889`).members.map(m => m.user.tag).length} boosts currently!!`)
 	}
 
 	boostMembers() {
-		this.stacks.utils.sendEmbed(`These are the members currently boosting the server :D\n${this.stacks.message.guild.roles.find(n => n.id === `585550404197285889`).members.map(m => m.user.tag).join(`\n`)}`)
+		const { reply } = this.stacks
+		return reply(`These are the members currently boosting the server :D\n${this.stacks.message.guild.roles.find(n => n.id === `585550404197285889`).members.map(m => m.user.tag).join(`\n`)}`)
 	}
 
 	boostLevel() {
-		let count = this.stacks.message.guild.roles.find(n => n.id === this.stacks.roles.nitro_boost).members.map(m => m.user.tag).length
-		let message
-		if (count >= 2 && count < 10) message = `The current level this server boosts is: Level 1`
-		if (count >= 10 && count < 50) message = `The current level this server boosts is: Level 2`
-		if (count >= 50) message = `The current level this server for boosts is: Level 3`
-		this.stacks.utils.sendEmbed(message)
+		const { reply,message,roles: { nitro_boost } } = this.stacks
+		let count = message.guild.roles.find(n => n.id === nitro_boost).members.map(m => m.user.tag).length
+		let response
+		if (count >= 2 && count < 10) response = `The current level this server boosts is: Level 1`
+		if (count >= 10 && count < 50) response = `The current level this server boosts is: Level 2`
+		if (count >= 50) response = `The current level this server for boosts is: Level 3`
+		return reply(response)
 	}
 
 	helpCenter(){
-		this.stacks.reply(this.stacks.code.SERVER_BOOST.SHORT_GUIDE,{
-			socket: [this.stacks.command, this.stacks.command, this.stacks.command]
+		const { reply, code: { SERVER_BOOST } , command } = this.stacks
+		return reply(SERVER_BOOST.SHORT_GUIDE,{
+			socket: [command, command, command]
 		})
 	}
 
 	async execute() {
-		if (!this.stacks.args[0]) return this.helpCenter()
-		if ([`level`, `lvl`, `l`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostLevel()
-		if ([`member`, `mem`, `m`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostMembers()
-		if ([`boost`, `boo`, `b`].some(x => x.toLowerCase() === this.stacks.args[0].toLowerCase())) return this.boostNum()
+		const { args } = this.stacks
+		if (!args[0]) return this.helpCenter()
+		if ([`level`, `lvl`, `l`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostLevel()
+		if ([`member`, `mem`, `m`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostMembers()
+		if ([`boost`, `boo`, `b`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostNum()
 	}
 }
 
@@ -39,7 +44,7 @@ module.exports.help = {
 	name: `serverboostinfo`,
 	aliases: [`sb`, `serverboost`,`sboost`],
 	description: `Displays info about server boost level.`,
-	usage: `sb members | level | number`,
+	usage: `sb members | level | boost`,
 	group: `General`,
 	public: true,
 	required_usermetadata: false,
