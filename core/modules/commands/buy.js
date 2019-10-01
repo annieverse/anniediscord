@@ -19,8 +19,7 @@ class Buy {
 	async execute() {
 
 		const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks
-		var tmp = true
-		if (tmp) reply(`Buy command is currently disabled`)
+
 		//  Returns no parametered input
 		if (!args[0]) return reply(BUY.SHORT_GUIDE)
 
