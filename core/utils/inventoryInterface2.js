@@ -27,7 +27,6 @@ const InventoryInterface = async (container, usertheme) => {
 	let canv = new Canvas(canvas_x, canvas_y) // x y
 	let theme = ThemePresets[usertheme]
 
-
 	/**
 	 * 	Rendering base layer of the card
 	 * 	@baseLayer

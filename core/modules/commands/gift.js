@@ -31,7 +31,9 @@ class Gift {
      */
 	async execute() {
 		const { code: {GIFT}, bot:{db}, args, palette, emoji, name, reply, collector, trueInt, selfTargeting, parsingAvailableGifts } = this.stacks
-        
+
+        var tmp = true
+        if (tmp) return reply(`Gift command is currently disabled`)
 		//  Centralized data
 		let metadata = {}
 

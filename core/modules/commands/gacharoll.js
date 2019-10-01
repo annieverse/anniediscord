@@ -75,6 +75,8 @@ class Gacha {
 	async execute() {
 		const { message, name, reply, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks
 
+		var tmp = true
+		if (tmp) reply(`Roll command is currently disabled`)
 
 		//	Returns if current channel is not in gacha-allowed list
 		if (!isGachaField) return reply(GACHA.UNALLOWED_ACCESS, {socket: [gachaField]})
