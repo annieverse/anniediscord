@@ -145,6 +145,9 @@ module.exports = bot => {
      */
 	/*
 	function autoStatus(){
+		
+	}
+	function autoStatus(){
 
 		let x = 1 // number of minutes
 		setInterval(data,60000*x)
