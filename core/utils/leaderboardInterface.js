@@ -90,7 +90,6 @@ const render = async (stacks, metadata) => {
 				await this.pullingAc()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`)
-				console.log(await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`))
 				return u
 			}
 			if (selected_group==`rep`) {
