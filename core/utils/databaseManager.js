@@ -1006,8 +1006,27 @@ class databaseUtils {
 			.then(async x => x[index][val])
 	}
 
+	/**
+        *   Pull ID ranking based on given descendant column order. FOR ARTCOINS
+        * @param tablename of target table.
+        * @param columnname of sorted descendant column. 
+        * @param index of user.
+        * @param val of returned data value.
+        */
+	indexRankingAC(tablename = `item_inventory`, columnname = `quantity`, index, val, itemId = 52) {
+		return sql.all(`SELECT ${val} FROM ${tablename} WHERE item_id = ${itemId} ORDER BY ${columnname} DESC`)
+			.then(async x => x[index][val])
+	}
 
-
+	/**
+			*   Pull Author ID ranking based on given descendant column order.
+			* @param tablename of target table.
+			* @param columnname of sorted descendant column. 
+			*/
+	authorIndexRankingAC(tablename, columnname, id = this.id) {
+		return sql.all(`SELECT user_id FROM ${tablename} WHERE item_id = 52 ORDER BY ${columnname} DESC`)
+			.then(async x => x.findIndex(z => z.user_id === id ))
+	}
 
 	/**
         *   Pull Author ID ranking based on given descendant column order.
