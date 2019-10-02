@@ -143,10 +143,11 @@ module.exports = bot => {
 	 * 	Note:
 	 * 	1. Please rework this function to integrate with databaseManager. 
      */
-	/*
+	
 	function autoStatus(){
 		
 	}
+	/*
 	function autoStatus(){
 
 		let x = 1 // number of minutes
@@ -264,6 +265,7 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
+			autoStatus()
 		} else {
 
 			/**
