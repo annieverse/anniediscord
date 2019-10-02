@@ -98,7 +98,7 @@
     "skills": {
       "main": {
         "name": "Blessing of Mentor",
-        "description": "+200% exp when posting images in art channels.",
+        "description": "gain +15% EXP boost for an hour after Ralu sends a message in #criticism or #art talk",
         "type": "exp_booster",
         "channel": [
           "520716400097099777",
