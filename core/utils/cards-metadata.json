@@ -84,9 +84,9 @@
       }
     }
   },
-  "ami_card": {
-    "fullname": "Pastel Goth, Ami",
-    "alias": "ami_card",
+  "ralu_card": {
+    "fullname": "Art Wizard, Ralu",
+    "alias": "ralu_card",
     "rarity": "5",
     "description": "things I like, my pri-... Ah, Pink clothing of course!",
     "url": "https://i.ibb.co/x6K8XL7/1-ami-card.png",
@@ -97,8 +97,8 @@
     },
     "skills": {
       "main": {
-        "name": "False Utopia",
-        "description": "+200% exp when posting images in art channels.",
+        "name": "Blessing of Mentor",
+        "description": "gain +15% EXP boost for an hour after Ralu sends a message in #criticism or #art talk",
         "type": "exp_booster",
         "channel": [
           "520716400097099777",
