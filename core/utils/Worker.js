@@ -55,7 +55,7 @@ class Worker extends Controller {
         if (await super.isCoolingDown()) return
 
         // Check if Ralu buff ran out (1h). If yes set the exp boost back to 0
-        if (!await super.isRaluBuffActive()) this.bot.cards.ami_card.skills.main.effect.exp = 0
+        if (!await super.isRaluBuffActive()) this.bot.cards.ralu_card.skills.main.effect.exp = 0
 
 
         //  Handle experience system

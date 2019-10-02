@@ -176,7 +176,7 @@ module.exports = bot => {
 
 				if (status === `ended`) {
 					sql.run(`DELETE FROM event_data WHERE active = 1 AND name = '${event}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
-						return console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+						return logger.info(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
 					})
 				}
                 
@@ -194,14 +194,14 @@ module.exports = bot => {
 					if (data.repeat_after === 0){
 						sql.run(`UPDATE event_data SET active = 1 WHERE name = '${event}' and start_time = ${time}`).then(() => {
 							sql.run(`DELETE FROM event_data WHERE status = 1 AND name = '${event}' AND start_time = ${time}`).then(() => {
-								console.log(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
+								logger.info(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
 							})
 						})
 					} else {
 						let diff = data.length-time
 						sql.run(`UPDATE event_data SET start_time = ${time+data.length}, length = ${diff} WHERE name = '${event}' AND start_time = ${time}`)
 					}
-					return console.log(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
+					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
 				} else if (bot.user.presence.game !== null){
 					if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return
 				}
@@ -217,12 +217,12 @@ module.exports = bot => {
 					bot.user.setActivity(`[EVENT] ${event} in ${countDown}`, {
 						type: `WATCHING`
 					})
-					return console.log(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
+					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
 				} else if (bufferTime.start < currentTime  && bufferTime.after > currentTime ) {
 					bot.user.setActivity(`[EVENT] ${event}`, {
 						type: `PLAYING`
 					})
-					return console.log(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
+					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
 				}     
 			})
 		}
