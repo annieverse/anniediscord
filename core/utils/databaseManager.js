@@ -378,8 +378,9 @@ class databaseUtils {
 
 	maintenanceUpdate(){
 		return sql.run(`
-				UPDATE userinventories
-				SET artcoins = artcoins + 1000 
+				UPDATE item_inventory
+				SET quantity = quantity + 1000 
+				WHERE item_id = 52
 			`)
 	}
 
