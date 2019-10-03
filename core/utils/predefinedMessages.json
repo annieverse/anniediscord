@@ -123,7 +123,7 @@
     },
     "EVENT_MANAGER": {
         "PUBLIC_SHORT_GUIDE": "You can look up a event by doing\n`lookup <event>`\n`lookup-all`",
-        "SHORT_GUIDE": "You can add,remove,update,end a event by doing\n`add <Event Name> <Start Time> [status]`\n`remove <Event Name>`\n`update <Event Name> <field you want to update> <update to>`\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
+        "SHORT_GUIDE": "You can add,remove,update,end a event by doing\n`add`\n`remove <Event Name>`\n`update `\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
         "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{0}"
     },
     "EVJOIN": {

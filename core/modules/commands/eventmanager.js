@@ -533,7 +533,7 @@ class addEvent extends databaseManager {
 		} else if (args[0] === `lookup`) {
 			return this.eventLookUp(args.slice(1).join(` `))
 		} else if (args[0] === `end`) {
-			return this.endEvent(args[1])
+			return this.endEvent(args.slice(1).join(` `))
 		} else if (args[0] === `lookup-all`) {
 			return this.showAllEvents()
 		} else if (args[0] === `update`) {

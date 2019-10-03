@@ -1012,6 +1012,14 @@ class databaseUtils {
 		return sql.run(`UPDATE event_data SET ${set} WHERE ${where}`)
 	}
 
+	/**
+			*   Pull data from event_data table.
+			* @param tablename of target table.
+			* @param id of userId
+			*/
+	pullEventData() {
+		return sql.all(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(async parsed => parsed)
+	}
 
 	/**
         *   Pull ID ranking based on given descendant column order.
