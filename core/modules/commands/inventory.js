@@ -1,5 +1,5 @@
-const Filter = require(`../../utils/inventoryContainerManager2`)
-const GUI = require(`../../utils/inventoryInterface2`)
+const Filter = require(`../../utils/inventoryContainerManager`)
+const GUI = require(`../../utils/inventoryInterface`)
 
 /**
  * Main module
