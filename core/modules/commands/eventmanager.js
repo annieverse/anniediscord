@@ -57,7 +57,7 @@ class addEvent extends databaseManager {
 				if (parsed.event === eventName) return reply(`I'm sorry but that event already exists please start over and choose a different name`)
 
 				this.deleteMessages(secondMsg)
-				reply(`Now the date you want this to start, formated like this please: 1/5/19 or Mar 20 2019 [month/date]`, { footer: `The current date and time is: ${(new Date()).toString()}` })
+				reply(`Now the date you want this to start, formated like this please: 1/5/19 or Mar 20 2019 [month/date/year]`, { footer: `The current date and time is: ${(new Date()).toString()}` })
 				const thirdCollector = multicollector(secondMsg)
 
 				thirdCollector.on(`collect`, thirdMsg => {
@@ -276,7 +276,7 @@ class addEvent extends databaseManager {
 		}
 		return reply(`The event you found from your search is:\n
             Name: ${parsed.name}\n
-            Date: ${date.toDateString()} Starting At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())} and Ending At ${this.addZero(end_date.getHours())}:${this.addZero(end_date.getMinutes())}\n
+            Date: Starting on ${date.toDateString()} At ${this.addZero(date.getHours())}:${this.addZero(date.getMinutes())} and Ending on ${end_date.toDateString()} At ${this.addZero(end_date.getHours())}:${this.addZero(end_date.getMinutes())}\n
             Description: ${desc}\n
             Organizers: ${organizers}\n
             Prizes: ${prizes}\n
@@ -346,6 +346,8 @@ class addEvent extends databaseManager {
 			options.active = parsed.active
 			options.occurance = parsed.occurance
 
+			this.deleteMessages(msg)
+
 			reply(`What field would you like to edit?\n[name, description, category, prizes, start, end, organizers, repeat, active, occurance]`)
 			const secondCollector = multicollector(msg)
 			secondCollector.on(`collect`, secondMsg => {
@@ -392,6 +394,7 @@ class addEvent extends databaseManager {
 					reply(`Assign what number the event is. For example, event 'Weekly event 24' needs to be changed to 'Weekly event 26' the number is what changes.`, { footer: `please input a number.` })
 					break
 				}
+				this.deleteMessages(secondMsg)
 				reply(`What would you like to change it to?`)
 				const thirdCollector = multicollector(secondMsg)
 				thirdCollector.on(`collect`, thirdMsg => {
@@ -475,6 +478,7 @@ class addEvent extends databaseManager {
 						reply(`Is this new value correct? \`${options.occurance}\``, { footer: `y or n` })
 						break
 					}
+					this.deleteMessages(thirdMsg)
 					const forthCollector = multicollector(thirdMsg)
 					forthCollector.on(`collect`, forthMsg => {
 						if (forthMsg.content.toLowerCase() === `y`) {
@@ -514,6 +518,7 @@ class addEvent extends databaseManager {
 						} else {
 							reply(`Please start over, this event has not been edited.`)
 						}
+						this.deleteMessages(forthMsg)
 						forthCollector.stop()
 						thirdCollector.stop()
 						secondCollector.stop()
