@@ -145,94 +145,109 @@ module.exports = bot => {
      */
 	
 	function autoStatus(){
+		let data = db.pullData(`event_data`)
+
+		if (!data) {
+			if (env.dev) {
+				return bot.user.setActivity(`maintenance.`, {
+					type: `LISTENING`
+				})
+			} else {
+				return bot.user.setActivity(null)
+			}
+		}
+
+		let metadata =
+		{
+			event : data.name,
+			time: data.start_time,
+			status: data.status,
+			currentTime: (new Date()),
+			bufferTime:
+			{
+				before: (new Date(this.time - 1.8e+7)),
+				after: (new Date(this.time + 7.2e+6)),
+				start: (new Date(this.time)),
+			}
+		}
+		let countDown =
+		{
+			// Find the distance between now and the count down date
+			distance: metadata.bufferTime.start.getTime() - metadata.currentTime.getTime(),
+			// Time calculations for hours and minutes
+			hours: Math.floor((this.distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+			minutes: Math.floor((this.distance % (1000 * 60 * 60)) / (1000 * 60)),
+			timer: `${this.hours}h ${this.minutes}m`
+		}
+		let tests =
+		{
+			eventHasEnded: metadata.status === `ended`,
+			eventIsOver: metadata.bufferTime.after < metadata.currentTime,
+			doesEventEqualPresenceGame: bot.user.presence.game.name === `[EVENT] ${metadata.event}`,
+			presenceTypeIsPlaying: bot.user.presence.game.type === 0,
+			presenceGameNotNull: bot.user.presence.game !== null,
+			eventDontRepeat: data.repeat_after === 0,
+			eventIsHappening: metadata.bufferTime.before < metadata.currentTime && metadata.bufferTime.start > metadata.currentTime,
+			eventHasntStarted: metadata.bufferTime.start < metadata.currentTime && metadata.bufferTime.after > metadata.currentTime
+		}
+
+		// watching = type 3
+		// playing = type 0
+
+		if (tests.eventHasEnded) return db.removeRowDataFromEventData(`name`,`${metadata.event}`,metadata.time)
 		
-	}
-	/*
-	function autoStatus(){
+		//tests.eventIsOver ? eventEnded() : tests.presenceGameNotNull ? tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying ? () => { return } : () => { return } : () => { return }
+		if (tests.eventIsOver) {
+			eventEnded()
+		} else if (tests.presenceGameNotNull) {
+			if (tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying) return
+		}
 
-		let x = 1 // number of minutes
-		setInterval(data,60000*x)
-		sql.open(`.data/database.sqlite`)
-        
-		function data(){
-			sql.get(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(data=>{
-				if (!data) {
-					if (env.dev) {
-						return bot.user.setActivity(`maintenance.`, {
-							type: `LISTENING`
-						})
+		if (tests.eventHasntStarted) {
+			eventStartingIn()			
+		} else if (tests.eventIsHappening) {
+			eventGoing()
+		}
+		
+		function eventEnded(){
+			env.dev ? ()=>
+			{
+				bot.user.setStatus(`dnd`)
+				bot.user.setActivity(`maintenance.`, {
+					type: `LISTENING`
+				})
+			} : () => 
+			{
+				bot.user.setStatus(`online`)
+				bot.user.setActivity(null)
+			}
+			
+			tests.eventDontRepeat? ()=>{
+				db.updateEventDataActiveToOne(`${metadata.event}`, metadata.time)
+				return db.removeRowDataFromEventData(`name`, `${metadata.event}`, metadata.time)
+			} : () =>
+			{
+				let diff = data.length - metadata.time
+				return db.updateRowDataFromEventData(`start_time = ${metadata.time + data.length}, length = ${diff}`, `name = '${metadata.event}' AND start_time = ${metadata.time}` )
+			}
+			
+			return logger.info(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
+		}
 
-					} else {
-						return bot.user.setActivity(null)
-					}
-				}
-				let event = data.name
-				let time = data.start_time
-				let status = data.status
-				let currentTime = (new Date())
-				let bufferTime = {
-					before: (new Date(time - 1.8e+7)),
-					after: (new Date(time + 7.2e+6)),
-					start: (new Date(time))
-				}
-				// watching = type 3
-				// playing = type 0
-
-				if (status === `ended`) {
-					sql.run(`DELETE FROM event_data WHERE active = 1 AND name = '${event}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
-						return logger.info(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
-					})
-				}
-                
-				if (bufferTime.after < currentTime) {
-					if (env.dev) {
-						bot.user.setStatus(`dnd`)
-						bot.user.setActivity(`maintenance.`, {
-							type: `LISTENING`
-						})
-
-					} else {
-						bot.user.setStatus(`online`)
-						bot.user.setActivity(null)
-					}
-					if (data.repeat_after === 0){
-						sql.run(`UPDATE event_data SET active = 1 WHERE name = '${event}' and start_time = ${time}`).then(() => {
-							sql.run(`DELETE FROM event_data WHERE status = 1 AND name = '${event}' AND start_time = ${time}`).then(() => {
-								logger.info(`Event: ${event} with start time of: ${time} has been deleted from the database.`)
-							})
-						})
-					} else {
-						let diff = data.length-time
-						sql.run(`UPDATE event_data SET start_time = ${time+data.length}, length = ${diff} WHERE name = '${event}' AND start_time = ${time}`)
-					}
-					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
-				} else if (bot.user.presence.game !== null){
-					if (bot.user.presence.game.name === `[EVENT] ${event}` && bot.user.presence.game.type === 0) return
-				}
-				// Find the distance between now and the count down date
-				var distance = bufferTime.start.getTime()-currentTime.getTime() 
-				// Time calculations for days, hours, minutes and seconds
-				var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-				var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-                
-				if (bufferTime.before < currentTime  && bufferTime.start > currentTime  ){
-                    
-					let countDown = `${hours}h ${minutes}m`
-					bot.user.setActivity(`[EVENT] ${event} in ${countDown}`, {
-						type: `WATCHING`
-					})
-					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${event}`)
-				} else if (bufferTime.start < currentTime  && bufferTime.after > currentTime ) {
-					bot.user.setActivity(`[EVENT] ${event}`, {
-						type: `PLAYING`
-					})
-					return logger.info(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${event}`)
-				}     
+		function eventStartingIn() {
+			bot.user.setActivity(`[EVENT] ${metadata.event} in ${countDown.timer}`, {
+				type: `WATCHING`
 			})
+			return logger.info(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${metadata.event}`)
+		}
+
+		function eventGoing() {
+			bot.user.setActivity(`[EVENT] ${metadata.event}`, {
+				type: `PLAYING`
+			})
+			return logger.info(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${metadata.event}`)
 		}
 	}
-	*/
-
 
 	/**
      *  

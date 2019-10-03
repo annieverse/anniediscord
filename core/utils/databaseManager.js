@@ -991,7 +991,25 @@ class databaseUtils {
 		return sql.run(`DELETE FROM ${tablename} WHERE ${idtype} = ${id}`)
 	}
 
+	/**
+	 * Delete row data from given table.
+	 * @param tablename of target table.
+	 * @param id of userId
+	 * @param idtype of the id type.
+	 */
+	removeRowDataFromEventData(id, idtype = `name`, time) {
+		return sql.run(`DELETE FROM event_data WHERE active = 1 AND ${idtype} = '${id}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
+			return logger.info(`Event: ${id} with start time of: ${time} has been deleted from the database.`)
+		})
+	}
 
+	updateEventDataActiveToOne(id, time){
+		return sql.run(`UPDATE event_data SET active = 1 WHERE name = '${id}' and start_time = ${time}`)
+	}
+
+	updateRowDataFromEventData(set, where){
+		return sql.run(`UPDATE event_data SET ${set} WHERE ${where}`)
+	}
 
 
 	/**
