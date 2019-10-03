@@ -6,7 +6,7 @@ class AddRole {
 
 	async execute() {
 
-		if (!this.stacks.message.member.hasPermission(`MANAGE_ROLES`) || this.required_roles) return this.stacks.utils.sendEmbed(this.stacks.code.UNAUTHORIZED_ACCESS, this.stacks.palette.red)
+		if (!this.stacks.message.member.hasPermission(`MANAGE_ROLES`) || !this.required_roles) return this.stacks.utils.sendEmbed(this.stacks.code.UNAUTHORIZED_ACCESS, this.stacks.palette.red)
 		if (!this.stacks.args[0]) return this.stacks.utils.sendEmbed(this.stacks.code.ADDROLE.NO_USER, this.stacks.palette.red)
 		let pUser = await this.stacks.utils.userFinding(this.stacks.args[0] || this.stacks.message.mentions.users.first())
 		if (!pUser || pUser === null) return this.stacks.reply(this.stacks.code.ADDROLE.NO_USER_FOUND, {
