@@ -71,8 +71,8 @@ class CommandsHandler extends Controller {
 			self.componentsAreReady()
 		}
 
-		if (this.data.args.includes(' ')) deleteObjectFromArr(this.data.args, ` `)
-		if (this.data.args.includes('')) deleteObjectFromArr(this.data.args, ``)
+		if (this.data.args.includes(` `)) deleteObjectFromArr(this.data.args, ` `)
+		if (this.data.args.includes(``)) deleteObjectFromArr(this.data.args, ``)
 
 		try {
 			if (!this.data.meta.author) return false
