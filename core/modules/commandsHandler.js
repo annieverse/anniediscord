@@ -49,6 +49,9 @@ class CommandsHandler extends Controller {
 
 		//	Benchmark label
 		this.data.benchmarkLabel = this.data.fullArgs ? this.data.fullArgs : this.data.meta.author.username
+
+		// reference to object
+		this.self = this
 	
 	}
 
@@ -58,6 +61,18 @@ class CommandsHandler extends Controller {
 	 * 	@propertiesAreReady
 	 */
 	async componentsAreReady() {
+
+		var self = this.self 
+		function deleteObjectFromArr(arr, obj) {
+			var index = arr.indexOf(obj)
+			if (index > -1) {
+				arr.splice(index, 1)
+			}
+			self.componentsAreReady()
+		}
+
+		if (this.data.args.includes(' ')) deleteObjectFromArr(this.data.args, ` `)
+		if (this.data.args.includes('')) deleteObjectFromArr(this.data.args, ``)
 
 		try {
 			if (!this.data.meta.author) return false
