@@ -20,8 +20,9 @@ class AddRole {
 			socket: [this.stacks.message.author],
 			color: this.stacks.palette.red
 		})
-		if (this.stacks.hasRole(gRole.name)) return this.stacks.reply(this.stacks.code.ADDROLE.HAS_ROLE_ALREADY, {
-			socket: [this.stacks.message.author],
+		console.log(pUser._roles.includes(gRole.id))
+		if (pUser._roles.includes(gRole.id)) return this.stacks.reply(this.stacks.code.ADDROLE.HAS_ROLE_ALREADY, {
+			socket: [pUser],
 			color: this.stacks.palette.red
 		})
 		await (this.stacks.addRole(gRole.name, pUser.id))
