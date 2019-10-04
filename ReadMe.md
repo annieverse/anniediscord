@@ -30,9 +30,9 @@ We got tons of upcoming features ahead!*
 
 Below are amazing people that make Annie possible!
 
-| ![1][naph]| ![2][pan] | ![4][ame] | ![5][dwarf] | ![6][fwub] |
+| ![1][naph]| ![2][pan] | ![4][sunny] | ![5][dwarf] | ![6][fwub] |
 | :----: | :----: | :----: | :----: | :----: |
-| **Naph** | **Panpan** | **Ane** | **Dwarf** | **Fwubbles** |
+| **Naph** | **Panpan** | **Sunny** | **Dwarf** | **Fwubbles** |
 | Product Manager | Lead Developer | Developer | Developer | Developer |
 
 ## **Contributor**
@@ -52,7 +52,7 @@ Below are amazing people that make Annie possible!
 
 [hugo]: https://cdn.discordapp.com/avatars/476391416268849175/ccd23e89da05b4a5ecd4c3ae637a39f7.png?size=128
 
-[ame]: https://cdn.discordapp.com/avatars/510246523939061760/a_33d70fc6e5c3978c57333fe5bb1672a2.gif
+[sunny]: https://cdn.discordapp.com/avatars/510246523939061760/f7aff487fee5efc01c56554a060b3c90.png?size=128
 
 [dwarf]: https://cdn.discordapp.com/avatars/596421558856056853/2bf3c57e9e104acd3f78a45f16ff25d5.png?size=128
 
