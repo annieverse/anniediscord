@@ -329,9 +329,9 @@ class databaseUtils {
 	 */
 	sendTenChocolateBoxes(userId = this.id) {
 		this._query(`
-			UPDATE userinventories
-			SET chocolate_box = chocolate_box + 10
-			WHERE userId = ?`,
+			UPDATE item_inventory
+			SET quantity = quantity + 10
+			WHERE user_id = ? AND item_id = 81`,
 			`run`
 			, [userId]
 		)		
