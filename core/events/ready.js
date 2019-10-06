@@ -146,14 +146,11 @@ module.exports = bot => {
 	
 	function autoStatus(){
 		let x = 1 // number of minutes
-		let numberoftimes = 0
 
 		update()
 		setInterval(update, 60000 * x)
 
 		async function update(){
-			logger.info(`in update() for the ${numberoftimes} time.`)
-			numberoftimes++
 
 			let data = await db.pullEventData(`event_data`)
 			
