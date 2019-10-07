@@ -1,6 +1,6 @@
-const Transaction = require(`../../utils/transactionHandler`)
-const Checkout = require(`../../utils/transactionCheckout`)
-const preview = require(`../../utils/config/itemPreview`)
+//const Transaction = require(`../../utils/transactionHandler`)
+//const Checkout = require(`../../utils/transactionCheckout`)
+//const preview = require(`../../utils/config/itemPreview`)
 
 /**
  * Main module
@@ -18,11 +18,11 @@ class Buy {
      */
 	async execute() {
 
-		const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks
-
+		//const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks
+		const { reply} = this.stacks
 		return reply(`I'm sorry, but this command has been diabled temporary. You may look at the shop, but the buy command is being fixed. Sorry again for the inconvince.`)
 		//  Returns no parametered input
-		if (!args[0]) return reply(BUY.SHORT_GUIDE)
+		/*if (!args[0]) return reply(BUY.SHORT_GUIDE)
 
 		const key = args[0].toUpperCase()
 
@@ -79,7 +79,7 @@ class Buy {
 			socket: [name(author.id), item.price_type]
 		})
 
-		return new Checkout(checkoutComponents).confirmation()
+		return new Checkout(checkoutComponents).confirmation()*/
 	}
 }
 
