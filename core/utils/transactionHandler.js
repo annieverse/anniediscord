@@ -53,7 +53,10 @@ class Transaction {
 
 	//  Withdrawing balance
 	withdraw(data) {
-		this.db.withdraw(data.price, data.itemId)
+		console.log(data)
+		console.log(data.price)
+		console.log(data.itemId)
+		this.db.withdraw(data.price, 52)
 	}
 
 
@@ -80,7 +83,7 @@ class Transaction {
 				}
 			}
 		}
-		return sql.all(`SELECT name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
+		return sql.all(`SELECT itemId,name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
                                         FROM itemlist 
                                         WHERE status = "${itemstatus}" 
                                         AND type = "${this.type}"`)
