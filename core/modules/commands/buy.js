@@ -20,6 +20,7 @@ class Buy {
 
 		const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks
 
+		return reply(`I'm sorry, but this command has been diabled temporary. You may look at the shop, but the buy command is being fixed. Sorry again for the inconvince.`)
 		//  Returns no parametered input
 		if (!args[0]) return reply(BUY.SHORT_GUIDE)
 
