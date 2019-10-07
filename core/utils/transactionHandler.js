@@ -53,9 +53,6 @@ class Transaction {
 
 	//  Withdrawing balance
 	withdraw(data) {
-		console.log(data)
-		console.log(data.price)
-		console.log(data.itemId)
 		this.db.withdraw(data.price, 52)
 	}
 
