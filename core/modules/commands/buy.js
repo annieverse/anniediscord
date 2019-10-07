@@ -18,7 +18,7 @@ class Buy {
      */
 	async execute() {
 
-		const { reply, args, name, message, code:{BUY}, meta: { author, data } } = this.stacks
+		const { reply, args, name, message, code:{BUY}, meta: { author, data }, db } = this.stacks
 		
 		//  Returns no parametered input
 		if (!args[0]) return reply(BUY.SHORT_GUIDE)
@@ -46,9 +46,13 @@ class Buy {
 
 		let badgesOnLimit = Object.values(await data.badges).indexOf(null) === -1
 		let badgesHaveDuplicate = Object.values(await data.badges).includes(item.alias)
+		let query = await db(author.id)._query(`
+			SELECT itemId FROM itemlist 
+			WHERE alias = ?`
+			, `get`
+			, [item.price_type])
 
-
-
+		item.itemId = query.itemId
 		let checkoutComponents = {
 			itemdata: item,
 			transaction: transaction,
@@ -73,8 +77,10 @@ class Buy {
 		//  Reject duplicate cover alias.
 		if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
 
+		let noItem = data[item.price_type] == undefined
+		let balanceTooLow = data[item.price_type] < item.price
 		//  Returns if balance is insufficent
-		if (data[item.price_type] < item.price) return reply(BUY.INSUFFICIENT_BALANCE, {
+		if ( balanceTooLow || noItem) return reply(BUY.INSUFFICIENT_BALANCE, {
 			socket: [name(author.id), item.price_type]
 		})
 
