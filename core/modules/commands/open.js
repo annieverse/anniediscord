@@ -76,7 +76,7 @@ class HalloweenBox {
         const { message, name, reply, code: { GACHA }, choice, emoji, gachaField, isGachaField } = this.stacks
 
         //	Returns if current channel is not in gacha-allowed list
-        //if (!isGachaField) return reply(GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
+        if (!isGachaField) return reply(GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
 
         //	Returns if user doesn't have any lucky ticket
         if (!this.data.halloween_box) return reply(GACHA.ZERO_TICKET)
