@@ -421,8 +421,8 @@ class databaseUtils {
 	 *  @param {Number|UserGachaTicket} lucky_ticket ticket
 	 *  @deliverRewardItems
 	 */
-	async deliverRewardItems({artcoins, lucky_ticket}) {
-		await this.storeArtcoins(artcoins)
+	async deliverRewardItems({artcoins, candies, lucky_ticket}) {
+		((new Date()).getMonth() == 9) ? await this.storeCandies(candies) : await this.storeArtcoins(artcoins)
 		await this.addLuckyTickets(lucky_ticket)
 		return this
 	}
@@ -447,6 +447,17 @@ class databaseUtils {
 	 */
 	async storeArtcoins(value) {
 		await this._updateInventory({itemId: 52, value: value, operation: `+`})
+		return this
+	}
+
+	/**
+	 * 	Add user artcoins. Supports method chaining.
+	 * 	@param {Number} value of the artcoins to be given
+	 * 	@param {String|ID} userId of the user id
+	 * 	@storeArtcoins
+	 */
+	async storeCandies(value) {
+		await this._updateInventory({ itemId: 102, value: value, operation: `+` })
 		return this
 	}
 

@@ -52,7 +52,8 @@ const InventoryInterface = async (container, usertheme) => {
 	 * 	@param {String|ID} id filename(item_alias)
 	 *  @getAsset
 	 */
-	const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
+	const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+	//const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
 
 
 	/**

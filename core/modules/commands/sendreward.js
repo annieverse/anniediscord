@@ -1,4 +1,4 @@
-const { packages, keywords } = require(`../../utils/event-rewards`)
+const { packages, keywords, halloween_packages } = require(`../../utils/event-rewards`)
 
 /**
  * Main module
@@ -13,12 +13,12 @@ class sendEventReward {
      *	Initializer method
      */
 	async execute() {
-		const { isEventManager, palette, avatar, addRole, collector, code, args, name, reply, bot:{db}, meta: {author} } = this.stacks
+		const { isEventManager, palette, avatar, addRole, collector, code, args, name, reply, bot:{db}, meta: {author}} = this.stacks
 
 		//  Centralized reward object
 		let metadata = {
 			keywords: keywords,
-			packages: packages,
+			packages: ((new Date()).getMonth()==9) ? halloween_packages : packages,
 			get whole_keywords() {
 				let arr = []
 				for (let i = 0; i < this.keywords.length; i++) {
@@ -61,8 +61,8 @@ class sendEventReward {
 					//  Store key of selected group
 					metadata.selected_group = metadata.keywords.filter(v => v.includes(input))[0][0]
 					//  Store item rewards reference
-					metadata.selected_rewards = packages[metadata.selected_group]
-
+					metadata.selected_rewards = metadata.packages[metadata.selected_group]
+					
 
 					//  Store micro-items reward
 					await db.setUser(author.id).deliverRewardItems(metadata.selected_rewards)
