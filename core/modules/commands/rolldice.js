@@ -85,5 +85,5 @@ module.exports.help = {
     public: true,
     required_usermetadata: false,
     multi_user: false,
-    special_channels: `630283310496612352`
+    special_channels: [`630283310496612352`,`631568116627013632`]
 }
