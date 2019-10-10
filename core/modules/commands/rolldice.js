@@ -50,7 +50,6 @@ class RollDice {
                 let roll = this.roll
                 let modifier = parseInt(this.modifier.slice(3))
                 let total
-                console.log()
                 if (this.modifier.trim().startsWith(`+`)){
                     total = roll + modifier
                 } else if (this.modifier.trim().startsWith(`-`)) {
@@ -95,7 +94,6 @@ class RollDice {
             this.setNumOfSides = diceOptions[1]
         }
         !diceOptions[0] ? this.rollAmount = 1 : this.rollAmount = diceOptions[0]
-        //NTE0Njg4OTY5MzU1ODIxMDc3.XRJmMw.hMLlYTwicmnY6MUFbJrbSj-17Wk
         return reply(this.rollSelected.join(`\n`))
     }
 }
