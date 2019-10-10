@@ -80,7 +80,8 @@ class RollDice {
 
         if (!args[0] || !args[0].includes(`d`)) return reply(`please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>`)
 
-        let diceOptions = args[0].split(`d`)
+        let fullArgs = args.join(``).trim()
+        let diceOptions = fullArgs.split(`d`)
         let modiferPlus, modiferMinus
         if (diceOptions[1].includes(`+`)) {
             modiferPlus = diceOptions[1].split(`+`)
