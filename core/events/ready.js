@@ -270,6 +270,16 @@ module.exports = bot => {
      */
 	function setupDatabase() {
 
+		db._query(`CREATE TABLE IF NOT EXISTS "halloween_rewards_pool" (
+					'item_id'	INTEGER,
+					'item_name'	TEXT,
+					'item_alias'	TEXT,
+					'type'	TEXT,
+					'rarity'	INTEGER,
+					'drop_rate'	REAL,
+					'availability'	INTEGER DEFAULT 0
+					)`
+		)
 		//	Reset whole server cooldown to false/zero.
 		db.resetCooldown()
 

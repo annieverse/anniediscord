@@ -1,5 +1,5 @@
-const GUI = require(`../../utils/gachaInterfaceManager`)
-const updateData = require(`../../utils/gachaContainerStoring`)
+const GUI = require(`../../utils/halloweenGachaInterfaceManager`)
+const updateData = require(`../../utils/halloweenGachaContainerStoring`)
 const Cooldown = new Set()
 
 class HalloweenBox {
@@ -13,9 +13,9 @@ class HalloweenBox {
 	/**
 	 * 	Get current roll type. Returns integer
 	 */
-    /*get roll_type() {
-        return this.stacks.command.startsWith(`multi-roll`) ? 10 : 1
-    }*/
+    get roll_type() {
+        return this.stacks.command.startsWith(`multi-open`) ? 10 : 1
+    }
 
 
 	/**
@@ -36,10 +36,10 @@ class HalloweenBox {
         }
 
         //	Get rates for each possible loot without duplicates			
-        let rates = (await this.db.luckyTicketDropRates).map(v => v.drop_rate)
+        let rates = (await this.db.halloweenBoxDropRates).map(v => v.drop_rate)
 
         //	get loot by defined rate
-        let get_loots = async (probs) => await this.db.lootGroupByRate(closestUpper(rates, probs))
+        let get_loots = async (probs) => await this.db.lootGroupByRate(closestUpper(rates, probs), `halloween_rewards_pool`)
 
         //	Sort array result by ascending
         rates.sort((a, b) => { return a - b })
@@ -73,24 +73,24 @@ class HalloweenBox {
 	 * 	Initializer
 	 */
     async execute() {
-        const { message, name, reply, code: { GACHA }, choice, emoji, gachaField, isGachaField } = this.stacks
+        const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji, gachaField, isGachaField } = this.stacks
 
         //	Returns if current channel is not in gacha-allowed list
-        if (!isGachaField) return reply(GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
+        if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
 
         //	Returns if user doesn't have any lucky ticket
-        if (!this.data.halloween_box) return reply(GACHA.ZERO_TICKET)
+        if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
 
         //	Returns if user trying to do multi-roll with owned less than 10 tickets
-        if (this.data.halloween_box < this.roll_type) return reply(GACHA.INSUFFICIENT_TICKET)
+        if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET)
 
         //	Returns if user state still in cooldown
-        if (Cooldown.has(this.author.id)) return reply(GACHA.COOLING_DOWN)
+        if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
 
 
         message.delete()
         //	Opening text
-        reply(emoji(`aaueyebrows`) + choice(GACHA.OPENING_WORDS), {
+        reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
             socket: [name(this.author.id)],
             simplified: true
         })
@@ -105,12 +105,13 @@ class HalloweenBox {
                 //	Get buffer interface
                 let renderResult = await new GUI(this.stacks, rollContainer).render
 
+
                 //	Parse backend and store inventory items
                 await new updateData(this.stacks, rollContainer).run()
 
                 opening.delete()
                 //	Render result
-                reply(`**${name(this.author.id)} used ${this.roll_type} Lucky Tickets!**`, {
+                reply(`**${name(this.author.id)} used ${this.roll_type} halloween boxes!**`, {
                     image: renderResult,
                     prebuffer: true,
                     simplified: true,
@@ -127,7 +128,7 @@ class HalloweenBox {
 module.exports.help = {
     start: HalloweenBox,
     name: `open`,
-    aliases: [`open`],
+    aliases: [`open`, `multi-open`],
     description: `opens a Halloween box.`,
     usage: `open hb`,
     group: `shop-related`,

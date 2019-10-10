@@ -243,7 +243,7 @@ class Pistachio {
 		}
 		//  Load asset from default images dir
 		container.loadAsset = async (id) => {
-			return fsn.readFile(`./core/images/${id}.png`)
+			return fsn.readFile(`./core/images/${id}.png`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
 		}
 
 

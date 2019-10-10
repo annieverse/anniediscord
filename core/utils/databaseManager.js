@@ -583,8 +583,12 @@ class databaseUtils {
 		return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
 	}
 
-	lootGroupByRate(rate) {
-		return sql.get(`SELECT * FROM luckyticket_rewards_pool WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 1`)
+	get halloweenBoxDropRates() {
+		return sql.all(`SELECT DISTINCT drop_rate FROM halloween_rewards_pool WHERE availability = 1`)
+	}
+
+	lootGroupByRate(rate, table = `luckyticket_rewards_pool`) {
+		return sql.get(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1`)
 	}
 
 
@@ -597,6 +601,14 @@ class databaseUtils {
 		this._updateInventory({itemId: 71, value: value, operation:`-`})
 	}
 
+	/**
+     * Subtracting tickets by result of roll_type().
+	 * @param {Number} value amount to be subtracted
+     * @substract_ticket
+    */
+	withdrawHalloweenBox(value = 0) {
+		this._updateInventory({ itemId: 111, value: value, operation: `-` })
+	}
 
 	//	Count total user's collected cards.
 	async totalCollectedCards(userId = this.id) {

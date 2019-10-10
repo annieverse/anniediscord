@@ -102,7 +102,7 @@ class RollDice {
 module.exports.help = {
     start: RollDice,
     name: `rolldice`,
-    aliases: [`diceroll`, `rd`, `roll`],
+    aliases: [`diceroll`, `rd`],
     description: `retrives a random roll`,
     usage: `rolldice`,
     group: `fun`,
