@@ -145,14 +145,12 @@ class CommandsHandler extends Controller {
 		 * 1. Transform the data in User() Class so they are match with how you would expect from `message.author`.
 		 * 
 		 */
-		if (!this.data.fullArgs) {
-			this.data.meta.author = await new User(this.data).get()
-			return
-		}
-
+        if (!this.data.fullArgs) {
+            this.data.meta.author = await new User(this.data).get()
+            return
+        }
 		//	Proceed to both data pulling
 		this.data.meta = await new Data(this.data).pull()
-
 	}
 
 

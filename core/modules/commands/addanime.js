@@ -65,6 +65,6 @@ module.exports.help = {
     group: `General`,
     public: true,
     require_usermetadata: true,
-    multi_user: true
+    multi_user: false
 }
 
