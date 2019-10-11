@@ -51,10 +51,11 @@ class halloweenGachaGUI {
      *  @param {Integer|Float} y vertical coordinates
      *  @param {Integer} index current index position of item's object
      */
-	async itemText(x, y, index = 0) {
+	async itemText(x, y, index = 0, color) {
 		const { palette } = this.stacks
+		!color ? color = palette.black : color
 		//  Name
-		this.canv.setColor(palette.black)
+		this.canv.setColor(color)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Whitney`) 
 		this.canv.addText(this.container.item[index], x, y)
@@ -105,10 +106,11 @@ class halloweenGachaGUI {
      *  @param {Integer|Float} dx second horizontal coordinates point after x
      *  @param {Integer|Float} dy second vertical coordinates point after x
      */
-	drawCardBase(x, y, dx, dy) {
+	drawCardBase(x, y, dx, dy,color) {
 		const { palette } = this.stacks
+		!color ? color = palette.golden : color
 		this.canv.createBeveledClip(x, y, dx, dy, 7)
-		this.canv.setColor(palette.golden)
+		this.canv.setColor(color)
 		this.canv.addRect(x, y, dx, dy)
 
 	}
@@ -142,7 +144,7 @@ class halloweenGachaGUI {
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 			//  Load item assets
 			await this.itemVisual(55, 50, 100, 100, 50)
-			await this.itemText(100, 170)
+			await this.itemText(100, 170, 0)
 			//  Render
 			return this.canv.toBuffer()
 		}      
@@ -196,12 +198,22 @@ class halloweenGachaGUI {
 					continue
 				}
                 
-				//  Draw card base
-				this.drawCardBase(dynamicX, set_y, card_dx, card_dy)
+
+				if (item(`type`) === `role`){
+					this.drawCardBase(dynamicX, set_y, card_dx, card_dy, palette.black)
+				} else {
+					//  Draw card base
+					this.drawCardBase(dynamicX, set_y, card_dx, card_dy)
+				}
+
 				//  Adjusting item graphic
 				await this.itemVisual(card2card_distancex(i) + 38, set_y + 35, 100, 100, 50, currentIndex)
-				//  Adjusting text
-				await this.itemText(card2card_distancex(i) + 85, set_y + 150, currentIndex)
+				if (item(`type`) === `role`) {
+					await this.itemText(card2card_distancex(i) + 85, set_y + 150, currentIndex, palette.white)
+				} else {
+					//  Adjusting text
+					await this.itemText(card2card_distancex(i) + 85, set_y + 150, currentIndex)
+				}
 			}
 		}
 
