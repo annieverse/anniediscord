@@ -92,35 +92,40 @@ class HalloweenBox {
         //	Opening text
         reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
             socket: [name(this.author.id)],
-            simplified: true
+            notch: true,
+            imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
         })
 
 
             .then(async opening => {
                 Cooldown.add(this.author.id)
 
-                //	Get roll metadata
-                let rollContainer = await this.roll(this.roll_type)
 
-                //	Get buffer interface
-                let renderResult = await new GUI(this.stacks, rollContainer).render
+                setTimeout(async () => {
+                    //	Get roll metadata
+                    let rollContainer = await this.roll(this.roll_type)
+
+                    //	Get buffer interface
+                    let renderResult = await new GUI(this.stacks, rollContainer).render
 
 
-                //	Parse backend and store inventory items
-                await new updateData(this.stacks, rollContainer).run()
+                    //	Parse backend and store inventory items
+                    await new updateData(this.stacks, rollContainer).run()
 
-                opening.delete()
-                //	Render result
-                reply(`**${name(this.author.id)} used ${this.roll_type} halloween boxes!**`, {
-                    image: renderResult,
-                    prebuffer: true,
-                    simplified: true,
-                })
+                    opening.delete()
+                    //	Render result
+                    reply(`**${name(this.author.id)} used ${this.roll_type} halloween boxes!**`, {
+                        image: renderResult,
+                        prebuffer: true,
+                        simplified: true,
+                    })
 
-                //	Unlock cooldown
-                setTimeout(() => {
-                    Cooldown.delete(this.author.id)
+                    //	Unlock cooldown
+                    setTimeout(() => {
+                        Cooldown.delete(this.author.id)
+                    }, 2000)
                 }, 2000)
+                
             })
     }
 }

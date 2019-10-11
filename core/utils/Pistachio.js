@@ -303,7 +303,9 @@ class Pistachio {
 		container.reply = async (content, options = {
 			socket: [],
 			color: ``,
+			url: null,
 			image: null,
+			imageGif: null,
 			field: message.channel,
 			simplified: false,
 			notch: false,
@@ -316,7 +318,9 @@ class Pistachio {
 		}) => {
 			options.socket = !options.socket ? [] : options.socket
 			options.color = !options.color ? container.palette.darkmatte : options.color
+			options.url = !options.url ? null : options.url
 			options.image = !options.image ? null : options.image
+			options.imageGif = !options.imageGif ? null : options.imageGif
 			options.field = !options.field ? message.channel : options.field
 			options.simplified = !options.simplified ? false : options.simplified
 			options.thumbnail = !options.thumbnail ? null : options.thumbnail
@@ -351,6 +355,17 @@ class Pistachio {
 
 			//  Add footer
 			if (options.footer) embed.setFooter(options.footer)
+
+			// Add url
+			if (options.url) embed.setURL(options.url)
+
+			//  Add image preview
+			if (options.imageGif) {
+				embed.setImage(options.imageGif)
+			} else if (embed.file) {
+				embed.image.url = null
+				embed.file = null
+			}
 
 			//  Add image preview
 			if (options.image) {

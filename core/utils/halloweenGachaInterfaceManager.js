@@ -54,7 +54,7 @@ class halloweenGachaGUI {
 	async itemText(x, y, index = 0) {
 		const { palette } = this.stacks
 		//  Name
-		this.canv.setColor(palette.white)
+		this.canv.setColor(palette.black)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Whitney`) 
 		this.canv.addText(this.container.item[index], x, y)
@@ -108,7 +108,7 @@ class halloweenGachaGUI {
 	drawCardBase(x, y, dx, dy) {
 		const { palette } = this.stacks
 		this.canv.createBeveledClip(x, y, dx, dy, 7)
-		this.canv.setColor(palette.nightmode)
+		this.canv.setColor(palette.golden)
 		this.canv.addRect(x, y, dx, dy)
 
 	}
