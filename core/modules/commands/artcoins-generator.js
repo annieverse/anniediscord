@@ -13,9 +13,7 @@ class ArtcoinsGenerator {
 
         
 		//  Returns if user doesn't have admin authority
-		console.log(isEventMember)
-		console.log(isAdmin)
-		if (!isEventMember && !isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+		if (!isEventMember && !isAdmin && !isEventManager) return reply(code.UNAUTHORIZED_ACCESS)
 
 		//  Returns if user not specifying any parameters
 		if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
