@@ -77,13 +77,16 @@ class Pistachio {
 			container.isGachaField = [bot.channels.get(`578518964439744512`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
 
 			//  Check for administrator authority
-			container.isAdmin = message.member.roles.find(r => (r.name === `Creators Council`) || (r.name === `Channel Overseer`))
+			container.isAdmin = message.member.roles.find(r => Object.keys(container.roles.admin).some(i => container.roles.admin[i] == r.id))
 
 			//  Check for developer authority
-			container.isDev = message.member.roles.find(r => (r.name === `Developer Team`) || (r.name === `Grand Master`))
+			container.isDev = message.member.roles.find(r => Object.keys(container.roles.dev_roles).some(i => container.roles.dev_roles[i] == r.id))
 
 			//  Check for event team authority
-			container.isEventManager = message.member.roles.find(r => r.name === `Events Team`)
+			container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
+
+			// Check for event team authority
+			container.isEventMember = message.member.roles.find(r => Object.keys(container.roles.events).some(i => container.roles.events[i] == r.id))
 
 
 			/**

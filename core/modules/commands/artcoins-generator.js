@@ -9,11 +9,13 @@ class ArtcoinsGenerator {
 
 	//  Init
 	async execute() {
-		const { name, args, collector, palette, emoji, isEventManager, isAdmin, avatar, trueInt, reply, commanifier, code, bot:{db}, meta: { author, data } } = this.stacks
+		const { name, args, collector, palette, emoji, isEventManager,isEventMember, isAdmin, avatar, trueInt, reply, commanifier, code, bot:{db}, meta: { author, data } } = this.stacks
 
         
 		//  Returns if user doesn't have admin authority
-		if (!isEventManager && !isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+		console.log(isEventMember)
+		console.log(isAdmin)
+		if (!isEventMember && !isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 
 		//  Returns if user not specifying any parameters
 		if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
