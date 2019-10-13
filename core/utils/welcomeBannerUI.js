@@ -37,23 +37,17 @@ class Banner {
 		async function welcomeCard() {
 
 			let canvas_x = 800
-			let canvas_y = 220
-			let start_x = canvas_x - 775
-			let start_y = canvas_y - 200
+			let canvas_y = 250
+			let start_x = 30
+			let start_y = 30
 
 			let canv = new Canvas(800, 250) // x y
 
 			canv.save()
 			canv.save()
-			canv.setShadowColor(`rgba(31, 31, 31, 1)`)
-				.setShadowOffsetY(3)
-				.setShadowBlur(4)
-				.addRect(start_x + 10, start_y + 10, canvas_x - 55, canvas_y - 50)
-				.createBeveledClip(start_x, start_y, canvas_x - 40, canvas_y - 40, 15)
-				.addImage(await configProfile.getAsset(`aug19_welcomer`), 0, 0, 800, 250, 400)
-				.setShadowOffsetY(0)
-				.setShadowBlur(0)
-			canv.context.globalAlpha = 0.4
+				.createBeveledClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
+				.addImage(await configProfile.getAsset(`aug19_welcomer`), 0, 0, 800, 300, 400)
+			canv.context.globalAlpha = 0.6
 			canv.setColor(palette.black)
 				.addRect(start_x, start_y, canvas_x - 40, canvas_y - 40)
 				.restore()
@@ -62,22 +56,14 @@ class Banner {
 				.setTextAlign(`left`)
 				.setTextFont(`41pt RobotoBold`)
 				.setColor(palette.lightgray)
-				.addText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`.` : user.username}.`, 400, 130) //102
-
+				.addText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`.` : user.username}.`, 390, 150) //102
+			
 				.setTextFont(`42pt Whitney`)
 				.setColor(palette.white)
-				.addText(`Hello,`, 260, 130)
-
-				.setTextFont(`15pt Whitney`)
-				.setColor(palette.white)
-				.addText(`You have joined`, 280, 157)
-
-				.setTextFont(`16pt RobotoBold`)
-				.setColor(palette.halloween)
-				.addText(`AAU!`, 417, 160)
+				.addText(`Hello,`, 240, 150)
 
 				.setColor(palette.white)
-				.addRoundImage(avatar, 113, 47, 130, 130, 65)
+				.addRoundImage(avatar, 20, 30, 205, 205, 100)
 
 			return canv.toBuffer()
 		}

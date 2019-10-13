@@ -1,3 +1,5 @@
+const Banner = require(`../utils/welcomeBannerUI`)
+
 module.exports = bot => {
 
 	//	Extract required part from Client
@@ -303,6 +305,7 @@ module.exports = bot => {
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
+
 
 		} else {
 
