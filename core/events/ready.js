@@ -1,5 +1,3 @@
-const Banner = require(`../utils/welcomeBannerUI`)
-
 module.exports = bot => {
 
 	//	Extract required part from Client
