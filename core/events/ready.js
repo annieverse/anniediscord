@@ -289,6 +289,14 @@ module.exports = bot => {
 
 	}
 
+	/**
+     * 
+     * Runs loop for Scare The Mascot.
+     * @smtloop
+     */
+	async function stmloop() {
+		await stm.eventloop()
+	}
 
 	/**
      * 
@@ -308,9 +316,6 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 			// Scare the mascot
-			async function stmloop() {
-				await stm.eventloop()
-			}
 			stmloop()
 
 
