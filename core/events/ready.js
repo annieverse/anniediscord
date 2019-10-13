@@ -1,5 +1,9 @@
 module.exports = bot => {
 
+	// Modules
+	const scare = require(`../utils/ScareTheMascot`)
+	let stm = new scare(bot)
+
 	//	Extract required part from Client
 	const { db, env, logger } = bot
 
@@ -303,6 +307,11 @@ module.exports = bot => {
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
+			// Scare the mascot
+			async function stmloop() {
+				await stm.eventloop()
+			}
+			stmloop()
 
 
 		} else {
