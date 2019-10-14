@@ -16,7 +16,7 @@ class screenshare {
 module.exports.help = {
 	start: screenshare,
 	name: `screenshare`, // This MUST equal the filename
-	aliases: [], // More or less this is what the user will input on discord to call the command
+	aliases: [`tea`], // More or less this is what the user will input on discord to call the command
 	description: `gives a link to screen share in the server`,
 	usage: `screenshare`,
 	group: `general`,
