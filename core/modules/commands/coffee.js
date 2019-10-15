@@ -12,8 +12,8 @@ class Coffee {
 
 module.exports.help = {
     start: Coffee,
-    name: `coffee`, // This MUST equal the filename
-    aliases: [`hugo`], // More or less this is what the user will input on discord to call the command
+    name: `coffee`, 
+    aliases: [`hugo`],
     description: `How do you describe @hugonun#0422 well by this video, thats all`,
     usage: `hugo`,
     group: `fun`,
