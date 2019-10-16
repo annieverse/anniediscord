@@ -30,7 +30,6 @@ class Worker extends Controller {
         //  Ignore if its from a bot user
         if (super.isAuthorBot) return
 
-
         //  These are only run on production server
         if (!this.env.dev) {
             //  React and collect if its an art post

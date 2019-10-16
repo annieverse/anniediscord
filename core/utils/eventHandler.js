@@ -25,7 +25,6 @@ module.exports = bot => {
 	//if (env.dev) bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
 
 
-
 	
 	if (!env.dev) {
 		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
@@ -33,8 +32,8 @@ module.exports = bot => {
 		bot.on(`disconnect`, (bot) => reqEvent(`disconnect`)(bot))
 		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))
 		bot.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(bot, oldUser, newUser))
-		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
 		bot.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({bot, reaction, user, message_object}))
+		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
 	}
 
 }

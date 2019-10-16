@@ -2,6 +2,7 @@ const { dev, administrator_id } = require(`../../.data/environment`)
 const { art_domain } = require(`../modules/config`)
 const database = require(`./databaseManager`)
 const Pistachio = require(`./Pistachio`)
+const RichNotification = require(`./richNotification`)
 
 /**
  *  Handles #Featured system
@@ -89,7 +90,7 @@ class HeartCollector {
      */
 	async notification() {
 		//  Mutation pistachio
-		const { reply, code:{FEATURED}, bot, user } = this.stacks
+		const { reply, isVIP, code:{FEATURED}, bot, user } = this.stacks
 		const { get_notification } = await this.db.userMetadata(this.metadata.msg.author.id)
 		const postmeta = await this.featuredPost
 
@@ -99,13 +100,18 @@ class HeartCollector {
 		if (get_notification==`-1`) return //-1 = explicit no
 		var once = null
 		if (get_notification==`0`) {//0 = default
-			once = `**Do you want to continue receiving notifications for likes, like this?** \n\n`+
+			once = `**Do you want to continue receiving post notification, like this?** \n\n`+
 			`If no, you need to do nothing. I will stop sending you notifications. \n`+
 			`If yes, please reply with "**enable notifications**" below. \n\n`+
 			`You can disable notifications with "**disable notifications**" again.`
 		}
 
-		try {
+
+		/**
+		 * 	Handling regular notification (Non-booster user)
+		 * 	@regularNotification
+		 */
+		const regularNotification = async () => {
 			//  Featured notification
 			if (!this.metadata.heartsTooLow && !postmeta) reply(
 				FEATURED.SUCCESSFUL + ` \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) `, {
@@ -114,8 +120,8 @@ class HeartCollector {
 					field: this.metadata.msg.author,
 					notch: true
 				})
-                
-			//  First or two liked.
+				
+			
 			else if (this.metadata.favs <= 2) reply(
 				FEATURED.FIRST_LIKE + ` \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) `, {
 					socket: [user.username],
@@ -123,6 +129,7 @@ class HeartCollector {
 					field: this.metadata.msg.author,
 					notch: true
 				})
+			
 
 			//  Regular notification
 			else reply(FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) `, {
@@ -134,11 +141,65 @@ class HeartCollector {
 
 			if (once) {
 				reply(once, {field: this.metadata.msg.author})
-				await this.db.disableNotification(this.metadata.msg.author.id)
-			}
-			return
+				return this.db.disableNotification(this.metadata.msg.author.id)
+			}	
 		}
-		catch(e) { return }
+
+
+		/**
+		 * 	Handling premium notification (Bbooster user)
+		 * 	@premiumNotification
+		 */
+		const premiumNotification = async () => {
+			//  Featured notification
+			if (!this.metadata.heartsTooLow && !postmeta) reply(
+				`[Go to Featured](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
+					field: this.metadata.msg.author,
+					prebuffer: true,
+					image: await new RichNotification({user,
+						postPreview: this.metadata.artwork,
+						channel: this.metadata.msg.channel.name, 
+						likerName: user.username,
+						featured: true
+					}).render(),
+				})
+				
+			
+			if (this.metadata.favs <= 2) reply(
+				`[Go to Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
+					field: this.metadata.msg.author,
+					prebuffer: true,
+					image: await new RichNotification({user,
+						postPreview: this.metadata.artwork,
+						channel: this.metadata.msg.channel.name, 
+						likerName: user.username}).render()
+				})
+			
+
+			//  Regular notification
+			else reply(`[Go to Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
+				field: this.metadata.msg.author,
+				prebuffer: true,
+				image: await new RichNotification({user,
+					postPreview: this.metadata.artwork,
+					channel: this.metadata.msg.channel.name, 
+					likerName: `${user.username} and ${this.metadata.favs - 1} others`}).render()
+			})
+
+			if (once) {
+				reply(once, {field: this.metadata.msg.author})
+				return this.db.disableNotification(this.metadata.msg.author.id)
+			}	
+		}
+
+
+		try {
+			if (isVIP) return premiumNotification()
+			regularNotification()
+		}
+		catch(e) { 
+			return this.logger.info(`Fail to execute post notification. > ${e.stack}`) 
+		}
 	}
 
 
