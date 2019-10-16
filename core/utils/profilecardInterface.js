@@ -151,28 +151,37 @@ async function profile(stacks, member) {
 		}
 	}
 
+
+	const resizeLongNickname = (name = ``) => {
+		return name.length <= 12 ? `14pt` : name.length <= 17 ? `11pt` : `9pt`
+	}
+
+
+	const titlePicker = (memberObject = {}) => {
+		return memberObject.roles.find(r => r.name === `༶•  Grand Master`) ? `G R A N D  M A S T E R` :
+		memberObject.roles.find(r => r.name === `༶•  Art Mentor`) ? `A R T  M E N T O R` :
+		memberObject.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
+		memberObject.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
+		memberObject.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
+				`A R T  A P P R E C I A T O R`
+	}
+
+
 	/**
 	 *    USERNAME
 	 */
-	canv.setColor(switchColor[usercolor].secondaryText)
+	canv.setColor(switchColor[usercolor].text)
 		.setTextAlign(`center`)
-		if (member.user.username.length <= 10) {
-			canv.setTextFont(`14pt RobotoBold`)
-		} else if (member.user.username.length <= 20) {
-			canv.setTextFont(`12pt RobotoBold`)
-		} else {
-			canv.setTextFont(`10pt RobotoBold`)
-		}
-	canv.addText(member.user.username, startPos_x + 70, 272)
+		.setTextFont(`${resizeLongNickname(member.user.username)} RobotoBold`)
+		.addText(member.user.username, startPos_x + 70, 272)
 
-		.setColor(user.clr)
+
+	/**
+	 * 	TITLE
+	 */
+	canv.setColor(user.clr)
 		.setTextFont(`5pt RobotoBold`)
-		.addText(
-			member.roles.find(r => r.name === `༶•  Grand Master`) ? `A D M I N I S T R A T O R` :
-			member.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
-			member.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
-			member.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
-					`A R T  A P P R E C I A T O R`, startPos_x + 70, 286)
+		.addText(titlePicker(member), startPos_x + 70, 286)
 
 	/**
 	 *
@@ -201,18 +210,18 @@ async function profile(stacks, member) {
 	canv.setColor(switchColor[usercolor].secondaryText)
 		.setTextAlign(`left`)
 		.setTextFont(`8pt Roboto`)
-	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length <= 55) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 31, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).second, 31, 317)
-	} else if (configProfile.checkDesc(user.des).length > 55 && configProfile.checkDesc(user.des).length <= 110) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 31, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 31, 317)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).third, 31, 327)
-	} else if (configProfile.checkDesc(user.des).length > 110 && configProfile.checkDesc(user.des).length <= 165) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 31, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 31, 317)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 31, 327)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).fourth, 31, 337)
+	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length <= 51) {
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 40, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).second, 40, 320)
+	} else if (configProfile.checkDesc(user.des).length > 51 && configProfile.checkDesc(user.des).length <= 102) {
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 40, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 40, 320)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).third, 40, 333)
+	} else if (configProfile.checkDesc(user.des).length > 102 && configProfile.checkDesc(user.des).length <= 154) {
+		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 40, 307)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 40, 320)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 40, 333)
+			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).fourth, 40, 346)
 	}
 	/**
 	 *    THREE BOXES
