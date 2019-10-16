@@ -1,3 +1,6 @@
+const BoosterPerks = require(`../utils/BoosterPerks`)
+const { nitro_booster } = require(`../utils/role-list`)
+
 module.exports = (bot, oldUser, newUser) => {
 
 	//	Get logger from @Client
@@ -10,6 +13,7 @@ module.exports = (bot, oldUser, newUser) => {
 	let ticket = getRoles(`Nickname Changer`)
 	let muted = getRoles(`muted`)
 	let eventParticipant = getRoles(`Event Participant`)
+	const firstTimeBoostingServer = newUser.roles.has(nitro_booster) && !oldUser.roles.has(nitro_booster)
 
 
 	if( newUser.roles.has(ticket.id) && (oldUser.nickname !== newUser.nickname) ) {
@@ -22,5 +26,8 @@ module.exports = (bot, oldUser, newUser) => {
 			logger.info(`${newUser.nickname} was given the ${muted.name} role so their event participant role has been taken away.`)
 		}
 	}
+
+	//	Send out artcoins pack if user receiving Shining Rich Star role.
+	if (firstTimeBoostingServer) new BoosterPerks({bot, oldUser, newUser}).artcoinsPack()
   
 }
