@@ -450,6 +450,25 @@ class databaseUtils {
 		return this
 	}
 
+
+	/**
+	 * 	Set User theming mode. Supports method chaining.
+	 * 	@param {String} themeName (light_profileskin/dark_profileskin)
+	 * 	@param {String|ID} userId of the user id
+	 * 	@setTheme
+	 */
+	setTheme(themeName = `light_profileskin`, authorId = 0) {
+		this._query(`
+			UPDATE userdata 
+			SET interfacemode = ? 
+			WHERE userId = ?`
+			, `run`
+			, [themeName, authorId]
+		)
+		return this
+	}
+
+
 	/**
 	 * 	Add user artcoins. Supports method chaining.
 	 * 	@param {Number} value of the artcoins to be given
