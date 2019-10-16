@@ -165,13 +165,13 @@ async function profile(stacks, member) {
 		}
 	canv.addText(member.user.username, startPos_x + 70, 272)
 
-		.setColor(isVIP ? palette.yellow : user.clr)
+		.setColor(user.clr)
 		.setTextFont(`5pt RobotoBold`)
 		.addText(
-			isVIP ? `D O N A T O R` :
+			member.roles.find(r => r.name === `༶•  Grand Master`) ? `A D M I N I S T R A T O R` :
 			member.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
 			member.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
-				member.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
+			member.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
 					`A R T  A P P R E C I A T O R`, startPos_x + 70, 286)
 
 	/**
@@ -187,7 +187,7 @@ async function profile(stacks, member) {
 	/**
 	 *    RANK TITLE
 	 */
-	canv.setColor(user.clr)
+	canv.setColor(Color(user.clr).darken(0.3))
 		.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 		.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 		.setColor(palette.white)
