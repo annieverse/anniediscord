@@ -236,7 +236,9 @@ class Pistachio {
 		// Lowercase first letter and de-plural string.
 		container.normalizeString = (string) => {
 			string = string.charAt(0).toLowerCase() + string.slice(1)
-			string = string.slice(0, -1)
+			if (string.endsWith(`s`)) {
+				string = string.slice(0, -1)
+			}
 			return string
 		}
 

@@ -2,7 +2,7 @@
   "halloween": {
     "emote": "japanese_ogre",
     "emoteUnicode": "\uD83D\uDC79",
-    "currency": "candy",
+    "currency": "candies",
     "currencyACvalue": 100,
     "shopname": "Halloween Shop"
   },

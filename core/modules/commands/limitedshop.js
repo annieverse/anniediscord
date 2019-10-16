@@ -59,28 +59,6 @@ class Limitedshop {
 		}
 
 		/**
-		 * Creates a column in userinventories for the special currency. Start value: 0
-		 */
-		const createCurr = () => {
-			reply(`Creating currency `+shopcurrency+`...`)
-			db.getCurrency(shopcurrency)
-				.then(() => { //column already exists
-					reply(`Currency ${shopcurrency} already exists`)
-					stock()
-				})
-				.catch(() => { //column doesn't exist
-					db.makeCurrency(shopcurrency)
-						.then(() => { //on successfully created
-							reply(`Created currency ${shopcurrency}`)
-							stock()
-						})
-						.catch(() =>{
-							reply(`Couldn't create currency ${shopcurrency}`)
-						})
-				})
-		}
-
-		/**
 		 * Gets the on-sale items from itemlist
 		 * Renames the shop channel name properly
 		 * Formats the shop with shop name, banner, etc, and all the sale items
@@ -129,24 +107,6 @@ class Limitedshop {
 				}
 			}, onedaytimeout)
 		}
-		/**
-		 * Converts any leftover special currency back into AC at a third of the value
-		 * (That's a shitty conversion rate)
-		 */
-		const destroyCurr = async () => {
-			reply(`Destroying currency `+shopcurrency+`...`)
-			//in the case that a special shop doesn't use special currency do nothing
-			if (shopcurrency==`artcoins`) return
-			await db.getUsersWithCurrency(shopcurrency)
-				.then((data) => {
-					for (var i=0;i<data.length;i++) {
-						let newac = data[i].artcoins + Math.floor(data[i][shopcurrency] * events[shoptype].currencyACvalue/3)
-						db.convertCurrencyToAc(shopcurrency, newac, data[i].userId)
-					}
-				})
-			reply(`Done`)
-			//TODO delete even the whole column?
-		}
 
 		/**
 		 * Closes the shop to the public
@@ -162,7 +122,7 @@ class Limitedshop {
 				await shopchannel.overwritePermissions(creatorscouncilrole, { VIEW_CHANNEL: false })
 				reply(`Setting shop name to closed...`)
 				await shopchannel.setName(`closed`+channelspace+`shop`)
-				await destroyCurr()
+				//await destroyCurr()
 			}, oneweektimeout)
 
 			//DM all users who still have currency
@@ -174,7 +134,7 @@ class Limitedshop {
 							var user = await bot.fetchUser(data[i].userId)
 							user.send(`ATTENTION!\n`+
 								`\n You haven't spent all of your `+shopcurrency+`.`+
-								`\n The store will close in exactly one week, and your `+shopcurrency+` will be destroyed!`+
+								`\n The store will close in exactly one week!`+//, and your `+shopcurrency+` will be destroyed!`+
 								`\n So what are you waiting for? BUY BUY BUY!`)
 						}
 					}
@@ -253,15 +213,17 @@ class Limitedshop {
 		const getItems = (source, page, emoji) => {
 			let categories = []
 
-			for (var key in source) {
-				if (!categories.includes(source[key].type)) {
-					categories.push(source[key].type)
+			for (var item of source) {
+				if (!categories.find((i) => i.type==item.type)) {
+					categories.push({type:item.type, text:``})
 				}
+				var c = categories[categories.length-1]
 				//format copy pasted from shop.js
-				var tempDesc = ``
-				let priceRange = format.threeDigitsComa(source[key].price)
-				tempDesc += `${emoji} ${priceRange} - **${source[key].name}**\n\`${source[key].desc}\`\n\n`
-				page.addField(source[key].type, tempDesc)
+				let priceRange = format.threeDigitsComa(item.price)
+				c.text += `${emoji} ${priceRange} - **${item.name}**\n\`${item.desc}\`\n\n`
+			}
+			for (var cat of categories) {
+				page.addField(cat.type, cat.text)
 			}
 			return source.length
 		}
@@ -277,7 +239,7 @@ class Limitedshop {
 			if (args[0] == `stock`) {
 				clear()
 				shopchannel.bulkDelete(1)
-				createCurr()
+				stock()
 			} else if (args[0] == `open`) {
 				open()
 			} else if (args[0] == `close`) {
@@ -301,5 +263,5 @@ module.exports.help = {
 	group: `Shop-related`,
 	public: true,
 	required_usermetadata: true,
-	multi_user: true
+	multi_user: false
 }
