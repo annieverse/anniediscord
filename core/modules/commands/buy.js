@@ -9,7 +9,7 @@ const preview = require(`../../utils/config/itemPreview`)
 class Buy {
 	constructor(Stacks) {
 		this.stacks = Stacks
-		this.categories = [`ROLE`, `TICKET`, `SKIN`, `BADGE`, `COVER`]
+		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`]
 	}
 
 	/**
@@ -25,15 +25,16 @@ class Buy {
 
 		const key = args[0].toUpperCase()
 
+		var category = this.categories.find((i) => i.toLowerCase().includes(key.toLowerCase()))
 		//  Returns if category is invalid
-		if (!this.categories.includes(key)) return reply(BUY.INVALID_CATEGORY)
+		if (!category) return reply(BUY.INVALID_CATEGORY)
 
 		//  Returns if item is invalid
 		if (!args[1]) return reply(BUY.MISSING_ITEMNAME)
 
 		let transactionComponents = {
 			itemname: message.content.substring(message.content.indexOf(args[1])).toLowerCase(),
-			type: args[0].charAt(0).toUpperCase() + args[0].slice(1) + `s`,
+			type: category,
 			message: message,
 			author: author,
 			usermetadata: data
@@ -46,13 +47,19 @@ class Buy {
 
 		let badgesOnLimit = Object.values(await data.badges).indexOf(null) === -1
 		let badgesHaveDuplicate = Object.values(await data.badges).includes(item.alias)
-		let query = await db(author.id)._query(`
+		let query1 = await db(author.id)._query(`
 			SELECT itemId FROM itemlist 
 			WHERE alias = ?`
 			, `get`
 			, [item.price_type])
+		let query2 = await db(author.id)._query(`
+			SELECT itemId FROM itemlist 
+			WHERE alias = ?`
+			, `get`
+			, [item.alias])
 
-		item.itemId = query.itemId
+		item.currencyId = query1.itemId
+		item.itemId = query2.itemId
 		let checkoutComponents = {
 			itemdata: item,
 			transaction: transaction,

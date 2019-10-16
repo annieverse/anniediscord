@@ -55,6 +55,6 @@ module.exports.help = {
 	usage: `setdesc <message>`,
 	group: `General`,
 	public: true,
-	require_usermetadata: true,
-	multi_user: true
+	required_usermetadata: true,
+	multi_user: false
 }

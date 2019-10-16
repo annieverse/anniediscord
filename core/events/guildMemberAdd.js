@@ -5,8 +5,6 @@ module.exports = async (bot, member) => {
 
     //  Display image
     banner.render()
-    //  Update server member status
-    banner.updateCounter()
     
     //	Register new data if its a new user, else ignore.
     await bot.db.validatingNewUser(member.user.id)

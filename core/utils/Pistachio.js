@@ -85,6 +85,9 @@ class Pistachio {
 			//  Check for event team authority
 			container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
 
+			//  Check for booster user
+			container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)
+
 			// Check for event team authority
 			container.isEventMember = message.member.roles.find(r => Object.keys(container.roles.events).some(i => container.roles.events[i] == r.id))
 
@@ -233,7 +236,9 @@ class Pistachio {
 		// Lowercase first letter and de-plural string.
 		container.normalizeString = (string) => {
 			string = string.charAt(0).toLowerCase() + string.slice(1)
-			string = string.slice(0, -1)
+			if (string.endsWith(`s`)) {
+				string = string.slice(0, -1)
+			}
 			return string
 		}
 

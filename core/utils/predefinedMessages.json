@@ -292,6 +292,13 @@
         "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
         "FETCHING": "`Fetching {0}'s stat data . .`"
     },
+    "SWITCH_THEME": {
+        "UNAVAILABLE": "This feature is only available to **Server Booster**.",
+        "MISSING_KEYWORD": "Please include the theme name you want to use.",
+        "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**`",
+        "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
+        "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name."
+    },
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },

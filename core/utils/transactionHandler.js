@@ -38,6 +38,11 @@ class Transaction {
 		this.db.updateBadge(data.alias)
 	}
 
+	// Updating badges column
+	Unique(data) {
+		this.db.addItems(data.itemId, 1)
+	}
+
 
 	// Applying EXP booster.
 	Exp_booster(data) {
@@ -53,7 +58,7 @@ class Transaction {
 
 	//  Withdrawing balance
 	withdraw(data) {
-		this.db.withdraw(data.price, data.itemId)
+		this.db.withdraw(data.price, data.currencyId)
 	}
 
 
@@ -73,14 +78,14 @@ class Transaction {
 		if (this.message.channel.id == `614819522310045718`) {
 			for (var key in events) {
 				if (events.hasOwnProperty(key)) {
-					if (this.message.channel.toLowerCase().includes(key)) {
+					if (this.message.channel.name.toLowerCase().includes(key)) {
 						itemstatus = key+`-sale`
 						break
 					}
 				}
 			}
 		}
-		return sql.all(`SELECT itemId,name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
+		return sql.all(`SELECT itemId, name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
                                         FROM itemlist 
                                         WHERE status = "${itemstatus}" 
                                         AND type = "${this.type}"`)
