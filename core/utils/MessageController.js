@@ -288,6 +288,9 @@ class MessageController {
         return bonus
     }
 
+    get pingHugo(){
+        return this.message.content.includes(`coffee`) ? true : false
+    }
 
 
 }

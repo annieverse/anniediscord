@@ -57,6 +57,8 @@ class Worker extends Controller {
         // Check if Ralu buff ran out (1h). If yes set the exp boost back to 0
         if (!await super.isRaluBuffActive()) this.bot.cards.ralu_card.skills.main.effect.exp = 0
 
+        // Ping hugo if coffee is mentioned
+        if (super.pingHugo) return this.message.channel.send(`<@!476391416268849175>`).then(msg=>msg.delete(2000))
 
         //  Handle experience system
         if (super.inExpChannel) new Experience(this.data).runAndUpdate()     
