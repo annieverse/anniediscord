@@ -11,7 +11,7 @@ module.exports = bot => {
 
 
 	/**
-     * secret thingy, change color of role
+     * Change color of role
      * @roleChange
      */
 	function roleChange(){
@@ -141,11 +141,6 @@ module.exports = bot => {
 	/**
      *  Automatically change current bot status presence
      *  @autoStatus
-	 * 
-	 * 	--	Disabled Temporary --
-	 * 
-	 * 	Note:
-	 * 	1. Please rework this function to integrate with databaseManager. 
      */
 	
 	function autoStatus(){
