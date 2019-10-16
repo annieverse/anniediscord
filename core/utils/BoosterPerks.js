@@ -29,6 +29,16 @@ class BoosterPerks {
     }
 
 
+    /**
+     *  Giving out vip badge
+     *  @vipBadge
+     */
+    vipBadge() {
+        this.db._query(`UPDATE userbadges SET slot6 = "vip" WHERE userId = ?`, `run`, [this.newUser.id])
+        this.logger.info(`${this.newUser.tag} has received VIP badge.`)
+    }
+
+
 }
 
 module.exports = BoosterPerks

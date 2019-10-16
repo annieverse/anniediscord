@@ -8,6 +8,7 @@ const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
 const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
+const { nitro_boost } = require(`./role-list`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -77,6 +78,7 @@ async function profile(stacks, member) {
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	const usercolor = configProfile.checkInterface(user.ui, member)
 	const badgesdata = await collection.badges
+	const isVIP = member.roles.has(nitro_boost)
 
 	//  Remove userid from badges object.
 	delete badgesdata.userId
@@ -125,7 +127,7 @@ async function profile(stacks, member) {
 	/**
 	 *    USER AVATAR
 	 */
-	canv.setColor(switchColor[usercolor].base)
+	canv.setColor(isVIP ? palette.yellow : switchColor[usercolor].base)
 		.addCircle(startPos_x + 70, 200, 52) //avatar
 		.addRoundImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
@@ -163,11 +165,13 @@ async function profile(stacks, member) {
 		}
 	canv.addText(member.user.username, startPos_x + 70, 272)
 
-		.setColor(user.clr)
+		.setColor(isVIP ? palette.yellow : user.clr)
 		.setTextFont(`5pt RobotoBold`)
-		.addText(member.roles.find(r => r.name === `Digital`) ? `D I G I T A L   A R T I S T` :
-			member.roles.find(r => r.name === `Traditional`) ? `T R A D I T I O N A L  A R T I S T` :
-				member.roles.find(r => r.name === `Mixed`) ? `G E N E R A L  A R T I S T` :
+		.addText(
+			isVIP ? `D O N A T O R` :
+			member.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
+			member.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
+				member.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
 					`A R T  A P P R E C I A T O R`, startPos_x + 70, 286)
 
 	/**

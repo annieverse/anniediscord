@@ -27,7 +27,12 @@ module.exports = (bot, oldUser, newUser) => {
 		}
 	}
 
-	//	Send out artcoins pack if user receiving Shining Rich Star role.
-	if (firstTimeBoostingServer) new BoosterPerks({bot, oldUser, newUser}).artcoinsPack()
+	//	Send out special perks if user receiving Shining Rich Star role.
+	if (firstTimeBoostingServer) {
+		const Perk = new BoosterPerks({bot, oldUser, newUser})
+
+		Perk.artcoinsPack()
+		Perk.vipBadge()
+	}
   
 }
