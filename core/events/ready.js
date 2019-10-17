@@ -201,23 +201,18 @@ module.exports = bot => {
 			// playing = type 0
 			
 			if (tests.eventHasEnded){
-				logger.info(`tests.eventHasEnded`)
 				return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
 			}			
 			
 			if (tests.eventIsOver) {
-				logger.info(`tests.eventIsOver`)
 				eventEnded()
 			} else if (tests.presenceGameIsNull) {
-				logger.info(`tests.presenceGameNotNull`)
-				if (tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying) return logger.info(`tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying`)
+				if (tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying) return
 			}
 
 			if (tests.eventHasntStarted) {
-				logger.info(`tests.eventHasntStarted`)
 				eventStartingIn()			
 			} else if (tests.eventIsHappening) {
-				logger.info(`tests.eventIsHappening`)
 				eventGoing()
 			}
 			
