@@ -188,9 +188,9 @@ module.exports = bot => {
 			{
 				eventHasEnded: metadata.status === 1,
 				eventIsOver: bufferTime.after < metadata.currentTime,
-				doesEventEqualPresenceGame: bot.user.presence.game === undefined ? false : bot.user.presence.game.name === `[EVENT] ${metadata.event}`,
-				presenceTypeIsPlaying: bot.user.presence.game === undefined ? false : bot.user.presence.game.type === 0,
-				presenceGameIsNull: bot.user.presence.game == null,
+				doesEventEqualPresenceGame: bot.user.presence.game === (undefined || null) ? false : bot.user.presence.game.name === `[EVENT] ${metadata.event}`,
+				presenceTypeIsPlaying: bot.user.presence.game === (undefined || null) ? false : bot.user.presence.game.type === 0,
+				presenceGameIsNull: bot.user.presence.game == (undefined || null),
 				eventDontRepeat: data.repeat_after === 0,
 				eventIsHappening: bufferTime.start < metadata.currentTime && bufferTime.after > metadata.currentTime,
 				eventHasntStarted: bufferTime.before < metadata.currentTime && bufferTime.start > metadata.currentTime
