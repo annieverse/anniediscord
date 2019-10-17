@@ -134,7 +134,10 @@ class BoosterColorManager {
         const colorData = this.fetchColorData(this.colorList[this.components.reaction.emoji.name])
 
         //  Notify user if non-booster user can't get Booster Perk's custom color
-
+        if (!this.userIsBooster()) {
+            this.components.reaction.remove(this.components.user)
+            return this.sendingDMNotification(`You need to be a **Server Booster** to get **${colorData.name}** color.`)
+        }
 
         try {
             //  Assign color and notify user.
