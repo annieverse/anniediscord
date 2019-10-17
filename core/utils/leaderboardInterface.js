@@ -301,8 +301,8 @@ const render = async (stacks, metadata) => {
 			this.deleteObjectFromArr(user.group, user.group[index])
 			user.limit++
 			user.group.push({
-				id: await dbmanager.indexRanking(`userinventories`, `artcoins`, user.limit, `userId`),
-				ac: await dbmanager.indexRanking(`userinventories`, `artcoins`, user.limit, `artcoins`)
+				id: await dbmanager.indexRankingAC(`item_inventory`, `quantity`, user.limit, `user_id`),
+				ac: await dbmanager.indexRankingAC(`item_inventory`, `quantity`, user.limit, `quantity`)
 			})
 		}
 

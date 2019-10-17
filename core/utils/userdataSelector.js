@@ -20,7 +20,6 @@ class Data {
 			let res = await this.db.userMetadata(user.id)
 			res.total_cards = await this.db.totalCollectedCards(user.id)
 			res.badges = await this.db.userBadges(user.id)
-
 			delete res.badges.userId
 
 			this.requestedData = {
