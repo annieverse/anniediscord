@@ -17,8 +17,6 @@ module.exports = bot => {
 		reqEvent(`message`)(bot, message)
 	})
 
-
-	
 	/**
 	 * 	Will be enabled once the cpu-leak issue has been fixed.
 	 */
@@ -33,6 +31,7 @@ module.exports = bot => {
 		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))
 		bot.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(bot, oldUser, newUser))
 		bot.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({bot, reaction, user, message_object}))
+		bot.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({bot, reaction, user, message_object}))
 		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
 	}
 
