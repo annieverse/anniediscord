@@ -112,7 +112,7 @@ class ClassroomManager {
             //  Assign role and redirect user.
             this.assignRole(Apprenticeship)
             //  Skip notification if user still in cooldown state.
-            if (await classroomNotificationCurrentlyCoolingdown()) return
+            if (await this.classroomNotificationCurrentlyCoolingdown()) return
             this.classroomNotificationSetCooldown(3600)
             return this.classroomNotification(`${this.components.user} has joined the classroom!`)
         }
