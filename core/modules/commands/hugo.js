@@ -1,4 +1,4 @@
-class Coffee {
+class Hugo {
     constructor(Stacks) {
         this.stacks = Stacks
     }
@@ -11,8 +11,8 @@ class Coffee {
 }
 
 module.exports.help = {
-    start: Coffee,
-    name: `coffee`, 
+    start: Hugo,
+    name: `hugo`, 
     aliases: [`hugo`],
     description: `How do you describe @hugonun#0422 well by this video, thats all`,
     usage: `hugo`,
