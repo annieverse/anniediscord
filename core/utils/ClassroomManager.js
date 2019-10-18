@@ -16,6 +16,7 @@ class ClassroomManager {
         this.logger = Components.bot.logger
         this.pistachio = new Pistachio(this.components).bag()
         this.keyv = Components.bot.keyv
+        this.cdlabel = `classnotifcd:${Components.user.id}`
     }
 
 
@@ -88,7 +89,7 @@ class ClassroomManager {
      *  @classroomNotificationSetCooldown
      */
     classroomNotificationSetCooldown(time = 0) {
-        this.keyv.set(`classroomNotifCooldown:${this.components.user.id}`, `1`, time)
+        this.keyv.set(this.cdlabel, `1`, time)
     }
 
 
@@ -97,7 +98,7 @@ class ClassroomManager {
      *  @classroomNotificationCurrentlyCoolingdown
      */
     async classroomNotificationCurrentlyCoolingdown() {
-        return await this.keyv.get(`classroomNotifCooldown:${this.components.user.id}`)
+        return await this.keyv.get(this.cdlabel)
     }
 
 
@@ -107,14 +108,13 @@ class ClassroomManager {
      */
     async Add() {
         const Apprenticeship = this.apprenticeshipRole
-        const inCooldown = await this.classroomNotificationCurrentlyCoolingdown()
 
         try {
             //  Assign role and redirect user.
             this.assignRole(Apprenticeship)
             //  Skip notification if user still in cooldown state.
-            if (inCooldown) return
-            this.classroomNotificationSetCooldown(3600)
+            if (await this.classroomNotificationCurrentlyCoolingdown()) return
+            this.classroomNotificationSetCooldown(3600000)
             return this.classroomNotification(`${this.components.user} has joined the classroom!`)
         }
         catch (e) {
