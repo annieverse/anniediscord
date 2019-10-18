@@ -1,6 +1,6 @@
 const Heart = require(`../utils/artFeaturingManager`)
 const BoosterColor = require(`../utils/BoosterColorManager`)
-const ClassroomManager = require(`../utils/ClassroommManager`)
+const ClassroomManager = require(`../utils/ClassroomManager`)
 
 module.exports = async(Components) => {
 
