@@ -105,14 +105,15 @@ class ClassroomManager {
      *  Executing sequence for messageReactionAdd.js
      *  @Add
      */
-    Add() {
+    async Add() {
         const Apprenticeship = this.apprenticeshipRole
+        const inCooldown = await this.classroomNotificationCurrentlyCoolingdown()
 
         try {
             //  Assign role and redirect user.
             this.assignRole(Apprenticeship)
             //  Skip notification if user still in cooldown state.
-            if (await this.classroomNotificationCurrentlyCoolingdown()) return
+            if (inCooldown) return
             this.classroomNotificationSetCooldown(3600)
             return this.classroomNotification(`${this.components.user} has joined the classroom!`)
         }
