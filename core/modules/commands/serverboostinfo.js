@@ -34,7 +34,7 @@ class serverBoost {
 		const { args } = this.stacks
 		if (!args[0]) return this.helpCenter()
 		if ([`level`, `lvl`, `l`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostLevel()
-		if ([`member`, `mem`, `m`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostMembers()
+		if ([`members`,`member`, `mem`, `m`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostMembers()
 		if ([`boost`, `boo`, `b`].some(x => x.toLowerCase() === args[0].toLowerCase())) return this.boostNum()
 	}
 }
