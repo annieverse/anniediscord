@@ -261,6 +261,7 @@ class databaseUtils {
 			SET expcooldown = "False"`
 			, `run`
 		)
+		logger.info(`User cooldown state has been reset.`)
 	}
 
 
