@@ -22,7 +22,6 @@ module.exports = bot => {
 	 */
 	//if (env.dev) bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
 
-
 	
 	if (!env.dev) {
 		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))

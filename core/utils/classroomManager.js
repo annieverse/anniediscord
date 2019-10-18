@@ -1,28 +1,124 @@
-module.exports = async (Components) => {
-	 /**
-     *
-     *	This function can be wrapped into its own class.
-     *	@classRoom
+const Pistachio = require(`./Pistachio`)
+/**
+ *  Boilerplate for handling Classroom System.
+ *  @ClassroomManager
+ */
+class ClassroomManager {
+    constructor(Components) {
+		this.components = { 
+			user: Components.user, 
+			reaction: Components.reaction, 
+			bot:Components.bot, 
+            message:Components.reaction.message, 
+			meta: {author:null}
+        }
+        this.userGuild = Components.reaction.message.guild.members.get(Components.user.id)
+        this.logger = Components.bot.logger
+        this.pistachio = new Pistachio(this.components).bag()
+    }
+
+
+    /**
+     *  Fetching Apprentice role data from guild.
+     *  @apprenticeshipRole
      */
-        const { bot, reaction, user } = Components
-        let classRoomChannel = bot.channels.get(`621705949429891074`)
-        const rmsg = reaction.message
-        const member = await rmsg.guild.fetchMember(user)
+    get apprenticeshipRole() {
+        return this.components.message.guild.roles.get(`621714766947287052`)
+    }
 
-        const ApprenticeKey = `621714766947287052`
-        const Announcements = `459892157600366612`
 
-        //    Ignore message outside of #announcements channel.
-        if (rmsg.channel.id != Announcements) return
+    /**
+     *  Fetching Classroom channel data from guild.
+     *  @classroomChannel
+     */
+    get classroomChannel() {
+        return this.components.message.guild.channels.get(`621705949429891074`)
+    }
 
-        //    Ignore message if reaction is not a pencil.    
-        if (reaction.emoji.name != `✏`) return
 
-        //    Ignore if user already have the role.
-        if (member.roles.find(x => x.id == ApprenticeKey)) return
+    /**
+     *  Assigning role to the user
+     *  @param {Object|RoleData} roleData
+     *  @assignColor
+     */
+    assignRole(roleData) {
+        if (!roleData) return
+        this.userGuild.addRole(roleData.id)
+        this.logger.info(`${this.components.user.username} has received ${roleData.name} from Classroom Guide channel.`)
+    }
 
-        //    Assign key, send notification.
-    	bot.logger.info(`${user.tag} has received Apprenticeship Key.`)
-        await member.addRole(ApprenticeKey)
-        return classRoomChannel.send(`${user} has joined the classroom!`)
+
+    /**
+     *  Removing role from the user
+     *  @param {Object|RoleData} roleData
+     *  @revokeRole
+     */
+    revokeRole(roleData) {
+        if (!roleData) return
+        this.userGuild.removeRole(roleData.id)
+        this.logger.info(`${this.components.user.username} has revoked ${roleData.name} from Classroom Guide channel.`)
+    }
+
+
+    /**
+     *  Check if user already has the role or not.
+     *  @param {Object|RoleData} roleData
+     *  @userHasRole
+     */
+    userHasRole(roleData) {
+        return this.userGuild.roles.has(roleData.id)
+    }
+
+
+    /**
+     *  Sending notification to the classroom based of Pistachio framework.
+     *  @param {String} content of the message
+     *  @classroomNotification
+     */
+    classroomNotification(content = ``) {
+        if (!content.length) return
+        return this.pistachio.reply(content, {field: this.classroomChannel, simplified: true})
+    }
+
+
+    /**
+     *  Executing sequence for messageReactionAdd.js
+     *  @Add
+     */
+    Add() {
+        const Apprenticeship = this.apprenticeshipRole
+
+        try {
+            //  Assign role and redirect user.
+            this.assignRole(Apprenticeship)
+            return this.classroomNotification(`${this.components.user} has joined the classroom!`)
+        }
+        catch (e) {
+            //  Incase there's an unexpected error
+            return this.logger.error(`Failed to assign ${Apprenticeship.name} key to ${this.components.user.username}. > ${e.stack}`)
+        }
+    }
+
+
+    /**
+     *  Executing sequence for messageReactionRemove.js
+     *  @Remove
+     */
+    Remove() {
+        const Apprenticeship = this.apprenticeshipRole
+
+        //  Return if user dont't have the role in the first place.
+        if (!this.userHasRole(Apprenticeship)) return
+
+        try {
+            //  Remove role from the user
+            this.revokeRole(Apprenticeship)
+        }
+        catch (e) {
+            //  Incase there's an unexpected error
+            return this.logger.error(`Failed to revoke ${Apprenticeship.name} key from ${this.components.user.username}. > ${e.stack}`)
+        }
+    }
 }
+
+module.exports = ClassroomManager
