@@ -25,7 +25,7 @@ module.exports = async (bot, message) => {
 		},
 		bot: bot,
 		message: message,
-		cooldown: 0,
+		cooldown: 30000,
 		total_gained_exp: Math.round(Math.random() * (15 - 10 + 1)) + 10,
 		total_gained_ac: Math.round(Math.random() * (15 - 10 + 1)) + 10,
 		updated: {
