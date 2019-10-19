@@ -150,7 +150,7 @@ class ranksManager {
 				return currentrank
 			}
 			let wrongRank = currentrank(this)
-			let isWrongRank = correctRank.name != wrongRank.name ? true : false
+			let isWrongRank = wrongRank == undefined ? true : correctRank.name != wrongRank.name ? true : false
 			return {isWrongRank,wrongRank,correctRank}
 		}
 

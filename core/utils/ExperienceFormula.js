@@ -125,7 +125,7 @@ class Experience extends Controller {
 	get fixLevel() {
 		let wrongRank = this.ranks.ranksCheck(this.meta.data.level).wrongRank
 		let correctRank = this.ranks.ranksCheck(this.meta.data.level).correctRank
-		this.message.guild.member(this.message.author.id).removeRole(wrongRank)
+		wrongRank == undefined ? null : this.message.guild.member(this.message.author.id).removeRole(wrongRank)
 		return this.message.guild.member(this.message.author.id).addRole(correctRank)
 	}
 
