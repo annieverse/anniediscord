@@ -1,54 +1,54 @@
-
-
 /**
-  * Managing ranks in AAU.
-  * {ranksManager}
-  */
+ * Managing ranks in AAU.
+ * {ranksManager}
+ */
 class ranksManager {
 
 	/**
-    * Passing discord events.
-    * @this.bot of Discord.Client
-    * @this.message of message listener
-    */  
+     * Passing discord events.
+     * @this.bot of Discord.Client
+     * @this.message of message listener
+     */  
 	constructor(bot, message) {
 		this.bot = bot
 		this.message = message
 	}
 
 	/**
-    * Get roles through discord's collection.
-    * @r of role property
-    */ 
+     * Get roles through discord's collection.
+     * @r of role property
+     */ 
 	getRoles(r) {
 		return this.bot.guilds.get(this.message.guild.id).roles.find(n => n.name === r)
 	}
 
 	/**
-    * Check ranks based on given lvl.
-    * @lv of user level
-    */  
+     * Check ranks based on given lvl.
+     * @lv of user level
+     */  
 	ranksCheck(lv) {
 
 		/**
-    * Level gap between ranks
-    * @cap
-    */ 
+    	 * Level gap between ranks
+    	 * @cap
+    	 */ 
 		const cap = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 85, 100, 180]
 
 		/**
-    * Filtering nearest below given value of an array.
-    * @array, @val
-    */ 
+    	 * Filtering nearest below given value of an array.
+    	 * @array
+		 * @val
+     	 */ 
 		const closestBelowLv = (array, val) => {
 			return Math.max.apply(null,array.filter(function(v)
 			{ return v <= val }))
 		}
     
 		/**
-    * Filtering below given value of an array.
-    * @array, @val
-    */ 
+		 * Filtering below given value of an array.
+		 * @array
+		 * @val
+    	 */ 
 		const previousLvl = (array, val) => {
 			return Math.max.apply(null,array.filter(function(v)
 			{ return v < val }))
@@ -56,9 +56,9 @@ class ranksManager {
 
 
 		/**
-    * Collection of available ranks.
-    * @ranks
-    */
+    	 * Collection of available ranks.
+    	 * @ranks
+    	 */
 		let ranks = {
 
 			"0": this.getRoles(`Pencilician`),
@@ -80,6 +80,80 @@ class ranksManager {
 
 		}
 
+		/**
+		 * Assign the correct rank to a person
+		 * @array 
+		 * @val
+		 */
+		const rankJump = (array, val) => {
+			
+			let correctRank = ranks[(previousLvl(array, val)).toString()]
+			
+			function currentrank(values) {
+				const {message} = values
+				let currentrank
+				message.member.roles.forEach((element) => {
+					switch (element.name) {
+						case ranks[(previousLvl(array, val)).toString()].name:
+							currentrank = element
+							break
+						case ranks[180].name:
+							currentrank = element
+							break
+						case ranks[100].name:
+							currentrank = element
+							break
+						case ranks[85].name:
+							currentrank = element
+							break
+						case ranks[70].name:
+							currentrank = element
+							break
+						case ranks[60].name:
+							currentrank = element
+							break
+						case ranks[50].name:
+							currentrank = element
+							break
+						case ranks[45].name:
+							currentrank = element
+							break
+						case ranks[40].name:
+							currentrank = element
+							break
+						case ranks[35].name:
+							currentrank = element
+							break
+						case ranks[30].name:
+							currentrank = element
+							break
+						case ranks[25].name:
+							currentrank = element
+							break
+						case ranks[20].name:
+							currentrank = element
+							break
+						case ranks[15].name:
+							currentrank = element
+							break
+						case ranks[10].name:
+							currentrank = element
+							break
+						case ranks[5].name:
+							currentrank = element
+							break
+						case ranks[0].name:
+							currentrank = element
+							break
+						}
+					})
+				return currentrank
+			}
+			let wrongRank = currentrank(this)
+			let isWrongRank = correctRank.name != wrongRank.name ? true : false
+			return {isWrongRank,wrongRank,correctRank}
+		}
+
 		return {
 			title: ranks[(closestBelowLv(cap, lv)).toString()].name,
 			rank: ranks[(closestBelowLv(cap, lv)).toString()],
@@ -87,8 +161,10 @@ class ranksManager {
 			currentrank: ranks[lv.toString()],
 			nexttorank: (lv-previousLvl(cap, lv)),
 			lvlcap: cap,
-			color: (ranks[(closestBelowLv(cap, lv)).toString()].hexColor).toString()
-            
+			color: (ranks[(closestBelowLv(cap, lv)).toString()].hexColor).toString(),
+			rankJump: rankJump(cap,lv).isWrongRank,
+			wrongRank: rankJump(cap, lv).wrongRank,
+			correctRank: rankJump(cap, lv).correctRank
 		} 
 
 	}

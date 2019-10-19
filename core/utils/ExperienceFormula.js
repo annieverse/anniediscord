@@ -122,6 +122,13 @@ class Experience extends Controller {
 	}
 
 
+	get fixLevel() {
+		let wrongRank = this.ranks.ranksCheck(this.meta.data.level).wrongRank
+		let correctRank = this.ranks.ranksCheck(this.meta.data.level).correctRank
+		this.message.guild.member(this.message.author.id).removeRole(wrongRank)
+		return this.message.guild.member(this.message.author.id).addRole(correctRank)
+	}
+
 	/**
 	 * 	Check for exp booster ticket.
 	 * 	If there's any, assign to the total boost.
@@ -166,7 +173,7 @@ class Experience extends Controller {
 	 */
 	async handlePassiveTicketBoost() {
 		if (super.isRaluMsg) {
-			this.bot.cards.ami_card.skills.main.effect.exp = 0.15
+			this.bot.cards.ralu_card.skills.main.effect.exp = 0.15
 			await this.keyv.set(`ralubuff`, `1h`, 3600000)
 		} 
 		if (super.isNaphMsg) this.db.whiteCatParadise()
@@ -189,6 +196,8 @@ class Experience extends Controller {
 			//  Add & calculate bonuses from ticket if prompted
 			if (this.applyTicketBuffs) await this.ticketBuffs()
 
+			// Fix wrong rank
+			if (this.ranks.ranksCheck(this.meta.data.level).rankJump) this.fixLevel
 
 			//  Calculate overall exp
 			await this.updatingExp()

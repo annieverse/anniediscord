@@ -289,7 +289,7 @@ class MessageController {
     }
 
     get pingHugo(){
-        return this.message.content.includes(`coffee`) ? true : false
+        return this.message.content.trim().toLowerCase().includes(`coffee`) ? true : false
     }
 
 
