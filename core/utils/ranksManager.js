@@ -85,16 +85,27 @@ class ranksManager {
 		 * @array 
 		 * @val
 		 */
-		const rankJump = () => {
+		const rankJump = (array, val) => {
 			
-			let correctRank = ranks[lv.toString()]
+			let correctRank = ranks[(closestBelowLv(array, val)).toString()]
+			// try {
+			// 	correctRank = ranks[val.toString()]				
+			// } catch (error) {
+			// 	console.log(`hmm`)
+			// }
+			// try {
+			// 	correctRank = ranks[(previousLvl(array, val)).toString()]				
+			// } catch (error) {
+			// 	console.log(`lolo`)
+			// }
+			//correctRank = ranks[lv.toString()].catch(err=>console.log(err))
 			
 			function currentrank(values) {
 				const {message} = values
 				let currentrank
 				message.member.roles.forEach((element) => {
 					switch (element.name) {
-						case ranks[lv.toString()].name:
+						case correctRank.name:
 						 	currentrank = element
 						 	break
 						case ranks[180].name:
@@ -145,13 +156,18 @@ class ranksManager {
 						case ranks[0].name:
 							currentrank = element
 							break
+						default:
+							break
 						}
 					})
 				return currentrank
 			}
 			let wrongRank = currentrank(this)
+
+			wrongRank == undefined ? wrongRank = ranks[0] : null
 			let isWrongRank = wrongRank == undefined ? true : correctRank.name != wrongRank.name ? true : false
-			return {isWrongRank,wrongRank,correctRank}
+			let hasRank = this.message.member.roles.find(r => r.name == correctRank.name) == null ? false : true
+			return { isWrongRank, wrongRank, correctRank, hasRank}
 		}
 
 		return {
@@ -162,9 +178,10 @@ class ranksManager {
 			nexttorank: (lv-previousLvl(cap, lv)),
 			lvlcap: cap,
 			color: (ranks[(closestBelowLv(cap, lv)).toString()].hexColor).toString(),
-			rankJump: rankJump().isWrongRank,
-			wrongRank: rankJump().wrongRank,
-			correctRank: rankJump().correctRank
+			rankJump: rankJump(cap, lv).isWrongRank,
+			wrongRank: rankJump(cap, lv).wrongRank,
+			correctRank: rankJump(cap, lv).correctRank,
+			hasRank: rankJump(cap, lv).hasRank
 		} 
 
 	}

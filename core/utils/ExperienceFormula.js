@@ -197,6 +197,7 @@ class Experience extends Controller {
 			if (this.applyTicketBuffs) await this.ticketBuffs()
 
 			// Fix wrong rank
+			this.ranks.ranksCheck(this.meta.data.level).hasRank ? null : this.message.guild.member(this.message.author.id).addRole(this.ranks.ranksCheck(this.meta.data.level).correctRank)
 			if (this.ranks.ranksCheck(this.meta.data.level).rankJump) this.fixLevel
 
 			//  Calculate overall exp
