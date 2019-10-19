@@ -85,18 +85,18 @@ class ranksManager {
 		 * @array 
 		 * @val
 		 */
-		const rankJump = (array, val) => {
+		const rankJump = () => {
 			
-			let correctRank = ranks[(previousLvl(array, val)).toString()]
+			let correctRank = ranks[lv.toString()]
 			
 			function currentrank(values) {
 				const {message} = values
 				let currentrank
 				message.member.roles.forEach((element) => {
 					switch (element.name) {
-						case ranks[(previousLvl(array, val)).toString()].name:
-							currentrank = element
-							break
+						case ranks[lv.toString()].name:
+						 	currentrank = element
+						 	break
 						case ranks[180].name:
 							currentrank = element
 							break
@@ -162,9 +162,9 @@ class ranksManager {
 			nexttorank: (lv-previousLvl(cap, lv)),
 			lvlcap: cap,
 			color: (ranks[(closestBelowLv(cap, lv)).toString()].hexColor).toString(),
-			rankJump: rankJump(cap,lv).isWrongRank,
-			wrongRank: rankJump(cap, lv).wrongRank,
-			correctRank: rankJump(cap, lv).correctRank
+			rankJump: rankJump().isWrongRank,
+			wrongRank: rankJump().wrongRank,
+			correctRank: rankJump().correctRank
 		} 
 
 	}
