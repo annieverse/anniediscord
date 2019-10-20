@@ -9,7 +9,7 @@ const preview = require(`../../utils/config/itemPreview`)
 class Buy {
 	constructor(Stacks) {
 		this.stacks = Stacks
-		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`]
+		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`,`Sticker`]
 	}
 
 	/**

@@ -54,7 +54,7 @@ async function profile(stacks, member) {
 			border: palette.deepnight,
 			text: palette.white,
 			secondaryText: palette.lightgray,
-			sticker: `dark`
+			sticker: `light`
 		},
 
 		"light_profileskin": {
@@ -62,7 +62,7 @@ async function profile(stacks, member) {
 			border: palette.lightgray,
 			text: palette.darkmatte,
 			secondaryText: palette.blankgray,
-			sticker: `light`
+			sticker: `dark`
 		}
 	}
 
@@ -111,9 +111,11 @@ async function profile(stacks, member) {
 	/**
 	 *    PROFILE STICKER
 	 */
-	/*if (user.stic) {
-		canv.addImage(await configProfile.getAsset(user.stic+switchColor[usercolor].sticker), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
-	}*/
+	if (user.stic) {
+		let stickerIsThemeSpecific = await collection.stickerTheme(user.stic)
+		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${switchColor[usercolor].sticker}`), startPos_x, startPos_y + 270, baseWidth, 460) :
+			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
+	}
 	//canv.addImage(await configProfile.getAsset(`AAU_Profile_Theme_Pumpkin`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 
 	/**

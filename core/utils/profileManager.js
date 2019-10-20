@@ -149,7 +149,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getBadge(id) {
-		return fsn.readFile(`./core/images/badges/${id}.jpg`)
+		return fsn.readFile(`./core/images/badges/${id}.jpg`).catch(async () => { return fsn.readFile(`./core/images/halloween/${id}.png`) })
 	}
 
 
@@ -158,7 +158,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getAsset(id) {
-		return fsn.readFile(`./core/images/${id}.png`)
+		return fsn.readFile(`./core/images/${id}.png`).catch(async () => { return fsn.readFile(`./core/images/halloween/${id}.png`) })
 	}
 
 	/**
@@ -166,7 +166,7 @@ class profileManager {
 	 * @id of the filename
 	 */
 	getCoverAsset(id) {
-		return fsn.readFile(`./core/images/covers/${id}.png`)
+		return fsn.readFile(`./core/images/covers/${id}.png`).catch(async () => { return fsn.readFile(`./core/images/halloween/${id}.png`) })
 	}
 
 

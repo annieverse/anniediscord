@@ -43,6 +43,10 @@ class Transaction {
 		this.db.addItems(data.itemId, 1)
 	}
 
+	// Updating badges column
+	Sticker(data) {
+		this.db.updateSticker(data.alias)
+	}
 
 	// Applying EXP booster.
 	Exp_booster(data) {

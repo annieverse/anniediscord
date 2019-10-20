@@ -506,6 +506,31 @@ class databaseUtils {
             WHERE userId = ${this.id}`)
 	}
 
+	updateSticker(newvalue){
+		sql.run(`UPDATE userdata 
+            SET sticker = "${newvalue}"
+            WHERE userId = ${this.id}`)
+	}
+
+	async stickerTheme(data){
+		let res = await this._query(`SELECT *
+			FROM itemlist
+			WHERE alias = ?`
+			,`get`
+			,[data]
+		).then(async parsed => parsed)
+		let theme = res == undefined ? false : res.unique_type == `-` ? false : true
+		return theme
+	}
+
+	get removeSticker(){
+		return this._query(`UPDATE userdata
+			SET sticker = ?
+			WHERE userId = ?`
+			,`run`
+			,[``, this.id])
+	}
+
 	async updateBadge(newvalue) {
 		let badgedata = await this.userBadges()
 		let slotkey = Object.keys(badgedata)

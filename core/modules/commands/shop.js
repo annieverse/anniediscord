@@ -69,15 +69,15 @@ class shop {
 
 
 		async function run() {
-			await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 8]`, `Unique`, `artcoins`, `price < 130`)
-			await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 8]`, `Covers`, `magical_paper`, `price < 6`)
-			await interface_page(`These are our general items!`, links.ticket, `[3 / 8]`, `Tickets`, `artcoins`, `_rowid_ < 3`)
-			await interface_page(`Boost your social activities!`, links.expbooster, `[4 / 8]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`)
-			await interface_page(`Customize your card theme!`, links.skin, `[5 / 8]`, `Skins`, `artcoins`)
-			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 8]`, `Badges`, `artcoins`)
-			await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 8]`, `Covers`, `artcoins`, `price > 350`)
-			await interface_page(`Choose your favorite roles!`, links.roles, `[8 / 8]`, `Roles`, `artcoins`, `price > 2000`)
-
+			await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 9]`, `Unique`, `artcoins`, `price < 130`)
+			await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 9]`, `Covers`, `magical_paper`, `price < 6`)
+			await interface_page(`These are our general items!`, links.ticket, `[3 / 9]`, `Tickets`, `artcoins`, `_rowid_ < 3`)
+			await interface_page(`Boost your social activities!`, links.expbooster, `[4 / 9]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`)
+			await interface_page(`Customize your card theme!`, links.skin, `[5 / 9]`, `Skins`, `artcoins`)
+			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 9]`, `Badges`, `artcoins`)
+			await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 9]`, `Covers`, `artcoins`, `price > 350`)
+			await interface_page(`Choose your favorite roles!`, links.roles, `[8 / 9]`, `Roles`, `artcoins`, `price > 2000`)
+			await interface_page(`Choose your favorite sticker!`, links.roles, `[9 / 9]`, `Sticker`, `artcoins`, `price > 2000`)
 
 
 			message.channel.send(registered_interface[0])
