@@ -1,13 +1,11 @@
-const db = require(`../../utils/databaseManager`)
-
 class MaintenanceUpdate {
     constructor(Stacks) {
         this.stacks = Stacks
     }
 
     async execute() {
-        const { reply } = this.stacks
-        new db().maintenanceUpdate()
+        const { reply,bot: { db } } = this.stacks
+        db.maintenanceUpdate()
         reply(`Reward given`,{deleteIn:5000})
     }
 }
