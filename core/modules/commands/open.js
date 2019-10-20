@@ -172,7 +172,7 @@ class HalloweenBox {
     }
 
     async halloweenChest() {
-        const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
+        const { message, name, reply,bot:{db}, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
         let amountOfCandies = 15
 
@@ -233,13 +233,13 @@ class HalloweenBox {
         switch (args[0]) {
             case `bag`:
                 this.halloweenBag()
-                break;
+                break
             case `chest`:
                 this.halloweenChest()
-                break;
+                break
             default:
                 this.halloweenBox()
-                break;
+                break
         }
     }
 }
