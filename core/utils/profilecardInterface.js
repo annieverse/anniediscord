@@ -113,10 +113,9 @@ async function profile(stacks, member) {
 	 */
 	if (user.stic) {
 		let stickerIsThemeSpecific = await collection.stickerTheme(user.stic)
-		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${switchColor[usercolor].sticker}`), startPos_x, startPos_y + 270, baseWidth, 460) :
-			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 270, baseWidth, 460) // STICKER BG
+		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${switchColor[usercolor].sticker}`), startPos_x, startPos_y + 194, baseWidth, 206) :
+			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 	}
-	//canv.addImage(await configProfile.getAsset(`AAU_Profile_Theme_Pumpkin`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 
 	/**
 	 *    PROFILE HEADER COVER
