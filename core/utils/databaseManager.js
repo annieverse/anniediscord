@@ -659,12 +659,30 @@ class databaseUtils {
 	}
 
 	/**
-     * Subtracting tickets by result of roll_type().
+     * Subtracting halloween box by result of roll_type().
 	 * @param {Number} value amount to be subtracted
      * @substract_ticket
     */
 	withdrawHalloweenBox(value = 0) {
 		this._updateInventory({ itemId: 111, value: value, operation: `-` })
+	}
+
+	/**
+     * Subtracting halloween bags by result of roll_type().
+	 * @param {Number} value amount to be subtracted
+     * @substract_ticket
+    */
+	withdrawHalloweenBag(value = 0) {
+		this._updateInventory({ itemId: 110, value: value, operation: `-` })
+	}
+
+	/**
+     * Subtracting halloween bags by result of roll_type().
+	 * @param {Number} value amount to be subtracted
+     * @substract_ticket
+    */
+	withdrawHalloweenChest(value = 0) {
+		this._updateInventory({ itemId: 109, value: value, operation: `-` })
 	}
 
 	//	Count total user's collected cards.

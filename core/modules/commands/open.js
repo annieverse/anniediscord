@@ -69,20 +69,14 @@ class HalloweenBox {
     }
 
 
-	/**
-	 * 	Initializer
-	 */
-    async execute() {
-        const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji, gachaField, isGachaField } = this.stacks
+    async halloweenBox() {
+        const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        //	Returns if current channel is not in gacha-allowed list
-        if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
-
-        //	Returns if user doesn't have any lucky ticket
+        //	Returns if user doesn't have any halloween box
         if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
 
         //	Returns if user trying to do multi-roll with owned less than 10 tickets
-        if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET)
+        if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`boxes`] })
 
         //	Returns if user state still in cooldown
         if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
@@ -125,8 +119,128 @@ class HalloweenBox {
                         Cooldown.delete(this.author.id)
                     }, 2000)
                 }, 2000)
-                
+
             })
+    }
+
+    async halloweenBag() {
+        const { message, name, reply, bot: { db }, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
+
+        let amountOfCandies = 5
+        //	Returns if user doesn't have any halloween bags
+        if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
+
+        //	Returns if user trying to do multi-open with owned less than 10 bags
+        if (this.data.halloween_bag < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`bags`] })
+
+        //	Returns if user state still in cooldown
+        if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
+
+        message.delete()
+        //	Opening text
+        reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
+            socket: [name(this.author.id)],
+            notch: true,
+            imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
+        })
+
+
+            .then(async opening => {
+                Cooldown.add(this.author.id)
+
+                // Add candies to user
+                db.storeCandies(amountOfCandies)
+
+                // Remove bags
+                db.withdrawHalloweenBag(this.roll_type)
+
+                opening.delete()
+                setTimeout(async () => {
+
+                    //	Render result
+                    reply(`**${name(this.author.id)} Opened ${this.roll_type} halloween bags!**\nFor a total of: **${amountOfCandies * this.roll_type}** candies`, {
+                        simplified: true,
+                    })
+
+                    //	Unlock cooldown
+                    setTimeout(() => {
+                        Cooldown.delete(this.author.id)
+                    }, 2000)
+                }, 2000)
+
+            })
+    }
+
+    async halloweenChest() {
+        const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
+
+        let amountOfCandies = 15
+
+        //	Returns if user doesn't have any halloween chests
+        if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
+
+        //	Returns if user trying to do multi-open with owned less than 10 chests
+        if (this.data.halloween_chest < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`chests`] })
+
+        //	Returns if user state still in cooldown
+        if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
+
+        message.delete()
+        //	Opening text
+        reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
+            socket: [name(this.author.id)],
+            notch: true,
+            imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
+        })
+
+
+            .then(async opening => {
+                Cooldown.add(this.author.id)
+
+
+                setTimeout(async () => {
+
+                    // Add candies to user
+                    db.storeCandies(amountOfCandies)
+
+                    // Remove chests
+                    db.withdrawHalloweenChest(this.roll_type)
+
+                    opening.delete()
+
+                    //	Render result
+                    reply(`**${name(this.author.id)} Opened ${this.roll_type} halloween bags!**\nFor a total of: **${amountOfCandies * this.roll_type}** candies`, {
+                        simplified: true,
+                    })
+
+                    //	Unlock cooldown
+                    setTimeout(() => {
+                        Cooldown.delete(this.author.id)
+                    }, 2000)
+                }, 2000)
+
+            })
+    }
+	/**
+	 * 	Initializer
+	 */
+    async execute() {
+        const { args, reply, code: { HALLOWEEN_GACHA }, gachaField, isGachaField } = this.stacks
+
+        //	Returns if current channel is not in gacha-allowed list
+        if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
+
+        switch (args[0]) {
+            case `bag`:
+                this.halloweenBag()
+                break;
+            case `chest`:
+                this.halloweenChest()
+                break;
+            default:
+                this.halloweenBox()
+                break;
+        }
     }
 }
 
