@@ -10,9 +10,9 @@ module.exports = (bot,member) => {
 	let memberCountUpdate = bot.channels.get(`518245560239652867`)
 	memberCountUpdate.setName(`˗ˏˋ ${configFormat.threeDigitsComa(userSize)} Artists!! ˎˊ˗`)
 
-	var DELETEDATA = false
-	DELETEDATA == true ? removeDataOnLeave() : null
-	function removeDataOnLeave(){
+	let shouldDeleteData = false
+	if (shouldDeleteData) removeUserData() 
+	function removeUserData(){
 		bot.db._query(`DELETE FROM clanmember WHERE userId = ?`, `run`, [member.id])
 		bot.db._query(`DELETE FROM userdata WHERE userId = ?`, `run`, [member.id])
 		bot.db._query(`DELETE FROM usercheck WHERE userId = ?`, `run`, [member.id])
