@@ -16,8 +16,6 @@ class fox {
 	}
 
 	async execute() {
-		const {message} = this.stacks
-		message.delete()
 		this.initFox()
 	}
 }

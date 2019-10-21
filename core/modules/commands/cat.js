@@ -16,8 +16,6 @@ class cat {
     }
 
     async execute() {
-        const { message } = this.stacks
-        message.delete()
         this.cat()
     }
 }

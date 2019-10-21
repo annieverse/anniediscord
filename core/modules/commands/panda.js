@@ -25,8 +25,6 @@ class panda {
     }
 
     async execute() {
-        const { message } = this.stacks
-        message.delete()
         let randomNum = Math.random() > 0.5
         switch (randomNum) {
             case true:

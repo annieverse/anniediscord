@@ -16,8 +16,6 @@ class pat {
     }
 
     async execute() {
-        const { message } = this.stacks
-        message.delete()
         this.pat()
     }
 }

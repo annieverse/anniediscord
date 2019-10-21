@@ -16,8 +16,6 @@ class hug {
     }
 
     async execute() {
-        const { message } = this.stacks
-        message.delete()
         this.hug()
     }
 }
