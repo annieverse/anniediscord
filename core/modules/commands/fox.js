@@ -1,36 +1,24 @@
-const Discord = require(`discord.js`)
-const formatManager = require(`../../utils/formatManager.js`)
 const superagent = require(`superagent`)
 
 class fox {
 	constructor(Stacks) {
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.args = Stacks.args
-		this.palette = Stacks.palette
 		this.stacks = Stacks
 	}
 
+	async initFox() {
+		const { reply } = this.stacks
+		let { body } = await superagent.get(`https://randomfox.ca/floof/`)
+		return reply(``,{
+			image:body.image,
+			prebuffer: true,
+			deleteIn: 5000
+		})
+	}
+
 	async execute() {
-		let message = this.message
-		let palette = this.stacks.palette
-		const format = new formatManager(message)
-		return [`485922866689474571`, `614737097454125056`].includes(message.channel.name) ? initFox()
-			: format.embedWrapper(palette.darkmatte, `Please use the command in ${message.guild.channels.get(`485922866689474571`).toString()}.`)
-
-		async function initFox() {
-			message.delete(5000)
-			if (!this.args[0]) {
-				let { body } = await superagent
-					.get(`https://randomfox.ca/floof/`)
-
-				let pandaembed = new Discord.RichEmbed()
-					.setColor(`#ff9900`)
-					.setImage(body.image)
-
-				message.channel.send(pandaembed)
-			}
-		}
+		const {message} = this.stacks
+		message.delete()
+		this.initFox()
 	}
 }
 
