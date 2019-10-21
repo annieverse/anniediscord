@@ -26,7 +26,7 @@ module.exports.help = {
 	start: fox,
 	name: `fox`,
 	aliases: [],
-	description: `Displays a random picture of a fox.`,
+	description: `Displays a random picture of a fox!`,
 	usage: `fox`,
 	group: `Fun`,
 	public: true,
