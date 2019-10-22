@@ -35,13 +35,13 @@ class covers {
     }
 
     get availiableCovers(){
-        const { bot: { db } } = this.stacks
-        return db.getCovers
+        const {message,db} = this.stacks
+        return db(message.author.id).getCovers
     }
 
     get activeCover(){
-        const { bot: { db } } = this.stacks
-        return db.activeCover
+        const {message,db} = this.stacks
+        return db(message.author.id).activeCover
     }
 
     async coverNames(data){
@@ -63,8 +63,9 @@ class covers {
     }
 
     async execute() {
-        const { message,reply,multicollector,bot:{db}} = this.stacks
-        if (await this.availiableCovers == 0) return reply(`I'm sorry but you dont have any covers`)
+        const { message,reply,multicollector,db} = this.stacks
+        let availiableCovers = await db(message.author.id).getCovers
+        if (availiableCovers == 0) return reply(`I'm sorry but you dont have any covers`)
         let covers = await this.coverNames(await this.availiableCovers)
         let items = covers.item
         let itemAlias = covers.itemAlias
@@ -76,7 +77,7 @@ class covers {
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
             if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this cover, ${response}`) }
-            db.setCover(itemAlias[index])
+            db(message.author.id).setCover(itemAlias[index])
             reply(`Your cover has been updated to: ${response}`)
         })
     }
@@ -88,13 +89,13 @@ class stickers {
     }
 
     get availiableStickers() {
-        const { bot: { db } } = this.stacks
-        return db.getStickers
+        const { message, db} = this.stacks
+        return db(message.author.id).getStickers
     }
 
     get activeSticker() {
-        const { bot: { db } } = this.stacks
-        return db.activeSticker
+        const { message, db} = this.stacks
+        return db(message.author.id).activeSticker
     }
 
     async stickerNames(data) {
@@ -116,7 +117,7 @@ class stickers {
     }
 
     async execute() {
-        const { message, reply, multicollector, bot: { db } } = this.stacks
+        const { message, reply, multicollector, db} = this.stacks
         if (await this.availiableStickers == 0 ) return reply(`I'm sorry but you dont have any stickers`)
         let stickers = await this.stickerNames(await this.availiableStickers)
         let items = stickers.item
@@ -129,7 +130,7 @@ class stickers {
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
             if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this sticker, ${response}`) }
-            db.setSticker(itemAlias[index])
+            db(message.author.id).setSticker(itemAlias[index])
             reply(`Your sticker has been updated to: ${response}`)
         })
     }

@@ -41,11 +41,14 @@
         "DUPLICATE_SKIN": "You already own that skin",
         "BADGES_LIMIT": "You have reached your max badges limit.",
         "DUPLICATE_BADGE": "You already own that badge",
+        "DUPLICATE_STICKER": "You are currently using that sticker",
         "DUPLICATE_COVER": "You are currently using that cover",
         "INSUFFICIENT_BALANCE": "Sorry **{0}**, it seems you don't have enough {1}.",
         "INVALID_CATEGORY": "That doesn't looks like a valid category.",
         "MISSING_ITEMNAME": "Don't forget to specify the item name",
-        "INVALID_ITEM": "I can't find any item with that name . ."
+        "INVALID_ITEM": "I can't find any item with that name . .",
+        "COVER_IN_INVENTORY":"You already own that cover",
+        "STICKER_IN_INVENTORY": "You already own that sticker"
     },
     "BOOSTER": {
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "

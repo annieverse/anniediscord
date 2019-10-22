@@ -518,9 +518,12 @@ class databaseUtils {
 	}
 
 	setSticker(data) {
-		return sql.run(`UPDATE userdata 
-            SET sticker = "${data}"
-			WHERE userId = ${this.id}`)
+		return this._query(`UPDATE userdata 
+            SET sticker = ?
+			WHERE userId = ?
+		`
+		,`run`
+		,[data,this.id])
 	}
 
 	get getCovers(){
@@ -541,9 +544,11 @@ class databaseUtils {
 	}
 
 	setCover(data){
-		return sql.run(`UPDATE userdata 
-            SET cover = "${data}"
-			WHERE userId = ${this.id}`)
+		this._query(`UPDATE userdata 
+            SET cover = ?
+			WHERE userId = ?`
+			,`run`
+			,[data,this.id])
 	}
 
 	updateCover(newvalue) {
