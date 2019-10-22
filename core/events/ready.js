@@ -305,8 +305,6 @@ module.exports = bot => {
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
-			// Scare the mascot
-			stmloop()
 
 
 		} else {
@@ -322,6 +320,8 @@ module.exports = bot => {
 			setupDatabase()
 			roleChange()
 			autoStatus()
+			// Scare the mascot
+			stmloop()
 		}
 	}
 
