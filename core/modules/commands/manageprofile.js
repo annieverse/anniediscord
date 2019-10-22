@@ -101,7 +101,6 @@ class stickers {
         let item = []
         let itemAlias = []
         let active_sticker = await this.activeSticker
-        console.log(active_sticker)
         data.forEach(async element => {
             item.push(`${element.name}`)
             itemAlias.push(`${element.alias}`)
