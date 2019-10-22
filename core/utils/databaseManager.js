@@ -329,14 +329,7 @@ class databaseUtils {
 	 * 	@sendTenChocolateBoxes
 	 */
 	sendTenChocolateBoxes(userId = this.id) {
-		this._updateInventory({itemId: 81, value:10, operation:`+`, userId})
-		/*this._query(`
-			UPDATE item_inventory
-			SET quantity = quantity + 10
-			WHERE user_id = ? AND item_id = 81`,
-			`run`
-			, [userId]
-		)*/		
+		this._updateInventory({itemId: 81, value:10, operation:`+`, userId})	
 	}
 
 	userBadges(userId = this.id) {
