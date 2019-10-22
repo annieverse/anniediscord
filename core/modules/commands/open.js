@@ -39,15 +39,13 @@ class HalloweenBox {
         let rates = (await this.db.halloweenBoxDropRates).map(v => v.drop_rate)
 
         //	get loot by defined rate
-        let get_loots = async (probs) => await this.db.lootGroupByRate(closestUpper(rates, probs), `halloween_rewards_pool`)
-
-        //	Sort array result by ascending
-        rates.sort((a, b) => { return a - b })
+        let get_loots = async (probs) => await this.db.lootGroupByRateForHalloween(closestUpper(rates, probs), `halloween_rewards_pool`)
 
         for (let i = 0; i < limit; i++) {
-            let arbitrary_num = Math.random() * 100
-            let res = await get_loots(arbitrary_num)
-
+            //let arbitrary_num = Math.random() * 100
+            let arbitrary_num = Math.random()
+            let firstRes = await get_loots(arbitrary_num)
+            let res = firstRes[Math.floor(Math.random() * firstRes.length)]
             //	Fire up world chat if user has pulled 5 star item.
             if (res.rarity === 5) reply(SYS_NOTIFICATION.FIVESTAR_PULL, {
                 socket: [this.author, emoji(relabel(res.item_alias)), res.item_name],
@@ -64,7 +62,6 @@ class HalloweenBox {
             await pause(100)
 
         }
-
         return metadata
     }
 
@@ -126,7 +123,7 @@ class HalloweenBox {
     async halloweenBag() {
         const { message, name, reply, bot: { db }, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        let amountOfCandies = 5
+        let amountOfCandies = Math.random() <= .01 ? 25 : Math.floor(Math.random() * 5)
         //	Returns if user doesn't have any halloween bags
         if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
 
@@ -174,7 +171,7 @@ class HalloweenBox {
     async halloweenChest() {
         const { message, name, reply,bot:{db}, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        let amountOfCandies = 15
+        let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 20)
 
         //	Returns if user doesn't have any halloween chests
         if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET)

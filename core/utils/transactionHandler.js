@@ -29,13 +29,13 @@ class Transaction {
 
 	//  Updating cover alias.
 	Covers(data) {
-		this.db.updateCover(data.alias)
+		this.db.updateCover(data)
 	}
 
 
 	// Updating badges column
 	Badges(data) {
-		this.db.updateBadge(data.alias)
+		this.db.updateBadge(data)
 	}
 
 	// Updating badges column
@@ -45,7 +45,7 @@ class Transaction {
 
 	// Updating badges column
 	Sticker(data) {
-		this.db.updateSticker(data.alias)
+		this.db.updateSticker(data)
 	}
 
 	// Applying EXP booster.

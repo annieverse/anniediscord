@@ -1,8 +1,6 @@
 const Discord = require(`discord.js`)
 const formatManager = require(`../../utils/formatManager`)
 const databaseManager = require(`../../utils/databaseManager`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 class shop {
 	constructor(Stacks) {
 		this.stacks = Stacks
@@ -50,6 +48,7 @@ class shop {
 			badge: `https://i.ibb.co/bBB2pPf/discordaau-badgebanner.png`,
 			regularcover: `https://i.ibb.co/j6C06LS/discordaau-regularcover.png`,
 			roles: `https://i.redd.it/79disx5z5c8x.jpg`,
+			sticker: `https://i.redd.it/79disx5z5c8x.jpg`,
 		}
 
 
@@ -77,7 +76,7 @@ class shop {
 			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 9]`, `Badges`, `artcoins`)
 			await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 9]`, `Covers`, `artcoins`, `price > 350`)
 			await interface_page(`Choose your favorite roles!`, links.roles, `[8 / 9]`, `Roles`, `artcoins`, `price > 2000`)
-			await interface_page(`Choose your favorite sticker!`, links.roles, `[9 / 9]`, `Sticker`, `artcoins`, `price > 2000`)
+			await interface_page(`Choose your favorite sticker!`, links.sticker, `[9 / 9]`, `Sticker`, `artcoins`, `price > 2000`)
 
 
 			message.channel.send(registered_interface[0])
