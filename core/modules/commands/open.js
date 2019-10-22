@@ -23,7 +23,7 @@ class HalloweenBox {
 	 * 	@param {Integer} limit roll counts
 	 */
     async roll(limit) {
-        const { world, emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause } = this.stacks
+        const { world, emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
 
         //	Roll's centralized metadata
         let metadata = {
@@ -53,6 +53,44 @@ class HalloweenBox {
                 simplified: true
             })
 
+            if (res.type == `role`){
+                let dayOption = res.item_name
+                let day = dayOption.substring(dayOption.indexOf(`(`), dayOption.indexOf(`)`))
+                day = day.replace(/[\])}[{(]/g, ``)
+                day.includes(` Day`) ? day = day[0] : day = 31
+                let roleRaw = dayOption.substring(0, dayOption.indexOf(`(`)-1)
+                let roleData = await db(message.author.id)._query(`SELECT * FROM itemlist WHERE name = ?`,`get`,[roleRaw])
+                var currentDate = new Date()
+                var foreverDate = new Date(`Jan 5, 2021 15:37:25`)
+                let roleName = message.guild.roles.find(r => r.id === roleData.alias).name
+                let currentRemoveBy = await db(message.author.id).getRemoveByLTSRole(roleData.alias)
+                let currentRemoveByDate = new Date(currentRemoveBy.remove_by)
+                if (currentRemoveByDate.getTime() == foreverDate.getTime()) day = 364
+                switch (day.toString().trim()) {
+                    case `1`:
+                        currentDate.setDate(currentDate.getDate() + 1)
+                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
+                        addRole(roleName)
+                        break
+                    case `3`:
+                        currentDate.setDate(currentDate.getDate() + 3)
+                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
+                        addRole(roleName)
+                        break
+                    case `7`:
+                        currentDate.setDate(currentDate.getDate() + 7)
+                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
+                        addRole(roleName)
+                        break
+                    case `31`:
+                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: foreverDate.getTime() })
+                        addRole(roleName)
+                        break
+                    default:
+                        logger.info(`${message.author.tag} already has the role ${roleName} permently`)
+                        break
+                }
+            }
             //	Store metadata
             metadata.item.push(res.item_name)
             metadata.rate.push(res.drop_rate)

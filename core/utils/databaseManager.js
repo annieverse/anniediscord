@@ -138,6 +138,44 @@ class databaseUtils {
 		return {stored: true}
 	}
 
+	/**
+	 * 	Standard low method for writing to limitedShopRoles
+	 *  @privateMethod
+	 *  @param {Number|ID} itemId item id
+	 *  @param {Number} value amount to be stored
+	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
+	 *  @param {String|ID} userId user id
+	 */
+	async _limitedShopRoles({ roleId, value = 0, operation = `update`, userId = this.id }) {
+		logger.info(`im running`)
+		//	Return if roleId is not specified
+		if (!roleId) return { stored: false }
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO limitedShopRoles (user_id, role_id)
+				SELECT $userId, $roleId
+				WHERE NOT EXISTS (SELECT 1 FROM limitedShopRoles WHERE role_id = $roleId AND user_id = $userId)`
+				, `run`
+				, { $roleId: roleId, $userId: userId}
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE limitedShopRoles
+				SET remove_by = ?
+				WHERE role_id = ? AND user_id = ?`
+				, `run`
+				, [value, roleId, userId]
+			)
+		}
+
+		logger.info(`[._limitedShopRoles][User:${userId}] (ITEMID:${roleId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		return { stored: true }
+	}
+
+	getRemoveByLTSRole(roleId){
+		return this._query(`SELECT remove_by FROM limitedShopRoles WHERE user_id = ? AND role_id = ?`,`get`,[this.id,roleId])
+	}
 
 	/**
 	 * 	Defacto method for updating experience point

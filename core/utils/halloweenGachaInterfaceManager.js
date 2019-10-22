@@ -120,7 +120,7 @@ class halloweenGachaGUI {
      *  Handling single-roll type of interface
      */
 	async singleRoll() {
-		const { loadAsset, relabel } = this.stacks
+		const { loadAsset, relabel, palette } = this.stacks
 
 		this.canvas_x = 200
 		this.canvas_y = 240
@@ -140,11 +140,20 @@ class halloweenGachaGUI {
 			//  Render
 			return this.canv.toBuffer()
 		} else {
-			//   Add base shape
-			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
+			if (this.container.type[0] === `role`) {
+				this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, palette.black)
+			} else {
+				//  Draw card base
+				this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
+			}
 			//  Load item assets
 			await this.itemVisual(55, 50, 100, 100, 50)
-			await this.itemText(100, 170, 0)
+			if (this.container.type[0] === `role`) {
+				await this.itemText(100, 170, 0, palette.white)
+			} else {
+				//  Adjusting text
+				await this.itemText(100, 170, 0)
+			}
 			//  Render
 			return this.canv.toBuffer()
 		}      

@@ -144,6 +144,15 @@ class Pistachio {
 				return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
 			}
 
+			/**
+			 * Returning of given role name
+			 * @param {String} rolename for role name code
+			 * @return {Object} of role
+			 * @addRole
+			 */
+			container.removeRole = (rolename = ``, user = message.author.id) => {
+				return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename))
+			}
 		}
 
 		//  Automatically convert weird number notation into real value.
