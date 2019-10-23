@@ -1359,6 +1359,11 @@ class databaseUtils {
 		return this.badgesQuerying
 	}
 
+	get retrieveTimeData(){
+		let dateRightNow = (new Date()).getTime()
+		return this._query(`SELECT * FROM limitedShopRoles WHERE remove_by != 1609879045000 AND remove_by <= ${dateRightNow} LIMIT 10`,`all`)
+	}
+
 
 	/**
 	 *   Pull user ranking data counted from all indexes.

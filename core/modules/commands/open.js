@@ -69,16 +69,19 @@ class HalloweenBox {
                 switch (day.toString().trim()) {
                     case `1`:
                         currentDate.setDate(currentDate.getDate() + 1)
+                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
                         await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
                         addRole(roleName)
                         break
                     case `3`:
                         currentDate.setDate(currentDate.getDate() + 3)
+                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
                         await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
                         addRole(roleName)
                         break
                     case `7`:
                         currentDate.setDate(currentDate.getDate() + 7)
+                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
                         await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
                         addRole(roleName)
                         break

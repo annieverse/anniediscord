@@ -1,3 +1,4 @@
+const cron = require(`node-cron`)
 module.exports = bot => {
 
 	// Modules
@@ -289,6 +290,23 @@ module.exports = bot => {
 	}
 
 	/**
+	 * schedules when to try and remove a limited Shop Role
+	 */
+	function removeLimShopRole(){
+		let data
+		cron.schedule('0 1 * * * *', () => {
+			data = await retriveData()
+		})
+		data.forEach(element => {
+			bot.members.get(element.user_id).removeRole(element.role_id)
+		});
+
+		async function retriveData(){
+			let timeData = await db.retrieveTimeData()
+			return timeData
+		}
+	}
+	/**
      * 
      * Fired processes on startup.
      * @startup
@@ -306,7 +324,7 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
-
+			removeLimShopRole()
 		} else {
 
 			/**
