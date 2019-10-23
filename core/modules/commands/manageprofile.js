@@ -9,9 +9,12 @@ class CentralHub {
         \n\`covers\`
         \n\`badges\`
         \n\`stickers\`
+        \n Or "cancel" or "exit" or "quit" to quit the selection menu
         `)
         collector.on(`collect`, async (msg) => {
             let response = msg.content.toLowerCase()
+            let exitAnswers = [`cancel`, `exit`, `quit`]
+            if (exitAnswers.includes(response)) return reply(`Selection menu closed.`)
             switch (response) {
                 case `covers`:
                     new covers(this.stacks).execute()
@@ -72,10 +75,12 @@ class covers {
         let index = items.length-1
         let result
         if (items.length > 1) result = items.join(`, `)
-        reply(`${result}\n\nPlease type the name of the cover you would like to change to`,{footer:`Case Sensitive`})
+        reply(`${result}\n\nPlease type the name of the cover you would like to change to.\nEnter "cancel" or "exit" or "quit" to quit the selection menu`,{footer:`Case Sensitive`})
         const secondCollector = multicollector(message)
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
+            let exitAnswers = [`cancel`, `exit`, `quit`]
+            if (exitAnswers.includes(response.toLowerCase())) return reply(`Selection menu closed.`)
             if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this cover, ${response}`) }
             db(message.author.id).setCover(itemAlias[index])
             reply(`Your cover has been updated to: ${response}`)
@@ -125,10 +130,12 @@ class stickers {
         let index = items.length - 1
         let result
         if (items.length > 1) result = items.join(`, `)
-        reply(`${result}\n\nPlease type the name of the sticker you would like to change to`, { footer: `Case Sensitive` })
+        reply(`${result}\n\nPlease type the name of the sticker you would like to change to.\nEnter "cancel" or "exit" or "quit" to quit the selection menu`, { footer: `Case Sensitive` })
         const secondCollector = multicollector(message)
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
+            let exitAnswers = [`cancel`,`exit`,`quit`]
+            if (exitAnswers.includes(response.toLowerCase())) return reply(`Selection menu closed.`)
             if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this sticker, ${response}`) }
             db(message.author.id).setSticker(itemAlias[index])
             reply(`Your sticker has been updated to: ${response}`)
