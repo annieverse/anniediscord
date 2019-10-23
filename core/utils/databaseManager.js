@@ -103,6 +103,39 @@ class databaseUtils {
 		return newInventory
 	}
 
+	/**
+	 * 	Standard low method for writing to item_inventory
+	 *  @privateMethod
+	 *  @param {Number|ID} itemId item id
+	 *  @param {Number} value amount to be stored
+	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
+	 *  @param {String|ID} userId user id
+	 */
+	async _transforInventoryCover({ itemId, value = 1, operation = `SET`, userId = this.id }) {
+		//	Return if itemId is not specified
+		if (!itemId) return { stored: false }
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO item_inventory (item_id, user_id)
+				SELECT $itemId, $userId
+				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
+				, `run`
+				, { $userId: userId, $itemId: itemId }
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE item_inventory
+				SET quantity = ?
+				WHERE item_id = ? AND user_id = ?`
+				, `run`
+				, [value, itemId, userId]
+			)
+		}
+
+		logger.info(`[._updateInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		return { stored: true }
+	}
 
 	/**
 	 * 	Standard low method for writing to item_inventory
