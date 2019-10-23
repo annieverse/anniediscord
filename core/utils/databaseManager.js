@@ -1395,7 +1395,10 @@ class databaseUtils {
 	get retrieveTimeData(){
 		let dateRightNow = (new Date()).getTime()
 		let foreverDate = (new Date(`Jan 5, 2021 15:37:25`)).getTime()
-		return this._query(`SELECT * FROM limitedShopRoles WHERE remove_by != ? AND remove_by <= ? LIMIT 50 ORDER BY remover_by ASC`
+		return this._query(`SELECT * 
+			FROM limitedShopRoles 
+			WHERE remove_by != ? AND remove_by <= ? 
+			ORDER BY remove_by ASC LIMIT 50`
 			,`all`
 			,[foreverDate,dateRightNow])
 	}
