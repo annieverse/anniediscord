@@ -294,12 +294,12 @@ module.exports = bot => {
 	 */
 	function removeLimShopRole(){
 		let data
-		cron.schedule('0 1 * * * *', () => {
+		cron.schedule(`0 1 * * * *`, async () => {
 			data = await retriveData()
 		})
 		data.forEach(element => {
 			bot.members.get(element.user_id).removeRole(element.role_id)
-		});
+		})
 
 		async function retriveData(){
 			let timeData = await db.retrieveTimeData()
