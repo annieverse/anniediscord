@@ -7,9 +7,9 @@ class screenshare {
 		const {message, reply} = this.stacks
 		let link_start = `https://discordapp.com/channels/459891664182312980/`
 		let link_end = ``
-		if (message.member.voiceChannelID == null || undefined) return reply(`I'm sorry but u must be in a voice channel first.`, { simplified: true })
+		if (message.member.voiceChannelID == null || undefined) return reply(`I'm sorry, but you must be in a voice channel first.`, { simplified: true })
 		link_end = message.member.voiceChannelID
-		return reply(`[Join/Start](${link_start + link_end})`, { notch:true})
+		return reply(`[Join/Start screenshare!](${link_start + link_end})`, { notch:true})
 	}
 }
 
