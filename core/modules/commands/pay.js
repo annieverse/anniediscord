@@ -116,7 +116,7 @@ module.exports.help = {
 	aliases: [`pay`, `transfer`, `transfers`, `share`],
 	description: `Pay a specified user an amount of AC from your balance`,
 	usage: `pay @user <amount>`,
-	group: `Shop-related`,
+	group: `shop`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: true

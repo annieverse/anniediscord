@@ -90,8 +90,8 @@ module.exports.help = {
 	name: `redeem`,
 	aliases: [],
 	description: `Buys gacha tickets`,
-	usage: ` redeem <amount>`,
-	group: `Shop-related`,
+	usage: `redeem <amount>`,
+	group: `shop`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: false

@@ -260,8 +260,8 @@ module.exports.help = {
 	aliases: [`ltdshop`, `lshop`, `ltd`, `limitedshop`, `limited`],
 	description: `Opens or closes limited time shop`,
 	usage: `${env.prefix}ltdshop <open>/<close>`,
-	group: `Shop-related`,
-	public: true,
+	group: `shop`,
+	public: false,
 	required_usermetadata: true,
 	multi_user: false
 }

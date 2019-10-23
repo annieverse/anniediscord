@@ -119,7 +119,7 @@ module.exports.help = {
 	aliases: [],
 	description: `buy an item from the shop`,
 	usage: `buy <item>`,
-	group: `Shop-related`,
+	group: `shop`,
 	public: true,
 	required_usermetadata: true,
 	multi_user : false,

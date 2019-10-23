@@ -130,7 +130,7 @@ module.exports.help = {
 	aliases: [`multi-roll`,`roll`],
 	description: `rolls a gacha ticket. roll is for one and multi-roll is for 10`,
 	usage: `roll or multi-roll`,
-	group: `shop-related`,
+	group: `shop`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: false

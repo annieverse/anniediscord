@@ -293,7 +293,7 @@ class help {
 		pageHeaderOptions.sort()
 		let General = await this.mainNames(`general`).then(str => str.split(`\n`))
 		let Fun = await this.mainNames(`fun`).then(str => str.split(`\n`))
-		let Shop_Related = await this.mainNames(`shop-related`).then(str => str.split(`\n`))
+		let shop = await this.mainNames(`shop`).then(str => str.split(`\n`))
 		let server = await this.mainNames(`server`).then(str => str.split(`\n`))
 		let prefix = require(`../../../.data/environment.json`).prefix
 		let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`
@@ -307,7 +307,7 @@ class help {
             ⇨ **Fun** [2/${Fun.length}]
             \`ask\`, \`avatar\`
 
-            ⇨ **Shop-related** [6/${Shop_Related.length}]
+            ⇨ **Shop-related** [6/${shop.length}]
             \`eat\` (capsules), \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\` (gacharoll), \`multi-roll\` (gacharoll),
 
             ⇨ **Server** [4/${server.length}]

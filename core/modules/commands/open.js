@@ -288,7 +288,7 @@ module.exports.help = {
     aliases: [`open`, `multi-open`],
     description: `opens a Halloween box.`,
     usage: `open hb`,
-    group: `shop-related`,
+    group: `shop`,
     public: false,
     required_usermetadata: true,
     multi_user: false

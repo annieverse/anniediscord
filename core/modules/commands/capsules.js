@@ -63,7 +63,7 @@ module.exports.help = {
 	aliases: [`eat`],
 	description: `Eats the capsules you get from gacha and gives you XP in return`,
 	usage: `eat <amount>`,
-	group: `Shop-related`,
+	group: `shop`,
 	public: true,
 	required_usermetadata: true,
 	multi_user: false
