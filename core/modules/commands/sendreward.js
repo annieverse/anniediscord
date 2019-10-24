@@ -13,7 +13,7 @@ class sendEventReward {
      *	Initializer method
      */
 	async execute() {
-		const { isEventManager, palette, avatar, addRole, collector, code, args, name, reply, bot:{db}, meta: {author}} = this.stacks
+		const { isEventManager, palette, avatar, roles, addRole, collector, code, args, name, reply, bot:{db}, meta: {author}} = this.stacks
 
 		//  Centralized reward object
 		let metadata = {
@@ -67,8 +67,10 @@ class sendEventReward {
 					//  Store micro-items reward
 					await db.setUser(author.id).deliverRewardItems(metadata.selected_rewards)
 					//  Add role if package contains role reward
-					if (metadata.selected_rewards.role) addRole(metadata.selected_rewards.role, author.id)
-
+					if (metadata.selected_rewards.role) {
+						addRole(metadata.selected_rewards.role, author.id)
+						addRole(roles.weekly_winner,author.id)
+					}
                 
 					//  Successful
 					return reply(code.DISTREWARD.SUCCESSFUL, {

@@ -131,7 +131,7 @@ class Limitedshop {
 				.then(async (data) => {
 					for (var i=0;i<data.length;i++) {
 						if(!env.dev) {
-							var user = await bot.fetchUser(data[i].userId)
+							var user = await bot.fetchUser(data[i].user_id)
 							user.send(`ATTENTION!\n`+
 								`\n You haven't spent all of your `+shopcurrency+`.`+
 								`\n The store will close in exactly one week!`+//, and your `+shopcurrency+` will be destroyed!`+

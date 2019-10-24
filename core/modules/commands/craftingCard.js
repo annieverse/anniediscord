@@ -191,11 +191,9 @@ class Craft {
 					if (!this.sufficientMaterials(this.card.req_materials)) return reply(code.CRAFT.INSUFFICIENT_MATERIALS, {
 						color: palette.red
 					})
-
 					//	Withdraw & store items
-					await db(message.author.id)
-						.consumeMaterials(this.card.req_materials)
-						.registerCard(this.card.alias)
+					await db(message.author.id).consumeMaterials(this.card.req_materials)
+					await db(message.author.id).registerCard(this.card.alias)
 
 					prompt.delete()
 					return reply(code.CRAFT.SUCCESSFUL, {
@@ -220,7 +218,7 @@ module.exports.help = {
 	name: `craftingCard`,
 	aliases: [`craft`, `crafts`],
 	description: `Opening crafting interface`,
-	usage: `>craft`,
+	usage: `craft`,
 	group: `General`,
 	public: true,
 	required_usermetadata: true,

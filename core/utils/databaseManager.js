@@ -133,7 +133,7 @@ class databaseUtils {
 			)
 		}
 
-		logger.info(`[._updateInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		logger.info(`[._transforInventoryCover][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
 		return { stored: true }
 	}
 
@@ -461,23 +461,16 @@ class databaseUtils {
 	}
 
 	//  Withdrawing multiple columns value
-	consumeMaterials(cardmeta) {
-		sql.run(`
-                UPDATE userinventories
-                SET ${this.toQuery(cardmeta)} 
-                WHERE userId = "${this.id}"
-            `)
-		return this
+	async consumeMaterials(cardmeta) {
+		let containerWithDetailedMetadata = await this._detransformInventory(cardmeta)
+		//  Store inventory data
+		return await this.withdrawUserCraftMetadata(containerWithDetailedMetadata)
 	}
 
 	//  Set one value into card column
-	registerCard(card_alias) {
-		sql.run(`
-                UPDATE collections
-                SET ${card_alias} = 1
-                WHERE userId = "${this.id}"
-            `)
-		return this
+	async registerCard(card_alias) {
+		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`,`get`,[card_alias])
+		return await this._updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
 	}
 
 	
@@ -882,6 +875,17 @@ class databaseUtils {
 		}
 	}
 
+	/**
+     *  Storing rolled items straight into user inventory
+     *  @param {Object} obj as parsed object of roll metadata (require baking in `._detransformInventory()`).
+	 *  @param {String|ID} userid for userId consistency, better to insert the id.
+     */
+	async withdrawUserCraftMetadata(obj = {}, userid = this.id) {
+		for (let key in obj) {
+			let data = obj[key]
+			await this._updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
+		}
+	}
 
 	/**
      * Adding user reputation points
@@ -1141,8 +1145,9 @@ class databaseUtils {
 	 *     Get users with more than 0 currency
 	 *   @param currency type
 	 */
-	getUsersWithCurrency(currency) {
-		return sql.all(`SELECT * FROM userinventories WHERE ${currency} > 0`)
+	async getUsersWithCurrency(currency) {
+		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [currency])
+		return this._query(`SELECT * FROM item_inventory WHERE item_id = ? AND quantity > 0`,`all`,[item_id.itemId])
 	}
 
 	/**
