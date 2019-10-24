@@ -136,6 +136,7 @@
         "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing."
     },
     "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",
+    "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
     "FEATURED": {
         "FIRST_LIKE": "**{0}** liked your post.",
         "LIKED": "**{0}** and **{1} others** liked your post.",
@@ -249,6 +250,10 @@
         "INVALID_AMOUNT": "Please put a valid number.",
         "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
         "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
+    },
+    "RECYCLE":{
+        "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
+        "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle"
     },
     "REDEEM": {
         "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",

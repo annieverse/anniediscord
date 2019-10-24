@@ -28,7 +28,7 @@ async function profile(stacks, member) {
       * rep = userreputation, des = userdescription, ui = userinterfacemode
       * clr = hex code of user's rank color.
       */
-	const userdata = await collection.userdata
+	const userdata = await collection.userdata()
 	const user = {
 		id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
 		crv: userdata.nextexpcurve, lvl: userdata.level,

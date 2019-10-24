@@ -13,7 +13,7 @@ class sendEventReward {
      *	Initializer method
      */
 	async execute() {
-		const { isEventManager, palette, avatar, roles, addRole, collector, code, args, name, reply, bot:{db}, meta: {author}} = this.stacks
+		const { isEventManager, isEventMember, palette, avatar, roles, addRole, collector, code, args, name, reply, bot:{db}, meta: {author}} = this.stacks
 
 		//  Centralized reward object
 		let metadata = {
@@ -31,6 +31,8 @@ class sendEventReward {
 
 		//  Returns if user has no event manager authority
 		if (!isEventManager) return reply(code.EVENTMANAGER_UNAUTHORIZED_ACCESS)
+		//  Returns if user has no event authority
+		if (!isEventMember) return reply(code.EVENTMEMBER_UNAUTHORIZED_ACCESS)
 		//  Returns if user doesn't include any parameter
 		if (!args[0]) return reply(code.DISTREWARD.SHORT_GUIDE)
 		//  Returns if target user is invalid

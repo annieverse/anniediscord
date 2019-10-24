@@ -218,12 +218,9 @@ class databaseUtils {
 		this._query(`
 			UPDATE userdata 
 			SET currentexp = ?
-			, level = ?
-			, maxexp = ?
-			, nextexpcurve = ?
 			WHERE userId = ?`
 			, `run`
-			, [data.currentexp, data.level, data.maxexp, data.nextexpcurve, userId])
+			, [data.currentexp, userId])
 	}
 
 
@@ -357,6 +354,11 @@ class databaseUtils {
 			, [userId]
 		)
 
+		let data = await this.xpFormula(main.currentexp)
+		main.level = data.level
+		main.maxexp = data.maxexp
+		main.nextexpcurve = data.nextexpcurve
+
 		let inventory = await this.pullInventory(userId)
 
 		return {...main, ...this._transformInventory(inventory)}
@@ -473,6 +475,13 @@ class databaseUtils {
 		return await this._updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
 	}
 
+	get cardItemIds() {
+		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ?`, `all`, [`Card`,`candies`])
+	}
+
+	get recycleableItems() {
+		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? AND price_type != ?`, `all`, [`Card`,`Shard`, `candies`])
+	}
 	
 	/**
 	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
@@ -732,10 +741,7 @@ class databaseUtils {
 	resetExperiencePoints(id = this.id) {
 		this._query(`
                 UPDATE userdata
-                SET currentexp = 0,
-                maxexp = 100,
-                nextexpcurve = 150,
-                level = 0
+                SET currentexp = 0
                 WHERE userId = ?`
             ,`run`
             , [id])
@@ -909,6 +915,17 @@ class databaseUtils {
 				WHERE item_inventory.user_id = ?`
 				, `all`
 				, [id])
+	}
+
+	pullInventoryCards(id = this.id) {
+		return this._query(`
+                SELECT *
+				FROM item_inventory
+				INNER JOIN itemlist
+				ON itemlist.itemId = item_inventory.item_id
+				WHERE item_inventory.user_id = ? AND itemlist.type = ?`
+			, `all`
+			, [id,`Card`])
 	}
 
 	//  Store new heart point
@@ -1336,11 +1353,49 @@ class databaseUtils {
         *   Pull user collection of data.
         * @this.id
         */
-	get userDataQuerying() {
-		return sql.get(`SELECT * FROM userdata WHERE userId = ${this.id}`)
+	async userDataQuerying() {
+		let data = await sql.get(`SELECT * FROM userdata WHERE userId = ${this.id}`)
 			.then(async parsed => parsed)
+		let main = await this.xpFormula(data.currentexp)
+		data.level = main.level
+		data.maxexp = main.maxexp
+		data.nextexpcurve = main.nextexpcurve
+		return data
 	}
 
+	async xpFormula(data){
+		const formula = (exp) => {
+			if (exp < 100) {
+				return {
+					level: 0,
+					maxexp: 100,
+					nextexpcurve: 100
+				}
+			}
+
+			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.floor(level)
+			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			var nextexpcurve = maxexp - minexp
+			level = level + 1
+
+			return {
+				level: level,
+				maxexp: maxexp,
+				nextexpcurve: nextexpcurve
+			}
+		}
+		
+		const accumulatedCurrent = Math.floor(data)
+		const main = formula(accumulatedCurrent)
+		let level = main.level
+		let maxexp = main.maxexp
+		let nextexpcurve = main.nextexpcurve
+		return {level,maxexp,nextexpcurve}
+	}
 
 	/**
         *   Pull user badges container of data.

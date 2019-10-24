@@ -28,6 +28,40 @@ class Experience extends Controller {
 		this.updated = this.data.updated
 	}
 
+	/*
+	setupmetaData(){
+		const formula = (exp) => {
+			if (exp < 100) {
+				return {
+					level: 0,
+					maxexp: 100,
+					nextexpcurve: 100
+				}
+			}
+
+			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.floor(level)
+			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			var nextexpcurve = maxexp - minexp
+			level = level + 1
+
+			return {
+				level: level,
+				maxexp: maxexp,
+				nextexpcurve: nextexpcurve
+			}
+		}
+		const accumulatedCurrent = Math.floor(this.meta.data.currentexp)
+		const main = formula(accumulatedCurrent)
+		this.meta.data.level = main.level
+		this.meta.data.maxexp = main.maxexp
+		this.meta.data.nextexpcurve = main.nextexpcurve
+	}
+	*/
+
 	/**
 	 * 	Add new rank
 	 * 	@addRank
@@ -186,6 +220,7 @@ class Experience extends Controller {
 	 */
 	async runAndUpdate() {
 		try {
+			//this.setupmetaData()
 			this.handlePassiveTicketBoost()
 
 			//  Add & calculate bonuses from card if prompted
