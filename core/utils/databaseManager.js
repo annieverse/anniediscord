@@ -900,14 +900,6 @@ class databaseUtils {
                             WHERE userId = "${userId}"`)
 	}
 
-
-	get inventory() {
-		return sql.get(`
-                SELECT *
-                FROM userinventories
-                WHERE userId = "${this.id}"`)
-	}
-
 	pullInventory(id = this.id) {
 		return this._query(`
                 SELECT *
