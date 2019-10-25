@@ -34,8 +34,7 @@ class HalloweenBox {
             alias: [],
             roll_type: limit
         }
-
-        console.log(metadata.roll_type)
+        
         //	Get rates for each possible loot without duplicates			
         let rates = (await this.db.halloweenBoxDropRates).map(v => v.drop_rate)
 
@@ -108,8 +107,7 @@ class HalloweenBox {
             await pause(100)
 
         }
-    
-        console.log(metadata)
+        
         return metadata
     }
 
@@ -143,7 +141,6 @@ class HalloweenBox {
                     //	Get roll metadata
                     let rollContainer = await this.roll(this.roll_type)
 
-                    console.log(rollContainer)
                     //	Get buffer interface
                     let renderResult = await new GUI(this.stacks, rollContainer).render
 
