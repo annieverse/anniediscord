@@ -293,14 +293,15 @@ module.exports = bot => {
 	 * schedules when to try and remove a limited Shop Role
 	 */
 	function removeLimShopRole(){
-		cron.schedule(`0 1 */30 * * *`, retriveData() )
-		async function retriveData(){
-			let data = await db.retrieveTimeData
-			data.forEach(element => {
-				bot.members.get(element.user_id).removeRole(element.role_id)
-			})
-		}
-	}
+        cron.schedule(`0 1 */30 * * *`, retriveData() )
+        async function retriveData(){
+            let data = await db.retrieveTimeData
+            if(!data) return
+            data.forEach(element => {
+                bot.members.get(element.user_id).removeRole(element.role_id)
+            })
+        }
+    }
 	/**
      * 
      * Fired processes on startup.

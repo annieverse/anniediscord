@@ -49,6 +49,14 @@ const render = async (stacks, metadata) => {
 				})
 			}
 		},
+		async pullingCandies() {
+			for (let i = 0; i < 10; i++) {
+				this.group.push({
+					id: await dbmanager.indexRankingCandies(`item_inventory`, `quantity`, i, `user_id`),
+					cdy: await dbmanager.indexRankingCandies(`item_inventory`, `quantity`, i, `quantity`)
+				})
+			}
+		},
 		async pullingRep() {
 			for (let i = 0; i < 10; i++) {
 				this.group.push({
@@ -90,6 +98,12 @@ const render = async (stacks, metadata) => {
 				await this.pullingAc()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`)
+				return u
+			}
+			if (selected_group==`halloween`) {
+				await this.pullingCandies()
+				u.group = this.group
+				u.authorindex = await dbmanager.authorIndexRankingCandies(`item_inventory`, `quantity`)
 				return u
 			}
 			if (selected_group==`rep`) {
@@ -209,6 +223,16 @@ const render = async (stacks, metadata) => {
 		}
 
 
+		//  Returns user candies
+		get candies() {
+			this.text_check
+			canv.setTextFont(`15pt RobotoBlack`)
+				.setTextAlign(`right`)
+				.addText(commanifier(user.group[this.index].cdy), size.x - 50, this.y)
+			return this
+		}
+
+
 		//  Return user level
 		get level() {
 			this.text_check
@@ -323,6 +347,28 @@ const render = async (stacks, metadata) => {
 					.nickname
 					.position
 					.artcoins
+					.avatar()
+
+				canv.restore()
+			}
+		}
+
+
+		//  Halloween Candies leaderboard
+		async halloween() {
+
+			metadata.title = `${emoji(`AnnieShock`)} **| Halloween Candies Leaders**`
+			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.candies), emoji(`candies`)]
+
+			for (let i = 0; i < user.group.length; i++) {
+				canv.save()
+					.save()
+
+				await new Row(i, 65, `cdygroup`)
+					.highlight
+					.nickname
+					.position
+					.candies
 					.avatar()
 
 				canv.restore()

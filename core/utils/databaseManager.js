@@ -1307,6 +1307,20 @@ class databaseUtils {
 			.then(async x => x[index][val])
 	}
 
+
+		/**
+        *   Pull ID ranking based on given descendant column order. FOR CANDIES
+        * @param tablename of target table.
+        * @param columnname of sorted descendant column. 
+        * @param index of user.
+        * @param val of returned data value.
+        */
+	   indexRankingCandies(tablename = `item_inventory`, columnname = `quantity`, index, val, itemId = 102) {
+		return sql.all(`SELECT ${val} FROM ${tablename} WHERE item_id = ${itemId} ORDER BY ${columnname} DESC`)
+			.then(async x => x[index][val])
+	}
+
+
 	/**
 			*   Pull Author ID ranking based on given descendant column order.
 			* @param tablename of target table.
@@ -1316,6 +1330,17 @@ class databaseUtils {
 		return sql.all(`SELECT user_id FROM ${tablename} WHERE item_id = 52 ORDER BY ${columnname} DESC`)
 			.then(async x => x.findIndex(z => z.user_id === id ))
 	}
+
+	/**
+			*   Pull Author ID ranking based on given descendant column order.
+			* @param tablename of target table.
+			* @param columnname of sorted descendant column. 
+			*/
+	authorIndexRankingCandies(tablename, columnname, id = this.id) {
+		return sql.all(`SELECT user_id FROM ${tablename} WHERE item_id = 102 ORDER BY ${columnname} DESC`)
+			.then(async x => x.findIndex(z => z.user_id === id ))
+	}
+
 
 	/**
         *   Pull Author ID ranking based on given descendant column order.

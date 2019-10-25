@@ -22,7 +22,8 @@ class Leaderboard {
 				[`ac`, `artcoins`, `artcoin`, `balance`],
 				[`rep`, `fame`,  `reputation`, `reputations`, `reps`],
 				[`arts`, `artists`, `artist`, `art`, `artwork`],
-				[`weeb`, `anime`, `otaku`, `weebs`, `mal`]
+				[`weeb`, `anime`, `otaku`, `weebs`, `mal`],
+				[`halloween`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
 			],
 			get whole_keywords() {
 				let arr = []
