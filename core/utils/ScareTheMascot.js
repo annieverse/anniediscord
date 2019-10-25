@@ -6,7 +6,7 @@ class ScareTheMascot {
         this.bot = bot
         this.logger = this.bot.logger
         this.eventmessage = `Trick or treat!! 🎃`
-        this.active = false // on/off switch
+        this.active = true // on/off switch
         this.eventchannels = [
             `459891664182312982`, //gen1
             `548950548343291914`, //gen2

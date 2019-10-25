@@ -70,7 +70,7 @@ class Limitedshop {
 				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
 				.setColor(palette.darkmatte)
 				.attachFile(`core/images/shop-` + shoptype + `-cov.png`)
-				.setImage(`https://i.ibb.co/pKLyV1b/discordaau-premiumcoverbanner.png`)//TODO placeholder
+				.setImage(`https://i.ibb.co/wgRm9G3/aau-halloweenshop.png`)//TODO placeholder
 			let numitems = getItems(await db.classifyLtdItem(shoptype, undefined, undefined), page, emoji(shopcurrency))
 			page.setFooter(`We have ` + numitems + ` limited items in store!`)
 			await shopchannel.send(page)
