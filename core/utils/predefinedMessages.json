@@ -188,8 +188,8 @@
         ],
         "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
         "UNALLOWED_ACCESS": "Please do your roll in {0}",
-        "ZERO_TICKET": "You don't have any halloween boxes!",
-        "INSUFFICIENT_TICKET": "You can't do multi-roll with less than **10 halloween {0}**!",
+        "ZERO_TICKET": "You don't have any **Halloween {0}**!",
+        "INSUFFICIENT_TICKET": "You can't do multi-roll with less than **10 Halloween {0}**!",
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
     "HELP": {

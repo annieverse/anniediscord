@@ -166,10 +166,10 @@ class HalloweenBox {
 
         let amountOfCandies = Math.random() <= .01 ? 25 : Math.floor(Math.random() * 5)
         //	Returns if user doesn't have any halloween bags
-        if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
+        if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET, {socket:[`Bag`]})
 
         //	Returns if user trying to do multi-open with owned less than 10 bags
-        if (this.data.halloween_bag < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`bags`] })
+        if (this.data.halloween_bag < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`Bags`] })
 
         //	Returns if user state still in cooldown
         if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
@@ -179,7 +179,7 @@ class HalloweenBox {
         reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
             socket: [name(this.author.id)],
             notch: true,
-            imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
+            //imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
         })
 
 
@@ -247,8 +247,7 @@ class HalloweenBox {
                     opening.delete()
 
                     //	Render result
-                    reply(`**${name(this.author.id)} Opened ${this.roll_type} halloween bags!**\nFor a total of: **${amountOfCandies * this.roll_type}** candies`, {
-                        simplified: true,
+                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Bags and gained **${amountOfCandies * this.roll_type} Candies!**`, {
                     })
 
                     //	Unlock cooldown
@@ -274,6 +273,9 @@ class HalloweenBox {
                 break
             case `chest`:
                 this.halloweenChest()
+                break
+            case `box`:
+                this.halloweenBox()
                 break
             default:
                 this.halloweenBox()
