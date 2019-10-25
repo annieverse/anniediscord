@@ -268,12 +268,15 @@ class HalloweenBox {
         //	Returns if current channel is not in gacha-allowed list
         if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case `bag`:
                 this.halloweenBag()
                 break
             case `chest`:
                 this.halloweenChest()
+                break
+            case `box`:
+                this.halloweenBox()
                 break
             default:
                 this.halloweenBox()
