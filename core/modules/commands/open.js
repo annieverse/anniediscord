@@ -23,7 +23,7 @@ class HalloweenBox {
 	 * 	@param {Integer} limit roll counts
 	 */
     async roll(limit) {
-        const { world, emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
+        const { emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
 
         //	Roll's centralized metadata
         let metadata = {
@@ -49,7 +49,6 @@ class HalloweenBox {
             //	Fire up world chat if user has pulled 5 star item.
             if (res.rarity === 5) reply(SYS_NOTIFICATION.FIVESTAR_PULL, {
                 socket: [this.author, emoji(relabel(res.item_alias)), res.item_name],
-                field: world,
                 simplified: true
             })
 
@@ -65,9 +64,11 @@ class HalloweenBox {
                 let roleName = message.guild.roles.find(r => r.id === roleData.alias).name
                 let currentRemoveBy = await db(message.author.id).getRemoveByLTSRole(roleData.alias)
                 let currentRemoveByDate
-                if (currentRemoveBy == undefined){
+                if (currentRemoveBy != undefined){
                     currentRemoveByDate = new Date(currentRemoveBy.remove_by)
                     if (currentRemoveByDate.getTime() == foreverDate.getTime()) day = 364
+                }else{
+                    currentRemoveByDate = new Date(currentDate.getTime())
                 }
                 switch (day.toString().trim()) {
                     case `1`:
@@ -93,7 +94,7 @@ class HalloweenBox {
                         addRole(roleName)
                         break
                     default:
-                        logger.info(`${message.author.tag} already has the role ${roleName} permently`)
+                        logger.info(`${message.author.tag} already has the role ${roleName} permanently`)
                         break
                 }
             }
@@ -114,14 +115,13 @@ class HalloweenBox {
         const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
         //	Returns if user doesn't have any halloween box
-        if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`boxes`] })
+        if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`Boxes`] })
 
         //	Returns if user trying to do multi-roll with owned less than 10 tickets
-        if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`boxes`] })
+        if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`Boxes`] })
 
         //	Returns if user state still in cooldown
         if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
-
 
         message.delete()
         //	Opening text
@@ -149,7 +149,7 @@ class HalloweenBox {
 
                     opening.delete()
                     //	Render result
-                    reply(`**${name(this.author.id)} used ${this.roll_type} halloween boxes!**`, {
+                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Boxes!**`, {
                         image: renderResult,
                         prebuffer: true,
                         simplified: true,
@@ -176,7 +176,6 @@ class HalloweenBox {
 
         //	Returns if user state still in cooldown
         if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
-
         message.delete()
         //	Opening text
         reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
@@ -199,9 +198,7 @@ class HalloweenBox {
                 setTimeout(async () => {
 
                     //	Render result
-                    reply(`**${name(this.author.id)} Opened ${this.roll_type} halloween bags!**\nFor a total of: **${amountOfCandies * this.roll_type}** candies`, {
-                        simplified: true,
-                    })
+                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Bags and gained **${amountOfCandies * this.roll_type} Candies!**`)
 
                     //	Unlock cooldown
                     setTimeout(() => {
@@ -250,8 +247,7 @@ class HalloweenBox {
                     opening.delete()
 
                     //	Render result
-                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Bags and gained **${amountOfCandies * this.roll_type} Candies!**`, {
-                    })
+                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Chests and gained **${amountOfCandies * this.roll_type} Candies!**`)
 
                     //	Unlock cooldown
                     setTimeout(() => {
@@ -269,6 +265,8 @@ class HalloweenBox {
 
         //	Returns if current channel is not in gacha-allowed list
         if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
+        //  Exception when no parameter was specified
+        if (!args[0]) return this.halloweenBox()
 
         switch (args[0].toLowerCase()) {
             case `bag`:
