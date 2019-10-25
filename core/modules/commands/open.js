@@ -111,7 +111,7 @@ class HalloweenBox {
         const { message, name, reply, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
         //	Returns if user doesn't have any halloween box
-        if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
+        if (!this.data.halloween_box) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`boxes`] })
 
         //	Returns if user trying to do multi-roll with owned less than 10 tickets
         if (this.data.halloween_box < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`boxes`] })
@@ -164,7 +164,7 @@ class HalloweenBox {
     async halloweenBag() {
         const { message, name, reply, bot: { db }, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        let amountOfCandies = Math.random() <= .01 ? 25 : Math.floor(Math.random() * 5)
+        let amountOfCandies = Math.random() <= .01 ? 25 : Math.floor(Math.random() * 4) + 1
         //	Returns if user doesn't have any halloween bags
         if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET, {socket:[`Bag`]})
 
@@ -212,10 +212,10 @@ class HalloweenBox {
     async halloweenChest() {
         const { message, name, reply,bot:{db}, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 20)
+        let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 19) +1
 
         //	Returns if user doesn't have any halloween chests
-        if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET)
+        if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`chests`] })
 
         //	Returns if user trying to do multi-open with owned less than 10 chests
         if (this.data.halloween_chest < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`chests`] })
@@ -267,7 +267,7 @@ class HalloweenBox {
         //	Returns if current channel is not in gacha-allowed list
         if (!isGachaField) return reply(HALLOWEEN_GACHA.UNALLOWED_ACCESS, { socket: [gachaField] })
 
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case `bag`:
                 this.halloweenBag()
                 break
