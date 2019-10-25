@@ -200,7 +200,7 @@ class HalloweenBox {
                 setTimeout(async () => {
 
                     //	Render result
-                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Bags and gained **${amountOfCandies * this.roll_type} Candies!**`)
+                    reply(`**${name(this.author.id)}** opened ${this.roll_type} Halloween Bags and gained **${amountOfCandies * this.roll_type} Candies!**`)
 
                     //	Unlock cooldown
                     setTimeout(() => {
@@ -249,7 +249,7 @@ class HalloweenBox {
                     opening.delete()
 
                     //	Render result
-                    reply(`**${name(this.author.id)} opened ${this.roll_type} Halloween Chests and gained **${amountOfCandies * this.roll_type} Candies!**`)
+                    reply(`**${name(this.author.id)}** opened ${this.roll_type} Halloween Chests and gained **${amountOfCandies * this.roll_type} Candies!**`)
 
                     //	Unlock cooldown
                     setTimeout(() => {
