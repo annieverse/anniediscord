@@ -23,7 +23,7 @@ class HalloweenBox {
 	 * 	@param {Integer} limit roll counts
 	 */
     async roll(limit) {
-        const { emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
+        const { world, emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
         
         //	Roll's centralized metadata
         let metadata = {
@@ -50,6 +50,7 @@ class HalloweenBox {
             //	Fire up world chat if user has pulled 5 star item.
             if (res.rarity === 5) reply(SYS_NOTIFICATION.FIVESTAR_PULL, {
                 socket: [this.author, emoji(relabel(res.item_alias)), res.item_name],
+                field: world,
                 simplified: true
             })
             if (res.type == `role`){
