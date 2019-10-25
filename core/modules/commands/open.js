@@ -24,7 +24,7 @@ class HalloweenBox {
 	 */
     async roll(limit) {
         const { emoji, reply, code: { SYS_NOTIFICATION }, relabel, closestUpper, pause, db ,message, addRole, bot:{logger} } = this.stacks
-
+        
         //	Roll's centralized metadata
         let metadata = {
             item: [],
@@ -35,13 +35,15 @@ class HalloweenBox {
             roll_type: limit
         }
 
+        console.log(metadata.roll_type)
         //	Get rates for each possible loot without duplicates			
         let rates = (await this.db.halloweenBoxDropRates).map(v => v.drop_rate)
 
         //	get loot by defined rate
         let get_loots = async (probs) => await this.db.lootGroupByRateForHalloween(closestUpper(rates, probs), `halloween_rewards_pool`)
-
+        
         for (let i = 0; i < limit; i++) {
+            
             //let arbitrary_num = Math.random() * 100
             let arbitrary_num = Math.random()
             let firstRes = await get_loots(arbitrary_num)
@@ -51,7 +53,6 @@ class HalloweenBox {
                 socket: [this.author, emoji(relabel(res.item_alias)), res.item_name],
                 simplified: true
             })
-
             if (res.type == `role`){
                 let dayOption = res.item_name
                 let day = dayOption.substring(dayOption.indexOf(`(`), dayOption.indexOf(`)`))
@@ -73,21 +74,21 @@ class HalloweenBox {
                 switch (day.toString().trim()) {
                     case `1`:
                         currentDate.setDate(currentDate.getDate() + 1)
-                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
-                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
-                        addRole(roleName)
+                        if (currentDate.getTime()>currentRemoveByDate.getTime()) {
+                            await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
+                            addRole(roleName)}
                         break
                     case `3`:
                         currentDate.setDate(currentDate.getDate() + 3)
-                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
-                        await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
-                        addRole(roleName)
+                        if (currentDate.getTime()>currentRemoveByDate.getTime()) {
+                            await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
+                            addRole(roleName)}
                         break
                     case `7`:
                         currentDate.setDate(currentDate.getDate() + 7)
-                        if (currentDate.getTime()<currentRemoveByDate.getTime()) return
+                        if (currentDate.getTime()>currentRemoveByDate.getTime()) {
                         await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: currentDate.getTime() })
-                        addRole(roleName)
+                        addRole(roleName)}
                         break
                     case `31`:
                         await db(message.author.id)._limitedShopRoles({ roleId: roleData.alias, value: foreverDate.getTime() })
@@ -107,6 +108,8 @@ class HalloweenBox {
             await pause(100)
 
         }
+    
+        console.log(metadata)
         return metadata
     }
 
@@ -140,6 +143,7 @@ class HalloweenBox {
                     //	Get roll metadata
                     let rollContainer = await this.roll(this.roll_type)
 
+                    console.log(rollContainer)
                     //	Get buffer interface
                     let renderResult = await new GUI(this.stacks, rollContainer).render
 
@@ -268,7 +272,7 @@ class HalloweenBox {
         //  Exception when no parameter was specified
         if (!args[0]) return this.halloweenBox()
 
-        switch (args[0].toLowerCase()) {
+        switch (args[0]) {
             case `bag`:
                 this.halloweenBag()
                 break

@@ -180,7 +180,6 @@ class databaseUtils {
 	 *  @param {String|ID} userId user id
 	 */
 	async _limitedShopRoles({ roleId, value = 0, operation = `update`, userId = this.id }) {
-		logger.info(`im running`)
 		//	Return if roleId is not specified
 		if (!roleId) return { stored: false }
 		let res = {
