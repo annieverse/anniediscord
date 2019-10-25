@@ -64,8 +64,10 @@ class HalloweenBox {
                 var foreverDate = new Date(`Jan 5, 2021 15:37:25`)
                 let roleName = message.guild.roles.find(r => r.id === roleData.alias).name
                 let currentRemoveBy = await db(message.author.id).getRemoveByLTSRole(roleData.alias)
-                let currentRemoveByDate = new Date(currentRemoveBy.remove_by)
-                if (currentRemoveByDate.getTime() == foreverDate.getTime()) day = 364
+                if (currentRemoveBy == undefined){
+                    let currentRemoveByDate = new Date(currentRemoveBy.remove_by)
+                    if (currentRemoveByDate.getTime() == foreverDate.getTime()) day = 364
+                }
                 switch (day.toString().trim()) {
                     case `1`:
                         currentDate.setDate(currentDate.getDate() + 1)
