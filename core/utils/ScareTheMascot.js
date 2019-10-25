@@ -59,6 +59,7 @@ class ScareTheMascot {
         collector.on(`collect`, message => {
             if(!message.author.bot){
                 this.scaryusers.push(message.author.id)
+                message.react(this.bot.emojis.find(m => m.name === `AnnieShock`))
             }
         })
     }
@@ -79,7 +80,7 @@ class ScareTheMascot {
                 db.storeCandies(this.prizeamount)
                 this.logger.info(`Scare The Mascot - ` + winner + ` wins ${this.prizeamount} candies!`)
                 this.bot.channels.get(this.eventchannel).send({embed:{
-                    description: `<@` + winner + `> That's so scary! Here's **${this.prizeamount} Candies** for you!`,
+                    description: `<@` + winner + `> That's so scary! Here's ${this.bot.emojis.find(m => m.name === `candies`)} **${this.prizeamount} Candies** for you!`,
                     color: 0xe66525
                 }})
             }
