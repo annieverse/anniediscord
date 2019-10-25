@@ -166,7 +166,7 @@ class HalloweenBox {
 
         let amountOfCandies = Math.random() <= .01 ? 25 : Math.floor(Math.random() * 4) + 1
         //	Returns if user doesn't have any halloween bags
-        if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET, {socket:[`Bag`]})
+        if (!this.data.halloween_bag) return reply(HALLOWEEN_GACHA.ZERO_TICKET, {socket:[`Bags`]})
 
         //	Returns if user trying to do multi-open with owned less than 10 bags
         if (this.data.halloween_bag < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`Bags`] })
@@ -215,10 +215,10 @@ class HalloweenBox {
         let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 19) +1
 
         //	Returns if user doesn't have any halloween chests
-        if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`chests`] })
+        if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`Chests`] })
 
         //	Returns if user trying to do multi-open with owned less than 10 chests
-        if (this.data.halloween_chest < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`chests`] })
+        if (this.data.halloween_chest < this.roll_type) return reply(HALLOWEEN_GACHA.INSUFFICIENT_TICKET, { socket: [`Chests`] })
 
         //	Returns if user state still in cooldown
         if (Cooldown.has(this.author.id)) return reply(HALLOWEEN_GACHA.COOLING_DOWN)
