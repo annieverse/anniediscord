@@ -148,7 +148,7 @@ class Limitedshop {
 		 * Also limit is at 100 messages according to docs
 		 */
 		const clear = () => {
-			shopchannel.fetchMessages({limit:100}).then((msgs) => {
+			shopchannel.fetchMessages({limit:5000}).then((msgs) => {
 				if (msgs.size>1) {
 					shopchannel.bulkDelete(msgs.size - 1)
 				}
