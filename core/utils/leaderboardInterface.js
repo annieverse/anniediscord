@@ -37,7 +37,7 @@ const render = async (stacks, metadata) => {
 				this.group.push({
 					id: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `userId`),
 					xp: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `currentexp`),
-					lv: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `level`)
+					lv: (await dbmanager.xpFormula(await dbmanager.indexRanking(`userdata`, `currentexp`, i, `currentexp`))).level
 				})
 			}
 		},
