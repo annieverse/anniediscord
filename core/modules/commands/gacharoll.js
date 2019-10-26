@@ -49,6 +49,7 @@ class Gacha {
 			//let res = await get_loots(arbitrary_num)
 			let firstRes = await get_loots(arbitrary_num)
 			let res = firstRes[Math.floor(Math.random() * firstRes.length)]
+
 			//	Fire up world chat if user has pulled 5 star item.
 			if (res.rarity === 5) reply(SYS_NOTIFICATION.FIVESTAR_PULL, {
 				socket: [this.author, emoji(relabel(res.item_alias)), res.item_name],
