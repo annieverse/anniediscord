@@ -32,7 +32,6 @@ class Limitedshop {
 		let shoptype
 		let shopdata
 		let shopname
-		let shopemote
 		let shopcurrency
 		let cleartimeout
 		let db
@@ -54,7 +53,6 @@ class Limitedshop {
 			shoptype = type ? type : getShopType(shopchannel.name)
 			shopdata = events[shoptype]
 			shopname = shopdata ? shopdata.emoteUnicode + `┋` + shopdata.shopname.replace(/ /g, channelspace) : shoptype + channelspace + `shop`
-			shopemote = shopdata ? emoji(shopdata.emote) : emoji(`AnnieHype`)
 			shopcurrency = shopdata ? shopdata.currency : `artcoins`
 		}
 
@@ -67,7 +65,7 @@ class Limitedshop {
 			reply(`Stocking the shop...`)
 
 			const page = new Discord.RichEmbed()
-				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
+				.setDescription(`The ` + shopname + ` is here! `)
 				.setColor(palette.darkmatte)
 				.attachFile(`core/images/shop-` + shoptype + `-cov.png`)
 				.setImage(`https://i.ibb.co/2tXV3T8/aau-halloweenshop-tutorialbanner.png`)//TODO placeholder
