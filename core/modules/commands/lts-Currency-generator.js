@@ -46,7 +46,6 @@ class currencyGenerator {
 					//  Storing new balance value
 					db.setUser(author.id).storeCandies(amount)
 
-					console.log(data)
 					//  Successful
 					return reply(code.ADDAC.SUCCESSFUL, {
 						socket: [
