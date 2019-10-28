@@ -451,6 +451,14 @@ class databaseUtils {
 			`)
 	}
 
+	async panGift() {
+		return sql.run(`
+				UPDATE item_inventory
+				SET quantity = quantity + 20 
+				WHERE item_id = 102
+			`)
+	}
+
 	//  Accepts one level of an object. Returns sql-like string.
 	toQuery(data) {
 		let res = ``

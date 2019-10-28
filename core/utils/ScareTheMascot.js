@@ -19,7 +19,7 @@ class ScareTheMascot {
         this.collectortrigger = `👻`
         this.prefix = `👻ˋˏ┋ `
         this.scaryusers = [],
-        this.prizeamount = 10,
+        this.prizeamount = 15,
         this.scareembedobject = {
             description: this.eventmessage,
             color: 0xe66525
@@ -30,7 +30,7 @@ class ScareTheMascot {
         await this.cleanevent()
         while(this.active) {
             try {
-                await this.delay(1*60*60*1000)
+                await this.delay(1*45*60*1000)
                 await this.runevent()
                 await this.delay(70*1000)
                 await this.stopevent()
