@@ -296,10 +296,11 @@ module.exports = bot => {
         cron.schedule(`0 1 */30 * * *`, retriveData() )
         async function retriveData(){
             let data = await db.retrieveTimeData
-            if(!data) return
-            data.forEach(element => {
-                bot.members.get(element.user_id).removeRole(element.role_id)
-            })
+			if (data != undefined) {
+				data.forEach(element => {
+					bot.members.get(element.user_id).removeRole(element.role_id)
+				})
+			}
         }
     }
 	/**
