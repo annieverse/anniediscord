@@ -292,6 +292,10 @@ class MessageController {
         return this.message.content.trim().toLowerCase().includes(`coffee`) ? true : false
     }
 
+    get isInGenTwo(){
+        return this.message.channel.id == `548950548343291914` ? true : false
+    }
+
 
 }
 

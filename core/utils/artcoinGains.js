@@ -40,6 +40,7 @@ class Artcoins extends Controller {
 		}
 		if (super.isArtPost) this.total_gained_ac = this.total_gained_ac * 10
 		if (super.isBoostedArtPost) this.total_gained_ac = this.total_gained_ac * 2
+		if (super.isInGenTwo) this.total_gained_ac = this.total_gained_ac + (this.total_gained_ac*.25) // Add a 25% artcoins when a message is detected in gen2
 
 		this.db.storeArtcoins(Math.floor(this.total_gained_ac))
 		this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_ac} AC(${this.ac_factor === 1 ? 0 : this.ac_factor-2}% bonus). (${this.data.commanifier(this.meta.data.artcoins)} --> ${this.data.commanifier(this.meta.data.artcoins + this.total_gained_ac)})`)
