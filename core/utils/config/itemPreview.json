@@ -3,5 +3,6 @@
     "TICKET": false,
     "SKIN": false,
     "BADGE": true,
-    "COVER": true
+    "COVER": true,
+    "STICKER":true
 }

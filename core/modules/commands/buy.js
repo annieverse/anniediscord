@@ -1,6 +1,7 @@
 const Transaction = require(`../../utils/transactionHandler`)
 const Checkout = require(`../../utils/transactionCheckout`)
 const preview = require(`../../utils/config/itemPreview`)
+const profileManager = require(`../../utils/profileManager`)
 
 /**
  * Main module
@@ -28,7 +29,7 @@ class Buy {
      */
 	async execute() {
 
-		const { reply, args, name, message, code:{BUY}, meta: { author, data }, db } = this.stacks
+		const { reply, args, name, message, code:{BUY}, meta: { author, data }, db, palette } = this.stacks
 		
 		//  Returns no parametered input
 		if (!args[0]) return reply(BUY.SHORT_GUIDE)
@@ -70,10 +71,33 @@ class Buy {
 
 		item.currencyId = query1.itemId
 		item.itemId = query2.itemId
+
+		const switchColor = {
+
+			"dark_profileskin": {
+				base: palette.nightmode,
+				border: palette.deepnight,
+				text: palette.white,
+				secondaryText: palette.lightgray,
+				sticker: `light`
+			},
+
+			"light_profileskin": {
+				base: palette.white,
+				border: palette.lightgray,
+				text: palette.darkmatte,
+				secondaryText: palette.blankgray,
+				sticker: `dark`
+			}
+		}
+		const configProfile = new profileManager()
+		const usercolor = configProfile.checkInterface(data.interfacemode)
+
 		let checkoutComponents = {
 			itemdata: item,
 			transaction: transaction,
-			preview: preview[key] ? item.alias : null,
+			// Is there a preview, yes = [is the item a sticker, yes = [is the sticker them specific, yes= add light or dark, no = return sticker alias name], no = return asset alias], no = return null
+			preview: preview[key] ? category === `Sticker` ? await db(author.id).stickerTheme(item.alias) ? `sticker_${item.alias}_${switchColor[usercolor].sticker}` : `sticker_${item.alias}` : item.alias : null,
 			stacks: this.stacks,
 			msg: message,
 			user: author
