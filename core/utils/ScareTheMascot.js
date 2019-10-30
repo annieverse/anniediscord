@@ -78,16 +78,18 @@ class ScareTheMascot {
             } else {
                 const winner = winnerlist[Math.floor(Math.random() * winnerlist.length)]
                 const db = new databaseManager(winner)
+                // Give random winner candies
                 db.storeCandies(this.prizeamount)
                 this.logger.info(`Scare The Mascot - ` + winner + ` wins ${this.prizeamount} candies!`)
-                winnerlist.forEach(element=>{
-                    db.setUser(element).storeCandies(this.prizeamountsecondary)
-                    this.logger.info(`Scare The Mascot - ` + element + ` wins ${this.prizeamountsecondary} candies!`)
-                })
                 this.bot.channels.get(this.eventchannel).send({embed:{
                     description: `<@` + winner + `> That's so scary! Here's ${this.bot.emojis.find(m => m.name === `candies`)} **${this.prizeamount + this.prizeamountsecondary} Candies** for you!`,
                     color: 0xe66525
                 }})
+                // Give participants candies
+                winnerlist.forEach(element=>{
+                    db.setUser(element).storeCandies(this.prizeamountsecondary)
+                    this.logger.info(`Scare The Mascot - ` + element + ` wins ${this.prizeamountsecondary} candies!`)
+                })
             }
         }
         await this.cleanevent()
