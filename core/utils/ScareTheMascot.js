@@ -19,7 +19,8 @@ class ScareTheMascot {
         this.collectortrigger = `👻`
         this.prefix = `👻ˋˏ┋ `
         this.scaryusers = [],
-        this.prizeamount = 15,
+        this.prizeamount = 10,
+        this.prizeamountsecondary = 5,
         this.scareembedobject = {
             description: this.eventmessage,
             color: 0xe66525
@@ -79,8 +80,12 @@ class ScareTheMascot {
                 const db = new databaseManager(winner)
                 db.storeCandies(this.prizeamount)
                 this.logger.info(`Scare The Mascot - ` + winner + ` wins ${this.prizeamount} candies!`)
+                winnerlist.forEach(element=>{
+                    db.setUser(element).storeCandies(this.prizeamountsecondary)
+                    this.logger.info(`Scare The Mascot - ` + element + ` wins ${this.prizeamountsecondary} candies!`)
+                })
                 this.bot.channels.get(this.eventchannel).send({embed:{
-                    description: `<@` + winner + `> That's so scary! Here's ${this.bot.emojis.find(m => m.name === `candies`)} **${this.prizeamount} Candies** for you!`,
+                    description: `<@` + winner + `> That's so scary! Here's ${this.bot.emojis.find(m => m.name === `candies`)} **${this.prizeamount + this.prizeamountsecondary} Candies** for you!`,
                     color: 0xe66525
                 }})
             }
