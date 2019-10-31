@@ -111,7 +111,7 @@ class databaseUtils {
 	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
 	 *  @param {String|ID} userId user id
 	 */
-	async _transforInventoryCover({ itemId, value = 1, operation = `SET`, userId = this.id }) {
+	async _transforInventory({ itemId, value = 1, operation = `SET`, userId = this.id }) {
 		//	Return if itemId is not specified
 		if (!itemId) return { stored: false }
 		let res = {
@@ -133,7 +133,7 @@ class databaseUtils {
 			)
 		}
 
-		logger.info(`[._transforInventoryCover][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		logger.info(`[._transforInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
 		return { stored: true }
 	}
 

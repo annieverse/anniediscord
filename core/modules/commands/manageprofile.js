@@ -1,20 +1,24 @@
 class CentralHub {
     constructor(Stacks) {
         this.stacks = Stacks
+        this.stacks.exitAnswers = [`cancel`, `exit`, `quit`]
     }
 
     async execute() {
-        const { reply, collector  } = this.stacks
-        reply(`Please repsond with 
-        \n\`covers\`
-        \n\`badges\`
-        \n\`stickers\`
-        \n Or "cancel" or "exit" or "quit" to quit the selection menu
-        `)
+        const { reply, collector, code: { MANAGE_PROFILE: { MAIN_MENU, MENU_CLOSED } }, exitAnswers} = this.stacks
+        reply(MAIN_MENU,{
+            socket:[
+                `
+                \n\`covers\`
+                \n\`badges\`
+                \n\`stickers\`
+                `
+            ]
+        })
+
         collector.on(`collect`, async (msg) => {
             let response = msg.content.toLowerCase()
-            let exitAnswers = [`cancel`, `exit`, `quit`]
-            if (exitAnswers.includes(response)) return reply(`Selection menu closed.`)
+            if (exitAnswers.includes(response)) return reply(MENU_CLOSED)
             switch (response) {
                 case `covers`:
                     new covers(this.stacks).execute()
@@ -26,6 +30,7 @@ class CentralHub {
                     new stickers(this.stacks).execute()
                     break
                 default:
+                    reply(MENU_CLOSED)
                     break
             }
         })
@@ -66,24 +71,23 @@ class covers {
     }
 
     async execute() {
-        const { message,reply,multicollector,db} = this.stacks
+        const { message, reply, multicollector, db, code: { MANAGE_PROFILE: { MENU, DONT_OWN_ITEM, ITEM_UPDATED, MENU_CLOSED, NO_COVERS } }, exitAnswers} = this.stacks
         let availiableCovers = await db(message.author.id).getCovers
-        if (availiableCovers == 0) return reply(`I'm sorry but you dont have any covers`)
+        if (availiableCovers == 0) return reply(NO_COVERS,{socket:[`covers`]})
         let covers = await this.coverNames(await this.availiableCovers)
         let items = covers.item
         let itemAlias = covers.itemAlias
         let index = items.length-1
         let result
         if (items.length > 1) result = items.join(`, `)
-        reply(`${result}\n\nPlease type the name of the cover you would like to change to.\nEnter "cancel" or "exit" or "quit" to quit the selection menu`,{footer:`Case Sensitive`})
+        reply(MENU, { socket: [`cover`, result], footer: `Case Sensitive` })
         const secondCollector = multicollector(message)
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
-            let exitAnswers = [`cancel`, `exit`, `quit`]
-            if (exitAnswers.includes(response.toLowerCase())) return reply(`Selection menu closed.`)
-            if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this cover, ${response}`) }
+            if (exitAnswers.includes(response.toLowerCase())) return reply(MENU_CLOSED)
+            if (items.includes(response)) { index = items.indexOf(response) } else { return reply(DONT_OWN_ITEM,{socket:[`cover`,response]}) }
             db(message.author.id).setCover(itemAlias[index])
-            reply(`Your cover has been updated to: ${response}`)
+            reply(ITEM_UPDATED, { socket: [`cover`, response] })
         })
     }
 }
@@ -112,7 +116,7 @@ class stickers {
             itemAlias.push(`${element.alias}`)
         })
         item.push(`default`)
-        itemAlias.push(``)//defaultcover1
+        itemAlias.push(``)
         for (let index = 0; index < item.length; index++) {
             if (itemAlias[index] == active_sticker.sticker) {
                 item[index] = `${item[index]} [active]`
@@ -122,26 +126,26 @@ class stickers {
     }
 
     async execute() {
-        const { message, reply, multicollector, db} = this.stacks
-        if (await this.availiableStickers == 0 ) return reply(`I'm sorry but you dont have any stickers`)
+        const { message, reply, multicollector, db, code: { MANAGE_PROFILE: { MENU, DONT_OWN_ITEM, ITEM_UPDATED, MENU_CLOSED, NO_ITEMS } }, exitAnswers} = this.stacks
+        if (await this.availiableStickers == 0) return reply(NO_ITEMS, { socket: [`stickers`] })
         let stickers = await this.stickerNames(await this.availiableStickers)
         let items = stickers.item
         let itemAlias = stickers.itemAlias
         let index = items.length - 1
         let result
         if (items.length > 1) result = items.join(`, `)
-        reply(`${result}\n\nPlease type the name of the sticker you would like to change to.\nEnter "cancel" or "exit" or "quit" to quit the selection menu`, { footer: `Case Sensitive` })
+        reply(MENU, { socket: [`sticker`, result], footer: `Case Sensitive` })
         const secondCollector = multicollector(message)
         secondCollector.on(`collect`, async (secondmsg) => {
             let response = secondmsg.content
-            let exitAnswers = [`cancel`,`exit`,`quit`]
-            if (exitAnswers.includes(response.toLowerCase())) return reply(`Selection menu closed.`)
-            if (items.includes(response)) { index = items.indexOf(response) } else { return reply(`Sorry but you do not own this sticker, ${response}`) }
+            if (exitAnswers.includes(response.toLowerCase())) return reply(MENU_CLOSED)
+            if (items.includes(response)) { index = items.indexOf(response) } else { return reply(DONT_OWN_ITEM, { socket: [`sticker`, response] })}
             db(message.author.id).setSticker(itemAlias[index])
-            reply(`Your sticker has been updated to: ${response}`)
+            reply(ITEM_UPDATED, { socket: [`sticker`, response] })
         })
     }
 }
+
 
 class badges {
     constructor(Stacks) {

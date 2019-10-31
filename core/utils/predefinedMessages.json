@@ -215,6 +215,14 @@
     },
     "LEVELUP": "{0} {1} has leveled up to **{2}**!\nhere's your **{3} {4} ** reward.",
     "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!\n here's your **{4} {5} ** reward. ",
+    "MANAGE_PROFILE":{
+        "DONT_OWN_ITEM": "Sorry but you do not own this {0}, {1}",
+        "ITEM_UPDATED" : "Your {0} has been updated to: {1}",
+        "MENU" : "{0}\n\nPlease type the name of the {1} you would like to change to.\nEnter \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
+        "MAIN_MENU": "Please repsond with {0} \n Or \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
+        "MENU_CLOSED" : "Selection menu closed.",
+        "NO_ITEMS" : "I'm sorry but you dont have any {0}"
+    },
     "MAIL": {
         "INVALID_USER": "Sorry, i couldn't find that user.",
         "PROMPT": "Message will be send to **{0}**. Now please type the content of the message.",

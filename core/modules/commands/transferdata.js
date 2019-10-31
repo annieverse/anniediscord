@@ -10,13 +10,60 @@ class commandName {
 	async execute() {
 		const {reply, bot:{db}} = this.stacks
 		try {
-			let userdataData = await db._query(`SELECT userId,cover FROM userdata WHERE cover != ? AND cover IS NOT NULL`
+			let userdataData = await db._query(`SELECT * FROM userbadges WHERE slot1 IS NOT NULL and 
+			slot2 IS NOT NULL or slot3 IS NOT NULL or slot4 IS NOT NULL or slot5 IS NOT NULL or slot6 IS NOT NULL or slotanime IS NOT NULL`
 			,`all`
-			,[`defaultcover1`])
+			)
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot1
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}		
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot2
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot3
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot4
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot5
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slot6
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			for (let index = 0; index < userdataData.length; index++) {
+				let item = userdataData[index].slotanime
+				if (item == (null || undefined)) return
+				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [item])
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
+			
+			userdataData = await db._query(`SELECT userId,cover FROM userdata WHERE cover != ? AND cover IS NOT NULL`
+				, `all`
+				, [`defaultcover1`])
 			for (let index = 0; index < userdataData.length; index++) {
 				let coverId = await db._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [userdataData[index].cover])
-				await db._transforInventoryCover({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
-			}			
+				await db._transforInventory({ itemId: coverId.itemId, value: 1, userId: userdataData[index].userId })
+			}
 		} catch (error) {
 			return reply(error.stack)
 		}
