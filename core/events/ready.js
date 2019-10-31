@@ -160,7 +160,10 @@ module.exports = bot => {
 						type: `LISTENING`
 					})
 				} else {
-					return bot.user.setActivity(null)
+					return bot.user.setActivity(`Trick Or Treat`, {
+						type: `PLAYING`
+					})
+					//return bot.user.setActivity(null)
 				}
 			}
 
@@ -227,7 +230,10 @@ module.exports = bot => {
 				} : () => 
 				{
 					bot.user.setStatus(`online`)
-					bot.user.setActivity(null)
+					bot.user.setActivity(`Trick Or Treat`, {
+						type: `PLAYING`
+					})
+					//bot.user.setActivity(null)
 				}
 				
 				tests.eventDontRepeat? ()=>{
@@ -328,7 +334,10 @@ module.exports = bot => {
              */
 			logger.info(`${bot.user.username}up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`online`)
-			bot.user.setActivity(null)
+			//bot.user.setActivity(null)
+			bot.user.setActivity(`Trick Or Treat`, {
+				type: `PLAYING`
+			})
 
 			setupDatabase()
 			roleChange()
