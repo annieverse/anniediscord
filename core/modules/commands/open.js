@@ -183,7 +183,7 @@ class HalloweenBox {
         reply(emoji(`aaueyebrows`) + choice(HALLOWEEN_GACHA.OPENING_WORDS), {
             socket: [name(this.author.id)],
             notch: true,
-            //imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
+            imageGif: `https://cdn.discordapp.com/attachments/614737097454125056/632048843483119617/halloween_box_animated.gif`
         })
 
 
@@ -191,7 +191,7 @@ class HalloweenBox {
                 Cooldown.add(this.author.id)
 
                 // Add candies to user
-                db.storeCandies(amountOfCandies)
+                await db.storeCandies(amountOfCandies * this.roll_type)
 
                 // Remove bags
                 db.withdrawHalloweenBag(this.roll_type)
@@ -214,7 +214,7 @@ class HalloweenBox {
     async halloweenChest() {
         const { message, name, reply,bot:{db}, code: { HALLOWEEN_GACHA }, choice, emoji } = this.stacks
 
-        let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 19) +1
+        let amountOfCandies = Math.random() <= .01 ? 100 : Math.floor(Math.random() * 19) + 1
 
         //	Returns if user doesn't have any halloween chests
         if (!this.data.halloween_chest) return reply(HALLOWEEN_GACHA.ZERO_TICKET, { socket: [`Chests`] })
@@ -241,7 +241,7 @@ class HalloweenBox {
                 setTimeout(async () => {
 
                     // Add candies to user
-                    db.storeCandies(amountOfCandies)
+                    await db.storeCandies(amountOfCandies * this.roll_type)
 
                     // Remove chests
                     db.withdrawHalloweenChest(this.roll_type)
