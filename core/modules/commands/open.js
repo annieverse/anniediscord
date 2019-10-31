@@ -194,7 +194,7 @@ class HalloweenBox {
                 await db.storeCandies(amountOfCandies * this.roll_type)
 
                 // Remove bags
-                db.withdrawHalloweenBag(this.roll_type)
+                await db.withdrawHalloweenBag(this.roll_type)
 
                 opening.delete()
                 setTimeout(async () => {
@@ -244,7 +244,7 @@ class HalloweenBox {
                     await db.storeCandies(amountOfCandies * this.roll_type)
 
                     // Remove chests
-                    db.withdrawHalloweenChest(this.roll_type)
+                    await db.withdrawHalloweenChest(this.roll_type)
 
                     opening.delete()
 
