@@ -1429,6 +1429,28 @@ class databaseUtils {
 		return {level,maxexp,nextexpcurve}
 	}
 
+	async xpReverseFormula(data) {
+		const formula = (level) => {
+			if (level < 1) {
+				return {
+					exp: 0
+				}
+			}
+
+			var exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			exp = Math.floor(exp)
+
+			return {
+				exp: exp
+			}
+		}
+
+		const level = Math.floor(data)
+		const main = formula(level)
+		let exp = main.exp
+		return { exp }
+	}
+
 	/**
         *   Pull user badges container of data.
         * @this.id
