@@ -483,11 +483,11 @@ class databaseUtils {
 	}
 
 	get cardItemIds() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ?`, `all`, [`Card`,`candies`])
+		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ? AND rarity = 5`, `all`, [`Card`,`candies`])
 	}
 
 	get recycleableItems() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? AND price_type != ?`, `all`, [`Card`,`Shard`, `candies`])
+		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? OR type = ? AND price_type != ?`, `all`, [`Foods`,`Shard`, `Materials`, `candies`])
 	}
 	
 	/**

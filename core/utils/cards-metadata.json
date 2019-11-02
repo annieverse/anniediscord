@@ -401,5 +401,55 @@
         }
       }
     }
+  },
+  "halloween_annie_card": {
+    "fullname": "Hallowenn Annie",
+    "alias": "halloween_annie_card",
+    "rarity": "5",
+    "description": "Halloween exclusive 5-star card.",
+    "url": "https://i.ibb.co/2c7tnGZ/halloween-annie.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "rin_kagamine_card": {
+    "fullname": "Rin Kagamine",
+    "alias": "rin_kagamine_card",
+    "rarity": "4",
+    "description": "Halloween exclusive 4-star card.",
+    "url": "https://i.ibb.co/kXZnHVr/rin-kagamine.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
   }
 }
