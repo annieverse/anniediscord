@@ -70,7 +70,7 @@ class mainHub {
 
 	get cleanMsgTransaction(){
 		const { message } = this.stacks
-		message.channel.bulkDelete(this.messageIds)
+		return message.channel.bulkDelete(this.messageIds)
 	}
 
 	async execute() {
@@ -101,7 +101,6 @@ class cleanInv extends mainHub {
 
 		reply(`hmm`).then(msg => super.messageIds.push(msg.id))
 
-		console.log(super.messageIds())
 		//super.cleanMsgTransaction
 	}
 }
