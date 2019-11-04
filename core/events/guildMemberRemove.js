@@ -14,7 +14,7 @@ module.exports = (bot,member) => {
 	userLeaving()
 
 	async function userLeaving() {
-		let shouldDeleteData = false // master deletion switch
+		let shouldDeleteData = true // master deletion switch
 
 		// if absence_ticket isn't given a value, don't allow user data deletion
 		if (absence_ticket == ``) shouldDeleteData = false
