@@ -264,10 +264,13 @@
         "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
     },
     "RECYCLE":{
-        "NOT_ENOUGH_ITEMS":"I'm sorry, but you don't have enough {0} to recycle. You need {1} more.",
+        "CONFIRMATION":"Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
+        "CONVERSATION_COMPLETED":"You have converted {0}, {1}, into {2} {3}",
+        "NOT_ENOUGH_ITEMS":"I'm sorry, but you don't have enough {0} to recycle.",
         "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
         "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle",
-        "INVALID_FORMAT": "Please use proper format so i can parse your request."
+        "INVALID_FORMAT": "Please use proper format so i can parse your request.",
+        "TRANSACTION_CLOSED":"Transaction closed."
     },
     "REDEEM": {
         "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",

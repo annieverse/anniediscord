@@ -796,7 +796,7 @@ class databaseUtils {
 	}
 
 	lootGroupByRate(rate, table = `luckyticket_rewards_pool`) {
-		return sql.all(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 5`)
+		return sql.get(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM()`)
 	}
 
 	lootGroupByRateForHalloween(rate, table = `luckyticket_rewards_pool`) {

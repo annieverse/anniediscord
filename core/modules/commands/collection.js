@@ -18,10 +18,11 @@ class Collection {
 	 * 	@getCardFromInventory
 	 */
 	filterCardFromInventory(data) {
+		
 		return Object.keys(data)
 		.filter(key => key.endsWith(`_card`))
 		.reduce((obj, key) => {
-			obj[key] = data[key]
+			if (data[key]>0) obj[key] = data[key]
 			return obj
 		}, {})
 	}

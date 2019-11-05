@@ -4,11 +4,11 @@ class mainHub {
 		this.messageIds = []
 		this.recycleEchangeMeta = {}
 		this.rarityLevels = {
-			1: 5,
-			2: 4,
-			3: 3,
-			4: 2,
-			5: 1
+			1: 1,
+			2: 2,
+			3: 100,
+			4: 250,
+			5: 500
 		}
 	}
 
@@ -119,7 +119,7 @@ class mainHub {
 	}
 
 	async execute() {
-		const { message, trueInt,collector, emoji, reply, code: { RECYCLE } ,bot:{db} } = this.stacks
+		const { message, trueInt, collector, multicollector, emoji, reply, code: { RECYCLE } ,bot:{db} } = this.stacks
 
 		this.messageIDs = message.id
 
@@ -165,23 +165,29 @@ class mainHub {
 
 			
 			//  Total gained reps from given properties above
-			metadata.counted_reps = Math.floor(metadata.amount_to_send / this.recycleEchangeMeta[metadata.item_to_send])
+			metadata.counted_reps = Math.floor(metadata.amount_to_send * this.recycleEchangeMeta[metadata.item_to_send])
 
-			if (metadata.counted_reps == 0) return reply(RECYCLE.NOT_ENOUGH_ITEMS, { socket: [metadata.item_to_send, this.recycleEchangeMeta[metadata.item_to_send] - metadata.amount_to_send] })
+			// eslint-disable-next-line no-useless-escape
+			if (metadata.counted_reps == 0) return reply(RECYCLE.NOT_ENOUGH_ITEMS, { socket: [metadata.item_to_send.replace(/\_/g, ` `)] })
 			//  Closing the connections
 			collector.stop()
 
-			let itemData = await db.getItemMetadata(metadata.item_to_send)
-			//  Send reputation points
-			db.setUser(msg.author.id).storeArtcoins(metadata.counted_reps)
-			//  Withdraw sender's gifts
-			db.setUser(msg.author.id).withdraw(metadata.amount_to_send, itemData[0].itemId)
-
-			this.cleanMsgTransaction
-			//  recycling successful
 			// eslint-disable-next-line no-useless-escape
-			reply(`You have converted ${metadata.amount_to_send}, ${metadata.item_to_send.replace(/\_/g, ` `)}, into ${metadata.counted_reps} ${emoji(`artcoins`)}`)
+			reply(RECYCLE.CONFIRMATION, { socket: [metadata.item_to_send.replace(/\_/g, ` `), this.recycleEchangeMeta[metadata.item_to_send], metadata.counted_reps, emoji(`artcoins`)], footer: `"y" to confirm` }).then(msg => this.messageIDs = msg.id)
+			const secondCollector = multicollector(msg)
+			secondCollector.on(`collect`, async (secondmsg) => {
+				if (secondmsg.content.toLowerCase() != `y`) return reply(RECYCLE.TRANSACTION_CLOSED)
+				let itemData = await db.getItemMetadata(metadata.item_to_send)
+				//  Send reputation points
+				db.setUser(msg.author.id).storeArtcoins(metadata.counted_reps)
+				//  Withdraw sender's gifts
+				db.setUser(msg.author.id).withdraw(metadata.amount_to_send, itemData[0].itemId)
 
+				this.cleanMsgTransaction
+				//  recycling successful
+				// eslint-disable-next-line no-useless-escape
+				reply(RECYCLE.CONVERSATION_COMPLETED, { socket: [metadata.amount_to_send, metadata.item_to_send.replace(/\_/g, ` `), metadata.counted_reps, emoji(`artcoins`)]})
+			})
 		})
 	}
 }
