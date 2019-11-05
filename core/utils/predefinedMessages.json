@@ -264,8 +264,10 @@
         "SUCCESSFUL": "Yay! **{0}** messages have been successfully deleted!"
     },
     "RECYCLE":{
+        "NOT_ENOUGH_ITEMS":"I'm sorry, but you don't have enough {0} to recycle. You need {1} more.",
         "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
-        "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle"
+        "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle",
+        "INVALID_FORMAT": "Please use proper format so i can parse your request."
     },
     "REDEEM": {
         "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
