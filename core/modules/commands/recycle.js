@@ -191,9 +191,9 @@ module.exports.help = {
 	name:`recycle`,
 	aliases: [], 
 	description: `Have items you can't use, convert them to AC.`,
-	usage: `TemplateCommand`,
+	usage: `recycle`,
 	group: `shop`,
-	public: false,
+	public: true,
 	require_usermetadata: true,
 	multi_user: false
 }
