@@ -132,15 +132,8 @@ class profileManager {
 	 * @curve of user nextexpcurve.
 	 * @barLength is the width size of the given rectangle.
 	 */
-	barSize(current, max, curve, barlength) {
-		//curve === 150 ? curve = max : curve;
-		//current = curve === 150 ? max-(max-current) : (curve-(max-current)); 
-		//PanCurrent, user.max)
-		if (curve === 150) {
-			return Math.floor(((Math.floor((current * 100) / max).toFixed()) / 100) * barlength)
-		} else {
-			return Math.floor(((Math.floor((current * 100) / curve).toFixed()) / 100) * barlength)
-		}
+	barSize(current, barlength) {
+		return Math.floor(current * barlength)
 	}
 
 
