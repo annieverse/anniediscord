@@ -600,12 +600,29 @@ class databaseUtils {
 		,[data,this.id])
 	}
 
-	get getCovers(){
+	setBadge({slot = `slot1`, item = null}){
+		return this._query(`UPDATE userbadges 
+            SET ${slot} = ?
+			WHERE userId = ?
+		`
+			, `run`
+			, [item, this.id])
+	}
+
+	get getCovers() {
 		return this._query(`SELECT * FROM itemlist,item_inventory 
 			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
-			,`all`
-			,[this.id,`Covers`]
-			)
+			, `all`
+			, [this.id, `Covers`]
+		)
+	} 
+
+	get getBadges() {
+		return this._query(`SELECT * FROM itemlist,item_inventory 
+			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
+			, `all`
+			, [this.id, `Badges`]
+		)
 	}
 
 	get activeCover(){
@@ -615,6 +632,15 @@ class databaseUtils {
 			,`get`
 			,[this.id]
 			)
+	}
+
+	get activeBadges() {
+		return this._query(`SELECT *
+			FROM userbadges
+			WHERE userId = ?`
+			, `get`
+			, [this.id]
+		)
 	}
 
 	setCover(data){
@@ -629,40 +655,14 @@ class databaseUtils {
 		sql.run(`UPDATE userdata 
             SET cover = "${newvalue.alias}"
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			,`run`
-			,[newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId })
 	}
 
 	updateSticker(newvalue){
 		sql.run(`UPDATE userdata 
             SET sticker = "${newvalue.alias}"
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			, `run`
-			, [newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId })
 	}
 
 	async stickerTheme(data){
@@ -691,20 +691,7 @@ class databaseUtils {
 		sql.run(`UPDATE userbadges 
             SET ${slotkey[slotvalue.indexOf(null)]} = "${newvalue.alias}" 
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			, `run`
-			, [newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId})
 	}
 
 	updateExpBooster(newvalue) {

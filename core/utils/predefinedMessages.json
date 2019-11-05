@@ -216,11 +216,15 @@
     "LEVELUP": "{0} {1} has leveled up to **{2}**!\nhere's your **{3} {4} ** reward.",
     "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!\n here's your **{4} {5} ** reward. ",
     "MANAGE_PROFILE":{
+        "ALREADY_DIPLAYED":"Sorry, but you are Already displaying that {0}",
+        "BADGE_MENU":"Your current badges are:\n{0}\nYour available badges are:\n{1}\nPlease indicate the badge space and what badge, that you want to display; Like this `1 Fire Alpaca`",
         "DONT_OWN_ITEM": "Sorry but you do not own this {0}, {1}",
+        "INVALID_SLOT":"Sorry but that {0} slot is not availiable, {1}",
         "ITEM_UPDATED" : "Your {0} has been updated to: {1}",
         "MENU" : "{0}\n\nPlease type the name of the {1} you would like to change to.\nEnter \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
         "MAIN_MENU": "Please repsond with {0} \n Or \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
         "MENU_CLOSED" : "Selection menu closed.",
+        "NO_ITEM_SUPPLIED":"Sorry, but you didnt give an item to display\n",
         "NO_ITEMS" : "I'm sorry but you dont have any {0}"
     },
     "MAIL": {
