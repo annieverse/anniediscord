@@ -133,7 +133,7 @@ class profileManager {
 	 * @barLength is the width size of the given rectangle.
 	 */
 	barSize(current, barlength) {
-		return Math.floor(current * barlength)
+		return Math.floor(Math.floor(current*100)/100 * barlength)
 	}
 
 

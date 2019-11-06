@@ -72,8 +72,7 @@ class Artcoins extends Controller {
 					this.emoji(`artcoins`),
 					this.data.commanifier(bonusac)
 				],
-				color: this.color.lightblue,
-				deleteIn: 30
+				color: this.color.lightblue
 			})
 		}
 
@@ -94,8 +93,7 @@ class Artcoins extends Controller {
 					this.emoji(`artcoins`),
 					this.data.commanifier(bonusac)
 				],
-				color: this.color.blue,
-				deleteIn: 30
+				color: this.color.blue
 			})
             
             this.logger.info(`${this.author.tag}: level up to LVL ${updatedlevel} in ${this.message.channel.name}`)

@@ -61,11 +61,10 @@ async function profile(stacks, member) {
 	let startPos_y = 15
 	let barlength_xp = canvas_x - 80
 
-	let xpRawNext = await collection.xpReverseFormula(user.lvl)
-	let xpRawCurrent = await collection.xpReverseFormula(user.lvl-1)
-	
+	let xpRawCurrent = await collection.xpReverseFormula(user.lvl)
+
 	//PAN's attempt
-	let PanCurrent = xpRawNext.exp - (user.cur - xpRawCurrent.exp) != xpRawNext.exp ? (xpRawNext.exp - user.cur)/ (user.cur - xpRawCurrent.exp) : 0
+	let PanCurrent = user.cur != xpRawCurrent.minexp ? (user.cur-xpRawCurrent.minexp)/(user.crv) : 0
 	const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	
 

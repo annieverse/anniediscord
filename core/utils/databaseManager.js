@@ -1388,7 +1388,8 @@ class databaseUtils {
 				return {
 					level: 0,
 					maxexp: 100,
-					nextexpcurve: 100
+					nextexpcurve: 100,
+					minexp: 0
 				}
 			}
 
@@ -1404,38 +1405,55 @@ class databaseUtils {
 			return {
 				level: level,
 				maxexp: maxexp,
-				nextexpcurve: nextexpcurve
+				nextexpcurve: nextexpcurve,
+				minexp: minexp
 			}
 		}
-		
+
 		const accumulatedCurrent = Math.floor(data)
 		const main = formula(accumulatedCurrent)
 		let level = main.level
 		let maxexp = main.maxexp
 		let nextexpcurve = main.nextexpcurve
-		return {level,maxexp,nextexpcurve}
+		let minexp = main.minexp
+		return {level,maxexp,nextexpcurve,minexp}
 	}
 
 	async xpReverseFormula(data) {
 		const formula = (level) => {
-			if (level < 1) {
+			if (level <= 0) {
 				return {
-					exp: 0
+					level: 0,
+					maxexp: 100,
+					nextexpcurve: 100,
+					minexp: 0
 				}
 			}
 
-			var exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			exp = Math.floor(exp)
+			let exp = Math.floor(((Math.pow(level,2)*390.0625)+375)/4)
+			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.floor(level)
+			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			var nextexpcurve = maxexp - minexp
+			level = level+1
 
 			return {
-				exp: exp
+				maxexp: maxexp,
+				nextexpcurve: nextexpcurve,
+				minexp: minexp,
+				level: level
 			}
 		}
 
-		const level = Math.floor(data)
+		let level = Math.floor(data)
 		const main = formula(level)
-		let exp = main.exp
-		return { exp }
+		
+		let maxexp = main.maxexp
+		let nextexpcurve = main.nextexpcurve
+		let minexp = main.minexp
+		level = main.level
+		return { level, maxexp, nextexpcurve, minexp }
 	}
 
 	/**
