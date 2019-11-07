@@ -1421,7 +1421,8 @@ class databaseUtils {
 
 	async xpReverseFormula(data) {
 		const formula = (level) => {
-			if (level <= 0) {
+			
+			if (level < 1) {
 				return {
 					level: 0,
 					maxexp: 100,
@@ -1429,14 +1430,15 @@ class databaseUtils {
 					minexp: 0
 				}
 			}
-
-			let exp = Math.floor(((Math.pow(level,2)*390.0625)+375)/4)
+			level < 60 ? level-=1 : level+=0
+			let exp = Math.floor(((390.0625*(Math.pow(level+1, 2)))+375)/4)
+			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.floor(level)
 			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
 			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
 			var nextexpcurve = maxexp - minexp
-			level = level+1
+			level = level + 1
 
 			return {
 				maxexp: maxexp,
