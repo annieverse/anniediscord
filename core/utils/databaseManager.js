@@ -1379,6 +1379,7 @@ class databaseUtils {
 		data.level = main.level
 		data.maxexp = main.maxexp
 		data.nextexpcurve = main.nextexpcurve
+		data.minexp = main.minexp
 		return data
 	}
 

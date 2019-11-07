@@ -30,7 +30,7 @@ async function profile(stacks, member) {
       */
 	const userdata = await collection.userdata()
 	const user = {
-		id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+		id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp, min: userdata.minexp,
 		crv: userdata.nextexpcurve, lvl: userdata.level,
 		rep: userdata.reputations, des: userdata.description, ui: userdata.interfacemode,
 		prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
@@ -61,11 +61,8 @@ async function profile(stacks, member) {
 	let startPos_y = 15
 	let barlength_xp = canvas_x - 80
 
-	
-	let xpRawCurrent = await collection.xpReverseFormula(user.lvl)
-	//PAN's attempt
-	
-	let PanCurrent = user.cur <= xpRawCurrent.minexp ? 0 : (user.cur - xpRawCurrent.minexp) / (xpRawCurrent.nextexpcurve)
+	//PAN's attempt	
+	let PanCurrent = user.cur <= user.min ? 0 : (user.cur - user.min) / (user.crv)
 	const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 	
 
