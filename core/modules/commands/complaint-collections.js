@@ -4,7 +4,7 @@ const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 const env = require(`../../../.data/environment`)
-class strikeCollection {
+class complaintCollection {
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
@@ -14,16 +14,8 @@ class strikeCollection {
 		const format = new formatManager(message)
 
 		/**
-         *  Auto-strike penalty such as mute, kick or ban are disabled
-         *  while doing local development to avoid unexpected behaviour.
-         * 
-         *  1-2 points => temporary mute
-         *  3 points => kick
-         *  4+ points lead to permanent ban.
-         * 
-         *  For whoever see this message and want to change the penalties,
-         *  please refer to line 145.
-         *  @strikecollection
+		 * 
+         * @complaintcollection
          */
 
 
@@ -48,21 +40,6 @@ class strikeCollection {
 				"UNAUTHORIZED": {
 					color: palette.crimson,
 					msg: `You aren't authorized to use the feature.`
-				},
-
-				"MUTED": {
-					color: palette.lightgreen,
-					msg: `Poor **${opt[0]}** got their first few strikes. I'll mute them for now.`
-				},
-
-				"KICKED": {
-					color: palette.lightgreen,
-					msg: `So far 3 strikes have been landed. Baibai **${opt[0]}**!`
-				},
-
-				"BANNED": {
-					color: palette.lightgreen,
-					msg: `Geez.. **${opt[0]}** strikes already. I've banned **${opt[1]}** out of our place.`
 				},
 
 				"INSIGHTS": {
@@ -123,43 +100,14 @@ class strikeCollection {
 
 			//  Display user's strike history.
 			get view() {
-				return sql.all(`SELECT * FROM strike_list WHERE userId = "${metadata.target.id}" AND strike_type != 'complaint' ORDER BY timestamp DESC`)
+				return sql.all(`SELECT * FROM strike_list WHERE userId = "${metadata.target.id}" AND strike_type = "complaint" ORDER BY timestamp DESC`)
 			}
-
-
-			//  Mute user temporarily.
-			get mute() {
-				if (!env.dev) this.member.addRole(`467171602048745472`)
-				return log({ code: `MUTED` }, metadata.target.user.username)
-			}
-
-
-			//  Kick user temporarily.
-			get kick() {
-				if (!env.dev) this.member.kick()
-				return log({ code: `KICKED` }, metadata.target.user.username)
-			}
-
-
-			//  Ban user permanently.
-			get ban() {
-				if (!env.dev) this.member.ban()
-				return log({ code: `BANNED` }, metadata.records_size, metadata.target.user.username)
-			}
-
-
-			//  Penalties will be given after new strike being added.
-			get penalty() {
-				const v = metadata.records_size
-				return v == 1 ? this.mute : v == 2 ? this.mute : v == 3 ? this.kick : this.ban
-			}
-
 
 			//  Add new user's strike record
 			get register() {
 				logger.info(`${metadata.admin.name} has reported ${metadata.target.id}.`)
-				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason, strike_type)
-                    VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}", "strike")`)
+				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason)
+                    VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}")`)
 			}
 
 			//  Delete user's newest strike record
@@ -170,7 +118,7 @@ class strikeCollection {
                     AND assigned_by = "${metadata.last_entry.assigned_by}"
                     AND userId = "${metadata.last_entry.userId}"
 					AND reason = "${metadata.last_entry.reason}"
-					AND strike_type = "strike"`)
+					AND strike_type = "complaint"`)
 				return log({ code: `ENTRY_DELETED` }, metadata.admin.name, metadata.target.user.username)
 			}
 
@@ -281,11 +229,11 @@ class strikeCollection {
 }
 
 module.exports.help = {
-	start: strikeCollection,
-	name: `strike-collections`,
-	aliases: [`strike`,`strikes`, `strikez`],
+	start: complaintCollection,
+	name: `complaint-collections`,
+	aliases: [`complaint`,`complaints`, `complaintz`],
 	description: `Give a strike to a user`,
-	usage: `strike @user`,
+	usage: `complaint @user`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,

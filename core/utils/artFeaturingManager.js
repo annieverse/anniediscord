@@ -23,6 +23,7 @@ class HeartCollector {
 		this.metadata = {
 			timestamp: Date.now(),
 			featured_channel: Stacks.bot.channels.get(`582808377864749056`),
+			daily_featured_channel: Stacks.bot.channels.get(`642829967176237061`),
 			featured_requirement: 10,
 			main_emoji: `❤`,
 			msg: Stacks.reaction.message,
@@ -245,12 +246,24 @@ class HeartCollector {
         
 		//  Send post to #featured
 		this.logger.info(`${this.metadata.msg.author.username}'s work has been featured.`)
-		return reply(`${this.metadata.caption} \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) \n\u200b`, {
+		reply(`${this.metadata.caption} \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) \n\u200b`, {
 			prebuffer: true,
 			image: this.metadata.artwork,
 			field: this.metadata.featured_channel,
 			customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
 		}) 
+
+		return reply(`${this.metadata.caption} \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) \n\u200b`, {
+			prebuffer: true,
+			image: this.metadata.artwork,
+			field: this.metadata.daily_featured_channel,
+			customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
+		}).then(async msg=>{
+			let newDate = new Date()
+			newDate.setDate(newDate.getDate()+2)
+			let remove_by = newDate.getTime()
+			await this.db.registerDailyFeaturedPost({messageId:msg.id,timestamp:remove_by})
+		})
 	}
 }
 

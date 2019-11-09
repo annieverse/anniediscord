@@ -62,6 +62,13 @@ class MessageController {
         return env.dev && !env.administrator_id.includes(this.message.author.id) ? true : false
     }
 
+    /**
+        * 	Check if user is not authorized in dev mode
+        * 	@isUserInDevEnvironment
+        */
+    get isUserADev() {
+        return env.dev && env.administrator_id.includes(this.message.author.id) ? true : false
+    }
 
     /**
      * 	Check if user has used command-type of message and sent in bot-allowed channel

@@ -5,6 +5,9 @@ module.exports = bot => {
 	const scare = require(`../utils/ScareTheMascot`)
 	let stm = new scare(bot)
 
+	const dailyFeatured = require(`../utils/DailyFeaturedPost`)
+	let fdp = new dailyFeatured(bot)
+
 	//	Extract required part from Client
 	const { db, env, logger } = bot
 
@@ -289,6 +292,11 @@ module.exports = bot => {
 		await stm.eventloop()
 	}
 
+
+	async function removeFeaturedDailyPostLoop(){
+		await fdp.loop()
+	}
+
 	/**
 	 * schedules when to try and remove a limited Shop Role
 	 */
@@ -321,6 +329,9 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
+			// Remove featured daily post
+			removeFeaturedDailyPostLoop()
+
 		} else {
 
 			/**
@@ -338,6 +349,7 @@ module.exports = bot => {
 			stmloop()
 			// Remove limited role module
 			removeLimShopRole()
+
 		}
 	}
 

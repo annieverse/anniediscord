@@ -785,7 +785,18 @@ class databaseUtils {
 		return this
 	}
 
+	registerDailyFeaturedPost({ messageId ,timestamp = 0 }) {
+		sql.run(`
+                INSERT INTO daily_featured_post
+                (message_id, delete_by)
+                VALUES (?, ?)`,
+			[messageId, timestamp]
+		)
+	}
 
+	getRemoveBy(remove_by_date){
+		return this._query(`SELECT message_id FROM daily_featured_post WHERE delete_by <= ?`,`all`,[remove_by_date])
+	}
 
 	get luckyTicketDropRates() {
 		return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
