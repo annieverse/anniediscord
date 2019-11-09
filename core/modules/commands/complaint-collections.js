@@ -211,13 +211,19 @@ class complaintCollection {
 			//  Returns when the user doesn't have admin authority.
 			if (!isAdmin) return log({ code: `UNAUTHORIZED` })
 
+			function ltrim(str) {
+				if (!str) return str
+				return str.replace(/^\s+/g, ``)
+			}
 
 			//  Returns tutorial
 			if (message.content.length <= command.length + 1) return log({ code: `SHORT_GUIDE` })
 
+			// Prepare set of args to get target person
+			let arg = ltrim(message.content.substring(command.length + env.prefix.length + 1))
 
 			//  Returns if target is not valid member.
-			metadata.target = await utils.userFinding(message.content.substring(command.length + env.prefix.length + 1))
+			metadata.target = await utils.userFinding(arg)
 			if (!metadata.target) return log({ code: `INVALID_USER` })
 
 
