@@ -5,7 +5,7 @@ class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
         this.logger = this.bot.logger
-        this.active = false // on/off switch
+        this.active = true // on/off switch
         this.dailyFeaturedChannel = `642829967176237061` //gen1
     }
 
@@ -14,7 +14,6 @@ class DailyFeaturedPost {
             try {
                 await this.delay(1*60*60*1000)
                 await this.run()
-                await this.delay(70*1000)
             } catch(e) {
                 this.logger.error(`Daily Feature Post - Loop broke.`)
                 this.logger.error(e)
@@ -27,8 +26,9 @@ class DailyFeaturedPost {
     }
 
     async run() {
-        let date = (new Date()).getTime()
         let query = Object.values(await this.queries(date))
+        if (!query) return
+        let date = (new Date()).getTime()
         this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages(query).then(msg=>{
             msg.delete()
         })

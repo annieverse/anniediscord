@@ -329,9 +329,6 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
-			// Remove featured daily post
-			removeFeaturedDailyPostLoop()
-
 		} else {
 
 			/**
@@ -350,6 +347,8 @@ module.exports = bot => {
 			// Remove limited role module
 			removeLimShopRole()
 
+			// Remove featured daily post
+			removeFeaturedDailyPostLoop()
 		}
 	}
 
