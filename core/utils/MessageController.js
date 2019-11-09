@@ -71,6 +71,13 @@ class MessageController {
     }
 
     /**
+     * 
+     */
+    get isUserAAdmin(){
+        return (Object.values(this.data.roles.admin)).includes(this.message.author.id) ? true : false
+    }
+
+    /**
      * 	Check if user has used command-type of message and sent in bot-allowed channel
      * 	@isCommandMessage
      */
