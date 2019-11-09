@@ -67,14 +67,14 @@ class MessageController {
         * 	@isUserInDevEnvironment
         */
     get isUserADev() {
-        return env.dev && env.administrator_id.includes(this.message.author.id) ? true : false
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.dev_roles).some(i => this.data.roles.dev_roles[i] == r.id)) ? true : false
     }
 
     /**
      * 
      */
     get isUserAAdmin(){
-        return (Object.values(this.data.roles.admin)).includes(this.message.author.id) ? true : false
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.admin).some(i => this.data.roles.admin[i] == r.id)) ? true : false
     }
 
     /**
