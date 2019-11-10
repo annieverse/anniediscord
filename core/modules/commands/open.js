@@ -294,7 +294,7 @@ module.exports.help = {
     description: `opens a Halloween box.`,
     usage: `open hb`,
     group: `shop`,
-    public: false,
+    public: true,
     required_usermetadata: true,
     multi_user: false
 }
