@@ -4,7 +4,7 @@ class bulkRoleRemove {
 	}
 
 	async execute() {
-		const {message,reply,args,bot:{logger},fullargs} = this.stacks
+		const {message,reply,args,bot:{logger}} = this.stacks
 		if (!args) return reply(`Please supply the roles by taging`)
 		try {
 			let roles = message.mentions.roles
