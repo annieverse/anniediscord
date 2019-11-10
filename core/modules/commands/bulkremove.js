@@ -4,7 +4,8 @@ class bulkRoleRemove {
 	}
 
 	async execute() {
-		const {message,reply,args,bot:{logger}} = this.stacks
+		const { message, reply, args, bot: { logger }, isEventMember, code: { UNAUTHORIZED_ACCESS}} = this.stacks
+		if (!isEventMember && !isModerator) return reply(UNAUTHORIZED_ACCESS)
 		if (!args) return reply(`Please supply the roles by taging`)
 		try {
 			let roles = message.mentions.roles
@@ -31,9 +32,9 @@ module.exports.help = {
 	name:`bulkremove`,
 	aliases: [`bulkroleremove`], 
 	description: `Removes a role from everybody that has it`,
-	usage: `TemplateCommand`,
+	usage: `bulkremove <@role>...`,
 	group: `Admin`,
-	public: false,
+	public: true,
 	require_usermetadata: true,
 	multi_user: false
 }
