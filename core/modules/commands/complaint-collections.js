@@ -44,12 +44,12 @@ class complaintCollection {
 
 				"INSIGHTS": {
 					color: palette.crimson,
-					msg: `Hey **${opt[0]}**, here's the strike data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new strike. Type \`-\` to remove the most recent strike.`
+					msg: `Hey **${opt[0]}**, here's the complaint data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new complaint. Type \`-\` to remove the most recent complaint.`
 				},
 
 				"NEW_ENTRY_SUCCESSFUL": {
 					color: palette.darkmatte,
-					msg: `Thankyou **${opt[0]}**! your report has been registered.`
+					msg: `Thankyou **${opt[0]}**! your report for **${opt[1]}** has been registered.`
 				},
 
 				"ENTRY_DELETED": {
@@ -69,12 +69,12 @@ class complaintCollection {
 
 				"NO_RECORDS_FOUND": {
 					color: palette.darkmatte,
-					msg: `**${opt[0]}** doesn't have any strike record yet. Type \`+ <reason>\` to add new strike.`
+					msg: `**${opt[0]}** doesn't have any complaint record yet. Type \`+ <reason>\` to add new complaint.`
 				},
 
 				"SHORT_GUIDE": {
 					color: palette.darkmatte,
-					msg: `You are authorized to access the strike-system. Each strike point will automatically give them
+					msg: `You are authorized to access the complaint-system. Each complaint point will automatically give them
                 such as temporary mute, kick and ban so please use it wisely.`
 				},
 
@@ -89,7 +89,7 @@ class complaintCollection {
 		}
 
 
-		//  strike-collection utils.
+		//  complaint-collection utils.
 		class Query {
 
 
@@ -98,21 +98,21 @@ class complaintCollection {
 			}
 
 
-			//  Display user's strike history.
+			//  Display user's complaint history.
 			get view() {
 				return sql.all(`SELECT * FROM strike_list WHERE userId = "${metadata.target.id}" AND strike_type = "complaint" ORDER BY timestamp DESC`)
 			}
 
-			//  Add new user's strike record
+			//  Add new user's complaint record
 			get register() {
 				logger.info(`${metadata.admin.name} has reported ${metadata.target.id}.`)
 				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason)
                     VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}")`)
 			}
 
-			//  Delete user's newest strike record
+			//  Delete user's newest complaint record
 			get unregister() {
-				logger.info(`${metadata.admin.name} has removed a strike from ${metadata.target.id}.`)
+				logger.info(`${metadata.admin.name} has removed a complaint from ${metadata.target.id}.`)
 				sql.run(`DELETE FROM strike_list
                     WHERE timestamp = ${metadata.last_entry.timestamp}
                     AND assigned_by = "${metadata.last_entry.assigned_by}"
@@ -120,6 +120,10 @@ class complaintCollection {
 					AND reason = "${metadata.last_entry.reason}"
 					AND strike_type = "complaint"`)
 				return log({ code: `ENTRY_DELETED` }, metadata.admin.name, metadata.target.user.username)
+			}
+
+			get confirm(){
+				return log({ code: `NEW_ENTRY_SUCCESSFUL` }, metadata.admin.name, metadata.target.user.username)
 			}
 
 		}
@@ -134,7 +138,7 @@ class complaintCollection {
 			if (res_view.length > 0) metadata.last_entry = res_view[0]
 
 
-			//  Display parsed result from available user's strike record.
+			//  Display parsed result from available user's complaint record.
 			const insights = () => {
 				let str = `Total **${metadata.records_size}** records were found
             The recent one was reported by **${bot.users.get(res_view[0].assigned_by).username}**
@@ -172,19 +176,25 @@ class complaintCollection {
 
 			collector.on(`collect`, async (msg) => {
 				let input = msg.content
+				let imagelinks = []
 
-
-				//  Register new strike record
+				//  Register new complaint record
 				if (input.startsWith(`+`)) {
-					metadata.reason = input.substring(1).trim()
+					metadata.reason = input.substring(1).trim()+` `
 					metadata.current_date = Date.now()
 					metadata.records_size = res_view.length + 1
-
+					if (msg.attachments.size > 0) {
+						msg.attachments.forEach(element => {
+							imagelinks.push(element.url)
+						})
+						metadata.reason += imagelinks.join(`\n`)
+					}
 					// Store new record.
 					query.register
 
-					//  Give penalty to the user based on their total records.
-					query.penalty
+					// send a message leting the user know the record has been stored
+					query.confirm
+
 					collector.stop()
 				}
 				else if (input.startsWith(`-`)) {
@@ -206,10 +216,10 @@ class complaintCollection {
 		//  Initial process
 		const run = async () => {
 
-			const { isAdmin } = this.stacks
+			const { isAdmin, isStaff } = this.stacks
 
 			//  Returns when the user doesn't have admin authority.
-			if (!isAdmin) return log({ code: `UNAUTHORIZED` })
+			if (!isAdmin && !isStaff) return log({ code: `UNAUTHORIZED` })
 
 			function ltrim(str) {
 				if (!str) return str
@@ -238,7 +248,7 @@ module.exports.help = {
 	start: complaintCollection,
 	name: `complaint-collections`,
 	aliases: [`complaint`,`complaints`, `complaintz`],
-	description: `Give a strike to a user`,
+	description: `Give a complaint to a user`,
 	usage: `complaint @user`,
 	group: `Admin`,
 	public: true,
