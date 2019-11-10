@@ -14,7 +14,7 @@ class bulkRoleRemove {
 				message.guild.members.forEach(member => {
 					if (!member.roles.find(t => t.name == r.name)) return
 					logger.info(`${member.user.tag} has role ${r.name}`)
-					//member.removeRole(role.id)
+					member.removeRole(role.id)
 				})
 				roleNames.push(role.name)
 			})			
