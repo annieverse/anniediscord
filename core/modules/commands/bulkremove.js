@@ -4,7 +4,7 @@ class bulkRoleRemove {
 	}
 
 	async execute() {
-		const { message, reply, args, bot: { logger }, isEventMember, code: { UNAUTHORIZED_ACCESS}} = this.stacks
+		const { message, reply, args, bot: { logger }, isEventMember, isModerator, code: { UNAUTHORIZED_ACCESS}} = this.stacks
 		if (!isEventMember && !isModerator) return reply(UNAUTHORIZED_ACCESS)
 		if (!args) return reply(`Please supply the roles by taging`)
 		try {
