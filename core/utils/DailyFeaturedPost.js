@@ -6,19 +6,19 @@ class DailyFeaturedPost {
         this.bot = bot
         this.logger = this.bot.logger
         this.active = true // on/off switch
-        this.dailyFeaturedChannel = `642829967176237061` //gen1
+        this.dailyFeaturedChannel = `642829967176237061` //gen
     }
 
     async loop() {
         while(this.active) {
             try {
-                await this.delay(1 * 5 * 60 * 1000)
+                await this.delay(1 * 10 * 60 * 1000)
                 await this.run()
-                await this.delay(1 * 5 * 60 * 1000)
+                await this.delay(1 * 10 * 60 * 1000)
                 await this.cleanDB()
             } catch(e) {
                 this.logger.error(`Daily Feature Post - Loop broke.`)
-                this.logger.error(e)
+                this.logger.error(e.stack)
             }
         }
     }
@@ -34,10 +34,13 @@ class DailyFeaturedPost {
     async run() {
         let date = (new Date()).getTime()
         let query = Object.values(await this.queries(date))
-        if (!query) return
-        this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages(query).then(msg=>{
-            msg.delete()
-        })
+        if (query) {
+            query.forEach(element=>{
+                this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element.message_id).then(msg => {
+                    msg.delete()
+                }).catch(err=> this.logger.error(`[DailyFeaturedPost.js] Delete message ${err}`))
+            })
+        }
     }
 
     async cleanDB(){
@@ -45,8 +48,9 @@ class DailyFeaturedPost {
         date.setMinutes(date.getMinutes()-5)
         date = date.getTime()
         let query = Object.values(await this.queries(date))
-        if (!query) return
-        await this.deleteRecord(date)
+        if (query) {
+            await this.deleteRecord(date)
+        }
     }
 
     async delay(ms) {

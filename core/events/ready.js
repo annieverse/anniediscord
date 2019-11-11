@@ -304,7 +304,7 @@ module.exports = bot => {
         cron.schedule(`0 1 */30 * * *`, retriveData() )
         async function retriveData(){
             let data = await db.retrieveTimeData
-			if (data != undefined) {
+			if (!data) {
 				data.forEach(element => {
 					bot.members.get(element.user_id).removeRole(element.role_id)
 				})
@@ -329,6 +329,8 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
+			// Remove featured daily post
+			removeFeaturedDailyPostLoop()
 		} else {
 
 			/**
@@ -347,8 +349,6 @@ module.exports = bot => {
 			// Remove limited role module
 			removeLimShopRole()
 
-			// Remove featured daily post
-			removeFeaturedDailyPostLoop()
 		}
 	}
 
