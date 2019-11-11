@@ -78,6 +78,13 @@ class MessageController {
     }
 
     /**
+     * 
+     */
+    get isUserAEventMember() {
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.events).some(i => this.data.roles.events[i] == r.id)) ? true : false
+    }
+
+    /**
      * 	Check if user has used command-type of message and sent in bot-allowed channel
      * 	@isCommandMessage
      */
