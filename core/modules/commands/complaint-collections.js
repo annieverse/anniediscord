@@ -253,5 +253,6 @@ module.exports.help = {
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,
-	multi_user: true
+	multi_user: true,
+	special_channels: [`603287083846729728`, `622038747290009620`,`639148941362987008`]
 }

@@ -28,11 +28,17 @@ class modulesLoader {
 
 			//	Get all the .js files
 			let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
-
+			var publicCommand = 0
+			var privateCommand = 0
 
 			//	Recursively registering commands
 			jsfile.forEach((f) => {
 				let props = require(`../modules/commands/${f}`)
+				if (props.help.public){
+					publicCommand++
+				}else{
+					privateCommand++
+				}
 				Client.commands.set(props.help.name, props)
 				props.help.aliases.forEach(alias => {
 					Client.aliases.set(alias, props.help.name)
@@ -41,7 +47,9 @@ class modulesLoader {
 
 
 			//	Log & Return the updated client
-			logger.info(`${jsfile.length} command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
+			//logger.info(`${jsfile.length} command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
+			logger.info(`${publicCommand} public command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
+			logger.info(`${privateCommand} private command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
 			return Client
 
 		}
