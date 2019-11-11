@@ -798,6 +798,10 @@ class databaseUtils {
 		return this._query(`SELECT message_id FROM daily_featured_post WHERE delete_by <= ?`,`all`,[remove_by_date])
 	}
 
+	deleteRecord(remove_by_date){
+		return this._query(`DELETE FROM daily_featured_post WHERE delete_by <= ?`,`run`,[remove_by_date])
+	}
+
 	get luckyTicketDropRates() {
 		return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
 	}
