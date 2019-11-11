@@ -45,15 +45,16 @@ class uploadFile {
 		if (message.attachments.size === 0) return reply(`I'm sorry but it seems you didnt include an attachment with your request`)
 
 		// upload the file and save filepath in varible
-		let filepath = await this.uploadFile()
+		//let filepath = await this.uploadFile()
+		await this.uploadFile()
 		// wait for file to be uploaded
 		await this.delay(5000)
 
 		// buffer image
-		await this.bufferFile(filepath)
+		//await this.bufferFile(filepath)
 
 		//remove the file from the filesystem (to save on disk space)
-		await this.removeFile(filepath)
+		//await this.removeFile(filepath)
 
 		return reply(`Your image file has been upload and saved`)
 	}
