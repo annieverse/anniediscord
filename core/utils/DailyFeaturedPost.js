@@ -32,9 +32,8 @@ class DailyFeaturedPost {
     }
 
     async run() {
-        let query = Object.values(await this.queries(date))
-        if (!query) return
         let date = (new Date()).getTime()
+        
         this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages(query).then(msg=>{
             msg.delete()
         })
@@ -44,6 +43,8 @@ class DailyFeaturedPost {
         let date = (new Date())
         date.setMinutes(date.getMinutes()-5)
         date = date.getTime()
+        let query = Object.values(await this.queries(date))
+        if (!query) return
         await this.deleteRecord(date)
     }
 
