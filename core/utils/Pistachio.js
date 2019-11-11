@@ -137,7 +137,7 @@ class Pistachio {
 			 * @hasRole
 			 */
 			container.hasRole = (rolename = ``) => {
-				return message.member.roles.find(role => role.name === rolename)
+				return message.member.roles.find(r => r.name === rolename || r.id === rolename)
 			}
 
 			/**
@@ -147,7 +147,7 @@ class Pistachio {
 			 * @addRole
 			 */
 			container.addRole = (rolename = ``, user = message.author.id) => {
-				return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename))
+				return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
 			}
 
 			/**
@@ -157,7 +157,7 @@ class Pistachio {
 			 * @addRole
 			 */
 			container.removeRole = (rolename = ``, user = message.author.id) => {
-				return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename))
+				return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
 			}
 		}
 

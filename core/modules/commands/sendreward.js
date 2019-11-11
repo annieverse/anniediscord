@@ -64,14 +64,13 @@ class sendEventReward {
 					metadata.selected_group = metadata.keywords.filter(v => v.includes(input))[0][0]
 					//  Store item rewards reference
 					metadata.selected_rewards = metadata.packages[metadata.selected_group]
-					
 
 					//  Store micro-items reward
 					await db.setUser(author.id).deliverRewardItems(metadata.selected_rewards)
 					//  Add role if package contains role reward
 					if (metadata.selected_rewards.role) {
 						addRole(metadata.selected_rewards.role, author.id)
-						addRole(roles.weekly_winner,author.id)
+						addRole(roles.weekly_winner, author.id)
 					}
                 
 					//  Successful
