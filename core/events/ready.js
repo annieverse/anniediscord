@@ -5,6 +5,9 @@ module.exports = bot => {
 	const scare = require(`../utils/ScareTheMascot`)
 	let stm = new scare(bot)
 
+	const dailyFeatured = require(`../utils/DailyFeaturedPost`)
+	let fdp = new dailyFeatured(bot)
+
 	//	Extract required part from Client
 	const { db, env, logger } = bot
 
@@ -289,6 +292,11 @@ module.exports = bot => {
 		await stm.eventloop()
 	}
 
+
+	async function removeFeaturedDailyPostLoop(){
+		await fdp.loop()
+	}
+
 	/**
 	 * schedules when to try and remove a limited Shop Role
 	 */
@@ -296,10 +304,11 @@ module.exports = bot => {
         cron.schedule(`0 1 */30 * * *`, retriveData() )
         async function retriveData(){
             let data = await db.retrieveTimeData
-            if(!data) return
-            data.forEach(element => {
-                bot.members.get(element.user_id).removeRole(element.role_id)
-            })
+			if (!data) {
+				data.forEach(element => {
+					bot.members.get(element.user_id).removeRole(element.role_id)
+				})
+			}
         }
     }
 	/**
@@ -328,6 +337,7 @@ module.exports = bot => {
 			logger.info(`${bot.user.username}up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
+			
 
 			setupDatabase()
 			roleChange()
@@ -336,6 +346,9 @@ module.exports = bot => {
 			stmloop()
 			// Remove limited role module
 			removeLimShopRole()
+
+			// Remove featured daily post
+			removeFeaturedDailyPostLoop()
 		}
 	}
 

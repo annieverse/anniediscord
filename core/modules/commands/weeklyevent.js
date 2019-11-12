@@ -64,7 +64,7 @@ module.exports.help = {
 	description: `check the time left on the weekly event`,
 	usage: `weeklyevent`,
 	group: `general`,
-	public: false,
+	public: true,
 	require_usermetadata: false,
 	multi_user: false
 }

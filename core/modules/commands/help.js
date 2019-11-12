@@ -379,7 +379,7 @@ module.exports.help = {
 	description: `all avaible commands`,
 	usage: `help`,
 	group: `general`,
-	public: false,
+	public: true,
 	require_usermetadata: true,
 	multi_user: false
 }

@@ -32,7 +32,6 @@ class Limitedshop {
 		let shoptype
 		let shopdata
 		let shopname
-		let shopemote
 		let shopcurrency
 		let cleartimeout
 		let db
@@ -54,7 +53,6 @@ class Limitedshop {
 			shoptype = type ? type : getShopType(shopchannel.name)
 			shopdata = events[shoptype]
 			shopname = shopdata ? shopdata.emoteUnicode + `┋` + shopdata.shopname.replace(/ /g, channelspace) : shoptype + channelspace + `shop`
-			shopemote = shopdata ? emoji(shopdata.emote) : emoji(`AnnieHype`)
 			shopcurrency = shopdata ? shopdata.currency : `artcoins`
 		}
 
@@ -67,7 +65,7 @@ class Limitedshop {
 			reply(`Stocking the shop...`)
 
 			const page = new Discord.RichEmbed()
-				.setDescription(`The ` + shopname + ` is here! ` + shopemote)
+				.setDescription(`The ` + shopname + ` is here! `)
 				.setColor(palette.darkmatte)
 				.attachFile(`core/images/shop-` + shoptype + `-cov.png`)
 				.setImage(`https://i.ibb.co/2tXV3T8/aau-halloweenshop-tutorialbanner.png`)//TODO placeholder
@@ -148,9 +146,12 @@ class Limitedshop {
 		 * Also limit is at 100 messages according to docs
 		 */
 		const clear = () => {
-			shopchannel.fetchMessages({limit:100}).then((msgs) => {
+			shopchannel.fetchMessages({limit:100}).then(async (msgs) => {
 				if (msgs.size>1) {
-					shopchannel.bulkDelete(msgs.size - 1)
+					await shopchannel.bulkDelete(msgs.size - 1)
+				}
+				if (msgs.size==100) {
+					clear()
 				}
 			})
 		}

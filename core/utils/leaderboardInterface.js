@@ -37,7 +37,7 @@ const render = async (stacks, metadata) => {
 				this.group.push({
 					id: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `userId`),
 					xp: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `currentexp`),
-					lv: await dbmanager.indexRanking(`userdata`, `currentexp`, i, `level`)
+					lv: (await dbmanager.xpFormula(await dbmanager.indexRanking(`userdata`, `currentexp`, i, `currentexp`))).level
 				})
 			}
 		},
@@ -332,9 +332,8 @@ const render = async (stacks, metadata) => {
 
 		//  Artcoins leaderboard
 		async ac() {
-			this.removeMemberFromListACgroup(`277266191540551680`)
-
 			metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`
+			if ((await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`, `277266191540551680`)) < 10) this.removeMemberFromListACgroup(`277266191540551680`)
 			if (user.authorindex > (await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`, `277266191540551680`))) user.authorindex-=1
 			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)]
 

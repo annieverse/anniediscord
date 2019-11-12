@@ -12,6 +12,10 @@ class Gift {
 			chocolate_bar: 1,
 			chocolate_box: 3,
 			teddy_bear: 5,
+			candle: 2,
+			chocolate: 2,
+			cookie: 2,
+			candies: 2
 		}
 	}
 

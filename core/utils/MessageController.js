@@ -62,6 +62,27 @@ class MessageController {
         return env.dev && !env.administrator_id.includes(this.message.author.id) ? true : false
     }
 
+    /**
+        * 	Check if user is not authorized in dev mode
+        * 	@isUserInDevEnvironment
+        */
+    get isUserADev() {
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.dev_roles).some(i => this.data.roles.dev_roles[i] == r.id)) ? true : false
+    }
+
+    /**
+     * 
+     */
+    get isUserAAdmin(){
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.admin).some(i => this.data.roles.admin[i] == r.id)) ? true : false
+    }
+
+    /**
+     * 
+     */
+    get isUserAEventMember() {
+        return this.message.member.roles.find(r => Object.keys(this.data.roles.events).some(i => this.data.roles.events[i] == r.id)) ? true : false
+    }
 
     /**
      * 	Check if user has used command-type of message and sent in bot-allowed channel
@@ -290,6 +311,10 @@ class MessageController {
 
     get pingHugo(){
         return this.message.content.trim().toLowerCase().includes(`coffee`) ? true : false
+    }
+
+    get isInGenTwo(){
+        return this.message.channel.id == `548950548343291914` ? true : false
     }
 
 

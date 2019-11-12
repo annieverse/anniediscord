@@ -4,7 +4,7 @@ const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 const env = require(`../../../.data/environment`)
-class strikeCollection {
+class complaintCollection {
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
@@ -14,16 +14,8 @@ class strikeCollection {
 		const format = new formatManager(message)
 
 		/**
-         *  Auto-strike penalty such as mute, kick or ban are disabled
-         *  while doing local development to avoid unexpected behaviour.
-         * 
-         *  1-2 points => temporary mute
-         *  3 points => kick
-         *  4+ points lead to permanent ban.
-         * 
-         *  For whoever see this message and want to change the penalties,
-         *  please refer to line 145.
-         *  @strikecollection
+		 * 
+         * @complaintcollection
          */
 
 
@@ -50,29 +42,14 @@ class strikeCollection {
 					msg: `You aren't authorized to use the feature.`
 				},
 
-				"MUTED": {
-					color: palette.lightgreen,
-					msg: `Poor **${opt[0]}** got their first few strikes. I'll mute them for now.`
-				},
-
-				"KICKED": {
-					color: palette.lightgreen,
-					msg: `So far 3 strikes have been landed. Baibai **${opt[0]}**!`
-				},
-
-				"BANNED": {
-					color: palette.lightgreen,
-					msg: `Geez.. **${opt[0]}** strikes already. I've banned **${opt[1]}** out of our place.`
-				},
-
 				"INSIGHTS": {
 					color: palette.crimson,
-					msg: `Hey **${opt[0]}**, here's the strike data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new strike. Type \`-\` to remove the most recent strike.`
+					msg: `Hey **${opt[0]}**, here's the complaint data for **${opt[1]}**\n\n${opt[2]}\n\nType \`+ <reason>\` to add new complaint. Type \`-\` to remove the most recent complaint.`
 				},
 
 				"NEW_ENTRY_SUCCESSFUL": {
 					color: palette.darkmatte,
-					msg: `Thankyou **${opt[0]}**! your report has been registered.`
+					msg: `Thankyou **${opt[0]}**! your report for **${opt[1]}** has been registered.`
 				},
 
 				"ENTRY_DELETED": {
@@ -92,12 +69,12 @@ class strikeCollection {
 
 				"NO_RECORDS_FOUND": {
 					color: palette.darkmatte,
-					msg: `**${opt[0]}** doesn't have any strike record yet. Type \`+ <reason>\` to add new strike.`
+					msg: `**${opt[0]}** doesn't have any complaint record yet. Type \`+ <reason>\` to add new complaint.`
 				},
 
 				"SHORT_GUIDE": {
 					color: palette.darkmatte,
-					msg: `You are authorized to access the strike-system. Each strike point will automatically give them
+					msg: `You are authorized to access the complaint-system. Each complaint point will automatically give them
                 such as temporary mute, kick and ban so please use it wisely.`
 				},
 
@@ -112,7 +89,7 @@ class strikeCollection {
 		}
 
 
-		//  strike-collection utils.
+		//  complaint-collection utils.
 		class Query {
 
 
@@ -121,57 +98,32 @@ class strikeCollection {
 			}
 
 
-			//  Display user's strike history.
+			//  Display user's complaint history.
 			get view() {
-				return sql.all(`SELECT * FROM strike_list WHERE userId = "${metadata.target.id}" AND strike_type != 'complaint' ORDER BY timestamp DESC`)
+				return sql.all(`SELECT * FROM strike_list WHERE userId = "${metadata.target.id}" AND strike_type = "complaint" ORDER BY timestamp DESC`)
 			}
 
-
-			//  Mute user temporarily.
-			get mute() {
-				if (!env.dev) this.member.addRole(`467171602048745472`)
-				return log({ code: `MUTED` }, metadata.target.user.username)
-			}
-
-
-			//  Kick user temporarily.
-			get kick() {
-				if (!env.dev) this.member.kick()
-				return log({ code: `KICKED` }, metadata.target.user.username)
-			}
-
-
-			//  Ban user permanently.
-			get ban() {
-				if (!env.dev) this.member.ban()
-				return log({ code: `BANNED` }, metadata.records_size, metadata.target.user.username)
-			}
-
-
-			//  Penalties will be given after new strike being added.
-			get penalty() {
-				const v = metadata.records_size
-				return v == 1 ? this.mute : v == 2 ? this.mute : v == 3 ? this.kick : this.ban
-			}
-
-
-			//  Add new user's strike record
+			//  Add new user's complaint record
 			get register() {
 				logger.info(`${metadata.admin.name} has reported ${metadata.target.id}.`)
-				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason, strike_type)
-                    VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}", "strike")`)
+				return sql.run(`INSERT INTO strike_list(timestamp, assigned_by, userId, reason)
+                    VALUES (${metadata.current_date}, "${metadata.admin.id}", "${metadata.target.id}", "${metadata.reason}")`)
 			}
 
-			//  Delete user's newest strike record
+			//  Delete user's newest complaint record
 			get unregister() {
-				logger.info(`${metadata.admin.name} has removed a strike from ${metadata.target.id}.`)
+				logger.info(`${metadata.admin.name} has removed a complaint from ${metadata.target.id}.`)
 				sql.run(`DELETE FROM strike_list
                     WHERE timestamp = ${metadata.last_entry.timestamp}
                     AND assigned_by = "${metadata.last_entry.assigned_by}"
                     AND userId = "${metadata.last_entry.userId}"
 					AND reason = "${metadata.last_entry.reason}"
-					AND strike_type = "strike"`)
+					AND strike_type = "complaint"`)
 				return log({ code: `ENTRY_DELETED` }, metadata.admin.name, metadata.target.user.username)
+			}
+
+			get confirm(){
+				return log({ code: `NEW_ENTRY_SUCCESSFUL` }, metadata.admin.name, metadata.target.user.username)
 			}
 
 		}
@@ -186,7 +138,7 @@ class strikeCollection {
 			if (res_view.length > 0) metadata.last_entry = res_view[0]
 
 
-			//  Display parsed result from available user's strike record.
+			//  Display parsed result from available user's complaint record.
 			const insights = () => {
 				let str = `Total **${metadata.records_size}** records were found
             The recent one was reported by **${bot.users.get(res_view[0].assigned_by).username}**
@@ -224,19 +176,25 @@ class strikeCollection {
 
 			collector.on(`collect`, async (msg) => {
 				let input = msg.content
+				let imagelinks = []
 
-
-				//  Register new strike record
+				//  Register new complaint record
 				if (input.startsWith(`+`)) {
-					metadata.reason = input.substring(1).trim()
+					metadata.reason = input.substring(1).trim()+` `
 					metadata.current_date = Date.now()
 					metadata.records_size = res_view.length + 1
-
+					if (msg.attachments.size > 0) {
+						msg.attachments.forEach(element => {
+							imagelinks.push(element.url)
+						})
+						metadata.reason += imagelinks.join(`\n`)
+					}
 					// Store new record.
 					query.register
 
-					//  Give penalty to the user based on their total records.
-					query.penalty
+					// send a message leting the user know the record has been stored
+					query.confirm
+
 					collector.stop()
 				}
 				else if (input.startsWith(`-`)) {
@@ -258,10 +216,10 @@ class strikeCollection {
 		//  Initial process
 		const run = async () => {
 
-			const { isAdmin } = this.stacks
+			const { isAdmin, isStaff } = this.stacks
 
 			//  Returns when the user doesn't have admin authority.
-			if (!isAdmin) return log({ code: `UNAUTHORIZED` })
+			if (!isAdmin && !isStaff) return log({ code: `UNAUTHORIZED` })
 
 			function ltrim(str) {
 				if (!str) return str
@@ -287,13 +245,14 @@ class strikeCollection {
 }
 
 module.exports.help = {
-	start: strikeCollection,
-	name: `strike-collections`,
-	aliases: [`strike`,`strikes`, `strikez`],
-	description: `Give a strike to a user`,
-	usage: `strike @user`,
+	start: complaintCollection,
+	name: `complaint-collections`,
+	aliases: [`complaint`,`complaints`, `complaintz`],
+	description: `Give a complaint to a user`,
+	usage: `complaint @user`,
 	group: `Admin`,
 	public: true,
 	required_usermetadata: true,
-	multi_user: true
+	multi_user: true,
+	special_channels: [`603287083846729728`, `622038747290009620`,`639148941362987008`]
 }

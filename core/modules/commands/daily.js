@@ -20,7 +20,7 @@ class Daily {
 	async execute() {
 		const {bot, reply, palette, name, emoji, commanifier, code:{DAILY}, bot:{db}, meta: { author, data } } = this.stacks
 		let metadata = {
-			cooldown: 8.64e+7,
+			cooldown: 8.28e+7,//23 hours
 			streakcooldown: 25.92e+7,
 			amount: 250,
 			skill: bot.cards.poppy_card.skills.main,

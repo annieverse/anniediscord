@@ -70,7 +70,7 @@ class shop {
 		async function run() {
 			await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 9]`, `Unique`, `artcoins`, `price < 130`)
 			await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 9]`, `Covers`, `magical_paper`, `price < 6`)
-			await interface_page(`These are our general items!`, links.ticket, `[3 / 9]`, `Tickets`, `artcoins`, `_rowid_ < 3`)
+			await interface_page(`These are our general items!`, links.ticket, `[3 / 9]`, `Tickets`, `artcoins`, `unique_type != "Exp_booster"`)
 			await interface_page(`Boost your social activities!`, links.expbooster, `[4 / 9]`, `Tickets`, `artcoins`, `_rowid_ > 2`, `name DESC`)
 			await interface_page(`Customize your card theme!`, links.skin, `[5 / 9]`, `Skins`, `artcoins`)
 			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 9]`, `Badges`, `artcoins`)

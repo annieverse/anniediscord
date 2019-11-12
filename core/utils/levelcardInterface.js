@@ -30,7 +30,7 @@ async function profile(stacks, member) {
       */
 	const userdata = await collection.userdata()
 	const user = {
-		id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp,
+		id: userdata.userId, cur: userdata.currentexp, max: userdata.maxexp, min: userdata.minexp,
 		crv: userdata.nextexpcurve, lvl: userdata.level,
 		rep: userdata.reputations, des: userdata.description, ui: userdata.interfacemode,
 		prt: userdata.partner, rtg: userdata.rating, likecount: userdata.liked_counts,
@@ -61,10 +61,12 @@ async function profile(stacks, member) {
 	let startPos_y = 15
 	let barlength_xp = canvas_x - 80
 
-	//PAN's attempt
-	let PanCurrent = user.crv === 150 ? user.max - (user.max - user.cur) : ((user.crv - 200) - (user.max - user.cur))
+	//PAN's attempt	
+	let PanCurrent = user.cur <= user.min ? 0 : (user.cur - user.min) / (user.crv)
 	const { body: avatar } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const calculatedBar = await configProfile.barSize(PanCurrent, user.max, user.crv, barlength_xp)
+	
+
+	const calculatedBar = await configProfile.barSize(PanCurrent, barlength_xp)
 	const rankTitle = await configRank.ranksCheck(user.lvl).title
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
@@ -224,14 +226,14 @@ async function profile(stacks, member) {
 		.setColor(Color(user.clr).desaturate(0.2))
 		.setTextFont(`20pt RobotoBold`)
 	if (user.crv === 150) {
-		canv.addText(`${configFormat.getPercentage(PanCurrent, user.max)}%`, calculatedBar + 20, 135)
+		canv.addText(`${configFormat.getPercentage(PanCurrent, 1)}%`, calculatedBar + 20, 135)
 	}
 	else if (configFormat.getPercentage(PanCurrent, user.crv) >= 90) {
-		canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar + 20, 135)
+		canv.addText(`${configFormat.getPercentage(PanCurrent, 1)}%`, calculatedBar + 20, 135)
 
 	}
 	else {
-		canv.addText(`${configFormat.getPercentage(PanCurrent, user.crv)}%`, calculatedBar + 20, 135)
+		canv.addText(`${configFormat.getPercentage(PanCurrent,1)}%`, calculatedBar + 20, 135)
 
 	}
 

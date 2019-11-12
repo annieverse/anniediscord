@@ -1,29 +1,18 @@
 {
     "team_leads":{
-        "internal_affairs": "",
         "channel_overseer": "459911406729560064",
         "art_mentor": "591061405776609286",
-        "public_relation": "",
-        "social_media": "",
-        "art_design": "",
         "development": "591061406548230145",
         "events": "591050124114001952"  
     },
     "teams": {
-        "internal_affairs": "",
         "channel_overseer": "551603523070984222",
         "art_mentor": "512464745022881792",
-        "public_relation": "",
-        "social_media": "",
-        "art_design": "",
         "development": "502843277041729546",
         "events": "507362015254413313"
     },
     "admin":{
         "creative_council": "465587578327007233",
-        "administration_manager": "",
-        "communication_manager": "",
-        "creative_assembly_manager": "",
         "grand_master":"459936023498063902",
         "Lead_overseer":"459911406729560064",
         "channel_overseer":"551603523070984222"
@@ -58,5 +47,6 @@
         "devMem":"502843277041729546"
     },
     "nitro_booster":"585550404197285889",
-    "weekly_winner":"634110914785837066"
+    "weekly_winner":"634110914785837066",
+    "absence_ticket":"640977077990064128"
 }

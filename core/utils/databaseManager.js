@@ -111,7 +111,7 @@ class databaseUtils {
 	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
 	 *  @param {String|ID} userId user id
 	 */
-	async _transforInventoryCover({ itemId, value = 1, operation = `SET`, userId = this.id }) {
+	async _transforInventory({ itemId, value = 1, operation = `SET`, userId = this.id }) {
 		//	Return if itemId is not specified
 		if (!itemId) return { stored: false }
 		let res = {
@@ -133,7 +133,7 @@ class databaseUtils {
 			)
 		}
 
-		logger.info(`[._transforInventoryCover][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		logger.info(`[._transforInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
 		return { stored: true }
 	}
 
@@ -451,6 +451,14 @@ class databaseUtils {
 			`)
 	}
 
+	async panGift() {
+		return sql.run(`
+				UPDATE item_inventory
+				SET quantity = quantity + 20 
+				WHERE item_id = 102
+			`)
+	}
+
 	//  Accepts one level of an object. Returns sql-like string.
 	toQuery(data) {
 		let res = ``
@@ -475,11 +483,11 @@ class databaseUtils {
 	}
 
 	get cardItemIds() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ?`, `all`, [`Card`,`candies`])
+		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ? AND rarity = 5`, `all`, [`Card`,`candies`])
 	}
 
 	get recycleableItems() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? AND price_type != ?`, `all`, [`Card`,`Shard`, `candies`])
+		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? OR type = ? AND price_type != ?`, `all`, [`Foods`,`Shard`, `Materials`, `candies`])
 	}
 	
 	/**
@@ -592,12 +600,29 @@ class databaseUtils {
 		,[data,this.id])
 	}
 
-	get getCovers(){
+	setBadge({slot = `slot1`, item = null}){
+		return this._query(`UPDATE userbadges 
+            SET ${slot} = ?
+			WHERE userId = ?
+		`
+			, `run`
+			, [item, this.id])
+	}
+
+	get getCovers() {
 		return this._query(`SELECT * FROM itemlist,item_inventory 
 			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
-			,`all`
-			,[this.id,`Covers`]
-			)
+			, `all`
+			, [this.id, `Covers`]
+		)
+	} 
+
+	get getBadges() {
+		return this._query(`SELECT * FROM itemlist,item_inventory 
+			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
+			, `all`
+			, [this.id, `Badges`]
+		)
 	}
 
 	get activeCover(){
@@ -607,6 +632,15 @@ class databaseUtils {
 			,`get`
 			,[this.id]
 			)
+	}
+
+	get activeBadges() {
+		return this._query(`SELECT *
+			FROM userbadges
+			WHERE userId = ?`
+			, `get`
+			, [this.id]
+		)
 	}
 
 	setCover(data){
@@ -621,40 +655,14 @@ class databaseUtils {
 		sql.run(`UPDATE userdata 
             SET cover = "${newvalue.alias}"
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			,`run`
-			,[newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId })
 	}
 
 	updateSticker(newvalue){
 		sql.run(`UPDATE userdata 
             SET sticker = "${newvalue.alias}"
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			, `run`
-			, [newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId })
 	}
 
 	async stickerTheme(data){
@@ -683,20 +691,7 @@ class databaseUtils {
 		sql.run(`UPDATE userbadges 
             SET ${slotkey[slotvalue.indexOf(null)]} = "${newvalue.alias}" 
 			WHERE userId = ${this.id}`)
-		this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-			, `run`
-			, { $userId: this.id, $itemId: newvalue.itemId }
-		)
-		this._query(`UPDATE item_inventory 
-			SET quantity = 1 
-			WHERE item_id = ? 
-			AND user_id = ?`
-			, `run`
-			, [newvalue.itemId, this.id]
-		)
+		this._transforInventory({ itemId: newvalue.itemId})
 	}
 
 	updateExpBooster(newvalue) {
@@ -790,7 +785,22 @@ class databaseUtils {
 		return this
 	}
 
+	registerDailyFeaturedPost({ messageId ,timestamp = 0 }) {
+		sql.run(`
+                INSERT INTO daily_featured_post
+                (message_id, delete_by)
+                VALUES (?, ?)`,
+			[messageId, timestamp]
+		)
+	}
 
+	getRemoveBy(remove_by_date){
+		return this._query(`SELECT * FROM daily_featured_post WHERE delete_by <= ?`,`all`,[remove_by_date])
+	}
+
+	deleteRecord(remove_by_date){
+		return this._query(`DELETE FROM daily_featured_post WHERE delete_by <= ?`,`run`,[remove_by_date])
+	}
 
 	get luckyTicketDropRates() {
 		return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
@@ -801,7 +811,7 @@ class databaseUtils {
 	}
 
 	lootGroupByRate(rate, table = `luckyticket_rewards_pool`) {
-		return sql.get(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1`)
+		return sql.get(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM()`)
 	}
 
 	lootGroupByRateForHalloween(rate, table = `luckyticket_rewards_pool`) {
@@ -1384,6 +1394,7 @@ class databaseUtils {
 		data.level = main.level
 		data.maxexp = main.maxexp
 		data.nextexpcurve = main.nextexpcurve
+		data.minexp = main.minexp
 		return data
 	}
 
@@ -1393,7 +1404,8 @@ class databaseUtils {
 				return {
 					level: 0,
 					maxexp: 100,
-					nextexpcurve: 100
+					nextexpcurve: 100,
+					minexp: 0
 				}
 			}
 
@@ -1409,16 +1421,57 @@ class databaseUtils {
 			return {
 				level: level,
 				maxexp: maxexp,
-				nextexpcurve: nextexpcurve
+				nextexpcurve: nextexpcurve,
+				minexp: minexp
 			}
 		}
-		
+
 		const accumulatedCurrent = Math.floor(data)
 		const main = formula(accumulatedCurrent)
 		let level = main.level
 		let maxexp = main.maxexp
 		let nextexpcurve = main.nextexpcurve
-		return {level,maxexp,nextexpcurve}
+		let minexp = main.minexp
+		return {level,maxexp,nextexpcurve,minexp}
+	}
+
+	async xpReverseFormula(data) {
+		const formula = (level) => {
+			
+			if (level < 1) {
+				return {
+					level: 0,
+					maxexp: 100,
+					nextexpcurve: 100,
+					minexp: 0
+				}
+			}
+			level < 60 ? level-=1 : level+=0
+			let exp = Math.floor(((390.0625*(Math.pow(level+1, 2)))+375)/4)
+			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+			level = Math.floor(level)
+			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+			var nextexpcurve = maxexp - minexp
+			level = level + 1
+
+			return {
+				maxexp: maxexp,
+				nextexpcurve: nextexpcurve,
+				minexp: minexp,
+				level: level
+			}
+		}
+
+		let level = Math.floor(data)
+		const main = formula(level)
+		
+		let maxexp = main.maxexp
+		let nextexpcurve = main.nextexpcurve
+		let minexp = main.minexp
+		level = main.level
+		return { level, maxexp, nextexpcurve, minexp }
 	}
 
 	/**
