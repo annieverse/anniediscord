@@ -45,9 +45,7 @@ class DailyFeaturedPost {
     }
 
     async cleanDB(){
-        let date = (new Date())
-        date.setMinutes(date.getMinutes()-5)
-        date = date.getTime()
+        let date = (new Date()).getTime()
         let query = Object.values(await this.queries(date))
         if (query) {
             await this.deleteRecord(date)
