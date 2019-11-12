@@ -36,7 +36,6 @@ class DailyFeaturedPost {
         let query = Object.values(await this.queries(date))
         if (query) {
             query.forEach(element=>{
-                console.log(element.message_id)
                 this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element.message_id).then(msg => {
                     msg.delete()
                 }).catch(err=> this.logger.error(`[DailyFeaturedPost.js] Delete message ${err}`))
