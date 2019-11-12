@@ -38,6 +38,7 @@ class DailyFeaturedPost {
             query.forEach(element=>{
                 this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element.message_id).then(msg => {
                     msg.delete()
+                    this.logger.info(`[DailyFeaturedPost.js] Delete message ${element.message_id}`)
                 }).catch(err=> this.logger.error(`[DailyFeaturedPost.js] Delete message ${err}`))
             })
         }
