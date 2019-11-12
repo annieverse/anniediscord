@@ -5,16 +5,16 @@ class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
         this.logger = this.bot.logger
-        this.active = true // on/off switch
+        this.active = false // on/off switch
         this.dailyFeaturedChannel = `642829967176237061` //gen
     }
 
     async loop() {
         while(this.active) {
             try {
-                await this.delay(1 * 10 * 60 * 1000)
+                await this.delay(1 * 1 * 15 * 1000)
                 await this.run()
-                await this.delay(1 * 10 * 60 * 1000)
+                await this.delay(1 * 1 * 30 * 1000)
                 await this.cleanDB()
             } catch(e) {
                 this.logger.error(`Daily Feature Post - Loop broke.`)
