@@ -327,5 +327,10 @@
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },
-    "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature."
+    "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
+    "VERIFICATION_REQUEST": {
+        "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
+        "NOTIFY_AVAILABLE_MODS": "Hey, hey! we got new verification request!\n{0}",
+        "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!"
+    }
 }
