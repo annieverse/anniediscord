@@ -95,7 +95,7 @@ class ModNotification {
         for (let i = 0; i < ArrayOfId.length; i++) {
             str += `<@${ArrayOfId[i]}> `
         }
-        return str;
+        return str
     }
 
 
