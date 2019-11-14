@@ -4,7 +4,8 @@ const {
     art_domain,
     nonxp_domain,
     event_submission_domain,
-    bot_domain
+    bot_domain,
+    verification_domain
 } = require(`../modules/config`)
 
 /**
@@ -176,6 +177,15 @@ class MessageController {
      */
     get isAddingPortfolio() {
         return this.message.content.includes(`#portfolio`) && this._hasAttachment() ? true : false
+    }
+
+
+    /**
+     *  Check if message is coming from #verification channel
+     *  @isVerificationRequest
+     */
+    get isVerificationRequest() {
+        return verification_domain.includes(this.message.channel.id) ? true : false
     }
 
 
