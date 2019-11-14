@@ -7,6 +7,7 @@ class DailyFeaturedPost {
         this.logger = this.bot.logger
         this.active = true // on/off switch
         this.dailyFeaturedChannel = `642829967176237061` //gen
+        this.messageIds = []
     }
 
     async loop() {
@@ -14,8 +15,7 @@ class DailyFeaturedPost {
             try {
                 await this.delay(1 * 10 * 60 * 1000)
                 await this.run()
-                await this.delay(1 * 10 * 60 * 1000)
-                await this.cleanDB()
+                this.messageIds = []
             } catch(e) {
                 this.logger.error(`Daily Feature Post - Loop broke.`)
                 this.logger.error(e.stack)
@@ -31,25 +31,28 @@ class DailyFeaturedPost {
         return await db.deleteRecord(date)
     }
 
-    async run() {
-        let date = (new Date()).getTime()
-        let query = Object.values(await this.queries(date))
-        if (query) {
-            query.forEach(element=>{
-                this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element.message_id).then(msg => {
-                    msg.delete()
-                    this.logger.info(`[DailyFeaturedPost.js] Delete message ${element.message_id}`)
-                }).catch(err=> this.logger.error(`[DailyFeaturedPost.js] Delete message ${err}`))
-            })
-        }
+    async getMessageArray(){
+        var testDay = 2 * 24 * 60 * 60 * 1000
+        var dateNow = Date.now()
+        await this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages({limit:100}).then(async messages => {
+            let messageArray = messages.keyArray()
+            if (messageArray){
+                messageArray.forEach(async element => {
+                    await this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element).then(msg =>{
+                        let messageDate = (new Date(msg.createdAt)).getTime()
+                        let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
+                        if (isMsgReadyToBeDeleted) {
+                            this.messageIds.push(msg.id)
+                        }
+                    })
+                })
+            }
+        })
     }
 
-    async cleanDB(){
-        let date = (new Date()).getTime()
-        let query = Object.values(await this.queries(date))
-        if (query) {
-            await this.deleteRecord(date)
-        }
+    async run() {
+        await this.getMessageArray()
+        if (this.messageIds) this.bot.channels.get(this.dailyFeaturedChannel).bulkDelete(this.messageIds).catch(error=>this.bot.logger.error(`[DailyFeaturedPost.js] Error on bulk delete: ${error}`))
     }
 
     async delay(ms) {

@@ -258,11 +258,6 @@ class HeartCollector {
 			image: this.metadata.artwork,
 			field: this.metadata.daily_featured_channel,
 			customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
-		}).then(async msg=>{
-			let newDate = new Date()
-			newDate.setDate(newDate.getDate()+2)
-			let remove_by = newDate.getTime()
-			await this.db.registerDailyFeaturedPost({messageId:msg.id,timestamp:remove_by})
 		})
 	}
 }
