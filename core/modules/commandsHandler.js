@@ -106,7 +106,7 @@ class CommandsHandler extends Controller {
 		this.module_parameters = require(this.path).help
 		
 		// Test if command is avaible to public
-		if (!this.module_parameters.public){
+		if (!this.module_parameters.public && this.module_parameters.public != null){
 			if (!this.isUserADev){
 				return this.logger.info(`${this.data.message.author.tag} trying to use non public command(${this.data.command}) in #${this.data.message.channel.name}`)
 			}

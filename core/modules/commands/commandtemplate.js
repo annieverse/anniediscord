@@ -9,7 +9,7 @@ class commandName {
 
 	async execute() {
 		const {reply} = this.stacks
-		reply()
+		reply(`I am an empty command`)
 	}
 }
 
@@ -20,7 +20,7 @@ module.exports.help = {
 	description: `No function just a place holder for commands`,
 	usage: `TemplateCommand`,
 	group: `Admin`,
-	public: false,
+	public: null,
 	require_usermetadata: true,
 	multi_user: true
 }

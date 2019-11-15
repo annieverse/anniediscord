@@ -69,10 +69,10 @@ module.exports.help = {
 	start: subCategory,
 	name:`subcategory`,
 	aliases: [`sub`],
-	description: `Shows the themes for a category`,
+	description: `Shows the themes for a category,from the >art.ch for art duels`,
 	usage: `sub <category>`,
 	group: `General`,
-	public: false,
+	public: true,
 	require_usermetadata: false,
 	multi_user: false
 }

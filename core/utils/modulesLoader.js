@@ -36,7 +36,7 @@ class modulesLoader {
 				let props = require(`../modules/commands/${f}`)
 				if (props.help.public){
 					publicCommand++
-				}else{
+				} else if (props.help.public != null){
 					privateCommand++
 				}
 				Client.commands.set(props.help.name, props)
