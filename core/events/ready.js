@@ -323,6 +323,13 @@ module.exports = bot => {
 		 *	Only run on development server 
 		 */
 		if (env.dev) {
+
+			//	This used when testing welcomer message.
+			if (env.WELCOMER_TEST) {
+				const BannerTest = require(`../utils/welcomeBannerUI`)
+				new BannerTest({bot, member:require(`../../test/testmsg`), channel:`614737097454125056`}).render()
+			}
+
 			logger.info(`${bot.user.username} up in dev environment. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`dnd`)
 			bot.user.setActivity(`maintenance.`, {

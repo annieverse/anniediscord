@@ -6,6 +6,7 @@ const Portfolio = require(`./portfolioManager`)
 const Commands = require(`../modules/commandsHandler`)
 const DM = require(`./directMessageInterface`)
 const Artcoins = require(`./artcoinGains`)
+const ModeratorNotification = require(`./ModeratorNotification`)
 
 
 /**
@@ -38,6 +39,8 @@ class Worker extends Controller {
             if (super.isEventSubmission) new EventSubmission(this.data).run()
             //  Handle portfolio post
             if (super.isAddingPortfolio) new Portfolio(this.data).add()
+            //  Handle message coming from #verification request
+            if (super.isVerificationRequest) return new ModeratorNotification(this.data).sendResponse()
         }
 
 
@@ -46,6 +49,7 @@ class Worker extends Controller {
 
         //  Handle message that has prefix or bot related.
         if (super.isCommandMessage) return new Commands(this.data).prepare()
+
 
         /** -----------------------------------------------------------------
          *  Beyond this point require cooling-down state mechanism.
