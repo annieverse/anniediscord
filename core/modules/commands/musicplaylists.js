@@ -13,17 +13,18 @@ class musicplaylists {
 			`[Classical](https://www.youtube.com/playlist?list=PLMYFChto7e13dGT6rRHBPpcxjUe567N1g&jct=80CyhD9fe547ydi5Td0gBdpHH5CKdQ)`,
 			`[Weeb](https://www.youtube.com/playlist?list=PLMYFChto7e13a8tghaNtQDQsuEO0NIq4q&jct=OQsuGKUXuaM-cJzZ2NSso7JRVYJm3w)`,
 			`[Meme](https://www.youtube.com/playlist?list=PLMYFChto7e12G_bOcZ2ZEIS5_tHeQJnWj&jct=9TMbtghZNYdlbNrz1qz9xfr0jULy1Q)`,
-			`[American](https://www.youtube.com/playlist?list=PLMYFChto7e13iMnW4E_i3Wtll11sZtc7x&jct=i0gp0kV_0lP806fqPP-8W-VZblq34w)`
+			`[American](https://www.youtube.com/playlist?list=PLMYFChto7e13iMnW4E_i3Wtll11sZtc7x&jct=i0gp0kV_0lP806fqPP-8W-VZblq34w)`,
+			`[kchill/Korean Chill](https://www.youtube.com/playlist?list=PLMYFChto7e13_ftED0mSNliYHmrAGP2MD&jct=o85XFsT9sNTfAdvjjLCnosJ3iyva6A)`
 		]
 
 		let playlistHomepage = `[Playlists](https://www.youtube.com/channel/UCySgzXyxBXx6fz57KizxcDA/playlists?disable_polymer=1)`
 
 		reply(`Here are song playlists you can add to (Just click the link and confirm):
-			\n{0}, {1}, {2}, {3}, {4}, {5}, {6}
+			\n{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}
 			\nHere is a link to the playlist home page where u can grab any of the playlist links:
-			\n{7}`,{
+			\n{8}`,{
 				socket:[
-					add[0], add[1], add[2], add[3], add[4], add[5], add[6], playlistHomepage
+					add[0], add[1], add[2], add[3], add[4], add[5], add[6], add[7], playlistHomepage
 				]
 			})
 	}
@@ -32,11 +33,12 @@ class musicplaylists {
 module.exports.help = {
 	start: musicplaylists, 
 	name:`musicplaylists`, 
-	aliases: [`playlists`], 
+	aliases: [`playlists`,`playlist`], 
 	description: `links for being able to add to a playlist and grab a playlist link`,
 	usage: `playlists`,
 	group: `general`,
 	public: true,
 	require_usermetadata: false,
-	multi_user: false
+	multi_user: false,
+	special_channels: [`459938699606491147`]
 }
