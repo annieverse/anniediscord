@@ -20,11 +20,11 @@ class musicplaylists {
 		let playlistHomepage = `[Playlists](https://www.youtube.com/channel/UCySgzXyxBXx6fz57KizxcDA/playlists?disable_polymer=1)`
 
 		reply(`Here are song playlists you can add to (Just click the link and confirm):
-			\n{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}
+			\n{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}
 			\nHere is a link to the playlist home page where u can grab any of the playlist links:
-			\n{8}`,{
+			\n{9}`,{
 				socket:[
-					add[0], add[1], add[2], add[3], add[4], add[5], add[6], add[7], playlistHomepage
+					add[0], add[1], add[2], add[3], add[4], add[5], add[6], add[7], add[8], playlistHomepage
 				]
 			})
 	}
