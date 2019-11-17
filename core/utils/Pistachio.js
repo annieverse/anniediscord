@@ -307,7 +307,28 @@ class Pistachio {
 			return str
 		}
 
+		/**
+		 * Splits array items into chunks of the specified size
+		 * @param {Array|String} items
+		 * @param {Number} chunkSize
+		 * @returns {Array}
+		 */
+		container.chunk = (items, chunkSize) => {
+			const result = []
 
+			for (let i = 0; i < items.length; i += chunkSize) {
+				result.push(items.slice(i, i + chunkSize))
+			}
+
+			return result
+		}
+
+		container.socketing = (content,socket) => {
+			for(let i = 0; i < socket.length; i++) {
+				if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, socket[i])
+			}
+			return content
+		}
 		/** Annie's custom system message.
 		 *  @param content as the message content
 		 *  @param {Array} socket is the optional message modifier. Array

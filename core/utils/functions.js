@@ -1,86 +1,10 @@
 
 
-module.exports = (bot, message) => {
+module.exports = () => {
 
 	const module = {}
-	const format = require(`./formatManager`)
 	const palette = require(`./colorset`)
 	const { RichEmbed } = require(`discord.js`)
-	const m = new format(message)
-
-	/**
-     * creates any amount of pages in a embed, when objects are given
-     * NOT SURE IF THIS IS USED
-     * naph lmk.
-     * Yes its used, but this one is outdated and missing some codes.
-     * The real one that we gonna use is currently in master branch.
-     * @param message message object
-     * @param pages array set
-     * @returns A correctly formatted Embed
-     */
-	module.craftingpages = async (message, pages) => {
-
-		const {
-			RichEmbed
-		} = require(`discord.js`)
-		const {
-			darkmatte
-		} = require(`./colorset`)
-
-		const registeringEmbeds = () => {
-			const keys = Object.keys(pages)
-			const url = Object.values(pages)
-
-			let res = []
-			for (let i = 0; i < keys.length; i++) {
-				let embed = new RichEmbed()
-					.setColor(darkmatte)
-					.setTitle(keys[i])
-					.setImage(url[i])
-				res[i] = embed
-			}
-			return res
-		}
-
-		const embedArray = await registeringEmbeds()
-		let page = 1 // We will define what page we are on here, the default page will be 1. (You can change the default page)
-
-
-		message.channel.send(embedArray[0]).then(msg => { // Now, we will send the embed and pass the new msg object
-			msg.react(`⏪`).then(async () => { // We need to make sure we start the first two reactions, this is the first one
-				msg.react(`⏩`) // This is the second one, it will run this one after the first one
-
-				// Filters - These make sure the varibles are correct before running a part of code
-				const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === message.author.id
-				const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === message.author.id // We need two filters, one for forwards and one for backwards
-
-				const backwards = msg.createReactionCollector(backwardsFilter, {}) // This creates the collector, which has the filter passed through it. The time is in milliseconds so you can change that for however you want the user to be able to react
-				const forwards = msg.createReactionCollector(forwardsFilter, {}) // This is the second collector, collecting for the forwardsFilter
-
-				// Next, we need to handle the collections
-				backwards.on(`collect`, r => { // This runs when the backwards reaction is found
-					r.remove(message.author.id)
-					page--
-					if (embedArray[page]) {
-						msg.edit(embedArray[page])
-					} // We want to make sure if they are on the first page, they can't go back a page // CHANGED so it goes to last page
-					else {
-						page++
-					}
-				})
-
-				forwards.on(`collect`, r => { // This runs when the forwards reaction is found
-					r.remove(message.author.id)
-					page++
-					if (embedArray[page]) {
-						msg.edit(embedArray[page])
-					} else {
-						page--
-					}
-				})
-			})
-		})
-	}// End of craftingpages
 
 	/**
     * creates any amount of pages in a embed, when a(n) array, array of arrays, or a large string is given as the input.
@@ -314,78 +238,7 @@ module.exports = (bot, message) => {
 		})
 	}// End of pagesDubArr
 
-	/**
-     * Splits array items into chunks of the specified size
-     * @param {Array|String} items
-     * @param {Number} chunkSize
-     * @returns {Array}
-     */
-	module.chunk = (items, chunkSize) => {
-		const result = []
-
-		for (let i = 0; i < items.length; i += chunkSize) {
-			result.push(items.slice(i, i + chunkSize))
-		}
-
-		return result
-	}
-
-	/**
-     * Finds a user by id, or tag or plain name
-     * @param {object} message message object
-     * @param target the arg for the user (id, name, mention)
-     * @returns {object} user object
-     */
-	module.userFinding = async (target) => {
-		const userPattern = /^(?:<@!?)?([0-9]+)>?$/
-		if (userPattern.test(target)) target = target.replace(userPattern, `$1`)
-		let members = message.guild.members
-
-		const filter = member => member.user.id === target ||
-            member.displayName.toLowerCase() === target.toLowerCase() ||
-            member.user.username.toLowerCase() === target.toLowerCase() ||
-            member.user.tag.toLowerCase() === target.toLowerCase()
-
-		return members.filter(filter).first()
-	}, // End of userFinding
-
-	module.rangeNumber = (min, max) => {
-		return m.rangeNumber(min, max)
-	}
-
-	/** This will be the messagelog function
-     *  @param socket is the optional key
-     */
-	module.systemMessage = (msg, socket = [], color = palette.darkmatte) => {
-		for (let i = 0; i < socket.length; i++) {
-			if (msg.indexOf(`{${i}}`) != -1) msg = msg.replace(`{${i}}`, socket[i])
-		}
-		return m.embedWrapper(color, msg)
-	}
-
-
-	module.sendEmbed = (msg = ``, color = palette.darkmatte) => {
-		return m.embedWrapper(color, msg)
-	}
-
-	module.avatarURL = (id) => {
-		return bot.users.get(id).avatarURL
-	}
-
-
-	module.nickname = (id) => {
-		return message.guild.members.get(id).displayName
-	}
-
-	module.advSend = (...options) => {
-		//console.log(options)
-		return m.embedWrapperAdv(...options)
-		//return m.embedWrapperAdv.apply(options);
-	}
-
-	module.commanized = (int = 0) => {
-		return m.threeDigitsComa(int)
-	}
+	
 
 	return module
 

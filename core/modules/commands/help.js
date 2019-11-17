@@ -18,11 +18,6 @@ class help {
 		this.logger = Stacks.bot.logger
 	}
 
-	// This will format all embeds used in this file
-	initializeEmbed() {
-		this.embed.setColor(this.palette.darkmatte)
-	}
-
 	async allowedToUse() {
 		if (this.message.member.roles.find(r => Object.keys(this.role.admin).some(i => this.role.admin[i] == r.id))) return true
 		return false
@@ -180,7 +175,7 @@ class help {
 
 			if (dmState) {
 				for (let i = 0; i < page.length; i++) {
-					pages.push(this.utils.chunk(page[i], 10))
+					pages.push(this.stacks.chunk(page[i], 10))
 					let header = `\n**Below are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.**\n`
 					pages[i].forEach((element, index) => {
 						if (index === 0) { element.unshift(header) }
@@ -193,7 +188,7 @@ class help {
 						newPageEdit.push(obj.join(`\n`))
 					})
 				})
-				let splitPages = this.utils.chunk(newPageEdit, 2)
+				let splitPages = this.stacks.chunk(newPageEdit, 2)
 				this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
 				splitPages.forEach(element => {
 					this.stacks.reply(element, { field: this.stacks.message.author })
@@ -201,14 +196,14 @@ class help {
 
 			} else {
 				for (let i = 0; i < page.length; i++) {
-					pages.push(this.utils.chunk(page[i], 6))
+					pages.push(this.stacks.chunk(page[i], 6))
 					let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[i].toUpperCase()}\` group.\n`
 					pages[i].forEach((element, index) => {
 						if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
 					})
 				}
 				this.utils.pages(this.message, pages, this.embed)
-				this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+				this.stacks.reply(this.needHelp)
 			}
 			return load.delete()
 		})
@@ -224,11 +219,11 @@ class help {
 		pageHeaderOptions.sort()
 
 		if (group.toLowerCase() === `help`) {
-			return this.utils.sendEmbed(`My available commands are:\n\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(`, `)}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``)
+			return this.stacks.reply(`My available commands are:\n\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(`, `)}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``)
 		}
 
 		if (group === `admin`) {
-			if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
+			if (await this.allowedToUse() === false) return this.stacks.reply(this.stacks.code.ROLE.ERR.WRONG.ROLE)
 		}
 
 		this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
@@ -245,7 +240,7 @@ class help {
 				}
 			}
 			let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nBelow are my commands documentation for the \`${pageHeaderOptions[position].toUpperCase()}\` group.\n`
-			pages = this.utils.chunk(page[0], 10)
+			pages = this.stacks.chunk(page[0], 10)
 
 			if (dmState) {
 				let newPage = []
@@ -262,7 +257,7 @@ class help {
 					if (index === 0) { element.unshift(header) } else { element.unshift(header + `**Continued**.\n`) }
 				})
 				this.utils.pages(this.message, pages, this.embed)
-				this.utils.sendEmbed(this.needHelp, this.palette.darkmatte)
+				this.stacks.reply(this.needHelp)
 			}
 			return load.delete()
 		})
@@ -270,14 +265,14 @@ class help {
 
 	async specificCommandsHelp(cmdFile, group, dmState) {
 		if (group === `admin`) {
-			if (await this.allowedToUse() === false) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.ROLE)
+			if (await this.allowedToUse() === false) return this.stacks.reply(this.stacks.code.ROLE.ERR.WRONG.ROLE)
 		}
 		this.message.channel.send(this.stacks.code.HELP.FETCHING).then(async load => {
 			let pages, page = []
 			this.embed.setFooter(`<required>|[optional]`)
 			page.push(new Array(`\`\`\`fix\n${await this.usage(cmdFile)}\`\`\``))
 			page[0].push(`Information\n\`\`\`ymal\n${await this.description(cmdFile)}\`\`\``)
-			pages = this.utils.chunk(page[0], 6)
+			pages = this.stacks.chunk(page[0], 6)
 			if (dmState) {
 				this.stacks.reply(pages[0], { field: this.stacks.message.author, footer: `<required>|[optional]` })
 			} else {
@@ -288,63 +283,45 @@ class help {
 	}
 
 	async startUp(dmState) {
-		let page, pages = []
+		const { message, reply, utils: { pages }, environment, socketing, code: { HELP: { HEADER, ADVANCEDHELPMENU, OTHER_INFO, STARTER_COMMANDS}}} = this.stacks
+		let p, ps = []
 		let pageHeaderOptions = await this.groupNames()
 		pageHeaderOptions.sort()
 		let General = await this.mainNames(`general`).then(str => str.split(`\n`))
 		let Fun = await this.mainNames(`fun`).then(str => str.split(`\n`))
 		let shop = await this.mainNames(`shop`).then(str => str.split(`\n`))
 		let server = await this.mainNames(`server`).then(str => str.split(`\n`))
-		let prefix = require(`../../../.data/environment.json`).prefix
-		let header = `<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n`
-		let advanceHelpMenuHelp = `**My available commands are:**\nhelp: \`\`\`fix\nTo view all availble commands\`\`\`help group: \`\`\`fix\nTo look at one specific group of commands\`\`\`My available groups are: \`\`\`fix\n${pageHeaderOptions.join(`, `)}\`\`\`help command:\`\`\`fix\nTo look at a specific command\`\`\``
-		let advanceHelpMenu = `To find out more about my advanced help menu options please Hit the next emoji or type ${prefix}help help\`\n`
-		let other_info = `If you would like the messages for advanced help to go to your dms please type \`--dm\` with the command (ie. ${prefix}help general --dm)\n\n`
-		let starterCommands = `
-            ⇨ **General** [7/${General.length}]
-            \`balance\`, \`profile\`, \`daily\`, \`inventory\`, \`collection\`, \`rep\`, \`gift\`
-
-            ⇨ **Fun** [2/${Fun.length}]
-            \`ask\`, \`avatar\`
-
-            ⇨ **Shop-related** [6/${shop.length}]
-            \`eat\` (capsules), \`buy\`, \`pay\`, \`redeem\`, \`shop\`, \`roll\` (gacharoll), \`multi-roll\` (gacharoll),
-
-            ⇨ **Server** [4/${server.length}]
-            \`stats\`, \`ping\`, \`invite\`, \`join\` 
-            `
-
-		page = header + starterCommands + `\n` + other_info + advanceHelpMenu
-		pages.push(page)
-		pages.push(advanceHelpMenuHelp)
+		p = HEADER + socketing(STARTER_COMMANDS, [General.length, Fun.length, shop.length, server.length]) + `\n` + socketing(OTHER_INFO,[environment.prefix])
+		ps.push(p)
+		ps.push(socketing(ADVANCEDHELPMENU,[environment.prefix, pageHeaderOptions.join(`, `), environment.prefix]))
 		if (dmState) {
-			this.stacks.reply(this.needHelp, { field: this.stacks.message.author })
-			this.stacks.reply(pages, { field: this.stacks.message.author })
+			reply(this.needHelp, { field: message.author })
+			reply(ps, { field: message.author })
 			//this.utils.pages(this.message, pages, this.embed);
 		} else {
-			this.utils.pages(this.message, pages, this.embed)
+			pages(message, ps, this.embed)
 		}
 	}
 
 	async helpCenter() {
-
+		const { args } = this.stacks
 		let obj = `--dm`
-		if (this.args.some(value => value.toLowerCase() === `--dm`)) {
-			this.deleteObjectFromArr(this.args, obj)
+		if (args.some(value => value.toLowerCase() === `--dm`)) {
+			this.deleteObjectFromArr(args, obj)
 			this.dm = true
 			this.helpCenter()
 		} else {
-			if (this.args.length === 0) return this.startUp(this.dm)
+			if (!args[0]) return this.startUp(this.dm)
 
-			if (this.args[0] === `all`) return this.helpAll(this.dm) // Sends the basic overall help of all available commands and groups, when no args are detected
+			if (args[0] === `all`) return this.helpAll(this.dm) // Sends the basic overall help of all available commands and groups, when no args are detected
             
-			let file = await this.returnFileName(this.args[0]) // grabs the file name of a command
+			let file = await this.returnFileName(args[0]) // grabs the file name of a command
 			let pageHeaderOptions = await this.groupNames() // Intializes the groups for all commands
-			if (this.args[0].toLowerCase() === `help`) return this.help(this.args[0].toLowerCase(), this.dm) // Sends a help message for the help command, ie. ${prefix}help help
+			if (args[0].toLowerCase() === `help`) return this.help(args[0].toLowerCase(), this.dm) // Sends a help message for the help command, ie. ${prefix}help help
             
 			for (let x = 0; x < pageHeaderOptions.length; x++) { // Loops through all available groups
 				let mainNames = await this.mainNames(pageHeaderOptions[x]).then(str => str.split(`\n`)) // Gets all available commands and assigns them to their groups
-				if (pageHeaderOptions.some(x => x.toLowerCase() === this.args[0].toLowerCase())) return this.help(this.args[0], this.dm) // if a group name is detected, only the commands for that group will be sent
+				if (pageHeaderOptions.some(x => x.toLowerCase() === args[0].toLowerCase())) return this.help(args[0], this.dm) // if a group name is detected, only the commands for that group will be sent
 				
 				// Set the Group name if their is a groups name availiable 
 				let group_name
@@ -353,7 +330,7 @@ class help {
 				} catch (err) {
 					group_name = undefined
 				}
-				if (group_name === undefined) return this.utils.sendEmbed(this.stacks.code.ROLE.ERR.WRONG.FILE)
+				if (group_name === undefined) return this.stacks.reply(this.stacks.code.ROLE.ERR.WRONG.FILE)
 				if (group_name.toLowerCase() === pageHeaderOptions[x] && group_name !== undefined) { // Tests to see if the arg being passed through is a command in a group
 					for (let index = 0; index < mainNames.length; index++) { // Loops through all available options for the command
 						if (file === mainNames[index]) { // Tests for the correct file
@@ -366,8 +343,8 @@ class help {
 	}
 
 	async execute() {
-		this.initializeEmbed()
-		if (this.args.length === 0) return this.startUp()
+		const {args} = this.stacks
+		if (!args[0]) return this.startUp()
 		this.helpCenter()
 	}
 }

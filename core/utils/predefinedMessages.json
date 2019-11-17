@@ -193,7 +193,11 @@
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
     "HELP": {
-        "FETCHING": "`Fetching `<a:AAUloading:599409998342127616>"
+        "ADVANCEDHELPMENU": "**My available commands are:**\nhelp: ```fix\nTo view most popular availble commands```help group: ```fix\nTo look at one specific group of commands\nEX. {0}help general```My available groups are: ```fix\n{1}```help command:```fix\nTo look at a specific command\nEX. {2}help shop```",
+        "FETCHING": "`Fetching `<a:AAUloading:599409998342127616>",
+        "HEADER": "<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n",
+        "OTHER_INFO":"\nWant this to be sent to your dms please include `--dm` (EX. {0}help general --dm)\n\n",
+        "STARTER_COMMANDS":"⇨ **General** [7/{0}]\n`balance`, `profile`, `daily`, `inventory`, `collection`, `rep`, `gift`\n⇨ **Fun** [2/{1}]\n`ask`, `avatar`\n⇨ **Shop-related** [6/{2}]\n`eat` (capsules), `buy`, `pay`, `redeem`, `shop`, `roll` (gacharoll), `multi-roll` (gacharoll)\n⇨ **Server** [4/{3}]\n`stats`, `ping`, `invite`, `join`"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
