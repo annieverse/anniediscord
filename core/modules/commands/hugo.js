@@ -5,7 +5,7 @@ class Hugo {
 
     async execute() {
         const { reply } = this.stacks
-        reply(`[Frank Sinatra - The Coffee Song](https://www.youtube.com/watch?v=H3MqmV47Lq8)\n
+        reply(`[Frank Sinatra - The Coffee Song](https://www.youtube.com/watch?v=zTbJBnkRkFo)\n
         [Coffee - Jack Stauber (Extended Fan Edit)](https://www.youtube.com/watch?v=slgEYXJ1sZQ)`)
     }
 }
