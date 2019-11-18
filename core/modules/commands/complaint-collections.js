@@ -3,14 +3,13 @@ const moment = require(`moment`)
 const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
-const env = require(`../../../.data/environment`)
 class complaintCollection {
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
 
 	async execute() {
-		const { message, bot, bot:{logger}, palette, command, utils } = this.stacks
+		const { message, bot, bot:{logger}, palette, command} = this.stacks
 		const format = new formatManager(message)
 
 		/**
@@ -132,11 +131,14 @@ class complaintCollection {
 		//  Core proccesses.
 		const main = async () => {
 
+			const { reply } = this.stacks
+
 			let query = new Query(message.guild.members.get(metadata.target.id))
 			let res_view = await query.view
 			metadata.records_size = res_view.length
 			if (res_view.length > 0) metadata.last_entry = res_view[0]
 
+			let addReason = false, deleteReason = false
 
 			//  Display parsed result from available user's complaint record.
 			const insights = () => {
@@ -193,14 +195,15 @@ class complaintCollection {
 					query.register
 
 					// send a message leting the user know the record has been stored
-					query.confirm
+					addReason = true
+					
 
 					collector.stop()
 				}
 				else if (input.startsWith(`-`)) {
 					if (metadata.records_size > 0) {
 						metadata.records_size--
-						query.unregister
+						deleteReason = true
 					}
 					collector.stop()
 				}
@@ -210,30 +213,32 @@ class complaintCollection {
 
 			})
 
+			collector.on(`end`, async () => {
+				if (!addReason && !deleteReason){
+					reply(`Sorry but the time limit has been reached for your response.`)
+				} else if (addReason){
+					query.confirm
+				} else if (deleteReason) {
+					query.unregister
+				}
+			})
 		}
 
 
 		//  Initial process
 		const run = async () => {
 
-			const { isAdmin, isStaff } = this.stacks
+			const { isAdmin, isStaff, meta: { author } } = this.stacks
 
 			//  Returns when the user doesn't have admin authority.
 			if (!isAdmin && !isStaff) return log({ code: `UNAUTHORIZED` })
 
-			function ltrim(str) {
-				if (!str) return str
-				return str.replace(/^\s+/g, ``)
-			}
 
 			//  Returns tutorial
 			if (message.content.length <= command.length + 1) return log({ code: `SHORT_GUIDE` })
 
-			// Prepare set of args to get target person
-			let arg = ltrim(message.content.substring(command.length + env.prefix.length + 1))
-
 			//  Returns if target is not valid member.
-			metadata.target = await utils.userFinding(arg)
+			metadata.target = author
 			if (!metadata.target) return log({ code: `INVALID_USER` })
 
 

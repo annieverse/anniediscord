@@ -172,6 +172,9 @@ class CommandsHandler extends Controller {
 	async init() {
 		try {
 			await this.requestData()
+
+			if (this.data.meta.author == null) return this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. > Target user is not \nregistered in DB`)
+
 			//	Set default id for db access
 			this.bot.db = this.bot.db.setUser(this.data.meta.author.id)
 			const { bot, message, command, args, fullArgs, commandfile, meta } = this.data

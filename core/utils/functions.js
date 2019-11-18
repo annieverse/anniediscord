@@ -237,9 +237,7 @@ module.exports = () => {
 			})
 		})
 	}// End of pagesDubArr
-
 	
-
 	return module
 
 }
