@@ -1,10 +1,11 @@
 {
     "ADDAC": {
-        "SHORT_GUIDE": "You can refill user's artcoins by typing `>addac <user> <amount>`",
+        "SHORT_GUIDE": "You can refill user's artcoins by typing `>addac [<user>, <user>]`",
         "MISSING_VALUES": "Please specify the amount.",
-        "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**{2}(+{3})**",
+        "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**(+{2})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
-        "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount"
+        "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount",
+        "WRONG_FORMAT": "Please use this format: `>addac [Bait God#8677, Poppy#0628]`"
     },
     "ADDROLE": {
         "NO_USER": "Uhm, can you specify the user please.",
