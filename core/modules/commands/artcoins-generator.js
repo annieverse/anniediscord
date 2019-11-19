@@ -17,7 +17,7 @@ class ArtcoinsGenerator {
 		
 		//  Returns if user doesn't have admin authority
 		if (!isEventMember && !isAdmin && !isEventManager) return reply(code.UNAUTHORIZED_ACCESS)
-		if (!message.content.includes(`[` && `]`)) return reply(code.WRONG_FORMAT)
+		if (!message.content.includes(`[` && `]`)) return reply(code.ADDAC.WRONG_FORMAT,{footer:`Include the \`[]\``})
 		let users = message.content.substring(message.content.indexOf(`[`)+1, message.content.indexOf(`]`))
 		let usersarr = users.split(`,`)
 		
