@@ -40,7 +40,7 @@ Below are amazing people that make Annie possible!
 | ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] | ![9][hugo] |
 | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
 | **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** | **Hugo** |
-| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer | Beta Tester
+| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer | Developer, Beta Tester
 
 . . . *and many others*
 
