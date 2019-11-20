@@ -6,14 +6,15 @@ class DailyFeaturedPost {
         this.bot = bot
         this.logger = this.bot.logger
         this.active = true // on/off switch
-        this.dailyFeaturedChannel = `642829967176237061` //gen
+        this.dailyFeaturedChannel = `642829967176237061` //trending
+        this.featuredChannel = `582808377864749056` //featured
         this.messageIds = []
     }
 
     async loop() {
         while(this.active) {
             try {
-                await this.delay(1 * 10 * 60 * 1000)
+                await this.delay(1 * 12 * 60 * 60 * 1000) // amount of days * amount of hours * hours * minutes * miliseconds 
                 await this.run()
                 this.messageIds = []
             } catch(e) {
@@ -43,6 +44,7 @@ class DailyFeaturedPost {
                         let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
                         if (isMsgReadyToBeDeleted) {
                             this.messageIds.push(msg.id)
+                            this.bot.channels.get(this.featuredChannel).send({ embed: msg.embeds[0] })
                         }
                     })
                 })
