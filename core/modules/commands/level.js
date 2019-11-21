@@ -34,7 +34,7 @@ class Level {
 			return `${lsep}${bar}${!progressive ? remaining : ``}${rsep}  ${(Math.round(normalized_value * 100 * 100) / 100)}%`
 		}
 		let current = data.currentexp <= data.minexp ? 0 : (data.currentexp - data.minexp) / (data.nextexpcurve)
-		let bar = progress({value: current, vmin: 0, vmax: 100})
+		let bar = progress({ value: Math.floor(current*100), vmin: 0, vmax: 100})
 		let level = data.level
 		let currentexp = data.currentexp
 		let nextlevelup = data.maxexp - data.currentexp
