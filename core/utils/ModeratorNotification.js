@@ -26,7 +26,6 @@ class ModNotification {
         this.modRoleId = `551603523070984222` 
         this.verificationChId = `538843763544555528`
         this.moderatorChannelId = `588438012787163146`
-        this.messageTimeout = 60 // 60 seconds
     }
 
 
@@ -114,7 +113,7 @@ class ModNotification {
             //  Notify user if there's no mod currently around.
             this.reply(this.code.MODS_UNAVAILABLE, {
                 socket: [this.message.author.username, this.emoji(`AnnieYandere`)],
-                deleteIn: this.messageTimeout
+                deleteIn: 60
             })
 
             //  Mention moderator role in #overseer channel.
@@ -131,7 +130,7 @@ class ModNotification {
         return this.reply(this.code.NOTIFY_AVAILABLE_MODS, {
             socket: [this.parseModsFromId(availableMods)],
             simplified: true,
-            deleteIn: this.messageTimeout
+            deleteIn: 60
         })
     }
 }
