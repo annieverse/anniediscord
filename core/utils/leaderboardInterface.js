@@ -16,6 +16,8 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 const render = async (stacks, metadata) => {
 	const { db, palette, bot, emoji, commanifier, meta: { data, author } } = stacks
 
+	let textleaderboard = ``
+
 	//  Canvas metadata
 	const size = {
 		x: 400,
@@ -279,6 +281,116 @@ const render = async (stacks, metadata) => {
 
 	}
 
+	// Bundled functions for each row rendering task for text based
+	class TextOptRow {
+		constructor(index, distancey, group) {
+			this.index = index
+			this.y = distancey * (this.index + 1)
+			this.group = group
+			this.text = ``
+		}
+
+
+		//  Adapt the text to match with the background
+		get text_check_top() {
+			if (this.highlight_user){
+				if (this.index == user.limit){
+					return `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`
+				} else {
+					return `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n`
+				}
+			}
+			return ``
+		}
+
+		get text_check_bottom() {
+			if (this.highlight_user) {
+				if (this.index == user.limit) {
+					return `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`
+				} else {
+					return `\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`
+				}
+			}
+			return ``
+		}
+
+		//  Make sure the nickname length is not greater than 10 characters
+		get nickname_formatter() {
+			let name
+			try {
+				name = bot.users.get(user.group[this.index].id).username
+			} catch (err) {
+				name = `User Left`
+			}
+			return name.length >= 10 ? `${name.substring(0, 9)}..` : name
+		}
+
+
+		//  Return nickname
+		get nickname() {
+			return this.nickname_formatter
+		}
+
+
+		//  Returns reputation points
+		get reputation() {
+			const reps = commanifier(user.group[this.index].rep)
+			return `${reps} ★`
+		}
+
+
+		//  Highlight if user is in the top ten list
+		get highlight() {
+			if (user.group[this.index].id === author.id) {
+				this.highlight_user = true
+				return `**`
+			}
+			return ``
+		}
+
+
+		//  Returns user liked post
+		get liked() {
+			const reps = commanifier(user.group[this.index].liked_count)
+			return `Reps \u3016${reps} ❤\u3016`
+		}
+
+		//  Returns user watched anime
+		get anime() {
+			const reps = commanifier(user.group[this.index].anime)
+			return `Anime Count \u3016${reps}\u3017`
+		}
+
+
+		//  Returns user artcoins
+		get artcoins() {
+			return `Artcoins \u3016${commanifier(user.group[this.index].ac)}\u3017`
+		}
+
+
+		//  Returns user candies
+		get candies() {
+			return `Candies \u3016${commanifier(user.group[this.index].cdy)}\u3017`
+		}
+
+
+		//  Return user level
+		get level() {
+			return `Level \u3016${user.group[this.index].lv}\u3017`
+		}
+
+
+		//  Return current exp
+		get exp() {
+			return `Current XP \u3016${commanifier(user.group[this.index].xp)}\u3017`
+		}
+
+
+		//  Return current ranking
+		get position() {
+			return `#${this.index + 1}`
+		}
+	}
 
 	//  Bundled functions for leaderboard interface.
 	class Leaderboard {
@@ -303,6 +415,12 @@ const render = async (stacks, metadata) => {
 					.level
 					.position
 					.avatar()
+
+				let row = await new TextOptRow(i, 65, `group`)
+				i == user.limit + 1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} ${row.exp} ${row.level}${row.text_check_bottom}`
+				:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.exp} \u27A0 ${row.level}${row.text_check_bottom}\n`
 
 				canv.restore()
 			}
@@ -348,6 +466,13 @@ const render = async (stacks, metadata) => {
 					.artcoins
 					.avatar()
 
+				let row = await new TextOptRow(i, 65, `acgroup`)
+				i == user.limit + 1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.artcoins}${row.text_check_bottom}`
+					:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.artcoins}${row.text_check_bottom}\n`
+
+
 				canv.restore()
 			}
 		}
@@ -370,6 +495,12 @@ const render = async (stacks, metadata) => {
 					.candies
 					.avatar()
 
+				let row = await new TextOptRow(i, 65, `cdygroup`)
+				i == user.limit + 1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.candies}${row.text_check_bottom}`
+					:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.candies}${row.text_check_bottom}\n`
+
 				canv.restore()
 			}
 		}
@@ -390,6 +521,12 @@ const render = async (stacks, metadata) => {
 					.position
 					.reputation
 					.avatar()
+
+				let row = await new TextOptRow(i, 65, `repgroup`)
+				i == user.limit + 1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.reputation}${row.text_check_bottom}`
+					:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.reputation}${row.text_check_bottom}\n`
 
 				canv.restore()
 			}
@@ -412,6 +549,12 @@ const render = async (stacks, metadata) => {
 					.liked
 					.avatar()
 
+				let row = await new TextOptRow(i, 65, `artgroup`)
+				i == user.limit + 1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.liked}${row.text_check_bottom}`
+					:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.liked}${row.text_check_bottom}\n`
+
 				canv.restore()
 			}
 		}
@@ -431,6 +574,12 @@ const render = async (stacks, metadata) => {
 					.position
 					.anime
 					.avatar()
+
+				let row = await new TextOptRow(i, 65, `group`)
+				i == user.limit+1 ?
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.anime}${row.text_check_bottom}`
+					:
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.anime}${row.text_check_bottom}\n`
 
 				canv.restore()
 			}
@@ -467,6 +616,7 @@ const render = async (stacks, metadata) => {
 
 
 	await new Leaderboard(metadata.selected_group).setup
+	metadata.textOption = textleaderboard
 	metadata.img = canv.toBuffer()
 	return metadata
 }

@@ -31,7 +31,7 @@ class Inventory {
 			let response = `Item: Quantity\n`
 			inv.forEach((element,index) => {
 				index == inv.length-1 ? response += `${element.name}: ${element.quantity}` : response += `${element.name}: ${element.quantity}\n`
-			});
+			})
 			return response
 		}
 		

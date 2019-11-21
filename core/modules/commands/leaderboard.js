@@ -49,8 +49,20 @@ class Leaderboard {
 		})
 			.then(async load => {
 				//  Get interface buffer
+				let textOpt = false
+				if (args[1] == `--text` || args[1] == `--tex` || args[1] == `--tx` || args[1] == `--tex`) textOpt = true
 				let res = await GUI(this.stacks, metadata)
 				//  Display leaderboard
+				textOpt ? reply(res.title + `\n${res.textOption}`, {
+					simplified: true
+				})
+					.then(() => {
+						load.delete()
+						//  Display author rank information
+						reply(res.footer_components[1] ? LEADERBOARD.AUTHOR_RANK : LEADERBOARD.UNRANKED, {
+							socket: res.footer_components
+						})
+					}) :
 				reply(res.title, {
 					image: res.img,
 					prebuffer: true,
