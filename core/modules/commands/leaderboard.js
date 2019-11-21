@@ -53,7 +53,7 @@ class Leaderboard {
 				if (args[1] == `--text` || args[1] == `--tex` || args[1] == `--tx` || args[1] == `--tex`) textOpt = true
 				let res = await GUI(this.stacks, metadata)
 				//  Display leaderboard
-				textOpt ? reply(res.title + `\n${res.textOption}`, {
+				textOpt ? reply(res.title + `\n\`\`\`${res.textOption}\`\`\``, {
 					simplified: true
 				})
 					.then(() => {

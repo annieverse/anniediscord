@@ -322,7 +322,7 @@ const render = async (stacks, metadata) => {
 			} catch (err) {
 				name = `User Left`
 			}
-			return name.length >= 10 ? `${name.substring(0, 9)}..` : name
+			return name
 		}
 
 
@@ -364,7 +364,7 @@ const render = async (stacks, metadata) => {
 
 		//  Returns user artcoins
 		get artcoins() {
-			return `Artcoins \u3016${commanifier(user.group[this.index].ac)}\u3017`
+			return `AC \u3016${commanifier(user.group[this.index].ac)}\u3017`
 		}
 
 
@@ -376,13 +376,13 @@ const render = async (stacks, metadata) => {
 
 		//  Return user level
 		get level() {
-			return `Level \u3016${user.group[this.index].lv}\u3017`
+			return `LV \u3016${user.group[this.index].lv}\u3017`
 		}
 
 
 		//  Return current exp
 		get exp() {
-			return `Current XP \u3016${commanifier(user.group[this.index].xp)}\u3017`
+			return `EXP \u3016${commanifier(user.group[this.index].xp)}\u3017`
 		}
 
 
@@ -417,10 +417,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `group`)
-				i == user.limit + 1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} ${row.exp} ${row.level}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.level} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.exp}${row.text_check_bottom}\n\n`
 				:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.exp} \u27A0 ${row.level}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.level} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.exp}${row.text_check_bottom}`
 
 				canv.restore()
 			}
@@ -467,10 +467,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `acgroup`)
-				i == user.limit + 1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.artcoins}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.artcoins}${row.text_check_bottom}\n\n`
 					:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.artcoins}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.artcoins}${row.text_check_bottom}`
 
 
 				canv.restore()
@@ -496,10 +496,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `cdygroup`)
-				i == user.limit + 1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.candies}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.candies}${row.text_check_bottom}\n\n`
 					:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.candies}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.candies}${row.text_check_bottom}`
 
 				canv.restore()
 			}
@@ -523,10 +523,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `repgroup`)
-				i == user.limit + 1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.reputation}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.reputation}${row.text_check_bottom}\n\n`
 					:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.reputation}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.reputation}${row.text_check_bottom}`
 
 				canv.restore()
 			}
@@ -535,7 +535,7 @@ const render = async (stacks, metadata) => {
 
 		//  Artists leaderboard
 		async arts() {
-			metadata.title = `${emoji(`hapiicat`)} **| Artists Leaders**`
+			metadata.title = `${emoji(`wowo`)} **| Artists Leaders**`
 			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.liked_counts), `♡`]
 
 			for (let i = 0; i < user.group.length; i++) {
@@ -550,10 +550,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `artgroup`)
-				i == user.limit + 1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.liked}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.liked}${row.text_check_bottom}\n\n`
 					:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.liked}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.liked}${row.text_check_bottom}`
 
 				canv.restore()
 			}
@@ -576,10 +576,10 @@ const render = async (stacks, metadata) => {
 					.avatar()
 
 				let row = await new TextOptRow(i, 65, `group`)
-				i == user.limit+1 ?
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.anime}${row.text_check_bottom}`
+				i < 9 ?
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.anime}${row.text_check_bottom}\n\n`
 					:
-					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight} \u27A0 ${row.anime}${row.text_check_bottom}\n`
+					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.anime}${row.text_check_bottom}`
 
 				canv.restore()
 			}
