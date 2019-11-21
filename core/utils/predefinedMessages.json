@@ -5,7 +5,8 @@
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**(+{2})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
         "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount",
-        "WRONG_FORMAT": "Please use this format: `>addac [Bait God#8677, Poppy#0628]`"
+        "WRONG_FORMAT": "Please use this format: `>addac [Bait God#8677, Poppy#0628]`",
+        "TRANSACTION_CLOSED": "Transaction closed"
     },
     "ADDROLE": {
         "NO_USER": "Uhm, can you specify the user please.",
@@ -314,7 +315,7 @@
         "SHORT_GUIDE": "I'll follow your words, **{0}**!"
     },
     "SERVER_BOOST": {
-        "SHORT_GUIDE": "Availible commands are:\n {0} boost - to see just the number of boosts the server has\n {1} level - to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
+        "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
     },
     "STATCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",

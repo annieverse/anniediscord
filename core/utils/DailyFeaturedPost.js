@@ -14,7 +14,7 @@ class DailyFeaturedPost {
     async loop() {
         while(this.active) {
             try {
-                await this.delay(1 * 12 * 60 * 60 * 1000) // amount of days * amount of hours * hours * minutes * miliseconds 
+                await this.delay(1 * 60 * 60 * 1000)  
                 await this.run()
                 this.messageIds = []
             } catch(e) {
@@ -33,7 +33,7 @@ class DailyFeaturedPost {
     }
 
     async getMessageArray(){
-        var testDay = 2 * 24 * 60 * 60 * 1000
+        var testDay = 1 * 12 * 60 * 60 * 1000 // amount of days * amount of hours * hours * minutes * miliseconds
         var dateNow = Date.now()
         await this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages({limit:100}).then(async messages => {
             let messageArray = messages.keyArray()

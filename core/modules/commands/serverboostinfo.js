@@ -5,7 +5,10 @@ class serverBoost {
 
 	boostNum() {
 		const { reply } = this.stacks
+		return reply(`Support for this feature has been discontinued`)
+		/*
 		return reply(`This Server has a total of ${this.stacks.message.guild.roles.find(n => n.id === `585550404197285889`).members.map(m => m.user.tag).length} boosts currently!!`)
+		*/
 	}
 
 	boostMembers() {
@@ -14,13 +17,19 @@ class serverBoost {
 	}
 
 	boostLevel() {
-		const { reply,message,roles: { nitro_boost } } = this.stacks
-		let count = message.guild.roles.find(n => n.id === nitro_boost).members.map(m => m.user.tag).length
+		//const { reply, message, roles: { nitro_booster } } = this.stacks
+		const { reply } = this.stacks
+		return reply(`Support for this feature has been discontinued`)
+		/*
+		let count = message.guild.roles.find(n => n.id === nitro_booster).members.map(m => m.user.tag).length
 		let response
-		if (count >= 2 && count < 10) response = `The current level this server boosts is: Level 1`
-		if (count >= 10 && count < 50) response = `The current level this server boosts is: Level 2`
-		if (count >= 50) response = `The current level this server for boosts is: Level 3`
+		let nolevel = 0,level1 = 2,level2 = 15,level3 = 30
+		if (count >= nolevel && count < level1) response = `The current level for server boosts is: Level 0`
+		if (count >= level1 && count < level2) response = `The current level for server boosts is: Level 1`
+		if (count >= level2 && count < level3) response = `The current level for server boosts is: Level 2`
+		if (count >= level3) response = `The current level for server boosts is: Level 3`
 		return reply(response)
+		*/
 	}
 
 	helpCenter(){

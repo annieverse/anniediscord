@@ -357,6 +357,7 @@ class databaseUtils {
 		main.level = data.level
 		main.maxexp = data.maxexp
 		main.nextexpcurve = data.nextexpcurve
+		main.minexp = data.minexp
 
 		let inventory = await this.pullInventory(userId)
 

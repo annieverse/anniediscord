@@ -11,15 +11,22 @@ class ArtcoinsGenerator {
 
 	//  Init
 	async execute() {
-		const {pause, message, commandfile, name, args, collector, palette, emoji, isEventManager,isEventMember, isAdmin, trueInt, reply, commanifier, code, bot:{db} } = this.stacks
+		const { pause, message, multicollector, command, commandfile, name, args, collector, palette, emoji, isEventManager,isEventMember, isAdmin, trueInt, reply, commanifier, code, bot:{db} } = this.stacks
 		
 		let userNames = []
 		
 		//  Returns if user doesn't have admin authority
 		if (!isEventMember && !isAdmin && !isEventManager) return reply(code.UNAUTHORIZED_ACCESS)
-		if (!message.content.includes(`[` && `]`)) return reply(code.ADDAC.WRONG_FORMAT,{footer:`Include the \`[]\``})
-		let users = message.content.substring(message.content.indexOf(`[`)+1, message.content.indexOf(`]`))
-		let usersarr = users.split(`,`)
+		//if (!message.content.includes(`[` && `]`)) return reply(code.ADDAC.WRONG_FORMAT,{footer:`Include the \`[]\``})
+		//let users = message.content.substring(message.content.indexOf(`[`) + 1, message.content.indexOf(`]`))
+		let users = message.content.slice(command.length+2)
+		let usersarr
+		if (message.content.includes(`,`)) {
+			usersarr = users.split(`,`)
+		} else {
+			usersarr = []
+			usersarr.push(users.slice(command+1))
+		}
 		
 		//  Returns if user not specifying any parameters
 		if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
@@ -43,28 +50,41 @@ class ArtcoinsGenerator {
 					//  Returns if input is a negative value
 					if (!amount) return reply(code.ADDAC.NEGATIVE_VALUES)
 
-					//  Storing new balance value
-					for (let index = 0; index < usersarr.length; index++) {
-						const element = usersarr[index]
-						let userSelectorMetadata = {
-							args: [element],
-							message: message,
-							commandfile: commandfile
-						}
-						let currentAuthor = await new User(userSelectorMetadata).getUser()
-						db.setUser(currentAuthor.id).storeArtcoins(amount)
-						userNames.push(name(currentAuthor.id))
-						pause(3000)
-					}
+					reply(`Please enter \`y\` to confirm`).then( async proceed =>{
+						
+						let secondCollector = multicollector(msg)
+						secondCollector.on(`collect`, async (secondmsg) => {
+							let inputtwo = secondmsg.content.toLowerCase()
 
-					let userNamesCombined = userNames.join(`, `)
+							proceed.delete()
+							secondCollector.stop()
 
-					//  Successful
-					return reply(code.ADDAC.SUCCESSFUL, {
-						socket: [
-							userNamesCombined,
-							emoji(`artcoins`),
-							commanifier(amount)]
+							if (inputtwo != `y`) reply(code.ADDAC.TRANSACTION_CLOSED)
+
+							//  Storing new balance value
+							for (let index = 0; index < usersarr.length; index++) {
+								const element = usersarr[index]
+								let userSelectorMetadata = {
+									args: [element],
+									message: message,
+									commandfile: commandfile
+								}
+								let currentAuthor = await new User(userSelectorMetadata).getUser()
+								db.setUser(currentAuthor.id).storeArtcoins(amount)
+								userNames.push(name(currentAuthor.id))
+								pause(3000)
+							}
+
+							let userNamesCombined = userNames.join(`, `)
+							
+							//  Successful
+							return reply(code.ADDAC.SUCCESSFUL, {
+								socket: [
+									userNamesCombined,
+									emoji(`artcoins`),
+									commanifier(amount)]
+							})
+						})
 					})
 				})
 			})
