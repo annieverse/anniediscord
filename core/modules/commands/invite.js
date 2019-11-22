@@ -5,18 +5,21 @@
 class ServerInvitation {
 	constructor(Stacks) {
 		this.stacks = Stacks
-		this.link = `https://discord.gg/YFaCQVn`
 	}
 
-	/**
+    /**
      *  Initializer method
      */
 	async execute() {
-		const { reply } = this.stacks
-		return reply(this.link, {simplified: true})
+		const { message, reply, logger } = this.stacks
+		await message.channel.createInvite()
+			.then(invite => {
+				logger.info(`Created an invite with a code of ${invite.code}`)
+				return reply(`https://discord.gg/${invite.code}`, { simplified: true })
+			})
+			.catch(logger.error)
 	}
 }
-
 module.exports.help={
 	start: ServerInvitation,
 	name:`invite`,
