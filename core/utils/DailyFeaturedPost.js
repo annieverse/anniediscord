@@ -1,6 +1,6 @@
 const databaseManager = require(`./databaseManager.js`)
 const db = new databaseManager()
-
+const { RichEmbed, Attachment} = require(`discord.js`)
 class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
@@ -44,7 +44,13 @@ class DailyFeaturedPost {
                         let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
                         if (isMsgReadyToBeDeleted) {
                             this.messageIds.push(msg.id)
-                            this.bot.channels.get(this.featuredChannel).send({ embed: msg.embeds[0] })
+                            const embed = new RichEmbed()
+                                .setColor(msg.embeds[0].color)
+                                .setDescription(msg.embeds[0].description)
+                                .attachFile(new Attachment(msg.embeds[0].image.url, `preview.jpg`))
+                                .setImage(`attachment://preview.jpg`)
+                                .setAuthor(msg.embeds[0].author.name, msg.embeds[0].author.iconURL)
+                            this.bot.channels.get(this.featuredChannel).send(embed)
                         }
                     })
                 })
