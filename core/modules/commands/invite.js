@@ -11,13 +11,13 @@ class ServerInvitation {
      *  Initializer method
      */
 	async execute() {
-		const { message, reply, logger } = this.stacks
+		const { message, reply, bot:{logger} } = this.stacks
 		await message.channel.createInvite()
 			.then(invite => {
 				logger.info(`Created an invite with a code of ${invite.code}`)
 				return reply(`https://discord.gg/${invite.code}`, { simplified: true })
 			})
-			.catch(logger.error)
+			.catch(error => logger.error(error))
 	}
 }
 module.exports.help={
