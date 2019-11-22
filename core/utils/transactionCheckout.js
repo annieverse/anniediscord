@@ -1,6 +1,6 @@
 const { MessageCollector } = require(`discord.js`)
 const logger = require(`./config/winston`)
-
+const profile = require(`./profilecardInterface`)
 
 //  Await for user confirmation before proceeding the transaction.
 class Checkout {
@@ -33,7 +33,6 @@ class Checkout {
 
 	async confirmation() {
 		const { reply, emoji, palette, commanifier, normalizeString, code: { CHECKOUT } } = this.stacks
-
 		//  Show user the item they are going to buy
 		reply(CHECKOUT.METADATA, {
 			socket: [
@@ -43,7 +42,11 @@ class Checkout {
 				commanifier(this.itemdata.price)
 			],
 			color: palette.golden,
-			image: this.preview,
+			image: this.itemdata.type == `Covers` || this.itemdata.type == `Sticker` ? await profile(this.stacks, this.author, {
+				cover: this.itemdata.type == `Covers` ? this.preview : null,
+				sticker: this.itemdata.type == `Sticker` ? this.itemdata.alias : null
+			}) : this.preview,
+			prebuffer: this.itemdata.type == `Covers` || this.itemdata.type == `Sticker` ? true : false,
 			notch: true
 		})
 			.then(async cmeta => {

@@ -17,7 +17,7 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `Robot
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
-async function profile(stacks, member) {
+async function profile(stacks, member, {cover = null, sticker = null}) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configFormat = new formatManager(stacks.message)
@@ -37,8 +37,8 @@ async function profile(stacks, member) {
 		prt: userdata.partner,
 		rtg: userdata.rating,
 		likecount: userdata.liked_counts,
-		cov: userdata.cover,
-		stic: userdata.sticker,
+		cov: cover == null ? userdata.cover : cover,
+		stic: sticker == null ? userdata.sticker : sticker,
 		log: userdata.last_login,
 		get clr() {
 			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
