@@ -30,7 +30,7 @@ class Banner {
 		const { body: avatar } = await get(user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
 		const configProfile = new profileManager()
 
-		this.ch.send(`Welcome to **Anime Artists United** ${user} ! Please get your roles in <#538843763544555528> for full access to the server, don't forget to read <#620695271323729920> & <#620710250345136138>. Last but not least enjoy your stay here! :tada:`,
+		this.ch.send(`Welcome to **AAU** ${user} ! Please get your roles in <#538843763544555528> for full access to the server, don't forget to read <#620695271323729920>. Last but not least enjoy your stay here! :tada:`,
 			new Attachment(await welcomeCard(), `welcome!-${user.tag}.jpg`))
 
 
