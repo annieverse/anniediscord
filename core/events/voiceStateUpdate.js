@@ -63,21 +63,19 @@ module.exports = (bot, oldMember, newMember) => {
 			let metadata = {
 				applyTicketBuffs: true,
 				applyCardBuffs: true,
-
-				//  Check Pan Card in this property
-				cardCollections: {},
                 
 				bonus: 1,
 				bot: bot,
+				meta: {
+					author: oldMember.user,
+					data: data
+				},
 				user: data,
 				message: {
-					author: {
-						id: oldMember.user.id,
-						tag: oldMember.user.tag,
-						username: oldMember.user.username
-					},
+					author: oldMember.user,
 					guild: oldMember.guild,
-					channel: oldMemberChannel
+					channel: oldMemberChannel,
+					member: oldMember
 				},
 				total_gained_exp: Math.floor(totalMinutes/2),
 				updated: {
@@ -85,37 +83,8 @@ module.exports = (bot, oldMember, newMember) => {
 					level: 0,
 					maxexp: 0,
 					nextexpcurve: 0
-				},
-				previous: {
-					currentexp: data.currentexp,
-					level: data.level,
-					maxexp: data.maxexp,
-					nextexpcurve: data.nextexpcurve
 				}
 			}
-
-			// Request user's collection data.
-			const cards_collection = () => {
-				return sql.get(`SELECT * FROM collections WHERE userId = ${oldMember.user.id}`)
-					.then(async data => data)
-			}
-
-
-			const card_stacks = await cards_collection()
-
-
-			//  Return new user collections if false.
-			const data_availability = () => {
-				try {
-					delete card_stacks.userId
-					metadata.collections = card_stacks
-				} catch (e) {
-					sql.run(`INSERT INTO collections(userId) VALUES(${oldMember.user.id})`)
-				}
-			}
-
-			data_availability()
-			metadata.cardCollections = card_stacks
 
 			// Store the exp
 			await new experience(metadata).runAndUpdate()

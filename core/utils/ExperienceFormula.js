@@ -158,7 +158,8 @@ class Experience extends Controller {
 			this.handlePassiveTicketBoost()
 
 			//  Add & calculate bonuses from card if prompted
-			if (!this.applyCardBuffs) {
+			
+			if (this.applyCardBuffs) {
 				var bonus = super.cardBuffs()
 				this.exp_factor += bonus.exp
 			}
@@ -180,8 +181,11 @@ class Experience extends Controller {
 				await this.addRank()
 			}
 
+			const commanifier = (number = 0) => {
+				return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
+			}
 			//	Save record
-			this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_exp} EXP(${(this.exp_factor === 1 ? 0 : this.exp_factor-2) * 100}% bonus). (${this.data.commanifier(this.meta.data.currentexp)} --> ${this.data.commanifier(this.updated.currentexp)})`)
+			this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_exp} EXP(${(this.exp_factor <= 1 ? 0 : this.exp_factor-2) * 100}% bonus). (${commanifier(this.meta.data.currentexp)} --> ${commanifier(this.updated.currentexp)})`)
 
 		}
 		catch (e) {
