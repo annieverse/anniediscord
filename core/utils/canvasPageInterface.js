@@ -150,7 +150,7 @@ class canvasGUI {
 			strips.push(await this.makeCanvasIndividual(i))
 		}
 		let width = this.canvas_x
-		let height = this.canvas_x
+		let height = this.canvas_y
 
 		let x = this.startPos_x
 		let originalX = this.startPos_x
@@ -158,14 +158,14 @@ class canvasGUI {
 		let originalY = this.startPos_y
 		let baseWidth = this.baseWidth
 		let baseHeight = this.baseHeight
-		let mergerWidth = this.amount > 5 ? width * 5 - (this.baseWidth + this.startPos_x + 58) : width * this.amount - ((30 * this.amount) + (this.amount == 1 ? 0 : x))
-		let mergerHeight = this.amount > 5 ? this.amount > 10 ? this.canvas_y * 3 : this.canvas_y * 2 : this.canvas_y
+		let mergerWidth = this.amount > 5 ? width * 5 - ((30 * 7) + (x)) : width * this.amount - ((30 * this.amount) + (this.amount == 1 ? 0 : x))
+		let mergerHeight = this.amount > 5 ? this.amount > 10 ? this.canvas_y * 3 - (originalY*5) : this.canvas_y * 2 - this.startPos_y : this.canvas_y
 
 		let canv = new Canvas(mergerWidth, mergerHeight)
 
 		strips.forEach((element, index) => {
-			if (index == 5) y = originalY * 2 + height
-			if (index == 10) y = originalY * 3 + height * 2
+			if (index == 5) y = (-1*(originalY * 2)) + height
+			if (index == 10) y = (-1*(originalY * 5)) + height * 2
 			if (index == 5 || index == 10) x = originalX
 			canv.addImage(element, x, y, baseWidth, baseHeight, baseHeight)
 			canv.save()
