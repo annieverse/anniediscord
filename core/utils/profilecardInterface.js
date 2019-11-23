@@ -17,7 +17,7 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `Robot
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
-async function profile(stacks, member, {cover = null, sticker = null}) {
+async function profile(stacks, member, cover = null, sticker = null) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configFormat = new formatManager(stacks.message)

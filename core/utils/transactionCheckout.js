@@ -42,10 +42,10 @@ class Checkout {
 				commanifier(this.itemdata.price)
 			],
 			color: palette.golden,
-			image: this.itemdata.type == `Covers` || this.itemdata.type == `Sticker` ? await profile(this.stacks, this.author, {
-				cover: this.itemdata.type == `Covers` ? this.preview : null,
-				sticker: this.itemdata.type == `Sticker` ? this.itemdata.alias : null
-			}) : this.preview,
+			image: this.itemdata.type == `Covers` || this.itemdata.type == `Sticker` ? await profile(this.stacks, this.author, 
+				this.itemdata.type == `Covers` ? this.preview : null,
+				this.itemdata.type == `Sticker` ? this.itemdata.alias : null
+			) : this.preview,
 			prebuffer: this.itemdata.type == `Covers` || this.itemdata.type == `Sticker` ? true : false,
 			notch: true
 		})
