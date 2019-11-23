@@ -37,7 +37,6 @@ module.exports = (bot, oldMember, newMember) => {
      */
 	async function leaveVC() {
 		if (oldMemberChannel.id !== afkChannel.id) {
-
 			let TimeJoined = new Date(await keyv.get(oldMember.user.id))
 			let currentTime = new Date()
 
@@ -85,10 +84,10 @@ module.exports = (bot, oldMember, newMember) => {
 					nextexpcurve: 0
 				}
 			}
-
-			// Store the exp
-			await new experience(metadata).runAndUpdate()
-
+			if (await keyv.get(oldMember.user.id) != undefined || null){
+				// Store the exp
+				await new experience(metadata).runAndUpdate()
+			}
 			// Delete from record when the transaction is over
 			keyv.delete(oldMember.user.id)
 		}

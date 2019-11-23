@@ -117,12 +117,11 @@ class canvasGUI {
 
 	async makeCanvasIndividual(index) {
 		const { loadAsset } = this.stacks
+		
 		this.canv = new Canvas(this.canvas_x, this.canvas_y)
-		this.canvas_x = 200
-		this.canvas_y = 240
 		//  Set checkpoint before rendering image
 		this.canv.save()
-		if (this.container.type[index] == undefined){
+		if (this.container.type[index] == undefined) {
 			//  Add base shadow
 			this.shadowGround()
 			this.removeShadowLayer()
@@ -139,42 +138,38 @@ class canvasGUI {
 			this.canv.addImage(await loadAsset(this.container.alias[index]), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
 			//  Render
 			return this.canv.toBuffer()
-		} else {
-			//   Add base shape
-			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
-			//  Load item assets
-			await this.itemVisual(55, 50, 100, 100, 50)
-			await this.itemText(100, 170)
-			//  Render
-			return this.canv.toBuffer()
 		}
 	}
 	async create() {
 		var strips = []
+		this.canvas_x = 200
+		this.canvas_y = 240
 		this.amount > 5 && this.amount < 10 ? this.amount += 10 - this.amount : this.amount
-		this.amount > 10 && this.amount < 15 ? this.amount += 15-this.amount : this.amount
+		this.amount > 10 && this.amount < 15 ? this.amount += 15 - this.amount : this.amount
 		for (var i = 0; i < this.amount; i++) {
 			strips.push(await this.makeCanvasIndividual(i))
 		}
-
-		let mergerWidth = this.amount > 5 ? this.canvas_x * 5 - 30 : this.canvas_x * this.amount - 30
-		let mergerHeight = this.amount > 5 ? this.amount > 10 ? this.canvas_y * 3: this.canvas_y * 2 : this.canvas_y
 		let width = this.canvas_x
 		let height = this.canvas_x
-		let canv = new Canvas(mergerWidth, mergerHeight)
-		canv.save()
 
 		let x = this.startPos_x
 		let originalX = this.startPos_x
 		let y = this.startPos_y
 		let originalY = this.startPos_y
+		let baseWidth = this.baseWidth
+		let baseHeight = this.baseHeight
+		let mergerWidth = this.amount > 5 ? width * 5 - (this.baseWidth + this.startPos_x + 58) : width * this.amount - ((30 * this.amount) + (this.amount == 1 ? 0 : x))
+		let mergerHeight = this.amount > 5 ? this.amount > 10 ? this.canvas_y * 3 : this.canvas_y * 2 : this.canvas_y
+
+		let canv = new Canvas(mergerWidth, mergerHeight)
 
 		strips.forEach((element, index) => {
 			if (index == 5) y = originalY * 2 + height
 			if (index == 10) y = originalY * 3 + height * 2
 			if (index == 5 || index == 10) x = originalX
-			canv.addImage(element, x, y)
-			x += width - 30
+			canv.addImage(element, x, y, baseWidth, baseHeight, baseHeight)
+			canv.save()
+			x += (baseWidth-25)
 		})
 		return canv.toBuffer()
 	}

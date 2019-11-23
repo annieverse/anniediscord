@@ -36,7 +36,7 @@ class Inventory {
 		}
 		
 		//  Display result
-		command.includes(`text`) || command.includes(`tex`) || command.includes(`t`) || command.includes(`tx`) ? 
+		command.includes(`text`) || command.includes(`tex`) || command.includes(`tx`) ? 
 			reply(INVENTORY.FETCHING, { socket: [name(this.author.id)], simplified: true })
 				.then(async load => {
 
@@ -67,8 +67,7 @@ module.exports.help = {
 	aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`,
 		`inventorytx`, `invtx`, `bagtx`, `inventtx`, `inventx`,
 		`inventorytex`, `invtex`, `bagtex`, `inventtex`, `inventex`,
-		`inventorytext`, `invtext`, `bagtext`, `inventtext`, `inventext`,
-		`inventoryt`, `invt`, `bagt`, `inventt`],
+		`inventorytext`, `invtext`, `bagtext`, `inventtext`, `inventext`],
 	description: `Views your inventory`,
 	usage: `inventory`,
 	group: `General`,
