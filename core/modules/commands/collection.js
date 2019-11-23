@@ -1,4 +1,4 @@
-
+const GUI = require(`../../utils/canvasPageInterface`)
 /**
  * 	Display user card collection
  * 	@collection
@@ -61,22 +61,95 @@ class Collection {
 		return content
 	}
 	
+	async getContainer(data){
+		const { pause } = this.stacks
+
+		let metadata = {
+			item: [],
+			rarity: [],
+			type: [],
+			alias: [],
+			amount: data.length
+		}
+
+		for (let i = 0; i < metadata.amount; i++) {
+			//	Store metadata
+			metadata.item.push(data[i].name)
+			metadata.rarity.push(data[i].rarity)
+			metadata.type.push(data[i].type)
+			metadata.alias.push(data[i].alias)
+			await pause(100)
+
+		}
+
+		return metadata
+	}
 
 	/**
 	 * 	Execute function
 	 *  @execute
 	 */
 	async execute() {
-		const { code:{COLLECTION}, emoji, reply, name, meta:{author,data} } = this.stacks
+		const { message,command, code:{COLLECTION}, emoji, reply, name, meta:{author,data} } = this.stacks
 		return reply(COLLECTION.FETCHING, {socket:[name(author.id)], simplified: true})
 			.then(async load => {	
-			const cards = this.filterCardFromInventory(data)
-			load.delete()
-			//	Return if user don't have any card
-			if (Object.keys(cards).length < 1) return reply(COLLECTION.EMPTY)
-			//	Card Author
-			reply(COLLECTION.HEADER, {socket:[emoji(`AnnieWot`), name(author.id)], simplified: true})
-			return reply(this.prettifyResult(await this.retrieveCardMetadata(cards)))
+				const cards = this.filterCardFromInventory(data)
+				load.delete()
+				//	Return if user don't have any card
+				if (Object.keys(cards).length < 1) return reply(COLLECTION.EMPTY)
+				//	Card Author
+				if (command.includes(`text`) || command.includes(`tex`) || command.includes(`tx`)){
+					reply(COLLECTION.HEADER, { socket: [emoji(`AnnieWot`), name(author.id)], simplified: true })
+					return reply(this.prettifyResult(await this.retrieveCardMetadata(cards)))
+				} else {
+					let container = await this.getContainer(await this.retrieveCardMetadata(cards))
+					let renderResult = await new GUI(this.stacks, container).render
+					let count = 0
+					const getPage = async (ctr) => {
+						if (!renderResult[ctr]) return reply(`Couldn't find that card. It's probably empty.`)
+
+						return reply(COLLECTION.HEADER, { 
+							socket: [emoji(`AnnieWot`), 
+							name(author.id)], 
+							simplified: true, 
+							prebuffer: true, 
+							image: await renderResult[ctr]
+						}).then(msg => {
+							if (renderResult.length == 1) return
+							msg.react(`⏪`).then(() => {
+								msg.react(`⏩`)
+								const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
+								const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
+
+								const backwards = msg.createReactionCollector(backwardsFilter, { time: 60000 })
+								const forwards = msg.createReactionCollector(forwardsFilter, { time: 60000 })
+
+								backwards.on(`collect`, async () => {
+									count--
+									if (count < 0) {
+										count = renderResult.length - 1
+									}
+									await msg.delete()
+									getPage(count)
+
+								})
+								forwards.on(`collect`, async () => {
+									count++
+									if (count > renderResult.length - 1) {
+										count = 0
+									}
+									await msg.delete()
+									getPage(count)
+								})
+								setTimeout(() => {
+									if (!msg.deleted) msg.clearReactions()
+								}, 60000)
+							})
+						})
+					}
+					//  Display result
+					getPage(count)
+				}
 		})
 	}
 }
@@ -85,7 +158,10 @@ class Collection {
 module.exports.help = {
 	start: Collection,
 	name: `collection`,
-	aliases: [`collection`, `mycard`, `card`],
+	aliases: [`collection`, `mycard`, `card`,
+		`collectiontx`, `mycardtx`, `cardtx`,
+		`collectiontex`, `mycardtex`, `cardtex`,
+		`collectiontext`, `mycardtext`, `cardtext`,],
 	description: `View yours or someones collected cards`,
 	usage: `collection`,
 	group: `General`,
