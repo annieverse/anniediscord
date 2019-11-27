@@ -3,7 +3,8 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
-const Card = require(`./CardComponentsLibrary`)
+const Card = require(`./UILibrary/Cards`)
+const Typography = require(`./UILibrary/Typography`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -13,10 +14,19 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 //	Pistachio stacks from module/stats.js
-async function Stats(stacks) {
+class StatsInterface {
+	constructor(Stacks) {
+		this.card = new Card({color:`lightgray`})
+	}
 
-	return new Card({}).base.toBuffer()
+
+	render() {
+
+		let data = new Typography(this.card.base, `nightmode`).addTitle(`Add Title`)
+
+		return data.card.toBuffer()
+	}
 
 }
 
-module.exports = Stats
+module.exports = StatsInterface

@@ -16,7 +16,7 @@ class Stats {
 		return reply(`null`, {
 			simplified: true,
 			prebuffer: true,
-			image: await StatsUI(this.stacks)
+			image: await new StatsUI(this.stacks).render()
 		})
 	}
 
