@@ -1,15 +1,31 @@
 const Discord = require(`discord.js`)
 const formatManager = require(`../../utils/formatManager`)
+const StatsUI = require(`../../utils/StatsInterface`)
 const ms = require(`parse-ms`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
-class stats {
+class Stats {
+
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
 
+
+	async BetaExec() {
+		const { reply } = this.stacks
+		return reply(`null`, {
+			simplified: true,
+			prebuffer: true,
+			image: await StatsUI(this.stacks)
+		})
+	}
+
+
+
 	async execute() {
 		const { message, bot, palette, pause } = this.stacks
+
+		if (bot.env.dev) return this.BetaExec()
 
 		const format = new formatManager(message)
 		return [`485922866689474571`, `614737097454125056`].includes(message.channel.id) ? initInfo() :
@@ -79,9 +95,9 @@ class stats {
 }
 
 module.exports.help = {
-	start: stats,
+	start: Stats,
 	name: `stats`,
-	aliases: [`anniestatus`, `botinfo`, `annieinfo`],
+	aliases: [`anniestatus`, `botinfo`, `annieinfo`, `info`],
 	description: `Gives info about the bot`,
 	usage: `anniestats`,
 	group: `server`,
