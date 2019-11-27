@@ -5,7 +5,7 @@
 ![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
 ![LastCommit](https://img.shields.io/github/last-commit/klerikdust/anniediscord.svg?style=flat-square)
 
-![annie](https://cdn.discordapp.com/avatars/501461775821176832/1d5c3c23e639a5461d6b1dc44d04836b.png?size=256)
+![annie](https://cdn.discordapp.com/avatars/501461775821176832/578de3a27b252ad2bf1e73bf1dd27210.png?size=256)
 
 Supporting the core function of the biggest art community in discord,
 **Anime Artist United.**
@@ -22,56 +22,32 @@ We got tons of upcoming features ahead!*
 ## Why artist should choose Annie
 
 - Annie biggest feature is involving with arts.
-- Fully integrated with our sweet home, AAU.
-- Put your greatest portfolio to your very own profile card!
-- Minimalism is our aesthetic.
+- Most-innovative features out there.
+- Quality over quantity experience.
+- Portfolio and Social Card.
+- Minimalist.
 
 ## **The Annie Team**
 
 Below are amazing people that make Annie possible!
 
-| ![1][naph]| ![2][pan] | ![4][sunny] | ![5][dwarf] | ![6][fwub] |
-| :----: | :----: | :----: | :----: | :----: |
-| **Naph** | **Panpan** | **Sunny** | **Dwarf** | **Fwubbles** |
-| Product Manager | Lead Developer | Developer | Developer | Developer |
+| ![1][pan]| ![2][hugo] | ![3][naph] |
+| :----: | :----: | :----: |
+| **Pan** | **Hugo** | **Naph** |
+| Lead Developer | Developer | UI/UX Engineer |
 
 ## **Contributor**
 
-| ![1][kitomi]| ![2][poppy] | ![3][ralu] | ![4][foxie] | ![5][snow] | ![6][hapii] | ![7][akane] | ![8][trojanos] | ![9][hugo] |
-| :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: | :----: |
-| **Kitomi** | **Poppy** | **Ralu** | **Foxie** | **Snow** | **Hapiikat** | **Akane** | **TrojanOS** | **Hugo** |
-| QA Analyst | CG Artist | CG Artist | CG Artist | Artcoins Designer | Annie Character Designer | Creator | (Ex) Database Engineer | Developer, Beta Tester
 
-. . . *and many others*
+*Snow, Hapiikat, Akane, TrojanOS, Fwubbles, sunnyrainyworks, secretdwarf05, Tantan, Kitomi, Foxie, Poppy, Ralu and many others.*
 
-[fwub]: https://cdn.discordapp.com/avatars/294177453449019409/1444c86e06e454161857f74edd60a1b9.jpg?size=128
-
-[naph]: https://cdn.discordapp.com/avatars/230034968515051520/90119a1bf45d46e2b8418886b67e90d4.png?size=128
+[naph]: https://cdn.discordapp.com/avatars/230034968515051520/3dae3e66eb876d60f3251ebdb7602cf0.png?size=128
 
 [pan]: https://cdn.discordapp.com/avatars/277266191540551680/d8c76120788366540552d977122a862d.png?size=128
 
 [hugo]: https://cdn.discordapp.com/avatars/476391416268849175/ccd23e89da05b4a5ecd4c3ae637a39f7.png?size=128
 
-[sunny]: https://cdn.discordapp.com/avatars/510246523939061760/f7aff487fee5efc01c56554a060b3c90.png?size=128
 
-[dwarf]: https://cdn.discordapp.com/avatars/596421558856056853/2bf3c57e9e104acd3f78a45f16ff25d5.png?size=128
+## **Progress**
 
-[kitomi]: https://cdn.discordapp.com/avatars/184396254984404992/24c4e564d263d29b3738c342f5b8d0b2.jpg?size=128
-
-[ralu]: https://cdn.discordapp.com/avatars/91856786293805056/8afacb06844b5808853f018b232078ed.jpg?size=128
-
-[poppy]: https://cdn.discordapp.com/avatars/198360319184207873/a_e4533f4c6f2ca6bd1fdeccc1e68e23d7.gif
-
-[snow]: https://i.ibb.co/Jz4d4Hj/snow-1-1.png
-
-[foxie]: https://cdn.discordapp.com/avatars/234835633099505664/a74fce47c95b5ccc23ef755499560612.jpg?size=128
-
-[hapii]: https://cdn.discordapp.com/avatars/145367500710739969/80770ff32da51e35aeec569d248ea486.jpg?size=128
-
-[akane]: https://i.ibb.co/Xydv8rV/akane-1.png
-
-[trojanos]: https://i.ibb.co/Xzcb8B9/1-1.png
-
-## **Support**
-
-Checkout the development progress in our [Trello Board !](https://trello.com/)
+Feel free to checkout the development progress in our [Trello Board !](https://trello.com/b/jBbOIqQA/annie-pipeline)
