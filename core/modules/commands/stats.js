@@ -1,6 +1,7 @@
 const Discord = require(`discord.js`)
 const formatManager = require(`../../utils/formatManager`)
 const StatsUI = require(`../../utils/StatsInterface`)
+const SI = require(`systeminformation`)
 const ms = require(`parse-ms`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
@@ -9,10 +10,61 @@ class Stats {
 	constructor(Stacks) {
 		this.stacks = Stacks
 	}
+	
+
+	/**
+	 * Used to format returned bytes values from `resourceData()` into more human-readable data.
+	 * @param {Bytes/Number} bytes 
+	 * @param {*} decimals 
+	 */
+	formatBytes(bytes, decimals = 2) {
+		if (bytes === 0) return '0 Bytes';
+	
+		const k = 1024;
+		const dm = decimals < 0 ? 0 : decimals;
+		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+	
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+	}
 
 
-	async BetaExec() {
+	/**
+	 * Converting values into percentage.
+	 * @param {Number} min 
+	 * @param {Number} max 
+	 */
+	toPercentage(min, max) {
+		return `${((min/max) * 100).toFixed(2)} %`
+	}
+
+
+	/**
+	 * 	Returns current machine resource usage such as cpu, memory, etc
+	 * 	@resource
+	 */
+	async resource() {
+		let { bot:{ping} } = this.stacks
+		let memoryData = await SI.mem()
+		let cpuData = await SI.currentLoad()
+		
+		return {
+			memory: this.toPercentage(memoryData.used, memoryData.total),
+			cpu: cpuData.currentload_system.toFixed(2),
+			ping: ping
+		}
+	}
+	
+
+	/**
+	 * 	In development feature.
+	 * 	Unavailable in production server
+	 * 	@beta
+	 */
+	async beta() {
 		const { reply } = this.stacks
+
 		return reply(`null`, {
 			simplified: true,
 			prebuffer: true,
@@ -25,7 +77,7 @@ class Stats {
 	async execute() {
 		const { message, bot, palette, pause } = this.stacks
 
-		if (bot.env.dev) return this.BetaExec()
+		if (bot.env.dev) return this.beta()
 
 		const format = new formatManager(message)
 		return [`485922866689474571`, `614737097454125056`].includes(message.channel.id) ? initInfo() :

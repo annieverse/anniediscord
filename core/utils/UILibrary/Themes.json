@@ -1,0 +1,22 @@
+{
+    "light": {
+        "main": "#EEEEEE",
+        "secondary": "#dedfe2",
+        "iconBackground": "lighten",
+        "iconBackgroundOpacity": 0.4,
+        "text": "#333333",
+        "caption": "#919191",
+        "okay": "#3ede81",
+        "critical": "#c72020"
+    },
+    "dark": {
+        "main": "#191D38",
+        "secondary": "#2D314C",
+        "iconBackground": "darken",
+        "iconBackgroundOpacity": 0.8,
+        "text": "#ffffff",
+        "caption": "#bfbfbf",
+        "okay": "#81D6BE",
+        "critical": "#c42f2f"
+    }
+}
