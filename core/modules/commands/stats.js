@@ -36,6 +36,17 @@ class Stats {
 
 
 	/**
+	 * 	Returns recorded previous resource data from database.
+	 * 	@resourceHistory
+	 */
+	async resourceHistory() {
+		let { bot:{db} } = this.stacks
+		const res = await db._query(`SELECT avg_load FROM resource_usage ORDER BY timestamp ASC`, `all`)
+		return res.map(data => data.avg_load)
+	}
+
+
+	/**
 	 * 	Returns current machine resource usage such as cpu, memory, etc
 	 * 	@resource
 	 */
@@ -63,7 +74,8 @@ class Stats {
 				//	Fetching render
 				const perfCard = await new StatsUI({
 					resource: resourceData,
-					theme: data.interfacemode
+					theme: data.interfacemode,
+					history: await this.resourceHistory()
 				}).render()
 
 				reply(`${emoji(`AnnieGeek`)} **| Performance Status**`, {

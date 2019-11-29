@@ -37,7 +37,7 @@ class StatsInterface {
 			width: 250,
 			height: 150,
 			labels: ['24h ago', '18h ago', '12h ago', '6h ago', 'just now'],
-			datasets: [2, 2, 2, 2, parseInt(this.resource.avg)],
+			datasets: [...this.data.history, parseInt(this.resource.avg)],
 			theme: this.theme,
 			primaryColor: statusCode.color
 		}).render()

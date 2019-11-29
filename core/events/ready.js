@@ -279,7 +279,7 @@ module.exports = bot => {
          */
 		setInterval(() => {
 			setTimeout(() => {
-				record
+				record()
 			}, null)
 		}, 60000*x)
 
@@ -287,14 +287,14 @@ module.exports = bot => {
 		 * 	Note: the available data to be stored currently only covered the necessary ones.
 		 * 	More new different kind of data will be recorded in the future.
 		 */
-		function record() {
+		async function record() {
 			let memory = await SI.mem()
 			let processes = await SI.currentLoad()
-			let params = [bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.currentload]
+			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.currentload]
 			
 			db._query(`
-				INSERT INTO resource_usage(timestamp, uptime, ping, cpu, memory, avg_load)
-				VALUES(datetime('now'), ?, ?, ?, ?, ?)`
+				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory, avg_load)
+				VALUES(datetime('now'), ?, ?, ?, ?, ?, ?)`
 				, `run`
 				, params
 			)
@@ -312,13 +312,14 @@ module.exports = bot => {
 	function setupDatabase() {
 
 
-		db._query(`CREATE TABLE IF NOT EXISTS "resource_usage" (
-			'timestamp'	INTEGER DEFAULT datetime('now'),
+		db._query(`CREATE TABLE IF NOT EXISTS resource_usage (
+			'timestamp' INTEGER,
+			'environment' TEXT,
 			'uptime' INTEGER,
 			'ping' REAL,
 			'cpu' REAL,
 			'memory' REAL,
-			'avg_load' REAL`
+			'avg_load' REAL)`
 			, `run`
 			, []
 		)
@@ -371,6 +372,9 @@ module.exports = bot => {
 			bot.user.setActivity(`maintenance.`, {
 				type: `LISTENING`
 			})
+
+			//	Recording resource usage
+			hourlyResourceLog()
 
 		} else {
 
