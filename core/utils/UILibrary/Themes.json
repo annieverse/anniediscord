@@ -1,22 +1,28 @@
 {
     "light": {
-        "main": "#EEEEEE",
-        "secondary": "#dedfe2",
+        "main": "#F5F8FF",
+        "secondary": "#FFFFFF",
         "iconBackground": "lighten",
         "iconBackgroundOpacity": 0.4,
-        "text": "#333333",
-        "caption": "#919191",
-        "okay": "#3ede81",
-        "critical": "#c72020"
+        "allowedShadow": true,
+        "text": "#6C6D71",
+        "caption": "#BFC2C7",
+        "okay": "#81E1BE",
+        "warn": "#ff8636",
+        "critical": "#ff364d",
+        "separator": "#dedfe2"
     },
     "dark": {
         "main": "#191D38",
         "secondary": "#2D314C",
         "iconBackground": "darken",
         "iconBackgroundOpacity": 0.8,
+        "allowedShadow": false,
         "text": "#ffffff",
         "caption": "#bfbfbf",
         "okay": "#81D6BE",
-        "critical": "#c42f2f"
+        "warn": "#ff8636",
+        "critical": "#ff364d",
+        "separator": "#1c1c1c"
     }
 }

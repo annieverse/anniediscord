@@ -1,17 +1,28 @@
 const { Canvas } = require(`canvas-constructor`) 
+const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
 const palette = require(`../colorset`)
 const themePresets = require(`./Themes`)
-const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
+
 
 /**
- * Universal Card UI 
- * Library
- * 
- * Supports method chaining for flexibility
+ * Universal UI Library for Annie's Material Design.
+ * Supports method chaining.
  */
 class Card {
 
-	constructor({width=DEFAULT.WIDTH, height=DEFAULT.HEIGHT, theme=DEFAULT.THEME, dataBarSize=DEFAULT.DATABAR.SIZE}) {
+
+	/**
+	 * Global presets for current card instance.
+	 * @param {*} Object
+	 */
+	constructor({
+		width=DEFAULT.WIDTH, 
+		height=DEFAULT.HEIGHT, 
+		theme=DEFAULT.THEME, 
+		dataBarSize=DEFAULT.DATABAR.SIZE,
+		primaryColor=themePresets[DEFAULT.THEME].text
+	
+		}) {
 		this.width = width
 		this.height = height
 		this.color = themePresets[theme]
@@ -21,15 +32,36 @@ class Card {
 		this.dataBarCount = 0
 		this.dataBarSize = dataBarSize
 		this.reservedSpace = 0
+		this.primaryColor = primaryColor
 	}
 
 
 	/**
-	 * 	Niche method so its fully-ready to be converted to buffer.
+	 * 	Finisher method chain..
 	 * 	@ready
 	 */
 	ready() {
 		return this.canv
+	}
+	
+
+	/**
+	 * 	Fallback handler for component's color property.
+	 * 	@param {String} prop color's name reference.
+	 *	@param {String} defaultOpt fallback color when given prop is not exists in the available palette pool.
+	 * 	@private	
+	 * 	@_resolveColor
+	 */
+	_resolveColor(prop, defaultOpt) {
+		//	Check for color availability in standard colorset
+		if (palette[prop]) return palette[prop]
+
+		//	If color is inherited, this will use the defined primary color in the global preset.
+		if ((prop === `inherit`) && palette[this.primaryColor]) return palette[this.primaryColor] 
+		if ((prop === `inherit`) && this.color[this.primaryColor]) return this.color[this.primaryColor] 
+		if (prop === `inherit`) return this.primaryColor
+
+		return defaultOpt
 	}
 
 
@@ -42,12 +74,15 @@ class Card {
 
 
 	/**
-	 *	Create standard base card.
+	 *	Initialize canvas with base card layer.
+	 *	@param {Hex|ResolvableColor} color custom color choice.
+	 *	@param {Integer} cornerRadius integer value for card cornerning radius.
 	 *	@createBase
 	 */
-	createBase() {
-		this.canv.setColor(this.color.main)
-		.createBeveledClip(10, 10, this.width - 20, this.height - 20, 30)
+	createBase({color=``, cornerRadius=DEFAULT.CORNER_RADIUS}) {
+		this.canv
+		.setColor(this._resolveColor(color, this.color.main))
+		.createBeveledClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
 		.addRect(0, 0, this.width, this.height)
 
 		return this
@@ -55,53 +90,106 @@ class Card {
 
 
 	/**
-	 * Creating Data Bar
-	 * @param {*} Object 
+	 * 	Creating a FAB-like bar that displays a bit piece of information.
+	 * 	@param {*} Object 
+	 * 	@createDataBar
 	 */
-	createDataBar({content=``, size=this.dataBarSize, position=`bottom`, label=``, color=null}) {
+	createDataBar({
+		content=``, 
+		label=``, 
+		size=this.dataBarSize,
+		marginTop=this.marginTop,
+		align=`left`,
+		contentColor=null,
+		barColor=null,
+		labelColor=null,
+		disableShadow=false,
+		inline=false,
+		releaseHook=false}) {
+
 
 		//	Handle sensitive case
 		size = size.toUpperCase()
+		//	Handle custom color selection
+		barColor = this._resolveColor(barColor, this.color.secondary)
+		contentColor = this._resolveColor(contentColor, this.color.text)
+		labelColor = this._resolveColor(labelColor, this.color.text)
 
-		const leftMarginState = this.dataBarCount > 0 
+		//	Flexible X positioning
+		const leftMarginState = (this.dataBarCount > 0) && inline
 		? (DATABAR[size].WIDTH * this.dataBarCount) + (10 * this.dataBarCount) + this.marginLeft
 		: this.marginLeft
 
-		const positionPresets = {
-			top: Math.floor(this.height / 8),
-			center: this.height / 2,
-			bottom: this.height / 1.4
+
+		this.canv.save()
+
+
+		//	Apply shadow if the selected theme is allowing object shadow elevation.
+		if (!disableShadow && this.color.allowedShadow) {
+			this.canv.setShadowColor(contentColor)
+			.setShadowOffsetY(10)
+			.setShadowBlur(15)
+			.setColor(this.color.main)
+	
+			.addRect(leftMarginState+20, this.reservedSpace+20, DATABAR[size].WIDTH-40, DATABAR[size].HEIGHT-35)
+			.setShadowBlur(0)
+			.setShadowOffsetY(0)
 		}
 
+
 		//	If custom color is not specified, will follow default theming preset instead.
-		this.canv.setColor(color ? palette[color] : this.color.secondary)
+		this.canv.setColor(barColor)
+		.createBeveledClip(leftMarginState, this.reservedSpace, DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
+		.addRect(this.marginLeft, this.reservedSpace, this.width, this.height)
 
-		.save()
-		.createBeveledClip(leftMarginState, positionPresets[position], DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
-		.addRect(this.marginLeft, positionPresets[position], this.width, this.height)
 
+		//	Main info
 		this._databarTextContent({
+			type: `MAIN_TEXT`,
 			align: `center`,
+			size: `MEDIUM`,
 			content: content, 
 			marginLeft: leftMarginState+(DATABAR[size].WIDTH/2), 
-			marginTop: positionPresets[position]+(DATABAR[size].HEIGHT/1.3),
-			color: this.color.okay,
+			marginTop: this.reservedSpace+(DATABAR[size].HEIGHT/1.4),
+			color: contentColor,
 		})
 
+
+		//	Label info
 		this._databarTextContent({
-			align: `left`,
-			content: label, 
-			marginLeft: leftMarginState+20, 
-			marginTop: positionPresets[position]+10,
+			type: `LABEL`,
+			align: align,
 			size: `SMALL`,
-			color: this.color.caption
+			content: label, 
+			marginLeft: leftMarginState+(DATABAR[size].WIDTH/4.2), 
+			marginTop: this.reservedSpace+(DATABAR[size].HEIGHT/3.9),
+			color: labelColor
 			
 		})
+
 
 		this.canv.restore()
 
 		//	Add state for flexible X positioning
 		this.dataBarCount += 1
+		//	Add state for flexible Y positioning
+		if (!inline || (inline && releaseHook)) this.reservedSpace += DATABAR[size].HEIGHT
+
+		return this
+	}
+
+
+	/**
+	 *	Create content separator. Vertically.
+	 *	@param {*} Object
+	 *	@createVerticalSeparator
+	 */
+	createVerticalSeparator({margin=20, thickness=1}) {
+		this.canv
+		.setColor(this.color.separator)
+		.addRect(0, this.reservedSpace + margin, this.width, thickness)
+
+		this.reservedSpace += (margin*2)
 
 		return this
 	}
@@ -117,13 +205,24 @@ class Card {
 
 	/**
 	 * 	Content-fill for Data Bar
-	 * 	@param {Object} Object
+	 * 	@private
+	 * 	@param {*} Object
+	 * 	@_databarTextContent
 	 */
-	_databarTextContent({content=``, marginTop=this.marginTop, marginLeft=this.marginLeft, size=`MEDIUM`, align=`center`, color=this.color.text}) {
+	_databarTextContent({
+		content=``, 
+		marginTop=this.marginTop, 
+		marginLeft=this.marginLeft, 
+		size=`MEDIUM`, 
+		align=`center`, 
+		color=this.color.text,
+		type=`MAIN_TEXT`
+		}) {
+
 		this.canv
 		.setTextAlign(align)
 		.setColor(color)
-		.setTextFont(CONTENT.MAIN_TEXT.SIZE[size])
+		.setTextFont(CONTENT[type].SIZE[size])
 		.addText(content, marginLeft, marginTop)
 	}	
 
@@ -131,6 +230,7 @@ class Card {
 	/**
 	 * 	Return fixed position for custom horizontal align
 	 * 	@param {String} alignName
+	 * 	@_getHorizontalAlign
 	 */
 	_getHorizontalAlign(alignName=`left`) {
 		const alignPresets = {
@@ -144,8 +244,9 @@ class Card {
 
 
 	/**
-	 * Add title section to the card.
-	 * @param {Object} Object 
+	 * 	Add title section to the card.
+	 * 	@param {*} Object 
+	 * 	@addTitle
 	 */
 	addTitle({
 		main=``,
@@ -178,30 +279,41 @@ class Card {
 
 
 	/**
-	 * Add content/body section to the card.
-	 * @param {Object} Object 
+	 *	Add content/body section to the card.
+	 *	@param {*} Object 
+	 * 	@addContent
 	 */
 	addContent({
 		main=``,
 		caption=null,
 		align=`left`,
-		textColor=this.color.okay,
+		mainColor=this.color.okay,
 		captionColor=this.color.okay,
 		size=`small`,
 		marginTop=this.marginTop,
 		marginLeft=this.marginLeft,
+		marginBottom=0,
 		inline=false,
+		releaseHook=false,
 		captionMargin=20,
-		databarContent=false}) {
+		img=null
+		}) {
 
 		//	Handle sensitive case
 		size = size.toUpperCase()
+		//	Handle custom color selection
+		mainColor = this._resolveColor(mainColor, this.color.text)
+		captionColor = this._resolveColor(captionColor, this.color.caption)
 
-		this.canv
-		.setColor(textColor)
-		.setTextAlign(align)
-		.setTextFont(CONTENT.MAIN_TEXT.SIZE[size])
-		.addText(main, inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
+
+		if (main) {
+			this.canv
+			.setColor(mainColor)
+			.setTextAlign(align)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size])
+			.addText(main, inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
+		}
+
 
 		if (caption) {
 			this.canv
@@ -210,12 +322,17 @@ class Card {
 			.addText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
 
-		//	Add state for flexible Y positioning
-		if (!inline) {
-			caption ? this.reservedSpace += this.reservedSpace+marginTop+captionMargin : this.reservedSpace += marginTop
+
+		if (img) {
+			this.canv
+			.addImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
 		}
 
-		if (databarContent) return
+
+		//	Add state for flexible Y positioning
+		if (!inline || (inline && releaseHook)) {
+			caption ? this.reservedSpace += marginTop+captionMargin : this.reservedSpace += marginTop
+		}
 
 		return this
 	}

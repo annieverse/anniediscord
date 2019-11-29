@@ -3,6 +3,7 @@
         "WIDTH": 300,
         "HEIGHT": 500,
         "THEME": "light",
+        "CORNER_RADIUS": 30,
         "DATABAR": {
             "CORNER_RADIUS": 300,
             "SIZE": "medium"
@@ -29,29 +30,29 @@
     "DATABAR": {
         "SMALL": {
             "WIDTH": 100,
-            "HEIGHT": 40
+            "HEIGHT": 45
         },
         "SMALL-MED": {
             "WIDTH": 125,
-            "HEIGHT": 50
+            "HEIGHT": 55
         },
         "MEDIUM": {
             "WIDTH": 200,
-            "HEIGHT": 60
+            "HEIGHT": 65
         },
         "LARGE": {
             "WIDTH": 300,
-            "HEIGHT": 80
+            "HEIGHT": 75
         }
     },
     "CONTENT": {
         "MAIN_TEXT": {
             "SIZE": {
                 "SMALL": "10pt RobotoBold",
-                "SMALL-MED": "15pt RobotoBold",
-                "MEDIUM": "20pt RobotoBold", 
-                "LARGE": "30pt RobotoBold",
-                "EXTRA-LARGE": "40pt RobotoBold"
+                "SMALL-MED": "12pt RobotoBold",
+                "MEDIUM": "15pt RobotoBold", 
+                "LARGE": "20pt RobotoBold",
+                "EXTRA-LARGE": "30pt RobotoBold"
             }
         },
         "CAPTION": {
@@ -60,6 +61,14 @@
                 "SMALL-MED": "4pt RobotoBold",
                 "MEDIUM": "6pt RobotoBold", 
                 "LARGE": "8pt RobotoBold"
+            }
+        },
+        "LABEL": {
+            "SIZE": {
+                "SMALL": "7pt RobotoThin",
+                "SMALL-MED": "9t RobotoThin",
+                "MEDIUM": "11pt RobotoThin", 
+                "LARGE": "13pt RobotoThin"      
             }
         }
     }
