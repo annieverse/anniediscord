@@ -345,14 +345,9 @@ module.exports = bot => {
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
 			
-
 			setupDatabase()
 			roleChange()
 			autoStatus()
-			// Scare the mascot
-			stmloop()
-			// Remove limited role module
-			removeLimShopRole()
 
 			// Remove featured daily post
 			removeFeaturedDailyPostLoop()
