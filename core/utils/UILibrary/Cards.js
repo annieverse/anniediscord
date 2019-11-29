@@ -98,7 +98,6 @@ class Card {
 		content=``, 
 		label=``, 
 		size=this.dataBarSize,
-		marginTop=this.marginTop,
 		align=`left`,
 		contentColor=null,
 		barColor=null,

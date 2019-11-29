@@ -1,4 +1,4 @@
-const ChartjsNode = require('chartjs-node')
+const ChartjsNode = require(`chartjs-node`)
 const Color = require(`color`)
 const themePresets = require(`./Themes`)
 const palette = require(`../colorset`)
@@ -56,7 +56,7 @@ class Chart {
     get chartConfigurations() {
         const extractedRgbValuesFromPrimaryColor = (Color(this._resolveColor(this.primaryColor, palette.white)).rgb().array()).join(`, `)
         return {
-            type: 'line',
+            type: `line`,
             data: {
                 labels: this.labels,
                 datasets: [{
