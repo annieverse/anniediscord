@@ -1,10 +1,8 @@
 const cron = require(`node-cron`)
+const SI = require(`systeminformation`)
 module.exports = bot => {
 
 	// Modules
-	const scare = require(`../utils/ScareTheMascot`)
-	let stm = new scare(bot)
-
 	const dailyFeatured = require(`../utils/DailyFeaturedPost`)
 	let fdp = new dailyFeatured(bot)
 
@@ -261,6 +259,51 @@ module.exports = bot => {
 		}
 	}
 
+
+	/**
+     *  Automatically record resource usage data every hour.
+     *  @hourlyResourceLog
+     */
+	async function hourlyResourceLog() {
+		/**
+         * The Variable "x" is in terms of minutes
+         * for example:
+         * 1 = 1 minute
+         * etc.
+         */
+		let x = 60
+
+		/**
+         * The setInterval controls how long it takes before the color changes.
+         * The setTimeout makes sure new values are assigned each time.
+         */
+		setInterval(() => {
+			setTimeout(() => {
+				record
+			}, null)
+		}, 60000*x)
+
+		/**
+		 * 	Note: the available data to be stored currently only covered the necessary ones.
+		 * 	More new different kind of data will be recorded in the future.
+		 */
+		function record() {
+			let memory = await SI.mem()
+			let processes = await SI.currentLoad()
+			let params = [bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.currentload]
+			
+			db._query(`
+				INSERT INTO resource_usage(timestamp, uptime, ping, cpu, memory, avg_load)
+				VALUES(datetime('now'), ?, ?, ?, ?, ?)`
+				, `run`
+				, params
+			)
+	
+			logger.info(`Resource usage has been recorded.`)
+		}
+	}
+
+
 	/**
      *  
      * Database table check & schema preparation
@@ -268,28 +311,21 @@ module.exports = bot => {
      */
 	function setupDatabase() {
 
-		db._query(`CREATE TABLE IF NOT EXISTS "halloween_rewards_pool" (
-					'item_id'	INTEGER,
-					'item_name'	TEXT,
-					'item_alias'	TEXT,
-					'type'	TEXT,
-					'rarity'	INTEGER,
-					'drop_rate'	REAL,
-					'availability'	INTEGER DEFAULT 0
-					)`
+
+		db._query(`CREATE TABLE IF NOT EXISTS "resource_usage" (
+			'timestamp'	INTEGER DEFAULT datetime('now'),
+			'uptime' INTEGER,
+			'ping' REAL,
+			'cpu' REAL,
+			'memory' REAL,
+			'avg_load' REAL`
+			, `run`
+			, []
 		)
+
 		//	Reset whole server cooldown to false/zero.
 		db.resetCooldown()
 
-	}
-
-	/**
-     * 
-     * Runs loop for Scare The Mascot.
-     * @smtloop
-     */
-	async function stmloop() {
-		await stm.eventloop()
 	}
 
 
@@ -341,13 +377,20 @@ module.exports = bot => {
 			/**
              *  Production server
              */
-			logger.info(`${bot.user.username}up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
+			logger.info(`${bot.user.username} up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
 			
+
 			setupDatabase()
 			roleChange()
 			autoStatus()
+
+			//	Recording resource usage
+			hourlyResourceLog()
+
+			// Remove limited role module
+			removeLimShopRole()
 
 			// Remove featured daily post
 			removeFeaturedDailyPostLoop()
