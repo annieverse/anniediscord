@@ -18,7 +18,6 @@ class Chart {
         primaryColor=themePresets[`dark`].text, 
         theme=`dark`
         }) {
-
         this.width = width
         this.height = height
         this.chart = new ChartjsNode(width, height)
@@ -60,7 +59,7 @@ class Chart {
             data: {
                 labels: this.labels,
                 datasets: [{
-                    backgroundColor: `rgba(${extractedRgbValuesFromPrimaryColor}, 0.3)`,
+                    backgroundColor: `rgba(${extractedRgbValuesFromPrimaryColor}, 0.1)`,
                     borderColor: this._resolveColor(this.primaryColor, palette.white),
                     data: this.datasets
                 }]
@@ -80,12 +79,13 @@ class Chart {
                         color: this.color.separator
                     },
                     yAxes: [{
-                        position: `right`,
                         ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 3,
                             fontColor: this.color.text,
                             fontFamily: `Roboto`,
                             fontSize: 8,
-                            stepSize: 25,
+                            stepSize: 500,
                             beginAtZero: true
                         },
                     }],
@@ -94,10 +94,13 @@ class Chart {
                             display: false
                         },
                         ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 4,
                             fontColor: this.color.text,
                             fontFamily: `Roboto`,
-                            fontSize: 6,
+                            fontSize: 8,
                             beginAtZero: true,
+                            reverse: true
                         }
                     }]
                 }

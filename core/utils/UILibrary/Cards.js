@@ -1,4 +1,5 @@
 const { Canvas } = require(`canvas-constructor`) 
+const sizeOf = require('buffer-image-size')
 const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
 const palette = require(`../colorset`)
 const themePresets = require(`./Themes`)
@@ -330,7 +331,9 @@ class Card {
 
 		//	Add state for flexible Y positioning
 		if (!inline || (inline && releaseHook)) {
-			caption ? this.reservedSpace += marginTop+captionMargin : this.reservedSpace += marginTop
+			if (caption) this.reservedSpace += captionMargin 
+			if (img) this.reservedSpace += sizeOf(img).height
+			this.reservedSpace += marginTop
 		}
 
 		return this

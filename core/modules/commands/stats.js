@@ -1,5 +1,5 @@
 const StatsUI = require(`../../utils/StatsInterface`)
-const SI = require(`systeminformation`)
+const nodeutils = require('node-os-utils')
 class Stats {
 
 	constructor(Stacks) {
@@ -36,29 +36,32 @@ class Stats {
 
 
 	/**
-	 * 	Returns recorded previous resource data from database.
-	 * 	@resourceHistory
+	 * 	Returns recorded previous response time data from database.
+	 * 	@responseTimeHistory
 	 */
-	async resourceHistory() {
+	async responseTimeHistory() {
 		let { bot:{db} } = this.stacks
-		const res = await db._query(`SELECT avg_load FROM resource_usage ORDER BY timestamp ASC`, `all`)
-		return res.map(data => data.avg_load)
+		const res = await db._query(`SELECT timestamp, ping FROM resource_usage ORDER BY timestamp ASC`, `all`)
+		return {
+			datasets: res.map(data => data.ping),
+			label: res.map(data => data.timestamp)
+		}
 	}
 
 
 	/**
-	 * 	Returns current machine resource usage such as cpu, memory, etc
+	 * 	Returns currentresource usage such as cpu, memory, etc
 	 * 	@resource
 	 */
 	async resource() {
-		let { bot:{ping} } = this.stacks
-		let memoryData = await SI.mem()
-		let processes = await SI.currentLoad()
+		let { bot:{uptime, ping} } = this.stacks
+		let memUsage = process.memoryUsage().heapUsed
+		let cpuUsage = await nodeutils.cpu.usage()
 		
 		return {
-			avg: processes.currentload,
-			memory: this.toPercentage(memoryData.used, memoryData.total),
-			cpu: processes.cpus[0].load,
+			uptime: uptime,
+			memory: memUsage,
+			cpu: cpuUsage,
 			ping: ping
 		}
 	}
@@ -67,7 +70,7 @@ class Stats {
 	async execute() {
 		const { reply, emoji, meta:{ data } } = this.stacks
 
-		return reply(`\`fetching resource data ...\``, {simplified: true})
+		return reply(`\`fetching metrics data ...\``, {simplified: true})
 			.then(async load => {
 				//	Fetching resource
 				const resourceData = await this.resource()
@@ -75,10 +78,10 @@ class Stats {
 				const perfCard = await new StatsUI({
 					resource: resourceData,
 					theme: data.interfacemode,
-					history: await this.resourceHistory()
+					history: await this.responseTimeHistory()
 				}).render()
 
-				reply(`${emoji(`AnnieGeek`)} **| Performance Status**`, {
+				reply(`${emoji(`AnnieGeek`)} **| System Metrics**`, {
 					simplified: true,
 					prebuffer: true,
 					image: perfCard

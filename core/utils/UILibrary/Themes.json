@@ -10,7 +10,7 @@
         "okay": "#81E1BE",
         "warn": "#ff8636",
         "critical": "#ff364d",
-        "separator": "#dedfe2"
+        "separator": "#e3e5e8"
     },
     "dark": {
         "main": "#191D38",

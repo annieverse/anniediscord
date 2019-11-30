@@ -290,7 +290,7 @@ module.exports = bot => {
 		async function record() {
 			let memory = await SI.mem()
 			let processes = await SI.currentLoad()
-			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.currentload]
+			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.avgload ? processes.avgload : processes.currentload]
 			
 			db._query(`
 				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory, avg_load)

@@ -8,23 +8,42 @@ class StatsInterface {
 		this.data = data
 		this.theme = data.theme.startsWith(`dark`) ? `dark` : `light`
 		this.resource = this.data.resource
+		this.history = data.history
 	}
 
 
-	resourceMessageCode() {
-		const load = parseInt(this.resource.avg)
+	statusCode() {
+		const ping = parseInt(this.resource.ping)
 		const msgcode = {
-			"30": {color: `okay`, message: `Everything looks fine!`},
-			"70": {color: `warn`, message: `It's getting warm here...`},
-			"100": {color: `critical`, message: `Running out of resources!`}
+			"100": {color: `okay`, message: `Everything looks fine!`},
+			"500": {color: `warn`, message: `I'm getting tired.`},
+			"1000": {color: `critical`, message: `Aw, unstable connection...`}
 		}
 
-		return load < 20 ? msgcode[`30`] : load < 70 ? msgcode[`70`] : msgcode[`100`]
+		return ping < 100 ? msgcode[`100`] : ping < 500 ? msgcode[`500`] : msgcode[`1000`]
+	}
+
+
+	/**
+	 * Used to format returned bytes value into more human-readable data.
+	 * @param {Bytes/Number} bytes 
+	 * @param {*} decimals 
+	 */
+	formatBytes(bytes, decimals = 2) {
+		if (bytes === 0) return `0 Bytes`
+	
+		const k = 1024
+		const dm = decimals < 0 ? 0 : decimals
+		const sizes = [`Bytes`, `KB`, `MB`, `GB`, `TB`, `PB`, `EB`, `ZB`, `YB`]
+	
+		const i = Math.floor(Math.log(bytes) / Math.log(k))
+	
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ` ` + sizes[i]
 	}
 
 
 	async build() {
-		const statusCode = this.resourceMessageCode()
+		const statusCode = this.statusCode()
 		const cardLayer = new Card({
 			width: 500,
 			height: 420,
@@ -34,10 +53,10 @@ class StatsInterface {
 		})
 
 		const chartLayer = await new Chart({
-			width: 250,
+			width: 405,
 			height: 150,
-			labels: [`24h ago`, `18h ago`, `12h ago`, `6h ago`, `just now`],
-			datasets: [...this.data.history, parseInt(this.resource.avg)],
+			labels: [`now`, ...(this.history.label).map(timestamp => moment(timestamp).format(`hh:mm`))],
+			datasets: [this.resource.ping, ...this.history.datasets],
 			theme: this.theme,
 			primaryColor: statusCode.color
 		}).render()
@@ -48,21 +67,19 @@ class StatsInterface {
 		.createBase({})
 
 		//	Add two header title on left and right. With captions as well.
-		.addTitle({main: `Performance`, caption: `At a glance report.`, align: `left`})
-		.addTitle({main: this.currentTime.format(`h:mm a`), caption: this.currentTime.format(`MMMM Do YYYY`), align: `right`, inline: true})
+		.addTitle({main: `System Metrics`, caption: `Response Time`, align: `left`})
+		.addTitle({main: this.currentTime.format(`h:mm a`), caption: `${this.resource.ping} ms`, align: `right`, inline: true})
 
-		//	Percentage of current system load.
-		.addContent({main: `${this.resource.avg.toFixed(2)} %`, caption: statusCode.message, size: `EXTRA-LARGE`, align: `right`, mainColor: `inherit`, captionColor: `inherit`, marginLeft: 200, marginTop: 110})
-		//	Average load past the 24 hours.
-		.addContent({img: chartLayer, marginLeft: 200, marginBottom: 130})
+		//	Response Time Chart for the past 24 hours.
+		.addContent({img: chartLayer})
 
 		//	Content separator.
-		.createVerticalSeparator({margin: 30})
+		.createVerticalSeparator({margin: 20})
 
 		//	Secondary information bars such as memory, cpu and ping.
-		.createDataBar({content: `${this.resource.cpu.toFixed(2)} %`, label: `cpu usage`, contentColor: `inherit`, inline: true})
-		.createDataBar({content: `${this.resource.memory.toFixed(2)} %`, label: `ram usage`, contentColor: `inherit`, inline: true})
-		.createDataBar({content: `${Math.round(this.resource.ping)} ms`, label: `ping`, contentColor: `inherit`, inline: true, releaseHook: true})
+		.createDataBar({content: `${this.resource.cpu} %`, label: `cpu usage`, contentColor: `inherit`, inline: true})
+		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, inline: true})
+		.createDataBar({content: moment(Date.now() - this.resource.uptime).fromNow(true), label: `uptime`, contentColor: `inherit`, inline: true, releaseHook: true})
 		
 		.ready()
 	}
