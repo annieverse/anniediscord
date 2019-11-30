@@ -10,7 +10,7 @@ class DeveloperTool {
 		this.stacks = Stacks
 	}
 
-	
+
 	/**
      * CLI tool. Took boilerplate from dbkits.js
      * @commandLineInterface
@@ -35,10 +35,11 @@ class DeveloperTool {
 
 		//	Running query
 		return cmd[flag](stmt, function(err, data, stderr) {
-			if (err) return reply(`Something went wrong ...\n\n${err}`)
-			const parsedResult = (JSON.stringify(data)).substring(0, 1800).replace(/\,/g, `,\n`)
-		//	Display result
-		return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
+			if (err) return reply(err, {color:palette.red})
+			if (flag === `run`) return reply(`executed.`, {color:palette.lightgreen})
+			const parsedResult = (JSON.stringify(data)).substring(0, 1800)
+			//	Display result
+			return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
 		})
 	}
 
