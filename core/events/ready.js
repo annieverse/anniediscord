@@ -318,8 +318,7 @@ module.exports = bot => {
 			'uptime' INTEGER,
 			'ping' REAL,
 			'cpu' REAL,
-			'memory' REAL,
-			'avg_load' REAL)`
+			'memory' REAL)`
 			, `run`
 			, []
 		)
