@@ -38,9 +38,7 @@ module.exports = () => {
 	bot.startupInit = process.hrtime()
 	const app = express()
 
-	
 	if (environment.dev) winston.info(ascii)
-
 
 	require(`dotenv`).config()
 	app.get(`/`, (request, response) => response.sendStatus(200))
