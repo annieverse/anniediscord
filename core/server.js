@@ -7,7 +7,6 @@ module.exports = () => {
 	const Database = require(`./utils/databaseManager`)
 	const KeyvClient = require(`keyv`)
 	const express = require(`express`)
-	const environment = require(`../.data/environment`)
 	const winston = require(`./utils/config/winston`)
 	const cards = require(`./utils/cards-metadata`)
 	const msgCodes = require(`./utils/predefinedMessages`)
