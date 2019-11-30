@@ -66,11 +66,14 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-
+      - restore_cache:
+          keys: 
+            - v1-dependency-cache-{{ checksum "package.json" }}
+            - v1-dependency-cache-
       - run:
           name: Canvas version fallback
           command: npm install canvas@2.0.0-alpha.2
-          
+
       - run:
           name: Deploy to Production
           command: curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
