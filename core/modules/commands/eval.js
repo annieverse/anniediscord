@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars*/
+/* eslint-disable no-useless-escape*/
 /**
  * Main module
  * @DeveloperTool as function to runs custom code on the fly
@@ -37,7 +38,7 @@ class DeveloperTool {
 		return cmd[flag](stmt, function(err, data, stderr) {
 			if (err) return reply(err, {color:palette.red})
 			if (flag === `run`) return reply(`executed.`, {color:palette.lightgreen})
-			const parsedResult = (JSON.stringify(data)).substring(0, 1800)
+			const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
 			//	Display result
 			return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
 		})
