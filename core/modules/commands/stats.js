@@ -1,5 +1,5 @@
 const StatsUI = require(`../../utils/StatsInterface`)
-const nodeutils = require('node-os-utils')
+const nodeutils = require(`node-os-utils`)
 class Stats {
 
 	constructor(Stacks) {

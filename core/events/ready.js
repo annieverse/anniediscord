@@ -261,10 +261,10 @@ module.exports = bot => {
 
 
 	/**
-     *  Automatically record resource usage data every hour.
+     *  Automatically record resource usage data every 5 min.
      *  @hourlyResourceLog
      */
-	async function hourlyResourceLog() {
+	async function resourceLogging() {
 		/**
          * The Variable "x" is in terms of minutes
          * for example:
@@ -372,8 +372,11 @@ module.exports = bot => {
 				type: `LISTENING`
 			})
 
+			setupDatabase()
+
+
 			//	Recording resource usage
-			hourlyResourceLog()
+			resourceLogging()
 
 		} else {
 
@@ -390,7 +393,7 @@ module.exports = bot => {
 			autoStatus()
 
 			//	Recording resource usage
-			hourlyResourceLog()
+			resourceLogging()
 
 			// Remove limited role module
 			removeLimShopRole()

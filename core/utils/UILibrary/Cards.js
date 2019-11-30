@@ -1,5 +1,5 @@
 const { Canvas } = require(`canvas-constructor`) 
-const sizeOf = require('buffer-image-size')
+const sizeOf = require(`buffer-image-size`)
 const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
 const palette = require(`../colorset`)
 const themePresets = require(`./Themes`)
