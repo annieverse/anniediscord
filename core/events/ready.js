@@ -1,5 +1,5 @@
 const cron = require(`node-cron`)
-const SI = require(`systeminformation`)
+const nodeutils = require(`node-os-utils`)
 module.exports = bot => {
 
 	// Modules
@@ -271,7 +271,7 @@ module.exports = bot => {
          * 1 = 1 minute
          * etc.
          */
-		let x = 60
+		let x = 5
 
 		/**
          * The setInterval controls how long it takes before the color changes.
@@ -288,13 +288,13 @@ module.exports = bot => {
 		 * 	More new different kind of data will be recorded in the future.
 		 */
 		async function record() {
-			let memory = await SI.mem()
-			let processes = await SI.currentLoad()
-			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, processes.cpus[0].load, (memory.used/memory.total)*100, processes.avgload ? processes.avgload : processes.currentload]
+			let memory = process.memoryUsage().heapUsed
+			let cpu = await nodeutils.cpu.usage()
+			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, cpu, memory]
 			
 			db._query(`
-				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory, avg_load)
-				VALUES(datetime('now'), ?, ?, ?, ?, ?, ?)`
+				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
+				VALUES(datetime('now'), ?, ?, ?, ?, ?)`
 				, `run`
 				, params
 			)
