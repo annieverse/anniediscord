@@ -1,5 +1,6 @@
 module.exports = () => {
 
+	const { Client } = require(`discord.js`)
 	const environment = require(`../.data/environment`)
 	const ascii = require(`./utils/config/startupAscii`)
 	const benchmark = require(`./utils/benchmarkConverter`)
@@ -10,23 +11,29 @@ module.exports = () => {
 	const winston = require(`./utils/config/winston`)
 	const cards = require(`./utils/cards-metadata`)
 	const msgCodes = require(`./utils/predefinedMessages`)
-	const cmd = require(`node-cmd`)
 	const { dependencies } = require(`../package`)
+	const npm = require(`npm-programmatic`)
 
-
-	//	Handling incompatible version of canvas.
-	if (!environment.dev) {
-		if (!dependencies.canvas.includes(`2.0.0-alpha.2`)) {
-			winston.info(`Incompatible version of canvas has been detected in the production, fallback version will be installed in a moment.`)
-			return cmd.run(`
-				npm install canvas@2.0.0-alpha.2
-			`)
-		}
+	const fallbackReinstall = () => {
+		winston.info(`Incompatible version of canvas has been detected in the production, fallback version will be installed in a moment.`)
+		npm.install([`canvas@2.0.0-alpha.2`], {
+			cwd: process.cwd(),
+			save: true
+		})
+		.then(() => {
+			winston.info(`Canvas has been successfully reinstalled. The server will restart in a second to apply the changes.`)
+			process.exit()
+		})
+		.catch(e => {
+			winston.error(`Canvas has failed to reinstall > ${e}`)
+		})
 	}
 
+	//	Handling incompatible version of canvas on production server
+	if (!environment.dev && !dependencies.canvas.includes(`2.0.0-alpha.2`)) return fallbackReinstall()
+
 	
-	//Initialize startup modules
-	const { Client } = require(`discord.js`)
+	//	Initialize client
 	let bot = new Client()
 	bot.startupInit = process.hrtime()
 	const app = express()
