@@ -34,14 +34,28 @@ class DeveloperTool {
 		if (!flag) return reply(DBKITS.MISSING_FLAG)
 
 
-		//	Running query
-		return cmd[flag](stmt, function(err, data, stderr) {
-			if (err) return reply(err, {color:palette.red})
-			if (flag === `run`) return reply(`executed.`, {color:palette.lightgreen})
-			const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
-			//	Display result
-			return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
-		})
+		reply(`\`executing "${flag}" method ...\``, {simplified: true})
+			.then(load => {
+				//	Running query
+				if (flag === `run`) {
+					cmd.run(stmt)
+					load.delete()
+					return reply(`executed.`, {color:palette.lightgreen})
+				}
+
+				return cmd.get(stmt, function(err, data, stderr) {
+					//	Catch error.
+					if (err) {
+						load.delete()
+						return reply(err, {color:palette.red})
+					}
+
+					const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
+					//	Display result.
+					load.delete()
+					return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
+				})
+			})
 	}
 
 
@@ -50,7 +64,7 @@ class DeveloperTool {
      * @Execute
      */
 	async execute() {
-		const {bot:{db},palette, isDev, command, message, args, utils:{pages}, code: {EVAL}, reply} = this.stacks
+		const {bot, palette, isDev, command, message, args, utils:{pages}, code: {EVAL}, reply} = this.stacks
 
 		//  Returns if the author is not in dev team or admin.
 		if (!isDev) return reply(EVAL.UNKNOWN_AUTHOR, { color: palette.red })
