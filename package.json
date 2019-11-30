@@ -34,6 +34,7 @@
     "mocha": "^6.2.2",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
+    "node-cmd": "^3.0.0",
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
     "node-os-utils": "^1.1.0",
