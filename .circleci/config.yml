@@ -69,7 +69,10 @@ jobs:
       - run:
           name: Deploy to Production
           command: |
-          npm install canvas@2.0.0-alpha.2 | curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
+
+          npm install canvas@2.0.0-alpha.2 
+          
+          curl -sSf -X POST "https://api.glitch.com/project/githubImport?authorization=$GLITCH_API_TOKEN&projectId=$GLITCH_PROJECT_ID&repo=klerikdust%2Fanniediscord"
 
 
 
