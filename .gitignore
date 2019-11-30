@@ -2,6 +2,5 @@ node_modules
 .idea/
 .data/
 .env
-package-lock.json
 .vscode/
 logs/
