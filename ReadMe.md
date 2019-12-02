@@ -1,7 +1,7 @@
 # Say hello to **Annie.**
 
 [![CircleCI](https://circleci.com/gh/klerikdust/anniediscord.svg?style=svg)](https://circleci.com/gh/klerikdust/anniediscord)
-![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m783469677-9c4a013c6c31449d182a51c6?style=flat-square)
+![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m783912232-966d9143f91a69adf58b49f1?style=flat-square)
 ![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
 ![LastCommit](https://img.shields.io/github/last-commit/klerikdust/anniediscord.svg?style=flat-square)
 
