@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "5.0.2",
+  "version": "5.0.5",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
@@ -13,8 +13,24 @@
   "engines": {
     "node": "10.16.0"
   },
-  "author": "AAU_developer",
+  "author": {
+    "name": "klerikdust",
+    "email": "klerikdust@gmail.com",
+    "url": "https://klerikdust.github.io"
+  },
+  "contributors": [
+    "Pan/Bait God (https://github.com/BaitGod01)",
+    "sunnyrainyworks (https://github.com/Sunny-Rainy-Works)",
+    "hugonun (https://github.com/hugonun)",
+    "Fwubbles (https://github.com/Fwubbles)"
+  ],
   "license": "MIT",
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "discordjs",
+    "bot"
+  ],
   "dependencies": {
     "axios": ">=0.19.0",
     "buffer-image-size": "^0.6.4",
