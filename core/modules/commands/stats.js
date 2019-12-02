@@ -1,4 +1,5 @@
 const StatsUI = require(`../../utils/StatsInterface`)
+const memUsage = require(`../../utils/memoryUsage`)
 class Stats {
 
 	constructor(Stacks) {
@@ -36,12 +37,11 @@ class Stats {
 	 */
 	async resource() {
 		let { bot:{uptime, ping} } = this.stacks
-		let memUsage = process.memoryUsage().heapTotal
 		let cmdUsage = await this.commandQueriesCount()
 		
 		return {
 			uptime: uptime,
-			memory: memUsage,
+			memory: memUsage(),
 			commandsRan: cmdUsage,
 			ping: ping
 		}

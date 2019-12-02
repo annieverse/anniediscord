@@ -1,5 +1,6 @@
 const cron = require(`node-cron`)
-const nodeutils = require(`node-os-utils`)
+const getCpuUsage = require(`../utils/cpuUsage`)
+const getMemUsage = require(`../utils/memoryUsage`)
 module.exports = bot => {
 
 	// Modules
@@ -287,10 +288,8 @@ module.exports = bot => {
 		 * 	Note: the available data to be stored currently only covered the necessary ones.
 		 * 	More new different kind of data will be recorded in the future.
 		 */
-		async function record() {
-			let memory = process.memoryUsage().heapUsed
-			let cpu = await nodeutils.cpu.usage()
-			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, cpu, memory]
+		function record() {
+			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, getCpuUsage(), getMemUsage()]
 			
 			db._query(`
 				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
