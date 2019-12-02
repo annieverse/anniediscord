@@ -31,6 +31,7 @@
     "discordjs",
     "bot"
   ],
+  "repository": "github:klerikdust/anniediscord",
   "dependencies": {
     "axios": ">=0.19.0",
     "buffer-image-size": "^0.6.4",
@@ -38,14 +39,13 @@
     "canvas-constructor": "^3.1.0",
     "chai": "^4.2.0",
     "chart.js": "^2.9.3",
-    "chartjs-node": "^1.7.1",
+    "chartjs-node-canvas": "^2.4.1",
     "color": "^3.1.2",
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs-nextra": "^0.4.5",
     "jimp": "^0.9.3",
-    "jsdom": "^15.2.1",
     "keyv": "^4.0.0",
     "mocha": "^6.2.2",
     "moment": "^2.24.0",
@@ -54,7 +54,6 @@
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
     "node-os-utils": "^1.1.0",
-    "npm-programmatic": "0.0.12",
     "parse-ms": "^2.1.0",
     "pm2": "^4.2.0",
     "probe-image-size": "^5.0.0",
@@ -65,7 +64,7 @@
     "winston-daily-rotate-file": "^4.3.0"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "5.16.0",
     "nodemon": "^2.0.1"
   }
 }

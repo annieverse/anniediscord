@@ -1,4 +1,4 @@
-const ChartjsNode = require(`chartjs-node`)
+const { CanvasRenderService } = require('chartjs-node-canvas');
 const Color = require(`color`)
 const themePresets = require(`./Themes`)
 const palette = require(`../colorset`)
@@ -20,7 +20,7 @@ class Chart {
         }) {
         this.width = width
         this.height = height
-        this.chart = new ChartjsNode(width, height)
+        this.chart = new CanvasRenderService(width, height)
         this.labels = labels
         this.datasets = datasets
         this.primaryColor = primaryColor
@@ -114,8 +114,7 @@ class Chart {
      *  @render
      */
     async render() {
-        await this.chart.drawChart(this.chartConfigurations)
-        return this.chart.getImageBuffer(`image/png`)
+        return await this.chart.renderToBuffer(this.chartConfigurations)
     }
 
 
