@@ -43,6 +43,7 @@ class StatsInterface {
 
 
 	async build() {
+		const uptime = moment.duration(this.resource.uptime)
 		const statusCode = this.statusCode()
 		const cardLayer = new Card({
 			width: 500,
@@ -79,7 +80,7 @@ class StatsInterface {
 		//	Secondary information bars.
 		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: `inherit`, inline: true})
 		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, inline: true})
-		.createDataBar({content: moment(Date.now() - this.resource.uptime).fromNow(true), label: `uptime`, contentColor: `inherit`, inline: true, releaseHook: true})
+		.createDataBar({content: `${uptime.hours()}h ${uptime.minutes()}m`, label: `uptime`, contentColor: `inherit`, inline: true, releaseHook: true})
 		
 		.ready()
 	}
