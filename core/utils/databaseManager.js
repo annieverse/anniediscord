@@ -272,6 +272,27 @@ class databaseUtils {
 
 
 	/**
+	 * 	Records command query/usage everytime user uses it.
+	 * 	@param {*} Object 
+	 * 	@recordsCommandUsage
+	 */
+	recordsCommandUsage({
+		guild_id=`???`,
+		user_id=`???`,
+		command_alias=`???`,
+		resolved_in=`???` }) {
+
+		this._query(`
+			INSERT INTO commands_usage (timestamp, guild_id, user_id, command_alias, resolved_in)
+			VALUES (datetime('now'), ?, ?, ?, ?)`
+			, `run`
+			, [guild_id, user_id, command_alias, resolved_in]
+		)
+	
+	}
+
+
+	/**
 	 * 	Register into userdata if not present
 	 * 	@param {String|ID} id user id. Use class default prop if not provided.
 	 */

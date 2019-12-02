@@ -181,7 +181,18 @@ class CommandsHandler extends Controller {
 			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
 			await new this.cmd(Pistachified).execute()
-			this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${this.filename} command. (${this.getBenchmark(process.hrtime(this.data.cmdExecTime))})`)
+
+			const cmdFinishTime = this.getBenchmark(process.hrtime(this.data.cmdExecTime))
+			const cmdUsageData = {
+				guild_id: this.data.message.guild.id,
+				user_id: this.data.message.author.id,
+				command_alias: command,
+				resolved_in: cmdFinishTime
+			}
+			//	Log and store the cmd usage to database.
+			this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${command} in (${cmdFinishTime})`)
+			this.bot.db.recordsCommandUsage(cmdUsageData)
+			
 		}
 		catch (e) {
 			this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. > ${e.stack}`)

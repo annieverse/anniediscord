@@ -323,6 +323,17 @@ module.exports = bot => {
 			, []
 		)
 
+		db._query(`CREATE TABLE IF NOT EXISTS commands_usage (
+			'timestamp' INTEGER,
+			'guild_id' TEXT,
+			'user_id' TEXT,
+			'command_alias' TEXT,
+			'resolved_in' TEXT)`
+			, `run`
+			, []
+		)
+
+
 		//	Reset whole server cooldown to false/zero.
 		db.resetCooldown()
 
