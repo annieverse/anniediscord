@@ -1,4 +1,4 @@
-const os = require('os')
+const os = require(`os`)
 
 
 /**
@@ -9,10 +9,10 @@ const cpuPercentage = () => {
     const cpus = os.cpus()
     const cpuArray = []
     for(var i = 0, len = cpus.length; i < len; i++) {
-        var cpu = cpus[i], total = 0;
+        var cpu = cpus[i], total = 0
 
         for(var type in cpu.times) {
-            total += cpu.times[type];
+            total += cpu.times[type]
         }
         cpuArray.push(Math.round(100 * (cpu.times.sys/ total)))
     }
