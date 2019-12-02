@@ -1,37 +1,8 @@
 const StatsUI = require(`../../utils/StatsInterface`)
-const nodeutils = require(`node-os-utils`)
 class Stats {
 
 	constructor(Stacks) {
 		this.stacks = Stacks
-	}
-	
-
-	/**
-	 * Used to format returned bytes values from `resourceData()` into more human-readable data.
-	 * @param {Bytes/Number} bytes 
-	 * @param {*} decimals 
-	 */
-	formatBytes(bytes, decimals = 2) {
-		if (bytes === 0) return `0 Bytes`
-	
-		const k = 1024
-		const dm = decimals < 0 ? 0 : decimals
-		const sizes = [`Bytes`, `KB`, `MB`, `GB`, `TB`, `PB`, `EB`, `ZB`, `YB`]
-	
-		const i = Math.floor(Math.log(bytes) / Math.log(k))
-	
-		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ` ` + sizes[i]
-	}
-
-
-	/**
-	 * Converting values into percentage.
-	 * @param {Number} min 
-	 * @param {Number} max 
-	 */
-	toPercentage(min, max) {
-		return (min/max) * 100
 	}
 
 
@@ -48,6 +19,16 @@ class Stats {
 		}
 	}
 
+	/**
+	 * 	Returns total amount of recorded command queries that has been ran.
+	 * 	@commandQueriesCount
+	 */
+	async commandQueriesCount() {
+		let { bot:{db} } = this.stacks
+		const res = await db._query(`SELECT COUNT(command_alias) FROM commands_usage`, `get`)
+		return res[`COUNT(command_alias)`]
+	}
+
 
 	/**
 	 * 	Returns currentresource usage such as cpu, memory, etc
@@ -55,13 +36,13 @@ class Stats {
 	 */
 	async resource() {
 		let { bot:{uptime, ping} } = this.stacks
-		let memUsage = process.memoryUsage().heapUsed
-		let cpuUsage = await nodeutils.cpu.usage()
+		let memUsage = process.memoryUsage().heapTotal
+		let cmdUsage = await this.commandQueriesCount()
 		
 		return {
 			uptime: uptime,
 			memory: memUsage,
-			cpu: cpuUsage,
+			commandsRan: cmdUsage,
 			ping: ping
 		}
 	}

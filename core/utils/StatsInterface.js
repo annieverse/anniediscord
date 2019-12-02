@@ -76,8 +76,8 @@ class StatsInterface {
 		//	Content separator.
 		.createVerticalSeparator({margin: 20})
 
-		//	Secondary information bars such as memory, cpu and ping.
-		.createDataBar({content: `${this.resource.cpu} %`, label: `cpu usage`, contentColor: `inherit`, inline: true})
+		//	Secondary information bars.
+		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: `inherit`, inline: true})
 		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, inline: true})
 		.createDataBar({content: moment(Date.now() - this.resource.uptime).fromNow(true), label: `uptime`, contentColor: `inherit`, inline: true, releaseHook: true})
 		
