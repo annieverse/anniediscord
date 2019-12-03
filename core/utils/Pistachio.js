@@ -1,6 +1,8 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
 const databaseManager = require(`./databaseManager`)
 const fsn = require(`fs-nextra`)
+const imageUrlRegex = /\?size=2048$/g
+const { get } = require(`snekfetch`)
 /**
  *  Micro framework to support Annie's structure
  *  Lightweight, portable and opinionated
@@ -172,11 +174,6 @@ class Pistachio {
 			return bot.users.get(id).username
 		}
 
-		//  Returns avatar URL based on the id.
-		container.avatar = (id) => {
-			return bot.users.get(id).displayAvatarURL
-		}
-
 		//  Wrapping out avatar message.
 		container.avatarWrapper = (id) => {
 			message.react(`📸`)
@@ -267,6 +264,21 @@ class Pistachio {
 		//  Load asset from default images dir
 		container.loadAsset = async (id) => {
 			return fsn.readFile(`./core/images/${id}.png`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+		}
+
+
+		//  Returns avatar URL based on the id.
+		container.avatar = async (id) => {
+
+			if (typeof id === `string`)  return bot.users.get(id).displayAvatarURL
+		
+			try {
+				let res = await get(id.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+				return res.body.avatar
+			}
+			catch(e) {
+				return await container.loadAsset(`error`)
+			}
 		}
 
 

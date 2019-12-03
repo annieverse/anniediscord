@@ -181,7 +181,7 @@ class CommandsHandler extends Controller {
 			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
 
 			await new this.cmd(Pistachified).execute()
-
+			
 			const cmdFinishTime = this.getBenchmark(process.hrtime(this.data.cmdExecTime))
 			const cmdUsageData = {
 				guild_id: this.data.message.guild.id,
@@ -189,6 +189,7 @@ class CommandsHandler extends Controller {
 				command_alias: command,
 				resolved_in: cmdFinishTime
 			}
+		
 			//	Log and store the cmd usage to database.
 			this.logger.info(`[${this.message.channel.name}] ${this.data.message.author.tag}: ran ${command} in (${cmdFinishTime})`)
 			this.bot.db.recordsCommandUsage(cmdUsageData)

@@ -73,9 +73,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	let baseWidth = canvas_x - 20
 	let baseHeight = canvas_y - 20
 
-	const {
-		body: avatar
-	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+	const avatar = await stacks.avatar(member.user)
 	const usercolor = configProfile.checkInterface(user.ui, member)
 	const badgesdata = await collection.badges
 	const isVIP = member.roles.has(nitro_boost)
@@ -129,7 +127,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	 *    USER AVATAR
 	 */
 	canv.setColor(isVIP ? palette.yellow : switchColor[usercolor].base)
-		.addCircle(startPos_x + 70, 200, 52) //avatar
+		.addCircle(startPos_x + 70, 200, 52) 
 		.addRoundImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
 	/**
