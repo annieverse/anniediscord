@@ -71,7 +71,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	let baseWidth = canvas_x - 20
 	let baseHeight = canvas_y - 20
 
-	const avatar = await stacks.avatar(member.user)
+	const avatar = await stacks.avatar(member.id, true)
 	const usercolor = configProfile.checkInterface(user.ui, member)
 	const badgesdata = await collection.badges
 	const isVIP = member.roles.has(nitro_boost)

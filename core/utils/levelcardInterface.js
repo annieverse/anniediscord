@@ -62,9 +62,7 @@ async function profile(stacks, member) {
 
 	//PAN's attempt	
 	let PanCurrent = user.cur <= user.min ? 0 : (user.cur - user.min) / (user.crv)
-	const avatar = await stacks.avatar(member.user)
-	
-
+	const avatar = await stacks.avatar(member.id, true)
 	const calculatedBar = await configProfile.barSize(PanCurrent, barlength_xp)
 	const rankTitle = await configRank.ranksCheck(user.lvl).title
 

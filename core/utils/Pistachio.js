@@ -1,7 +1,6 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
 const databaseManager = require(`./databaseManager`)
 const fsn = require(`fs-nextra`)
-const imageUrlRegex = /\?size=2048$/g
 const { get } = require(`snekfetch`)
 /**
  *  Micro framework to support Annie's structure
@@ -267,18 +266,30 @@ class Pistachio {
 		}
 
 
-		//  Returns avatar URL based on the id.
-		container.avatar = async (id) => {
+		/**
+		 *	Handles user's avatar fetching process.
+		 *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
+		 *	@param {String|ID} id id of user to be fetched from.
+		 *	@param {Boolean} compress set true to return as compressed buffer.
+		 */
+		container.avatar = (id, compress=false) => {
 
-			if (typeof id === `string`)  return bot.users.get(id).displayAvatarURL
+			const fallbackImage = (err) => {
+				bot.logger.error(`Failed to parse user's avatar. User will see a placeholder img as an exchange. > ${err}`)
+				return container.loadAsset(`error`)
+			}
 		
 			try {
-				let res = await get(id.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-				return res.body.avatar
+				let url = bot.users.get(id).displayAvatarURL
+				if (compress) {
+					return get(url.replace(/\?size=2048$/g, `?size=512`))
+						.then(data => data.body)
+						.catch(e => { return fallbackImage(e) })
+				}
+
+				return url
 			}
-			catch(e) {
-				return await container.loadAsset(`error`)
-			}
+			catch(e) { return fallbackImage(e) }
 		}
 
 
