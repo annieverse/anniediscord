@@ -3,7 +3,6 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const Color = require(`color`)
 const moment = require(`moment`)
-const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const rankManager = require(`./ranksManager`)
