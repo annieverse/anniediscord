@@ -81,9 +81,7 @@ async function friend(stacks, member) {
     let baseWidth = canvas_x - 20
     let baseHeight = canvas_y - 20
 
-    const {
-        body: avatar
-    } = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+    const avatar = await stacks.avatar(member.id, true)
     const usercolor = configProfile.checkInterface(user.ui, member)
 
     let canv = new Canvas(canvas_x, canvas_y) // x y
@@ -136,9 +134,7 @@ async function friend(stacks, member) {
 
     for (var i=0;i<Math.min(friendrelations.length, 9); i++) {
         var relUser = await stacks.bot.fetchUser(friendrelations[i].theirUserId)
-        const {
-            body: userAvatar
-        } = await get(relUser.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+        var userAvatar = await stacks.avatar(relUser.id, true)
         listEntry(relUser.username, userAvatar, friendrelations[i].theirRelation, 30, 70 + i*33)
     }
 
