@@ -78,9 +78,7 @@ async function portfolio(stacks, member) {
 	let baseWidth = canvas_x - 20
 	let baseHeight = canvas_y - 20
 
-	const {
-		body: avatar
-	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+	const avatar = await stacks.avatar(member.id, true)
 	const usercolor = configProfile.checkInterface(user.ui, member)
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
