@@ -11,7 +11,7 @@ module.exports = () => {
 	const winston = require(`./utils/config/winston`)
 	const cards = require(`./utils/cards-metadata`)
 	const msgCodes = require(`./utils/predefinedMessages`)
-
+	const cmd = require(`node-cmd`)
 	
 	//	Initialize client
 	let bot = new Client()
@@ -35,6 +35,9 @@ module.exports = () => {
 	bot.keyv = new KeyvClient()
 	bot = new modulesLoader().register(bot)
 
+
+	cmd.run(`rm -rf .git`)
+	bot.logger.info(`> [GIT] rm -rf .git > RAN`)
 
 	require(`./utils/eventHandler`)(bot)
 	bot.login(process.env.TOKEN)
