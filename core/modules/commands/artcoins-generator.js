@@ -63,16 +63,23 @@ class ArtcoinsGenerator {
 
 							//  Storing new balance value
 							for (let index = 0; index < usersarr.length; index++) {
-								const element = usersarr[index]
-								let userSelectorMetadata = {
-									args: [element],
-									message: message,
-									commandfile: commandfile
+								try 
+								{
+									const element = usersarr[index]
+									let userSelectorMetadata = {
+										args: [element],
+										message: message,
+										commandfile: commandfile
+									}
+									let currentAuthor = await new User(userSelectorMetadata).getUser()
+									db.setUser(currentAuthor.id).storeArtcoins(amount)
+									userNames.push(name(currentAuthor.id))
+									pause(3000)
 								}
-								let currentAuthor = await new User(userSelectorMetadata).getUser()
-								db.setUser(currentAuthor.id).storeArtcoins(amount)
-								userNames.push(name(currentAuthor.id))
-								pause(3000)
+								catch(error)
+								{
+									null
+								}
 							}
 
 							let userNamesCombined = userNames.join(`, `)
