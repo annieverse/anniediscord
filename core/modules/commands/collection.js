@@ -90,7 +90,7 @@ class Collection {
 	 *  @execute
 	 */
 	async execute() {
-		const { message,command, code:{COLLECTION}, emoji, reply, name, meta:{author,data}, textOption} = this.stacks
+		const { message, code:{COLLECTION}, emoji, reply, name, meta:{author,data}, textOption} = this.stacks
 		return reply(COLLECTION.FETCHING, {socket:[name(author.id)], simplified: true})
 			.then(async load => {	
 				const cards = this.filterCardFromInventory(data)

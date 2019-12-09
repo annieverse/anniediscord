@@ -8,45 +8,45 @@ module.exports = async (bot, message) => {
 	await bot.db.validatingNewUser(message.author.id)
 	//	Retrieve user metadata from db
 	const data = await bot.db.userMetadata(message.author.id)
-	if (message.author.id != '277266191540551680') return
+	
 	/**
 	 * This willl be used to toggle the text verison of a command
 	 */
-	let textOption = false;
+	let textOption = false
 	function remove_first_occurrence(str, searchstr) {
-		var index = str.indexOf(searchstr);
+		var index = str.indexOf(searchstr)
 		if (index === -1) {
-			return str;
+			return str
 		}
-		return str.slice(0, index) + str.slice(index + searchstr.length);
+		return str.slice(0, index) + str.slice(index + searchstr.length)
 	}
 
-	var testString = "--text"
+	var testString = `--text`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = "--tex"
+	testString = `--tex`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = "--tx"
+	testString = `--tx`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = "text"
+	testString = `text`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = "tx"
+	testString = `tx`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = "tex"
+	testString = `tex`
 	if (message.content.includes(testString)) {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
