@@ -29,6 +29,24 @@ class Experience extends Controller {
 	}
 
 	/**
+	 * Give user rank rewards based on level achieved
+	 * @rankRewards
+	 */
+	rankRewards(){
+		let level = this.meta.data.level
+		switch (level) {
+			case 85: // For level 85 milestone
+				this.db.addReputations(100)
+				break
+			case 100: // For level 100 milestone
+				this.db.addLuckyTickets(100)
+				break
+			default:
+				break
+		}
+	}
+
+	/**
 	 * 	Add new rank
 	 * 	@addRank
 	 */
@@ -179,6 +197,7 @@ class Experience extends Controller {
 			if (this.rankUp) {
 				await this.removeRank()
 				await this.addRank()
+				this.rankRewards()
 			}
 
 			const commanifier = (number = 0) => {

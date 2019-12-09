@@ -88,17 +88,6 @@ class ranksManager {
 		const rankJump = (array, val) => {
 			
 			let correctRank = ranks[(closestBelowLv(array, val)).toString()]
-			// try {
-			// 	correctRank = ranks[val.toString()]				
-			// } catch (error) {
-			// 	console.log(`hmm`)
-			// }
-			// try {
-			// 	correctRank = ranks[(previousLvl(array, val)).toString()]				
-			// } catch (error) {
-			// 	console.log(`lolo`)
-			// }
-			//correctRank = ranks[lv.toString()].catch(err=>console.log(err))
 			
 			function currentrank(values) {
 				const {message} = values
