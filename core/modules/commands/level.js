@@ -45,7 +45,7 @@ class Level {
 	 *  Initialzer method
 	 */
 	async execute() {
-		const { reply, name, code: {LEVELCARD}, meta: {author}, command } = this.stacks
+		const { reply, name, code: {LEVELCARD}, meta: {author}, textOption } = this.stacks
 
 		//  Returns if user is invalid
 		if (!author) return reply(LEVELCARD.INVALID_USER)
@@ -53,7 +53,7 @@ class Level {
 		let textoptions = await this.textOpt()
 		
 		//  Display result
-		command.includes(`text`) || command.includes(`tex`) || command.includes(`t`) || command.includes(`tx`) ?
+		textOption ?
 		reply(`${LEVELCARD.HEADER}\n${textoptions.bar}\n  ${textoptions.level}\t\t  ${textoptions.currentexp}\t\t\t${textoptions.nextlevelup}\nLevel\tCurrent Exp\tNext Level Up`, {
 			socket: [name(author.id)],
 			simplified: true 
@@ -70,7 +70,7 @@ class Level {
 module.exports.help = {
 	start: Level,
 	name: `level`,
-	aliases: [`lvl`, `lv`, `leveltext`, `lvltext`, `lvtext`, `levelt`, `lvlt`, `lvt`, `leveltx`, `lvltx`, `lvtx`, `leveltex`, `lvltex`, `lvtex`],
+	aliases: [`lvl`, `lv`],
 	description: `Pulls up your level`,
 	usage: `level`,
 	group: `General`,

@@ -90,7 +90,7 @@ class Collection {
 	 *  @execute
 	 */
 	async execute() {
-		const { message,command, code:{COLLECTION}, emoji, reply, name, meta:{author,data} } = this.stacks
+		const { message,command, code:{COLLECTION}, emoji, reply, name, meta:{author,data}, textOption} = this.stacks
 		return reply(COLLECTION.FETCHING, {socket:[name(author.id)], simplified: true})
 			.then(async load => {	
 				const cards = this.filterCardFromInventory(data)
@@ -98,7 +98,7 @@ class Collection {
 				//	Return if user don't have any card
 				if (Object.keys(cards).length < 1) return reply(COLLECTION.EMPTY)
 				//	Card Author
-				if (command.includes(`text`) || command.includes(`tex`) || command.includes(`tx`)){
+				if (textOption){
 					reply(COLLECTION.HEADER, { socket: [emoji(`AnnieWot`), name(author.id)], simplified: true })
 					return reply(this.prettifyResult(await this.retrieveCardMetadata(cards)))
 				} else {
@@ -158,10 +158,7 @@ class Collection {
 module.exports.help = {
 	start: Collection,
 	name: `collection`,
-	aliases: [`collection`, `mycard`, `card`,
-		`collectiontx`, `mycardtx`, `cardtx`,
-		`collectiontex`, `mycardtex`, `cardtex`,
-		`collectiontext`, `mycardtext`, `cardtext`,],
+	aliases: [`collection`, `mycard`, `card`],
 	description: `View yours or someones collected cards`,
 	usage: `collection`,
 	group: `General`,

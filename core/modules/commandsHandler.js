@@ -172,13 +172,15 @@ class CommandsHandler extends Controller {
 	async init() {
 		try {
 			await this.requestData()
-			// We can find a better way of catching this later
-			if (this.data.meta.author == null) return this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. > Target user is not \nregistered in DB [May be something inside command]`)
-
+			
 			//	Set default id for db access
-			this.bot.db = this.bot.db.setUser(this.data.meta.author.id)
-			const { bot, message, command, args, fullArgs, commandfile, meta } = this.data
-			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta}).bag()
+			try {
+				this.bot.db = this.bot.db.setUser(this.data.meta.author.id)
+			} catch (e) {
+				return this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. \n"this.data.meta.author.id" could not be read\n> ${e.stack}`)
+			}
+			const { bot, message, command, args, fullArgs, commandfile, meta, textOption} = this.data
+			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta, textOption}).bag()
 
 			await new this.cmd(Pistachified).execute()
 			

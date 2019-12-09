@@ -13,7 +13,7 @@ class Leaderboard {
      *  Initialzer method
      */
 	async execute() {
-		const { args, reply, code: {LEADERBOARD} } = this.stacks
+		const { args, reply, code: { LEADERBOARD }, textOption } = this.stacks
 
 		//  Centralized object
 		let metadata = {
@@ -49,11 +49,9 @@ class Leaderboard {
 		})
 			.then(async load => {
 				//  Get interface buffer
-				let textOpt = false
-				if (args[1] == `--text` || args[1] == `--tex` || args[1] == `--tx` || args[1] == `--tex`) textOpt = true
 				let res = await GUI(this.stacks, metadata)
 				//  Display leaderboard
-				textOpt ? reply(res.title + `\n\`\`\`${res.textOption}\`\`\``, {
+				textOption ? reply(res.title + `\n\`\`\`${res.textOption}\`\`\``, {
 					simplified: true
 				})
 					.then(() => {

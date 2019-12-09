@@ -16,7 +16,7 @@ class Inventory {
      *  Initialzer method
      */
 	async execute() {
-		const { command, code: {INVENTORY}, bot:{db}, name, reply, emoji } = this.stacks
+		const { code: { INVENTORY }, bot: { db }, name, reply, emoji, textOption } = this.stacks
 
 
 		//  Returns if user is invalid
@@ -36,7 +36,7 @@ class Inventory {
 		}
 		
 		//  Display result
-		command.includes(`text`) || command.includes(`tex`) || command.includes(`tx`) ? 
+		textOption ? 
 			reply(INVENTORY.FETCHING, { socket: [name(this.author.id)], simplified: true })
 				.then(async load => {
 
