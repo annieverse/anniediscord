@@ -170,7 +170,7 @@ class LogsSystem {
 
     channelCreate() {
         const { bot: { logger }, channel } = this.data
-        if (!channel || channel.name == `undefined`) return
+        if (!channel || channel.name == `undefined` || channel.name == undefined) return
         logger.info(`New Channel Created: #${channel.name}`)
         this.reply(`**Channel Created: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
