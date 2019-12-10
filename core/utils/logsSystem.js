@@ -257,6 +257,10 @@ class LogsSystem {
         const { messageUpdate_MASTER, messageUpdate_EDITED } = logSystemConfig
         if (!messageUpdate_MASTER) return
         if (messageUpdate_EDITED && (oldMessage.content != newMessage.content)){
+            if (oldMessage.content.length > 1920) {
+                oldMessage.content = oldMessage.content.substring(0,50) + `...`
+                newMessage.content = newMessage.content.substring(0,1800) + `...`
+            }
             logger.info(`Message edited in #${newMessage.channel.name}`)
             this.reply(`**{0} Edited their message in: **{1}\n**From: **{2}\n**To: **{3}`, {
                 socket: [newMessage.author, newMessage.channel, oldMessage.content, newMessage.content],
@@ -283,6 +287,7 @@ class LogsSystem {
 
     messageDelete() {
         const { bot: { logger }, message } = this.data
+        if (message.author.bot) return
         logger.info(`Message deleted in #${message.channel.name} Message Content:\n${message.content ? message.content : `No Text`}`)
         if (message.attachments.size > 0) {
             var index = 1
@@ -313,6 +318,7 @@ class LogsSystem {
     record() {
         const { typeOfLog } = this.data
         if (!typeOfLog) return
+        if (!logSystemConfig.WANT_CUSTOM_LOGS) return
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()
         if (typeOfLog == `channelCreate`) return this.channelCreate()
         if (typeOfLog == `channelDelete`) return this.channelDelete()
