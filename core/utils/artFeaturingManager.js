@@ -243,18 +243,8 @@ class HeartCollector {
 		//  Register post metadata
 		await this.db.registerFeaturedPost(this.metadata.postComponents)
 
-        
 		//  Send post to #featured
 		this.logger.info(`${this.metadata.msg.author.username}'s work has been featured.`)
-		/**
-		 * completely delete this commented code when we know 100% that the daily spotlight thing is working
-		 */
-		/* reply(`${this.metadata.caption} \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) \n\u200b`, {
-			prebuffer: true,
-			image: this.metadata.artwork,
-			field: this.metadata.featured_channel,
-			customHeader: [this.metadata.msg.author.tag, avatar(this.metadata.msg.author.id)]
-		})  */
 
 		return reply(`${this.metadata.caption} \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) \n\u200b`, {
 			prebuffer: true,
