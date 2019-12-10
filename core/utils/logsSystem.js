@@ -170,7 +170,7 @@ class LogsSystem {
 
     channelCreate() {
         const { bot: { logger }, channel } = this.data
-        logger.info(`New Channel Created > ${channel.name}`)
+        logger.info(`New Channel Created: #${channel.name}`)
         this.reply(`**Channel Created: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
             footer: `ID: ${channel.id}`,
@@ -233,20 +233,22 @@ class LogsSystem {
     roleCreate() {
         const { bot: { logger }, role } = this.data
         logger.info(`Role Created: ${role.name}`)
-        this.reply(`**Role Created: **{0}`, {
+        this.reply(`**Role Created: {0}**`, {
             socket: [role],
             timestamp: true,
-            color: palette.red
+            color: palette.red,
+            footer: `ID: ${role.id}`
         })
     }
 
     roleDelete() {
         const { bot: { logger }, role } = this.data
         logger.info(`Role Deleted: ${role.name}`)
-        this.reply(`**Role Deleted: **@{0}`, {
+        this.reply(`**Role Deleted: @{0}**`, {
             socket: [role.name],
             timestamp: true,
-            color: palette.red
+            color: palette.red,
+            footer: `ID: ${role.id}`
         })
     }
 
