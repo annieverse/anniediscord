@@ -170,6 +170,7 @@ class LogsSystem {
 
     channelCreate() {
         const { bot: { logger }, channel } = this.data
+        if (!channel || channel.name == `undefined`) return
         logger.info(`New Channel Created: #${channel.name}`)
         this.reply(`**Channel Created: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
@@ -305,7 +306,7 @@ class LogsSystem {
             })
         } else {
             this.reply(`**Message deleted in {0} Message Content:**\n{1}`,{
-                socket: [message.channel, message.content ? message.content : `No Text`],
+                socket: [message.channel, message.content ? message.content : message.embeds.length > 0 ? `Was an embed`: `No Text`],
                 footer: `ChannelID: ${message.channel.id}`,
                 timestamp: true,
                 color: palette.red,
