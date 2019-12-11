@@ -272,7 +272,7 @@ class Pistachio {
 		 *	@param {String|ID} id id of user to be fetched from.
 		 *	@param {Boolean} compress set true to return as compressed buffer.
 		 */
-		container.avatar = (id, compress=false) => {
+		container.avatar = (id, compress = false, size = `?size=512`) => {
 
 			const fallbackImage = (err) => {
 				bot.logger.error(`Failed to parse user's avatar. User will see a placeholder img as an exchange. > ${err}`)
@@ -282,7 +282,7 @@ class Pistachio {
 			try {
 				let url = bot.users.get(id).displayAvatarURL
 				if (compress) {
-					return get(url.replace(/\?size=2048$/g, `?size=512`))
+					return get(url.replace(/\?size=2048$/g, size))
 						.then(data => data.body)
 						.catch(e => { return fallbackImage(e) })
 				}

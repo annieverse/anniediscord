@@ -36,7 +36,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		rtg: userdata.rating,
 		likecount: userdata.liked_counts,
 		cov: cover == null ? userdata.cover : cover,
-		stic: sticker == null ? userdata.sticker : sticker,
+		stic: sticker == null ? userdata.sticker == ` ` ? null : userdata.sticker : sticker,
 		log: userdata.last_login,
 		get clr() {
 			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :

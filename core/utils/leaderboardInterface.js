@@ -14,7 +14,7 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 
 //  Render the image
 const render = async (stacks, metadata) => {
-	const { db, palette, bot, emoji, commanifier, meta: { data, author } } = stacks
+	const { db, palette, bot, emoji, commanifier, meta: { data, author }, avatar } = stacks
 
 	let textleaderboard = ``
 
@@ -266,16 +266,8 @@ const render = async (stacks, metadata) => {
 
 		//  Returns avatar
 		async avatar() {
-			let identify_user
-			try {
-				identify_user = bot.users.get(user.group[this.index].id).displayAvatarURL.replace(imageUrlRegex, `?size=256`)
-			} catch (err) {
-				identify_user = bot.user.displayAvatarURL.replace(imageUrlRegex, `?size=256`)
-			}
-			const {
-				body: avatar
-			} = await get(identify_user)
-			canv.addRoundImage(await avatar, size.x2 + 80, this.y - 30, 50, 50, 25)
+			const avatar = await stacks.avatar(user.group[this.index].id, true, `?size = 256`)
+			canv.addRoundImage(avatar, size.x2 + 80, this.y - 30, 50, 50, 25)
 			return this
 		}
 
