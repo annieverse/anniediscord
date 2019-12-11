@@ -498,7 +498,7 @@ const render = async (stacks, metadata) => {
 
 		//  Reputations leaderboard
 		async rep() {
-			metadata.title = `${emoji(`wowo`)} **| Popularity Leaders**`
+			metadata.title = `${emoji(`AnnieYay`)} **| Popularity Leaders**`
 			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.reputations), `☆`]
 
 			for (let i = 0; i < user.group.length; i++) {
@@ -525,7 +525,7 @@ const render = async (stacks, metadata) => {
 
 		//  Artists leaderboard
 		async arts() {
-			metadata.title = `${emoji(`wowo`)} **| Artists Leaders**`
+			metadata.title = `${emoji(`AnnieYay`)} **| Artists Leaders**`
 			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.liked_counts), `♡`]
 
 			for (let i = 0; i < user.group.length; i++) {
