@@ -115,6 +115,7 @@ class LogsSystem {
 
     channelUpdate() {
         const { bot: { logger }, oldChannel, newChannel, bot } = this.data
+        if (this.logChannel.guild.id != oldChannel.guild.id) return
         const {channelUpdate_MASTER, channelUpdate_NAME, channelUpdate_TOPIC, channelUpdate_NSFW, channelUpdate_TYPE, channelUpdate_CATEGORY } = logSystemConfig
         if (!channelUpdate_MASTER) return
         if (channelUpdate_NAME && (oldChannel.name != newChannel.name)) {
@@ -171,6 +172,7 @@ class LogsSystem {
     channelCreate() {
         const { bot: { logger }, channel } = this.data
         if (!channel || channel.name == `undefined` || channel.name == undefined) return
+        if (this.logChannel.guild.id != channel.guild.id) return
         logger.info(`New Channel Created: #${channel.name}`)
         this.reply(`**Channel Created: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
@@ -182,6 +184,7 @@ class LogsSystem {
 
     channelDelete() {
         const { bot: { logger }, channel } = this.data
+        if (this.logChannel.guild.id != channel.guild.id) return
         logger.info(`Channel Deleted > ${channel.name}`)
         this.reply(`**Channel Deleted: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
@@ -195,6 +198,7 @@ class LogsSystem {
         const { bot: { logger }, oldEmoji, newEmoji } = this.data
         const { emojiUpdate_MASTER, emojiUpdate_NAME } = logSystemConfig
         if (!emojiUpdate_MASTER) return
+        if (this.logChannel.guild.id != oldEmoji.guild.id) return
         if (emojiUpdate_NAME && (oldEmoji.name != newEmoji.name)){
             logger.info(`Emoji Name Changed > From: ${oldEmoji.name} To: ${newEmoji.name}`)
             this.reply(`**Emoji Name Changed: From: **{0} **To: **{1}`, {
@@ -207,6 +211,7 @@ class LogsSystem {
 
     emojiCreate() {
         const { bot: { logger }, emoji } = this.data
+        if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Created: ${emoji.name}`)
         this.reply(`**Emoji Created: **{0}`, {
             socket: [emoji.name],
@@ -217,6 +222,7 @@ class LogsSystem {
 
     emojiDelete() {
         const { bot: { logger }, emoji } = this.data
+        if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Deleted: ${emoji.name}`)
         this.reply(`**Emoji Deleted: **@{0}`, {
             socket: [emoji.name],
@@ -229,10 +235,12 @@ class LogsSystem {
         //const { bot: { logger }, oldRole, newRole } = this.data
         const { roleUpdate_MASTER } = logSystemConfig
         if (!roleUpdate_MASTER) return
+        //if (this.logChannel.guild.id != oldRole.guild.id) return
     }
 
     roleCreate() {
         const { bot: { logger }, role } = this.data
+        if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Created: ${role.name}`)
         this.reply(`**Role Created: {0}**`, {
             socket: [role],
@@ -244,6 +252,7 @@ class LogsSystem {
 
     roleDelete() {
         const { bot: { logger }, role } = this.data
+        if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Deleted: ${role.name}`)
         this.reply(`**Role Deleted: @{0}**`, {
             socket: [role.name],
@@ -257,14 +266,12 @@ class LogsSystem {
         const { bot: { logger }, oldMessage, newMessage } = this.data
         const { messageUpdate_MASTER, messageUpdate_EDITED } = logSystemConfig
         if (!messageUpdate_MASTER) return
+        if (this.logChannel.guild.id != oldMessage.guild.id) return
         if (messageUpdate_EDITED && (oldMessage.content != newMessage.content)){
-            if (oldMessage.content.length > 1920) {
-                oldMessage.content = oldMessage.content.substring(0,50) + `...`
-                newMessage.content = newMessage.content.substring(0,1800) + `...`
-            }
+            if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
             logger.info(`Message edited in #${newMessage.channel.name}`)
-            this.reply(`**{0} Edited their message in: **{1}\n**From: **{2}\n**To: **{3}`, {
-                socket: [newMessage.author, newMessage.channel, oldMessage.content, newMessage.content],
+            this.reply(`**{0} Edited their message in: **{1}\n**Old: **{2}`, {
+                socket: [newMessage.author, newMessage.channel, oldMessage.content],
                 footer: `ChannelID: ${newMessage.channel.id}`,
                 timestamp: true,
                 color: palette.red,
@@ -277,6 +284,7 @@ class LogsSystem {
     messageDeleteBulk() {
         const { bot: { logger }, messages } = this.data
         var message = messages.first()
+        if (this.logChannel.guild.id != message.guild.id) return
         logger.info(`Bulk Message delete in #${message.channel.name}`)
         this.reply(`**{0} Messages bulk deleted in {1}**`, {
             socket: [messages.size, message.channel],
@@ -289,6 +297,7 @@ class LogsSystem {
     messageDelete() {
         const { bot: { logger }, message } = this.data
         if (message.author.bot) return
+        if (this.logChannel.guild.id != message.guild.id) return
         logger.info(`Message deleted in #${message.channel.name} Message Content:\n${message.content ? message.content : `No Text`}`)
         if (message.attachments.size > 0) {
             var index = 1
