@@ -1,7 +1,5 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const { get } = require(`snekfetch`)
-const imageUrlRegex = /\?size=2048$/g
 const animeManager = require(`./animesiteManager`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
@@ -266,8 +264,8 @@ const render = async (stacks, metadata) => {
 
 		//  Returns avatar
 		async avatar() {
-			const avatar = await stacks.avatar(user.group[this.index].id, true, `?size = 256`)
-			canv.addRoundImage(avatar, size.x2 + 80, this.y - 30, 50, 50, 25)
+			const userAvatar = await avatar(user.group[this.index].id, true, `?size = 256`)
+			canv.addRoundImage(userAvatar, size.x2 + 80, this.y - 30, 50, 50, 25)
 			return this
 		}
 
