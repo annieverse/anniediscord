@@ -1,5 +1,7 @@
 const BoosterPerks = require(`../utils/BoosterPerks`)
 const { nitro_booster } = require(`../utils/role-list`)
+const logSystem = require(`../utils/logsSystem`)
+const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = (bot, oldUser, newUser) => {
 
@@ -67,5 +69,11 @@ module.exports = (bot, oldUser, newUser) => {
 			.then(r => logger.info(`booster color roles removed from ${r.user.tag}`)) // 
 			.catch(()=>null) // Ignore the error
 	}
-  
+	var metadata = {
+		oldUser: oldUser,
+		newUser: newUser,
+		typeOfLog: `guildMemberUpdate`,
+		bot: bot
+	}
+	if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberUpdate) new logSystem(metadata).record()
 }

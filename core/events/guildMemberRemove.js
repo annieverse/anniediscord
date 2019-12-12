@@ -1,4 +1,6 @@
 const { absence_ticket } = require(`../utils/role-list`)
+const logSystem = require(`../utils/logsSystem`)
+const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = (bot,member) => {
 
@@ -64,4 +66,10 @@ module.exports = (bot,member) => {
 			bot.db._query(`UPDATE item_inventory SET quantity = round(quantity/2) WHERE user_id = ? and item_id != ?`, `run`, [member.id, 52])
 		}
 	}
+	var metadata = {
+		member: member,
+		typeOfLog: `guildMemberRemove`,
+		bot: bot
+	}
+	if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberRemove) new logSystem(metadata).record()
 }

@@ -232,10 +232,19 @@ class LogsSystem {
     }
 
     roleUpdate() {
-        //const { bot: { logger }, oldRole, newRole } = this.data
+        const { bot: { logger }, oldRole, newRole } = this.data
         const { roleUpdate_MASTER } = logSystemConfig
         if (!roleUpdate_MASTER) return
-        //if (this.logChannel.guild.id != oldRole.guild.id) return
+        if (this.logChannel.guild.id != newRole.guild.id) return
+        if (oldRole.name != newRole.name){
+            logger.info(`Role name changed: ${newRole.name}`)
+            this.reply(`**Role Name Changed: {0}**\n**Old Role: **{1}`, {
+                socket: [newRole, oldRole.name],
+                timestamp: true,
+                color: palette.red,
+                footer: `ID: ${newRole.id}`
+            })
+        }
     }
 
     roleCreate() {
@@ -266,7 +275,7 @@ class LogsSystem {
         const { bot: { logger }, oldMessage, newMessage } = this.data
         const { messageUpdate_MASTER, messageUpdate_EDITED } = logSystemConfig
         if (!messageUpdate_MASTER) return
-        if (this.logChannel.guild.id != oldMessage.guild.id) return
+        if (this.logChannel.guild.id != newMessage.guild.id) return
         if (messageUpdate_EDITED && (oldMessage.content != newMessage.content)){
             if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
             logger.info(`Message edited in #${newMessage.channel.name}`)
@@ -341,6 +350,16 @@ class LogsSystem {
         if (typeOfLog == `roleUpdate`) return this.roleUpdate()
         if (typeOfLog == `roleCreate`) return this.roleCreate()
         if (typeOfLog == `roleDelete`) return this.roleDelete()
+        if (typeOfLog == `guildBanAdd`) return
+        if (typeOfLog == `guildBanRemove`) return
+        if (typeOfLog == `guildCreate`) return
+        if (typeOfLog == `guildDelete`) return
+        if (typeOfLog == `guildMemberAdd`) return
+        if (typeOfLog == `guildMemberRemove`) return
+        if (typeOfLog == `guildMembersChunk`) return
+        if (typeOfLog == `guildMemberUpdate`) return
+        if (typeOfLog == `guildUnavailable`) return
+        if (typeOfLog == `guildUpdated`) return
     }
 
 }

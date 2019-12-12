@@ -1,4 +1,6 @@
 const Banner = require(`../utils/welcomeBannerUI`)
+const logSystem = require(`../utils/logsSystem`)
+const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = async (bot, member) => {
     const banner = new Banner({bot:bot, member:member, channel:`459891664182312982`})
@@ -20,5 +22,10 @@ module.exports = async (bot, member) => {
     member.addRole(`632892126824235009`)
 
     bot.logger.info(`${bot.users.get(member.id).tag} has joined the server.`)
-
+    var metadata = {
+        member: member,
+        typeOfLog: `guildMemberAdd`,
+        bot: bot
+    }
+    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberAdd) new logSystem(metadata).record()
 }

@@ -22,5 +22,15 @@
     "roleCreate": true,
     "roleDelete": true,
     "roleUpdate": true,
-    "roleUpdate_MASTER": true
+    "roleUpdate_MASTER": true,
+    "guildBanAdd": true,
+    "guildBanRemove": true,
+    "guildCreate": true,
+    "guildDelete": true,
+    "guildMemberAdd": true,
+    "guildMemberRemove": true,
+    "guildMembersChunk": true,
+    "guildMemberUpdate": true,
+    "guildUnavailable": true,
+    "guildUpdated": true
 }
