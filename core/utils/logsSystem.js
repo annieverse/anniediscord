@@ -13,7 +13,7 @@ class LogsSystem {
 
     constructor(data) {
         this.data = data
-        this.logChannel = data.bot.channels.get(`460267216324263936`)
+        this.logChannel = data.bot.channels.get(`654967979402067988`)
     }
 
     /** Annie's custom system message.
