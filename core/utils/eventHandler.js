@@ -17,8 +17,6 @@ module.exports = bot => {
 		reqEvent(`message`)(bot, message)
 	})
 	
-	// Will move into production only once done
-	
 	if (!env.dev) {
 		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))
@@ -30,7 +28,6 @@ module.exports = bot => {
 		bot.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({bot, reaction, user, message_object}))
 		bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
 		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
-		
 		// Mostly for Logging only
 		bot.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(bot, channel))
 		bot.on(`channelDelete`, async (channel) => reqEvent(`channelDelete`)(bot, channel))

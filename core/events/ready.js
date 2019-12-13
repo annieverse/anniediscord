@@ -1,6 +1,8 @@
 const cron = require(`node-cron`)
 const getCpuUsage = require(`../utils/cpuUsage`)
 const getMemUsage = require(`../utils/memoryUsage`)
+const moment = require(`moment`)
+const { Attachment } = require(`discord.js`)
 module.exports = bot => {
 
 	// Modules
@@ -342,21 +344,23 @@ module.exports = bot => {
 	async function removeFeaturedDailyPostLoop(){
 		await fdp.loop()
 	}
+	
 
 	/**
-	 * schedules when to try and remove a limited Shop Role
+	 * 	Automatically backup the current state of the database to #database-snapshots channel.
+	 * 	This will run every at 12 AM everyday.
+	 * 	@backupDatabase
 	 */
-	function removeLimShopRole(){
-        cron.schedule(`0 1 */30 * * *`, retriveData() )
-        async function retriveData(){
-            let data = await db.retrieveTimeData
-			if (!data) {
-				data.forEach(element => {
-					bot.members.get(element.user_id).removeRole(element.role_id)
-				})
-			}
-        }
-    }
+	function backupDatabase() {
+		cron.schedule(`0 0 0 * * *`, () => {
+			bot.guild.channels.get(`654401729663860739`).send(
+				moment(Date.now()).format(`dddd, MMMM Do YYYY, h:mm:ss a`),
+				new Attachment(`.data/database.sqlite`, `${Date.now()}.sqlite`)
+			)
+		})
+	}
+
+
 	/**
      * 
      * Fired processes on startup.
@@ -397,16 +401,20 @@ module.exports = bot => {
 			bot.user.setStatus(`online`)
 			bot.user.setActivity(null)
 			
-
+			//	Scheduling for database backup
+			backupDatabase()
+			
+			//	Checking up database's tables availability
 			setupDatabase()
+
+			//	Change Booster Role color
 			roleChange()
+
+			//	Automatically change bot status
 			autoStatus()
 
 			//	Recording resource usage
 			resourceLogging()
-
-			// Remove limited role module
-			removeLimShopRole()
 
 			// Remove featured daily post
 			removeFeaturedDailyPostLoop()
