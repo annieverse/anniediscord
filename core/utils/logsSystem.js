@@ -273,10 +273,10 @@ class LogsSystem {
 
     messageUpdate() {
         const { bot: { logger }, oldMessage, newMessage } = this.data
-        const { messageUpdate_MASTER, messageUpdate_EDITED } = logSystemConfig
+        const { messageUpdate_MASTER } = logSystemConfig
         if (!messageUpdate_MASTER) return
         if (this.logChannel.guild.id != newMessage.guild.id) return
-        if (messageUpdate_EDITED && (oldMessage.content != newMessage.content)){
+        if (oldMessage.content != newMessage.content){
             if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
             logger.info(`Message edited in #${newMessage.channel.name}`)
             this.reply(`**{0} Edited their message in: **{1}\n**Old: **{2}`, {
