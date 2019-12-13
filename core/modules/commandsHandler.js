@@ -6,6 +6,7 @@ const User = require(`../utils/userSelector`)
 const Pistachio = require(`../utils/Pistachio`)
 const env = require(`../../.data/environment`)
 const { special_bot_domain } = require(`./config`)
+const IdCollection = require(`../utils/role-list`)
 
 
 /**
@@ -112,7 +113,7 @@ class CommandsHandler extends Controller {
 			}
 		} 
 
-		
+
 		/**
 		 * 	Commented this line.
 		 * 	So the command works outside of current AAU's configuration.
@@ -171,12 +172,24 @@ class CommandsHandler extends Controller {
 
 
 	/**
+	 * 	Global Developer Privilege Checks.
+	 * 	This way, we as developer/creator of the app has immunity against any condition and specific privileges.
+	 *  Returns boolean.
+	 * 	@_privilegeChecks
+	 */
+	get _developerPrivilegeChecks() {
+		return IdCollection.annie_developer.includes(this.data.meta.author.id)
+	}
+
+	/**
 	 * 	Running the command
 	 * 	@init
 	 */
 	async init() {
 		try {
 			await this.requestData()
+
+			const devAccess = this._developerPrivilegeChecks
 			
 			//	Set default id for db access
 			try {
@@ -185,7 +198,7 @@ class CommandsHandler extends Controller {
 				return this.logger.error(`[${this.message.channel.name}] ${this.data.message.author.tag} has failed to run ${this.filename}. \n"this.data.meta.author.id" could not be read\n> ${e.stack}`)
 			}
 			const { bot, message, command, args, fullArgs, commandfile, meta, textOption} = this.data
-			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta, textOption}).bag()
+			const Pistachified = new Pistachio({bot, message, command, args, fullArgs, commandfile, meta, textOption, devAccess}).bag()
 
 			await new this.cmd(Pistachified).execute()
 			

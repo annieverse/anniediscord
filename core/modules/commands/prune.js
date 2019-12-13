@@ -12,11 +12,14 @@ class Prune {
      *  Initializer method
      */
 	async execute() {
-		const { isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks
+		const { devAccess, isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks
+
+		if (!devAccess) {
+			//	Returns if user doesn't have administrator authority
+			if (isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+		}
 
 
-		//	Returns if user doesn't have administrator authority
-		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 		//	Returns if user doesn't specify any parameter
 		if (!args[0]) return reply(code.PRUNE.SHORT_GUIDE)
 
