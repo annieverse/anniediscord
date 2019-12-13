@@ -112,10 +112,15 @@ class CommandsHandler extends Controller {
 			}
 		} 
 
-		if (!this.isUserADev && this.module_parameters.group.toLowerCase() === (`developer`||`dev`)) return this.logger.info(`${this.data.message.author.tag} trying to use dev only command(${this.data.command}) in #${this.data.message.channel.name}`)
-
-		if ((!this.isUserADev && !this.isUserAAdmin && !this.isUserAEventMember) && this.module_parameters.group.toLowerCase() === `admin`) return this.logger.info(`${this.data.message.author.tag} trying to use admin only command(${this.data.command}) in #${this.data.message.channel.name}`)
 		
+		/**
+		 * 	Commented this line.
+		 * 	So the command works outside of current AAU's configuration.
+		 */
+		//if (!this.isUserADev && this.module_parameters.group.toLowerCase() === (`developer`||`dev`)) return this.logger.info(`${this.data.message.author.tag} trying to use dev only command(${this.data.command}) in #${this.data.message.channel.name}`)
+		//if ((!this.isUserADev && !this.isUserAAdmin && !this.isUserAEventMember) && this.module_parameters.group.toLowerCase() === `admin`) return this.logger.info(`${this.data.message.author.tag} trying to use admin only command(${this.data.command}) in #${this.data.message.channel.name}`)
+		
+
 		//	Module invoker
 		this.cmd = this.module_parameters.start
 

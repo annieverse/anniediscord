@@ -81,7 +81,7 @@ class Pistachio {
 			container.isAdmin = message.member.roles.find(r => Object.keys(container.roles.admin).some(i => container.roles.admin[i] == r.id))
 
 			//  Check for developer authority
-			container.isDev = message.member.roles.find(r => Object.keys(container.roles.dev_roles).some(i => container.roles.dev_roles[i] == r.id))
+			container.isDev = container.roles.annie_developer.includes(message.member.id)
 
 			//  Check for event team authority
 			container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
