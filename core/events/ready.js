@@ -1,424 +1,70 @@
-const cron = require(`node-cron`)
-const getCpuUsage = require(`../utils/cpuUsage`)
-const getMemUsage = require(`../utils/memoryUsage`)
-const moment = require(`moment`)
-const { Attachment } = require(`discord.js`)
+const Routines = require(`../utils/Routines`)
 module.exports = bot => {
 
-	// Modules
-	const dailyFeatured = require(`../utils/DailyFeaturedPost`)
-	let fdp = new dailyFeatured(bot)
-
-	//	Extract required part from Client
-	const { db, env, logger } = bot
-
-	startup()
-
-
-	/**
-     * Change color of role
-     * @roleChange
-     */
-	function roleChange(){
-		/**
-         * The Varible "x" is in terms of minutes
-         * for example:
-         * 1 = 1 minute
-         * etc.
-         */
-		let x = 15
-
-		/**
-         * The roleSelector is a list of every role you want to change.
-         * TODO: Use group id instead of group name.
-         */
-		let roleSelector=[
-			`585550404197285889`
-		]
-		/**
-         * The colorArray is a list of every color you want to change.
-         */
-		let colorArray=[
-			`FF9AA2`,
-			`FFB7B2`,
-			`FFDAC1`,
-			`E2F0CB`,
-			`b5EAD7`,
-			`C7CEEA`,
-			`F8B195`,
-			`F67280`,
-			`79fa72`,
-			`d3fa7f`,
-			`ca8ae4`,
-			`fff177`
-		]
-
-		/**
-         * Count is used to run through the colorArray in order.
-         */
-		let count = 0
-
-		/**
-         * The setInterval controls how long it takes before the color changes.
-         * The setTimeout makes sure new values are assigned each time.
-         */
-		setInterval(() => {
-			setTimeout(() => {
-				autoRoleColorChange(roleSelector)
-			}, null)
-		}, 60000*x)
-
-		/**
-         * Random color for each role selected right off the bat when bot starts - initializes the changing sequence
-         */
-		autoRoleColorChange(roleSelector)
-
-		/**
-         * Pass through a array of role names and they will automically be processed and change each one to a new color.
-         * @function grabRole() 
-         * @function randomColor()
-         * @function main()
-         * @function run()
-         * @param {array} roleNameInput Array of string elements
-         */
-		function autoRoleColorChange(roleNameInput){
-
-			/**
-             * Pass through the role's name and it will return the role object
-             * @param {string} role 
-             * @returns {object} Role Object
-             */
-			async function grabRole(role){
-				return bot.guilds.get(`459891664182312980`).roles.find(n => n.id === role)
-			}
-
-            
-			/**
-             * @returns {string} A(n) color in hex format from the colorArray
-             */
-			async function setColor(){
-                
-
-				// color code starts with # 
-				var color = `#`
-
-				//assigns the color using the colorArray values
-				color += colorArray[count]
-                
-				// Increase the count by one
-				count++
-				if (count === colorArray.length) count = 0
-				return color
-			}
-
-			/**
-             * runs the core processing of the whole function
-             * @param {string} roleName Role name
-             */
-			async function main(roleName) {
-
-				// For random color
-				//let color = await randomColor();
-				// Use colorArray
-				let color = await setColor()
-                
-				let role = await grabRole(roleName)
-				logger.info(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
-				role.setColor(color)
-			}
-
-			/**
-             * Initilizes the whole function to run, by separating the array of role names and calls the main() to process them.
-             * @param {string} role Role name
-             */
-			function run(role) {
-				for (let index = 0; index < role.length; index++) {
-					main(role[index])
-				}
-			}
-
-			// Call the run function and start the process
-			run(roleNameInput)
-		}
-	}
-
-
-	/**
-     *  Automatically change current bot status presence
-     *  @autoStatus
-     */
 	
-	function autoStatus(){
-		let x = 1 // number of minutes
-
-		update()
-		setInterval(update, 60000 * x)
-
-		async function update(){
-
-			let data = await db.pullEventData(`event_data`)
-			
-			if (data[0] === undefined) {
-				if (env.dev) {
-					return bot.user.setActivity(`maintenance.`, {
-						type: `LISTENING`
-					})
-				} else {
-					return bot.user.setActivity(null)
-				}
-			}
-
-			let metadata =
-			{
-				event : data[0].name,
-				time: data[0].start_time,
-				status: data[0].active,
-				currentTime: (new Date()),
-			}
-			let bufferTime =
-			{
-				before: (new Date(metadata.time - 1.8e+7)),
-				after: (new Date(metadata.time + 7.2e+6)),
-				start: (new Date(metadata.time)),
-			}
-
-			// Find the distance between now and the count down date
-			let distance = bufferTime.start.getTime() - metadata.currentTime.getTime()
-			// Time calculations for hours and minutes
-			let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-			let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-			let timer = `${hours}h ${minutes}m`
-
-			let tests =
-			{
-				eventHasEnded: metadata.status === 1,
-				eventIsOver: bufferTime.after < metadata.currentTime,
-				doesEventEqualPresenceGame: bot.user.presence.game === (undefined || null) ? false : bot.user.presence.game.name === `[EVENT] ${metadata.event}`,
-				presenceTypeIsPlaying: bot.user.presence.game === (undefined || null) ? false : bot.user.presence.game.type === 0,
-				presenceGameIsNull: bot.user.presence.game == (undefined || null),
-				eventDontRepeat: data.repeat_after === 0,
-				eventIsHappening: bufferTime.start < metadata.currentTime && bufferTime.after > metadata.currentTime,
-				eventHasntStarted: bufferTime.before < metadata.currentTime && bufferTime.start > metadata.currentTime
-				
-			}
-
-			// watching = type 3
-			// playing = type 0
-			
-			if (tests.eventHasEnded){
-				return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
-			}			
-			
-			if (tests.eventIsOver) {
-				eventEnded()
-			} else if (tests.presenceGameIsNull) {
-				if (tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying) return
-			}
-
-			if (tests.eventHasntStarted) {
-				eventStartingIn()			
-			} else if (tests.eventIsHappening) {
-				eventGoing()
-			}
-			
-			function eventEnded(){
-				env.dev ? ()=>
-				{
-					bot.user.setStatus(`dnd`)
-					bot.user.setActivity(`maintenance.`, {
-						type: `LISTENING`
-					})
-				} : () => 
-				{
-					bot.user.setStatus(`online`)
-					bot.user.setActivity(null)
-				}
-				
-				tests.eventDontRepeat? ()=>{
-					db.updateEventDataActiveToOne(`${metadata.event}`, metadata.time)
-					return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
-				} : () =>
-				{
-					let diff = data.length - metadata.time
-					return db.updateRowDataFromEventData(`start_time = ${metadata.time + data.length}, length = ${diff}`, `name = '${metadata.event}' AND start_time = ${metadata.time}` )
-				}
-				
-				return logger.info(`[STATUS CHANGE] ${bot.user.username} is now set to null`)
-			}
-
-			function eventStartingIn() {
-				bot.user.setActivity(`[EVENT] ${metadata.event} in ${timer}`, {
-					type: `WATCHING`
-				})
-				return logger.info(`[STATUS CHANGE] ${bot.user.username} is now WATCHING ${metadata.event}`)
-			}
-
-			function eventGoing() {
-				bot.user.setActivity(`[EVENT] ${metadata.event}`, {
-					type: `PLAYING`
-				})
-				return logger.info(`[STATUS CHANGE] ${bot.user.username} is now PLAYING ${metadata.event}`)
-			}
-		}
-	}
+	const { env, logger } = bot
+	const Routine = new Routines(bot)
 
 
-	/**
-     *  Automatically record resource usage data every 5 min.
-     *  @hourlyResourceLog
-     */
-	async function resourceLogging() {
+	if (env.dev) {
 		/**
-         * The Variable "x" is in terms of minutes
-         * for example:
-         * 1 = 1 minute
-         * etc.
-         */
-		let x = 5
-
-		/**
-         * The setInterval controls how long it takes before the color changes.
-         * The setTimeout makes sure new values are assigned each time.
-         */
-		setInterval(() => {
-			setTimeout(() => {
-				record()
-			}, null)
-		}, 60000*x)
-
-		/**
-		 * 	Note: the available data to be stored currently only covered the necessary ones.
-		 * 	More new different kind of data will be recorded in the future.
+		 * 	--------------------------------------------------
+		 * 	Configuration for Development
+		 * 	--------------------------------------------------
 		 */
-		function record() {
-			let params = [env.dev ? `development` : `production`, bot.uptime, bot.ping, getCpuUsage(), getMemUsage()]
-			
-			db._query(`
-				INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
-				VALUES(datetime('now'), ?, ?, ?, ?, ?)`
-				, `run`
-				, params
-			)
-	
-			logger.info(`Resource usage has been recorded.`)
+
+		if (env.WELCOMER_TEST) {
+			const BannerTest = require(`../utils/welcomeBannerUI`)
+			new BannerTest({bot, member:require(`../../test/testmsg`), channel:`654401864565129236`}).render()
 		}
-	}
 
-
-	/**
-     *  
-     * Database table check & schema preparation
-     * @setupDatabase
-     */
-	function setupDatabase() {
-
-
-		db._query(`CREATE TABLE IF NOT EXISTS resource_usage (
-			'timestamp' INTEGER,
-			'environment' TEXT,
-			'uptime' INTEGER,
-			'ping' REAL,
-			'cpu' REAL,
-			'memory' REAL)`
-			, `run`
-			, []
-		)
-
-		db._query(`CREATE TABLE IF NOT EXISTS commands_usage (
-			'timestamp' INTEGER,
-			'guild_id' TEXT,
-			'user_id' TEXT,
-			'command_alias' TEXT,
-			'resolved_in' TEXT)`
-			, `run`
-			, []
-		)
-
-
-		//	Reset whole server cooldown to false/zero.
-		db.resetCooldown()
-
-	}
-
-
-	async function removeFeaturedDailyPostLoop(){
-		await fdp.loop()
-	}
-	
-
-	/**
-	 * 	Automatically backup the current state of the database to #database-snapshots channel.
-	 * 	This will run every at 12 AM everyday.
-	 * 	@backupDatabase
-	 */
-	function backupDatabase() {
-		cron.schedule(`0 0 0 * * *`, () => {
-			bot.guild.channels.get(`654401729663860739`).send(
-				moment(Date.now()).format(`dddd, MMMM Do YYYY, h:mm:ss a`),
-				new Attachment(`.data/database.sqlite`, `${Date.now()}.sqlite`)
-			)
+		logger.info(`${bot.user.username} up in dev environment. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
+		bot.user.setStatus(`dnd`)
+		bot.user.setActivity(`maintenance.`, {
+			type: `LISTENING`
 		})
-	}
 
 
-	/**
-     * 
-     * Fired processes on startup.
-     * @startup
-     */
-	function startup() {
+	} else {
 
 
 		/**
-		 *	Only run on development server 
+		 * 	--------------------------------------------------
+		 * 	Configuration for Production
+		 * 	--------------------------------------------------
 		 */
-		if (env.dev) {
+		logger.info(`${bot.user.username} up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
+		bot.user.setStatus(`online`)
+		bot.user.setActivity(null)
+		
 
-			//	This used when testing welcomer message.
-			if (env.WELCOMER_TEST) {
-				const BannerTest = require(`../utils/welcomeBannerUI`)
-				new BannerTest({bot, member:require(`../../test/testmsg`), channel:`614737097454125056`}).render()
-			}
+		/**
+		 * 	--------------------------------------------------
+		 * 	Primary task
+		 * 	--------------------------------------------------
+		 */
 
-			logger.info(`${bot.user.username} up in dev environment. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
-			bot.user.setStatus(`dnd`)
-			bot.user.setActivity(`maintenance.`, {
-				type: `LISTENING`
-			})
+		//	Scheduling for database backup
+		Routine.databaseBackup()
+		//	Schema/tables check
+		Routine.databaseCheck()
+		//	Recording resource usage every 5 mins
+		Routine.resourceUsageLogging()
 
-			setupDatabase()
 
+		/**
+		 * 	--------------------------------------------------
+		 * 	Below are features that currently binding to AAU guild.
+		 * 	Can be disabled or adjusted for cross-server proposal.
+		 * 	--------------------------------------------------
+		 */
 
-			//	Recording resource usage
-			resourceLogging()
-
-		} else {
-
-			/**
-             *  Production server
-             */
-			logger.info(`${bot.user.username} up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
-			bot.user.setStatus(`online`)
-			bot.user.setActivity(null)
-			
-			//	Scheduling for database backup
-			backupDatabase()
-			
-			//	Checking up database's tables availability
-			setupDatabase()
-
-			//	Change Booster Role color
-			roleChange()
-
-			//	Automatically change bot status
-			autoStatus()
-
-			//	Recording resource usage
-			resourceLogging()
-
-			// Remove featured daily post
-			removeFeaturedDailyPostLoop()
-		}
+		//	Change Booster Role color
+		Routine.roleChange()
+		//	Automatically change bot status
+		Routine.autoStatus()
+		// Remove featured daily post
+		Routine.removeFeaturedDailyPostLoop()
 	}
 
 }
