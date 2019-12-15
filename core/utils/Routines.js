@@ -11,7 +11,7 @@ const dailyFeatured = require(`../utils/DailyFeaturedPost`)
  *  @param {Object} Client current this.client instance
  */
 class Routines {
-    constructor(Client = {}) {
+    constructor(Client) {
         this.client = Client
         this.logger = Client.logger
         this.db = Client.db
@@ -68,6 +68,9 @@ class Routines {
      * @roleChange
      */
 	roleChange() {
+
+		const client = this.client
+		const logger = this.logger
 		/**
          * The Varible "x" is in terms of minutes
          * for example:
@@ -137,7 +140,7 @@ class Routines {
              * @returns {object} Role Object
              */
 			async function grabRole(role){
-				return this.client.guilds.get(`459891664182312980`).roles.find(n => n.id === role)
+				return client.guilds.get(`459891664182312980`).roles.find(n => n.id === role)
 			}
 
             
@@ -171,7 +174,7 @@ class Routines {
 				let color = await setColor()
                 
 				let role = await grabRole(roleName)
-				this.logger.info(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
+				logger.info(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
 				role.setColor(color)
 			}
 
@@ -196,6 +199,11 @@ class Routines {
      *  @autoStatus
      */
 	autoStatus() {
+		const client = this.client
+		const logger = this.logger
+		const db = this.db
+		const env = this.env
+
 		let x = 1 // number of minutes
 
 		update()
@@ -203,15 +211,15 @@ class Routines {
 
 		async function update(){
 
-			let data = await this.db.pullEventData(`event_data`)
+			let data = await db.pullEventData(`event_data`)
 			
 			if (data[0] === undefined) {
-				if (this.env.dev) {
-					return this.client.user.setActivity(`maintenance.`, {
+				if (env.dev) {
+					return client.user.setActivity(`maintenance.`, {
 						type: `LISTENING`
 					})
 				} else {
-					return this.client.user.setActivity(null)
+					return client.user.setActivity(null)
 				}
 			}
 
@@ -240,9 +248,9 @@ class Routines {
 			{
 				eventHasEnded: metadata.status === 1,
 				eventIsOver: bufferTime.after < metadata.currentTime,
-				doesEventEqualPresenceGame: this.client.user.presence.game === (undefined || null) ? false : this.client.user.presence.game.name === `[EVENT] ${metadata.event}`,
-				presenceTypeIsPlaying: this.client.user.presence.game === (undefined || null) ? false : this.client.user.presence.game.type === 0,
-				presenceGameIsNull: this.client.user.presence.game == (undefined || null),
+				doesEventEqualPresenceGame: client.user.presence.game === (undefined || null) ? false : client.user.presence.game.name === `[EVENT] ${metadata.event}`,
+				presenceTypeIsPlaying: client.user.presence.game === (undefined || null) ? false : client.user.presence.game.type === 0,
+				presenceGameIsNull: client.user.presence.game == (undefined || null),
 				eventDontRepeat: data.repeat_after === 0,
 				eventIsHappening: bufferTime.start < metadata.currentTime && bufferTime.after > metadata.currentTime,
 				eventHasntStarted: bufferTime.before < metadata.currentTime && bufferTime.start > metadata.currentTime
@@ -253,7 +261,7 @@ class Routines {
 			// playing = type 0
 			
 			if (tests.eventHasEnded){
-				return this.db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
+				return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
 			}			
 			
 			if (tests.eventIsOver) {
@@ -269,42 +277,42 @@ class Routines {
 			}
 			
 			function eventEnded(){
-				this.env.dev ? ()=>
+				env.dev ? ()=>
 				{
-					this.client.user.setStatus(`dnd`)
-					this.client.user.setActivity(`maintenance.`, {
+					client.user.setStatus(`dnd`)
+					client.user.setActivity(`maintenance.`, {
 						type: `LISTENING`
 					})
 				} : () => 
 				{
-					this.client.user.setStatus(`online`)
-					this.client.user.setActivity(null)
+					client.user.setStatus(`online`)
+					client.user.setActivity(null)
 				}
 				
 				tests.eventDontRepeat? ()=>{
-					this.db.updateEventDataActiveToOne(`${metadata.event}`, metadata.time)
-					return this.db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
+					db.updateEventDataActiveToOne(`${metadata.event}`, metadata.time)
+					return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
 				} : () =>
 				{
 					let diff = data.length - metadata.time
-					return this.db.updateRowDataFromEventData(`start_time = ${metadata.time + data.length}, length = ${diff}`, `name = '${metadata.event}' AND start_time = ${metadata.time}` )
+					return db.updateRowDataFromEventData(`start_time = ${metadata.time + data.length}, length = ${diff}`, `name = '${metadata.event}' AND start_time = ${metadata.time}` )
 				}
 				
-				return this.logger.info(`[STATUS CHANGE] ${this.client.user.username} is now set to null`)
+				return logger.info(`[STATUS CHANGE] ${client.user.username} is now set to null`)
 			}
 
 			function eventStartingIn() {
-				this.client.user.setActivity(`[EVENT] ${metadata.event} in ${timer}`, {
+				client.user.setActivity(`[EVENT] ${metadata.event} in ${timer}`, {
 					type: `WATCHING`
 				})
-				return  this.logger.info(`[STATUS CHANGE] ${this.client.user.username} is now WATCHING ${metadata.event}`)
+				return  logger.info(`[STATUS CHANGE] ${client.user.username} is now WATCHING ${metadata.event}`)
 			}
 
 			function eventGoing() {
-				this.client.user.setActivity(`[EVENT] ${metadata.event}`, {
+				client.user.setActivity(`[EVENT] ${metadata.event}`, {
 					type: `PLAYING`
 				})
-				return  this.logger.info(`[STATUS CHANGE] ${this.client.user.username} is now PLAYING ${metadata.event}`)
+				return  logger.info(`[STATUS CHANGE] ${client.user.username} is now PLAYING ${metadata.event}`)
 			}
 		}
     }
@@ -330,26 +338,22 @@ class Routines {
          */
         setInterval(() => {
             setTimeout(() => {
-                record()
+				/**
+				 * 	Note: the available data to be stored currently only covered the necessary ones.
+				 * 	More new different kind of data will be recorded in the future.
+				 */
+				let params = [this.env.dev ? `development` : `production`, this.client.uptime, this.client.ping, getCpuUsage(), getMemUsage()]
+            
+				this.db._query(`
+					INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
+					VALUES(datetime('now'), ?, ?, ?, ?, ?)`
+					, `run`
+					, params
+				)
+	
+				this.logger.info(`Resource usage has been recorded.`)
             }, null)
         }, 60000*x)
-
-        /**
-         * 	Note: the available data to be stored currently only covered the necessary ones.
-         * 	More new different kind of data will be recorded in the future.
-         */
-        function record() {
-            let params = [this.env.dev ? `development` : `production`, this.client.uptime, this.client.ping, getCpuUsage(), getMemUsage()]
-            
-            this.db._query(`
-                INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
-                VALUES(datetime('now'), ?, ?, ?, ?, ?)`
-                , `run`
-                , params
-            )
-
-            this.logger.info(`Resource usage has been recorded.`)
-        }
     }
 
 
