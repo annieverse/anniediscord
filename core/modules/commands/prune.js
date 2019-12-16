@@ -13,11 +13,8 @@ class Prune {
      */
 	async execute() {
 		const { devAccess, isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks
-
-		if (!devAccess) {
-			//	Returns if user doesn't have administrator authority
-			if (isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
-		}
+		//	Returns if user doesn't have administrator authority
+		if (!devAccess && !isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
 
 
 		//	Returns if user doesn't specify any parameter

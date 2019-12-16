@@ -13,7 +13,8 @@ class LogsSystem {
 
     constructor(data) {
         this.data = data
-        this.logChannel = data.bot.channels.get(`654967979402067988`)
+        this.logChannel = data.bot.channels.get(`460267216324263936`)
+        this.SupportServerLogChannel = data.bot.channels.get(`654967979402067988`)
     }
 
     /** Annie's custom system message.
@@ -334,6 +335,54 @@ class LogsSystem {
         }
     }
 
+    guildBanAdd(){
+        const { bot: { logger }, guild, user } = this.data
+        if (this.logChannel.guild.id != guild.id) return
+        logger.info(`Member Banned From ${guild.id}, ${user}`)
+        this.reply(`**Member Banned: **{0} - {1}`, {
+            socket: [user, user.username],
+            timestamp: true,
+            color: palette.red,
+            footer: `ID: ${user.id}`
+        })
+    }
+
+    guildBanRemove() {
+        const { bot: { logger }, guild, user } = this.data
+        if (this.logChannel.guild.id != guild.id) return
+        logger.info(`Member Ban revoked From ${guild.id}, ${user}`)
+        this.reply(`**Member Ban revoked: **{0} - {1}`, {
+            socket: [user, user.username],
+            timestamp: true,
+            color: palette.red,
+            footer: `ID: ${user.id}`
+        })
+    }
+
+    guildCreate() {
+        const { bot: { logger }, guild } = this.data
+        logger.info(`New guild joined ${guild.id}`)
+        this.reply(`**New Guild Joined: **{0} - {1}`, {
+            socket: [guild.id, guild.name],
+            timestamp: true,
+            color: palette.red,
+            field: this.SupportServerLogChannel,
+            footer: `ID: ${guild.id}`
+        })
+    }
+
+    guildDelete() {
+        const { bot: { logger }, guild } = this.data
+        logger.info(`Guild Left ${guild.id}`)
+        this.reply(`**Guild Left: **{0} - {1}`, {
+            socket: [guild.id, guild.name],
+            timestamp: true,
+            color: palette.red,
+            field: this.SupportServerLogChannel,
+            footer: `ID: ${guild.id}`
+        })
+    }
+
     record() {
         const { typeOfLog } = this.data
         if (!typeOfLog) return
@@ -350,10 +399,10 @@ class LogsSystem {
         if (typeOfLog == `roleUpdate`) return this.roleUpdate()
         if (typeOfLog == `roleCreate`) return this.roleCreate()
         if (typeOfLog == `roleDelete`) return this.roleDelete()
-        if (typeOfLog == `guildBanAdd`) return
-        if (typeOfLog == `guildBanRemove`) return
-        if (typeOfLog == `guildCreate`) return
-        if (typeOfLog == `guildDelete`) return
+        if (typeOfLog == `guildBanAdd`) return this.guildBanAdd()
+        if (typeOfLog == `guildBanRemove`) return this.guildBanRemove()
+        if (typeOfLog == `guildCreate`) return this.guildCreate()
+        if (typeOfLog == `guildDelete`) return this.guildDelete()
         if (typeOfLog == `guildMemberAdd`) return
         if (typeOfLog == `guildMemberRemove`) return
         if (typeOfLog == `guildMembersChunk`) return
