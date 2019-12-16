@@ -403,7 +403,7 @@ class LogsSystem {
         if (typeOfLog == `guildBanRemove`) return this.guildBanRemove()
         if (typeOfLog == `guildCreate`) return this.guildCreate()
         if (typeOfLog == `guildDelete`) return this.guildDelete()
-        if (typeOfLog == `guildMemberAdd`) return
+        if (typeOfLog == `guildMemberAdd`) return 
         if (typeOfLog == `guildMemberRemove`) return
         if (typeOfLog == `guildMembersChunk`) return
         if (typeOfLog == `guildMemberUpdate`) return
