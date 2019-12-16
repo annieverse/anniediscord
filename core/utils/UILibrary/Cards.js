@@ -21,15 +21,18 @@ class Card {
 		height=DEFAULT.HEIGHT, 
 		theme=DEFAULT.THEME, 
 		dataBarSize=DEFAULT.DATABAR.SIZE,
-		primaryColor=themePresets[DEFAULT.THEME].text
+		primaryColor=themePresets[DEFAULT.THEME].text,
+		marginLeft=50,
+		marginTop=20
 	
 		}) {
 		this.width = width
 		this.height = height
-		this.color = themePresets[theme]
+		this.parsingThemeCode = theme.startsWith(`dark`) ? `dark` : `light`
+		this.color = themePresets[this.parsingThemeCode]
 		this.canv = new Canvas(this.width, this.height) 
-		this.marginLeft = 50
-		this.marginTop = 20
+		this.marginLeft = marginLeft
+		this.marginTop = marginTop
 		this.dataBarCount = 0
 		this.dataBarSize = dataBarSize
 		this.reservedSpace = 0
@@ -254,19 +257,21 @@ class Card {
 		align=`left`,
 		inline=false,
 		marginTop=DEFAULT.HEADER.TITLE.HEIGHT,
+		fontWeight=null,
+		marginLeft=0,
 		captionMargin=25}) {
 
 		this.canv
 		.setColor(this.color.text)
 		.setTextAlign(align)
-		.setTextFont(DEFAULT.HEADER.TITLE.FONT)
-		.addText(main, this._getHorizontalAlign(align), DEFAULT.HEADER.TITLE.HEIGHT)
+		.setTextFont(fontWeight ? `${parseInt(DEFAULT.HEADER.TITLE.FONT)}pt Roboto${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
+		.addText(main, marginLeft + this._getHorizontalAlign(align), marginTop)
 
 		if (caption) {
 			this.canv
 			.setTextFont(DEFAULT.HEADER.CAPTION.FONT)
 			.setColor(this.color.caption)
-			.addText(caption, this._getHorizontalAlign(align), DEFAULT.HEADER.TITLE.HEIGHT + captionMargin)
+			.addText(caption, marginLeft + this._getHorizontalAlign(align), marginTop + captionMargin)
 		}
 
 		//	Add state for flexible Y positioning
@@ -289,6 +294,7 @@ class Card {
 		align=`left`,
 		mainColor=this.color.okay,
 		captionColor=this.color.okay,
+		fontWeight=`Bold`,
 		size=`small`,
 		marginTop=this.marginTop,
 		marginLeft=this.marginLeft,
@@ -300,7 +306,7 @@ class Card {
 		}) {
 
 		//	Handle sensitive case
-		size = size.toUpperCase()
+		if (size === `string`) size = size.toUpperCase()
 		//	Handle custom color selection
 		mainColor = this._resolveColor(mainColor, this.color.text)
 		captionColor = this._resolveColor(captionColor, this.color.caption)
@@ -310,7 +316,7 @@ class Card {
 			this.canv
 			.setColor(mainColor)
 			.setTextAlign(align)
-			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size])
+			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt Roboto${fontWeight}`)
 			.addText(main, inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
 		}
 
