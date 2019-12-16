@@ -47,18 +47,23 @@ class Routines {
 
 	/**
 	 * 	Automatically backup the current state of the database to #database-snapshots channel.
-	 * 	This will run every at 12 AM everyday.
+	 * 	This will run every at 11:23 PM everyday.
 	 * 
 	 * 	@backupDatabase
 	 */
 	databaseBackup() {
-		cron.schedule(`0 0 0 * * *`, () => {
+		const snapshot = this.client.guilds.get(`577121315480272908`).channels.get(`654401729663860739`)
+		const logger = this.logger.info
+
+		logger(`Scheduling cron database backup`)
+		cron.schedule(`59 23 * * *`, async () => {
+			logger(`Running daily master database backup ...`)
+
             const timestamp = Date.now()
-			this.client.guilds.get(`577121315480272908`).channels.get(`654401729663860739`).send(
-				moment(timestamp.format(`dddd, MMMM Do YYYY, h:mm:ss a`)),
+			snapshot.send(moment(timestamp).format(`dddd, MMMM Do YYYY, h:mm:ss a`),
 				new Attachment(`.data/database.sqlite`, `${timestamp}.sqlite`)
-            )
-            this.logger.info(`Database with timestamp [${timestamp}] has been backed up.`)
+			)
+			logger(`Database with timestamp [${timestamp}] has been successfully backed up.`)
 		})
 	}
 
