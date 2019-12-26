@@ -1,11 +1,11 @@
 {
     "light": {
-        "main": "#F5F8FF",
-        "secondary": "#FFFFFF",
+        "main": "#e6e7f0",
+        "secondary": "#e6e7f0",
         "iconBackground": "lighten",
         "iconBackgroundOpacity": 0.4,
         "allowedShadow": true,
-        "text": "#6C6D71",
+        "text": "#2b3052",
         "caption": "#BFC2C7",
         "okay": "#81E1BE",
         "warn": "#ff8636",
