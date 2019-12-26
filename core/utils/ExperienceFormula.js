@@ -184,10 +184,6 @@ class Experience extends Controller {
 			//  Add & calculate bonuses from ticket if prompted
 			if (this.applyTicketBuffs) await this.ticketBuffs()
 
-			// Fix wrong rank
-			this.ranks.ranksCheck(this.meta.data.level).hasRank ? null : this.message.guild.member(this.message.author.id).addRole(this.ranks.ranksCheck(this.meta.data.level).correctRank)
-			if (this.ranks.ranksCheck(this.meta.data.level).rankJump) this.fixLevel
-
 			//  Calculate overall exp
 			await this.updatingExp()
 			new Artcoins(this.data).onLevelUp()
@@ -195,6 +191,10 @@ class Experience extends Controller {
 			//  Update rank if current rank rank is not equal with the new rank.
 			// ! NOT if current level is not equal with new level !
 			if (this.rankUp) {
+				// Fix wrong rank
+				this.ranks.ranksCheck(this.meta.data.level).hasRank ? null : this.message.guild.member(this.message.author.id).addRole(this.ranks.ranksCheck(this.meta.data.level).correctRank)
+				if (this.ranks.ranksCheck(this.meta.data.level).rankJump) this.fixLevel
+
 				await this.removeRank()
 				await this.addRank()
 				this.rankRewards()
