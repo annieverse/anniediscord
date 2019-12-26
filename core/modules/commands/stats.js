@@ -36,13 +36,13 @@ class Stats {
 	 * 	@resource
 	 */
 	async resource() {
-		let { bot:{uptime, ping} } = this.stacks
+		let { bot:{uptime, ping}, commanifier } = this.stacks
 		let cmdUsage = await this.commandQueriesCount()
 		
 		return {
 			uptime: uptime,
 			memory: memUsage(),
-			commandsRan: cmdUsage,
+			commandsRan: commanifier(cmdUsage),
 			ping: ping
 		}
 	}
