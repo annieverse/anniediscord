@@ -3,6 +3,10 @@ const logSystem = require(`../utils/logsSystem`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = async (bot, member) => {
+
+    //  Ignore if incoming event was from outer guild (not aau)
+    if (member.guild.id != `459891664182312980`) return
+
     const banner = new Banner({bot:bot, member:member, channel:`459891664182312982`})
 
     //  Display image
