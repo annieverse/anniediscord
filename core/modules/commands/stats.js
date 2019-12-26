@@ -62,7 +62,7 @@ class Stats {
 					history: await this.responseTimeHistory()
 				}).render()
 
-				reply(`${emoji(`AnnieGeek`)} **| System Metrics**`, {
+				reply(`${emoji(`AnnieGeek`)} **| Resource Usage**`, {
 					simplified: true,
 					prebuffer: true,
 					image: perfCard
