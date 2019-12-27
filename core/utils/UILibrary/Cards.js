@@ -3,6 +3,14 @@ const sizeOf = require(`buffer-image-size`)
 const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
 const palette = require(`../colorset`)
 const themePresets = require(`./Themes`)
+const { resolve, join } = require(`path`)
+
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Light.ttf`)), `OpenSansLight`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Regular.ttf`)), `OpenSansRegular`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-SemiBold.ttf`)), `OpenSansSemiBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Bold.ttf`)), `OpenSansBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-ExtraBold.ttf`)), `OpenSansExtraBold`)
+
 
 
 /**
@@ -264,7 +272,7 @@ class Card {
 		this.canv
 		.setColor(this.color.text)
 		.setTextAlign(align)
-		.setTextFont(fontWeight ? `${parseInt(DEFAULT.HEADER.TITLE.FONT)}pt Roboto${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
+		.setTextFont(fontWeight ? `${parseInt(DEFAULT.HEADER.TITLE.FONT)}pt OpenSans${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
 		.addText(main, marginLeft + this._getHorizontalAlign(align), marginTop)
 
 		if (caption) {
@@ -316,7 +324,7 @@ class Card {
 			this.canv
 			.setColor(mainColor)
 			.setTextAlign(align)
-			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt Roboto${fontWeight}`)
+			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt OpenSans${fontWeight}`)
 			.addText(main, inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
 		}
 

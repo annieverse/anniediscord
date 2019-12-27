@@ -11,28 +11,19 @@ class Balance {
 
 	async beta() {
 		const { reply, emoji, commanifier, meta : { author, data }} = this.stacks
-		const readyCard = new Card({width: 400, height: 150, marginLeft: 70, theme: data.interfacemode})
+		const totalBalance = commanifier(data.artcoins)
+		const readyCard = new Card({width: 350, height: 150, marginLeft: 70, theme: data.interfacemode})
 
 		//	Custom base
 		.createBase({cornerRadius: 8})
 
-		//	Header Part
-		.addTitle({
-			main: `Hello,`,
-			caption: `here is your remaining balance ...`,
-			fontWeight: `Thin`,
-			captionMargin: 10,
-			marginTop: 50,
-			inline: true
-		})
-		.addTitle({main: `${author.user.username} ...`, marginTop: 50, marginLeft: 55, inline: true, releaseHook: true})
-
 		//	Artcoins amount
-		.addContent({main: commanifier(data.artcoins), marginTop: 100, size: 32, fontWeight: `Bold`})
+		.addContent({main: totalBalance, marginTop: 83, marginLeft: 145, size: 28, fontWeight: `Light`, align: `center`, inline: true})
+		//.addContent({main: `ac`, marginTop: 82, marginLeft: 50, size: 12, fontWeight: `Light`, inline: true, releaseHook: true})
 
 		.ready()
 
-		return reply(`${emoji(`artcoins`)} ** | Artcoins Balance for ${author.user.username}**`, {
+		return reply(`${emoji(`artcoins`)} ** | Here's your remaining balance, ${author.user.username}**`, {
 			prebuffer: true,
 			image: readyCard.toBuffer(),
 			simplified: true

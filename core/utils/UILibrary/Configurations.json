@@ -11,11 +11,11 @@
         "HEADER": {
             "TITLE": {
                 "HEIGHT": 70,
-                "FONT": "15pt RobotoBold"
+                "FONT": "15pt OpenSansBold"
             },
             "CAPTION": {
                 "HEIGHT": 90,
-                "FONT": "8pt RobotoThin"
+                "FONT": "8pt OpenSansLight"
             }
         },
         "CONTENT": {
@@ -48,27 +48,27 @@
     "CONTENT": {
         "MAIN_TEXT": {
             "SIZE": {
-                "SMALL": "10pt RobotoBold",
-                "SMALL-MED": "12pt RobotoBold",
-                "MEDIUM": "15pt RobotoBold", 
-                "LARGE": "20pt RobotoBold",
-                "EXTRA-LARGE": "30pt RobotoBold"
+                "SMALL": "10pt OpenSansBold",
+                "SMALL-MED": "12pt OpenSansBold",
+                "MEDIUM": "15pt OpenSansBold", 
+                "LARGE": "20pt OpenSansBold",
+                "EXTRA-LARGE": "30pt OpenSansBold"
             }
         },
         "CAPTION": {
             "SIZE": {
-                "SMALL": "2pt RobotoBold",
-                "SMALL-MED": "4pt RobotoBold",
-                "MEDIUM": "6pt RobotoBold", 
-                "LARGE": "8pt RobotoBold"
+                "SMALL": "2pt OpenSansBold",
+                "SMALL-MED": "4pt OpenSansBold",
+                "MEDIUM": "6pt OpenSansBold", 
+                "LARGE": "8pt OpenSansBold"
             }
         },
         "LABEL": {
             "SIZE": {
-                "SMALL": "7pt RobotoThin",
-                "SMALL-MED": "9t RobotoThin",
-                "MEDIUM": "11pt RobotoThin", 
-                "LARGE": "13pt RobotoThin"      
+                "SMALL": "7pt OpenSansLight",
+                "SMALL-MED": "9t OpenSansLight",
+                "MEDIUM": "11pt OpenSansLight", 
+                "LARGE": "13pt OpenSansLight"      
             }
         }
     }
