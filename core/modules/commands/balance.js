@@ -12,18 +12,20 @@ class Balance {
 	async beta() {
 		const { reply, emoji, commanifier, meta : { author, data }} = this.stacks
 		const totalBalance = commanifier(data.artcoins)
-		const readyCard = new Card({width: 350, height: 150, marginLeft: 70, theme: data.interfacemode})
+		const growthDataFromLastWeek = `+7,532 (25%)`
+		const readyCard = new Card({width: 250, height: 150, marginLeft: 70, theme: data.interfacemode})
 
 		//	Custom base
 		.createBase({cornerRadius: 8})
 
 		//	Artcoins amount
-		.addContent({main: totalBalance, marginTop: 83, marginLeft: 145, size: 28, fontWeight: `Light`, align: `center`, inline: true})
-		//.addContent({main: `ac`, marginTop: 82, marginLeft: 50, size: 12, fontWeight: `Light`, inline: true, releaseHook: true})
-
+		.addContent({main: totalBalance, marginTop: 82, justify: `center`, size: 26, fontWeight: `Bold`, align: `center`})
+		.addContent({main: growthDataFromLastWeek, size: 7, justify: `center`, align: `center`, fontWeight: `Bold`, mainColor: `okay`})
+		.addContent({main: `last week`, justify: `center`, size: 7, fontWeight: `Light`, align: `center`})
 		.ready()
 
-		return reply(`${emoji(`artcoins`)} ** | Here's your remaining balance, ${author.user.username}**`, {
+
+		return reply(`${emoji(`artcoins`)} ** | Your remaining balance, ${author.user.username}**`, {
 			prebuffer: true,
 			image: readyCard.toBuffer(),
 			simplified: true

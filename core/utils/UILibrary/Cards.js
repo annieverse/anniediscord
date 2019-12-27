@@ -72,6 +72,8 @@ class Card {
 		if ((prop === `inherit`) && palette[this.primaryColor]) return palette[this.primaryColor] 
 		if ((prop === `inherit`) && this.color[this.primaryColor]) return this.color[this.primaryColor] 
 		if (prop === `inherit`) return this.primaryColor
+		//	Following system theming
+		if (this.color[prop]) return this.color[prop]
 
 		return defaultOpt
 	}
@@ -304,6 +306,7 @@ class Card {
 		captionColor=this.color.okay,
 		fontWeight=`Bold`,
 		size=`small`,
+		justify=null,
 		marginTop=this.marginTop,
 		marginLeft=this.marginLeft,
 		marginBottom=0,
@@ -325,7 +328,7 @@ class Card {
 			.setColor(mainColor)
 			.setTextAlign(align)
 			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt OpenSans${fontWeight}`)
-			.addText(main, inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
+			.addText(main, justify ? this._getHorizontalAlign(justify) : inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
 		}
 
 
