@@ -11,17 +11,24 @@ class Balance {
 
 	async beta() {
 		const { reply, emoji, commanifier, meta : { author, data }} = this.stacks
-		const readyCard = new Card({width: 500, height: 250, marginLeft: 70, theme: data.interfacemode})
+		const readyCard = new Card({width: 400, height: 150, marginLeft: 70, theme: data.interfacemode})
 
 		//	Custom base
 		.createBase({cornerRadius: 8})
 
 		//	Header Part
-		.addTitle({main: `Hello,`, caption: `here is your remaining balance ...`, fontWeight: `Thin`, marginTop: 80, inline: true})
-		.addTitle({main: `${author.user.username} ...`, marginTop: 80, marginLeft: 55, inline: true, releaseHook: true})
+		.addTitle({
+			main: `Hello,`,
+			caption: `here is your remaining balance ...`,
+			fontWeight: `Thin`,
+			captionMargin: 10,
+			marginTop: 50,
+			inline: true
+		})
+		.addTitle({main: `${author.user.username} ...`, marginTop: 50, marginLeft: 55, inline: true, releaseHook: true})
 
 		//	Artcoins amount
-		.addContent({main: commanifier(data.artcoins), marginTop: 180, size: 50, fontWeight: `Medium`})
+		.addContent({main: commanifier(data.artcoins), marginTop: 100, size: 32, fontWeight: `Bold`})
 
 		.ready()
 
