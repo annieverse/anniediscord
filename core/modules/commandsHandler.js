@@ -128,7 +128,7 @@ class CommandsHandler extends Controller {
 
 		// If the channel is restricted to some cmds only; check if cmd has channel enabled
 		if ((special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels) ||
-		(special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels.includes(this.data.message.channel.id))) return
+			(special_bot_domain.includes(this.data.message.channel.id) && !this.data.commandfile.help.special_channels.includes(this.data.message.channel.id)) || !this.data.commandfile.help.group.toLowerCase() === `admin`) return
 
 		//	Double-check
 		if (this.componentsAreReady()) return this.init()
