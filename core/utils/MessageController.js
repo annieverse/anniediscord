@@ -91,7 +91,8 @@ class MessageController {
      */
     get isCommandMessage() {
         if (!this.message.content.startsWith(env.prefix)) return false
-        if (!bot_domain.includes(this.message.channel.id)) return false
+        //  Commented this check. Gonna implement more scalable bot_domain check for cross-server feature.
+        //if (!bot_domain.includes(this.message.channel.id)) return false
         if (this.message.content.length <= env.prefix.length) return false
 
         return true
