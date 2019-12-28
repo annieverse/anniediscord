@@ -333,6 +333,13 @@
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },
+    "SERVER_REMOTE": {
+        "AUTHORIZED": "**{0}**, you are authorized to control my server remotely. {1}",
+        "PROCESSING": "**Server will restart in {0} seconds...**",
+        "GUIDE": "These are the available parameter [-live, -mt, -rs].",
+        "CURRENTLY_MT": "Currently is running in development state.",
+        "CURRENTLY_LIVE": "Currently is running in production state."
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
