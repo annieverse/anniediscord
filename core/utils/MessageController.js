@@ -4,7 +4,6 @@ const {
     art_domain,
     nonxp_domain,
     event_submission_domain,
-    bot_domain,
     verification_domain
 } = require(`../modules/config`)
 
