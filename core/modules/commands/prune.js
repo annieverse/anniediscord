@@ -9,20 +9,26 @@ class Prune {
 
 
 	/**
-     *  Initializer method
-     */
+	 * 	Double checks for command authority.
+	 * 	NOTE: This is planned  to be implemented into its own module, it's gonna be a part of every command's method.
+	 * 	The point is to make us developer write less duplicated method and safer security.
+	 * 
+	 */
+	_hasAccess() {
+		const { isAdmin, devAccess } = this.stacks
+		return isAdmin || devAccess ? true : false
+	}
+
+
 	async execute() {
-		const { devAccess, isAdmin, reply, code, args, trueInt, deleteMessages } = this.stacks
+		const { reply, code, args, trueInt, deleteMessages } = this.stacks
+
 		//	Returns if user doesn't have administrator authority
-		if (!devAccess && !isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
-
-
+		if (!this._hasAccess()) return reply(code.UNAUTHORIZED_ACCESS)
 		//	Returns if user doesn't specify any parameter
 		if (!args[0]) return reply(code.PRUNE.SHORT_GUIDE)
 
-
 		let amount = trueInt(args[0])
-
 
 		//	Returns if inputted value is invalid
 		if (!amount) return reply(code.PRUNE.INVALID_AMOUNT)
