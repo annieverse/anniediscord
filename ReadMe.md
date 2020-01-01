@@ -27,27 +27,6 @@ We got tons of upcoming features ahead!*
 - Portfolio and Social Card.
 - Minimalist.
 
-## **The Annie Team**
-
-Below are amazing people that make Annie possible!
-
-| ![1][pan]| ![2][hugo] | ![3][naph] |
-| :----: | :----: | :----: |
-| **Pan** | **Hugo** | **Naph** |
-| Lead Developer | Developer | UI/UX Engineer |
-
-## **Contributor**
-
-
-*Snow, Hapiikat, Akane, TrojanOS, Fwubbles, sunnyrainyworks, secretdwarf05, Tantan, Kitomi, Foxie, Poppy, Ralu and many others.*
-
-[naph]: https://cdn.discordapp.com/avatars/230034968515051520/3dae3e66eb876d60f3251ebdb7602cf0.png?size=128
-
-[pan]: https://cdn.discordapp.com/avatars/277266191540551680/d8c76120788366540552d977122a862d.png?size=128
-
-[hugo]: https://cdn.discordapp.com/avatars/476391416268849175/ccd23e89da05b4a5ecd4c3ae637a39f7.png?size=128
-
-
-## **Progress**
+## **Development**
 
 Feel free to checkout the development progress in our [Trello Board !](https://trello.com/b/jBbOIqQA/annie-pipeline)
