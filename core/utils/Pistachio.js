@@ -266,6 +266,12 @@ class Pistachio {
 		}
 
 
+		//  Load cached pixiv image on root
+		container.loadPixivCaches = async (id) => {
+			return fsn.readFile(`./${id}`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+		}
+
+
 		/**
 		 *	Handles user's avatar fetching process.
 		 *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
