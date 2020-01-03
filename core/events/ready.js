@@ -14,6 +14,7 @@ module.exports = bot => {
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
+
 		if (env.WELCOMER_TEST) {
 			const BannerTest = require(`../utils/welcomeBannerUI`)
 			new BannerTest({bot, member:require(`../../test/testmsg`), channel:`654401864565129236`}).render()
@@ -51,6 +52,8 @@ module.exports = bot => {
 		Routine.databaseCheck()
 		//	Recording resource usage every 5 mins
 		Routine.resourceUsageLogging()
+		//	Check if pixiv cache's dir exists or not.
+		Routine.pixivCacheDirCheck()
 
 
 		/**

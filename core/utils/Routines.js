@@ -1,5 +1,6 @@
 const cron = require(`node-cron`)
 const moment = require(`moment`)
+const fs = require(`fs`)
 const { Attachment } = require(`discord.js`)
 const getCpuUsage = require(`./cpuUsage`)
 const getMemUsage = require(`./memoryUsage`)
@@ -365,8 +366,23 @@ class Routines {
     async removeFeaturedDailyPostLoop() {
         let fdp = new dailyFeatured(this.client)
         await fdp.loop()
-    }
+	}
+	
 
+	/**
+	 * 	Check if pixiv cache's directory is exists or not.
+	 * 	If no, create the directory.
+	 */
+	pixivCacheDirCheck() {
+		const path = `./core/images/PixivCaches`
+		fs.access(path, (err) => {
+			if (err) {
+			  fs.mkdir(path, () => {
+				this.logger.info(`Created Pixiv Cache's directory.`)
+			  })
+			}
+		})
+	}
 }
 
 module.exports = Routines
