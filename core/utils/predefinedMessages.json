@@ -254,7 +254,7 @@
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
     },
     "PIXIV": {
-        "DISPLAY_RECOMMENDED_WORK": "`Requesting the most recommended work for you ...`",
+        "DISPLAY_RECOMMENDED_WORK": "`Showing the most recommended work for you ...`",
         "DISPLAY_CUSTOM_SEARCH": "`Looking for '{0}' ...`",
         "NO_RESULT": "Sorry! i can't find anything with that keyword."
     },

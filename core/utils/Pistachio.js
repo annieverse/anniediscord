@@ -273,6 +273,28 @@ class Pistachio {
 
 
 		/**
+		 * ------------------------------------------------
+		 * Cooling down system -> Pistachio's CD Cluster
+		 * 
+		 * Future plan: move these sub container into its own Class Module.
+		 * ------------------------------------------------
+		 */
+
+		container.setCooldown = async (label=String, timeout=5000) => {
+			bot.keyv.set(label, `1`, timeout)
+			bot.logger.info(`${timeout/1000}s cooldown state has been set for ${label}`)
+		}
+		container.isCooldown = async (label=String) => {
+			const inCooldownState = await bot.keyv.get(label)
+			if (inCooldownState) {
+				bot.logger.info(`Access denied for ${label} (currently cooling down)`)
+				return true
+			}
+			return false
+		}
+
+
+		/**
 		 *	Handles user's avatar fetching process.
 		 *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
 		 *	@param {String|ID} id id of user to be fetched from.

@@ -20,6 +20,7 @@ class Pixiv {
         this.args = Stacks.fullArgs
         this.CACHE_PATH = `./core/images/PixivCaches/`
         this.loadCache = Stacks.loadPixivCaches
+        this.moduleID = `${Stacks.meta.author.id}_PIXIV_SERVICE`
     }
     
 
@@ -78,8 +79,11 @@ class Pixiv {
 
 
 	async execute() {
-        const { reply, code:{PIXIV} } = this.stacks
-        
+        const { reply, code:{PIXIV}, isCooldown, setCooldown } = this.stacks
+
+        if (await isCooldown(this.moduleID)) return reply(`Please wait a moment until your next request.`)
+        setCooldown(this.moduleID)
+
         //  Logging in to get access to the Pixiv API
         await this.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
 
