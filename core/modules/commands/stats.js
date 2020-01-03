@@ -16,7 +16,7 @@ class Stats {
 		const res = await db._query(`SELECT timestamp, ping FROM resource_usage ORDER BY timestamp ASC LIMIT 100`, `all`)
 		return {
 			datasets: res.map(data => data.ping),
-			label: res.map(data => data.timestamp)
+			label: res.map(data => data.timestamp) 
 		}
 	}
 
