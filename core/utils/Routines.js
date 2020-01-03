@@ -1,6 +1,7 @@
 const cron = require(`node-cron`)
 const moment = require(`moment`)
 const fs = require(`fs`)
+const path = require(`path`)
 const { Attachment } = require(`discord.js`)
 const getCpuUsage = require(`./cpuUsage`)
 const getMemUsage = require(`./memoryUsage`)
@@ -16,7 +17,8 @@ class Routines {
         this.client = Client
         this.logger = Client.logger
         this.db = Client.db
-        this.env = Client.env
+		this.env = Client.env
+		this.pixivCacheDirectory = path.join(__dirname, `../images/PixivCaches`)
     }
 
 
@@ -374,13 +376,29 @@ class Routines {
 	 * 	If no, create the directory.
 	 */
 	pixivCacheDirCheck() {
-		const path = `./core/images/PixivCaches`
-		fs.access(path, (err) => {
+		fs.access(this.pixivCacheDirectory, (err) => {
 			if (err) {
-			  fs.mkdir(path, () => {
+			  fs.mkdir(this.pixivCacheDirectory, () => {
 				this.logger.info(`Created Pixiv Cache's directory.`)
 			  })
 			}
+		})
+	}
+
+
+	/**
+	 * 	Deletes Pixiv Caches for every 30 minutes.
+	 */
+	releasePixivCaches() {
+		cron.schedule(`*/30 * * * *`, async () => {
+			fs.readdir(`./core/images/PixivCaches`, (err, files) => {
+				if (err) throw err
+				for (let file of files) {
+					fs.unlink(path.join(`./core/images/PixivCaches`, file), () => {
+						this.logger.info(`${files.length} Pixiv Caches have been released.`)
+					})
+				}
+			})
 		})
 	}
 }
