@@ -253,6 +253,11 @@
         "SUCCESSFUL": "Transaction successful.",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
     },
+    "PIXIV": {
+        "DISPLAY_RECOMMENDED_WORK": "`Requesting the most recommended work for you ...`",
+        "DISPLAY_CUSTOM_SEARCH": "`Looking for '{0}' ...`",
+        "NO_RESULT": "Sorry! i can't find anything with that keyword."
+    },
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"

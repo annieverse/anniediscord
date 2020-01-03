@@ -1,16 +1,25 @@
 const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
+
 /**
+ * Note:
+ * This module requires pixiv account (verified username and pw) in order to get acccess to the API.
+ * So, make sure to put your account details inside .env file
+ * 
+ *  PIXIV_USERNAME = email
+ *  PIXIV_PASS = account password
+ * 
  * Main module
  * @Pixiv fetching image from pixiv.
  */
- 
 class Pixiv {
 	constructor(Stacks) {
         this.stacks = Stacks
         this.choice = Stacks.choice
         this.args = Stacks.fullArgs
+        this.CACHE_PATH = `./core/images/PixivCaches/`
+        this.loadCache = Stacks.loadPixivCaches
     }
     
 
@@ -30,38 +39,71 @@ class Pixiv {
      * @param {String} filter 
      */
     async fetchCustomSearch(filter = ``) {
-        const res = pixiv.searchIllust(filter)
+        const res = await pixiv.searchIllustPopularPreview(filter)
         return this.choice(res.illusts)
     }
 
 
     /**
-     * Fetch artworks by recommended result. Returns object of choosen index.
+     * Fetch artworks by popularity ranking. Returns object of choosen index.
      */
     async fetchRecommendedWork() {
-        const res = await pixiv.illustRecommended()
+        const res = await pixiv.illustRanking()
         return this.choice(res.illusts)
     }
 
+    
+    /**
+     * Loading image from pixiv cache directory. (downloaded pixiv's image)
+     * @param {String|URL} url 
+     * @param {String|ID} filename 
+     */
+    async getImage(url = String, filename = String) {
+        return this.loadCache(await PixImg(url, `${this.CACHE_PATH + filename}.jpg`))
+    }
+
+
+    /**
+     * Map `name` prop from Pixiv's tags object. Returns a proper string of hashtags.
+     * @param {ArrayOfObject} tags 
+     */
+    getHashtags(tags = Array) {
+        let arr = tags.map(key => `#${key.name}`)
+        let str = ``
+        for (let el of arr) {
+           str += `${el} `
+        }
+        return str
+    } 
+
 
 	async execute() {
-        const { reply, loadPixivCaches } = this.stacks
+        const { reply, code:{PIXIV} } = this.stacks
         
         //  Logging in to get access to the Pixiv API
-        await this.login('leizha.naphzter074@gmail.com', 'whitecookie007')
+        await this.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
 
-        reply(`fetching pixiv result...`)
-            .then(async loadmsg => {
-            //  Dynamically choose recommended/custom search based on input
-            const data = !this.args ? await this.fetchRecommendedWork() : await this.fetchCustomSearch(this.args)
-            reply(data.caption, {
-                customHeader: [data.user.name, data.user.profile_image_urls.medium],
-                prebuffer: true,
-                image: await loadPixivCaches(await PixImg(data.image_urls.large))
+        reply(PIXIV[this.args ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+            simplified: true,
+            socket: [this.args]})
+                .then(async loadmsg => {
+                    //  Dynamically choose recommended/custom search based on input
+                    const data = !this.args ? await this.fetchRecommendedWork() : await this.fetchCustomSearch(this.args)
+
+                    //  Handle if no returned result from the query
+                    if (!data)  {
+                        loadmsg.delete()
+                        return reply(PIXIV.NO_RESULT, {color: `red`})
+                    }
+
+                    reply(this.getHashtags(data.tags), {
+                        customHeader: [`by ${data.user.name}`, data.user.profile_image_urls.medium],
+                        image: await this.getImage(data.image_urls.medium, data.id),
+                        prebuffer: true
+                    })
+                    loadmsg.delete()
             })
-            return loadmsg.delete()
-        })
-	}
+	    }
 }
 
 
@@ -69,9 +111,9 @@ module.exports.help = {
 	start: Pixiv,
 	name: `pixiv`,
 	aliases: [`pix`, `pxv`, `pixiv`],
-	description: `Gives bot's ping`,
-	usage: `ping`,
-	group: `Server`,
+	description: `Fetching image from pixiv.`,
+	usage: `pixiv`,
+	group: `Art Platform`,
 	public: true,
 	required_usermetadata: false,
 	multi_user: false

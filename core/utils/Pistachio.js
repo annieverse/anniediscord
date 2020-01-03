@@ -416,7 +416,7 @@ class Pistachio {
 
 
 			const embed = new RichEmbed()
-				.setColor(options.color)
+				.setColor(container.palette[options.color] || options.color)
 				.setDescription(content)
 				.setThumbnail(options.thumbnail)
 
