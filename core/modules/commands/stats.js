@@ -55,11 +55,12 @@ class Stats {
 			.then(async load => {
 				//	Fetching resource
 				const resourceData = await this.resource()
+				const responseTimeHistory = await this.responseTimeHistory()
 				//	Fetching render
 				const perfCard = await new StatsUI({
 					resource: resourceData,
 					theme: data.interfacemode,
-					history: await this.responseTimeHistory()
+					history: responseTimeHistory
 				}).render()
 
 				reply(`${emoji(`AnnieGeek`)} **| Resource Usage**`, {

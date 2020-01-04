@@ -97,8 +97,7 @@ class CommandsHandler extends Controller {
 	async prepare() {
 
 		//	File validation
-		if (!this.data.commandfile) return this.logger.error(`${this.data.message.author.tag} trying to use invalid command (${this.data.command}) in #${this.data.message.channel.name}`)
-
+		if (!this.data.commandfile) return 
 
 		//	Ref to file path
 		this.path = `../modules/commands/${this.filename}.js`
