@@ -7,6 +7,7 @@ ___
 * Set point for correct versioning.
 * Ton of UI/UX improvement.
 * Added custom UI Library for handling canvas-based interface.
+* Support Server ad on Annie's message system.
 * Various QoL updates.
 
 ## **09/30/19 | 5.0.2 - >**

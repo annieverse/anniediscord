@@ -439,7 +439,8 @@ class Pistachio {
 
 			const embed = new RichEmbed()
 				.setColor(container.palette[options.color] || options.color)
-				.setDescription(content)
+				//	Ad inject
+				.setDescription(content + `\n[Join my support server!](https://discord.gg/7nDes9P)`)
 				.setThumbnail(options.thumbnail)
 
 			//  Add header
