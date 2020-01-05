@@ -1,6 +1,13 @@
-# Logs based on Major Patch
+# Change Logs
 
 ___
+
+## **01/05/20 | 5.1.0 ->**
+
+* Set point for correct versioning.
+* Ton of UI/UX improvement.
+* Added custom UI Library for handling canvas-based interface.
+* Various QoL updates.
 
 ## **09/30/19 | 5.0.2 - >**
 
