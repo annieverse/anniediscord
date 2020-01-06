@@ -78,7 +78,7 @@ class Pistachio {
 			container.isGachaField = [bot.channels.get(`485922866689474571`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
 
 			//  Check for administrator authority
-			container.isAdmin = message.member.roles.find(r => Object.keys(container.roles.admin).some(i => container.roles.admin[i] == r.id))
+			container.isAdmin = message.member.roles.find(r => container.roles.admin.channel_overseer == r.id)
 
 			//  Check for developer authority
 			container.isDev = container.roles.annie_developer.includes(message.member.id)
