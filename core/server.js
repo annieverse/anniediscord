@@ -1,6 +1,7 @@
 module.exports = () => {
 
 	const { Client } = require(`discord.js`)
+	const environment = require(`../.data/environment`)
 	const ascii = require(`./utils/config/startupAscii`)
 	const benchmark = require(`./utils/benchmarkConverter`)
 	const modulesLoader = require(`./utils/modulesLoader`)
@@ -16,7 +17,7 @@ module.exports = () => {
 	let bot = new Client()
 	bot.startupInit = process.hrtime()
 	const app = express()
-	if (process.env.NODE_ENV === `dev`) winston.info(ascii)
+	if (environment.dev) winston.info(ascii)
 	app.get(`/`, (request, response) => response.sendStatus(200))
 	app.listen(process.env.PORT)
 
@@ -26,7 +27,7 @@ module.exports = () => {
 	bot.cards = cards
 	bot.getBenchmark = benchmark
 	bot.logger = winston
-	bot.env = process.env
+	bot.env = environment
 	bot.db = new Database(null, bot).connect()
 	bot.keyv = new KeyvClient()
 	bot = new modulesLoader().register(bot)
