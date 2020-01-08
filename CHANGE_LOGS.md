@@ -2,6 +2,10 @@
 
 ___
 
+## **01/08/20 | 5.1.1 ->**
+
+* Ignore quotation marks on complaint cmd args.
+
 ## **01/05/20 | 5.1.0 ->**
 
 * Set point for correct versioning.

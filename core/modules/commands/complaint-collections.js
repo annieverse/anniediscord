@@ -178,6 +178,10 @@ class complaintCollection {
 
 			collector.on(`collect`, async (msg) => {
 				let input = msg.content
+
+				//	Remove quotation marks if accidentaly included to avoid errors.
+				if (input.includes(`"`)) input = input.split(`"`).join(``)
+
 				let imagelinks = []
 
 				//  Register new complaint record
