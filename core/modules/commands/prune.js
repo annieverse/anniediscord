@@ -15,8 +15,8 @@ class Prune {
 	 * 
 	 */
 	_hasAccess() {
-		const { isAdmin, devAccess } = this.stacks
-		return isAdmin || devAccess ? true : false
+		const { isModerator, devAccess } = this.stacks
+		return isModerator || devAccess ? true : false
 	}
 
 

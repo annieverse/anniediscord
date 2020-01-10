@@ -78,7 +78,10 @@ class Pistachio {
 			container.isGachaField = [bot.channels.get(`485922866689474571`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
 
 			//  Check for administrator authority
-			container.isAdmin = message.member.hasPermission(`MANAGE_ROLE`)
+			container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
+
+			// Check for moderator authority
+			container.isModerator = message.member.hasPermission(`MANAGE_ROLE`)
 
 			//  Check for developer authority
 			container.isDev = container.roles.annie_developer.includes(message.member.id)
@@ -88,9 +91,6 @@ class Pistachio {
 
 			// Check for staff team authority
 			container.isStaff = message.member.roles.find(r => Object.keys(container.roles.teams).some(i => container.roles.teams[i] == r.id))
-
-			// Check for mod team authority
-			container.isModerator = message.member.roles.find(r => Object.keys(container.roles.moderator).some(i => container.roles.moderator[i] == r.id))
 
 			//  Check for booster user
 			container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)

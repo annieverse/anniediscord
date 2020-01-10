@@ -23,7 +23,7 @@ class ModNotification {
         this.reply = Components.reply
         this.code = Components.code.VERIFICATION_REQUEST
         this.emoji = Components.emoji
-        this.isAdmin = Components.isAdmin
+        this.isModerator = Components.isModerator
         this.setCooldown = Components.setCooldown
         this.isCooldown = Components.isCooldown
         this.modRoleId = `551603523070984222` 
@@ -112,7 +112,7 @@ class ModNotification {
         const availableMods = this.fetchModId
 
         //  Ignore if the sender was a moderator/admin. (to prevent unnecessary notification)
-        if (this.isAdmin) return
+        if (this.isModerator) return
 
         //  Ignore if user still in cooling down state to avoid repetitive notifications/spam.
         if (this.isCooldown(this.moduleID)) return
