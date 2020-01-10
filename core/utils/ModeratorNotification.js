@@ -99,6 +99,15 @@ class ModNotification {
 
 
     /**
+     *  Check if the message author is a moderator (who has manage role permission)
+     *  Returns Boolean
+     */
+    get senderIsModerator() {
+        return this.message.member.hasPermission('MANAGE_ROLE')
+    }
+
+
+    /**
      *  Decide on which message to be sent based on specified condition.
      *  The message that user see will be removed within 60s.
      *  @sendResponse
@@ -106,6 +115,9 @@ class ModNotification {
     sendResponse() {
 
         const availableMods = this.fetchModId
+
+        //  Ignore if the sender was a moderator/admin. (to prevent unnecessary notification)
+        if (this.senderIsModerator) return
 
         //  Handle unavailable mods.
         if (availableMods.length < 1) {
