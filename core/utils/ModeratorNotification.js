@@ -23,9 +23,12 @@ class ModNotification {
         this.reply = Components.reply
         this.code = Components.code.VERIFICATION_REQUEST
         this.emoji = Components.emoji
+        this.setCooldown = Components.setCooldown
+        this.isCooldown = Components.isCooldown
         this.modRoleId = `551603523070984222` 
         this.verificationChId = `538843763544555528`
         this.moderatorChannelId = `588438012787163146`
+        this.moduleID = `${Components.message.author.id}-REQUESTING_VERIFICATION`
     }
 
 
@@ -118,6 +121,10 @@ class ModNotification {
 
         //  Ignore if the sender was a moderator/admin. (to prevent unnecessary notification)
         if (this.senderIsModerator) return
+
+        //  Ignore if user still in cooling down state to avoid repetitive notifications/spam.
+        if (this.isCooldown(this.moduleID)) return
+        this.setCooldown(this.moduleID, 30000)
 
         //  Handle unavailable mods.
         if (availableMods.length < 1) {
