@@ -23,6 +23,7 @@ class ModNotification {
         this.reply = Components.reply
         this.code = Components.code.VERIFICATION_REQUEST
         this.emoji = Components.emoji
+        this.isAdmin = Components.isAdmin
         this.setCooldown = Components.setCooldown
         this.isCooldown = Components.isCooldown
         this.modRoleId = `551603523070984222` 
@@ -102,15 +103,6 @@ class ModNotification {
 
 
     /**
-     *  Check if the message author is a moderator (who has manage role permission)
-     *  Returns Boolean
-     */
-    get senderIsModerator() {
-        return this.message.member.hasPermission('MANAGE_ROLE')
-    }
-
-
-    /**
      *  Decide on which message to be sent based on specified condition.
      *  The message that user see will be removed within 60s.
      *  @sendResponse
@@ -120,7 +112,7 @@ class ModNotification {
         const availableMods = this.fetchModId
 
         //  Ignore if the sender was a moderator/admin. (to prevent unnecessary notification)
-        if (this.senderIsModerator) return
+        if (this.isAdmin) return
 
         //  Ignore if user still in cooling down state to avoid repetitive notifications/spam.
         if (this.isCooldown(this.moduleID)) return
