@@ -2,6 +2,13 @@
 
 ___
 
+## **01/10/20 | 5.1.2 ->**
+
+* Disable .git history deletion on dev environment.
+* Ignore verif notification on user with admin/mod privilege.
+* Adds 30s cooling-down state for each verification message.
+* .isAdmin() and .isModerator() now check by its granted permission(previously by role).
+
 ## **01/08/20 | 5.1.1 ->**
 
 * Ignore quotation marks on complaint cmd args.
