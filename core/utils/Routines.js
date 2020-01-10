@@ -18,7 +18,7 @@ class Routines {
         this.logger = Client.logger
         this.db = Client.db
 		this.env = Client.env
-		this.pixivCacheDirectory = path.join(__dirname, `../images/PixivCaches`)
+		this.pixivCacheDirectory = path.join(__dirname, `../images/.pixivcaches`)
     }
 
 
@@ -391,10 +391,10 @@ class Routines {
 	 */
 	releasePixivCaches() {
 		cron.schedule(`*/30 * * * *`, async () => {
-			fs.readdir(`./core/images/PixivCaches`, (err, files) => {
+			fs.readdir(`./core/images/.pixivcaches`, (err, files) => {
 				if (err) throw err
 				for (let file of files) {
-					fs.unlink(path.join(`./core/images/PixivCaches`, file), () => {
+					fs.unlink(path.join(`./core/images/.pixivcaches`, file), () => {
 						this.logger.info(`${files.length} Pixiv Caches have been released.`)
 					})
 				}

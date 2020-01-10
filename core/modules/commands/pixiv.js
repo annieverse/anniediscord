@@ -18,7 +18,7 @@ class Pixiv {
         this.stacks = Stacks
         this.choice = Stacks.choice
         this.args = Stacks.fullArgs
-        this.CACHE_PATH = `./core/images/PixivCaches/`
+        this.CACHE_PATH = `./core/images/.pixivcaches/`
         this.loadCache = Stacks.loadPixivCaches
         this.moduleID = `${Stacks.meta.author.id}_PIXIV_SERVICE`
     }
