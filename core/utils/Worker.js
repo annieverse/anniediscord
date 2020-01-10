@@ -40,7 +40,7 @@ class Worker extends Controller {
             //  Handle portfolio post
             if (super.isAddingPortfolio) new Portfolio(this.data).add()
             //  Handle message coming from #verification request
-            if (super.isVerificationRequest) return new ModeratorNotification(this.data).sendResponse()
+            if (super.isVerificationRequest) new ModeratorNotification(this.data).sendResponse()
         }
 
 
