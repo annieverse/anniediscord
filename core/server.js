@@ -17,7 +17,16 @@ module.exports = () => {
 	let bot = new Client()
 	bot.startupInit = process.hrtime()
 	const app = express()
+
+	//	Custom splash text on dev environment's startup
 	if (environment.dev) winston.info(ascii)
+
+	//	Only deletes .git history on prod environment
+	if (!environment.dev) {
+		cmd.run(`rm -rf .git`)
+		winston.info(`cleaning up .git history`)
+	}
+
 	app.get(`/`, (request, response) => response.sendStatus(200))
 	app.listen(process.env.PORT)
 
@@ -31,10 +40,6 @@ module.exports = () => {
 	bot.db = new Database(null, bot).connect()
 	bot.keyv = new KeyvClient()
 	bot = new modulesLoader().register(bot)
-
-
-	cmd.run(`rm -rf .git`)
-	bot.logger.info(`> [GIT] rm -rf .git > RAN`)
 
 	require(`./utils/eventHandler`)(bot)
 	bot.login(process.env.TOKEN)
