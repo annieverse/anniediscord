@@ -72,7 +72,7 @@ class Pistachio {
 		container.gachaField = bot.channels.get(`485922866689474571`)
 
 		//  Sub-pistachio which require guild properties and not in DM.
-		if (message.member && (message.channel.type !== `dm`)) {
+		if (message.member && message.guild) {
 
 			//  Check if current channel is included in gacha-allowed list
 			container.isGachaField = [bot.channels.get(`485922866689474571`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
@@ -81,7 +81,7 @@ class Pistachio {
 			container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
 
 			// Check for moderator authority
-			container.isModerator = message.member.hasPermission(`MANAGE_ROLE`)
+			container.isModerator = message.member.hasPermission(`MANAGE_ROLES`)
 
 			//  Check for developer authority
 			container.isDev = container.roles.annie_developer.includes(message.member.id)
