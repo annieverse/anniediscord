@@ -2,6 +2,13 @@
 
 ___
 
+## **01/11/20 | 5.1.3 ->**
+
+* Fix ghosting command in verification channel.
+* Untrack .pixivcaches
+* Fix wrong string param in privilege checks.
+* Add build & lint script.
+
 ## **01/10/20 | 5.1.2 ->**
 
 * Disable .git history deletion on dev environment.
