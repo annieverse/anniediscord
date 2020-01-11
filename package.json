@@ -8,7 +8,9 @@
     "linting": "eslint . ",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
-    "beta": "nodemon index.js"
+    "beta": "nodemon index.js",
+    "build": "npm install",
+    "lint": "eslint ."
   },
   "engines": {
     "node": "10.16.0"
