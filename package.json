@@ -4,7 +4,7 @@
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "npm run lint && npm run unit-test && echo 'Finished.'",
+    "test": "npm run lint && echo 'Finished.'",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon index.js",
