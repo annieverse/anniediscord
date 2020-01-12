@@ -34,7 +34,7 @@ jobs:
 
 
   # Code style & syntax check
-  linting:
+  lint:
     <<: *defaults
     steps:
       - checkout
@@ -44,7 +44,7 @@ jobs:
             - v1-dependency-cache-
       - run: 
           name: Running ESlint
-          command: npm run linting
+          command: npm run lint
 
 
   # Test predefined micro functions
@@ -86,7 +86,7 @@ workflows:
                 - master
 
       # Check for code style & syntax consistency. Requires build to finish.
-      - linting:
+      - lint:
           requires:
             - build
           filters:
@@ -107,7 +107,7 @@ workflows:
       - deploying:
           requires:
             - build
-            - linting
+            - lint
             - unit_test
           filters:
             branches:
