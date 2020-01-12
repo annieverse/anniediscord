@@ -5,11 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "npm run linting && npm run unit-test && echo 'Finished.'",
-    "linting": "eslint . ",
+    "linting": "eslint core",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
     "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "nodemon index.js",
-    "lint": "eslint ."
+    "lint": "eslint core"
   },
   "engines": {
     "node": "10.16.0"
