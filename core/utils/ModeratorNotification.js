@@ -107,15 +107,14 @@ class ModNotification {
      *  The message that user see will be removed within 60s.
      *  @sendResponse
      */
-    sendResponse() {
+    async sendResponse() {
 
         const availableMods = this.fetchModId
 
         //  Ignore if the sender was a moderator/admin. (to prevent unnecessary notification)
         if (this.isModerator) return
-
         //  Ignore if user still in cooling down state to avoid repetitive notifications/spam.
-        if (this.isCooldown(this.moduleID)) return
+        if (await this.isCooldown(this.moduleID)) return
         this.setCooldown(this.moduleID, 30000)
 
         //  Handle unavailable mods.
