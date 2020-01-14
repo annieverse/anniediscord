@@ -221,6 +221,12 @@ class Pistachio {
 			}))
 		}
 
+		//  Get closest below element from an array
+		container.closestBelow = (array, val) => {
+			return Math.max.apply(null,array.filter(function(v)
+			{ return v <= val }))
+		}
+
 		//  Removing first few non-alphabet character from string
 		container.relabel = (str) => {
 			let res = str.replace(/[^A-Za-z]+/, ``)
@@ -318,6 +324,47 @@ class Pistachio {
 				return url
 			}
 			catch(e) { return fallbackImage(e) }
+		}
+
+
+		/**
+		 * 	Get the min/max or the calculated curve on given currentexp.
+		 *  @param {Number/Integer} currentExp
+		 */
+		container.getExpMetadata = (currentExp=Number) => {
+			const formula = (exp) => {
+				if (exp < 100) {
+					return {
+						level: 0,
+						maxexp: 100,
+						nextexpcurve: 100,
+						minexp: 0
+					}
+				}
+	
+
+				let level = Math.sqrt(4 * exp - 375) / 20 - 0.25
+				level = Math.floor(level)
+				let maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
+				let minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
+				let nextexpcurve = maxexp - minexp
+				level = level + 1
+	
+				return {
+					level: level,
+					maxexp: maxexp,
+					nextexpcurve: nextexpcurve,
+					minexp: minexp
+				}
+			}
+	
+			const accumulatedCurrent = Math.floor(currentExp)
+			const main = formula(accumulatedCurrent)
+			let level = main.level
+			let maxexp = main.maxexp
+			let nextexpcurve = main.nextexpcurve
+			let minexp = main.minexp
+			return {level,maxexp,nextexpcurve,minexp}
 		}
 
 

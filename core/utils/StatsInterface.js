@@ -78,9 +78,9 @@ class StatsInterface {
 		.createVerticalSeparator({margin: 20})
 
 		//	Secondary information bars.
-		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: `inherit`, inline: true})
-		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, inline: true})
-		.createDataBar({content: `${uptime.hours()}h ${uptime.minutes()}m`, label: `uptime`, contentColor: `inherit`, inline: true, releaseHook: true})
+		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: `inherit`, barColor: `main`, inline: true})
+		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, barColor: `main`, inline: true})
+		.createDataBar({content: `${uptime.hours()}h ${uptime.minutes()}m`, label: `uptime`, contentColor: `inherit`, barColor: `main`, inline: true, releaseHook: true})
 		
 		.ready()
 	}

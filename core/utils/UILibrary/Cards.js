@@ -31,7 +31,7 @@ class Card {
 		dataBarSize=DEFAULT.DATABAR.SIZE,
 		primaryColor=themePresets[DEFAULT.THEME].text,
 		marginLeft=50,
-		marginTop=20
+		marginTop=50
 	
 		}) {
 		this.width = width
@@ -65,12 +65,15 @@ class Card {
 	 * 	@_resolveColor
 	 */
 	_resolveColor(prop, defaultOpt) {
+
+		//	Gives default option if the given prop is undefined/null
+		if (!prop) return defaultOpt
+
+		//	Returns if the given prop is a valid hex code
+		if (prop.startsWith(`#`)) return prop
 		//	Check for color availability in standard colorset
 		if (palette[prop]) return palette[prop]
-
 		//	If color is inherited, this will use the defined primary color in the global preset.
-		if ((prop === `inherit`) && palette[this.primaryColor]) return palette[this.primaryColor] 
-		if ((prop === `inherit`) && this.color[this.primaryColor]) return this.color[this.primaryColor] 
 		if (prop === `inherit`) return this.primaryColor
 		//	Following system theming
 		if (this.color[prop]) return this.color[prop]
@@ -85,6 +88,56 @@ class Card {
 	 * ----------------------------------------------------------------------------------------
 	 * 
 	 */
+
+
+	/**
+	 * @current of user currentexp.
+	 * @barLength is the width size of the given rectangle.
+	 */
+	_barSize(current, barlength) {
+		return Math.floor(Math.floor(current*100)/100 * barlength)
+	}
+
+
+	/**
+	 *  Creating a linebar that similar to exp bar.
+	 *  @param {*} Object 
+	 */
+	addLinebar({
+		barColor=this.color.secondary,
+		fillColor=this.color.secondary,
+		marginLeft=null,
+		marginTop=this.marginTop,
+		align=`left`,
+		width=200,
+		height=10,
+		current=50,
+		inline=false
+		}) {
+		
+		const progressBar = this._barSize(current, width)
+		const dynamicMarginLeft = marginLeft + this._getHorizontalAlign(align)
+
+		this.canv
+		.save()
+		.save()
+
+		//	Base pipe
+		.setColor(this._resolveColor(barColor, this.color.secondary))
+		.createBeveledClip(dynamicMarginLeft, marginTop, width, height, 240)
+		.addRect(dynamicMarginLeft, marginTop, width, height)
+		.restore()
+
+		//	Filled pipe
+		.setColor(this._resolveColor(fillColor, this.color.okay))
+		.createBeveledClip(dynamicMarginLeft, marginTop, progressBar, height, 240)
+		.addRect(dynamicMarginLeft, marginTop, progressBar, height)  
+		.restore()
+
+		if (!inline) this.reservedSpace += height+10
+
+		return this
+	}
 
 
 	/**
@@ -112,12 +165,14 @@ class Card {
 		content=``, 
 		label=``, 
 		size=this.dataBarSize,
-		align=`left`,
+		align=`center`,
 		contentColor=null,
 		barColor=null,
 		labelColor=null,
 		disableShadow=false,
+		marginTop=0,
 		inline=false,
+		marginLeft=this.marginLeft,
 		releaseHook=false}) {
 
 
@@ -130,8 +185,8 @@ class Card {
 
 		//	Flexible X positioning
 		const leftMarginState = (this.dataBarCount > 0) && inline
-		? (DATABAR[size].WIDTH * this.dataBarCount) + (10 * this.dataBarCount) + this.marginLeft
-		: this.marginLeft
+		? (DATABAR[size].WIDTH * this.dataBarCount) + (10 * this.dataBarCount) + marginLeft
+		: marginLeft
 
 
 		this.canv.save()
@@ -144,26 +199,27 @@ class Card {
 			.setShadowBlur(15)
 			.setColor(this.color.main)
 	
-			.addRect(leftMarginState+20, this.reservedSpace+20, DATABAR[size].WIDTH-40, DATABAR[size].HEIGHT-35)
+			.addRect(leftMarginState+20, this.reservedSpace+marginTop+20, DATABAR[size].WIDTH-40, DATABAR[size].HEIGHT-35)
 			.setShadowBlur(0)
 			.setShadowOffsetY(0)
+			
 		}
 
 
 		//	If custom color is not specified, will follow default theming preset instead.
 		this.canv.setColor(barColor)
-		.createBeveledClip(leftMarginState, this.reservedSpace, DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
-		.addRect(this.marginLeft, this.reservedSpace, this.width, this.height)
+		.createBeveledClip(leftMarginState, this.reservedSpace+marginTop, DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
+		.addRect(marginLeft, this.reservedSpace+marginTop, this.width, this.height)
 
 
 		//	Main info
 		this._databarTextContent({
 			type: `MAIN_TEXT`,
-			align: `center`,
+			align: align,
 			size: `MEDIUM`,
 			content: content, 
 			marginLeft: leftMarginState+(DATABAR[size].WIDTH/2), 
-			marginTop: this.reservedSpace+(DATABAR[size].HEIGHT/1.4),
+			marginTop: marginTop+this.reservedSpace+(DATABAR[size].HEIGHT/1.4),
 			color: contentColor,
 		})
 
@@ -174,8 +230,8 @@ class Card {
 			align: align,
 			size: `SMALL`,
 			content: label, 
-			marginLeft: leftMarginState+(DATABAR[size].WIDTH/4.2), 
-			marginTop: this.reservedSpace+(DATABAR[size].HEIGHT/3.9),
+			marginLeft: leftMarginState+(DATABAR[size].WIDTH/2), 
+			marginTop: marginTop+this.reservedSpace+(DATABAR[size].HEIGHT/3.9),
 			color: labelColor
 			
 		})
@@ -267,14 +323,15 @@ class Card {
 		align=`left`,
 		inline=false,
 		marginTop=DEFAULT.HEADER.TITLE.HEIGHT,
-		fontWeight=null,
-		marginLeft=0,
+		color=this.color.text,
+		size=null,
+		marginLeft=null,
 		captionMargin=25}) {
 
 		this.canv
-		.setColor(this.color.text)
+		.setColor(color)
 		.setTextAlign(align)
-		.setTextFont(fontWeight ? `${parseInt(DEFAULT.HEADER.TITLE.FONT)}pt OpenSans${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
+		.setTextFont(size ? `${parseInt(size)}pt OpenSansBold` : DEFAULT.HEADER.TITLE.FONT)
 		.addText(main, marginLeft + this._getHorizontalAlign(align), marginTop)
 
 		if (caption) {
@@ -313,7 +370,8 @@ class Card {
 		inline=false,
 		releaseHook=false,
 		captionMargin=20,
-		img=null
+		img=null,
+		avatar=null
 		}) {
 
 		//	Handle sensitive case
@@ -331,7 +389,6 @@ class Card {
 			.addText(main, justify ? this._getHorizontalAlign(justify) : inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
 		}
 
-
 		if (caption) {
 			this.canv
 			.setTextFont(CONTENT.CAPTION.SIZE.LARGE)
@@ -339,10 +396,14 @@ class Card {
 			.addText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
 
-
 		if (img) {
 			this.canv
 			.addImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
+		}
+	
+		if (avatar) {
+			this.canv
+			.addRoundImage(avatar, marginLeft, this.reservedSpace+marginTop-marginBottom, 80, 80, 40)
 		}
 
 
