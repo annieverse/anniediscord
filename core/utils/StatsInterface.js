@@ -48,7 +48,7 @@ class StatsInterface {
 		const cardLayer = new Card({
 			width: 500,
 			height: 420,
-			theme: this.theme,
+			theme: `dark`,
 			dataBarSize: `small-med`,
 			primaryColor: statusCode.color
 		})
@@ -58,7 +58,7 @@ class StatsInterface {
 			height: 150,
 			labels: [`now`, ...(this.history.label).map(timestamp => moment(timestamp).format(`hh:mm`))],
 			datasets: [this.resource.ping, ...this.history.datasets],
-			theme: this.theme,
+			theme: `dark`,
 			primaryColor: statusCode.color
 		}).render()
 
@@ -72,15 +72,15 @@ class StatsInterface {
 		.addTitle({main: this.currentTime.format(`h:mm a`), caption: `${this.resource.ping} ms`, align: `right`, inline: true})
 
 		//	Response Time Chart for the past 24 hours.
-		.addContent({img: chartLayer})
+		.addContent({img: chartLayer, marginTop: 20})
 
 		//	Content separator.
 		.createVerticalSeparator({margin: 20})
 
 		//	Secondary information bars.
-		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: `inherit`, barColor: `main`, inline: true})
-		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: `inherit`, barColor: `main`, inline: true})
-		.createDataBar({content: `${uptime.hours()}h ${uptime.minutes()}m`, label: `uptime`, contentColor: `inherit`, barColor: `main`, inline: true, releaseHook: true})
+		.createDataBar({content: this.resource.commandsRan, label: `commands ran`, contentColor: statusCode.color, barColor: `main`, inline: true})
+		.createDataBar({content: this.formatBytes(this.resource.memory), label: `ram usage`, contentColor: statusCode.color, barColor: `main`, inline: true})
+		.createDataBar({content: `${uptime.hours()}h ${uptime.minutes()}m`, label: `uptime`, contentColor: statusCode.color, barColor: `main`, inline: true, releaseHook: true})
 		
 		.ready()
 	}

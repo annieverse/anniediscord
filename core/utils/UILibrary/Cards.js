@@ -68,15 +68,14 @@ class Card {
 
 		//	Gives default option if the given prop is undefined/null
 		if (!prop) return defaultOpt
-
+		//	Following system theming
+		if (this.color[prop]) return this.color[prop]
+		//	If color is inherited, this will use the defined primary color in the global preset.
+		if (prop === `inherit`) return this.primaryColor
 		//	Returns if the given prop is a valid hex code
 		if (prop.startsWith(`#`)) return prop
 		//	Check for color availability in standard colorset
 		if (palette[prop]) return palette[prop]
-		//	If color is inherited, this will use the defined primary color in the global preset.
-		if (prop === `inherit`) return this.primaryColor
-		//	Following system theming
-		if (this.color[prop]) return this.color[prop]
 
 		return defaultOpt
 	}

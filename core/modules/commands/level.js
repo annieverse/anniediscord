@@ -45,25 +45,29 @@ class Level {
 	 *  Initialzer method
 	 */
 	async execute() {
-		const { reply, name, code: {LEVELCARD}, meta: {author}, textOption } = this.stacks
+		const { reply, name, emoji, code: {LEVELCARD}, meta: {author}, textOption } = this.stacks
 
 		//  Returns if user is invalid
 		if (!author) return reply(LEVELCARD.INVALID_USER)
 
-		let textoptions = await this.textOpt()
+		reply(`${emoji(`AAUloading`)} resolving exp data with ID ${author.id} ...`, {simplified: true})
+			.then(async load => {
+				let textoptions = await this.textOpt()
 		
-		//  Display result
-		textOption ?
-		reply(`${LEVELCARD.HEADER}\n${textoptions.bar}\n  ${textoptions.level}\t\t  ${textoptions.currentexp}\t\t\t${textoptions.nextlevelup}\nLevel\tCurrent Exp\tNext Level Up`, {
-			socket: [name(author.id)],
-			simplified: true 
-		}) :
-		reply(LEVELCARD.HEADER, {
-			socket: [name(author.id)],
-			image: await GUI(this.stacks, author),
-			prebuffer: true,
-			simplified: true
-		})
+				//  Display result
+				textOption ?
+				reply(`${LEVELCARD.HEADER}\n${textoptions.bar}\n  ${textoptions.level}\t\t  ${textoptions.currentexp}\t\t\t${textoptions.nextlevelup}\nLevel\tCurrent Exp\tNext Level Up`, {
+					socket: [name(author.id)],
+					simplified: true 
+				}) :
+				reply(LEVELCARD.HEADER, {
+					socket: [name(author.id)],
+					image: await new GUI(this.stacks).render(),
+					prebuffer: true,
+					simplified: true
+				})
+				load.delete()
+			})
 	}
 }
 

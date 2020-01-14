@@ -11,7 +11,7 @@ class LevelUI {
 
 
 	async build() {
-		const { avatar, meta:{author, data}, getExpMetadata, closestBelow, commanifier } = stacks
+		const { avatar, meta:{author, data}, getExpMetadata, closestBelow, commanifier } = this.stacks
 		const currentRankLevel = closestBelow(DEFAULT.map(el => el.LEVEL), data.level)
 		const rank = DEFAULT.filter(el => el.LEVEL === currentRankLevel)
 		const exp = getExpMetadata(data.currentexp)

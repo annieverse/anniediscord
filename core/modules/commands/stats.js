@@ -51,7 +51,7 @@ class Stats {
 	async execute() {
 		const { reply, emoji, meta:{ data } } = this.stacks
 
-		return reply(`\`fetching metrics data ...\``, {simplified: true})
+		return reply(`${emoji(`AAUloading`)} requesting resource data ...`, {simplified: true})
 			.then(async load => {
 				//	Fetching resource
 				const resourceData = await this.resource()
@@ -63,7 +63,7 @@ class Stats {
 					history: responseTimeHistory
 				}).render()
 
-				reply(`${emoji(`AnnieGeek`)} **| Resource Usage**`, {
+				reply(`${emoji(`AnnieGeek`)} **| Here's my current status**`, {
 					simplified: true,
 					prebuffer: true,
 					image: perfCard
