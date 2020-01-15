@@ -2,6 +2,14 @@
 
 ___
 
+## **01/14/20 | 5.2.0 ->**
+
+* Updated UI Library
+* Custom Rank Configuration
+* Support Server ad on message module is no longer displayed.
+* Refactored Level Card. (now uses UI Lib and not strictly to roles setting)
+* Moderator Notification bug has been resolved.
+
 ## **01/11/20 | 5.1.3 ->**
 
 * Fix ghosting command in verification channel.
