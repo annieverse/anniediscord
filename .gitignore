@@ -4,4 +4,4 @@ node_modules
 .env
 .vscode/
 logs/
-.core/images/.pixivcaches
+core/images/.pixivcaches
