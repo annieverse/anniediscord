@@ -2,7 +2,6 @@
 
 const Controller = require(`../utils/MessageController`)
 const Data = require(`../utils/userdataSelector`)
-const User = require(`../utils/userSelector`)
 const Pistachio = require(`../utils/Pistachio`)
 const env = require(`../../.data/environment`)
 const { special_bot_domain } = require(`./config`)
