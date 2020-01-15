@@ -1,4 +1,3 @@
-const { DEFAULT } = require(`../config/ranks`)
 const Cards = require(`./UILibrary/Cards`)
 class LevelUI {
 	/**
@@ -11,14 +10,12 @@ class LevelUI {
 
 
 	async build() {
-		const { avatar, meta:{author, data}, getExpMetadata, closestBelow, commanifier } = this.stacks
-		const currentRankLevel = closestBelow(DEFAULT.map(el => el.LEVEL), data.level)
-		const rank = DEFAULT.filter(el => el.LEVEL === currentRankLevel)
+		const { avatar, meta:{author, data}, getExpMetadata, commanifier } = this.stacks
 		const exp = getExpMetadata(data.currentexp)
 		const current = data.currentexp <= exp.minexp ? 0 : (data.currentexp - exp.minexp) / exp.nextexpcurve
 	
 	
-		return new Cards({ width: 500, height: 260, theme: `dark`, primaryColor: rank[0].COLOR })
+		return new Cards({ width: 500, height: 260, theme: `dark`, primaryColor: data.rank.color })
 	
 	
 		//	Base card
@@ -26,11 +23,11 @@ class LevelUI {
 		//	Avatar representative
 		.addContent({ avatar: await avatar(author.id, true), inline: true })
 		//	Rank name 
-		.addTitle({ marginLeft: 100, marginTop: 70, main: rank[0].NAME, color: rank[0].COLOR , inline: true, size: 8 })
+		.addTitle({ marginLeft: 100, marginTop: 70, main: data.rank.name, color: data.rank.color , inline: true, size: 8 })
 		//	Author name
 		.addTitle({ marginLeft: 100, marginTop: 100, main: author.user.username, size: 20 })
 		//	Add experience bar
-		.addLinebar({ marginLeft: 100, marginTop: 120, current: current, max: exp.maxexp, fillColor: rank[0].COLOR, width: 280 })
+		.addLinebar({ marginLeft: 100, marginTop: 120, current: current, max: exp.maxexp, fillColor: data.rank.color, width: 280 })
 	
 	
 		//	Footer contents
