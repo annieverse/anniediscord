@@ -16,7 +16,7 @@ class Profile {
      *  Initialzer method
      */
 	async execute() {
-		const {message, command, reply, name, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
+		const {message, command, reply, name, emoji, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
 
         const collection = new databaseManager(data.userId)
         const userartworks = await collection.userArtworks()
@@ -89,40 +89,45 @@ class Profile {
         const getPage = async (ctr) => {
             if (!pages[ctr]) return reply (`Couldn't find that card. It's probably empty.`)
 
-            return reply(pages[ctr].card.HEADER, {
-                socket: [name(author.id)],
-                image: await pages[ctr].gui(this.stacks, author),
-                prebuffer: true,
-                simplified: true
-            }).then(msg => {
-                msg.react(`⏪`).then(() => {
-                    msg.react(`⏩`)
-                    const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
-                    const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
-
-                    const backwards = msg.createReactionCollector(backwardsFilter, {time: 60000})
-                    const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
-
-                    backwards.on(`collect`, async () => {
-                        count--
-                        if (count < 0) {
-                            count = pages.length - 1
-                        }
-                        await msg.delete()
-                        getPage(count)
-
+            reply(`${emoji(`AAUloading`)} resolving ${pages[ctr].alias} data with ID ${author.id}`, {simplified: true})
+            .then(async load => {
+                reply(pages[ctr].card.HEADER, {
+                    socket: [name(author.id)],
+                    image: await pages[ctr].gui(this.stacks, author),
+                    prebuffer: true,
+                    simplified: true })
+                .then(msg => {
+                    msg.react(`⏪`).then(() => {
+                        msg.react(`⏩`)
+                        const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
+                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
+    
+                        const backwards = msg.createReactionCollector(backwardsFilter, {time: 60000})
+                        const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
+    
+                        backwards.on(`collect`, async () => {
+                            count--
+                            if (count < 0) {
+                                count = pages.length - 1
+                            }
+                            await msg.delete()
+                            getPage(count)
+    
+                        })
+                        forwards.on(`collect`, async () => {
+                            count++
+                            if (count > pages.length - 1) {
+                                count = 0
+                            }
+                            await msg.delete()
+                            getPage(count)
+                        })
+                        
+                        load.delete()
+                        setTimeout(() => {
+                            if (!msg.deleted) msg.clearReactions()
+                        }, 60000)
                     })
-                    forwards.on(`collect`, async () => {
-                        count++
-                        if (count > pages.length - 1) {
-                            count = 0
-                        }
-                        await msg.delete()
-                        getPage(count)
-                    })
-                    setTimeout(() => {
-                        if (!msg.deleted) msg.clearReactions()
-                    }, 60000)
                 })
             })
         }

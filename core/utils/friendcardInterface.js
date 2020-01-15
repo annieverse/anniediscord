@@ -1,5 +1,5 @@
 const { Canvas } = require(`canvas-constructor`)
-const { resolve, join } = require(`path`)``
+const { resolve, join } = require(`path`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const palette = require(`./colorset`)
