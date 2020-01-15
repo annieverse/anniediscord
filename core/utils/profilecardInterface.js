@@ -1,9 +1,7 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const Color = require(`color`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const rankManager = require(`./ranksManager`)
 const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
 const { nitro_boost } = require(`./role-list`)
@@ -16,10 +14,10 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function profile(stacks, member, cover = null, sticker = null) {
+	const rank = stacks.meta.data.rank
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configFormat = new formatManager(stacks.message)
-	const configRank = new rankManager(stacks.bot, stacks.message)
 
 	const userdata = await collection.userMetadata()
 	const user = {
@@ -37,12 +35,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		likecount: userdata.liked_counts,
 		cov: cover == null ? userdata.cover : cover,
 		stic: sticker == null ? userdata.sticker == ` ` ? null : userdata.sticker : sticker,
-		log: userdata.last_login,
-		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
-		},
+		log: userdata.last_login
 	}
 
 	const switchColor = {
@@ -117,7 +110,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	 *    PROFILE HEADER COVER
 	 */
 
-	canv.setColor(user.clr)
+	canv.setColor(rank.color)
 		.addRect(startPos_x, startPos_y, baseWidth, 194)
 		.addImage(await stacks.loadAsset(user.cov?user.cov:`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 
@@ -176,7 +169,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	/**
 	 * 	TITLE
 	 */
-	canv.setColor(user.clr)
+	canv.setColor(rank.color)
 		.setTextFont(`5pt RobotoBold`)
 		.addText(titlePicker(member), startPos_x + 70, 286)
 
@@ -193,12 +186,12 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	/**
 	 *    RANK TITLE
 	 */
-	canv.setColor(Color(user.clr).darken(0.3))
+	canv.setColor(rank.color)
 		.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 		.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 		.setColor(palette.white)
 		.setTextFont(`8pt RobotoBold`) // role window - role name
-		.addText(configRank.ranksCheck(user.lvl).title, startPos_x + 215, startPos_y + 264)
+		.addText(rank.name, startPos_x + 215, startPos_y + 264)
 		.restore()
 
 	/**
@@ -226,7 +219,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	 *
 	 */
 	canv.setTextAlign(`center`)
-		.setColor(user.clr)
+		.setColor(rank.color)
 		.setTextFont(`20pt RobotoMedium`)
 		.addText(configFormat.formatK(user.likecount), 70, 370) // left point // rank
 		.addText(user.lvl, 160, 370) // middle point // level

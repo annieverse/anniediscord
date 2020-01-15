@@ -1,12 +1,10 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
-const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
 const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const rankManager = require(`./ranksManager`)
 const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
 
@@ -19,9 +17,9 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `Kosugi
 
 async function stat(stacks, member) {
 	const {bot} = stacks
+	const rank = stacks.meta.data.rank
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
-	const configRank = new rankManager(stacks.bot, stacks.message)
 	const configFormat = new formatManager(stacks.message)
 
 
@@ -46,12 +44,7 @@ async function stat(stacks, member) {
 		rtg: userdata.rating,
 		likecount: userdata.liked_counts,
 		cov: userdata.cover,
-		log: userdata.last_login,
-		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
-		},
+		log: userdata.last_login
 	}
 
 	const switchColor = {
@@ -108,14 +101,14 @@ async function stat(stacks, member) {
 		.save()
 
 	var gradient = canv.createLinearGradient(baseWidth/2, 350, baseWidth/2-10, 0)
-	gradient.addColorStop(0, user.clr)
+	gradient.addColorStop(0, rank.color)
 	gradient.addColorStop(1, `transparent`)
 	/**
 	 *    USER
 	 *    AVATAR
 	 */
 	canv.createBeveledClip(startPos_x, startPos_y-100, baseWidth+100, 360, 100, 1)
-		.setColor(user.clr)
+		.setColor(rank.color)
 		.setGlobalAlpha(0.5)
 		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 		.setGlobalAlpha(0.25)
@@ -149,7 +142,7 @@ async function stat(stacks, member) {
 		.setTextFont(`9pt RobotoBold`)
 		.addText(`Ranking`, startPos_x + 28, 290)
 
-		.setColor(user.clr)
+		.setColor(rank.color)
 		.setTextFont(`33pt RobotoBold`)
 		.addText(configFormat.ordinalSuffix(await collection.ranking + 1), startPos_x + 33, 350)
 

@@ -1,9 +1,7 @@
 const { Canvas } = require(`canvas-constructor`)
-const { resolve, join } = require(`path`)
-const Color = require(`color`)
+const { resolve, join } = require(`path`)``
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const rankManager = require(`./ranksManager`)
 const palette = require(`./colorset`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
@@ -14,10 +12,9 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function friend(stacks, member) {
+    const rank = stacks.meta.data.rank
     const configProfile = new profileManager()
     const collection = new databaseManager(member.id)
-    const configRank = new rankManager(stacks.bot, stacks.message)
-
     /**
      * id = userid, cur = currentexp, max = maxexp,
      * crv = expcurve, lvl = userlevel, ac = userartcoins,
@@ -39,12 +36,7 @@ async function friend(stacks, member) {
         rtg: userdata.rating,
         likecount: userdata.liked_counts,
         cov: userdata.cover,
-        log: userdata.last_login,
-        get clr() {
-            return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
-                this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
-                    (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
-        },
+        log: userdata.last_login
     }
     const relations = await collection.relationships
 
@@ -120,7 +112,7 @@ async function friend(stacks, member) {
 
 
     const listEntry = (username, avatar, relation, x, y) => {
-        canv.setColor(user.clr)
+        canv.setColor(rank.color)
             .addRoundImage(avatar, x + 4, y, 38, 38, 19)
             .setTextAlign(`left`)
             .setTextFont(`13pt RobotoBold`)
