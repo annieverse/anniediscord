@@ -1,12 +1,10 @@
 const { Canvas } = require(`canvas-constructor`) 
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
-const Color = require(`color`)
 const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const rankManager = require(`./ranksManager`)
-const palette = require(`./colorset`)
+const Theme = require(`./UILibrary/Themes`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -18,7 +16,6 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `Kosugi
 async function badge(stacks, member) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
-	const configRank = new rankManager(stacks.bot, stacks.message)
 
 
 	/**
@@ -43,28 +40,7 @@ async function badge(stacks, member) {
 		likecount: userdata.liked_counts,
 		cov: userdata.cover,
 		log: userdata.last_login,
-		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
-		},
-	}
-
-	const switchColor = {
-
-		"dark_profileskin": {
-			base: palette.nightmode,
-			border: palette.deepnight,
-			text: palette.white,
-			secondaryText: palette.lightgray
-		},
-
-		"light_profileskin": {
-			base: palette.white,
-			border: palette.lightgray,
-			text: palette.darkmatte,
-			secondaryText: palette.blankgray
-		}
+		theme: Theme[userdata.interfacemode]
 	}
 
 	let canvas_x = 320//300
@@ -77,7 +53,6 @@ async function badge(stacks, member) {
 	const {
 		body: avatar
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const usercolor = configProfile.checkInterface(user.ui, member)
 	const badgesdata = await collection.badges
 
 	delete badgesdata.userId
@@ -92,7 +67,7 @@ async function badge(stacks, member) {
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
-		.setColor(switchColor[usercolor].base)
+		.setColor(user.theme.main)
 		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
 		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
@@ -108,11 +83,11 @@ async function badge(stacks, member) {
 	/**
 	 *    TITLE BAR
 	 */
-		.setColor(switchColor[usercolor].secondaryText)
+		.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
 		.addText(`Badges Collection`, 55, 35)
-		.setColor(switchColor[usercolor].border)
+		.setColor(user.theme.separator)
 		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
 	const symetric_xy = 45

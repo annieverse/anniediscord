@@ -1,8 +1,7 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const palette = require(`./colorset`)
+const Theme = require(`./UILibrary/Themes`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -13,7 +12,6 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `Kosugi
 
 async function relation(stacks, member) {
     const rank = stacks.meta.data.rank
-    const configProfile = new profileManager()
     const collection = new databaseManager(member.id)
 
     /**
@@ -37,7 +35,8 @@ async function relation(stacks, member) {
         rtg: userdata.rating,
         likecount: userdata.liked_counts,
         cov: userdata.cover,
-        log: userdata.last_login
+        log: userdata.last_login,
+        theme: Theme[userdata.interfacemode]
     }
     const relations = await collection.relationships
 
@@ -48,22 +47,6 @@ async function relation(stacks, member) {
         if (e.theirRelation == `kouhai`) return false
         return true
     })
-    const switchColor = {
-
-        "dark_profileskin": {
-            base: palette.nightmode,
-            border: palette.deepnight,
-            text: palette.white,
-            secondaryText: palette.lightgray
-        },
-
-        "light_profileskin": {
-            base: palette.white,
-            border: palette.lightgray,
-            text: palette.darkmatte,
-            secondaryText: palette.blankgray
-        }
-    }
 
     let canvas_x = 320//300
     let canvas_y = 420//400
@@ -74,7 +57,6 @@ async function relation(stacks, member) {
 
 
     const avatar = await stacks.avatar(member.id, true)
-    const usercolor = configProfile.checkInterface(user.ui, member)
 
     let canv = new Canvas(canvas_x, canvas_y) // x y
 
@@ -84,7 +66,7 @@ async function relation(stacks, member) {
     canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
         .setShadowOffsetY(5)
         .setShadowBlur(10)
-        .setColor(switchColor[usercolor].base)
+        .setColor(user.theme.main)
         .addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
         .createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
         .addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
@@ -101,11 +83,11 @@ async function relation(stacks, member) {
     /**
      *    TITLE BAR
      */
-        .setColor(switchColor[usercolor].secondaryText)
+        .setColor(user.theme.text)
         .setTextAlign(`left`)
         .setTextFont(`11pt RobotoBold`)
         .addText(`Family`, 55, 35)
-        .setColor(switchColor[usercolor].border)
+        .setColor(user.theme.separator)
         .addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
     if (relations.length == 0) {
@@ -119,7 +101,7 @@ async function relation(stacks, member) {
             .setTextAlign(`left`)
             .setTextFont(`13pt RobotoBold`)
             .addText(username, x + 50, y + 20)
-            .setColor(switchColor[usercolor].secondaryText)
+            .setColor(user.theme.text)
             .setTextFont(`8pt RobotoBold`)
             .addText(relation, x + 50, y + 34)
     }

@@ -5,6 +5,7 @@ const databaseManager = require(`./databaseManager`)
 const formatManager = require(`./formatManager`)
 const palette = require(`./colorset`)
 const { nitro_boost } = require(`./role-list`)
+const Theme = require(`./UILibrary/Themes`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -35,26 +36,8 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		likecount: userdata.liked_counts,
 		cov: cover == null ? userdata.cover : cover,
 		stic: sticker == null ? userdata.sticker == ` ` ? null : userdata.sticker : sticker,
-		log: userdata.last_login
-	}
-
-	const switchColor = {
-
-		"dark_profileskin": {
-			base: palette.nightmode,
-			border: palette.deepnight,
-			text: palette.white,
-			secondaryText: palette.lightgray,
-			sticker: `light`
-		},
-
-		"light_profileskin": {
-			base: palette.white,
-			border: palette.lightgray,
-			text: palette.darkmatte,
-			secondaryText: palette.blankgray,
-			sticker: `dark`
-		}
+		log: userdata.last_login,
+		theme: Theme[userdata.interfacemode]
 	}
 
 	let canvas_x = 320//300
@@ -65,7 +48,6 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	let baseHeight = canvas_y - 20
 
 	const avatar = await stacks.avatar(member.id, true)
-	const usercolor = configProfile.checkInterface(user.ui, member)
 	const badgesdata = await collection.badges
 	const isVIP = member.roles.has(nitro_boost)
 
@@ -89,7 +71,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
-		.setColor(switchColor[usercolor].base)
+		.setColor(user.theme.main)
 		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
 		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
@@ -97,14 +79,17 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		.setShadowOffsetY(0)
 		.save()
 
+	
 	/**
 	 *    PROFILE STICKER
-	 */
+	 * 	  DISABLED UNTIL NEXT UPDATE (01/15/20)
+	 
 	if (user.stic) {
 		let stickerIsThemeSpecific = await collection.stickerTheme(user.stic)
 		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${switchColor[usercolor].sticker}`), startPos_x, startPos_y + 194, baseWidth, 206) :
 			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 	}
+	*/
 
 	/**
 	 *    PROFILE HEADER COVER
@@ -117,7 +102,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	/**
 	 *    USER AVATAR
 	 */
-	canv.setColor(isVIP ? palette.yellow : switchColor[usercolor].base)
+	canv.setColor(isVIP ? palette.yellow : user.theme.main)
 		.addCircle(startPos_x + 70, 200, 52) 
 		.addRoundImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
@@ -160,7 +145,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	/**
 	 *    USERNAME
 	 */
-	canv.setColor(switchColor[usercolor].text)
+	canv.setColor(user.theme.text)
 		.setTextAlign(`center`)
 		.setTextFont(`${resizeLongNickname(member.user.username)} RobotoBold`)
 		.addText(member.user.username, startPos_x + 70, 272)
@@ -197,7 +182,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	/**
 	 *    PROFILE DESCRIPTION
 	 */
-	canv.setColor(switchColor[usercolor].secondaryText)
+	canv.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`8pt Roboto`)
 	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length <= 51) {
@@ -225,7 +210,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		.addText(user.lvl, 160, 370) // middle point // level
 		.addText(configFormat.formatK(user.rep), 250, 370) // right point // AC
 
-		.setColor(switchColor[usercolor].secondaryText)
+		.setColor(user.theme.text)
 		.setTextFont(`8pt Whitney`)
 		.addText(`HEARTS`, 70, 390) // left point
 		.addText(`LEVEL`, 160, 390) // middle point

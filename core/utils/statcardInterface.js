@@ -3,10 +3,9 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const imageUrlRegex = /\?size=2048$/g
 const moment = require(`moment`)
-const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
 const formatManager = require(`./formatManager`)
-const palette = require(`./colorset`)
+const Theme = require(`./UILibrary/Themes`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -18,7 +17,6 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `Kosugi
 async function stat(stacks, member) {
 	const {bot} = stacks
 	const rank = stacks.meta.data.rank
-	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
 	const configFormat = new formatManager(stacks.message)
 
@@ -30,38 +28,23 @@ async function stat(stacks, member) {
      * clr = hex code of user`s rank color.
      */
 	const userdata = await collection.userMetadata()
-	const user = {
-		id: userdata.userId,
-		cur: userdata.currentexp,
-		max: userdata.maxexp,
-		crv: userdata.nextexpcurve,
-		lvl: userdata.level,
-		ac: userdata.artcoins,
-		rep: userdata.reputations,
-		des: userdata.description,
-		ui: userdata.interfacemode,
-		prt: userdata.partner,
-		rtg: userdata.rating,
-		likecount: userdata.liked_counts,
-		cov: userdata.cover,
-		log: userdata.last_login
-	}
-
-	const switchColor = {
-		"dark_profileskin": {
-			base: palette.nightmode,
-			border: palette.deepnight,
-			text: palette.white,
-			secondaryText: palette.lightgray
-		},
-
-		"light_profileskin": {
-			base: palette.white,
-			border: palette.lightgray,
-			text: palette.darkmatte,
-			secondaryText: palette.blankgray
-		}
-	}
+    const user = {
+        id: userdata.userId,
+        cur: userdata.currentexp,
+        max: userdata.maxexp,
+        crv: userdata.nextexpcurve,
+        lvl: userdata.level,
+        ac: userdata.artcoins,
+        rep: userdata.reputations,
+        des: userdata.description,
+        ui: userdata.interfacemode,
+        prt: userdata.partner,
+        rtg: userdata.rating,
+        likecount: userdata.liked_counts,
+        cov: userdata.cover,
+        log: userdata.last_login,
+        theme: Theme[userdata.interfacemode]
+    }
 
 	let canvas_x = 320//300
 	let canvas_y = 420//400
@@ -73,7 +56,6 @@ async function stat(stacks, member) {
 	const {
 		body: avatar
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const usercolor = configProfile.checkInterface(user.ui, member)
 
 
 	/**
@@ -92,7 +74,7 @@ async function stat(stacks, member) {
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
-		.setColor(switchColor[usercolor].base)
+		.setColor(user.theme.main)
 		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
 		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
@@ -117,14 +99,10 @@ async function stat(stacks, member) {
 		.setColor(gradient)
 		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 
-		.setColor(switchColor[usercolor].base)
+		.setColor(user.theme.main)
 		.setTextAlign(`Left`)
 		.setTextFont(`9pt RobotoBold`)
 		.addText(`Last online`, startPos_x + 23, 88)
-
-		//	Disabled emoji
-		//.setTextFont(`14pt Roboto`)
-		//.addText(`🕑`, startPos_x + 87, 85)
 
 		.setTextFont(`20pt RobotoBold`)
 		.addText(getLastOnline(), startPos_x + 30, 115)
@@ -137,7 +115,7 @@ async function stat(stacks, member) {
 		.addText(configFormat.threeDigitsComa(user.cur) + ` EXP`, baseWidth - 13, 210)
 		.restore()
 
-		.setColor(switchColor[usercolor].secondaryText)
+		.setColor(user.theme.text)
 		.setTextAlign(`Left`)
 		.setTextFont(`9pt RobotoBold`)
 		.addText(`Ranking`, startPos_x + 28, 290)
@@ -146,7 +124,7 @@ async function stat(stacks, member) {
 		.setTextFont(`33pt RobotoBold`)
 		.addText(configFormat.ordinalSuffix(await collection.ranking + 1), startPos_x + 33, 350)
 
-		.setColor(switchColor[usercolor].secondaryText)
+		.setColor(user.theme.text)
 		.setTextFont(`9pt RobotoBold`)
 		.addText(`from a total of `+configFormat.threeDigitsComa(bot.users.size)+` members`, startPos_x + 38, 366)
 

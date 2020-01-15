@@ -1,13 +1,11 @@
 const { Canvas } = require(`canvas-constructor`) 
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
-const Color = require(`color`)
 const moment = require(`moment`)
 const profileManager = require(`./profileManager`)
 const databaseManager = require(`./databaseManager`)
-const rankManager = require(`./ranksManager`)
-const palette = require(`./colorset`)
 const probe = require(`probe-image-size`)
+const Theme = require(`./UILibrary/Themes`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
@@ -21,7 +19,6 @@ Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `Kosugi
 async function portfolio(stacks, member) {
 	const configProfile = new profileManager()
 	const collection = new databaseManager(member.id)
-	const configRank = new rankManager(stacks.bot, stacks.message)
 
 
 	/**
@@ -46,28 +43,7 @@ async function portfolio(stacks, member) {
 		likecount: userdata.liked_counts,
 		cov: userdata.cover,
 		log: userdata.last_login,
-		get clr() {
-			return this.ui === `light_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex() :
-				this.ui === `dark_profileskin` ? (Color(configRank.ranksCheck(userdata.level).color).desaturate(0.1)).hex() :
-					(Color(configRank.ranksCheck(userdata.level).color).desaturate(0.2)).hex()
-		},
-	}
-
-	const switchColor = {
-
-		"dark_profileskin": {
-			base: palette.nightmode,
-			border: palette.deepnight,
-			text: palette.white,
-			secondaryText: palette.lightgray
-		},
-
-		"light_profileskin": {
-			base: palette.white,
-			border: palette.lightgray,
-			text: palette.darkmatte,
-			secondaryText: palette.blankgray
-		}
+		theme: Theme[userdata.interfacemode]
 	}
 
 	let canvas_x = 320//300
@@ -78,7 +54,6 @@ async function portfolio(stacks, member) {
 	let baseHeight = canvas_y - 20
 
 	const avatar = await stacks.avatar(member.id, true)
-	const usercolor = configProfile.checkInterface(user.ui, member)
 
 	let canv = new Canvas(canvas_x, canvas_y) // x y
 
@@ -88,7 +63,7 @@ async function portfolio(stacks, member) {
 	canv = canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
-		.setColor(switchColor[usercolor].base)
+		.setColor(user.theme.main)
 		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
 		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
 		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
@@ -105,11 +80,11 @@ async function portfolio(stacks, member) {
 	/**
 	 *    TITLE BAR
 	 */
-		.setColor(switchColor[usercolor].secondaryText)
+		.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
 		.addText(`Recent Post`, 55, 35)
-		.setColor(switchColor[usercolor].border)
+		.setColor(user.theme.separator)
 		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
 
 
@@ -138,12 +113,12 @@ async function portfolio(stacks, member) {
 		async function nullCollection() {
 			canv.addText(`No artworks yet!`, (baseWidth / 2) + 10, 100)
 				.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
-				.setColor(switchColor[usercolor].border)
+				.setColor(user.theme.separator)
 				.addRect(posx, posy, dx, dy)
 				.addImage(await configProfile.getAsset(`anniewot`), 350, 125, 80, 80, 40)
 		}
 
-		canv.setColor(switchColor[usercolor].secondaryText)
+		canv.setColor(user.theme.text)
 			.setTextAlign(`right`)
 			.setTextFont(`11pt Whitney`)
 			.addText(moment(res.timestamp).fromNow(), baseWidth - 5, 35)
@@ -181,7 +156,7 @@ async function portfolio(stacks, member) {
 			}
 
             canv.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
-				.setColor(switchColor[usercolor].border)
+				.setColor(user.theme.separator)
 				.addRect(posx, posy, dx, dy)
 			await aspectRatio(res.url)
 		}
