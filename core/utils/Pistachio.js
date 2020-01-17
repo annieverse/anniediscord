@@ -68,14 +68,8 @@ class Pistachio {
 		//  Get general aau channel object
 		container.world = bot.channels.get(`459891664182312982`)
 
-		//  Get gacha-unlocked channel
-		container.gachaField = bot.channels.get(`485922866689474571`)
-
 		//  Sub-pistachio which require guild properties and not in DM.
 		if (message.member && message.guild) {
-
-			//  Check if current channel is included in gacha-allowed list
-			container.isGachaField = [bot.channels.get(`485922866689474571`).name, bot.channels.get(`614737097454125056`).name].includes(message.channel.name)
 
 			//  Check for administrator authority
 			container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
