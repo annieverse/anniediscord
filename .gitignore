@@ -1,7 +1,4 @@
 node_modules
-.idea/
-.data/
-.env
-.vscode/
 logs/
-core/images/.pixivcaches
+.*
+!.gitignore
