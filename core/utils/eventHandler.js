@@ -16,7 +16,13 @@ module.exports = bot => {
 		message_object = message
 		reqEvent(`message`)(bot, message)
 	})
-	
+
+	bot.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(bot, guild))
+	bot.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(bot, guild))
+
+	bot.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(bot, guild, user))
+	bot.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(bot, guild, user))
+
 	if (!env.dev) {
 		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))

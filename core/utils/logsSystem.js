@@ -365,7 +365,7 @@ class LogsSystem {
         this.reply(`**New Guild Joined: **{0} - {1}`, {
             socket: [guild.id, guild.name],
             timestamp: true,
-            color: palette.red,
+            color: palette.green,
             field: this.SupportServerLogChannel,
             footer: `ID: ${guild.id}`
         })
