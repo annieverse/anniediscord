@@ -11,9 +11,9 @@ class ServerInvitation {
      *  Initializer method
      */
 	async execute() {
-		const { message, command, reply, bot:{logger} } = this.stacks
+		const { message, command, reply, bot:{logger, user} } = this.stacks
 		if (command.includes(`bot`)) {
-			return reply(`<https://discordapp.com/api/oauth2/authorize?client_id=501461775821176832&permissions=8&scope=bot>`, {simplified:true})
+			return reply(`[Invite Me!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`)
 		}
 		await message.channel.createInvite()
 			.then(invite => {
