@@ -85,7 +85,7 @@ class Pistachio {
 
 			// Check for staff team authority
 			container.isStaff = message.member.roles.find(r => Object.keys(container.roles.teams).some(i => container.roles.teams[i] == r.id))
-
+ 
 			//  Check for booster user
 			container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)
 
