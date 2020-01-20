@@ -1,6 +1,7 @@
 node_modules
 logs
-.**
+.env
+.**/
 !.gitignore
 !.circleci
 !.github
