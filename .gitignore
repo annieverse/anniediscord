@@ -6,3 +6,4 @@ logs
 !.circleci
 !.github
 !.pm2
+core/images/pixivcaches
