@@ -1,9 +1,6 @@
 `use-strict`
 const palette = require(`../utils/colorset.json`)
-const { RichEmbed, Attachment } = require(`discord.js`)
-const fsn = require(`fs-nextra`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
-const { get } = require(`snekfetch`)
 const Long = require(`long`)
 const Pistachio = require(`../utils/Pistachio`)
 /**
@@ -22,103 +19,6 @@ class LogsSystem {
     makePistachio(bot){
         return new Pistachio({bot}).bag()
     }
-
-    /** Annie's custom system message.
-     *  @param content as the message content
-     *  @param {Array} socket is the optional message modifier. Array
-     *  @param {ColorResolvable} color for the embed color. Hex code
-     *  @param {Object} field as the message field target (GuildChannel/DM). Object
-     *  @param {ImageBuffer} image as the attachment url. Buffer
-     *  @param {String or Object} header use header in an embed.
-     *  @param {Date} timestamp use a date object in embed
-     *  @param {Object} author use user object to set author
-     */
-    /* reply(content, options = {
-        socket: [],
-        color: ``,
-        url: null,
-        image: null,
-        field: null,
-        header: null,
-        footer: null,
-        author: null,
-        timestamp: false
-    }) {
-        options.socket = !options.socket ? [] : options.socket
-        options.color = !options.color ? palette.red : options.color
-        options.url = !options.url ? null : options.url
-        options.image = !options.image ? null : options.image
-        options.field = !options.field ? options.field = this.logChannel : options.field // done
-        options.author = !options.author ?  options.author = this.data.bot.user : options.author
-        options.header = !options.header ? options.header = this.data.bot.user : options.header
-        options.footer = !options.footer ? null : options.footer
-        options.timestamp == false ? null : options.timestamp = true
-
-        //  Socketing
-        for (let i = 0; i < options.socket.length; i++) {
-            if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, options.socket[i])
-        }
-
-        const embed = new RichEmbed()
-            .setColor(options.color)
-            .setDescription(content)
-        //  Add header
-        if (options.header) embed.setAuthor(options.header.username, this.avatar(options.author.id))
-
-        //  Add footer
-        if (options.footer) embed.setFooter(options.footer)
-
-        //  Add footer
-        if (options.timestamp) embed.setTimestamp()
-
-        // Add url
-        if (options.url) embed.setURL(options.url)
-
-        //  Add image preview
-        if (options.image) {
-            embed.attachFile(new Attachment(options.image, `preview.jpg`))
-            embed.setImage(`attachment://preview.jpg`)
-        } else if (embed.file) {
-            embed.image.url = null
-            embed.file = null
-        }
-
-
-        //  If deleteIn parameter was not specified
-        return options.field.send(embed)
-    } *//* 
-    //  Load asset from default images dir
-    async loadAsset (id){
-        return fsn.readFile(`./core/images/${id}.png`).catch(async () => { return fsn.readFile(`./core/images/halloween/${id}.png`) })
-    }
-
-    /**
-     *	Handles user's avatar fetching process.
-     *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
-     *	@param {String|ID} id id of user to be fetched from.
-     *	@param {Boolean} compress set true to return as compressed buffer.
-     *//*
-    avatar(id, compress = false){
-
-        const { bot } = this.data
-        const fallbackImage = (err) => {
-            const { bot } = this.data
-            bot.logger.error(`Failed to parse user's avatar. User will see a placeholder img as an exchange. > ${err}`)
-            return this.loadAsset(`error`)
-        }
-
-        try {
-            let url = bot.users.get(id).displayAvatarURL
-            if (compress) {
-                return get(url.replace(/\?size=2048$/g, `?size=512`))
-                    .then(data => data.body)
-                    .catch(e => { return fallbackImage(e) })
-            }
-
-            return url
-        }
-        catch (e) { return fallbackImage(e) }
-    } */
 
     channelUpdate() {
         const { bot: { logger }, oldChannel, newChannel, bot } = this.data

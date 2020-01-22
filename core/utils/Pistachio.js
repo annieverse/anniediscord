@@ -1,6 +1,8 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
 const databaseManager = require(`./databaseManager`)
 const fsn = require(`fs-nextra`)
+const fs = require(`fs`)
+const path = require(`path`)
 const { get } = require(`snekfetch`)
 /**
  *  Micro framework to support Annie's structure
@@ -266,7 +268,32 @@ class Pistachio {
 		}
 		//  Load asset from default images dir
 		container.loadAsset = async (id) => {
-			return fsn.readFile(`./core/images/${id}.png`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+			// List all files in a directory in Node.js recursively in a synchronous fashion
+			const walkSync = (dir, filelist = []) => {
+				fs.readdirSync(dir).forEach(file => {
+					filelist = fs.statSync(path.join(dir, file)).isDirectory()
+						? walkSync(path.join(dir, file), filelist)
+						: filelist.concat(path.join(dir, file))
+				})
+				return filelist
+			}
+			let allFiles = walkSync(`./core/images`) // Starts with the main directory and includes all files in the sub directories
+			let ultimateFile
+			allFiles.forEach((file) => {
+				if (file.includes(id)){ 
+					let filePath = `./${file.replace(/\\/g, `/`)}`
+					return ultimateFile = filePath
+				}
+			})
+			if (!ultimateFile) {
+				allFiles.forEach((f) => {
+					if (f.includes(`error`)) {
+						let filePath = `./${f.replace(/\\/g, `/`)}`
+						return ultimateFile = filePath
+					}
+				})
+			}
+			return fsn.readFile(ultimateFile)
 		}
 
 

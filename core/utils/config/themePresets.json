@@ -1,12 +1,12 @@
 {
-    "light_profileskin": {
+    "light": {
         "main": "#EEEEEE",
         "secondary": "#dedfe2",
         "iconBackground": "lighten",
         "iconBackgroundOpacity": 0.4,
         "text": "#191919"
     },
-    "dark_profileskin": {
+    "dark": {
         "main": "#2b313a",
         "secondary": "#1d232d",
         "iconBackground": "darken",
