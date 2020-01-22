@@ -4,7 +4,7 @@ const { RichEmbed, Attachment } = require(`discord.js`)
 const fsn = require(`fs-nextra`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 const { get } = require(`snekfetch`)
-
+const Long = require(`long`)
 /**
  *  Handling log records
  *  @LogsSystem
@@ -405,7 +405,7 @@ class LogsSystem {
             let owner = guild.owner
             return this.reply(`Hello`, { field: owner })
         } catch (e) {
-            return bot.logger.info(`There was no way To Send a Message to the server`)
+            return logger.info(`There was no way To Send a Message to the server`)
         }
     }
 
