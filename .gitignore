@@ -1,9 +1,14 @@
+# Node's Dependencies
 node_modules
+
+# Server Logs
 logs
+
+# Sensitive login information
 .env
-.**/
-!.gitignore
-!.circleci
-!.github
-!.pm2
-core/images/pixivcaches
+
+# Database dir
+.data
+
+# Cache directory for Pixiv API
+.pixivcaches
