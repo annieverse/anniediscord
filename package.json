@@ -65,7 +65,7 @@
     "winston-daily-rotate-file": "^4.4.1"
   },
   "devDependencies": {
-    "@architect/sandbox": "^1.5.4",
+    "@architect/sandbox": "^1.5.6",
     "eslint": "5.16.0",
     "nodemon": "^2.0.2"
   }
