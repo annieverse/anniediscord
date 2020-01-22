@@ -47,6 +47,10 @@ module.exports = bot => {
 		bot.on(`emojiCreate`, async (emoji) => reqEvent(`emojiCreate`)(bot, emoji))
 		bot.on(`emojiDelete`, async (emoji) => reqEvent(`emojiDelete`)(bot, emoji))
 		bot.on(`emojiUpdate`, async (oldEmoji, newEmoji) => reqEvent(`emojiUpdate`)(bot, oldEmoji, newEmoji))
+
+		bot.on(`guildUnavailable`, async (guild) => reqEvent(`guildMemberAdd`)(bot, guild))
+		bot.on(`guildUpdate`, async (oldGuild, newGuild) => reqEvent(`guildUpdate`)(bot, oldGuild, newGuild))
+		bot.on(`guildMembersChunk`, async (members, guild) => reqEvent(`guildMembersChunk`)(bot, members, guild))
 	}
 
 }

@@ -383,6 +383,92 @@ class LogsSystem {
         })
     }
 
+    guildUnavailable() {
+        const { bot: { logger }, guild } = this.data
+        if (this.logChannel.guild.id != guild.id) return
+        logger.info(`Guild Unavailable ${guild.id}`)
+        this.reply(`**Guild Unavailable: **{0} - {1}`, {
+            socket: [guild.id, guild.name],
+            timestamp: true,
+            color: palette.red,
+            field: this.SupportServerLogChannel,
+            footer: `ID: ${guild.id}`
+        })
+    }
+
+    guildUpdate() {
+        const { bot: { logger }, oldGuild, newGuild } = this.data
+        if (this.logChannel.guild.id != newGuild.id) return
+        if (oldGuild.name != newGuild.name){
+            logger.info(`Guild Name change ${oldGuild.name} => ${newGuild.name} | ${newGuild.id}`)
+            this.reply(`**Guild Name change: **{0} -> {1}`, {
+                socket: [oldGuild.name, newGuild.name],
+                timestamp: true,
+                color: palette.red,
+                footer: `ID: ${newGuild.id}`
+            })
+        }
+        if (oldGuild.region != newGuild.region) {
+            logger.info(`Guild region change ${oldGuild.region} => ${newGuild.region} | ${newGuild.id}`)
+            this.reply(`**Guild region change: **{0} -> {1}`, {
+                socket: [oldGuild.region, newGuild.region],
+                timestamp: true,
+                color: palette.red,
+                footer: `ID: ${newGuild.id}`
+            })
+        }
+    }
+
+    guildMemberAdd(){
+        const { bot: { logger }, member } = this.data
+        if (this.logChannel.guild.id != member.guild.id) return
+        logger.info(`Member Joined ${member.guild.id}, ${member}`)
+        this.reply(`**Member Joined: **{0} - {1}`, {
+            socket: [member, member.user.username],
+            timestamp: true,
+            color: palette.green,
+            footer: `ID: ${member.id}`
+        })
+    }
+
+    guildMemberRemove(){
+        const { bot: { logger }, member } = this.data
+        if (this.logChannel.guild.id != member.guild.id) return
+        logger.info(`Member Left ${member.guild.id}, ${member}`)
+        this.reply(`**Member Left: **{0} - {1}`, {
+            socket: [member, member.user.username],
+            timestamp: true,
+            color: palette.red,
+            footer: `ID: ${member.id}`
+        })
+    }
+
+    guildMemberUpdate(){
+        const { bot: { logger }, oldMember, newMember } = this.data
+        if (this.logChannel.guild.id != newMember.guild.id) return
+        if(oldMember.nickname != newMember.nickname){
+            logger.info(`Nick name change ${oldMember.id} -> ${newMember.nickname}`)
+            this.reply(`** {0} nickname change: **{1} - {2}`, {
+                socket: [newMember, oldMember.nickname, newMember.nickname],
+                timestamp: true,
+                color: palette.red,
+                footer: `ID: ${newMember.id}`
+            })
+        }
+    }
+
+    guildMembersChunk(){
+        const { bot: { logger }, members, guild } = this.data
+        if (this.logChannel.guild.id != members.first().guild.id) return
+        logger.info(`Members from ${guild.id}, ${guild.name}`)
+        this.reply(`** {0} Members from: **{1} - {2}`, {
+            socket: [members.length, guild.id, guild.name],
+            timestamp: true,
+            color: palette.green,
+            footer: `ID: ${guild.id}`
+        })
+    }
+
     record() {
         const { typeOfLog } = this.data
         if (!typeOfLog) return
@@ -403,12 +489,12 @@ class LogsSystem {
         if (typeOfLog == `guildBanRemove`) return this.guildBanRemove()
         if (typeOfLog == `guildCreate`) return this.guildCreate()
         if (typeOfLog == `guildDelete`) return this.guildDelete()
-        if (typeOfLog == `guildMemberAdd`) return 
-        if (typeOfLog == `guildMemberRemove`) return
-        if (typeOfLog == `guildMembersChunk`) return
-        if (typeOfLog == `guildMemberUpdate`) return
-        if (typeOfLog == `guildUnavailable`) return
-        if (typeOfLog == `guildUpdated`) return
+        if (typeOfLog == `guildMemberAdd`) return this.guildMemberAdd()
+        if (typeOfLog == `guildMemberRemove`) return this.guildMemberRemove()
+        if (typeOfLog == `guildMembersChunk`) return this.guildMembersChunk()
+        if (typeOfLog == `guildMemberUpdate`) return this.guildMemberUpdate()
+        if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
+        if (typeOfLog == `guildUpdate`) return this.guildUpdate()
     }
 
 }
