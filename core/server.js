@@ -11,7 +11,6 @@ module.exports = () => {
 	const winston = require(`./utils/config/winston`)
 	const cards = require(`./utils/cards-metadata`)
 	const msgCodes = require(`./utils/predefinedMessages`)
-	const cmd = require(`node-cmd`)
 	
 	//	Initialize client
 	let bot = new Client()

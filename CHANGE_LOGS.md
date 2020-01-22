@@ -2,6 +2,25 @@
 
 ___
 
+## **01/22/20 | 5.3.0 ->**
+
+* Added Bot Invite link for cross-server support.
+* Improved log system.
+* Removed unused image assets.
+* Updated .gitignore configuration.
+* No longer deleting .git history on a production server.
+
+## **01/15/20 | 5.2.1 ->**
+
+* Fix deployment bug caused by false dir in .gitignore.
+* Now userdataSelector module will include user's current ranking.
+* Rank/EXP data retrieval in the level card has been optimized.
+* Now command handler module will re-fetch the data for both author and the targeted user.
+* Profile Card now is available to be used outside of guild role settings.
+* Profile Card now is semi-integrated with newest UI Lib.
+* Added fetching animation while using profile command.
+* UI Lib (Light Theme) colour update.
+
 ## **01/14/20 | 5.2.0 ->**
 
 * Updated UI Library
