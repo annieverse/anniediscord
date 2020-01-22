@@ -79,17 +79,15 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		.setShadowOffsetY(0)
 		.save()
 
-	
 	/**
 	 *    PROFILE STICKER
 	 * 	  DISABLED UNTIL NEXT UPDATE (01/15/20)
-	 
+	 */
 	if (user.stic) {
 		let stickerIsThemeSpecific = await collection.stickerTheme(user.stic)
-		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${switchColor[usercolor].sticker}`), startPos_x, startPos_y + 194, baseWidth, 206) :
+		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${user.theme.inverseThemeName}`), startPos_x, startPos_y + 194, baseWidth, 206) :
 			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 	}
-	*/
 
 	/**
 	 *    PROFILE HEADER COVER

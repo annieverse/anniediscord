@@ -10,7 +10,9 @@
         "okay": "#81E1BE",
         "warn": "#ff8636",
         "critical": "#ff364d",
-        "separator": "#acb5bf"
+        "separator": "#acb5bf",
+        "themeName": "light",
+        "inverseThemeName": "dark"
     },
     "dark": {
         "main": "#28292e",
@@ -23,6 +25,8 @@
         "okay": "#81D6BE",
         "warn": "#ff8636",
         "critical": "#ff364d",
-        "separator": "#1c1c1c"
+        "separator": "#1c1c1c",
+        "themeName": "dark",
+        "inverseThemeName": "light"
     }
 }
