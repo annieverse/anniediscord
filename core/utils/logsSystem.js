@@ -360,7 +360,7 @@ class LogsSystem {
     }
 
     guildCreate() {
-        const { bot: { logger }, guild } = this.data
+        const { bot: { logger }, bot, guild } = this.data
         logger.info(`New guild joined ${guild.id}`)
         this.reply(`**New Guild Joined: **{0} - {1}`, {
             socket: [guild.id, guild.name],
@@ -387,19 +387,19 @@ class LogsSystem {
             return channel
         }
         let hasSystemChannelID = guild.systemChannelID != null 
-        if (hasSystemChannelID) return this.reply(`Hello`,{ field: guild.systemChannelID })
+        if (hasSystemChannelID) return this.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
 
         let hasGeneral = getDefaultChannel(guild, `general`)
-        if (hasGeneral) return this.reply(`Hello`, { field: hasGeneral.id })
+        if (hasGeneral) return this.reply(`Hello`, { field: hasGeneral })
 
         let hasBotChannel = getDefaultChannel(guild, `bot`)
-        if (hasBotChannel) return this.reply(`Hello`, { field: hasBotChannel.id })
+        if (hasBotChannel) return this.reply(`Hello`, { field: hasBotChannel })
 
         let hasLogChannel = getDefaultChannel(guild, `logs`)
-        if (hasLogChannel) return this.reply(`Hello`,{ field: hasLogChannel.id })
+        if (hasLogChannel) return this.reply(`Hello`,{ field: hasLogChannel })
 
         let hasChatableChannel = getChannel(guild)
-        if (hasChatableChannel) return this.reply(`Hello`, { field: hasChatableChannel.id })
+        if (hasChatableChannel) return this.reply(`Hello`, { field: hasChatableChannel })
 
         try {
             let owner = guild.owner
