@@ -75,10 +75,7 @@ class Gacha {
 	 * 	Initializer
 	 */
 	async execute() {
-		const { message, name, reply, code:{GACHA}, choice, emoji, gachaField, isGachaField } = this.stacks
-
-		//	Returns if current channel is not in gacha-allowed list
-		if (!isGachaField) return reply(GACHA.UNALLOWED_ACCESS, {socket: [gachaField]})
+		const { message, name, reply, code:{GACHA}, choice, emoji} = this.stacks
 
 		//	Returns if user doesn't have any lucky ticket
 		if (!this.data.lucky_ticket) return reply(GACHA.ZERO_TICKET)
