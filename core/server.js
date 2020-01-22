@@ -21,12 +21,6 @@ module.exports = () => {
 	//	Custom splash text on dev environment's startup
 	if (environment.dev) winston.info(ascii)
 
-	//	Only deletes .git history on prod environment
-	if (!environment.dev) {
-		cmd.run(`rm -rf .git`)
-		winston.info(`cleaning up .git history`)
-	}
-
 	app.get(`/`, (request, response) => response.sendStatus(200))
 	app.listen(process.env.PORT)
 
