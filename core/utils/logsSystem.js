@@ -5,6 +5,7 @@ const fsn = require(`fs-nextra`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 const { get } = require(`snekfetch`)
 const Long = require(`long`)
+const Pistachio = require(`../utils/Pistachio`)
 /**
  *  Handling log records
  *  @LogsSystem
@@ -15,6 +16,11 @@ class LogsSystem {
         this.data = data
         this.logChannel = data.bot.channels.get(`460267216324263936`)
         this.SupportServerLogChannel = data.bot.channels.get(`654967979402067988`)
+        this.Pistachio = this.makePistachio(this.data.bot)
+    }
+
+    makePistachio(bot){
+        return new Pistachio({bot}).bag()
     }
 
     /** Annie's custom system message.
@@ -27,7 +33,7 @@ class LogsSystem {
      *  @param {Date} timestamp use a date object in embed
      *  @param {Object} author use user object to set author
      */
-    reply(content, options = {
+    /* reply(content, options = {
         socket: [],
         color: ``,
         url: null,
@@ -42,7 +48,7 @@ class LogsSystem {
         options.color = !options.color ? palette.red : options.color
         options.url = !options.url ? null : options.url
         options.image = !options.image ? null : options.image
-        options.field = !options.field ? options.field = this.logChannel : options.field
+        options.field = !options.field ? options.field = this.logChannel : options.field // done
         options.author = !options.author ?  options.author = this.data.bot.user : options.author
         options.header = !options.header ? options.header = this.data.bot.user : options.header
         options.footer = !options.footer ? null : options.footer
@@ -80,7 +86,7 @@ class LogsSystem {
 
         //  If deleteIn parameter was not specified
         return options.field.send(embed)
-    }
+    } *//* 
     //  Load asset from default images dir
     async loadAsset (id){
         return fsn.readFile(`./core/images/${id}.png`).catch(async () => { return fsn.readFile(`./core/images/halloween/${id}.png`) })
@@ -91,7 +97,7 @@ class LogsSystem {
      *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
      *	@param {String|ID} id id of user to be fetched from.
      *	@param {Boolean} compress set true to return as compressed buffer.
-     */
+     *//*
     avatar(id, compress = false){
 
         const { bot } = this.data
@@ -112,7 +118,7 @@ class LogsSystem {
             return url
         }
         catch (e) { return fallbackImage(e) }
-    }
+    } */
 
     channelUpdate() {
         const { bot: { logger }, oldChannel, newChannel, bot } = this.data
@@ -123,9 +129,12 @@ class LogsSystem {
             logger.info(`Channel Name Changed: From #${oldChannel.name} To #${newChannel.name}`)
             this.reply(`**Channel Name Changed: From #{0} To {1}**`, {
                 socket: [oldChannel.name, newChannel],
+                field: this.logChannel,
                 footer: `ID: ${newChannel.id}`,
                 timestamp: true,
-                color: palette.green
+                color: palette.green,
+                author: bot.user,
+                header: bot.user
             })
         }
         if (channelUpdate_TOPIC && (oldChannel.topic != newChannel.topic)) {
@@ -135,8 +144,11 @@ class LogsSystem {
             this.reply(`**Channel Topic Changed: For {0}**\n**From:** {1}\n**To:** {2}`, {
                 socket: [newChannel, oldChannel.topic, newChannel.topic],
                 footer: `ID: ${newChannel.id}`,
+                field: this.logChannel,
                 timestamp: true,
-                color: palette.green
+                color: palette.green,
+                author: bot.user,
+                header: bot.user
             })
         }
         if (channelUpdate_NSFW && (oldChannel.nsfw != newChannel.nsfw)) {
@@ -147,7 +159,10 @@ class LogsSystem {
                 socket: [newChannel, newChannel.nsfw ? yes : no],
                 footer: `ID: ${newChannel.id}`,
                 timestamp: true,
+                field: this.logChannel,
                 color: palette.green,
+                author: bot.user,
+                header: bot.user
             })
         }
         if (channelUpdate_TYPE && (oldChannel.type != newChannel.type)) {
@@ -155,8 +170,11 @@ class LogsSystem {
             this.reply(`**Channel Type Changed: For {0}**\n**To:** {1}`, {
                 socket: [newChannel, newChannel.type],
                 footer: `ID: ${newChannel.id}`,
+                field: this.logChannel,
                 timestamp: true,
                 color: palette.green,
+                author: bot.user,
+                header: bot.user
             })
         }
         if (channelUpdate_CATEGORY && (oldChannel.parentID != newChannel.parentID)) {
@@ -164,14 +182,17 @@ class LogsSystem {
             this.reply(`**Channel Category Changed: For {0}**\n**From:** {1}\n**To:** {2}`, {
                 socket: [newChannel, oldChannel.parentID ? bot.channels.get(oldChannel.parentID) : `No Category`, newChannel.parentID ? bot.channels.get(newChannel.parentID) : `No Category`],
                 footer: `ID: ${newChannel.id}`,
+                field: this.logChannel,
                 timestamp: true,
                 color: palette.green,
+                author: bot.user,
+                header: bot.user
             })
         }
     }
 
     channelCreate() {
-        const { bot: { logger }, channel } = this.data
+        const { bot: { logger }, bot, channel } = this.data
         if (!channel || channel.name == `undefined` || channel.name == undefined) return
         if (this.logChannel.guild.id != channel.guild.id) return
         logger.info(`New Channel Created: #${channel.name}`)
@@ -179,24 +200,30 @@ class LogsSystem {
             socket: [channel.name],
             footer: `ID: ${channel.id}`,
             timestamp: true,
-            color: palette.green
+            field: this.logChannel,
+            color: palette.green,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     channelDelete() {
-        const { bot: { logger }, channel } = this.data
+        const { bot: { logger }, bot, channel } = this.data
         if (this.logChannel.guild.id != channel.guild.id) return
         logger.info(`Channel Deleted > ${channel.name}`)
         this.reply(`**Channel Deleted: #{0}**\n*check audit logs to see who did it*`, {
             socket: [channel.name],
             footer: `ID: ${channel.id}`,
             timestamp: true,
-            color: palette.red
+            field: this.logChannel,
+            color: palette.red,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     emojiUpdate() {
-        const { bot: { logger }, oldEmoji, newEmoji } = this.data
+        const { bot: { logger }, bot, oldEmoji, newEmoji } = this.data
         const { emojiUpdate_MASTER, emojiUpdate_NAME } = logSystemConfig
         if (!emojiUpdate_MASTER) return
         if (this.logChannel.guild.id != oldEmoji.guild.id) return
@@ -205,35 +232,44 @@ class LogsSystem {
             this.reply(`**Emoji Name Changed: From: **{0} **To: **{1}`, {
                 socket: [oldEmoji.name, newEmoji.name],
                 timestamp: true,
-                color: palette.red
+                field: this.logChannel,
+                color: palette.red,
+                author: bot.user,
+                header: bot.user
             })
         }
     }
 
     emojiCreate() {
-        const { bot: { logger }, emoji } = this.data
+        const { bot: { logger }, bot, emoji } = this.data
         if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Created: ${emoji.name}`)
         this.reply(`**Emoji Created: **{0}`, {
             socket: [emoji.name],
             timestamp: true,
-            color: palette.red
+            field: this.logChannel,
+            color: palette.red,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     emojiDelete() {
-        const { bot: { logger }, emoji } = this.data
+        const { bot: { logger }, bot, emoji } = this.data
         if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Deleted: ${emoji.name}`)
         this.reply(`**Emoji Deleted: **@{0}`, {
             socket: [emoji.name],
             timestamp: true,
-            color: palette.red
+            field: this.logChannel,
+            color: palette.red,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     roleUpdate() {
-        const { bot: { logger }, oldRole, newRole } = this.data
+        const { bot: { logger }, bot, oldRole, newRole } = this.data
         const { roleUpdate_MASTER } = logSystemConfig
         if (!roleUpdate_MASTER) return
         if (this.logChannel.guild.id != newRole.guild.id) return
@@ -243,32 +279,41 @@ class LogsSystem {
                 socket: [newRole, oldRole.name],
                 timestamp: true,
                 color: palette.red,
-                footer: `ID: ${newRole.id}`
+                field: this.logChannel,
+                footer: `ID: ${newRole.id}`,
+                author: bot.user,
+                header: bot.user
             })
         }
     }
 
     roleCreate() {
-        const { bot: { logger }, role } = this.data
+        const { bot: { logger }, bot, role } = this.data
         if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Created: ${role.name}`)
         this.reply(`**Role Created: {0}**`, {
             socket: [role],
             timestamp: true,
+            field: this.logChannel,
             color: palette.red,
-            footer: `ID: ${role.id}`
+            footer: `ID: ${role.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     roleDelete() {
-        const { bot: { logger }, role } = this.data
+        const { bot: { logger }, bot, role } = this.data
         if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Deleted: ${role.name}`)
         this.reply(`**Role Deleted: @{0}**`, {
             socket: [role.name],
             timestamp: true,
+            field: this.logChannel,
             color: palette.red,
-            footer: `ID: ${role.id}`
+            footer: `ID: ${role.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
@@ -285,6 +330,7 @@ class LogsSystem {
                 footer: `ChannelID: ${newMessage.channel.id}`,
                 timestamp: true,
                 color: palette.red,
+                field: this.logChannel,
                 header: newMessage.author,
                 author: newMessage.author
             })
@@ -292,7 +338,7 @@ class LogsSystem {
     }
 
     messageDeleteBulk() {
-        const { bot: { logger }, messages } = this.data
+        const { bot: { logger }, bot, messages } = this.data
         var message = messages.first()
         if (this.logChannel.guild.id != message.guild.id) return
         logger.info(`Bulk Message delete in #${message.channel.name}`)
@@ -300,7 +346,10 @@ class LogsSystem {
             socket: [messages.size, message.channel],
             footer: `ChannelID: ${message.channel.id}`,
             timestamp: true,
-            color: palette.red
+            field: this.logChannel,
+            color: palette.red,
+            author: bot.user,
+            header: bot.user
         })
     }
 
@@ -317,6 +366,7 @@ class LogsSystem {
                     footer: `ChannelID: ${message.channel.id} Attachment #${index}`,
                     timestamp: true,
                     color: palette.red,
+                    field: this.logChannel,
                     image: element.url,
                     header: message.author,
                     author: message.author
@@ -329,6 +379,7 @@ class LogsSystem {
                 footer: `ChannelID: ${message.channel.id}`,
                 timestamp: true,
                 color: palette.red,
+                field: this.logChannel,
                 header: message.author,
                 author: message.author
             })
@@ -336,38 +387,46 @@ class LogsSystem {
     }
 
     guildBanAdd(){
-        const { bot: { logger }, guild, user } = this.data
+        const { bot: { logger }, bot, guild, user } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Member Banned From ${guild.id}, ${user}`)
         this.reply(`**Member Banned: **{0} - {1}`, {
             socket: [user, user.username],
             timestamp: true,
             color: palette.red,
-            footer: `ID: ${user.id}`
+            field: this.logChannel,
+            footer: `ID: ${user.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildBanRemove() {
-        const { bot: { logger }, guild, user } = this.data
+        const { bot: { logger }, bot, guild, user } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Member Ban revoked From ${guild.id}, ${user}`)
         this.reply(`**Member Ban revoked: **{0} - {1}`, {
             socket: [user, user.username],
             timestamp: true,
+            field: this.logChannel,
             color: palette.red,
-            footer: `ID: ${user.id}`
+            footer: `ID: ${user.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildCreate() {
         const { bot: { logger }, bot, guild } = this.data
         logger.info(`New guild joined ${guild.id}`)
-        this.reply(`**New Guild Joined: **{0} - {1}`, {
+        this.Pistachio.reply(`**New Guild Joined: **{0} - {1}`, {
             socket: [guild.id, guild.name],
             timestamp: true,
             color: palette.green,
             field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`
+            footer: `ID: ${guild.id}`,
+            author: bot.user,
+            header: bot.user
         })
 
         // Post a message in the server joined
@@ -387,42 +446,59 @@ class LogsSystem {
             return channel
         }
         let hasSystemChannelID = guild.systemChannelID != null 
-        if (hasSystemChannelID) return this.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
+        if (hasSystemChannelID) return this.Pistachio.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
 
         let hasGeneral = getDefaultChannel(guild, `general`)
-        if (hasGeneral) return this.reply(`Hello`, { field: hasGeneral })
+        if (hasGeneral) return this.Pistachio.reply(`Hello`, {
+            field: hasGeneral,
+            author: bot.user,
+            header: bot.user })
 
         let hasBotChannel = getDefaultChannel(guild, `bot`)
-        if (hasBotChannel) return this.reply(`Hello`, { field: hasBotChannel })
+        if (hasBotChannel) return this.Pistachio.reply(`Hello`, {
+            field: hasBotChannel,
+            author: bot.user,
+            header: bot.user })
 
         let hasLogChannel = getDefaultChannel(guild, `logs`)
-        if (hasLogChannel) return this.reply(`Hello`,{ field: hasLogChannel })
+        if (hasLogChannel) return this.Pistachio.reply(`Hello`, {
+            field: hasLogChannel,
+            author: bot.user,
+            header: bot.user })
 
         let hasChatableChannel = getChannel(guild)
-        if (hasChatableChannel) return this.reply(`Hello`, { field: hasChatableChannel })
+        if (hasChatableChannel) return this.Pistachio.reply(`Hello`, {
+            field: hasChatableChannel,
+            author: bot.user,
+            header: bot.user })
 
         try {
             let owner = guild.owner
-            return this.reply(`Hello`, { field: owner })
+            return this.Pistachio.reply(`Hello`, {
+                field: owner,
+                author: bot.user,
+                header: bot.user })
         } catch (e) {
             return logger.info(`There was no way To Send a Message to the server`)
         }
     }
 
     guildDelete() {
-        const { bot: { logger }, guild } = this.data
+        const { bot: { logger }, bot, guild } = this.data
         logger.info(`Guild Left ${guild.id}`)
         this.reply(`**Guild Left: **{0} - {1}`, {
             socket: [guild.id, guild.name],
             timestamp: true,
             color: palette.red,
             field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`
+            footer: `ID: ${guild.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildUnavailable() {
-        const { bot: { logger }, guild } = this.data
+        const { bot: { logger }, bot, guild } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Guild Unavailable ${guild.id}`)
         this.reply(`**Guild Unavailable: **{0} - {1}`, {
@@ -430,12 +506,14 @@ class LogsSystem {
             timestamp: true,
             color: palette.red,
             field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`
+            footer: `ID: ${guild.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildUpdate() {
-        const { bot: { logger }, oldGuild, newGuild } = this.data
+        const { bot: { logger }, bot, oldGuild, newGuild } = this.data
         if (this.logChannel.guild.id != newGuild.id) return
         if (oldGuild.name != newGuild.name){
             logger.info(`Guild Name change ${oldGuild.name} => ${newGuild.name} | ${newGuild.id}`)
@@ -443,7 +521,10 @@ class LogsSystem {
                 socket: [oldGuild.name, newGuild.name],
                 timestamp: true,
                 color: palette.red,
-                footer: `ID: ${newGuild.id}`
+                field: this.logChannel,
+                footer: `ID: ${newGuild.id}`,
+                author: bot.user,
+                header: bot.user
             })
         }
         if (oldGuild.region != newGuild.region) {
@@ -452,58 +533,73 @@ class LogsSystem {
                 socket: [oldGuild.region, newGuild.region],
                 timestamp: true,
                 color: palette.red,
-                footer: `ID: ${newGuild.id}`
+                field: this.logChannel,
+                footer: `ID: ${newGuild.id}`,
+                author: bot.user,
+                header: bot.user
             })
         }
     }
 
     guildMemberAdd(){
-        const { bot: { logger }, member } = this.data
+        const { bot: { logger }, bot, member } = this.data
         if (this.logChannel.guild.id != member.guild.id) return
         logger.info(`Member Joined ${member.guild.id}, ${member}`)
         this.reply(`**Member Joined: **{0} - {1}`, {
             socket: [member, member.user.username],
             timestamp: true,
             color: palette.green,
-            footer: `ID: ${member.id}`
+            field: this.logChannel,
+            footer: `ID: ${member.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildMemberRemove(){
-        const { bot: { logger }, member } = this.data
+        const { bot: { logger }, bot, member } = this.data
         if (this.logChannel.guild.id != member.guild.id) return
         logger.info(`Member Left ${member.guild.id}, ${member}`)
         this.reply(`**Member Left: **{0} - {1}`, {
             socket: [member, member.user.username],
             timestamp: true,
+            field: this.logChannel,
             color: palette.red,
-            footer: `ID: ${member.id}`
+            footer: `ID: ${member.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 
     guildMemberUpdate(){
-        const { bot: { logger }, oldMember, newMember } = this.data
+        const { bot: { logger }, bot,oldMember, newMember } = this.data
         if (this.logChannel.guild.id != newMember.guild.id) return
         if(oldMember.nickname != newMember.nickname){
             logger.info(`Nick name change ${oldMember.id} -> ${newMember.nickname}`)
             this.reply(`** {0} nickname change: **{1} - {2}`, {
                 socket: [newMember, oldMember.nickname, newMember.nickname],
                 timestamp: true,
+                field: this.logChannel,
                 color: palette.red,
-                footer: `ID: ${newMember.id}`
+                footer: `ID: ${newMember.id}`,
+                author: bot.user,
+                header: bot.user
             })
         }
     }
 
     guildMembersChunk(){
-        const { bot: { logger }, members, guild } = this.data
+        const { bot: { logger }, bot, members, guild } = this.data
         if (this.logChannel.guild.id != members.first().guild.id) return
         logger.info(`Members from ${guild.id}, ${guild.name}`)
         this.reply(`** {0} Members from: **{1} - {2}`, {
             socket: [members.length, guild.id, guild.name],
             timestamp: true,
+            field: this.logChannel,
             color: palette.green,
-            footer: `ID: ${guild.id}`
+            footer: `ID: ${guild.id}`,
+            author: bot.user,
+            header: bot.user
         })
     }
 

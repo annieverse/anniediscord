@@ -45,8 +45,9 @@ class Pistachio {
 		container.roles = require(`./role-list`)
 
 		//  Storing functions.js functions
-		container.utils = require(`./functions`)(bot, message)
-
+		if (message){
+			container.utils = require(`./functions`)(bot, message)
+		}
 		//  Storing transaction checkout handler
 		container.Checkout = require(`./transactionCheckout`)
 		
@@ -69,93 +70,94 @@ class Pistachio {
 		container.world = bot.channels.get(`459891664182312982`)
 
 		//  Sub-pistachio which require guild properties and not in DM.
-		if (message.member && message.guild) {
+		if (message){
+			if (message.member && message.guild) {
 
-			//  Check for administrator authority
-			container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
+				//  Check for administrator authority
+				container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
 
-			// Check for moderator authority
-			container.isModerator = message.member.hasPermission(`MANAGE_ROLES`)
+				// Check for moderator authority
+				container.isModerator = message.member.hasPermission(`MANAGE_ROLES`)
 
-			//  Check for developer authority
-			container.isDev = container.roles.annie_developer.includes(message.member.id)
+				//  Check for developer authority
+				container.isDev = container.roles.annie_developer.includes(message.member.id)
 
-			//  Check for event team authority
-			container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
+				//  Check for event team authority
+				container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
 
-			// Check for staff team authority
-			container.isStaff = message.member.roles.find(r => Object.keys(container.roles.teams).some(i => container.roles.teams[i] == r.id))
- 
-			//  Check for booster user
-			container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)
+				// Check for staff team authority
+				container.isStaff = message.member.roles.find(r => Object.keys(container.roles.teams).some(i => container.roles.teams[i] == r.id))
+	
+				//  Check for booster user
+				container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)
 
-			// Check for event team authority
-			container.isEventMember = message.member.roles.find(r => Object.keys(container.roles.events).some(i => container.roles.events[i] == r.id))
-
-
-			/**
-			 *  Delete bulk of messages in current channel
-			 *  @param {Integer} amount must be atleast above zero.
-			 */
-			container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
-
-			
-			/**
-			 *  Instant message collector
-			 *  @param {Default} max only catch 1 response
-			 *  @param {Default} time 60 seconds timeout
-			 */
-			container.collector = new MessageCollector(message.channel,
-				m => m.author.id === message.author.id, {
-					max: 1,
-					time: 60000,
-				})
+				// Check for event team authority
+				container.isEventMember = message.member.roles.find(r => Object.keys(container.roles.events).some(i => container.roles.events[i] == r.id))
 
 
-			/**
-			 *  (Multi-layering)Instant message collector
-			 *  @param {Object} msg current message instance
-			 *  @param {Default} max only catch 1 response
-			 *  @param {Default} time 60 seconds timeout
-			 */
-			container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
-				m => m.author.id === msg.author.id, {
-					max: 1,
-					time: 60000,
-				})
+				/**
+				 *  Delete bulk of messages in current channel
+				 *  @param {Integer} amount must be atleast above zero.
+				 */
+				container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
 
+				
+				/**
+				 *  Instant message collector
+				 *  @param {Default} max only catch 1 response
+				 *  @param {Default} time 60 seconds timeout
+				 */
+				container.collector = new MessageCollector(message.channel,
+					m => m.author.id === message.author.id, {
+						max: 1,
+						time: 60000,
+					})
+				
 
-			/**
-			 * To check whether the user has the said role or not
-			 * @param {String} rolename for role name code
-			 * @return {Boolean} of role
-			 * @hasRole
-			 */
-			container.hasRole = (rolename = ``) => {
-				return message.member.roles.find(r => r.name === rolename || r.id === rolename)
-			}
+				/**
+				 *  (Multi-layering)Instant message collector
+				 *  @param {Object} msg current message instance
+				 *  @param {Default} max only catch 1 response
+				 *  @param {Default} time 60 seconds timeout
+				 */
+				container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
+					m => m.author.id === msg.author.id, {
+						max: 1,
+						time: 60000,
+					})
+				
 
-			/**
-			 * Returning of given role name
-			 * @param {String} rolename for role name code
-			 * @return {Object} of role
-			 * @addRole
-			 */
-			container.addRole = (rolename = ``, user = message.author.id) => {
-				return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
-			}
+				/**
+				 * To check whether the user has the said role or not
+				 * @param {String} rolename for role name code
+				 * @return {Boolean} of role
+				 * @hasRole
+				 */
+				container.hasRole = (rolename = ``) => {
+					return message.member.roles.find(r => r.name === rolename || r.id === rolename)
+				}
 
-			/**
-			 * Returning of given role name
-			 * @param {String} rolename for role name code
-			 * @return {Object} of role
-			 * @addRole
-			 */
-			container.removeRole = (rolename = ``, user = message.author.id) => {
-				return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
+				/**
+				 * Returning of given role name
+				 * @param {String} rolename for role name code
+				 * @return {Object} of role
+				 * @addRole
+				 */
+				container.addRole = (rolename = ``, user = message.author.id) => {
+					return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
+				}
+
+				/**
+				 * Returning of given role name
+				 * @param {String} rolename for role name code
+				 * @return {Object} of role
+				 * @addRole
+				 */
+				container.removeRole = (rolename = ``, user = message.author.id) => {
+					return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
+				}
 			}
 		}
-
 		//  Automatically convert weird number notation into real value.
 		container.trueInt = (str) => {
 			return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
@@ -167,32 +169,33 @@ class Pistachio {
 			return bot.users.get(id).username
 		}
 
-		//  Wrapping out avatar message.
-		container.avatarWrapper = (id) => {
-			message.react(`📸`)
-			const reactions = [
-				`Amazing!`,
-				`I wuv it ❤`,
-				`Awesome art!`,
-				`Magnificent~`,
-				`#2k19 #topselfie`,
-				`Beautiful!!`,
-				`Avatar of the day!`
-			]
-			const randomReactions = reactions[Math.floor(Math.random() * reactions.length)]
-			const [Avatar, Name] = [container.avatar(id), container.name(id)]
-			const embed = new RichEmbed()
-				.setImage(Avatar)
-				.setAuthor(Name, Avatar)
-				.setColor(container.palette.darkmatte)
-				
-		
-			return message.channel.send(embed)
-				.then(() => {
-					message.channel.send(randomReactions)
-				})
+		if (message){
+			//  Wrapping out avatar message.
+			container.avatarWrapper = (id) => {
+				message.react(`📸`)
+				const reactions = [
+					`Amazing!`,
+					`I wuv it ❤`,
+					`Awesome art!`,
+					`Magnificent~`,
+					`#2k19 #topselfie`,
+					`Beautiful!!`,
+					`Avatar of the day!`
+				]
+				const randomReactions = reactions[Math.floor(Math.random() * reactions.length)]
+				const [Avatar, Name] = [container.avatar(id), container.name(id)]
+				const embed = new RichEmbed()
+					.setImage(Avatar)
+					.setAuthor(Name, Avatar)
+					.setColor(container.palette.darkmatte)
+					
+			
+				return message.channel.send(embed)
+					.then(() => {
+						message.channel.send(randomReactions)
+					})
+			}
 		}
-
 
 		//  An emoji finder. Returns as unicode
 		container.emoji = (name) => {
@@ -252,13 +255,14 @@ class Pistachio {
 			}
 			return string
 		}
-
-		//  Inside this statement only available to use when required_usermetada is true.
-		if(this.components.meta.author) {
-			//  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
-			container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
-			//  Initializing database class
-			container.db = (id = this.components.meta.author.id) => new databaseManager(id)
+		if (message){
+			//  Inside this statement only available to use when required_usermetada is true.
+			if(this.components.meta.author) {
+				//  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
+				container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
+				//  Initializing database class
+				container.db = (id = this.components.meta.author.id) => new databaseManager(id)
+			}
 		}
 		//  Load asset from default images dir
 		container.loadAsset = async (id) => {
@@ -361,15 +365,16 @@ class Pistachio {
 			return {level,maxexp,nextexpcurve,minexp}
 		}
 
-
-		/**
-		 *  Request mutation data
-		 *  @param {String} id target user's id. Message author is the default id. 
-		 */
-		container.reqData = async (id = message.author.id) => {
-			const mutatedComponents = {args: [id], bot, message: message, commandfile: {help: {multi_user: false}}}
-			const metadata = await new container.Data(mutatedComponents).pull()
-			return metadata
+		if (message){
+			/**
+			 *  Request mutation data
+			 *  @param {String} id target user's id. Message author is the default id. 
+			 */
+			container.reqData = async (id = message.author.id) => {
+				const mutatedComponents = {args: [id], bot, message: message, commandfile: {help: {multi_user: false}}}
+				const metadata = await new container.Data(mutatedComponents).pull()
+				return metadata
+			}
 		}
 
 		/**
