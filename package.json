@@ -33,7 +33,7 @@
   ],
   "repository": "github:klerikdust/anniediscord",
   "dependencies": {
-    "axios": ">=0.19.0",
+    "axios": ">=0.19.2",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
     "canvas-constructor": "^3.1.0",
