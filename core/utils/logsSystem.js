@@ -369,6 +369,44 @@ class LogsSystem {
             field: this.SupportServerLogChannel,
             footer: `ID: ${guild.id}`
         })
+
+        // Post a message in the server joined
+        const getDefaultChannel = (guild, channelName) => {
+
+            // Check for a "general" channel, which is often default chat
+            const generalChannel = guild.channels.find(channel => channel.name === channelName)
+            if (generalChannel) return generalChannel
+            return false
+        }
+        const getChannel = (guild) => {
+            let channel = guild.channels
+                .filter(c => c.type === `text` && c.permissionsFor(guild.client.user).has(`SEND_MESSAGES`))
+                .sort((a, b) => a.position - b.position || Long.fromString(a.id).sub(Long.fromString(b.id)).toNumber())
+                .first()
+            if (!channel) return false
+            return channel
+        }
+        let hasSystemChannelID = guild.systemChannelID != null 
+        if (hasSystemChannelID) return this.reply(`Hello`,{ field: guild.systemChannelID })
+
+        let hasGeneral = getDefaultChannel(guild, `general`)
+        if (hasGeneral) return this.reply(`Hello`, { field: hasGeneral.id })
+
+        let hasBotChannel = getDefaultChannel(guild, `bot`)
+        if (hasBotChannel) return this.reply(`Hello`, { field: hasBotChannel.id })
+
+        let hasLogChannel = getDefaultChannel(guild, `logs`)
+        if (hasLogChannel) return this.reply(`Hello`,{ field: hasLogChannel.id })
+
+        let hasChatableChannel = getChannel(guild)
+        if (hasChatableChannel) return this.reply(`Hello`, { field: hasChatableChannel.id })
+
+        try {
+            let owner = guild.owner
+            return this.reply(`Hello`, { field: owner })
+        } catch (e) {
+            return bot.logger.info(`There was no way To Send a Message to the server`)
+        }
     }
 
     guildDelete() {
