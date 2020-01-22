@@ -448,6 +448,7 @@ class Pistachio {
 			image: null,
 			imageGif: null,
 			field: message.channel,
+			author: null,
 			simplified: false,
 			notch: false,
 			thumbnail: null,
@@ -455,7 +456,8 @@ class Pistachio {
 			prebuffer: false,
 			header: null,
 			footer: null,
-			customHeader: null
+			customHeader: null,
+			timestamp: false
 		}) => {
 			options.socket = !options.socket ? [] : options.socket
 			options.color = !options.color ? container.palette.darkmatte : options.color
@@ -468,8 +470,10 @@ class Pistachio {
 			options.notch = !options.notch ? false : options.notch
 			options.prebuffer = !options.prebuffer ? false : options.prebuffer
 			options.header = !options.header ? null : options.header
+			options.author = !options.author ? null : options.author
 			options.footer = !options.footer ? null : options.footer
 			options.customHeader = !options.customHeader ? null : options.customHeader
+			options.timestamp == false ? null : options.timestamp = true
 
 			//  Socketing
 			for (let i = 0; i < options.socket.length; i++) {
@@ -490,7 +494,7 @@ class Pistachio {
 				.setThumbnail(options.thumbnail)
 
 			//  Add header
-			if(options.header) embed.setAuthor(options.header, container.avatar(message.author.id))
+			if(options.header) embed.setAuthor(options.header, container.avatar(message ? message.author.id : options.author.id))
 
 			//  Custom header
 			if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
