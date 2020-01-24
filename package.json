@@ -6,8 +6,8 @@
   "scripts": {
     "test": "npm run lint && echo 'Finished.'",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
-    "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
-    "beta": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production pm2 start index.js --no-daemon --max-memory-restart 400M",
+    "beta": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint core"
   },
   "engines": {
@@ -65,7 +65,7 @@
     "winston-daily-rotate-file": "^4.4.2"
   },
   "devDependencies": {
-    "@architect/sandbox": "^1.5.4",
+    "cross-env": "^6.0.3",
     "eslint": "5.16.0",
     "nodemon": "^2.0.2"
   }
