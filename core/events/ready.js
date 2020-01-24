@@ -2,11 +2,11 @@ const Routines = require(`../utils/Routines`)
 module.exports = bot => {
 
 
-	const { env, logger } = bot
+	const { config, logger } = bot
 	const Routine = new Routines(bot)
 
 
-	if (env.dev) {
+	if (config.dev) {
 
 
 		/**
@@ -14,7 +14,7 @@ module.exports = bot => {
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
-		if (env.WELCOMER_TEST) {
+		if (config.plugins.includes(`WELCOMER_TEST`)) {
 			const BannerTest = require(`../utils/welcomeBannerUI`)
 			new BannerTest({bot, member:require(`../../test/testmsg`), channel:`654401864565129236`}).render()
 		}

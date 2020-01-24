@@ -9,49 +9,6 @@ module.exports = async (bot, message) => {
 	//	Retrieve user metadata from db
 	const data = await bot.db.userMetadata(message.author.id)
 	
-	/**
-	 * This willl be used to toggle the text verison of a command
-	 */
-	let textOption = false
-	function remove_first_occurrence(str, searchstr) {
-		var index = str.indexOf(searchstr)
-		if (index === -1) {
-			return str
-		}
-		return str.slice(0, index) + str.slice(index + searchstr.length)
-	}
-
-	var testString = `--text`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `--tex`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `--tx`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `text`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `tx`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `tex`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-
 
 	/**
 	 * This used to supply the required metadata in Message Controller.
@@ -59,30 +16,14 @@ module.exports = async (bot, message) => {
 	 */
 	let stacks = new Pistachio({
 		label: `msg-${message.author.id}`,
-		applyTicketBuffs: true,
-		applyCardBuffs: true,
-		ac_factor: 1,
-		exp_factor: 1,
-		gainArtcoins: true,
 		meta: {
 			author: message.author,
 			data: data
 		},
 		bot: bot,
-		message: message,
-		cooldown: 30000,
-		total_gained_exp: Math.round(Math.random() * (15 - 10 + 1)) + 10,
-		total_gained_ac: Math.round(Math.random() * (15 - 10 + 1)) + 10,
-		updated: {
-			currentexp: 0,
-			level: 0,
-			maxexp: 0,
-			nextexpcurve: 0
-		},
-		textOption: textOption
+		message: message
 	}).bag()
 
-	//	Check for message flow
 	new Worker(stacks).default()
 
 }

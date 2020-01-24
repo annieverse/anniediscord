@@ -3,29 +3,51 @@ let Controller = require(`./MessageController`)
 let Artcoins = require(`./artcoinGains`)
 
 /**
- * Experience formula wrapper. Standalone Class.
- * new value -> process -> update.
- * 
+ * Experience formula wrapper.
  * Please follow the default constructor metadata structure in order to make 
  * the class working as expected
  * 
  * @Experience
  */
 class Experience extends Controller {
-
-
 	constructor(data) {
 		super(data)
 		this.data = data
 		this.bot = data.bot
-		this.keyv = data.bot.keyv
-		this.applyTicketBuffs = data.applyTicketBuffs
-		this.applyCardBuffs = data.applyCardBuffs
-		this.exp_factor = data.exp_factor ? data.exp_factor : 1
 		this.message = data.message
+		this.expConfig = data.bot.config.exp
+		this.exp_factor = this.expConfig.factor
+		this.total_gained_exp = this.expConfig.totalGain
 		this.meta = data.meta
-		this.total_gained_exp = data.total_gained_exp
-		this.updated = this.data.updated
+		this.updated = {
+			currentexp: 0,
+			level: 0,
+			maxexp: 0,
+			nextexpcurve: 0
+		}
+		this.moduleID = `EXP_GAIN_${data.message.author.id}`
+	}
+
+
+	async runAndUpdate() {
+		try {
+			//  Add & calculate bonuses from ticket if there's any
+			await this.ticketBuffs()
+			//  Calculate overall exp
+			await this.updatingExp()
+			//	Gives reward if there is a level difference
+			if (this.updated.level != this.meta.data.level) new Artcoins(this.data).onLevelUp()
+
+			//	Log record
+			const guildInfo = `${this.message.guild.name} | ${this.message.channel.name}`
+			const expDifference = `${this.data.commanifier(this.meta.data.currentexp)} --> ${this.data.commanifier(this.updated.currentexp)}`
+			this.logger.info(`[${guildInfo}] ${this.moduleID} received ${this.total_gained_exp} EXP (${expDifference})`)
+
+		}
+		catch (e) {
+			this.logger.error(`ExperienceFormula.js has failed to process. > ${e.stack}`)
+		}
+
 	}
 
 	/**
@@ -148,72 +170,8 @@ class Experience extends Controller {
 			this.exp_factor += booster[percentage].multiplier
 		}
 		catch (e) {
-			return this.logger.error(`Failed to check EXP booster on ${this.meta.author.tag}. > ${e.stack}`)
+			return this.logger.error(`Failed to check EXP booster on ${this.meta.author.tag}. > ${e}`)
 		}
-	}
-
-
-	/**
-	 * 	Check if the message is sent by staff with passive ticket boost
-	 * 	@ticketBuffs
-	 */
-	async handlePassiveTicketBoost() {
-		if (super.isRaluMsg) {
-			this.bot.cards.ralu_card.skills.main.effect.exp = 0.15
-			await this.keyv.set(`ralubuff`, `1h`, 3600000)
-		} 
-		if (super.isNaphMsg) this.db.whiteCatParadise()
-	}
-
-
-	/**
-	 * 	Aggregate and automating all the process in this class
-	 * 	@runAndUpdate
-	 */
-	async runAndUpdate() {
-		try {
-			//this.setupmetaData()
-			this.handlePassiveTicketBoost()
-
-			//  Add & calculate bonuses from card if prompted
-			
-			if (this.applyCardBuffs) {
-				var bonus = super.cardBuffs()
-				this.exp_factor += bonus.exp
-			}
-			//  Add & calculate bonuses from ticket if prompted
-			if (this.applyTicketBuffs) await this.ticketBuffs()
-
-			//  Calculate overall exp
-			await this.updatingExp()
-			new Artcoins(this.data).onLevelUp()
-
-			//  Update rank if current rank rank is not equal with the new rank.
-			// ! NOT if current level is not equal with new level !
-			if (this.rankUp) {
-				// Fix wrong rank
-				this.ranks.ranksCheck(this.meta.data.level).hasRank ? null : this.message.guild.member(this.message.author.id).addRole(this.ranks.ranksCheck(this.meta.data.level).correctRank)
-				if (this.ranks.ranksCheck(this.meta.data.level).rankJump) this.fixLevel
-
-				await this.removeRank()
-				await this.addRank()
-				this.rankRewards()
-			}
-
-			const commanifier = (number = 0) => {
-				return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
-			}
-			//	Save record
-			this.logger.info(`[${this.message.channel.name}] ${this.author.tag}: received ${this.total_gained_exp} EXP(${(this.exp_factor <= 1 ? 0 : this.exp_factor-2) * 100}% bonus). (${commanifier(this.meta.data.currentexp)} --> ${commanifier(this.updated.currentexp)})`)
-
-		}
-		catch (e) {
-
-			//	Catch possible error
-			this.logger.error(`Failed to parse exp in ExperienceFormula.js. > ${e.stack}`)
-
-		}
-
 	}
 
 }

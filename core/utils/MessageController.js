@@ -1,5 +1,4 @@
 const ranksManager = require(`./ranksManager`)
-const env = require(`../../.data/environment.json`)
 const {
     art_domain,
     nonxp_domain,
@@ -19,69 +18,35 @@ class MessageController {
         this.bot = data.bot
 		this.message = data.message
         this.keyv = data.bot.keyv
-        this.env = data.bot.env
         this.ranks = new ranksManager(data.bot, data.message)
         this.reply = data.reply
+        this.config = data.bot.config
         this.color = data.palette
         this.emoji = data.emoji
         this.code = data.code
         this.meta = data.meta
-        //  Optional condition: if data from author(parent) can't be pulled, then use user(child).
         this.author = data.meta.author.username ? data.meta.author : data.meta.author.user
         this.db = data.bot.db.setUser(this.author.id)
         this.logger = data.bot.logger
-        this.label = data.label
+        this.moduleID = `MSG_${data.message.author.id}`
         this.cd = data.cooldown
         this.getBenchmark = data.bot.getBenchmark
     }
 
-
     /**
-     * 	Check if user sent the message from DM. Returning Boolean.
-     * 	@isDirectMessage
+     * 	Check if user sent the message from DM.
+     * 	Returns @Boolean
      */
     get isDirectMessage() {
-        return this.message.channel.type === `dm` ? true : false
+        return this.message.channel.type === `dm`
     }
 
-
     /**
-     * 	Check if user is a bot. Returning Boolean.
-     * 	@isAuthorBot
+     * 	Check if user is a bot.
+     * 	Returns @Boolean
      */
     get isAuthorBot() {
-        return this.message.author.bot ? true : false
-    }
-
-
-    /**
-     * 	Check if user is not authorized in dev mode
-     * 	@isUserInDevEnvironment
-     */
-    get isUserInDevEnvironment() {
-        return env.dev && !env.administrator_id.includes(this.message.author.id) ? true : false
-    }
-
-    /**
-        * 	Check if user is not authorized in dev mode
-        * 	@isUserInDevEnvironment
-        */
-    get isUserADev() {
-        return this.message.member.roles.find(r => Object.keys(this.data.roles.dev_roles).some(i => this.data.roles.dev_roles[i] == r.id)) ? true : false
-    }
-
-    /**
-     * 
-     */
-    get isUserAAdmin(){
-        return this.message.member.roles.find(r => Object.keys(this.data.roles.admin).some(i => this.data.roles.admin[i] == r.id)) ? true : false
-    }
-
-    /**
-     * 
-     */
-    get isUserAEventMember() {
-        return this.message.member.roles.find(r => Object.keys(this.data.roles.events).some(i => this.data.roles.events[i] == r.id)) ? true : false
+        return this.message.author.bot
     }
 
     /**
@@ -89,30 +54,55 @@ class MessageController {
      * 	@isCommandMessage
      */
     get isCommandMessage() {
-        if (!this.message.content.startsWith(env.prefix)) return false
-        //  Commented this check. Gonna implement more scalable bot_domain check for cross-server feature.
-        //if (!bot_domain.includes(this.message.channel.id)) return false
-        if (this.message.content.length <= env.prefix.length) return false
-
+        if (!this.message.content.startsWith(this.config.prefix)) return false
+        if (this.message.content.length <= this.config.prefix.length) return false
         return true
     }
 
 
     /**
-     * 	Check if user has sent the message in exp channel
-     * 	@notInExpChannel
+     *  -------------------------------------------------------------------------------
+     *  EXP, ARTCOINS and COOLDOWN STATE checks
+     * -------------------------------------------------------------------------------
      */
-    get inExpChannel() {
-        if (this.message.content.startsWith(env.prefix) && this.meta.data.annie_card) return true
-        if (nonxp_domain.includes(this.message.channel.id) && env.active_exp) return false
-        return true
+
+    /**
+     *  Global cooldown for message exp/ac gain.
+     *  Returns @Boolean
+     */
+    async isCoolingDown() {
+        if (this.config.plugins.includes(`DISABLE_COOLDOWN`)) return false
+        if (!this.cd) return false
+        if (await this.keyv.get(this.moduleID)) return true
+        await this.keyv.set(this.moduleID, `1`, this.cd)
+        return false
     }
 
+    /**
+     * 	Check if EXP plugin is enabled.
+     * 	Returns @Boolean
+     */
+    get isExpActive() {
+        return this.config.plugins.includes(`ACTIVE_EXP`)
+    }
+
+    /**
+     *  Check if ARTCOINS plugin is enabled.
+     *  Returns @Boolean
+     */
+    get isArtcoinsActive() {
+        return this.config.plugins.includes(`ACTIVE_ARTCOINS`)
+    }
+
+
+    /**
+     *  -------------------------------------------------------------------------------
+     *  Art-post related checks
+     * -------------------------------------------------------------------------------
+     */
 
     /**
      *  Check if message has an attachment. Returns boolean
-     *  @privateMethod
-     *  @_hasAttachment
      */
     _hasAttachment() {
         try {
@@ -123,34 +113,63 @@ class MessageController {
         }
     }
 
-
     /**
      *  Check if it's an art post and sent in art-allowed channel
-     *  @isArtPost
+     * 
+     *  REWORK TO-DO : 
+     *   - Makes the method to listen only if the current guild has set their art post channel.
+     *  
+     *  Returns @Boolean
      */
     get isArtPost() {
-        return art_domain.includes(this.message.channel.id) && this._hasAttachment() ? true : false
+        return art_domain.includes(this.message.channel.id) && this._hasAttachment()
+    }
+
+    /**
+     *  Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
+     *  Returns @Boolean
+     */
+    get isAddingPortfolio() {
+        return this.message.content.includes(`#portfolio`) && this._hasAttachment()
     }
 
 
     /**
-     *  Check if it's an art post and sent in an art boosted channel
-     *  @isArtPost
+     *  -------------------------------------------------------------------------------
+     *  Specific server features for Anime Artists United (459891664182312980)
+     *  -------------------------------------------------------------------------------
      */
-    get isBoostedArtPost() {
-        return this.message.channel.id==`626927282602377226` && this._hasAttachment() ? true : false
+
+
+    /**
+     *  Check if message is coming from #verification channel
+     *  Returns @Boolean
+     */
+    get isVerificationRequest() {
+        return verification_domain.includes(this.message.channel.id)
     }
 
+    /**
+     *  Check if it sent to event-submission channel
+     *  @isEventSubmission
+     */
+    get isEventSubmission() {
+        return event_submission_domain.includes(this.message.channel.id) && this._hasAttachment()
+    }
+
+
+
+
+
+    
 
     /**
      *  Check if it's a message by Naph in general
      *  @isArtPost
      */
     get isNaphMsg() {
-        //  Bypass in dev mode
-        if (env.dev && this.message.author.id==`230034968515051520`) return true
-        //  in general and by Naph
-        return this.message.channel.id==`459891664182312982` && this.message.author.id==`230034968515051520` ? true : false
+        //  Temporarily disabled.
+        return false
     }
 
     /**
@@ -158,59 +177,9 @@ class MessageController {
      *  @isArtPost
      */
     get isRaluMsg() {
-        return this.bot.cards.ralu_card.skills.main.channel.includes(this.message.channel.id) && this.message.author.id==`91856786293805056` ? true : false
-    }
-
-
-    /**
-     *  Check if it sent to event-submission channel
-     *  @isEventSubmission
-     */
-    get isEventSubmission() {
-        return event_submission_domain.includes(this.message.channel.id) && this._hasAttachment() ? true : false
-    }
-
-
-    /**
-     *  Check if user intent is to setup portfolio work
-     *  @isAddingPortfolio
-     */
-    get isAddingPortfolio() {
-        return this.message.content.includes(`#portfolio`) && this._hasAttachment() ? true : false
-    }
-
-
-    /**
-     *  Check if message is coming from #verification channel
-     *  @isVerificationRequest
-     */
-    get isVerificationRequest() {
-        return verification_domain.includes(this.message.channel.id) ? true : false
-    }
-
-
-    /**
-     *  Check if current action is prompted to gain artcoin
-     *  @isAllowedGainArtcoin
-     */
-    get isGainingArtcoins() {
-        return nonxp_domain.includes(this.message.channel.id) && this.data.gainArtcoins ? false : true
-    }
-
-
-    /**
-     *  Global cooldown for message exp/ac gain.
-     *  Only active when its prompted.
-     *  @isCoolingDown
-     */
-    async isCoolingDown() {
-        if (env.DISABLE_COOLDOWN) return false
-        if (!this.cd) return false
-        if (await this.keyv.get(this.label)) return true
-        await this.keyv.set(this.label, `1`, this.cd)
+        //  Temporarily disabled.
         return false
     }
-
     async isRaluBuffActive() {
         if (await this.keyv.get(`ralubuff`)) return true
         return false

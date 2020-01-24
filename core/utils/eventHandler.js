@@ -1,5 +1,4 @@
 const reqEvent = (event) => require(`../events/${event}.js`)
-const env = require(`../../.data/environment.json`)
 
 module.exports = bot => {
 
@@ -23,7 +22,7 @@ module.exports = bot => {
 	bot.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(bot, guild, user))
 	bot.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(bot, guild, user))
 
-	if (!env.dev) {
+	if (process.env.NODE_ENV === `production`) {
 		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
 		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))
 		bot.on(`disconnect`, (bot) => reqEvent(`disconnect`)(bot))

@@ -1,5 +1,5 @@
 /* eslint-disable no-unreachable */
-const Experience = require(`../../utils/ExperienceFormula`)
+const Experience = require(`../../utils/expManager`)
 
 /**
  * Main module

@@ -1,2 +1,2 @@
 require(`dotenv`).config()
-require(`./core/server`)()
+require(`./core/annie`)()
