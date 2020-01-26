@@ -47,7 +47,7 @@
     "fs-nextra": "^0.4.5",
     "jimp": "^0.9.3",
     "keyv": "^4.0.0",
-    "mocha": "^7.0.0",
+    "mocha": "^7.0.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
     "node-cmd": "^3.0.0",
