@@ -459,6 +459,7 @@ class LogsSystem {
     guildMemberRemove(){
         const { bot: { logger }, bot, member } = this.data
         if (this.logChannel.guild.id != member.guild.id) return
+        if (!member.bannable) return
         logger.info(`Member Left ${member.guild.id}, ${member}`)
         this.Pistachio.reply(`**Member Left: **{0} - {1}`, {
             socket: [member, member.user.username],
