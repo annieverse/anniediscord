@@ -32,7 +32,7 @@ module.exports = () => {
 	bot.keyv = new keyvClient()
 	bot = new modulesLoader().register(bot)
 
-	require(`./utils/eventHandler`)(bot)
+	require(`./events/eventHandler`)(bot)
 	bot.login(process.env.TOKEN)
 
 }
