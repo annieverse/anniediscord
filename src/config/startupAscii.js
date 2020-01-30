@@ -1,4 +1,4 @@
-const { version } = require(`../../../package`)
+const { version } = require(`../../package`)
 module.exports = `
                      
 ,---.          o     
@@ -7,6 +7,4 @@ module.exports = `
 \`   '\`   '\`   '\`\`---'
                              
 @v${version}		Made with ♥
-
-> STARTING UP...
 `

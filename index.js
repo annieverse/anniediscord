@@ -1,2 +1,2 @@
 require(`dotenv`).config()
-require(`./core/annie`)()
+require(`./src/annie`)()

@@ -1,66 +1,53 @@
-const { readdirSync } = require(`fs`)
 const { Collection } = require(`discord.js`)
-const commandsPath = `./core/modules/commands/`
-const logger = require(`../../utils/config/winston`)
+const { readdirSync } = require(`fs`)
+const logger = require(`../logger`)
 
-class modulesLoader {
-
-
-	/**
-	 * 	Get all files in commands directory
-	 */
-	get fetchSource() {
-		return readdirSync(commandsPath)
+class Loader {
+	constructor() {
+		this.commandsPath = `./src/commands/`
+		this.queryOnFile = null
 	}
 
 
 	/**
-	 * 	Assigning fetchSource() result to @Client
+	 * 	Assigning fetchSource() result to @client
 	 */
-	register(Client) {
+	register(client) {
 		let initModulesLoad = process.hrtime()
 
 		//	Initialize new collection in the client
-		Client.commands = new Collection()
-		Client.aliases = new Collection()
+		client.commands = new Collection()
+		client.aliases = new Collection()
 
 		try {
 
-			//	Get all the .js files
-			let jsfile = this.fetchSource.filter(f => f.split(`.`).pop() === `js`)
-			var publicCommand = 0
-			var privateCommand = 0
-
-			//	Recursively registering commands
-			jsfile.forEach((f) => {
-				let props = require(`../modules/commands/${f}`)
-				if (props.help.public){
-					publicCommand++
-				} else if (props.help.public != null){
-					privateCommand++
-				}
-				Client.commands.set(props.help.name, props)
-				props.help.aliases.forEach(alias => {
-					Client.aliases.set(alias, props.help.name)
+			let directories = readdirSync(this.commandsPath)
+			let totalFiles = 0
+			for (const index in directories) {
+				const files = readdirSync(this.commandsPath + directories[index])
+				const jsfile = files.filter(f => f.split(`.`).pop() === `js`)
+				jsfile.forEach((f) => {
+					this.queryOnFile = f
+					const props = require(`../../commands/${directories[index]}/${f}`)
+					client.commands.set(props.help.name, props)
+					props.help.aliases.forEach(alias => {
+						client.aliases.set(alias, props.help.name)
+					})
+					totalFiles++
+					this.queryOnFile = f
 				})
-			})
-
+			}
 
 			//	Log & Return the updated client
-			//logger.info(`${jsfile.length} command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
-			logger.info(`${publicCommand} public command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
-			logger.info(`${privateCommand} private command modules loaded (${Client.getBenchmark(process.hrtime(initModulesLoad))})`)
-			return Client
+			logger.info(`> ${totalFiles} commands successfully loaded (${client.getBenchmark(process.hrtime(initModulesLoad))})`)
+			return client
 
 		}
 		catch (e) {
-
-			//	Log & return the old client
-			logger.error(`Failed to load commands module > ${e.stack}`)
-			return Client
-
+			logger.error(`Failed to register ${this.queryOnFile} command > ${e.stack}`)
+			throw e
 		}
 	}
 }
 
-module.exports = modulesLoader
+module.exports = Loader

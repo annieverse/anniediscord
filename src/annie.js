@@ -1,38 +1,73 @@
-const discord = require(`discord.js`)
+const Discord = require(`discord.js`)
 const config = require(`./config/global`)
-const ascii = require(`./utils/config/startupAscii`)
-const benchmark = require(`./utils/system/benchmarkConverter`)
-const modulesLoader = require(`./structures/modulesLoader`)
-const database = require(`./utils/databaseManager`)
-const keyvClient = require(`keyv`)
+const ascii = require(`./config/startupAscii`)
+const commandsLoader = require(`./struct/commands/loader`)
+const database = require(`./struct/database`)
+const logger = require(`./struct/logger`)
+const keyv = require(`keyv`)
 const express = require(`express`)
-const winston = require(`./utils/config/winston`)
 
 module.exports = () => {
 
-	//	Initialize client
-	let bot = new discord.Client({ disableEveryone: true })
-	bot.startupInit = process.hrtime()
+	try {
+		
+		/**
+		 * 	-------------------------------------------------------------
+		 *  Preparing server
+		 *  -------------------------------------------------------------
+		 */
+		logger.info(ascii)
+		logger.info(`> Initializing ${process.env.NODE_ENV} server...`)
 
-	//	Custom splash text on dev environment's startup
-	if (config.dev) winston.info(ascii)
 
-	const app = express()
-	app.get(`/`, (request, response) => response.sendStatus(200))
-	app.listen(config.port)
+		/**
+		 * 	-------------------------------------------------------------
+		 *  Registering Client.
+		 *  TO-DO: split Client's parameters into its own config file.
+		 *  -------------------------------------------------------------
+		 */
+		logger.info(`> Registering client...`)
+		let Annie = new Discord.Client({ disableEveryone: true })
+		Annie.startupInit = process.hrtime()
 
 
-	//	Assign Client custom props
-	bot.code = require(`./utils/predefinedMessages`)
-	bot.cards = require(`./utils/cards-metadata`)
-	bot.getBenchmark = benchmark
-	bot.logger = winston
-	bot.config = config
-	bot.db = new database(null, bot).connect()
-	bot.keyv = new keyvClient()
-	bot = new modulesLoader().register(bot)
+		/**
+		 * 	-------------------------------------------------------------
+		 *  Registering Custom Properties.
+		 *  -------------------------------------------------------------
+		 */
+		logger.info(`> Registering nodes...`)
+		Annie.logger = logger
+		Annie.getBenchmark = (measure) => { return `${(measure[0] * 1000) + (measure[1] / 1e6)} ms` }
+		Annie.locale = require(`./locales/default`)
+		Annie.config = config
+		Annie.keyv = new keyv()
+		Annie.db = new database(null, Annie).connect()
+		Annie = new commandsLoader().register(Annie)
 
-	require(`./events/eventHandler`)(bot)
-	bot.login(process.env.TOKEN)
 
+		/**
+		 * 	-------------------------------------------------------------
+		 *  Start listening to server port and events
+		 *  -------------------------------------------------------------
+		 */
+		require(`./events/eventHandler`)(Annie)
+		const app = express()
+		app.get(`/`, (request, response) => response.sendStatus(200))
+		app.listen(config.port)
+		logger.info(`> Listening to port ${config.port}...`)
+
+
+		/**
+		 * 	-------------------------------------------------------------
+		 *  Logging in
+		 *  -------------------------------------------------------------
+		 */
+		Annie.login(process.env.TOKEN)
+		logger.info(`> Logging in...`)
+
+	}
+	catch(e) {
+		return logger.error(`Client has failed to start.`)
+	}
 }

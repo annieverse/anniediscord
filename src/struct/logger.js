@@ -1,4 +1,3 @@
-const env = require(`../../../.data/environment`)
 const winston = require(`winston`)
 const { combine, timestamp, printf, colorize } = winston.format
 require(`winston-daily-rotate-file`)
@@ -31,7 +30,7 @@ const customFormat = printf(({ level, message, timestamp }) => {
 /**
  *  Production log
  */
-if (!env.dev) winston.add(new winston.transports.DailyRotateFile({    
+if (process.env.NODE_ENV === `production`) winston.add(new winston.transports.DailyRotateFile({    
     filename: `./logs/%DATE%.log`,
     datePattern: `YYYY-MM-DD`,
     maxSize: `20m`,
@@ -46,7 +45,7 @@ if (!env.dev) winston.add(new winston.transports.DailyRotateFile({
 /**
  *  Add console logging in development
  */
-if (env.dev) winston.add(new winston.transports.Console({
+if (process.env.NODE_ENV === `development`) winston.add(new winston.transports.Console({
     format: combine(
         colorize(),
         timestamp(),
