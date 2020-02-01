@@ -272,10 +272,10 @@ class strikeCollection {
 		//  Initial process
 		const run = async () => {
 
-			const { isAdmin, meta: { author }} = this.stacks
+			const { isModerator, meta: { author }} = this.stacks
 
-			//  Returns when the user doesn't have admin authority.
-			if (!isAdmin) return log({ code: `UNAUTHORIZED` })
+			//  Returns when the user doesn't have moderator authority.
+			if (!isModerator) return log({ code: `UNAUTHORIZED` })
 
 			//  Returns tutorial
 			if (message.content.length <= command.length + 1) return log({ code: `SHORT_GUIDE` })
