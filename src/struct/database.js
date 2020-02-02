@@ -1,38 +1,39 @@
 const sql = require(`sqlite`)
 const logger = require(`./logger`)
+const getBenchmark = require(`../utils/getBenchmark`)
+const { accessSync, constants } = require(`fs`)
+const { join } = require(`path`)
 
-/**
-  *   Accessing database globally.
-  *   {databaseUtils}
-  */
-class databaseUtils {
-
-
+class Database {
 	/**
-        *  id represent userId in userdata column.
-        *  @this.id
-		*  @client is optional. for experimental purpose.
-        */
-	constructor(id, client) {
-		this.id = id
+	 * @param {DatabaseClient} client sql instance that going to be used. Optional.
+	 */
+	constructor(client={}) {
 		this.client = client
 	}
 
 
 	/**
-	 * 	Opening connection
-	 *	Use caching mode to save time on next queries.
-	 *	@connect
+	 * 	Opening database connection
+	 *	@param {String} path default: ".data/database.sqlite"
 	 */
-	connect() {
+	async connect(path=`.data/database.sqlite`) {
 		try {
-			let initdb = process.hrtime()
-			sql.open(`.data/database.sqlite`, {cached: true})
-			logger.info(`Database successfully connected (${this.client.getBenchmark(process.hrtime(initdb))})`)
+			const initTime = process.hrtime()
+
+			/**
+			 * This will check if the db file exists or not.
+			 * If no, it will throw an error that already catched below.
+			 */
+			accessSync(join(__dirname, `../../${path}`), constants.F_OK)
+
+			this.client = await sql.open(path, {cached: true})
+			logger.info(`Database has been connected. (${getBenchmark(initTime)})`)
 			return this
 		}
-		catch (e) {
-			logger.error(`Database has failed to connect > ${e.stack}`)
+		catch(error) {
+			logger.error(`Failed to connect database > ${error.message}`)
+			throw error
 		}
 	}
 
@@ -1691,4 +1692,4 @@ class databaseUtils {
 
 }
 
-module.exports = databaseUtils
+module.exports = Database

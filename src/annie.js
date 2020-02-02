@@ -1,73 +1,66 @@
 const Discord = require(`discord.js`)
 const config = require(`./config/global`)
 const ascii = require(`./config/startupAscii`)
-const commandsLoader = require(`./struct/commands/loader`)
-const database = require(`./struct/database`)
+const CommandsLoader = require(`./struct/commands/loader`)
+const Database = require(`./struct/database`)
 const logger = require(`./struct/logger`)
 const keyv = require(`keyv`)
 const express = require(`express`)
+const locale = require(`./locales/default`)
 
-module.exports = () => {
+class Annie extends Discord.Client {
+	constructor() {
+		super({ disableEveryone: true })
 
-	try {
-		
-		/**
-		 * 	-------------------------------------------------------------
-		 *  Preparing server
-		 *  -------------------------------------------------------------
-		 */
-		logger.info(ascii)
-		logger.info(`> Initializing ${process.env.NODE_ENV} server...`)
+		this.startupInit = process.hrtime()
+		this.logger = logger
+		this.locale = locale
+		this.config = config
+		this.keyv = new keyv()
+	}
 
-
-		/**
-		 * 	-------------------------------------------------------------
-		 *  Registering Client.
-		 *  TO-DO: split Client's parameters into its own config file.
-		 *  -------------------------------------------------------------
-		 */
-		logger.info(`> Registering client...`)
-		let Annie = new Discord.Client({ disableEveryone: true })
-		Annie.startupInit = process.hrtime()
-
-
-		/**
-		 * 	-------------------------------------------------------------
-		 *  Registering Custom Properties.
-		 *  -------------------------------------------------------------
-		 */
-		logger.info(`> Registering nodes...`)
-		Annie.logger = logger
-		Annie.getBenchmark = (measure) => { return `${(measure[0] * 1000) + (measure[1] / 1e6)} ms` }
-		Annie.locale = require(`./locales/default`)
-		Annie.config = config
-		Annie.keyv = new keyv()
-		Annie.db = new database(null, Annie).connect()
-		Annie = new commandsLoader().register(Annie)
+	
+	/**
+	 * Listening to custom events
+	 * @param {String} path events directory's path
+	 */
+	listeningToEvents(path=`./events/eventHandler`) {
+		require(path)(this)
+		this.logger.info(`Listening to events...`)
+	}
 
 
-		/**
-		 * 	-------------------------------------------------------------
-		 *  Start listening to server port and events
-		 *  -------------------------------------------------------------
-		 */
-		require(`./events/eventHandler`)(Annie)
+	/**
+	 * Specified port to be listened to
+	 * @param {Number} port
+	 */
+	listeningToPort(port=this.config.port) {
 		const app = express()
 		app.get(`/`, (request, response) => response.sendStatus(200))
-		app.listen(config.port)
-		logger.info(`> Listening to port ${config.port}...`)
-
-
-		/**
-		 * 	-------------------------------------------------------------
-		 *  Logging in
-		 *  -------------------------------------------------------------
-		 */
-		Annie.login(process.env.TOKEN)
-		logger.info(`> Logging in...`)
-
+		app.listen(port)
+		this.logger.info(`> Listening to port ${port}...`)
 	}
-	catch(e) {
-		return logger.error(`Client has failed to start.`)
+
+
+
+	async initialize() {
+		try {
+			this.logger.info(ascii)
+			this.logger.info(`Initializing ${process.env.NODE_ENV} server...`)
+			
+
+			// Starting new sql client instance
+			this.db = await new Database().connect()
+			// Initializing command modules
+			this.logger.debug(`%o`, new CommandsLoader().register())
+
+			//this.login(process.env.TOKEN)
+			this.logger.debug(`Logging in...`)
+		}
+		catch(error) {
+			return this.logger.error(`Client terminated.`)
+		}
 	}
 }
+
+module.exports = Annie

@@ -1,2 +1,3 @@
 require(`dotenv`).config()
-require(`./src/annie`)()
+const Annie = require(`./src/annie`)
+new Annie().initialize()
