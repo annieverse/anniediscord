@@ -83,6 +83,15 @@
         "HEADER": "{0} **| {1} Card Collection**",
         "EMPTY": "You don't have any collection. Go test your luck with our gacha!`"
     },
+    "COMPLAINT": {
+        "UNAUTHORIZED": "Sorry, your authority level doesn't meet the requirement to use the complaint system.",
+        "GUIDE": "You are authorized to use **Complaint System**\n\nThis feature used to track bad behavior caused by member in the server.",
+        "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
+        "NULL_RECORD": "User with ID **{1}** doesn't have any complaint record yet. Please type + <reason> to add new complaint.",
+        "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** complaints were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new complaint. Or `-` to remove the most recent complaint.",
+        "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
+        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed."
+    },
     "CRAFT": {
         "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
         "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",

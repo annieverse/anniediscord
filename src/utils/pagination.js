@@ -1,5 +1,5 @@
 const { RichEmbed } = require(`discord.js`)
-const palette = require(`./colorset`)
+const palette = require(`../ui/colors/default`)
 
 
 /**

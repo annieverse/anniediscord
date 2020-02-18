@@ -52,7 +52,7 @@ class Annie extends Discord.Client {
 			// Starting new sql client instance
 			this.db = await new Database().connect()
 			// Initializing command modules
-			this.logger.debug(`%o`, new CommandsLoader().register())
+			this.commands = await new CommandsLoader().register()
 
 			//this.login(process.env.TOKEN)
 			this.logger.debug(`Logging in...`)

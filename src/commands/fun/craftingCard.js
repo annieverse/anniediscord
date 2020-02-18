@@ -1,4 +1,4 @@
-const cardMetadata = require(`../../utils/cards-metadata`)
+const cardMetadata = require(`../../config/cards`)
 const { RichEmbed } = require(`discord.js`)
 
 /**

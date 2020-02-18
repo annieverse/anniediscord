@@ -1,4 +1,4 @@
-const { packages, keywords, halloween_packages } = require(`../../utils/event-rewards`)
+const { packages, keywords, halloween_packages } = require(`../../config/event-rewards`)
 
 /**
  * Main module

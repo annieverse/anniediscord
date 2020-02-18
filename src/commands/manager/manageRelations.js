@@ -1,4 +1,4 @@
-const databaseManager = require(`../../utils/databaseManager`)
+const databaseManager = require(`../../struct/database`)
 
 const Discord = require(`discord.js`)
 /**

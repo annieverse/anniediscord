@@ -7,6 +7,7 @@ class CommandsLoader {
 	constructor() {
 		this.commandsPath = `./src/commands/`
 		this.queryOnFile = null
+		this.queryOnDir = null
 	}
 
 
@@ -20,6 +21,7 @@ class CommandsLoader {
 			let directories = fs.readdirSync(this.commandsPath)
 			let totalFiles = 0
 			for (const index in directories) {
+				this.queryOnDir = directories[index]
 				const files = fs.readdirSync(this.commandsPath + directories[index])
 				const jsfile = files.filter(f => f.split(`.`).pop() === `js`)
 				jsfile.forEach((f) => {
@@ -39,7 +41,7 @@ class CommandsLoader {
 
 		}
 		catch (error) {
-			logger.error(`Failed to register ${this.queryOnFile} command > ${error.message}`)
+			logger.error(`Failed to register ${this.queryOnDir}/${this.queryOnFile} > ${error.message}`)
 			throw error
 		}
 	}

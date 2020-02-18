@@ -1,4 +1,4 @@
-const LogsManager = require(`../../utils/logsManager`)
+const { readdirSync } = require(`fs`)
 /**
  * Main module
  * @Logs retrieve system log.
@@ -6,6 +6,31 @@ const LogsManager = require(`../../utils/logsManager`)
 class Logs {
 	constructor(Stacks) {
 		this.stacks = Stacks
+		this.logPath = `./logs/`
+		this.logger = Stacks.bot.logger
+	}
+
+
+	/**
+	 * Fetch log file from disk.
+	 * @param {String} date default "today".
+	 */
+	async pullFile(date = `today`) {
+		try {
+            //	Get all the .log files
+            let resArray = readdirSync(this.logPath)
+                .filter(f => f
+                    .split(`.`)
+                    .pop() === `log`)
+            let ref = {
+                "today": resArray.length - 1,
+                "yesterday": resArray.length - 2
+            }
+            return resArray[ref[date] || resArray.length - 1]
+        }
+        catch (error) {
+            this.logger.error(`Failed to retrieve log file > ${error.message}`)
+        }
 	}
 
 
@@ -22,7 +47,7 @@ class Logs {
         let parseRef = args[0] || `today`
 
         //  Get log file
-        let file = new LogsManager(this.stacks).pull(parseRef)
+        let file = this.pullFile(parseRef)
 
         //  Output attachment
         return reply(code.GETLOG.RETURNING, {

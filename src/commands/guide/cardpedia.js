@@ -1,5 +1,5 @@
-const PagingSystem = require(`../../utils/PagingSystem`)
-const CardImgUrl = require(`../../utils/config/cardImageUrl`)
+const PagingSystem = require(`../../utils/pagination`)
+const CardImgUrl = require(`../../config/cardImageUrl`)
 
 
 /**
