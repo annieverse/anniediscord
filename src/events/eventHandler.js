@@ -1,9 +1,6 @@
 const reqEvent = (event) => require(`./${event}.js`)
 
 module.exports = bot => {
-
-	//	Handle global rejection
-	process.on(`unhandledRejection`, (err) => reqEvent(`unhandledRejection`)(bot, err))
 	//	Cached message
 	let message_object
 

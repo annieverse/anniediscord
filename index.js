@@ -1,3 +1,3 @@
 require(`dotenv`).config()
 const Annie = require(`./src/annie`)
-new Annie().minimal()
+new Annie().default()
