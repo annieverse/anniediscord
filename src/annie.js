@@ -4,63 +4,75 @@ const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./struct/commands/loader`)
 const Database = require(`./struct/database`)
 const logger = require(`./struct/logger`)
-const keyv = require(`keyv`)
-const express = require(`express`)
+const Keyv = require(`keyv`)
+const Express = require(`express`)
 const locale = require(`./locales/default`)
 
 class Annie extends Discord.Client {
 	constructor() {
 		super({ disableEveryone: true })
-
 		this.startupInit = process.hrtime()
 		this.logger = logger
 		this.locale = locale
 		this.config = config
-		this.keyv = new keyv()
+		this.keyv = new Keyv()
 	}
 
 	
 	/**
-	 * Listening to custom events
-	 * @param {String} path events directory's path
+	 * @desc default option for deploying Annie's Client with its full features
+	 * such as database access and reachable interactions through custom commands.
 	 */
-	listeningToEvents(path=`./events/eventHandler`) {
-		require(path)(this)
-		this.logger.info(`Listening to events...`)
-	}
-
-
-	/**
-	 * Specified port to be listened to
-	 * @param {Number} port
-	 */
-	listeningToPort(port=this.config.port) {
-		const app = express()
-		app.get(`/`, (request, response) => response.sendStatus(200))
-		app.listen(port)
-		this.logger.info(`> Listening to port ${port}...`)
-	}
-
-
-
-	async initialize() {
+	async default() {
 		try {
-			this.logger.info(ascii)
+			this.promiseRejectionHandler()
+			this.logger.info(ascii.default)
 			this.logger.info(`Initializing ${process.env.NODE_ENV} server...`)
-			
-
-			// Starting new sql client instance
 			this.db = await new Database().connect()
-			// Initializing command modules
 			this.commands = await new CommandsLoader().register()
-
-			//this.login(process.env.TOKEN)
-			this.logger.debug(`Logging in...`)
+			this.listeningToPort()
+			require(`./events/eventHandler`)(this)
+			this.logger.info(`Logging in...`)
+			this.login(process.env.TOKEN)
 		}
 		catch(error) {
 			return this.logger.error(`Client terminated.`)
 		}
 	}
+
+
+	/**
+	 * @desc This method has eliminated some of processes such as database connection
+	 * and commands loader to reduce the client load.
+	 * Intentionally made for fun and internal monitoring without reachable interactions as end user.
+	 */
+	minimal() {
+		try {
+			this.logger.info(ascii.minimalist)
+			this.logger.info(`Initializing ${process.env.NODE_ENV} server...`)
+			this.logger.info(`Logging in...`)
+			this.login(process.env.TOKEN)
+		}
+		catch(error) {
+			return this.logger.error(`Client terminated.`)
+		}
+	}
+
+
+	listeningToPort(port=this.config.port) {
+		const app = Express()
+		app.get(`/`, (request, response) => response.sendStatus(200))
+		app.listen(port)
+		this.logger.info(`Listening to port ${port}`)
+	}
+
+
+	promiseRejectionHandler() {
+		process.on(`unhandledRejection`, (err) => {
+			this.logger.error(err.stack)
+		})
+	}
+
 }
 
 module.exports = Annie

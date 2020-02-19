@@ -2,20 +2,17 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const imageUrlRegex = /\?size=2048$/g
-const profileManager = require(`../../../utils/profileManager`)
-const databaseManager = require(`./databaseManager`)
-const Theme = require(`./UILibrary/Themes`)
+const Theme = require(`../../ui/colors/themes`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function badge(stacks, member) {
-	const configProfile = new profileManager()
-	const collection = new databaseManager(member.id)
+	const { loadAsset, meta: {data} } = stacks
 
 
 	/**
@@ -24,7 +21,7 @@ async function badge(stacks, member) {
      * rep = userreputation, des = userdescription, ui = userinterfacemode
      * clr = hex code of user's rank color.
      */
-	const userdata = await collection.userMetadata()
+	const userdata = data
 	const user = {
 		id: userdata.userId,
 		cur: userdata.currentexp,
@@ -53,7 +50,7 @@ async function badge(stacks, member) {
 	const {
 		body: avatar
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const badgesdata = await collection.badges
+	const badgesdata = data.badges
 
 	delete badgesdata.userId
 
@@ -99,12 +96,12 @@ async function badge(stacks, member) {
 	async function setBadge(xy, diameter, pos_y) {
 		for (var i=0; i<=Math.min(key.length, 18); i++) {
 			var j = Math.floor(i/4)
-			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
+			canv.addImage(await loadAsset(key[i]), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
 		}
 		if (key.length == 19) {
-			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
+			canv.addImage(await loadAsset(key[i]), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		} else if (key.length > 19) {
-			canv.addImage(await configProfile.getAsset(`plus`), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
+			canv.addImage(await loadAsset(`plus`), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		}
 	}
 

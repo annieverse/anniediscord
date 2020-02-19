@@ -2,32 +2,22 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const moment = require(`moment`)
-const profileManager = require(`../../utils/profileManager`)
-const databaseManager = require(`./databaseManager`)
 const probe = require(`probe-image-size`)
-const Theme = require(`./UILibrary/Themes`)
+const Theme = require(`../../ui/colors/themes`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function portfolio(stacks, member) {
-	const configProfile = new profileManager()
-	const collection = new databaseManager(member.id)
+	const { loadAsset, formatString, meta: {data}, bot:{db} } = stacks
 
-
-	/**
-     * id = userid, cur = currentexp, max = maxexp,
-     * crv = expcurve, lvl = userlevel, ac = userartcoins,
-     * rep = userreputation, des = userdescription, ui = userinterfacemode
-     * clr = hex code of user's rank color.
-     */
-	const userdata = await collection.userMetadata()
+	const userdata = data
 	const user = {
 		id: userdata.userId,
 		cur: userdata.currentexp,
@@ -89,7 +79,7 @@ async function portfolio(stacks, member) {
 
 
 	async function gridImage(posx, posy, dx, dy) {
-		var res = await collection.userArtworks()
+		var res = await db.userRecentPost(member.id)
 		async function aspectRatio(src) {
 			try {
 				var proberes = await probe(src)
@@ -115,7 +105,7 @@ async function portfolio(stacks, member) {
 				.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)
 				.setColor(user.theme.separator)
 				.addRect(posx, posy, dx, dy)
-				.addImage(await configProfile.getAsset(`anniewot`), 350, 125, 80, 80, 40)
+				.addImage(await loadAsset(`anniewot`), 350, 125, 80, 80, 40)
 		}
 
 		canv.setColor(user.theme.text)
@@ -133,26 +123,26 @@ async function portfolio(stacks, member) {
 				}
 
 			if (description.length > 0 && description.length <= 50) {
-				if (configProfile.formatString(description, 1).second) {
-					canv.addText(configProfile.formatString(description, 1).first, (baseWidth / 2) + 10, 85)
-						.addText(configProfile.formatString(description, 1).second, (baseWidth / 2) + 10, 100)
+				if (formatString(description, 1).second) {
+					canv.addText(formatString(description, 1).first, (baseWidth / 2) + 10, 85)
+						.addText(formatString(description, 1).second, (baseWidth / 2) + 10, 100)
 				} else {
-					canv.addText(configProfile.formatString(description, 1).first, (baseWidth / 2) + 10, 100)
+					canv.addText(formatString(description, 1).first, (baseWidth / 2) + 10, 100)
 				}
 
 			} else if (description.length > 50 && description.length <= 100) {
-				if (configProfile.formatString(description, 2).third) {
-					canv.addText(configProfile.formatString(description, 2).first, (baseWidth / 2) + 10, 70)
-						.addText(configProfile.formatString(description, 2).second, (baseWidth / 2) + 10, 85)
-						.addText(configProfile.formatString(description, 2).third, (baseWidth / 2) + 10, 100)
+				if (formatString(description, 2).third) {
+					canv.addText(formatString(description, 2).first, (baseWidth / 2) + 10, 70)
+						.addText(formatString(description, 2).second, (baseWidth / 2) + 10, 85)
+						.addText(formatString(description, 2).third, (baseWidth / 2) + 10, 100)
 				} else {
-					canv.addText(configProfile.formatString(description, 2).first, (baseWidth / 2) + 10, 85)
-						.addText(configProfile.formatString(description, 2).second, (baseWidth / 2) + 10, 100)
+					canv.addText(formatString(description, 2).first, (baseWidth / 2) + 10, 85)
+						.addText(formatString(description, 2).second, (baseWidth / 2) + 10, 100)
 				}
 			} else if (description.length > 100) {
-				canv.addText(configProfile.formatString(description, 3).first, (baseWidth / 2) + 10, 70)
-					.addText(configProfile.formatString(description, 3).second, (baseWidth / 2) + 10, 85)
-					.addText(configProfile.formatString(description, 3).third+`...`, (baseWidth / 2) + 10, 100)
+				canv.addText(formatString(description, 3).first, (baseWidth / 2) + 10, 70)
+					.addText(formatString(description, 3).second, (baseWidth / 2) + 10, 85)
+					.addText(formatString(description, 3).third+`...`, (baseWidth / 2) + 10, 100)
 			}
 
             canv.createBeveledClip(startPos_x, 110, baseWidth, baseWidth, 25)

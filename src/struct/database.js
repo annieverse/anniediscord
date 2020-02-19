@@ -428,13 +428,15 @@ class Database {
 		)
 	}
 
-	userArtworks(userId = this.id) {
-		return sql.get(`
-                SELECT *
-                FROM userartworks
-                WHERE userId = "${userId}"
-                ORDER BY timestamp DESC
-            `).then(async parsed => parsed)
+	userRecentPost(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM userartworks
+			WHERE userId = ?
+			ORDER BY timestamp DESC`
+			, `get`
+			, [userId]
+		)
 	}
 
 	/**
@@ -1576,53 +1578,53 @@ class Database {
 
 
 	/**
-	 *   Pull user ranking data counted from all indexes.
-	 * @this.queryingAll
+	 * @desc Fetch user ranking based on descendant order.
+	 * @param {String} userId 
+	 * @returns {Number}
 	 */
-	get ranking() {
-		return this.queryingAll
-			.then(async data => data.findIndex(x => x.userId === this.id))
+	async userExpRanking(userId=``) {
+		const sorted = await this._query(`
+			SELECT userId
+			FROM userdata 
+			ORDER BY currentexp DESC`
+			, `all`
+			, [userId]
+		)
+		return sorted.findIndex(value => value.userId === userId)
 	}
 
-    /**
-     *   Pull user's relationships with other members with main relationship on top if it exists
-     */
-    get relationships() {
-        return sql.all(`SELECT 
-                        r1.type AS "myRelation", r2.type AS "theirRelation",
-                        userId1 as "myUserId", userId2 AS "theirUserId"
-						FROM relationship r
-						JOIN relationshiptype r1
-						ON r.relationType1 = r1.typeId
-						JOIN relationshiptype r2
-						ON r.relationType2 = r2.typeId
-						WHERE r.userId1 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
-						 
-						UNION
-						
-						SELECT 
-                        r1.type AS "myRelation", r2.type AS "theirRelation",
-                        userId2 as "myUserId", userId1 AS "theirUserId"
-						FROM relationship r
-						JOIN relationshiptype r1
-						ON r.relationType2 = r1.typeId
-						JOIN relationshiptype r2
-						ON r.relationType1 = r2.typeId
-						WHERE r.userId2 = ${this.id} AND relationType1 > 0 AND relationType2 > 0
-                   		`)
-            .then(async parsed => parsed)
-		/*
-		* CASE WHEN EXISTS(SELECT 1
-                        	FROM mainrelationship main
-                        	WHERE r.userId1 = main.userId1
-                        	AND r.userId2 = main.userId2) THEN 1 ELSE 0 END AS isMain,
-                        	* relationStart, relationPoints, recentReceived AS "gift"
-        * CASE WHEN EXISTS(SELECT 1
-                        	FROM mainrelationship main
-                        	WHERE userId2 = main.userId1
-                        	AND userId1 = main.userId2) THEN 1 ELSE 0 END AS isMain,
-                        	* relationStart, relationPoints, recentGifted AS "gift"
-		* ORDER BY isMain DESC*/
+
+	/**
+	 * @desc Fetch user's relationship info
+	 * @param {String} userId <String> of user id 
+	 * @returns {Array}
+	 */
+    userRelations(userId=``) {
+		return this._query(`
+			SELECT 
+			r1.type AS "myRelation", r2.type AS "theirRelation",
+			userId1 as "myUserId", userId2 AS "theirUserId"
+			FROM relationship r
+			JOIN relationshiptype r1
+			ON r.relationType1 = r1.typeId
+			JOIN relationshiptype r2
+			ON r.relationType2 = r2.typeId
+			WHERE r.userId1 = ? AND relationType1 > 0 AND relationType2 > 0
+				
+			UNION
+			
+			SELECT 
+			r1.type AS "myRelation", r2.type AS "theirRelation",
+			userId2 as "myUserId", userId1 AS "theirUserId"
+			FROM relationship r
+			JOIN relationshiptype r1
+			ON r.relationType2 = r1.typeId
+			JOIN relationshiptype r2
+			ON r.relationType1 = r2.typeId
+			WHERE r.userId2 = ? AND relationType1 > 0 AND relationType2 > 0`
+			, `all`
+			, [userId, userId]
+		)
     }
 
     /**

@@ -2,6 +2,7 @@ const { Collection } = require(`discord.js`)
 const fs = require(`fs`)
 const logger = require(`../logger`)
 const getBenchmark = require(`../../utils/getBenchmark`)
+const config = require(`../../config/global`)
 
 class CommandsLoader {
 	constructor() {
@@ -36,12 +37,12 @@ class CommandsLoader {
 				})
 			}
 
-			logger.info(`> ${totalFiles} commands successfully loaded (${getBenchmark(initTime)})`)
+			logger.info(`${totalFiles} commands have successfully registered. (${getBenchmark(initTime)})`)
 			return { commands, aliases }
 
 		}
 		catch (error) {
-			logger.error(`Failed to register ${this.queryOnDir}/${this.queryOnFile} > ${error.message}`)
+			logger.error(`Failed to register ${this.queryOnDir}/${this.queryOnFile} > ${config.dev ? error.stack : error.message}`)
 			throw error
 		}
 	}

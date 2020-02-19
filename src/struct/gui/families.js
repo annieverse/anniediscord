@@ -1,18 +1,17 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const databaseManager = require(`./databaseManager`)
-const Theme = require(`./UILibrary/Themes`)
+const Theme = require(`../../ui/colors/themes`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function relation(stacks, member) {
+    const { meta: {data}, bot: {db} } = stacks
     const rank = stacks.meta.data.rank
-    const collection = new databaseManager(member.id)
 
     /**
      * id = userid, cur = currentexp, max = maxexp,
@@ -20,7 +19,7 @@ async function relation(stacks, member) {
      * rep = userreputation, des = userdescription, ui = userinterfacemode
      * clr = hex code of user's rank color.
      */
-    const userdata = await collection.userMetadata()
+    const userdata = data
     const user = {
         id: userdata.userId,
         cur: userdata.currentexp,
@@ -38,7 +37,7 @@ async function relation(stacks, member) {
         log: userdata.last_login,
         theme: Theme[userdata.interfacemode]
     }
-    const relations = await collection.relationships
+    const relations = await db.userRelations(member.id)
 
     const familyrelations = relations.filter((e) => {
         if (e.theirRelation == `bestie`) return false

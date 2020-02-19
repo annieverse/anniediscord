@@ -3,22 +3,18 @@ const { resolve, join } = require(`path`)
 const { get } = require(`snekfetch`)
 const imageUrlRegex = /\?size=2048$/g
 const moment = require(`moment`)
-const databaseManager = require(`./databaseManager`)
-const formatManager = require(`./formatManager`)
-const Theme = require(`./UILibrary/Themes`)
+const Theme = require(`../../ui/colors/themes`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function stat(stacks, member) {
-	const {bot} = stacks
+	const { bot, commanifier } = stacks
 	const rank = stacks.meta.data.rank
-	const collection = new databaseManager(member.id)
-	const configFormat = new formatManager(stacks.message)
 
 
 	/**
@@ -27,7 +23,7 @@ async function stat(stacks, member) {
      * rep = userreputation, des = userdescription, ui = userinterfacemode
      * clr = hex code of user`s rank color.
      */
-	const userdata = await collection.userMetadata()
+	const userdata = data
     const user = {
         id: userdata.userId,
         cur: userdata.currentexp,
@@ -56,12 +52,6 @@ async function stat(stacks, member) {
 	const {
 		body: avatar
 	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-
-
-	/**
-	 * 	Get author last online
-	 *  @getLastOnline
-	 */
 	const getLastOnline = () => bot.users.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : `No data retrieved.`
 
 
@@ -112,7 +102,7 @@ async function stat(stacks, member) {
 		.addText(`Current experience points`, baseWidth - 13, 180)
 
 		.setTextFont(`24pt RobotoBold`)
-		.addText(configFormat.threeDigitsComa(user.cur) + ` EXP`, baseWidth - 13, 210)
+		.addText(commanifier(user.cur) + ` EXP`, baseWidth - 13, 210)
 		.restore()
 
 		.setColor(user.theme.text)
@@ -122,11 +112,11 @@ async function stat(stacks, member) {
 
 		.setColor(rank.color)
 		.setTextFont(`33pt RobotoBold`)
-		.addText(configFormat.ordinalSuffix(await collection.ranking + 1), startPos_x + 33, 350)
+		.addText(await db.userExpRanking(member.id) + 1, startPos_x + 33, 350)
 
 		.setColor(user.theme.text)
 		.setTextFont(`9pt RobotoBold`)
-		.addText(`from a total of `+configFormat.threeDigitsComa(bot.users.size)+` members`, startPos_x + 38, 366)
+		.addText(`from a total of `+commanifier(bot.users.size)+` members`, startPos_x + 38, 366)
 
 
 	return canv.toBuffer()
