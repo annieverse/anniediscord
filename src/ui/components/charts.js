@@ -1,7 +1,7 @@
 const { CanvasRenderService } = require(`chartjs-node-canvas`)
 const Color = require(`color`)
-const themePresets = require(`./Themes`)
-const palette = require(`../colorset`)
+const themePresets = require(`../colors/themes`)
+const palette = require(`../colors/default`)
 
 class Chart {
 

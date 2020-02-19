@@ -1,14 +1,14 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const animeManager = require(`../../utils/anime/animesiteManager`)
+const animeManager = require(`../../utils/fetchAnimeSite`)
 const sql = require(`sqlite`)
 sql.open(`.data/database.sqlite`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-black.ttf`)), `RobotoBlack`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBlack`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
 
 //  Render the image
 const render = async (stacks, metadata) => {

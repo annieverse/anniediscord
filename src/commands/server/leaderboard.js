@@ -1,4 +1,4 @@
-const GUI = require(`../../utils/leaderboardInterface`)
+const GUI = require(`../../struct/gui/leaderboard`)
 
 /**
  * Main module

@@ -1,4 +1,4 @@
-const Cards = require(`./UILibrary/Cards`)
+const Cards = require(`../../ui/components/cards`)
 class LevelUI {
 	/**
 	 * Level User Interface

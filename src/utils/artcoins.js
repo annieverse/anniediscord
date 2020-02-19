@@ -1,4 +1,4 @@
-const Controller = require(`../../structures/messageController`)
+const Controller = require(`../struct/controller`)
 
 
 /**

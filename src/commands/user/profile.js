@@ -1,10 +1,10 @@
-const profile = require(`../../utils/profilecardInterface`)
-const portfolio = require(`../../utils/portfoliocardInterface`)
-const badge = require(`../../utils/badgecardInterface`)
-const family = require(`../../utils/familycardInterface`)
-const friend = require(`../../utils/friendcardInterface`)
-const stat = require(`../../utils/statcardInterface`)
-const databaseManager = require(`../../utils/databaseManager`)
+const profile = require(`../../struct/gui/profile`)
+const portfolio = require(`../../struct/gui/portfolio`)
+const badge = require(`../../struct/gui/badges`)
+const family = require(`../../struct/gui/families`)
+const friend = require(`../../struct/gui/friends`)
+const stat = require(`../../struct/gui/stats`)
+const databaseManager = require(`../../struct/database`)
 
 class Profile {
 	constructor(Stacks) {

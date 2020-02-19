@@ -1,5 +1,5 @@
-const Card = require(`./UILibrary/Cards`)
-const Chart = require(`./UILibrary/DataChart`)
+const Card = require(`../../ui/components/cards`)
+const Chart = require(`../../ui/components/charts`)
 const moment = require(`moment`)
 
 class StatsInterface {

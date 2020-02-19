@@ -1,4 +1,4 @@
-const Card = require(`../../utils/UILibrary/Cards`)
+const Card = require(`../../ui/components/cards`)
 /**
  * Main module
  * @Balance outputing artcoins data

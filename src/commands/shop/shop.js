@@ -1,6 +1,4 @@
 const Discord = require(`discord.js`)
-const formatManager = require(`../../utils/formatManager`)
-const databaseManager = require(`../../utils/databaseManager`)
 class shop {
 	constructor(Stacks) {
 		this.stacks = Stacks
@@ -8,13 +6,7 @@ class shop {
 	}
 
 	async execute() {
-		const format = new formatManager(this.message)
-		const {
-			message,
-			palette,
-			emoji
-		} = this.stacks
-		const collection = new databaseManager(message.author.id)
+		const { message, palette, emoji, commanifier, bot:{db} } = this.stacks
 
 		const registerItems = (source, target, emoji) => {
 			let categories = []
@@ -30,7 +22,7 @@ class shop {
 				var tempDesc = ``
 				for (var c in source) {
 					if (categories[i] === source[c].type) {
-						let priceRange = format.threeDigitsComa(source[c].price)
+						let priceRange = commanifier(source[c].price)
 						tempDesc += `${emoji} ${priceRange} - **${source[c].name}**\n\`${source[c].desc}\`\n\n`
 					}
 				}
@@ -61,7 +53,7 @@ class shop {
 				.setColor(palette.darkmatte)
 				.setFooter(footer)
 				.setImage(img)
-			registerItems(await collection.classifyItem(type, opt1, opt2), page, emoji(emojicode))
+			registerItems(await db.classifyItem(type, opt1, opt2), page, emoji(emojicode))
 
 			registered_interface.push(page)
 		}

@@ -1,4 +1,4 @@
-const GUI = require(`../../utils/levelcardInterface`)
+const GUI = require(`../../struct/gui/level`)
 
 /**
  * Main module

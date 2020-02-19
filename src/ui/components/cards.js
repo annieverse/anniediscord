@@ -1,8 +1,8 @@
 const { Canvas } = require(`canvas-constructor`) 
 const sizeOf = require(`buffer-image-size`)
-const { DEFAULT, DATABAR, CONTENT } = require(`./Configurations`)
-const palette = require(`../colorset`)
-const themePresets = require(`./Themes`)
+const { DEFAULT, DATABAR, CONTENT } = require(`../config`)
+const palette = require(`../colors/default`)
+const themePresets = require(`../colors/themes`)
 const { resolve, join } = require(`path`)
 
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Light.ttf`)), `OpenSansLight`)

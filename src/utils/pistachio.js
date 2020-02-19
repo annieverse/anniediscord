@@ -431,6 +431,51 @@ class Pistachio {
 			return str
 		}
 
+		
+		/**
+		 * Formatting each paragraph.
+		 * @string of user description.
+		 * @numlines of paragraph.
+		 */
+		container.formatString = (string, numlines) => {
+			var paraLength = Math.round((string.length) / numlines)
+			var paragraphs = []
+			var marker = paraLength
+			for (var i = 0; i < numlines; i++) {
+				//if the marker is right after a space, move marker back one character
+				if (string.charAt(marker - 1) == ` `) {
+					marker--
+				}
+
+				//if marker is in middle of word, try moving to the back of the word
+				//but at most 5 characters
+				for (var j=0; j<5;j++) {
+					if (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
+						marker = marker+j
+					}
+				}
+
+				//if can't move to back of word, more to front instead
+				while (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
+					marker--
+				}
+				var nextPara = string.substring(0, marker)
+
+				paragraphs.push(nextPara)
+				string = string.substring((nextPara.length + 1), string.length)
+			}
+			if (string) {
+				paragraphs.push(string)
+			}
+			return {
+				first: paragraphs[0],
+				second: paragraphs[1]?paragraphs[1]:``,
+				third: paragraphs[2]?paragraphs[2]:``,
+				fourth: paragraphs[3]?paragraphs[3]:``
+			}
+		}
+
+
 		/**
 		 * Splits array items into chunks of the specified size
 		 * @param {Array|String} items

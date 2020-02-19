@@ -1,4 +1,4 @@
-const StatsUI = require(`../../utils/StatsInterface`)
+const StatsUI = require(`../../struct/gui/systemStatus`)
 const memUsage = require(`../../utils/memoryUsage`)
 class Stats {
 
@@ -19,6 +19,7 @@ class Stats {
 			label: res.map(data => data.timestamp) 
 		}
 	}
+
 
 	/**
 	 * 	Returns total amount of recorded command queries that has been ran.

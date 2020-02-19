@@ -388,6 +388,25 @@ class Database {
 
 
 	/**
+	 * Pull configured Art-Feeds channel.
+	 * @param {String|ID} guildId <StringType> guild id
+	 */
+	async getArtFeedsLocation(guildId=0) {
+		logger.debug(`%o`, `${guildId} has requested guild_artfeeds_configurations`)
+		const res = await this._query(`
+			SELECT *
+			FROM guild_artfeeds_configurations
+			WHERE guild_id = ?`
+			, `all`
+			, [guildId]
+		)
+
+		if (res) return res.map(entry => entry.channel_id)
+		return res
+	}
+
+
+	/**
 	 * 	Registering post metadata
 	 * 	@param {String|ID} userId
 	 * 	@param {ResolvableURL} url

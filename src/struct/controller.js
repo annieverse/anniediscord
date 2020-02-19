@@ -1,11 +1,3 @@
-const ranksManager = require(`../utils/ranksManager`)
-const {
-    art_domain,
-    nonxp_domain,
-    event_submission_domain,
-    verification_domain
-} = require(`../modules/config`)
-
 /**
  *  Centralized Controller for message related.
  *  Mainly used to handle incoming message from user and calculate the possible actions
@@ -18,7 +10,6 @@ class MessageController {
         this.bot = data.bot
 		this.message = data.message
         this.keyv = data.bot.keyv
-        this.ranks = new ranksManager(data.bot, data.message)
         this.reply = data.reply
         this.config = data.bot.config
         this.color = data.palette
@@ -113,17 +104,23 @@ class MessageController {
         }
     }
 
+
     /**
-     *  Check if it's an art post and sent in art-allowed channel
-     * 
-     *  REWORK TO-DO : 
-     *   - Makes the method to listen only if the current guild has set their art post channel.
-     *  
-     *  Returns @Boolean
+     *  @desc Check if it's an art post and sent in artfeeds channel
+     *  @getter
+     *  @returns {Boolean}
      */
-    get isArtPost() {
-        return art_domain.includes(this.message.channel.id) && this._hasAttachment()
+    async isArtPost() {
+        //  Skip if message not containing any attachment
+        if (!this._hasAttachment) return false
+
+        //  Fetching guild's artfeeds configuration.
+        const channels = await this.db.getArtFeedsLocation(this.message.guild.id)
+        if (!channels) return false
+
+        return channels.includes(this.message.channel.id)
     }
+
 
     /**
      *  Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
@@ -146,7 +143,7 @@ class MessageController {
      *  Returns @Boolean
      */
     get isVerificationRequest() {
-        return verification_domain.includes(this.message.channel.id)
+        return [`538843763544555528`].includes(this.message.channel.id)
     }
 
     /**
@@ -154,14 +151,9 @@ class MessageController {
      *  @isEventSubmission
      */
     get isEventSubmission() {
-        return event_submission_domain.includes(this.message.channel.id) && this._hasAttachment()
+        return [`460615254553001994`].includes(this.message.channel.id) && this._hasAttachment()
     }
 
-
-
-
-
-    
 
     /**
      *  Check if it's a message by Naph in general

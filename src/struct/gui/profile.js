@@ -1,43 +1,36 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const profileManager = require(`../../utils/profileManager`)
-const databaseManager = require(`./databaseManager`)
-const formatManager = require(`./formatManager`)
-const palette = require(`./colorset`)
-const { nitro_boost } = require(`./role-list`)
-const Theme = require(`../ui/Themes`)
+const palette = require(`../../ui/colors/default`)
+const Theme = require(`../../ui/colors/themes`)
 
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Roboto.ttf`)), `Roboto`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/Whitney.otf`)), `Whitney`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function profile(stacks, member, cover = null, sticker = null) {
+	const { commanifier, formatString, loadAsset, meta: {data, author} } = stacks
 	const rank = stacks.meta.data.rank
-	const configProfile = new profileManager()
-	const collection = new databaseManager(member.id)
-	const configFormat = new formatManager(stacks.message)
 
-	const userdata = await collection.userMetadata()
 	const user = {
-		id: userdata.userId,
-		cur: userdata.currentexp,
-		max: userdata.maxexp,
-		crv: userdata.nextexpcurve,
-		lvl: userdata.level,
-		ac: userdata.artcoins,
-		rep: userdata.reputations,
-		des: userdata.description,
-		ui: userdata.interfacemode,
-		prt: userdata.partner,
-		rtg: userdata.rating,
-		likecount: userdata.liked_counts,
-		cov: cover == null ? userdata.cover : cover,
-		stic: sticker == null ? userdata.sticker == ` ` ? null : userdata.sticker : sticker,
-		log: userdata.last_login,
-		theme: Theme[userdata.interfacemode]
+		id: author.id,
+		cur: data.currentexp,
+		max: data.maxexp,
+		crv: data.nextexpcurve,
+		lvl: data.level,
+		ac: data.artcoins,
+		rep: data.reputations,
+		des: data.description,
+		ui: data.interfacemode,
+		prt: data.partner,
+		rtg: data.rating,
+		likecount: data.liked_counts,
+		cov: cover == null ? data.cover : cover,
+		stic: sticker == null ? data.sticker == ` ` ? null : data.sticker : sticker,
+		log: data.last_login,
+		theme: Theme[data.interfacemode]
 	}
 
 	let canvas_x = 320//300
@@ -48,8 +41,8 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	let baseHeight = canvas_y - 20
 
 	const avatar = await stacks.avatar(member.id, true)
-	const badgesdata = await collection.badges
-	const isVIP = member.roles.has(nitro_boost)
+	const badgesdata = await data.badges
+	const isVIP = member.roles.has(`585550404197285889`)
 
 	//  Remove userid from badges object.
 	delete badgesdata.userId
@@ -84,9 +77,9 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	 * 	  DISABLED UNTIL NEXT UPDATE (01/15/20)
 	 */
 	if (user.stic) {
-		let stickerIsThemeSpecific = await collection.stickerTheme(user.stic)
-		stickerIsThemeSpecific ? canv.addImage(await configProfile.getAsset(`sticker_${user.stic}_${user.theme.inverseThemeName}`), startPos_x, startPos_y + 194, baseWidth, 206) :
-			canv.addImage(await configProfile.getAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
+		let stickerIsThemeSpecific = await data.stickerTheme(user.stic)
+		stickerIsThemeSpecific ? canv.addImage(await loadAsset(`sticker_${user.stic}_${user.theme.inverseThemeName}`), startPos_x, startPos_y + 194, baseWidth, 206) :
+			canv.addImage(await loadAsset(`sticker_${user.stic}`), startPos_x, startPos_y + 194, baseWidth, 206) // STICKER BG
 	}
 
 	/**
@@ -95,7 +88,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 
 	canv.setColor(rank.color)
 		.addRect(startPos_x, startPos_y, baseWidth, 194)
-		.addImage(await stacks.loadAsset(user.cov?user.cov:`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
+		.addImage(await loadAsset(user.cov?user.cov:`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 
 	/**
 	 *    USER AVATAR
@@ -115,12 +108,12 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	//we can fit 8 badges; if user has more display a plus or something
 	async function setBadge(xy, diameter, pos_y) {
 		for (var i=0; i<=Math.min(key.length, 6); i++) {
-			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
+			canv.addImage(await loadAsset(key[i]), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
 		}
 		if (key.length == 7) {
-			canv.addImage(await configProfile.checkBadges(key[i]), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
+			canv.addImage(await loadAsset(key[i]), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
 		} else if (key.length > 7) {
-			canv.addImage(await configProfile.getAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
+			canv.addImage(await loadAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
 		}
 	}
 
@@ -163,7 +156,7 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	 */
 	const verifiedStartingPoint = canv.measureText(member.user.username).width * 1.3 + 2
 	if (user.likecount >= 1000) {
-		canv.addImage(await configProfile.getAsset(`verified_badge`), startPos_x + 70 + verifiedStartingPoint, 256, 16, 16)
+		canv.addImage(await loadAsset(`verified_badge`), startPos_x + 70 + verifiedStartingPoint, 256, 16, 16)
 	}
 
 	/**
@@ -183,18 +176,18 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	canv.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`8pt Roboto`)
-	if (configProfile.checkDesc(user.des).length > 0 && configProfile.checkDesc(user.des).length <= 51) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).first, 40, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 1).second, 40, 320)
-	} else if (configProfile.checkDesc(user.des).length > 51 && configProfile.checkDesc(user.des).length <= 102) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).first, 40, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).second, 40, 320)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 2).third, 40, 333)
-	} else if (configProfile.checkDesc(user.des).length > 102 && configProfile.checkDesc(user.des).length <= 154) {
-		canv.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).first, 40, 307)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).second, 40, 320)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).third, 40, 333)
-			.addText(configProfile.formatString(configProfile.checkDesc(user.des), 3).fourth, 40, 346)
+	if (user.des.length > 0 && user.des.length <= 51) {
+		canv.addText(formatString(user.des, 1).first, 40, 307)
+			.addText(formatString(user.des, 1).second, 40, 320)
+	} else if (user.des.length > 51 && user.des.length <= 102) {
+		canv.addText(formatString(user.des, 2).first, 40, 307)
+			.addText(formatString(user.des, 2).second, 40, 320)
+			.addText(formatString(user.des, 2).third, 40, 333)
+	} else if (user.des.length > 102 && user.des.length <= 154) {
+		canv.addText(formatString(user.des, 3).first, 40, 307)
+			.addText(formatString(user.des, 3).second, 40, 320)
+			.addText(formatString(user.des, 3).third, 40, 333)
+			.addText(formatString(user.des, 3).fourth, 40, 346)
 	}
 	/**
 	 *    THREE BOXES
@@ -204,9 +197,9 @@ async function profile(stacks, member, cover = null, sticker = null) {
 	canv.setTextAlign(`center`)
 		.setColor(rank.color)
 		.setTextFont(`20pt RobotoMedium`)
-		.addText(configFormat.formatK(user.likecount), 70, 370) // left point // rank
+		.addText(commanifier(user.likecount), 70, 370) // left point // rank
 		.addText(user.lvl, 160, 370) // middle point // level
-		.addText(configFormat.formatK(user.rep), 250, 370) // right point // AC
+		.addText(commanifier(user.rep), 250, 370) // right point // AC
 
 		.setColor(user.theme.text)
 		.setTextFont(`8pt Whitney`)

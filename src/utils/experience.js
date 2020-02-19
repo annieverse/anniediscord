@@ -1,6 +1,6 @@
-let booster = require(`./config/ticketbooster`)
-let Controller = require(`../../structures/messageController`)
-let Artcoins = require(`./artcoinGains`)
+const booster = require(`../config/ticketbooster`)
+const Controller = require(`../struct/controller`)
+const Artcoins = require(`./artcoins`)
 
 /**
  * Experience formula wrapper.

@@ -1,4 +1,4 @@
-const GUI = require(`../../utils/inventoryInterface`)
+const GUI = require(`../../struct/gui/inventory`)
 
 /**
  * Main module

@@ -1,5 +1,4 @@
-const GUI = require(`../../utils/gachaInterfaceManager`)
-const updateData = require(`../../utils/gachaContainerStoring`)
+const GUI = require(`../../struct/gui/gacha`)
 const Cooldown = new Set()
 
 class Gacha {
@@ -104,8 +103,11 @@ class Gacha {
 				//	Get buffer interface
 				let renderResult = await new GUI(this.stacks, rollContainer).render
 
-				//	Parse backend and store inventory items
-				await new updateData(this.stacks, rollContainer).run()
+				/**
+				 *  TO-DO: Framework to store rolled items into inventory.
+				 * 	@updateData
+				 */
+				// await new updateData(this.stacks, rollContainer).run()
 
 				opening.delete()
 				//	Render result

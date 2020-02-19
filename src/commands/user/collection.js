@@ -1,4 +1,4 @@
-const GUI = require(`../../utils/canvasPageInterface`)
+const GUI = require(`../../struct/gui/collections`)
 /**
  * 	Display user card collection
  * 	@collection

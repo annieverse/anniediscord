@@ -1,6 +1,6 @@
 const { MessageCollector } = require(`discord.js`)
-const logger = require(`../../utils/logger`)
-const profile = require(`../gui/profilecardInterface`)
+const logger = require(`../logger`)
+const profile = require(`../gui/profile`)
 
 //  Await for user confirmation before proceeding the transaction.
 class Checkout {

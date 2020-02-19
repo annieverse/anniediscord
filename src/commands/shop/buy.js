@@ -1,7 +1,6 @@
-const Transaction = require(`../../utils/transactionHandler`)
-const Checkout = require(`../../utils/transactionCheckout`)
-const preview = require(`../../utils/config/itemPreview`)
-const profileManager = require(`../../utils/profileManager`)
+const Transaction = require(`../../struct/transactions/handler`)
+const Checkout = require(`../../struct/transactions/checkout`)
+const preview = require(`../../config/itemPreview`)
 
 /**
  * Main module
@@ -90,8 +89,7 @@ class Buy {
 				sticker: `dark`
 			}
 		}
-		const configProfile = new profileManager()
-		const usercolor = configProfile.checkInterface(data.interfacemode)
+		const usercolor = data.rank.color
 
 		let checkoutComponents = {
 			itemdata: item,
