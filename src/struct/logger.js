@@ -1,6 +1,6 @@
 const winston = require(`winston`)
 const moment = require(`moment`)
-const { combine, timestamp, printf, colorize, splat, json } = winston.format
+const { combine, timestamp, printf, colorize, splat } = winston.format
 require(`winston-daily-rotate-file`)
 
 /**

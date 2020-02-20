@@ -1,6 +1,5 @@
 const sql = require(`sqlite`)
 const logger = require(`./logger`)
-const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
 
@@ -16,19 +15,16 @@ class Database {
 	/**
 	 * 	Opening database connection
 	 *	@param {String} path default: ".data/database.sqlite"
+	 *  @param {String} fsPath default: "../../.data/database.sqlite"
 	 */
-	async connect(path=`.data/database.sqlite`) {
+	async connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
 		try {
-			const initTime = process.hrtime()
-
 			/**
 			 * This will check if the db file exists or not.
 			 * If no, it will throw an error that already catched below.
 			 */
-			accessSync(join(__dirname, `../../${path}`), constants.F_OK)
-
+			accessSync(join(__dirname, fsPath), constants.F_OK)
 			this.client = await sql.open(path, {cached: true})
-			logger.info(`Database has been connected. (${getBenchmark(initTime)})`)
 			return this
 		}
 		catch(error) {

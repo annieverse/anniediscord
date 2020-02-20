@@ -69,7 +69,7 @@ class Annie extends Discord.Client {
 
 	promiseRejectionHandler() {
 		process.on(`unhandledRejection`, (err) => {
-			this.logger.error(err.stack)
+			this.logger.error(`Promise Rejection. ${err.message}`)
 		})
 	}
 

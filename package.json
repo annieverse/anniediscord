@@ -4,11 +4,11 @@
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
-    "test": "npm run lint && echo 'Finished.'",
-    "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
+    "test": "npm run lint && npm run unit-test && echo 'Test passed.'",
+    "unit-test": "node ./node_modules/mocha/bin/mocha \"test/*.js\"",
     "start": "cross-env NODE_ENV=production pm2 start index.js --no-daemon --max-memory-restart 400M",
     "beta": "cross-env NODE_ENV=development nodemon index.js",
-    "lint": "eslint core"
+    "lint": "eslint src"
   },
   "engines": {
     "node": "10.16.0"

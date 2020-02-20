@@ -13,7 +13,7 @@ Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitne
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/KosugiMaru.ttf`)), `KosugiMaru`)
 
 async function stat(stacks, member) {
-	const { bot, commanifier } = stacks
+	const { bot, commanifier, meta: {data} } = stacks
 	const rank = stacks.meta.data.rank
 
 
@@ -112,7 +112,7 @@ async function stat(stacks, member) {
 
 		.setColor(rank.color)
 		.setTextFont(`33pt RobotoBold`)
-		.addText(await db.userExpRanking(member.id) + 1, startPos_x + 33, 350)
+		.addText(await bot.db.userExpRanking(member.id) + 1, startPos_x + 33, 350)
 
 		.setColor(user.theme.text)
 		.setTextFont(`9pt RobotoBold`)
