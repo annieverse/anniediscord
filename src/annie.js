@@ -7,6 +7,7 @@ const logger = require(`./struct/logger`)
 const Keyv = require(`keyv`)
 const Express = require(`express`)
 const locale = require(`./locales/default`)
+const getBenchmark = require(`./utils/getBenchmark`)
 
 class Annie extends Discord.Client {
 	constructor() {
@@ -25,22 +26,42 @@ class Annie extends Discord.Client {
 	 */
 	async default() {
 		try {
-			this.promiseRejectionHandler()
-			this.logger.info(ascii.default)
-			this.logger.info(`Initializing ${process.env.NODE_ENV} server...`)
+			process.on(`unhandledRejection`, err => {
+				logger.error(`Promise Rejection > ${err.stack}`)
+			})
+
+			logger.info(ascii.default)
+			logger.info(`Initializing ${process.env.NODE_ENV} server...`)
+
+			// Connecting to .sqlite file in .data/database.sqlite
+			const dbtime = process.hrtime()
 			this.db = await new Database().connect()
-			this.commands = await new CommandsLoader().register()
-			this.listeningToPort()
+			logger.info(`Database connected (${getBenchmark(dbtime)})`)
+
+			// Registering all the available commands from ./src/commands directory
+			const cmdtime = process.hrtime()
+			this.commands = await new CommandsLoader().default()
+			logger.info(`${this.commands.totalFiles} commands registered (${getBenchmark(cmdtime)})`)
+
+			// Listening to default port
+			const app = Express()
+			app.get(`/`, (request, response) => response.sendStatus(200))
+			app.listen(this.config.port)
+			logger.info(`Listening to port ${this.config.port}`)
+
+			// Listening to discordjs events
 			require(`./events/eventHandler`)(this)
-			this.logger.info(`Logging in...`)
+
+			// Logging in and trigger events/ready.js
+			logger.info(`Logging in...`)
 			this.login(process.env.TOKEN)
 		}
 		catch(error) {
-			return this.logger.error(`Client terminated.`)
+			logger.error(`Client terminated > ${error.stack}`)
 		}
 	}
 
-
+	
 	/**
 	 * @desc This method has eliminated some of processes such as database connection
 	 * and commands loader to reduce the client load.
@@ -48,31 +69,15 @@ class Annie extends Discord.Client {
 	 */
 	minimal() {
 		try {
-			this.logger.info(ascii.minimalist)
-			this.logger.info(`Initializing ${process.env.NODE_ENV} server...`)
-			this.logger.info(`Logging in...`)
+			logger.info(ascii.minimalist)
+			logger.info(`Initializing ${process.env.NODE_ENV} server...`)
+			logger.info(`Logging in...`)
 			this.login(process.env.TOKEN)
 		}
 		catch(error) {
-			return this.logger.error(`Client terminated.`)
+			return logger.error(`Client terminated > ${error.stack}`)
 		}
 	}
-
-
-	listeningToPort(port=this.config.port) {
-		const app = Express()
-		app.get(`/`, (request, response) => response.sendStatus(200))
-		app.listen(port)
-		this.logger.info(`Listening to port ${port}`)
-	}
-
-
-	promiseRejectionHandler() {
-		process.on(`unhandledRejection`, (err) => {
-			this.logger.error(`Promise Rejection. ${err.message}`)
-		})
-	}
-
 }
 
 module.exports = Annie

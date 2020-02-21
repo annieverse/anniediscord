@@ -1,5 +1,6 @@
 const { Collection } = require(`discord.js`)
 const fs = require(`fs`)
+const logger = require(`../../struct/logger`)
 
 class CommandsLoader {
 	/**
@@ -21,26 +22,24 @@ class CommandsLoader {
 			 * Recursively pull available categories in command's root directory
 			 * @example user/system/social/shop/etc
 			 */
-			fs.readdir(this.commandsPath, directories => {
-				for (const index in directories) {
-					const dir = directories[index]
-					this.queryOnDir = dir
-					/**
-					 * Recursively pull files from a category
-					 * @example user/system/social/shop/etc
-					 */
-					fs.readdir(this.commandsPath + dir, files => {
-						const jsfile = this._getJsFiles(files)
-						jsfile.forEach((file) => {
-							this.register(dir, file)
+			const directories = fs.readdirSync(this.commandsPath)
+			for (const index in directories) {
+				const dir = directories[index]
+				this.queryOnDir = dir
+				/**
+				 * Recursively pull files from a category
+				 * @example user/system/social/shop/etc
+				 */
+				const files = fs.readdirSync(this.commandsPath + dir)
+				const jsfile = this._getJsFiles(files)
+				jsfile.forEach(file => {
+					this.register(dir, file)
 
-							// Iteration checkpoints
-							this.totalFiles++
-							this.queryOnFile = file
-						})
-					})
-				}
-			})
+					// Iteration checkpoints
+					this.totalFiles++
+					this.queryOnFile = file
+				})
+			}
 			return { 
 				commands : this.commands,
 				aliases : this.aliases,
@@ -48,7 +47,7 @@ class CommandsLoader {
 			}
 		}
 		catch (error) {
-			throw Error(`Failed to register ${this.queryOnDir}/${this.queryOnFile}`)
+			logger.error(`Failed to register ${this.queryOnDir}/${this.queryOnFile} > ${error}`)
 		}
 	}
 

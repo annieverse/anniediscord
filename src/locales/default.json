@@ -347,6 +347,10 @@
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },
+    "INTERNAL_SYSTEM": {
+        "DATABASE_CONNECTED": "Database successfully connected",
+        "COMMANDS_REGISTERED": "Commands have successfully registered"
+    },
     "SERVER_REMOTE": {
         "AUTHORIZED": "**{0}**, you are authorized to control my server remotely. {1}",
         "PROCESSING": "**Server will restart in {0} seconds...**",
