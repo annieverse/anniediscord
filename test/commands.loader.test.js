@@ -5,9 +5,9 @@ const CommandsLoader = require(`../src/struct/commands/loader`)
  */
 describe(`Commands Loader`, () => {
 
-    it(`._getJsFiles() should able to only returns .js files`, () => {
+    it(`.getJsFiles() should able to only returns .js files`, () => {
         const dummyArray = [`apple.js`, `orange.js`, `pear.cpp`]
-        const res = new CommandsLoader()._getJsFiles(dummyArray)
+        const res = new CommandsLoader().getJsFiles(dummyArray)
         res.map(file => {
             expect(file).to.contain(`.js`)
         })

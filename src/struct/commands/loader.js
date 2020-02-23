@@ -31,7 +31,7 @@ class CommandsLoader {
 				 * @example user/system/social/shop/etc
 				 */
 				const files = fs.readdirSync(this.commandsPath + dir)
-				const jsfile = this._getJsFiles(files)
+				const jsfile = this.getJsFiles(files)
 				jsfile.forEach(file => {
 					this.register(dir, file)
 
@@ -75,11 +75,10 @@ class CommandsLoader {
 
 
 	/**
-	 * @type {Private}
 	 * @param {Array} files list of files from fs.readdir 
 	 * @returns {Array}
 	 */
-	_getJsFiles(files=[]) {
+	getJsFiles(files=[]) {
 		return files.filter(f => f.split(`.`).pop() === `js`)
 	}
 }
