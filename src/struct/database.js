@@ -77,21 +77,21 @@ class Database {
 			'registered_date' TIMESTAMP DEFAULT datetime('now'),
 			'id' TEXT NOT NULL UNIQUE,
 			'name' TEXT,
-			'exp' INTEGER DEFAULT 0,
 			'bio' TEXT,
-            'reputations' INTEGER DEFAULT 0,
 			'heart_counts' INTEGER DEFAULT 0,
 			'receive_notification' INTEGER DEFAULT 0,
 			'last_login' INTEGER)`
             , `run`
-            , []
+			, []
+			, `Checking table user`
         )
 		this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
 			'user_id' TEXT NOT NULL UNIQUE,
 			'last_claim' INTEGER DEFAULT 0,
 			'total_streak' INTEGER DEFAULT 0)`
             , `run`
-            , []
+			, []
+			, `Checking table user_dailies`
 		)
 		this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
 			'user_id' TEXT NOT NULL UNIQUE,
@@ -100,7 +100,8 @@ class Database {
 			'last_give' INTEGER DEFAULT 0
 			'last_receive' INTEGER DEFAULT 0`
             , `run`
-            , []
+			, []
+			, `Checking table user_reputations`
 		)
 		this._query(`CREATE TABLE IF NOT EXISTS user_exp (
 			'user_id' TEXT NOT NULL UNIQUE,
@@ -109,7 +110,8 @@ class Database {
 			'exp_booster' INTEGER DEFAULT 0
 			'exp_booster_actived_at' INTEGER DEFAULT 0`
             , `run`
-            , []
+			, []
+			, `Checking table user_exp`
 		)
 		this._query(`CREATE TABLE IF NOT EXISTS user_post (
 			'posted_at' TIMESTAMP,
@@ -119,7 +121,8 @@ class Database {
 			'in_channel_id' INTEGER
 			'in_guild_id' INTEGER`
             , `run`
-            , []
+			, []
+			, `Checking table user_post`
 		)
 		this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
 			'item_id' INTEGER,
@@ -127,7 +130,8 @@ class Database {
 			'quantity' INTEGER,
 			'last_update' TIMESTAMP DEFAULT datetime('now'))`
             , `run`
-            , []
+			, []
+			, `Checking table user_inventory`
 		)
 
 
@@ -144,10 +148,51 @@ class Database {
 			'in_guild' INTEGER,
 			'strike_level' INTEGER)`
             , `run`
-            , []
+			, []
+			, `Checking table strike_records`
 		)
 
 		
+		 /**
+		  * --------------------------
+		  * System
+		  * --------------------------
+		  */
+		 this._query(`CREATE TABLE IF NOT EXISTS commands_log (
+			'timestamp' TIMESTAMP DEFAULT datetime('now'),
+			'user_id' TEXT,
+			'in_guild' TEXT,
+			'command_alias' TEXT,
+			'resolved_in' TEXT)`
+            , `run`
+			, []
+			, `Checking table commands_log`
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS resource_log (
+			'timestamp' TIMESTAMP DEFAULT datetime('now'),
+			'uptime' INTEGER,
+			'ping' REAL,
+			'cpu' REAL,
+			'memory' REAL)`
+            , `run`
+			, []
+			, `Checking table resource_log`
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS items (
+			'id' INTEGER NOT NULL UNIQUE,
+			'name' TEXT,
+			'rarity' INTEGER,
+			'alias' TEXT,
+			'type' TEXT,
+			'unique_type' TEXT,
+			'price' INTEGER,
+			'price_type TEXT,
+			'description' TEXT,
+			'status' TEXT)`
+            , `run`
+			, []
+			, `Checking table items`
+		)
 
 
         this._query(`CREATE TABLE IF NOT EXISTS user_check (
