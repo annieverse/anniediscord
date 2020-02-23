@@ -1,44 +1,29 @@
 const Routines = require(`../utils/Routines`)
-module.exports = bot => {
+module.exports = annie => {
 
 
-	const { config, logger } = bot
-	const Routine = new Routines(bot)
+	const { config, logger } = annie
+	const Routine = new Routines(annie)
 
 
 	if (config.dev) {
-
-
 		/**
 		 * 	--------------------------------------------------
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
-		if (config.plugins.includes(`WELCOMER_TEST`)) {
-			const BannerTest = require(`../utils/welcomeBannerUI`)
-			new BannerTest({bot, member:require(`../../test/testmsg`), channel:`654401864565129236`}).render()
-		}
-
-		logger.info(`${bot.user.username} up in dev environment. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
-		bot.user.setStatus(`dnd`)
-		bot.user.setActivity(`maintenance.`, {
-			type: `LISTENING`
-		})
-
-
+		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.benchmark(annie.startupInit)})`)
+		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
+		annie.user.setStatus(`dnd`)
 	} else {
-
-
 		/**
 		 * 	--------------------------------------------------
 		 * 	Configuration for Production
 		 * 	--------------------------------------------------
 		 */
-		logger.info(`${bot.user.username} up in production. (${bot.getBenchmark(process.hrtime(bot.startupInit))})`)
-		bot.user.setStatus(`online`)
-		bot.user.setActivity(null)
-		
-
+		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
+		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
+		annie.user.setStatus(`online`)
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
@@ -55,8 +40,6 @@ module.exports = bot => {
 		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes
 		Routine.releasePixivCaches()
-
-
 		/**
 		 * 	--------------------------------------------------
 		 * 	Below are features that currently binding to AAU guild.
@@ -66,10 +49,9 @@ module.exports = bot => {
 
 		//	Change Booster Role color
 		Routine.roleChange()
-		//	Automatically change bot status
+		//	Automatically change annie status
 		Routine.autoStatus()
 		// Remove featured daily post
 		Routine.removeFeaturedDailyPostLoop()
 	}
-
 }
