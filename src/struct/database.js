@@ -63,6 +63,123 @@ class Database {
 	}
 
 
+	schemaCheck() {
+		/**
+		 * --------------------------
+		 * NEW TABLES
+		 * @description A subsets from old tables. UNFINISHED
+		 * @since 24/02/20
+		 * @author klerikdust
+		 * @
+		 * --------------------------
+		 */
+
+		 /**
+		  * --------------------------
+		  * User-related Data
+		  * --------------------------
+		  */
+		this._query(`CREATE TABLE IF NOT EXISTS user (
+			'registered_date' TIMESTAMP DEFAULT datetime('now'),
+			'id' TEXT NOT NULL UNIQUE,
+			'name' TEXT,
+			'exp' INTEGER DEFAULT 0,
+			'bio' TEXT,
+            'reputations' INTEGER DEFAULT 0,
+			'heart_counts' INTEGER DEFAULT 0,
+			'receive_notification' INTEGER DEFAULT 0,
+			'last_login' INTEGER)`
+            , `run`
+            , []
+        )
+		this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
+			'user_id' TEXT NOT NULL UNIQUE,
+			'last_claim' INTEGER DEFAULT 0,
+			'total_streak' INTEGER DEFAULT 0)`
+            , `run`
+            , []
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
+			'user_id' TEXT NOT NULL UNIQUE,
+			'total_owned_reps' INTEGER DEFAULT 0
+			'total_given_reps' INTEGER DEFAULT 0
+			'last_give' INTEGER DEFAULT 0
+			'last_receive' INTEGER DEFAULT 0`
+            , `run`
+            , []
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS user_exp (
+			'user_id' TEXT NOT NULL UNIQUE,
+			'current_exp' INTEGER DEFAULT 0
+			'last_gain' INTEGER DEFAULT 0
+			'exp_booster' INTEGER DEFAULT 0
+			'exp_booster_actived_at' INTEGER DEFAULT 0`
+            , `run`
+            , []
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS user_post (
+			'posted_at' TIMESTAMP,
+			'url' TEXT,
+			'caption' TEXT
+			'from_user_id' INTEGER
+			'in_channel_id' INTEGER
+			'in_guild_id' INTEGER`
+            , `run`
+            , []
+		)
+		this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
+			'item_id' INTEGER,
+			'user_id' TEXT,
+			'quantity' INTEGER,
+			'last_update' TIMESTAMP DEFAULT datetime('now'))`
+            , `run`
+            , []
+		)
+
+
+		 /**
+		  * --------------------------
+		  * Security & Moderation
+		  * --------------------------
+		  */
+		 this._query(`CREATE TABLE IF NOT EXISTS strike_records (
+			'registered_at' TIMESTAMP DEFAULT datetime('now'),
+			'user_id' TEXT,
+			'reason' TEXT,
+			'reported_by' TEXT,
+			'in_guild' INTEGER,
+			'strike_level' INTEGER)`
+            , `run`
+            , []
+		)
+
+		
+
+
+        this._query(`CREATE TABLE IF NOT EXISTS user_check (
+            'user_id' TEXT NOT NULL UNIQUE,
+            'exp_cooldown' INTEGER DEFAULT 0,
+            'rep_cooldown' INTEGER DEFAULT 0,
+			'last_daily' REAL,
+			'total_daily_streak'
+            'cpu' REAL,
+            'memory' REAL)`
+            , `run`
+            , []
+        )
+    
+        this._query(`CREATE TABLE IF NOT EXISTS commands_usage (
+            'timestamp' INTEGER,
+            'guild_id' TEXT,
+            'user_id' TEXT,
+            'command_alias' TEXT,
+            'resolved_in' TEXT)`
+            , `run`
+            , []
+        )
+	}
+
+
 	/**
 	 * 	Parsing raw result from this.pullInventory().
 	 * 	@privateMethod
