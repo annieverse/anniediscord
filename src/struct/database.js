@@ -35,31 +35,25 @@ class Database {
 
 
 	/**
-	 * 	Standard low method for executing sql query
-	 * 	@privateMethod
-	 * 	@param {String|SQL} stmt
+	 * 	@description Standard low method for executing sql query
+	 * 	@param {String|SQL} stmt sql statement
 	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
 	 * 	@param {ArrayOfString|Object} supplies parameters to be used in sql statement.
+	 *  @param {String} label description for the query. Optional
 	 */
-	async _query(stmt=``, type=`get`, supplies=[]) {
-
+	async _query(stmt=``, type=`get`, supplies=[], label=``) {
 		//	Return if no statement has found
 		if (!stmt) return null
-
 		try {
-
-			//	Run query
-			let result = await sql[type](stmt, supplies)
-			//	Returning query result
+			let result = await this.client[type](stmt, supplies)
+			if (label) logger.info(`[Database._query()] ${label}`)
 			return result
-			
 		}
 		catch (e) {
 			logger.error(`Database._query() has failed to run. > ${e.stack}\n${stmt}`)
 			return null
 		}
-
 	}
 
 
