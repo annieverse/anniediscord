@@ -13,7 +13,7 @@ class Database {
 
 
 	/**
-	 * 	Opening database connection
+	 * 	@description Opening database connection
 	 *	@param {String} path default: ".data/database.sqlite"
 	 *  @param {String} fsPath default: "../../.data/database.sqlite"
 	 */
@@ -21,7 +21,7 @@ class Database {
 		try {
 			/**
 			 * This will check if the db file exists or not.
-			 * If no, it will throw an error that already catched below.
+			 * If file is not found, throw an error.
 			 */
 			accessSync(join(__dirname, fsPath), constants.F_OK)
 			this.client = await sql.open(path, {cached: true})
@@ -35,7 +35,7 @@ class Database {
 
 
 	/**
-	 * 	@description Standard low method for executing sql query
+	 * 	@description Standardized method for executing sql query
 	 * 	@param {String|SQL} stmt sql statement
 	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
@@ -51,20 +51,20 @@ class Database {
 			return result
 		}
 		catch (e) {
-			logger.error(`Database._query() has failed to run. > ${e.stack}\n${stmt}`)
+			logger.error(`[Database._query()] has failed to run. > ${e.stack}\n${stmt}`)
 			return null
 		}
 	}
 
 
-	schemaCheck() {
+	async schemaCheck() {
 		/**
 		 * --------------------------
 		 * NEW TABLES
-		 * @description A subsets from old tables. UNFINISHED
+		 * @description A subsets from old tables. Requires consideration and further refactoring.
 		 * @since 24/02/20
 		 * @author klerikdust
-		 * @
+		 * @version 0.1.0
 		 * --------------------------
 		 */
 
@@ -73,8 +73,8 @@ class Database {
 		  * User-related Data
 		  * --------------------------
 		  */
-		this._query(`CREATE TABLE IF NOT EXISTS user (
-			'registered_date' TIMESTAMP DEFAULT datetime('now'),
+		await this._query(`CREATE TABLE IF NOT EXISTS user (
+			'registered_date' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'id' TEXT NOT NULL UNIQUE,
 			'name' TEXT,
 			'bio' TEXT,
@@ -83,55 +83,87 @@ class Database {
 			'last_login' INTEGER)`
             , `run`
 			, []
-			, `Checking table user`
+			, `Verifying table user`
         )
-		this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
 			'user_id' TEXT NOT NULL UNIQUE,
-			'last_claim' INTEGER DEFAULT 0,
+			'last_claim' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'total_streak' INTEGER DEFAULT 0)`
             , `run`
 			, []
-			, `Checking table user_dailies`
+			, `Verifying table user_dailies`
 		)
-		this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
 			'user_id' TEXT NOT NULL UNIQUE,
-			'total_owned_reps' INTEGER DEFAULT 0
-			'total_given_reps' INTEGER DEFAULT 0
-			'last_give' INTEGER DEFAULT 0
-			'last_receive' INTEGER DEFAULT 0`
+			'total_owned_reps' INTEGER DEFAULT 0,
+			'total_given_reps' INTEGER DEFAULT 0,
+			'last_give' TIMESTAMP,
+			'last_receive' TIMESTAMP)`
             , `run`
 			, []
-			, `Checking table user_reputations`
+			, `Verifying table user_reputations`
 		)
-		this._query(`CREATE TABLE IF NOT EXISTS user_exp (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_exp (
 			'user_id' TEXT NOT NULL UNIQUE,
-			'current_exp' INTEGER DEFAULT 0
-			'last_gain' INTEGER DEFAULT 0
-			'exp_booster' INTEGER DEFAULT 0
-			'exp_booster_actived_at' INTEGER DEFAULT 0`
+			'current_exp' INTEGER DEFAULT 0,
+			'last_update' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'exp_booster' INTEGER DEFAULT 0,
+			'exp_booster_actived_at' TIMESTAMP)`
             , `run`
 			, []
-			, `Checking table user_exp`
+			, `Verifying table user_exp`
 		)
-		this._query(`CREATE TABLE IF NOT EXISTS user_post (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_post (
 			'posted_at' TIMESTAMP,
 			'url' TEXT,
-			'caption' TEXT
-			'from_user_id' INTEGER
-			'in_channel_id' INTEGER
-			'in_guild_id' INTEGER`
+			'caption' TEXT,
+			'user_id' INTEGER,
+			'channel_id' INTEGER,
+			'guild_id' INTEGER)`
             , `run`
 			, []
-			, `Checking table user_post`
+			, `Verifying table user_post`
 		)
-		this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
 			'item_id' INTEGER,
 			'user_id' TEXT,
 			'quantity' INTEGER,
-			'last_update' TIMESTAMP DEFAULT datetime('now'))`
+			'last_update' TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`
             , `run`
 			, []
-			, `Checking table user_inventory`
+			, `Verifying table user_inventory`
+		)
+		await this._query(`CREATE TABLE IF NOT EXISTS user_badges (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'badge_id' TEXT,
+			'equipped' INTEGER DEFAULT 1)`
+            , `run`
+			, []
+			, `Verifying table user_badges`
+		)
+
+
+		/**
+		 * --------------------------
+		 * Shop-related
+		 * --------------------------
+		 */
+		await this._query(`CREATE TABLE IF NOT EXISTS items (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'id' INTEGER NOT NULL UNIQUE,
+			'name' TEXT,
+			'alias' TEXT,
+			'rarity' INTEGER,
+			'type' TEXT,
+			'unique_type' TEXT,
+			'price' INTEGER,
+			'price_type' TEXT,
+			'description' TEXT,
+			'status' TEXT)`
+            , `run`
+			, []
+			, `Verifying table items`
 		)
 
 
@@ -140,82 +172,46 @@ class Database {
 		  * Security & Moderation
 		  * --------------------------
 		  */
-		 this._query(`CREATE TABLE IF NOT EXISTS strike_records (
-			'registered_at' TIMESTAMP DEFAULT datetime('now'),
+		await this._query(`CREATE TABLE IF NOT EXISTS strike_records (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT,
 			'reason' TEXT,
 			'reported_by' TEXT,
-			'in_guild' INTEGER,
+			'guild_id' INTEGER,
 			'strike_level' INTEGER)`
             , `run`
 			, []
-			, `Checking table strike_records`
+			, `Verifying table strike_records`
 		)
 
 		
 		 /**
 		  * --------------------------
-		  * System
+		  * System-level related informations
 		  * --------------------------
 		  */
-		 this._query(`CREATE TABLE IF NOT EXISTS commands_log (
-			'timestamp' TIMESTAMP DEFAULT datetime('now'),
+		await this._query(`CREATE TABLE IF NOT EXISTS commands_log (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT,
-			'in_guild' TEXT,
+			'guild_id' TEXT,
 			'command_alias' TEXT,
 			'resolved_in' TEXT)`
             , `run`
 			, []
-			, `Checking table commands_log`
+			, `Verifying table commands_log`
 		)
-		this._query(`CREATE TABLE IF NOT EXISTS resource_log (
-			'timestamp' TIMESTAMP DEFAULT datetime('now'),
+		await this._query(`CREATE TABLE IF NOT EXISTS resource_log (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'uptime' INTEGER,
 			'ping' REAL,
 			'cpu' REAL,
 			'memory' REAL)`
             , `run`
 			, []
-			, `Checking table resource_log`
-		)
-		this._query(`CREATE TABLE IF NOT EXISTS items (
-			'id' INTEGER NOT NULL UNIQUE,
-			'name' TEXT,
-			'rarity' INTEGER,
-			'alias' TEXT,
-			'type' TEXT,
-			'unique_type' TEXT,
-			'price' INTEGER,
-			'price_type TEXT,
-			'description' TEXT,
-			'status' TEXT)`
-            , `run`
-			, []
-			, `Checking table items`
+			, `Verifying table resource_log`
 		)
 
-
-        this._query(`CREATE TABLE IF NOT EXISTS user_check (
-            'user_id' TEXT NOT NULL UNIQUE,
-            'exp_cooldown' INTEGER DEFAULT 0,
-            'rep_cooldown' INTEGER DEFAULT 0,
-			'last_daily' REAL,
-			'total_daily_streak'
-            'cpu' REAL,
-            'memory' REAL)`
-            , `run`
-            , []
-        )
-    
-        this._query(`CREATE TABLE IF NOT EXISTS commands_usage (
-            'timestamp' INTEGER,
-            'guild_id' TEXT,
-            'user_id' TEXT,
-            'command_alias' TEXT,
-            'resolved_in' TEXT)`
-            , `run`
-            , []
-        )
+		return this
 	}
 
 

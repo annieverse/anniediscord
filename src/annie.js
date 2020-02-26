@@ -35,7 +35,7 @@ class Annie extends Discord.Client {
 
 			// Connecting to .sqlite file in .data/database.sqlite
 			const dbtime = process.hrtime()
-			this.db = await new Database().connect()
+			this.db = await (await new Database().connect()).schemaCheck()
 			logger.info(`Database connected (${getBenchmark(dbtime)})`)
 
 			// Registering all the available commands from ./src/commands directory
