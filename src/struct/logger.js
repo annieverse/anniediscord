@@ -21,8 +21,6 @@ const logFormat = printf(info => {
     return `${moment(info.timestamp).format(`DD-MM-Y hh:mm:ss`)} [${info.level}]: ${parsedMessage}`
   })
 
-
-//  Production Logging
 if (process.env.NODE_ENV === `production`) {
     winston.add(new winston.transports.DailyRotateFile({ 
         level: `info`,  
@@ -37,8 +35,6 @@ if (process.env.NODE_ENV === `production`) {
     }))
 }
 
-
-//  Development Logging
 if (process.env.NODE_ENV === `development`) {
     winston.add(new winston.transports.Console({
         level: `debug`,
@@ -52,6 +48,13 @@ if (process.env.NODE_ENV === `development`) {
             timestamp(),
             logFormat
         )
+    }))
+}
+
+if (process.env.NODE_ENV === `test`) {
+    winston.add(new winston.transports.Console({
+         level: `error`,
+         format: winston.format.simple() 
     }))
 }
 

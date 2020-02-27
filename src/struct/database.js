@@ -211,7 +211,7 @@ class Database {
 			, `Verifying table resource_log`
 		)
 
-		return this
+		return true
 	}
 
 
@@ -442,31 +442,19 @@ class Database {
 
 
 	/**
-	 * 	Register into userdata if not present
-	 * 	@param {String|ID} id user id. Use class default prop if not provided.
+	 * 	@description Insert into user table if id is not registered.
+	 * 	@param {String|ID} userId User's Discord ID
+	 *  @param {String|ID} userName User's Username
 	 */
-	async validatingNewUser(id = this.id) {
-		await this._query(`
-			INSERT OR IGNORE
-			INTO "userdata" (userId, registered_date)
-			VALUES (?, datetime('now'))`
+	async validatingNewUser(userId=``, userName=``) {
+		if (!userId) return logger.error(`[Database.validatingNewUser()] parameter "userId" is not provided.`)
+		const res = await this._query(`
+			INSERT OR IGNORE INTO user (registered_date, id, name, bio, heart_counts, receive_notification, last_login)
+			VALUES (datetime('now'), ?, ?, ?, ?, ?, datetime('now'))`
 			, `run`
-			, [id]
+			, [userId, userName, `Proud being Annie's Friend!`, 0, 1]
 		)
-		await this._query(`
-			INSERT OR IGNORE
-            INTO "usercheck"(userId)
-            VALUES(?)`
-			, `run`
-			, [id]
-		)
-		await this._query(`
-			INSERT OR IGNORE
-            INTO "userbadges"(userId)
-            VALUES(?)`
-			, `run`
-			, [id]
-		)
+		return res
 	}
 
 
