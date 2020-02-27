@@ -1,8 +1,16 @@
+const Experience = require(`./expManager`)
+const CollectPost = require(`./collectingArtpost`)
+const EventSubmission = require(`./eventSubmissionManager`)
+const Portfolio = require(`./portfolioManager`)
+const Commands = require(`../modules/commandsHandler`)
+const DM = require(`./directMessageInterface`)
+const Artcoins = require(`./artcoinGains`)
+const ModeratorNotification = require(`./ModeratorNotification`)
+
 /**
- *  Centralized Controller for message related.
+ *  @classdesc Centralized Controller for message related.
  *  Mainly used to handle incoming message from user and calculate the possible actions
  *  such as exp/post/event.
- *  @MessageController
  */
 class MessageController {
     constructor(data) {
@@ -24,25 +32,63 @@ class MessageController {
         this.getBenchmark = data.bot.getBenchmark
     }
 
+
+    async defaultFlow() {
+        //  Ignore any user interaction in dev environment
+        if (this.isUserInDevEnvironment) return
+        //  Ignore if its from a bot user
+        if (this.isAuthorBot) return
+
+        //  These are only run on production server
+        if (!this.config.dev) {
+            //  React and collect if its an art post
+            if (await this.isArtPost()) new CollectPost(this.data).run()
+            //  Handle event-submission post
+            if (this.isEventSubmission) new EventSubmission(this.data).run()
+            //  Handle portfolio post
+            if (this.isAddingPortfolio) new Portfolio(this.data).add()
+            //  Handle message coming from #verification request
+            if (this.isVerificationRequest) new ModeratorNotification(this.data).sendResponse()
+        }
+
+        //  Handle direct message
+        if (this.isDirectMessage) return new DM(this.data).run()
+        //  Handle message that has prefix or bot related.
+        if (this.isCommandMessage) return new Commands(this.data).prepare()
+
+
+        /** -----------------------------------------------------------------
+         *  Beyond this point require cooling-down state mechanism.
+         *  -----------------------------------------------------------------
+         */ 
+        //  Handle cooling-down state
+        if (await this.isCoolingDown()) return
+        //  Handle experience point gaining system
+        if (this.isExpActive) new Experience(this.data).runAndUpdate()     
+        //  Handle artcoins gaining system
+        if (this.isArtcoinsActive) new Artcoins(this.data).runAndUpdate()
+    }
+
+
     /**
-     * 	Check if user sent the message from DM.
-     * 	Returns @Boolean
+     * 	@description Check if user sent the message from DM.
+     * 	@returns {Boolean}
      */
     get isDirectMessage() {
         return this.message.channel.type === `dm`
     }
 
     /**
-     * 	Check if user is a bot.
-     * 	Returns @Boolean
+     * 	@description Check if user is a bot.
+     * 	@returns {Boolean}
      */
     get isAuthorBot() {
         return this.message.author.bot
     }
 
     /**
-     * 	Check if user has used command-type of message and sent in bot-allowed channel
-     * 	@isCommandMessage
+     * 	@description Check if user has used command-type of message and sent in bot-allowed channel
+     * 	@returns {Boolean}
      */
     get isCommandMessage() {
         if (!this.message.content.startsWith(this.config.prefix)) return false
@@ -58,8 +104,8 @@ class MessageController {
      */
 
     /**
-     *  Global cooldown for message exp/ac gain.
-     *  Returns @Boolean
+     *  @description Global cooldown for message exp/ac gain.
+     * 	@returns {Boolean}
      */
     async isCoolingDown() {
         if (this.config.plugins.includes(`DISABLE_COOLDOWN`)) return false
@@ -70,16 +116,16 @@ class MessageController {
     }
 
     /**
-     * 	Check if EXP plugin is enabled.
-     * 	Returns @Boolean
+     * 	@description Check if EXP plugin is enabled.
+     * 	@returns {Boolean}
      */
     get isExpActive() {
         return this.config.plugins.includes(`ACTIVE_EXP`)
     }
 
     /**
-     *  Check if ARTCOINS plugin is enabled.
-     *  Returns @Boolean
+     *  @description Check if ARTCOINS plugin is enabled.
+     * 	@returns {Boolean}
      */
     get isArtcoinsActive() {
         return this.config.plugins.includes(`ACTIVE_ARTCOINS`)
@@ -88,14 +134,15 @@ class MessageController {
 
     /**
      *  -------------------------------------------------------------------------------
-     *  Art-post related checks
+     *  Art-post methods
      * -------------------------------------------------------------------------------
      */
 
     /**
-     *  Check if message has an attachment. Returns boolean
+     *  @description Check if message has an attachment.
+     * 	@returns {Boolean}
      */
-    _hasAttachment() {
+    hasAttachment() {
         try {
             return this.message.attachments.first().id ? true : false
         }
@@ -104,16 +151,13 @@ class MessageController {
         }
     }
 
-
     /**
-     *  @desc Check if it's an art post and sent in artfeeds channel
-     *  @getter
+     *  @description Check if it's an art post and sent in artfeeds channel
      *  @returns {Boolean}
      */
     async isArtPost() {
         //  Skip if message not containing any attachment
-        if (!this._hasAttachment) return false
-
+        if (!this.hasAttachment()) return false
         //  Fetching guild's artfeeds configuration.
         const channels = await this.db.getArtFeedsLocation(this.message.guild.id)
         if (!channels) return false
@@ -123,8 +167,8 @@ class MessageController {
 
 
     /**
-     *  Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
-     *  Returns @Boolean
+     *  @description Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
+     * 	@returns {Boolean}
      */
     get isAddingPortfolio() {
         return this.message.content.includes(`#portfolio`) && this._hasAttachment()
@@ -139,21 +183,20 @@ class MessageController {
 
 
     /**
-     *  Check if message is coming from #verification channel
-     *  Returns @Boolean
+     *  @description Check if it sent to #verification channel
+     * 	@returns {Boolean}
      */
     get isVerificationRequest() {
         return [`538843763544555528`].includes(this.message.channel.id)
     }
 
     /**
-     *  Check if it sent to event-submission channel
-     *  @isEventSubmission
+     *  @description Check if it sent to event-submission channel
+     * 	@returns {Boolean}
      */
     get isEventSubmission() {
         return [`460615254553001994`].includes(this.message.channel.id) && this._hasAttachment()
     }
-
 
     /**
      *  Check if it's a message by Naph in general

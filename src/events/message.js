@@ -1,4 +1,4 @@
-const Worker = require(`../utils/Worker`)
+const MessageController = require(`../struct/controller`)
 const Pistachio = require(`../utils/Pistachio`)
 module.exports = async (bot, message) => {
 
@@ -24,6 +24,6 @@ module.exports = async (bot, message) => {
 		message: message
 	}).bag()
 
-	new Worker(stacks).default()
+	new MessageController(stacks).defaultFlow()
 
 }
