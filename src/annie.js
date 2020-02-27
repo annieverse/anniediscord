@@ -13,6 +13,7 @@ class Annie extends Discord.Client {
 	constructor() {
 		super({ disableEveryone: true })
 		this.startupInit = process.hrtime()
+		this.benchmark = getBenchmark
 		this.logger = logger
 		this.locale = locale
 		this.config = config
@@ -30,25 +31,15 @@ class Annie extends Discord.Client {
 				logger.error(`Promise Rejection > ${err.stack}`)
 			})
 
-			logger.info(ascii.default)
+			logger.debug(ascii.default)
 			logger.info(`Initializing ${process.env.NODE_ENV} server...`)
 
 			// Connecting to .sqlite file in .data/database.sqlite
-			const dbtime = process.hrtime()
-			this.db = await (await new Database().connect()).schemaCheck()
-			logger.info(`Database connected (${getBenchmark(dbtime)})`)
-
+			await this._setupDatabase()
 			// Registering all the available commands from ./src/commands directory
-			const cmdtime = process.hrtime()
-			this.commands = await new CommandsLoader().default()
-			logger.info(`${this.commands.totalFiles} commands registered (${getBenchmark(cmdtime)})`)
-
+			await this._setupCommands()
 			// Listening to default port
-			const app = Express()
-			app.get(`/`, (request, response) => response.sendStatus(200))
-			app.listen(this.config.port)
-			logger.info(`Listening to port ${this.config.port}`)
-
+			this._listeningToPort(this.config.port)
 			// Listening to discordjs events
 			require(`./events/eventHandler`)(this)
 
@@ -78,6 +69,33 @@ class Annie extends Discord.Client {
 			return logger.error(`Client terminated > ${error.stack}`)
 		}
 	}
+
+
+	async _setupDatabase() {
+		const dbtime = process.hrtime()
+		const db = await new Database().connect()
+		await db.schemaCheck()
+		// Assign once successful
+		this.db = db
+		logger.info(`Database connected (${getBenchmark(dbtime)})`)
+	}
+
+
+	async _setupCommands() {
+		const cmdtime = process.hrtime()
+		this.commands = await new CommandsLoader().default()
+		logger.info(`${this.commands.totalFiles} commands registered (${getBenchmark(cmdtime)})`)
+	}
+
+
+	_listeningToPort(port=0) {
+		const app = Express()
+		app.get(`/`, (request, response) => response.sendStatus(200))
+		app.listen(port)
+		logger.info(`Listening to port ${port}`)
+	}
+
+
 }
 
 module.exports = Annie

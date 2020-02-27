@@ -1,5 +1,3 @@
-const databaseManager = require(`./databaseManager.js`)
-const db = new databaseManager()
 const { RichEmbed, Attachment} = require(`discord.js`)
 class DailyFeaturedPost {
     constructor(bot) {
@@ -25,11 +23,11 @@ class DailyFeaturedPost {
     }
 
     async queries(date){
-        return await db.getRemoveBy(date)
+        return await this.bot.db.getRemoveBy(date)
     }
 
     async deleteRecord(date) {
-        return await db.deleteRecord(date)
+        return await this.bot.db.deleteRecord(date)
     }
 
     async getMessageArray(){

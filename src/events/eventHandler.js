@@ -1,51 +1,52 @@
 const reqEvent = (event) => require(`./${event}.js`)
 
-module.exports = bot => {
+module.exports = annie => {
 	//	Cached message
 	let message_object
 
-	bot.on(`ready`, async() => reqEvent(`ready`)(bot))
-	bot.on(`error`, async (e) => reqEvent(`error`)(bot, e, message_object))
-	bot.on(`warn`, async (e) => reqEvent(`warn`)(bot, e, message_object))
-	bot.on(`message`, async(message) => {
+	annie.on(`ready`, async() => reqEvent(`ready`)(annie))
+	annie.on(`error`, async (e) => reqEvent(`error`)(annie, e, message_object))
+	/*
+	annie.on(`warn`, async (e) => reqEvent(`warn`)(annie, e, message_object))
+	annie.on(`message`, async(message) => {
 		message_object = message
-		reqEvent(`message`)(bot, message)
+		reqEvent(`message`)(annie, message)
 	})
 
-	bot.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(bot, guild))
-	bot.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(bot, guild))
+	annie.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(annie, guild))
+	annie.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(annie, guild))
+	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
+	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
+	*/
 
-	bot.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(bot, guild, user))
-	bot.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(bot, guild, user))
-
-	if (!bot.config.dev) {
-		bot.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({bot, oldMember, newMember}))
-		bot.on(`reconnecting`, (bot) => reqEvent(`reconnecting`)(bot))
-		bot.on(`disconnect`, (bot) => reqEvent(`disconnect`)(bot))
-		bot.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(bot, member))
-		bot.on(`guildMemberRemove`, async (member) => reqEvent(`guildMemberRemove`)(bot, member))
-		bot.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(bot, oldUser, newUser))
-		bot.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({bot, reaction, user, message_object}))
-		bot.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({bot, reaction, user, message_object}))
-		bot.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(bot, oldMember, newMember))
-		bot.on(`raw`, async (packet) => reqEvent(`raw`)(bot, packet))
+	if (!annie.config.dev) {
+		annie.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({annie, oldMember, newMember}))
+		annie.on(`reconnecting`, (annie) => reqEvent(`reconnecting`)(annie))
+		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie))
+		annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member))
+		annie.on(`guildMemberRemove`, async (member) => reqEvent(`guildMemberRemove`)(annie, member))
+		annie.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(annie, oldUser, newUser))
+		annie.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({annie, reaction, user, message_object}))
+		annie.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({annie, reaction, user, message_object}))
+		annie.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(annie, oldMember, newMember))
+		annie.on(`raw`, async (packet) => reqEvent(`raw`)(annie, packet))
 		// Mostly for Logging only
-		bot.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(bot, channel))
-		bot.on(`channelDelete`, async (channel) => reqEvent(`channelDelete`)(bot, channel))
-		bot.on(`channelUpdate`, async (oldChannel, newChannel) => reqEvent(`channelUpdate`)(bot, oldChannel, newChannel))
-		bot.on(`roleCreate`, async (role) => reqEvent(`roleCreate`)(bot, role))
-		bot.on(`roleDelete`, async (role) => reqEvent(`roleDelete`)(bot, role))
-		bot.on(`roleUpdate`, async (oldRole, newRole) => reqEvent(`roleUpdate`)(bot, oldRole, newRole))
-		bot.on(`messageDelete`, async (message) => reqEvent(`messageDelete`)(bot, message))
-		bot.on(`messageDeleteBulk`, async (messages) => reqEvent(`messageDeleteBulk`)(bot, messages))
-		bot.on(`messageUpdate`, async (oldMessage, newMessage) => reqEvent(`messageUpdate`)(bot, oldMessage, newMessage))
-		bot.on(`emojiCreate`, async (emoji) => reqEvent(`emojiCreate`)(bot, emoji))
-		bot.on(`emojiDelete`, async (emoji) => reqEvent(`emojiDelete`)(bot, emoji))
-		bot.on(`emojiUpdate`, async (oldEmoji, newEmoji) => reqEvent(`emojiUpdate`)(bot, oldEmoji, newEmoji))
+		annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel))
+		annie.on(`channelDelete`, async (channel) => reqEvent(`channelDelete`)(annie, channel))
+		annie.on(`channelUpdate`, async (oldChannel, newChannel) => reqEvent(`channelUpdate`)(annie, oldChannel, newChannel))
+		annie.on(`roleCreate`, async (role) => reqEvent(`roleCreate`)(annie, role))
+		annie.on(`roleDelete`, async (role) => reqEvent(`roleDelete`)(annie, role))
+		annie.on(`roleUpdate`, async (oldRole, newRole) => reqEvent(`roleUpdate`)(annie, oldRole, newRole))
+		annie.on(`messageDelete`, async (message) => reqEvent(`messageDelete`)(annie, message))
+		annie.on(`messageDeleteBulk`, async (messages) => reqEvent(`messageDeleteBulk`)(annie, messages))
+		annie.on(`messageUpdate`, async (oldMessage, newMessage) => reqEvent(`messageUpdate`)(annie, oldMessage, newMessage))
+		annie.on(`emojiCreate`, async (emoji) => reqEvent(`emojiCreate`)(annie, emoji))
+		annie.on(`emojiDelete`, async (emoji) => reqEvent(`emojiDelete`)(annie, emoji))
+		annie.on(`emojiUpdate`, async (oldEmoji, newEmoji) => reqEvent(`emojiUpdate`)(annie, oldEmoji, newEmoji))
 
-		bot.on(`guildUnavailable`, async (guild) => reqEvent(`guildMemberAdd`)(bot, guild))
-		bot.on(`guildUpdate`, async (oldGuild, newGuild) => reqEvent(`guildUpdate`)(bot, oldGuild, newGuild))
-		bot.on(`guildMembersChunk`, async (members, guild) => reqEvent(`guildMembersChunk`)(bot, members, guild))
+		annie.on(`guildUnavailable`, async (guild) => reqEvent(`guildMemberAdd`)(annie, guild))
+		annie.on(`guildUpdate`, async (oldGuild, newGuild) => reqEvent(`guildUpdate`)(annie, oldGuild, newGuild))
+		annie.on(`guildMembersChunk`, async (members, guild) => reqEvent(`guildMembersChunk`)(annie, members, guild))
 	}
 
 }

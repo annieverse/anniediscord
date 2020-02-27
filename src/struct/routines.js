@@ -3,9 +3,9 @@ const moment = require(`moment`)
 const fs = require(`fs`)
 const path = require(`path`)
 const { Attachment } = require(`discord.js`)
-const getCpuUsage = require(`./cpuUsage`)
-const getMemUsage = require(`./memoryUsage`)
-const dailyFeatured = require(`../utils/DailyFeaturedPost`)
+const getCpuUsage = require(`../utils/cpuUsage`)
+const getMemUsage = require(`../utils/memoryUsage`)
+const dailyFeatured = require(`../struct/posts/dailyFeatured`)
 
 
 /**
@@ -19,32 +19,6 @@ class Routines {
         this.db = Client.db
 		this.env = Client.env
 		this.pixivCacheDirectory = path.join(__dirname, `../../.pixivcaches`)
-    }
-
-
-    databaseCheck() {
-
-        this.db._query(`CREATE TABLE IF NOT EXISTS resource_usage (
-            'timestamp' INTEGER,
-            'environment' TEXT,
-            'uptime' INTEGER,
-            'ping' REAL,
-            'cpu' REAL,
-            'memory' REAL)`
-            , `run`
-            , []
-        )
-    
-        this.db._query(`CREATE TABLE IF NOT EXISTS commands_usage (
-            'timestamp' INTEGER,
-            'guild_id' TEXT,
-            'user_id' TEXT,
-            'command_alias' TEXT,
-            'resolved_in' TEXT)`
-            , `run`
-            , []
-        )
-    
     }
 
 

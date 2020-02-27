@@ -1,4 +1,4 @@
-const Routines = require(`../utils/Routines`)
+const Routines = require(`../struct/routines`)
 module.exports = annie => {
 
 
@@ -32,8 +32,6 @@ module.exports = annie => {
 
 		//	Scheduling for database backup
 		Routine.databaseBackup()
-		//	Schema/tables check
-		Routine.databaseCheck()
 		//	Recording resource usage every 5 mins
 		Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
