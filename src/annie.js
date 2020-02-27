@@ -74,7 +74,7 @@ class Annie extends Discord.Client {
 	async _setupDatabase() {
 		const dbtime = process.hrtime()
 		const db = await new Database().connect()
-		await db.schemaCheck()
+		await db.validatingTables()
 		// Assign once successful
 		this.db = db
 		logger.info(`Database connected (${getBenchmark(dbtime)})`)

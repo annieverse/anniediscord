@@ -57,17 +57,16 @@ class Database {
 	}
 
 
-	async schemaCheck() {
-		/**
-		 * --------------------------
-		 * NEW TABLES
-		 * @description A subsets from old tables. Requires consideration and further refactoring.
-		 * @since 24/02/20
-		 * @author klerikdust
-		 * @version 0.1.0
-		 * --------------------------
-		 */
-
+	/**
+	 * --------------------------
+	 * NEW TABLES
+	 * @description A subsets from old tables. Requires consideration and further refactoring.
+	 * @since 24/02/20
+	 * @author klerikdust
+	 * @version 0.1.0
+	 * --------------------------
+	 */
+	async validatingTables() {
 		 /**
 		  * --------------------------
 		  * User-related Data
@@ -445,6 +444,7 @@ class Database {
 	 * 	@description Insert into user table if id is not registered.
 	 * 	@param {String|ID} userId User's Discord ID
 	 *  @param {String|ID} userName User's Username
+	 *  @returns {Object}
 	 */
 	async validatingNewUser(userId=``, userName=``) {
 		if (!userId) return logger.error(`[Database.validatingNewUser()] parameter "userId" is not provided.`)
@@ -453,6 +453,22 @@ class Database {
 			VALUES (datetime('now'), ?, ?, ?, ?, ?, datetime('now'))`
 			, `run`
 			, [userId, userName, `Proud being Annie's Friend!`, 0, 1]
+		)
+		return res
+	}
+
+
+	/**
+	 * 	@description Delete a user from user table entries.
+	 * 	@param {String|ID} userId User's Discord ID
+	 */
+	async deleteUser(userId=``) {
+		if (!userId) return logger.error(`[Database.deleteUser()] parameter "userId" is not provided.`)
+		const res = await this._query(`
+			DELETE FROM user
+			WHERE id = ?`
+			, `run`
+			, [userId]
 		)
 		return res
 	}

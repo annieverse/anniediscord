@@ -5,7 +5,7 @@ module.exports = async (bot, message) => {
 	//	Ignore bot
 	if (message.author.bot) return
 	//	Register new data if its a new user, else ignore.
-	await bot.db.validatingNewUser(message.author.id)
+	await bot.db.validatingNewUser(message.author.id, message.author.username)
 	//	Retrieve user metadata from db
 	const data = await bot.db.userMetadata(message.author.id)
 	
