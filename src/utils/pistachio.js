@@ -4,6 +4,9 @@ const fs = require(`fs`)
 const path = require(`path`)
 const { get } = require(`snekfetch`)
 /**
+ *  @class Pistachio
+ *  @version 0.2.0
+ *  @since 27/02/20
  *  @classdesc Micro framework to support Annie's structure.
  *  Lightweight, portable and opinionated.
  *  This was originally made by Pan to aggregate all the essential
@@ -11,8 +14,7 @@ const { get } = require(`snekfetch`)
  *  But since then, it got bigger and putting much advantage into our 
  *  day to day workflow,
  *  It might be a good idea to give it a unique name
- *  so here our smol Pistachio !
- *  @class Pistachio
+ *  so here is our smol Pistachio !
  */
 class Pistachio {
 	/**
@@ -23,7 +25,7 @@ class Pistachio {
 	}
 	
 	bag() {
-		
+
 		//  Get main this.components to make pistachio works
 		let { bot, message } = this.components
 		// Initialize default container
