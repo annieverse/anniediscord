@@ -1,108 +1,63 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
-const databaseManager = require(`./databaseManager`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
 const { get } = require(`snekfetch`)
 /**
- *  Micro framework to support Annie's structure
- *  Lightweight, portable and opinionated
- *  @Pistachio
- *  
+ *  @classdesc Micro framework to support Annie's structure.
+ *  Lightweight, portable and opinionated.
  *  This was originally made by Pan to aggregate all the essential
  *  functions as a single package of utils.
  *  But since then, it got bigger and putting much advantage into our 
  *  day to day workflow,
  *  It might be a good idea to give it a unique name
- *  so here our smol @Pistachio !
- *  
+ *  so here our smol Pistachio !
+ *  @class Pistachio
  */
 class Pistachio {
+	/**
+	 * @param {Object} Components must atleast include <Message> Object and Annie's <Client> instance.
+	 */
 	constructor(Components) {
 		this.components = Components
 	}
 	
-
-	/**
-	 * 	This is the default method to pull standard Pistachio's Components
-	 * 	@bag
-	 */
 	bag() {
+		
 		//  Get main this.components to make pistachio works
 		let { bot, message } = this.components
-
 		// Initialize default container
 		let container = { ...this.components }
-
-		//  Storing message codes
-		container.code = require(`./predefinedMessages`)
-
-		// Storing file paths
-		container.paths = require(`./filePaths.json`)
-
 		//  Storing colorset
 		container.palette = require(`./colorset`)
 
-		//  Storing role ids
-		container.roles = require(`./role-list`)
-
-		//  Storing functions.js functions
-		if (message){
-			container.utils = require(`./functions`)(bot, message)
-		}
-		//  Storing transaction checkout handler
-		container.Checkout = require(`../structures/transactions/checkout`)
-		
-		//  Storing main transaction handler
-		container.Transaction = require(`../structures/transactions/handler`)
-
-		//  Storing environment.json keys
-		container.environment = require(`../../.data/environment.json`)
-
-		//  Storing cards data
-		container.metacards = require(`./cards-metadata`)
-
-		//  Get user metadata manager
-		container.Data = require(`./userDataSelector`)
-
-		//  Get event-discussion channel object
-		container.eventLobby = bot.channels.get(`460615157056405505`)
-
-		//  Get general aau channel object
-		container.world = bot.channels.get(`459891664182312982`)
-
-		//  Sub-pistachio which require guild properties and not in DM.
 		if (message){
 			if (message.member && message.guild) {
-
+				/**
+				 * ------------------------
+				 *  User Permissions-Level
+				 * ------------------------
+				 */
 				//  Check for administrator authority
 				container.isAdmin = message.member.hasPermission(`ADMINISTRATOR`)
-
 				// Check for moderator authority
 				container.isModerator = message.member.hasPermission(`MANAGE_ROLES`)
-
 				//  Check for developer authority
 				container.isDev = container.roles.annie_developer.includes(message.member.id)
-
 				//  Check for event team authority
 				container.isEventManager = message.member.roles.find(r => r.id === `591050124114001952`)
-
 				// Check for staff team authority
 				container.isStaff = message.member.roles.find(r => Object.keys(container.roles.teams).some(i => container.roles.teams[i] == r.id))
-	
 				//  Check for booster user
 				container.isVIP = message.member.roles.find(r => r.id === `585550404197285889`)
-
 				// Check for event team authority
 				container.isEventMember = message.member.roles.find(r => Object.keys(container.roles.events).some(i => container.roles.events[i] == r.id))
 
-
 				/**
-				 *  Delete bulk of messages in current channel
+				 *  @description Delete bulk of messages in current channel
 				 *  @param {Integer} amount must be atleast above zero.
 				 */
 				container.deleteMessages = (amount = 1) => message.channel.bulkDelete(amount)
-
 				
 				/**
 				 *  Instant message collector
@@ -115,9 +70,8 @@ class Pistachio {
 						time: 60000,
 					})
 				
-
 				/**
-				 *  (Multi-layering)Instant message collector
+				 *  @description (Multi-layering)Instant message collector
 				 *  @param {Object} msg current message instance
 				 *  @param {Default} max only catch 1 response
 				 *  @param {Default} time 60 seconds timeout
@@ -128,9 +82,8 @@ class Pistachio {
 						time: 60000,
 					})
 				
-
 				/**
-				 * To check whether the user has the said role or not
+				 * @description To check whether the user has the said role or not
 				 * @param {String} rolename for role name code
 				 * @return {Boolean} of role
 				 * @hasRole
@@ -159,21 +112,20 @@ class Pistachio {
 					return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
 				}
 			}
-		}
-		//  Automatically convert weird number notation into real value.
-		container.trueInt = (str) => {
-			return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
-				? Math.round(Number(str)) : NaN
-		}
-
-		//  Returns username based on the id.
-		container.name = (id) => {
-			return bot.users.get(id).username
-		}
-
-		if (message){
-			//  Wrapping out avatar message.
-			container.avatarWrapper = (id) => {
+			//  Method inside this statement only available to use when msg's property {required_usermetada} is set to true.
+			if(this.components.meta.author) {
+				/**
+				 * @description Check whether the user is trying to gift/rep/send money to themselves.
+				 * @returns {Boolean}
+				 */
+				container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
+			}
+			
+			/**
+			 * @description Uses raw Discord.RichEmbed to build custom avatar message.
+			 * @param {String|ID} userId target user's avatar to be pulled from
+			 */
+			container.avatarWrapper = (userId=``) => {
 				message.react(`📸`)
 				const reactions = [
 					`Amazing!`,
@@ -185,7 +137,7 @@ class Pistachio {
 					`Avatar of the day!`
 				]
 				const randomReactions = reactions[Math.floor(Math.random() * reactions.length)]
-				const [Avatar, Name] = [container.avatar(id), container.name(id)]
+				const [Avatar, Name] = [container.avatar(userId), container.name(userId)]
 				const embed = new RichEmbed()
 					.setImage(Avatar)
 					.setAuthor(Name, Avatar)
@@ -198,76 +150,121 @@ class Pistachio {
 					})
 			}
 		}
-
-		//  An emoji finder. Returns as unicode
-		container.emoji = (name) => {
-			try {
-				return bot.emojis.find(e => e.name === name)
-			} catch (e) {
-				throw new TypeError(`${name} is not a valid emoji.`)
-			}
+		
+		/**
+		 * @description Automatically convert any weird number notation into a real value.
+		 * @param {String} str target string
+		 * @returns {Number/NaN}
+		 */
+		container.trueInt = (str=``) => {
+			return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
+				? Math.round(Number(str)) : NaN
 		}
 
-		//  Format numbers with more than 3 digits
-		container.commanifier = (number = 0) => {
+		/**
+		 *  @description Fetch user's username based on given user id. Fallback as 'unknown' if user is not fetchable.
+		 *  @param {String} userId target user
+		 *  @returns {String}
+		 */
+		container.name = (userId=``) => {
+			return bot.users.get(userId).username || `unknown`
+		}
+
+		/**
+		 *  @description An Emoji finder. Fetch all the available emoji based on given emoji name
+		 *  @param {String} name emoji name
+		 *  @returns {Emoji|String}
+		 */
+		container.emoji = (name=``) => {
+			return bot.emojis.find(e => e.name === name) || `(???)`
+		}
+
+		/**
+		 *  @description Add comma separator on given number. Only applies to number above 3 digits.
+		 *  @param {Number|Integer} number target number to be parsed from
+		 *  @returns {Number|Integer}
+		 */
+		container.commanifier = (number=0) => {
 			return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
 		}
 
-		//  Get closest upper element from an array
-		container.closestUpper = (array, val) => {
+		/**
+		 *  @description Get closest upper element from an array
+		 *  @param {Array} array target array
+		 *  @param {Number|Integer} val value to be looked on
+		 *  @returns {ElementOfArray}
+		 */
+		container.closestUpper = (array=[], val=1) => {
 			return Math.min.apply(null, array.filter(function (v) {
 				return v > val
 			}))
 		}
 
-		//  Get closest below element from an array
-		container.closestBelow = (array, val) => {
+		/**
+		 *  @description Get closest previous element from an array
+		 *  @param {Array} array target array
+		 *  @param {Number|Integer} val value to be looked on
+		 *  @returns {ElementOfArray}
+		 */
+		container.closestBelow = (array=[], val=1) => {
 			return Math.max.apply(null,array.filter(function(v)
 			{ return v <= val }))
 		}
 
-		//  Removing first few non-alphabet character from string
-		container.relabel = (str) => {
+		/**
+		 * @description Removes first few non-alphabet characters from a string.
+		 * @param {String} str target string
+		 * @returns {String}
+		 */
+		container.relabel = (str=``) => {
 			let res = str.replace(/[^A-Za-z]+/, ``)
 			return res
 		}
 
-		//  Outputing bot's ping
+		/**
+		 * @description Output bot's current latency in rounded format
+		 * @returns {String}
+		 */
 		container.ping = container.commanifier(Math.round(bot.ping))
 
-		//  Returns random index of elemenet from given array
-		container.choice = (arr = []) => {
+		/**
+		 * Randomize and pick one of the element of given array.
+		 * @param {Array} arr target array to be choose from
+		 * @returns {ElementOfArray}
+		 */
+		container.choice = (arr=[]) => {
 			return arr[Math.floor(Math.random() * arr.length)]
 		}
 
 		/**
-		 * Lifesaver promise. Used pretty often when calling an API.
-		 * @pause
+		 * @description Bite-sized promise. The task will be freezed for given x milliseconds 
+		 * until prompted to run the next task.
+		 * @param {Integer/Number}
 		 */
-		container.pause = (ms) => {
+		container.pause = (ms=0) => {
 			return new Promise(resolve => setTimeout(resolve, ms))
-		}, // End of pause
+		}, 
 
-
-		// Lowercase first letter and de-plural string.
-		container.normalizeString = (string) => {
+		/**
+		 * @description Normalizing string. First character will be lowercased and 
+		 * the "s" at the end of string will be removed as well.
+		 * @param {String} string target string
+		 * @returns {String}
+		 */
+		container.normalizeString = (string=``) => {
 			string = string.charAt(0).toLowerCase() + string.slice(1)
 			if (string.endsWith(`s`)) {
 				string = string.slice(0, -1)
 			}
 			return string
 		}
-		if (message){
-			//  Inside this statement only available to use when required_usermetada is true.
-			if(this.components.meta.author) {
-				//  Check whether the user is trying to gift/rep/send money to themselves. Returns boolean.
-				container.selfTargeting = this.components.meta.author.id === message.author.id ? true : false
-				//  Initializing database class
-				container.db = (id = this.components.meta.author.id) => new databaseManager(id)
-			}
-		}
-		//  Load asset from default images dir
-		container.loadAsset = async (id) => {
+
+		/**
+		 *  @description Load image based on given id from default ./src/images/ directory.
+		 *  @param {String} id filename 
+		 *  @returns {Buffer}
+		 */
+		container.loadAsset = async (id=``) => {
 			// List all files in a directory in Node.js recursively in a synchronous fashion
 			const walkSync = (dir, filelist = []) => {
 				fs.readdirSync(dir).forEach(file => {
@@ -296,48 +293,39 @@ class Pistachio {
 			return fsn.readFile(ultimateFile)
 		}
 
-
-		//  Load cached pixiv image on root
-		container.loadPixivCaches = async (id) => {
-			return fsn.readFile(`./${id}`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+		/**
+		 * @description registering cooldown state for given label. (Example of
+		 * label: modulename_userid)
+		 * @param {String} label cooldown label
+		 * @param {Integer/Number} timeout timeout in milliseconds until removed.
+		 */
+		container.setCooldown = async (label=``, timeout=5000) => {
+			await bot.keyv.set(label, `1`, timeout)
+			bot.logger.verbose(`${timeout/1000}s cooldown state has been set for ${label}`)
 		}
-
 
 		/**
-		 * ------------------------------------------------
-		 * Cooling down system -> Pistachio's CD Cluster
-		 * 
-		 * Future plan: move these sub container into its own Class Module.
-		 * ------------------------------------------------
+		 * @description check cooldown state for given label. (Example of
+		 * label: modulename_userid)
+		 * @param {String} label cooldown label
+		 * @returns {Boolean}
 		 */
-
-		container.setCooldown = async (label=String, timeout=5000) => {
-			bot.keyv.set(label, `1`, timeout)
-			bot.logger.info(`${timeout/1000}s cooldown state has been set for ${label}`)
-		}
-		container.isCooldown = async (label=String) => {
+		container.isCooldown = async (label=``) => {
 			const inCooldownState = await bot.keyv.get(label)
 			if (inCooldownState) {
-				bot.logger.info(`Access denied for ${label} (currently cooling down)`)
+				bot.logger.verbose(`Access denied for ${label} (currently cooling down)`)
 				return true
 			}
 			return false
 		}
 
-
 		/**
-		 *	Handles user's avatar fetching process.
-		 *	Set `true` on second param to return as compressed buffer. (which is needed by canvas)
+		 *	@description Handles user's avatar fetching process. Set `true` on
+		 *  second param to return as compressed buffer. (which is needed by canvas)
 		 *	@param {String|ID} id id of user to be fetched from.
 		 *	@param {Boolean} compress set true to return as compressed buffer.
 		 */
 		container.avatar = (id, compress = false, size = `?size=512`) => {
-
-			const fallbackImage = (err) => {
-				bot.logger.error(`Failed to parse user's avatar. User will see a placeholder img as an exchange. > ${err}`)
-				return container.loadAsset(`error`)
-			}
-		
 			try {
 				let url = bot.users.get(id).displayAvatarURL
 				if (compress) {
@@ -348,15 +336,14 @@ class Pistachio {
 
 				return url
 			}
-			catch(e) { return fallbackImage(e) }
+			catch(e) { return container.loadAsset(`error`) }
 		}
 
-
 		/**
-		 * 	Get the min/max or the calculated curve on given currentexp.
+		 * 	@description Get the min/max or the calculated curve on given currentexp.
 		 *  @param {Number/Integer} currentExp
 		 */
-		container.getExpMetadata = (currentExp=Number) => {
+		container.getExpMetadata = (currentExp=0) => {
 			const formula = (exp) => {
 				if (exp < 100) {
 					return {
@@ -392,20 +379,8 @@ class Pistachio {
 			return {level,maxexp,nextexpcurve,minexp}
 		}
 
-		if (message){
-			/**
-			 *  Request mutation data
-			 *  @param {String} id target user's id. Message author is the default id. 
-			 */
-			container.reqData = async (id = message.author.id) => {
-				const mutatedComponents = {args: [id], bot, message: message, commandfile: {help: {multi_user: false}}}
-				const metadata = await new container.Data(mutatedComponents).pull()
-				return metadata
-			}
-		}
-
 		/**
-		 *  Prettify result of user's owned gifts
+		 *  @description Prettify result of user's owned gifts
 		 *  @param {Object} metadata Gifts metadata. Giving information of each reps point.
 		 *  @param {Object} userInventory User inventories metadata.
 		 */
@@ -431,13 +406,12 @@ class Pistachio {
 			return str
 		}
 
-		
 		/**
-		 * Formatting each paragraph.
-		 * @string of user description.
-		 * @numlines of paragraph.
+		 * @description Formatting each paragraph. Mainly used to format profile card's description/bio
+		 * @param {String} string of user description.
+		 * @param {Number|Integer} numlines of paragraph.
 		 */
-		container.formatString = (string, numlines) => {
+		container.formatString = (string=``, numlines=0) => {
 			var paraLength = Math.round((string.length) / numlines)
 			var paragraphs = []
 			var marker = paraLength
@@ -475,9 +449,8 @@ class Pistachio {
 			}
 		}
 
-
 		/**
-		 * Splits array items into chunks of the specified size
+		 * @description Splits array items into chunks of the specified size
 		 * @param {Array|String} items
 		 * @param {Number} chunkSize
 		 * @returns {Array}
@@ -492,14 +465,21 @@ class Pistachio {
 			return result
 		}
 
-		container.socketing = (content,socket) => {
+		/**
+		 * @description Mainly used to socket a socketable message like in Annie's System Locales.
+		 * @param {String} content target string
+		 * @param {Array} socket an array of sockets to be applied from.
+		 * @returns {String}
+		 */
+		container.socketing = (content=``,socket=[]) => {
 			for(let i = 0; i < socket.length; i++) {
 				if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, socket[i])
 			}
 			return content
 		}
-		/** Annie's custom system message.
-		 *  @param content as the message content
+
+		/** @description Annie's custom message system.
+		 *  @param {String} content as the message content
 		 *  @param {Array} socket is the optional message modifier. Array
 		 *  @param {ColorResolvable} color for the embed color. Hex code
 		 *  @param {Object} field as the message field target (GuildChannel/DM). Object
