@@ -232,10 +232,10 @@ class complaintCollection {
 		//  Initial process
 		const run = async () => {
 
-			const { isAdmin, isStaff, meta: { author } } = this.stacks
+			const { isModerator, meta: { author } } = this.stacks
 
-			//  Returns when the user doesn't have admin authority.
-			if (!isAdmin && !isStaff) return log({ code: `UNAUTHORIZED` })
+			//  Returns when the user doesn't have moderator authority.
+			if (!isModerator) return log({ code: `UNAUTHORIZED` })
 
 
 			//  Returns tutorial
