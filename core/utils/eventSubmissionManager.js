@@ -60,7 +60,7 @@ class SubmissionManager extends Controller {
         this.reply(this.code.FOXIE_ENVELOPE, {
             socket:[
                 this.meta.author.username,
-                this.emoji(`bongofoxy`)
+                this.emoji(`AnnieYay`)
             ],
             color: this.color.pink,
             field: this.eventLobby,
