@@ -18,10 +18,13 @@ process.on(`unhandledRejection`, err => {
 	logger.error(`Promise Rejection > ${err.stack}`)
 })
 
-new Client({
+const client = new Client({
     fetchAllMembers: false,
     prefix: config.prefix,
     commandEditing: true,
     typing: true,
     readyMessage: (client) => `Successfully initialized. Ready to serve ${client.guilds.size} guilds.`
-}).login(process.env.TOKEN)
+})
+
+logger.debug(`finish`)
+

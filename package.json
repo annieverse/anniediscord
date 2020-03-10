@@ -41,6 +41,7 @@
     "chart.js": "^2.9.3",
     "chartjs-node-canvas": "^2.4.1",
     "color": "^3.1.2",
+    "cross-env": "^7.0.2",
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -65,7 +66,6 @@
     "winston-daily-rotate-file": "^4.4.2"
   },
   "devDependencies": {
-    "cross-env": "^6.0.3",
     "eslint": "5.16.0",
     "nodemon": "^2.0.2"
   }
