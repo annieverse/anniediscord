@@ -1,6 +1,6 @@
-const logger = require(`../logger`)
+const logger = require(`./logger`)
 
-class Actions {
+class Moderations {
     /**
      * @param {Object} message <Message> instance is required. 
      * @param {*} userId target user id.
@@ -24,7 +24,7 @@ class Actions {
       } 
 
       // Cancel action if the given point is negative.
-      if (!points) return logger.debug(`no moderate actions given for ${this.user.id}`)
+      if (!points) return logger.debug(`no actions given for ${this.user.id}`)
 
       if (points > 4) points = 4
 
@@ -73,4 +73,4 @@ class Actions {
 
 }
 
-module.exports = Actions
+module.exports = Moderations

@@ -2,11 +2,18 @@ let config = {}
 
 /**
  *  -----------------------------------------------------------
+ *  This defines the current version of the app.
+ *  @STRING
+ */
+config.VERSION = require(`../../package`).version
+
+/**
+ *  -----------------------------------------------------------
  *  This defines the current environment that the app hosted on.
  *  Set NODE_ENV to development if you are hosting this locally.
  *  @BOOLEAN
  */
-config.dev = process.env.NODE_ENV === `development`
+config.DEV = process.env.NODE_ENV === `development`
 
 /**
  *  -----------------------------------------------------------
@@ -14,7 +21,7 @@ config.dev = process.env.NODE_ENV === `development`
  *  If not defined, it will use 3000 as the default port.
  *  @NUMBER
  */
-config.port = process.env.PORT || 3000
+config.PORT = process.env.PORT || 3000
 
 /**
  *  -----------------------------------------------------------
@@ -22,7 +29,7 @@ config.port = process.env.PORT || 3000
  *  If not defined, it will use `>` as the default prefix.
  *  @STRING
  */
-config.prefix = process.env.PREFIX || `>`
+config.PREFIX = process.env.PREFIX || `>`
 
 /**
  *  -----------------------------------------------------------
@@ -36,12 +43,12 @@ config.prefix = process.env.PREFIX || `>`
  *  @ARRAY type for the container
  *  @STRING type for the supplied parameter
  */
-config.plugins = [`ACTIVE_EXP`, `ACTIVE_ARTCOINS`]
+config.PLUGINS = [`ACTIVE_EXP`, `ACTIVE_ARTCOINS`]
 
 
-config.permission = require(`./permissions`)
-config.exp = require(`./exp`)
-config.currency = require(`./currency`)
+config.PERMISSIONS = require(`./permissions`)
+config.EXP = require(`./exp`)
+config.CURRENCY = require(`./currency`)
 
 
 module.exports = config

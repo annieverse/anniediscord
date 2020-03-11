@@ -1,5 +1,5 @@
 const moment = require(`moment`)
-const Action = require(`../../struct/moderation/actions`)
+const Action = require(`../../libs/moderations`)
 
 /**
  *  Main Module

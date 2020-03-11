@@ -4,8 +4,6 @@ const { get } = require(`snekfetch`)
 const moment = require(`moment`)
 const probe = require(`probe-image-size`)
 const Theme = require(`../../ui/colors/themes`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/Roboto.ttf`)), `Roboto`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
@@ -96,7 +94,7 @@ async function portfolio(stacks, member) {
 				}
 			} catch (e) {
 				//console.log(err);
-				sql.run(`DELETE FROM userartworks WHERE url = "${src}"`)
+				db._query(`DELETE FROM userartworks WHERE url = ?`, `run`, [src])
 			}
 		}
 

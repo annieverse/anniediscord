@@ -1,8 +1,8 @@
 `use-strict`
 
 const Controller = require(`../messageController`)
-const Data = require(`../../utils/userdataSelector`)
-const Pistachio = require(`../../utils/Pistachio`)
+const Data = require(`../utils/userdataSelector`)
+const Pistachio = require(`../utils/Pistachio`)
 const env = require(`../../.data/environment`)
 const { special_bot_domain } = require(`./config`)
 const IdCollection = require(`../utils/role-list`)

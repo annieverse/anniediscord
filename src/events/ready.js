@@ -1,18 +1,18 @@
-const Routines = require(`../struct/routines`)
+const Routines = require(`../libs/routines`)
 module.exports = annie => {
 
 
-	const { config, logger } = annie
+	const { dev, logger } = annie
 	const Routine = new Routines(annie)
 
 
-	if (config.dev) {
+	if (dev) {
 		/**
 		 * 	--------------------------------------------------
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
-		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.benchmark(annie.startupInit)})`)
+		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`dnd`)
 	} else {

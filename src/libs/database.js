@@ -1,4 +1,5 @@
-const sql = require(`sqlite`)
+const SqliteClient = require(`better-sqlite3`)
+const Redis = require(`redis`)
 const logger = require(`./logger`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
@@ -17,20 +18,19 @@ class Database {
 	 *	@param {String} path default: ".data/database.sqlite"
 	 *  @param {String} fsPath default: "../../.data/database.sqlite"
 	 */
-	async connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
-		try {
-			/**
-			 * This will check if the db file exists or not.
-			 * If file is not found, throw an error.
-			 */
-			accessSync(join(__dirname, fsPath), constants.F_OK)
-			this.client = await sql.open(path, {cached: true})
-			return this
-		}
-		catch(error) {
-			logger.error(`Failed to connect database > ${error.message}`)
-			throw error
-		}
+	connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
+		/**
+		 * This will check if the db file exists or not.
+		 * If file is not found, throw an error.
+		 */
+		accessSync(join(__dirname, fsPath), constants.F_OK)
+		this.client = new SqliteClient(path, {cached: true})
+		const redisClient = Redis.createClient()
+		redisClient.on(`connect`, () => logger.info(`Redis client has connected`))
+		redisClient.on(`error`, err => new Error(`Failed to connect redis > ${err}`))
+		this.redis = redisClient
+
+		return this
 	}
 
 
@@ -46,7 +46,7 @@ class Database {
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {
-			let result = await this.client[type](stmt, supplies)
+			let result = await this.client.prepare(stmt)[type](supplies)
 			if (label) logger.info(`[Database._query()] ${label}`)
 			return result
 		}
@@ -141,6 +141,23 @@ class Database {
 			, []
 			, `Verifying table user_badges`
 		)
+
+
+		/**
+		 * --------------------------
+		 * Guild-related
+		 * --------------------------
+		 */
+		await this._query(`CREATE TABLE IF NOT EXISTS guild_configurations (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'guild_id' TEXT NOT NULL,
+			'type' TEXT,
+			'user_id' TEXT,
+			'channel_id' TEXT)`
+            , `run`
+			, []
+			, `Verifying table guild_configurations`
+		)	
 
 
 		/**
@@ -356,6 +373,25 @@ class Database {
 	getRemoveByLTSRole(roleId){
 		return this._query(`SELECT remove_by FROM limitedShopRoles WHERE user_id = ? AND role_id = ?`,`get`,[this.id,roleId])
 	}
+
+	/** -------------------------------------------------------------------------------
+	 *  Guild Methods
+	 *  -------------------------------------------------------------------------------
+	 */
+	/**
+	 * Fetch guild's configurations in the guild_configurations table.
+	 * @param {String} guildId Target guild id 
+	 * @returns {Object}
+	 */
+	getGuildConfigurations(guildId=``) {
+		this._query(`
+			SELECT * FROM guild_configurations
+			WHERE guild_id = ? `
+			, `all`
+			, [guildId]
+		)
+	}
+
 
 	/**
 	 * 	Defacto method for updating experience point

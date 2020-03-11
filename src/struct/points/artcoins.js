@@ -1,4 +1,4 @@
-const Controller = require(`../struct/controller`)
+const Points = require(`../../libs/points`)
 
 
 /**
@@ -11,7 +11,7 @@ const Controller = require(`../struct/controller`)
  *  make sure it is properly mocked.
  *  @Artcoins
  */
-class Artcoins extends Controller {
+class Artcoins extends Points {
     constructor(data) {
 		super(data)
         this.data = data

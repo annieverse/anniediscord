@@ -5,7 +5,7 @@
  * ASK Me if you need help and ill help walkthrough
  * 
  */
-const databaseManager = require(`../../struct/database`)
+const databaseManager = require(`../../libs/database`)
 
 /**
  * Notes for me.

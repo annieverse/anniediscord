@@ -1,4 +1,5 @@
-const reqEvent = (event) => require(`./${event}.js`)
+const reqEvent = (event) => require(`../events/${event}.js`)
+const MessageController = require(`./messages`)
 
 module.exports = annie => {
 	//	Cached message
@@ -6,20 +7,18 @@ module.exports = annie => {
 
 	annie.on(`ready`, async() => reqEvent(`ready`)(annie))
 	annie.on(`error`, async (e) => reqEvent(`error`)(annie, e, message_object))
-	/*
 	annie.on(`warn`, async (e) => reqEvent(`warn`)(annie, e, message_object))
 	annie.on(`message`, async(message) => {
 		message_object = message
-		reqEvent(`message`)(annie, message)
+		new MessageController({bot:annie, message}).run(true)
 	})
 
 	annie.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(annie, guild))
 	annie.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(annie, guild))
 	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
 	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
-	*/
 
-	if (!annie.config.dev) {
+	if (!annie.dev) {
 		annie.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)({annie, oldMember, newMember}))
 		annie.on(`reconnecting`, (annie) => reqEvent(`reconnecting`)(annie))
 		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie))

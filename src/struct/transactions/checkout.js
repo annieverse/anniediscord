@@ -1,5 +1,5 @@
 const { MessageCollector } = require(`discord.js`)
-const logger = require(`../logger`)
+const logger = require(`../../libs/logger`)
 const profile = require(`../gui/profile`)
 
 //  Await for user confirmation before proceeding the transaction.

@@ -1,6 +1,6 @@
 const Discord = require(`discord.js`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const SqliteClient = require(`better-sqlite3`)
+const sql = new SqliteClient(`.data/database.sqlite`)
 class addAnime {
     constructor(Stacks) {
         this.author = Stacks.meta.author

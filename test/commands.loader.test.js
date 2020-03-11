@@ -1,5 +1,5 @@
 const { expect } = require(`chai`)
-const CommandsLoader = require(`../src/struct/commands/loader`)
+const CommandsLoader = require(`../src/commands/loader`)
 /**
  * @reference ./src/struct/commands/loader.js
  */

@@ -1,77 +1,105 @@
-const Experience = require(`./expManager`)
-const CollectPost = require(`./collectingArtpost`)
-const EventSubmission = require(`./eventSubmissionManager`)
-const Portfolio = require(`./portfolioManager`)
-const Commands = require(`../modules/commandsHandler`)
-const DM = require(`./directMessageInterface`)
-const Artcoins = require(`./artcoinGains`)
-const ModeratorNotification = require(`./ModeratorNotification`)
+const Permission = require(`../libs/permissions`)
 
 /**
- *  @classdesc Centralized Controller for message related.
- *  Mainly used to handle incoming message from user and calculate the possible actions
- *  such as exp/post/event.
+ * @typedef {ClientPrimaryProps}
+ * @property {Object} [client={}] Current <AnnieClient> instance
+ * @property {Object} [message={}] Current <Message> instance
+ * 
+ */
+
+/**
+ * Centralized Controller for handling incoming messages.
+ * Mainly used to handle incoming message from user and calculate the possible actions
+ * such as Points/Social Feeds/Commands Module.
+ * @since 4.0.1
+ * @param {Object} data supplied data from message event.
  */
 class MessageController {
-    constructor(data) {
-        this.data = data
-        this.bot = data.bot
-		this.message = data.message
-        this.keyv = data.bot.keyv
-        this.reply = data.reply
-        this.config = data.bot.config
-        this.color = data.palette
-        this.emoji = data.emoji
-        this.code = data.code
-        this.meta = data.meta
-        this.author = data.meta.author.username ? data.meta.author : data.meta.author.user
-        this.db = data.bot.db.setUser(this.author.id)
-        this.logger = data.bot.logger
+    constructor(data = {}) {
         this.moduleID = `MSG_${data.message.author.id}`
-        this.cd = data.cooldown
-        this.getBenchmark = data.bot.getBenchmark
+        this.bot = data.bot
+        this.message = data.message
+        this.permission = data.bot.permissions
+        this.userId = data.message.author.id
+        this.logger = data.bot.logger
     }
 
+    /**
+     * Running default workflow. In the newer version, each tasks has cooldown checks.
+     * @since 6.0.0
+     * @param {Boolean} minimal set this to true to make it only run command's tasks.
+     * @returns {Classes}
+     */
+    async run(minimal=false) {
 
-    async defaultFlow() {
-        //  Ignore any user interaction in dev environment
-        if (this.isUserInDevEnvironment) return
+        /** -----------------------------------------------------------------
+         *  Exceptor
+         *  -----------------------------------------------------------------
+         */
         //  Ignore if its from a bot user
-        if (this.isAuthorBot) return
+        if (this.isBotUser) return
+        //  Ignore any user interaction in dev environment
+        if (this.unauthorizedEnvironment) return
 
-        //  These are only run on production server
-        if (!this.config.dev) {
-            //  React and collect if its an art post
-            if (await this.isArtPost()) new CollectPost(this.data).run()
-            //  Handle event-submission post
-            if (this.isEventSubmission) new EventSubmission(this.data).run()
-            //  Handle portfolio post
-            if (this.isAddingPortfolio) new Portfolio(this.data).add()
-            //  Handle message coming from #verification request
-            if (this.isVerificationRequest) new ModeratorNotification(this.data).sendResponse()
+        /** -----------------------------------------------------------------
+         *  Module Selector
+         *  -----------------------------------------------------------------
+         */
+
+        if (minimal) {
+            if (this.isCommandMessage) {
+                if (await this.isCoolingDown(`COMMAND_${this.userId}`)) return
+                return 
+            }
+            return
         }
 
         //  Handle direct message
-        if (this.isDirectMessage) return new DM(this.data).run()
-        //  Handle message that has prefix or bot related.
-        if (this.isCommandMessage) return new Commands(this.data).prepare()
+        if (this.isDirectMessage) {
+            if (await this.isCoolingDown(`DM_${this.userId}`)) return
+            return 
+            
+        }
+        //  Handle message that started with a prefix
+        if (this.isCommandMessage) {
+            if (await this.isCoolingDown(`COMMAND_${this.userId}`)) return
+            return
+        }
+        // Handle message that have met the requirement for a feed post
+        if (this.isFeedMessage()) {
+            if (await this.isCoolingDown(`FEEDS_${this.userId}`)) return
+            return
+        }
 
-
-        /** -----------------------------------------------------------------
-         *  Beyond this point require cooling-down state mechanism.
-         *  -----------------------------------------------------------------
-         */ 
-        //  Handle cooling-down state
-        if (await this.isCoolingDown()) return
+        //  Automatically using [Points Module] when no module requirements are met
+        if (await this.isCoolingDown(`POINTS_${this.userId}`)) return
         //  Handle experience point gaining system
-        if (this.isExpActive) new Experience(this.data).runAndUpdate()     
+        if (this.isExpActive) return  
         //  Handle artcoins gaining system
-        if (this.isArtcoinsActive) new Artcoins(this.data).runAndUpdate()
+        if (this.isArtcoinsActive) return
     }
 
+    /**
+     *  Check if user is not authorized to access the environment
+     *  @returns {Boolean}
+     */
+    get unauthorizedEnvironment() {
+        const userPerm = new Permission(this.message).authorityCheck()
+        this.logger.debug(`${this.userId} - LVL${userPerm.level} - ${userPerm.name}, ${this.message.content}`)
+        const permLevel = userPerm.level
+        return this.bot.dev && permLevel < 4 ? true : false
+    }
 
     /**
-     * 	@description Check if user sent the message from DM.
+     *  Check if user is a bot.
+     *  @returns {Boolean}
+     */
+    get isBotUser() {
+        return this.message.author.bot
+    }
+
+    /**
+     * 	Check if user sent the message from DM.
      * 	@returns {Boolean}
      */
     get isDirectMessage() {
@@ -79,44 +107,51 @@ class MessageController {
     }
 
     /**
-     * 	@description Check if user is a bot.
-     * 	@returns {Boolean}
-     */
-    get isAuthorBot() {
-        return this.message.author.bot
-    }
-
-    /**
-     * 	@description Check if user has used command-type of message and sent in bot-allowed channel
+     * 	Check if user has started the message with prefix
      * 	@returns {Boolean}
      */
     get isCommandMessage() {
-        if (!this.message.content.startsWith(this.config.prefix)) return false
-        if (this.message.content.length <= this.config.prefix.length) return false
+        return this.message.content.startsWith(this.bot.prefix)
+    }
+
+    /**
+     * 	Check if user has meet the condition for feed post.
+     *  Require Database API 
+     * 	@returns {Boolean}
+     */
+    async isFeedMessage() {
+        const config = this.bot.db.getGuildConfigurations(this.message.guild.id)
+        // False if guild hasn't set any custom configurations for the guild
+        if (!config.length) return false
+        const feedsConfig = config.filter(el => el.type === `FEEDS`)
+        // False if guild hasn't set their feeds channel yet
+        if (!feedsConfig.length) return false
+        // False if current channel id isn't match with the registered feeds channel id
+        if (!feedsConfig.channel_id != this.message.guild.channel)
+
         return true
     }
 
 
     /**
-     *  -------------------------------------------------------------------------------
+     * -------------------------------------------------------------------------------
      *  EXP, ARTCOINS and COOLDOWN STATE checks
      * -------------------------------------------------------------------------------
      */
 
     /**
-     *  @description Global cooldown for message exp/ac gain.
+     *  Check if user's action still in cooling-down state.
+     *  @param {String} label Define label for the cooldown. (Example: MSG_{USER.ID})
      * 	@returns {Boolean}
      */
-    async isCoolingDown() {
-        if (this.config.plugins.includes(`DISABLE_COOLDOWN`)) return false
-        if (!this.cd) return false
-        if (await this.keyv.get(this.moduleID)) return true
-        await this.keyv.set(this.moduleID, `1`, this.cd)
+    async isCoolingDown(label=``) {
+        if (this.bot.plugins.includes(`DISABLE_COOLDOWN`)) return false
+        if (await this.bot.db.redis.get(label)) return true
         return false
     }
 
     /**
-     * 	@description Check if EXP plugin is enabled.
+     * 	Check if EXP plugin is enabled.
      * 	@returns {Boolean}
      */
     get isExpActive() {
@@ -124,7 +159,7 @@ class MessageController {
     }
 
     /**
-     *  @description Check if ARTCOINS plugin is enabled.
+     *  Check if ARTCOINS plugin is enabled.
      * 	@returns {Boolean}
      */
     get isArtcoinsActive() {
@@ -139,7 +174,7 @@ class MessageController {
      */
 
     /**
-     *  @description Check if message has an attachment.
+     *  Check if message has an attachment.
      * 	@returns {Boolean}
      */
     hasAttachment() {
@@ -152,7 +187,7 @@ class MessageController {
     }
 
     /**
-     *  @description Check if it's an art post and sent in artfeeds channel
+     *  Check if it's an art post and sent in artfeeds channel
      *  @returns {Boolean}
      */
     async isArtPost() {
@@ -167,7 +202,7 @@ class MessageController {
 
 
     /**
-     *  @description Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
+     *  Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
      * 	@returns {Boolean}
      */
     get isAddingPortfolio() {
@@ -183,7 +218,7 @@ class MessageController {
 
 
     /**
-     *  @description Check if it sent to #verification channel
+     *  Check if it sent to #verification channel
      * 	@returns {Boolean}
      */
     get isVerificationRequest() {
@@ -191,7 +226,7 @@ class MessageController {
     }
 
     /**
-     *  @description Check if it sent to event-submission channel
+     *  Check if it sent to event-submission channel
      * 	@returns {Boolean}
      */
     get isEventSubmission() {

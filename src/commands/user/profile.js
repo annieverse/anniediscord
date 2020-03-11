@@ -4,7 +4,7 @@ const badge = require(`../../struct/gui/badges`)
 const family = require(`../../struct/gui/families`)
 const friend = require(`../../struct/gui/friends`)
 const stat = require(`../../struct/gui/stats`)
-const databaseManager = require(`../../struct/database`)
+const databaseManager = require(`../../libs/database`)
 
 class Profile {
 	constructor(Stacks) {

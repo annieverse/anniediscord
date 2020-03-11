@@ -1,4 +1,4 @@
-const databaseManager = require(`../database`)
+const databaseManager = require(`../../libs/database`)
 
 
 // Supporting transaction workflow. Initialized on each different category.

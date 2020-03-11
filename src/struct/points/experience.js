@@ -1,15 +1,13 @@
-const booster = require(`../config/ticketbooster`)
-const Controller = require(`../struct/controller`)
+const booster = require(`../../config/ticketbooster`)
+const Points = require(`../../libs/points`)
 const Artcoins = require(`./artcoins`)
 
 /**
  * Experience formula wrapper.
  * Please follow the default constructor metadata structure in order to make 
  * the class working as expected
- * 
- * @Experience
  */
-class Experience extends Controller {
+class Experience extends Points {
 	constructor(data) {
 		super(data)
 		this.data = data

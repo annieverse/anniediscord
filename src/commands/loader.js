@@ -1,6 +1,5 @@
 const { Collection } = require(`discord.js`)
 const fs = require(`fs`)
-const logger = require(`../../struct/logger`)
 
 class CommandsLoader {
 	/**
@@ -17,37 +16,33 @@ class CommandsLoader {
 
 
 	default() {
-		try {
+		/**
+		 * Recursively pull available categories in command's root directory
+		 * @example user/system/social/shop/etc
+		 */
+		let directories = fs.readdirSync(this.commandsPath).filter(file => !file.includes(`.`))
+
+		for (const index in directories) {
+			const dir = directories[index]
+			this.queryOnDir = dir
 			/**
-			 * Recursively pull available categories in command's root directory
+			 * Recursively pull files from a category
 			 * @example user/system/social/shop/etc
 			 */
-			const directories = fs.readdirSync(this.commandsPath)
-			for (const index in directories) {
-				const dir = directories[index]
-				this.queryOnDir = dir
-				/**
-				 * Recursively pull files from a category
-				 * @example user/system/social/shop/etc
-				 */
-				const files = fs.readdirSync(this.commandsPath + dir)
-				const jsfile = this.getJsFiles(files)
-				jsfile.forEach(file => {
-					this.register(dir, file)
+			const files = fs.readdirSync(this.commandsPath + dir)
+			const jsfile = this.getJsFiles(files)
+			jsfile.forEach(file => {
+				this.register(dir, file)
 
-					// Iteration checkpoints
-					this.totalFiles++
-					this.queryOnFile = file
-				})
-			}
-			return { 
-				commands : this.commands,
-				aliases : this.aliases,
-				totalFiles : this.totalFiles
-			}
+				// Iteration checkpoints
+				this.totalFiles++
+				this.queryOnFile = file
+			})
 		}
-		catch (error) {
-			logger.error(`Failed to register ${this.queryOnDir}/${this.queryOnFile} > ${error}`)
+		return { 
+			commands : this.commands,
+			aliases : this.aliases,
+			totalFiles : this.totalFiles
 		}
 	}
 
@@ -60,7 +55,7 @@ class CommandsLoader {
 	 * command without using .default() method first. Optional.
 	 */
 	register(category=``, file=``, ejectImmediately=false) {
-		const src = require(`../../commands/${category}/${file}`)
+		const src = require(`./${category}/${file}`)
 		
 		this.commands.set(src.help.name, src)
 		src.help.aliases.forEach(alias => {

@@ -1,5 +1,5 @@
 /* eslint-disable no-unreachable */
-const Experience = require(`../../utils/experience`)
+const Experience = require(`../../struct/points/experience`)
 
 /**
  * Main module
