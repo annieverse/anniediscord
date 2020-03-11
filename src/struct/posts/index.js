@@ -21,10 +21,6 @@ class Post {
     isHeartReaction(emoji=``) {
         return emoji == this.main_emoji
     }
-
-    get inFeedChannel() {
-
-    }
-
-
 }
+
+module.exports = Post

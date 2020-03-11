@@ -333,7 +333,6 @@ class Pistachio {
 				if (compress) {
 					return get(url.replace(/\?size=2048$/g, size))
 						.then(data => data.body)
-						.catch(e => { return fallbackImage(e) })
 				}
 
 				return url
