@@ -1,5 +1,5 @@
 const SqliteClient = require(`better-sqlite3`)
-const Redis = require(`redis`)
+const Redis = require(`async-redis`)
 const logger = require(`./logger`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
@@ -26,10 +26,8 @@ class Database {
 		accessSync(join(__dirname, fsPath), constants.F_OK)
 		this.client = new SqliteClient(path, {cached: true})
 		const redisClient = Redis.createClient()
-		redisClient.on(`connect`, () => logger.info(`Redis client has connected`))
 		redisClient.on(`error`, err => new Error(`Failed to connect redis > ${err}`))
 		this.redis = redisClient
-
 		return this
 	}
 

@@ -1,4 +1,5 @@
 const Permission = require(`../libs/permissions`)
+const Command = require(`../libs/commands`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -31,52 +32,31 @@ class MessageController {
      * @returns {Classes}
      */
     async run(minimal=false) {
-
         /** -----------------------------------------------------------------
          *  Exceptor
          *  -----------------------------------------------------------------
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
+        this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
 
-        /** -----------------------------------------------------------------
+        /** 
+         *  -----------------------------------------------------------------
          *  Module Selector
          *  -----------------------------------------------------------------
          */
-
         if (minimal) {
-            if (this.isCommandMessage) {
-                if (await this.isCoolingDown(`COMMAND_${this.userId}`)) return
-                return 
-            }
+            if (this.isCommandMessage) return this._runTask(`COMMAND`, new Command(this.bot, this.message).init(), 5)
             return
         }
-
-        //  Handle direct message
-        if (this.isDirectMessage) {
-            if (await this.isCoolingDown(`DM_${this.userId}`)) return
-            return 
-            
-        }
-        //  Handle message that started with a prefix
-        if (this.isCommandMessage) {
-            if (await this.isCoolingDown(`COMMAND_${this.userId}`)) return
-            return
-        }
-        // Handle message that have met the requirement for a feed post
-        if (this.isFeedMessage()) {
-            if (await this.isCoolingDown(`FEEDS_${this.userId}`)) return
-            return
-        }
+        if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
+        if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`dm done`), 5)
+        if (this.isFeedMessage()) return this._runTask(`FEED`, console.log(`feed done`), 5)
 
         //  Automatically using [Points Module] when no module requirements are met
-        if (await this.isCoolingDown(`POINTS_${this.userId}`)) return
-        //  Handle experience point gaining system
-        if (this.isExpActive) return  
-        //  Handle artcoins gaining system
-        if (this.isArtcoinsActive) return
+        return this._runTask(`POINTS`, console.log(`feed done`), 60)
     }
 
     /**
@@ -84,10 +64,7 @@ class MessageController {
      *  @returns {Boolean}
      */
     get unauthorizedEnvironment() {
-        const userPerm = new Permission(this.message).authorityCheck()
-        this.logger.debug(`${this.userId} - LVL${userPerm.level} - ${userPerm.name}, ${this.message.content}`)
-        const permLevel = userPerm.level
-        return this.bot.dev && permLevel < 4 ? true : false
+        return this.bot.dev && this.message.author.permissions.level < 4 ? true : false
     }
 
     /**
@@ -135,80 +112,70 @@ class MessageController {
 
     /**
      * -------------------------------------------------------------------------------
-     *  EXP, ARTCOINS and COOLDOWN STATE checks
+     *  COOLDOWN STATE checks
      * -------------------------------------------------------------------------------
      */
 
     /**
      *  Check if user's action still in cooling-down state.
-     *  @param {String} label Define label for the cooldown. (Example: MSG_{USER.ID})
+     *  @since 6.0.0
+     *  @param {String} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
      * 	@returns {Boolean}
      */
-    async isCoolingDown(label=``) {
+    async isCooldown(label=``) {
+        const fn = `[MessageController.isCooldown()]`
         if (this.bot.plugins.includes(`DISABLE_COOLDOWN`)) return false
-        if (await this.bot.db.redis.get(label)) return true
-        return false
+        this.logger.debug(`${fn} checking ${label}`)
+        return await this.bot.db.redis.get(label)
     }
 
     /**
-     * 	Check if EXP plugin is enabled.
+     *  Set a cooldown for user
+     *  @since 6.0.0
+     *  @param {String} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
+     *  @param {Number} [time=0] timeout in seconds
      * 	@returns {Boolean}
      */
-    get isExpActive() {
-        return this.config.plugins.includes(`ACTIVE_EXP`)
-    }
-
-    /**
-     *  Check if ARTCOINS plugin is enabled.
-     * 	@returns {Boolean}
-     */
-    get isArtcoinsActive() {
-        return this.config.plugins.includes(`ACTIVE_ARTCOINS`)
+    async setCooldown(label=``, time=0) {
+        const fn = `[MessageController.setCooldown()]`
+        if (time <= 0) throw new TypeError(`${fn} "time" parameter must above 0.`)
+        this.logger.debug(`${fn} registering ${label} with ${time}s timeout`)
+        return await this.bot.db.redis.set(label, 1, `EX`, time)
     }
 
 
     /**
      *  -------------------------------------------------------------------------------
-     *  Art-post methods
+     *  Private Methods
      * -------------------------------------------------------------------------------
      */
+    /**
+     * A task wrapper.
+     * @param {String} [label=``] Define label for the cooldown. (Example: MSG)
+     * @param {Function/Method/Class} task define the main task that going to be executed
+     * @param {Number} [timeout=0] define the timeout number
+     */
+    async _runTask(label=``, task, timeout=0) {
+        const fn = `[MessageController._runTask()]`
+        if (!task) throw new TypeError(`${fn} parameter "task" should be filled with either a Function/Method/Class`)
+        const embedLabel = `${label}_${this.userId}`
+        if (await this.isCooldown(embedLabel)) return
+        task
+        this.setCooldown(embedLabel, timeout)
+     }
 
     /**
-     *  Check if message has an attachment.
-     * 	@returns {Boolean}
+     * Assign user's permission level to <Message> properties.
+     * Accessable through <message.author.permissions> afterwards.
+     * @returns {StringCode}
      */
-    hasAttachment() {
-        try {
-            return this.message.attachments.first().id ? true : false
-        }
-        catch (e) {
-            return false
-        }
-    }
-
-    /**
-     *  Check if it's an art post and sent in artfeeds channel
-     *  @returns {Boolean}
-     */
-    async isArtPost() {
-        //  Skip if message not containing any attachment
-        if (!this.hasAttachment()) return false
-        //  Fetching guild's artfeeds configuration.
-        const channels = await this.db.getArtFeedsLocation(this.message.guild.id)
-        if (!channels) return false
-
-        return channels.includes(this.message.channel.id)
-    }
-
-
-    /**
-     *  Check if user intent is to setup portfolio work. Thiw will be automatically recorded as submitting new art.
-     * 	@returns {Boolean}
-     */
-    get isAddingPortfolio() {
-        return this.message.content.includes(`#portfolio`) && this._hasAttachment()
-    }
-
+    _registerPermission() {
+        const fn = `[MessageCollector._registerPermission()]`
+        const userPerm = new Permission(this.message).authorityCheck()
+        this.logger.debug(`${fn} PERM_LVL ${userPerm.level} - ${userPerm.name} | USER_ID ${this.message.author.id}`)
+        this.message.author.permissions = userPerm
+        return `OK`
+     }
 
     /**
      *  -------------------------------------------------------------------------------

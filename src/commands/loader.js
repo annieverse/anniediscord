@@ -40,7 +40,7 @@ class CommandsLoader {
 			})
 		}
 		return { 
-			commands : this.commands,
+			names : this.commands,
 			aliases : this.aliases,
 			totalFiles : this.totalFiles
 		}
