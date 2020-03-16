@@ -1,18 +1,18 @@
+const Pistachio = require(`../../libs/pistachio`)
 /**
  * Main module
  * @Ping outputing bot ping
  */
  
-class Ping {
+class Ping extends Pistachio {
 	constructor(Stacks) {
-		this.stacks = Stacks
-		this.reply = Stacks.reply
+		super(Stacks)
 	}
 	async execute() {
-		const { bot, commanifier, palette } = this.stacks
-		return this.reply(bot.locale.REQUEST_PING, {
-			color: palette.lightgreen,
-			socket: [commanifier(Math.round(bot.ping))]
+		return super.reply(1)
+		return super.reply(super.bot.locales.REQUEST_PING, {
+			color: super.utils.palette.lightgreen,
+			socket: [super.utils.commanifier(Math.round(super.bot.ping))]
 		})
 	}
 }
@@ -28,5 +28,5 @@ module.exports.help = {
 	permissionLevel: 0,
 	public: true,
 	required_usermetadata: false,
-	multi_user: false
+	multiUser: false
 }
