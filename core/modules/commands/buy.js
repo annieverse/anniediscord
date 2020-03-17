@@ -10,15 +10,15 @@ const profileManager = require(`../../utils/profileManager`)
 class Buy {
 	constructor(Stacks) {
 		this.stacks = Stacks
-		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`,`Sticker`]
+		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`, `Sticker`]
 	}
 
-	get availiableCovers() {
+	get availableCovers() {
 		const { bot: { db } } = this.stacks
 		return db.getCovers
 	}
 
-	get availiableStickers() {
+	get availableStickers() {
 		const { bot: { db } } = this.stacks
 		return db.getStickers
 	}
@@ -116,12 +116,12 @@ class Buy {
 		if (transactionComponents.type === `Badges` && badgesHaveDuplicate) return reply(BUY.DUPLICATE_BADGE)
 
 		//  Reject duplicate cover alias.
-		let covers = await this.availiableCovers
+		let covers = await this.availableCovers
 		if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
 		
 		if (transactionComponents.type === `Covers` && covers.map(element => element.alias).includes(item.alias)) return reply(BUY.COVER_IN_INVENTORY)
 
-		let stickers = await this.availiableStickers
+		let stickers = await this.availableStickers
 		if (transactionComponents.type === `Sticker` && data.sticker === item.alias) return reply(BUY.DUPLICATE_STICKER)
 
 		if (transactionComponents.type === `Sticker` && stickers.map(element => element.alias).includes(item.alias)) return reply(BUY.STICKER_IN_INVENTORY)

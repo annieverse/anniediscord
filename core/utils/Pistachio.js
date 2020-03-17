@@ -179,7 +179,7 @@ class Pistachio {
 					`I wuv it ❤`,
 					`Awesome art!`,
 					`Magnificent~`,
-					`#2k19 #topselfie`,
+					`#2k20 #topselfie`,
 					`Beautiful!!`,
 					`Avatar of the day!`
 				]
