@@ -111,10 +111,9 @@ class Pistachio {
 				 */
 				container.collector = new MessageCollector(message.channel,
 					m => m.author.id === message.author.id, {
-						max: 1,
+						max: 2,
 						time: 60000,
 					})
-				
 
 				/**
 				 *  (Multi-layering)Instant message collector
@@ -124,7 +123,7 @@ class Pistachio {
 				 */
 				container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
 					m => m.author.id === msg.author.id, {
-						max: 1,
+						max: 2,
 						time: 60000,
 					})
 				
@@ -180,7 +179,7 @@ class Pistachio {
 					`I wuv it ❤`,
 					`Awesome art!`,
 					`Magnificent~`,
-					`#2k19 #topselfie`,
+					`#2k20 #topselfie`,
 					`Beautiful!!`,
 					`Avatar of the day!`
 				]
@@ -202,9 +201,10 @@ class Pistachio {
 		//  An emoji finder. Returns as unicode
 		container.emoji = (name) => {
 			try {
-				return bot.emojis.find(e => e.name === name)
+				return bot.emojis.find(e => e.name === name) ? bot.emojis.find(e => e.name === name) : `:sparkles:`
 			} catch (e) {
-				throw new TypeError(`${name} is not a valid emoji.`)
+				//throw new TypeError(`${name} is not a valid emoji.`)
+				return `:sparkles:`
 			}
 		}
 

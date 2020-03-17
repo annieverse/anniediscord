@@ -16,10 +16,13 @@ class ranksManager {
 
 	/**
      * Get roles through discord's collection.
+	 * Returns @everyone role if no role can be found by name
      * @r of role property
      */ 
 	getRoles(r) {
-		return this.bot.guilds.get(this.message.guild.id).roles.find(n => n.name === r)
+		return (this.bot.guilds.get(this.message.guild.id).roles.find(n => n.name === r) ?
+				this.bot.guilds.get(this.message.guild.id).roles.find(n => n.name === r) :
+				this.bot.guilds.get(this.message.guild.id).roles.find( n => n.name === `@everyone`) )
 	}
 
 	/**

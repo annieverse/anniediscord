@@ -10,15 +10,15 @@ const profileManager = require(`../../utils/profileManager`)
 class Buy {
 	constructor(Stacks) {
 		this.stacks = Stacks
-		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`,`Sticker`]
+		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`, `Sticker`]
 	}
 
-	get availiableCovers() {
+	get availableCovers() {
 		const { bot: { db } } = this.stacks
 		return db.getCovers
 	}
 
-	get availiableStickers() {
+	get availableStickers() {
 		const { bot: { db } } = this.stacks
 		return db.getStickers
 	}
@@ -34,24 +34,31 @@ class Buy {
 		//  Returns no parametered input
 		if (!args[0]) return reply(BUY.SHORT_GUIDE)
 
-		const key = args[0].toUpperCase()
-
-		var category = this.categories.find((i) => i.toLowerCase().includes(key.toLowerCase()))
-		//  Returns if category is invalid
-		if (!category) return reply(BUY.INVALID_CATEGORY)
-
-		//  Returns if item is invalid
-		if (!args[1]) return reply(BUY.MISSING_ITEMNAME)
-
+		let item
 		let transactionComponents = {
-			itemname: message.content.substring(message.content.indexOf(args[1])).toLowerCase(),
-			type: category,
 			message: message,
 			author: author,
 			usermetadata: data
 		}
+
+		if (/^\d+$/.test(args[0])) {
+			transactionComponents.id = parseInt(args[0])
+		} else {
+			const key = args[0].toUpperCase()
+
+			var category = this.categories.find((i) => i.toLowerCase().includes(key.toLowerCase()))
+			//  Returns if category is invalid
+			if (!category) return reply(BUY.INVALID_CATEGORY)
+
+			//  Returns if item is invalid
+			if (!args[1]) return reply(BUY.MISSING_ITEMNAME)
+
+			transactionComponents.itemname = message.content.substring(message.content.indexOf(args[1])).toLowerCase()
+			transactionComponents.type = category
+		}
+
 		let transaction = new Transaction(transactionComponents)
-		let item = await transaction.pull
+		item = await transaction.pull
 
 		//  Returns if item is not valid
 		if (!item) return reply(BUY.INVALID_ITEM)
@@ -97,7 +104,7 @@ class Buy {
 			itemdata: item,
 			transaction: transaction,
 			// Is there a preview, yes = [is the item a sticker, yes = [is the sticker them specific, yes= add light or dark, no = return sticker alias name], no = return asset alias], no = return null
-			preview: preview[key] ? category === `Sticker` ? await db(author.id).stickerTheme(item.alias) ? `sticker_${item.alias}_${switchColor[usercolor].sticker}` : `sticker_${item.alias}` : item.alias : null,
+			preview: preview[item.type.toUpperCase()] ? category === `Sticker` ? await db(author.id).stickerTheme(item.alias) ? `sticker_${item.alias}_${switchColor[usercolor].sticker}` : `sticker_${item.alias}` : item.alias : null,
 			stacks: this.stacks,
 			msg: message,
 			user: author
@@ -116,12 +123,12 @@ class Buy {
 		if (transactionComponents.type === `Badges` && badgesHaveDuplicate) return reply(BUY.DUPLICATE_BADGE)
 
 		//  Reject duplicate cover alias.
-		let covers = await this.availiableCovers
+		let covers = await this.availableCovers
 		if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
 		
 		if (transactionComponents.type === `Covers` && covers.map(element => element.alias).includes(item.alias)) return reply(BUY.COVER_IN_INVENTORY)
 
-		let stickers = await this.availiableStickers
+		let stickers = await this.availableStickers
 		if (transactionComponents.type === `Sticker` && data.sticker === item.alias) return reply(BUY.DUPLICATE_STICKER)
 
 		if (transactionComponents.type === `Sticker` && stickers.map(element => element.alias).includes(item.alias)) return reply(BUY.STICKER_IN_INVENTORY)
@@ -142,7 +149,7 @@ module.exports.help = {
 	name: `buy`,
 	aliases: [],
 	description: `buy an item from the shop`,
-	usage: `buy <category> <item>`,
+	usage: `buy <category> <item> OR buy <index>`,
 	group: `shop`,
 	public: true,
 	required_usermetadata: true,

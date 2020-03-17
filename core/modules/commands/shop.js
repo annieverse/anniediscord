@@ -16,7 +16,7 @@ class shop {
 		} = this.stacks
 		const collection = new databaseManager(message.author.id)
 
-		const registerItems = (source, target, emoji) => {
+		const registerItems = (source, target) => {
 			let categories = []
 
 			for (var key in source) {
@@ -31,7 +31,7 @@ class shop {
 				for (var c in source) {
 					if (categories[i] === source[c].type) {
 						let priceRange = format.threeDigitsComa(source[c].price)
-						tempDesc += `${emoji} ${priceRange} - **${source[c].name}**\n\`${source[c].desc}\`\n\n`
+						tempDesc += `${source[c].itemId} **${source[c].name}** - ${priceRange} ${emoji(source[c].price_type)}\n\`${source[c].desc}\`\n\n`
 					}
 				}
 				target.addField(categories[i], tempDesc)
@@ -55,28 +55,28 @@ class shop {
 
 		//          WORKING ON NEW SHOP INTERFACE
 		let registered_interface = []
-		const interface_page = async (desc = `test`, img, footer = `footer`, type = `Tickets`, emojicode = `artcoins`, opt1 = undefined, opt2 = undefined) => {
+		const interface_page = async (desc = `test`, img, footer = `footer`, type = `Tickets`, opt1 = undefined, opt2 = undefined) => {
 			const page = new Discord.RichEmbed()
 				.setDescription(desc)
 				.setColor(palette.darkmatte)
 				.setFooter(footer)
 				.setImage(img)
-			registerItems(await collection.classifyItem(type, opt1, opt2), page, emoji(emojicode))
+			registerItems(await collection.classifyItem(type, opt1, opt2), page)
 
 			registered_interface.push(page)
 		}
 
 
 		async function run() {
-			await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 9]`, `Unique`, `artcoins`, `price < 130`)
-			await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 9]`, `Covers`, `magical_paper`, `price < 6`)
-			await interface_page(`These are our general items!`, links.ticket, `[3 / 9]`, `Tickets`, `artcoins`, `unique_type != "Exp_booster"`)
-			await interface_page(`Boost your social activities!`, links.expbooster, `[4 / 9]`, `Tickets`, `artcoins`, `_rowid_ > 2 AND unique_type = "Exp_booster"`, `name DESC`)
-			await interface_page(`Customize your card theme!`, links.skin, `[5 / 9]`, `Skins`, `artcoins`)
-			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 9]`, `Badges`, `artcoins`)
-			await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 9]`, `Covers`, `artcoins`, `price > 350`)
-			await interface_page(`Choose your favorite roles!`, links.roles, `[8 / 9]`, `Roles`, `artcoins`, `price > 2000`)
-			await interface_page(`Choose your favorite sticker!`, links.sticker, `[9 / 9]`, `Sticker`, `artcoins`, `price > 2000`)
+			await interface_page(`Lucky Ticket has come!`, links.gacha, `[1 / 9]`, `Unique`, `price < 130`)
+			await interface_page(`May Special Cover!`, links.premiumcover, `[2 / 9]`, `Covers`, `price < 6`)
+			await interface_page(`These are our general items!`, links.ticket, `[3 / 9]`, `Tickets`, `unique_type != "Exp_booster"`)
+			await interface_page(`Boost your social activities!`, links.expbooster, `[4 / 9]`, `Tickets`, `_rowid_ > 2 AND unique_type = "Exp_booster"`, `name DESC`)
+			await interface_page(`Customize your card theme!`, links.skin, `[5 / 9]`, `Skins`)
+			await interface_page(`Grab your artistic badges!`, links.badge, `[6 / 9]`, `Badges`)
+			await interface_page(`Beautify your profile cover!`, links.regularcover, `[7 / 9]`, `Covers`, `price > 350`)
+			await interface_page(`Choose your favorite roles!`, links.roles, `[8 / 9]`, `Roles`, `price > 2000`)
+			await interface_page(`Choose your favorite sticker!`, links.sticker, `[9 / 9]`, `Sticker`, `price > 2000`)
 
 
 			message.channel.send(registered_interface[0])
