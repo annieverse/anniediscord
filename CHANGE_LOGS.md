@@ -1,5 +1,15 @@
 # Change Logs
 
+## **03/16/20 | 5.3.1 ->**
+
+* Readded 2 covers that are previously removed due to missing credit:
+  * Hunter
+  * Sinister Lady
+* Now Pistachio's Emoji method has fallback handler.
+* Now manageprofile command is case insensitive and accepts index input.
+* Now shop command's argument accepts index input.
+* Fix Pistachio's Collector method by increasing the message limit.
+
 ___
 
 ## **01/22/20 | 5.3.0 ->**

@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "5.3.0",
+  "version": "5.3.1",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
@@ -16,7 +16,7 @@
   "author": {
     "name": "klerikdust",
     "email": "klerikdust@gmail.com",
-    "url": "https://klerikdust.github.io"
+    "url": "https://github.com/klerikdust"
   },
   "contributors": [
     "Pan/Bait God (https://github.com/BaitGod01)",
@@ -47,6 +47,7 @@
     "fs-nextra": "^0.4.7",
     "jimp": "^0.9.3",
     "keyv": "^4.0.0",
+    "minimist": ">=1.2.2",
     "mocha": "^7.0.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
@@ -65,7 +66,6 @@
     "winston-daily-rotate-file": "^4.4.2"
   },
   "devDependencies": {
-    "@architect/sandbox": "^1.5.4",
     "eslint": "5.16.0",
     "nodemon": "^2.0.2"
   }
