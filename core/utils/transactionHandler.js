@@ -6,12 +6,14 @@ const events = require(`./event-metadata`)
 
 // Supporting transaction workflow. Initialized on each different category.
 class Transaction {
-	constructor({itemname, type, message, author}) {
+
+	constructor({itemname, type, message, author, id}) {
 		this.itemname = itemname
 		this.type = type
 		this.message = message
 		this.author = author
 		this.db = new databaseManager(this.author.id)
+		this.id = id
 	}
 
 
@@ -69,7 +71,8 @@ class Transaction {
 	// Returns key-value
 	lookfor(src) {
 		for (let i in src) {
-			if (src[i][`upper(name)`] === this.itemname.toUpperCase()) {
+			if (src[i].itemId === this.id ||
+				src[i][`upper(name)`] === this.itemname.toUpperCase()) {
 				return src[i]
 			}
 		}
@@ -89,11 +92,19 @@ class Transaction {
 				}
 			}
 		}
-		return sql.all(`SELECT itemId, name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
+		if (this.id) {
+			return sql.all(`SELECT itemId, name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
+                                        FROM itemlist 
+                                        WHERE status = "${itemstatus}" 
+                                        AND itemId = "${this.id}"`)
+				.then(rootgroup => this.lookfor(rootgroup))
+		} else {
+			return sql.all(`SELECT itemId, name, upper(name), alias, type, unique_type, price, price_type, desc, status, rarity 
                                         FROM itemlist 
                                         WHERE status = "${itemstatus}" 
                                         AND type = "${this.type}"`)
-			.then(rootgroup => this.lookfor(rootgroup))
+				.then(rootgroup => this.lookfor(rootgroup))
+		}
 	}
 
 

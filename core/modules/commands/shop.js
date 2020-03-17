@@ -31,7 +31,7 @@ class shop {
 				for (var c in source) {
 					if (categories[i] === source[c].type) {
 						let priceRange = format.threeDigitsComa(source[c].price)
-						tempDesc += `${parseInt(c) + 1} **${source[c].name}** - ${priceRange} ${emoji(source[c].price_type)}\n\`${source[c].desc}\`\n\n`
+						tempDesc += `${source[c].itemId} **${source[c].name}** - ${priceRange} ${emoji(source[c].price_type)}\n\`${source[c].desc}\`\n\n`
 					}
 				}
 				target.addField(categories[i], tempDesc)

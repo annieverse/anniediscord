@@ -1169,7 +1169,7 @@ class databaseUtils {
         *     @param opt of additional filter option. (default: "price < 999999")
         */
 	classifyItem(type, opt = `price > 0`, order = `price ASC`) {
-		return sql.all(`SELECT name, type, price, desc, price_type FROM itemlist WHERE type = "${type.toString()}" AND status = "sell" AND ${opt} ORDER BY ${order}`).then(async parsed => parsed)
+		return sql.all(`SELECT name, type, price, desc, price_type, itemId FROM itemlist WHERE type = "${type.toString()}" AND status = "sell" AND ${opt} ORDER BY ${order}`).then(async parsed => parsed)
 	}
 
 	/**
