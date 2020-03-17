@@ -201,9 +201,10 @@ class Pistachio {
 		//  An emoji finder. Returns as unicode
 		container.emoji = (name) => {
 			try {
-				return bot.emojis.find(e => e.name === name)
+				return bot.emojis.find(e => e.name === name) ? bot.emojis.find(e => e.name === name) : `:sparkles:`
 			} catch (e) {
-				throw new TypeError(`${name} is not a valid emoji.`)
+				//throw new TypeError(`${name} is not a valid emoji.`)
+				return `:sparkles:`
 			}
 		}
 
