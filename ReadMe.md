@@ -14,19 +14,24 @@ Supporting the core function of the biggest art community in discord,
 
 [Join the community!](https://discord.gg/Tjsck8F)
 
-Dedicated-Artist Discord Bot to fulfill your artistic needs.
-We connect every artist around the discord community.
-We help them to get potential client more easier.
-We got tons of upcoming features ahead!*
+**Annie,** a dedicated-artist discord bot to fulfill your everyday artistic needs.
 
-## Why artist should choose Annie
+We connect every artist around the discord community regardless of which server they are in through integrated art feeds.
 
-- Annie biggest feature is involving with arts.
-- Most-innovative features out there.
-- Quality over quantity experience.
-- Portfolio and Social Card.
-- Minimalist.
+We help them to get potential client more easier through our Commission Bulletin Board and Virtual Marketplace.
+
+A lot features are expected to come in future, so please stay tune with our project to build a better experience for artists on Discord!
+
+## Why you should choose Annie?
+
+- To build a better art-community for your server
+- The one and only bot you need to assist your artwork process
+- Quality over quantity experience
+- Built by artist, for artist
+- Constantly updated
+- Open source
+- Minimalist
 
 ## **Development**
 
-Feel free to checkout the development progress in our [Trello Board !](https://trello.com/b/jBbOIqQA/annie-pipeline)
+Feel free to checkout the development progress in our [Discord Server!](https://discord.gg/7nDes9P)
