@@ -10,9 +10,9 @@ class CentralHub {
         reply(MAIN_MENU,{
             socket:[
                 `
-                \n\`covers\`
-                \n\`badges\`
-                \n\`stickers\`
+                \n\`1 covers\`
+                \n\`2 badges\`
+                \n\`3 stickers\`
                 `
             ]
         })
@@ -21,12 +21,18 @@ class CentralHub {
             let response = msg.content.toLowerCase()
             if (exitAnswers.includes(response)) return reply(MENU_CLOSED)
             switch (response.toLowerCase()) {
+                case `1`:
+                case `1 covers`:
                 case `covers`:
                     new covers(this.stacks).execute()
                     break
+                case `2`:
+                case `2 badges`:
                 case `badges`:
                     new badges(this.stacks).execute()
                     break
+                case `3`:
+                case `3 stickers`:
                 case `stickers`:
                     new stickers(this.stacks).execute()
                     break
@@ -80,7 +86,7 @@ class covers {
         let itemAlias = covers.itemAlias
         let index = items.length-1
         let result
-        if (items.length > 1) result = items.join(`, `)
+        if (items.length > 1) result = items.map( (i, idx) => `${idx + 1} ${i}`).join(`, `)
         reply(MENU, { socket: [result,`cover`], footer: `Case Sensitive` })
         const secondCollector = multicollector(message)
         secondCollector.on(`collect`, async (secondmsg) => {
@@ -88,6 +94,8 @@ class covers {
             if (exitAnswers.includes(response.toLowerCase())) return reply(MENU_CLOSED)
             if (items.join(`, `).toLowerCase().includes(response.toLowerCase())) {
                 index = items.findIndex(i => i.toLowerCase() === response.toLowerCase())
+            } else if (/^\d+$/.test(response) && parseInt(response) > 0 && parseInt(response) <= items.length) {
+                index = parseInt(response) - 1
             } else {
                 return reply(DONT_OWN_ITEM,{socket:[`cover`,response]})
             }
