@@ -140,6 +140,27 @@ class Database {
 			, `Verifying table user_badges`
 		)
 
+		/*
+		await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
+			'user_id' TEXT NOT NULL UNIQUE,
+			'quest_key' INTEGER,
+			'quest_level' INTEGER)`
+			, `run`
+			, []
+			, `Verifying table user_quest_info`
+		)
+
+		await this._query(`CREATE TABLE IF NOT EXISTS user_quests (
+			'user_id' TEXT NOT NULL,
+			'quest_id' INTEGER,
+			'status' INTEGER,
+			'date_completed' TIMESTAMP)`
+			, `run`
+			, []
+			, `Verifying table user_quests`
+		)
+		*/
+
 
 		/**
 		 * --------------------------

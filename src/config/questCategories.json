@@ -1,0 +1,30 @@
+{
+  "0": {
+    "name": "form",
+    "color": "red"
+  },
+  "1": {
+    "name": "values",
+    "color": "orange"
+  },
+  "2": {
+    "name": "color",
+    "color": "yellow"
+  },
+  "3": {
+    "name": "anatomy",
+    "color": "green"
+  },
+  "4": {
+    "name": "gesture",
+    "color": "blue"
+  },
+  "5": {
+    "name": "composition",
+    "color": "purple"
+  },
+  "6": {
+    "name": "perspective",
+    "color": "brown"
+  }
+}
