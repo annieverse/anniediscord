@@ -12,3 +12,6 @@ logs
 
 # Cache directory for Pixiv API
 .pixivcaches
+
+# ide specific folder
+.idea
