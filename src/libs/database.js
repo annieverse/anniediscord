@@ -635,11 +635,11 @@ class Database {
 	}
 
 	userBadges(userId = this.id) {
-		return sql.get(`
+		return this._query(`
                 SELECT *
                 FROM userbadges
-                WHERE userId = "${userId}"
-            `).then(async parsed => parsed)
+                WHERE userId = ?
+            `, `get`, [userId])
 	}
 
 
@@ -1086,7 +1086,7 @@ class Database {
 
 	//	Count total user's collected cards.
 	async totalCollectedCards(userId = this.id) {
-		let data = await sql.get(`SELECT * FROM item_inventory WHERE user_id = ${userId}`)
+		let data = await this._query(`SELECT * FROM item_inventory WHERE user_id = ?`, `get`, [userId])
 		for (let key in data) {
 			if (!data[key]) delete data[key]
 		}
@@ -1137,7 +1137,7 @@ class Database {
      * @param {Integer} amount Updated/added amount of user's reputation points
      */
 	addReputations(amount = 0, userId = this.id) {
-		return sql.run(`UPDATE userdata
+		return this.client.run(`UPDATE userdata
                             SET reputations = CASE WHEN reputations IS NULL
                                                 THEN ${amount}
                                               ELSE reputations + ${amount}
@@ -1169,16 +1169,17 @@ class Database {
 
 	//  Store new heart point
 	addHeart() {
-		sql.run(`
+		this.client.run(`
             UPDATE userdata 
             SET liked_counts = liked_counts + 1 
             WHERE userId = "${this.id}"
             `)
 	}
 
+
 	//  Enable user's notification
 	enableNotification(userId=this.id) {
-		sql.run(`
+		this.client.run(`
                 UPDATE userdata
                 SET get_notification = 1
                 WHERE userId = "${userId}"
@@ -1187,7 +1188,7 @@ class Database {
 
 	//  Disabled user's notification
 	disableNotification(userId=this.id) {
-		sql.run(`
+		this.client.run(`
                 UPDATE userdata
                 SET get_notification = -1
                 WHERE userId = "${userId}"
@@ -1196,7 +1197,7 @@ class Database {
         
 	//  Check if post already stored in featured list
 	featuredPostMetadata(url) {
-		return sql.get(`
+		return this.client.get(`
                 SELECT *
                 FROM featured_post
                 WHERE url = "${url}"
@@ -1205,7 +1206,7 @@ class Database {
 
 	//  Register new featured post metadata
 	registerFeaturedPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
-		sql.run(`
+		this.client.run(`
                 INSERT INTO featured_post
                 (timestamp, url, author, channel, heart_counts, last_heart_timestamp)
                 VALUES (?, ?, ?, ?, ?, ?)`,
@@ -1256,7 +1257,7 @@ class Database {
             *   @param description of item description.
             */
 	registerItem(name, alias, type, price, description) {
-		return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
+		return this.client.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
 	}
 
 
@@ -1267,7 +1268,7 @@ class Database {
         * @param id of userId
         */
 	registeringId(tablename, id) {
-		return sql.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
+		return this.client.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
 	}
 
 
@@ -1278,7 +1279,7 @@ class Database {
         * @param type of column type.
         */
 	registerColumn(tablename, columnname, type) {
-		return sql.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
+		return this.client.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
 	}
 
 
@@ -1289,7 +1290,7 @@ class Database {
     * @param type of column type.
     */
 	registerTable(tablename, columnname, type) {
-		return sql.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
+		return this.client.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
 	}
 
 
@@ -1301,9 +1302,9 @@ class Database {
     *   @param id of target userid.
     */
 	sumValue(tablename, columnname, value, id, idtype = `userId`) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
 			.then(async currentdata => {
-				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
+				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
 			})
 	}
 
@@ -1315,12 +1316,12 @@ class Database {
      * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
      */
 	addValues(tablename, columnnames, values) {
-		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
+		return this.client.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
 	}
 
 	updateValue(tablename, columnNameToUpdate, value, columnname, id) {
 		try {
-			sql.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
+			this.client.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
 		} catch (error) { throw error }
 	}
 	/**
@@ -1331,9 +1332,9 @@ class Database {
     *   @param id of target userid.
     */
 	subtractValue(tablename, columnname, value, id) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
 			.then(async currentdata => {
-				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
+				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
 			})
 	}
 
@@ -1347,7 +1348,7 @@ class Database {
      *  @param idtype of the id type (default: "userId")
      */
 	replaceValue(tablename, columnname, value, id, idtype = `userId`) {
-		return sql.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
+		return this.client.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
 	}
 
 
@@ -1358,7 +1359,7 @@ class Database {
         * @param id of userId
         */
 	pullRowData(tablename, id, idtype = `userId`) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} = ${id}`).then(async parsed => parsed)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} = ${id}`).then(async parsed => parsed)
 	}
 
 	/**
