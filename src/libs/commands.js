@@ -27,12 +27,7 @@ class Commands {
          */
 		this.messageArray = Stacks.message.content.split(` `)
 
-
 		/**
-		 *  ----------------------------------------------------
-		 *  ARGUMENTS
-		 *  ----------------------------------------------------
-		 * 
          * Tokenized arguments. Except, no command name included.
          * @since 1.0.0
          * @type {String}
