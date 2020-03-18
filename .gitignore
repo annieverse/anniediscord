@@ -16,3 +16,5 @@ logs
 #fonts
 src/fonts
 core/fonts
+
+.idea/
