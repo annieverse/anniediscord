@@ -49,6 +49,7 @@ class User {
      * @returns {UserMetadataObject}
      */
     async requestMetadata(target) {
+		const fn = `[User.requestMetadata()]`
 		try {
 			const user = this.lookFor(target)
 			let res = await this.bot.db.userMetadata(user.id)
@@ -68,6 +69,7 @@ class User {
 			return res
 		}
 		catch(e) {
+			this.bot.logger.error(`${fn} has failed to parse user's metadata > ${e.stack}`)
 			return null
 		}
     }

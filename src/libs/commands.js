@@ -1,9 +1,5 @@
 `use-strict`
-
 const User = require(`./user`)
-const Pistachio = require(`./pistachio`)
-
-
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -65,33 +61,22 @@ class Commands {
 	
 	}
 
-	async prepare() {
-		this._userSelector()
-		await this._requestUserMetadata()
-		await this._requestPistachios()
-	}
+	async requestUserMetadata(dataLevel=1) {
+		const fn = `[Commands.requestUserMetadata()]`
+		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
 
-	async _requestPistachios() {
-		const components = {
-			bot: this.bot,
-			message: this.message,
-			prefix: this.prefix,
-			commandName: this.commandName,
-			args: this.args,
-			fullArgs: this.fullArgs
+		if (dataLevel === 2) {
+			if (!this.user) this.user = await this._userSelector()
+			this.user.meta = await this.userClass.requestMetadata(this.user.id)
+			return true
 		}
-		this.utils = new Pistachio(components)
-		return true
-	}
 
-	async _requestUserMetadata() {
-		this.user.meta = await this.userClass.requestMetadata(this.user.id)
+		this.user = await this._userSelector()
 		return true
 	}
 
 	_userSelector() {
-		this.user = this.commandProperties.multiUser && this.args ? this.userClass.lookFor(this.args) : this.userClass.lookFor(this.message.author.id)
-		return true
+		return this.commandProperties.multiUser && this.args ? this.userClass.lookFor(this.args) : this.userClass.lookFor(this.message.author.id)
 	}
 
 

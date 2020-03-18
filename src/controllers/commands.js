@@ -1,4 +1,5 @@
 const { readdirSync } = require(`fs`)
+const Pistachio = require(`../libs/pistachio`)
 /**
  * @typedef {ClientPrimaryProps}
  * @property {Object} [bot={}] Current <AnnieClient> instance
@@ -61,9 +62,9 @@ class CommandController {
             message: this.message,
             commandProperties: this.commandProperties
         }
-
-        await new Command(commandComponents).execute()
-        const cmdFinishTime = this.bot.getBenchMark(initTime)
+        const PistachioComponents = new Pistachio(commandComponents)
+        await new Command(commandComponents).execute(PistachioComponents)
+        const cmdFinishTime = this.bot.getBenchmark(initTime)
 
         const cmdUsageData = {
             guild_id: this.message.guild.id,
@@ -73,7 +74,7 @@ class CommandController {
         }
 
         //	Log and store the cmd usage to database.
-        this.logger.info(`${fn} ran ${command} command (${cmdFinishTime})`)
+        this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
         this.bot.db.recordsCommandUsage(cmdUsageData)
     }
 
