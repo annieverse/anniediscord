@@ -12,3 +12,7 @@ logs
 
 # Cache directory for Pixiv API
 .pixivcaches
+
+#fonts
+src/fonts
+core/fonts
