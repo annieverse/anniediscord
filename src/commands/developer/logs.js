@@ -1,0 +1,77 @@
+const { readdirSync } = require(`fs`)
+const Command = require(`../../libs/commands`)
+
+/**
+ * 	Retrieving log file
+ * 	@author klerikdust
+ */
+class Logs extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+	constructor(Stacks) {
+		super(Stacks)
+		this.logPath = `./logs/`
+    }
+    
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, name, bot:{locale:{GETLOG}} }) {
+        await this.requestUserMetadata(1)
+        
+        //  Target date
+        let parseRef = this.args[0] || `today`
+        //  Get log file
+        let file = await this._pullFile(parseRef)
+        if (!file) return reply(GETLOG.ERR)
+
+        //  Output attachment
+        return reply(GETLOG.RETURNING, {
+            socket: [name(this.user.id)],
+            simplified: true,
+            image: this.logPath + file,
+            prebuffer: true
+        })
+    }
+    
+	/**
+	 * Fetch log file from disk.
+	 * @param {String} [date=`today`]
+     * @returns {LogFile}
+	 */
+	async _pullFile(date = `today`) {
+        const fn = `[Logs._pullfile()]`
+		try {
+            //	Get all the .log files
+            let resArray = readdirSync(this.logPath)
+                .filter(f => f
+                    .split(`.`)
+                    .pop() === `log`)
+            let ref = {
+                "today": resArray.length - 1,
+                "yesterday": resArray.length - 2
+            }
+            return resArray[ref[date] || resArray.length - 1]
+        }
+        catch (error) {
+            this.logger.error(`${fn} has failed to retrieve log file > ${error.stack}`)
+            return null
+        }
+    }
+    
+}
+
+module.exports.help = {
+	start: Logs,
+	name:`logs`,
+	aliases: [`getlog`],
+	description: `Retrieving log file`,
+	usage: `getlog <Date>(Optional)`,
+    group: `Developer`,
+    permissionLevel: 4,
+	public: true,
+	multiUser: true
+}

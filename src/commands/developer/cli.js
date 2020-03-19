@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars*/
 /* eslint-disable no-useless-escape*/
 const Command = require(`../../libs/commands`)
-const Discord = require(`discord.js`)
 const cmd = require(`node-cmd`)
 
 /**
