@@ -170,7 +170,7 @@ class MessageController {
      * @returns {StringCode}
      */
     _registerPermission() {
-        const fn = `[MessageCollector._registerPermission()]`
+        const fn = `[MessageController._registerPermission()]`
         const userPerm = new Permission(this.message).authorityCheck()
         this.logger.debug(`${fn} PERM_LVL ${userPerm.level} - ${userPerm.name} | USER_ID ${this.message.author.id}`)
         this.message.author.permissions = userPerm

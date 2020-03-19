@@ -67,6 +67,7 @@ class Commands {
 
 		if (dataLevel === 2) {
 			if (!this.user) this.user = await this._userSelector()
+			if (!this.user) return false
 			this.user.meta = await this.userClass.requestMetadata(this.user.id)
 			return true
 		}

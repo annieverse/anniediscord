@@ -18,6 +18,7 @@ class Balance extends Command {
      */
 	async execute({ reply, commanifier, avatar, emoji, bot:{locale}}) {
 		await this.requestUserMetadata(2)
+		if (!this.user) return reply(locale.UNABLE_TO_FIND_USER)
 		return reply(locale.DISPLAY_BALANCE, {
 			socket: [emoji(`artcoins`), commanifier(this.user.meta.artcoins)],
 			notch: true,
