@@ -80,6 +80,7 @@ class Pistachio {
 		this.loadAsset = this.loadAsset.bind(this)
 		this.normalizeString = this.normalizeString.bind(this)
 		this.avatar = this.avatar.bind(this)
+		this.displayAvatar = this.displayAvatar.bind(this)
 		this.getExpMetadata = this.getExpMetadata(this)
 		this.parsingAvailableGifts = this.parsingAvailableGifts.bind(this)
 		this.formatString = this.formatString.bind(this)
@@ -476,6 +477,21 @@ class Pistachio {
 			if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, socket[i])
 		}
 		return content
+	}
+
+	/**
+	 * Message wrapper to display avatar request.
+	 * @param {String} userId target user
+	 * @returns {AvatarMessage}
+	 */
+	displayAvatar(userId=``) {
+		this.message.react(`📸`)
+		const [avatar, name] = [this.avatar(userId), this.name(userId)]
+		const embed = new RichEmbed()
+		.setImage(avatar)
+		.setAuthor(name, avatar)
+		.setColor(this.palette.darkmatte)
+		this.message.channel.send(embed)
 	}
 
 	/** Annie's custom message system.
