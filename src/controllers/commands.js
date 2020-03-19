@@ -60,7 +60,7 @@ class CommandController {
         const commandComponents = {
             bot: this.bot,
             message: this.message,
-            commandProperties: this.commandProperties
+            commandProperties: this.commandProperties.help
         }
         const PistachioComponents = new Pistachio(commandComponents)
         await new Command(commandComponents).execute(PistachioComponents)

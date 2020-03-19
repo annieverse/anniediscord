@@ -76,7 +76,7 @@ class Commands {
 	}
 
 	_userSelector() {
-		return this.commandProperties.multiUser && this.args ? this.userClass.lookFor(this.args) : this.userClass.lookFor(this.message.author.id)
+		return this.commandProperties.multiUser && this.fullArgs ? this.userClass.lookFor(this.fullArgs) : this.userClass.lookFor(this.message.author.id)
 	}
 
 

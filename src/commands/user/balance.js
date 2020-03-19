@@ -1,46 +1,27 @@
-const Card = require(`../../ui/components/cards`)
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Balance outputing artcoins data
+ * Displaying user's current balance
+ * @author klerikdust
  */
-class Balance {
+class Balance extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
-
-	async beta() {
-		const { reply, emoji, commanifier, meta : { author, data }} = this.stacks
-		const totalBalance = commanifier(data.artcoins)
-		const growthDataFromLastWeek = `+7,532 (25%)`
-		const readyCard = new Card({width: 250, height: 150, marginLeft: 70, theme: data.interfacemode})
-
-		//	Custom base
-		.createBase({cornerRadius: 8})
-
-		//	Artcoins amount
-		.addContent({main: totalBalance, marginTop: 82, justify: `center`, size: 26, fontWeight: `Bold`, align: `center`})
-		.addContent({main: growthDataFromLastWeek, size: 7, justify: `center`, align: `center`, fontWeight: `Bold`, mainColor: `okay`})
-		.addContent({main: `last week`, justify: `center`, size: 7, fontWeight: `Light`, align: `center`})
-		.ready()
-
-
-		return reply(`${emoji(`artcoins`)} ** | Your remaining balance, ${author.user.username}**`, {
-			prebuffer: true,
-			image: readyCard.toBuffer(),
-			simplified: true
-		})
-	}
-
-
-	async execute() {
-		const { reply, bot, code, emoji, avatar, commanifier, meta : { author, data }} = this.stacks
-
-		if(bot.env.dev) return this.beta()
-		return reply(code.DISPLAY_BALANCE, {
-			socket: [emoji(`artcoins`), commanifier(data.artcoins)],
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, commanifier, avatar, emoji, bot:{locale}}) {
+		await this.requestUserMetadata(2)
+		return reply(locale.DISPLAY_BALANCE, {
+			socket: [emoji(`artcoins`), commanifier(this.user.meta.artcoins)],
 			notch: true,
-			thumbnail: avatar(author.id)
+			thumbnail: avatar(this.user.id)
 		})
 	}
 }
@@ -50,10 +31,10 @@ module.exports.help = {
 	start: Balance,
 	name: `balance`,
 	aliases: [`bal`, `money`, `credit`, `ball`, `ac`, `artcoin`, `artcoins`],
-	description: `Checks your AC balance`,
-	usage: `bal`,
+	description: `Displaying user's current balance`,
+	usage: `balance`,
 	group: `General`,
+	permissionLevel: 0,
 	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	multiUser: true
 }

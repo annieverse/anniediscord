@@ -200,7 +200,7 @@ class Pistachio {
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		return bot.users.get(userId).username || `unknown`
+		return this.bot.users.get(userId).username || `unknown`
 	}
 
 	/**
@@ -209,7 +209,7 @@ class Pistachio {
 	 *  @returns {Emoji|String}
 	 */
 	emoji(name=``) {
-		return bot.emojis.find(e => e.name === name) || `(???)`
+		return this.bot.emojis.find(e => e.name === name) || `(???)`
 	}
 
 	/**
@@ -328,7 +328,7 @@ class Pistachio {
 	*/
 	avatar(id, compress = false, size = `?size=512`) {
 		try {
-			let url = bot.users.get(id).displayAvatarURL
+			let url = this.bot.users.get(id).displayAvatarURL
 			if (compress) {
 				return get(url.replace(/\?size=2048$/g, size))
 					.then(data => data.body)
@@ -336,7 +336,7 @@ class Pistachio {
 
 			return url
 		}
-		catch(e) { return container.loadAsset(`error`) }
+		catch(e) { return this.loadAsset(`error`) }
 	}
 
 	/**
