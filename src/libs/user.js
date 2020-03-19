@@ -38,6 +38,7 @@ class User {
 			return members.filter(filter).first()
 		}
 		catch(e) {
+			this.logger.error(`${fn} has failed to find user with keyword: ${target}`)
 			return null
 		}
     }
