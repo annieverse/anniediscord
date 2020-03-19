@@ -113,8 +113,8 @@ class Pistachio {
 	collector(msg) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
-		m => m.author.id === message.author.id, {
-			max: 1,
+		m => m.author.id === msg.author.id, {
+			max: 2,
 			time: 60000,
 		})
 	}
@@ -129,7 +129,7 @@ class Pistachio {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
 		m => m.author.id === msg.author.id, {
-			max: 1,
+			max: 2,
 			time: 60000,
 		})
 	}

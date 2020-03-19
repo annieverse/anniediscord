@@ -24,7 +24,7 @@ class Database {
 		 * If file is not found, throw an error.
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
-		this.client = new SqliteClient(path, {cached: true})
+		this.client = new SqliteClient(path)
 		const redisClient = Redis.createClient()
 		redisClient.on(`error`, err => new Error(`Failed to connect redis > ${err}`))
 		this.redis = redisClient
@@ -33,7 +33,7 @@ class Database {
 
 
 	/**
-	 * 	@description Standardized method for executing sql query
+	 * 	Standardized method for executing sql query
 	 * 	@param {String|SQL} stmt sql statement
 	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
@@ -41,15 +41,17 @@ class Database {
 	 *  @param {String} label description for the query. Optional
 	 */
 	async _query(stmt=``, type=`get`, supplies=[], label=``) {
+		const fn = `[Database._query()]`
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
-			if (label) logger.info(`[Database._query()] ${label}`)
+			if (label) logger.info(`${fn} ${label}`)
+			result.stmt = stmt
 			return result
 		}
 		catch (e) {
-			logger.error(`[Database._query()] has failed to run. > ${e.stack}\n${stmt}`)
+			logger.error(`${fn} has failed to run > ${e.stack}\n${stmt}`)
 			return null
 		}
 	}
@@ -322,16 +324,16 @@ class Database {
 	}
 
 	/**
-	 * 	Standard low method for writing to item_inventory
-	 *  @privateMethod
+	 * 	Standardized method for writing to item_inventory
 	 *  @param {Number|ID} itemId item id
 	 *  @param {Number} value amount to be stored
 	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
 	 *  @param {String|ID} userId user id
 	 */
-	async _updateInventory({itemId, value=0, operation=`+`, userId=this.id}) {
-		//	Return if itemId is not specified
-		if (!itemId) return {stored: false}
+	async updateInventory({itemId, value=0, operation=`+`, userId}) {
+		const fn = `[Database.updateInventory()]`
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
@@ -339,7 +341,7 @@ class Database {
 				SELECT $itemId, $userId
 				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
 				, `run`
-				, {$userId: userId, $itemId: itemId}
+				, {itemId: itemId, userId: userId}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
@@ -350,8 +352,9 @@ class Database {
 				, [value, itemId, userId]
 			)
 		}
-
-		logger.info(`[._updateInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		
+		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return {stored: true}
 	}
 
@@ -652,7 +655,7 @@ class Database {
 	 * 	@sendTenChocolateBoxes
 	 */
 	sendTenChocolateBoxes(userId = this.id) {
-		this._updateInventory({itemId: 81, value:10, operation:`+`, userId})	
+		this.updateInventory({itemId: 81, value:10, operation:`+`, userId})	
 	}
 
 	userBadges(userId = this.id) {
@@ -730,7 +733,7 @@ class Database {
 	//  Set one value into card column
 	async registerCard(card_alias) {
 		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`,`get`,[card_alias])
-		return await this._updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
+		return await this.updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
 	}
 
 	get cardItemIds() {
@@ -760,7 +763,7 @@ class Database {
 	 * 	@addLuckyTickets
 	 */
 	async addLuckyTickets(value = 0) {
-		await this._updateInventory({itemId: 71, value:value, operation:`+`})
+		await this.updateInventory({itemId: 71, value:value, operation:`+`})
 		return this
 	}
 
@@ -772,7 +775,7 @@ class Database {
 	 * 	@addItems
 	 */
 	async addItems(itemId, value = 0) {
-		await this._updateInventory({itemId: itemId, value:value, operation:`+`})
+		await this.updateInventory({itemId: itemId, value:value, operation:`+`})
 		return this
 	}
 
@@ -784,7 +787,7 @@ class Database {
 	 * 	@storeArtcoins
 	 */
 	async storeArtcoins(value) {
-		await this._updateInventory({itemId: 52, value: value, operation: `+`})
+		await this.updateInventory({itemId: 52, value: value, operation: `+`})
 		return this
 	}
 
@@ -814,7 +817,7 @@ class Database {
 	 * 	@storeArtcoins
 	 */
 	async storeCandies(value) {
-		await this._updateInventory({ itemId: 102, value: value, operation: `+` })
+		await this.updateInventory({ itemId: 102, value: value, operation: `+` })
 		return this
 	}
 
@@ -1075,7 +1078,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawLuckyTicket(value = 0) {
-		this._updateInventory({itemId: 71, value: value, operation:`-`})
+		this.updateInventory({itemId: 71, value: value, operation:`-`})
 	}
 
 	/**
@@ -1084,7 +1087,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenBox(value = 0) {
-		this._updateInventory({ itemId: 111, value: value, operation: `-` })
+		this.updateInventory({ itemId: 111, value: value, operation: `-` })
 	}
 
 	/**
@@ -1093,7 +1096,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenBag(value = 0) {
-		this._updateInventory({ itemId: 110, value: value, operation: `-` })
+		this.updateInventory({ itemId: 110, value: value, operation: `-` })
 	}
 
 	/**
@@ -1102,7 +1105,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenChest(value = 0) {
-		this._updateInventory({ itemId: 109, value: value, operation: `-` })
+		this.updateInventory({ itemId: 109, value: value, operation: `-` })
 	}
 
 	//	Count total user's collected cards.
@@ -1137,7 +1140,7 @@ class Database {
 	async storingUserGachaMetadata(obj = {}, userid=this.id) {
 		for (let key in obj) {
 			let data = obj[key]
-			await this._updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
+			await this.updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
 		}
 	}
 
@@ -1149,7 +1152,7 @@ class Database {
 	async withdrawUserCraftMetadata(obj = {}, userid = this.id) {
 		for (let key in obj) {
 			let data = obj[key]
-			await this._updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
+			await this.updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
 		}
 	}
 

@@ -45,22 +45,22 @@ class CommandController {
      * @returns {CommandClass}
      */
     async run() {
-        const fn = `[CommandController.run()] USER: ${this.message.author.id}`   
+        const fn = `[CommandController.run()] USER_ID:${this.message.author.id}`   
         const initTime = process.hrtime()
         this.commandProperties = this.getCommandProperties(this.commandName)
 
         // Ignore if no files are match with the given command name
         if (!this.commandProperties) return this.logger.debug(`${fn} Invalid command`)
         // Ignore if user's permission level doesn't met the minimum command's permission requirement
-        if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} USER:${this.message.author.id} tries to use LV${this.commandProperties.permissionLevel} command`)
+        if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
    
-        const Command = this._findFile(this.commandProperties.help.name)
-        if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.help.name}>`)
+        const Command = this._findFile(this.commandProperties.name)
+        if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
         
         const commandComponents = {
             bot: this.bot,
             message: this.message,
-            commandProperties: this.commandProperties.help
+            commandProperties: this.commandProperties
         }
         const PistachioComponents = new Pistachio(commandComponents)
         await new Command(commandComponents).execute(PistachioComponents)
@@ -114,13 +114,15 @@ class CommandController {
 	 */
 	getCommandProperties(commandName=``) {
 		const fn = `[Commands.getCommandProperties()]`
-		if (!commandName) throw new TypeError(`${fn} parameter "commandName" cannot be blank.`)
-		return this.bot.commands.names.get(commandName) || this.bot.commands.names.get(this.bot.commands.aliases.get(commandName))
+        if (!commandName) throw new TypeError(`${fn} parameter "commandName" cannot be blank.`)
+        const res = this.bot.commands.names.get(commandName) || this.bot.commands.names.get(this.bot.commands.aliases.get(commandName))
+        if (!res) return null
+		return res.help
     }
     
 
 	get isNotEnoughPermissionLevel() {
-		return this.commandProperties.permissionLevel < this.message.author.permissions.level
+		return this.commandProperties.permissionLevel > this.message.author.permissions.level
 	}
 
 }

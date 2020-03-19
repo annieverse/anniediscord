@@ -4,7 +4,8 @@
         "MISSING_VALUES": "Please specify the amount.",
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**(+{2})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
-        "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount",
+        "CONFIRMATION_SEQ_1": "Now please type the amount",
+        "CONFIRMATION_SEQ_2": "{0}**+{1}** 🡆 **{2}'s Balance** ?\nPlease type `y` to confirm",
         "WRONG_FORMAT": "Please use this format: `>addac [Bait God#8677, Poppy#0628]`",
         "TRANSACTION_CLOSED": "Transaction closed"
     },
@@ -373,7 +374,8 @@
     },
 
     "ERR": {
-        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!"
+        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!",
+        "NEGATIVE_INPUT": "You can't use negative values."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "VERIFICATION_REQUEST": {
