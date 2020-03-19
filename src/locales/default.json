@@ -371,7 +371,10 @@
         "3_STRIKE": "Third strikes so far. Kick action has been performed.",
         "4_STRIKE": "Unforgiveable behaviour. They have gone to the void."
     },
-    "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!",
+
+    "ERR": {
+        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!"
+    },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
