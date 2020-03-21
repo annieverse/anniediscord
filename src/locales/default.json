@@ -266,7 +266,8 @@
     "PIXIV": {
         "DISPLAY_RECOMMENDED_WORK": "`Showing the most recommended work for you ...`",
         "DISPLAY_CUSTOM_SEARCH": "`Looking for '{0}' ...`",
-        "NO_RESULT": "Sorry! i can't find anything with that keyword."
+        "NO_RESULT": "Sorry! i can't find anything with that keyword.",
+        "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!"
     },
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
