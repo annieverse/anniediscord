@@ -1,40 +1,38 @@
 /* eslint-disable no-useless-escape */
-
+const Command = require(`../../libs/commands`)
 /**
- * 	Running query on air
- * 	@DatabaseKits
+ * 	Running database queries on air
+ * 	@author klerikdust
  */
-class DatabaseKits {
+class DatabaseKits extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
-
-	/**
-	 * 	Execute task
-	 * 	@execute
-	 */
-	async execute() {
-		const { isDev, bot: {db}, fullArgs, reply, palette, code:{ DBKITS }, name, meta: {author} } = this.stacks
-
-
-		//	Return if user is not part of the developer team
-		if (!isDev) return reply(DBKITS.UNAUTHORIZED, {color: palette.red})
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, palette, name, bot:{db, locale:{DBKITS}}} ) {
+		await this.requestUserMetadata(1)
 
 		//	Return if user doesn't specify arguments.
-		if (!fullArgs) return reply(DBKITS.AUTHORIZED, {socket: [name(author.id)], color: palette.blue})
-
+		if (!this.fullArgs) return reply(DBKITS.AUTHORIZED, {socket: [name(this.user.id)], color: palette.crimson})
 
 		try {
 
 			//	Parse statement
-			const stmt = fullArgs.match(/\[(.*?)\]/)[1]
+			const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
 			//	Make sure the the stmt is valid
 			if (!stmt) return reply(DBKITS.MISSING_STMT)
 
 			
 			//	Parse flag
-			const flag = fullArgs.match(/[^--]*$/)[0].substring(0, 3)
+			const flag = this.fullArgs.match(/[^--]*$/)[0].substring(0, 3)
 			//	Flag check as well
 			if (!flag) return reply(DBKITS.MISSING_FLAG)
 
@@ -59,10 +57,10 @@ module.exports.help = {
 	start: DatabaseKits,
 	name: `dbkits`,
 	aliases: [`db`],
-	description: `Allows to do sql queries`,
-	usage: `db <subcommand>`,
-	group: `Admin`,
+	description: `Running database queries on air`,
+	usage: `db <[SqlStatement]> --flag`,
+	group: `Developer`,
+	permissionLevel: 4,
 	public: true,
-	required_usermetadata: true,
-	multi_user: false
+	multiUser: false
 }

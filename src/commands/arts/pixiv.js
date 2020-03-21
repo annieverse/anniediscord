@@ -1,3 +1,5 @@
+const Command = require(`../../libs/commands`)
+const fsn = require(`fs-nextra`)
 const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
@@ -10,63 +12,117 @@ const pixiv = new PixivApi()
  *  PIXIV_USERNAME = email
  *  PIXIV_PASS = account password
  * 
- * Main module
- * @Pixiv fetching image from pixiv.
+ * Pixiv API
+ * @author klerikdust
  */
-class Pixiv {
-	constructor(Stacks) {
-        this.stacks = Stacks
-        this.choice = Stacks.choice
-        this.args = Stacks.fullArgs
-        this.CACHE_PATH = `./.pixivcaches/`
-        this.loadCache = Stacks.loadPixivCaches
-        this.moduleID = `${Stacks.meta.author.id}_PIXIV_SERVICE`
-    }
-    
+class Pixiv extends Command {
 
     /**
-     * Required for authentication
-     * @param {String} username 
-     * @param {String} pw 
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-    async login(username, pw) {
-        await pixiv.login(username, pw)
-        return true
+	constructor(Stacks) {
+        super(Stacks)
+        this.cachePath = `./.pixivcaches/`
     }
+    
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, bot }) {
+        const { PIXIV } = bot.locale 
+        //  Logging in to get access to the Pixiv API
+        await pixiv.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
 
+        const fullArgs = this.fullArgs
+        reply(PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+            simplified: true,
+            socket: [fullArgs]})
+                .then(async loadmsg => {
+                    //  Dynamically choose recommended/custom search based on input
+                    const data = fullArgs ? await this.fetchCustomSearch(fullArgs) : await this.fetchRecommendedWork()
+
+                    //  Handle if no returned result from the query
+                    if (!data)  {
+                        loadmsg.delete()
+                        return reply(PIXIV.NO_RESULT, {color: `red`})
+                    }
+
+                    const img = await this.getImage(data.image_urls.medium, data.id)
+                    //  Handle if no returned result from given img path
+                    if (!img) {
+                        loadmsg.delete()
+                        return reply(PIXIV.FAIL_TO_LOAD, {color: `red`})
+                    }
+
+                    loadmsg.delete()
+                    return reply(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
+                        customHeader: [`by ${data.user.name}`, bot.user.displayAvatarURL],
+                        image: img,
+                        prebuffer: true
+                    })
+            })
+	}
 
     /**
      * Fetch artworks by custom search/filter. Returns object of choosen index.
-     * @param {String} filter 
+     * @param {String} keyword 
+     * @returns {JSONData}
      */
-    async fetchCustomSearch(filter = ``) {
-        const res = await pixiv.searchIllustPopularPreview(filter)
-        return this.choice(res.illusts)
-    }
+    async fetchCustomSearch(keyword = ``) {
+        const fn = `[Pixiv.fetchCustomSearch()]`
+        this.logger.debug(`${fn} looking up for image with (keyword: ${keyword})`)
+        const res = await pixiv.searchIllustPopularPreview(keyword)
+        const postData = res.illusts[Math.floor(Math.random() * res.illusts.length)]
 
+        return postData
+    }
 
     /**
      * Fetch artworks by popularity ranking. Returns object of choosen index.
+     * @returns {JSONData}
      */
     async fetchRecommendedWork() {
+        const fn = `[Pixiv.fetchRecommendedWork()]`
+        this.logger.debug(`${fn} randomizing result`)
         const res = await pixiv.illustRanking()
-        return this.choice(res.illusts)
-    }
+        const postData = res.illusts[Math.floor(Math.random() * res.illusts.length)]
 
+        return postData
+    }
     
     /**
      * Loading image from pixiv cache directory. (downloaded pixiv's image)
      * @param {String|URL} url 
      * @param {String|ID} filename 
+     * @param {Function} loaderMethod supply with Pistachio's loadCache.
+     * @returns {Buffer}
      */
-    async getImage(url = String, filename = String) {
-        return this.loadCache(await PixImg(url, `${this.CACHE_PATH + filename}.jpg`))
+    async getImage(url=``, filename=``) {
+        const fn = `[Pixiv.getImage()]`
+        this.logger.debug(`${fn} fetching request (URL: ${url}) with (filename:${filename})`)
+        const id = await PixImg(url, `${this.cachePath + filename}.jpg`)
+        return await this.getImageCache(id)
     }
 
+    /**
+     * Fetch cached pixiv's image. Return as buffer. If error occured, fallback with a Boolean.
+     * @param {String} id image filename 
+     * @returns {Buffer}
+     */
+    async getImageCache(id=``) {
+        const fn = `[Pixiv.getImageCache()]`
+        this.logger.debug(`${fn} fetching cache with path (${id})`)
+        return fsn.readFile(`./${id}`).catch(() => {
+            this.logger.error(`${fn} has failed to fetch pixiv img with path (${id})`)
+            return false
+        })
+    }
 
     /**
      * Map `name` prop from Pixiv's tags object. Returns a proper string of hashtags.
      * @param {ArrayOfObject} tags 
+     * @returns {String}
      */
     getHashtags(tags = Array) {
         let arr = tags.map(key => `#${key.name}`)
@@ -77,37 +133,15 @@ class Pixiv {
         return str
     } 
 
-
-	async execute() {
-        const { reply, code:{PIXIV}, isCooldown, setCooldown } = this.stacks
-
-        if (await isCooldown(this.moduleID)) return reply(`Please wait a moment until your next request.`)
-        setCooldown(this.moduleID)
-
-        //  Logging in to get access to the Pixiv API
-        await this.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
-
-        reply(PIXIV[this.args ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
-            simplified: true,
-            socket: [this.args]})
-                .then(async loadmsg => {
-                    //  Dynamically choose recommended/custom search based on input
-                    const data = !this.args ? await this.fetchRecommendedWork() : await this.fetchCustomSearch(this.args)
-
-                    //  Handle if no returned result from the query
-                    if (!data)  {
-                        loadmsg.delete()
-                        return reply(PIXIV.NO_RESULT, {color: `red`})
-                    }
-
-                    reply(this.getHashtags(data.tags), {
-                        customHeader: [`by ${data.user.name}`, data.user.profile_image_urls.medium],
-                        image: await this.getImage(data.image_urls.medium, data.id),
-                        prebuffer: true
-                    })
-                    loadmsg.delete()
-            })
-	    }
+    /**
+     * Parse "tools" property from Pixiv's Post Data. Omitted if no tools are found.
+     * @param {Array} tools
+     * @returns {String}
+     */
+    getTools(tools=Array) {
+        if (tools.length < 1) return ``
+        return `**Made with ${tools[0]}**`
+    } 
 }
 
 
@@ -117,8 +151,8 @@ module.exports.help = {
 	aliases: [`pix`, `pxv`, `pixiv`],
 	description: `Fetching image from pixiv.`,
 	usage: `pixiv`,
-	group: `Art Platform`,
+    group: `Art Platform`,
+    permissionLevel: 0,
 	public: true,
-	required_usermetadata: false,
-	multi_user: false
+	multiUser: false
 }

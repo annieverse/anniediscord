@@ -4,7 +4,8 @@
         "MISSING_VALUES": "Please specify the amount.",
         "SUCCESSFUL": "**{0}'s** balance has been successfully refilled. {1}**(+{2})**",
         "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
-        "CONFIRMATION": "**+**{0} 🡆 **{1}'s Balance** ?\nPlease type the amount",
+        "CONFIRMATION_SEQ_1": "Now please type the amount",
+        "CONFIRMATION_SEQ_2": "{0}**+{1}** 🡆 **{2}'s Balance** ?\nPlease type `y` to confirm",
         "WRONG_FORMAT": "Please use this format: `>addac [Bait God#8677, Poppy#0628]`",
         "TRANSACTION_CLOSED": "Transaction closed"
     },
@@ -105,7 +106,7 @@
     },
     "DBKITS": {
         "UNAUTHORIZED": "You are not authorized to access this area.",
-        "AUTHORIZED": "Welcome back **{0}**! Tackle my database, senpai.",
+        "AUTHORIZED": "Good evening, **{0}**. This module is ready to be used.",
         "ERROR": "**Ops, something went wrong.**\n\n",
         "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
         "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
@@ -265,7 +266,8 @@
     "PIXIV": {
         "DISPLAY_RECOMMENDED_WORK": "`Showing the most recommended work for you ...`",
         "DISPLAY_CUSTOM_SEARCH": "`Looking for '{0}' ...`",
-        "NO_RESULT": "Sorry! i can't find anything with that keyword."
+        "NO_RESULT": "Sorry! i can't find anything with that keyword.",
+        "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!"
     },
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
@@ -370,6 +372,11 @@
         "2_STRIKE": "Second strikes has been landed, the mute will last up to 24 hours.",
         "3_STRIKE": "Third strikes so far. Kick action has been performed.",
         "4_STRIKE": "Unforgiveable behaviour. They have gone to the void."
+    },
+
+    "ERR": {
+        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!",
+        "NEGATIVE_INPUT": "You can't use negative values."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
     "VERIFICATION_REQUEST": {

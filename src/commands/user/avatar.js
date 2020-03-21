@@ -1,27 +1,37 @@
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Avatar showing user avatar
+ * Display user's avatar
+ * @author klerikdust
  */
-class Avatar {
+class Avatar extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
-	async execute() {
-		const { avatarWrapper, meta: { author } } = this.stacks
-		return avatarWrapper(author.id)
+
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, displayAvatar, bot:{locale} }) {
+		await this.requestUserMetadata(1)
+		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
+		return displayAvatar(this.user.id)
 	}
 }
-
 
 
 module.exports.help = {
 	start: Avatar,
 	name: `avatar`,
 	aliases: [`ava`, `pfp`],
-	description: `Grabs your's or a specified user's avatar and displays it`,
-	usage: `avatar [user]`,
+	description: `Display user's avatar`,
+	usage: `avatar <user>`,
 	group: `Fun`,
+	permissionLevel: 0,
 	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	multiUser: true
 }

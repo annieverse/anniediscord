@@ -24,7 +24,7 @@ class Database {
 		 * If file is not found, throw an error.
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
-		this.client = new SqliteClient(path, {cached: true})
+		this.client = new SqliteClient(path)
 		const redisClient = Redis.createClient()
 		redisClient.on(`error`, err => new Error(`Failed to connect redis > ${err}`))
 		this.redis = redisClient
@@ -33,7 +33,7 @@ class Database {
 
 
 	/**
-	 * 	@description Standardized method for executing sql query
+	 * 	Standardized method for executing sql query
 	 * 	@param {String|SQL} stmt sql statement
 	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
@@ -41,15 +41,17 @@ class Database {
 	 *  @param {String} label description for the query. Optional
 	 */
 	async _query(stmt=``, type=`get`, supplies=[], label=``) {
+		const fn = `[Database._query()]`
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
-			if (label) logger.info(`[Database._query()] ${label}`)
+			if (label) logger.info(`${fn} ${label}`)
+			result.stmt = stmt
 			return result
 		}
 		catch (e) {
-			logger.error(`[Database._query()] has failed to run. > ${e.stack}\n${stmt}`)
+			logger.error(`${fn} has failed to run > ${e.stack}\n${stmt}`)
 			return null
 		}
 	}
@@ -139,6 +141,27 @@ class Database {
 			, []
 			, `Verifying table user_badges`
 		)
+
+		/*
+		await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
+			'user_id' TEXT NOT NULL UNIQUE,
+			'quest_key' INTEGER,
+			'quest_level' INTEGER)`
+			, `run`
+			, []
+			, `Verifying table user_quest_info`
+		)
+
+		await this._query(`CREATE TABLE IF NOT EXISTS user_quests (
+			'user_id' TEXT NOT NULL,
+			'quest_id' INTEGER,
+			'status' INTEGER,
+			'date_completed' TIMESTAMP)`
+			, `run`
+			, []
+			, `Verifying table user_quests`
+		)
+		*/
 
 
 		/**
@@ -301,16 +324,16 @@ class Database {
 	}
 
 	/**
-	 * 	Standard low method for writing to item_inventory
-	 *  @privateMethod
+	 * 	Standardized method for writing to item_inventory
 	 *  @param {Number|ID} itemId item id
 	 *  @param {Number} value amount to be stored
 	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
 	 *  @param {String|ID} userId user id
 	 */
-	async _updateInventory({itemId, value=0, operation=`+`, userId=this.id}) {
-		//	Return if itemId is not specified
-		if (!itemId) return {stored: false}
+	async updateInventory({itemId, value=0, operation=`+`, userId}) {
+		const fn = `[Database.updateInventory()]`
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
@@ -318,7 +341,7 @@ class Database {
 				SELECT $itemId, $userId
 				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
 				, `run`
-				, {$userId: userId, $itemId: itemId}
+				, {itemId: itemId, userId: userId}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
@@ -329,8 +352,9 @@ class Database {
 				, [value, itemId, userId]
 			)
 		}
-
-		logger.info(`[._updateInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
+		
+		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return {stored: true}
 	}
 
@@ -631,15 +655,15 @@ class Database {
 	 * 	@sendTenChocolateBoxes
 	 */
 	sendTenChocolateBoxes(userId = this.id) {
-		this._updateInventory({itemId: 81, value:10, operation:`+`, userId})	
+		this.updateInventory({itemId: 81, value:10, operation:`+`, userId})	
 	}
 
 	userBadges(userId = this.id) {
-		return sql.get(`
+		return this._query(`
                 SELECT *
                 FROM userbadges
-                WHERE userId = "${userId}"
-            `).then(async parsed => parsed)
+                WHERE userId = ?
+            `, `get`, [userId])
 	}
 
 
@@ -709,7 +733,7 @@ class Database {
 	//  Set one value into card column
 	async registerCard(card_alias) {
 		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`,`get`,[card_alias])
-		return await this._updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
+		return await this.updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
 	}
 
 	get cardItemIds() {
@@ -739,7 +763,7 @@ class Database {
 	 * 	@addLuckyTickets
 	 */
 	async addLuckyTickets(value = 0) {
-		await this._updateInventory({itemId: 71, value:value, operation:`+`})
+		await this.updateInventory({itemId: 71, value:value, operation:`+`})
 		return this
 	}
 
@@ -751,7 +775,7 @@ class Database {
 	 * 	@addItems
 	 */
 	async addItems(itemId, value = 0) {
-		await this._updateInventory({itemId: itemId, value:value, operation:`+`})
+		await this.updateInventory({itemId: itemId, value:value, operation:`+`})
 		return this
 	}
 
@@ -763,7 +787,7 @@ class Database {
 	 * 	@storeArtcoins
 	 */
 	async storeArtcoins(value) {
-		await this._updateInventory({itemId: 52, value: value, operation: `+`})
+		await this.updateInventory({itemId: 52, value: value, operation: `+`})
 		return this
 	}
 
@@ -793,7 +817,7 @@ class Database {
 	 * 	@storeArtcoins
 	 */
 	async storeCandies(value) {
-		await this._updateInventory({ itemId: 102, value: value, operation: `+` })
+		await this.updateInventory({ itemId: 102, value: value, operation: `+` })
 		return this
 	}
 
@@ -1054,7 +1078,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawLuckyTicket(value = 0) {
-		this._updateInventory({itemId: 71, value: value, operation:`-`})
+		this.updateInventory({itemId: 71, value: value, operation:`-`})
 	}
 
 	/**
@@ -1063,7 +1087,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenBox(value = 0) {
-		this._updateInventory({ itemId: 111, value: value, operation: `-` })
+		this.updateInventory({ itemId: 111, value: value, operation: `-` })
 	}
 
 	/**
@@ -1072,7 +1096,7 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenBag(value = 0) {
-		this._updateInventory({ itemId: 110, value: value, operation: `-` })
+		this.updateInventory({ itemId: 110, value: value, operation: `-` })
 	}
 
 	/**
@@ -1081,12 +1105,12 @@ class Database {
      * @substract_ticket
     */
 	withdrawHalloweenChest(value = 0) {
-		this._updateInventory({ itemId: 109, value: value, operation: `-` })
+		this.updateInventory({ itemId: 109, value: value, operation: `-` })
 	}
 
 	//	Count total user's collected cards.
 	async totalCollectedCards(userId = this.id) {
-		let data = await sql.get(`SELECT * FROM item_inventory WHERE user_id = ${userId}`)
+		let data = await this._query(`SELECT * FROM item_inventory WHERE user_id = ?`, `get`, [userId])
 		for (let key in data) {
 			if (!data[key]) delete data[key]
 		}
@@ -1116,7 +1140,7 @@ class Database {
 	async storingUserGachaMetadata(obj = {}, userid=this.id) {
 		for (let key in obj) {
 			let data = obj[key]
-			await this._updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
+			await this.updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
 		}
 	}
 
@@ -1128,7 +1152,7 @@ class Database {
 	async withdrawUserCraftMetadata(obj = {}, userid = this.id) {
 		for (let key in obj) {
 			let data = obj[key]
-			await this._updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
+			await this.updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
 		}
 	}
 
@@ -1137,7 +1161,7 @@ class Database {
      * @param {Integer} amount Updated/added amount of user's reputation points
      */
 	addReputations(amount = 0, userId = this.id) {
-		return sql.run(`UPDATE userdata
+		return this.client.run(`UPDATE userdata
                             SET reputations = CASE WHEN reputations IS NULL
                                                 THEN ${amount}
                                               ELSE reputations + ${amount}
@@ -1169,16 +1193,17 @@ class Database {
 
 	//  Store new heart point
 	addHeart() {
-		sql.run(`
+		this.client.run(`
             UPDATE userdata 
             SET liked_counts = liked_counts + 1 
             WHERE userId = "${this.id}"
             `)
 	}
 
+
 	//  Enable user's notification
 	enableNotification(userId=this.id) {
-		sql.run(`
+		this.client.run(`
                 UPDATE userdata
                 SET get_notification = 1
                 WHERE userId = "${userId}"
@@ -1187,7 +1212,7 @@ class Database {
 
 	//  Disabled user's notification
 	disableNotification(userId=this.id) {
-		sql.run(`
+		this.client.run(`
                 UPDATE userdata
                 SET get_notification = -1
                 WHERE userId = "${userId}"
@@ -1196,7 +1221,7 @@ class Database {
         
 	//  Check if post already stored in featured list
 	featuredPostMetadata(url) {
-		return sql.get(`
+		return this.client.get(`
                 SELECT *
                 FROM featured_post
                 WHERE url = "${url}"
@@ -1205,7 +1230,7 @@ class Database {
 
 	//  Register new featured post metadata
 	registerFeaturedPost({timestamp=0, url=``, author=``, channel=``, heart_counts=0, last_heart_timestamp=Date.now()}) {
-		sql.run(`
+		this.client.run(`
                 INSERT INTO featured_post
                 (timestamp, url, author, channel, heart_counts, last_heart_timestamp)
                 VALUES (?, ?, ?, ?, ?, ?)`,
@@ -1256,7 +1281,7 @@ class Database {
             *   @param description of item description.
             */
 	registerItem(name, alias, type, price, description) {
-		return sql.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
+		return this.client.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
 	}
 
 
@@ -1267,7 +1292,7 @@ class Database {
         * @param id of userId
         */
 	registeringId(tablename, id) {
-		return sql.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
+		return this.client.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
 	}
 
 
@@ -1278,7 +1303,7 @@ class Database {
         * @param type of column type.
         */
 	registerColumn(tablename, columnname, type) {
-		return sql.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
+		return this.client.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
 	}
 
 
@@ -1289,7 +1314,7 @@ class Database {
     * @param type of column type.
     */
 	registerTable(tablename, columnname, type) {
-		return sql.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
+		return this.client.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
 	}
 
 
@@ -1301,9 +1326,9 @@ class Database {
     *   @param id of target userid.
     */
 	sumValue(tablename, columnname, value, id, idtype = `userId`) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
 			.then(async currentdata => {
-				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
+				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
 			})
 	}
 
@@ -1315,12 +1340,12 @@ class Database {
      * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
      */
 	addValues(tablename, columnnames, values) {
-		return sql.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
+		return this.client.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
 	}
 
 	updateValue(tablename, columnNameToUpdate, value, columnname, id) {
 		try {
-			sql.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
+			this.client.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
 		} catch (error) { throw error }
 	}
 	/**
@@ -1331,9 +1356,9 @@ class Database {
     *   @param id of target userid.
     */
 	subtractValue(tablename, columnname, value, id) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
 			.then(async currentdata => {
-				sql.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
+				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
 			})
 	}
 
@@ -1347,7 +1372,7 @@ class Database {
      *  @param idtype of the id type (default: "userId")
      */
 	replaceValue(tablename, columnname, value, id, idtype = `userId`) {
-		return sql.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
+		return this.client.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
 	}
 
 
@@ -1358,7 +1383,7 @@ class Database {
         * @param id of userId
         */
 	pullRowData(tablename, id, idtype = `userId`) {
-		return sql.get(`SELECT * FROM ${tablename} WHERE ${idtype} = ${id}`).then(async parsed => parsed)
+		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} = ${id}`).then(async parsed => parsed)
 	}
 
 	/**

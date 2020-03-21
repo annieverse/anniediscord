@@ -1,5 +1,5 @@
 const Permission = require(`../libs/permissions`)
-const Command = require(`../libs/commands`)
+const Command = require(`./commands`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -48,7 +48,7 @@ class MessageController {
          *  -----------------------------------------------------------------
          */
         if (minimal) {
-            if (this.isCommandMessage) return this._runTask(`COMMAND`, new Command(this.bot, this.message).init(), 5)
+            if (this.isCommandMessage) return this._runTask(`COMMAND`, new Command({bot:this.bot, message:this.message}).run(), 5)
             return
         }
         if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
@@ -170,7 +170,7 @@ class MessageController {
      * @returns {StringCode}
      */
     _registerPermission() {
-        const fn = `[MessageCollector._registerPermission()]`
+        const fn = `[MessageController._registerPermission()]`
         const userPerm = new Permission(this.message).authorityCheck()
         this.logger.debug(`${fn} PERM_LVL ${userPerm.level} - ${userPerm.name} | USER_ID ${this.message.author.id}`)
         this.message.author.permissions = userPerm

@@ -39,50 +39,54 @@ class Pistachio {
 		 * @type {AnyComponents}
 		 */
 		this.components = Components
-	}
 
+		/**
+		 * Bind Methods
+		 * @since 1.0.0
+		 * @type {AnyComponents}
+		 */	
+		this.palette = require(`../ui/colors/default`)
 
-	/**
-	 *  ------------------------------------------
-	 *  Getter Variables
-	 *  ------------------------------------------
-	 */
-
-	/**
-	 * Default Annie's Color pool
-	 * @since 2.0.0
-	 * @type {JSON}
-	 */
-	get palette() {
-		return require(`../ui/colors/default`)
-	}
-
-	/**
-	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.
-	 * @since 5.0.0
-	 * @type {Boolean}
-	 */
-	get isSelfTargeting() {
-		if (!this._isUserMetaLayerAvailable) return
-		return this.components.user.id === message.author.id ? true : false
-	}
-
-	/**
-	 * Check if <User> property is available in the components
-	 * @since 6.0.0
-	 * @type {Boolean}
-	 */
-	get _isUserMetaLayerAvailable() {
-		return this.components.user || null
-	}
+		/**
+		 * Check if <User> property is available in the components
+		 * @since 6.0.0
+		 * @type {Boolean}
+		 */
+		this._isUserMetaLayerAvailable = this.components.user || null
 	
-	/**
-	 * Check if <Member> and <Guild> property is available in the message components
-	 * @since 6.0.0
-	 * @type {Boolean}
-	 */
-	get _isGuildLayerAvailable() {
-		return this.message.member && this.message.guild ? true : false
+		/**
+		 * Check if <Member> and <Guild> property is available in the message components
+		 * @since 6.0.0
+		 * @type {Boolean}
+		 */
+		this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
+		
+		this.isSelfTargeting = this.isSelfTargeting.bind(this)
+		this.deleteMessages = this.deleteMessages.bind(this)
+		this.collector = this.collector.bind(this)
+		this.multicollector = this.multicollector.bind(this)
+		this.hasRole = this.hasRole.bind(this)
+		this.removeRole = this.removeRole.bind(this)
+		this.addRole = this.addRole.bind(this)
+		this.trueInt = this.trueInt.bind(this)
+		this.name = this.name.bind(this)
+		this.emoji = this.emoji.bind(this)
+		this.commanifier = this.commanifier.bind(this)
+		this.closestUpper = this.closestUpper.bind(this)
+		this.closestBelow = this.closestBelow.bind(this)
+		this.choice = this.choice.bind(this)
+		this.relabel = this.relabel.bind(this)
+		this.pause = this.pause.bind(this)
+		this.loadAsset = this.loadAsset.bind(this)
+		this.normalizeString = this.normalizeString.bind(this)
+		this.avatar = this.avatar.bind(this)
+		this.displayAvatar = this.displayAvatar.bind(this)
+		this.getExpMetadata = this.getExpMetadata(this)
+		this.parsingAvailableGifts = this.parsingAvailableGifts.bind(this)
+		this.formatString = this.formatString.bind(this)
+		this.chunk = this.chunk.bind(this)
+		this.socketing = this.socketing.bind(this)
+		this.reply = this.reply.bind(this)
 	}
 
 
@@ -109,8 +113,8 @@ class Pistachio {
 	collector(msg) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
-		m => m.author.id === message.author.id, {
-			max: 1,
+		m => m.author.id === msg.author.id, {
+			max: 2,
 			time: 60000,
 		})
 	}
@@ -125,7 +129,7 @@ class Pistachio {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
 		m => m.author.id === msg.author.id, {
-			max: 1,
+			max: 2,
 			time: 60000,
 		})
 	}
@@ -171,6 +175,16 @@ class Pistachio {
 	 */
 
 	/**
+	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.
+	 * @since 5.0.0
+	 * @type {Boolean}
+	 */
+	isSelfTargeting() {
+		if (!this._isUserMetaLayerAvailable) return
+		return this.components.user.id === message.author.id ? true : false
+	}
+
+	/**
 	 * Automatically convert any weird number notation into a real value.
 	 * @author Fwubbles
 	 * @param {String} str target string
@@ -187,7 +201,7 @@ class Pistachio {
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		return bot.users.get(userId).username || `unknown`
+		return this.bot.users.get(userId).username || `unknown`
 	}
 
 	/**
@@ -196,7 +210,7 @@ class Pistachio {
 	 *  @returns {Emoji|String}
 	 */
 	emoji(name=``) {
-		return bot.emojis.find(e => e.name === name) || `(???)`
+		return this.bot.emojis.find(e => e.name === name) || `(???)`
 	}
 
 	/**
@@ -315,7 +329,7 @@ class Pistachio {
 	*/
 	avatar(id, compress = false, size = `?size=512`) {
 		try {
-			let url = bot.users.get(id).displayAvatarURL
+			let url = this.bot.users.get(id).displayAvatarURL
 			if (compress) {
 				return get(url.replace(/\?size=2048$/g, size))
 					.then(data => data.body)
@@ -323,7 +337,7 @@ class Pistachio {
 
 			return url
 		}
-		catch(e) { return container.loadAsset(`error`) }
+		catch(e) { return this.loadAsset(`error`) }
 	}
 
 	/**
@@ -465,6 +479,21 @@ class Pistachio {
 		return content
 	}
 
+	/**
+	 * Message wrapper to display avatar request.
+	 * @param {String} userId target user
+	 * @returns {AvatarMessage}
+	 */
+	displayAvatar(userId=``) {
+		this.message.react(`📸`)
+		const [avatar, name] = [this.avatar(userId), this.name(userId)]
+		const embed = new RichEmbed()
+		.setImage(avatar)
+		.setAuthor(name, avatar)
+		.setColor(this.palette.darkmatte)
+		this.message.channel.send(embed)
+	}
+
 	/** Annie's custom message system.
 	 *  @param {String} content as the message content
 	 *  @param {Array} socket is the optional message modifier. Array
@@ -486,7 +515,7 @@ class Pistachio {
 		url: null,
 		image: null,
 		imageGif: null,
-		field: this.message.channel,
+		field: null,
 		author: null,
 		simplified: false,
 		notch: false,

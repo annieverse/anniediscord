@@ -1,95 +1,63 @@
-const User = require(`../../utils/userSelector`)
+const Command = require(`../../libs/commands`)
 
 /**
- * Main module
- * @ArtcoinsGenerator Admin command to add artcoins
+ * Add artcoins to a user
+ * @author klerikdust
  */
-class ArtcoinsGenerator {
+class ArtcoinsGenerator extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
-	//  Init
-	async execute() {
-		const { pause, message, multicollector, command, commandfile, name, args, collector, palette, emoji, isEventManager,isEventMember, isAdmin, trueInt, reply, commanifier, code, bot:{db} } = this.stacks
-		
-		let userNames = []
-		
-		//  Returns if user doesn't have admin authority
-		if (!isEventMember && !isAdmin && !isEventManager) return reply(code.UNAUTHORIZED_ACCESS)
-		//if (!message.content.includes(`[` && `]`)) return reply(code.ADDAC.WRONG_FORMAT,{footer:`Include the \`[]\``})
-		//let users = message.content.substring(message.content.indexOf(`[`) + 1, message.content.indexOf(`]`))
-		let users = message.content.slice(command.length+2)
-		let usersarr
-		if (message.content.includes(`,`)) {
-			usersarr = users.split(`,`)
-		} else {
-			usersarr = []
-			usersarr.push(users.slice(command+1))
-		}
-		
-		//  Returns if user not specifying any parameters
-		if (!args[0]) return reply(code.ADDAC.SHORT_GUIDE)
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, bot:{locale, db}, name, palette, collector, multicollector, trueInt, emoji, commanifier, message }) {
+		await this.requestUserMetadata(2)
+		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
 
 		//  Confirmation
-		reply(code.ADDAC.CONFIRMATION, {
-			socket: [emoji(`artcoins`), users],
-			color: palette.golden,
-			notch: true
-		})
+		const user = this.user
+		reply(locale.ADDAC.CONFIRMATION_SEQ_1, {color: palette.golden})
 			.then(async confirmation => {
-				collector.on(`collect`, async msg => {
+				const firstCollector = collector(message)
+				firstCollector.on(`collect`, async msg => {
 					let input = msg.content.toLowerCase()
 					let amount = trueInt(input)
 
 					//  Close connections
 					confirmation.delete()
-					collector.stop()
+					firstCollector.stop()
                 
-
 					//  Returns if input is a negative value
-					if (!amount) return reply(code.ADDAC.NEGATIVE_VALUES)
+					if (!amount) return reply(locale.ERR.NEGATIVE_INPUT)
 
-					reply(`Please enter \`y\` to confirm`).then( async proceed =>{
-						
+					reply(locale.ADDAC.CONFIRMATION_SEQ_2, {
+						socket: [emoji(`artcoins`), commanifier(amount), name(user.id)],
+						color: palette.golden
+					})
+						.then(async proceed =>{
 						let secondCollector = multicollector(msg)
 						secondCollector.on(`collect`, async (secondmsg) => {
 							let inputtwo = secondmsg.content.toLowerCase()
-
 							proceed.delete()
 							secondCollector.stop()
+							if (inputtwo != `y`) return reply(locale.ADDAC.TRANSACTION_CLOSED)
 
-							if (inputtwo != `y`) reply(code.ADDAC.TRANSACTION_CLOSED)
-
-							//  Storing new balance value
-							for (let index = 0; index < usersarr.length; index++) {
-								try 
-								{
-									const element = usersarr[index]
-									let userSelectorMetadata = {
-										args: [element],
-										message: message,
-										commandfile: commandfile
-									}
-									let currentAuthor = await new User(userSelectorMetadata).getUser()
-									db.setUser(currentAuthor.id).storeArtcoins(amount)
-									userNames.push(name(currentAuthor.id))
-									pause(3000)
-								}
-								catch(error)
-								{
-									null
-								}
-							}
-
-							let userNamesCombined = userNames.join(`, `)
-							
+							//  Story artcoins into db
+							await db.updateInventory({itemId: 52, value: amount, userId: user.id})
 							//  Successful
-							return reply(code.ADDAC.SUCCESSFUL, {
+							return reply(locale.ADDAC.SUCCESSFUL, {
 								socket: [
-									userNamesCombined,
+									name(user.id),
 									emoji(`artcoins`),
-									commanifier(amount)]
+									commanifier(amount)],
+								color: palette.lightgreen
 							})
 						})
 					})
@@ -101,12 +69,12 @@ class ArtcoinsGenerator {
 
 module.exports.help = {
 	start: ArtcoinsGenerator,
-	name: `artcoins-generator`,
+	name: `artcoinsGenerator`,
 	aliases: [`addac`, `addacs`, `addartcoin`],
-	description: `Add artcoins to specific user.`,
-	usage: `addac @user <amount>`,
-	group: `Admin`,
+	description: `Add artcoins to a user`,
+	usage: `addac <user>`,
+	group: `Developer`,
+	permissionLevel: 5,
 	public: true,
-	required_usermetadata: true,
-	multi_user: false
+	multiUser: true
 }
