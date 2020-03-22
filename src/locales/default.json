@@ -340,7 +340,7 @@
         "FETCHING": "`Fetching {0}'s stat data . .`"
     },
     "SWITCH_THEME": {
-        "UNAVAILABLE": "This feature is only available to **Server Booster**.",
+        "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**.",
         "MISSING_KEYWORD": "Please include the theme name you want to use.",
         "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**`",
         "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
