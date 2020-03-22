@@ -1,41 +1,41 @@
-
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Say function bundler to talk through bot
+ * Talk through bot.
+ * @author klerikdust
  */
-class Say {
-	constructor(Stacks) {
-		this.stacks = Stacks
-	}
+class Say extends Command {
 
-
-	/**
-     *	Initializer method
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
-		const { isAdmin, code, name, reply, args, message, meta: {author} } = this.stacks
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-		//  Returns if user has no admin authority
-		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
-		//	Returns as short-guide if user's custom message length is zero.
-		if (!args[0]) return reply(code.SAY.SHORT_GUIDE, {socket: [name(author.id)]})
-		//	Parse custom message
-		let content = message.content.slice(message.content.indexOf(args[0]))
-		//	Hide author message
-		message.delete()
-		//	Send custom message
-		return reply(content)
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, name, bot:{locale:{SAY}} }) {
+		await this.requestUserMetadata(1)
+
+		//	Displaying short-guide if user doesn't specify any message to send.
+		if (!this.fullArgs) return reply(SAY.SHORT_GUIDE, {socket: [name(this.user.id)]})
+		//	Spying mode. FAYAHHHH!
+		this.message.delete()
+		return reply(this.fullArgs, {color: `crimson`})
 	}
+
 }
 
 module.exports.help = {
 	start: Say,
 	name: `say`,
 	aliases: [],
-	description: `Talk through bot`,
+	description: `Talk through bot.`,
 	usage: `say <message>`,
 	group: `Admin`,
+	permissionLevel: 3,
 	public: true,
-	required_usermetadata: true,
-	multi_user: false
+	multiUser: false
 }

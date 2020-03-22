@@ -22,7 +22,7 @@ class SwitchTheme extends Command {
         await this.requestUserMetadata(2)
         
         //  Returns if user not categorized as server booster/doanor
-        //if (!this.user.meta.premiumUser) return reply(SWITCH_THEME.UNAVAILABLE)
+        if (!this.user.meta.premiumUser) return reply(SWITCH_THEME.UNAVAILABLE)
         //  Returns if user didn't specify any keyword
         if (!this.args[0]) return reply(SWITCH_THEME.MISSING_KEYWORD)
 
@@ -51,5 +51,5 @@ module.exports.help = {
     group: `User`,
     permissionLevel: 0,
 	public: true,
-	multi_user: false
+	multiUser: false
 }

@@ -1,9 +1,47 @@
-class RollDice {
+const Command = require(`../../libs/commands`)
+/**
+ * @todo
+ * Hi @Bait_god, would you mind to refactor this code?
+ * IMO, the options are a bit overwhelming, should we try to add a simpler dice option?
+ * Example, if user doesn't specify any argument, Annie will use the common rolldice method a.k.a randomize number from 1 to 6.
+ * 
+ * Retrieves a random roll
+ * @author Bait God
+ */
+class RollDice extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
     constructor(Stacks) {
-        this.stacks = Stacks
+        super(Stacks)
         this.amount = 1
         this.numOfSides = 6
         this.modifier = null
+    }
+
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, bot:{locale:{ROLLDICE}} }) {
+
+        if (!this.args[0] || !this.args[0].includes(`d`)) return reply(ROLLDICE.MISSING_ARGS)
+        let diceOptions = this.fullArgs.split(`d`)
+        let modiferPlus, modiferMinus
+        if (diceOptions[1].includes(`+`)) {
+            modiferPlus = diceOptions[1].split(`+`)
+            this.modifier = ` + ${modiferPlus[1]}`
+            this.setNumOfSides = modiferPlus[0]
+        } else if (diceOptions[1].includes(`-`)) {
+            modiferMinus = diceOptions[1].split(`-`)
+            this.modifier = ` - ${modiferMinus[1]}`
+            this.setNumOfSides = modiferMinus[0]
+        } else {
+            this.setNumOfSides = diceOptions[1]
+        }
+        !diceOptions[0] ? this.rollAmount = 1 : this.rollAmount = diceOptions[0]
+        return reply(this.rollSelected.join(`\n`))
     }
 
     numToWord(args) {
@@ -75,39 +113,16 @@ class RollDice {
         this.numOfSides = num
     }
 
-    async execute() {
-        const { reply, args } = this.stacks
-
-        if (!args[0] || !args[0].includes(`d`)) return reply(`please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>`)
-
-        let fullArgs = args.join(``).trim()
-        let diceOptions = fullArgs.split(`d`)
-        let modiferPlus, modiferMinus
-        if (diceOptions[1].includes(`+`)) {
-            modiferPlus = diceOptions[1].split(`+`)
-            this.modifier = ` + ${modiferPlus[1]}`
-            this.setNumOfSides = modiferPlus[0]
-        } else if (diceOptions[1].includes(`-`)) {
-            modiferMinus = diceOptions[1].split(`-`)
-            this.modifier = ` - ${modiferMinus[1]}`
-            this.setNumOfSides = modiferMinus[0]
-        } else {
-            this.setNumOfSides = diceOptions[1]
-        }
-        !diceOptions[0] ? this.rollAmount = 1 : this.rollAmount = diceOptions[0]
-        return reply(this.rollSelected.join(`\n`))
-    }
 }
 
 module.exports.help = {
     start: RollDice,
     name: `rolldice`,
     aliases: [`diceroll`, `rd`],
-    description: `retrives a random roll`,
-    usage: `rolldice`,
+    description: `Retrieves a random roll`,
+    usage: `rolldice <AmountOfDice>`,
     group: `fun`,
+    permissionLevel: 0,
     public: true,
-    required_usermetadata: false,
-    multi_user: false,
-    special_channels: [`630283310496612352`, `631568116627013632`]
+    multiUser: false,
 }

@@ -73,6 +73,14 @@
         "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
         "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}"
     },
+    "CAT": {
+        "RESPONSES": [
+            "Nyaa~",
+            "Paw paw!",
+            ":cat:",
+            "*fluffy~*"
+        ]
+    },
     "CHECKOUT": {
         "CANCEL": "Transaction cancelled.",
         "SUCCESSFUL": "Purchase successful!",
@@ -154,6 +162,22 @@
         "LIKED": "**{0}** and **{1} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
     },
+    "FLIPCOIN": {
+        "RESPONSES": [
+            "Landed on **{0}!** Yay!",
+            "The coin has landed on **{0}.**",
+            "Whoa! **{0}!**",
+            "As i expected! landed on **{0}!**"
+        ]
+    },
+    "FOX": {
+        "RESPONSES": [
+            "Fluffy~",
+            ":fox:",
+            "Don't get too close, i might bite you.",
+            "Awooo"
+        ]
+    },
     "GACHA": {
         "OPENING_WORDS": [
             " *{0} is opening their precious card*",
@@ -211,6 +235,10 @@
         "OTHER_INFO":"\nWant this to be sent to your dms please include `--dm` (EX. {0}help general --dm)\n\n",
         "STARTER_COMMANDS":"⇨ **General** [7/{0}]\n`balance`, `profile`, `daily`, `inventory`, `collection`, `rep`, `gift`\n⇨ **Fun** [2/{1}]\n`ask`, `avatar`\n⇨ **Shop-related** [6/{2}]\n`eat` (capsules), `buy`, `pay`, `redeem`, `shop`, `roll` (gacharoll), `multi-roll` (gacharoll)\n⇨ **Server** [4/{3}]\n`stats`, `ping`, `invite`, `join`"
     },
+    "HUG": {
+        "THEMSELVES": "**{0}** hugging a thin air. :<",
+        "OTHER_USER": "**{0}** hugging **{1}** <3"
+    },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
         "FETCHING": "`fetching {0} inventory . .`",
@@ -249,6 +277,18 @@
         "SUCCESSFUL": "Gotcha! message has been successfully sent to **{0}**.",
         "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
         "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
+    },
+    "PANDA": {
+        "RESPONSES": [
+            ":panda:",
+            "So cute!",
+            "Look at this lazy blob!",
+            "How adorable!"
+        ]
+    },
+    "PAT": {
+        "THEMSELVES": "**{0}** is patting themselves. :< ",
+        "OTHER_USER": "**{0}** is patting **{1}**, how adorable!"
     },
     "PAY": {
         "SHORT_GUIDE": "Pay-feature let you share your artcoins with other user!\nStart by typing `>pay <user>`",
@@ -327,8 +367,11 @@
             }
         }
     },
+    "ROLLDICE": {
+        "MISSING_ARGS": "Please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>"
+    },
     "SAY": {
-        "SHORT_GUIDE": "I'll follow your words, **{0}**!"
+        "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
     },
     "SERVER_BOOST": {
         "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
