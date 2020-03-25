@@ -69,7 +69,7 @@ module.exports.help = {
 	description: `Running terminal command`,
 	usage: `cli <[CommandStatement]> --flag`,
 	group: `Developer`,
-	permissionLevel: `4`,
+	permissionLevel: 4,
 	public: true,
 	multiUser: false,
 }

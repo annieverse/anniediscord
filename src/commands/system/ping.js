@@ -36,9 +36,9 @@ module.exports.help = {
 	start: Ping,
 	name: `ping`,
 	aliases: [`pong`, `p1ng`, `poing`],
-	description: `Gives bot's ping`,
+	description: `Output bot's ping`,
 	usage: `ping`,
-	group: `Server`,
+	group: `System`,
 
 	/**
 	 * permissionLevel is a new property in command class object, a lot of commands don't have this property yet.
@@ -48,6 +48,5 @@ module.exports.help = {
 
 
 	public: true,
-	required_usermetadata: false,
 	multiUser: false
 }

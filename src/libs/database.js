@@ -415,6 +415,32 @@ class Database {
 	}
 
 
+	/** -------------------------------------------------------------------------------
+	 *  Commands Methods
+	 *  -------------------------------------------------------------------------------
+	 */
+
+	/**
+	 * Fetch most used commands from commands_usage. Descendantly ordered.
+	 * @param {Number} [limit=5] amount of returned rows
+	 * @returns {Array}
+	 */
+	async mostUsedCommands(limit=5) {
+		const fn = `[Database.mostUsedCommands()]`
+		if (limit < 0) throw new TypeError(`${fn} parameter "limit" cannot be blank or below zero. Set at least 1.`)
+		return this._query(`
+			SELECT command_alias, COUNT(command_alias) as total_used
+			FROM commands_usage
+			GROUP BY command_alias
+			ORDER BY COUNT(command_alias) DESC
+			LIMIT ?`
+			, `all`
+			, [limit]
+			, `Fetching most used commands in commands_usage`
+		)
+	}
+	
+
 	/**
 	 * 	Defacto method for updating experience point
 	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.

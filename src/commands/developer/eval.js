@@ -25,7 +25,7 @@ class DeveloperTool extends Command {
 			return reply(evaled)
 
 		} catch (err) {
-			return reply(message)
+			return reply(err)
 		}
 	}
 }
@@ -37,7 +37,7 @@ module.exports.help = {
 	description: `Evaluate line of code on air`,
 	usage: `eval <LineOfCode>`,
 	group: `Developer`,
-	permissionLevel: `4`,
+	permissionLevel: 4,
 	public: true,
 	multiUser: false,
 }

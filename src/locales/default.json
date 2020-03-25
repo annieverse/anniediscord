@@ -229,6 +229,13 @@
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
     "HELP": {
+        "LANDING": "**Hi {0}!** I'm Annie and how I can help you?\n\n**• Recommended Commands**\nTry my most popular commands among of our user! they are sorted based on our collected command usage data.\n{1}\n\n**• Discover more**\nIf you are looking for comprehensive list, take a look at Commandpedia by pressing to the :book: button on this message.\n\nUnable to find what you are looking for? don't be worry! my developers are always available to answer your questions right away.\n{2}",
+        "COMMANDPEDIA": {
+            "HEADER": "Below you can see all the commands I know\nFor further assistance, please have a visit to my {1}\n\n{2}",
+            "TITLE": "Commandpedia",
+            "USAGE_EXAMPLES": "Use **{0}help <CommandName>** to get information about a command.\nUse **{0}help <CategoryName>** to get information about a category."
+        },
+        "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword.",
         "ADVANCEDHELPMENU": "**My available commands are:**\nhelp: ```fix\nTo view most popular availble commands```help group: ```fix\nTo look at one specific group of commands\nEX. {0}help general```My available groups are: ```fix\n{1}```help command:```fix\nTo look at a specific command\nEX. {2}help shop```",
         "FETCHING": "`Fetching `<a:AAUloading:599409998342127616>",
         "HEADER": "<:AnnieHi:501524470692053002> **Hello, I'm Annie!**\nHere are some commands to get you started and information on how to use my advanced help menu:\n",

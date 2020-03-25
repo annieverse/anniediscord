@@ -545,7 +545,8 @@ class Pistachio {
 
 		//  Socketing
 		for (let i = 0; i < options.socket.length; i++) {
-			if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, options.socket[i])
+			const key = `{${i}}`
+			if (content.indexOf(key) != -1) content = content.replace(new RegExp(`\\` + key, `g`), options.socket[i])
 		}
 
 		//  Returns simple message w/o embed
