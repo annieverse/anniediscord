@@ -441,6 +441,32 @@ class Database {
 	}
 	
 
+	/** -------------------------------------------------------------------------------
+	 *  User's manager methods
+	 *  -------------------------------------------------------------------------------
+	 */	
+
+	/**
+	 * Updating user's bio
+	 * @param {String} bio User's input. Limit 156 character.
+	 * @param {String} userId User's discord id.
+	 * @returns {SQLObject}
+	 */
+	setUserBio(bio=``, userId=``) {
+		const fn = `[Database.setUserBio()]`
+		if (bio !== `string`) throw new TypeError(`${fn} parameter "bio" should be string.`)
+		if (bio.length > 156) throw new RangeError(`${fn} parameter "bio" cannot exceed 156 characters!`)
+		return this._query(`
+			UPDATE user
+			SET bio = $bio
+			WHERE id = $id`
+			, `run`
+			, {$bio: bio, $id: userId}
+			, `Updating bio for USER_ID:${userId}`
+		)
+	}
+
+
 	/**
 	 * 	Defacto method for updating experience point
 	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
