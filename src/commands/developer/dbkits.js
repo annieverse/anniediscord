@@ -30,25 +30,22 @@ class DatabaseKits extends Command {
 			//	Make sure the the stmt is valid
 			if (!stmt) return reply(DBKITS.MISSING_STMT)
 
-			
 			//	Parse flag
 			const flag = this.fullArgs.match(/[^--]*$/)[0].substring(0, 3)
 			//	Flag check as well
 			if (!flag) return reply(DBKITS.MISSING_FLAG)
 
-
 			//	Running query
 			const result = await db._query(stmt, flag)
 			//	Prettify result for readability
 			const parsedResult = JSON.stringify(result).replace(/\,/g, `,\n`)
-
 			//	Display result
 			return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
 
 		}
 		catch (e) {
 			//	Catching failed query
-			return reply (DBKITS.ERROR + e.message)
+			return reply (DBKITS.ERROR + `\`\`\`diff\n- ${e.message}\`\`\``)
 		}
 	}
 }

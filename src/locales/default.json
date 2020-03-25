@@ -115,7 +115,7 @@
     "DBKITS": {
         "UNAUTHORIZED": "You are not authorized to access this area.",
         "AUTHORIZED": "Good evening, **{0}**. This module is ready to be used.",
-        "ERROR": "**Ops, something went wrong.**\n\n",
+        "ERROR": "**Ops, something went wrong.**\n",
         "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
         "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
     },

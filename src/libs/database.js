@@ -52,7 +52,7 @@ class Database {
 		}
 		catch (e) {
 			logger.error(`${fn} has failed to run > ${e.stack}\n${stmt}`)
-			return null
+			throw e
 		}
 	}
 
