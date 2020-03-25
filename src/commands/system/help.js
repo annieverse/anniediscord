@@ -153,7 +153,7 @@ module.exports.help = {
 	aliases: [`help`, `help`, `cmdhelp`],
 	description: `Displaying all the available commands. Complete with the usage.`,
 	usage: `help <Category/CommandName>(Optional)`,
-	group: `general`,
+	group: `System`,
 	permissionLevel: 0,
 	public: true,
 	multiUser: false
