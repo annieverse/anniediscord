@@ -383,6 +383,11 @@
     "SERVER_BOOST": {
         "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
     },
+    "SETBIO": {
+        "MISSING_ARG": "Aw, you missed something. Yes, the bio/description! please include it next time!",
+        "EXCEEDING_LIMIT": "Great bio! but can you reduce it to maximum at **156 characters?** I've trouble fitting this into my small pocket ...",
+        "SUCCESSFUL": "Yay! your new profile's bio has been set!"
+    },
     "STATCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Stat card for {0}**",

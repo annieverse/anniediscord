@@ -1,60 +1,42 @@
-const Discord = require(`discord.js`)
-const SqliteClient = require(`better-sqlite3`)
-const sql = new SqliteClient(`.data/database.sqlite`)
-class setDesc {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.args = Stacks.args
-		this.palette = Stacks.palette
-		this.stacks = Stacks
+const Command = require(`../../libs/commands`)
+/**
+ * Set user's profile bio/description
+ * @author klerikdust
+ */
+class SetBio extends Command {
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+		super(Stacks)
+		this.charactersLimit = 156
+    }
+
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here
+     */
+    async execute({ reply, bot:{db, locale:{SETBIO}}}) {
+		await this.requestUserMetadata(1)
+
+		//  Handle if user doesn't specify the new bio/description
+		if (!this.fullArgs) return reply(SETBIO.MISSING_ARG, {color: `red`})
+		//  Handle if user input is exceeding the character limit
+		if (this.fullArgs.length > this.charactersLimit) return reply(SETBIO.EXCEEDING_LIMIT, {color: `red`})
+
+		await db.setUserBio(this.fullArgs, this.user.id)
+		return reply(SETBIO.SUCCESSFUL, {color: `lightgreen`})
 	}
 
-	async execute() {
-		let message = this.message
-		let palette = this.stacks.palette
-		function profileDescription(userid, desc) {
-			sql.get(`SELECT * FROM userdata WHERE userId=${userid}`)
-				.then(() => {
-					sql.run(`UPDATE userdata SET description = ? WHERE userId = ?`, [desc, userid])
-				})
-		}
-
-		let descriptionArguments = message.content.substring(this.stacks.command.length+2)
-		const embed = new Discord.RichEmbed()
-
-		if (!this.args[0]) {
-			embed.setColor(palette.darkmatte)
-			embed.setDescription(`Here's the example on how to create your own profile description!\n\n\`>setdesc\` \`I'm AAU Artist!\``)
-
-			return message.channel.send(embed)
-		} else if (descriptionArguments.length > 165) {
-			embed.setColor(palette.darkmatte)
-			embed.setDescription(`You've exceeded the number limit you baka! It should be less than **166** characters.`)
-
-			return message.channel.send(embed)
-		} else {
-			await profileDescription(message.author.id, descriptionArguments)
-
-			embed.setColor(palette.halloween)
-			embed.setDescription(`Hello **${message.author.username}**, your profile description has been set to \`${descriptionArguments}\``)
-
-			return message.channel.send(embed)
-
-		}
-	}
 }
 
 module.exports.help = {
-	start: setDesc,
-	name: `setdesc`,
-	aliases: [`sd`],
-	description: `Set description for profile card`,
-	usage: `setdesc <message>`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: false
+	start: SetBio,
+	name: `setProfileDescription`,
+	aliases: [`sd`, `sb`, `setbio`, `setdesc`, `setdescription`],
+	description: `Set user's profile bio/description`,
+	usage: `setbio <Message>`,
+	group: `Manager`,
+	permissionLevel: 0,
+	multiUser: false
 }

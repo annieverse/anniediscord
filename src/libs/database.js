@@ -454,14 +454,14 @@ class Database {
 	 */
 	setUserBio(bio=``, userId=``) {
 		const fn = `[Database.setUserBio()]`
-		if (bio !== `string`) throw new TypeError(`${fn} parameter "bio" should be string.`)
+		if (typeof bio !== `string`) throw new TypeError(`${fn} parameter "bio" should be string.`)
 		if (bio.length > 156) throw new RangeError(`${fn} parameter "bio" cannot exceed 156 characters!`)
 		return this._query(`
 			UPDATE user
-			SET bio = $bio
-			WHERE id = $id`
+			SET bio = ?
+			WHERE id = ?`
 			, `run`
-			, {$bio: bio, $id: userId}
+			, [bio, userId]
 			, `Updating bio for USER_ID:${userId}`
 		)
 	}
