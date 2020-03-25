@@ -10,7 +10,7 @@ const Command = require(`../../libs/commands`)
  * Command's Class description
  * @author yourname
  */
-class Ping extends Command {
+class CommandName extends Command {
 
     /**
      * @param {external:CommandComponents} Stacks refer to Commands Controller.
@@ -36,7 +36,7 @@ class Ping extends Command {
 
         /**
          *  -----------------------
-         *  Define workflow in here
+         *  Define workflow below here
          *  -----------------------
          */
     }
@@ -44,14 +44,47 @@ class Ping extends Command {
 
 
 module.exports.help = {
-    start: Ping,
-    name: `ping`,
-    aliases: [`pong`, `p1ng`, `poing`],
-    description: `Gives bot's ping`,
-    usage: `ping`,
+    /**
+     * Refer to the class of this file
+     * @type {Class}
+     */
+    start: CommandName,
+    /**
+     * Define the file name (without the extension!)
+     * @type {String}
+     */
+    name: `commandName`,
+    /**
+     * Define accepted aliases. User will be able to call the command with these alternative names.
+     * @type {ArrayOfString}
+     */
+    aliases: [`itscommand`, `cmdName`, `justCallMeCommand!`],
+    /**
+     * Make a short, clear and concise command's description
+     * @type {String}
+     */
+    description: `This is a command's template`,
+    /**
+     * Define how to use the command. Include optional arguments/flags if needed
+     * @type {String}
+     */
+    usage: `command <withArgument>(Optional)`,
+    /**
+     * Define the command's group. Follow the name of parent folder where you stored this command
+     * @type {String}
+     */
     group: `Server`,
+    /**
+     * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
+     * @type {Number}
+     */
     permissionLevel: 0,
-    public: true,
+    /**
+     * Set this to false if the command doesn't have the option to target different user
+     * EXAMPLE W/O MULTIUSER PROP: <Ping>/<Stats>/<Pixiv>
+     * EXAMPLE w/ MULTIUSER PROP: <Profile>/<Balance>/<Avatar>
+     * @type {Boolean}
+     */
     multiUser: false
 }
 
