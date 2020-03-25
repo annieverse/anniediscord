@@ -150,8 +150,8 @@ module.exports.help = {
 	name: `pixiv`,
 	aliases: [`pix`, `pxv`, `pixiv`],
 	description: `Fetching image from pixiv.`,
-	usage: `pixiv`,
-    group: `Art Platform`,
+	usage: `pixiv <SearchKeyword>(Optional)`,
+    group: `Artsy`,
     permissionLevel: 0,
 	public: true,
 	multiUser: false

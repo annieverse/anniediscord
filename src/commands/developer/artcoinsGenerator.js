@@ -72,9 +72,9 @@ module.exports.help = {
 	name: `artcoinsGenerator`,
 	aliases: [`addac`, `addacs`, `addartcoin`],
 	description: `Add artcoins to a user`,
-	usage: `addac <user>`,
+	usage: `addac <User>(Optional)`,
 	group: `Developer`,
-	permissionLevel: 5,
+	permissionLevel: 4,
 	public: true,
 	multiUser: true
 }

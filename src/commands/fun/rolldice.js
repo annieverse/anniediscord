@@ -121,7 +121,7 @@ module.exports.help = {
     aliases: [`diceroll`, `rd`],
     description: `Retrieves a random roll`,
     usage: `rolldice <AmountOfDice>`,
-    group: `fun`,
+    group: `Fun`,
     permissionLevel: 0,
     public: true,
     multiUser: false,

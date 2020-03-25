@@ -34,7 +34,7 @@ module.exports.help = {
 	aliases: [],
 	description: `Talk through bot.`,
 	usage: `say <message>`,
-	group: `Admin`,
+	group: `Fun`,
 	permissionLevel: 3,
 	public: true,
 	multiUser: false
