@@ -146,7 +146,7 @@ class Database {
 			'user_id' TEXT NOT NULL,
 			'decor_id' TEXT,
 			'decor_type' TEXT,
-			'in_use' TEXT)`
+			'in_use' INTEGER DEFAULT 0)`
             , `run`
 			, []
 			, `Verifying table user_profile_decorations`
@@ -507,6 +507,21 @@ class Database {
 		const stmtType = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
 		logger.info(`${fn} ${stmtType} (TYPE:${type})(URL:${url}) | USER_ID ${userId}`)
 		return true
+	}
+
+	/**
+	 * Set user's in_use stickers to zero
+	 * @param {String} [userId=``] User's discord id.
+	 * @returns {SQLObject}
+	 */
+	removeSticker(userId=``){
+		return this._query(`
+			UPDATE user_profile_decorations
+			SET in_use = 0
+			WHERE user_id = ?`
+			, `run`
+			, [userId]
+		)
 	}
 
 	/**
@@ -1024,13 +1039,6 @@ class Database {
 		return theme
 	}
 
-	get removeSticker(){
-		return this._query(`UPDATE userdata
-			SET sticker = ?
-			WHERE userId = ?`
-			,`run`
-			,[``, this.id])
-	}
 
 	async updateBadge(newvalue) {
 		let badgedata = await this.userBadges()

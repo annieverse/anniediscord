@@ -366,6 +366,10 @@
     "REQUEST_PING": "Request received in **{0} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
     "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
+    "REMOVE_STICKER": {
+        "NO_CHANGES": "Sorry, it seems you haven't equipped any sticker.",
+        "SUCCESSFUL": "Your profile sticker has been unequipped."
+    },
     "ROLE": {
         "ERR": {
             "WRONG": {
