@@ -12,14 +12,13 @@ class Help extends Command {
 		super(Stacks)
 		this.defaultColor = `crimson`
 		this.commandpediaButton = `📖`
-		this.supportServerLink = `[Support Server](https://discord.gg/wSu6Bq)`
 	}
 
     /**
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, bot:{db, version, locale:{HELP}} }) {
+	async execute({ reply, name, bot:{db, supportServer, version, locale:{HELP}} }) {
 		await this.requestUserMetadata(1)
 		const cmds = this.getCommandStructures()
 
@@ -29,7 +28,7 @@ class Help extends Command {
 			// Display 5 most used commands suggestions
 			const commandSuggestions = await db.mostUsedCommands()
 			return reply(HELP.LANDING, {
-				socket: [name(this.user.id), this.prettifySuggestions(commandSuggestions), this.supportServerLink],
+				socket: [name(this.user.id), this.prettifySuggestions(commandSuggestions), supportServer],
 				color: this.defaultColor,
 				thumbnail: this.bot.user.displayAvatarURL
 			})
@@ -45,7 +44,7 @@ class Help extends Command {
 				bookEmojiCollector.on(`collect`, () => {
 					response.delete()
 					reply(HELP.COMMANDPEDIA.HEADER, {
-						socket: [version, this.supportServerLink, this.prettifyCommandpedia(cmds)],
+						socket: [version, supportServer, this.prettifyCommandpedia(cmds)],
 						customHeader: [HELP.COMMANDPEDIA.TITLE, this.bot.user.displayAvatarURL],
 						color: this.defaultColor
 					})
