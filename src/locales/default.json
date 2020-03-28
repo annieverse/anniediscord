@@ -388,6 +388,11 @@
         "EXCEEDING_LIMIT": "Great bio! but can you reduce it to maximum at **156 characters?** I've trouble fitting this into my small pocket ...",
         "SUCCESSFUL": "Yay! your new profile's bio has been set!"
     },
+    "SETANIME": {
+        "MISSING_ARG": "Aw, you missed something. Yes, your MAL/Kitsu link! please include it next time!",
+        "SOURCE_UNSUPPORTED": "Right now you can only set MAL and Kitsu profile links. To have your site added, request in {0}",
+        "SUCCESSFUL": "Yay! your {0} account has been linked!"
+    },
     "STATCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Stat card for {0}**",

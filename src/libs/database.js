@@ -475,6 +475,38 @@ class Database {
 		)
 	}
 
+	/**
+	 * Updating user's linked social media
+	 * @param {String} [type=``] User's social media type (EXAMPLE: "twitter", "facebook", "kitsu").
+	 * @param {String} [url=``] User's social media url.
+	 * @param {String} [userId=``] User's discord id.
+	 * @returns {SQLObject}
+	 */
+	async setUserSocialMedia(type=``, url=``, userId=``) {
+		const fn = `[Database.setUserSocialMedia()]`
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO user_socialmedia(user_id, type, url)
+				SELECT $userId, $type, $url
+				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedia WHERE user_id = $userId AND type = $type)`
+				, `run`
+				, {userId: userId, type: type, url: url}
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_socialmedia
+				SET url = ?, type = ?
+				WHERE user_id = ?`
+				, `run`
+				, [url, type, userId]
+			)
+		}
+
+		const stmtType = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		logger.info(`${fn} ${stmtType} (TYPE:${type})(URL:${url}) | USER_ID ${userId}`)
+		return true
+	}
 
 	/**
 	 * 	Defacto method for updating experience point
