@@ -132,15 +132,6 @@ class Database {
 			, []
 			, `Verifying table user_inventory`
 		)
-		await this._query(`CREATE TABLE IF NOT EXISTS user_badges (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'badge_id' TEXT,
-			'equipped' INTEGER DEFAULT 1)`
-            , `run`
-			, []
-			, `Verifying table user_badges`
-		)
 		await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedia (
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL,
@@ -149,6 +140,16 @@ class Database {
             , `run`
 			, []
 			, `Verifying table user_socialmedia`
+		)
+		await this._query(`CREATE TABLE IF NOT EXISTS user_profile_decorations (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'decor_id' TEXT,
+			'decor_type' TEXT,
+			'in_use' TEXT)`
+            , `run`
+			, []
+			, `Verifying table user_profile_decorations`
 		)
 
 		/*
