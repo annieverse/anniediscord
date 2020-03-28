@@ -1,11 +1,12 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
+const logger = require(`./logger`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
 const { get } = require(`snekfetch`)
 /**
  *  @class Pistachio
- *  @version 0.3.0
+ *  @version 0.4.0
  *  @classdesc Micro framework to support Annie's structure.
  *  Lightweight, portable and opinionated.
  *  This was originally made by Pan (our developer) to aggregate all the essential
@@ -64,10 +65,11 @@ class Pistachio {
 		this.isSelfTargeting = this.isSelfTargeting.bind(this)
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
-		this.multicollector = this.multicollector.bind(this)
+		this.multiCollector = this.multiCollector.bind(this)
 		this.hasRole = this.hasRole.bind(this)
 		this.removeRole = this.removeRole.bind(this)
 		this.addRole = this.addRole.bind(this)
+		this.findRole = this.findRole.bind(this)
 		this.trueInt = this.trueInt.bind(this)
 		this.name = this.name.bind(this)
 		this.emoji = this.emoji.bind(this)
@@ -120,12 +122,12 @@ class Pistachio {
 	}
 	
 	/**
-		*  (Multi-layering)Instant message collector
-		*  @param {Object} msg current message instance
-		*  @param {Default} max only catch 1 response
-		*  @param {Default} time 60 seconds timeout
-		*/
-	multicollector(msg) {
+	*  (Multi-layering)Instant message collector
+	*  @param {Object} msg current message instance
+	*  @param {Default} max only catch 1 response
+	*  @param {Default} time 60 seconds timeout
+	*/
+	multiCollector(msg) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
 		m => m.author.id === msg.author.id, {
@@ -133,39 +135,60 @@ class Pistachio {
 			time: 60000,
 		})
 	}
-	
+
 	/**
-		* To check whether the user has the said role or not
-		* @param {String} rolename for role name code
-		* @return {Boolean} of role
-		* @hasRole
-		*/
-	hasRole(rolename) {
+	* Adding role to a user
+	* @param {String} targetRole searchString keyword for the role
+	* @param {String} userId user's discord id
+	* @returns {RoleObject}
+	*/
+	addRole(targetRole, userId) {
+		const fn = `[Pistachio.addRole()]`
 		if (!this._isGuildLayerAvailable) return
-		return message.member.roles.find(r => r.name === rolename || r.id === rolename)
+		const role = this.findRole(targetRole)
+		logger.debug(`${fn} assigned ${role.name} to USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).addRole(role)
 	}
 
 	/**
-		* Returning of given role name
-		* @param {String} rolename for role name code
-		* @return {Object} of role
-		* @addRole
-		*/
-	addRole(rolename, user) {
+	* Removing role from user
+	* @param {String} targetRole searchString keyword for the role
+	* @param {String} userId user's discord id
+	* @returns {RoleObject}
+	*/
+	removeRole(targetRole, userId) {
+		const fn = `[Pistachio.removeRole()]`
 		if (!this._isGuildLayerAvailable) return
-		return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
+		const role = this.findRole(targetRole)
+		logger.debug(`${fn} removed ${role.name} from USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).removeRole(role)
 	}
 
-	/**
-		* Returning of given role name
-		* @param {String} rolename for role name code
-		* @return {Object} of role
-		* @addRole
-		*/
-	removeRole(rolename, user) {
-		if (!this._isGuildLayerAvailable) return
-		return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
-	}
+    /**
+     * Finds a role by id, tag or plain name
+     * @param {UserResolvable} target the keyword for the role (id, name, mention)
+     * @returns {GuildMemberObject}
+     */
+	findRole(target) {
+        const fn = `[Pistachio.findRole()]`
+        if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target role id/name/mention.`)
+		try {
+			const rolePattern = /^(?:<@&?)?([0-9]+)>?$/
+			if (rolePattern.test(target)) target = target.replace(rolePattern, `$1`)
+			const roles = this.message.guild.roles
+			const filter = role => role.id === target ||
+			role.name.toLowerCase() === target.toLowerCase() ||
+			role === target
+
+			return roles.filter(filter).first()
+		}
+		catch(e) {
+			return {
+				name: null,
+				id: null
+			}
+		}
+    }
 
 
 	/**

@@ -16,7 +16,7 @@ module.exports = {
         name: `Moderator`,
         level: 2,
         description: `Server staff with minimal access to admin privileges.`,
-        permissionString: `MANAGE_MESSAGES`
+        permissionString: `MANAGE_ROLES`
     },
     beta: {
         name: `Beta`,
