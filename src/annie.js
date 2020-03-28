@@ -96,6 +96,12 @@ class Annie extends Discord.Client {
          * @type {WinstonObject}
          */
         this.logger = logger
+
+        /**
+         * Stores Annie's Support Server invite link.
+         * @type {HyperlinkString}
+         */ 
+        this.supportServer = `[Support Server](https://discord.gg/wSu6Bq)`
     }
 
 
