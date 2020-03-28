@@ -116,7 +116,6 @@ class Help extends Command {
 	getPermissionProperties(lvl=0) {
 		const src = this.bot.permission
 		for (let key in src) {
-			console.debug(src[key].level, lvl)
 			if (src[key].level === lvl) return src[key]
 		}
 	}
