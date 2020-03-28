@@ -141,6 +141,15 @@ class Database {
 			, []
 			, `Verifying table user_badges`
 		)
+		await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedia (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'type' TEXT,
+			'url' TEXT)`
+            , `run`
+			, []
+			, `Verifying table user_socialmedia`
+		)
 
 		/*
 		await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
