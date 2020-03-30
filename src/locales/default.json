@@ -289,8 +289,9 @@
         "INVALID_USER": "Sorry, i couldn't find that user.",
         "PROMPT": "Message will be send to **{0}**. Now please type the content of the message.",
         "SUCCESSFUL": "Gotcha! message has been successfully sent to **{0}**.",
-        "UNSUCCESSFUL": "Aw, sadly the user seem locked their direct message.",
-        "SHORT_GUIDE": "Wanna use my DM service? please type `>mail <user>`"
+        "UNSUCCESSFUL": "Aw, sadly the user seems locked their direct message.",
+        "CANCELLED": "Alright, mail cancelled.",
+        "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!"
     },
     "PANDA": {
         "RESPONSES": [

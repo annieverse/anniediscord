@@ -1,43 +1,49 @@
-
+const Command = require(`../../libs/commands`)
 /**
-*   Main module
-*   @Mail Anonymous-administrator direct message through annie.
-*/
-class Mail {
-	constructor(Stacks) {
-		this.stacks = Stacks
-	}
+ * Sends a direct message to specified user
+ * @author klerikdust
+ */
+class Mail extends Command {
 
-	/**
-     *  Initializer method
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
-		const { isAdmin, code, reply, args, palette, collector, name, meta: {author} } = this.stacks
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-		//  Returns if user doesn't have admin authority
-		if (!isAdmin) return reply(code.UNAUTHORIZED_ACCESS)
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, name, collector, bot:{locale:{MAIL}} }) {
+		await this.requestUserMetadata(1)
+
 		//  Returns as guide if user doesn't specify any parameter.
-		if (!args[0]) return reply(code.MAIL.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(MAIL.SHORT_GUIDE)
 		//  Returns if target user is invalid.
-		if (!author) return reply(code.MAIL.INVALID_USER)
+		if (!this.user) return reply(MAIL.INVALID_USER, {color: `red`})
 
 		//  Confirmation message.
-		reply(code.MAIL.PROMPT, {socket: [name(author.id)]})
+		reply(MAIL.PROMPT, {socket: [name(this.user.id)], color: `golden`})
 
-		collector.on(`collect`, msg => {
+		const collect = collector(this.message)
+		collect.on(`collect`, msg => {
 			//  Close connection
-			collector.stop()
+			collect.stop()
+			//  Handle if user tries to cancel the message forwarding
+			if ([`cancel`, `n`, `no`].includes(msg.content.toLowerCase())) return reply(MAIL.CANCELLED)
+
 			try {
 				//  Send message to target
-				reply(msg, {field: author})
+				reply(msg.content, {field: this.user})
 				//  Show notification if message has been successfully delivered.
-				reply(code.MAIL.SUCCESSFUL, {socket: [name(author.id)], color: palette.lightgreen})
+				return reply(MAIL.SUCCESSFUL, {socket: [name(this.user.id)], color: `lightgreen`})
 			}
 			catch(e) {
 				//  Handles the error caused by locked dms setting.
-				reply(code.MAIL.UNSUCCESSFUL, {color: palette.red})
+				return reply(MAIL.UNSUCCESSFUL, {color: `red`})
 			}
-
 		})
 	}
 }
@@ -45,11 +51,10 @@ class Mail {
 module.exports.help = {
 	start: Mail,
 	name: `mail`,
-	aliases: [],
-	description: `Send a message to a specified user`,
-	usage: `mail @user <message>`,
-	group: `Admin`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`dm`],
+	description: `Sends a direct message to specified user`,
+	usage: `mail <User>`,
+	group: `Moderation`,
+	permissionLevel: 3,
+	multiUser: true
 }
