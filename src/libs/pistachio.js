@@ -66,7 +66,6 @@ class Pistachio {
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
 		this.multiCollector = this.multiCollector.bind(this)
-		this.hasRole = this.hasRole.bind(this)
 		this.removeRole = this.removeRole.bind(this)
 		this.addRole = this.addRole.bind(this)
 		this.findRole = this.findRole.bind(this)

@@ -37,6 +37,12 @@
         "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
+    "BAN": {
+        "MISSING_ARG": "Hi, you are authorized to use the command. Please specify the user you want me to ban next time!",
+        "TARGET_DOESNT_EXISTS": "Eh? where are they? do they even exist?",
+        "TARGET_HAS_ADMIN_PRIVILEGE": "Hard to say, but I can't ban a user with admin privilege. :(",
+        "SUCCESSFUL": "Bai bai **{0}!** I've sent them to the void."
+    },
     "BUY": {
         "SHORT_GUIDE": "Checkout what you can buy in our `>shop` !",
         "MISSING_CATEGORY": "**{0}**, Could you please specify the category?",
