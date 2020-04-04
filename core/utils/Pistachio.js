@@ -111,7 +111,7 @@ class Pistachio {
 				 */
 				container.collector = new MessageCollector(message.channel,
 					m => m.author.id === message.author.id, {
-						max: 2,
+						max: 3,
 						time: 60000,
 					})
 
@@ -123,7 +123,7 @@ class Pistachio {
 				 */
 				container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
 					m => m.author.id === msg.author.id, {
-						max: 2,
+						max: 3,
 						time: 60000,
 					})
 				

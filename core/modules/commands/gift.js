@@ -70,6 +70,8 @@ class Gift {
 						//  Listening to item confirmation
 						collector.on(`collect`, async msg => {
 							inventory.delete()
+							//  Closing the connections
+							collector.stop()
 
 							const input = msg.content.toLowerCase()
 							const params = input.split(` `)
@@ -91,9 +93,6 @@ class Gift {
 							//  Returns if format is invalid
 							if (!metadata.amount_to_send && !metadata.item_to_send) return reply(GIFT.INVALID_FORMAT)
 
-
-							//  Closing the connections
-							collector.stop()
 
 							let itemData = await db.getItemMetadata(metadata.item_to_send)
 							//  Send reputation points
