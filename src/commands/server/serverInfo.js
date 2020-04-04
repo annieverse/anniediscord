@@ -1,18 +1,22 @@
-const Discord = require(`discord.js`)
-const ms = require(`parse-ms`)
+const Command = require(`../../libs/commands`)
+/**
+ * Displays info about the server
+ * @author klerikdust
+ */
+class ServerInfo extends Command {
 
-class serverInfo {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.args = Stacks.args
-		this.palette = Stacks.palette
-		this.stacks = Stacks
-	}
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+		super(Stacks)
+    }
 
-	async execute() {
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply }) {
 		let message = this.message
 		let palette = this.stacks.palette
 		/// serverinfo.js
@@ -60,13 +64,12 @@ class serverInfo {
 }
 
 module.exports.help = {
-	start: serverInfo,
+	start: ServerInfo,
 	name:`serverinfo`,
-	aliases: [],
-	description: `Displays info about server`,
+	aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
+	description: `Displays info about the server`,
 	usage: `serverinfo`,
 	group: `Server`,
-	public: true,
-	required_usermetadata: false,
-	multi_user: false
+	permissionLevel: 0,
+	multiUser: false
 }
