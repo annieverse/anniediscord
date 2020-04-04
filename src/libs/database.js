@@ -1162,7 +1162,7 @@ class Database {
 	 * 	@param {Number} item_id as item id reference
 	 * 
 	 */
-	async withdraw(value, item_id) {
+	async withdrawItem(value, item_id) {
 		await this._query(`
 			UPDATE item_inventory 
             SET quantity = quantity - ?
