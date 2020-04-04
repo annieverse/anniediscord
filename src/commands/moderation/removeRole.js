@@ -32,24 +32,23 @@ class RemoveRole extends Command {
 		.then(sequenceOne => {
 			const seqOne = collector(this.message)
 			seqOne.on(`collect`, async input => {
+				sequenceOne.delete()
 				const role = findRole(input.content.toLowerCase())
 
 				//  Handle if cannot find the role
 				if (!role) {
 					seqOne.stop()
-					sequenceOne.delete()
 					return reply(REMOVEROLE.NO_ROLE_FOUND, {color: `red`})
 				}
 				//  Handle if user doesn't have the role
 				if (!this.user._roles.includes(role.id)) {
 					seqOne.stop()
-					sequenceOne.delete()
 					return reply(REMOVEROLE.DOESNT_HAVE_THE_ROLE, {socket: [name(this.user.id)], color: `red`})
 				}
+				
 				seqOne.stop()
-
 				removeRole(role, this.user.id)
-				return reply(REMOVEROLE.SUCCESSFUL, {socket: [name(this.user.id)], color: `lightgreen`})
+				return reply(REMOVEROLE.SUCCESSFUL, {socket: [role.name, name(this.user.id)], color: `lightgreen`})
 
 			})
 		})
@@ -59,7 +58,7 @@ class RemoveRole extends Command {
 module.exports.help = {
 	start: RemoveRole,
 	name:`removeRole`,
-	aliases: [`rmvrole`, `deleterolefrom`, `roleremove`, `rolerevoke`],
+	aliases: [`rmvrole`, `deleterolefrom`, `roleremove`, `rolerevoke`, `removerole`],
 	description: `Removes role from specific user.`,
 	usage: ` removerole <User>`,
 	group: `Moderation`,

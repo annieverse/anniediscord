@@ -297,7 +297,8 @@
         "MISSING_ARG": "You are authorized to use the Mute System. Please specify the target user next time!",
         "INVALID_USER": "Ah, I can't find that user ...",
         "SUCCESSFUL": "Successfully muted **{0}** for **{1}**",
-        "INVALID_DATE": "I'm not sure if that's correct date. :0"
+        "INVALID_DATE": "I'm not sure if that's correct date. :0",
+        "DURATION": "Okay, now please type the mute duration."
     },
     "PANDA": {
         "RESPONSES": [
@@ -390,7 +391,7 @@
         "NO_ROLE_FOUND": "Sorry, I'm unable to find the role you are looking for.",
         "ROLE_SELECTION": "Now please type the role name you want me to remove from **{0}**",
         "DOESNT_HAVE_THE_ROLE": "{0} doesn't even have that role .. don't tease me please. ;A;",
-        "SUCCESSFUL": "Successfully removed **{0} Role** from {1}"
+        "SUCCESSFUL": "Successfully removed **{0}** from **{1}**"
     },
     "ROLE": {
         "ERR": {
@@ -447,13 +448,12 @@
         "CURRENTLY_LIVE": "Currently is running in production state."
     },
     "STRIKE": {
-        "UNAUTHORIZED": "Sorry, your authority level doesn't meet the requirement to use the STRIKE system.",
         "GUIDE": "You are authorized to use **sTRIKE System**\n\nThis feature used to track bad behavior caused by member in the server and automatically give them penalty action such as mute, kick or even ban.",
         "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
-        "NULL_RECORD": "User with ID **{1}** doesn't have any strike record yet. Please type + <reason> to add new strike.",
-        "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** strikes were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new strike. Or `-` to remove the most recent strike.",
+        "NULL_RECORD": "**{0}/{1}** doesn't have any strike record yet. Please type + <reason> to add new strike.",
+        "DISPLAY_RECORD": "Here's what I found for **{0}**\n\nTotal **{1}** strikes were recorded.\nThe recent one was added by **{2}**\n\n{3}\n\nType `+ <reason>` to add new strike.",
         "ENTRY_REGISTER": "Thankyou! your report for **{0}** has been registered.",
-        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed.",
+        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed."
     },
 
     "ERR": {

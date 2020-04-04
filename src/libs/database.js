@@ -34,20 +34,21 @@ class Database {
 
 	/**
 	 * 	Standardized method for executing sql query
-	 * 	@param {String|SQL} stmt sql statement
-	 * 	@param {String|MethodName} type `get` for single result, `all` for multiple result
+	 * 	@param {String|SQL} [stmt=``] sql statement
+	 * 	@param {String|MethodName} [type=`get`] `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
-	 * 	@param {ArrayOfString|Object} supplies parameters to be used in sql statement.
-	 *  @param {String} label description for the query. Optional
+	 * 	@param {ArrayOfString|Object} [supplies=[]] parameters to be used in sql statement.
+	 *  @param {String} [label=``] description for the query. Optional
+	 *  @param {Boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional
 	 */
-	async _query(stmt=``, type=`get`, supplies=[], label=``) {
+	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=false) {
 		const fn = `[Database._query()]`
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
 			if (label) logger.info(`${fn} ${label}`)
-			result.stmt = stmt
+			if (!rowsOnly) result.stmt = stmt
 			return result
 		}
 		catch (e) {
@@ -547,8 +548,9 @@ class Database {
 			WHERE user_id = ?`
 			, `all`
 			, [userId]
-			, `Fetching strike_records for USER_ID ${userId}
-		`)
+			, `Fetching strike_records for USER_ID ${userId}`
+			, true
+		)
 	}
 
 	/**
@@ -562,22 +564,23 @@ class Database {
 	 * 
 	 * @returns {SQLObject}
 	 */
-	async registerStrike(entry={user_id=``, reason=`not_provided`, reported_by=``, guild_id=``}) {
+	async registerStrike({user_id=``, reason=`not_provided`, reported_by=``, guild_id=``}) {
 		const fn = `[Database.registerStrike]`
-		if (!entry.user_id) throw new TypeError(`${fn} property entry.user_id should be filled.`)
-		if (!entry.reported_by) throw new TypeError(`${fn} property entry.reported_by should be filled.`)
-		if (!entry.guild_id) throw new TypeError(`${fn} property entry.guild_id should be filled.`)
+		if (!user_id) throw new TypeError(`${fn} property entry.user_id should be filled.`)
+		if (!reported_by) throw new TypeError(`${fn} property entry.reported_by should be filled.`)
+		if (!guild_id) throw new TypeError(`${fn} property entry.guild_id should be filled.`)
 		return this._query(`
 			INSERT INTO strike_records(
 				registered_at,
 				user_id,
 				reason,
 				reported_by,
-				guild_id,
+				guild_id
 			)
 			VALUES(datetime('now'), ?, ?, ?, ?)`
-			, `all`
-			, [entry.user_id, entry.reason, entry.reported_by, entry.guild_id]
+			, `run`
+			, [user_id, reason, reported_by, guild_id]
+			, `Registering new strike entry for USER_ID .strike sunnyrainyworks${user_id}`
 		)
 	}
 

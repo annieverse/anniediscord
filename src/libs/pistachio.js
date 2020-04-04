@@ -146,9 +146,17 @@ class Pistachio {
 	addRole(targetRole, userId) {
 		const fn = `[Pistachio.addRole()]`
 		if (!this._isGuildLayerAvailable) return
-		const role = this.findRole(targetRole)
-		logger.debug(`${fn} assigned ${role.name} to USER_ID ${userId}`)
-		return this.message.guild.members.get(userId).addRole(role)
+
+		//  Use default lookup if supplied targetRole is not a <RoleObject>
+		if (!targetRole.id) {
+			const role = this.findRole(targetRole)
+			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
+			logger.debug(`${fn} assigned ${role.name} to USER_ID ${userId}`)
+			return this.message.guild.members.get(userId).addRole(role)
+		}
+
+		logger.debug(`${fn} assigned ${targetRole.name} to USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).addRole(targetRole)
 	}
 
 	/**
@@ -160,9 +168,17 @@ class Pistachio {
 	removeRole(targetRole, userId) {
 		const fn = `[Pistachio.removeRole()]`
 		if (!this._isGuildLayerAvailable) return
-		const role = this.findRole(targetRole)
-		logger.debug(`${fn} removed ${role.name} from USER_ID ${userId}`)
-		return this.message.guild.members.get(userId).removeRole(role)
+
+		//  Use default lookup if supplied targetRole is not a <RoleObject>
+		if (!targetRole.id) {
+			const role = this.findRole(targetRole)
+			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
+			logger.debug(`${fn} removed ${role.name} from USER_ID ${userId}`)
+			return this.message.guild.members.get(userId).removeRole(role)
+		}
+
+		logger.debug(`${fn} removed ${targetRole.name} from USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).removeRole(targetRole)
 	}
 
     /**
@@ -199,51 +215,6 @@ class Pistachio {
 	 */
 
 	/**
-	 * Scheduling task to run every/after passing the given interval time.
-	 * @param {Number} [interval=60000] interval time 
-	 * @returns {Number/NaN}
-	 */
-	schedule(interval, taskCallback=null, runOnce=false) {
-
-
-		const cron cron.schedule(this.millisecondsToCronDate(interval), () => {
-			taskCallback
-
-			if (runOnce)
-		})
-	}
-
-	/**
-	 * Converting milliseconds into proper string date. Mainly supplied into Pistachio.schedule()
-	 * @param {Number} ms milliseconds to be converted into cron date
-	 * @returns {String}
-	 */
-	millisecondsToCronDate(ms=0) {
-		const fn = `[Pistachio.millisecondsToCronDate()]`
-		//  Round ms into seconds for readability
-		const seconds = ms / 1000
-		//  Return error if seconds is not a positive number
-		if (seconds <= 0) throw new TypeError(`${fn} parameter "ms" cannot be negative or below zero.`)
-		//  if ms is below a minute, return as "seconds" prefix
-		if (seconds < 60) return `${seconds} * * * * *`
-		//  if ms is below an hour, return as "minutes" prefix
-		if (seconds < 3600) return `* ${seconds} * * *`
-		//  If ms is below a day, return as "hours" prefix
-		if (seconds < 86400) return `* * ${seconds} * *`
-		//  if ms is below a week, return as "days" prefix
-		if (seconds < 604800) return `* * * ${seconds} *`
-
-		/**
-		 *  if input is exceeding a week, throw an error.
-		 *  The reason why i put the limit is because the system is unreliable to make a cron task
-		 *  above a week.
-		 *  The limit can be removed once we get a better machine specifications.
-		 */
-		throw new RangeError(`${fn} cannot convert parameter "ms" that has exceeding a week for stability reasons.`)
-	}
-
-
-	/**
 	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.
 	 * @since 5.0.0
 	 * @type {Boolean}
@@ -265,12 +236,12 @@ class Pistachio {
 	}
 
 	/**
-	 *  Fetch user's username based on given user id. Fallback as 'unknown' if user is not fetchable.
+	 *  Fetch user's username based on given user id. Fallback userId if user is not fetchable.
 	 *  @param {String} userId target user
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		return this.bot.users.get(userId).username || `unknown`
+		return this.bot.users.get(userId).username || userId
 	}
 
 	/**

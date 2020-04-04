@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const moment = require(`moment`)
 /**
  * Gives user a strike point.
  * @author klerikdust
@@ -26,23 +27,22 @@ class Strike extends Command {
 
 		//  Fetching user's strike records
 		const records = await db.getStrikeRecords(this.user.id)
-
-		if (!records) reply(STRIKE.NULL_RECORD)
+		if (!records.length) reply(STRIKE.NULL_RECORD, {socket: [name(this.user.id), this.user.id]})
 		else reply(STRIKE.DISPLAY_RECORD, {socket: [
-			this.user.id,
+			name(this.user.id),
 			records.length, 
-			records[0].assigned_by,
+			name(records[0].reported_by),
 			this.parseRecord(records)
 		]})
 
 		const sequence = collector(this.message)
 		sequence.on(`collect`, async (msg) => {
 			let input = msg.content
-			collector.stop()
+			sequence.stop()
 
 			//	Remove quotation marks if accidentally included.
 			if (input.includes(`"`)) input = input.split(`"`).join(``)
-			//  Register new complaint record
+
 			if (input.startsWith(`+`)) {
 				let reason = input.substring(1).trim()+` `
 
@@ -62,9 +62,10 @@ class Strike extends Command {
 					reported_by: this.message.author.id,
 					guild_id: this.message.guild.id
 				})
-				return reply(STRIKE.ENTRY_REGISTER, {socket: [name(this.user.id], color: `lightgreen`})
+				sequence.stop()
+				return reply(STRIKE.ENTRY_REGISTER, {socket: [name(this.user.id)], color: `lightgreen`})
 			}
-			collector.stop()
+			sequence.stop()
 		})
 
 	}
@@ -76,8 +77,8 @@ class Strike extends Command {
 	 */
 	parseRecord(records=[]) {
 		let str = ``
-		for (let index of records) {
-			str += `\n[${moment(records[index].timestamp).format(`MMMM Do YYYY, h:mm:ss a`)}](complaints) - ${records[index].assigned_by} "${records[index].reason}"`
+		for (let index in records) {
+			str += `[${moment(records[index].registered_at).format(`MMMM Do YYYY, h:mm:ss a`)}](https://discord.gg/DCysMa6) - "${records[index].reason}"\n`
 		}
 		return str
 	}

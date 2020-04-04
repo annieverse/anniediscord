@@ -76,7 +76,7 @@ class AddRole extends Command {
 						secondInput.delete()
 						sequenceTwo.delete()
 						seqTwo.stop()
-						await addRole(role.id, this.user.id)
+						await addRole(role, this.user.id)
 						return reply(ADDROLE.ROLE_ADDED, {color: `lightgreen`})
 					})
 				})

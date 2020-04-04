@@ -26,40 +26,46 @@ class Mute extends Command {
 		if (!this.user) return reply(MUTE.INVALID_USER, {color: `red`})
 
 		const sequenceOne = collector(this.message)
-		sequenceOne.on(`collect`, async inputOne => {
-			const time = ms(inputOne.content)
-			sequenceOne.stop()
-
-			//  Handle if input time is not a valid date
-			if (!time) return reply(MUTE.INVALID_DATE, {color: `red`})
-
-			//  Lookup into available mute role in the guild
-			let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
-			//  If mute role hasn't been made yet, create one.
-			if (!muteRole) {
-				try {
-					muteRole = await this.message.guild.createRole({
-						name: `muted`,
-						color: `#000000`,
-						permissions: []
-					})
-					this.message.guild.channels.forEach(async channel => {
-						await channel.overwritePermissions(muterole, {
-							SEND_MESSAGES: false,
-							ADD_REACTIONS: false,
-							SEND_TTS_MESSAGES: false,
-							ATTACH_FILES: false,
-							SPEAK: false
+		reply(MUTE.DURATION, {color: `golden`})
+			.then(async confirmation => {
+			sequenceOne.on(`collect`, async inputOne => {
+				const time = ms(inputOne.content)
+				confirmation.delete()
+				sequenceOne.stop()
+	
+				//  Handle if input time is not a valid date
+				if (!time) return reply(MUTE.INVALID_DATE, {color: `red`})
+	
+				//  Lookup into available mute role in the guild
+				let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
+				//  If mute role hasn't been made yet, create one.
+				if (!muteRole) {
+					try {
+						muteRole = await this.message.guild.createRole({
+							name: `muted`,
+							color: `#000000`,
+							permissions: []
 						})
-					})
-				} catch (e) {
-					this.logger.error(`Failed to create mute role. > `, e)
+						this.message.guild.channels.forEach(async channel => {
+							await channel.overwritePermissions(muteRole, {
+								SEND_MESSAGES: false,
+								ADD_REACTIONS: false,
+								SEND_TTS_MESSAGES: false,
+								ATTACH_FILES: false,
+								SPEAK: false
+							})
+						})
+					} catch (e) {
+						this.logger.error(`Failed to create mute role. > `, e)
+					}
 				}
-			}
-
-			addRole(muteRole, this.user.id)
-			reply(MUTE.SUCCESSFUL, {socket: [name(this.user.id), inputOne.content], color: `lightgreen`})
-			schedule(time, removeRole(muteRole, this.user.id))
+	
+				addRole(muteRole, this.user.id)
+				reply(MUTE.SUCCESSFUL, {socket: [name(this.user.id), inputOne.content], color: `lightgreen`})
+				setTimeout(() => {
+					removeRole(muteRole, this.user.id)
+				}, time)
+			})
 		})
 	}
 }

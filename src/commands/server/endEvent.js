@@ -38,7 +38,7 @@ class EndEvent extends Command {
     
 module.exports.help = {
 	start: EndEvent,
-	name:`eventend`,
+	name:`endEvent`,
 	aliases: [`endevent`, `eventend`],
 	description: `Takes all expired event ticket from participants`,
 	usage: `eventend`,
