@@ -452,12 +452,8 @@
         "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
         "NULL_RECORD": "User with ID **{1}** doesn't have any strike record yet. Please type + <reason> to add new strike.",
         "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** strikes were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new strike. Or `-` to remove the most recent strike.",
-        "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
+        "ENTRY_REGISTER": "Thankyou! your report for **{0}** has been registered.",
         "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed.",
-        "1_STRIKE": "First strike has been landed, now they won't able to talk for the next 3 hours.",
-        "2_STRIKE": "Second strikes has been landed, the mute will last up to 24 hours.",
-        "3_STRIKE": "Third strikes so far. Kick action has been performed.",
-        "4_STRIKE": "Unforgiveable behaviour. They have gone to the void."
     },
 
     "ERR": {

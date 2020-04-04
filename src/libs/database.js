@@ -536,6 +536,50 @@ class Database {
 			, [data.currentexp, userId])
 	}
 
+	/**
+	 * Pull user's strike records if presents.
+	 * @param {String} [userId=``] User's discord id.
+	 * @returns {SQLObject}
+	 */
+	async getStrikeRecords(userId=``) {
+		return this._query(`
+			SELECT * FROM strike_records
+			WHERE user_id = ?`
+			, `all`
+			, [userId]
+			, `Fetching strike_records for USER_ID ${userId}
+		`)
+	}
+
+	/**
+	 * Register a new strike entry for user.
+	 * 
+	 * @param {Object} entry required parameters to register new strike point
+	 * @property {String} user_id target user id to be reported
+	 * @property {String} [reason=`not_provided`] providing the reason why user is striked is very helpful
+	 * @property {String} reported_by reporter's user id
+	 * @property {String} guild_id the server where user get reported
+	 * 
+	 * @returns {SQLObject}
+	 */
+	async registerStrike(entry={user_id=``, reason=`not_provided`, reported_by=``, guild_id=``}) {
+		const fn = `[Database.registerStrike]`
+		if (!entry.user_id) throw new TypeError(`${fn} property entry.user_id should be filled.`)
+		if (!entry.reported_by) throw new TypeError(`${fn} property entry.reported_by should be filled.`)
+		if (!entry.guild_id) throw new TypeError(`${fn} property entry.guild_id should be filled.`)
+		return this._query(`
+			INSERT INTO strike_records(
+				registered_at,
+				user_id,
+				reason,
+				reported_by,
+				guild_id,
+			)
+			VALUES(datetime('now'), ?, ?, ?, ?)`
+			, `all`
+			, [entry.user_id, entry.reason, entry.reported_by, entry.guild_id]
+		)
+	}
 
 	/**
 	 * 	Validating if user has been registered or not.
