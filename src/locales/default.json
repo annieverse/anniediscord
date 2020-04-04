@@ -384,6 +384,14 @@
         "NO_CHANGES": "Sorry, it seems you haven't equipped any sticker.",
         "SUCCESSFUL": "Your profile sticker has been unequipped."
     },
+    "REMOVEROLE": {
+        "MISSING_ARG": "You are authorized to use **Remove Role System**, please don't forget to specify the target user next time!",
+        "NO_USER_FOUND": "Sorry, It seems I can't find the user you are looking for.",
+        "NO_ROLE_FOUND": "Sorry, I'm unable to find the role you are looking for.",
+        "ROLE_SELECTION": "Now please type the role name you want me to remove from **{0}**",
+        "DOESNT_HAVE_THE_ROLE": "{0} doesn't even have that role .. don't tease me please. ;A;",
+        "SUCCESSFUL": "Successfully removed **{0} Role** from {1}"
+    },
     "ROLE": {
         "ERR": {
             "WRONG": {

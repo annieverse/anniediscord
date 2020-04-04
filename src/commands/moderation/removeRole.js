@@ -1,96 +1,68 @@
-const Discord = require(`discord.js`)
+const Command = require(`../../libs/commands`)
+/**
+ * Removes role from specific user.
+ * @author klerikdust
+ */
+class RemoveRole extends Command {
 
-class removeRole {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.args = Stacks.this.args
-		this.stacks = Stacks
-		this.logger = Stacks.bot.logger
-	}
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-	async execute() {
-		// Add these three lines so u dont have to go through and put this./this.stacks infront of everything
-		// might have to go through if another varible is called
-		let message = this.message
-		let bot = this.stacks.bot
-		/// removerole.js
-		///
-		///  REMOVE COMMAND
-		///    change logs:
-		///       09/19/18 - rework embed. 
-		///     -naphnaphz
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, collector, name, removeRole, findRole, bot:{locale:{REMOVEROLE}} }) {
+		await this.requestUserMetadata(1)
 
+		//  Handle if user doesn't specify the target user
+		if (!this.fullArgs) return reply(REMOVEROLE.MISSING_ARG)
+		//  Handle if target user doesn't exists
+		if (!this.user) return reply(REMOVEROLE.NO_USER_FOUND, {color: `red`})
 
+		/** --------------------------
+		 *  Role Selection
+		 *  --------------------------
+		 */
+		reply(REMOVEROLE.ROLE_SELECTION, {socket: [name(this.user.id)], color: `golden`})
+		.then(sequenceOne => {
+			const seqOne = collector(this.message)
+			seqOne.on(`collect`, async input => {
+				const role = findRole(input.content.toLowerCase())
 
-		let bicon = bot.user.displayAvatarURL
-		let pUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(this.args[0]))
-		let red = `#b22727`
+				//  Handle if cannot find the role
+				if (!role) {
+					seqOne.stop()
+					sequenceOne.delete()
+					return reply(REMOVEROLE.NO_ROLE_FOUND, {color: `red`})
+				}
+				//  Handle if user doesn't have the role
+				if (!this.user._roles.includes(role.id)) {
+					seqOne.stop()
+					sequenceOne.delete()
+					return reply(REMOVEROLE.DOESNT_HAVE_THE_ROLE, {socket: [name(this.user.id)], color: `red`})
+				}
+				seqOne.stop()
 
-		let roleEmbed = new Discord.RichEmbed()
+				removeRole(role, this.user.id)
+				return reply(REMOVEROLE.SUCCESSFUL, {socket: [name(this.user.id)], color: `lightgreen`})
 
-		roleEmbed.setColor(red)
-		roleEmbed.setDescription(`You don't have authorization to use this command.`)
-		roleEmbed.setFooter(`Anime Artist United | Remove Role`, bicon)
-		if (!message.member.hasPermission(`MANAGE_ROLES`)) return message.channel.send(roleEmbed)
-
-		roleEmbed.setColor(red)
-		roleEmbed.setDescription(`Uhm, can you specify the user?`)
-		if (!this.args[0]) return message.channel.send(roleEmbed)
-
-
-		roleEmbed.setColor(red)
-		roleEmbed.setDescription(`Sorry ${message.author.username}, I couldn't find that user.`)
-		if (!pUser) return message.channel.send(roleEmbed)
-
-
-		roleEmbed.setColor(red)
-		roleEmbed.setDescription(`Can you specify the role?`)
-		if (!this.args[1]) return message.channel.send(roleEmbed)
-
-
-		roleEmbed.setColor(red)
-		roleEmbed.setDescription(`${message.author.username}, I couldn't find that role.`)
-		let role = message.guild.roles.find(r => r.name === this.args[1].slice(0)).id
-		let gRole = message.guild.roles.get(role)
-		if (!gRole) return message.channel.send(roleEmbed)
-
-
-		roleEmbed.setColor(`#d61313`)
-		roleEmbed.setDescription(`${pUser} doesn't have that role.`)
-		if (!pUser.roles.has(gRole.id)) return message.channel.send(roleEmbed)
-
-
-		await (pUser.removeRole(gRole.id))
-		message.react(`👌`)
-		try {
-
-			roleEmbed.setColor(`#a3edd0`)
-			roleEmbed.setDescription(`Sorry, your **${gRole.name}** role has been taken away. :((`)
-			roleEmbed.setFooter(`Anime Artist United | Removed Role`, bicon)
-
-			await pUser.send(roleEmbed)
-
-		} catch (e) {
-
-			roleEmbed.setColor(`#5178a5`)
-			roleEmbed.setDescription(`Sorry to <@${pUser.id}>, the role ${gRole.name} has been confiscated. We tried to contact you, but your DMs are locked. :((`)
-			roleEmbed.setFooter(`Anime Artist United | Removed Role`, bicon)
-			return message.channel.send(roleEmbed)
-		}
+			})
+		})
 	}
 }
 
 module.exports.help = {
-	start: removeRole,
-	name:`removerole`,
-	aliases: [],
-	description: `Removing user's roles.`,
-	usage: ` removerole @user @role`,
-	group: `Admin`,
-	public: true,
-	require_usermetadata: true,
-	multi_user: true
+	start: RemoveRole,
+	name:`removeRole`,
+	aliases: [`rmvrole`, `deleterolefrom`, `roleremove`, `rolerevoke`],
+	description: `Removes role from specific user.`,
+	usage: ` removerole <User>`,
+	group: `Moderation`,
+	permissionLevel: 2,
+	multiUser: true
 }

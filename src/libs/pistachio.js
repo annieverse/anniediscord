@@ -200,19 +200,23 @@ class Pistachio {
 
 	/**
 	 * Scheduling task to run every/after passing the given interval time.
-	 * @param {Number|Milliseconds} [interval=60000] interval time 
+	 * @param {Number} [interval=60000] interval time 
 	 * @returns {Number/NaN}
 	 */
-	schedule(date, taskCallback=null, runOnce=false) {
+	schedule(interval, taskCallback=null, runOnce=false) {
 
 
-		cron.schedule(this.millisecondsToCronDate(()))
+		const cron cron.schedule(this.millisecondsToCronDate(interval), () => {
+			taskCallback
+
+			if (runOnce)
+		})
 	}
 
 	/**
 	 * Converting milliseconds into proper string date. Mainly supplied into Pistachio.schedule()
 	 * @param {Number} ms milliseconds to be converted into cron date
-	 * @returns {string}
+	 * @returns {String}
 	 */
 	millisecondsToCronDate(ms=0) {
 		const fn = `[Pistachio.millisecondsToCronDate()]`
@@ -229,7 +233,12 @@ class Pistachio {
 		//  if ms is below a week, return as "days" prefix
 		if (seconds < 604800) return `* * * ${seconds} *`
 
-		//  if input is exceeding a week, throw an error.
+		/**
+		 *  if input is exceeding a week, throw an error.
+		 *  The reason why i put the limit is because the system is unreliable to make a cron task
+		 *  above a week.
+		 *  The limit can be removed once we get a better machine specifications.
+		 */
 		throw new RangeError(`${fn} cannot convert parameter "ms" that has exceeding a week for stability reasons.`)
 	}
 
