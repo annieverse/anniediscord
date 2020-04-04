@@ -22,7 +22,7 @@ class JoinEvent extends Command {
 		await this.requestUserMetadata(2)
 
 		//  Filter command to only working in AAU.
-		if (this.message.guild.id != `123`)
+		if (!this.message.guild.id != `459892609838481408`) return
 
 		const eventRole = findRole(`Event Participant`)
 		//  Returns if user already have the ticket.
