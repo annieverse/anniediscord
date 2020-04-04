@@ -1,4 +1,5 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
+const cron = require(`node-cron`)
 const logger = require(`./logger`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
@@ -108,15 +109,16 @@ class Pistachio {
 	
 	/**
 	 *  Instant message collector
-	 *  @param {Default} max only catch 1 response
-	 *  @param {Default} time 60 seconds timeout
+	 *  @param {MessageInstance} msg
+	 *  @param {Default} [max=2] only catch 1 response
+	 *  @param {Default} [timeout=60000] 60 seconds timeout
 	 */
-	collector(msg) {
+	collector(msg, max=2, timeout=60000) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
 		m => m.author.id === msg.author.id, {
-			max: 2,
-			time: 60000,
+			max: max,
+			time: timeout,
 		})
 	}
 	
@@ -195,6 +197,42 @@ class Pistachio {
 	 *  Flexible Components
 	 *  ------------------------------------------
 	 */
+
+	/**
+	 * Scheduling task to run every/after passing the given interval time.
+	 * @param {Number|Milliseconds} [interval=60000] interval time 
+	 * @returns {Number/NaN}
+	 */
+	schedule(date, taskCallback=null, runOnce=false) {
+
+
+		cron.schedule(this.millisecondsToCronDate(()))
+	}
+
+	/**
+	 * Converting milliseconds into proper string date. Mainly supplied into Pistachio.schedule()
+	 * @param {Number} ms milliseconds to be converted into cron date
+	 * @returns {string}
+	 */
+	millisecondsToCronDate(ms=0) {
+		const fn = `[Pistachio.millisecondsToCronDate()]`
+		//  Round ms into seconds for readability
+		const seconds = ms / 1000
+		//  Return error if seconds is not a positive number
+		if (seconds <= 0) throw new TypeError(`${fn} parameter "ms" cannot be negative or below zero.`)
+		//  if ms is below a minute, return as "seconds" prefix
+		if (seconds < 60) return `${seconds} * * * * *`
+		//  if ms is below an hour, return as "minutes" prefix
+		if (seconds < 3600) return `* ${seconds} * * *`
+		//  If ms is below a day, return as "hours" prefix
+		if (seconds < 86400) return `* * ${seconds} * *`
+		//  if ms is below a week, return as "days" prefix
+		if (seconds < 604800) return `* * * ${seconds} *`
+
+		//  if input is exceeding a week, throw an error.
+		throw new RangeError(`${fn} cannot convert parameter "ms" that has exceeding a week for stability reasons.`)
+	}
+
 
 	/**
 	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.

@@ -293,6 +293,12 @@
         "CANCELLED": "Alright, mail cancelled.",
         "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!"
     },
+    "MUTE": {
+        "MISSING_ARG": "You are authorized to use the Mute System. Please specify the target user next time!",
+        "INVALID_USER": "Ah, I can't find that user ...",
+        "SUCCESSFUL": "Successfully muted **{0}** for **{1}**",
+        "INVALID_DATE": "I'm not sure if that's correct date. :0"
+    },
     "PANDA": {
         "RESPONSES": [
             ":panda:",

@@ -1,116 +1,76 @@
-const Discord = require(`discord.js`)
+const Command = require(`../../libs/commands`)
 const ms = require(`ms`)
+/**
+ * Mutes a user
+ * @author klerikdust
+ */
+class Mute extends Command {
 
-class mute {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.this.args = Stacks.this.args
-		this.palette = Stacks.palette
-		this.stacks = Stacks
-		this.logger = Stacks.bot.logger
-	}
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-	async execute() {
-		let message = this.message
-		let bot = this.stacks.bot
-		let palette = this.stacks.palette
-		message.delete()
-		let bicon = bot.user.displayAvatarURL
-		let admEmbed = new Discord.RichEmbed()
-		admEmbed.setColor(palette.red)
-		admEmbed.setDescription(`You don't have authorization to use this command.`)
-		admEmbed.setFooter(`Anime Artist United | Say Message`, bicon)
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, name, addRole, removeRole, schedule, collector, bot:{locale:{MUTE}} }) {
+		await this.requestUserMetadata(1)
 
-		if (!message.member.roles.find(r => (r.name === `Creators Council`)
-      || (r.name === `Trial Mod`)
-      || (r.name === `Channel Overseer`)
-      || (r.name === `Tomato Fox`))) return message.channel.send(admEmbed)
+		//  Handle if user doesn't specify the target user to be muted
+		if (!this.fullArgs) return reply(MUTE.MISSING_ARG)
+		//  Handle if target user doesn't exists
+		if (!this.user) return reply(MUTE.INVALID_USER, {color: `red`})
 
-		let mutee = message.guild.member(message.mentions.users.first() || message.guild.members.get(this.args[0]))
-		if (!mutee) return message.channel.send(`Please provide a user to be muted.`)
+		const sequenceOne = collector(this.message)
+		sequenceOne.on(`collect`, async inputOne => {
+			const time = ms(inputOne.content)
+			sequenceOne.stop()
 
-		let reason
-		let mutetime = this.args[1]
-		if (!mutetime) {
-			mutetime = `1d`
-		}
-		if (mutetime) {
-			if (isNaN(mutetime.charAt(0))) {
-				mutetime = `1d`
-				reason = this.args[1]
-				if (!reason) { reason = `No reason was given.` } else { reason = this.args.join(` `).split(` `).slice(1).join(` `) }
-			} else {
-				reason = this.args[2]
-				if (!reason) { reason = `No reason was given.` } else { reason = this.args.join(` `).split(` `).slice(2).join(` `) }
-			}
-		}
+			//  Handle if input time is not a valid date
+			if (!time) return reply(MUTE.INVALID_DATE, {color: `red`})
 
-
-		let muterole = message.guild.roles.find(r => r.name === `muted`)
-		//start of create role
-		if (!muterole) {
-			try {
-				muterole = await message.guild.createRole({
-					name: `muted`,
-					color: `#000000`,
-					permissions: []
-				})
-				message.guild.channels.forEach(async (channel) => {
-					await channel.overwritePermissions(muterole, {
-						SEND_MESSAGES: false,
-						ADD_REACTIONS: false,
-						SEND_TTS_MESSAGES: false,
-						ATTACH_FILES: false,
-						SPEAK: false
+			//  Lookup into available mute role in the guild
+			let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
+			//  If mute role hasn't been made yet, create one.
+			if (!muteRole) {
+				try {
+					muteRole = await this.message.guild.createRole({
+						name: `muted`,
+						color: `#000000`,
+						permissions: []
 					})
-				})
-			} catch (e) {
-				this.logger.error(`Failed to create muted role. > `, e)
+					this.message.guild.channels.forEach(async channel => {
+						await channel.overwritePermissions(muterole, {
+							SEND_MESSAGES: false,
+							ADD_REACTIONS: false,
+							SEND_TTS_MESSAGES: false,
+							ATTACH_FILES: false,
+							SPEAK: false
+						})
+					})
+				} catch (e) {
+					this.logger.error(`Failed to create mute role. > `, e)
+				}
 			}
-		}
 
-		mutee.addRole(muterole.id).then(() => {
-			message.delete()
-			mutee.send(`Hello, you have been muted in ${message.guild.name}\n
-				for: ${reason}\nfor: ${mutetime}: **Or** until a staff member unmutes.`)
-				.catch(err => this.logger.error(`Mute notification has failed to send. > `, err))
+			addRole(muteRole, this.user.id)
+			reply(MUTE.SUCCESSFUL, {socket: [name(this.user.id), inputOne.content], color: `lightgreen`})
+			schedule(time, removeRole(muteRole, this.user.id))
 		})
-		//end of create role
-
-		let embed = new Discord.RichEmbed()
-			.setColor(palette.red)
-			.setAuthor(`${message.guild.name} Modlogs`, message.guild.iconURL)
-			.addField(`Moderation:`, `mute`)
-			.addField(`Mutee:`, `username: ${mutee.user.username}\n
-                      user ID:  ${mutee.id}`)
-			.addField(`Moderator:`, `username: ${message.author.username}\n
-                           user ID:  ${message.author.id}`)
-			.addField(`Reason:`, reason)
-			.addField(`Time:`, mutetime)
-			.addField(`Date:`, message.createdAt.toLocaleString())
-
-		let staffLogChannel = bot.channels.get(`460267216324263936`)
-		staffLogChannel.send(embed)
-
-		setTimeout(function () {
-			if (mutee.roles.find(r => r.name === muterole.name)) {
-				mutee.removeRole(muterole.id)
-			}
-		}, ms(mutetime))
 	}
 }
 
 module.exports.help = {
-	start: mute,
+	start: Mute,
 	name:`mute`,
-	aliases: [],
-	description: `mutes a user and sends them a dm`,
-	usage: `mute @user [time]<optional (defaults to 1d if nothing supplied) <reason>`,
-	group: `Admin`,
-	public: true,
-	require_usermetadata: true,
-	multi_user: true
+	aliases: [`silent`, `silence`],
+	description: `Mutes a user`,
+	usage: `mute <User>`,
+	group: `Moderation`,
+	permissionLevel: 2,
+	multiUser: true
 }
