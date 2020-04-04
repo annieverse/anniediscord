@@ -224,8 +224,7 @@ class Database {
 			'user_id' TEXT,
 			'reason' TEXT,
 			'reported_by' TEXT,
-			'guild_id' INTEGER,
-			'strike_level' INTEGER)`
+			'guild_id' INTEGER)`
             , `run`
 			, []
 			, `Verifying table strike_records`
