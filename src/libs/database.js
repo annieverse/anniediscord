@@ -1697,15 +1697,48 @@ class Database {
 	}
 
 	/**
-        *   Pull ID ranking based on given descendant column order.
-        * @param tablename of target table.
-        * @param columnname of sorted descendant column. 
-        * @param index of user.
-        * @param val of returned data value.
-        */
-	indexRanking(tablename, columnname, index, val) {
-		return sql.all(`SELECT ${val} FROM ${tablename} ORDER BY ${columnname} DESC`)
-			.then(async x => x[index][val])
+	* Pull ID ranking based on given descendant column order.
+	* @param {String} group of target category
+	* @returns {Array}
+	*/
+	async indexRanking(group=``) {
+
+		if (group === `exp`) return this._query(`
+			SELECT userId AS id, currentexp AS points FROM userdata
+			ORDER BY currentexp DESC`
+			, `all`
+			, []
+			, `Fetching exp leaderboard`
+			, true	
+		)
+
+		if (group === `artcoins`) return this._query(`
+			SELECT user_id AS id, quantity AS points FROM item_inventory
+			WHERE item_id = 52
+			ORDER BY quantity DESC`
+			, `all`
+			, []
+			, `Fetching artcoins leaderboard`
+			, true	
+		)
+
+		if (group === `fame`) return this._query(`
+			SELECT userId AS id, reputations AS points FROM userdata
+			ORDER BY reputations DESC`
+			, `all`
+			, []
+			, `Fetching fame leaderboard`
+			, true	
+		)
+
+		if (group === `artists`) return this._query(`
+			SELECT userId AS id, liked_counts AS points FROM userdata
+			ORDER BY liked_counts DESC`
+			, `all`
+			, []
+			, `Fetching artists leaderboard`
+			, true	
+		)
 	}
 
 	/**

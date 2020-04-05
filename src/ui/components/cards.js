@@ -5,11 +5,11 @@ const palette = require(`../colors/default`)
 const themePresets = require(`../colors/themes`)
 const { resolve, join } = require(`path`)
 
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Light.ttf`)), `OpenSansLight`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Regular.ttf`)), `OpenSansRegular`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-SemiBold.ttf`)), `OpenSansSemiBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Bold.ttf`)), `OpenSansBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-ExtraBold.ttf`)), `OpenSansExtraBold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `roboto-thin`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-light.ttf`)), `roboto-light`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `roboto-medium`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `roboto-bold`)
+Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `roboto-black`)
 
 
 
@@ -167,6 +167,8 @@ class Card {
 		align=`center`,
 		contentColor=null,
 		barColor=null,
+		width = null,
+		height = null,
 		labelColor=null,
 		disableShadow=false,
 		marginTop=0,
@@ -198,7 +200,7 @@ class Card {
 			.setShadowBlur(15)
 			.setColor(this.color.main)
 	
-			.addRect(leftMarginState+20, this.reservedSpace+marginTop+20, DATABAR[size].WIDTH-40, DATABAR[size].HEIGHT-35)
+			.addRect(leftMarginState+20, this.reservedSpace+marginTop+20, width ? width-40 : DATABAR[size].WIDTH-40, height ? height-35 : DATABAR[size].HEIGHT-35)
 			.setShadowBlur(0)
 			.setShadowOffsetY(0)
 			
@@ -207,7 +209,7 @@ class Card {
 
 		//	If custom color is not specified, will follow default theming preset instead.
 		this.canv.setColor(barColor)
-		.createBeveledClip(leftMarginState, this.reservedSpace+marginTop, DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
+		.createBeveledClip(leftMarginState, this.reservedSpace+marginTop, width || DATABAR[size].WIDTH, height || DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
 		.addRect(marginLeft, this.reservedSpace+marginTop, this.width, this.height)
 
 
@@ -327,10 +329,11 @@ class Card {
 		marginLeft=null,
 		captionMargin=25}) {
 
+		console.debug(parseInt(size))
 		this.canv
 		.setColor(color)
 		.setTextAlign(align)
-		.setTextFont(size ? `${parseInt(size)}pt OpenSansBold` : DEFAULT.HEADER.TITLE.FONT)
+		.setTextFont(size ? `${parseInt(size)}pt roboto-black` : DEFAULT.HEADER.TITLE.FONT)
 		.addText(main, marginLeft + this._getHorizontalAlign(align), marginTop)
 
 		if (caption) {
@@ -358,8 +361,8 @@ class Card {
 		main=``,
 		caption=null,
 		align=`left`,
-		mainColor=this.color.okay,
-		captionColor=this.color.okay,
+		mainColor=this.color.text,
+		captionColor=this.color.caption,
 		fontWeight=`Bold`,
 		size=`small`,
 		justify=null,
@@ -374,18 +377,17 @@ class Card {
 		}) {
 
 		//	Handle sensitive case
-		if (size === `string`) size = size.toUpperCase()
-		//	Handle custom color selection
+		if (typeof size === `string`) size = size.toUpperCase()
+		//	Handle custom color selectio
 		mainColor = this._resolveColor(mainColor, this.color.text)
 		captionColor = this._resolveColor(captionColor, this.color.caption)
-
 
 		if (main) {
 			this.canv
 			.setColor(mainColor)
 			.setTextAlign(align)
-			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt OpenSans${fontWeight}`)
-			.addText(main, justify ? this._getHorizontalAlign(justify) : inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
+			.addText(main, justify ? this._getHorizontalAlign(justify)+marginLeft : avatar ? marginLeft + 70 : marginLeft, this.reservedSpace+marginTop)
 		}
 
 		if (caption) {
@@ -402,7 +404,7 @@ class Card {
 	
 		if (avatar) {
 			this.canv
-			.addRoundImage(avatar, marginLeft, this.reservedSpace+marginTop-marginBottom, 80, 80, 40)
+			.addRoundImage(avatar, marginLeft, this.reservedSpace+25, 45, 45, 22)
 		}
 
 

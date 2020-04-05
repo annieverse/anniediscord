@@ -17,7 +17,7 @@ class ArtcoinsGenerator extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{locale, db}, name, palette, collector, multicollector, trueInt, emoji, commanifier, message }) {
+	async execute({ reply, bot:{locale, db}, name, palette, collector, multiCollector, trueInt, emoji, commanifier, message }) {
 		await this.requestUserMetadata(2)
 		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
 
@@ -42,7 +42,7 @@ class ArtcoinsGenerator extends Command {
 						color: palette.golden
 					})
 						.then(async proceed =>{
-						let secondCollector = multicollector(msg)
+						let secondCollector = multiCollector(msg)
 						secondCollector.on(`collect`, async (secondmsg) => {
 							let inputtwo = secondmsg.content.toLowerCase()
 							proceed.delete()

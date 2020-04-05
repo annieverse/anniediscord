@@ -241,7 +241,8 @@ class Pistachio {
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		return this.bot.users.get(userId).username || userId
+		const user = this.bot.users.get(userId) 
+		return user ? user.username : userId
 	}
 
 	/**
@@ -342,7 +343,7 @@ class Pistachio {
 			})
 			return filelist
 		}
-		let allFiles = walkSync(`./core/images`) // Starts with the main directory and includes all files in the sub directories
+		let allFiles = walkSync(`./src/assets`) // Starts with the main directory and includes all files in the sub directories
 		let ultimateFile
 		allFiles.forEach((file) => {
 			if (file.includes(id)){ 
