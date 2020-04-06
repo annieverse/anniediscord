@@ -40,8 +40,10 @@ class Database {
 	 * 	@param {ArrayOfString|Object} [supplies=[]] parameters to be used in sql statement.
 	 *  @param {String} [label=``] description for the query. Optional
 	 *  @param {Boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional
+	 *  @param {Boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
+	 *  @returns {SQLObject}
 	 */
-	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=false) {
+	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=false, ignoreError=false) {
 		const fn = `[Database._query()]`
 		//	Return if no statement has found
 		if (!stmt) return null
@@ -52,6 +54,7 @@ class Database {
 			return result
 		}
 		catch (e) {
+			if (ignoreError) return
 			logger.error(`${fn} has failed to run > ${e.stack}\n${stmt}`)
 			throw e
 		}
@@ -1873,7 +1876,7 @@ class Database {
 			SELECT 
 				registered_date registered_at,
 				userId id, 
-				name NULL, 
+				NULL name, 
 				description bio
 			FROM userdata`
 			, `run`
@@ -1969,18 +1972,18 @@ class Database {
 		)
 		await this._query(`
 			INSERT INTO user_inventory (
-				registered_at
-				last_updated_at
-				item_id
-				user_id
+				registered_at,
+				last_updated_at,
+				item_id,
+				user_id,
 				quantity
 			) 
 			SELECT 
 				datetime('now') registered_at,
 				datetime('now') last_updated_at,
-				item_id item_id
+				item_id item_id,
 				user_id user_id,
-				quantity quantity,
+				quantity quantity
 			FROM item_inventory`
 			, `run`
 			, []
@@ -1999,10 +2002,10 @@ class Database {
 				datetime('now') registered_at,
 				datetime('now') last_updated_at,
 				userId user_id,
-				(SELECT itemId FROM itemlist WHERE type = "Covers" AND alias = userdata.cover) decor_id,
-				"COVERS",
+				(SELECT itemId FROM itemlist WHERE alias = userdata.cover) decor_id,
+				(SELECT upper(type) FROM itemlist WHERE alias = userdata.cover) decor_type,
 				1 in_use
-			FROM userdata WHERE cover IS NOT NULL AND cover != "defaultcover1"`
+			FROM userdata WHERE cover IS NOT NULL`
 			, `run`
 			, []
 			, `Migrating userdata's cover into user_profile_decorations`
@@ -2026,7 +2029,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot1) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot1) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot1 IS NOT NULL`
 			, `run`
@@ -2047,7 +2050,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot2) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot2) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot2 IS NOT NULL`
 			, `run`
@@ -2068,7 +2071,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot3) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot3) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot3 IS NOT NULL`
 			, `run`
@@ -2089,7 +2092,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot4) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot4) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot4 IS NOT NULL`
 			, `run`
@@ -2110,7 +2113,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot5) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot5) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot5 IS NOT NULL`
 			, `run`
@@ -2131,7 +2134,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot6) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot6) decor_type,
 				1 in_use
 			FROM userbadges WHERE slot6 IS NOT NULL`
 			, `run`
@@ -2152,7 +2155,7 @@ class Database {
 				datetime('now') last_updated_at,
 				userId user_id,
 				(SELECT itemId FROM itemlist WHERE alias = userbadges.slotanime) decor_id,
-				"BADGES",
+				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slotanime) decor_type,
 				1 in_use
 			FROM userbadges WHERE slotanime IS NOT NULL`
 			, `run`
@@ -2186,7 +2189,7 @@ class Database {
 				upper(unique_type) unique_type,
 				price price,
 				upper(price_type) price_type,
-				description description,
+				desc description,
 				status status
 			FROM itemlist`
 			, `run`
@@ -2205,9 +2208,9 @@ class Database {
 				timestamp registered_at,
 				userId user_id,
 				reason reason,
-				assigned_by reported_by
+				assigned_by reported_by,
 				459892609838481408 guild_id
-			FROM item_inventory`
+			FROM strike_list`
 			, `run`
 			, []
 			, `Migrating strike_list into strike_records`
@@ -2232,7 +2235,7 @@ class Database {
 			, `Migrating commands_usage into commands_log`
 		)
 		await this._query(`
-			INSERT INTO commands_log (
+			INSERT INTO resource_log (
 				registered_at,
 				uptime,
 				ping,
@@ -2293,8 +2296,8 @@ class Database {
 			'last_give_at' TIMESTAMP,
 			'last_received_at' TIMESTAMP,
 			'recently_received_item' INTEGER,
-			'recently_received_from' TEXT NOT NULL,
-			'recently_give_to'
+			'recently_received_from' TEXT,
+			'recently_give_to' TEXT
 			)`
             , `run`
 			, []
@@ -2329,8 +2332,8 @@ class Database {
 		)
 
 		await this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'item_id' INTEGER,
 			'user_id' TEXT,
 			'quantity' INTEGER)`
@@ -2476,66 +2479,92 @@ class Database {
 			, `run`
 			, []
 			, `Dropping table user`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_dailies`
 			, `run`
 			, []
 			, `Dropping table user_dailies`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_reputations`
 			, `run`
 			, []
 			, `Dropping table user_reputations`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_exp`
 			, `run`
 			, []
 			, `Dropping table user_exp`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_posts`
 			, `run`
 			, []
 			, `Dropping table user_posts`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_inventory`
 			, `run`
 			, []
 			, `Dropping table user_inventory`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_socialmedia`
 			, `run`
 			, []
 			, `Dropping table user_socialmedia`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE user_profile_decorations`
 			, `run`
 			, []
 			, `Dropping table user_profile_decorations`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE guild_configurations`
 			, `run`
 			, []
 			, `Dropping table guild_configurations`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE items`
 			, `run`
 			, []
 			, `Dropping table items`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE strike_records`
 			, `run`
 			, []
 			, `Dropping table strike_records`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE commands_log`
 			, `run`
 			, []
 			, `Dropping table commands_log`
+			, false
+			, true
 		)
 		await this._query(`DROP TABLE resource_logs`
 			, `run`
 			, []
 			, `Dropping table resource_logs`
+			, false
+			, true
 		)
 	}
 
