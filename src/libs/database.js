@@ -57,93 +57,498 @@ class Database {
 		}
 	}
 
+	/**
+	 * Migrating old db entries into v6's tables
+	 * @returns {Boolean}
+	 */
+	async migrate() {
+		await this._query(`
+			INSERT INTO user (registered_at, id, name, bio) 
+			SELECT 
+				registered_date registered_at,
+				userId id, 
+				name NULL, 
+				description bio
+			FROM userdata`
+			, `run`
+			, []
+			, `Migrating userdata into user`
+		)
+		await this._query(`
+			INSERT INTO user_dailies (registered_at, last_updated_at, user_id, total_streak) 
+			SELECT 
+				datetime('now') registered_at,
+				lastdaily last_updated_at,
+				userId user_id, 
+				totaldailystreak total_streak 
+			FROM usercheck`
+			, `run`
+			, []
+			, `Migrating usercheck's dailies into user_dailies`
+		)
+		await this._query(`
+			INSERT INTO user_reputations (
+				registered_at,
+				user_id,
+				owned_reps,
+				given_reps,
+				last_give_at,
+				last_received_at,
+				recently_received_item,
+				recently_received_from,
+				recently_give_to)
+			SELECT 
+				datetime('now') registered_at,
+				userId user_id, 
+				reputations owned_reps,
+				0 given_reps,
+				NULL last_give_at,
+				NULL last_received_at,
+				NULL recently_received_item,
+				NULL recently_received_from,
+				NULL recently_give_to
+			FROM userdata`
+			, `run`
+			, []
+			, `Migrating userdata's reps into user_reputations`
+		)
+		await this._query(`
+			INSERT INTO user_exp (
+				registered_at,
+				last_updated_at,
+				user_id,
+				current_exp,
+				exp_booster,
+				exp_booster_activated_at
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				usercheck.userId user_id,
+				userdata.currentexp current_exp,
+				usercheck.expbooster exp_booster,
+				usercheck.expbooster_duration exp_booster_activated_at
+			FROM usercheck, userdata
+			WHERE usercheck.userId = userdata.userId`
+			, `run`
+			, []
+			, `Migrating userdata and usercheck exp data into user_exp`
+		)
+		await this._query(`
+			INSERT INTO user_posts (
+				posted_at,
+				last_updated_at,
+				user_id,
+				url,
+				caption,
+				channel_id,
+				guild_id,
+				total_likes,
+				recently_liked_by
+			) 
+			SELECT 
+				timestamp posted_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				url url,
+				description caption,
+				location channel_id,
+				459892609838481408 guild_id,
+				0 total_likes,
+				230034968515051520 recently_liked_by
+			FROM userartworks`
+			, `run`
+			, []
+			, `Migrating userartworks into user_posts`
+		)
+		await this._query(`
+			INSERT INTO user_inventory (
+				registered_at
+				last_updated_at
+				item_id
+				user_id
+				quantity
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				item_id item_id
+				user_id user_id,
+				quantity quantity,
+			FROM item_inventory`
+			, `run`
+			, []
+			, `Migrating item_inventory into user_inventory`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE type = "Covers" AND alias = userdata.cover) decor_id,
+				"COVERS",
+				1 in_use
+			FROM userdata WHERE cover IS NOT NULL AND cover != "defaultcover1"`
+			, `run`
+			, []
+			, `Migrating userdata's cover into user_profile_decorations`
+		)
+
+		/**
+		 *  Sub-migrating
+		 *  Migrates each badges in userbadges into individual rows in user_profile_decorations
+		 */
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot1) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot1 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot1) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot2) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot2 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot2) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot3) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot3 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot3) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot4) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot4 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot4) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot5) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot5 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot5) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot6) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slot6 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slot6) into user_profile_decorations`
+		)
+		await this._query(`
+			INSERT INTO user_profile_decorations (
+				registered_at,
+				last_updated_at,
+				user_id,
+				decor_id,
+				decor_type,
+				in_use
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				userId user_id,
+				(SELECT itemId FROM itemlist WHERE alias = userbadges.slotanime) decor_id,
+				"BADGES",
+				1 in_use
+			FROM userbadges WHERE slotanime IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userbadges(slotanime) into user_profile_decorations`
+		)
+
+		await this._query(`
+			INSERT INTO items (
+				registered_at,
+				last_updated_at,
+				id,
+				name,
+				alias,
+				rarity,
+				type,
+				unique_type,
+				price,
+				price_type,
+				description,
+				status
+			) 
+			SELECT 
+				datetime('now') registered_at,
+				datetime('now') last_updated_at,
+				itemId id,
+				name name,
+				alias alias,
+				rarity rarity,
+				upper(type) type,
+				upper(unique_type) unique_type,
+				price price,
+				upper(price_type) price_type,
+				description description,
+				status status
+			FROM itemlist`
+			, `run`
+			, []
+			, `Migrating itemlist into items`
+		)	
+		await this._query(`
+			INSERT INTO strike_records (
+				registered_at,
+				user_id,
+				reason,
+				reported_by,
+				guild_id
+			) 
+			SELECT 
+				timestamp registered_at,
+				userId user_id,
+				reason reason,
+				assigned_by reported_by
+				459892609838481408 guild_id
+			FROM item_inventory`
+			, `run`
+			, []
+			, `Migrating strike_list into strike_records`
+		)
+		await this._query(`
+			INSERT INTO commands_log (
+				registered_at,
+				user_id,
+				guild_id,
+				command_alias,
+				resolved_in
+			) 
+			SELECT 
+				timestamp registered_at,
+				user_id user_id,
+				guild_id guild_id,
+				command_alias command_alias,
+				resolved_in resolved_in
+			FROM commands_usage`
+			, `run`
+			, []
+			, `Migrating commands_usage into commands_log`
+		)
+		await this._query(`
+			INSERT INTO commands_log (
+				registered_at,
+				uptime,
+				ping,
+				cpu,
+				memory
+			) 
+			SELECT 
+				timestamp registered_at,
+				uptime uptime,
+				ping ping,
+				cpu cpu,
+				memory memory
+			FROM resource_usage`
+			, `run`
+			, []
+			, `Migrating resource_usage into resource_log`
+		)
+		
+		return true
+	}
+
 
 	/**
-	 * --------------------------
-	 * NEW TABLES
-	 * @description A subsets from old tables. Requires consideration and further refactoring.
-	 * @since 24/02/20
-	 * @author klerikdust
-	 * @version 0.1.0
-	 * --------------------------
+	 * A subsets from old tables. Requires consideration and further refactoring.
+	 * @returns {Boolean}
 	 */
 	async validatingTables() {
+
 		 /**
 		  * --------------------------
 		  * User-related Data
 		  * --------------------------
 		  */
 		await this._query(`CREATE TABLE IF NOT EXISTS user (
-			'registered_date' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'id' TEXT NOT NULL UNIQUE,
 			'name' TEXT,
 			'bio' TEXT,
-			'heart_counts' INTEGER DEFAULT 0,
-			'receive_notification' INTEGER DEFAULT 0,
-			'last_login' INTEGER)`
+			'last_login' TIMESTAMP)`
             , `run`
 			, []
 			, `Verifying table user`
-        )
+		)
+		
 		await this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL UNIQUE,
-			'last_claim' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'total_streak' INTEGER DEFAULT 0)`
             , `run`
 			, []
 			, `Verifying table user_dailies`
 		)
+
 		await this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL UNIQUE,
-			'total_owned_reps' INTEGER DEFAULT 0,
-			'total_given_reps' INTEGER DEFAULT 0,
-			'last_give' TIMESTAMP,
-			'last_receive' TIMESTAMP)`
+			'owned_reps' INTEGER DEFAULT 0,
+			'given_reps' INTEGER DEFAULT 0,
+			'last_give_at' TIMESTAMP,
+			'last_received_at' TIMESTAMP,
+			'recently_received_item' INTEGER,
+			'recently_received_from' TEXT NOT NULL,
+			'recently_give_to'
+			)`
             , `run`
 			, []
 			, `Verifying table user_reputations`
 		)
+
 		await this._query(`CREATE TABLE IF NOT EXISTS user_exp (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL UNIQUE,
 			'current_exp' INTEGER DEFAULT 0,
-			'last_update' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'exp_booster' INTEGER DEFAULT 0,
-			'exp_booster_actived_at' TIMESTAMP)`
+			'exp_booster_activated_at' TIMESTAMP)`
             , `run`
 			, []
 			, `Verifying table user_exp`
 		)
+
 		await this._query(`CREATE TABLE IF NOT EXISTS user_post (
-			'posted_at' TIMESTAMP,
+			'posted_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
 			'url' TEXT,
 			'caption' TEXT,
-			'user_id' INTEGER,
 			'channel_id' INTEGER,
-			'guild_id' INTEGER)`
+			'guild_id' INTEGER,
+			'total_likes' INTEGER DEFAULT 0,
+			'recently_liked_by' TEXT NOT NULL)`
             , `run`
 			, []
 			, `Verifying table user_post`
 		)
+
 		await this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 			'item_id' INTEGER,
 			'user_id' TEXT,
-			'quantity' INTEGER,
-			'last_update' TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`
+			'quantity' INTEGER)`
             , `run`
 			, []
 			, `Verifying table user_inventory`
 		)
+		
 		await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedia (
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL,
-			'type' TEXT,
+			'account_type' TEXT,
 			'url' TEXT)`
             , `run`
 			, []
 			, `Verifying table user_socialmedia`
 		)
+
 		await this._query(`CREATE TABLE IF NOT EXISTS user_profile_decorations (
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL,
 			'decor_id' TEXT,
 			'decor_type' TEXT,
@@ -174,7 +579,6 @@ class Database {
 		)
 		*/
 
-
 		/**
 		 * --------------------------
 		 * Guild-related
@@ -182,15 +586,15 @@ class Database {
 		 */
 		await this._query(`CREATE TABLE IF NOT EXISTS guild_configurations (
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'guild_id' TEXT NOT NULL,
-			'type' TEXT,
+			'event_name' TEXT,
 			'user_id' TEXT,
 			'channel_id' TEXT)`
             , `run`
 			, []
 			, `Verifying table guild_configurations`
 		)	
-
 
 		/**
 		 * --------------------------
@@ -199,6 +603,7 @@ class Database {
 		 */
 		await this._query(`CREATE TABLE IF NOT EXISTS items (
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'id' INTEGER NOT NULL UNIQUE,
 			'name' TEXT,
 			'alias' TEXT,
@@ -213,7 +618,6 @@ class Database {
 			, []
 			, `Verifying table items`
 		)
-
 
 		 /**
 		  * --------------------------
@@ -231,10 +635,9 @@ class Database {
 			, `Verifying table strike_records`
 		)
 
-		
 		 /**
 		  * --------------------------
-		  * System-level related informations
+		  * System-level logs
 		  * --------------------------
 		  */
 		await this._query(`CREATE TABLE IF NOT EXISTS commands_log (
@@ -257,7 +660,6 @@ class Database {
 			, []
 			, `Verifying table resource_log`
 		)
-
 		return true
 	}
 
