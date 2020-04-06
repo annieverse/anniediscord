@@ -1862,7 +1862,7 @@ class Database {
 		)
 			 */
 	}
-	
+
 	/**
 	 * Migrating old db entries into v6's tables
 	 * @returns {Boolean}
@@ -2313,7 +2313,7 @@ class Database {
 			, `Verifying table user_exp`
 		)
 
-		await this._query(`CREATE TABLE IF NOT EXISTS user_post (
+		await this._query(`CREATE TABLE IF NOT EXISTS user_posts (
 			'posted_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT NOT NULL,
@@ -2467,7 +2467,77 @@ class Database {
 		return true
 	}
 
-
+	/**
+	 * Drop V6 Tables
+	 * @returns {Boolean}
+	 */
+	async dropTables() {
+		await this._query(`DROP TABLE user`
+			, `run`
+			, []
+			, `Dropping table user`
+		)
+		await this._query(`DROP TABLE user_dailies`
+			, `run`
+			, []
+			, `Dropping table user_dailies`
+		)
+		await this._query(`DROP TABLE user_reputations`
+			, `run`
+			, []
+			, `Dropping table user_reputations`
+		)
+		await this._query(`DROP TABLE user_exp`
+			, `run`
+			, []
+			, `Dropping table user_exp`
+		)
+		await this._query(`DROP TABLE user_posts`
+			, `run`
+			, []
+			, `Dropping table user_posts`
+		)
+		await this._query(`DROP TABLE user_inventory`
+			, `run`
+			, []
+			, `Dropping table user_inventory`
+		)
+		await this._query(`DROP TABLE user_socialmedia`
+			, `run`
+			, []
+			, `Dropping table user_socialmedia`
+		)
+		await this._query(`DROP TABLE user_profile_decorations`
+			, `run`
+			, []
+			, `Dropping table user_profile_decorations`
+		)
+		await this._query(`DROP TABLE guild_configurations`
+			, `run`
+			, []
+			, `Dropping table guild_configurations`
+		)
+		await this._query(`DROP TABLE items`
+			, `run`
+			, []
+			, `Dropping table items`
+		)
+		await this._query(`DROP TABLE strike_records`
+			, `run`
+			, []
+			, `Dropping table strike_records`
+		)
+		await this._query(`DROP TABLE commands_log`
+			, `run`
+			, []
+			, `Dropping table commands_log`
+		)
+		await this._query(`DROP TABLE resource_logs`
+			, `run`
+			, []
+			, `Dropping table resource_logs`
+		)
+	}
 
 }
 
