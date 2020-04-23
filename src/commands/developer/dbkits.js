@@ -17,23 +17,23 @@ class DatabaseKits extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, palette, name, bot:{db, locale:{DBKITS}}} ) {
+	async execute({ reply, palette, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
 
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return reply(DBKITS.AUTHORIZED, {socket: [name(this.user.id)], color: palette.crimson})
+		if (!this.fullArgs) return reply(this.locale.DBKITS.AUTHORIZED, {socket: {user: name(this.user.id)}, color: `crimson`})
 
 		try {
 
 			//	Parse statement
 			const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
 			//	Make sure the the stmt is valid
-			if (!stmt) return reply(DBKITS.MISSING_STMT)
+			if (!stmt) return reply(this.locale.DBKITS.MISSING_STMT)
 
 			//	Parse flag
 			const flag = this.fullArgs.match(/[^--]*$/)[0].substring(0, 3)
 			//	Flag check as well
-			if (!flag) return reply(DBKITS.MISSING_FLAG)
+			if (!flag) return reply(this.locale.DBKITS.MISSING_FLAG)
 
 			//	Running query
 			const result = await db._query(stmt, flag)
@@ -45,7 +45,7 @@ class DatabaseKits extends Command {
 		}
 		catch (e) {
 			//	Catching failed query
-			return reply (DBKITS.ERROR + `\`\`\`diff\n- ${e.message}\`\`\``)
+			return reply (this.locale.ERROR, {socket: {error: e}, color: `red`})
 		}
 	}
 }
@@ -58,6 +58,5 @@ module.exports.help = {
 	usage: `db <[SqlStatement]> --flag`,
 	group: `Developer`,
 	permissionLevel: 4,
-	public: true,
 	multiUser: false
 }

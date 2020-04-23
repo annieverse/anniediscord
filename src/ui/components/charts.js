@@ -95,7 +95,9 @@ class Chart {
                         },
                         ticks: {
                             autoSkip: true,
-                            maxTicksLimit: 4,
+                            maxTicksLimit: 2,
+                            maxRotation: 0,
+                            minRotation: 0,
                             fontColor: this.color.text,
                             fontFamily: `Roboto`,
                             fontSize: 8,

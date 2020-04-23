@@ -1,92 +1,74 @@
-const GUI = require(`../../struct/gui/inventory`)
-
+const GUI = require(`../../ui/prebuild/inventory`)
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Inventory Display user's inventory bag.
+ * Views all items in your inventory
+ * @author klerikdust
  */
-class Inventory {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.theme = Stacks.meta.data.interfacemode
-		this.stacks = Stacks
-	}
+class Inventory extends Command {
 
-
-	/**
-	 * 	Filtering object
-	 * 	@param {Object} container user inventory metadata
-	 */
-	wrangle({container={}, strict=false}) {
-		//  Only remove unavailable items (0/null/undefined)
-		let DefaultFilter = (obj) => obj.filter(prop => prop.quantity != false)
-		//	Additionally excluding card from result if prompted
-		let AdvancedFilter = (obj) => obj.filter(prop => (prop.quantity != false) && (prop.type != `Card`) && (prop.type != `Covers`) && (prop.type != `Roles`) && (prop.type != `Sticker`) && (prop.type != `Badges`) && (prop.type != `Package Items`))
-		//	Sorting object (descending)
-		let Sorted = (obj) => obj.sort((a,b) => (a.quantity < b.quantity) ? 1 : ((b.quantity < a.quantity) ? -1 : 0))
-		return strict ? Sorted(AdvancedFilter(container)) : Sorted(DefaultFilter(container))
-	}
-
-
-	/**
-     *  Initialzer method
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
-		const { code: { INVENTORY }, bot: { db }, name, reply, emoji, textOption } = this.stacks
+	constructor(Stacks) {
+		super(Stacks)
+		this.itemsFilter = item => (item.quantity != false) && (item.in_use === 0) && (item.type != `CARDS`)
+	}
 
+	/**
+	 * Running command workflow
+	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 */
+	async execute({ reply, name, emoji, commanifier, bot:{locale:{INVENTORY}} }) {
+		await this.requestUserMetadata(2)
 
-		//  Returns if user is invalid
-		if (!this.author) return reply(INVENTORY.INVALID_USER)
-		//  Get user's inventory metadata
-		let Inventory = this.wrangle({
-			container: await db.pullInventory(this.author.id),
-			strict: true
-		})
-
-		function textOpt(inv){
-			let response = `Item: Quantity\n`
-			inv.forEach((element,index) => {
-				index == inv.length-1 ? response += `${element.name}: ${element.quantity}` : response += `${element.name}: ${element.quantity}\n`
+		//  Handle if couldn't find the invntory's author
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		//  Handle if couldn't fetch the inventory
+		const INVALID_INVENTORY = this.user.isSelf ? this.locale.INVENTORY.AUTHOR_EMPTY : this.locale.INVENTORY.OTHER_USER_EMPTY
+		if (!this.user.inventory) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)} })
+		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.id, emoji: emoji(`AAUloading`)}})
+		.then(async loading => {
+			//  Remove faulty values and sort order by type descendantly
+			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.quantity - b.quantity).reverse()
+			await reply(this.locale.COMMAND.TITLE, {
+				simplified: true,
+				prebuffer: true,
+				image: await GUI(filteredInventory, this.user.usedTheme),
+				socket: {
+					user: name(this.user.id),
+					emoji: emoji(`AnniePogg`),
+					command: `Items Inventory`
+				}
 			})
-			return response
+			loading.delete()
+			return reply(this.displayDetailedInventory(filteredInventory, commanifier), {simplified: true})
+		})
+	}
+
+	/**
+	 * 	Prettify result from `this.user.inventory.raw`
+	 * 	@param {array} [inventory=[]] user's raw inventory metadata
+	 *  @param {function} [numberParser] supply with `Pistachio.commanifier()``
+	 *  @returns {string}
+	 */
+	displayDetailedInventory(inventory=[], numberParser) {
+		let str = `\`\`\`\n`
+		for (let i=0; i<inventory.length; i++) {
+			const item = inventory[i]
+			str += `- (${numberParser(item.quantity)}x) ${item.type} ${item.name}\n`
 		}
-		
-		//  Display result
-		textOption ? 
-			reply(INVENTORY.FETCHING, { socket: [name(this.author.id)], simplified: true })
-				.then(async load => {
-
-					reply(`${INVENTORY.HEADER}\n${textOpt(Inventory)}`, {
-						socket: [emoji(`AnnieYandere`), name(this.author.id)],
-						simplified: true
-					})
-					load.delete()
-				})
-			:
-			reply(INVENTORY.FETCHING, { socket: [name(this.author.id)], simplified: true })
-				.then(async load => {
-
-					reply(INVENTORY.HEADER, {
-						socket: [emoji(`AnnieYandere`), name(this.author.id)],
-						image: await GUI(Inventory, this.theme),
-						prebuffer: true,
-						simplified: true
-					})
-					load.delete()
-				})
+		str += `\`\`\``
+		return str
 	}
 }
 
 module.exports.help = {
 	start: Inventory,
 	name: `inventory`,
-	aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`,
-		`inventorytx`, `invtx`, `bagtx`, `inventtx`, `inventx`,
-		`inventorytex`, `invtex`, `bagtex`, `inventtex`, `inventex`,
-		`inventorytext`, `invtext`, `bagtext`, `inventtext`, `inventext`],
-	description: `Views your inventory`,
-	usage: `inventory`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`],
+	description: `Views all items in your inventory`,
+	usage: `inventory <User>(Optional)`,
+	group: `User`,
+	permissionLevel: 0,
+	multiUser: true
 }

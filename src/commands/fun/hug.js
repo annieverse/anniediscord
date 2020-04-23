@@ -46,6 +46,5 @@ module.exports.help = {
     usage: `hug <User>(Optional)`,
     group: `Fun`,
     permissionLevel: 0,
-    public: true,
     multiUser: false
 }

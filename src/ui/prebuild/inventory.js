@@ -1,14 +1,9 @@
-const { Canvas } = require(`canvas-constructor`) 
-const { resolve, join } = require(`path`)
 const palette = require(`../../ui/colors/default`)
-const RarityColor = require(`../../config/itemRarityColor`)
+const { ITEM_RARITY_COLOR } = require(`../config`)
 const fsn = require(`fs-nextra`)
 const Color = require(`color`)
-const ThemePresets = require(`../../ui/colors/themes`)
-
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+const ThemePresets = require(`../colors/themes`)
+const Canvas = require(`../setup`)
 
 /**
  * 	Displaying user inventory.
@@ -85,7 +80,7 @@ const InventoryInterface = async (container, usertheme) => {
 
 		//	Render item rarity frame
 		const renderFrame = (rarity, pos=[]) => {
-			const mainColor = palette[RarityColor[rarity]]
+			const mainColor = palette[ITEM_RARITY_COLOR[rarity]]
 			const frameHole = () => {
 				pos[0] = pos[0] + 1
 				pos[1] = pos[1] + 1
@@ -101,7 +96,7 @@ const InventoryInterface = async (container, usertheme) => {
 
 			canv.save()
 			canv.createBeveledClip(...pos, 15)
-			canv.setColor(palette[RarityColor[rarity]])
+			canv.setColor(palette[ITEM_RARITY_COLOR[rarity]])
 			canv.addRect(...pos)
 			frameHole()
 			canv.restore()

@@ -34,6 +34,5 @@ module.exports.help = {
     usage: `cat`,
     group: `Fun`,
     permissionLevel: 0,
-    public: true,
     multiUser: false
 }

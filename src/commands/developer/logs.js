@@ -72,6 +72,5 @@ module.exports.help = {
 	usage: `getlog <Date>(Optional)`,
     group: `Developer`,
     permissionLevel: 4,
-	public: true,
 	multiUser: true
 }

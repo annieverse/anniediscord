@@ -35,6 +35,5 @@ module.exports.help = {
     usage: `panda`,
     group: `Fun`,
     permissionLevel: 0,
-    public: true,
     multiUser: false
 }

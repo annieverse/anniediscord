@@ -1,149 +1,126 @@
-const Transaction = require(`../../struct/transactions/handler`)
-const Checkout = require(`../../struct/transactions/checkout`)
-const preview = require(`../../config/itemPreview`)
-
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Buy as transaction initializer
+ * Buy any purchasable items in the shop!
+ * @author klerikdust
  */
-class Buy {
-	constructor(Stacks) {
-		this.stacks = Stacks
-		this.categories = [`Roles`, `Tickets`, `Skins`, `Badges`, `Covers`, `Unique`,`Sticker`]
-	}
+class Buy extends Command {
 
-	get availiableCovers() {
-		const { bot: { db } } = this.stacks
-		return db.getCovers
-	}
-
-	get availiableStickers() {
-		const { bot: { db } } = this.stacks
-		return db.getStickers
-	}
-
-	/**
-     * Initializer method
-     * @Execute
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
+    constructor(Stacks) {
+		super(Stacks)
+    }
 
-		const { reply, args, name, message, code:{BUY}, meta: { author, data }, db, palette } = this.stacks
-		
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, emoji, name, trueInt, commanifier, loadAsset, bot:{db, locale:{BUY}} }) {
+    	await this.requestUserMetadata(2)
+
 		//  Returns no parametered input
-		if (!args[0]) return reply(BUY.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(BUY.SHORT_GUIDE)
+		//  Connect space between words with underscore(_) if user has included whitespace
+		const itemKeyword = this.fullArgs.replace(/\ /g, `_`)
+		const item = await db.getItem(itemKeyword)
+		//  Returns if item with the given keyword cannot be found
+		if (!item) return reply(BUY.INVALID_ITEM, {color: `red`})
+		//  Returns if the target item is not available to buy
+		if (!item.available_on_shop) return reply(BUY.ITEM_CANT_BE_BOUGHT, {color: `red`})
+		//  Handle if the item doesn't allow user to multi-stacking and user already have it
+		const selectedItemInsideInventory = this.user.inventory.raw.filter(key => key.item_id === item.item_id)
+    	if ((selectedItemInsideInventory.length >= 1) && item.max_stacks <= 1) {
+    		return reply(BUY.NO_DUPLICATE_ITEM, {color: `red`, socket: [`${item.name} ${item.type}`]})
+    	}
 
-		const key = args[0].toUpperCase()
+    	//  Initialize sequences and item vars
+	    this.setSequence(5)
+	    let itemPreview = await loadAsset(item.alias)
+		let amount = 1
+		let total = item.price * amount 
 
-		var category = this.categories.find((i) => i.toLowerCase().includes(key.toLowerCase()))
-		//  Returns if category is invalid
-		if (!category) return reply(BUY.INVALID_CATEGORY)
+	    
+    	//  Ask user to input the amount to buy if multi-stacking is allowed
+    	if (item.max_stacks > 1) {
+    		reply(BUY.ITEM_AMOUNT, {color: `golden`, socket: [item.name]})
+    	}
+    	else {
+			reply(BUY.CHECKOUT_PREVIEW, {
+				socket: [emoji(`artcoins`), commanifier(item.price), item.name],
+				color: `golden`,
+				image: itemPreview,
+				prebuffer: true
+			})
+			//  Skip the ask-for-amount page
+		    this.nextSequence() 
+    	}
 
-		//  Returns if item is invalid
-		if (!args[1]) return reply(BUY.MISSING_ITEMNAME)
+		this.sequence.on(`collect`, async msg => {
+			let input = msg.content.toLowerCase()
+			msg.delete()
 
-		let transactionComponents = {
-			itemname: message.content.substring(message.content.indexOf(args[1])).toLowerCase(),
-			type: category,
-			message: message,
-			author: author,
-			usermetadata: data
-		}
-		let transaction = new Transaction(transactionComponents)
-		let item = await transaction.pull
-
-		//  Returns if item is not valid
-		if (!item) return reply(BUY.INVALID_ITEM)
-
-		let badgesOnLimit = Object.values(await data.badges).indexOf(null) === -1
-		let badgesHaveDuplicate = Object.values(await data.badges).includes(item.alias)
-		let query1 = await db(author.id)._query(`
-			SELECT itemId FROM itemlist 
-			WHERE alias = ?`
-			, `get`
-			, [item.price_type])
-		let query2 = await db(author.id)._query(`
-			SELECT itemId FROM itemlist 
-			WHERE alias = ?`
-			, `get`
-			, [item.alias])
-
-		item.currencyId = query1.itemId
-		item.itemId = query2.itemId
-
-		const switchColor = {
-
-			"dark_profileskin": {
-				base: palette.nightmode,
-				border: palette.deepnight,
-				text: palette.white,
-				secondaryText: palette.lightgray,
-				sticker: `light`
-			},
-
-			"light_profileskin": {
-				base: palette.white,
-				border: palette.lightgray,
-				text: palette.darkmatte,
-				secondaryText: palette.blankgray,
-				sticker: `dark`
+			/** --------------------
+			 *  Sequence Cancellations
+			 *  --------------------
+			 */
+			if (this.cancelParameters.includes(input)) {
+				reply(BUY.TRANSACTION_CANCELLED)
+				return this.endSequence()
 			}
-		}
-		const usercolor = data.rank.color
 
-		let checkoutComponents = {
-			itemdata: item,
-			transaction: transaction,
-			// Is there a preview, yes = [is the item a sticker, yes = [is the sticker them specific, yes= add light or dark, no = return sticker alias name], no = return asset alias], no = return null
-			preview: preview[key] ? category === `Sticker` ? await db(author.id).stickerTheme(item.alias) ? `sticker_${item.alias}_${switchColor[usercolor].sticker}` : `sticker_${item.alias}` : item.alias : null,
-			stacks: this.stacks,
-			msg: message,
-			user: author
-		}
+			/** --------------------
+			 *  1.) Ask user for amount to buy
+			 *  --------------------
+			 */
+			if (this.onSequence <= 1) {
+				amount = trueInt(input)
+				//  Handle if given amount is not valid
+				if (!amount) return reply(BUY.INVALID_ITEM_AMOUNT, {socket: emoji(`AnnieMad`), color: `red`})
+				total = item.price * amount 
+				reply(BUY.CHECKOUT_PREVIEW, {
+					socket: [emoji(`artcoins`), commanifier(total), `(${commanifier(amount)}x)${item.name}`],
+					color: `golden`,
+					image: itemPreview,
+					prebuffer: true
+				})
+				return this.nextSequence()
+			}
 
-		//  Returns if user lvl doesn't meet requirement to buy roles
-		if (transactionComponents.type === `Roles` && data.level < 25) return reply(BUY.ROLES_LVL_TOO_LOW)
-        
-		//  Reject duplicate skin.
-		if (transactionComponents.type === `Skins` && data.interfacemode === item.alias) return reply(BUY.DUPLICATE_SKIN)
+			/** --------------------
+			 *  2.) Checkout
+			 *  --------------------
+			 */
+			if (this.onSequence <= 2) {
+				//  Ghostingly ignore if user didn't type the confirmation word
+				if (!input.startsWith(`y`)) return
+				//  Handles if user's balance is onsufficient to pay the total
+				if (this.user.inventory.artcoins < total) {
+					reply(BUY.INSUFFICIENT_BALANCE, {
+						socket: [emoji(`artcoins`), commanifier(total)], 
+						color: `red`
+					})
+					return this.endSequence()
+				}
 
-		//  No available slots left
-		if (transactionComponents.type === `Badges` && badgesOnLimit) return reply(BUY.BADGES_LIMIT)
+				//  Deduct balance & deliver item
+				await db.updateInventory({itemId: 52, value: total, operation: `-`, userId: this.user.id})
+				await db.updateInventory({itemId: item.item_id, value: 1, operation: `+`, userId: this.user.id})
 
-		//  Reject duplicate badge alias
-		if (transactionComponents.type === `Badges` && badgesHaveDuplicate) return reply(BUY.DUPLICATE_BADGE)
-
-		//  Reject duplicate cover alias.
-		let covers = await this.availiableCovers
-		if (transactionComponents.type === `Covers` && data.cover === item.alias) return reply(BUY.DUPLICATE_COVER)
-		
-		if (transactionComponents.type === `Covers` && covers.map(element => element.alias).includes(item.alias)) return reply(BUY.COVER_IN_INVENTORY)
-
-		let stickers = await this.availiableStickers
-		if (transactionComponents.type === `Sticker` && data.sticker === item.alias) return reply(BUY.DUPLICATE_STICKER)
-
-		if (transactionComponents.type === `Sticker` && stickers.map(element => element.alias).includes(item.alias)) return reply(BUY.STICKER_IN_INVENTORY)
-
-		let noItem = data[item.price_type] == undefined
-		let balanceTooLow = data[item.price_type] < item.price
-		//  Returns if balance is insufficent
-		if ( balanceTooLow || noItem) return reply(BUY.INSUFFICIENT_BALANCE, {
-			socket: [name(author.id), item.price_type]
+				reply(BUY.SUCCESSFUL, {color: `lightgreen`, socket:[`(${commanifier(amount)}x)${item.name}`, emoji(`AnnieSmile`)]})
+				return this.endSequence()
+			}	
 		})
-
-		return new Checkout(checkoutComponents).confirmation()
 	}
 }
 
 module.exports.help = {
 	start: Buy,
 	name: `buy`,
-	aliases: [],
-	description: `buy an item from the shop`,
-	usage: `buy <category> <item>`,
+	aliases: [`purchase`, `redeem`],
+	description: `Buy any purchasable items in the shop!`,
+	usage: `buy <ItemID/ItemName>`,
 	group: `shop`,
-	public: true,
-	required_usermetadata: true,
-	multi_user : false,
-	special_channels: [`614819522310045718`]
+	permissionLevel: 0,
+	multiUser: false
 }

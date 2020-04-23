@@ -35,6 +35,5 @@ module.exports.help = {
 	usage: `fox`,
 	group: `Fun`,
 	permissionLevel: 0,
-	public: true,
 	multiUser: false
 }

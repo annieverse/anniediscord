@@ -14,12 +14,13 @@ const CommandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
 const logger = require(`./libs/logger`)
 const Express = require(`express`)
-const Locale = require(`./locales/default`)
+const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 
 class Annie extends Discord.Client {
     constructor() {
         super()
+        logger.debug(ascii.default)
 
         /**
          * The default prop for accessing current Annie's version.
@@ -82,7 +83,7 @@ class Annie extends Discord.Client {
          * @since 6.0.0
          * @type {external:Locales}
          */
-        this.locale = Locale
+        this.locale = new Localizer()
 
         /**
          * The default function for calculating task performance in milliseconds.
@@ -101,7 +102,7 @@ class Annie extends Discord.Client {
          * Stores Annie's Support Server invite link.
          * @type {HyperlinkString}
          */ 
-        this.supportServer = `[Support Server](https://discord.gg/wSu6Bq)`
+        this.supportServer = `https://discord.gg/7nDes9P`
     }
 
 
@@ -113,7 +114,6 @@ class Annie extends Discord.Client {
      */
     async prepareLogin(token) {
         try {
-            logger.debug(ascii.default)
             this._rejectionHandler()
             await this._initializingDatabase()
             await this._initializingCommands()
@@ -137,6 +137,20 @@ class Annie extends Discord.Client {
         this.destroy()
         logger.info(`Client.terminate() has successfully terminating the system.`)
         process.exit()
+    }
+
+    /**
+     * Registering new first-level property/node into this.
+     * @since 6.0.0
+     * @param {*} [node] assign any value.
+     * @param {string} [nodeName] codename/identifier of the given node.
+     * @returns {void}
+     */
+    registerNode(node, nodeName) {
+        const fn = `[Annie.registerNode()]`
+        if (!nodeName || !node) throw new TypeError(`${fn} parameters (node, nodeName) cannot be blank.`)
+        if (typeof nodeName != `string`) throw new TypeError(`${fn} parameter 'nodeName' only accepts string.`)
+        this[nodeName] = node
     }
 
 
@@ -175,7 +189,7 @@ class Annie extends Discord.Client {
     _rejectionHandler(log=true) {
         process.on(`unhandledRejection`, err => {
             if (!log) return
-            return logger.error(`Handle Rejection > ${err.stack}`)
+            return logger.error(err.stack)
         })
     }
 
@@ -189,9 +203,6 @@ class Annie extends Discord.Client {
     async _initializingDatabase(log=true) {
         const initTime = process.hrtime()
         this.db = new Database().connect()
-        await this.db.dropTables()
-        await this.db.verifyingTables()
-        await this.db.migrate()
         if (!log) return
         return logger.info(`Database has successfully connected (${getBenchmark(initTime)})`)
     }

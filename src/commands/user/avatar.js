@@ -16,9 +16,9 @@ class Avatar extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, displayAvatar, bot:{locale} }) {
+	async execute({ reply, displayAvatar }) {
 		await this.requestUserMetadata(1)
-		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		return displayAvatar(this.user.id)
 	}
 }
@@ -30,8 +30,7 @@ module.exports.help = {
 	aliases: [`ava`, `pfp`],
 	description: `Display user's avatar`,
 	usage: `avatar <user>`,
-	group: `Fun`,
+	group: `User`,
 	permissionLevel: 0,
-	public: true,
 	multiUser: true
 }

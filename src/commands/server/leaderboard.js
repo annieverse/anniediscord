@@ -17,7 +17,7 @@ class Leaderboard extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, avatar, commanifier, name, bot:{db, locale:{LEADERBOARD}} }) {
+    async execute({ reply, emoji, avatar, commanifier, name, bot:{db} }) {
 		await this.requestUserMetadata(2)
 
 		const keywords = [
@@ -37,14 +37,18 @@ class Leaderboard extends Command {
 		}
 
 		//  Returns a guide if no parameter was specified.
-		if (!this.args[0]) return reply(LEADERBOARD.SHORT_GUIDE)
+		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE)
 		//  Returns if parameter is invalid.
-		if (!wholeKeywords().includes(this.args[0].toLowerCase())) return reply(LEADERBOARD.INVALID_CATEGORY)
+		if (!wholeKeywords().includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
 		//  Store key of selected group
 		const selectedGroup = keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0][0]
 
-		return reply(LEADERBOARD.FETCHING, {
-			socket: [selectedGroup],
+		return reply(this.locale.COMMAND.FETCHING, {
+			socket: {
+				command: `${selectedGroup} leaderboard`,
+				emoji: emoji(`AAUloading`),
+				user: this.user.id
+			},
 			simplified: true
 		})
 		.then(async load => {
@@ -53,23 +57,24 @@ class Leaderboard extends Command {
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()
-				return reply(`no leaderboard data found for **${selectedGroup}** category`)
+				return reply(this.locale.LEADERBOARD.NO_DATA, {socket: {category: selectedGroup}})
 			}
 
-
-			//  Get interface buffer
+			const topTenRows = lbData.slice(0, 10)
+			//  Get canvas buffer
 			let ui = await new Card({width: 520, height: 550, theme: `dark`})
 			.createBase({cornerRadius: 50})
 
-			for (let row in lbData) {
+			for (let row in topTenRows) {
 				let ranking = parseInt(row) + 1
 				let colorByRank = ranking <= 1 ? `yellow` : ranking <= 2 ? `lightblue` : ranking <= 3 ? `palebrown` : `text`
 
 				//  Add highlight and lighten the text if current row is the author
-				if (lbData[row].id === this.user.id) {
+				if (topTenRows[row].id === this.user.id) {
 					colorByRank = `purewhite`
 					ui.createDataBar({
 						barColor: `golden`, 
+						shadowColor: `golden`,
 						inline: true,
 						marginTop: 22,
 						height: 50,
@@ -78,12 +83,13 @@ class Leaderboard extends Command {
 				}
 
 				//  User name
-				const userName = name(lbData[row].id)
+				const userName = name(topTenRows[row].id)
 				ui.addContent({
 					main: userName.length >= 18 ? userName.slice(0, 18) + `...` : userName,
-					fontWeight: `black`,
+					fontWeight: `bold`,
 					size: 12,
-					avatar: await avatar(lbData[row].id, true), 
+					avatar: await avatar(topTenRows[row].id, true), 
+					avatarRadius: 20,
 					mainColor: colorByRank,
 					marginLeft: 120,
 					inline: true
@@ -91,7 +97,7 @@ class Leaderboard extends Command {
 
 				//  User points (EXP/AC/HEARTS/ETC)
 				ui.addContent({
-					main: commanifier(lbData[row].points),
+					main: commanifier(topTenRows[row].points),
 					justify: `right`,
 					align: `right`,
 					marginLeft: -40,

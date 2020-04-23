@@ -18,7 +18,7 @@ class Help extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, bot:{db, supportServer, version, locale:{HELP}} }) {
+	async execute({ reply, name, bot:{db, supportServer, version} }) {
 		await this.requestUserMetadata(1)
 		const cmds = this.getCommandStructures()
 
@@ -27,8 +27,12 @@ class Help extends Command {
 
 			// Display 5 most used commands suggestions
 			const commandSuggestions = await db.mostUsedCommands()
-			return reply(HELP.LANDING, {
-				socket: [name(this.user.id), this.prettifySuggestions(commandSuggestions), supportServer],
+			return reply(this.locale.HELP.LANDING, {
+				socket: {
+					user: name(this.user.id),
+					recommendedCommands: this.prettifySuggestions(commandSuggestions),
+					serverLink: supportServer
+				},
 				color: this.defaultColor,
 				thumbnail: this.bot.user.displayAvatarURL
 			})
@@ -43,13 +47,16 @@ class Help extends Command {
 				//  Display Commandpedia layout once user pressed the :book: button
 				bookEmojiCollector.on(`collect`, () => {
 					response.delete()
-					reply(HELP.COMMANDPEDIA.HEADER, {
-						socket: [version, supportServer, this.prettifyCommandpedia(cmds)],
-						customHeader: [HELP.COMMANDPEDIA.TITLE, this.bot.user.displayAvatarURL],
+					reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
+						socket: {
+							serverLink: supportServer,
+							commandList: this.prettifyCommandpedia(cmds)
+						},
+						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL],
 						color: this.defaultColor
 					})
-					reply(HELP.COMMANDPEDIA.USAGE_EXAMPLES, {
-						socket: [this.prefix],
+					reply(this.locale.HELP.COMMANDPEDIA.USAGE_EXAMPLES, {
+						socket: {prefix: this.prefix},
 						color: this.defaultColor
 					})
 				})
@@ -58,7 +65,7 @@ class Help extends Command {
 
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const res = await this.findCommandByKeyword(this.fullArgs, cmds)
-		if (!res) return reply(HELP.UNABLE_TO_FIND_COMMAND, {color: `red`})
+		if (!res) return reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {color: `red`})
 		const perm = this.getPermissionProperties(res.help.permissionLevel)
 		const cmdName = res.help.name.charAt(0).toUpperCase() + res.help.name.slice(1)
 		const cmdDesc = `"${res.help.description.charAt(0).toUpperCase() + res.help.description.slice(1)}"`
@@ -153,6 +160,5 @@ module.exports.help = {
 	usage: `help <Category/CommandName>(Optional)`,
 	group: `System`,
 	permissionLevel: 0,
-	public: true,
 	multiUser: false
 }

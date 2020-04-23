@@ -123,6 +123,5 @@ module.exports.help = {
     usage: `rolldice <AmountOfDice>`,
     group: `Fun`,
     permissionLevel: 0,
-    public: true,
     multiUser: false,
 }

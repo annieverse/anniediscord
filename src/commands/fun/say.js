@@ -36,6 +36,5 @@ module.exports.help = {
 	usage: `say <message>`,
 	group: `Fun`,
 	permissionLevel: 3,
-	public: true,
 	multiUser: false
 }

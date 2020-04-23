@@ -1,78 +1,62 @@
+const Command = require(`../../libs/commands`)
+const User = require(`../../libs/user`)
 const moment = require(`moment`)
-
 /**
- * Main module
- * @Rep as function to handle user dailies reputation pointl
+ * Gives a reputation point to a user. Once a day.
+ * @author klerikdust
  */
-class Rep {
-	constructor(Stacks) {
-		this.stacks = Stacks
-	}
+class Reputation extends Command {
 
-
-	/**
-     *  Get sender's author object and inventory metadata.
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async assignSenderMetadata() {
-		const { reqData } = this.stacks
-		const res = await reqData()
-		this.senderMeta = res
-	}
+    constructor(Stacks) {
+		super(Stacks)
+		this.cooldown = [23, `hours`]
+    }
 
-
-	/**
-     *	Initializer method
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute() {
-		const { args, reply, db, name, selfTargeting, palette, code: {REP}, meta: {author} } = this.stacks
+    async execute({ reply, emoji, name, bot:{db, locale:{GIVE_REPUTATION}} }) {
+		await this.requestUserMetadata(2)
+		await this.requestAuthorMetadata(2)
 
+		const now = moment()
+		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
 
-		//	Get sender's metadata
-		await this.assignSenderMetadata()
-
-
-		//	Centralized metadata
-		let metadata = {
-			cooldown: 8.64e+7,
-			amount: 1
-		}
-
-
-		//	Returns if user rep duration still in cooldown
-		if ((this.senderMeta.data.repcooldown !== null) && metadata.cooldown - (Date.now() - this.senderMeta.data.repcooldown) > 0) return reply(REP.IN_COOLDOWN, {
-			socket: [moment(this.senderMeta.data.repcooldown + metadata.cooldown).fromNow()],
-			color: palette.red
+		//  Returns if user's last reps give still under 23 hours.
+		if (now.diff(lastGiveAt, this.cooldown[1]) <= this.cooldown[0]) return reply(GIVE_REPUTATION.IN_COOLDOWN, {
+			socket: [moment(lastGiveAt).add(...this.cooldown).fromNow()],
+			color: `red`
 		})
+
 		//	Returns short-guide if user doesn't specify any parameter
-		if (!args[0]) return reply(REP.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(GIVE_REPUTATION.SHORT_GUIDE, {socket: [emoji(`AnnieSmile`)]})
 		//	Returns if target user is invalid
-		if (!author) return reply(REP.INVALID_USER)
+		if (!this.user) return reply(GIVE_REPUTATION.INVALID_USER, {color: `red`})
 		//	Returns if user is trying to rep themselves
-		if (selfTargeting) return reply(REP.SELF_TARGETING)
+		if (this.user.isSelf) return reply(GIVE_REPUTATION.SELF_TARGETING, {color: `red`, socket: [emoji(`AnnieMad`)]})
 
+		//	Update
+		await db.addUserReputation(1, this.user.id, this.author.id)
+		await db.updateReputationGiver(this.author.id)
 
-		//	Assign target id into metadata
-		metadata.target_id = author.id
-		//	Update database
-		await db(this.senderMeta.author.id).updateReps(metadata)
-
-
-		//	Successful
-		return reply(REP.SUCCESSFUL, {
-			socket: [name(author.id), name(this.senderMeta.author.id)],
-			color: palette.lightgreen
+		return reply(GIVE_REPUTATION.SUCCESSFUL, {
+			socket: [name(this.user.id), name(this.author.id)],
+			color: `lightgreen`
 		})
 	}
 }
 
 module.exports.help = {
-	start: Rep,
+	start: Reputation,
 	name: `rep`,
-	aliases: [],
-	description: `Gives rep to a user`,
-	usage: ` rep @user`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`reps`, `reputation`, `reputations`, `reputationpoint`, `praise`, `commend`],
+	description: `Gives a reputation point to a user. Once a day.`,
+	usage: `rep <User>`,
+	group: `Social`,
+	permissionLevel: 0,
+	multiUser: true
 }

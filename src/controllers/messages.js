@@ -1,4 +1,5 @@
 const Permission = require(`../libs/permissions`)
+const Points = require(`../libs/points`)
 const Command = require(`./commands`)
 
 /**
@@ -23,6 +24,8 @@ class MessageController {
         this.permission = data.bot.permissions
         this.userId = data.message.author.id
         this.logger = data.bot.logger
+
+        data.bot.registerNode(Points, `points`)
     }
 
     /**
@@ -172,7 +175,6 @@ class MessageController {
     _registerPermission() {
         const fn = `[MessageController._registerPermission()]`
         const userPerm = new Permission(this.message).authorityCheck()
-        this.logger.debug(`${fn} PERM_LVL ${userPerm.level} - ${userPerm.name} | USER_ID ${this.message.author.id}`)
         this.message.author.permissions = userPerm
         return `OK`
      }

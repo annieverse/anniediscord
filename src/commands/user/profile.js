@@ -1,37 +1,37 @@
-const profile = require(`../../struct/gui/profile`)
+const profile = require(`../../ui/prebuild/profile`)
 const portfolio = require(`../../struct/gui/portfolio`)
 const badge = require(`../../struct/gui/badges`)
 const family = require(`../../struct/gui/families`)
 const friend = require(`../../struct/gui/friends`)
-const stat = require(`../../struct/gui/stats`)
-const databaseManager = require(`../../libs/database`)
+const Command = require(`../../libs/commands`)
+/**
+ * Displays your profile card, including timeline, badges, relationship, and statistics
+ * @author klerikdust
+ */
+class Profile extends Command {
 
-class Profile {
-	constructor(Stacks) {
-		this.stacks = Stacks
-	}
-
-	//          WORKING ON NEW SHOP INTERFACE
-	/**
-     *  Initialzer method
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
-		const {message, command, reply, name, emoji, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-        const collection = new databaseManager(data.userId)
-        const userartworks = await collection.userArtworks()
-        const badgesdata = await collection.badges
-        delete badgesdata.userId
-        const key = Object.values(badgesdata).filter(e => e)
-        const relations = await collection.relationships
-        const familyrelations = relations.filter((e) => {
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, bot:{db}, emoji, name }) {
+        await this.requestUserMetadata(2)
+
+        const familyrelations = this.user.relationships.filter((e) => {
             if (e.theirRelation == `bestie`) return false
             if (e.theirRelation == `soulmate`) return false
             if (e.theirRelation == `senpai`) return false
             if (e.theirRelation == `kouhai`) return false
             return true
         })
-        const friendrelations = relations.filter((e) => {
+        const friendrelations =  this.user.relationships.filter((e) => {
             if (e.theirRelation == `bestie`) return true
             if (e.theirRelation == `soulmate`) return true
             if (e.theirRelation == `senpai`) return true
@@ -40,64 +40,72 @@ class Profile {
         })
 
         /*Don't add empty pages*/
-        var pages = [{gui: profile, card: PROFILECARD, alias: `profile`}]
-        if (userartworks) {
-            pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
+        let pages = [{gui: profile, card: this.locale.PROFILECARD, alias: `profile`}]
+        if (this.user.posts.length > 0) {
+            pages.push({gui: portfolio, card: this.locale.PORTFOLIOCARD, alias: `portfolio`})
         }
-        if (key.length > 0 && key[0] != null) {
-            pages.push({gui: badge, card: BADGECARD, alias: `badge`})
+        if (this.user.inventory.raw.filter(key => key.type === `BADGES`).length > 0) {
+            pages.push({gui: badge, card: this.locale.BADGECARD, alias: `badge`})
         }
         if (familyrelations.length > 0) {
-            pages.push({gui: family, card: RELATIONSHIPCARD, alias: `family`})
+            pages.push({gui: family, card: this.locale.RELATIONSHIPCARD, alias: `family`})
         }
         if (friendrelations.length > 0) {
-            pages.push({gui: friend, card: RELATIONSHIPCARD, alias: `friend`})
+            pages.push({gui: friend, card: this.locale.RELATIONSHIPCARD, alias: `friend`})
         }
-        pages.push({gui: stat, card: STATCARD, alias: `stat`})
 
         let count = 0
         //  Returns if user is invalid or lvl too low
-        switch (command) {
+        switch (this.commandName) {
             case `timeline`:
             case `portfolio`:
-                if (!author) return reply(PORTFOLIOCARD.INVALID_USER)
+                if (!author) return reply(this.locale.PORTFOLIOCARD.INVALID_USER)
                 count = pages.findIndex((e) => e.alias == `portfolio`)
                 break
             case `badges`:
             case `badge`:
-                if (!author) return reply(BADGECARD.INVALID_USER)
+                if (!author) return reply(this.locale.BADGECARD.INVALID_USER)
                 count = pages.findIndex((e) => e.alias == `badge`)
                 break
             case `family`:
-                if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
+                if (!author) return reply(this.locale.RELATIONSHIPCARD.INVALID_USER)
                 count = pages.findIndex((e) => e.alias == `family`)
                 break
             case `friend`:
             case `friends`:
-                if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
+                if (!author) return reply(this.locale.RELATIONSHIPCARD.INVALID_USER)
                 count = pages.findIndex((e) => e.alias == `friend`)
                 break
-            case `stats`:
-            case `stat`:
-                if (!author) return reply(STATCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `stat`)
-                break
         default:
-            if (!author) return reply(PROFILECARD.INVALID_USER)
+            if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
         }
 
         const getPage = async (ctr) => {
             if (!pages[ctr]) return reply (`Couldn't find that card. It's probably empty.`)
 
-            reply(`${emoji(`AAUloading`)} resolving ${pages[ctr].alias} data with ID ${author.id}`, {simplified: true})
+            //  Fetching 
+            reply(this.locale.COMMAND.FETCHING, {
+                socket: {
+                    emoji: emoji(`AAUloading`),
+                    command: pages[ctr].alias,
+                    user: this.user.id
+                },
+                simplified: true
+            })
             .then(async load => {
-                reply(pages[ctr].card.HEADER, {
-                    socket: [name(author.id)],
-                    image: await pages[ctr].gui(this.stacks, author),
+                const GUI = await new pages[ctr].gui(this.user).build()
+                reply(this.locale.COMMAND.TITLE, {
+                    socket: {
+                        user: name(this.user.id),
+                        emoji: emoji(`AnnieSmile`),
+                        command: pages[ctr].alias
+                    },
+                    image: GUI.toBuffer(),
                     prebuffer: true,
                     simplified: true })
                 .then(msg => {
-                    msg.react(`⏪`).then(() => {
+                    msg.react(`⏪`)
+                    .then(() => {
                         msg.react(`⏩`)
                         const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
                         const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
@@ -112,7 +120,6 @@ class Profile {
                             }
                             await msg.delete()
                             getPage(count)
-    
                         })
                         forwards.on(`collect`, async () => {
                             count++
@@ -139,11 +146,10 @@ class Profile {
 module.exports.help = {
 	start: Profile,
 	name: `profile`,
-	aliases: [`profile`, `p`, `mycard`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`, `stats`, `stat`],
-	description: `Display user's profile card, including timeline, badges, relationship, and statistics`,
-	usage: `profile [@user]<optional>`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`profile`, `p`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`],
+	description: `Displays your profile card, including timeline, badges, relationship, and statistics`,
+	usage: `profile <User>(Optional)`,
+	group: `User`,
+	permissionLevel: 0,
+	multiUser: true
 }

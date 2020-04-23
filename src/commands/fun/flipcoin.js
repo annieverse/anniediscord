@@ -32,6 +32,5 @@ module.exports.help={
 	usage: `flipcoin`,
 	group: `Fun`,
 	permissionLevel: 0,
-	public: true,
 	multiUser: false
 }

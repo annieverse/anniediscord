@@ -63,7 +63,6 @@ class Pistachio {
 		 */
 		this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
 		
-		this.isSelfTargeting = this.isSelfTargeting.bind(this)
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
 		this.multiCollector = this.multiCollector.bind(this)
@@ -115,8 +114,8 @@ class Pistachio {
 	 */
 	collector(msg, max=2, timeout=60000) {
 		if (!this._isGuildLayerAvailable) return
-		return new MessageCollector(msg.channel,
-		m => m.author.id === msg.author.id, {
+		return new MessageCollector(this.message.channel,
+		m => m.author.id === this.message.author.id, {
 			max: max,
 			time: timeout,
 		})
@@ -213,17 +212,6 @@ class Pistachio {
 	 *  Flexible Components
 	 *  ------------------------------------------
 	 */
-
-	/**
-	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.
-	 * @since 5.0.0
-	 * @type {Boolean}
-	 */
-	isSelfTargeting() {
-		if (!this._isUserMetaLayerAvailable) return
-		return this.components.user.id === message.author.id ? true : false
-	}
-
 	/**
 	 * Automatically convert any weird number notation into a real value.
 	 * @author Fwubbles
@@ -260,7 +248,7 @@ class Pistachio {
 	 *  @returns {Number|Integer}
 	 */
 	commanifier(number=0) {
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
+		return number ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`) : 0
 	}
 
 	/**
@@ -584,37 +572,33 @@ class Pistachio {
 		options.customHeader = !options.customHeader ? null : options.customHeader
 		options.timestamp == false ? null : options.timestamp = true
 
-		//  Socketing
-		for (let i = 0; i < options.socket.length; i++) {
-			const key = `{${i}}`
-			if (content.indexOf(key) != -1) content = content.replace(new RegExp(`\\` + key, `g`), options.socket[i])
+		//  Find all the available {{}} socket in the string.
+		let sockets = content.match(/\{{(.*?)\}}/g)
+		if (sockets === null) sockets = []
+		for (let i = 0; i < sockets.length; i++) {
+			const key = sockets[i].match(/\{{([^)]+)\}}/)
+			if (!key) continue
+			//  Index `0` has key with the double curly braces, index `1` only has the inside value.
+			const pieceToAttach = options.socket[key[1]]
+			if (pieceToAttach) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
 		}
 
 		//  Returns simple message w/o embed
 		if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
-
 		//  Add notch/chin
 		if (options.notch) content = `\u200C\n${content}\n\u200C`
-
-
 		const embed = new RichEmbed()
 			.setColor(this.palette[options.color] || options.color)
-			//	Ad inject
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
-
 		//  Add header
 		if(options.header) embed.setAuthor(options.header, this.avatar(message ? message.author.id : options.author.id))
-
 		//  Custom header
 		if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
-
 		//  Add footer
 		if (options.footer) embed.setFooter(options.footer)
-
 		// Add url
 		if (options.url) embed.setURL(options.url)
-
 		//  Add image preview
 		if (options.imageGif) {
 			embed.setImage(options.imageGif)
@@ -622,7 +606,6 @@ class Pistachio {
 			embed.image.url = null
 			embed.file = null
 		}
-
 		//  Add image preview
 		if (options.image) {
 			embed.attachFile(new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image), `preview.jpg`))
@@ -631,11 +614,7 @@ class Pistachio {
 			embed.image.url = null
 			embed.file = null
 		}
-
-
-		//  If deleteIn parameter was not specified
 		if (!options.deleteIn) return options.field.send(embed)
-
 		return options.field.send(embed)
 			.then(msg => {
 				//  Convert deleteIn parameter into milliseconds.

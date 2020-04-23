@@ -2,6 +2,7 @@
     "light": {
         "main": "#d3deeb",
         "secondary": "#c5cfdb",
+        "highlight": "#ffffff",
         "iconBackground": "lighten",
         "iconBackgroundOpacity": 0.4,
         "allowedShadow": true,
@@ -17,9 +18,10 @@
     "dark": {
         "main": "#28292e",
         "secondary": "#1d1e21",
+        "highlight": "#323336",
         "iconBackground": "darken",
         "iconBackgroundOpacity": 0.8,
-        "allowedShadow": false,
+        "allowedShadow": true,
         "text": "#c5c6c9",
         "caption": "#bfbfbf",
         "okay": "#81D6BE",

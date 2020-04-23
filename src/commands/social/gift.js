@@ -1,133 +1,109 @@
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Gift Sending gift to other user.
+ * Send gifts to your friends! They will receive 1 reputation point for each gift you send.
+ * @author klerikdust
  */
-class Gift {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.stacks = Stacks
-		this.repmeta = {
-			rose: 1,
-			chocolate_bar: 1,
-			chocolate_box: 3,
-			teddy_bear: 5,
-			candle: 2,
-			chocolate: 2,
-			cookie: 2,
-			candies: 2
-		}
-	}
+class Gift extends Command {
 
-
-	/**
-     *  Get sender's author object and inventory metadata.
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async assignSenderMetadata() {
-		const { reqData } = this.stacks
-		const res = await reqData()
-		this.senderMeta = res
-	}
+    constructor(Stacks) {
+		super(Stacks)
+    }
 
-
-	/**
-     *  Initializer method
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute() {
-		const { code: {GIFT}, bot:{db}, args, palette, emoji, name, reply, collector, trueInt, selfTargeting, parsingAvailableGifts } = this.stacks
-
-		//  Centralized data
-		let metadata = {}
-
-		// Get sender's inventory metadata
-		await this.assignSenderMetadata()
+    async execute({ reply, emoji, name, trueInt, bot:{db, locale:{GIFT}} }) {
+		await this.requestUserMetadata(2)
+		await this.requestAuthorData(2)
 
 		// No parameters given
-		if (!args[0]) return reply(GIFT.SHORT_GUIDE, {
-			socket: [
-				emoji(`HeartPeek`)
-			]
-		})
-
+		if (!this.fullArgs) return reply(GIFT.SHORT_GUIDE, {socket: [emoji(`HeartPeek`)]})
 		// Invalid target
-		if (!this.author) return reply(GIFT.INVALID_USER)
-
+		if (!this.user) return reply(GIFT.INVALID_USER, {color: `red`})
 		// Returns if user trying to gift themselves.
-		if (selfTargeting) return reply(GIFT.SELF_TARGETING)
+		if (this.user.isSelf) return reply(GIFT.SELF_TARGETING, {color: `red`})
 
+		this.setSequence(5)
+	
+		reply(GIFT.FETCHING, {simplified: true, socket:[this.user.id]})
+		.then(async load => {
+			let availableGifts = this.author.inventory.raw.filter(key => (key.type === `GIFTS`) && (key.quantity != 0))
+			load.delete()
+			//  Handle if user don't have any gifts to send
+			if (!availableGifts) return reply(GIFT.UNAVAILABLE, {color: `red`})
+			//  Selecting gift
+			reply(this.displayGifts(availableGifts, emoji))
+			reply(GIFT.GUIDE_TO_PICK_GIFT, {color: `golden`})
+			.then(async guide => {
+				this.sequence.on(`collect`, async msg => {
+					guide.delete()
+					const input = msg.content.toLowerCase()
+					const params = input.split(` `)
+					msg.delete()
 
-		//  Init
-		reply(GIFT.FETCHING, {simplified: true})
-			.then(async load => {
-				let parsingResult = parsingAvailableGifts(this.repmeta, this.senderMeta.data)
-				load.delete()
-            
-				//  Returns if user don't have any gifts to send
-				if (!parsingResult) return reply(GIFT.UNAVAILABLE)
-            
-				reply(parsingResult, {notch: true, color: palette.golden})
-					.then(async inventory => {
-						//  Listening to item confirmation
-						collector.on(`collect`, async msg => {
-							inventory.delete()
+					//  Returns if user asked to cancel the transaction
+					if (this.cancelParameters.includes(input)) {
+						this.endSequence()
+						return reply(GIFT.CANCELLED)
+					}
 
-							const input = msg.content.toLowerCase()
-							const params = input.split(` `)
+					//  Get amount of gift to send from first parameter
+					const amountToSend = trueInt(params[0])
+					//  Get item name from the second parameter. Ignoring spaces.
+					// eslint-disable-next-line no-useless-escape
+					const selectedItem = input.slice(input.indexOf(params[1])).replace(/\ /g, `_`)
+					const item = availableGifts.filter(key => (key.alias === selectedItem) || (key.name === selectedItem))
 
-                    
-							//  Get amount of gift to send from first parameter
-							metadata.amount_to_send = trueInt(params[0])
-							//  Get type of item to send from second parameter. Ignoring spaces.
-							// eslint-disable-next-line no-useless-escape
-							metadata.item_to_send = input.slice(input.indexOf(params[1])).replace(/\ /g, `_`)
-							//  Total gained reps from given properties above
-							metadata.counted_reps = this.repmeta[metadata.item_to_send] * metadata.amount_to_send
-
-                    
-							//  Returns if user amount input is lower than owned items
-							if (metadata.amount_to_send > this.senderMeta.data[metadata.item_to_send]) return reply(GIFT.INSUFFICIENT_AMOUNT)
-							//  Returns if user item name input is invalid
-							if (!this.senderMeta.data[metadata.item_to_send]) return reply(GIFT.INVALID_ITEM)
-							//  Returns if format is invalid
-							if (!metadata.amount_to_send && !metadata.item_to_send) return reply(GIFT.INVALID_FORMAT)
-
-
-							//  Closing the connections
-							collector.stop()
-
-							let itemData = await db.getItemMetadata(metadata.item_to_send)
-							//  Send reputation points
-							db.setUser(this.author.id).addReputations(metadata.counted_reps)
-							//  Withdraw sender's gifts
-							db.setUser(this.senderMeta.author.id).withdraw(metadata.amount_to_send, itemData[0].itemId)
-
-                    
-							//  Gifting successful
-							return reply(GIFT.SUCCESSFUL, {
-								socket: [
-									name(this.author.id),
-									emoji(metadata.item_to_send),
-									metadata.amount_to_send,
-									metadata.item_to_send,
-									metadata.counted_reps
-								],
-								color: palette.lightgreen
-							})
-
-						})
+					//  Handle if can't parse the desired user's gift amount
+					if (!amountToSend) return reply(GIFT.INVALID_AMOUNT, {color: `red`})
+					//  Handle if selected item doesn't exists in the author/sender's inventory
+					if (!item.length) return reply(GIFT.INVALID_ITEM, {color: `red`})
+					//  Returns if the amount to send is lower than total owned items
+					if (item[0].quantity < amountToSend) return reply(GIFT.INSUFFICIENT_AMOUNT, {
+						socket: [amountToSend - item[0].quantity, emoji(item[0].alias), item[0].name],
+						color:` red`
 					})
+
+					await db.addUserReputation(amountToSend, this.user.id)
+					await db.updateInventory({itemId: item[0].item_id, value: amountToSend, operation: `-`, userId: this.author.id})
+					reply(GIFT.SUCCESSFUL, {
+						socket: [
+							name(this.user.id),
+							emoji(selectedItem),
+							amountToSend,
+							item[0].name,
+							amountToSend,
+							name(this.author.id)
+						],
+						color: `lightgreen`
+					})
+					return this.endSequence()
+				})
 			})
+		})
+	}
+
+	displayGifts(inventory=[], emojiParser) {
+		let str = `\n`
+		for (let i = 0; i<inventory.length; i++) {
+			const item = inventory[i]
+			str += `${emojiParser(item.alias)} **(${item.quantity}x) ${item.name}**\n`
+		}
+		return str
 	}
 }
 
 module.exports.help = {
 	start: Gift,
 	name: `gift`,
-	aliases: [],
-	description: `gives an item from your inventory to a specified user`,
-	usage: `gift @user`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`gifts`, `giveitem`, `senditem`, `praise`],
+	description: `Send gifts to your friends! They will receive 1 reputation point for each gift you send.`,
+	usage: `gift <User>`,
+	group: `Social`,
+	permissionLevel: 0,
+	multiUser: true
 }

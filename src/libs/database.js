@@ -4,19 +4,98 @@ const logger = require(`./logger`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
 
+/**
+ * Centralized Class for handling various database tasks 
+ * for Annie.
+ */
 class Database {
+
 	/**
-	 * @param {DatabaseClient} client sql instance that going to be used. Optional.
+	 * Options to be supplied to `this.updateInventory()` parameters
+	 * @typedef {Object} itemsMetadata
+	 * @property {number} [itemId] The item's id. Refer to `items` table
+	 * @property {number} [value=0] Amount to be stored.
+	 * @property {string} [operation=`+`] `+, -, *, /` is the available operation.
+	 * @property {string} [userId] target user's discord id
+	 */
+
+	/**
+	 * Options to be supplied to `this.updateProfileDecoration()` parameters
+	 * @typedef {Object} ProfileDecoration
+	 * @property {number} decorId the decor id. used to refer to `items` table when looking for its metadata.
+	 * @property {string} [decorType=``] decor name. must be uppercased.
+	 * @property {string} [userId=``] target user's discord id
+	 * @property {string} [inUse=0] set `1` to enable the decoration and `0` to disable the decoration.
+	 */	 
+
+	/**
+	 * Keyword used to perform searchString in item database lookup.
+	 * The keyword can be an `item id`, `item name` or `item alias`.
+	 * Below is the example for each keyword type:
+	 * * Item Id : 0, 1, 2, ... 9999
+	 * * Item Name : "Default Cover", "Spring Badge", "Chocolate Box"
+	 * * item Alias : "defaultcov", "spring_badge", "chocolate_box"
+	 * @typedef {string} ItemKeyword
+	 */
+
+	/**
+	 * Required metadata to register new entry for `strike_records` table
+	 * @typedef {object} StrikeEntry
+	 * @property {string} [user_id=``] target user id to be reported
+	 * @property {string} [reason=`not_provided`] providing the reason why user is striked is helpful sometimes. :)
+	 * @property {string} [reported_by=``] reporter's user id
+	 * @property {string} [guild_id=``] the server where user get reported
+	 */
+
+	/**
+	 * Required metadata to register new entry for `commands_log` table
+	 * @typedef {object} CommandUsage
+	 * @property {string} [user_id=``] user id who uses it
+	 * @property {string} [guild_id=``] the guild id where user uses the command
+	 * @property {string} [command_alias=``] used command name/alias
+	 * @property {string} [resolved_in=`0ms`] the time taken during command execution
+	 */
+
+	/**
+	 * Required metadata to register new entry for `user_posts` table
+	 * @typedef {object} UserPost
+	 * @property {string} [userId=``] post's author
+	 * @property {string} [url=``] the post' url
+	 * @property {string} [caption=``] post's caption. Can be blank
+	 * @property {string} [channelId=``] the channel id where the post is submitted
+	 * @property {string} [guildId=``] the guild id where the post is submitted
+	 */
+
+	/**
+	 * Returned result after executing `this._query()`
+	 * Rows will be stored in the root level of the object or array (depends if you use `get` or `all` method)
+	 * So for as example in the `all` method:
+	 * ```
+	 * [
+	 *  {"1": 1},
+	 *  stmt: `SELECT 1 FROM user`
+	 * ]
+	 * ```
+	 * You will need Array.map() in order to access the data.
+	 * By default the retuned result will include the given stmt.
+	 * Although for some cases, stmt isn't needed. You can ommit the prop by toggling the
+	 * fifth parameter in `this._query()` if you want.
+	 * @typedef {object} QueryResult
+	 * @property {string} [stmt] The item's id. Refer to `items` table
+	 */
+
+	/**
+	 * @param {object} client sql instance that is going to be used
 	 */
 	constructor(client={}) {
 		this.client = client
 	}
 
-
 	/**
-	 * 	@description Opening database connection
-	 *	@param {String} path default: ".data/database.sqlite"
-	 *  @param {String} fsPath default: "../../.data/database.sqlite"
+	 * Opening database connection
+	 * @param {string} [path=`.data/database.sqlite`]
+	 * @param {string} [fsPath=`../../.data/database.sqlite`]
+	 * @returns {this}
 	 */
 	connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
 		/**
@@ -31,17 +110,17 @@ class Database {
 		return this
 	}
 
-
 	/**
 	 * 	Standardized method for executing sql query
-	 * 	@param {String|SQL} [stmt=``] sql statement
-	 * 	@param {String|MethodName} [type=`get`] `get` for single result, `all` for multiple result
+	 * 	@param {string} [stmt=``] sql statement
+	 * 	@param {string} [type=`get`] `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
-	 * 	@param {ArrayOfString|Object} [supplies=[]] parameters to be used in sql statement.
-	 *  @param {String} [label=``] description for the query. Optional
-	 *  @param {Boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional
-	 *  @param {Boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
-	 *  @returns {SQLObject}
+	 * 	@param {array} [supplies=[]] parameters to be supplied into sql statement.
+	 *  @param {string} [label=``] description for the query. Optional
+	 *  @param {boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional
+	 *  @param {boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
+	 *  @private
+	 *  @returns {QueryResult}
 	 */
 	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=false, ignoreError=false) {
 		const fn = `[Database._query()]`
@@ -50,6 +129,7 @@ class Database {
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
 			if (label) logger.info(`${fn} ${label}`)
+			if (!result) return null
 			if (!rowsOnly) result.stmt = stmt
 			return result
 		}
@@ -61,82 +141,9 @@ class Database {
 	}
 
 	/**
-	 * 	Parsing raw result from this.pullInventory().
-	 * 	@privateMethod
-	 * 	@param {Object} data inventory metadata
-	 */
-	_transformInventory(data = {}) {
-		let obj = {}
-		for (let i = 0; i < data.length; i++) {
-			obj[data[i].alias] = data[i].quantity
-		}
-		return obj
-	}
-
-
-	/**
-	 * 	Reversed mechanism from `._transformInventory()`.
-	 * 	@privateMethod
-	 * 	@param {Object} src transformed inventory metadata
-	 */
-	async _detransformInventory(src = {}) {
-		const newInventory = []
-		const keys = Object.keys(src)
-		const meta = await this._query(`
-			SELECT *
-			FROM itemlist
-			WHERE alias IN (${keys.map(() => `?`).join(`, `)})`
-			, `all`
-			, keys
-		)
-		for (let metaKey in meta) {
-			for (let srcKey in src) {
-				if(meta[metaKey].alias === srcKey) newInventory.push({...meta[metaKey], quantity:src[srcKey]})
-			}
-		}
-		return newInventory
-	}
-
-	/**
-	 * 	Standard low method for writing to item_inventory
-	 *  @privateMethod
-	 *  @param {Number|ID} itemId item id
-	 *  @param {Number} value amount to be stored
-	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
-	 *  @param {String|ID} userId user id
-	 */
-	async _transforInventory({ itemId, value = 1, operation = `SET`, userId = this.id }) {
-		//	Return if itemId is not specified
-		if (!itemId) return { stored: false }
-		let res = {
-			//	Insert if no data entry exists.
-			insert: await this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
-				, `run`
-				, { $userId: userId, $itemId: itemId }
-			),
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
-				UPDATE item_inventory
-				SET quantity = ?
-				WHERE item_id = ? AND user_id = ?`
-				, `run`
-				, [value, itemId, userId]
-			)
-		}
-
-		logger.info(`[._transforInventory][User:${userId}] (ITEMID:${itemId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
-		return { stored: true }
-	}
-
-	/**
-	 * 	Standardized method for writing to item_inventory
-	 *  @param {Number|ID} itemId item id
-	 *  @param {Number} value amount to be stored
-	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
-	 *  @param {String|ID} userId user id
+	 * Standardized method for making changes to the user_inventories
+	 * @param {itemsMetadata} meta item's metadata
+	 * @returns {boolean}
 	 */
 	async updateInventory({itemId, value=0, operation=`+`, userId}) {
 		const fn = `[Database.updateInventory()]`
@@ -145,16 +152,18 @@ class Database {
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-				INSERT INTO item_inventory (item_id, user_id)
+				INSERT INTO user_inventories (item_id, user_id)
 				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM item_inventory WHERE item_id = $itemId AND user_id = $userId)`
+				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)`
 				, `run`
 				, {itemId: itemId, userId: userId}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
-				UPDATE item_inventory
-				SET quantity = quantity ${operation} ?
+				UPDATE user_inventories
+				SET 
+					quantity = quantity ${operation} ?,
+					last_updated_at = datetime('now')
 				WHERE item_id = ? AND user_id = ?`
 				, `run`
 				, [value, itemId, userId]
@@ -163,12 +172,12 @@ class Database {
 		
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
-		return {stored: true}
+		return true
 	}
 
 	/**
 	 * 	Standard low method for writing to limitedShopRoles
-	 *  @privateMethod
+	 *  @deprecated
 	 *  @param {Number|ID} itemId item id
 	 *  @param {Number} value amount to be stored
 	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
@@ -208,10 +217,11 @@ class Database {
 	 *  Guild Methods
 	 *  -------------------------------------------------------------------------------
 	 */
+
 	/**
 	 * Fetch guild's configurations in the guild_configurations table.
-	 * @param {String} guildId Target guild id 
-	 * @returns {Object}
+	 * @param {string} [guildId=``] Target guild id 
+	 * @returns {QueryResult}
 	 */
 	getGuildConfigurations(guildId=``) {
 		this._query(`
@@ -222,7 +232,6 @@ class Database {
 		)
 	}
 
-
 	/** -------------------------------------------------------------------------------
 	 *  Commands Methods
 	 *  -------------------------------------------------------------------------------
@@ -230,24 +239,71 @@ class Database {
 
 	/**
 	 * Fetch most used commands from commands_usage. Descendantly ordered.
-	 * @param {Number} [limit=5] amount of returned rows
-	 * @returns {Array}
+	 * @param {number} [limit=5] amount of returned rows
+	 * @returns {QueryResult}
 	 */
 	async mostUsedCommands(limit=5) {
 		const fn = `[Database.mostUsedCommands()]`
 		if (limit < 0) throw new TypeError(`${fn} parameter "limit" cannot be blank or below zero. Set at least 1.`)
 		return this._query(`
 			SELECT command_alias, COUNT(command_alias) as total_used
-			FROM commands_usage
+			FROM commands_log
 			GROUP BY command_alias
 			ORDER BY COUNT(command_alias) DESC
 			LIMIT ?`
 			, `all`
 			, [limit]
-			, `Fetching most used commands in commands_usage`
+			, `Fetching most used commands in commands_log`
 		)
 	}
-	
+
+	async getDailyCommandUsage(day=30) {
+		return this._query(`
+			SELECT COUNT(command_alias) as 'command', 
+			    strftime('%d-%m-%Y', registered_at) as 'on_date',
+			    registered_at 
+			FROM commands_log 
+		    GROUP by strftime('%d-%m-%Y', registered_at)
+		    ORDER BY registered_at DESC
+		    LIMIT ?`
+		    , `all`
+		    , [day]
+		)
+	}
+
+	getResourceData(day=30) {
+		return this._query(`
+			SELECT 
+				AVG(uptime) AS 'uptime',
+				AVG(ping) AS 'ping',
+				AVG(cpu) AS 'cpu',
+				AVG(memory) AS 'memory',
+			    strftime('%d-%m-%Y', registered_at) AS 'on_date',
+			    registered_at 
+			FROM resource_log
+		    GROUP by strftime('%d-%m-%Y', registered_at)
+		    ORDER BY registered_at DESC
+			LIMIT ?`
+			, `all`
+			, [day]
+		)
+	}
+
+	/**
+	 * Get total count of the commands logs from commands_log table.
+	 * @returns {number}
+	 */
+	async getCommandQueryCounts() {
+		const res = await this._query(`
+			SELECT COUNT(command_alias) AS total
+			FROM commands_log`
+			, `get`
+			, []
+			, `Fetching commands_log`
+		)
+		return res.total
+	}
+
 
 	/** -------------------------------------------------------------------------------
 	 *  User's manager methods
@@ -255,19 +311,71 @@ class Database {
 	 */	
 
 	/**
+	 * Insert into user table if id is not registered.
+	 * @param {string} [userId=``] User's discord id.
+	 * @param {string} [userName=``] User's discord name. 
+	 * @returns {QueryResult}
+	 */
+	async verifyingNewUser(userId=``, userName=``) {
+		const fn = `[Database.verifyingNewUser()]`
+		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
+		const res = await this._query(`
+			INSERT OR IGNORE INTO users (user_id, name)
+			VALUES (?, ?)`
+			, `run`
+			, [userId, userName,]
+		)
+
+		if (res.insert) logger.info(`${fn} Registering new USER_ID ${userId}`)
+		return res
+	}
+
+	/**
+	 * Delete a user from user table entries.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
+	 */
+	async deleteUser(userId=``) {
+		const fn = `[Database.deleteUser()]`
+		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
+		return this._query(`
+			DELETE FROM users
+			WHERE user_id = ?`
+			, `run`
+			, [userId]
+			, `Deleting USER_ID ${userId} from database`
+		)
+	}
+
+	/**
+	 * Updating user's last_login.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
+	 */
+	async updateLastLogin(userId=``) {
+		return this._query(`
+			UPDATE users
+			SET last_login_at = datetime('now')
+			WHERE user_id = ?`
+			, `run`
+			, [userId]
+		)
+	}	 
+
+	/**
 	 * Updating user's bio
-	 * @param {String} bio User's input. Limit 156 character.
-	 * @param {String} userId User's discord id.
-	 * @returns {SQLObject}
+	 * @param {string} [bio=``] User's input. Limit 156 character.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
 	 */
 	setUserBio(bio=``, userId=``) {
 		const fn = `[Database.setUserBio()]`
 		if (typeof bio !== `string`) throw new TypeError(`${fn} parameter "bio" should be string.`)
 		if (bio.length > 156) throw new RangeError(`${fn} parameter "bio" cannot exceed 156 characters!`)
 		return this._query(`
-			UPDATE user
+			UPDATE users
 			SET bio = ?
-			WHERE id = ?`
+			WHERE user_id = ?`
 			, `run`
 			, [bio, userId]
 			, `Updating bio for USER_ID:${userId}`
@@ -276,26 +384,26 @@ class Database {
 
 	/**
 	 * Updating user's linked social media
-	 * @param {String} [type=``] User's social media type (EXAMPLE: "twitter", "facebook", "kitsu").
-	 * @param {String} [url=``] User's social media url.
-	 * @param {String} [userId=``] User's discord id.
-	 * @returns {SQLObject}
+	 * @param {string} [type=``] User's social media type (EXAMPLE: "twitter", "facebook", "kitsu").
+	 * @param {string} [url=``] User's social media url.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
 	 */
 	async setUserSocialMedia(type=``, url=``, userId=``) {
 		const fn = `[Database.setUserSocialMedia()]`
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-				INSERT INTO user_socialmedia(user_id, type, url)
+				INSERT INTO user_socialmedias(user_id, type, url)
 				SELECT $userId, $type, $url
-				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedia WHERE user_id = $userId AND type = $type)`
+				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedia WHERE user_id = $userId AND account_type = $type)`
 				, `run`
 				, {userId: userId, type: type, url: url}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
 				UPDATE user_socialmedia
-				SET url = ?, type = ?
+				SET url = ?, account_type = ?
 				WHERE user_id = ?`
 				, `run`
 				, [url, type, userId]
@@ -309,13 +417,55 @@ class Database {
 
 	/**
 	 * Set user's in_use stickers to zero
-	 * @param {String} [userId=``] User's discord id.
-	 * @returns {SQLObject}
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
 	 */
-	removeSticker(userId=``){
+	disableSticker(userId=``){
 		return this._query(`
-			UPDATE user_profile_decorations
+			UPDATE user_inventories
 			SET in_use = 0
+			WHERE 
+				user_id = ? 
+				AND item_id IN (
+					SELECT item_id
+					FROM items
+					WHERE type = 'STICKERS'
+				)`
+			, `run`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Adding user's reputation points into `user_reputations` table
+	 * @param {number} [amount=0] amount to be added
+	 * @param {string} [userId=``] target user's discord id
+	 * @param {string} [givenBy=null] giver user's discord id. Optional
+	 * @returns {QueryResult}
+	 */
+	addUserReputation(amount=0, userId=``, givenBy=null) {
+		return this._query(`
+			UPDATE user_reputations 
+			SET 
+				total_reps = total_reps + ?,
+				last_received_at = datetime('now'),
+				recently_received_by = ?
+			WHERE user_id = ?`
+			, `run`
+			, [amount, userId, givenBy]
+		)
+	}
+
+	/**
+	 * Updating the timestamp for reputation giver.
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	updateReputationGiver(userId=``) {
+		return this._query(`
+			UPDATE user_reputations 
+			SET 
+				last_giving_at = datetime('now')
 			WHERE user_id = ?`
 			, `run`
 			, [userId]
@@ -323,22 +473,129 @@ class Database {
 	}
 
 	/**
-	 * 	Defacto method for updating experience point
-	 * 	@param {Object} data should include atleast currentexp, level, maxexp and nextexpcurve.
+	 * Adds new streak data and updating the timestamp for user dailies.
+	 * @param {number} [streak=0] the amount of dailies streak to be set to `user_dailies.total_streak`
+	 * @param {string} [user_id=``] target user's discord id
+	 * @returns {QueryResult}
 	 */
-	updateExperienceMetadata(data = {}, userId = this.id) {
-		this._query(`
-			UPDATE userdata 
-			SET currentexp = ?
-			WHERE userId = ?`
+	updateUserDailies(streak=0, userId=``) {
+		return this._query(`
+			UPDATE user_dailies 
+			SET 
+				last_updated_at = datetime('now', 'localtime'),
+				total_streak = ?
+			WHERE user_id = ?`
 			, `run`
-			, [data.currentexp, userId])
+			, [streak, userId]
+		)
 	}
 
 	/**
+	 * Converts db's timestamp to local/current machine date.
+	 * @param {string} [timestamp=`now`] datetime from sql to be parsed from.
+	 * @returns {string}
+	 */
+	async toLocaltime(timestamp=`now`) {
+		const res = await this._query(`
+			SELECT datetime(?, 'localtime') AS timestamp`
+			, `get`
+			, [timestamp]
+		)
+		return res.timestamp
+	}
+
+	/** -------------------------------------------------------------------------------
+	 *  User's Experience Points Method
+	 *  -------------------------------------------------------------------------------
+	 */	
+
+	/**
+	 * Pull user's experience points metadata from `user_exp` table
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	getUserExp(userId=``) {
+		return this._query(`
+			SELECT * FROM user_exp 
+			WHERE user_id = ?`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Adding user's experience points into `user_exp` table
+	 * @param {number} [amount=0] amount to be added
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	addUserExp(amount=0, userId=``) {
+		return this._query(`
+			UPDATE user_exp 
+			SET current_exp = current_exp + ?
+			WHERE user_id = ?`
+			, `run`
+			, [amount, userId]
+		)
+	}
+
+	/**
+	 * Subtracts user's experience points into `user_exp` table
+	 * @param {number} [amount=0] amount to be added
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	subtractUserExp(amount=0, userId=``) {
+		return this._query(`
+			UPDATE user_exp 
+			SET current_exp = current_exp - ?
+			WHERE user_id = ?`
+			, `run`
+			, [amount, userId]
+		)
+	}
+
+	/**
+	 * Reset user exp from user_exp's entries
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	resetUserExp(userId=``) {
+		return this._query(`
+			DELETE FROM user_exp
+			WHERE user_id = ?`
+			, `run`
+			, [userId]
+			, `Resetting exp for USER_ID ${userId}`
+		)
+	}
+
+	/**
+	 * Resetting user exp booster.
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	resetUserExpBooster(userId=``) {
+		return this._query(`
+			UPDATE user_exp
+			SET 
+				exp_booster = NULL,
+				exp_booster_activated_at = NULL
+			WHERE userId = ?`
+			, `run`
+			, [userId]
+		)
+	}
+
+	/** -------------------------------------------------------------------------------
+	 *  Moderation methods
+	 *  -------------------------------------------------------------------------------
+	 */	
+
+	/**
 	 * Pull user's strike records if presents.
-	 * @param {String} [userId=``] User's discord id.
-	 * @returns {SQLObject}
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
 	 */
 	async getStrikeRecords(userId=``) {
 		return this._query(`
@@ -353,14 +610,8 @@ class Database {
 
 	/**
 	 * Register a new strike entry for user.
-	 * 
-	 * @param {Object} entry required parameters to register new strike point
-	 * @property {String} user_id target user id to be reported
-	 * @property {String} [reason=`not_provided`] providing the reason why user is striked is very helpful
-	 * @property {String} reported_by reporter's user id
-	 * @property {String} guild_id the server where user get reported
-	 * 
-	 * @returns {SQLObject}
+	 * @param {StrikeEntry} meta required parameters to register new strike point
+	 * @returns {QueryResult}
 	 */
 	async registerStrike({user_id=``, reason=`not_provided`, reported_by=``, guild_id=``}) {
 		const fn = `[Database.registerStrike]`
@@ -378,325 +629,286 @@ class Database {
 			VALUES(datetime('now'), ?, ?, ?, ?)`
 			, `run`
 			, [user_id, reason, reported_by, guild_id]
-			, `Registering new strike entry for USER_ID .strike sunnyrainyworks${user_id}`
+			, `Registering new strike entry for USER_ID ${user_id}`
 		)
 	}
 
-	/**
-	 * 	Validating if user has been registered or not.
-	 * 	Returns boolean
-	 * 	@param {String|ID} id user id. Use class default prop if not provided.
-	 */
-	async validateUser(id = this.id) {
-		let res = await this._query(`
-			SELECT COUNT(*) userId
-			FROM userdata
-			WHERE userId = ?`
-			, `get`
-			, [id])
-
-		//	This returns numbers 0 || 1. But i prefer to have it in true Boolean form.
-		return res.userId ? true : false
-	}
-
+	/** -------------------------------------------------------------------------------
+	 *  System Logging Methods
+	 *  -------------------------------------------------------------------------------
+	 */	
 
 	/**
-	 * 	Set user's last_login.
-	 * 	@param {Date|Timestamp} timestamp presence update time.
-	 * 	@param {String|ID} id user id. Use class default prop if not provided.
+	 * Records command query/usage everytime user uses it.
+	 * @param {CommandUsage} meta required parameters
+	 * @returns {QueryResult}
 	 */
-	async updateLastLogin(timestamp = Date.now(), id = this.id) {
-		await this._query(`
-			UPDATE userdata
-			SET last_login = ?
-			WHERE userId = ?`
-			, `run`
-			, [timestamp, id])
-	}
-
-
-	/**
-	 * 	Reset expiring user exp booster.
-	 * 	@resetExpBooster
-	 */
-	resetExpBooster() {
-		this._query(`
-			UPDATE usercheck
-			SET expbooster = NULL, expbooster_duration = NULL
-			WHERE userId = ?`
-			, `run`
-			, [this.id]
-		)
-	}
-
-
-	/**
-	 * 	Records command query/usage everytime user uses it.
-	 * 	@param {*} Object 
-	 * 	@recordsCommandUsage
-	 */
-	recordsCommandUsage({
-		guild_id=`???`,
-		user_id=`???`,
-		command_alias=`???`,
-		resolved_in=`???` }) {
-
-		this._query(`
-			INSERT INTO commands_usage (timestamp, guild_id, user_id, command_alias, resolved_in)
+	recordsCommandUsage({guild_id=``, user_id=``, command_alias=``, resolved_in=`0ms` }) {
+		return this._query(`
+			INSERT INTO commands_log (
+				registered_at, 
+				user_id, 
+				guild_id, 
+				command_alias, 
+				resolved_in
+			)
 			VALUES (datetime('now'), ?, ?, ?, ?)`
 			, `run`
-			, [guild_id, user_id, command_alias, resolved_in]
+			, [user_id, guild_id, command_alias, resolved_in]
+			, `Recording command usage`
 		)
-	
 	}
 
-
 	/**
-	 * 	@description Insert into user table if id is not registered.
-	 * 	@param {String|ID} userId User's Discord ID
-	 *  @param {String|ID} userName User's Username
-	 *  @returns {Object}
+	 * Pull user's main metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
 	 */
-	async validatingNewUser(userId=``, userName=``) {
-		if (!userId) return logger.error(`[Database.validatingNewUser()] parameter "userId" is not provided.`)
-		const res = await this._query(`
-			INSERT OR IGNORE INTO user (registered_date, id, name, bio, heart_counts, receive_notification, last_login)
-			VALUES (datetime('now'), ?, ?, ?, ?, ?, datetime('now'))`
-			, `run`
-			, [userId, userName, `Proud being Annie's Friend!`, 0, 1]
-		)
-		return res
-	}
-
-
-	/**
-	 * 	@description Delete a user from user table entries.
-	 * 	@param {String|ID} userId User's Discord ID
-	 */
-	async deleteUser(userId=``) {
-		if (!userId) return logger.error(`[Database.deleteUser()] parameter "userId" is not provided.`)
-		const res = await this._query(`
-			DELETE FROM user
-			WHERE id = ?`
-			, `run`
-			, [userId]
-		)
-		return res
-	}
-
-
-	/**
-	 * 	Distribute exp based on Naph's buff.
-	 * 	@whiteCatParadise
-	 */
-	async whiteCatParadise() {
-		const meta = this.client.cards.naph_card.skills.main
-		const res = await this._query(`
-			UPDATE userdata
-			SET currentexp = currentexp + ?
-			WHERE userId IN (SELECT user_id FROM item_inventory WHERE item_id = 54)`
-			, `run`
-			, [meta.effect.exp]
-		)
-
-		logger.info(`[${meta.name}] : ${res.stmt.changes} users have received ${meta.effect.exp} EXP`)
-	}
-
-
-	/**
-	 * 	Set all cooldown to zero
-	 * 	@resetCooldown
-	 */
-	resetCooldown() {
-		this._query(`
-			UPDATE usercheck
-			SET expcooldown = "False"`
-			, `run`
-		)
-		logger.info(`User cooldown state has been reset.`)
-	}
-
-
-	/**
-     * Lifesaver promise. Used pretty often when calling an API.
-     * @pause
-     */
-	pause(ms) {
-		return new Promise(resolve => setTimeout(resolve, ms))
-	} // End of pause
-
-
-	//  Pull neccesary data at once.
-	async userMetadata(userId = this.id) {
-		let main = await this._query(`
+	async getUser(userId=``) {
+		return this._query(`
 			SELECT *
-			FROM userdata
-			INNER JOIN usercheck
-			ON usercheck.userId = userdata.userId
-			WHERE userdata.userId = ?`
+			FROM users
+			WHERE user_id = ?`
 			, `get`
 			, [userId]
 		)
-
-		let data = await this.xpFormula(main.currentexp)
-		main.level = data.level
-		main.maxexp = data.maxexp
-		main.nextexpcurve = data.nextexpcurve
-		main.minexp = data.minexp
-
-		let inventory = await this.pullInventory(userId)
-
-		return {...main, ...this._transformInventory(inventory)}
 	}
 
-
 	/**
-	 * Pull configured Art-Feeds channel.
-	 * @param {String|ID} guildId <StringType> guild id
+	 * Pull user's inventories metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
 	 */
-	async getArtFeedsLocation(guildId=0) {
-		logger.debug(`%o`, `${guildId} has requested guild_artfeeds_configurations`)
-		const res = await this._query(`
+	async getUserInventory(userId=``) {
+		return this._query(`
 			SELECT *
-			FROM guild_artfeeds_configurations
-			WHERE guild_id = ?`
+			FROM user_inventories
+			INNER JOIN items
+			ON items.item_id = user_inventories.item_id
+			WHERE user_inventories.user_id = ?`
 			, `all`
-			, [guildId]
+			, [userId]
 		)
-
-		if (res) return res.map(entry => entry.channel_id)
-		return res
 	}
 
+	/**
+	 * Pull user's decorations metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserProfileDecorations(userId=``) {
+		return this._query(`
+			SELECT name, item_type, in_use
+			FROM user_decorations
+			INNER JOIN items
+			ON items.item_id = user_decorations.item_type
+			WHERE user_decorations.user_id = ?`
+			, `all`
+			, [userId]
+		)
+	}
 
 	/**
-	 * 	Registering post metadata
-	 * 	@param {String|ID} userId
-	 * 	@param {ResolvableURL} url
-	 * 	@param {String|ID} location
-	 * 	@registerPost
+	 * Pull user's dailies metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
 	 */
-	registerPost({userId=``, url=``, location=``, description=``}) {
-		this._query(`
-			INSERT INTO userartworks (
-				userId
-				, url
-				, timestamp
-				, location
-				, description
+	async getUserDailies(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_dailies
+			WHERE user_id = ?`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Pull user's reputations metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserReputations(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_reputations
+			WHERE user_id = ?`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Pull user's social media metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserSocialMedia(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_socialmedias
+			WHERE user_id = ?`
+			, `all`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Pull user's posts metadata
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserPosts(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_posts
+			WHERE user_id = ?`
+			, `all`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Pull user's recent post. Only fetch one row.
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserRecentPost(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_posts
+			WHERE user_id = ?
+			ORDER BY registered_at DESC`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Pull user's total likes from aggregated data in `user_posts` table
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserTotalLikes(userId=``) {
+		return this._query(`
+			SELECT SUM(total_likes)
+			FROM user_posts
+			WHERE user_id = ?`
+			, `all`
+			, [userId]
+		)
+	}	
+
+	/**
+	 * Pull the most recent trending post. Fetched `10 rows` at a time.
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getRecentlyTrendingPost(userId=``) {
+		return this._query(`
+			SELECT *
+			FROM user_posts
+			ORDER BY last_updated_at DESC
+			LIMIT 10`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
+	 * Registering new user's post
+	 * @param {UserPost} meta required parameters to register the entry
+	 * @returns {QueryResult}
+	 */
+	registerPost({userId=``, url=``, caption=``, channelId=``, guildId=``}) {
+		return this._query(`
+			INSERT INTO user_posts (
+				posted_at,
+				last_updated_at,
+				user_id,
+				url,
+				caption,
+				channel_id,
+				guild_id
 			)
-			VALUES (?, ?, datetime('now'), ?, ?)`,
+			VALUES (
+				datetime('now'),
+				datetime('now'),
+				?, ?, ?, ?, ?
+			)`,
 			`run`
-			, [userId, url, location, description]
+			, [userId, url, caption, channelId, guildId]
 		)
 	}
 
-	userRecentPost(userId=``) {
+	/**
+	 * Sending 10 chocolate boxes to the user's inventory
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	sendTenChocolateBoxes(userId=``) {
+		return this.updateInventory({itemId: 81, value:10, operation:`+`, userId})	
+	}
+
+	/**
+	 * Pull any item metadata from `items` table. Supports dynamic search.
+	 * @param {ItemKeyword} keyword ref to item id, item name or item alias.
+	 * @returns {QueryResult}
+	 */
+	getItem(keyword=``) {
 		return this._query(`
-			SELECT *
-			FROM userartworks
-			WHERE userId = ?
-			ORDER BY timestamp DESC`
+			SELECT * 
+			FROM items
+			WHERE 
+				item_id = $keyword
+				OR lower(name) = lower($keyword)
+				OR lower(alias) = lower($keyword)
+			LIMIT 1`
 			, `get`
-			, [userId]
+			, {keyword: keyword}	
+			, `Looking up for an item with keyword "${keyword}"`
 		)
 	}
 
 	/**
-	 * 	Sending 10 chocolate boxes
-	 * 	@param {String|ID} id
-	 * 	@sendTenChocolateBoxes
+	 * Fetch purchasable items in the shop.
+	 * @param {number} [limit=10] the limit for returned rows
+	 * @returns {QueryResult}
 	 */
-	sendTenChocolateBoxes(userId = this.id) {
-		this.updateInventory({itemId: 81, value:10, operation:`+`, userId})	
-	}
-
-	userBadges(userId = this.id) {
+	getPurchasableItems(limit=10) {
 		return this._query(`
-                SELECT *
-                FROM userbadges
-                WHERE userId = ?
-            `, `get`, [userId])
-	}
-
-
-	/**
-	 * 	Getting item metadata from db. Supports dynamic search.
-	 * 	@param {Number|String} keyword ref either itemId or item alias.
-	 * 	@getItemMetadata
-	 */
-	getItemMetadata(keyword = 0) {
-
-		let arrayOfKeyword = []
-		arrayOfKeyword[0] = keyword
-
-		if (typeof keyword === `string`) {
-			return this._query(`
-				SELECT *
-				FROM itemlist 
-				WHERE alias IN (${arrayOfKeyword.map(() => `?`).join(`, `)})`
-				, `all`
-				, arrayOfKeyword
-			)		
-		}
-
-		return this._query(`
-			SELECT *
-			FROM itemlist 
-			WHERE itemId IN (${arrayOfKeyword.map(() => `?`).join(`, `)})`
+			SELECT * 
+			FROM items
+			WHERE 
+				available_on_shop = 1,
+				type != 'CURRENCY'
+			ORDER BY price DESC
+			LIMIT ?`
 			, `all`
-			, arrayOfKeyword
+			, [limit]	
+			, `Looking up for ${limit} purchasable items`
+			, true
 		)
 	}
 
-
-	maintenanceUpdate(){
-		return sql.run(`
-				UPDATE item_inventory
-				SET quantity = quantity + 1000 
-				WHERE item_id = 52
-			`)
-	}
-
-	async panGift() {
-		return sql.run(`
-				UPDATE item_inventory
-				SET quantity = quantity + 20 
-				WHERE item_id = 102
-			`)
-	}
-
-	//  Accepts one level of an object. Returns sql-like string.
-	toQuery(data) {
-		let res = ``
-		for (let key in data) {
-			res += `${key} = ${key} - ${data[key]},`
-		}
-		res = res.replace(/.$/, ` `)
-		return res
-	}
-
-	//  Withdrawing multiple columns value
-	async consumeMaterials(cardmeta) {
-		let containerWithDetailedMetadata = await this._detransformInventory(cardmeta)
-		//  Store inventory data
-		return await this.withdrawUserCraftMetadata(containerWithDetailedMetadata)
-	}
-
-	//  Set one value into card column
-	async registerCard(card_alias) {
-		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`,`get`,[card_alias])
-		return await this.updateInventory({ itemId: item_id.itemId, value: 1, operation: `+` })
-	}
-
-	get cardItemIds() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? AND price_type != ? AND rarity = 5`, `all`, [`Card`,`candies`])
-	}
-
-	get recycleableItems() {
-		return this._query(`SELECT * FROM itemlist WHERE type = ? OR type = ? OR type = ? AND price_type != ?`, `all`, [`Foods`,`Shard`, `Materials`, `candies`])
+	/**
+	 * Fetch droppable items from `item_gacha` table.
+	 * @returns {QueryResult}
+	 */
+	getDroppableItems() {
+		return this._query(`
+			SELECT * 
+			FROM item_gacha
+			WHERE droppable = 1`
+			, `all`
+			, []	
+			, `Looking up for droppable items`
+			, true
+		)
 	}
 	
+
+
 	/**
 	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
 	 * 	@param {Number|UserArtcoins} artcoins ac
@@ -708,60 +920,6 @@ class Database {
 		await this.addLuckyTickets(lucky_ticket)
 		return this
 	}
-
-
-	/**
-	 * 	Updating user lucky ticket. Support method chaining.
-	 * 	@param {Number} value amount of lucky ticket to be given
-	 * 	@addLuckyTickets
-	 */
-	async addLuckyTickets(value = 0) {
-		await this.updateInventory({itemId: 71, value:value, operation:`+`})
-		return this
-	}
-
-
-	/**
-	 * 	Updating user any item. Support method chaining.
-	 * 	@param {Number} value amount of items to be given
-	 * 	@param {Number} item id
-	 * 	@addItems
-	 */
-	async addItems(itemId, value = 0) {
-		await this.updateInventory({itemId: itemId, value:value, operation:`+`})
-		return this
-	}
-
-
-	/**
-	 * 	Add user artcoins. Supports method chaining.
-	 * 	@param {Number} value of the artcoins to be given
-	 * 	@param {String|ID} userId of the user id
-	 * 	@storeArtcoins
-	 */
-	async storeArtcoins(value) {
-		await this.updateInventory({itemId: 52, value: value, operation: `+`})
-		return this
-	}
-
-
-	/**
-	 * 	Set User theming mode. Supports method chaining.
-	 * 	@param {String} themeName (light_profileskin/dark_profileskin)
-	 * 	@param {String|ID} userId of the user id
-	 * 	@setTheme
-	 */
-	setTheme(themeName = `light_profileskin`, authorId = 0) {
-		this._query(`
-			UPDATE userdata 
-			SET interfacemode = ? 
-			WHERE userId = ?`
-			, `run`
-			, [themeName, authorId]
-		)
-		return this
-	}
-
 
 	/**
 	 * 	Add user artcoins. Supports method chaining.
@@ -1115,54 +1273,52 @@ class Database {
                             WHERE userId = "${userId}"`)
 	}
 
-	pullInventory(id = this.id) {
+	/**
+	* Enables user's notification. User will start receive notifications after executing it
+	* @param {number} [amount=0] amount of like to be registered
+	* @param {string} [postUrl=``] of source post url
+	* @param {string} [userId=``] of target user id
+	* @returns {QueryResult}
+	*/
+	addLike(amount=``, postUrl=``, userId=``) {
 		return this._query(`
-                SELECT *
-				FROM item_inventory
-				INNER JOIN itemlist
-				ON itemlist.itemId = item_inventory.item_id
-				WHERE item_inventory.user_id = ?`
-				, `all`
-				, [id])
+            UPDATE user_posts 
+            SET total_likes = total_likes + ? 
+			WHERE url = ? AND user_id = ?`
+			, `run`
+			, [amount, postUrl, userId]
+			, `USER_ID ${userId} receives ${amount} likes`	
+		)
 	}
 
-	pullInventoryCards(id = this.id) {
+	/**
+	* Enables user's notification. User will start receive notifications after executing it.
+	* @param {string} [userId=``] of target user id
+	* @returns {QueryResult}
+	*/
+	enableNotification(userId=``) {
 		return this._query(`
-                SELECT *
-				FROM item_inventory
-				INNER JOIN itemlist
-				ON itemlist.itemId = item_inventory.item_id
-				WHERE item_inventory.user_id = ? AND itemlist.type = ?`
-			, `all`
-			, [id,`Card`])
+			UPDATE user
+			SET receive_notification = 1
+			WHERE id = ?`
+			, `run`
+			, [userId]
+		)
 	}
 
-	//  Store new heart point
-	addHeart() {
-		this.client.run(`
-            UPDATE userdata 
-            SET liked_counts = liked_counts + 1 
-            WHERE userId = "${this.id}"
-            `)
-	}
-
-
-	//  Enable user's notification
-	enableNotification(userId=this.id) {
-		this.client.run(`
-                UPDATE userdata
-                SET get_notification = 1
-                WHERE userId = "${userId}"
-            `)
-	}
-
-	//  Disabled user's notification
-	disableNotification(userId=this.id) {
-		this.client.run(`
-                UPDATE userdata
-                SET get_notification = -1
-                WHERE userId = "${userId}"
-            `)
+	/**
+	* Enables user's notification. User will start receive notifications after executing it.
+	* @param {string} [userId=``] of target user id
+	* @returns {QueryResult}
+	*/
+	disableNotification(userId=``) {
+		return this._query(`
+			UPDATE user
+			SET receive_notification = 0
+			WHERE id = ?`
+			, `run`
+			, [userId]
+		)
 	}
         
 	//  Check if post already stored in featured list
@@ -1185,285 +1341,56 @@ class Database {
 	}
 
 	/**
-            *   Getting keys from object
-            * @src: an object of data to be pulled from.
-            */
-	storingKey(src) {
-		let container = []
-		for(let i in src) { container.push(i) }
-		return container
+	* Pull ID ranking based on given descendant column order.
+	* @param {string} [group=``] of target category
+	* @returns {QueryResult}
+	*/
+	async indexRanking(group=``) {
+
+		if (group === `exp`) return this._query(`
+			SELECT user_id AS id, current_exp AS points FROM user_exp
+			ORDER BY current_exp DESC`
+			, `all`
+			, []
+			, `Fetching exp leaderboard`
+			, true	
+		)
+
+		if (group === `artcoins`) return this._query(`
+			SELECT user_id AS id, quantity AS points FROM user_inventories
+			WHERE item_id = 52
+			ORDER BY quantity DESC`
+			, `all`
+			, []
+			, `Fetching artcoins leaderboard`
+			, true	
+		)
+
+		if (group === `fame`) return this._query(`
+			SELECT user_id AS id, total_reps AS points FROM user_reputations
+			ORDER BY total_reps DESC`
+			, `all`
+			, []
+			, `Fetching fame leaderboard`
+			, true	
+		)
+
+		if (group === `artists`) return this._query(`
+			SELECT userId AS id, liked_counts AS points FROM userdata
+			ORDER BY liked_counts DESC`
+			, `all`
+			, []
+			, `Fetching artists leaderboard`
+			, true	
+		)
 	}
 
-            
-	/**
-            *   Getting value from object keys
-            * @src: an object of data to be pulled from.
-            */
-	storingValue(src) {
-		let container = []
-		for(let q in src) { container.push(src[q]) }
-		return container 
-	}
-
-
-	/**
-            *   Getting value from object keys
-            * @src: an object of data to be pulled from.
-            * @ele: target key.
-            */
-	storingValueOfElement(src, ele) {
-		let container = []
-		for(let q in src) { container.push(src[q][ele]) }
-		return container 
-	}
-                
-
-	/**
-            *   Register new item.
-            *   @param name of item name.
-            *   @param alias of item source alias.
-            *   @param type of item type.
-            *   @param price of item price.
-            *   @param description of item description.
-            */
-	registerItem(name, alias, type, price, description) {
-		return this.client.get(`INSERT INTO itemlist (name, alias, type, price, desc) VALUES (?, ?, ?, ?, ?)`, [name, alias, type, price, description])
-	}
-
-
-
-	/**
-        *   Register new ID into table.
-        * @param tablename of target table.
-        * @param id of userId
-        */
-	registeringId(tablename, id) {
-		return this.client.run(`INSERT INTO ${tablename} (userId) VALUES (?)`, [id])
-	}
-
-
-	/**
-        *   Register new column into given table.
-        * @param tablename of target table.
-        * @param columnname of new column.
-        * @param type of column type.
-        */
-	registerColumn(tablename, columnname, type) {
-		return this.client.get(`ALTER TABLE ${tablename} ADD COLUMN ${columnname} ${type}`)
-	}
-
-
-	/**
-    *   Register new table.
-    * @param tablename of target table.
-    * @param columnname of target column.
-    * @param type of column type.
-    */
-	registerTable(tablename, columnname, type) {
-		return this.client.get(`CREATE TABLE IF NOT EXISTS ${tablename} (${columnname} ${type.toUpperCase()})`)
-	}
-
-
-	/**
-    *   Sum up value on column of table.
-    * @param tablename of target table.
-    * @param columnname of target column.
-    * @param value of new value to be added on.
-    *   @param id of target userid.
-    */
-	sumValue(tablename, columnname, value, id, idtype = `userId`) {
-		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} ="${id}"`)
-			.then(async currentdata => {
-				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? parseInt(value) : currentdata[columnname] + parseInt(value)} WHERE ${idtype} = ${id}`)
-			})
-	}
-
-	/**
-     * Extendable function to add values to any table
-     * 
-     * @param {string} tablename the name of the table
-     * @param {string} columnnames the name of the columns ie. 'col1, col2, col3, etc'
-     * @param {string} values the input values ie. ''this is val 1', 'this is val 2', 'val3'
-     */
-	addValues(tablename, columnnames, values) {
-		return this.client.run(`INSERT INTO ${tablename}(${columnnames}) VALUES (${values})`)
-	}
-
-	updateValue(tablename, columnNameToUpdate, value, columnname, id) {
-		try {
-			this.client.run(`UPDATE ${tablename} SET ${columnNameToUpdate} = '${value}' WHERE ${columnname} = '${id}'`)
-		} catch (error) { throw error }
-	}
-	/**
-    *   Subtract value on column of table.
-    * @param tablename of target table.
-    * @param columnname of target column.
-    * @param value of new value to be added on.
-    *   @param id of target userid.
-    */
-	subtractValue(tablename, columnname, value, id) {
-		return this.client.get(`SELECT * FROM ${tablename} WHERE userId ="${id}"`)
-			.then(async currentdata => {
-				this.client.run(`UPDATE ${tablename} SET ${columnname} = ${currentdata[columnname] === null ? 0 : currentdata[columnname] - parseInt(value)} WHERE userId = ${id}`)
-			})
-	}
-
-
-	/**
-     *  Replacing value on column of table.
-     *  @param tablename of target table.
-     *  @param columnname of target column.
-     *  @param value of new value to be added on.
-     *  @param id of target userid.
-     *  @param idtype of the id type (default: "userId")
-     */
-	replaceValue(tablename, columnname, value, id, idtype = `userId`) {
-		return this.client.run(`UPDATE ${tablename} SET ${columnname} = "${value}" WHERE ${idtype} = ${id}`)
-	}
-
-
-
-	/**
-        *   Pull id data from given table.
-        * @param tablename of target table.
-        * @param id of userId
-        */
-	pullRowData(tablename, id, idtype = `userId`) {
-		return this.client.get(`SELECT * FROM ${tablename} WHERE ${idtype} = ${id}`).then(async parsed => parsed)
-	}
-
-	/**
-        *   Pull data from given table.
-        * @param tablename of target table.
-        * @param id of userId
-        */
-	pullData(tablename) {
-		return sql.all(`SELECT * FROM ${tablename}`).then(async parsed => parsed)
-	}
-
-
-	/**
-        *     Registering item type into shop.
-        *   @param type of item type.
-        *     @param opt of additional filter option. (default: "price < 999999")
-        */
-	classifyItem(type, opt = `price > 0`, order = `price ASC`) {
-		return sql.all(`SELECT name, type, price, desc FROM itemlist WHERE type = "${type.toString()}" AND status = "sell" AND ${opt} ORDER BY ${order}`).then(async parsed => parsed)
-	}
-
-	/**
-	 *     Registering item type into shop.
-	 *   @param status of item type.
-	 *     @param opt of additional filter option. (default: "price < 999999")
-	 */
-	classifyLtdItem(status, opt = `price > 0`, order = `price ASC`) {
-		return sql.all(`SELECT name, type, price, desc FROM itemlist WHERE status = "${status.toString()}-sale" AND ${opt} ORDER BY type, ${order}`).then(async parsed => parsed)
-	}
-
-	/**
-	 *     Get users with more than 0 currency
-	 *   @param currency type
-	 */
-	async getUsersWithCurrency(currency) {
-		let item_id = await this._query(`SELECT itemId FROM itemlist WHERE alias = ?`, `get`, [currency])
-		return this._query(`SELECT * FROM item_inventory WHERE item_id = ? AND quantity > 0`,`all`,[item_id.itemId])
-	}
-
-	/**
-        *   Find item on given array.
-        *   Ignoring word case
-        * @param src of target array.
-        * @param id of target element in given src.
-        */
-	request_query(callback, itemname) {
-		return sql.all(`SELECT upper(name), alias, type, price, desc, status, rarity FROM itemlist WHERE status = "sell"`)
-			.then(() => callback(callback, itemname))
-	}
-
-
-	// Returns key-value
-	lookfor(src, name) {
-		for (let i in src) {
-			if (src[i] === name.toUpperCase()) {
-				return src[i]
-			}
-		}
-	}
-
-
-	// Get item obj.
-	get_item(itemname) {
-		return this.request_query(this.lookfor, itemname)
-	}
-
-
-
-	/**
-        *   Get package obj from packagelist.
-        * @param name of package name.
-        */
-	async pullPackage(name) {
-		let src = await this.wholeIndexing(`packagelist`)
-		let filtered = await this.storingValueOfElement(src, `name`)
-		let itemIndex = this.itemIndexing(filtered, name)
-
-		return sql.get(`SELECT * FROM packagelist WHERE name = "${itemIndex.toString()}"`).then(async parsed => parsed)
-	}
-
-
-
-	/**
-        *   Pulling item aliases from given package.
-        * @param pkg of parsed pkg object.
-        */
-	async packageAlias(pkg) {
-
-		let aliases = []
-		for (let i = 1; i <= 3; i++) {
-			sql.get(`SELECT alias FROM itemlist WHERE itemId = ${(pkg[`item` + i.toString()])}`)
-				.then(async parsed => await aliases.push(parsed.alias))
-
-			if (i === 3) { break }
-		}
-		await this.pause(1000)
-		return aliases
-	}
-
-
-
-	/**
-      * Returns true if the given package's badge was present in their userbadges.
-      * Otherwise, false.
-      * @param id of packagename
-      * @param userbadges of user badges collection.
-      */
-	async packageCrossCheck(id, userbadges) {
-		let targetPackage = await this.pullPackage(id)
-		let data = await this.packageAlias(targetPackage)
-		return data.every(e => userbadges.includes(e))
-	}
-
-
-
-	/**
-      * Pull collection of table data.
-      * @param tablename
-      */
-	wholeIndexing(tablename, opt = ``) {
-		return sql.all(`SELECT * FROM ${tablename} ${opt}`)
-			.then(async parsed => parsed)
-	}
-
-
-	/**
-        *   Delete row data from given table.
-        * @param tablename of target table.
-        * @param id of userId
-        * @param idtype of the id type.
-        */
-	removeRowData(tablename, id, idtype = `userId`) {
-		return sql.run(`DELETE FROM ${tablename} WHERE ${idtype} = ${id}`)
-	}
+	/** -------------------------------------------------------------------------------
+	 *  Limited Shop & Events Methods
+	 *  @todo
+	 *  * REQUIRE UPDATES @Bait_God
+	 *  -------------------------------------------------------------------------------
+	 */	
 
 	/**
 	 * Delete row data from given table.
@@ -1494,267 +1421,6 @@ class Database {
 		return sql.all(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(async parsed => parsed)
 	}
 
-	/**
-	* Pull ID ranking based on given descendant column order.
-	* @param {String} group of target category
-	* @returns {Array}
-	*/
-	async indexRanking(group=``) {
-
-		if (group === `exp`) return this._query(`
-			SELECT userId AS id, currentexp AS points FROM userdata
-			ORDER BY currentexp DESC`
-			, `all`
-			, []
-			, `Fetching exp leaderboard`
-			, true	
-		)
-
-		if (group === `artcoins`) return this._query(`
-			SELECT user_id AS id, quantity AS points FROM item_inventory
-			WHERE item_id = 52
-			ORDER BY quantity DESC`
-			, `all`
-			, []
-			, `Fetching artcoins leaderboard`
-			, true	
-		)
-
-		if (group === `fame`) return this._query(`
-			SELECT userId AS id, reputations AS points FROM userdata
-			ORDER BY reputations DESC`
-			, `all`
-			, []
-			, `Fetching fame leaderboard`
-			, true	
-		)
-
-		if (group === `artists`) return this._query(`
-			SELECT userId AS id, liked_counts AS points FROM userdata
-			ORDER BY liked_counts DESC`
-			, `all`
-			, []
-			, `Fetching artists leaderboard`
-			, true	
-		)
-	}
-
-	/**
-        *   Pull ID ranking based on given descendant column order. FOR ARTCOINS
-        * @param tablename of target table.
-        * @param columnname of sorted descendant column. 
-        * @param index of user.
-        * @param val of returned data value.
-        */
-	indexRankingAC(tablename = `item_inventory`, columnname = `quantity`, index, val, itemId = 52) {
-		return sql.all(`SELECT ${val} FROM ${tablename} WHERE item_id = ${itemId} ORDER BY ${columnname} DESC`)
-			.then(async x => x[index][val])
-	}
-
-
-		/**
-        *   Pull ID ranking based on given descendant column order. FOR CANDIES
-        * @param tablename of target table.
-        * @param columnname of sorted descendant column. 
-        * @param index of user.
-        * @param val of returned data value.
-        */
-	   indexRankingCandies(tablename = `item_inventory`, columnname = `quantity`, index, val, itemId = 102) {
-		return sql.all(`SELECT ${val} FROM ${tablename} WHERE item_id = ${itemId} ORDER BY ${columnname} DESC`)
-			.then(async x => x[index][val])
-	}
-
-
-	/**
-			*   Pull Author ID ranking based on given descendant column order.
-			* @param tablename of target table.
-			* @param columnname of sorted descendant column. 
-			*/
-	authorIndexRankingAC(tablename, columnname, id = this.id) {
-		return sql.all(`SELECT user_id FROM ${tablename} WHERE item_id = 52 ORDER BY ${columnname} DESC`)
-			.then(async x => x.findIndex(z => z.user_id === id ))
-	}
-
-	/**
-			*   Pull Author ID ranking based on given descendant column order.
-			* @param tablename of target table.
-			* @param columnname of sorted descendant column. 
-			*/
-	authorIndexRankingCandies(tablename, columnname, id = this.id) {
-		return sql.all(`SELECT user_id FROM ${tablename} WHERE item_id = 102 ORDER BY ${columnname} DESC`)
-			.then(async x => x.findIndex(z => z.user_id === id ))
-	}
-
-
-	/**
-        *   Pull Author ID ranking based on given descendant column order.
-        * @param tablename of target table.
-        * @param columnname of sorted descendant column. 
-        */
-	authorIndexRanking(tablename, columnname, id = this.id) {
-		return sql.all(`SELECT userId FROM ${tablename} ORDER BY ${columnname} DESC`)
-			.then(async x => x.findIndex(z => z.userId === id))
-	}
-
-
-
-
-	/**
-        *   Pull packages from packagelist.
-        */
-	get packageCollections() {
-		return sql.get(`SELECT * FROM packagelist`).then(async parsed => parsed)
-	}
-
-
-
-	/**
-        *   Pull total user collection size.
-        */
-	get userSize() {
-		return sql.all(`SELECT * FROM userdata`)
-			.then(async x => x.length)
-	}
-
-
-	/**
-        *   Pull user collection of data.
-        * @this.id
-        */
-	async userDataQuerying() {
-		let data = await sql.get(`SELECT * FROM userdata WHERE userId = ${this.id}`)
-			.then(async parsed => parsed)
-		let main = await this.xpFormula(data.currentexp)
-		data.level = main.level
-		data.maxexp = main.maxexp
-		data.nextexpcurve = main.nextexpcurve
-		data.minexp = main.minexp
-		return data
-	}
-
-	async xpFormula(data){
-		const formula = (exp) => {
-			if (exp < 100) {
-				return {
-					level: 0,
-					maxexp: 100,
-					nextexpcurve: 100,
-					minexp: 0
-				}
-			}
-
-			//exp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
-			var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
-			level = Math.floor(level)
-			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			var nextexpcurve = maxexp - minexp
-			level = level + 1
-
-			return {
-				level: level,
-				maxexp: maxexp,
-				nextexpcurve: nextexpcurve,
-				minexp: minexp
-			}
-		}
-
-		const accumulatedCurrent = Math.floor(data)
-		const main = formula(accumulatedCurrent)
-		let level = main.level
-		let maxexp = main.maxexp
-		let nextexpcurve = main.nextexpcurve
-		let minexp = main.minexp
-		return {level,maxexp,nextexpcurve,minexp}
-	}
-
-	async xpReverseFormula(data) {
-		const formula = (level) => {
-			
-			if (level < 1) {
-				return {
-					level: 0,
-					maxexp: 100,
-					nextexpcurve: 100,
-					minexp: 0
-				}
-			}
-			level < 60 ? level-=1 : level+=0
-			let exp = Math.floor(((390.0625*(Math.pow(level+1, 2)))+375)/4)
-			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
-			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
-			level = Math.floor(level)
-			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			var nextexpcurve = maxexp - minexp
-			level = level + 1
-
-			return {
-				maxexp: maxexp,
-				nextexpcurve: nextexpcurve,
-				minexp: minexp,
-				level: level
-			}
-		}
-
-		let level = Math.floor(data)
-		const main = formula(level)
-		
-		let maxexp = main.maxexp
-		let nextexpcurve = main.nextexpcurve
-		let minexp = main.minexp
-		level = main.level
-		return { level, maxexp, nextexpcurve, minexp }
-	}
-
-	/**
-        *   Pull user badges container of data.
-        * @this.id
-        */
-	get badgesQuerying() {
-		return sql.get(`SELECT * FROM userbadges WHERE userId = ${this.id}`)
-			.then(async parsed => parsed)
-	}
-
-
-	/**
-        *   Pull all the registered user data.
-        * @this.id
-        */
-	get queryingAll() {
-		return sql.all(`SELECT userId FROM userdata ORDER BY currentexp DESC`)
-			.then(async parsed => parsed)
-	}
-
-
-	/**
-        *   Pull all the available tables.
-        * @no params
-        */
-	get listedTables() {
-		return sql.all(`SELECT * FROM sqlite_master WHERE type='table'`)
-			.then(async parsed => parsed)
-	}
-
-
-	/**
-        *   Referenced to @userDataQuerying.
-        * @this.userDataQuerying
-        */
-	get userdata() {
-		return this.userDataQuerying
-	}
-
-
-	/**
-        *   Referenced to @badgesQuerying.
-        * @this.badgesQuerying
-        */
-	get badges() {
-		return this.badgesQuerying
-	}
-
 	get retrieveTimeData(){
 		let dateRightNow = (new Date()).getTime()
 		let foreverDate = (new Date(`Jan 5, 2021 15:37:25`)).getTime()
@@ -1766,30 +1432,19 @@ class Database {
 			,[foreverDate,dateRightNow])
 	}
 
+	/** -------------------------------------------------------------------------------
+	 *  User Relationship Methods.
+	 *  @todo
+	 *  * REQUIRE UPDATES @sunnyrainyworks
+	 *  -------------------------------------------------------------------------------
+	 */	
 
 	/**
-	 * @desc Fetch user ranking based on descendant order.
-	 * @param {String} userId 
-	 * @returns {Number}
+	 * Fetch user's relationship info
+	 * @param {string} [userId=``] target user id
+	 * @returns {QueryResult}
 	 */
-	async userExpRanking(userId=``) {
-		const sorted = await this._query(`
-			SELECT userId
-			FROM userdata 
-			ORDER BY currentexp DESC`
-			, `all`
-			, [userId]
-		)
-		return sorted.findIndex(value => value.userId === userId)
-	}
-
-
-	/**
-	 * @desc Fetch user's relationship info
-	 * @param {String} userId <String> of user id 
-	 * @returns {Array}
-	 */
-    userRelations(userId=``) {
+    getUserRelations(userId=``) {
 		return this._query(`
 			SELECT 
 			r1.type AS "myRelation", r2.type AS "theirRelation",
@@ -1817,12 +1472,16 @@ class Database {
 		)
     }
 
-    /**
-     *   Pull available relationship types
-     */
+	/**
+	 * Pull available relationship types
+	 * @type {QueryResult}
+	 */
     get relationshipTypes() {
-        return sql.all(`SELECT * FROM relationshiptype ORDER BY typeId ASC`)
-            .then(async parsed => parsed)
+		return this._query(`
+			SELECT * FROM relationshiptype
+			ORDER BY typeId ASC`
+			, `all`	
+		)
     }
 
 	async setRelationship(relType, userId) {
@@ -1857,65 +1516,500 @@ class Database {
 		return sql.run(`DELETE FROM relationship
 						WHERE (userId1 = "${this.id}" AND userId2 = "${userId}")
 						OR (userId2 = "${this.id}" AND userId1 = "${userId}")`)
-			/*.then(
-				sql.run(`
-					DELETE FROM mainrelationship 
-					WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
-				`)
-		)
-			 */
+	}
+
+
+	/** -------------------------------------------------------------------------------
+	 *  Pre-V6 Migrations Methods
+	 *  -------------------------------------------------------------------------------
+	 */	
+
+
+	/**
+	 * Drop V6 Tables
+	 * @returns {boolean}
+	 */
+	async dropTables() {
+		logger.info(`Dropping temp v6 tables.. this may take a minute...`)
+		await this.client.exec(`
+			BEGIN;
+			DROP TABLE IF EXISTS users;
+			DROP TABLE IF EXISTS user_dailies;
+			DROP TABLE IF EXISTS user_reputations;
+			DROP TABLE IF EXISTS user_exp;
+			DROP TABLE IF EXISTS user_posts;
+			DROP TABLE IF EXISTS user_inventories;
+			DROP TABLE IF EXISTS user_socialmedias;
+			DROP TABLE IF EXISTS items;
+			DROP TABLE IF EXISTS strikes;
+			DROP TABLE IF EXISTS commands_log;
+			DROP TABLE IF EXISTS resource_log;
+			COMMIT;
+			`)
+		return true
 	}
 
 	/**
-	 * Migrating old db entries into v6's tables
-	 * @returns {Boolean}
+	 * Validate and Create V6 Table Schemas
+	 * @returns {boolean}
+	 */
+	async verifyingTables() {
+		/**
+		 * --------------------------
+		 * USER TREE
+		 * --------------------------
+		 */
+	   await this._query(`CREATE TABLE IF NOT EXISTS users (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_login_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'user_id' TEXT PRIMARY KEY,
+		   'name' TEXT,
+		   'bio' TEXT DEFAULT "Hi! I'm new user!",
+		   'verified' INTEGER DEFAULT 0,
+		   'lang' TEXT DEFAULT 'en',
+		   'receive_notification' INTEGER DEFAULT -1
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table users`
+	   )
+	   
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'user_id' TEXT PRIMARY KEY,
+		   'total_streak' INTEGER DEFAULT 0,
+
+		   FOREIGN KEY(user_id)
+		   REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_dailies`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_giving_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_received_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'user_id' TEXT PRIMARY KEY,
+		   'total_reps' INTEGER DEFAULT 0,
+		   'recently_received_by' TEXT,
+
+		   FOREIGN KEY(user_id) 
+		   REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_reputations`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_exp (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'user_id' TEXT PRIMARY KEY,
+		   'current_exp' INTEGER DEFAULT 0,
+		   'booster_id' INTEGER DEFAULT 0,
+		   'booster_activated_at' TIMESTAMP,
+
+		   FOREIGN KEY(user_id) 
+		   REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_exp`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_inventories (
+		   
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'inventory_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+			'user_id' TEXT,
+			'item_id' INTEGER,
+			'quantity' INTEGER DEFAULT 0,
+			'in_use' INTEGER DEFAULT 0,
+
+			FOREIGN KEY(user_id) 
+			REFERENCES users(user_id) 
+				ON DELETE CASCADE
+				ON UPDATE CASCADE
+
+			)`
+			, `run`
+			, []
+			, `Verifying table user_inventories`
+		)
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_posts (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'post_id' TEXT PRIMARY KEY,
+		   'user_id' TEXT,
+		   'url' TEXT,
+		   'caption' TEXT,
+		   'channel_id' TEXT,
+		   'guild_id' TEXT,
+		   'total_likes' INTEGER DEFAULT 0,
+		   'recently_liked_by' TEXT,
+
+		   FOREIGN KEY(user_id)
+		   REFERENCES users(user_id)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_posts`
+	   )
+	   
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedias (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'socialmedia_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'user_id' TEXT,
+		   'url' TEXT,
+		   'account_type' TEXT,
+
+		   FOREIGN KEY(user_id)
+		   REFERENCES users(user_id)
+		   		ON DELETE CASCADE
+		   		ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_socialmedias`
+	   )
+
+	   /*
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
+		   'user_id' TEXT NOT NULL UNIQUE,
+		   'quest_key' INTEGER,
+		   'quest_level' INTEGER)`
+		   , `run`
+		   , []
+		   , `Verifying table user_quest_info`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_quests (
+		   'user_id' TEXT NOT NULL,
+		   'quest_id' INTEGER,
+		   'status' INTEGER,
+		   'date_completed' TIMESTAMP)`
+		   , `run`
+		   , []
+		   , `Verifying table user_quests`
+	   )
+	   */
+
+	   /**
+		* --------------------------
+		* GUILD TREES
+		* --------------------------
+		*/
+	   await this._query(`CREATE TABLE IF NOT EXISTS guilds (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'guild_id' TEXT PRIMARY KEY,
+		   'name' TEXT,
+		   'bio' TEXT
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table guilds`
+	   )	
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS guild_configurations (
+
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+			'guild_id' TEXT,
+			'channel_id' TEXT,
+			'config_name' TEXT,
+			'set_by' TEXT,
+
+			FOREIGN KEY(guild_id)
+			REFERENCES guilds(guild_id)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE
+
+			)`
+			, `run`
+			, []
+			, `Verifying table guild_configurations`
+		)	
+
+	   /**
+		* --------------------------
+		* ITEMS TREES
+		* --------------------------
+		*/
+	   await this._query(`CREATE TABLE IF NOT EXISTS items (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'item_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'name' TEXT,
+		   'alias' TEXT,
+		   'rarity' INTEGER,
+		   'type' TEXT,
+		   'price' INTEGER,
+		   'description' TEXT,
+		   'max_stacks' INTEGER DEFAULT 9999,
+		   'bind' TEXT DEFAULT 0,
+		   'available_on_shop' INTEGER DEFAULT 1
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table items`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS item_gacha (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'item_id' INTEGER,
+		   'quantity' INTEGER DEFAULT 1,
+		   'drop_rate' REAL,
+		   'droppable' INTEGER DEFAULT 1,
+
+			FOREIGN KEY(item_id)
+			REFERENCES items(item_id)
+				ON DELETE CASCADE
+				ON UPDATE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table item_gacha`
+	   )
+
+		/**
+		 * --------------------------
+		 * MODERATION TREES
+		 * --------------------------
+		 */
+	   await this._query(`CREATE TABLE IF NOT EXISTS strikes (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'strike_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'user_id' TEXT,
+		   'guild_id' TEXT,
+		   'reported_by' TEXT,
+		   'reason' TEXT DEFAULT "Not provided"
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table strikes`
+	   )
+
+		/**
+		 * --------------------------
+		 * LOG TREES
+		 * --------------------------
+		 */
+	   await this._query(`CREATE TABLE IF NOT EXISTS commands_log (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'user_id' TEXT,
+		   'channel_id' TEXT,
+		   'guild_id' TEXT,
+		   'command_alias' TEXT,
+		   'resolved_in' TEXT
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table commands_log`
+	   )
+	   await this._query(`CREATE TABLE IF NOT EXISTS resource_log (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'uptime' INTEGER,
+		   'ping' REAL,
+		   'cpu' REAL,
+		   'memory' REAL
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table resource_log`
+	   )
+	   return true
+   }	
+
+	/**
+	 * Migrating old db entries into V6's tables
+	 * @returns {boolean}
 	 */
 	async migrate() {
+
+		//  Updating item db
 		await this._query(`
-			INSERT INTO user (registered_at, id, name, bio) 
+			INSERT INTO items (
+				item_id,
+				name,
+				alias,
+				rarity,
+				type,
+				price,
+				description
+			) 
 			SELECT 
-				registered_date registered_at,
-				userId id, 
-				NULL name, 
-				description bio
+				itemId,
+				name,
+				alias,
+				rarity,
+				upper(type),
+				price,
+				desc
+			FROM itemlist`
+			, `run`
+			, []
+			, `Migrating itemlist into items`
+		)	
+		await this._query(`
+			UPDATE items 
+			SET 
+				name = 'Light Profile Theme',
+				description = 'Delightful. Pure. Clean slate color for your profile card.',
+				type = 'THEMES'
+			WHERE alias = 'light'`
+			, `run`
+			, []
+			, `Updating [Light Profile Theme] in items table`
+		)	
+		await this._query(`
+			UPDATE items 
+			SET 
+				name = 'Dark Profile Theme',
+				description = 'Its time to take care of your eyes with dark themed profile.',
+				type = 'THEMES'
+			WHERE alias = 'dark'`
+			, `run`
+			, []
+			, `Updating [Dark Profile Theme] in items table`
+		)
+		await this._query(`
+			UPDATE items 
+			SET max_stacks = 1
+			WHERE type in (
+				'COVERS',
+				'BADGES',
+				'THEMES',
+				'STICKERS'
+			)`
+			, `run`
+			, []
+			, `Updating decoration item's max_stacks to 1 in items table`
+		)
+		await this._query(`
+			UPDATE items 
+			SET max_stacks = 99999999999999
+			WHERE alias = 'artcoins'`
+			, `run`
+			, []
+			, `Updating artcoins max_stacks to 99999999999999 in items table`
+		)			
+		await this._query(`
+			UPDATE items 
+			SET alias = 'lalolu_cov' 
+			WHERE name = 'Lalolu' AND type = 'Covers'`
+			, `run`
+			, []
+			, `Fixing Lalolu's Cover alias`
+		)	
+		await this._query(`
+			UPDATE items 
+			SET type = 'CARDS'
+			WHERE type = 'CARD'`
+			, `run`
+			, []
+			, `Updating items with CARD type into CARDS (plural) in items table`
+		)
+		await this._query(`
+			UPDATE usercheck 
+			SET lastdaily = datetime(lastdaily/1000, 'unixepoch')`
+			, `run`
+			, []
+			, `Converting usercheck's lastdaily into a proper datetime`
+		)
+		await this._query(`
+			UPDATE usercheck 
+			SET repcooldown = datetime(repcooldown/1000, 'unixepoch')`
+			, `run`
+			, []
+			, `Converting usercheck's repcooldown into a proper datetime`
+		)		
+		await this._query(`
+			INSERT INTO users (
+				last_login_at,
+				user_id,
+				bio,
+				receive_notification
+			) 
+			SELECT 
+				last_login,
+				userId, 
+				description,
+				get_notification
 			FROM userdata`
 			, `run`
 			, []
-			, `Migrating userdata into user`
+			, `Migrating userdata into users`
 		)
+
 		await this._query(`
-			INSERT INTO user_dailies (registered_at, last_updated_at, user_id, total_streak) 
+			INSERT INTO user_dailies (
+				last_updated_at,
+				user_id,
+				total_streak
+			) 
 			SELECT 
-				datetime('now') registered_at,
-				lastdaily last_updated_at,
-				userId user_id, 
-				totaldailystreak total_streak 
-			FROM usercheck`
+				usercheck.lastdaily,
+				users.user_id,
+				usercheck.totaldailystreak
+			FROM usercheck, users
+			WHERE users.user_id = usercheck.userId`
 			, `run`
 			, []
 			, `Migrating usercheck's dailies into user_dailies`
 		)
 		await this._query(`
 			INSERT INTO user_reputations (
-				registered_at,
 				user_id,
-				owned_reps,
-				given_reps,
-				last_give_at,
-				last_received_at,
-				recently_received_item,
-				recently_received_from,
-				recently_give_to)
+				total_reps
+			)
 			SELECT 
-				datetime('now') registered_at,
-				userId user_id, 
-				reputations owned_reps,
-				0 given_reps,
-				NULL last_give_at,
-				NULL last_received_at,
-				NULL recently_received_item,
-				NULL recently_received_from,
-				NULL recently_give_to
+				userId, 
+				reputations
 			FROM userdata`
 			, `run`
 			, []
@@ -1923,20 +2017,16 @@ class Database {
 		)
 		await this._query(`
 			INSERT INTO user_exp (
-				registered_at,
-				last_updated_at,
 				user_id,
 				current_exp,
-				exp_booster,
-				exp_booster_activated_at
+				booster_id,
+				booster_activated_at
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
 				usercheck.userId user_id,
 				userdata.currentexp current_exp,
-				usercheck.expbooster exp_booster,
-				usercheck.expbooster_duration exp_booster_activated_at
+				(SELECT itemId FROM itemlist WHERE alias = usercheck.expbooster),
+				usercheck.expbooster_duration
 			FROM usercheck, userdata
 			WHERE usercheck.userId = userdata.userId`
 			, `run`
@@ -1945,275 +2035,346 @@ class Database {
 		)
 		await this._query(`
 			INSERT INTO user_posts (
-				posted_at,
-				last_updated_at,
+				registered_at,
+				post_id,
 				user_id,
 				url,
 				caption,
-				channel_id,
 				guild_id,
-				total_likes,
 				recently_liked_by
 			) 
 			SELECT 
-				timestamp posted_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				url url,
-				description caption,
-				location channel_id,
-				459892609838481408 guild_id,
-				0 total_likes,
-				230034968515051520 recently_liked_by
-			FROM userartworks`
+				(SELECT datetime(timestamp / 1000, 'unixepoch')),
+				userartworks.timestamp,
+				userartworks.userId,
+				userartworks.url,
+				userartworks.description,
+				459892609838481408,
+				230034968515051520
+			FROM userartworks, users
+			WHERE users.user_id = userartworks.userId`
 			, `run`
 			, []
 			, `Migrating userartworks into user_posts`
 		)
+
+
+		/**  --------------------------
+		  *  USER INVENTORIES
+		  *  --------------------------
+		  */
 		await this._query(`
-			INSERT INTO user_inventory (
-				registered_at,
-				last_updated_at,
-				item_id,
+			INSERT INTO user_inventories (
 				user_id,
+				item_id,
 				quantity
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				item_id item_id,
-				user_id user_id,
-				quantity quantity
-			FROM item_inventory`
+				item_inventory.user_id,
+				item_inventory.item_id,
+				item_inventory.quantity
+			FROM item_inventory, users
+			WHERE 
+				users.user_id = item_inventory.user_id`
 			, `run`
 			, []
-			, `Migrating item_inventory into user_inventory`
+			, `Migrating item_inventory into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userdata.cover) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userdata.cover) decor_type,
-				1 in_use
-			FROM userdata WHERE cover IS NOT NULL`
+				users.user_id,
+				items.item_id,
+				1,
+				1
+			FROM userdata, users, items
+			WHERE 
+				users.user_id = userdata.userId
+				AND items.alias = userdata.cover
+				AND userdata.cover != ''
+				AND userdata.cover IS NOT NULL 
+			`
 			, `run`
 			, []
-			, `Migrating userdata's cover into user_profile_decorations`
+			, `Migrating userdata's cover into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				items.item_id,
+				1,
+				1
+			FROM userdata, users, items
+			WHERE 
+				users.user_id = userdata.userId
+				AND items.alias = userdata.interfacemode
+				AND userdata.interfacemode != ''
+				AND userdata.interfacemode IS NOT NULL 
+			`
+			, `run`
+			, []
+			, `Migrating userdata's interfacemode into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				items.item_id,
+				1,
+				1
+			FROM userdata, users, items
+			WHERE 
+				users.user_id = userdata.userId
+				AND items.alias = userdata.sticker
+				AND userdata.sticker != ''
+				AND userdata.sticker IS NOT NULL 
+			`
+			, `run`
+			, []
+			, `Migrating userdata's sticker into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				items.item_id,
+				1,
+				1
+			FROM usercheck, users, items
+			WHERE 
+				users.user_id = usercheck.userId
+				AND items.alias = usercheck.expbooster
+				AND usercheck.expbooster != ''
+				AND usercheck.expbooster IS NOT NULL 
+			`
+			, `run`
+			, []
+			, `Migrating usercheck's exp boosters into user_inventories`
+		)
+
+
+		/**  --------------------------
+		  *  USER SOCIAL MEDIAS
+		  *  --------------------------
+		  */
+		await this._query(`
+			INSERT INTO user_socialmedias (
+				user_id,
+				url,
+				account_type
+			) 
+			SELECT 
+				userdata.userId,
+				userdata.anime_link,
+				'MAL/Kitsu'
+			FROM userdata, users
+			WHERE 
+				users.user_id = userdata.userId
+				AND userdata.anime_link IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userdata's anime link into user_socialmedias`
 		)
 
 		/**
 		 *  Sub-migrating
-		 *  Migrates each badges in userbadges into individual rows in user_profile_decorations
+		 *  Migrates each badges in userbadges into individual row in user_decorations
 		 */
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot1) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot1) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot1 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot1 IS NOT NULL
+				AND items.alias = userbadges.slot1
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot1 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot1) into user_profile_decorations`
+			, `Migrating userbadges(slot1) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot2) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot2) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot2 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot2 IS NOT NULL
+				AND items.alias = userbadges.slot2
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot2 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot2) into user_profile_decorations`
+			, `Migrating userbadges(slot2) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot3) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot3) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot3 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot3 IS NOT NULL
+				AND items.alias = userbadges.slot3
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot3 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot3) into user_profile_decorations`
+			, `Migrating userbadges(slot3) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot4) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot4) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot4 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot4 IS NOT NULL
+				AND items.alias = userbadges.slot4
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot4 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot4) into user_profile_decorations`
+			, `Migrating userbadges(slot4) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot5) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot5) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot5 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot5 IS NOT NULL
+				AND items.alias = userbadges.slot5
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot5 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot5) into user_profile_decorations`
+			, `Migrating userbadges(slot5) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slot6) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slot6) decor_type,
-				1 in_use
-			FROM userbadges WHERE slot6 IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slot6 IS NOT NULL
+				AND items.alias = userbadges.slot6
+				AND users.user_id = userbadges.userId
+				AND userbadges.slot6 != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slot6) into user_profile_decorations`
+			, `Migrating userbadges(slot6) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_profile_decorations (
-				registered_at,
-				last_updated_at,
+			INSERT INTO user_inventories (
 				user_id,
-				decor_id,
-				decor_type,
+				item_id,
+				quantity,
 				in_use
 			) 
 			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				userId user_id,
-				(SELECT itemId FROM itemlist WHERE alias = userbadges.slotanime) decor_id,
-				(SELECT upper(type) FROM itemlist WHERE alias = userbadges.slotanime) decor_type,
-				1 in_use
-			FROM userbadges WHERE slotanime IS NOT NULL`
+				userbadges.userId,
+				items.item_id,
+				1,
+				1
+			FROM userbadges, users, items
+			WHERE 
+				userbadges.slotanime IS NOT NULL
+				AND items.alias = userbadges.slotanime
+				AND users.user_id = userbadges.userId
+				AND userbadges.slotanime != ''`
 			, `run`
 			, []
-			, `Migrating userbadges(slotanime) into user_profile_decorations`
+			, `Migrating userbadges(slotanime) into user_inventories`
 		)
 
+
 		await this._query(`
-			INSERT INTO items (
-				registered_at,
-				last_updated_at,
-				id,
-				name,
-				alias,
-				rarity,
-				type,
-				unique_type,
-				price,
-				price_type,
-				description,
-				status
-			) 
-			SELECT 
-				datetime('now') registered_at,
-				datetime('now') last_updated_at,
-				itemId id,
-				name name,
-				alias alias,
-				rarity rarity,
-				upper(type) type,
-				upper(unique_type) unique_type,
-				price price,
-				upper(price_type) price_type,
-				desc description,
-				status status
-			FROM itemlist`
-			, `run`
-			, []
-			, `Migrating itemlist into items`
-		)	
-		await this._query(`
-			INSERT INTO strike_records (
+			INSERT INTO strikes (
 				registered_at,
 				user_id,
-				reason,
+				guild_id,
 				reported_by,
-				guild_id
+				reason
 			) 
 			SELECT 
-				timestamp registered_at,
-				userId user_id,
-				reason reason,
-				assigned_by reported_by,
-				459892609838481408 guild_id
+				timestamp,
+				userId,
+				459892609838481408,
+				assigned_by,
+				reason
 			FROM strike_list`
 			, `run`
 			, []
-			, `Migrating strike_list into strike_records`
+			, `Migrating strike_list into strikes`
 		)
 		await this._query(`
 			INSERT INTO commands_log (
@@ -2224,11 +2385,11 @@ class Database {
 				resolved_in
 			) 
 			SELECT 
-				timestamp registered_at,
-				user_id user_id,
-				guild_id guild_id,
-				command_alias command_alias,
-				resolved_in resolved_in
+				timestamp,
+				user_id,
+				guild_id,
+				command_alias,
+				resolved_in
 			FROM commands_usage`
 			, `run`
 			, []
@@ -2243,11 +2404,11 @@ class Database {
 				memory
 			) 
 			SELECT 
-				timestamp registered_at,
-				uptime uptime,
-				ping ping,
-				cpu cpu,
-				memory memory
+				timestamp,
+				uptime,
+				ping,
+				cpu,
+				memory
 			FROM resource_usage`
 			, `run`
 			, []
@@ -2255,317 +2416,6 @@ class Database {
 		)
 		
 		return true
-	}
-
-	/**
-	 * V6 Table Schemas
-	 * @returns {Boolean}
-	 */
-	async verifyingTables() {
-		 /**
-		  * --------------------------
-		  * User-related Data
-		  * --------------------------
-		  */
-		await this._query(`CREATE TABLE IF NOT EXISTS user (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'id' TEXT NOT NULL UNIQUE,
-			'name' TEXT,
-			'bio' TEXT,
-			'last_login' TIMESTAMP)`
-            , `run`
-			, []
-			, `Verifying table user`
-		)
-		
-		await this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL UNIQUE,
-			'total_streak' INTEGER DEFAULT 0)`
-            , `run`
-			, []
-			, `Verifying table user_dailies`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_reputations (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL UNIQUE,
-			'owned_reps' INTEGER DEFAULT 0,
-			'given_reps' INTEGER DEFAULT 0,
-			'last_give_at' TIMESTAMP,
-			'last_received_at' TIMESTAMP,
-			'recently_received_item' INTEGER,
-			'recently_received_from' TEXT,
-			'recently_give_to' TEXT
-			)`
-            , `run`
-			, []
-			, `Verifying table user_reputations`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_exp (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL UNIQUE,
-			'current_exp' INTEGER DEFAULT 0,
-			'exp_booster' INTEGER DEFAULT 0,
-			'exp_booster_activated_at' TIMESTAMP)`
-            , `run`
-			, []
-			, `Verifying table user_exp`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_posts (
-			'posted_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'url' TEXT,
-			'caption' TEXT,
-			'channel_id' INTEGER,
-			'guild_id' INTEGER,
-			'total_likes' INTEGER DEFAULT 0,
-			'recently_liked_by' TEXT NOT NULL)`
-            , `run`
-			, []
-			, `Verifying table user_post`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_inventory (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'item_id' INTEGER,
-			'user_id' TEXT,
-			'quantity' INTEGER)`
-            , `run`
-			, []
-			, `Verifying table user_inventory`
-		)
-		
-		await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedia (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'account_type' TEXT,
-			'url' TEXT)`
-            , `run`
-			, []
-			, `Verifying table user_socialmedia`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_profile_decorations (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'decor_id' TEXT,
-			'decor_type' TEXT,
-			'in_use' INTEGER DEFAULT 0)`
-            , `run`
-			, []
-			, `Verifying table user_profile_decorations`
-		)
-
-		/*
-		await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
-			'user_id' TEXT NOT NULL UNIQUE,
-			'quest_key' INTEGER,
-			'quest_level' INTEGER)`
-			, `run`
-			, []
-			, `Verifying table user_quest_info`
-		)
-
-		await this._query(`CREATE TABLE IF NOT EXISTS user_quests (
-			'user_id' TEXT NOT NULL,
-			'quest_id' INTEGER,
-			'status' INTEGER,
-			'date_completed' TIMESTAMP)`
-			, `run`
-			, []
-			, `Verifying table user_quests`
-		)
-		*/
-
-		/**
-		 * --------------------------
-		 * Guild-related
-		 * --------------------------
-		 */
-		await this._query(`CREATE TABLE IF NOT EXISTS guild_configurations (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'guild_id' TEXT NOT NULL,
-			'event_name' TEXT,
-			'user_id' TEXT,
-			'channel_id' TEXT)`
-            , `run`
-			, []
-			, `Verifying table guild_configurations`
-		)	
-
-		/**
-		 * --------------------------
-		 * Shop-related
-		 * --------------------------
-		 */
-		await this._query(`CREATE TABLE IF NOT EXISTS items (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'id' INTEGER NOT NULL UNIQUE,
-			'name' TEXT,
-			'alias' TEXT,
-			'rarity' INTEGER,
-			'type' TEXT,
-			'unique_type' TEXT,
-			'price' INTEGER,
-			'price_type' TEXT,
-			'description' TEXT,
-			'status' TEXT)`
-            , `run`
-			, []
-			, `Verifying table items`
-		)
-
-		 /**
-		  * --------------------------
-		  * Security & Moderation
-		  * --------------------------
-		  */
-		await this._query(`CREATE TABLE IF NOT EXISTS strike_records (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT,
-			'reason' TEXT,
-			'reported_by' TEXT,
-			'guild_id' INTEGER)`
-            , `run`
-			, []
-			, `Verifying table strike_records`
-		)
-
-		 /**
-		  * --------------------------
-		  * System-level logs
-		  * --------------------------
-		  */
-		await this._query(`CREATE TABLE IF NOT EXISTS commands_log (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT,
-			'guild_id' TEXT,
-			'command_alias' TEXT,
-			'resolved_in' TEXT)`
-            , `run`
-			, []
-			, `Verifying table commands_log`
-		)
-		await this._query(`CREATE TABLE IF NOT EXISTS resource_log (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'uptime' INTEGER,
-			'ping' REAL,
-			'cpu' REAL,
-			'memory' REAL)`
-            , `run`
-			, []
-			, `Verifying table resource_log`
-		)
-		return true
-	}
-
-	/**
-	 * Drop V6 Tables
-	 * @returns {Boolean}
-	 */
-	async dropTables() {
-		await this._query(`DROP TABLE user`
-			, `run`
-			, []
-			, `Dropping table user`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_dailies`
-			, `run`
-			, []
-			, `Dropping table user_dailies`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_reputations`
-			, `run`
-			, []
-			, `Dropping table user_reputations`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_exp`
-			, `run`
-			, []
-			, `Dropping table user_exp`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_posts`
-			, `run`
-			, []
-			, `Dropping table user_posts`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_inventory`
-			, `run`
-			, []
-			, `Dropping table user_inventory`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_socialmedia`
-			, `run`
-			, []
-			, `Dropping table user_socialmedia`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE user_profile_decorations`
-			, `run`
-			, []
-			, `Dropping table user_profile_decorations`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE guild_configurations`
-			, `run`
-			, []
-			, `Dropping table guild_configurations`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE items`
-			, `run`
-			, []
-			, `Dropping table items`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE strike_records`
-			, `run`
-			, []
-			, `Dropping table strike_records`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE commands_log`
-			, `run`
-			, []
-			, `Dropping table commands_log`
-			, false
-			, true
-		)
-		await this._query(`DROP TABLE resource_logs`
-			, `run`
-			, []
-			, `Dropping table resource_logs`
-			, false
-			, true
-		)
 	}
 
 }

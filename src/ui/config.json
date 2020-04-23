@@ -28,6 +28,10 @@
         }
     },
     "DATABAR": {
+        "MICRO": {
+            "WIDTH": 30,
+            "HEIGHT": 15
+        },
         "SMALL": {
             "WIDTH": 100,
             "HEIGHT": 45
@@ -48,6 +52,7 @@
     "CONTENT": {
         "MAIN_TEXT": {
             "SIZE": {
+                "MICRO": "8pt roboto-bold",
                 "SMALL": "10pt roboto-bold",
                 "SMALL-MED": "12pt roboto-bold",
                 "MEDIUM": "15pt roboto-bold", 
@@ -57,6 +62,7 @@
         },
         "CAPTION": {
             "SIZE": {
+                "MICRO": "2pt roboto-bold",
                 "SMALL": "2pt roboto-bold",
                 "SMALL-MED": "4pt roboto-bold",
                 "MEDIUM": "6pt roboto-bold", 
@@ -65,11 +71,19 @@
         },
         "LABEL": {
             "SIZE": {
-                "SMALL": "7pt roboto-light",
-                "SMALL-MED": "9t roboto-light",
+                "MICRO": "8pt roboto-light",
+                "SMALL": "9pt roboto-light",
+                "SMALL-MED": "9pt roboto-light",
                 "MEDIUM": "11pt roboto-light", 
                 "LARGE": "13pt roboto-light"      
             }
         }
+    },
+    "ITEM_RARITY_COLOR": {
+        "1": "blankgray",
+        "2": "blankgray",
+        "3": "blue",
+        "4": "purple",
+        "5": "red"
     }
 }

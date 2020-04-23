@@ -1,8 +1,8 @@
 {
-		"crimson": "#912f46",
+	"crimson": "#912f46",
     "palebrown": "#ede1c9",
     "darkbrown": "#7c7360",
-		"blankgray": "#888a91",
+	"blankgray": "#888a91",
     "lightgray": "#dedfe2",
     "lightred": "#d66262",
     "lightyellow": "#ffeca8",
@@ -23,9 +23,9 @@
     "darkmatte": "#36393F",
     "darkblue": "#99bcbf",
     "darkblue2": "#93b1bf",	
-		"white": "#EEEEEE",
+	"white": "#EEEEEE",
     "purewhite": "#ffffff",
-		"golden": "#E3964B",
+	"golden": "#E3964B",
     "halloween": "#bee6e9",
     "yellow": "#f7df43"
 }

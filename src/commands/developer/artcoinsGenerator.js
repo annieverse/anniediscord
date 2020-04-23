@@ -17,52 +17,69 @@ class ArtcoinsGenerator extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{locale, db}, name, palette, collector, multiCollector, trueInt, emoji, commanifier, message }) {
+	async execute({ reply, bot:{locale:{ADDAC}, db}, name, trueInt, emoji, commanifier }) {
 		await this.requestUserMetadata(2)
-		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
 
-		//  Confirmation
-		const user = this.user
-		reply(locale.ADDAC.CONFIRMATION_SEQ_1, {color: palette.golden})
-			.then(async confirmation => {
-				const firstCollector = collector(message)
-				firstCollector.on(`collect`, async msg => {
-					let input = msg.content.toLowerCase()
-					let amount = trueInt(input)
+		//  Handle if user doesn't specify any arg
+		if (!this.fullArgs) return reply(ADDAC.GUIDE)
+		//  Handle if target user is invalid
+		if (!this.user) return reply(ADDAC.INVALID_USER, {color: `red`})
 
-					//  Close connections
-					confirmation.delete()
-					firstCollector.stop()
-                
+		this.setSequence(5)
+
+		let amount = 0
+		reply(ADDAC.CONFIRMATION_SEQ_1, {color: `golden`})
+		.then(async confirmation => {
+			this.sequence.on(`collect`, async msg => {
+				let input = msg.content.toLowerCase()
+				msg.delete()
+
+				/**
+				 * ---------------------
+				 * Sequence Cancellations.
+				 * ---------------------
+				 */
+				if (this.cancelParameters.includes(input)) {
+					this.endSequence()
+					return reply(ADDAC.CANCELLED)
+				}
+
+				/**
+				 * ---------------------
+				 * 1.) Inputting amount of artcoins to be generated.
+				 * ---------------------
+				 */
+				if (this.onSequence <= 1) {
+					amount = trueInt(input)
 					//  Returns if input is a negative value
-					if (!amount) return reply(locale.ERR.NEGATIVE_INPUT)
-
-					reply(locale.ADDAC.CONFIRMATION_SEQ_2, {
-						socket: [emoji(`artcoins`), commanifier(amount), name(user.id)],
-						color: palette.golden
+					if (!amount) return reply(ADDAC.NO_NEGATIVE_INPUT)
+					confirmation.delete()
+					reply(ADDAC.CONFIRMATION_SEQ_2, {
+						socket: [emoji(`artcoins`), commanifier(amount), name(this.user.id)],
+						color: `golden`
 					})
-						.then(async proceed =>{
-						let secondCollector = multiCollector(msg)
-						secondCollector.on(`collect`, async (secondmsg) => {
-							let inputtwo = secondmsg.content.toLowerCase()
-							proceed.delete()
-							secondCollector.stop()
-							if (inputtwo != `y`) return reply(locale.ADDAC.TRANSACTION_CLOSED)
+					return this.nextSequence()
+				}
 
-							//  Story artcoins into db
-							await db.updateInventory({itemId: 52, value: amount, userId: user.id})
-							//  Successful
-							return reply(locale.ADDAC.SUCCESSFUL, {
-								socket: [
-									name(user.id),
-									emoji(`artcoins`),
-									commanifier(amount)],
-								color: palette.lightgreen
-							})
-						})
+				/**
+				 * ---------------------
+				 * 2.) Finalizer/Confirmation
+				 * ---------------------
+				 */
+				if (this.onSequence <= 2) {
+					//  Update
+					await db.updateInventory({itemId: 52, value: amount, userId: this.user.id})
+					reply(ADDAC.SUCCESSFUL, {
+						socket: [
+							name(this.user.id),
+							emoji(`artcoins`),
+							commanifier(amount)],
+						color: `lightgreen`
 					})
-				})
+					return this.endSequence()
+				}
 			})
+		})
 	}
 }
 
@@ -75,6 +92,5 @@ module.exports.help = {
 	usage: `addac <User>(Optional)`,
 	group: `Developer`,
 	permissionLevel: 4,
-	public: true,
 	multiUser: true
 }

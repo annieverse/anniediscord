@@ -1,37 +1,47 @@
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @ServerInvitation as one-type command to server invite link.
+ * Generates Server & Bot invitation link
+ * @author klerikdust
  */
-class ServerInvitation {
+class Invite extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
     /**
-     *  Initializer method
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute() {
-		const { message, command, reply, bot:{logger, user} } = this.stacks
-		if (command.includes(`bot`)) {
-			return reply(`[Invite Me!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`)
-		}
-		await message.channel.createInvite()
-			.then(invite => {
-				logger.info(`Created an invite with a code of ${invite.code}`)
-				return reply(`https://discord.gg/${invite.code}`, { simplified: true })
-			})
-			.catch(error => logger.error(error))
+	async execute({ reply, emoji, bot:{user, supportServer} }) {
+
+		const serverInvite = await this.message.channel.createInvite()
+
+		await reply(this.locale.GENERATE_BOT_INVITE, {
+			socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
+			color: `crimson`
+		})
+
+		return reply(this.locale.GENERATE_SERVER_INVITE, {
+			simplified: true,
+			socket: {
+				serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
+				emoji: emoji(`AnnieSmile`)
+			}
+		})
 	}
 }
+
 module.exports.help={
-	start: ServerInvitation,
+	start: Invite,
 	name:`invite`,
-	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `link`, 
-		`botserverinvite`, `botserverlink`, `botlinkserver`, `botinvitelink`, `botlink`, `botinvite`],
-	description: `gives a server invite link`,
-	usage: `invite`,
-	group: `Server`,
-	public: true,
-	required_usermetadata: false,
-	multi_user: false
+	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `invite`],
+	description: `Generates Server & Bot invitation link`,
+	usage: `invite <Bot>(Optional)`,
+	group: `System`,
+	permissionLevel: 0,
+	multiUser: false
 }

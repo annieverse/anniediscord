@@ -19,7 +19,7 @@ class RemoveSticker extends Command {
      */
     async execute({ reply, bot:{db, locale:{REMOVE_STICKER}} }) {
 		await this.requestUserMetadata(1)
-		const res = await db.removeSticker(this.user.id)
+		const res = await db.disableSticker(this.user.id)
 
 		//  Tell user if no equipped stickers have been found
 		if (res.changes < 1) return reply(REMOVE_STICKER.NO_CHANGES)

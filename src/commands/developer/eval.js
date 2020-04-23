@@ -38,6 +38,5 @@ module.exports.help = {
 	usage: `eval <LineOfCode>`,
 	group: `Developer`,
 	permissionLevel: 4,
-	public: true,
 	multiUser: false,
 }
