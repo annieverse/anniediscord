@@ -26,31 +26,6 @@ module.exports = async (bot, message) => {
 		message.content = remove_first_occurrence(message.content, testString)
 		textOption = true
 	}
-	testString = `--tex`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `--tx`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `text`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `tx`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
-	testString = `tex`
-	if (message.content.includes(testString)) {
-		message.content = remove_first_occurrence(message.content, testString)
-		textOption = true
-	}
 
 
 	/**
