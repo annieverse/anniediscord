@@ -188,6 +188,7 @@ class Craft {
 										await db(message.author.id).registerCard(this.card.alias)
 
 										prompt.delete()
+										collector.stop()
 										return reply(code.CRAFT.SUCCESSFUL, {
 											socket: [message.author.username, emoji(this.card.alias), this.card.fullname],
 											color: palette.lightgreen
