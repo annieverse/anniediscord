@@ -26,7 +26,11 @@ class Craft {
 			emoji,
 			palette,
 			commanifier,
-			message
+			message,
+			collector,
+			reply,
+			db,
+			code
 		} = this.stacks
 
 		//  Get required metadata from cardMetadata and returns as an object of array.
@@ -153,54 +157,47 @@ class Craft {
 
 							this.user = this.stacks.meta
 							this.card = embedArray[page].card_metadata
-							return this.confirmation()
+							//  Ask for confirmation before proceeding
+							reply(code.CRAFT.CONFIRMATION, {
+								socket: [emoji(this.card.alias), this.card.fullname],
+								color: palette.golden,
+								notch: true,
+							})
+								.then(async prompt => {
+									collector.on(`collect`, async msg => {
+										let input = msg.content.toLowerCase()
+										msg.delete()
+
+										//  Returns if transaction is unconfirmed
+										if (!input.startsWith(`y`)) return reply(code.CHECKOUT.CANCEL)
+
+										//  Returns if user level is below the requirement
+										if (this.data.level < 5) return reply(code.CRAFT.LVL_TOO_LOW)
+
+										//  Returns if user already owned the card.
+										if (this.data[this.card.alias]) return reply(code.CRAFT.DUPLICATES)
+
+										//  Returns if user's materials aren't sufficent
+										if (!this.sufficientMaterials(this.card.req_materials)) return reply(code.CRAFT.INSUFFICIENT_MATERIALS, {
+											color: palette.red
+										})
+										//	Withdraw & store items
+										await db(message.author.id).consumeMaterials(this.card.req_materials)
+										await db(message.author.id).registerCard(this.card.alias)
+
+										prompt.delete()
+										return reply(code.CRAFT.SUCCESSFUL, {
+											socket: [message.author.username, emoji(this.card.alias), this.card.fullname],
+											color: palette.lightgreen
+										})
+									})
+								})
 						})
 
 						setTimeout(() => {
 							msg.clearReactions()
 						}, 120000)
 					})
-			})
-	}
-
-	//  Transaction flow
-	async confirmation() {
-		const { reply,code,palette,emoji,message,db, collector} = this.stacks
-
-		//  Ask for confirmation before proceeding
-		reply(code.CRAFT.CONFIRMATION, {
-			socket: [emoji(this.card.alias), this.card.fullname],
-			color: palette.golden,
-			notch: true,
-		})
-			.then(async prompt => {
-				collector.on(`collect`, async msg => {
-					let input = msg.content.toLowerCase()
-					msg.delete()
-
-					//  Returns if transaction is unconfirmed
-					if (!input.startsWith(`y`)) return reply(code.CHECKOUT.CANCEL)
-
-					//  Returns if user level is below the requirement
-					if (this.data.level < 5) return reply(code.CRAFT.LVL_TOO_LOW)
-
-					//  Returns if user already owned the card.
-					if (this.data[this.card.alias]) return reply(code.CRAFT.DUPLICATES)
-
-					//  Returns if user's materials aren't sufficent
-					if (!this.sufficientMaterials(this.card.req_materials)) return reply(code.CRAFT.INSUFFICIENT_MATERIALS, {
-						color: palette.red
-					})
-					//	Withdraw & store items
-					await db(message.author.id).consumeMaterials(this.card.req_materials)
-					await db(message.author.id).registerCard(this.card.alias)
-
-					prompt.delete()
-					return reply(code.CRAFT.SUCCESSFUL, {
-						socket: [message.author.username, emoji(this.card.alias), this.card.fullname],
-						color: palette.lightgreen
-					})
-				})
 			})
 	}
 

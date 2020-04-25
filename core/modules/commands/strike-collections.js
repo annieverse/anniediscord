@@ -1,4 +1,3 @@
-const Discord = require(`discord.js`)
 const moment = require(`moment`)
 const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
@@ -10,7 +9,7 @@ class strikeCollection {
 	}
 
 	async execute() {
-		const { message, bot, bot:{logger}, palette, command} = this.stacks
+		const { message, bot, bot:{logger}, palette, collector, command} = this.stacks
 		const format = new formatManager(message)
 
 		/**
@@ -216,15 +215,6 @@ class strikeCollection {
 					metadata.target.user.username,
 					insights()
 				)
-
-
-			//  Listening to second response.
-			const collector = new Discord.MessageCollector(message.channel,
-				m => m.author.id === message.author.id, {
-					max: 1,
-					time: 60000,
-				})
-
 
 			collector.on(`collect`, async (msg) => {
 				let input = msg.content
