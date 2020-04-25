@@ -27,7 +27,7 @@ class Craft {
 			palette,
 			commanifier,
 			message,
-			collector,
+			multicollector,
 			reply,
 			db,
 			code
@@ -157,6 +157,7 @@ class Craft {
 
 							this.user = this.stacks.meta
 							this.card = embedArray[page].card_metadata
+
 							//  Ask for confirmation before proceeding
 							reply(code.CRAFT.CONFIRMATION, {
 								socket: [emoji(this.card.alias), this.card.fullname],
@@ -164,9 +165,10 @@ class Craft {
 								notch: true,
 							})
 								.then(async prompt => {
-									collector.on(`collect`, async msg => {
-										let input = msg.content.toLowerCase()
-										msg.delete()
+									const collector = multicollector(message)
+									collector.on(`collect`, async confirmation => {
+										let input = confirmation.content.toLowerCase()
+										confirmation.delete()
 
 										//  Returns if transaction is unconfirmed
 										if (!input.startsWith(`y`)) return reply(code.CHECKOUT.CANCEL)
