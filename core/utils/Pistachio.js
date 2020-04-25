@@ -1,4 +1,4 @@
-const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
+const { RichEmbed, Attachment } = require(`discord.js`)
 const databaseManager = require(`./databaseManager`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
@@ -109,7 +109,7 @@ class Pistachio {
 				 *  @param {Default} max only catch 1 response
 				 *  @param {Default} time 60 seconds timeout
 				 */
-				container.collector = new MessageCollector(message.channel,
+				container.collector = message.channel.createMessageCollector(
 					m => m.author.id === message.author.id, {
 						max: 3,
 						time: 60000,
@@ -121,7 +121,7 @@ class Pistachio {
 				 *  @param {Default} max only catch 1 response
 				 *  @param {Default} time 60 seconds timeout
 				 */
-				container.multicollector = (msg = {}) => new MessageCollector(msg.channel,
+				container.multicollector = (msg = {}) => msg.channel.createMessageCollector(
 					m => m.author.id === msg.author.id, {
 						max: 3,
 						time: 60000,
