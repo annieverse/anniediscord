@@ -1,6 +1,7 @@
 `use-strict`
 const rank = require(`../config/ranks`)
 const Experience = require(`./exp`)
+const Permission = require(`./permissions`)
 /**
  * Handles user-related data request and changes
  * @since 6.0.0
@@ -112,6 +113,7 @@ class User {
 			const sticker = this.user.inventory.raw.filter(key => (key.type === `STICKERS`) && (key.in_use === 1))
 			user.usedSticker = sticker.length ? sticker[0].alias : null
 			user.isSelf = this.isSelf
+			user.title = new Permission(this.message).getUserPermission(user.id).name
 
 			return user
 		}

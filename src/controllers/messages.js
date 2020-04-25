@@ -174,7 +174,7 @@ class MessageController {
      */
     _registerPermission() {
         const fn = `[MessageController._registerPermission()]`
-        const userPerm = new Permission(this.message).authorityCheck()
+        const userPerm = new Permission(this.message).getUserPermission(this.message.author.id)
         this.message.author.permissions = userPerm
         return `OK`
      }

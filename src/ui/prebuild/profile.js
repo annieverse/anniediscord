@@ -8,18 +8,15 @@ class UI {
 	 * Profile UI Builder.
 	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
+	 * @legacy
 	 * @return {Canvas}
 	 */
-	constructor(user={}, width=320, height=420) {
+	constructor(user={}) {
 		this.user = user
-		this.width = width
-		this.height = height
+		this.width = 320
+		this.height = 430
 	}
 
-
-	/**
-	 *  This UI still uses abstraction canvas.
-	 */
 	async build() {
 		let startPos_x = 10
 		let startPos_y = 10
@@ -47,20 +44,21 @@ class UI {
 			.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL), startPos_x + 20, 150, 100, 100, 50)
 
 		//  Badges
-		const badges = this.user.inventory.raw.filter(key => (key.type === `BADGES`) && (key.in_use === 1))
+		const inventory = this.user.inventory.raw
+		const badges = inventory.filter(key => key.type === `BADGES`)
+
+		const badgeDisplayLimit = 7
 		const symetric_xy = 18
 		const diameter = Math.round(symetric_xy / 2)
 		const y_badge = 208
 		await setBadge(symetric_xy, diameter, y_badge)
-		//we can fit 8 badges; if user has more display a plus or something
 		async function setBadge(xy, diameter, pos_y) {
-			for (var i=0; i<=Math.min(badges.length, 6); i++) {
+			for (let i=0; i<badges.length; i++) {
+				if (i >= 7) {
+					card.canv.addImage(await loadAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
+					break
+				}
 				card.canv.addImage(await loadAsset(badges[i].alias), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
-			}
-			if (badges.length == 7) {
-				card.canv.addImage(await loadAsset(badges[i].alias), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
-			} else if (badges.length > 7) {
-				card.canv.addImage(await loadAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
 			}
 		}
 
@@ -70,58 +68,62 @@ class UI {
 			.setTextFont(`${this.resizeLongNickname(this.user.user.username)} RobotoBold`)
 			.addText(this.user.user.username, startPos_x + 70, 272)
 
-		//  Title
+		//  User's Title
 		card.canv.setColor(this.user.rank.color)
-			.setTextFont(`5pt RobotoBold`)
-			.addText(this.user.title, startPos_x + 70, 286)
+			.setTextFont(`7pt RobotoThin`)
+			.addText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
-		//  Verified/Blue Badge
+		//  Verified/Blue Badge if any
 		const verifiedStartingPoint = card.canv.measureText(this.user.user.username).width * 1.3 + 2
 		if (this.user.verified) card.canv.addImage(await loadAsset(`verified_badge`), startPos_x + 70 + verifiedStartingPoint, 256, 16, 16)
 
-		// Rank title
-		card.canv.setColor(this.user.rank.color)
+		// Rank Bar
+		card.canv.save()
+			.setColor(this.user.rank.color)
 			.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setColor(card._resolveColor(`white`))
-			.setTextFont(`8pt RobotoBold`) // role window - role name
+			.setTextFont(`8pt RobotoBold`)
 			.addText(this.user.rank.name, startPos_x + 215, startPos_y + 264)
 			.restore()
 
 		//  Description
+		const bio = this.user.main.bio
+		const descriptionMarginLeft = 50
+		const descriptionMarginTop = 310
+		const descriptionMarginBetweenParagraph = 13
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`left`)
 			.setTextFont(`8pt Roboto`)
+		if (bio.length > 0 && bio.length <= 51) {
+			card.canv.addText(this.formatString(bio, 1).first, descriptionMarginLeft, descriptionMarginTop)
+				.addText(this.formatString(bio, 1).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
 
-		if (this.user.main.bio.length > 0 && this.user.main.bio.length <= 51) {
-			card.canv.addText(this.formatString(this.user.main.bio, 1).first, 40, 307)
-				.addText(this.formatString(this.user.main.bio, 1).second, 40, 320)
+		} else if (bio.length > 51 && bio.length <= 102) {
+			card.canv.addText(this.formatString(bio, 2).first, descriptionMarginLeft, descriptionMarginTop)
+				.addText(this.formatString(bio, 2).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+				.addText(this.formatString(bio, 2).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
 
-		} else if (this.user.main.bio.length > 51 && this.user.main.bio.length <= 102) {
-			card.canv.addText(this.formatString(this.user.main.bio, 2).first, 40, 307)
-				.addText(this.formatString(this.user.main.bio, 2).second, 40, 320)
-				.addText(this.formatString(this.user.main.bio, 2).third, 40, 333)
-
-		} else if (this.user.main.bio.length > 102 && user.main.bio.length <= 154) {
-			card.canv.addText(this.formatString(this.user.main.bio, 3).first, 40, 307)
-				.addText(this.formatString(this.user.main.bio, 3).second, 40, 320)
-				.addText(this.formatString(this.user.main.bio, 3).third, 40, 333)
-				.addText(this.formatString(this.user.main.bio, 3).fourth, 40, 346)
+		} else if (bio.length > 102 && bio.length <= 154) {
+			card.canv.addText(this.formatString(bio, 3).first, descriptionMarginLeft, descriptionMarginTop)
+				.addText(this.formatString(bio, 3).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+				.addText(this.formatString(bio, 3).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
+				.addText(this.formatString(bio, 3).fourth, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*3))
 		}
 
-		//  HEART, LVL, REP
+		//  Footer Components [Heart, Level, Fame/Reputation Points]
 		card.canv.setTextAlign(`center`)
 			.setColor(this.user.rank.color)
-			.setTextFont(`20pt RobotoMedium`)
+			.setTextFont(`17pt RobotoMedium`)
 			.addText(commanifier(this.user.likecount), 70, 370)
 			.addText(this.user.exp.level, 160, 370)
 			.addText(commanifier(this.user.reputations.total_reps), 250, 370)
 
 			.setColor(card.color.text)
-			.setTextFont(`8pt Roboto`)
-			.addText(`HEARTS`, 70, 390) // left point
-			.addText(`LEVEL`, 160, 390) // middle point
-			.addText(`FAME`, 250, 390) // right point
+			.setTextFont(`7pt Roboto`)
+			.addText(`HEARTS`, 70, 390)
+			.addText(`LEVEL`, 160, 390) 
+			.addText(`FAME`, 250, 390) 
 
 		return card.ready()
 	}

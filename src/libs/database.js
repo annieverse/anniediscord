@@ -692,23 +692,6 @@ class Database {
 	}
 
 	/**
-	 * Pull user's decorations metadata
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getUserProfileDecorations(userId=``) {
-		return this._query(`
-			SELECT name, item_type, in_use
-			FROM user_decorations
-			INNER JOIN items
-			ON items.item_id = user_decorations.item_type
-			WHERE user_decorations.user_id = ?`
-			, `all`
-			, [userId]
-		)
-	}
-
-	/**
 	 * Pull user's dailies metadata
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
@@ -1639,12 +1622,12 @@ class Database {
 		   
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'inventory_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 			'user_id' TEXT,
 			'item_id' INTEGER,
 			'quantity' INTEGER DEFAULT 0,
 			'in_use' INTEGER DEFAULT 0,
 
+			PRIMARY KEY (user_id, item_id),
 			FOREIGN KEY(user_id) 
 			REFERENCES users(user_id) 
 				ON DELETE CASCADE
@@ -1660,7 +1643,7 @@ class Database {
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'post_id' TEXT PRIMARY KEY,
+		   'post_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'user_id' TEXT,
 		   'url' TEXT,
 		   'caption' TEXT,
@@ -1873,7 +1856,7 @@ class Database {
 
 		//  Updating item db
 		await this._query(`
-			INSERT INTO items (
+			INSERT OR IGNORE INTO items (
 				item_id,
 				name,
 				alias,
@@ -1969,7 +1952,7 @@ class Database {
 			, `Converting usercheck's repcooldown into a proper datetime`
 		)		
 		await this._query(`
-			INSERT INTO users (
+			INSERT OR IGNORE INTO users (
 				last_login_at,
 				user_id,
 				bio,
@@ -1987,7 +1970,7 @@ class Database {
 		)
 
 		await this._query(`
-			INSERT INTO user_dailies (
+			INSERT OR IGNORE INTO user_dailies (
 				last_updated_at,
 				user_id,
 				total_streak
@@ -2003,7 +1986,7 @@ class Database {
 			, `Migrating usercheck's dailies into user_dailies`
 		)
 		await this._query(`
-			INSERT INTO user_reputations (
+			INSERT OR IGNORE INTO user_reputations (
 				user_id,
 				total_reps
 			)
@@ -2016,7 +1999,7 @@ class Database {
 			, `Migrating userdata's reps into user_reputations`
 		)
 		await this._query(`
-			INSERT INTO user_exp (
+			INSERT OR IGNORE INTO user_exp (
 				user_id,
 				current_exp,
 				booster_id,
@@ -2034,9 +2017,8 @@ class Database {
 			, `Migrating userdata and usercheck exp data into user_exp`
 		)
 		await this._query(`
-			INSERT INTO user_posts (
+			INSERT OR IGNORE INTO user_posts (
 				registered_at,
-				post_id,
 				user_id,
 				url,
 				caption,
@@ -2045,7 +2027,6 @@ class Database {
 			) 
 			SELECT 
 				(SELECT datetime(timestamp / 1000, 'unixepoch')),
-				userartworks.timestamp,
 				userartworks.userId,
 				userartworks.url,
 				userartworks.description,
@@ -2064,7 +2045,7 @@ class Database {
 		  *  --------------------------
 		  */
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity
@@ -2097,14 +2078,21 @@ class Database {
 				users.user_id = userdata.userId
 				AND items.alias = userdata.cover
 				AND userdata.cover != ''
-				AND userdata.cover IS NOT NULL 
+				AND userdata.cover IS NOT NULL
+				AND NOT EXISTS (
+					SELECT 1
+					FROM user_inventories
+					WHERE 
+						item_id = items.item_id
+						AND user_id = users.user_id
+				)
 			`
 			, `run`
 			, []
 			, `Migrating userdata's cover into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2127,7 +2115,7 @@ class Database {
 			, `Migrating userdata's interfacemode into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2150,7 +2138,7 @@ class Database {
 			, `Migrating userdata's sticker into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2173,36 +2161,12 @@ class Database {
 			, `Migrating usercheck's exp boosters into user_inventories`
 		)
 
-
-		/**  --------------------------
-		  *  USER SOCIAL MEDIAS
-		  *  --------------------------
-		  */
-		await this._query(`
-			INSERT INTO user_socialmedias (
-				user_id,
-				url,
-				account_type
-			) 
-			SELECT 
-				userdata.userId,
-				userdata.anime_link,
-				'MAL/Kitsu'
-			FROM userdata, users
-			WHERE 
-				users.user_id = userdata.userId
-				AND userdata.anime_link IS NOT NULL`
-			, `run`
-			, []
-			, `Migrating userdata's anime link into user_socialmedias`
-		)
-
 		/**
 		 *  Sub-migrating
 		 *  Migrates each badges in userbadges into individual row in user_decorations
 		 */
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2224,7 +2188,7 @@ class Database {
 			, `Migrating userbadges(slot1) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2246,7 +2210,7 @@ class Database {
 			, `Migrating userbadges(slot2) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2268,7 +2232,7 @@ class Database {
 			, `Migrating userbadges(slot3) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2290,7 +2254,7 @@ class Database {
 			, `Migrating userbadges(slot4) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2312,7 +2276,7 @@ class Database {
 			, `Migrating userbadges(slot5) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2334,7 +2298,7 @@ class Database {
 			, `Migrating userbadges(slot6) into user_inventories`
 		)
 		await this._query(`
-			INSERT INTO user_inventories (
+			INSERT OR IGNORE INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2357,8 +2321,31 @@ class Database {
 		)
 
 
+		/**  --------------------------
+		  *  USER SOCIAL MEDIAS
+		  *  --------------------------
+		  */
 		await this._query(`
-			INSERT INTO strikes (
+			INSERT OR IGNORE INTO user_socialmedias (
+				user_id,
+				url,
+				account_type
+			) 
+			SELECT 
+				userdata.userId,
+				userdata.anime_link,
+				'MAL/Kitsu'
+			FROM userdata, users
+			WHERE 
+				users.user_id = userdata.userId
+				AND userdata.anime_link IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userdata's anime link into user_socialmedias`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO strikes (
 				registered_at,
 				user_id,
 				guild_id,
@@ -2377,7 +2364,7 @@ class Database {
 			, `Migrating strike_list into strikes`
 		)
 		await this._query(`
-			INSERT INTO commands_log (
+			INSERT OR IGNORE INTO commands_log (
 				registered_at,
 				user_id,
 				guild_id,
@@ -2396,7 +2383,7 @@ class Database {
 			, `Migrating commands_usage into commands_log`
 		)
 		await this._query(`
-			INSERT INTO resource_log (
+			INSERT OR IGNORE INTO resource_log (
 				registered_at,
 				uptime,
 				ping,

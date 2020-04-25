@@ -24,6 +24,8 @@ class Profile extends Command {
     async execute({ reply, bot:{db}, emoji, name }) {
         await this.requestUserMetadata(2)
 
+        if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+
         const familyrelations = this.user.relationships.filter((e) => {
             if (e.theirRelation == `bestie`) return false
             if (e.theirRelation == `soulmate`) return false
@@ -107,8 +109,8 @@ class Profile extends Command {
                     msg.react(`⏪`)
                     .then(() => {
                         msg.react(`⏩`)
-                        const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
-                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
+                        const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === this.message.author.id)
+                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === this.message.author.id)
     
                         const backwards = msg.createReactionCollector(backwardsFilter, {time: 60000})
                         const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
