@@ -2039,13 +2039,12 @@ class Database {
 			, `Migrating userartworks into user_posts`
 		)
 
-
 		/**  --------------------------
 		  *  USER INVENTORIES
 		  *  --------------------------
 		  */
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity
@@ -2061,6 +2060,144 @@ class Database {
 			, []
 			, `Migrating item_inventory into user_inventories`
 		)
+
+		await this._query(`
+			UPDATE user_inventories
+			SET in_use = 1
+			WHERE item_id IN (
+				SELECT items.item_id
+				FROM userdata, items
+				WHERE 
+					userdata.cover IS NOT NULL
+					AND userdata.cover != ''
+					AND userdata.cover != 'defaultcover1'
+					AND items.alias = userdata.cover
+			)`
+			, `run`
+			, []
+			, `Set item's in_use to 1 with COVERS type in user_inventories based on user's applied cover in userdata.cover`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				(SELECT item_id FROM items WHERE alias = userdata.cover),
+				1,
+				1
+			FROM userdata, users
+			WHERE 
+				users.user_id = userdata.userId
+				AND userdata.cover != 'defaultcover1'
+				AND userdata.cover != ''
+				AND userdata.cover IS NOT NULL
+				AND userdata.cover NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
+			, `run`
+			, []
+			, `Migrating userdata's cover into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				(SELECT item_id FROM items WHERE alias = userdata.interfacemode),
+				1,
+				1
+			FROM userdata, users, items
+			WHERE 
+				users.user_id = userdata.userId
+				AND items.alias = userdata.interfacemode
+				AND userdata.interfacemode != ''
+				AND userdata.interfacemode IS NOT NULL
+				AND userdata.interfacemode NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
+			, `run`
+			, []
+			, `Migrating userdata's interfacemode into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				(SELECT item_id FROM items WHERE alias = userdata.sticker),
+				1,
+				1
+			FROM userdata, users, items
+			WHERE 
+				users.user_id = userdata.userId
+				AND items.alias = userdata.sticker
+				AND userdata.sticker != ''
+				AND userdata.sticker IS NOT NULL
+				AND userdata.sticker NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
+			, `run`
+			, []
+			, `Migrating userdata's sticker into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				users.user_id,
+				(SELECT item_id FROM items WHERE alias = usercheck.expbooster),
+				1,
+				1
+			FROM usercheck, users, items
+			WHERE 
+				users.user_id = usercheck.userId
+				AND items.alias = usercheck.expbooster
+				AND usercheck.expbooster != ''
+				AND usercheck.expbooster IS NOT NULL 
+				AND usercheck.expbooster NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
+			, `run`
+			, []
+			, `Migrating usercheck's exp boosters into user_inventories`
+		)
+
+		/**
+		 *  Sub-migrating
+		 *  Migrates each badges in userbadges into individual row in user_decorations
+		 */
 		await this._query(`
 			INSERT INTO user_inventories (
 				user_id,
@@ -2073,129 +2210,32 @@ class Database {
 				items.item_id,
 				1,
 				1
-			FROM userdata, users, items
-			WHERE 
-				users.user_id = userdata.userId
-				AND items.alias = userdata.cover
-				AND userdata.cover != ''
-				AND userdata.cover IS NOT NULL
-				AND NOT EXISTS (
-					SELECT 1
-					FROM user_inventories
-					WHERE 
-						item_id = items.item_id
-						AND user_id = users.user_id
-				)
-			`
-			, `run`
-			, []
-			, `Migrating userdata's cover into user_inventories`
-		)
-		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
-				user_id,
-				item_id,
-				quantity,
-				in_use
-			) 
-			SELECT 
-				users.user_id,
-				items.item_id,
-				1,
-				1
-			FROM userdata, users, items
-			WHERE 
-				users.user_id = userdata.userId
-				AND items.alias = userdata.interfacemode
-				AND userdata.interfacemode != ''
-				AND userdata.interfacemode IS NOT NULL 
-			`
-			, `run`
-			, []
-			, `Migrating userdata's interfacemode into user_inventories`
-		)
-		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
-				user_id,
-				item_id,
-				quantity,
-				in_use
-			) 
-			SELECT 
-				users.user_id,
-				items.item_id,
-				1,
-				1
-			FROM userdata, users, items
-			WHERE 
-				users.user_id = userdata.userId
-				AND items.alias = userdata.sticker
-				AND userdata.sticker != ''
-				AND userdata.sticker IS NOT NULL 
-			`
-			, `run`
-			, []
-			, `Migrating userdata's sticker into user_inventories`
-		)
-		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
-				user_id,
-				item_id,
-				quantity,
-				in_use
-			) 
-			SELECT 
-				users.user_id,
-				items.item_id,
-				1,
-				1
-			FROM usercheck, users, items
-			WHERE 
-				users.user_id = usercheck.userId
-				AND items.alias = usercheck.expbooster
-				AND usercheck.expbooster != ''
-				AND usercheck.expbooster IS NOT NULL 
-			`
-			, `run`
-			, []
-			, `Migrating usercheck's exp boosters into user_inventories`
-		)
-
-		/**
-		 *  Sub-migrating
-		 *  Migrates each badges in userbadges into individual row in user_decorations
-		 */
-		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
-				user_id,
-				item_id,
-				quantity,
-				in_use
-			) 
-			SELECT 
-				userbadges.userId,
-				items.item_id,
-				1,
-				1
 			FROM userbadges, users, items
 			WHERE 
 				userbadges.slot1 IS NOT NULL
 				AND items.alias = userbadges.slot1
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot1 != ''`
+				AND userbadges.slot1 != ''
+				AND userbadges.slot1 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot1) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
+				users.user_id,
 				items.item_id,
 				1,
 				1
@@ -2204,20 +2244,27 @@ class Database {
 				userbadges.slot2 IS NOT NULL
 				AND items.alias = userbadges.slot2
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot2 != ''`
+				AND userbadges.slot2 != ''
+				AND userbadges.slot2 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot2) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
+				users.user_id,
 				items.item_id,
 				1,
 				1
@@ -2226,20 +2273,27 @@ class Database {
 				userbadges.slot3 IS NOT NULL
 				AND items.alias = userbadges.slot3
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot3 != ''`
+				AND userbadges.slot3 != ''
+				AND userbadges.slot3 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot3) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
+				users.user_id,
 				items.item_id,
 				1,
 				1
@@ -2248,13 +2302,20 @@ class Database {
 				userbadges.slot4 IS NOT NULL
 				AND items.alias = userbadges.slot4
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot4 != ''`
+				AND userbadges.slot4 != ''
+				AND userbadges.slot4 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot4) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2270,13 +2331,20 @@ class Database {
 				userbadges.slot5 IS NOT NULL
 				AND items.alias = userbadges.slot5
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot5 != ''`
+				AND userbadges.slot5 != ''
+				AND userbadges.slot5 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot5) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2292,13 +2360,20 @@ class Database {
 				userbadges.slot6 IS NOT NULL
 				AND items.alias = userbadges.slot6
 				AND users.user_id = userbadges.userId
-				AND userbadges.slot6 != ''`
+				AND userbadges.slot6 != ''
+				AND userbadges.slot6 NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slot6) into user_inventories`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_inventories (
+			INSERT INTO user_inventories (
 				user_id,
 				item_id,
 				quantity,
@@ -2314,7 +2389,14 @@ class Database {
 				userbadges.slotanime IS NOT NULL
 				AND items.alias = userbadges.slotanime
 				AND users.user_id = userbadges.userId
-				AND userbadges.slotanime != ''`
+				AND userbadges.slotanime != ''
+				AND userbadges.slotanime NOT IN (
+					SELECT items.alias
+					FROM items, user_inventories
+					WHERE 
+						items.item_id = user_inventories.item_id
+						AND user_inventories.user_id = users.user_id
+				)`
 			, `run`
 			, []
 			, `Migrating userbadges(slotanime) into user_inventories`
@@ -2326,7 +2408,7 @@ class Database {
 		  *  --------------------------
 		  */
 		await this._query(`
-			INSERT OR IGNORE INTO user_socialmedias (
+			INSERT INTO user_socialmedias (
 				user_id,
 				url,
 				account_type
@@ -2345,7 +2427,7 @@ class Database {
 		)
 
 		await this._query(`
-			INSERT OR IGNORE INTO strikes (
+			INSERT INTO strikes (
 				registered_at,
 				user_id,
 				guild_id,
@@ -2364,7 +2446,7 @@ class Database {
 			, `Migrating strike_list into strikes`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO commands_log (
+			INSERT INTO commands_log (
 				registered_at,
 				user_id,
 				guild_id,
@@ -2383,7 +2465,7 @@ class Database {
 			, `Migrating commands_usage into commands_log`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO resource_log (
+			INSERT INTO resource_log (
 				registered_at,
 				uptime,
 				ping,
