@@ -17,9 +17,9 @@ class Panda extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, choice, bot:{locale:{PANDA}} }) {
+    async execute({ reply, choice }) {
         const { body } = await superagent.get(`https://some-random-api.ml/img/panda`)
-        return reply(choice(PANDA.RESPONSES), {
+        return reply(choice(this.locale.PANDA.RESPONSES), {
             image: body.link,
             prebuffer: true,
         })

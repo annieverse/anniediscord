@@ -24,6 +24,7 @@ class Profile extends Command {
     async execute({ reply, bot:{db}, emoji, name }) {
         await this.requestUserMetadata(2)
 
+        //  Handle if user doesn't exists
         if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
         const familyrelations = this.user.relationships.filter((e) => {

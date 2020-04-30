@@ -16,16 +16,16 @@ class SetBio extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here
      */
-    async execute({ reply, bot:{db, locale:{SETBIO}}}) {
-		await this.requestUserMetadata(1)
+    async execute({ reply, bot:{db} }) {
+		await this.requestUserMetadata(2)
 
 		//  Handle if user doesn't specify the new bio/description
-		if (!this.fullArgs) return reply(SETBIO.MISSING_ARG, {color: `red`})
+		if (!this.fullArgs) return reply(this.locale.SETBIO.MISSING_ARG, {color: `red`})
 		//  Handle if user input is exceeding the character limit
-		if (this.fullArgs.length > this.charactersLimit) return reply(SETBIO.EXCEEDING_LIMIT, {color: `red`})
+		if (this.fullArgs.length > this.charactersLimit) return reply(this.locale.SETBIO.EXCEEDING_LIMIT, {color: `red`})
 
 		await db.setUserBio(this.fullArgs, this.user.id)
-		return reply(SETBIO.SUCCESSFUL, {color: `lightgreen`})
+		return reply(this.locale.SETBIO.SUCCESSFUL, {color: `lightgreen`})
 	}
 
 }

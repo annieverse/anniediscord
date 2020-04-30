@@ -16,11 +16,12 @@ class Ask extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, choice, bot:{locale:{ASK}} }) {
+	async execute({ reply, choice }) {
+		await this.requestUserMetadata(2)
 		//  Returns if no question was specified.
-		if (!this.fullArgs) return reply(ASK.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(this.locale.ASK.SHORT_GUIDE)
 		//  Finishing answer.
-		return reply(choice(ASK.ANSWERS))
+		return reply(choice(this.locale.ASK.ANSWERS))
 	}
 }
 
@@ -28,9 +29,9 @@ class Ask extends Command {
 module.exports.help = {
 	start: Ask,
 	name: `ask`,
-	aliases: [],
+	aliases: [`8ball`],
 	description: `You can ask any question and Annie will answer you.`,
-	usage: `ask <message>`,
+	usage: `ask <Message>`,
 	group: `Fun`,
 	permissionLevel: 0,
 	multiUser: false

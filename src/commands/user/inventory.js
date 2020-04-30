@@ -11,7 +11,7 @@ class Inventory extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
-		this.itemsFilter = item => (item.quantity != false) && (item.in_use === 0) && (item.type != `CARDS`)
+		this.itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && (item.type_name != `Cards`)
 	}
 
 	/**
@@ -28,12 +28,12 @@ class Inventory extends Command {
 		if (!this.user.inventory) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)} })
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.id, emoji: emoji(`AAUloading`)}})
 		.then(async loading => {
-			//  Remove faulty values and sort order by type descendantly
+			//  Remove faulty values and sort order by quantity descendantly
 			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.quantity - b.quantity).reverse()
 			await reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
-				image: await GUI(filteredInventory, this.user.usedTheme),
+				image: await GUI(filteredInventory, this.user.usedTheme.alias),
 				socket: {
 					user: name(this.user.id),
 					emoji: emoji(`AnniePogg`),
@@ -52,10 +52,18 @@ class Inventory extends Command {
 	 *  @returns {string}
 	 */
 	displayDetailedInventory(inventory=[], numberParser) {
-		let str = `\`\`\`\n`
+		let str = `\`\`\`diff\n`
 		for (let i=0; i<inventory.length; i++) {
 			const item = inventory[i]
-			str += `- (${numberParser(item.quantity)}x) ${item.type} ${item.name}\n`
+
+			//  Limit maximum displayed items in the footer
+			const limit = 10
+			if (i >= limit) {
+				str += `\nAnd ${numberParser(inventory.length-limit)} other items ...`
+				break
+			}
+
+			str += `[${numberParser(item.quantity)}x][${item.rarity_name}|${item.type_name}] - ${item.name}\n`
 		}
 		str += `\`\`\``
 		return str

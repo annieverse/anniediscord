@@ -26,17 +26,17 @@ class UI {
 		let card = new Cards({
 			width: this.width,
 			height: this.height,
-			theme: this.user.usedTheme
+			theme: this.user.usedTheme.alias
 		})
 		.createBase({cornerRadius: 25})
 
 		//  Sticker
-		if (this.user.usedSticker) card.canv.addImage(await loadAsset(`sticker_${this.user.usedSticker}`), startPos_x, startPos_y + 194, baseWidth, 206)
+		if (this.user.usedSticker) card.canv.addImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`), startPos_x, startPos_y + 194, baseWidth, 206)
 
 		//  Cover
 		card.canv.setColor(this.user.rank.color)
 			.addRect(startPos_x, startPos_y, baseWidth, 194)
-			.addImage(await loadAsset(this.user.usedCover), startPos_x, startPos_y, baseWidth, 194)
+			.addImage(await loadAsset(this.user.usedCover.alias), startPos_x, startPos_y, baseWidth, 194)
 
 		//  Avatar
 		card.canv.setColor(this.user.premium ? card._resolveColor(`yellow`) :  card._resolveColor(card.color.main))
@@ -45,7 +45,7 @@ class UI {
 
 		//  Badges
 		const inventory = this.user.inventory.raw
-		const badges = inventory.filter(key => key.type === `BADGES`)
+		const badges = inventory.filter(key => key.type_name === `Badges`)
 
 		const badgeDisplayLimit = 7
 		const symetric_xy = 18

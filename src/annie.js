@@ -203,9 +203,6 @@ class Annie extends Discord.Client {
     async _initializingDatabase(log=true) {
         const initTime = process.hrtime()
         this.db = new Database().connect()
-        await this.db.dropTables()
-        await this.db.verifyingTables()
-        await this.db.migrate()
         if (!log) return
         return logger.info(`Database has successfully connected (${getBenchmark(initTime)})`)
     }

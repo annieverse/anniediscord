@@ -17,63 +17,72 @@ class Strike extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, collector, name, bot:{db, locale:{STRIKE}} }) {
+    async execute({ reply, collector, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
 
 		//  Display tutorial if no input was given
-		if (!this.fullArgs) return reply(STRIKE.GUIDE)
+		if (!this.fullArgs) return reply(this.locale.STRIKE.GUIDE)
 		//  Returns if target is not a valid member.
-		if (!this.user) return reply(STRIKE.INVALID_USER, {socket: [this.fullArgs], color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
 		//  Fetching user's strike records
 		const records = await db.getStrikeRecords(this.user.id)
-		if (!records.length) reply(STRIKE.NULL_RECORD, {socket: [name(this.user.id), this.user.id]})
-		else reply(STRIKE.DISPLAY_RECORD, {socket: [
-			name(this.user.id),
-			records.length, 
-			name(records[0].reported_by),
-			this.parseRecord(records)
-		]})
+		if (!records.length) reply(this.locale.STRIKE.NULL_RECORD, {socket: {user: name(this.user.id), color: `golden`} })
+		else reply(this.locale.STRIKE.DISPLAY_RECORD, {
+			socket: {
+				user: name(this.user.id),
+				recordsLength: records.length, 
+				reportedBy: name(records[0].reported_by),
+				list: this.parseRecord(records)
+			}
+		})
 
-		const sequence = collector(this.message)
-		sequence.on(`collect`, async (msg) => {
+		this.setSequence(3, 300000)
+		this.sequence.on(`collect`, async msg => {
 			let input = msg.content
-			sequence.stop()
+
+			/**
+			 * ---------------------
+			 * Sequence Cancellations.
+			 * ---------------------
+			 */
+			if (this.cancelParameters.includes(input)) {
+				this.endSequence()
+				return reply(this.locale.ACTION_CANCELLED)
+			}
 
 			//	Remove quotation marks if accidentally included.
 			if (input.includes(`"`)) input = input.split(`"`).join(``)
+			//  Silently ghosting if user doesn't include the `add strike` prefix`
+			if (!input.startsWith(`+`)) return
 
-			if (input.startsWith(`+`)) {
-				let reason = input.substring(1).trim()+` `
-
-				//	Fetch attachment's url as part of report
-				if (msg.attachments.size > 0) {
-					let imageLinks = []
-					msg.attachments.forEach(element => {
-						imageLinks.push(element.url)
-					})
-					reason += imageLinks.join(`\n`)
-				}
-				
-				// Register new strike entry
-				await db.registerStrike({ 
-					user_id: this.user.id,
-					reason: reason,
-					reported_by: this.message.author.id,
-					guild_id: this.message.guild.id
+			let reason = input.substring(1).trim()+` `
+			//	Fetch attachment's url as part of report
+			if (msg.attachments.size > 0) {
+				let imageLinks = []
+				msg.attachments.forEach(element => {
+					imageLinks.push(element.url)
 				})
-				sequence.stop()
-				return reply(STRIKE.ENTRY_REGISTER, {socket: [name(this.user.id)], color: `lightgreen`})
+				reason += imageLinks.join(`\n`)
 			}
-			sequence.stop()
+				
+			// Register new strike entry
+			await db.registerStrike({ 
+				user_id: this.user.id,
+				reason: reason,
+				reported_by: this.message.author.id,
+				guild_id: this.message.guild.id
+			})
+			reply(this.locale.STRIKE.ENTRY_REGISTER, {socket: {user: name(this.user.id)}, color: `lightgreen`})
+			return this.endSequence()
 		})
 
 	}
 
 	/**
 	 *  Display parsed result from available user's strike records.
-	 *  @param {Array} [records=[]] pulled strike entries from database
-	 *  @returns {String}
+	 *  @param {array} [records=[]] pulled strike entries from database
+	 *  @returns {string}
 	 */
 	parseRecord(records=[]) {
 		let str = ``

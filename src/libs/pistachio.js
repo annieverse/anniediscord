@@ -87,6 +87,7 @@ class Pistachio {
 		this.formatString = this.formatString.bind(this)
 		this.chunk = this.chunk.bind(this)
 		this.socketing = this.socketing.bind(this)
+		this._registerPages = this._registerPages.bind(this)
 		this.reply = this.reply.bind(this)
 	}
 
@@ -103,7 +104,7 @@ class Pistachio {
 	 */
 	deleteMessages(amount = 1) {
 		if (!this._isGuildLayerAvailable) return
-		return message.channel.bulkDelete(amount)
+		return this.message.channel.bulkDelete(amount)
 	}
 	
 	/**
@@ -503,7 +504,7 @@ class Pistachio {
 	 */
 	socketing(content=``,socket=[]) {
 		for(let i = 0; i < socket.length; i++) {
-			if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, socket[i])
+			if (content.indexOf(`{${i+1}}`) != -1) content = content.replace(`{${i}}`, socket[i])
 		}
 		return content
 	}
@@ -522,6 +523,20 @@ class Pistachio {
 		.setColor(this.palette.darkmatte)
 		this.message.channel.send(embed)
 	}
+
+    /**
+     *  Registering each element of array into its own embed.
+     *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
+     *  @returns {array}
+     */
+    _registerPages(pages=[]) {
+        let res = []
+        for (let i = 0; i < pages.length; i++) {
+            res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.darkmatte)
+        }
+        return res
+    }
+
 
 	/** Annie's custom message system.
 	 *  @param {String} content as the message content
@@ -554,7 +569,8 @@ class Pistachio {
 		header: null,
 		footer: null,
 		customHeader: null,
-		timestamp: false
+		timestamp: false,
+		paging: false
 	}) {
 		options.socket = !options.socket ? [] : options.socket
 		options.color = !options.color ? this.palette.darkmatte : options.color
@@ -571,6 +587,53 @@ class Pistachio {
 		options.footer = !options.footer ? null : options.footer
 		options.customHeader = !options.customHeader ? null : options.customHeader
 		options.timestamp == false ? null : options.timestamp = true
+		options.paging === false ? null : options.paging
+		const fn = `[Pistachio.reply()]`
+
+		//  Handle message with paging property enabled
+		if (options.paging) {
+			let page = 0
+			const embeddedPages = this._registerPages(content)
+			return options.field.send(embeddedPages[0])
+            .then(async msg => {
+                //  Buttons
+                await msg.react(`⏪`)
+                await msg.react(`⏩`)
+                // Filters - These make sure the varibles are correct before running a part of code
+                const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+                const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+                //  Timeout limit for page buttons
+                const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
+                const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
+                //	Left navigation
+                backwards.on(`collect`, r => {
+                    r.remove(this.message.author.id)
+                    page--
+                    if (embeddedPages[page]) {
+                        msg.edit(embeddedPages[page])
+                    } else {
+                        page++
+                    }
+                })
+                //	Right navigation
+                forwards.on(`collect`, r => {
+                    r.remove(this.message.author.id)
+                    page++
+                    if (embeddedPages[page]) {
+                        msg.edit(embeddedPages[page])
+                    } else {
+                        page--
+                    }
+                })
+            })
+		}
+
+		//  Replace content with error message if content is a faulty value
+		if (!content && (typeof content != `string`)) {
+			logger.error(`${fn} parameter 'content' should only be string. Because of this, now user will only see my localization msg handler.`)
+			content = this.bot.locale.en.LOCALIZATION_ERROR
+
+		}
 
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
@@ -582,7 +645,7 @@ class Pistachio {
 			const pieceToAttach = options.socket[key[1]]
 			if (pieceToAttach) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
 		}
-
+	
 		//  Returns simple message w/o embed
 		if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
 		//  Add notch/chin
@@ -592,7 +655,7 @@ class Pistachio {
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
 		//  Add header
-		if(options.header) embed.setAuthor(options.header, this.avatar(message ? message.author.id : options.author.id))
+		if(options.header) embed.setTitle(options.header)
 		//  Custom header
 		if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
 		//  Add footer
@@ -614,14 +677,15 @@ class Pistachio {
 			embed.image.url = null
 			embed.file = null
 		}
-		if (!options.deleteIn) return options.field.send(embed)
-		return options.field.send(embed)
-			.then(msg => {
-				//  Convert deleteIn parameter into milliseconds.
-				msg.delete(options.deleteIn * 1000)
-			})
+
+		let sent = options.field.send(embed)
+		if (!options.deleteIn) return sent
+		return sent
+		.then(msg => {
+			//  Convert deleteIn parameter into milliseconds.
+			msg.delete(options.deleteIn * 1000)
+		})
 	}
-		
 }
 
 

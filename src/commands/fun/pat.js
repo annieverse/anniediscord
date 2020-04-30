@@ -17,19 +17,19 @@ class Pat extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, bot:{locale:{PAT}} }) {
+    async execute({ reply }) {
         await this.requestUserMetadata(1)
         const { body } = await superagent.get(`https://some-random-api.ml/animu/pat`)
 
         //  Lonely pat
-        if (!this.fullArgs) return reply(PAT.THEMSELVES, {
+        if (!this.fullArgs) return reply(this.locale.PAT.THEMSELVES, {
             socket: [this.user],
             image: body.link,
             prebuffer: true,
         })
 
         //  Patting other user
-        return reply(PAT.OTHER_USER, {
+        return reply(this.locale.PAT.OTHER_USER, {
             socket: [this.user, this.fullArgs],
             image: body.link,
             prebuffer: true,

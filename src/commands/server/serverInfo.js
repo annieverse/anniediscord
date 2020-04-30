@@ -24,7 +24,6 @@ class ServerInfo extends Command {
 		let onmem = this.message.guild.members.filter(a => a.user.presence.status === `online`).size
 
 		return reply(`
-			**${this.message.guild.name}**
 			${this.message.guild.region.charAt(0).toUpperCase() + this.message.guild.region.slice(1)}-based Guild
 
 			Owned by **${name(this.message.guild.ownerID)}**
@@ -46,6 +45,7 @@ class ServerInfo extends Command {
 			Okay, that's all I know! 
 
 		`, {
+			header: this.message.guild.name,
 			thumbnail: this.message.guild.iconURL
 		})
 	}

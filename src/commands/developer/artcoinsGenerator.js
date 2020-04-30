@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 
 /**
- * Add artcoins to a user
+ * Adds artcoins to a user
  * @author klerikdust
  */
 class ArtcoinsGenerator extends Command {
@@ -17,18 +17,18 @@ class ArtcoinsGenerator extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{locale:{ADDAC}, db}, name, trueInt, emoji, commanifier }) {
+	async execute({ reply, bot:{db}, name, avatar, trueInt, emoji, commanifier }) {
 		await this.requestUserMetadata(2)
 
 		//  Handle if user doesn't specify any arg
-		if (!this.fullArgs) return reply(ADDAC.GUIDE)
+		if (!this.fullArgs) return reply(this.locale.ADDAC.GUIDE)
 		//  Handle if target user is invalid
-		if (!this.user) return reply(ADDAC.INVALID_USER, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
 		this.setSequence(5)
 
 		let amount = 0
-		reply(ADDAC.CONFIRMATION_SEQ_1, {color: `golden`})
+		reply(this.locale.ADDAC.CONFIRMATION_SEQ_1, {socket: {user: name(this.user.id)}, color: `golden`})
 		.then(async confirmation => {
 			this.sequence.on(`collect`, async msg => {
 				let input = msg.content.toLowerCase()
@@ -41,7 +41,7 @@ class ArtcoinsGenerator extends Command {
 				 */
 				if (this.cancelParameters.includes(input)) {
 					this.endSequence()
-					return reply(ADDAC.CANCELLED)
+					return reply(this.locale.ACTION_CANCELLED)
 				}
 
 				/**
@@ -51,11 +51,16 @@ class ArtcoinsGenerator extends Command {
 				 */
 				if (this.onSequence <= 1) {
 					amount = trueInt(input)
-					//  Returns if input is a negative value
-					if (!amount) return reply(ADDAC.NO_NEGATIVE_INPUT)
+					if (!amount) return reply(this.locale.ADDAC.NO_NEGATIVE_INPUT)
 					confirmation.delete()
-					reply(ADDAC.CONFIRMATION_SEQ_2, {
-						socket: [emoji(`artcoins`), commanifier(amount), name(this.user.id)],
+					reply(this.locale.ADDAC.CONFIRMATION_SEQ_2, {
+						socket: {
+							emoji: emoji(`artcoins`),
+							amount: commanifier(amount),
+							user: name(this.user.id)
+						},
+						thumbnail: avatar(this.user.id),
+						notch: true,
 						color: `golden`
 					})
 					return this.nextSequence()
@@ -67,15 +72,8 @@ class ArtcoinsGenerator extends Command {
 				 * ---------------------
 				 */
 				if (this.onSequence <= 2) {
-					//  Update
 					await db.updateInventory({itemId: 52, value: amount, userId: this.user.id})
-					reply(ADDAC.SUCCESSFUL, {
-						socket: [
-							name(this.user.id),
-							emoji(`artcoins`),
-							commanifier(amount)],
-						color: `lightgreen`
-					})
+					reply(this.locale.ADDAC.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
 				}
 			})
@@ -88,7 +86,7 @@ module.exports.help = {
 	start: ArtcoinsGenerator,
 	name: `artcoinsGenerator`,
 	aliases: [`addac`, `addacs`, `addartcoin`],
-	description: `Add artcoins to a user`,
+	description: `Adds artcoins to a user`,
 	usage: `addac <User>(Optional)`,
 	group: `Developer`,
 	permissionLevel: 4,

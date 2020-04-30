@@ -16,40 +16,48 @@ class RemoveRole extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, collector, name, removeRole, findRole, bot:{locale:{REMOVEROLE}} }) {
+    async execute({ reply, collector, name, removeRole, findRole, emoji }) {
 		await this.requestUserMetadata(1)
 
 		//  Handle if user doesn't specify the target user
-		if (!this.fullArgs) return reply(REMOVEROLE.MISSING_ARG)
+		if (!this.fullArgs) return reply(this.locale.REMOVEROLE.MISSING_ARG)
 		//  Handle if target user doesn't exists
-		if (!this.user) return reply(REMOVEROLE.NO_USER_FOUND, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
-		/** --------------------------
-		 *  Role Selection
-		 *  --------------------------
-		 */
-		reply(REMOVEROLE.ROLE_SELECTION, {socket: [name(this.user.id)], color: `golden`})
-		.then(sequenceOne => {
-			const seqOne = collector(this.message)
-			seqOne.on(`collect`, async input => {
-				sequenceOne.delete()
-				const role = findRole(input.content.toLowerCase())
+		this.setSequence(5)
+		reply(this.locale.REMOVEROLE.ROLE_SELECTION, {socket: {user: name(this.user.id)}, color: `golden`})
+		.then(init => {
+			this.sequence.on(`collect`, async msg => {
+				const input = msg.content.toLowerCase()
+				const role = findRole(input)
+
+				/**
+				 * ---------------------
+				 * Sequence Cancellations.
+				 * ---------------------
+				 */
+				if (this.cancelParameters.includes(input)) {
+					this.endSequence()
+					return reply(this.locale.ACTION_CANCELLED)
+				}
 
 				//  Handle if cannot find the role
-				if (!role) {
-					seqOne.stop()
-					return reply(REMOVEROLE.NO_ROLE_FOUND, {color: `red`})
-				}
+				if (!role) return reply(this.locale.REMOVEROLE.NO_ROLE_FOUND, {color: `red`})
 				//  Handle if user doesn't have the role
-				if (!this.user._roles.includes(role.id)) {
-					seqOne.stop()
-					return reply(REMOVEROLE.DOESNT_HAVE_THE_ROLE, {socket: [name(this.user.id)], color: `red`})
-				}
+				if (!this.user._roles.includes(role.id)) return reply(this.locale.REMOVEROLE.DOESNT_HAVE_THE_ROLE, {
+					socket: {user: name(this.user.id), emoji: emoji(`AnnieCry`)}, color: `red`
+				})
 				
-				seqOne.stop()
 				removeRole(role, this.user.id)
-				return reply(REMOVEROLE.SUCCESSFUL, {socket: [role.name, name(this.user.id)], color: `lightgreen`})
-
+				reply(this.locale.REMOVEROLE.SUCCESSFUL, {
+					color: `lightgreen`,
+					socket: {
+						role: role.name,
+						user: name(this.user.id)
+					}
+				})
+				init.delete()
+				return this.endSequence()
 			})
 		})
 	}

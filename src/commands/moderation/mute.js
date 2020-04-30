@@ -17,25 +17,34 @@ class Mute extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, name, addRole, removeRole, schedule, collector, bot:{locale:{MUTE}} }) {
+    async execute({ reply, name, addRole, removeRole, emoji }) {
 		await this.requestUserMetadata(1)
 
 		//  Handle if user doesn't specify the target user to be muted
-		if (!this.fullArgs) return reply(MUTE.MISSING_ARG)
+		if (!this.fullArgs) return reply(this.locale.MUTE.MISSING_ARG)
 		//  Handle if target user doesn't exists
-		if (!this.user) return reply(MUTE.INVALID_USER, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
-		const sequenceOne = collector(this.message)
-		reply(MUTE.DURATION, {color: `golden`})
-			.then(async confirmation => {
-			sequenceOne.on(`collect`, async inputOne => {
-				const time = ms(inputOne.content)
-				confirmation.delete()
-				sequenceOne.stop()
-	
+		this.setSequence()
+		reply(this.locale.MUTE.DURATION, {color: `golden`})
+		.then(async confirmation => {
+			this.sequence.on(`collect`, async msg => {
+				const input = msg.content.toLowerCase()
+				const time = ms(input)
+
+				/**
+				 * ---------------------
+				 * Sequence Cancellations.
+				 * ---------------------
+				 */
+				if (this.cancelParameters.includes(input)) {
+					this.endSequence()
+					return reply(this.locale.ACTION_CANCELLED)
+				}
+
+
 				//  Handle if input time is not a valid date
-				if (!time) return reply(MUTE.INVALID_DATE, {color: `red`})
-	
+				if (!time) return reply(this.locale.MUTE.INVALID_DATE, {color: `red`})
 				//  Lookup into available mute role in the guild
 				let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
 				//  If mute role hasn't been made yet, create one.
@@ -55,13 +64,22 @@ class Mute extends Command {
 								SPEAK: false
 							})
 						})
-					} catch (e) {
+					} 
+					catch (e) {
 						this.logger.error(`Failed to create mute role. > `, e)
 					}
 				}
 	
 				addRole(muteRole, this.user.id)
-				reply(MUTE.SUCCESSFUL, {socket: [name(this.user.id), inputOne.content], color: `lightgreen`})
+				reply(this.locale.MUTE.SUCCESSFUL, {
+					color: `lightgreen`,
+					socket: {
+						user: name(this.user.id),
+						duration: input,
+						emoji: emoji(`AnnieYandere`)
+					}
+				})
+				this.endSequence()
 				setTimeout(() => {
 					removeRole(muteRole, this.user.id)
 				}, time)

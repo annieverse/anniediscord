@@ -117,12 +117,12 @@ class Database {
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
 	 * 	@param {array} [supplies=[]] parameters to be supplied into sql statement.
 	 *  @param {string} [label=``] description for the query. Optional
-	 *  @param {boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional
+	 *  @param {boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional for debugging purposes.
 	 *  @param {boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
 	 *  @private
 	 *  @returns {QueryResult}
 	 */
-	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=false, ignoreError=false) {
+	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=true, ignoreError=false) {
 		const fn = `[Database._query()]`
 		//	Return if no statement has found
 		if (!stmt) return null
@@ -163,7 +163,7 @@ class Database {
 				UPDATE user_inventories
 				SET 
 					quantity = quantity ${operation} ?,
-					last_updated_at = datetime('now')
+					updated_at = datetime('now')
 				WHERE item_id = ? AND user_id = ?`
 				, `run`
 				, [value, itemId, userId]
@@ -173,6 +173,46 @@ class Database {
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return true
+	}
+
+	/**
+	 * Set user item's `in_use`` value to `1`
+	 * @param {number} [itemId] target item's id.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
+	 */
+	useItem(itemId, userId=``) {
+		const fn = `[Database.useItem()]`
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)		
+		return this._query(`
+			UPDATE user_inventories
+			SET in_use = 1
+			WHERE 
+				user_id = ?
+				AND item_id = ?`
+			, `run`
+			, [userId, itemId]
+		)
+	}
+
+	/**
+	 * Set user item's `in_use`` value to `0`
+	 * @param {number} [itemId] target item's id.
+	 * @param {string} [userId=``] User's discord id.
+	 * @returns {QueryResult}
+	 */
+	unuseItem(itemId, userId=``) {
+		const fn = `[Database.useItem()]`
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)		
+		return this._query(`
+			UPDATE user_inventories
+			SET in_use = 0
+			WHERE 
+				user_id = ?
+				AND item_id = ?`
+			, `run`
+			, [userId, itemId]
+		)
 	}
 
 	/**
@@ -394,15 +434,15 @@ class Database {
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-				INSERT INTO user_socialmedias(user_id, type, url)
+				INSERT INTO user_socialmedias(user_id, account_type, url)
 				SELECT $userId, $type, $url
-				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedia WHERE user_id = $userId AND account_type = $type)`
+				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedias WHERE user_id = $userId AND account_type = $type)`
 				, `run`
 				, {userId: userId, type: type, url: url}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
-				UPDATE user_socialmedia
+				UPDATE user_socialmedias
 				SET url = ?, account_type = ?
 				WHERE user_id = ?`
 				, `run`
@@ -482,7 +522,7 @@ class Database {
 		return this._query(`
 			UPDATE user_dailies 
 			SET 
-				last_updated_at = datetime('now', 'localtime'),
+				updated_at = datetime('now'),
 				total_streak = ?
 			WHERE user_id = ?`
 			, `run`
@@ -599,11 +639,11 @@ class Database {
 	 */
 	async getStrikeRecords(userId=``) {
 		return this._query(`
-			SELECT * FROM strike_records
+			SELECT * FROM strikes
 			WHERE user_id = ?`
 			, `all`
 			, [userId]
-			, `Fetching strike_records for USER_ID ${userId}`
+			, `Fetching strikes for USER_ID ${userId}`
 			, true
 		)
 	}
@@ -619,7 +659,7 @@ class Database {
 		if (!reported_by) throw new TypeError(`${fn} property entry.reported_by should be filled.`)
 		if (!guild_id) throw new TypeError(`${fn} property entry.guild_id should be filled.`)
 		return this._query(`
-			INSERT INTO strike_records(
+			INSERT INTO strikes(
 				registered_at,
 				user_id,
 				reason,
@@ -675,16 +715,59 @@ class Database {
 	}
 
 	/**
+	 * Pull user's language/locale data
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserLocale(userId=``) {
+		return this._query(`
+			SELECT lang
+			FROM users
+			WHERE user_id = ?`
+			, `get`
+			, [userId]
+		)
+	}
+
+	/**
 	 * Pull user's inventories metadata
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
 	async getUserInventory(userId=``) {
 		return this._query(`
-			SELECT *
+			SELECT 
+
+				user_inventories.registered_at AS registered_at,
+				user_inventories.updated_at AS updated_at,
+				user_inventories.item_id AS item_id,
+				user_inventories.user_id AS user_id,
+				user_inventories.quantity AS quantity,
+				user_inventories.in_use AS in_use,
+
+				items.name AS name,
+				items.description AS description,
+				items.alias AS alias,
+				items.type_id AS type_id,
+				items.rarity_id AS rarity_id,
+				items.bind AS bind,
+
+				item_types.name AS type_name,
+				item_types.alias AS type_alias,
+				item_types.max_stacks AS type_max_stacks,
+				item_types.max_use AS type_max_use,
+
+				item_rarities.name AS rarity_name,
+				item_rarities.level AS rarity_level,
+				item_rarities.color AS rarity_color
+
 			FROM user_inventories
 			INNER JOIN items
 			ON items.item_id = user_inventories.item_id
+			INNER JOIN item_types 
+			ON item_types.type_id = items.type_id
+			INNER JOIN item_rarities
+			ON item_rarities.rarity_id = items.rarity_id
 			WHERE user_inventories.user_id = ?`
 			, `all`
 			, [userId]
@@ -791,7 +874,7 @@ class Database {
 		return this._query(`
 			SELECT *
 			FROM user_posts
-			ORDER BY last_updated_at DESC
+			ORDER BY updated_at DESC
 			LIMIT 10`
 			, `get`
 			, [userId]
@@ -806,8 +889,6 @@ class Database {
 	registerPost({userId=``, url=``, caption=``, channelId=``, guildId=``}) {
 		return this._query(`
 			INSERT INTO user_posts (
-				posted_at,
-				last_updated_at,
 				user_id,
 				url,
 				caption,
@@ -815,8 +896,6 @@ class Database {
 				guild_id
 			)
 			VALUES (
-				datetime('now'),
-				datetime('now'),
 				?, ?, ?, ?, ?
 			)`,
 			`run`
@@ -840,12 +919,35 @@ class Database {
 	 */
 	getItem(keyword=``) {
 		return this._query(`
-			SELECT * 
+			SELECT 
+
+				items.item_id AS item_id,
+				items.name AS name,
+				items.description AS description,
+				items.alias AS alias,
+				items.type_id AS type_id,
+				items.rarity_id AS rarity_id,
+				items.bind AS bind,
+
+				item_types.name AS type_name,
+				item_types.alias AS type_alias,
+				item_types.max_stacks AS type_max_stacks,
+				item_types.max_use AS type_max_use,
+
+				item_rarities.name AS rarity_name,
+				item_rarities.level AS rarity_level,
+				item_rarities.color AS rarity_color
+
 			FROM items
+			INNER JOIN item_types
+				ON item_types.type_id = items.type_id
+			INNER JOIN item_rarities
+				ON item_rarities.rarity_id = items.rarity_id
+
 			WHERE 
-				item_id = $keyword
-				OR lower(name) = lower($keyword)
-				OR lower(alias) = lower($keyword)
+				items.item_id = $keyword
+				OR lower(items.name) = lower($keyword)
+				OR lower(items.alias) = lower($keyword)
 			LIMIT 1`
 			, `get`
 			, {keyword: keyword}	
@@ -854,23 +956,47 @@ class Database {
 	}
 
 	/**
-	 * Fetch purchasable items in the shop.
-	 * @param {number} [limit=10] the limit for returned rows
+	 * Fetch purchasable items in the shop table.
+	 * @param {string} [sortBy=`items.type_id`] ordering array by given column
 	 * @returns {QueryResult}
 	 */
-	getPurchasableItems(limit=10) {
+	getPurchasableItems(sortBy=`items.type_id`) {
 		return this._query(`
-			SELECT * 
-			FROM items
-			WHERE 
-				available_on_shop = 1,
-				type != 'CURRENCY'
-			ORDER BY price DESC
-			LIMIT ?`
+			SELECT 
+
+				shop.item_id AS item_id,
+				shop.item_price_id AS item_price_id,
+				(SELECT alias FROM items WHERE item_id = shop.item_price_id) AS item_price_alias,
+				shop.price AS price,
+
+				items.name AS name,
+				items.description AS description,
+				items.alias AS alias,
+				items.type_id AS type_id,
+				items.rarity_id AS rarity_id,
+				items.bind AS bind,
+
+				item_types.name AS type_name,
+				item_types.alias AS type_alias,
+				item_types.max_stacks AS type_max_stacks,
+				item_types.max_use AS type_max_use,
+
+				item_rarities.name AS rarity_name,
+				item_rarities.level AS rarity_level,
+				item_rarities.color AS rarity_color
+
+			FROM shop
+			INNER JOIN items
+				ON items.item_id = shop.item_id
+			INNER JOIN item_types
+				ON item_types.type_id = items.type_id
+			INNER JOIN item_rarities
+				ON item_rarities.rarity_id = items.rarity_id
+
+			ORDER BY ? DESC`
 			, `all`
-			, [limit]	
-			, `Looking up for ${limit} purchasable items`
-			, true
+			, [sortBy]	
+			, `Looking up for purchasable items`
 		)
 	}
 
@@ -1415,13 +1541,6 @@ class Database {
 			,[foreverDate,dateRightNow])
 	}
 
-	/** -------------------------------------------------------------------------------
-	 *  User Relationship Methods.
-	 *  @todo
-	 *  * REQUIRE UPDATES @sunnyrainyworks
-	 *  -------------------------------------------------------------------------------
-	 */	
-
 	/**
 	 * Fetch user's relationship info
 	 * @param {string} [userId=``] target user id
@@ -1514,21 +1633,21 @@ class Database {
 	 */
 	async dropTables() {
 		logger.info(`Dropping temp v6 tables.. this may take a minute...`)
-		await this.client.exec(`
-			BEGIN;
-			DROP TABLE IF EXISTS users;
-			DROP TABLE IF EXISTS user_dailies;
-			DROP TABLE IF EXISTS user_reputations;
-			DROP TABLE IF EXISTS user_exp;
-			DROP TABLE IF EXISTS user_posts;
-			DROP TABLE IF EXISTS user_inventories;
-			DROP TABLE IF EXISTS user_socialmedias;
-			DROP TABLE IF EXISTS items;
-			DROP TABLE IF EXISTS strikes;
-			DROP TABLE IF EXISTS commands_log;
-			DROP TABLE IF EXISTS resource_log;
-			COMMIT;
-			`)
+		await this._query(`DROP TABLE IF EXISTS users`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_dailies`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_reputations`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_exp`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_posts`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_inventories`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_socialmedias`, `run`)
+		await this._query(`DROP TABLE IF EXISTS items`, `run`)
+		await this._query(`DROP TABLE IF EXISTS item_gacha`, `run`)
+		await this._query(`DROP TABLE IF EXISTS item_types`, `run`)
+		await this._query(`DROP TABLE IF EXISTS item_rarities`, `run`)
+		await this._query(`DROP TABLE IF EXISTS shop`, `run`)
+		await this._query(`DROP TABLE IF EXISTS strikes`, `run`)
+		await this._query(`DROP TABLE IF EXISTS commands_log`, `run`)
+		await this._query(`DROP TABLE IF EXISTS resource_log`, `run`)
 		return true
 	}
 
@@ -1545,11 +1664,11 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS users (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'last_login_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'user_id' TEXT PRIMARY KEY,
 		   'name' TEXT,
-		   'bio' TEXT DEFAULT "Hi! I'm new user!",
+		   'bio' TEXT DEFAULT "Hi! I'm a new user!",
 		   'verified' INTEGER DEFAULT 0,
 		   'lang' TEXT DEFAULT 'en',
 		   'receive_notification' INTEGER DEFAULT -1
@@ -1563,7 +1682,7 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_dailies (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'user_id' TEXT PRIMARY KEY,
 		   'total_streak' INTEGER DEFAULT 0,
 
@@ -1601,14 +1720,19 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_exp (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'user_id' TEXT PRIMARY KEY,
 		   'current_exp' INTEGER DEFAULT 0,
-		   'booster_id' INTEGER DEFAULT 0,
+		   'booster_id' INTEGER,
 		   'booster_activated_at' TIMESTAMP,
 
 		   FOREIGN KEY(user_id) 
 		   REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		   FOREIGN KEY(booster_id) 
+		   REFERENCES items(item_id) 
 			   ON DELETE CASCADE
 			   ON UPDATE CASCADE
 
@@ -1621,15 +1745,21 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_inventories (
 		   
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT,
 			'item_id' INTEGER,
 			'quantity' INTEGER DEFAULT 0,
 			'in_use' INTEGER DEFAULT 0,
 
 			PRIMARY KEY (user_id, item_id),
+
 			FOREIGN KEY(user_id) 
 			REFERENCES users(user_id) 
+				ON DELETE CASCADE
+				ON UPDATE CASCADE,
+
+			FOREIGN KEY(item_id) 
+			REFERENCES items(item_id) 
 				ON DELETE CASCADE
 				ON UPDATE CASCADE
 
@@ -1642,13 +1772,13 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_posts (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'post_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'user_id' TEXT,
-		   'url' TEXT,
-		   'caption' TEXT,
 		   'channel_id' TEXT,
 		   'guild_id' TEXT,
+		   'url' TEXT,
+		   'caption' TEXT,
 		   'total_likes' INTEGER DEFAULT 0,
 		   'recently_liked_by' TEXT,
 
@@ -1666,7 +1796,7 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_socialmedias (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'socialmedia_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'user_id' TEXT,
 		   'url' TEXT,
@@ -1712,7 +1842,7 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS guilds (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'guild_id' TEXT PRIMARY KEY,
 		   'name' TEXT,
 		   'bio' TEXT
@@ -1726,17 +1856,22 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS guild_configurations (
 
 			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+			'config_code' TEXT,
 			'guild_id' TEXT,
 			'channel_id' TEXT,
-			'config_name' TEXT,
-			'set_by' TEXT,
+			'set_by_user_id' TEXT,
 
 			FOREIGN KEY(guild_id)
 			REFERENCES guilds(guild_id)
 				ON DELETE CASCADE
 				ON UPDATE CASCADE
+
+			FOREIGN KEY(set_by_user_id)
+			REFERENCES users(user_id)
+		   		ON UPDATE CASCADE
+				ON DELETE SET NULL
 
 			)`
 			, `run`
@@ -1752,17 +1887,24 @@ class Database {
 	   await this._query(`CREATE TABLE IF NOT EXISTS items (
 
 		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'item_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'name' TEXT,
-		   'alias' TEXT,
-		   'rarity' INTEGER,
-		   'type' TEXT,
-		   'price' INTEGER,
 		   'description' TEXT,
-		   'max_stacks' INTEGER DEFAULT 9999,
+		   'alias' TEXT,
+		   'type_id' INTEGER,
+		   'rarity_id' INTEGER,
 		   'bind' TEXT DEFAULT 0,
-		   'available_on_shop' INTEGER DEFAULT 1
+
+		   FOREIGN KEY (rarity_id) 
+		   REFERENCES item_rarities(rarity_id)
+		   		ON UPDATE CASCADE
+		   		ON DELETE SET NULL,
+
+		   FOREIGN KEY (type_id) 
+		   REFERENCES item_types(type_id)
+		   		ON UPDATE CASCADE
+		   		ON DELETE SET NULL
 
 		   )`
 		   , `run`
@@ -1772,13 +1914,10 @@ class Database {
 
 	   await this._query(`CREATE TABLE IF NOT EXISTS item_gacha (
 
-		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		   'last_updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		   'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'item_id' INTEGER,
 		   'quantity' INTEGER DEFAULT 1,
 		   'drop_rate' REAL,
-		   'droppable' INTEGER DEFAULT 1,
 
 			FOREIGN KEY(item_id)
 			REFERENCES items(item_id)
@@ -1789,6 +1928,63 @@ class Database {
 		   , `run`
 		   , []
 		   , `Verifying table item_gacha`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS item_types (
+
+		   'type_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'name' TEXT,
+		   'alias' TEXT,
+		   'max_stacks' INTEGER DEFAULT 9999,
+		   'max_use' INTEGER DEFAULT 9999
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table item_types`
+	   )
+
+	   await this._query(`CREATE TABLE IF NOT EXISTS item_rarities (
+
+		   'rarity_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'name' TEXT,
+		   'level' INTEGER UNIQUE,
+		   'color' TEXT DEFAULT '#000000'
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table item_rarities`
+	   )
+
+		/**
+		 * --------------------------
+		 * SHOP TREES
+		 * --------------------------
+		 */
+	   await this._query(`CREATE TABLE IF NOT EXISTS shop (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'shop_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'item_id' INTEGER,
+		   'item_price_id' INTEGER,
+		   'price' INTEGER DEFAULT 100,
+
+		   FOREIGN KEY (item_id) 
+		   REFERENCES items(item_id)
+		   		ON UPDATE CASCADE
+		   		ON DELETE CASCADE,
+
+		   FOREIGN KEY (item_price_id) 
+		   REFERENCES items(item_id)
+		   		ON UPDATE CASCADE
+		   		ON DELETE CASCADE
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table shop`
 	   )
 
 		/**
@@ -1854,89 +2050,305 @@ class Database {
 	 */
 	async migrate() {
 
-		//  Updating item db
+
+		/**
+		 * ---------------------------------------------------------
+		 * Registering item types
+		 * ---------------------------------------------------------
+		 */
 		await this._query(`
-			INSERT OR IGNORE INTO items (
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Covers', 'cov')`
+			, `run`
+			, []
+			, `Register Covers type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Badges', 'bgs')`
+			, `run`
+			, []
+			, `Register Badges type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Stickers', 'stc')`
+			, `run`
+			, []
+			, `Register Stickers type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Themes', 'thm')`
+			, `run`
+			, []
+			, `Register Themes type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias, max_stacks)
+			VALUES('Currencies', 'crcy', 9999999999)`
+			, `run`
+			, []
+			, `Register Currencies type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Tickets', 'tkt')`
+			, `run`
+			, []
+			, `Register Tickets type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Materials', 'mtrl')`
+			, `run`
+			, []
+			, `Register Materials type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Consumables', 'cnsm')`
+			, `run`
+			, []
+			, `Register Consumables type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Cards', 'crd')`
+			, `run`
+			, []
+			, `Register Cards type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Gifts', 'gft')`
+			, `run`
+			, []
+			, `Register Gifts type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Gachas', 'gch')`
+			, `run`
+			, []
+			, `Register Gachas type in item_types table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_types(name, alias)
+			VALUES('Packages', 'pkg')`
+			, `run`
+			, []
+			, `Register Packages type in item_types table`
+		)
+
+		/**
+		 * ---------------------------------------------------------
+		 * Registering item rarities
+		 * ---------------------------------------------------------
+		 */
+		await this._query(`
+			INSERT OR IGNORE INTO item_rarities(name, level, color)
+			VALUES('Common', 1, '#888A91')`
+			, `run`
+			, []
+			, `Register [1]Common rarity in item_rarities table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_rarities(name, level, color)
+			VALUES('Magic', 2, '#68B73E')`
+			, `run`
+			, []
+			, `Register [2]Magic rarity in item_rarities table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_rarities(name, level, color)
+			VALUES('Rare', 3, '#99BCBF')`
+			, `run`
+			, []
+			, `Register [3]Rare rarity in item_rarities table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_rarities(name, level, color)
+			VALUES('Unique', 4, '#C21CFF')`
+			, `run`
+			, []
+			, `Register [4]Unique rarity in item_rarities table`
+		)
+
+		await this._query(`
+			INSERT OR IGNORE INTO item_rarities(name, level, color)
+			VALUES('Legendary', 5, '#AD3632')`
+			, `run`
+			, []
+			, `Register [5]Legendary rarity in item_rarities table`
+		)
+
+
+		/**
+		 * ---------------------------------------------------------
+		 * Migrating and updating table items
+		 * ---------------------------------------------------------
+		 */
+
+		await this._query(`
+			DELETE FROM itemlist 
+			WHERE type IN ('Roles', 'Seasonal Roles')`
+			, `run`
+			, []
+			, `Deleting item with 'Roles' and 'Seasonal Roles' type in itemlist table`
+		)
+
+		await this._query(`
+			UPDATE itemlist 
+			SET type = 'Badges'
+			WHERE type = 'Package Items'`
+			, `run`
+			, []
+			, `Updating 'Package Items' type into 'Badges' in itemlist table`
+		)
+
+		await this._query(`
+			UPDATE itemlist 
+			SET type = 'Currencies'
+			WHERE type = 'Currency'`
+			, `run`
+			, []
+			, `Updating 'Currency' type into 'Currencies' in itemlist table`
+		)
+
+		await this._query(`
+			UPDATE itemlist 
+			SET type = 'Materials'
+			WHERE type in ('Unique', 'Shard')`
+			, `run`
+			, []
+			, `Updating 'Unique' and 'Shard' type into 'Materials' in itemlist table`
+		)
+
+		await this._query(`
+			UPDATE itemlist 
+			SET type = 'Gifts'
+			WHERE type = 'Foods'`
+			, `run`
+			, []
+			, `Updating 'Foods' type into 'Gifts' in itemlist table`
+		)
+
+		await this._query(`
+			UPDATE itemlist 
+			SET type = 'Consumables'
+			WHERE type = 'Capsule'`
+			, `run`
+			, []
+			, `Updating 'Capsule' type into 'Consumables' in itemlist table`
+		)
+
+		await this._query(`
+			INSERT INTO items (
 				item_id,
 				name,
 				alias,
-				rarity,
-				type,
-				price,
+				rarity_id,
+				type_id,
 				description
 			) 
 			SELECT 
 				itemId,
 				name,
 				alias,
-				rarity,
-				upper(type),
-				price,
+				(SELECT rarity_id FROM item_rarities WHERE itemlist.rarity = item_rarities.level),
+				(SELECT type_id FROM item_types 
+				WHERE 
+					UPPER(itemlist.type) = UPPER(item_types.name)
+					OR UPPER(itemlist.type) || 'S' = UPPER(item_types.name)
+				),
 				desc
 			FROM itemlist`
 			, `run`
 			, []
 			, `Migrating itemlist into items`
 		)	
+
+		await this._query(`
+			INSERT INTO items (
+				name,
+				alias,
+				rarity_id,
+				type_id,
+				description
+			) 
+			VALUES (
+				'Annie is bored!',
+				'defaultcover1',
+				1,
+				(SELECT type_id FROM item_types WHERE name = 'Covers'),
+				'Looks! Annie is disappointed looking at your boring profile.'
+			)`
+			, `run`
+			, []
+			, `Registering defaultcover1 into items table`
+		)	
+
 		await this._query(`
 			UPDATE items 
 			SET 
 				name = 'Light Profile Theme',
 				description = 'Delightful. Pure. Clean slate color for your profile card.',
-				type = 'THEMES'
+				type_id = (SELECT type_id FROM item_types WHERE name = 'Themes')
 			WHERE alias = 'light'`
 			, `run`
 			, []
 			, `Updating [Light Profile Theme] in items table`
 		)	
+
 		await this._query(`
 			UPDATE items 
 			SET 
 				name = 'Dark Profile Theme',
 				description = 'Its time to take care of your eyes with dark themed profile.',
-				type = 'THEMES'
+				type_id = (SELECT type_id FROM item_types WHERE name = 'Themes')
 			WHERE alias = 'dark'`
 			, `run`
 			, []
 			, `Updating [Dark Profile Theme] in items table`
 		)
+
 		await this._query(`
-			UPDATE items 
-			SET max_stacks = 1
-			WHERE type in (
+			UPDATE item_types 
+			SET max_use = 1
+			WHERE name in (
 				'COVERS',
-				'BADGES',
 				'THEMES',
 				'STICKERS'
 			)`
 			, `run`
 			, []
-			, `Updating decoration item's max_stacks to 1 in items table`
+			, `Updating decoration(except badges) item's max_use to 1 in item_types table`
 		)
-		await this._query(`
-			UPDATE items 
-			SET max_stacks = 99999999999999
-			WHERE alias = 'artcoins'`
-			, `run`
-			, []
-			, `Updating artcoins max_stacks to 99999999999999 in items table`
-		)			
+
 		await this._query(`
 			UPDATE items 
 			SET alias = 'lalolu_cov' 
-			WHERE name = 'Lalolu' AND type = 'Covers'`
+			WHERE name = 'Lalolu'`
 			, `run`
 			, []
 			, `Fixing Lalolu's Cover alias`
 		)	
-		await this._query(`
-			UPDATE items 
-			SET type = 'CARDS'
-			WHERE type = 'CARD'`
-			, `run`
-			, []
-			, `Updating items with CARD type into CARDS (plural) in items table`
-		)
+
 		await this._query(`
 			UPDATE usercheck 
 			SET lastdaily = datetime(lastdaily/1000, 'unixepoch')`
@@ -1952,7 +2364,7 @@ class Database {
 			, `Converting usercheck's repcooldown into a proper datetime`
 		)		
 		await this._query(`
-			INSERT OR IGNORE INTO users (
+			INSERT INTO users (
 				last_login_at,
 				user_id,
 				bio,
@@ -1970,8 +2382,8 @@ class Database {
 		)
 
 		await this._query(`
-			INSERT OR IGNORE INTO user_dailies (
-				last_updated_at,
+			INSERT INTO user_dailies (
+				updated_at,
 				user_id,
 				total_streak
 			) 
@@ -1986,7 +2398,7 @@ class Database {
 			, `Migrating usercheck's dailies into user_dailies`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_reputations (
+			INSERT INTO user_reputations (
 				user_id,
 				total_reps
 			)
@@ -1999,7 +2411,7 @@ class Database {
 			, `Migrating userdata's reps into user_reputations`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_exp (
+			INSERT INTO user_exp (
 				user_id,
 				current_exp,
 				booster_id,
@@ -2008,7 +2420,7 @@ class Database {
 			SELECT 
 				usercheck.userId user_id,
 				userdata.currentexp current_exp,
-				(SELECT itemId FROM itemlist WHERE alias = usercheck.expbooster),
+				(SELECT item_id FROM items WHERE alias = usercheck.expbooster),
 				usercheck.expbooster_duration
 			FROM usercheck, userdata
 			WHERE usercheck.userId = userdata.userId`
@@ -2017,7 +2429,7 @@ class Database {
 			, `Migrating userdata and usercheck exp data into user_exp`
 		)
 		await this._query(`
-			INSERT OR IGNORE INTO user_posts (
+			INSERT INTO user_posts (
 				registered_at,
 				user_id,
 				url,
@@ -2040,6 +2452,21 @@ class Database {
 		)
 
 		/**  --------------------------
+		  *  Remove non-existent userId in userbadges (deprecated) table.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM userbadges
+			WHERE userId NOT IN (
+				SELECT user_id 
+				FROM users
+			)`
+			, `run`
+			, []
+			, `Remove non-existent userId in userbadges (deprecated) table.`
+		)
+
+		/**  --------------------------
 		  *  USER INVENTORIES
 		  *  --------------------------
 		  */
@@ -2059,24 +2486,81 @@ class Database {
 			, `run`
 			, []
 			, `Migrating item_inventory into user_inventories`
+		)	
+
+		await this._query(`
+			INSERT INTO shop (
+				item_id,
+				item_price_id,
+				price
+			)
+			SELECT
+				itemlist.itemId,
+				52,
+				itemlist.price
+			FROM itemlist, items
+			WHERE 
+				items.item_id = itemlist.itemId
+				AND items.type_id IN (
+					SELECT type_id 
+					FROM item_types 
+					WHERE name != 'Currencies'
+				)`
+			, `run`
+			, []
+			, `Registering all items into shop table, except for one with 'Currencies' type`
+		)
+
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov') AS itemId,
+				1,
+				1
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.cover IS NOT NULL
+			AND t1.cover != ''
+			AND t1.cover != 'defaultcover1'`
+			, `run`
+			, []
+			, `Migrating userdata's cover into user_inventories`
 		)
 
 		await this._query(`
 			UPDATE user_inventories
 			SET in_use = 1
-			WHERE item_id IN (
-				SELECT items.item_id
-				FROM userdata, items
-				WHERE 
-					userdata.cover IS NOT NULL
-					AND userdata.cover != ''
-					AND userdata.cover != 'defaultcover1'
-					AND items.alias = userdata.cover
+			WHERE user_id || '_' || item_id IN (
+				SELECT 
+					userId || '_' || (SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov') AS key
+				FROM userdata t1
+
+				INNER JOIN user_inventories t2 
+					ON t2.user_id = t1.userId 
+					AND t2.item_id = (SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov')
+
+				WHERE t1.cover IS NOT NULL
+				AND t1.cover != ''
+				AND t1.cover != 'defaultcover1'
 			)`
 			, `run`
 			, []
-			, `Set item's in_use to 1 with COVERS type in user_inventories based on user's applied cover in userdata.cover`
-		)
+			, `Set cover in_use value to 1 based on user-applied cover in userdata`
+		)	
+
 		await this._query(`
 			INSERT INTO user_inventories (
 				user_id,
@@ -2085,52 +2569,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				(SELECT item_id FROM items WHERE alias = userdata.cover),
+				userId,
+				(SELECT item_id FROM items WHERE alias = interfacemode) AS itemId,
 				1,
 				1
-			FROM userdata, users
-			WHERE 
-				users.user_id = userdata.userId
-				AND userdata.cover != 'defaultcover1'
-				AND userdata.cover != ''
-				AND userdata.cover IS NOT NULL
-				AND userdata.cover NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
-			, `run`
-			, []
-			, `Migrating userdata's cover into user_inventories`
-		)
-		await this._query(`
-			INSERT INTO user_inventories (
-				user_id,
-				item_id,
-				quantity,
-				in_use
-			) 
-			SELECT 
-				users.user_id,
-				(SELECT item_id FROM items WHERE alias = userdata.interfacemode),
-				1,
-				1
-			FROM userdata, users, items
-			WHERE 
-				users.user_id = userdata.userId
-				AND items.alias = userdata.interfacemode
-				AND userdata.interfacemode != ''
-				AND userdata.interfacemode IS NOT NULL
-				AND userdata.interfacemode NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.interfacemode IS NOT NULL
+			AND t1.interfacemode != ''`
 			, `run`
 			, []
 			, `Migrating userdata's interfacemode into user_inventories`
@@ -2143,23 +2595,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				(SELECT item_id FROM items WHERE alias = userdata.sticker),
+				userId,
+				(SELECT item_id FROM items WHERE alias = sticker) AS itemId,
 				1,
 				1
-			FROM userdata, users, items
-			WHERE 
-				users.user_id = userdata.userId
-				AND items.alias = userdata.sticker
-				AND userdata.sticker != ''
-				AND userdata.sticker IS NOT NULL
-				AND userdata.sticker NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.sticker IS NOT NULL
+			AND t1.sticker != ''`
 			, `run`
 			, []
 			, `Migrating userdata's sticker into user_inventories`
@@ -2172,23 +2621,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				(SELECT item_id FROM items WHERE alias = usercheck.expbooster),
+				userId,
+				(SELECT item_id FROM items WHERE alias = expbooster) AS itemId,
 				1,
 				1
-			FROM usercheck, users, items
-			WHERE 
-				users.user_id = usercheck.userId
-				AND items.alias = usercheck.expbooster
-				AND usercheck.expbooster != ''
-				AND usercheck.expbooster IS NOT NULL 
-				AND usercheck.expbooster NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM usercheck t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.expbooster IS NOT NULL
+			AND t1.expbooster != ''`
 			, `run`
 			, []
 			, `Migrating usercheck's exp boosters into user_inventories`
@@ -2196,7 +2642,7 @@ class Database {
 
 		/**
 		 *  Sub-migrating
-		 *  Migrates each badges in userbadges into individual row in user_decorations
+		 *  Migrates each badges in userbadges into individual row in user_inventories
 		 */
 		await this._query(`
 			INSERT INTO user_inventories (
@@ -2206,23 +2652,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot1) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot1 IS NOT NULL
-				AND items.alias = userbadges.slot1
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot1 != ''
-				AND userbadges.slot1 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot1 IS NOT NULL
+			AND t1.slot1 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot1) into user_inventories`
@@ -2235,23 +2678,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot2) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot2 IS NOT NULL
-				AND items.alias = userbadges.slot2
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot2 != ''
-				AND userbadges.slot2 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot2 IS NOT NULL
+			AND t1.slot2 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot2) into user_inventories`
@@ -2264,23 +2704,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot3) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot3 IS NOT NULL
-				AND items.alias = userbadges.slot3
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot3 != ''
-				AND userbadges.slot3 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot3 IS NOT NULL
+			AND t1.slot3 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot3) into user_inventories`
@@ -2293,23 +2730,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				users.user_id,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot4) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot4 IS NOT NULL
-				AND items.alias = userbadges.slot4
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot4 != ''
-				AND userbadges.slot4 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot4 IS NOT NULL
+			AND t1.slot4 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot4) into user_inventories`
@@ -2322,23 +2756,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot5) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot5 IS NOT NULL
-				AND items.alias = userbadges.slot5
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot5 != ''
-				AND userbadges.slot5 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot5 IS NOT NULL
+			AND t1.slot5 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot5) into user_inventories`
@@ -2351,23 +2782,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot6) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slot6 IS NOT NULL
-				AND items.alias = userbadges.slot6
-				AND users.user_id = userbadges.userId
-				AND userbadges.slot6 != ''
-				AND userbadges.slot6 NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot6 IS NOT NULL
+			AND t1.slot6 != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slot6) into user_inventories`
@@ -2380,23 +2808,20 @@ class Database {
 				in_use
 			) 
 			SELECT 
-				userbadges.userId,
-				items.item_id,
+				userId,
+				(SELECT item_id FROM items WHERE alias = slotanime) AS itemId,
 				1,
 				1
-			FROM userbadges, users, items
-			WHERE 
-				userbadges.slotanime IS NOT NULL
-				AND items.alias = userbadges.slotanime
-				AND users.user_id = userbadges.userId
-				AND userbadges.slotanime != ''
-				AND userbadges.slotanime NOT IN (
-					SELECT items.alias
-					FROM items, user_inventories
-					WHERE 
-						items.item_id = user_inventories.item_id
-						AND user_inventories.user_id = users.user_id
-				)`
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slotanime IS NOT NULL
+			AND t1.slotanime != ''`
 			, `run`
 			, []
 			, `Migrating userbadges(slotanime) into user_inventories`

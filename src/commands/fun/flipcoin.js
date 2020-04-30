@@ -16,8 +16,8 @@ class FlipCoin extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, choice, bot:{locale:{FLIPCOIN}} }) {
-		return reply(choice(FLIPCOIN.RESPONSES), {
+	async execute({ reply, choice }) {
+		return reply(choice(this.locale.FLIPCOIN.RESPONSES), {
 			socket: [choice([`Heads`, `Tails`])]
 		})
 	}

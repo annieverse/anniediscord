@@ -24,9 +24,9 @@ class RollDice extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, bot:{locale:{ROLLDICE}} }) {
+    async execute({ reply }) {
 
-        if (!this.args[0] || !this.args[0].includes(`d`)) return reply(ROLLDICE.MISSING_ARGS)
+        if (!this.args[0] || !this.args[0].includes(`d`)) return reply(this.locale.ROLLDICE.MISSING_ARGS)
         let diceOptions = this.fullArgs.split(`d`)
         let modiferPlus, modiferMinus
         if (diceOptions[1].includes(`+`)) {

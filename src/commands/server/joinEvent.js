@@ -18,7 +18,7 @@ class JoinEvent extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, addRole, findRole, name, bot:{db, locale:{EVJOIN}} }) {
+    async execute({ reply, addRole, findRole, name, bot:{db} }) {
 		await this.requestUserMetadata(2)
 
 		//  Filter command to only working in AAU.
@@ -26,11 +26,12 @@ class JoinEvent extends Command {
 
 		const eventRole = findRole(`Event Participant`)
 		//  Returns if user already have the ticket.
-		if (this.user._roles.includes(eventRole.id)) return reply(EVJOIN.ALREADY_HAS, {socket: [name(author.id)]})
+		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(author.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
-		if (this.user.meta.artcoins < this.fee) return reply(EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
+		if (this.user.meta.artcoins < this.fee) return reply(this.locale.EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
 		//  Deduct user's balance if user hadn't foxie card
-		if (!this.user.meta.foxie_card) await db.updateInventory({
+		const hasFoxieCard = this.user.inventory.foxie_card
+		if (!hasFoxieCard) await db.updateInventory({
 			itemId: 52,
 			value: this.fee,
 			operation:`-`,
@@ -39,10 +40,14 @@ class JoinEvent extends Command {
 
 		//  Assign role to the user
 		addRole(eventRole, this.user.id)
-		return reply(EVJOIN.SUCCESSFUL, {
-			socket: [name(this.user.id), EVJOIN.FOXIES_BLESSING, emoji(`AnnieHype`)],
-			color: this.user.meta.foxie_card ? `pink` : `golden`,
-			notch:  this.user.meta.foxie_card ? true : false,
+		return reply(this.locale.EVJOIN.SUCCESSFUL, {
+			socket: {
+				user: name(this.user.id),
+				foxieMessage: this.locale.EVJOIN.FOXIES_BLESSING,
+				emoji: emoji(`AnnieHype`)
+			},
+			color: hasFoxieCard ? `pink` : `lightgreen`,
+			notch: hasFoxieCard ? true : false,
 		})
 	}
 }

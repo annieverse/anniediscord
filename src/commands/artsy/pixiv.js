@@ -7,7 +7,7 @@ const pixiv = new PixivApi()
 /**
  * Note:
  * This module requires pixiv account (verified username and pw) in order to get acccess to the API.
- * So, make sure to put your account details inside .env file
+ * So, make sure to put your pixiv account details inside the .env file
  * 
  *  PIXIV_USERNAME = email
  *  PIXIV_PASS = account password
@@ -35,9 +35,9 @@ class Pixiv extends Command {
         await pixiv.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
 
         const fullArgs = this.fullArgs
-        reply(PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+        reply(this.locale.PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
             simplified: true,
-            socket: [fullArgs]})
+            socket: {keyword: fullArgs}})
                 .then(async loadmsg => {
                     //  Dynamically choose recommended/custom search based on input
                     const data = fullArgs ? await this.fetchCustomSearch(fullArgs) : await this.fetchRecommendedWork()
@@ -45,14 +45,14 @@ class Pixiv extends Command {
                     //  Handle if no returned result from the query
                     if (!data)  {
                         loadmsg.delete()
-                        return reply(PIXIV.NO_RESULT, {color: `red`})
+                        return reply(this.locale.PIXIV.NO_RESULT, {color: `red`})
                     }
 
                     const img = await this.getImage(data.image_urls.medium, data.id)
                     //  Handle if no returned result from given img path
                     if (!img) {
                         loadmsg.delete()
-                        return reply(PIXIV.FAIL_TO_LOAD, {color: `red`})
+                        return reply(this.locale.PIXIV.FAIL_TO_LOAD, {color: `red`})
                     }
 
                     loadmsg.delete()
@@ -67,7 +67,7 @@ class Pixiv extends Command {
     /**
      * Fetch artworks by custom search/filter. Returns object of choosen index.
      * @param {String} keyword 
-     * @returns {JSONData}
+     * @returns {?object}
      */
     async fetchCustomSearch(keyword = ``) {
         const fn = `[Pixiv.fetchCustomSearch()]`
@@ -80,7 +80,7 @@ class Pixiv extends Command {
 
     /**
      * Fetch artworks by popularity ranking. Returns object of choosen index.
-     * @returns {JSONData}
+     * @returns {?object}
      */
     async fetchRecommendedWork() {
         const fn = `[Pixiv.fetchRecommendedWork()]`
@@ -93,10 +93,10 @@ class Pixiv extends Command {
     
     /**
      * Loading image from pixiv cache directory. (downloaded pixiv's image)
-     * @param {String|URL} url 
-     * @param {String|ID} filename 
-     * @param {Function} loaderMethod supply with Pistachio's loadCache.
-     * @returns {Buffer}
+     * @param {string} url 
+     * @param {string} filename 
+     * @param {function} loaderMethod supply with Pistachio's loadCache.
+     * @returns {buffer}
      */
     async getImage(url=``, filename=``) {
         const fn = `[Pixiv.getImage()]`
@@ -107,8 +107,8 @@ class Pixiv extends Command {
 
     /**
      * Fetch cached pixiv's image. Return as buffer. If error occured, fallback with a Boolean.
-     * @param {String} id image filename 
-     * @returns {Buffer}
+     * @param {string} id image filename 
+     * @returns {buffer}
      */
     async getImageCache(id=``) {
         const fn = `[Pixiv.getImageCache()]`
@@ -121,8 +121,8 @@ class Pixiv extends Command {
 
     /**
      * Map `name` prop from Pixiv's tags object. Returns a proper string of hashtags.
-     * @param {ArrayOfObject} tags 
-     * @returns {String}
+     * @param {array} tags 
+     * @returns {string}
      */
     getHashtags(tags = Array) {
         let arr = tags.map(key => `#${key.name}`)
@@ -135,8 +135,8 @@ class Pixiv extends Command {
 
     /**
      * Parse "tools" property from Pixiv's Post Data. Omitted if no tools are found.
-     * @param {Array} tools
-     * @returns {String}
+     * @param {array} tools
+     * @returns {string}
      */
     getTools(tools=Array) {
         if (tools.length < 1) return ``
@@ -153,6 +153,5 @@ module.exports.help = {
 	usage: `pixiv <SearchKeyword>(Optional)`,
     group: `Artsy`,
     permissionLevel: 0,
-	public: true,
 	multiUser: false
 }

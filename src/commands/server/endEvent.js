@@ -16,7 +16,7 @@ class EndEvent extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, findRole, name, bot:{locale:{EVENT}} }) {
+    async execute({ reply, findRole, name }) {
 		await this.requestUserMetadata(1)
 		
 		//  Filter command to only working in AAU.
@@ -26,13 +26,13 @@ class EndEvent extends Command {
 		const participants = ticket.members.map(m => m.user.id)
 
 		//  Returns if no ghosting participants left
-		if (participants.length < 1) return reply(EVENT.END_NOPARTICIPANTLEFT, {socket: [name(this.user.id)]})
+		if (participants.length < 1) return reply(this.locale.EVENT.END_NOPARTICIPANTLEFT, {socket: {user: name(this.user.id)} })
 		//  Removing tickets
 		for (let i = 0; i < participants.length; i++) {
 			await this.message.guild.members.get(participants[i]).removeRole(ticket)
 		}
 		//  Successful!
-		return reply(EVENT.END, {socket: [participants.length], color: `lightgreen`})
+		return reply(this.locale.EVENT.END, {socket: {participants: participants.length}, color: `lightgreen`})
 	}
 }
     

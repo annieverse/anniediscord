@@ -17,9 +17,9 @@ class Cat extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, choice, bot:{locale:{CAT}} }) {
+    async execute({ reply, choice }) {
         const { body } = await superagent.get(`https://some-random-api.ml/img/cat`)
-        return reply(choice(CAT.RESPONSES), {
+        return reply(choice(this.locale.CAT.RESPONSES), {
             image: body.link,
             prebuffer: true,
         })

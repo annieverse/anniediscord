@@ -55,7 +55,7 @@ class User {
     /**
      * Requesting standard user metadata from Discord API and/or Database
      * @param {string} target the keyword for the user (id, name, tag, snowflake)
-	 * @param {number} [dataLevel=1] set to `1` to return standard user's discord structure. Set to `2` to have an additional
+	 * @param {number} [dataLevel=1] set to `1` to return standard user's discord structure with custom locale. Set to `2` to have an additional
 	 * properties such as inventory, exp, level, reputations, etc/
      * @returns {UserMetadataObject}
      */
@@ -65,6 +65,8 @@ class User {
 		try {
 			this.logger.debug(`${fn} searching for ${target}`)
 			let user = this.lookFor(target)
+			let getUserLocale = await db.getUserLocale(user.id)
+			user.lang = getUserLocale ? getUserLocale.lang : `en`
 			this.logger.debug(`${fn} found user with ID ${user.id}`)
 			if (dataLevel <= 1) return user
 
@@ -106,12 +108,12 @@ class User {
 
 
 			//  Custom properties
-			const theme = this.user.inventory.raw.filter(key => (key.type === `THEMES`) && (key.in_use === 1))
-			user.usedTheme = theme.length ? theme[0].alias : `light`
-			const cover = this.user.inventory.raw.filter(key => (key.type === `COVERS`) && (key.in_use === 1))
-			user.usedCover = cover.length ? cover[0].alias : `defaultcover1`
-			const sticker = this.user.inventory.raw.filter(key => (key.type === `STICKERS`) && (key.in_use === 1))
-			user.usedSticker = sticker.length ? sticker[0].alias : null
+			const theme = this.user.inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
+			user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+			const cover = this.user.inventory.raw.filter(key => (key.type_name === `Covers`) && (key.in_use === 1))
+			user.usedCover = cover.length > 0 ? cover[0] : await db.getItem(`defaultcover1`)
+			const sticker = this.user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
+			user.usedSticker = sticker.length ? sticker[0] : null
 			user.isSelf = this.isSelf
 			user.title = new Permission(this.message).getUserPermission(user.id).name
 

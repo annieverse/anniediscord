@@ -1,6 +1,5 @@
 `use-strict`
 const User = require(`./user`)
-const { MessageCollector } = require(`discord.js`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -96,7 +95,7 @@ class Commands {
 		const fn = `[Commands.setSequence()]`
 		this.logger.debug(`${fn} ${this.instanceId} initializing new sequence flow`)
 		this.onSequence = 1
-		this.sequence = new MessageCollector(this.message.channel,
+		this.sequence = this.message.channel.createMessageCollector(
 		m => m.author.id === this.message.author.id, {
 			max: max,
 			time: timeout,

@@ -1,8 +1,9 @@
-const palette = require(`../../ui/colors/default`)
+const palette = require(`../colors/default`)
 const { ITEM_RARITY_COLOR } = require(`../config`)
 const fsn = require(`fs-nextra`)
 const Color = require(`color`)
 const ThemePresets = require(`../colors/themes`)
+const loadAsset = require(`../../utils/loadAsset`)
 const Canvas = require(`../setup`)
 
 /**
@@ -40,17 +41,6 @@ const InventoryInterface = async (container, usertheme) => {
 			.restore()
 	}
 
-
-	/**
-	 * 	Load asset based on given @id.
-	 * 	@param {String|ID} id filename(item_alias)
-	 *  @getAsset
-	 */
-	const getAsset = (id) => fsn.readFile(`./src/assets/${id}.png`)
-	.catch(async ()=>{return fsn.readFile(`./src/assets/error.png`)})
-	//const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
-
-
 	/**
 	 * Scalable grid-system
 	 * Allows each item to be stored into its own grid.
@@ -79,8 +69,7 @@ const InventoryInterface = async (container, usertheme) => {
 
 
 		//	Render item rarity frame
-		const renderFrame = (rarity, pos=[]) => {
-			const mainColor = palette[ITEM_RARITY_COLOR[rarity]]
+		const renderFrame = (frameColor, pos=[]) => {
 			const frameHole = () => {
 				pos[0] = pos[0] + 1
 				pos[1] = pos[1] + 1
@@ -89,14 +78,14 @@ const InventoryInterface = async (container, usertheme) => {
 
 				canv.save()
 				canv.createBeveledClip(...pos, 15)
-				canv.setColor(Color(mainColor)[theme.iconBackground](theme.iconBackgroundOpacity))
+				canv.setColor(Color(frameColor)[theme.iconBackground](theme.iconBackgroundOpacity))
 				canv.addRect(...pos)
 				canv.restore()
 			}
 
 			canv.save()
 			canv.createBeveledClip(...pos, 15)
-			canv.setColor(palette[ITEM_RARITY_COLOR[rarity]])
+			canv.setColor(frameColor)
 			canv.addRect(...pos)
 			frameHole()
 			canv.restore()
@@ -144,7 +133,7 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {ArrayOfPosition} pos Preferably to use the same grid array across function
 		 * @renderIcon
 		 */
-		const renderIcon = async (id, pos=[]) => canv.addImage(await getAsset(id), ...pos, dx / 2)
+		const renderIcon = async (id, pos=[]) => canv.addImage(await loadAsset(id), ...pos, dx / 2)
 
 
 		/**
@@ -178,7 +167,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridZero = aspectRatio({index: i, rowNth: 0})
 			canv.addRect(...gridZero)
 			if (itemRenderable({index: i, rowNth: 0})) {
-				renderFrame(container[i + columnBreak[0]].rarity, gridZero)
+				renderFrame(container[i + columnBreak[0]].rarity_color, gridZero)
 				await renderIcon(container[i + columnBreak[0]].alias, gridZero)
 				renderQuantity(container[i + columnBreak[0]].quantity, gridZero)
 
@@ -188,7 +177,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridOne = aspectRatio({index: i, rowNth: 1})
 			canv.addRect(...gridOne)
 			if (itemRenderable({index: i, rowNth: 1})) {
-				renderFrame(container[i + columnBreak[1]].rarity, gridOne)
+				renderFrame(container[i + columnBreak[1]].rarity_color, gridOne)
 				await renderIcon(container[i + columnBreak[1]].alias, gridOne)
 				renderQuantity(container[i + columnBreak[1]].quantity, gridOne)
 			}
@@ -197,7 +186,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridTwo = aspectRatio({index: i, rowNth: 2})
 			canv.addRect(...gridTwo)
 			if (itemRenderable({index: i, rowNth: 2})) {
-				renderFrame(container[i + columnBreak[2]].rarity, gridTwo)
+				renderFrame(container[i + columnBreak[2]].rarity_color, gridTwo)
 				await renderIcon(container[i + columnBreak[2]].alias, gridTwo)
 				renderQuantity(container[i + columnBreak[2]].quantity, gridTwo)
 		   }
@@ -206,7 +195,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridThree = aspectRatio({index: i, rowNth: 3})
 			canv.addRect(...gridThree)
 			if (itemRenderable({index: i, rowNth: 3})) {
-				renderFrame(container[i + columnBreak[3]].rarity, gridThree)
+				renderFrame(container[i + columnBreak[3]].rarity_color, gridThree)
 				await renderIcon(container[i + columnBreak[3]].alias, gridThree)
 				renderQuantity(container[i + columnBreak[3]].quantity, gridThree)
 		   }
@@ -215,7 +204,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridFour = aspectRatio({index: i, rowNth: 4})
 			canv.addRect(...gridFour)
 			if (itemRenderable({index: i, rowNth: 4})) {
-				renderFrame(container[i + columnBreak[4]].rarity, gridFour)
+				renderFrame(container[i + columnBreak[4]].rarity_color, gridFour)
 				await renderIcon(container[i + columnBreak[4]].alias, gridFour)
 				renderQuantity(container[i + columnBreak[4]].quantity, gridFour)
 		   }
@@ -224,7 +213,7 @@ const InventoryInterface = async (container, usertheme) => {
 			const gridFive = aspectRatio({index: i, rowNth: 5})
 			canv.addRect(...gridFive)			
 			if (itemRenderable({index: i, rowNth: 5})) {
-				renderFrame(container[i + columnBreak[5]].rarity, gridFive)
+				renderFrame(container[i + columnBreak[5]].rarity_color, gridFive)
 				await renderIcon(container[i + columnBreak[5]].alias, gridFive)
 				renderQuantity(container[i + columnBreak[5]].quantity, gridFive)
 		   }

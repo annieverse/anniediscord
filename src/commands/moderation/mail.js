@@ -16,33 +16,51 @@ class Mail extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, name, collector, bot:{locale:{MAIL}} }) {
+    async execute({ reply, name }) {
 		await this.requestUserMetadata(1)
 
 		//  Returns as guide if user doesn't specify any parameter.
-		if (!this.fullArgs) return reply(MAIL.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(this.locale.MAIL.SHORT_GUIDE)
 		//  Returns if target user is invalid.
-		if (!this.user) return reply(MAIL.INVALID_USER, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
-		//  Confirmation message.
-		reply(MAIL.PROMPT, {socket: [name(this.user.id)], color: `golden`})
+		reply(this.locale.MAIL.PROMPT, {socket: {user: name(this.user.id)}, color: `golden`})
+		this.setSequence(3, 300000)
+		this.sequence.on(`collect`, async msg => {
+			const input = msg.content.toLowerCase()
 
-		const collect = collector(this.message)
-		collect.on(`collect`, msg => {
-			//  Close connection
-			collect.stop()
-			//  Handle if user tries to cancel the message forwarding
-			if ([`cancel`, `n`, `no`].includes(msg.content.toLowerCase())) return reply(MAIL.CANCELLED)
-
-			try {
-				//  Send message to target
-				reply(msg.content, {field: this.user})
-				//  Show notification if message has been successfully delivered.
-				return reply(MAIL.SUCCESSFUL, {socket: [name(this.user.id)], color: `lightgreen`})
+			/**
+			 * ---------------------
+			 * Sequence Cancellations.
+			 * ---------------------
+			 */
+			if (this.cancelParameters.includes(input)) {
+				this.endSequence()
+				return reply(this.locale.ACTION_CANCELLED)
 			}
+
+			/**
+			 * ---------------------
+			 * 1.) Sends message to target
+			 * ---------------------
+			 */
+			try {
+				reply(msg.content, {field: this.user})
+				reply(this.locale.MAIL.SUCCESSFUL, {
+					color: `lightgreen`,
+					socket: {user: name(this.user.id)}
+				})
+				return this.endSequence()
+			}
+
+			/**
+			 * ---------------------
+			 * Handles error caused by locked dm setting.
+			 * ---------------------
+			 */
 			catch(e) {
-				//  Handles the error caused by locked dms setting.
-				return reply(MAIL.UNSUCCESSFUL, {color: `red`})
+				reply(this.locale.MAIL.UNSUCCESSFUL, {socket: {emoji: emoji(`AnnieCry`)}, color: `red`})
+				this.endSequence()
 			}
 		})
 	}
