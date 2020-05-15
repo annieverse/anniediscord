@@ -1001,22 +1001,45 @@ class Database {
 	}
 
 	/**
-	 * Fetch droppable items from `item_gacha` table.
+	 * Fetch items from `item_gacha` table.
 	 * @returns {QueryResult}
 	 */
-	getDroppableItems() {
+	getGachaRewardsPool() {
 		return this._query(`
-			SELECT * 
+			SELECT 
+
+				item_gacha.item_id AS item_id,
+				item_gacha.quantity AS quantity,
+				item_gacha.weight AS weight,
+
+				items.name AS name,
+				items.description AS description,
+				items.alias AS alias,
+				items.type_id AS type_id,
+				items.rarity_id AS rarity_id,
+				items.bind AS bind,
+
+				item_types.name AS type_name,
+				item_types.alias AS type_alias,
+				item_types.max_stacks AS type_max_stacks,
+				item_types.max_use AS type_max_use,
+
+				item_rarities.name AS rarity_name,
+				item_rarities.level AS rarity_level,
+				item_rarities.color AS rarity_color
+
 			FROM item_gacha
-			WHERE droppable = 1`
+			INNER JOIN items
+				ON items.item_id = item_gacha.item_id
+			INNER JOIN item_types
+				ON item_types.type_id = items.type_id
+			INNER JOIN item_rarities
+				ON item_rarities.rarity_id = items.rarity_id`
 			, `all`
 			, []	
-			, `Looking up for droppable items`
-			, true
+			, `Fetching gacha's rewards pool`
 		)
 	}
-	
-
 
 	/**
 	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
@@ -1917,7 +1940,7 @@ class Database {
 		   'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 		   'item_id' INTEGER,
 		   'quantity' INTEGER DEFAULT 1,
-		   'drop_rate' REAL,
+		   'weight' REAL,
 
 			FOREIGN KEY(item_id)
 			REFERENCES items(item_id)

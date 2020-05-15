@@ -17,52 +17,61 @@ class Pay extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, commanifier, trueInt, avatar, bot:{db, locale:{PAY}} }) {
+    async execute({ reply, emoji, name, commanifier, trueInt, avatar, bot:{db} }) {
 		await this.requestUserMetadata(2)
-		await this.requestAuthorData(2)
+		await this.requestAuthorMetadata(2)
 
 		//  Returns if user level is below the requirement
-		if (this.author.exp.level < this.requirementLevel) return reply(PAY.LVL_TOO_LOW, {
-			socket: [this.requirement_level],
+		if (this.author.exp.level < this.requirementLevel) return reply(this.locale.PAY.LVL_TOO_LOW, {
+			socket: {level: this.requirement_level},
 			color: `red`
 		})
-		//  Returns as guide user doesn't specify any parameter
-		if (!this.fullArgs) return reply(PAY.SHORT_GUIDE)
-		//  Returns if target is invalid
-		if (!this.user) return reply(PAY.INVALID_USER, {color: `red`})
-		//  Returns if user trying to pay themselves
-		if (this.user.isSelf) return reply(PAY.SELF_TARGETING, {color: `red`})
+		//  Displays as guide if user doesn't specify any parameter
+		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE)
+		//  Handle if target is invalid
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		//  Handle if user is trying to pay themselves
+		if (this.user.isSelf) return reply(this.locale.PAY.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)}, color: `red`})
 
-		//  Receives 5 new responses in current sequence
 		this.setSequence(5)
-
-		let amount = 0
-		reply(PAY.USER_CONFIRMATION, {socket: [name(this.user.id)], color: `golden`})
-		.then(initial => {
+		reply(this.locale.PAY.USER_CONFIRMATION, {socket: {user: name(this.user.id)}, color: `golden`})
+		.then(init => {
 			this.sequence.on(`collect`, async msg => {			
 				let input = msg.content.toLowerCase()
-				msg.delete()
 
-				//  Returns if user asked to cancel the transaction
+				/** --------------------
+				 *  Sequence Cancellations
+				 *  --------------------
+				 */
 				if (this.cancelParameters.includes(input)) {
 					this.endSequence()
-					return reply(PAY.CANCELLED)
+					return reply(this.locale.ACTION_CANCELLED)
 				}
 
 				/** --------------------
-				 *  1.) Amount to send - Confirmation
+				 *  1.) Amount to send
 				 *  --------------------
 				 */
 				if (this.onSequence <= 1) {
-					amount = trueInt(input)
-					//  Returns if input is invalid
-					if (!amount) return reply(PAY.INVALID_AMOUNT, {color: `red`})
-					//  Returns if sender's balance is below the specified input
-					if (this.author.inventory.artcoins < amount) return reply(PAY.EXCEEDING_BALANCE, {color: `red`})
+					this.amount = trueInt(input)
+					//  Handle if input is not a valid number
+					if (!this.amount) return reply(this.locale.PAY.INVALID_AMOUNT, {color: `red`})
+					//  Handle if sender's balance is below the specified input
+					if (this.author.inventory.artcoins < this.amount) {
+							this.endSequence()
+							return reply(this.locale.PAY.INSUFFICIENT_BALANCE, {
+							socket: {amount: `${emoji(`artcoins`)} ${commanifier(this.amount - this.author.inventory.artcoins)}`},
+							color: `red`
+						})
+					}
 					
-					initial.delete()
-					reply(PAY.CONFIRMATION, {
-						socket: [emoji(`artcoins`), commanifier(amount), name(this.user.id)],
+					init.delete()
+					reply(this.locale.PAY.CONFIRMATION, {
+						socket: {
+							emoji: emoji(`artcoins`),
+							amount: commanifier(this.amount),
+							user: name(this.user.id)
+						},
 						color: `golden`,
 						notch: true,
 						thumbnail: avatar(this.user.id)
@@ -71,18 +80,16 @@ class Pay extends Command {
 				}
 
 				/** --------------------
-				 *  2.) Finalizer - Confirmation
+				 *  2.) Finalizer
 				 *  --------------------
 				 */
 				if (this.onSequence <= 2) {
+					//  Silently ghosting if user's confirmation message is invalid
 					if (!input.startsWith(`y`)) return
-
-					//  Database update
-					await db.updateInventory({itemId: 52, value: amount, operation: `+`, userId: this.user.id})
-					await db.updateInventory({itemId: 52, value: amount, operation: `-`, userId: this.author.id})
-
-					//  Transaction successful
-					reply(PAY.SUCCESSFUL, {color: `lightgreen`})
+					await db.updateInventory({itemId: 52, value: this.amount, operation: `+`, userId: this.user.id})
+					await db.updateInventory({itemId: 52, value: this.amount, operation: `-`, userId: this.author.id})
+					msg.delete()
+					reply(this.locale.PAY.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
 				}
 			})

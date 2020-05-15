@@ -123,11 +123,12 @@
         "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
     },
     "DAILIES": {
-        "AUTHOR_IN_COOLDOWN": "You can take your dailies again **{{time}}**",
-        "OTHERS_IN_COOLDOWN": "**{{user}}** can take their dailies again **{{time}}**",
-        "CLAIMED": "You have received **{{amount}}** artcoins!\n**{{streaks}}** days of consecutive claims {{poppyBuff}}",
-        "POPPY_BUFF": "with Poppy's Blessing!",
-        "HELP_CLAIMING_OTHERS_DAILIES": "**{{user}}** has received their **{{amount}}** artcoins!\n**{{streaks}}** days of consecutive claims {{poppyBuff}}\n\nThanks for the help, **{{helpedBy}}**! {{emoji}}"
+        "AUTHOR_IN_COOLDOWN": "You can take your dailies again\n:clock1: **{{time}}**",
+        "OTHERS_IN_COOLDOWN": "{{user}} can take their dailies again\n:clock1: **{{time}}**",
+        "CLAIMED": "{{user}} have received\n**{{amount}}** artcoins!",
+        "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
+        "THANKS_HELP": "Thanks for the help!",
+        "STREAK_INCREASING": "Keep it up!"
     },
     "CLI": {
         "GUIDE": "The pattern is similar to my dbkits, so make sure to input the cli command inside a square brackets.",
@@ -211,12 +212,10 @@
             " *wooowieeee*",
             " *flip flip flap!*"
         ],
-        "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later! {0}",
+        "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
         "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
-        "UNALLOWED_ACCESS": "Please do your roll in {0}",
-        "NO_TICKET": "You don't have any **Lucky Tickets!**",
-        "INVALID_AMOUNT": "Please put a valid amount of ticket you want to open. {0}",
-        "INSUFFICIENT_TICKET": "What are you trying to do? you only have {0}**{1} Lucky Tickets**. {2}",
+        "INVALID_AMOUNT": "Please put a valid amount of ticket you want to open.",
+        "INSUFFICIENT_TICKET": "Hey, you don't have enough **Lucky Ticket.** Go get some in my shop! {{emoji}}",
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
     "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n\n{{serverLink}}",
@@ -227,17 +226,16 @@
         "RETURNING": "Hello **{0}**, here's your requested file."
     },
     "GIFT": {
-        "SHORT_GUIDE": "You now able to gift your crush in the server by typing `>gift <user>`! {0}",
+        "SHORT_GUIDE": "You are now able to gift someone you admire!\nStart by typing `{{prefix}}gift <user>`",
         "INVALID_USER": "Sorry, i couldn't find that user.",
         "SELF_TARGETING": "Aw, sadly you can't gift yourself.",
-        "INSUFFICIENT_AMOUNT": "You need **{0}** more of **{1}{2}** to complete the gifting.",
+        "INSUFFICIENT_AMOUNT": "You need **{{item}}** more to complete the gifting.",
         "INVALID_ITEM": "I don't think thats a valid item..",
         "INVALID_AMOUNT": "Please type a proper amount you want to gift!",
-        "SUCCESSFUL": "**{0}** has received {1}**{2} {3}(+{4} reps)** from **{5}**",
-        "FETCHING": "`Fetching gift inventory with id {0}`",
-        "UNAVAILABLE": "You don't have any gifts at the moment.",
-        "GUIDE_TO_PICK_GIFT": "Please type `<amount> <giftname>` to start sending gift.",
-        "CANCELLED": "Gifting cancelled."
+        "DISPLAYGIFT_HEADER": "Your gifts",
+        "SUCCESSFUL": "{{user}} has received\n**{{item}}(+{{gainedReps}} reps)**",
+        "UNAVAILABLE": "You don't have any gift at the moment.",
+        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift."
     },
     "HALLOWEEN_GACHA": {
         "OPENING_WORDS": [
@@ -326,16 +324,14 @@
         "OTHER_USER": "**{0}** is patting **{1}**, how adorable!"
     },
     "PAY": {
-        "SHORT_GUIDE": "Pay-feature let you share your artcoins with other user!\nStart by typing `>pay <user>`",
-        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{0}** to use this feature.",
-        "INVALID_USER": "Sorry, I couldn't find that account.",
-        "SELF_TARGETING": "You can't pay yourself.",
-        "USER_CONFIRMATION": "You are going to transfer your artcoins to **{0}'s** account. Please type the amount.",
-        "CANCELLED": "Transaction cancelled.",
+        "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{{level}}** to use this feature.",
+        "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
+        "USER_CONFIRMATION": "You are going to transfer your artcoins to **{{user}}'s** account. Please type the amount.",
         "INVALID_AMOUNT": "You need to put a valid number.",
-        "EXCEEDING_BALANCE": "Your current balance isn't enough to continue the transaction.",
-        "CONFIRMATION": "{0}**+{1}** -> **{2}'s Balance**?\ntype `y` to confirm your transaction.",
-        "SUCCESSFUL": "Transaction successful.",
+        "INSUFFICIENT_BALANCE": "You need **{{amount}}** more to continue this transaction.",
+        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
+        "SUCCESSFUL": "Transaction successful!",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
     },
     "PIXIV": {
@@ -394,11 +390,10 @@
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
     "GIVE_REPUTATION": {
-        "IN_COOLDOWN": "You can give reputation point again **{0}**",
-        "SHORT_GUIDE": "Who you are going to rep today? {0}",
-        "INVALID_USER": "Sorry, I couldn't find that user.",
-        "SELF_TARGETING": "You can't rep yourself, baka. {0}",
-        "SUCCESSFUL": "**{0}** has been praised by **{1}**."
+        "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",
+        "SHORT_GUIDE": "Your rep is available. Go rep someone you admire! {{emoji}}",
+        "SELF_TARGETING": "You can't rep yourself, baka. {{emoji}}",
+        "SUCCESSFUL": "{{user}} has received\n**+1 reputation point**"
     },
     "REQUEST_PING": "Request received in **{{ping}} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
