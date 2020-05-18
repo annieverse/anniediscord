@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run lint && echo 'Finished.'",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/initial.test.js\"",
-    "start": "pm2 start index.js --no-daemon --max-memory-restart 400M",
+    "start": "pm2 start index.js --no-autorestart",
     "beta": "nodemon index.js",
     "lint": "eslint core"
   },
