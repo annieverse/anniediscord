@@ -18,13 +18,13 @@ class UI {
 
 	async build() {
 		const currentBarPercentage = this.user.exp.current_exp <=  this.user.exp.minexp ? 0 : (this.user.exp.current_exp - this.user.exp.minexp) / this.user.exp.nextexpcurve
-		const adjustedPrimaryColorContrast = this.user.usedTheme === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
+		const adjustedPrimaryColorContrast = this.user.usedTheme.alias === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
 
-		return new Cards({ width: 260, height: 260, theme: this.user.usedTheme, primaryColor: adjustedPrimaryColorContrast, align: `center` })
+		return new Cards({ width: 260, height: 260, theme: this.user.usedTheme.alias, primaryColor: adjustedPrimaryColorContrast, align: `center` })
 		//	Base card
 		.createBase({})
 		//  Add top cover
-		.addCover({ img: await loadAsset(this.user.usedCover), gradient: true })
+		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
 		//	Avatar representative
 		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL), justify: `center`, marginTop: 75 })
 		//	Author and rank name

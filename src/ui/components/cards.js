@@ -136,9 +136,8 @@ class Card {
 		const themeInRgb = Color(this.color.main).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
 
-		grad.addColorStop(0, `transparent`)
-		grad.addColorStop(0.2, semiTransparent)
 		grad.addColorStop(1, this.color.main)
+		grad.addColorStop(0, semiTransparent)
 
 		this.canv
 		.setGlobalAlpha(0.2)
@@ -167,7 +166,7 @@ class Card {
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
 
 		grad.addColorStop(1, this.color.highlight)
-		grad.addColorStop(0.8, semiTransparent)
+		grad.addColorStop(0.5, semiTransparent)
 		grad.addColorStop(0, this.color.main)
 
 		this.canv
