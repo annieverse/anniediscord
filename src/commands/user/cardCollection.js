@@ -21,7 +21,7 @@ class CardCollection extends Command {
 		await this.requestUserMetadata(2)
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		//  Fetch cards type in user's inventory and sort by rarity descendantly
-		const filteredInventory = this.user.inventory.raw.filter(prop => prop.type === `CARDS`).sort((a,b) => (a.rarity < b.rarity))
+		const filteredInventory = this.user.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (a.rarity < b.rarity))
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)}})
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.id, emoji: emoji(`AAUloading`)}})
@@ -50,7 +50,7 @@ class CardCollection extends Command {
 		let str = `\`\`\`\n`
 		for (let i=0; i<inventory.length; i++) {
 			const item = inventory[i]
-			str += `- (${`★`.repeat(item.rarity)}) ${item.name}\n`
+			str += `- (${`★`.repeat(item.rarity_level)}) ${item.name}\n`
 
 		}
 		str += `\`\`\``
