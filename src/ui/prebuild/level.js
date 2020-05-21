@@ -28,12 +28,12 @@ class UI {
 		//	Avatar representative
 		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL), justify: `center`, marginTop: 75 })
 		//	Author and rank name
-		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15 })
+		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 25 })
 		//	Add experience bar
 		.addLinebar({  
 			current: currentBarPercentage, 
 			fillColor: `inherit`, 
-			marginTop: 30,
+			marginTop: 25,
 			width: 200, 
 			height: 12
 		})
