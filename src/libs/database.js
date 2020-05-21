@@ -321,7 +321,8 @@ class Database {
 			    strftime('%d-%m-%Y', registered_at) AS 'on_date',
 			    registered_at 
 			FROM resource_log
-		    ORDER BY registered_at ASC
+		    GROUP by strftime('%d-%m-%Y', registered_at)
+		    ORDER BY registered_at DESC
 			LIMIT ?`
 			, `all`
 			, [day]
