@@ -85,7 +85,7 @@ class Chart {
                             fontColor: this.color.text,
                             fontFamily: `Roboto`,
                             fontSize: 8,
-                            stepSize: 500,
+                            stepSize: 100,
                             beginAtZero: true
                         },
                     }],

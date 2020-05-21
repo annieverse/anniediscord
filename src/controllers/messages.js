@@ -67,7 +67,7 @@ class MessageController {
      *  @returns {Boolean}
      */
     get unauthorizedEnvironment() {
-        return this.bot.dev && this.message.author.permissions.level < 4 ? true : false
+        return this.bot.dev && this.message.author.permissions.level < 1 ? true : false
     }
 
     /**

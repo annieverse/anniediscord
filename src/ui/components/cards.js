@@ -322,7 +322,8 @@ class Card {
 		caption=null, 
 		align=this.align,
 		inline=false,
-		marginTop=20,
+		releaseHook=false,
+		marginTop=this.marginTop,
 		size=null,
 		marginLeft=this.marginLeft,
 		captionMargin=15,
@@ -344,11 +345,12 @@ class Card {
 			.setColor(captionColor)
 			.addText(caption, this._getHorizontalAlign(align), this.reservedSpace+marginTop+captionMargin)
 		}
+		
 		//	Add state for flexible Y positioning
-		if (!inline) {
-			caption ? this.reservedSpace += marginTop+captionMargin : this.reservedSpace += marginTop
+		if (!inline || (releaseHook && inline)) {
+			if (caption) this.reservedSpace += captionMargin
+			this.reservedSpace += marginTop
 		}
-
 
 		return this
 	}

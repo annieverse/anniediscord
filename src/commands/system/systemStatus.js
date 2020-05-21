@@ -15,7 +15,7 @@ class SystemStatus extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
-		this.selectedMetric = `ping`
+		this.selectedMetric = `ping` //  default metric
 		this.dateThreeshold = 30 // 30 days
 	}
 
@@ -23,18 +23,19 @@ class SystemStatus extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji, trueInt, commanifier, bot:{db, ping, uptime, locale:{SYSTEM_STATS}} }) {
+	async execute({ reply, emoji, trueInt, commanifier, bot:{db, ping, uptime} }) {
+		await this.requestUserMetadata(1)
 
 		//  Handle user's custom data category
 		if (this.args[0]) this.selectedMetric = this.args[0]
 		//  Handle user's custom data parameter
 		if (this.args[1]) {
 			const customDate = trueInt(this.args[1])
-			if (!customDate) return reply(SYSTEM_STATS.INVALID_DATE, {color: `red`})
+			if (!customDate) return reply(this.locale.SYSTEM_STATS.INVALID_DATE, {color: `red`})
 			this.dateThreeshold = customDate
 		}
 
-		reply(SYSTEM_STATS.FETCHING, {simplified: true, socket: [emoji(`AAUloading`)]})
+		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `resource usage`, emoji: emoji(`AAUloading`), user: this.user.id} })
 		.then(async loading => {
 
 			const now = moment()
@@ -46,7 +47,12 @@ class SystemStatus extends Command {
 			//  Handle if no data is found for given category
 			if (!history.datasets[0]) {
 				loading.delete()
-				return reply(SYSTEM_STATS.NO_DATA_FOUND, {color: `red`, socket: [this.selectedMetric, emoji(`AnnieCry`)]})
+				return reply(this.locale.SYSTEM_STATS.NO_DATA_FOUND, {color: `red`, 
+					socket: {
+						selectedMetric: this.selectedMetric,
+						emoji: emoji(`AnnieCry`)
+					}
+				})
 			}
 
 			const uptimeDuration = moment.duration(uptime)
@@ -63,22 +69,23 @@ class SystemStatus extends Command {
 			const chartLayer = await new Chart({
 				width: 405,
 				height: 150,
-				labels: [`now`, now.subtract(Math.round(this.dateThreeshold/2), `days`).fromNow(), now.subtract(Math.round(this.dateThreeshold), `days`).fromNow()],
-				datasets: [data[0], ...data],
+				labels: [...history.label],
+				datasets: [...data],
 				theme: `dark`,
 				primaryColor: `crimson`
 			}).render()
 			const cardLayer = new Card({
 				width: 500,
-				height: 320,
+				height: 270,
 				theme: `dark`,
-				primaryColor: `crimson`
+				primaryColor: `crimson`,
+				marginTop: 50
 			})
 			//	Create base card.
 			.createBase({})
 			//	Add two header title on left and right. With captions as well.
-			.addTitle({main: `${title} (${this.dateThreeshold} days)`, caption: `Annie's System Metrics`, align: `left`})
-			.addTitle({main: liveData[this.selectedMetric], caption: `(${percentage <= 0 ? `` : `+`}${percentage.toFixed(2)}%)`, align: `right`, inline: true})
+			.addTitle({main: `${title} (${this.dateThreeshold} days)`, caption: `Annie's System Metrics`, align: `left`, inline: true})
+			.addTitle({main: liveData[this.selectedMetric], caption: `(${percentage <= 0 ? `` : `+`}${percentage.toFixed(2)}%)`, align: `right`, inline: true, releaseHook: true})
 			//	Response Time Chart for the past 24 hours.
 			.addContent({img: chartLayer, marginTop: 20})
 

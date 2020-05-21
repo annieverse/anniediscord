@@ -313,16 +313,15 @@ class Database {
 
 	getResourceData(day=30) {
 		return this._query(`
-			SELECT 
-				AVG(uptime) AS 'uptime',
-				AVG(ping) AS 'ping',
-				AVG(cpu) AS 'cpu',
-				AVG(memory) AS 'memory',
+			SELECT
+				uptime,
+				ping,
+				cpu,
+				memory,
 			    strftime('%d-%m-%Y', registered_at) AS 'on_date',
 			    registered_at 
 			FROM resource_log
-		    GROUP by strftime('%d-%m-%Y', registered_at)
-		    ORDER BY registered_at DESC
+		    ORDER BY registered_at ASC
 			LIMIT ?`
 			, `all`
 			, [day]

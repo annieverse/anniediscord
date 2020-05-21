@@ -473,10 +473,9 @@
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },
     "SYSTEM_STATS": {
-        "FETCHING": "{0} `requesting resource data...`",
-        "NO_DATA_FOUND": "I can't find any data associated with **{0}** field. {1}",
+        "NO_DATA_FOUND": "I can't find any data associated with **{{selectedMetric}}** field. {{emoji}}",
         "INVALID_DATE": "Invalid parameter, baka. Try type `7` as the parameter to get aggregated data for this week.",
-        "INSIGHT": "I can see **{0}%** from previous **last {1} days** datapoint. {2}"
+        "INSIGHT": "I can see **{{percentage}}%** from previous **last {{days}} days** datapoint. {{emoji}}"
     },
     "INTERNAL_SYSTEM": {
         "DATABASE_CONNECTED": "Database successfully connected",
