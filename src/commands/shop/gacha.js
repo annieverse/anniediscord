@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const GUI = require(`../../ui/prebuild/gacha`)
 const closestBelow = require(`../../utils/closestBelow`)
 /**
  * Opens a Lucky Ticket and wins various exclusive rewards!
@@ -18,7 +19,7 @@ class Gacha extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, commanifier, loadAsset, bot:{db} }) {
+    async execute({ reply, emoji, name, trueInt, commanifier, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
     	//  Handle if user doesn't have any lucky ticket to be opened.
@@ -51,8 +52,18 @@ class Gacha extends Command {
             this.loots.push(loot)
         }
 
+        await reply(this.locale.COMMAND.TITLE, {
+            prebuffer: true,
+            image: await new GUI(this.loots, this.drawCounts).build(),
+            simplified: true,
+            socket: {
+                command: `${this.drawCounts} Lucky Tickets`,
+                user: name(this.user.id),
+                emoji: emoji(`lucky_ticket`)
+            }
+        })
         this.fetching.delete()
-        return reply(this.displayDetailedLoots(), {header: `You have opened ${amountToOpen} Lucky Tickets!`})
+        return reply(this.displayDetailedLoots())
     }
 
     /**
@@ -61,11 +72,13 @@ class Gacha extends Command {
      */
     displayDetailedLoots() {
         let str = `\`\`\`ml\n`
-        let rightAlign = this.loots.filter((acc, item) => acc.name.length < item.name.length ? item.name : acc.name)[0]
-        let leftAlign = this.loots.filter((acc, item) => acc.rarity_name.length < item.rarity_name.length ? item.rarity_name : acc.rarity_name)[0]
-        for (let i=0; i<this.loots.length; i++) {
-            const loot = this.loots[i]
-            str += `${` `.repeat(leftAlign-loot.rarity_name.length)}${loot.rarity_name} | ${loot.quantity}x ${loot.name}${` `.repeat(rightAlign-loot.name.length)}}\n`
+        let items = this.loots.map(item => item.name)
+        let uniqueItems = [...new Set(items)]
+        for (let i=0; i<uniqueItems.length; i++) {
+            const item = this.loots.filter(item => item.name === uniqueItems[i])
+            const amount = item.map(item => item.quantity)
+            const receivedAmount = amount.reduce((acc, current) => acc + current)
+            str += `[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}\n`
         }
         str += `\`\`\``
         return str
@@ -84,6 +97,14 @@ class Gacha extends Command {
         const fitInRanges = closestBelow(weightsPool, rng)
         const item = rewardsPool.filter(item => item.weight === fitInRanges)
         return item[0]
+    }
+
+    /**
+     * Determine user's gacha counts
+     * type {number}
+     */
+    get drawCounts() {
+        return !this.args[0] ? 1 : 10
     }
 
 }
