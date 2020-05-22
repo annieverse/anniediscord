@@ -55,8 +55,7 @@ class MessageController {
             if (this.isCommandMessage) {
                 const commandId = `CMD_${this.message.author.id}`
                 const commandCooldown = 5
-                const stillCooldown = await this.isCooldown(commandId)
-                if (stillCooldown) return this.message.channel.send(`**Your next command in ${moment(stillCooldown).add(commandCooldown, `seconds`).diff(moment(), `seconds`)}s**`)
+                if (await this.isCooldown(commandId)) return
                 this.setCooldown(commandId, commandCooldown)
                 return new Command({bot:this.bot, message:this.message}).run()           
             }

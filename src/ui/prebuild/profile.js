@@ -65,12 +65,12 @@ class UI {
 		//  Username
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`center`)
-			.setTextFont(`${this.resizeLongNickname(this.user.user.username)} RobotoBold`)
+			.setTextFont(`${this.resizeLongNickname(this.user.user.username)} roboto-bold`)
 			.addText(this.user.user.username, startPos_x + 70, 272)
 
 		//  User's Title
 		card.canv.setColor(this.user.rank.color)
-			.setTextFont(`7pt RobotoThin`)
+			.setTextFont(`7pt roboto`)
 			.addText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
 		//  Verified/Blue Badge if any
@@ -83,7 +83,7 @@ class UI {
 			.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setColor(card._resolveColor(`white`))
-			.setTextFont(`8pt RobotoBold`)
+			.setTextFont(`8pt roboto-bold`)
 			.addText(this.user.rank.name, startPos_x + 215, startPos_y + 264)
 			.restore()
 
@@ -94,7 +94,7 @@ class UI {
 		const descriptionMarginBetweenParagraph = 13
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`left`)
-			.setTextFont(`8pt Roboto`)
+			.setTextFont(`8pt roboto`)
 		if (bio.length > 0 && bio.length <= 51) {
 			card.canv.addText(this.formatString(bio, 1).first, descriptionMarginLeft, descriptionMarginTop)
 				.addText(this.formatString(bio, 1).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
@@ -114,13 +114,13 @@ class UI {
 		//  Footer Components [Heart, Level, Fame/Reputation Points]
 		card.canv.setTextAlign(`center`)
 			.setColor(this.user.rank.color)
-			.setTextFont(`17pt RobotoMedium`)
+			.setTextFont(`17pt roboto`)
 			.addText(commanifier(this.user.likecount), 70, 370)
 			.addText(this.user.exp.level, 160, 370)
 			.addText(commanifier(this.user.reputations.total_reps), 250, 370)
 
 			.setColor(card.color.text)
-			.setTextFont(`7pt Roboto`)
+			.setTextFont(`7pt roboto`)
 			.addText(`HEARTS`, 70, 390)
 			.addText(`LEVEL`, 160, 390) 
 			.addText(`FAME`, 250, 390) 
