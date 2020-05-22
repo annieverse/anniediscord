@@ -138,7 +138,7 @@ module.exports.help = {
 	aliases: [`purchase`, `redeem`],
 	description: `Buy any purchasable items our shop!`,
 	usage: `buy <ItemID/ItemName>`,
-	group: `shop`,
+	group: `Shop`,
 	permissionLevel: 0,
 	multiUser: false
 }
