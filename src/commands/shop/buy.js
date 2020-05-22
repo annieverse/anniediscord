@@ -15,6 +15,7 @@ class Buy extends Command {
 			|| item.item_id === parseInt(this.fullArgs)
 			|| item.alias === this.fullArgs.toLowerCase().replace(` `, `_`)
 		}
+		this.displayedItemPreview = [1, 3, 9]
     }
 
     /**
@@ -31,6 +32,7 @@ class Buy extends Command {
 		if (!this.fullArgs) return reply(this.locale.BUY.SHORT_GUIDE, {socket: {prefix: this.prefix}})
 		//  Handle if item with the given keyword cannot be found
 		const item = purchasableItems.filter(this.itemFilter)[0]
+		this.item = item
 		if (!item) return reply(this.locale.BUY.INVALID_ITEM, {color: `red`})
 		//  Handle if the item doesn't allow user to multi stack and user already have it
 		const selectedItemInsideInventory = this.user.inventory.raw.filter(key => key.item_id === item.item_id)
@@ -54,7 +56,7 @@ class Buy extends Command {
 					item: `[${this.amount}x]${item.name}`
 				},
 				color: `golden`,
-				image: previewItem,
+				image: this.displayedItemPreview.includes(item.item_id) ? previewItem : null,
 				prebuffer: true
 			})
 			//  Skip the ask-for-amount page
@@ -85,10 +87,10 @@ class Buy extends Command {
 				this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
 					socket: {
 						total: `${emoji(paymentItem.alias)}${commanifier(this.total)}`,
-						item: `[${commanifier(this.amount)}x]${item.name}`
+						item: `${emoji(item.alias)} [${item.type_name}] ${commanifier(this.amount)}x ${item.name}`
 					},
 					color: `golden`,
-					image: previewItem,
+					image: this.displayedItemPreview.includes(item.item_id) ? previewItem : null,
 					prebuffer: true
 				})
 				this.askAmount.delete()
@@ -119,7 +121,7 @@ class Buy extends Command {
 				reply(this.locale.BUY.SUCCESSFUL, {
 					color: `lightgreen`,
 					socket: {
-						item: `[${commanifier(this.amount)}x]${item.name}`,
+						item: `${emoji(item.alias)} [${item.type_name}] ${commanifier(this.amount)}x ${item.name}`,
 						emoji: emoji(`AnnieSmile`)
 					}
 				})

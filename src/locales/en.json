@@ -255,7 +255,7 @@
         "LANDING": "**Hi {{user}}!** I'm Annie and how I can help you?\n\n**• Recommended Commands**\nTry my most popular commands among of our user! they are sorted based on our collected command usage data.\n{{recommendedCommands}}\n\n**• Discover more**\nIf you are looking for comprehensive list, take a look at Commandpedia by pressing to the :book: button on this message.\n\nUnable to find what you are looking for? don't be worry! my developers are always available to answer your questions right away.\n{{serverLink}}",
         "COMMANDPEDIA": {
             "HEADER": "Below you can see all the commands I know\nFor further assistance, please have a visit to my {{serverLink}}\n\n{{commandList}}",
-            "USAGE_EXAMPLES": "Use **{{prefix}}help <CommandName>** to get information about a command.\nUse **{{prefix}}help <CategoryName>** to get information about a category."
+            "USAGE_EXAMPLES": "Use **{{prefix}}help <CommandName>** to get information about a command."
         },
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
     },
