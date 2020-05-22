@@ -1,6 +1,7 @@
 const Permission = require(`../libs/permissions`)
 const Points = require(`../libs/points`)
 const Command = require(`./commands`)
+const moment = require(`moment`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -51,8 +52,14 @@ class MessageController {
          *  -----------------------------------------------------------------
          */
         if (minimal) {
-            if (this.isCommandMessage) return this._runTask(`COMMAND`, new Command({bot:this.bot, message:this.message}).run(), 5)
-            return
+            if (this.isCommandMessage) {
+                const commandId = `CMD_${this.message.author.id}`
+                const commandCooldown = 5
+                const stillCooldown = await this.isCooldown(commandId)
+                if (stillCooldown) return this.message.channel.send(`**Your next command in ${moment(stillCooldown).add(commandCooldown, `seconds`).diff(moment(), `seconds`)}s**`)
+                this.setCooldown(commandId, commandCooldown)
+                return new Command({bot:this.bot, message:this.message}).run()           
+            }
         }
         if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
         if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`dm done`), 5)
@@ -143,7 +150,7 @@ class MessageController {
         const fn = `[MessageController.setCooldown()]`
         if (time <= 0) throw new TypeError(`${fn} "time" parameter must above 0.`)
         this.logger.debug(`${fn} registering ${label} with ${time}s timeout`)
-        return await this.bot.db.redis.set(label, 1, `EX`, time)
+        return await this.bot.db.redis.set(label, new Date(), `EX`, time)
     }
 
 
@@ -162,7 +169,9 @@ class MessageController {
         const fn = `[MessageController._runTask()]`
         if (!task) throw new TypeError(`${fn} parameter "task" should be filled with either a Function/Method/Class`)
         const embedLabel = `${label}_${this.userId}`
+        const isCooldownBool = await this.isCooldown(embedLabel)
         if (await this.isCooldown(embedLabel)) return
+        console.debug(isCooldownBool)
         task
         this.setCooldown(embedLabel, timeout)
      }

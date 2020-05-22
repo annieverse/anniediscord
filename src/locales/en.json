@@ -203,18 +203,15 @@
     },
     "GACHA": {
         "OPENING_WORDS": [
-            " *{0} is opening their precious card*",
-            " *{0} seems really curious*",
-            " *{0}, may the RNG bless you*",
-            " *{0}, close your eyes*",
-            " *{0}, do you know what's lying behind this card?*",
-            " *I feel strange feelings*",
-            " *wooowieeee*",
-            " *flip flip flap!*"
+            "{{emoji}} *{{user}} is opening their precious card!*",
+            "{{emoji}} *{{user}} is opening the gate to sea of despair*",
+            "{{emoji}} *{{user}}, may the RNG bless you*",
+            "{{emoji}} *{{user}}, do you know what's lying behind this card?*"
         ],
         "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
         "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
         "INVALID_AMOUNT": "Please put a valid amount of ticket you want to open.",
+        "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls.",
         "INSUFFICIENT_TICKET": "Hey, you don't have enough **Lucky Ticket.** Go get some in my shop! {{emoji}}",
         "COOLING_DOWN": "Your next roll still in cooldown."
     },

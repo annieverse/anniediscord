@@ -40,27 +40,30 @@ class UI {
 	async singleRoll() {
 		this.canvas_x = 200
 		this.canvas_y = 240
+		const item = this.container[0]
 
 		//  Initialize new canvas
 		this.canv = new Canvas(this.canvas_x, this.canvas_y)
-		//  Set checkpoint before rendering image
-		this.canv.save()
-		if (this.container[0].type_name === `Cards`) {
+		//  Init save points
+		this.setSavepoints(1)
+
+		if (item.type_name === `Cards`) {
 			//  Add base shadow
 			this.shadowGround()
 			this.removeShadowLayer()
 			//  Load item asset
-			this.canv.addImage(await loadAsset(this.container[0].alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
-			//  Render
-			return this.canv.toBuffer()
+			this.canv.addImage(await loadAsset(item.alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
 		} else {
 			//   Add base shape
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 			//  Load item assets
 			await this.itemVisual(55, 50, 100, 100, 50)
 			await this.itemText(100, 170)
-			return this.canv.toBuffer()
 		}      
+
+		//  Add flare overlay for item with rarity above 3
+		if (item.rarity_level > 3) this.canv.addImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`), 0, 0, this.canvas_x, this.canvas_y)
+		return this.canv.toBuffer()
 	}
 
 	/**
@@ -107,6 +110,12 @@ class UI {
 
 		await row(`top`)
 		await row(`bottom`)
+
+		this.canv.restore()
+		//  Add flare overlay for item with rarity above 3
+		const rareRarities = this.container.filter(item => item.rarity_level > 3).map(item => item.rarity_level)
+		const highestRarityInPool = Math.max.apply(Math, rareRarities)
+		if (highestRarityInPool > 3) this.canv.addImage(await loadAsset(`rarityflare_${highestRarityInPool}`), 0, 0, this.canvas_x, this.canvas_y)
 		return this.canv.toBuffer()
 	}
 

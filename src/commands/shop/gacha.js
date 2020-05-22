@@ -19,17 +19,16 @@ class Gacha extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, commanifier, bot:{db} }) {
+    async execute({ reply, emoji, name, trueInt, commanifier, choice, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
     	//  Handle if user doesn't have any lucky ticket to be opened.
-    	if (!this.user.inventory.lucky_ticket) return reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
-            socket: {emoji: emoji(`AnnieDead`)},
-            color: `red`
-        })
+    	if (!this.user.inventory.lucky_ticket) return reply(this.locale.GACHA.INSUFFICIENT_TICKET, {socket: {emoji: emoji(`AnnieDead`)}, color: `red`})
     	const amountToOpen = this.args[0] ? trueInt(this.args[0]) : 1 
     	//  Handle if amount be opened is invalid
     	if (!amountToOpen) return reply(this.locale.GACHA.INVALID_AMOUNT, {color: `red`, socket: {emoji: emoji(`AnnieCry`)} })
+        //  Handle if amount to be opened is out of range (1/10)
+        if (![1, 10].includes(amountToOpen)) return reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {color: `red`})
     	//  Handle if amount to be opened is higher than the owned ones
     	if (this.user.inventory.lucky_ticket < amountToOpen) return reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
     		socket: {emoji: emoji(`AnnieDead`)},
@@ -38,12 +37,11 @@ class Gacha extends Command {
     	const rewardsPool = await db.getGachaRewardsPool()
     	//  Handle if no rewards are available to be pulled from gacha.
     	if (!rewardsPool.length) return reply(this.locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: emoji(`AnnieCry`)} })
-        this.fetching = await reply(this.locale.COMMAND.FETCHING, {
+        this.fetching = await reply(choice(this.locale.GACHA.OPENING_WORDS), {
             simplified: true,
             socket: {
-                command: `gacha`,
-                user: this.user.id,
-                emoji: emoji(`AAUloading`)
+                user: name(this.user.id),
+                emoji: emoji(`AnnieStabby`)
             }
         })
         //  Registering loot
@@ -52,35 +50,44 @@ class Gacha extends Command {
             this.loots.push(loot)
         }
 
+        //  Subtract user's lucky tickets
+        await db.updateInventory({itemId: 71, value: amountToOpen, operation: `-`, userId: this.user.id})
+        //  Storing items into user's inventory
+        for (let i=0; i<this.loots.length; i++) {
+            const item = this.loots[i]
+            await db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id})
+        }
+
+        //  Displaying result
         await reply(this.locale.COMMAND.TITLE, {
             prebuffer: true,
             image: await new GUI(this.loots, this.drawCounts).build(),
             simplified: true,
             socket: {
-                command: `${this.drawCounts} Lucky Tickets`,
+                command: `has opened ${this.drawCounts} Lucky Tickets!`,
                 user: name(this.user.id),
                 emoji: emoji(`lucky_ticket`)
             }
         })
         this.fetching.delete()
-        return reply(this.displayDetailedLoots())
+        return reply(this.displayDetailedLoots(emoji), {simplified: true})
     }
 
     /**
      * Aggregate and prettify this.loots into a readable list.
+     * @param {function} emojiParser refer to Pistachio.emoji()
      * @returns {string}
      */
-    displayDetailedLoots() {
-        let str = `\`\`\`ml\n`
+    displayDetailedLoots(emojiParser) {
+        let str = ``
         let items = this.loots.map(item => item.name)
         let uniqueItems = [...new Set(items)]
         for (let i=0; i<uniqueItems.length; i++) {
             const item = this.loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
-            str += `[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}\n`
+            str += `${emojiParser(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
         }
-        str += `\`\`\``
         return str
     }
 
@@ -91,9 +98,15 @@ class Gacha extends Command {
      * @returns {object}
      */
     getLoot(rewardsPool=[]) {
+        const fn = `[Gacha.getLoot()]`
         const totalProbability = rewardsPool.reduce((total, item) => total + item.weight, 0)
         const weightsPool = rewardsPool.map(item => item.weight)
-        const rng = Math.random() * totalProbability
+        let rng = Math.random() * totalProbability
+        //  Handle if rng is hitting infinity
+        if (rng === `-infinity`) {
+            throw new RangeError(`${fn} variable 'rng' has reached -infinite. Now it will fallback rng's value to 100.`)
+            rng = 100
+        }
         const fitInRanges = closestBelow(weightsPool, rng)
         const item = rewardsPool.filter(item => item.weight === fitInRanges)
         return item[0]
