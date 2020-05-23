@@ -48,7 +48,7 @@
     "jimp": "^0.9.3",
     "keyv": "^4.0.0",
     "minimist": ">=1.2.2",
-    "mocha": "^7.0.0",
+    "mocha": "^7.2.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
     "node-cmd": "^3.0.0",
