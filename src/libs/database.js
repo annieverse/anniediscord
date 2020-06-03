@@ -1572,77 +1572,90 @@ class Database {
     getUserRelations(userId=``) {
 		return this._query(`
 			SELECT 
-			r1.type AS "myRelation", r2.type AS "theirRelation",
-			userId1 as "myUserId", userId2 AS "theirUserId"
-			FROM relationship r
-			JOIN relationshiptype r1
-			ON r.relationType1 = r1.typeId
-			JOIN relationshiptype r2
-			ON r.relationType2 = r2.typeId
-			WHERE r.userId1 = ? AND relationType1 > 0 AND relationType2 > 0
-				
-			UNION
-			
-			SELECT 
-			r1.type AS "myRelation", r2.type AS "theirRelation",
-			userId2 as "myUserId", userId1 AS "theirUserId"
-			FROM relationship r
-			JOIN relationshiptype r1
-			ON r.relationType2 = r1.typeId
-			JOIN relationshiptype r2
-			ON r.relationType1 = r2.typeId
-			WHERE r.userId2 = ? AND relationType1 > 0 AND relationType2 > 0`
+				relationships.relationship_id AS "relationship_id",
+				relationships.name AS "relationship_name",
+
+				user_relationships.user_id_A AS "author_user_id",
+				user_relationships.user_id_B AS "assigned_user_id"
+			FROM user_relationships
+
+			INNER JOIN relationships
+			ON relationships.relationship_id = user_relationships.relationship_id
+
+			WHERE 
+				user_relationships.user_id_A = ?
+				AND user_relationships.relationship_id > 0
+				AND user_relationships.relationship_id IS NOT NULL`
 			, `all`
-			, [userId, userId]
+			, [userId]
 		)
     }
 
 	/**
 	 * Pull available relationship types
-	 * @type {QueryResult}
+	 * @returns {QueryResult}
 	 */
-    get relationshipTypes() {
+    getAvailableRelationships() {
 		return this._query(`
-			SELECT * FROM relationshiptype
-			ORDER BY typeId ASC`
+			SELECT * FROM relationships
+			ORDER BY relationship_id ASC`
 			, `all`	
 		)
     }
 
-	async setRelationship(relType, userId) {
-		var res = await sql.all(`SELECT * FROM relationship WHERE userId1 = "${this.id}" AND userId2 = "${userId}"`)
-
-		if (res.length>0) {
-			return sql.run(`
-                UPDATE relationship
-                SET relationType2 = ${relType} 
-                WHERE userId1 = "${this.id}" AND userId2 = "${userId}"
-            `)
+	/**
+	 * Registering new user's relationship
+	 * @param {string} [userA=``] Author's user id
+	 * @param {string} [userB=``] Target user's id to be assigned
+	 * @param {number} [relationshipId=0] assigned relationship's role id
+	 * @returns {QueryResult}
+	 */
+    async setUserRelationship(userA=``, userB=``, relationshipId=0) {
+		const fn = `[Database.setUserRelationship()]`
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id)
+				SELECT $userA, $userB, $relationshipId
+				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
+				, `run`
+				, {userA: userA, userB: userB, relationshipId: relationshipId}	
+				, `Registering new relationship for ${userA} and ${userB}`
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_relationships
+				SET relationship_id = ?
+				WHERE 
+					user_id_A = ?
+					AND user_id_B = ?`
+				, `run`
+				, [relationshipId, userA, userB]
+			)
 		}
-		res = await sql.all(`SELECT * FROM relationship WHERE userId2 = "${this.id}" AND userId1 = "${userId}"`)
 
-		if (res.length>0) {
-			return sql.run(`
-                UPDATE relationship
-                SET relationType1 = ${relType} 
-                WHERE userId2 = "${this.id}" AND userId1 = "${userId}"
-            `)
-		}
-		return sql.run(`
-                INSERT INTO relationship
-                (userId1, userId2, relationType2)
-                VALUES (?, ?, ?)`,
-			[this.id, userId, relType]//relationStart
+		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
+		return true
+    }
+
+	/**
+	 * Removing user's relationship
+	 * @param {string} [userA=``] Author's user id.
+	 * @param {string} [userB=``] Target user's id to be assigned.
+	 * @returns {QueryResult}
+	 */
+    removeUserRelationship(userA=``, userB=``) {
+		return this._query(`
+            DELETE FROM user_relationships
+            WHERE 
+            	user_id_A = ?
+            	AND user_id_B = ?`
+			, `run`
+			, [userA, userB]
+			, `Removing ${userA} and ${userB} relationship.`
 		)
-	}
-
-
-	deleteRelationship(userId) {
-		return sql.run(`DELETE FROM relationship
-						WHERE (userId1 = "${this.id}" AND userId2 = "${userId}")
-						OR (userId2 = "${this.id}" AND userId1 = "${userId}")`)
-	}
-
+    }
 
 	/** -------------------------------------------------------------------------------
 	 *  Pre-V6 Migrations Methods
@@ -1663,6 +1676,8 @@ class Database {
 		await this._query(`DROP TABLE IF EXISTS user_posts`, `run`)
 		await this._query(`DROP TABLE IF EXISTS user_inventories`, `run`)
 		await this._query(`DROP TABLE IF EXISTS user_socialmedias`, `run`)
+		await this._query(`DROP TABLE IF EXISTS user_relationships`, `run`)
+		await this._query(`DROP TABLE IF EXISTS relationships`, `run`)
 		await this._query(`DROP TABLE IF EXISTS items`, `run`)
 		await this._query(`DROP TABLE IF EXISTS item_gacha`, `run`)
 		await this._query(`DROP TABLE IF EXISTS item_types`, `run`)
@@ -1836,6 +1851,36 @@ class Database {
 		   , `Verifying table user_socialmedias`
 	   )
 
+	   await this._query(`CREATE TABLE IF NOT EXISTS user_relationships (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'user_id_A' TEXT,
+		   'user_id_B' TEXT,
+		   'relationship_id' TEXT,
+
+		   PRIMARY KEY(user_id_A, user_id_B),
+
+		   FOREIGN KEY(user_id_A)
+		   REFERENCES users(user_id)
+		   		ON DELETE CASCADE
+		   		ON UPDATE CASCADE
+
+		   FOREIGN KEY(user_id_B)
+		   REFERENCES users(user_id)
+		   		ON DELETE CASCADE
+		   		ON UPDATE CASCADE
+
+		   FOREIGN KEY(relationship_id)
+		   REFERENCES relationships(relationship_id)
+		   		ON DELETE CASCADE
+		   		ON UPDATE CASCADE
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table user_relationships`
+	   )
+
 	   /*
 	   await this._query(`CREATE TABLE IF NOT EXISTS user_quest_data (
 		   'user_id' TEXT NOT NULL UNIQUE,
@@ -1901,6 +1946,24 @@ class Database {
 			, []
 			, `Verifying table guild_configurations`
 		)	
+
+	   /**
+		* --------------------------
+		* RELATIONSHIP TREES
+		* --------------------------
+		*/
+	   await this._query(`CREATE TABLE IF NOT EXISTS relationships (
+
+		   'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		   'relationship_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+		   'name' TEXT
+
+		   )`
+		   , `run`
+		   , []
+		   , `Verifying table relationships`
+	   )
 
 	   /**
 		* --------------------------
@@ -2490,6 +2553,22 @@ class Database {
 		)
 
 		/**  --------------------------
+		  *  Delete duplicate items in item_inventory.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM item_inventory
+			WHERE rowid NOT IN (
+				SELECT min(rowid)
+				FROM item_inventory
+				GROUP BY item_id, user_id
+			)`
+			, `run`
+			, []
+			, `Remove duplicate items in item_inventory.`
+		)
+
+		/**  --------------------------
 		  *  USER INVENTORIES
 		  *  --------------------------
 		  */
@@ -2850,6 +2929,57 @@ class Database {
 			, `Migrating userbadges(slotanime) into user_inventories`
 		)
 
+
+		/**
+		 * ---------------------------------------------------------
+		 * Registering relationships
+		 * ---------------------------------------------------------
+		 */
+		await this._query(`
+			INSERT INTO relationships (
+				relationship_id,
+				name
+			)
+			SELECT
+				typeId,
+				type
+			FROM relationshiptype`
+			, `run`
+			, []
+			, `Migrating relationshiptype into relationships`
+		)
+		await this._query(`
+			INSERT INTO user_relationships (
+				user_id_A,
+				user_id_B,
+				relationship_id
+			)
+			SELECT
+				userId1,
+				userId2,
+				relationType2
+			FROM relationship
+			WHERE relationType2 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating relationship(A) into user_relationships`
+		)
+		await this._query(`
+			INSERT INTO user_relationships (
+				user_id_A,
+				user_id_B,
+				relationship_id
+			)
+			SELECT
+				userId2,
+				userId1,
+				relationType1
+			FROM relationship
+			WHERE relationType1 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating relationship(B) into user_relationships`
+		)
 
 		/**  --------------------------
 		  *  USER SOCIAL MEDIAS

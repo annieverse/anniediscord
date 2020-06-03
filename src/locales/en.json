@@ -386,6 +386,17 @@
         "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
+    "RELATIONSHIP": {
+        "GUIDE": "Start add someone to your relationship trees!",
+        "SET_TO_SELF": "You can't add a relationship to yourself, baka. {{emoji}}",
+        "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
+        "UNAVAILABLE": "There is no assignable relationship at the moment.",
+        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** now is \n{{user}}'s {{role}}!",
+        "SUCCESSFULLY_REMOVED": "Your relationship with **{{user}}** has been removed.",
+        "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
+        "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
+        "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them."
+    },
     "GIVE_REPUTATION": {
         "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",
         "SHORT_GUIDE": "Your rep is available. Go rep someone you admire! {{emoji}}",

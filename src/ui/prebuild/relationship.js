@@ -44,10 +44,10 @@ class UI {
         //  Main Content
         for (let i=0; i<Math.min(this.relationships.length, 9); i++) {
             const rel = this.relationships[i]
-            const user = this.bot.users.get(rel.theirUserId)
+            const user = this.bot.users.get(rel.assigned_user_id)
             const relAvatar = user ? await urlToBuffer(user.displayAvatarURL) : await loadAsset(`error`)
-            const relName = user ? this.nameParser(user.id) : rel.theirUserId
-            this.listEntry(relName, relAvatar, rel.theirRelation, 30, 70 + i*33)
+            const relName = user ? this.nameParser(user.id) : rel.assigned_user_id
+            this.listEntry(relName, relAvatar, rel.relationship_name, 30, 70 + i*33)
         }
 
         //  Footer
