@@ -59,8 +59,9 @@ class MessageController {
          *  -----------------------------------------------------------------
          */
         if (this.isDirectMessage) return
+        if (this.isModmailMessage) return
         if (await this.isFeedMessage()) return
-        console.debug(`yeah here`)
+
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
     }
@@ -115,28 +116,19 @@ class MessageController {
         return true
     }
 
+    /**
+     * Check if user sent message from modmail channel
+     * @returns {Boolean}
+     */
+    get isModmailMessage(){
+        return this.message.channel.parentID == `507048639747850240`
+    }
 
     /**
      *  -------------------------------------------------------------------------------
      *  Private Methods
      * -------------------------------------------------------------------------------
      */
-    /**
-     * A task wrapper.
-     * @param {String} [label=``] Define label for the cooldown. (Example: MSG)
-     * @param {Function/Method/Class} task define the main task that going to be executed
-     * @param {Number} [timeout=0] define the timeout number
-     */
-    async _runTask(label=``, task, timeout=0) {
-        const fn = `[MessageController._runTask()]`
-        if (!task) throw new TypeError(`${fn} parameter "task" should be filled with either a Function/Method/Class`)
-        const embedLabel = `${label}_${this.userId}`
-        const isCooldownBool = await this.isCooldown(embedLabel)
-        if (await this.isCooldown(embedLabel)) return
-        console.debug(isCooldownBool)
-        task
-        this.setCooldown(embedLabel, timeout)
-     }
 
     /**
      * Assign user's permission level to <Message> properties.
