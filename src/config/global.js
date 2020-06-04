@@ -47,8 +47,7 @@ config.PLUGINS = [`ACTIVE_EXP`, `ACTIVE_ARTCOINS`]
 
 
 config.PERMISSIONS = require(`./permissions`)
-config.EXP = require(`./exp`)
-config.CURRENCY = require(`./currency`)
+config.POINTS = require(`./points`)
 
 
 module.exports = config

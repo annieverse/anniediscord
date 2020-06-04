@@ -1,5 +1,5 @@
 const Permission = require(`../libs/permissions`)
-const Points = require(`../libs/points`)
+const Points = require(`./points`)
 const Command = require(`./commands`)
 const moment = require(`moment`)
 
@@ -7,7 +7,6 @@ const moment = require(`moment`)
  * @typedef {ClientPrimaryProps}
  * @property {Object} [client={}] Current <AnnieClient> instance
  * @property {Object} [message={}] Current <Message> instance
- * 
  */
 
 /**
@@ -25,15 +24,12 @@ class MessageController {
         this.permission = data.bot.permissions
         this.userId = data.message.author.id
         this.logger = data.bot.logger
-
-        data.bot.registerNode(Points, `points`)
     }
 
     /**
      * Running default workflow. In the newer version, each tasks has cooldown checks.
-     * @since 6.0.0
-     * @param {Boolean} minimal set this to true to make it only run command's tasks.
-     * @returns {Classes}
+     * @param {boolean} [minimal=false] set this to true to make it only run command-type module.
+     * @returns {class}
      */
     async run(minimal=false) {
         /** -----------------------------------------------------------------
@@ -49,23 +45,24 @@ class MessageController {
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
+         *  -- minimal
          *  -----------------------------------------------------------------
          */
-        if (minimal) {
-            if (this.isCommandMessage) {
-                const commandId = `CMD_${this.message.author.id}`
-                const commandCooldown = 5
-                if (await this.isCooldown(commandId)) return
-                this.setCooldown(commandId, commandCooldown)
-                return new Command({bot:this.bot, message:this.message}).run()           
-            }
-        }
-        if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
-        if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`dm done`), 5)
-        if (this.isFeedMessage()) return this._runTask(`FEED`, console.log(`feed done`), 5)
+        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
+        //  Limit modules in minimal state.
+        if (minimal) return
 
-        //  Automatically using [Points Module] when no module requirements are met
-        return this._runTask(`POINTS`, console.log(`feed done`), 60)
+        /** 
+         *  -----------------------------------------------------------------
+         *  Module Selector
+         *  -- extended
+         *  -----------------------------------------------------------------
+         */
+        if (this.isDirectMessage) return
+        if (await this.isFeedMessage()) return
+        console.debug(`yeah here`)
+        //  Automatically executing [Points Controller] when no other module requirements are met
+        return new Points({bot:this.bot, message:this.message})
     }
 
     /**
@@ -97,7 +94,7 @@ class MessageController {
      * 	@returns {Boolean}
      */
     get isCommandMessage() {
-        return this.message.content.startsWith(this.bot.prefix)
+        return this.message.content.startsWith(this.bot.prefix) && this.message.content.length > (this.bot.prefix.length + 1)
     }
 
     /**
@@ -106,7 +103,7 @@ class MessageController {
      * 	@returns {Boolean}
      */
     async isFeedMessage() {
-        const config = this.bot.db.getGuildConfigurations(this.message.guild.id)
+        const config = await this.bot.db.getGuildConfigurations(this.message.guild.id)
         // False if guild hasn't set any custom configurations for the guild
         if (!config.length) return false
         const feedsConfig = config.filter(el => el.type === `FEEDS`)
@@ -116,40 +113,6 @@ class MessageController {
         if (!feedsConfig.channel_id != this.message.guild.channel)
 
         return true
-    }
-
-
-    /**
-     * -------------------------------------------------------------------------------
-     *  COOLDOWN STATE checks
-     * -------------------------------------------------------------------------------
-     */
-
-    /**
-     *  Check if user's action still in cooling-down state.
-     *  @since 6.0.0
-     *  @param {String} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
-     * 	@returns {Boolean}
-     */
-    async isCooldown(label=``) {
-        const fn = `[MessageController.isCooldown()]`
-        if (this.bot.plugins.includes(`DISABLE_COOLDOWN`)) return false
-        this.logger.debug(`${fn} checking ${label}`)
-        return await this.bot.db.redis.get(label)
-    }
-
-    /**
-     *  Set a cooldown for user
-     *  @since 6.0.0
-     *  @param {String} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
-     *  @param {Number} [time=0] timeout in seconds
-     * 	@returns {Boolean}
-     */
-    async setCooldown(label=``, time=0) {
-        const fn = `[MessageController.setCooldown()]`
-        if (time <= 0) throw new TypeError(`${fn} "time" parameter must above 0.`)
-        this.logger.debug(`${fn} registering ${label} with ${time}s timeout`)
-        return await this.bot.db.redis.set(label, new Date(), `EX`, time)
     }
 
 

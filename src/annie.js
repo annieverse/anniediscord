@@ -6,8 +6,7 @@ const {
     PORT,
     PLUGINS,
     PERMISSIONS,
-    EXP,
-    CURRENCY
+    POINTS
 } = require(`./config/global`)
 const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./commands/loader`)
@@ -65,18 +64,25 @@ class Annie extends Discord.Client {
         this.permission = PERMISSIONS
 
         /**
+         * The default prop for accessing the global point configurations.
+         * @since 6.0.0
+         * @type {external:Object}
+         */
+        this.points = POINTS
+
+        /**
          * The default prop for accessing the default EXP configurations.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.exp = EXP
+        this.exp = POINTS.exp
 
         /**
          * The default prop for accessing the default Currency configurations.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.currency = CURRENCY
+        this.currency = POINTS.exp
 
         /**
          * The default prop for accessing languages.
@@ -220,6 +226,35 @@ class Annie extends Discord.Client {
         this.commands = res
         if (!log) return
         return logger.info(`${res.totalFiles} Commands has successfully registered (${getBenchmark(initTime)})`)
+    }
+
+
+    /**
+     *  Check if user's action still in cooling-down state.
+     *  @since 6.0.0
+     *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
+     *  @returns {boolean}
+     */
+    async isCooldown(label=``) {
+        const fn = `[Annie.isCooldown()]`
+        if (this.plugins.includes(`DISABLE_COOLDOWN`)) return false
+        logger.debug(`${fn} checking ${label}`)
+        return await this.db.redis.get(label)
+    }
+
+
+    /**
+     *  Set a cooldown for user
+     *  @since 6.0.0
+     *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
+     *  @param {number} [time=0] timeout in seconds
+     *  @returns {boolean}
+     */
+    async setCooldown(label=``, time=0) {
+        const fn = `[Annie.setCooldown()]`
+        if (time <= 0) logger.error(`${fn} "time" parameter must above 0.`)
+        logger.debug(`${fn} registering ${label} with ${time}s timeout`)
+        return await this.db.redis.set(label, new Date(), `EX`, time)
     }
 
 }

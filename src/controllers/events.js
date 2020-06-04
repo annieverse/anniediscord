@@ -10,7 +10,7 @@ module.exports = annie => {
 	annie.on(`warn`, async (e) => reqEvent(`warn`)(annie, e, message_object))
 	annie.on(`message`, async(message) => {
 		message_object = message
-		new MessageController({bot:annie, message}).run(true)
+		new MessageController({bot:annie, message}).run(false)
 	})
 
 	annie.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(annie, guild))

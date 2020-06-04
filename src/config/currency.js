@@ -2,22 +2,22 @@ let config = {}
 
 /**
  *  This will set the base artcoins that user will get.
- *  @DEFAULT 1 - 5 Artcoins
- *  @NUMBER
+ *  @default 1 - 5 Artcoins
+ *  @type {array}
  */
-config.totalGain = Math.round(Math.random() * (6 - 1 + 1)) + 1
+config.baseAmount = [1, 5]
 
 /**
  *  This will set the base number for artcoins multiplier.
- *  @DEFAULT 1
- *  @NUMBER
+ *  @default 1
+ *  @type {number}
  */
 config.factor = 1
 
 /**
  *  This will define the artcoins gain interval between the message to avoid spam.
- *  @DEFAULT 30 seconds
- *  @NUMBER
+ *  @default 30 seconds
+ *  @type {number}
  */
 config.cooldown = 30000
 

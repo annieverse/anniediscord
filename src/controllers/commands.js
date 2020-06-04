@@ -1,4 +1,5 @@
 const { readdirSync } = require(`fs`)
+const moment = require(`moment`)
 const Pistachio = require(`../libs/pistachio`)
 /**
  * @typedef {ClientPrimaryProps}
@@ -16,6 +17,12 @@ class CommandController {
         this.bot = data.bot
         this.message = data.message
         this.logger = data.bot.logger
+
+        /**
+         * The default identifier for current instance.
+         * @type {string}
+         */
+        this.moduleID = `CMD_${data.message.author.id}`
 
         /**
          * The default prop for accessing command's prefix.
@@ -37,6 +44,18 @@ class CommandController {
          * @type {String}
          */	
 		this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
+
+        /**
+         * The default locale properties for command controller.
+         * @type {object}
+         */ 
+        this.locale = data.bot.locale[`en`]
+
+        /**
+         * The default property for command cooldown.
+         * @type {number}
+         */ 
+        this.cooldownTime = data.bot.points.cooldown
     }
 
 
@@ -46,26 +65,27 @@ class CommandController {
      */
     async run() {
         const fn = `[CommandController.run()] USER_ID:${this.message.author.id}`   
+        const now = moment()
         const initTime = process.hrtime()
         this.commandProperties = this.getCommandProperties(this.commandName)
 
         // Ignore if no files are match with the given command name
-        if (!this.commandProperties) return this.logger.debug(`${fn} Invalid command`)
+        if (!this.commandProperties) return
         // Ignore if user's permission level doesn't met the minimum command's permission requirement
         if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
-   
         const Command = this._findFile(this.commandProperties.name)
         if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
         
-        const commandComponents = {
-            bot: this.bot,
-            message: this.message,
-            commandProperties: this.commandProperties
-        }
+        const commandComponents = {bot: this.bot, message: this.message, commandProperties: this.commandProperties}
         const PistachioComponents = new Pistachio(commandComponents)
-        await new Command(commandComponents).execute(PistachioComponents)
-        const cmdFinishTime = this.bot.getBenchmark(initTime)
 
+        //  Handle if command still in cooldown
+
+
+        await new Command(commandComponents).execute(PistachioComponents)
+
+
+        const cmdFinishTime = this.bot.getBenchmark(initTime)
         const cmdUsageData = {
             guild_id: this.message.guild.id,
             user_id: this.message.author.id,
@@ -77,7 +97,6 @@ class CommandController {
         this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
         this.bot.db.recordsCommandUsage(cmdUsageData)
     }
-
 
 	/**
 	 * Browser through filedisk and Find command file with the given keyword 
@@ -105,7 +124,6 @@ class CommandController {
 		return null
     }
     
-
 	/**
 	 * Fetch command's properties from registered commands in client properties.
 	 * @since 6.0.0
@@ -120,7 +138,6 @@ class CommandController {
 		return res.help
     }
     
-
 	get isNotEnoughPermissionLevel() {
 		return this.commandProperties.permissionLevel > this.message.author.permissions.level
 	}

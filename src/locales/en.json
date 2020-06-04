@@ -86,7 +86,8 @@
     },
     "COMMAND": {
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
-        "TITLE": "{{emoji}} **| {{user}}'s {{command}}**"
+        "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
+        "STILL_COOLDOWN": "**{{user}}**, your next command is ready in **{{timeLeft}}s**"
     },
     "CARDCOLLECTION_AUTHOR_EMPTY": "You don't have any card collection. Go test your luck with my gacha system!",
     "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection.",
@@ -281,8 +282,10 @@
         "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
         "INVALID_USER": "Sorry, i couldn't find that user."
     },
-    "LEVELUP": "{0} {1} has leveled up to **{2}**!\nhere's your **{3} {4} ** reward.",
-    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!\n here's your **{4} {5} ** reward. ",
+    "LEVELUP": {
+        "REGULAR": "**{{user}}** has leveled up to **LV{{gainedLevel}}**!\nhere's your {{emoji}} **{{gainedReward}}** reward. ",
+        "JUMPING": "**{{user}}** has leveled up to **LV{{gainedLevel}}**, awesome!\n here's your {{emoji}} **{{gainedReward}}** reward. "
+    },
     "MANAGE_PROFILE": {
         "ALREADY_DIPLAYED": "Sorry, but you are Already displaying that {0}",
         "BADGE_MENU": "Your current badges are:\n{0}\nYour available badges are:\n{1}\nPlease indicate the badge space and what badge, that you want to display; Like this `1 Fire Alpaca`",

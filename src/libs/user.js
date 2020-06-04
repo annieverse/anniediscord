@@ -79,7 +79,7 @@ class User {
 
 			//  Fetching exp
 			const experienceData = await db.getUserExp(user.id)
-			const parsedExp = new Experience().xpFormula(experienceData.current_exp)
+			const parsedExp = new Experience({bot: this.bot, message:this.message}).xpFormula(experienceData.current_exp)
 			user.exp = {
 				raw: experienceData,
 				current_exp: experienceData.current_exp,

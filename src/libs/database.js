@@ -263,8 +263,8 @@ class Database {
 	 * @param {string} [guildId=``] Target guild id 
 	 * @returns {QueryResult}
 	 */
-	getGuildConfigurations(guildId=``) {
-		this._query(`
+	async getGuildConfigurations(guildId=``) {
+		return this._query(`
 			SELECT * FROM guild_configurations
 			WHERE guild_id = ? `
 			, `all`
@@ -1042,6 +1042,24 @@ class Database {
 	}
 
 	/**
+	 * 	Nullify user's exp booster in `user_exp` table.
+	 *  @param {string} [userId=``] target user's id to be nullified to
+	 *  @returns {QueryResult}
+	 */
+	nullifyExpBooster(userId=``) {
+		return this._query(`
+			UPDATE user_exp 
+            SET 
+            	booster_id = NULL,
+            	booster_activated_at = NULL
+            WHERE user_id = ?`
+            , `run`
+            , [userId]
+            , `EXP booster for USER_ID ${userId} has been nullified.`
+        )
+	}
+
+	/**
 	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
 	 * 	@param {Number|UserArtcoins} artcoins ac
 	 *  @param {Number|UserGachaTicket} lucky_ticket ticket
@@ -1183,14 +1201,6 @@ class Database {
 			WHERE userId = ${this.id}`)
 		this._transforInventory({ itemId: newvalue.itemId})
 	}
-
-	updateExpBooster(newvalue) {
-		sql.run(`UPDATE usercheck 
-            SET expbooster = "${newvalue}",
-                expbooster_duration = ${Date.now()}
-            WHERE userId = "${this.id}"`)
-	}
-
 
 	/**
 	 * 	Updating dailies metadata. Supports method chaining.
