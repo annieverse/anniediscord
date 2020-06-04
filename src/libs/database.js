@@ -214,45 +214,7 @@ class Database {
 			, [userId, itemId]
 		)
 	}
-
-	/**
-	 * 	Standard low method for writing to limitedShopRoles
-	 *  @deprecated
-	 *  @param {Number|ID} itemId item id
-	 *  @param {Number} value amount to be stored
-	 *  @param {Symbol} operation `+` for (sum), `-` for subtract and so on.
-	 *  @param {String|ID} userId user id
-	 */
-	async _limitedShopRoles({ roleId, value = 0, operation = `update`, userId = this.id }) {
-		//	Return if roleId is not specified
-		if (!roleId) return { stored: false }
-		let res = {
-			//	Insert if no data entry exists.
-			insert: await this._query(`
-				INSERT INTO limitedShopRoles (user_id, role_id)
-				SELECT $userId, $roleId
-				WHERE NOT EXISTS (SELECT 1 FROM limitedShopRoles WHERE role_id = $roleId AND user_id = $userId)`
-				, `run`
-				, { $roleId: roleId, $userId: userId}
-			),
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
-				UPDATE limitedShopRoles
-				SET remove_by = ?
-				WHERE role_id = ? AND user_id = ?`
-				, `run`
-				, [value, roleId, userId]
-			)
-		}
-
-		logger.info(`[._limitedShopRoles][User:${userId}] (ITEMID:${roleId})(QTY:${value}) UPDATE:${res.update.stmt.changes} INSERT:${res.insert.stmt.changes} with operation(${operation})`)
-		return { stored: true }
-	}
-
-	getRemoveByLTSRole(roleId){
-		return this._query(`SELECT remove_by FROM limitedShopRoles WHERE user_id = ? AND role_id = ?`,`get`,[this.id,roleId])
-	}
-
+	
 	/** -------------------------------------------------------------------------------
 	 *  Guild Methods
 	 *  -------------------------------------------------------------------------------
@@ -328,48 +290,13 @@ class Database {
 			, [day]
 		)
 	}
-
-	/**
-	 * Get total count of the commands logs from commands_log table.
-	 * @returns {number}
-	 */
-	async getCommandQueryCounts() {
-		const res = await this._query(`
-			SELECT COUNT(command_alias) AS total
-			FROM commands_log`
-			, `get`
-			, []
-			, `Fetching commands_log`
-		)
-		return res.total
-	}
-
+	
 
 	/** -------------------------------------------------------------------------------
 	 *  User's manager methods
 	 *  -------------------------------------------------------------------------------
 	 */	
-
-	/**
-	 * Insert into user table if id is not registered.
-	 * @param {string} [userId=``] User's discord id.
-	 * @param {string} [userName=``] User's discord name. 
-	 * @returns {QueryResult}
-	 */
-	async verifyingNewUser(userId=``, userName=``) {
-		const fn = `[Database.verifyingNewUser()]`
-		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		const res = await this._query(`
-			INSERT OR IGNORE INTO users (user_id, name)
-			VALUES (?, ?)`
-			, `run`
-			, [userId, userName,]
-		)
-
-		if (res.insert) logger.info(`${fn} Registering new USER_ID ${userId}`)
-		return res
-	}
-
+	
 	/**
 	 * Delete a user from user table entries.
 	 * @param {string} [userId=``] User's discord id.
@@ -454,28 +381,7 @@ class Database {
 		logger.info(`${fn} ${stmtType} (TYPE:${type})(URL:${url}) | USER_ID ${userId}`)
 		return true
 	}
-
-	/**
-	 * Set user's in_use stickers to zero
-	 * @param {string} [userId=``] User's discord id.
-	 * @returns {QueryResult}
-	 */
-	disableSticker(userId=``){
-		return this._query(`
-			UPDATE user_inventories
-			SET in_use = 0
-			WHERE 
-				user_id = ? 
-				AND item_id IN (
-					SELECT item_id
-					FROM items
-					WHERE type = 'STICKERS'
-				)`
-			, `run`
-			, [userId]
-		)
-	}
-
+	
 	/**
 	 * Adding user's reputation points into `user_reputations` table
 	 * @param {number} [amount=0] amount to be added
@@ -544,6 +450,222 @@ class Database {
 		return res.timestamp
 	}
 
+	/**
+	 * MODMAIL Plugin
+	 */
+    writeToThread(user_id, mod_id, guild_id, thread_id, text){
+        this._query(`
+			INSERT INTO modmail_thread_messages (registered_at, user_id, mod_id, guild_id, thread_id, message)
+			VALUES (datetime('now'), ?, ?, ?, ?, ?)`
+			, `run`
+			, [user_id, mod_id, guild_id, thread_id, text]
+			)
+	}
+
+	getBlockedUsers(){
+		return this._query(`
+				SELECT user_id
+				FROM modmail_blocked_users
+				WHERE blocked = 1`
+				, `all`
+				, []
+				,`getting blocked users`
+			)
+	}
+
+	getBlockedUserReason(user_id){
+		return this._query(`
+				SELECT reason
+				FROM modmail_blocked_users
+				WHERE user_id = ?`
+				, `get`
+				, [user_id]
+				,`getting blocked user's reason`
+			)
+	}
+
+	getBlockedUsersList(){
+		return this._query(`
+			SELECT user_id
+			FROM modmail_blocked_users`
+			, `all`
+			, []
+			,`getting blocked users`
+		)
+	}
+
+	registerUserInBlockList(user_id){
+		this._query(`
+			INSERT INTO modmail_blocked_users (registered_at, user_id, blocked)
+			VALUES (datetime('now'), ?, 0)`
+			, `run`
+			, [user_id]
+			)
+	}
+
+	blockUser(user_id, reason = `The Moderator didn't supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.`){
+		this._query(`
+			UPDATE modmail_blocked_users 
+			SET blocked = 1 AND reason = ?
+			WHERE user_id = ?`
+			, `run`
+			, [user_id, reason]
+			, `blocking user`
+			)
+	}
+
+	unblockUser(user_id){
+		this._query(`
+			UPDATE modmail_blocked_users 
+			SET blocked = 0
+			WHERE user_id = ?`
+			, `run`
+			, [user_id]
+			)
+	}
+
+	isblockedUser(id){
+		this._query(`
+				SELECT *
+				FROM modmail_blocked_users
+				WHERE user_id = ?
+				AND blocked = 0`
+				, `get`
+				, [id]
+				,`checking if user is blocked`
+			)
+	}
+
+	async alreadyOpenThread(id, dm = true){
+		let search
+		if (dm) {
+			search = await this._query(`
+				SELECT *
+				FROM modmail_threads
+				WHERE user_id = ?
+				AND status = 'open'
+				ORDER BY thread_id`
+				, `get`
+				, [id]
+				,`getting open thread`
+			)
+		} else if (!dm) {
+			search = await this._query(`
+				SELECT *
+				FROM modmail_threads
+				WHERE channel = ?
+				AND status = 'open'
+				ORDER BY thread_id`
+				, `get`
+				, [id]
+				,`getting open thread`
+			)
+		}
+		if (!search) search = `none`
+		return search
+	}
+
+	updateChannel(id, threadId){
+		this._query(`
+				UPDATE modmail_threads
+				SET channel = ?
+				WHERE thread_id = ?`
+				, `run`
+				, [id, threadId]
+			)
+	}
+
+	getlogsForUser(userId){
+		return this._query(`
+			SELECT *
+			FROM modmail_threads
+			WHERE user_id = ?
+			AND status = 'closed' AND is_anonymous = 0
+			ORDER BY thread_id`
+			, `all`
+			, [userId]
+			,`getting logs for user`
+		)
+	}
+
+	closeThread(thread_id){
+		this._query(`
+		UPDATE modmail_threads SET status = 'closed'
+		WHERE thread_id = ?`
+		, `run`
+		, [thread_id]
+		)
+	}
+
+	makeNewThread(user_id, guild_id, thread_id, status, is_anonymous){
+		try {
+			this._query(`
+			INSERT INTO modmail_threads (registered_at, user_id, guild_id, thread_id, status, is_anonymous)
+			VALUES (datetime('now'), ?, ?, ?, ?, ?)`
+			, `run`
+			, [user_id, guild_id, thread_id, status, is_anonymous]
+			)
+		} catch (error) {
+			thread_id = makeRandomId()
+			this.makeNewThread(user_id, guild_id, thread_id, status, is_anonymous)
+		}
+		
+		function makeRandomId(){
+			var result = ``
+			var characters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
+			var charactersLength = characters.length
+			for ( var i = 0; i < 20; i++ ) {
+				result += characters.charAt(Math.floor(Math.random() * charactersLength))
+			}
+			return result
+		}
+	}
+
+	deleteLog(id) {
+		this._query(`
+			DELETE FROM modmail_thread_messages
+			WHERE thread_id = ?`
+			, `run`
+			, [id]
+			,`delete logs for specific thread`
+		)
+		this._query(`
+			DELETE FROM modmail_threads
+			WHERE thread_id = ?`
+			, `run`
+			, [id]
+			,`delete logs for specific thread`
+		)
+	}
+
+	getLogByThreadId(id){
+		return this._query(`
+			SELECT *
+			FROM modmail_thread_messages
+			WHERE thread_id = ?`
+			, `all`
+			, [id]
+			,`getting logs for specific thread`
+		)
+	}
+	
+	getThreadTicket(id){
+		return this._query(`
+			SELECT *
+			FROM modmail_threads
+			WHERE thread_id = ?`
+			, `get`
+			, [id]
+			,`getting thread data for specific thread`
+		)
+	}
+
+	/**
+	 * 
+	 * END OF MODMAIL PLUGIN
+	 * 
+	 */
+
 	/** -------------------------------------------------------------------------------
 	 *  User's Experience Points Method
 	 *  -------------------------------------------------------------------------------
@@ -578,60 +700,7 @@ class Database {
 			, [amount, userId]
 		)
 	}
-
-	/**
-	 * Subtracts user's experience points into `user_exp` table
-	 * @param {number} [amount=0] amount to be added
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	subtractUserExp(amount=0, userId=``) {
-		return this._query(`
-			UPDATE user_exp 
-			SET current_exp = current_exp - ?
-			WHERE user_id = ?`
-			, `run`
-			, [amount, userId]
-		)
-	}
-
-	/**
-	 * Reset user exp from user_exp's entries
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	resetUserExp(userId=``) {
-		return this._query(`
-			DELETE FROM user_exp
-			WHERE user_id = ?`
-			, `run`
-			, [userId]
-			, `Resetting exp for USER_ID ${userId}`
-		)
-	}
-
-	/**
-	 * Resetting user exp booster.
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	resetUserExpBooster(userId=``) {
-		return this._query(`
-			UPDATE user_exp
-			SET 
-				exp_booster = NULL,
-				exp_booster_activated_at = NULL
-			WHERE userId = ?`
-			, `run`
-			, [userId]
-		)
-	}
-
-	/** -------------------------------------------------------------------------------
-	 *  Moderation methods
-	 *  -------------------------------------------------------------------------------
-	 */	
-
+	
 	/**
 	 * Pull user's strike records if presents.
 	 * @param {string} [userId=``] target user's discord id
@@ -833,54 +902,7 @@ class Database {
 			, [userId]
 		)
 	}
-
-	/**
-	 * Pull user's recent post. Only fetch one row.
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getUserRecentPost(userId=``) {
-		return this._query(`
-			SELECT *
-			FROM user_posts
-			WHERE user_id = ?
-			ORDER BY registered_at DESC`
-			, `get`
-			, [userId]
-		)
-	}
-
-	/**
-	 * Pull user's total likes from aggregated data in `user_posts` table
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getUserTotalLikes(userId=``) {
-		return this._query(`
-			SELECT SUM(total_likes)
-			FROM user_posts
-			WHERE user_id = ?`
-			, `all`
-			, [userId]
-		)
-	}	
-
-	/**
-	 * Pull the most recent trending post. Fetched `10 rows` at a time.
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getRecentlyTrendingPost(userId=``) {
-		return this._query(`
-			SELECT *
-			FROM user_posts
-			ORDER BY updated_at DESC
-			LIMIT 10`
-			, `get`
-			, [userId]
-		)
-	}
-
+	
 	/**
 	 * Registering new user's post
 	 * @param {UserPost} meta required parameters to register the entry
@@ -1040,63 +1062,13 @@ class Database {
 			, `Fetching gacha's rewards pool`
 		)
 	}
-
-	/**
-	 * 	Event Manager toolkit. Sending package of reward to user. Supports method chaining.
-	 * 	@param {Number|UserArtcoins} artcoins ac
-	 *  @param {Number|UserGachaTicket} lucky_ticket ticket
-	 *  @deliverRewardItems
-	 */
-	async deliverRewardItems({artcoins, candies, lucky_ticket}) {
-		((new Date()).getMonth() == 9) ? await this.storeCandies(candies) : await this.storeArtcoins(artcoins)
-		await this.addLuckyTickets(lucky_ticket)
-		return this
-	}
-
-	/**
-	 * 	Add user artcoins. Supports method chaining.
-	 * 	@param {Number} value of the artcoins to be given
-	 * 	@param {String|ID} userId of the user id
-	 * 	@storeArtcoins
-	 */
-	async storeCandies(value) {
-		await this.updateInventory({ itemId: 102, value: value, operation: `+` })
-		return this
-	}
-
-
+	
 	updateSkin(newvalue) {
 		sql.run(`UPDATE userdata 
             SET interfacemode ="${newvalue}" 
             WHERE userId = ${this.id}`)
 	}
-
-	get getStickers() {
-		return this._query(`SELECT * FROM itemlist,item_inventory 
-			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
-			, `all`
-			, [this.id, `Sticker`]
-		)
-	}
-
-	get activeSticker() {
-		return this._query(`SELECT sticker
-			FROM userdata
-			WHERE userId = ?`
-			, `get`
-			, [this.id]
-		)
-	}
-
-	setSticker(data) {
-		return this._query(`UPDATE userdata 
-            SET sticker = ?
-			WHERE userId = ?
-		`
-		,`run`
-		,[data,this.id])
-	}
-
+	
 	setBadge({slot = `slot1`, item = null}){
 		return this._query(`UPDATE userbadges 
             SET ${slot} = ?
@@ -1105,49 +1077,7 @@ class Database {
 			, `run`
 			, [item, this.id])
 	}
-
-	get getCovers() {
-		return this._query(`SELECT * FROM itemlist,item_inventory 
-			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
-			, `all`
-			, [this.id, `Covers`]
-		)
-	} 
-
-	get getBadges() {
-		return this._query(`SELECT * FROM itemlist,item_inventory 
-			WHERE itemlist.itemId = item_inventory.item_id AND item_inventory.user_id = ? AND itemlist.type = ?`
-			, `all`
-			, [this.id, `Badges`]
-		)
-	}
-
-	get activeCover(){
-		return this._query(`SELECT cover
-			FROM userdata
-			WHERE userId = ?`
-			,`get`
-			,[this.id]
-			)
-	}
-
-	get activeBadges() {
-		return this._query(`SELECT *
-			FROM userbadges
-			WHERE userId = ?`
-			, `get`
-			, [this.id]
-		)
-	}
-
-	setCover(data){
-		this._query(`UPDATE userdata 
-            SET cover = ?
-			WHERE userId = ?`
-			,`run`
-			,[data,this.id])
-	}
-
+	
 	updateCover(newvalue) {
 		sql.run(`UPDATE userdata 
             SET cover = "${newvalue.alias}"
@@ -1190,81 +1120,7 @@ class Database {
                 expbooster_duration = ${Date.now()}
             WHERE userId = "${this.id}"`)
 	}
-
-
-	/**
-	 * 	Updating dailies metadata. Supports method chaining.
-	 * 	@param {Object} dly_metadata returned metadata from daily.js
-	 *  @updateDailies
-	 */
-	updateDailies(dly_metadata) {
-		//  Update daily date
-		this._query(`
-			UPDATE usercheck
-            SET totaldailystreak = ${dly_metadata.countStreak},
-            lastdaily = "${Date.now()}"
-			WHERE userId = ?`
-			, `run`
-			, [this.id]
-		)
-		//  Update dailies reward
-		this.storeArtcoins(dly_metadata.amount + dly_metadata.bonus)
-		return this
-	}
-
-
-	async updateReps(dly_metadata) {
-		//  Update daily date
-		sql.run(`UPDATE usercheck
-                     SET repcooldown = "${Date.now()}"
-                     WHERE userId = ${this.id}`)
-
-		await this.addReputations(dly_metadata.amount, dly_metadata.target_id)
-	}
-
-	resetExperiencePoints(id = this.id) {
-		this._query(`
-                UPDATE userdata
-                SET currentexp = 0
-                WHERE userId = ?`
-            ,`run`
-            , [id])
-	}
-
-
-	/**
-	 * 	Delete user inventory entries. Supports method chaining.
-	 * 	@resetInventory
-	 */
-	resetInventory() {
-		this._query(`
-			DELETE FROM item_inventory
-			WHERE user_id = ?`
-			, `run`
-			, [this.id]
-		)
-		return this
-	}
-
-
-	/**
-	 * 	Withdrawing specific item from user inventory. Supports method chaining.
-	 * 	@param {Number} value as amount to be withdraw
-	 * 	@param {Number} item_id as item id reference
-	 * 
-	 */
-	async withdrawItem(value, item_id) {
-		await this._query(`
-			UPDATE item_inventory 
-            SET quantity = quantity - ?
-			WHERE item_id = ? AND user_id = ?`
-			, `run`
-			, [value, item_id, this.id]
-		)
-		return this
-	}
-
-
+	
 	/**
 	 * 	Set default db author. Supports method chaining.
 	 * 	@param {String|ID} id user id
@@ -1274,16 +1130,7 @@ class Database {
 		this.id = id
 		return this
 	}
-
-	registerDailyFeaturedPost({ messageId ,timestamp = 0 }) {
-		sql.run(`
-                INSERT INTO daily_featured_post
-                (message_id, delete_by)
-                VALUES (?, ?)`,
-			[messageId, timestamp]
-		)
-	}
-
+	
 	getRemoveBy(remove_by_date){
 		return this._query(`SELECT * FROM daily_featured_post WHERE delete_by <= ?`,`all`,[remove_by_date])
 	}
@@ -1291,59 +1138,7 @@ class Database {
 	deleteRecord(remove_by_date){
 		return this._query(`DELETE FROM daily_featured_post WHERE delete_by <= ?`,`run`,[remove_by_date])
 	}
-
-	get luckyTicketDropRates() {
-		return sql.all(`SELECT DISTINCT drop_rate FROM luckyticket_rewards_pool WHERE availability = 1`)
-	}
-
-	get halloweenBoxDropRates() {
-		return sql.all(`SELECT DISTINCT drop_rate FROM halloween_rewards_pool WHERE availability = 1`)
-	}
-
-	lootGroupByRate(rate, table = `luckyticket_rewards_pool`) {
-		return sql.get(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM()`)
-	}
-
-	lootGroupByRateForHalloween(rate, table = `luckyticket_rewards_pool`) {
-		return sql.all(`SELECT * FROM ${table} WHERE drop_rate = ${rate} AND availability = 1 ORDER BY RANDOM() LIMIT 2`)
-	}
-
-	/**
-     * Subtracting tickets by result of roll_type().
-	 * @param {Number} value amount to be subtracted
-     * @substract_ticket
-    */
-	withdrawLuckyTicket(value = 0) {
-		this.updateInventory({itemId: 71, value: value, operation:`-`})
-	}
-
-	/**
-     * Subtracting halloween box by result of roll_type().
-	 * @param {Number} value amount to be subtracted
-     * @substract_ticket
-    */
-	withdrawHalloweenBox(value = 0) {
-		this.updateInventory({ itemId: 111, value: value, operation: `-` })
-	}
-
-	/**
-     * Subtracting halloween bags by result of roll_type().
-	 * @param {Number} value amount to be subtracted
-     * @substract_ticket
-    */
-	withdrawHalloweenBag(value = 0) {
-		this.updateInventory({ itemId: 110, value: value, operation: `-` })
-	}
-
-	/**
-     * Subtracting halloween bags by result of roll_type().
-	 * @param {Number} value amount to be subtracted
-     * @substract_ticket
-    */
-	withdrawHalloweenChest(value = 0) {
-		this.updateInventory({ itemId: 109, value: value, operation: `-` })
-	}
-
+	
 	//	Count total user's collected cards.
 	async totalCollectedCards(userId = this.id) {
 		let data = await this._query(`SELECT * FROM item_inventory WHERE user_id = ?`, `get`, [userId])
@@ -1366,32 +1161,7 @@ class Database {
 		data = filterCardFromInventory(data)
 		return Object.keys(data).length
 	}
-
-
-	/**
-     *  Storing rolled items straight into user inventory
-     *  @param {Object} obj as parsed object of roll metadata (require baking in `._detransformInventory()`).
-	 *  @param {String|ID} userid for userId consistency, better to insert the id.
-     */
-	async storingUserGachaMetadata(obj = {}, userid=this.id) {
-		for (let key in obj) {
-			let data = obj[key]
-			await this.updateInventory({itemId: data.itemId, value: data.quantity, userId:userid})
-		}
-	}
-
-	/**
-     *  Storing rolled items straight into user inventory
-     *  @param {Object} obj as parsed object of roll metadata (require baking in `._detransformInventory()`).
-	 *  @param {String|ID} userid for userId consistency, better to insert the id.
-     */
-	async withdrawUserCraftMetadata(obj = {}, userid = this.id) {
-		for (let key in obj) {
-			let data = obj[key]
-			await this.updateInventory({ itemId: data.itemId, value: data.quantity, operation:`-`, userId: userid })
-		}
-	}
-
+	
 	/**
      * Adding user reputation points
      * @param {Integer} amount Updated/added amount of user's reputation points
@@ -1404,25 +1174,7 @@ class Database {
                                             END
                             WHERE userId = "${userId}"`)
 	}
-
-	/**
-	* Enables user's notification. User will start receive notifications after executing it
-	* @param {number} [amount=0] amount of like to be registered
-	* @param {string} [postUrl=``] of source post url
-	* @param {string} [userId=``] of target user id
-	* @returns {QueryResult}
-	*/
-	addLike(amount=``, postUrl=``, userId=``) {
-		return this._query(`
-            UPDATE user_posts 
-            SET total_likes = total_likes + ? 
-			WHERE url = ? AND user_id = ?`
-			, `run`
-			, [amount, postUrl, userId]
-			, `USER_ID ${userId} receives ${amount} likes`	
-		)
-	}
-
+	
 	/**
 	* Enables user's notification. User will start receive notifications after executing it.
 	* @param {string} [userId=``] of target user id
@@ -1552,18 +1304,7 @@ class Database {
 	pullEventData() {
 		return sql.all(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(async parsed => parsed)
 	}
-
-	get retrieveTimeData(){
-		let dateRightNow = (new Date()).getTime()
-		let foreverDate = (new Date(`Jan 5, 2021 15:37:25`)).getTime()
-		return this._query(`SELECT * 
-			FROM limitedShopRoles 
-			WHERE remove_by != ? AND remove_by <= ? 
-			ORDER BY remove_by ASC LIMIT 50`
-			,`all`
-			,[foreverDate,dateRightNow])
-	}
-
+	
 	/**
 	 * Fetch user's relationship info
 	 * @param {string} [userId=``] target user id
@@ -1694,6 +1435,51 @@ class Database {
 	 * @returns {boolean}
 	 */
 	async verifyingTables() {
+		
+		/**
+		 * --------------------------
+		 * Modmail Plugin
+		 * --------------------------
+		 */
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_threads (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'thread_id' REAL UNIQUE NOT NULL,
+			'status' TEXT NOT NULL,
+			'is_anonymous' INTEGER NOT NULL DEFAULT 0,
+			'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`
+            , `run`
+			, []
+			, `Verifying table modmail_threads`)
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_thread_messages (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'mod_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'thread_id' TEXT NOT NULL,
+			'message' TEXT NOT NULL)`
+            , `run`
+			, []
+			, `Verifying table modmail_thread_messages`)
+
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_blocked_users (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL UNIQUE,
+			'blocked' INTEGER DEFAULT 0,
+			'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`
+            , `run`
+			, []
+			, `Verifying table modmail_blocked_users`)
+			
+		/**
+		 * 
+		 * END OF MODMAIL PLUGIN
+		 * 
+		 */
+
 		/**
 		 * --------------------------
 		 * USER TREE

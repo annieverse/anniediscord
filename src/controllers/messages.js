@@ -61,9 +61,11 @@ class MessageController {
             }
         }
         if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
-        if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`dm done`), 5)
+        if (this.isModmailMessage) return this._runTask(`MODMAIL`, console.log(`modmail done`), 5)
+        if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`command done`), 5)
         if (this.isFeedMessage()) return this._runTask(`FEED`, console.log(`feed done`), 5)
-
+    
+        
         //  Automatically using [Points Module] when no module requirements are met
         return this._runTask(`POINTS`, console.log(`feed done`), 60)
     }
@@ -118,6 +120,13 @@ class MessageController {
         return true
     }
 
+    /**
+     * Check if user sent message from modmail channel
+     * @returns {Boolean}
+     */
+    get isModmailMessage(){
+        return this.message.channel.parentID == `507048639747850240`
+    }
 
     /**
      * -------------------------------------------------------------------------------

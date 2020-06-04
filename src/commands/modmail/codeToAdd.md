@@ -1,3 +1,271 @@
+This code below is the creation statements for the SQLite tables needed.
+```javascript
+		/**
+		 * --------------------------
+		 * Modmail Plugin
+		 * --------------------------
+		 */
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_threads (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'thread_id' REAL UNIQUE NOT NULL,
+			'status' TEXT NOT NULL,
+			'is_anonymous' INTEGER NOT NULL DEFAULT 0,
+			'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`
+            , `run`
+			, []
+			, `Verifying table modmail_threads`)
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_thread_messages (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'mod_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'thread_id' TEXT NOT NULL,
+			'message' TEXT NOT NULL)`
+            , `run`
+			, []
+			, `Verifying table modmail_thread_messages`)
+
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS modmail_blocked_users (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL UNIQUE,
+			'blocked' INTEGER DEFAULT 0,
+			'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`
+            , `run`
+			, []
+			, `Verifying table modmail_blocked_users`)
+			
+		/**
+		 * 
+		 * END OF MODMAIL PLUGIN
+		 * 
+		 */
+```
+
+These are the functions needed to interact with the db
+```javascript
+    /**
+	 * MODMAIL Plugin
+	 */
+    writeToThread(user_id, mod_id, guild_id, thread_id, text){
+        this._query(`
+			INSERT INTO modmail_thread_messages (registered_at, user_id, mod_id, guild_id, thread_id, message)
+			VALUES (datetime('now'), ?, ?, ?, ?, ?)`
+			, `run`
+			, [user_id, mod_id, guild_id, thread_id, text]
+			)
+	}
+
+	getBlockedUsers(){
+		return this._query(`
+				SELECT user_id
+				FROM modmail_blocked_users
+				WHERE blocked = 1`
+				, `all`
+				, []
+				,`getting blocked users`
+			)
+	}
+
+	getBlockedUserReason(user_id){
+		return this._query(`
+				SELECT reason
+				FROM modmail_blocked_users
+				WHERE user_id = ?`
+				, `get`
+				, [user_id]
+				,`getting blocked user's reason`
+			)
+	}
+
+	getBlockedUsersList(){
+		return this._query(`
+			SELECT user_id
+			FROM modmail_blocked_users`
+			, `all`
+			, []
+			,`getting blocked users`
+		)
+	}
+
+	registerUserInBlockList(user_id){
+		this._query(`
+			INSERT INTO modmail_blocked_users (registered_at, user_id, blocked)
+			VALUES (datetime('now'), ?, 0)`
+			, `run`
+			, [user_id]
+			)
+	}
+
+	blockUser(user_id, reason = `The Moderator didn't supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.`){
+		this._query(`
+			UPDATE modmail_blocked_users 
+			SET blocked = 1 AND reason = ?
+			WHERE user_id = ?`
+			, `run`
+			, [user_id, reason]
+			, `blocking user`
+			)
+	}
+
+	unblockUser(user_id){
+		this._query(`
+			UPDATE modmail_blocked_users 
+			SET blocked = 0
+			WHERE user_id = ?`
+			, `run`
+			, [user_id]
+			)
+	}
+
+	isblockedUser(id){
+		this._query(`
+				SELECT *
+				FROM modmail_blocked_users
+				WHERE user_id = ?
+				AND blocked = 0`
+				, `get`
+				, [id]
+				,`checking if user is blocked`
+			)
+	}
+
+	async alreadyOpenThread(id, dm = true){
+		let search
+		if (dm) {
+			search = await this._query(`
+				SELECT *
+				FROM modmail_threads
+				WHERE user_id = ?
+				AND status = 'open'
+				ORDER BY thread_id`
+				, `get`
+				, [id]
+				,`getting open thread`
+			)
+		} else if (!dm) {
+			search = await this._query(`
+				SELECT *
+				FROM modmail_threads
+				WHERE channel = ?
+				AND status = 'open'
+				ORDER BY thread_id`
+				, `get`
+				, [id]
+				,`getting open thread`
+			)
+		}
+		if (!search) search = `none`
+		return search
+	}
+
+	updateChannel(id, threadId){
+		this._query(`
+				UPDATE modmail_threads
+				SET channel = ?
+				WHERE thread_id = ?`
+				, `run`
+				, [id, threadId]
+			)
+	}
+
+	getlogsForUser(userId){
+		return this._query(`
+			SELECT *
+			FROM modmail_threads
+			WHERE user_id = ?
+			AND status = 'closed' AND is_anonymous = 0
+			ORDER BY thread_id`
+			, `all`
+			, [userId]
+			,`getting logs for user`
+		)
+	}
+
+	closeThread(thread_id){
+		this._query(`
+		UPDATE modmail_threads SET status = 'closed'
+		WHERE thread_id = ?`
+		, `run`
+		, [thread_id]
+		)
+	}
+
+	makeNewThread(user_id, guild_id, thread_id, status, is_anonymous){
+		try {
+			this._query(`
+			INSERT INTO modmail_threads (registered_at, user_id, guild_id, thread_id, status, is_anonymous)
+			VALUES (datetime('now'), ?, ?, ?, ?, ?)`
+			, `run`
+			, [user_id, guild_id, thread_id, status, is_anonymous]
+			)
+		} catch (error) {
+			thread_id = makeRandomId()
+			this.makeNewThread(user_id, guild_id, thread_id, status, is_anonymous)
+		}
+		
+		function makeRandomId(){
+			var result = ``
+			var characters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
+			var charactersLength = characters.length
+			for ( var i = 0; i < 20; i++ ) {
+				result += characters.charAt(Math.floor(Math.random() * charactersLength))
+			}
+			return result
+		}
+	}
+
+	deleteLog(id) {
+		this._query(`
+			DELETE FROM modmail_thread_messages
+			WHERE thread_id = ?`
+			, `run`
+			, [id]
+			,`delete logs for specific thread`
+		)
+		this._query(`
+			DELETE FROM modmail_threads
+			WHERE thread_id = ?`
+			, `run`
+			, [id]
+			,`delete logs for specific thread`
+		)
+	}
+
+	getLogByThreadId(id){
+		return this._query(`
+			SELECT *
+			FROM modmail_thread_messages
+			WHERE thread_id = ?`
+			, `all`
+			, [id]
+			,`getting logs for specific thread`
+		)
+	}
+	
+	getThreadTicket(id){
+		return this._query(`
+			SELECT *
+			FROM modmail_threads
+			WHERE thread_id = ?`
+			, `get`
+			, [id]
+			,`getting thread data for specific thread`
+		)
+	}
+
+	/**
+	 * 
+	 * END OF MODMAIL PLUGIN
+	 * 
+	 */
+```
+
+for commands controller
+```javascript
 const { readdirSync } = require(`fs`)
 const Pistachio = require(`../libs/pistachio`)
 /**
@@ -37,7 +305,6 @@ class CommandController {
          * @type {String}
          */
         if (data.message.channel.type == `dm` || data.modmail) {
-            this.modmail = data.modmail
             if (data.message.content.startsWith(data.bot.prefix)) {
                 this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
             }	
@@ -54,6 +321,7 @@ class CommandController {
     async run() {
         const fn = `[CommandController.run()] USER_ID:${this.message.author.id}`   
         const initTime = process.hrtime()
+
         this.commandProperties = this.getCommandProperties(this.commandName)
 
         // Ignore if no files are match with the given command name
@@ -117,7 +385,7 @@ class CommandController {
             //	Log and store the cmd usage to database.
             this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
         } else {
-            let allowedCmds = [`ping`, `newThread`, `close`, `anon`, `modlogs`, `showlogs`] // `ping`, `newThread`, `close`, `anon`, `modlogs`, `showlogs` <- This must be allowed for the modmail plugin to work
+            let allowedCmds = [`ping`, `newThread`, `close`, `anon`, `modlogs`, `showlogs`]
                 
             let specialArg = 1
             if (this.commandName.includes(`modlogs`)) {
@@ -153,13 +421,14 @@ class CommandController {
         }
     }
 
+
 	/**
 	 * Browser through filedisk and Find command file with the given keyword 
 	 * @param {String} filename source filename
 	 * @returns {CommandComponentClass}
 	 */
 	_findFile(filename) {
-		if (!filename) throw new TypeError(`[CommandController._findFile()] parameter "filename" cannot be blank.`)
+        if (!filename) throw new TypeError(`[CommandController._findFile()] parameter "filename" cannot be blank.`)
 		if (!filename.endsWith(`.js`)) filename = filename + `.js`
 		/**
 		 * Recursively pull available categories in command's root directory
@@ -167,7 +436,7 @@ class CommandController {
 		 */
 		let directories = readdirSync(`./src/commands/`).filter(file => !file.includes(`.`))
 		for (const index in directories) {
-			const dir = directories[index]
+            const dir = directories[index]
 			/**
 			 * Recursively pull files from a category
 			 * @example user/system/social/shop/etc
@@ -202,3 +471,17 @@ class CommandController {
 }
 
 module.exports = CommandController
+```
+
+Add in message event
+```javascript
+    if (this.isModmailMessage) return this._runTask(`MODMAIL`, new Command({bot:this.bot, message:this.message, modmail:true}).runDM(), 5)
+    
+    /**
+     * Check if user sent message from modmail channel
+     * @returns {Boolean}
+     */
+    get isModmailMessage(){
+        return this.message.channel.parentID == `507048639747850240`
+    }
+```
