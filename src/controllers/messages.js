@@ -1,5 +1,7 @@
 const Permission = require(`../libs/permissions`)
+const Points = require(`../libs/points`)
 const Command = require(`./commands`)
+const moment = require(`moment`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -23,6 +25,8 @@ class MessageController {
         this.permission = data.bot.permissions
         this.userId = data.message.author.id
         this.logger = data.bot.logger
+
+        data.bot.registerNode(Points, `points`)
     }
 
     /**
@@ -48,8 +52,13 @@ class MessageController {
          *  -----------------------------------------------------------------
          */
         if (minimal) {
-            if (this.isCommandMessage) return this._runTask(`COMMAND`, new Command({bot:this.bot, message:this.message}).run(), 5)
-            return
+            if (this.isCommandMessage) {
+                const commandId = `CMD_${this.message.author.id}`
+                const commandCooldown = 5
+                if (await this.isCooldown(commandId)) return
+                this.setCooldown(commandId, commandCooldown)
+                return new Command({bot:this.bot, message:this.message}).run()           
+            }
         }
         if (this.isDirectMessage) return this._runTask(`DM`, console.log(`dm done`), 5)
         if (this.isCommandMessage) return this._runTask(`COMMAND`, console.log(`dm done`), 5)
@@ -64,7 +73,7 @@ class MessageController {
      *  @returns {Boolean}
      */
     get unauthorizedEnvironment() {
-        return this.bot.dev && this.message.author.permissions.level < 4 ? true : false
+        return this.bot.dev && this.message.author.permissions.level < 1 ? true : false
     }
 
     /**
@@ -140,7 +149,7 @@ class MessageController {
         const fn = `[MessageController.setCooldown()]`
         if (time <= 0) throw new TypeError(`${fn} "time" parameter must above 0.`)
         this.logger.debug(`${fn} registering ${label} with ${time}s timeout`)
-        return await this.bot.db.redis.set(label, 1, `EX`, time)
+        return await this.bot.db.redis.set(label, new Date(), `EX`, time)
     }
 
 
@@ -159,7 +168,9 @@ class MessageController {
         const fn = `[MessageController._runTask()]`
         if (!task) throw new TypeError(`${fn} parameter "task" should be filled with either a Function/Method/Class`)
         const embedLabel = `${label}_${this.userId}`
+        const isCooldownBool = await this.isCooldown(embedLabel)
         if (await this.isCooldown(embedLabel)) return
+        console.debug(isCooldownBool)
         task
         this.setCooldown(embedLabel, timeout)
      }
@@ -171,8 +182,7 @@ class MessageController {
      */
     _registerPermission() {
         const fn = `[MessageController._registerPermission()]`
-        const userPerm = new Permission(this.message).authorityCheck()
-        this.logger.debug(`${fn} PERM_LVL ${userPerm.level} - ${userPerm.name} | USER_ID ${this.message.author.id}`)
+        const userPerm = new Permission(this.message).getUserPermission(this.message.author.id)
         this.message.author.permissions = userPerm
         return `OK`
      }

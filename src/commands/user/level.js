@@ -1,73 +1,49 @@
-const GUI = require(`../../struct/gui/level`)
-
+const GUI = require(`../../ui/prebuild/level`)
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Level Display detailed level information.
+ * Display your current exp, level and rank.
+ * @author klerikdust
  */
-class Level {
+class Level extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, name, emoji, avatar}) {
+		await this.requestUserMetadata(2)
 
-	async textOpt(){
-		const {meta:{ data }} = this.stacks
-		const progress = ({
-			value,
-			length = 40,
-			vmin = 0.0,
-			vmax = 1.0,
-			progressive = false
-		}) => {
-			// Block progression is 1/8
-			const blocks = [``, `▏`, `▎`, `▍`, `▌`, `▋`, `▊`, `▉`, `█`]
-			const lsep = `▏`, rsep = `▕`
-
-			// Normalize value
-			const normalized_value = (Math.min(Math.max(value, vmin), vmax) - vmin) / Number(vmax - vmin)
-			const v = normalized_value * length
-			const x = Math.floor(v) // integer part
-			const y = v - x         // fractional part
-			const i = Math.round(y * 8)
-			const bar = Array(x).fill(`█`).join(``) + blocks[i]
-			const remaining = Array(length - bar.length).fill(` `).join(``)
-			return `${lsep}${bar}${!progressive ? remaining : ``}${rsep}  ${(Math.round(normalized_value * 100 * 100) / 100)}%`
-		}
-		let current = data.currentexp <= data.minexp ? 0 : (data.currentexp - data.minexp) / (data.nextexpcurve)
-		let bar = progress({ value: Math.floor(current*100), vmin: 0, vmax: 100})
-		let level = data.level
-		let currentexp = data.currentexp
-		let nextlevelup = data.maxexp - data.currentexp
-		return {bar,level,currentexp,nextlevelup}
-	}
-
-	/**
-	 *  Initialzer method
-	 */
-	async execute() {
-		const { reply, name, emoji, code: {LEVELCARD}, meta: {author}, textOption } = this.stacks
-
-		//  Returns if user is invalid
-		if (!author) return reply(LEVELCARD.INVALID_USER)
-
-		reply(`${emoji(`AAUloading`)} resolving exp data with ID ${author.id} ...`, {simplified: true})
-			.then(async load => {
-				let textoptions = await this.textOpt()
-		
-				//  Display result
-				textOption ?
-				reply(`${LEVELCARD.HEADER}\n${textoptions.bar}\n  ${textoptions.level}\t\t  ${textoptions.currentexp}\t\t\t${textoptions.nextlevelup}\nLevel\tCurrent Exp\tNext Level Up`, {
-					socket: [name(author.id)],
-					simplified: true 
-				}) :
-				reply(LEVELCARD.HEADER, {
-					socket: [name(author.id)],
-					image: await new GUI(this.stacks).render(),
-					prebuffer: true,
-					simplified: true
-				})
-				load.delete()
+		//  Handle if user doesn't exists
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		reply(this.locale.COMMAND.FETCHING, {
+			simplified: true,
+			socket: {
+				emoji: emoji(`AAUloading`), 
+				user: this.user.id,
+				command: `level`
+			}
+		})
+		.then(async loading => {
+			const img = await new GUI(this.user).build()
+			await reply(this.locale.COMMAND.TITLE, {
+				simplified: true,
+				prebuffer: true,
+				image: img.toBuffer(),
+				socket: {
+					emoji: emoji(`AnnieDab`),
+					user: name(this.user.id),
+					command: `Level`
+				}
 			})
+			return loading.delete()
+		})
 	}
 }
 
@@ -75,10 +51,9 @@ module.exports.help = {
 	start: Level,
 	name: `level`,
 	aliases: [`lvl`, `lv`],
-	description: `Pulls up your level`,
-	usage: `level`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	description: `Display your current exp, level and rank.`,
+	usage: `level <User>(Optional)`,
+	group: `User`,
+	permissionLevel: 0,
+	multiUser: true
 }

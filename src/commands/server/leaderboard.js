@@ -1,79 +1,89 @@
-const GUI = require(`../../struct/gui/leaderboard`)
-
+const GUI = require(`../../ui/prebuild/leaderboard`)
+const Command = require(`../../libs/commands`)
 /**
- * Main module
- * @Leaderboard Display top 10 user in the server.
+ * Displays global leaderboard
+ * @author klerikdust
  */
-class Leaderboard {
-	constructor(Stacks) {
-		this.stacks = Stacks
+class Leaderboard extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+		super(Stacks)
+
+		/**
+		 * First element of the child array determines the leaderboard category name.
+		 * @type {array}
+		 */
+		this.keywords = [
+			[`exp`, `xp`, `lvl`, `level`],
+			[`artcoins`, `ac`, `artcoin`, `balance`],
+			[`fame`, `rep`,  `reputation`, `reputations`, `reps`],
+			[`artists`, `arts`, `artist`, `art`, `artwork`],
+			[`anime`, `weeb`, `otaku`, `weebs`, `mal`],
+			[`halloween`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
+		]
+    }
+
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, emoji, avatar, commanifier, name, bot:{db} }) {
+		await this.requestUserMetadata(2)
+
+		//  Returns a guide if no parameter was specified.
+		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE)
+		//  Returns if parameter is invalid.
+		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
+		//  Store key of selected group
+		const selectedGroup = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0][0]
+		return reply(this.locale.COMMAND.FETCHING, {
+			socket: {
+				command: `${selectedGroup} leaderboard`,
+				emoji: emoji(`AAUloading`),
+				user: this.user.id
+			},
+			simplified: true
+		})
+		.then(async load => {
+			const lbData = await db.indexRanking(selectedGroup)
+			//  Handle if no returned leaderboard data
+			if (!lbData.length) {
+				load.delete()
+				return reply(this.locale.LEADERBOARD.NO_DATA, {socket: {category: selectedGroup}})
+			}
+			const img = await new GUI(this.user, lbData, name, avatar).build()
+			load.delete()
+			await reply(`${emoji(selectedGroup)} **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**`, {
+				prebuffer: true,
+				image: img.toBuffer(),
+				simplified: true
+			})
+
+			const author = lbData.filter(key => key.id === this.user.id)[0]
+			reply(this.locale.LEADERBOARD.AUTHOR_RANK, {
+				simplified: true,
+				socket: {
+					rank: lbData.indexOf(author),
+					points: commanifier(author.points),
+					emoji: emoji(selectedGroup),
+				}
+			})
+		})
 	}
 
 	/**
-     *  Initialzer method
-     */
-	async execute() {
-		const { args, reply, code: { LEADERBOARD }, textOption } = this.stacks
-
-		//  Centralized object
-		let metadata = {
-			keywords: [
-				[`xp`, `exp`, `lvl`, `level`],
-				[`ac`, `artcoins`, `artcoin`, `balance`],
-				[`rep`, `fame`,  `reputation`, `reputations`, `reps`],
-				[`arts`, `artists`, `artist`, `art`, `artwork`],
-				[`weeb`, `anime`, `otaku`, `weebs`, `mal`],
-				[`halloween`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
-			],
-			get whole_keywords() {
-				let arr = []
-				for (let i = 0; i < this.keywords.length; i++) {
-					arr.push(...this.keywords[i])
-				}
-				return arr
-			}
+	 * Aggregate available keywords in `this.keywords`.
+	 * @type {array}
+	 */
+	get wholeKeywords() {
+		let arr = []
+		for (let i = 0; i < this.keywords.length; i++) {
+			arr.push(...this.keywords[i])
 		}
-
-		//  Returns a guide if no parameter was specified.
-		if (!args[0]) return reply(LEADERBOARD.SHORT_GUIDE)
-		//  Returns if parameter is invalid.
-		if (!metadata.whole_keywords.includes(args[0].toLowerCase())) return reply(LEADERBOARD.INVALID_CATEGORY)
-		//  Store key of selected group
-		metadata.selected_group = metadata.keywords.filter(v => v.includes(args[0].toLowerCase()))[0][0]
-
-        
-		//  Fetching data
-		return reply(LEADERBOARD.FETCHING, {
-			socket: [metadata.selected_group],
-			simplified: true
-		})
-			.then(async load => {
-				//  Get interface buffer
-				let res = await GUI(this.stacks, metadata)
-				//  Display leaderboard
-				textOption ? reply(res.title + `\n\`\`\`${res.textOption}\`\`\``, {
-					simplified: true
-				})
-					.then(() => {
-						load.delete()
-						//  Display author rank information
-						reply(res.footer_components[1] ? LEADERBOARD.AUTHOR_RANK : LEADERBOARD.UNRANKED, {
-							socket: res.footer_components
-						})
-					}) :
-				reply(res.title, {
-					image: res.img,
-					prebuffer: true,
-					simplified: true
-				})
-					.then(() => {
-						load.delete()
-						//  Display author rank information
-						reply(res.footer_components[1] ? LEADERBOARD.AUTHOR_RANK : LEADERBOARD.UNRANKED, {
-							socket: res.footer_components
-						})
-					})
-			})
+		return arr
 	}
 }
 
@@ -81,10 +91,9 @@ module.exports.help = {
 	start: Leaderboard,
 	name:`leaderboard`,
 	aliases: [`lb`,`leaderboard`, `rank`, `ranking`],
-	description: `pulls up options for the leaderboards`,
+	description: `Displays global leaderboard`,
 	usage: `lb`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: false
+	group: `Server`,
+	permissionLevel: 0,
+	multiUser: false
 }

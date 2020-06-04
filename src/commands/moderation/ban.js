@@ -1,48 +1,43 @@
-const Discord = require(`discord.js`)
+const Command = require(`../../libs/commands`)
+/**
+ * Ban a user permanently from server.
+ * @author klerikdust
+ */
+class Ban extends Command {
 
-class ban {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.this.args = Stacks.this.args
-		this.palette = Stacks.palette
-		this.required_roles = this.message.member.roles.find(r => (r.name === `Grand Master`) || (r.name === `Tomato Fox`))
-		this.stacks = Stacks
-	}
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-	async execute() {
-		let message = this.message
-		let bUser = message.guild.member(message.mentions.users.first() || message.guilds.member.get(this.args[0]))
-		if (!bUser) return message.channel.send(`Can't find user.`)
-		let breason = this.args.join(` `).slice(22)
-		if (!message.member.hasPermission(`ADMINISTRATOR`)) return message.channel.send(`You are not allowed to kick.`)
-		if (bUser.hasPermission(`ADMINISTRATOR`)) return message.channel.send(`That person can't be kicked.`)
-		let banEmbed = new Discord.RichEmbed()
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, name, bot:{locale:{BAN}} }) {
+		await this.requestUserMetadata(1)
 
-			.setDescription(`~Ban~`)
-			.setColor(0xff1a1a)
-			.addField(`Banned User`, `${bUser}with ID ${bUser.id}`)
-			.addField(`Banned By`, `<@${message.author.id}> with ID ${message.author.id}`)
-			.addField(`Banned In`, message.channel)
-			.addField(`Time`, message.createdAt)
-			.addField(`Reason`, breason)
-		let BanChannel = message.guild.channels.find(`name`, `goodbye`)
-		if (!BanChannel) return message.channel.send(`Can't goodbye channel`)
-		message.guild.member(bUser).ban(breason)
-		BanChannel.send(banEmbed)
+		//  Handle if user doesn't specify the target
+		if (!this.fullArgs) return reply(this.locale.BAN.MISSING_ARG)
+		//  Handle if target user doesn't exists
+		if (!this.user) return reply(this.locale.BAN.TARGET_DOESNT_EXISTS, {color: `red`})
+		//  Handle if target user permission is equal to admin privilege
+		if (this.user.hasPermission(`ADMINISTRATOR`)) return reply(this.locale.BAN.TARGET_HAS_ADMIN_PRIVILEGE, {color: `red`})
+
+		await this.message.guild.member(this.user).ban()
+		return reply(this.locale.BAN.SUCCESSFUL, {socket: {user: name(this.user.id)}, color: `lightgreen`})
 	}
 }
 
 module.exports.help={
-	start:ban,
+	start: Ban,
 	name:`ban`,
-	aliases: [],
-	description: `Kick permanently.`,
-	usage: `ban @user <reason>`,
-	group: `Admin`,
-	public: true,
-	require_usermetadata: true,
-	multi_user: true
+	aliases: [`hammer`, `bwans`, `bun`],
+	description: `Ban a user permanently from server.`,
+	usage: `ban <User>`,
+	group: `Moderation`,
+	permissionLevel: 3,
+	multiUser: true
 }

@@ -1,33 +1,39 @@
+const Command = require(`../../libs/commands`)
 const superagent = require(`superagent`)
+/**
+ * Displays a random picture of a fox.
+ * @author klerikdust
+ */
+class Fox extends Command {
 
-class fox {
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
-	async initFox() {
-		const { reply } = this.stacks
-		let { body } = await superagent.get(`https://randomfox.ca/floof/`)
-		return reply(``,{
-			image:body.image,
-			prebuffer: true,
-			deleteIn: 5000
-		})
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, choice }) {
+        const { body } = await superagent.get(`https://some-random-api.ml/img/fox`)
+        return reply(choice(this.locale.FOX.RESPONSES), {
+            image: body.link,
+            prebuffer: true,
+        })
 	}
 
-	async execute() {
-		this.initFox()
-	}
 }
 
 module.exports.help = {
-	start: fox,
+	start: Fox,
 	name: `fox`,
 	aliases: [],
-	description: `Displays a random picture of a fox!`,
+	description: `Displays a random picture of a fox.`,
 	usage: `fox`,
 	group: `Fun`,
-	public: true,
-	require_usermetadata: false,
-	multi_user: false
+	permissionLevel: 0,
+	multiUser: false
 }

@@ -1,0 +1,516 @@
+{
+    "ACTION_CANCELLED": "Alright, action cancelled.",
+    "ADDAC": {
+        "GUIDE": "You are authorized to use the **Artcoins Generator**.",
+        "SUCCESSFUL": "Successfully refilled!",
+        "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
+        "CONFIRMATION_SEQ_1": "You are going to refill **{{user}}'s Artcoins.** Now please specify the amount you want to generate.",
+        "CONFIRMATION_SEQ_2": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance** ?\nPlease type `y` to confirm",
+        "NO_NEGATIVE_INPUT": "Please put a valid amount."
+    },
+    "ADDROLE": {
+        "MISSING_ARG": "Uhm, can you specify the user please.",
+        "CONFIRMATION_SEQ_1": "Alright, I'll assign a new role to **{{user}}.** Now please specify the role name.",
+        "CONFIRMATION_SEQ_2": "**{{role}} Role** 🡆 **{{user}}** ?\nPlease type `y` to confirm",
+        "NO_ROLE_FOUND": "Sorry, I couldn't find that role. Can you type it again?",
+        "HAS_ROLE_ALREADY": "Sorry, but **{{user}}** has that role already.",
+        "ROLE_ADDED": "Successfully assigned the role!"
+    },
+    "ASK": {
+        "ANSWERS": [
+            "Yes.",
+            "No.",
+            "I don't know.",
+            "You",
+            "Well, probably.",
+            "Not sure.",
+            "Definitely!"
+        ],
+        "SHORT_GUIDE": "Feel free to ask me anything!"
+    },
+    "BADGECARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s badge data . .`"
+    },
+    "BAN": {
+        "MISSING_ARG": "Hi, you are authorized to use the command. Please specify the user you want me to ban next time!",
+        "TARGET_DOESNT_EXISTS": "Eh? where are they? do they even exist?",
+        "TARGET_HAS_ADMIN_PRIVILEGE": "Hard to say, but I can't ban a user with admin privilege. :(",
+        "SUCCESSFUL": "Bai bai **{{user}}!** I've sent them to the void."
+    },
+    "BUY": {
+        "SHORT_GUIDE": "Checkout what you can buy in our `{{prefix}}shop` !",
+        "INSUFFICIENT_BALANCE": "You need {{emoji}}**{{amount}}** more to finish this transaction.",
+        "INVALID_ITEM": "I can't find any item with that name..",
+        "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
+        "NO_DUPLICATE": "You are already own that {{itemType}}",
+        "SUCCESSFUL": "**{{item}}** has been delivered to your inventory! {{emoji}}",
+        "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
+        "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
+        "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
+        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this item. Please type `y` to confirm the purchase."
+    },
+    "BOOSTER": {
+        "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
+    },
+    "CARTCOIN": {
+        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:2**",
+        "INSUFFICIENT_AMOUNT": "You only have **{{amount}}** artcoins. Grind harder!",
+        "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
+        "SUCCESSFUL": "Successfully convert **{{artcoins}}** into **{{exp}}** !",
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nType `y` to confirm the conversion."
+    },
+    "CATEXP": {
+        "UNAVAILABLE": "You don't have any exp to claim.",
+        "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
+        "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}"
+    },
+    "CAT": {
+        "RESPONSES": [
+            "Nyaa~",
+            "Paw paw!",
+            ":cat:",
+            "*fluffy~*"
+        ]
+    },
+    "CHECKOUT": {
+        "CANCEL": "Transaction cancelled.",
+        "SUCCESSFUL": "Purchase successful!",
+        "METADATA": "{2}**{3}** 🡆 **{0} {1}** ?\nPlease type `y` to confirm your purchase.",
+        "ERROR": "Uhh, something went wrong."
+    },
+    "USER": {
+        "IS_INVALID": "Sorry, I couldn't find that user."
+    },
+    "COMMAND": {
+        "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
+        "TITLE": "{{emoji}} **| {{user}}'s {{command}}**"
+    },
+    "CARDCOLLECTION_AUTHOR_EMPTY": "You don't have any card collection. Go test your luck with my gacha system!",
+    "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection.",
+    "CHOOSE": {
+        "GUIDE": "I'll try to pick any options you give!",
+        "INVALID_OPTIONS": "Ehh, give me multiple options to choose!",
+        "THINKING": [
+            "Hmm..",
+            "I will choose...",
+            "How about.."
+        ],
+        "EMOTIONS": [
+            "AnnieDab",
+            "AnnieCry",
+            "AnniePogg",
+            "AnnieSmile",
+            "AnnieLewd"
+        ]
+    },
+    "COMPLAINT": {
+        "UNAUTHORIZED": "Sorry, your authority level doesn't meet the requirement to use the complaint system.",
+        "GUIDE": "You are authorized to use **Complaint System**\n\nThis feature used to track bad behavior caused by member in the server.",
+        "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
+        "NULL_RECORD": "User with ID **{1}** doesn't have any complaint record yet. Please type + <reason> to add new complaint.",
+        "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** complaints were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new complaint. Or `-` to remove the most recent complaint.",
+        "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
+        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed."
+    },
+    "CRAFT": {
+        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",
+        "DUPLICATES": "You can't craft duplicates!",
+        "INSUFFICIENT_MATERIALS": "Missing materials.",
+        "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
+    },
+    "DAILIES": {
+        "AUTHOR_IN_COOLDOWN": "You can take your dailies again\n:clock1: **{{time}}**",
+        "OTHERS_IN_COOLDOWN": "{{user}} can take their dailies again\n:clock1: **{{time}}**",
+        "CLAIMED": "{{user}} have received\n**{{amount}}** artcoins!",
+        "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
+        "THANKS_HELP": "Thanks for the help!",
+        "STREAK_INCREASING": "Keep it up!"
+    },
+    "CLI": {
+        "GUIDE": "The pattern is similar to my dbkits, so make sure to input the cli command inside a square brackets.",
+        "MISSING_STMT": "Please write the command statement inside **[]** brackets."
+    },
+    "DBKITS": {
+        "AUTHORIZED": "Good evening, **{{user}}**. You can access my db query module.",
+        "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
+        "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
+    },
+    "DISPLAY_BALANCE": "**Remaining Balance**\n{{emoji}} **{{amount}}**",
+    "DISTREWARD": {
+        "CONFIRMATION": "🎁 🡆 **{0}'s Inventory** ?\nPlease type the reward ranking",
+        "SUCCESSFUL": "**{0}** has successfully received **{1}** package!",
+        "SHORT_GUIDE": "You can start distributing event rewards by typing `>sendreward <user>`",
+        "INVALID_REWARD": "Sorry, i can't find any package for that rank."
+    },
+    "DM": {
+        "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
+        "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",
+        "NOTIFICATION_ENABLED": "Your setting has been saved. I'll keep you posted with your post engagements!",
+        "ERROR": "Something went wrong ..",
+        "COOLING_DOWN": "You can make changes again in 5 seconds."
+    },
+    "ERROR": "Ops, something went wrong.\n```diff\n- {{error}}\n```",
+    "LOCALIZATION_ERROR": "**I've encountered localization error. T_T\nPlease help me reporting this to my developers so I can serve you better!**",
+    "EVAL": {
+        "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"
+    },
+    "EVENT": {
+        "END": "Okay! the rest **{0}** participants ticket has been taken down.",
+        "END_NOPARTICIPANTLEFT": "All participants have successfully participated in the event! Goodjob **{0}**!"
+    },
+    "EVENT_SUBMISSION": {
+        "DEFAULT": "**{0}** has submitted some work! {1}",
+        "FOXIE_ENVELOPE": "Yay, **{0}** has submitted some work! {1}\nGive them some love!"
+    },
+    "EVENT_MANAGER": {
+        "PUBLIC_SHORT_GUIDE": "You can look up a event by doing\n`lookup <event>`\n`lookup-all`",
+        "SHORT_GUIDE": "You can add,remove,update,end a event by doing\n`add`\n`remove <Event Name>`\n`update `\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
+        "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{0}"
+    },
+    "EVJOIN": {
+        "ALREADY_HAS": "**{{user}}** you have unused ticket, go submit your art now!",
+        "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event. Go take your dailies if you haven't yet!",
+        "SUCCESSFUL": "**{{user}}** has joined the event.\n{{foxieMessage}}{{emoji}}",
+        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing."
+    },
+    "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",
+    "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
+    "EXEC_CODE": "Command executed in **{{time}}**\n```json\n{{result}}\n```",
+    "FEATURED": {
+        "FIRST_LIKE": "**{0}** liked your post.",
+        "LIKED": "**{0}** and **{1} others** liked your post.",
+        "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
+    },
+    "FLIPCOIN": {
+        "RESPONSES": [
+            "Landed on **{0}!** Yay!",
+            "The coin has landed on **{0}.**",
+            "Whoa! **{0}!**",
+            "As i expected! landed on **{0}!**"
+        ]
+    },
+    "FOX": {
+        "RESPONSES": [
+            "Fluffy~",
+            ":fox:",
+            "Don't get too close, i might bite you.",
+            "Awooo"
+        ]
+    },
+    "GACHA": {
+        "OPENING_WORDS": [
+            "{{emoji}} *{{user}} is opening their precious card!*",
+            "{{emoji}} *{{user}} is opening the gate to sea of despair*",
+            "{{emoji}} *{{user}}, may the RNG bless you*",
+            "{{emoji}} *{{user}}, do you know what's lying behind this card?*"
+        ],
+        "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
+        "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
+        "INVALID_AMOUNT": "Please put a valid amount of ticket you want to open.",
+        "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls.",
+        "INSUFFICIENT_TICKET": "Hey, you don't have enough **Lucky Ticket.** Go get some in my shop! {{emoji}}",
+        "COOLING_DOWN": "Your next roll still in cooldown."
+    },
+    "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n\n{{serverLink}}",
+    "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",
+    "GETLOG": {
+        "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
+        "ERR": "Ops, something went wrong,..",
+        "RETURNING": "Hello **{0}**, here's your requested file."
+    },
+    "GIFT": {
+        "SHORT_GUIDE": "You are now able to gift someone you admire!\nStart by typing `{{prefix}}gift <user>`",
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "SELF_TARGETING": "Aw, sadly you can't gift yourself.",
+        "INSUFFICIENT_AMOUNT": "You need **{{item}}** more to complete the gifting.",
+        "INVALID_ITEM": "I don't think thats a valid item..",
+        "INVALID_AMOUNT": "Please type a proper amount you want to gift!",
+        "DISPLAYGIFT_HEADER": "Your gifts",
+        "SUCCESSFUL": "{{user}} has received\n**{{item}}(+{{gainedReps}} reps)**",
+        "UNAVAILABLE": "You don't have any gift at the moment.",
+        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift."
+    },
+    "HALLOWEEN_GACHA": {
+        "OPENING_WORDS": [
+            " *{0} is opening their precious box*",
+            " *{0} seems really curious*",
+            " *{0}, may the RNG bless you*",
+            " *{0}, close your eyes*",
+            " *{0}, do you know what's lying in this box?*",
+            " *I feel strange feelings*",
+            " *wooowieeee*",
+            " *flip flip flap!*"
+        ],
+        "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
+        "UNALLOWED_ACCESS": "Please do your roll in {0}",
+        "ZERO_TICKET": "You don't have any **Halloween {0}**!",
+        "INSUFFICIENT_TICKET": "You can't do multi-roll with less than **10 Halloween {0}**!",
+        "COOLING_DOWN": "Your next roll still in cooldown."
+    },
+    "HELP": {
+        "LANDING": "**Hi {{user}}!** I'm Annie and how I can help you?\n\n**• Recommended Commands**\nTry my most popular commands among of our user! they are sorted based on our collected command usage data.\n{{recommendedCommands}}\n\n**• Discover more**\nIf you are looking for comprehensive list, take a look at Commandpedia by pressing to the :book: button on this message.\n\nUnable to find what you are looking for? don't be worry! my developers are always available to answer your questions right away.\n{{serverLink}}",
+        "COMMANDPEDIA": {
+            "HEADER": "Below you can see all the commands I know\nFor further assistance, please have a visit to my {{serverLink}}\n\n{{commandList}}",
+            "USAGE_EXAMPLES": "Use **{{prefix}}help <CommandName>** to get information about a command."
+        },
+        "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
+    },
+    "HUG": {
+        "THEMSELVES": "**{0}** hugging a thin air. :<",
+        "OTHER_USER": "**{0}** hugging **{1}** <3"
+    },
+    "INVALID_USER": "Sorry, I couldn't find that user.",
+    "INVENTORY": {
+        "FETCHING": "{0} `fetching inventory data for {1} ...`",
+        "AUTHOR_EMPTY": "You don't have any items in your bag.",
+        "OTHER_USER_EMPTY": "{0} don't have any items in their bag.",
+        "INVALID_USER": "Sorry i couldn't find that user."
+    },
+    "LEADERBOARD": {
+        "GUIDE": "Hi, checkout our global leaderboard below!\n\n**>leaderboard exp**\nfor global EXP & Level user ranking\n\n**>leaderboard ac**\nlist of rich users across the discord continent!\n\n**>leaderboard fame**\nCheckout who's the most popular user.\n\n**>leaderboard art**\nMost popular artists in discord.\n\n**>leaderboard weeb**\nLet's see who's the strongest weeb king/queen based on their total of completed animes. ;)",
+        "INVALID_CATEGORY": "Sorry i can't find anything from that category",
+        "NO_DATA": "No data found yet for **{{category}} Leaderboard.** Come back later! {{emoji}}",
+        "AUTHOR_RANK": "You are currently **{{rank}}#** with total **{{points}}** {{emoji}}",
+        "UNRANKED": "You are unranked."
+    },
+    "LEVELCARD": {
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
+        "INVALID_USER": "Sorry, i couldn't find that user."
+    },
+    "LEVELUP": "{0} {1} has leveled up to **{2}**!\nhere's your **{3} {4} ** reward.",
+    "LEVELUP_JUMP": "{0} {1} has level up to **{2} (+{3} LV)**, awesome!\n here's your **{4} {5} ** reward. ",
+    "MANAGE_PROFILE": {
+        "ALREADY_DIPLAYED": "Sorry, but you are Already displaying that {0}",
+        "BADGE_MENU": "Your current badges are:\n{0}\nYour available badges are:\n{1}\nPlease indicate the badge space and what badge, that you want to display; Like this `1 Fire Alpaca`",
+        "DONT_OWN_ITEM": "Sorry but you do not own this {0}, {1}",
+        "INVALID_SLOT": "Sorry but that {0} slot is not availiable, {1}",
+        "ITEM_UPDATED": "Your {0} has been updated to: {1}",
+        "MENU": "{0}\n\nPlease type the name of the {1} you would like to change to.\nEnter \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
+        "MAIN_MENU": "Please repsond with {0} \n Or \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
+        "MENU_CLOSED": "Selection menu closed.",
+        "NO_ITEM_SUPPLIED": "Sorry, but you didnt give an item to display\n",
+        "NO_ITEMS": "I'm sorry but you dont have any {0}"
+    },
+    "MAIL": {
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "PROMPT": "Message will be send to **{{user}}**. Now please type the content of the message.",
+        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{{user}}**.",
+        "UNSUCCESSFUL": "Aw, sadly the user seems locked their direct message. {{emoji}}",
+        "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!"
+    },
+    "MUTE": {
+        "MISSING_ARG": "You are authorized to use the **Mute System**. Please specify the target user next time!",
+        "SUCCESSFUL": "Successfully muted **{{user}}** for **{{duration}}**! {{emoji}}",
+        "INVALID_DATE": "I'm not sure if that's correct date. :0",
+        "DURATION": "Okay, now please type the mute duration."
+    },
+    "PANDA": {
+        "RESPONSES": [
+            ":panda:",
+            "So cute!",
+            "Look at this lazy blob!",
+            "How adorable!"
+        ]
+    },
+    "PAT": {
+        "THEMSELVES": "**{0}** is patting themselves. :< ",
+        "OTHER_USER": "**{0}** is patting **{1}**, how adorable!"
+    },
+    "PAY": {
+        "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{{level}}** to use this feature.",
+        "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
+        "USER_CONFIRMATION": "You are going to transfer your artcoins to **{{user}}'s** account. Please type the amount.",
+        "INVALID_AMOUNT": "You need to put a valid number.",
+        "INSUFFICIENT_BALANCE": "You need **{{amount}}** more to continue this transaction.",
+        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
+        "SUCCESSFUL": "Transaction successful!",
+        "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**"
+    },
+    "PIXIV": {
+        "DISPLAY_RECOMMENDED_WORK": "`Showing the most recommended work for you ...`",
+        "DISPLAY_CUSTOM_SEARCH": "`Looking for '{{keyword}}' ...`",
+        "NO_RESULT": "Sorry! i can't find anything with that keyword.",
+        "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!"
+    },
+    "EAT_POWERCAPSULE": {
+        "MISSING_ARG": "Please don't forget to specify the amount you want to use next time.",
+        "INVALID_AMOUNT": "That doesn't seem to be a correct value. :/",
+        "SHORT_GUIDE": "You can use your power capsules and gain the exp by typing `>eat <amount>`.",
+        "INSUFFICIENT_AMOUNT": "You only have {{emoji}} **{{amount}} Power Capsules.**",
+        "SUCCESSFUL": "Successfully eating **{{amount}} Power Capsules!**",
+        "CONFIRMATION": "{{emoji}} **{{powerCapsuleAmount}} 🡆 {{gainedExp}} EXP ?**\nPlease type `y` to confirm the action.",
+        "UNAVAILABLE": "You don't have any power capsules left."
+    },
+    "PROFILECARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
+    },
+    "PORTFOLIOCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Portfolio card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s portfolio data . .`"
+    },
+    "PRUNE": {
+        "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
+        "INVALID_AMOUNT": "Please put a valid number.",
+        "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
+        "SUCCESSFUL": "Yay! **{{amount}}** messages have been successfully deleted! {{emoji}}"
+    },
+    "RECYCLE": {
+        "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
+        "CONVERSATION_COMPLETED": "You have converted {0}, {1}, into {2} {3}",
+        "NOT_ENOUGH_ITEMS": "I'm sorry, but you don't have enough {0} to recycle.",
+        "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
+        "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle",
+        "INVALID_FORMAT": "Please use proper format so i can parse your request.",
+        "TRANSACTION_CLOSED": "Transaction closed."
+    },
+    "REDEEM": {
+        "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
+        "INVALID_AMOUNT": "Please put a valid amount.",
+        "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
+        "CANCELLED": "Transaction cancelled.",
+        "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
+        "COLLECTOR_FORTUNE": "Ara ara, redeem successful! {0}**{1}(+{2}) Lucky Tickets** have been added into your inventory.\nGained tickets are doubled with Rany's Blessing.",
+        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
+    },
+    "RELATIONSHIPCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Relationship card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s badge data . .`"
+    },
+    "RELATIONSHIP": {
+        "GUIDE": "Start add someone to your relationship trees!",
+        "SET_TO_SELF": "You can't add a relationship to yourself, baka. {{emoji}}",
+        "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
+        "UNAVAILABLE": "There is no assignable relationship at the moment.",
+        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** now is \n{{user}}'s {{role}}!",
+        "SUCCESSFULLY_REMOVED": "Your relationship with **{{user}}** has been removed.",
+        "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
+        "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
+        "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them."
+    },
+    "GIVE_REPUTATION": {
+        "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",
+        "SHORT_GUIDE": "Your rep is available. Go rep someone you admire! {{emoji}}",
+        "SELF_TARGETING": "You can't rep yourself, baka. {{emoji}}",
+        "SUCCESSFUL": "{{user}} has received\n**+1 reputation point**"
+    },
+    "REQUEST_PING": "Request received in **{{ping}} ms**",
+    "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
+    "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
+    "REMOVE_STICKER": {
+        "NO_CHANGES": "Sorry, it seems you haven't equipped any sticker.",
+        "SUCCESSFUL": "Your profile sticker has been unequipped."
+    },
+    "REMOVEROLE": {
+        "MISSING_ARG": "You are authorized to use **Remove Role System**, please don't forget to specify the target user next time!",
+        "NO_ROLE_FOUND": "Sorry, I'm unable to find the role you are looking for. Type it again with different name.",
+        "ROLE_SELECTION": "Now please type the role name you want me to remove from **{{user}}**",
+        "DOESNT_HAVE_THE_ROLE": "**{{user}}** doesn't even have that role .. don't tease me please. {{emoji}}",
+        "SUCCESSFUL": "Successfully removed **{{role}}** from **{{user}}.**"
+    },
+    "ROLE": {
+        "ERR": {
+            "WRONG": {
+                "FILE": "I'm sorry but that command/group doesn't exist, please do `help help` for more info",
+                "ROLE": "I'm sorry but you do not have the requried role for this/these command(s)"
+            }
+        }
+    },
+    "ROLLDICE": {
+        "MISSING_ARGS": "Please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>"
+    },
+    "SAY": {
+        "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
+    },
+    "SERVER_BOOST": {
+        "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
+    },
+    "SETBIO": {
+        "MISSING_ARG": "Aw, you missed something. Yes, the bio/description! please include it next time!",
+        "EXCEEDING_LIMIT": "Great bio! but can you reduce it to maximum at **156 characters?** I've trouble fitting this into my small pocket ...",
+        "SUCCESSFUL": "Yay! your new profile's bio has been set!"
+    },
+    "SETSOCIALMEDIA": {
+        "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
+        "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
+        "SUCCESSFUL": "Yay! your **{{account}}** account has been linked!",
+        "ALREADY_REGISTERED": "You are already have **{{account}}** account registered. {{emoji}}"
+    },
+    "SETPROFILE": {
+        "EQUIPPED_ITEMS": "**{{item}}** is currently equipped as your profile {{type}}.",
+        "NO_EQUIPPED_ITEMS": "**You don't have any {{type}} equipped at the moment.**",
+        "UNEQUIPPED_ITEMS": "And these are your available {{type}}:",
+        "NON_PROFILEDECORATION": "Sorry, that's not a customizable profile decoration.",
+        "EQUIPPING_GUIDE": "Reply with `equip <{{type}}ID>` if you wish to change it.",
+        "UNEQUIPPING_GUIDE": "Reply with `unequip <{{type}}ID>` to unequip your current {{type}}.",
+        "GUIDE": "Please include the item type you want to customize like **covers, badges, stickers or something else.**",
+        "INVALID_ITEM": "That doesn't looks like a valid item.. or you don't have it in your inventory.",
+        "SUCCESSFUL": "**{{item}}** {{itemType}} has been successfully {{actionType}}!",
+        "INVALID_ACTION": "Please only use either `equip` or `unequip`.",
+        "EQUIPPING_NOTHING": "Hey, there are nothing available to equip, baka. {{emoji}}",
+        "UNEQUIPPING_NOTHING": "What are you trying to unequip? {{emoji}}",
+        "MISSING_TARGET_ITEM": "Please don't forget to include the item id."
+    },
+    "SHOP": {
+        "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
+        "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}"
+    },
+    "STATCARD": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Stat card for {0}**",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
+        "FETCHING": "`Fetching {0}'s stat data . .`"
+    },
+    "SWITCH_THEME": {
+        "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**.",
+        "MISSING_KEYWORD": "Please include the theme name you want to use.",
+        "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**`",
+        "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
+        "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name."
+    },
+    "SYS_NOTIFICATION": {
+        "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
+    },
+    "SYSTEM_STATS": {
+        "NO_DATA_FOUND": "I can't find any data associated with **{{selectedMetric}}** field. {{emoji}}",
+        "INVALID_DATE": "Invalid parameter, baka. Try type `7` as the parameter to get aggregated data for this week.",
+        "INSIGHT": "I can see **{{percentage}}%** from previous **last {{days}} days** datapoint. {{emoji}}"
+    },
+    "INTERNAL_SYSTEM": {
+        "DATABASE_CONNECTED": "Database successfully connected",
+        "COMMANDS_REGISTERED": "Commands have successfully registered"
+    },
+    "SERVER_REMOTE": {
+        "AUTHORIZED": "**{0}**, you are authorized to control my server remotely. {1}",
+        "PROCESSING": "**Server will restart in {0} seconds...**",
+        "GUIDE": "These are the available parameter [-live, -mt, -rs].",
+        "CURRENTLY_MT": "Currently is running in development state.",
+        "CURRENTLY_LIVE": "Currently is running in production state."
+    },
+    "STRIKE": {
+        "GUIDE": "You are authorized to use the **Strike System.**\n\nThis feature used to track bad behavior caused by member in the server and automatically give them penalty action such as mute, kick or even ban.",
+        "NULL_RECORD": "**{{user}}** doesn't have any strike record yet. Please type `+ <reason>` to add new strike.",
+        "DISPLAY_RECORD": "Here's what I found for **{{user}}**\n\nTotal **{{recordsLength}}** strikes were recorded.\nThe recent one was added by **{{reportedBy}}**\n\n{{list}}\n\nType `+ <reason>` to add new strike.",
+        "ENTRY_REGISTER": "Thankyou! your report for **{{user}}** has been registered."
+    },
+    "ERR": {
+        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!",
+        "NEGATIVE_INPUT": "You can't use negative values.",
+        "MISSING_ARG": "Please don't forget to specify the amount of power capsules that you want to use."
+    },
+    "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
+    "VERIFICATION_REQUEST": {
+        "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
+        "NOTIFY_AVAILABLE_MODS": "Hey, hey! we got new verification request!\n{0}",
+        "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!"
+    }
+}

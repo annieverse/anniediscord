@@ -19,17 +19,17 @@ class Logs extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, bot:{locale:{GETLOG}} }) {
+	async execute({ reply, name }) {
         await this.requestUserMetadata(1)
         
         //  Target date
         let parseRef = this.args[0] || `today`
         //  Get log file
         let file = await this._pullFile(parseRef)
-        if (!file) return reply(GETLOG.ERR)
+        if (!file) return reply(this.locale.GETLOG.ERR)
 
         //  Output attachment
-        return reply(GETLOG.RETURNING, {
+        return reply(this.locale.GETLOG.RETURNING, {
             socket: [name(this.user.id)],
             simplified: true,
             image: this.logPath + file,
@@ -67,11 +67,10 @@ class Logs extends Command {
 module.exports.help = {
 	start: Logs,
 	name:`logs`,
-	aliases: [`getlog`],
+	aliases: [`getlog`, `log`],
 	description: `Retrieving log file`,
 	usage: `getlog <Date>(Optional)`,
     group: `Developer`,
     permissionLevel: 4,
-	public: true,
 	multiUser: true
 }

@@ -1,33 +1,38 @@
+const Command = require(`../../libs/commands`)
 const superagent = require(`superagent`)
+/**
+ * Displays a random picture of a cat.
+ * @author klerikdust
+ */
+class Cat extends Command {
 
-class cat {
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
     constructor(Stacks) {
-        this.stacks = Stacks
+        super(Stacks)
     }
 
-    async cat() {
-        const { reply } = this.stacks
-        let { body } = await superagent.get(`https://some-random-api.ml/img/cat`)
-        return reply(``, {
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, choice }) {
+        const { body } = await superagent.get(`https://some-random-api.ml/img/cat`)
+        return reply(choice(this.locale.CAT.RESPONSES), {
             image: body.link,
             prebuffer: true,
-            deleteIn: 5000
         })
-    }
-
-    async execute() {
-        this.cat()
     }
 }
 
 module.exports.help = {
-    start: cat,
+    start: Cat,
     name: `cat`,
-    aliases: [],
+    aliases: [`kitty`, `cat`],
     description: `Displays a random picture of a cat.`,
-    usage: `hug`,
+    usage: `cat`,
     group: `Fun`,
-    public: true,
-    require_usermetadata: false,
-    multi_user: false
+    permissionLevel: 0,
+    multiUser: false
 }

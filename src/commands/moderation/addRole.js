@@ -1,61 +1,99 @@
-class AddRole {
-	constructor(Stacks) {
-		this.stacks = Stacks
-		this.required_roles = Stacks.message.member.roles.find(r => Object.keys(this.stacks.roles.admin).some(i => this.stacks.roles.admin[i] === r.id))
-	}
+const Command = require(`../../libs/commands`)
+/**
+ * Adds role to specific user.
+ * @author klerikdust
+ */
+class AddRole extends Command {
 
-	async execute() {
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-		const { reply, args, code: { ADDROLE, UNAUTHORIZED_ACCESS }, meta: { author }, message, palette, addRole} = this.stacks
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, name, avatar, addRole, findRole }) {
+		await this.requestUserMetadata(2)
 
-		if (!message.member.hasPermission(`MANAGE_ROLES`) || !this.required_roles) return reply(UNAUTHORIZED_ACCESS, {color:palette.red})
-		if (!args[0]) return reply(ADDROLE.NO_USER, {color : palette.red})
-		let pUser = author
-		if (!pUser || pUser === null) return reply(ADDROLE.NO_USER_FOUND, {
-			socket: [message.author],
-			color: palette.red
+		//  Handle if user doesn't specify the target user
+		if (!this.fullArgs) return reply(this.locale.ADDROLE.MISSING_ARG)
+		//  Handle if target user doesn't exists
+		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+
+		this.setSequence(10)
+		reply(this.locale.ADDROLE.CONFIRMATION_SEQ_1, {
+			color: `golden`,
+			socket: {user: name(this.user.id)}
 		})
-		if (!args[1]) return reply(ADDROLE.NO_ROLE_SPECIFIED, {color:palette.red})
-		let role = args[1].substring(3, 21)
-		let gRole = message.guild.roles.get(role)
-		if (!gRole) return reply(ADDROLE.NO_ROLE_FOUND, {
-			socket: [this.stacks.message.author],
-			color: palette.red
-		})
-		if (pUser._roles.includes(gRole.id)) return reply(ADDROLE.HAS_ROLE_ALREADY, {
-			socket: [pUser],
-			color: palette.red
-		})
-		await (addRole(gRole.name, pUser.id))
-		message.react(`👌`)
-		try {
-			reply(ADDROLE.ROLE_ADDED, {
-				color: palette.green,
-				field: pUser,
-				socket: [pUser, gRole.name]
-			}).catch(() => {
-				return reply(ADDROLE.DMS_LOCKED, {
-					color: palette.green,
-					socket: [pUser, gRole.name]
-				})
+		.then(init => {
+			this.sequence.on(`collect`, async msg => {
+				const input = msg.content.toLowerCase()
+
+				/**
+				 * ---------------------
+				 * Sequence Cancellations.
+				 * ---------------------
+				 */
+				if (this.cancelParameters.includes(input)) {
+					this.endSequence()
+					return reply(this.locale.ACTION_CANCELLED)
+				}
+
+				/**
+				 * ---------------------
+				 * 1.) Choosing role.
+				 * ---------------------
+				 */
+				if (this.onSequence <= 1) {
+					this.role = findRole(input)
+					//  Handle if cannot find the role
+					if (!this.role) return reply(this.locale.ADDROLE.NO_ROLE_FOUND, {color: `red`})
+					//  Handle if user already have the role
+					if (this.user._roles.includes(this.role.id)) return reply(this.locale.ADDROLE.HAS_ROLE_ALREADY, {
+						color: `red`,
+						socket: {user: name(this.user.id)}
+					})
+					reply(this.locale.ADDROLE.CONFIRMATION_SEQ_2, {
+						socket: {
+							role: this.role.name,
+							user: name(this.user.id)
+						},
+						thumbnail: avatar(this.user.id),
+						color: `golden`,
+						notch: true
+					})
+					init.delete()
+					return this.nextSequence()
+				}
+
+				/**
+				 * ---------------------
+				 * 2.) Finalize.
+				 * ---------------------
+				 */
+				if (this.onSequence <= 2) {
+					if (!input.startsWith(`y`)) return reply(this.locale.ADDROLE.CANCEL)
+					await addRole(this.role, this.user.id)
+					reply(this.locale.ADDROLE.ROLE_ADDED, {color: `lightgreen`})
+					input.delete()
+					return this.endSequence()
+				}
 			})
-		} catch (e) {
-			return reply(ADDROLE.DMS_LOCKED, {
-				color: palette.green,
-				socket: [pUser, gRole.name]
-			})
-		}
+		})
 	}
 }
 
 module.exports.help = {
 	start: AddRole,
-	name: `addrole`,
-	aliases: [],
-	description: `Add roles to specific user.`,
-	usage: `addrole @user @role`,
-	group: `Admin`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	name: `addRole`,
+	aliases: [`assignrole`, `addrole`, `giverole`, `roleadd`, `rolegive`, `roleassign`],
+	description: `Adds role to specific user.`,
+	usage: `addrole <User>`,
+	group: `Moderation`,
+	permissionLevel: 2,
+	multiUser: true
 }

@@ -1,11 +1,13 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
+const cron = require(`node-cron`)
+const logger = require(`./logger`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
 const { get } = require(`snekfetch`)
 /**
  *  @class Pistachio
- *  @version 0.3.0
+ *  @version 0.4.0
  *  @classdesc Micro framework to support Annie's structure.
  *  Lightweight, portable and opinionated.
  *  This was originally made by Pan (our developer) to aggregate all the essential
@@ -61,13 +63,12 @@ class Pistachio {
 		 */
 		this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
 		
-		this.isSelfTargeting = this.isSelfTargeting.bind(this)
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
-		this.multicollector = this.multicollector.bind(this)
-		this.hasRole = this.hasRole.bind(this)
+		this.multiCollector = this.multiCollector.bind(this)
 		this.removeRole = this.removeRole.bind(this)
 		this.addRole = this.addRole.bind(this)
+		this.findRole = this.findRole.bind(this)
 		this.trueInt = this.trueInt.bind(this)
 		this.name = this.name.bind(this)
 		this.emoji = this.emoji.bind(this)
@@ -86,6 +87,7 @@ class Pistachio {
 		this.formatString = this.formatString.bind(this)
 		this.chunk = this.chunk.bind(this)
 		this.socketing = this.socketing.bind(this)
+		this._registerPages = this._registerPages.bind(this)
 		this.reply = this.reply.bind(this)
 	}
 
@@ -102,15 +104,31 @@ class Pistachio {
 	 */
 	deleteMessages(amount = 1) {
 		if (!this._isGuildLayerAvailable) return
-		return message.channel.bulkDelete(amount)
+		return this.message.channel.bulkDelete(amount)
 	}
 	
 	/**
 	 *  Instant message collector
-	 *  @param {Default} max only catch 1 response
-	 *  @param {Default} time 60 seconds timeout
+	 *  @param {MessageInstance} msg
+	 *  @param {Default} [max=2] only catch 1 response
+	 *  @param {Default} [timeout=60000] 60 seconds timeout
 	 */
-	collector(msg) {
+	collector(msg, max=2, timeout=60000) {
+		if (!this._isGuildLayerAvailable) return
+		return new MessageCollector(this.message.channel,
+		m => m.author.id === this.message.author.id, {
+			max: max,
+			time: timeout,
+		})
+	}
+	
+	/**
+	*  (Multi-layering)Instant message collector
+	*  @param {Object} msg current message instance
+	*  @param {Default} max only catch 1 response
+	*  @param {Default} time 60 seconds timeout
+	*/
+	multiCollector(msg) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(msg.channel,
 		m => m.author.id === msg.author.id, {
@@ -118,54 +136,76 @@ class Pistachio {
 			time: 60000,
 		})
 	}
-	
+
 	/**
-		*  (Multi-layering)Instant message collector
-		*  @param {Object} msg current message instance
-		*  @param {Default} max only catch 1 response
-		*  @param {Default} time 60 seconds timeout
-		*/
-	multicollector(msg) {
+	* Adding role to a user
+	* @param {String} targetRole searchString keyword for the role
+	* @param {String} userId user's discord id
+	* @returns {RoleObject}
+	*/
+	addRole(targetRole, userId) {
+		const fn = `[Pistachio.addRole()]`
 		if (!this._isGuildLayerAvailable) return
-		return new MessageCollector(msg.channel,
-		m => m.author.id === msg.author.id, {
-			max: 2,
-			time: 60000,
-		})
-	}
-	
-	/**
-		* To check whether the user has the said role or not
-		* @param {String} rolename for role name code
-		* @return {Boolean} of role
-		* @hasRole
-		*/
-	hasRole(rolename) {
-		if (!this._isGuildLayerAvailable) return
-		return message.member.roles.find(r => r.name === rolename || r.id === rolename)
+
+		//  Use default lookup if supplied targetRole is not a <RoleObject>
+		if (!targetRole.id) {
+			const role = this.findRole(targetRole)
+			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
+			logger.debug(`${fn} assigned ${role.name} to USER_ID ${userId}`)
+			return this.message.guild.members.get(userId).addRole(role)
+		}
+
+		logger.debug(`${fn} assigned ${targetRole.name} to USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).addRole(targetRole)
 	}
 
 	/**
-		* Returning of given role name
-		* @param {String} rolename for role name code
-		* @return {Object} of role
-		* @addRole
-		*/
-	addRole(rolename, user) {
+	* Removing role from user
+	* @param {String} targetRole searchString keyword for the role
+	* @param {String} userId user's discord id
+	* @returns {RoleObject}
+	*/
+	removeRole(targetRole, userId) {
+		const fn = `[Pistachio.removeRole()]`
 		if (!this._isGuildLayerAvailable) return
-		return message.guild.member(user).addRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
+
+		//  Use default lookup if supplied targetRole is not a <RoleObject>
+		if (!targetRole.id) {
+			const role = this.findRole(targetRole)
+			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
+			logger.debug(`${fn} removed ${role.name} from USER_ID ${userId}`)
+			return this.message.guild.members.get(userId).removeRole(role)
+		}
+
+		logger.debug(`${fn} removed ${targetRole.name} from USER_ID ${userId}`)
+		return this.message.guild.members.get(userId).removeRole(targetRole)
 	}
 
-	/**
-		* Returning of given role name
-		* @param {String} rolename for role name code
-		* @return {Object} of role
-		* @addRole
-		*/
-	removeRole(rolename, user) {
-		if (!this._isGuildLayerAvailable) return
-		return message.guild.member(user).removeRole(message.guild.roles.find(r => r.name === rolename || r.id === rolename))
-	}
+    /**
+     * Finds a role by id, tag or plain name
+     * @param {UserResolvable} target the keyword for the role (id, name, mention)
+     * @returns {GuildMemberObject}
+     */
+	findRole(target) {
+        const fn = `[Pistachio.findRole()]`
+        if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target role id/name/mention.`)
+		try {
+			const rolePattern = /^(?:<@&?)?([0-9]+)>?$/
+			if (rolePattern.test(target)) target = target.replace(rolePattern, `$1`)
+			const roles = this.message.guild.roles
+			const filter = role => role.id === target ||
+			role.name.toLowerCase() === target.toLowerCase() ||
+			role === target
+
+			return roles.filter(filter).first()
+		}
+		catch(e) {
+			return {
+				name: null,
+				id: null
+			}
+		}
+    }
 
 
 	/**
@@ -173,17 +213,6 @@ class Pistachio {
 	 *  Flexible Components
 	 *  ------------------------------------------
 	 */
-
-	/**
-	 * Check if user targetting themselves. This intentionally built to avoid payment system abuse.
-	 * @since 5.0.0
-	 * @type {Boolean}
-	 */
-	isSelfTargeting() {
-		if (!this._isUserMetaLayerAvailable) return
-		return this.components.user.id === message.author.id ? true : false
-	}
-
 	/**
 	 * Automatically convert any weird number notation into a real value.
 	 * @author Fwubbles
@@ -196,12 +225,13 @@ class Pistachio {
 	}
 
 	/**
-	 *  Fetch user's username based on given user id. Fallback as 'unknown' if user is not fetchable.
+	 *  Fetch user's username based on given user id. Fallback userId if user is not fetchable.
 	 *  @param {String} userId target user
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		return this.bot.users.get(userId).username || `unknown`
+		const user = this.bot.users.get(userId) 
+		return user ? user.username : userId
 	}
 
 	/**
@@ -219,7 +249,7 @@ class Pistachio {
 	 *  @returns {Number|Integer}
 	 */
 	commanifier(number=0) {
-		return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`)
+		return number ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`) : 0
 	}
 
 	/**
@@ -302,7 +332,7 @@ class Pistachio {
 			})
 			return filelist
 		}
-		let allFiles = walkSync(`./core/images`) // Starts with the main directory and includes all files in the sub directories
+		let allFiles = walkSync(`./src/assets`) // Starts with the main directory and includes all files in the sub directories
 		let ultimateFile
 		allFiles.forEach((file) => {
 			if (file.includes(id)){ 
@@ -474,7 +504,7 @@ class Pistachio {
 	 */
 	socketing(content=``,socket=[]) {
 		for(let i = 0; i < socket.length; i++) {
-			if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, socket[i])
+			if (content.indexOf(`{${i+1}}`) != -1) content = content.replace(`{${i}}`, socket[i])
 		}
 		return content
 	}
@@ -493,6 +523,20 @@ class Pistachio {
 		.setColor(this.palette.darkmatte)
 		this.message.channel.send(embed)
 	}
+
+    /**
+     *  Registering each element of array into its own embed.
+     *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
+     *  @returns {array}
+     */
+    _registerPages(pages=[]) {
+        let res = []
+        for (let i = 0; i < pages.length; i++) {
+            res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.darkmatte)
+        }
+        return res
+    }
+
 
 	/** Annie's custom message system.
 	 *  @param {String} content as the message content
@@ -525,7 +569,8 @@ class Pistachio {
 		header: null,
 		footer: null,
 		customHeader: null,
-		timestamp: false
+		timestamp: false,
+		paging: false
 	}) {
 		options.socket = !options.socket ? [] : options.socket
 		options.color = !options.color ? this.palette.darkmatte : options.color
@@ -542,37 +587,81 @@ class Pistachio {
 		options.footer = !options.footer ? null : options.footer
 		options.customHeader = !options.customHeader ? null : options.customHeader
 		options.timestamp == false ? null : options.timestamp = true
+		options.paging === false ? null : options.paging
+		const fn = `[Pistachio.reply()]`
 
-		//  Socketing
-		for (let i = 0; i < options.socket.length; i++) {
-			if (content.indexOf(`{${i}}`) != -1) content = content.replace(`{${i}}`, options.socket[i])
+		//  Handle message with paging property enabled
+		if (options.paging) {
+			let page = 0
+			const embeddedPages = this._registerPages(content)
+			return options.field.send(embeddedPages[0])
+            .then(async msg => {
+                //  Buttons
+                await msg.react(`⏪`)
+                await msg.react(`⏩`)
+                // Filters - These make sure the varibles are correct before running a part of code
+                const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+                const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+                //  Timeout limit for page buttons
+                const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
+                const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
+                //	Left navigation
+                backwards.on(`collect`, r => {
+                    r.remove(this.message.author.id)
+                    page--
+                    if (embeddedPages[page]) {
+                        msg.edit(embeddedPages[page])
+                    } else {
+                        page++
+                    }
+                })
+                //	Right navigation
+                forwards.on(`collect`, r => {
+                    r.remove(this.message.author.id)
+                    page++
+                    if (embeddedPages[page]) {
+                        msg.edit(embeddedPages[page])
+                    } else {
+                        page--
+                    }
+                })
+            })
 		}
 
+		//  Replace content with error message if content is a faulty value
+		if (!content && (typeof content != `string`)) {
+			logger.error(`${fn} parameter 'content' should only be string. Because of this, now user will only see my localization msg handler.`)
+			content = this.bot.locale.en.LOCALIZATION_ERROR
+
+		}
+
+		//  Find all the available {{}} socket in the string.
+		let sockets = content.match(/\{{(.*?)\}}/g)
+		if (sockets === null) sockets = []
+		for (let i = 0; i < sockets.length; i++) {
+			const key = sockets[i].match(/\{{([^)]+)\}}/)
+			if (!key) continue
+			//  Index `0` has key with the double curly braces, index `1` only has the inside value.
+			const pieceToAttach = options.socket[key[1]]
+			if (pieceToAttach) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
+		}
+	
 		//  Returns simple message w/o embed
 		if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
-
 		//  Add notch/chin
 		if (options.notch) content = `\u200C\n${content}\n\u200C`
-
-
 		const embed = new RichEmbed()
 			.setColor(this.palette[options.color] || options.color)
-			//	Ad inject
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
-
 		//  Add header
-		if(options.header) embed.setAuthor(options.header, this.avatar(message ? message.author.id : options.author.id))
-
+		if(options.header) embed.setTitle(options.header)
 		//  Custom header
 		if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
-
 		//  Add footer
 		if (options.footer) embed.setFooter(options.footer)
-
 		// Add url
 		if (options.url) embed.setURL(options.url)
-
 		//  Add image preview
 		if (options.imageGif) {
 			embed.setImage(options.imageGif)
@@ -580,7 +669,6 @@ class Pistachio {
 			embed.image.url = null
 			embed.file = null
 		}
-
 		//  Add image preview
 		if (options.image) {
 			embed.attachFile(new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image), `preview.jpg`))
@@ -590,17 +678,14 @@ class Pistachio {
 			embed.file = null
 		}
 
-
-		//  If deleteIn parameter was not specified
-		if (!options.deleteIn) return options.field.send(embed)
-
-		return options.field.send(embed)
-			.then(msg => {
-				//  Convert deleteIn parameter into milliseconds.
-				msg.delete(options.deleteIn * 1000)
-			})
+		let sent = options.field.send(embed)
+		if (!options.deleteIn) return sent
+		return sent
+		.then(msg => {
+			//  Convert deleteIn parameter into milliseconds.
+			msg.delete(options.deleteIn * 1000)
+		})
 	}
-		
 }
 
 

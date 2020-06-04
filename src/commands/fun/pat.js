@@ -1,33 +1,50 @@
+const Command = require(`../../libs/commands`)
 const superagent = require(`superagent`)
+/**
+ * Displays a random gif of a pat.
+ * @author klerikdust
+ */
+class Pat extends Command {
 
-class pat {
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
     constructor(Stacks) {
-        this.stacks = Stacks
+        super(Stacks)
     }
 
-    async pat() {
-        const { reply } = this.stacks
-        let { body } = await superagent.get(`https://some-random-api.ml/animu/pat`)
-        return reply(``, {
-            imageGif: body.link,
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply }) {
+        await this.requestUserMetadata(1)
+        const { body } = await superagent.get(`https://some-random-api.ml/animu/pat`)
+
+        //  Lonely pat
+        if (!this.fullArgs) return reply(this.locale.PAT.THEMSELVES, {
+            socket: [this.user],
+            image: body.link,
             prebuffer: true,
-            deleteIn: 5000
+        })
+
+        //  Patting other user
+        return reply(this.locale.PAT.OTHER_USER, {
+            socket: [this.user, this.fullArgs],
+            image: body.link,
+            prebuffer: true,
         })
     }
 
-    async execute() {
-        this.pat()
-    }
 }
 
 module.exports.help = {
-    start: pat,
+    start: Pat,
     name: `pat`,
     aliases: [],
     description: `Displays a random gif of a pat.`,
-    usage: `pat`,
+    usage: `pat <User>(Optional)`,
     group: `Fun`,
-    public: true,
-    require_usermetadata: false,
-    multi_user: false
+    permissionLevel: 0,
+    multiUser: false
 }

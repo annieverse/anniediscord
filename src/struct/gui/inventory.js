@@ -9,7 +9,6 @@ const ThemePresets = require(`../../ui/colors/themes`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitney`)
 
 /**
  * 	Displaying user inventory.
@@ -52,7 +51,8 @@ const InventoryInterface = async (container, usertheme) => {
 	 * 	@param {String|ID} id filename(item_alias)
 	 *  @getAsset
 	 */
-	const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`).catch(async ()=>{return fsn.readFile(`./core/images/halloween/${id}.png`)})
+	const getAsset = (id) => fsn.readFile(`./src/assets/${id}.png`)
+	.catch(async ()=>{return fsn.readFile(`./src/assets/error.png`)})
 	//const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
 
 

@@ -16,11 +16,16 @@ class Balance extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, commanifier, avatar, emoji, bot:{locale}}) {
+	async execute({ reply, commanifier, avatar, emoji}) {
 		await this.requestUserMetadata(2)
-		if (!this.user) return reply(locale.ERR.UNABLE_TO_FIND_USER)
-		return reply(locale.DISPLAY_BALANCE, {
-			socket: [emoji(`artcoins`), commanifier(this.user.meta.artcoins)],
+		
+		//  Handle if user couldn't be found
+		if (!this.user) return reply(this.locale.USER.IS_INVALID)
+		return reply(this.locale.DISPLAY_BALANCE, {
+			socket: {
+				emoji: emoji(`artcoins`), 
+				amount: commanifier(this.user.inventory.artcoins)
+			},
 			notch: true,
 			thumbnail: avatar(this.user.id)
 		})
@@ -34,8 +39,7 @@ module.exports.help = {
 	aliases: [`bal`, `money`, `credit`, `ball`, `ac`, `artcoin`, `artcoins`],
 	description: `Displaying user's current balance`,
 	usage: `balance`,
-	group: `General`,
+	group: `User`,
 	permissionLevel: 0,
-	public: true,
 	multiUser: true
 }

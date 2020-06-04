@@ -8,16 +8,16 @@ class PermissionController {
 
     /**
      * Fetch user's permission level
-     * @since 6.0.0
+     * @param {string} [userId=this.message.author.id] Target user's id permission to be fetched from
      * @returns {configObject}
      */
-    authorityCheck() {
+    getUserPermission(userId=this.message.author.id) {
         // Check for developer privileges
-        if (config.developer.accounts.includes(this.message.author.id)) return config.developer
+        if (config.developer.accounts.includes(userId)) return config.developer
         // User without developer privileges in dm interface will be automatically assigned as a regular user.
         if (this.message.channel.type === `dm`) return config.user
 
-        const perm = new Permissions(this.message.member.highestRole.permissions)
+        const perm = new Permissions(this._getUser(userId).highestRole.permissions)
         for (let type in config) {
             if (type === `developer`) continue
             if (perm.has(config[type].permissionString)) {
@@ -26,6 +26,10 @@ class PermissionController {
         }
         // Returns as regular user if no level is matched
         return config.user
+    }
+
+    _getUser(userId=``) {
+        return this.message.guild.members.get(userId)
     }
 }
 

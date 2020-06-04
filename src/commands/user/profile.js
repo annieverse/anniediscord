@@ -1,149 +1,56 @@
-const profile = require(`../../struct/gui/profile`)
-const portfolio = require(`../../struct/gui/portfolio`)
-const badge = require(`../../struct/gui/badges`)
-const family = require(`../../struct/gui/families`)
-const friend = require(`../../struct/gui/friends`)
-const stat = require(`../../struct/gui/stats`)
-const databaseManager = require(`../../libs/database`)
+const GUI = require(`../../ui/prebuild/profile`)
+const Command = require(`../../libs/commands`)
+/**
+ * Displays your profile card, including timeline, badges, relationship, and statistics
+ * @author klerikdust
+ */
+class Profile extends Command {
 
-class Profile {
-	constructor(Stacks) {
-		this.stacks = Stacks
-	}
-
-	//          WORKING ON NEW SHOP INTERFACE
-	/**
-     *  Initialzer method
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
      */
-	async execute() {
-		const {message, command, reply, name, emoji, code: {PROFILECARD, PORTFOLIOCARD, BADGECARD, RELATIONSHIPCARD, STATCARD}, meta: {author, data} } = this.stacks
+    constructor(Stacks) {
+        super(Stacks)
+    }
 
-        const collection = new databaseManager(data.userId)
-        const userartworks = await collection.userArtworks()
-        const badgesdata = await collection.badges
-        delete badgesdata.userId
-        const key = Object.values(badgesdata).filter(e => e)
-        const relations = await collection.relationships
-        const familyrelations = relations.filter((e) => {
-            if (e.theirRelation == `bestie`) return false
-            if (e.theirRelation == `soulmate`) return false
-            if (e.theirRelation == `senpai`) return false
-            if (e.theirRelation == `kouhai`) return false
-            return true
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, bot:{db}, emoji, name }) {
+        await this.requestUserMetadata(2)
+
+        //  Handle if user doesn't exists
+        if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+        this.fetching = await reply(this.locale.COMMAND.FETCHING, {
+            socket: {
+                emoji: emoji(`AAUloading`),
+                command: `profile`,
+                user: this.user.id
+            },
+            simplified: true
         })
-        const friendrelations = relations.filter((e) => {
-            if (e.theirRelation == `bestie`) return true
-            if (e.theirRelation == `soulmate`) return true
-            if (e.theirRelation == `senpai`) return true
-            if (e.theirRelation == `kouhai`) return true
-            return false
+        await reply(this.locale.COMMAND.TITLE, {
+            socket: {
+                user: name(this.user.id),
+                emoji: emoji(`AnnieSmile`),
+                command: `Profile`
+            },
+            image: (await new GUI(this.user).build()).toBuffer(),
+            prebuffer: true,
+            simplified: true 
         })
-
-        /*Don't add empty pages*/
-        var pages = [{gui: profile, card: PROFILECARD, alias: `profile`}]
-        if (userartworks) {
-            pages.push({gui: portfolio, card: PORTFOLIOCARD, alias: `portfolio`})
-        }
-        if (key.length > 0 && key[0] != null) {
-            pages.push({gui: badge, card: BADGECARD, alias: `badge`})
-        }
-        if (familyrelations.length > 0) {
-            pages.push({gui: family, card: RELATIONSHIPCARD, alias: `family`})
-        }
-        if (friendrelations.length > 0) {
-            pages.push({gui: friend, card: RELATIONSHIPCARD, alias: `friend`})
-        }
-        pages.push({gui: stat, card: STATCARD, alias: `stat`})
-
-        let count = 0
-        //  Returns if user is invalid or lvl too low
-        switch (command) {
-            case `timeline`:
-            case `portfolio`:
-                if (!author) return reply(PORTFOLIOCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `portfolio`)
-                break
-            case `badges`:
-            case `badge`:
-                if (!author) return reply(BADGECARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `badge`)
-                break
-            case `family`:
-                if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `family`)
-                break
-            case `friend`:
-            case `friends`:
-                if (!author) return reply(RELATIONSHIPCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `friend`)
-                break
-            case `stats`:
-            case `stat`:
-                if (!author) return reply(STATCARD.INVALID_USER)
-                count = pages.findIndex((e) => e.alias == `stat`)
-                break
-        default:
-            if (!author) return reply(PROFILECARD.INVALID_USER)
-        }
-
-        const getPage = async (ctr) => {
-            if (!pages[ctr]) return reply (`Couldn't find that card. It's probably empty.`)
-
-            reply(`${emoji(`AAUloading`)} resolving ${pages[ctr].alias} data with ID ${author.id}`, {simplified: true})
-            .then(async load => {
-                reply(pages[ctr].card.HEADER, {
-                    socket: [name(author.id)],
-                    image: await pages[ctr].gui(this.stacks, author),
-                    prebuffer: true,
-                    simplified: true })
-                .then(msg => {
-                    msg.react(`⏪`).then(() => {
-                        msg.react(`⏩`)
-                        const backwardsFilter = (reaction, user) => (reaction.emoji.name === `⏪`) && (user.id === message.author.id)
-                        const forwardsFilter = (reaction, user) => (reaction.emoji.name === `⏩`) && (user.id === message.author.id)
-    
-                        const backwards = msg.createReactionCollector(backwardsFilter, {time: 60000})
-                        const forwards = msg.createReactionCollector(forwardsFilter, {time: 60000})
-    
-                        backwards.on(`collect`, async () => {
-                            count--
-                            if (count < 0) {
-                                count = pages.length - 1
-                            }
-                            await msg.delete()
-                            getPage(count)
-    
-                        })
-                        forwards.on(`collect`, async () => {
-                            count++
-                            if (count > pages.length - 1) {
-                                count = 0
-                            }
-                            await msg.delete()
-                            getPage(count)
-                        })
-                        
-                        load.delete()
-                        setTimeout(() => {
-                            if (!msg.deleted) msg.clearReactions()
-                        }, 60000)
-                    })
-                })
-            })
-        }
-		//  Display result
-        getPage(count)
+        return this.fetching.delete()
 	}
 }
 
 module.exports.help = {
 	start: Profile,
 	name: `profile`,
-	aliases: [`profile`, `p`, `mycard`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`, `stats`, `stat`],
-	description: `Display user's profile card, including timeline, badges, relationship, and statistics`,
-	usage: `profile [@user]<optional>`,
-	group: `General`,
-	public: true,
-	required_usermetadata: true,
-	multi_user: true
+	aliases: [`profile`, `p`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`],
+	description: `Displays your profile card, including timeline, badges, relationship, and statistics`,
+	usage: `profile <User>(Optional)`,
+	group: `User`,
+	permissionLevel: 0,
+	multiUser: true
 }

@@ -1,72 +1,63 @@
-const Discord = require(`discord.js`)
-const ms = require(`parse-ms`)
+const Command = require(`../../libs/commands`)
+const moment = require(`moment`)
+/**
+ * Displays info about the server
+ * @author klerikdust
+ */
+class ServerInfo extends Command {
 
-class serverInfo {
-	constructor(Stacks) {
-		this.author = Stacks.meta.author
-		this.data = Stacks.meta.data
-		this.utils = Stacks.utils
-		this.message = Stacks.message
-		this.args = Stacks.args
-		this.palette = Stacks.palette
-		this.stacks = Stacks
-	}
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
+    constructor(Stacks) {
+		super(Stacks)
+    }
 
-	async execute() {
-		let message = this.message
-		let palette = this.stacks.palette
-		/// serverinfo.js
-		///
-		///  server info command
-		///    change logs:
-		///       10/19/18 - added more data(owner & region)
-		///       10/18/18 - embed changes.
-		///       09/20/18 - More data, ms-module & rework embed.
-		///
-		///     -naphnaphz
-		///     -Frying Pan
-
-
-		let sicon = message.guild.iconURL
-		let members = message.guild.memberCount
-		let botSize = message.guild.members.filter(a => a.user.bot).size
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    async execute({ reply, name, commanifier }) {
+		let members = this.message.guild.memberCount
+		let botSize =  this.message.guild.members.filter(a => a.user.bot).size
 		let userSize = members - botSize
-		var timestamp = new Date
+		let onmem = this.message.guild.members.filter(a => a.user.presence.status === `online`).size
 
-		let onmem = message.guild.members.filter(a => a.user.presence.status === `online`).size
-		let idlemem = message.guild.members.filter(a => a.user.presence.status === `idle`).size
-		let dndmem = message.guild.members.filter(a => a.user.presence.status === `dnd`).size
+		return reply(`
+			${this.message.guild.region.charAt(0).toUpperCase() + this.message.guild.region.slice(1)}-based Guild
 
-		let createdAtMs = ms(Date.now() - (message.guild.createdAt))
-		let joinedAtMs = ms(Date.now() - (message.member.joinedAt))
+			Owned by **${name(this.message.guild.ownerID)}**
 
-		let serverembed = new Discord.RichEmbed()
+			**• When the guild was found?**
+			It's exactly ${moment(this.message.guild.createdAt).fromNow()}.
+			and I saw you were joining to this server ${moment(this.message.member.joinedAt).fromNow()}.
 
-			.setColor(palette.halloween)
-			.setThumbnail(sicon)
-			.addField(`Server Name`, message.guild.name, true)
-			.addField(`Region`, message.guild.region, true)
-			.addField(`Owner`, `<@${message.guild.ownerID}>`)
-			.addField(`Created on`, `${createdAtMs.days} days, ${createdAtMs.hours} hours ago.`, true)
-			.addField(`Date joined`, `${joinedAtMs.days} days, ${joinedAtMs.hours} hours ago.`, true)
-			.addField(`Customs`, `• **${message.guild.channels.size}** Channels\n• **${userSize}** Users\n• **${botSize}** Bots\n• **${members}** Members`, true)
-			.addField(`Presence Status`, `• **${onmem}** Online\n• **${idlemem}** Idle\n• **${dndmem}** Away\n• **${members - onmem - dndmem - idlemem}** Offline\n`, true)
-			.addBlankField()
-			.setFooter(`Anime Artist United | Server Information`, sicon)
-			.setTimestamp(timestamp)
+			**• How many members do we have?**
+			I can smell ${commanifier(userSize)} hoomans are currently living in this guild and the rest ${commanifier(botSize)} creatures are my friend. x)
+			But, did you know?
+			${onmem} users are currently active in this server! go greet them!
 
-		return message.channel.send(serverembed)
+			**• Hmm, what about the channels and roles?**
+			Hah! they have ${this.message.guild.channels.size} channels and ${this.message.guild.roles.size} roles!
+			Is that what you are looking for?
+			Wait, they also have ${this.bot.channels.get(this.message.guild.systemChannelID)} as their main channel.
+
+			Okay, that's all I know! 
+
+		`, {
+			header: this.message.guild.name,
+			thumbnail: this.message.guild.iconURL
+		})
 	}
 }
 
 module.exports.help = {
-	start: serverInfo,
-	name:`serverinfo`,
-	aliases: [],
-	description: `Displays info about server`,
+	start: ServerInfo,
+	name:`serverInfo`,
+	aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
+	description: `Displays info about the server`,
 	usage: `serverinfo`,
 	group: `Server`,
-	public: true,
-	required_usermetadata: false,
-	multi_user: false
+	permissionLevel: 0,
+	multiUser: false
 }

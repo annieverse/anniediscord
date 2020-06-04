@@ -1,25 +1,14 @@
-const { Canvas } = require(`canvas-constructor`) 
+const Canvas = require(`../setup`)
 const sizeOf = require(`buffer-image-size`)
+const Color = require(`color`)
 const { DEFAULT, DATABAR, CONTENT } = require(`../config`)
 const palette = require(`../colors/default`)
 const themePresets = require(`../colors/themes`)
-const { resolve, join } = require(`path`)
-
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Light.ttf`)), `OpenSansLight`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Regular.ttf`)), `OpenSansRegular`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-SemiBold.ttf`)), `OpenSansSemiBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-Bold.ttf`)), `OpenSansBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/OpenSans-ExtraBold.ttf`)), `OpenSansExtraBold`)
-
-
-
 /**
  * Universal UI Library for Annie's Material Design.
  * Supports method chaining.
  */
 class Card {
-
-
 	/**
 	 * Global presets for current card instance.
 	 * @param {*} Object
@@ -31,8 +20,8 @@ class Card {
 		dataBarSize=DEFAULT.DATABAR.SIZE,
 		primaryColor=themePresets[DEFAULT.THEME].text,
 		marginLeft=50,
-		marginTop=50
-	
+		marginTop=50,
+		align=`left`
 		}) {
 		this.width = width
 		this.height = height
@@ -41,10 +30,12 @@ class Card {
 		this.canv = new Canvas(this.width, this.height) 
 		this.marginLeft = marginLeft
 		this.marginTop = marginTop
+		this.align = align
 		this.dataBarCount = 0
 		this.dataBarSize = dataBarSize
 		this.reservedSpace = 0
 		this.primaryColor = primaryColor
+		this.avatar = {width: 50, height: 50}
 	}
 
 
@@ -64,7 +55,7 @@ class Card {
 	 * 	@private	
 	 * 	@_resolveColor
 	 */
-	_resolveColor(prop, defaultOpt) {
+	_resolveColor(prop, defaultOpt=`white`) {
 
 		//	Gives default option if the given prop is undefined/null
 		if (!prop) return defaultOpt
@@ -106,34 +97,58 @@ class Card {
 		barColor=this.color.secondary,
 		fillColor=this.color.secondary,
 		marginLeft=null,
-		marginTop=this.marginTop,
-		align=`left`,
+		marginTop=0,
+		align=this.align,
 		width=200,
 		height=10,
 		current=50,
 		inline=false
 		}) {
 		
-		const progressBar = this._barSize(current, width)
-		const dynamicMarginLeft = marginLeft + this._getHorizontalAlign(align)
+		//  Handle invalid type of color
+		barColor = this._resolveColor(barColor, this.color.secondary)
+		fillColor = this._resolveColor(fillColor, `red`)
 
+		const progressBar = this._barSize(current, width)
+		const dynamicMarginLeft = marginLeft + (align === `center` ? this._getHorizontalAlign(`center`)-Math.floor(width/2) : this._getHorizontalAlign(align))
 		this.canv
 		.save()
 		.save()
-
 		//	Base pipe
-		.setColor(this._resolveColor(barColor, this.color.secondary))
-		.createBeveledClip(dynamicMarginLeft, marginTop, width, height, 240)
-		.addRect(dynamicMarginLeft, marginTop, width, height)
+		.setColor(barColor)
+		.createBeveledClip(dynamicMarginLeft, this.reservedSpace+marginTop, width, height, 240)
+		.addRect(dynamicMarginLeft, this.reservedSpace+marginTop, width, height)
 		.restore()
-
 		//	Filled pipe
-		.setColor(this._resolveColor(fillColor, this.color.okay))
-		.createBeveledClip(dynamicMarginLeft, marginTop, progressBar, height, 240)
-		.addRect(dynamicMarginLeft, marginTop, progressBar, height)  
+		this.canv.setColor(fillColor)
+		.createBeveledClip(dynamicMarginLeft,  this.reservedSpace+marginTop, progressBar, height, 240)
+		.addRect(dynamicMarginLeft, this.reservedSpace+marginTop, progressBar, height)  
 		.restore()
 
-		if (!inline) this.reservedSpace += height+10
+		if (!inline) this.reservedSpace += marginTop+height
+
+		return this
+	}
+
+
+	addCover({img=``, gradient=false}) {
+		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/1.5))
+		const themeInRgb = Color(this.color.main).rgb().array()
+		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
+
+		grad.addColorStop(1, this.color.main)
+		grad.addColorStop(0, semiTransparent)
+
+		this.canv
+		.setGlobalAlpha(0.2)
+		.addImage(img, 0, 0)
+		.setGlobalAlpha(1)
+
+		if (gradient) {
+			this.canv
+			.setColor(grad)
+			.addRect(0, 0, this.width, this.height)
+		}
 
 		return this
 	}
@@ -145,7 +160,15 @@ class Card {
 	 *	@param {Integer} cornerRadius integer value for card cornerning radius.
 	 *	@createBase
 	 */
-	createBase({color=``, cornerRadius=DEFAULT.CORNER_RADIUS}) {
+	createBase({color=``, gradient=false, cornerRadius=DEFAULT.CORNER_RADIUS}) {
+		const grad = this.canv.createLinearGradient(0, 0,  Math.floor(this.width/1.5), 0)
+		const themeInRgb = Color(this.color.highlight).rgb().array()
+		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
+
+		grad.addColorStop(1, this.color.highlight)
+		grad.addColorStop(0.5, semiTransparent)
+		grad.addColorStop(0, this.color.main)
+
 		this.canv
 		.setColor(this._resolveColor(color, this.color.main))
 		.createBeveledClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
@@ -164,88 +187,90 @@ class Card {
 		content=``, 
 		label=``, 
 		size=this.dataBarSize,
-		align=`center`,
+		align=this.align,
 		contentColor=null,
 		barColor=null,
+		width = null,
+		height = null,
 		labelColor=null,
 		disableShadow=false,
+		shadowColor=null,
 		marginTop=0,
 		inline=false,
 		marginLeft=this.marginLeft,
-		releaseHook=false}) {
-
+		releaseHook=false,
+		rawPositioning=false,
+		contentSize=`MEDIUM`,
+		labelSize=`SMALL`
+		}) {
 
 		//	Handle sensitive case
 		size = size.toUpperCase()
+		contentSize = contentSize.toUpperCase()
+		labelSize = labelSize.toUpperCase()
+
+		//  Handle missing value
+		if (!width) width = DATABAR[size].WIDTH
+		if (!height) height = DATABAR[size].HEIGHT
 		//	Handle custom color selection
 		barColor = this._resolveColor(barColor, this.color.secondary)
 		contentColor = this._resolveColor(contentColor, this.color.text)
 		labelColor = this._resolveColor(labelColor, this.color.text)
+		shadowColor = this._resolveColor(shadowColor, contentColor)
 
 		//	Flexible X positioning
-		const leftMarginState = (this.dataBarCount > 0) && inline
-		? (DATABAR[size].WIDTH * this.dataBarCount) + (10 * this.dataBarCount) + marginLeft
-		: marginLeft
+		const leftMarginState = () => {
+			if (rawPositioning && (align === `center`)) return this._getHorizontalAlign(`center`)-Math.floor(width/2)
+			if (rawPositioning) return marginLeft
+			if ((this.dataBarCount > 0) && inline) return (width * this.dataBarCount) + (10 * this.dataBarCount) + marginLeft
+			if (align === `center`) return this._getHorizontalAlign(`center`)-Math.floor(width/2)
+			return marginLeft
+		}
+		const topMarginState = () => {
+			if (rawPositioning) return marginTop
+			return this.reservedSpace+marginTop
+		}
 
 
 		this.canv.save()
-
-
 		//	Apply shadow if the selected theme is allowing object shadow elevation.
 		if (!disableShadow && this.color.allowedShadow) {
-			this.canv.setShadowColor(contentColor)
+			this.canv.setShadowColor(shadowColor)
 			.setShadowOffsetY(10)
 			.setShadowBlur(15)
 			.setColor(this.color.main)
 	
-			.addRect(leftMarginState+20, this.reservedSpace+marginTop+20, DATABAR[size].WIDTH-40, DATABAR[size].HEIGHT-35)
+			.addRect(leftMarginState()+20, topMarginState()+20, width-40, height-35)
 			.setShadowBlur(0)
 			.setShadowOffsetY(0)
 			
 		}
 
-
 		//	If custom color is not specified, will follow default theming preset instead.
 		this.canv.setColor(barColor)
-		.createBeveledClip(leftMarginState, this.reservedSpace+marginTop, DATABAR[size].WIDTH, DATABAR[size].HEIGHT, DEFAULT.DATABAR.CORNER_RADIUS)
-		.addRect(marginLeft, this.reservedSpace+marginTop, this.width, this.height)
-
-
-		//	Main info
-		this._databarTextContent({
-			type: `MAIN_TEXT`,
-			align: align,
-			size: `MEDIUM`,
-			content: content, 
-			marginLeft: leftMarginState+(DATABAR[size].WIDTH/2), 
-			marginTop: marginTop+this.reservedSpace+(DATABAR[size].HEIGHT/1.4),
-			color: contentColor,
-		})
-
-
-		//	Label info
-		this._databarTextContent({
-			type: `LABEL`,
-			align: align,
-			size: `SMALL`,
-			content: label, 
-			marginLeft: leftMarginState+(DATABAR[size].WIDTH/2), 
-			marginTop: marginTop+this.reservedSpace+(DATABAR[size].HEIGHT/3.9),
-			color: labelColor
-			
-		})
+		.createBeveledClip(leftMarginState(), topMarginState(), width, height, DEFAULT.DATABAR.CORNER_RADIUS)
+		.addRect(marginLeft, topMarginState(), this.width, this.height)
+		//  Content
+		this.canv
+		.setTextAlign(align)
+		.setColor(contentColor)
+		.setTextFont(CONTENT[`MAIN_TEXT`].SIZE[contentSize])
+		.addText(content, leftMarginState()+(width/2), topMarginState()+(height/1.4))
+		//  Label
+		this.canv
+		.setTextAlign(align)
+		.setColor(labelColor)
+		.setTextFont(CONTENT[`LABEL`].SIZE[labelSize])
+		.addText(label, leftMarginState()+(width/2), topMarginState()+(height/3.9))
 
 
 		this.canv.restore()
-
 		//	Add state for flexible X positioning
 		this.dataBarCount += 1
 		//	Add state for flexible Y positioning
-		if (!inline || (inline && releaseHook)) this.reservedSpace += DATABAR[size].HEIGHT
-
+		if (!inline || (inline && releaseHook)) this.reservedSpace += marginTop+height
 		return this
 	}
-
 
 	/**
 	 *	Create content separator. Vertically.
@@ -269,30 +294,6 @@ class Card {
 	 * ----------------------------------------------------------------------------------------
 	 * 
 	 */
-
-
-	/**
-	 * 	Content-fill for Data Bar
-	 * 	@private
-	 * 	@param {*} Object
-	 * 	@_databarTextContent
-	 */
-	_databarTextContent({
-		content=``, 
-		marginTop=this.marginTop, 
-		marginLeft=this.marginLeft, 
-		size=`MEDIUM`, 
-		align=`center`, 
-		color=this.color.text,
-		type=`MAIN_TEXT`
-		}) {
-
-		this.canv
-		.setTextAlign(align)
-		.setColor(color)
-		.setTextFont(CONTENT[type].SIZE[size])
-		.addText(content, marginLeft, marginTop)
-	}	
 
 	 
 	/**
@@ -319,30 +320,36 @@ class Card {
 	addTitle({
 		main=``,
 		caption=null, 
-		align=`left`,
+		align=this.align,
 		inline=false,
-		marginTop=DEFAULT.HEADER.TITLE.HEIGHT,
-		color=this.color.text,
+		releaseHook=false,
+		marginTop=this.marginTop,
 		size=null,
-		marginLeft=null,
-		captionMargin=25}) {
+		marginLeft=this.marginLeft,
+		captionMargin=15,
+		captionColor=this.color.caption,
+		color=this.color.text}) {
+
+		color = this._resolveColor(color, this.color.text)
+		captionColor = this._resolveColor(captionColor, this.color.text)
 
 		this.canv
 		.setColor(color)
 		.setTextAlign(align)
-		.setTextFont(size ? `${parseInt(size)}pt OpenSansBold` : DEFAULT.HEADER.TITLE.FONT)
-		.addText(main, marginLeft + this._getHorizontalAlign(align), marginTop)
+		.setTextFont(size ? `${parseInt(size)}pt roboto-light` : DEFAULT.HEADER.TITLE.FONT)
+		.addText(main, this._getHorizontalAlign(align), this.reservedSpace+marginTop)
 
 		if (caption) {
 			this.canv
 			.setTextFont(DEFAULT.HEADER.CAPTION.FONT)
-			.setColor(this.color.caption)
-			.addText(caption, marginLeft + this._getHorizontalAlign(align), marginTop + captionMargin)
+			.setColor(captionColor)
+			.addText(caption, this._getHorizontalAlign(align), this.reservedSpace+marginTop+captionMargin)
 		}
-
+		
 		//	Add state for flexible Y positioning
-		if (!inline) {
-			caption ? this.reservedSpace += this.reservedSpace+marginTop+captionMargin : this.reservedSpace += marginTop
+		if (!inline || (releaseHook && inline)) {
+			if (caption) this.reservedSpace += captionMargin
+			this.reservedSpace += marginTop
 		}
 
 		return this
@@ -357,9 +364,9 @@ class Card {
 	addContent({
 		main=``,
 		caption=null,
-		align=`left`,
-		mainColor=this.color.okay,
-		captionColor=this.color.okay,
+		align=this.align,
+		mainColor=this.color.text,
+		captionColor=this.color.caption,
 		fontWeight=`Bold`,
 		size=`small`,
 		justify=null,
@@ -370,22 +377,38 @@ class Card {
 		releaseHook=false,
 		captionMargin=20,
 		img=null,
-		avatar=null
+		avatar=null,
+		avatarRadius=null
 		}) {
 
 		//	Handle sensitive case
-		if (size === `string`) size = size.toUpperCase()
-		//	Handle custom color selection
+		if (typeof size === `string`) size = size.toUpperCase()
+		//	Handle custom color selectio
 		mainColor = this._resolveColor(mainColor, this.color.text)
 		captionColor = this._resolveColor(captionColor, this.color.caption)
 
+		const customAvatarRadius = avatarRadius ? avatarRadius : Math.floor(this.avatar.width/2)
+		const customAvatarWidth = avatarRadius ? avatarRadius * 2 : this.avatar.width
+		const customAvatarHeight = avatarRadius ? avatarRadius * 2 : this.avatar.height
+		const mainMarginLeft = () => {
+			let combinedCustomXAxis = 0
+			if (justify) combinedCustomXAxis += this._getHorizontalAlign(justify)
+			if (avatar) combinedCustomXAxis += customAvatarWidth + 20
+			return combinedCustomXAxis + marginLeft
+		}
+		const avatarMarginLeft = () => {
+			let combinedCustomXAxis = 0
+			if (justify === `center`) return this._getHorizontalAlign(`center`)-customAvatarRadius
+			return combinedCustomXAxis + marginLeft
+		}
+		const avatarMarginTop = () => (this.reservedSpace+marginTop)-(customAvatarRadius+5)
 
 		if (main) {
 			this.canv
 			.setColor(mainColor)
 			.setTextAlign(align)
-			.setTextFont(typeof size === `string` ? CONTENT.MAIN_TEXT.SIZE[size] : `${size}pt OpenSans${fontWeight}`)
-			.addText(main, justify ? this._getHorizontalAlign(justify) : inline ? marginLeft + 30 : marginLeft, this.reservedSpace+marginTop)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
+			.addText(main, mainMarginLeft(), this.reservedSpace+marginTop)
 		}
 
 		if (caption) {
@@ -395,21 +418,14 @@ class Card {
 			.addText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
 
-		if (img) {
-			this.canv
-			.addImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
-		}
-	
-		if (avatar) {
-			this.canv
-			.addRoundImage(avatar, marginLeft, this.reservedSpace+marginTop-marginBottom, 80, 80, 40)
-		}
-
+		if (img) this.canv.addImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
+		if (avatar) this.canv.addRoundImage(avatar, avatarMarginLeft(), avatarMarginTop(), customAvatarWidth, customAvatarHeight, customAvatarRadius)
 
 		//	Add state for flexible Y positioning
 		if (!inline || (inline && releaseHook)) {
 			if (caption) this.reservedSpace += captionMargin 
 			if (img) this.reservedSpace += sizeOf(img).height
+			if (avatar) this.reservedSpace += customAvatarRadius
 			this.reservedSpace += marginTop
 		}
 

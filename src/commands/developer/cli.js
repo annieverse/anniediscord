@@ -20,45 +20,41 @@ class CommandLineInterface extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{locale:{DBKITS}}, palette }) {
+	async execute({ reply, palette, emoji }) {
+		await this.requestUserMetadata(1)
 
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return reply(`please include the cmd`)
-
+		if (!this.fullArgs) return reply(this.locale.CLI.GUIDE)
 		//	Parse statement
 		const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
 		//	Make sure the the stmt is valid
-		if (!stmt) return reply(DBKITS.MISSING_STMT)
+		if (!stmt) return reply(this.locale.CLI.MISSING_STMT, {color: `red`})
 
-		
-		//	Parse flag
-		const flag = this.fullArgs.match(/[^--]*$/)[0].substring(0, 3)
-		//	Flag check as well
-		if (!flag) return reply(DBKITS.MISSING_FLAG)
-
-
-		reply(`\`executing "${flag}" method ...\``, {simplified: true})
-			.then(load => {
-				//	Running query
-				if (flag === `run`) {
-					cmd.run(stmt)
+		reply(this.locale.COMMAND.FETCHING, {
+			simplified: true,
+			socket: {
+				emoji: emoji(`AAUloading`),
+				command: `cli`,
+				user: this.user.id
+			} 
+		})
+		.then(load => {
+			const initTime = process.hrtime()
+			return cmd.get(stmt, (err, data) => {
+				if (err) {
 					load.delete()
-					return reply(`executed.`, {color:palette.lightgreen})
+					return reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
 				}
-
-				return cmd.get(stmt, function(err, data) {
-					//	Catch error.
-					if (err) {
-						load.delete()
-						return reply(err, {color:palette.red})
+				const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
+				load.delete()
+				return reply(this.locale.EXEC_CODE, {
+					socket: {
+						time: this.bot.getBenchmark(initTime),
+						result: parsedResult.slice(0, 2000)
 					}
-
-					const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
-					//	Display result.
-					load.delete()
-					return reply(`\`\`\`json\n${parsedResult}\n\`\`\``)
 				})
 			})
+		})
 	}
 }
 
@@ -69,7 +65,6 @@ module.exports.help = {
 	description: `Running terminal command`,
 	usage: `cli <[CommandStatement]> --flag`,
 	group: `Developer`,
-	permissionLevel: `4`,
-	public: true,
+	permissionLevel: 4,
 	multiUser: false,
 }

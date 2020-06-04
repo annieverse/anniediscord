@@ -1,26 +1,27 @@
+const Command = require(`../../libs/commands`)
 /**
-   * Main module
-   * @Ask 8ball-like question.
-   */
-class Ask {
+ * You can ask any question and Annie will answer you.
+ * @author klerikdust
+ */
+class Ask extends Command {
+
+    /**
+     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     */
 	constructor(Stacks) {
-		this.stacks = Stacks
+		super(Stacks)
 	}
 
-	async execute() {
-		const { args, reply, code: {ASK}, choice } = this.stacks
-      
+    /**
+     * Running command workflow
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+	async execute({ reply, choice }) {
+		await this.requestUserMetadata(2)
 		//  Returns if no question was specified.
-		if (!args[0]) return reply(ASK.SHORT_GUIDE)
-
-		const question = args.slice(0).join(` `)
-		const chance = 100 - Math.floor(Math.random() * 100)
-
-		//  If chances are below 30, echo question.
-		if(chance <= 30) await reply(question + `?`)
-
+		if (!this.fullArgs) return reply(this.locale.ASK.SHORT_GUIDE)
 		//  Finishing answer.
-		return reply(choice(ASK.ANSWERS))
+		return reply(choice(this.locale.ASK.ANSWERS))
 	}
 }
 
@@ -28,11 +29,10 @@ class Ask {
 module.exports.help = {
 	start: Ask,
 	name: `ask`,
-	aliases: [],
+	aliases: [`8ball`],
 	description: `You can ask any question and Annie will answer you.`,
-	usage: `ask <message>`,
+	usage: `ask <Message>`,
 	group: `Fun`,
-	public: true,
-	required_usermetadata: false,
-	multi_user: false
+	permissionLevel: 0,
+	multiUser: false
 }
