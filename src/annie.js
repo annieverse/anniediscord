@@ -1,13 +1,5 @@
 const Discord = require(`discord.js`)
-const {
-    VERSION,
-    DEV,
-    PREFIX,
-    PORT,
-    PLUGINS,
-    PERMISSIONS,
-    POINTS
-} = require(`./config/global`)
+const config = require(`./config/global`)
 const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
@@ -22,67 +14,74 @@ class Annie extends Discord.Client {
         logger.debug(ascii.default)
 
         /**
+         * The default prop for accessing the global point configurations.
+         * @since 6.0.0
+         * @type {external:Object}
+         */
+        this.configs = config
+
+        /**
          * The default prop for accessing current Annie's version.
          * @since 6.0.0
          * @type {external:String}
          */
-        this.version = VERSION
+        this.version = config.version
 
         /**
          * The default prop for determining if current instance is development environment.
          * @since 6.0.0
          * @type {external:Boolean}
          */
-        this.dev = DEV
+        this.dev = config.dev
 
         /**
          * The default prop for accessing command prefix.
          * @since 6.0.0
          * @type {external:String}
          */
-        this.prefix = PREFIX
+        this.prefix = config.prefix
 
         /**
          * The default prop for accessing current port.
          * @since 6.0.0
          * @type {external:Number}
          */
-        this.port = PORT
+        this.port = config.port
 
         /**
          * The default prop for accessing the available plugins.
          * @since 6.0.0
          * @type {external:Array}
          */
-        this.plugins = PLUGINS
+        this.plugins = config.plugins
 
         /**
          * The default prop for accessing permissions level.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.permission = PERMISSIONS
+        this.permission = config.permissions
 
         /**
          * The default prop for accessing the global point configurations.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.points = POINTS
+        this.points = config.points
 
         /**
          * The default prop for accessing the default EXP configurations.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.exp = POINTS.exp
+        this.exp = config.points.exp
 
         /**
          * The default prop for accessing the default Currency configurations.
          * @since 6.0.0
          * @type {external:Object}
          */
-        this.currency = POINTS.exp
+        this.currency = config.points.currency
 
         /**
          * The default prop for accessing languages.
@@ -239,7 +238,9 @@ class Annie extends Discord.Client {
         const fn = `[Annie.isCooldown()]`
         if (this.plugins.includes(`DISABLE_COOLDOWN`)) return false
         logger.debug(`${fn} checking ${label}`)
-        return await this.db.redis.get(label)
+        const res = await this.db.redis.get(label)
+        if (res) logger.debug(`${fn} blocking access for ${label}. Key was registered at ${res}.`)
+        return res
     }
 
 
