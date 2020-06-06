@@ -97,17 +97,33 @@ class Database {
 	 * @param {string} [fsPath=`../../.data/database.sqlite`]
 	 * @returns {this}
 	 */
-	connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
+	async connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
 		/**
 		 * This will check if the db file exists or not.
 		 * If file is not found, throw an error.
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
 		this.client = new SqliteClient(path)
-		const redisClient = Redis.createClient()
-		redisClient.on(`error`, err => new Error(`Failed to connect redis > ${err}`))
-		this.redis = redisClient
+		await this.connectRedis()
 		return this
+	}
+
+	/**
+	 * Opening redis database connection
+	 * @returns {boolean}
+	 */
+	async connectRedis() {
+		const fn = `[Database.connectRedis()]`
+		const redisClient = await Redis.createClient()
+		redisClient.on(`error`, err => {
+			logger.error(`${fn} ${err}`)
+			process.exit()
+		})
+		redisClient.on(`connect`, () => {
+			logger.info(`${fn} successfully connected to redis.`)
+			this.redis = redisClient
+			return true
+		})
 	}
 
 	/**
