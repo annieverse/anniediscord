@@ -359,6 +359,9 @@
         "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
         "FETCHING": "`Fetching {0}'s portfolio data . .`"
     },
+    "POST": {
+        "IS_EMPTY": "Hmm, **{{user}}** hasn't post anything since the first time i came here. {{emoji}}"
+    },
     "PRUNE": {
         "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
         "INVALID_AMOUNT": "Please put a valid number.",

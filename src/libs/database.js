@@ -913,7 +913,8 @@ class Database {
 		return this._query(`
 			SELECT *
 			FROM user_posts
-			WHERE user_id = ?`
+			WHERE user_id = ?
+			ORDER BY registered_at DESC`
 			, `all`
 			, [userId]
 		)

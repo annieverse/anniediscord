@@ -86,26 +86,32 @@ class CommandController {
         const commandComponents = {bot: this.bot, message: this.message, commandProperties: this.commandProperties}
         const PistachioComponents = new Pistachio(commandComponents)
 
-        //  Handle if command still in cooldown
-        const cd = await this.bot.isCooldown(this.moduleID)
-        if (cd) return PistachioComponents.reply(this.locale.COMMAND.STILL_COOLDOWN, {
-            color: `red`,
-            socket: {timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cd), `seconds`, true)).toFixed(2)}
-        })
-        await new Command(commandComponents).execute(PistachioComponents)
-        this.bot.setCooldown(this.moduleID, this.bot.configs.commands.cooldown)
+        try {
+            //  Handle if command still in cooldown
+            const cd = await this.bot.isCooldown(this.moduleID)
+            if (cd) return PistachioComponents.reply(this.locale.COMMAND.STILL_COOLDOWN, {
+                color: `red`,
+                socket: {timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cd), `seconds`, true)).toFixed(2)}
+            })
+            await new Command(commandComponents).execute(PistachioComponents)
+            this.bot.setCooldown(this.moduleID, this.bot.configs.commands.cooldown)
 
-        const cmdFinishTime = this.bot.getBenchmark(initTime)
-        const cmdUsageData = {
-            guild_id: this.message.guild.id,
-            user_id: this.message.author.id,
-            command_alias: this.commandName,
-            resolved_in: cmdFinishTime
+            const cmdFinishTime = this.bot.getBenchmark(initTime)
+            const cmdUsageData = {
+                guild_id: this.message.guild.id,
+                user_id: this.message.author.id,
+                command_alias: this.commandName,
+                resolved_in: cmdFinishTime
+            }
+
+            //	Log and store the cmd usage to database.
+            this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
+            return this.bot.db.recordsCommandUsage(cmdUsageData)
         }
-
-        //	Log and store the cmd usage to database.
-        this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
-        this.bot.db.recordsCommandUsage(cmdUsageData)
+        catch(e) {
+            this.logger.error(`${fn} ${e}`)
+            return PistachioComponents.reply(this.locale.ERROR, {color: `red`, socket:{error: e} })
+        }
     }
 
     /**
