@@ -33,9 +33,9 @@ class Shop extends Command {
 			const sortedItems = specificItemsType.sort((a,b) => a.price - b.price)
 			return reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true})
 		}
-		//  Else, display all the purchasable items and sort by item's type name.
-		const sortedItems = items.sort((a,b) => a.type_id - b.type_id)
-		return reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true})
+		//  Else, display all the purchasable items and sort by item's price.
+		const sortedItems = items.sort((a,b) => b.price - a.price)
+		return reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true, color: `golden`})
 	}
 
 	/**
