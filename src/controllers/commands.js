@@ -89,9 +89,10 @@ class CommandController {
         try {
             //  Handle if command still in cooldown
             const cd = await this.bot.isCooldown(this.moduleID)
+            const cooldownToLocalTime = await this.bot.db.toLocaltime(cd)
             if (cd) return PistachioComponents.reply(this.locale.COMMAND.STILL_COOLDOWN, {
                 color: `red`,
-                socket: {timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cd), `seconds`, true)).toFixed(2)}
+                socket: {timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cooldownToLocalTime), `seconds`, true)).toFixed(2)}
             })
             await new Command(commandComponents).execute(PistachioComponents)
             this.bot.setCooldown(this.moduleID, this.bot.configs.commands.cooldown)

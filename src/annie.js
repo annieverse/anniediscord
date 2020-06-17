@@ -7,6 +7,7 @@ const logger = require(`./libs/logger`)
 const Express = require(`express`)
 const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
+const moment = require(`moment`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -255,7 +256,7 @@ class Annie extends Discord.Client {
         const fn = `[Annie.setCooldown()]`
         if (time <= 0) logger.error(`${fn} "time" parameter must above 0.`)
         logger.debug(`${fn} registering ${label} with ${time}s timeout`)
-        return await this.db.redis.set(label, new Date(), `EX`, time)
+        return await this.db.redis.set(label, moment().format(), `EX`, time)
     }
 
 }
