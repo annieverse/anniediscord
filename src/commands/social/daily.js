@@ -29,7 +29,7 @@ class Dailies extends Command {
 		const lastClaimAt = await db.toLocaltime(this.user.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		const COOLDOWN_MSG = this.user.isSelf ? this.locale.DAILIES.AUTHOR_IN_COOLDOWN : this.locale.DAILIES.OTHERS_IN_COOLDOWN
-		if (now.diff(lastClaimAt, this.cooldown[1]) <= this.cooldown[0]) return reply(COOLDOWN_MSG, {
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(COOLDOWN_MSG, {
 			color: `red`,
 			socket: {time: moment(lastClaimAt).add(...this.cooldown).fromNow(), user: name(this.user.id)}
 		})

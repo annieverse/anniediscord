@@ -26,7 +26,7 @@ class Reputation extends Command {
 		const now = moment()
 		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
 		//  Returns if user's last reps give still under 23 hours.
-		if (now.diff(lastGiveAt, this.cooldown[1]) <= this.cooldown[0]) return reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
+		if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
 			socket: {time: moment(lastGiveAt).add(...this.cooldown).fromNow()},
 			color: `red`
 		})
