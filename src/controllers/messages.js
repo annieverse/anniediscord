@@ -95,7 +95,7 @@ class MessageController {
      * 	@returns {Boolean}
      */
     get isCommandMessage() {
-        return this.message.content.startsWith(this.bot.prefix) && this.message.content.length > (this.bot.prefix.length + 1)
+        return this.message.content.startsWith(this.bot.prefix) && this.message.content.length >= (this.bot.prefix.length + 1)
     }
 
     /**
