@@ -1,8 +1,8 @@
 const moment = require(`moment`)
 const formatManager = require(`../../utils/formatManager`)
 const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
-const env = require(`../../../.data/environment`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 class strikeCollection {
 	constructor(Stacks) {
 		this.stacks = Stacks

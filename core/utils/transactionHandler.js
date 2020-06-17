@@ -1,5 +1,5 @@
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 const databaseManager = require(`./databaseManager`)
 const events = require(`./event-metadata`)
 

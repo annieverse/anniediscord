@@ -1,4 +1,5 @@
-const sql = require(`sqlite`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 const logger = require(`./config/winston`)
 
 /**
@@ -27,7 +28,7 @@ class databaseUtils {
 	connect() {
 		try {
 			let initdb = process.hrtime()
-			sql.open(`.data/database.sqlite`, {cached: true})
+			sql.get(`SELECT 1`)
 			logger.info(`Database successfully connected (${this.client.getBenchmark(process.hrtime(initdb))})`)
 			return this
 		}

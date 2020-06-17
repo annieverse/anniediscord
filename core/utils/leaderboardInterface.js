@@ -1,8 +1,8 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const animeManager = require(`./animesiteManager`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `RobotoMedium`)
 Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `RobotoBold`)

@@ -1,7 +1,7 @@
 const Discord = require(`discord.js`)
 const formatManager = require(`../../utils/formatManager`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 
 class clanaddbeta {
 	constructor(Stacks) {

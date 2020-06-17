@@ -1,6 +1,6 @@
 const Discord = require(`discord.js`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+const sqliteClient = require(`sqlite3`)
+const sql = new sqliteClient.Database(`.data/database.sqlite`)
 class setDesc {
 	constructor(Stacks) {
 		this.author = Stacks.meta.author
