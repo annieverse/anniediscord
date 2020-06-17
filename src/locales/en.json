@@ -468,7 +468,8 @@
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
-        "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}"
+        "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}",
+        "RETRIEVING": "{{emoji}} `retrieving all the purchasable {{itemType}} ...`"
     },
     "STATCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",

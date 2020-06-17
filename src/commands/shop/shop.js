@@ -30,12 +30,16 @@ class Shop extends Command {
 		if (this.fullArgs) {
 			const specificItemsType = items.filter(this.itemFilter)
 			if (!specificItemsType.length) return reply(this.locale.SHOP.INVALID_TYPE, {socket: {emoji: emoji(`AnnieCry`)}, color: `red`})
+			this.fetching = await reply(this.locale.SHOP.RETRIEVING, {simplified: true, socket: {emoji: emoji(`AAUloading`), itemType: this.fullArgs}})
 			const sortedItems = specificItemsType.sort((a,b) => a.price - b.price)
-			return reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true})
+			await reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true})
+			return this.fetching.delete()
 		}
 		//  Else, display all the purchasable items and sort by item's price.
 		const sortedItems = items.sort((a,b) => b.price - a.price)
-		return reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true, color: `golden`})
+		this.fetching = await reply(this.locale.SHOP.RETRIEVING, {simplified: true, socket: {emoji: emoji(`AAUloading`), itemType: `items`}})
+		await reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true, color: `golden`})
+		return this.fetching.delete()
 	}
 
 	/**
@@ -49,7 +53,9 @@ class Shop extends Command {
 		let box = []
 		let state = 0
 		let list = ``
-		for (let key in items) {
+		let totalElements = parseInt(items.length)
+
+		for (let key=0; key<items.length; key++) {
 			const item = items[key]
 			//  If iteration has reached the limit, reset list & shift to next index in the array.
 			if (state >= 5) {
@@ -57,10 +63,23 @@ class Shop extends Command {
 				state = 0
 				list = ``
 			}
+			//  If array has less than five elements, lock totalElements mutation.
+			else if (totalElements < 5) {
+				list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
+				\`${item.description}\`
+				${emojiParser(item.item_price_alias)}${commaParser(item.price)}\n\n`
+				state++
+
+				if ((items.length-1) != key) continue
+				box.push(list)
+				break;				
+			}
+
 			list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
 			\`${item.description}\`
 			${emojiParser(item.item_price_alias)}${commaParser(item.price)}\n\n`
 			state++
+			totalElements = totalElements - 1
 		}
 		return box
 	}

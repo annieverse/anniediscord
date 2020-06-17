@@ -532,7 +532,7 @@ class Pistachio {
     _registerPages(pages=[]) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.darkmatte)
+            res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.golden)
         }
         return res
     }
