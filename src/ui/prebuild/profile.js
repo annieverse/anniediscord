@@ -2,6 +2,7 @@ const Cards = require(`../components/cards`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
 const commanifier = require(`../../utils/commanifier`)
+const formatK = require(`../../utils/formatK`)
 
 class UI {
 	/**
@@ -115,13 +116,13 @@ class UI {
 		card.canv.setTextAlign(`center`)
 			.setColor(this.user.rank.color)
 			.setTextFont(`17pt roboto`)
-			.addText(commanifier(this.user.likecount), 70, 370)
+			.addText(formatK(this.user.inventory.artcoins), 70, 370)
 			.addText(this.user.exp.level, 160, 370)
-			.addText(commanifier(this.user.reputations.total_reps), 250, 370)
+			.addText(formatK(this.user.reputations.total_reps), 250, 370)
 
 			.setColor(card.color.text)
 			.setTextFont(`7pt roboto`)
-			.addText(`HEARTS`, 70, 390)
+			.addText(`ARTCOINS`, 70, 390)
 			.addText(`LEVEL`, 160, 390) 
 			.addText(`FAME`, 250, 390) 
 
