@@ -101,5 +101,6 @@ module.exports.help = {
 	description: `Gives user a strike point.`,
 	usage: `strike <User>`,
 	group: `Moderation`,
+	permissionLevel: 2,
 	multiUser: true
 }
