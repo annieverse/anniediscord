@@ -58,8 +58,8 @@ class MessageController {
          *  -- extended
          *  -----------------------------------------------------------------
          */
-        if (this.isDirectMessage) return
-        if (this.isModmailMessage) return
+        if (this.isDirectMessage) return new Command({bot:this.bot, message:this.message}).runDM()
+        if (this.isModmailMessage) return new Command({bot:this.bot, message:this.message, modmail:true}).runDM()
         if (await this.isFeedMessage()) return
 
         //  Automatically executing [Points Controller] when no other module requirements are met
