@@ -41,7 +41,7 @@
     "canvas-constructor": "^3.1.0",
     "chai": "^4.2.0",
     "chart.js": "^2.9.3",
-    "chartjs-node-canvas": "^2.4.1",
+    "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
     "cross-env": "^7.0.2",
     "discord.js": "^11.5.1",
