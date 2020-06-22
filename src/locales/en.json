@@ -56,9 +56,9 @@
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
     },
     "CARTCOIN": {
-        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:2**",
+        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:8**",
         "INSUFFICIENT_AMOUNT": "You only have **{{amount}}** artcoins. Grind harder!",
-        "INVALID_AMOUNT": "To use the converter, you need to put atleast **2 artcoins.**",
+        "INVALID_AMOUNT": "To use the converter, you need to put atleast **8 artcoins.**",
         "SUCCESSFUL": "Successfully convert **{{artcoins}}** into **{{exp}}** !",
         "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nType `y` to confirm the conversion."
     },

@@ -10,6 +10,7 @@ class ConvertArtcoins extends Command {
      */
     constructor(Stacks) {
 		super(Stacks)
+		this.artcoinsRatio = 8
     }
 
     /**
@@ -28,8 +29,8 @@ class ConvertArtcoins extends Command {
 			color: `red`
 		})
 		//  Returns if user amount input is below the acceptable threeshold
-		if (!amountToUse || amountToUse < 2) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {color: `red`})
-		const totalGainedExp = amountToUse / 2
+		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {color: `red`})
+		const totalGainedExp = amountToUse / this.artcoinsRatio
 
 		this.setSequence(5)
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
