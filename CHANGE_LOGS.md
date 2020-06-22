@@ -2,6 +2,54 @@
 
 ___
 
+## **06/22/20 | 6.1.0 ->**
+
+* Strike perm level tag added.
+* Disable Classrom module.
+* Adds Modmail's DM control.
+* fix(presenceUpdate): wrong properties path.
+* feat: added .registerUser() module in db, now message controller checks for user validality in the users table.
+
+## **06/18/20 | 6.0.1 ->**
+
+* fix(dailies, rep): now only checks user with date data under 23 hours.
+
+## **06/17/20 | 6.0.0 ->**
+
+* Modularized Canvas-Based UI using Annie's custom UI framework.
+* Added new item: Matcha Chocolate Bar
+* Footer Components (heart) on profile card has been replaced with total amount of artcoins
+* Refreshed UI for Level, Relationship and Leaderboard card.
+* Cooling-down state for end-user actions now is fully managed by redis.
+* Alpha modmail integration
+* Command(buy) now accepts item id, item alias and item alias with case-insensitive as the search string.
+* Command(shop) now is displayed in paginated-style. You can also filter result by giving additional item type as argument.
+* Command(profile) is no longer using paginated-style.
+* Command(gacha) UI has been improved. There's an additional visual effect when you pulled and item with rarity above rare.
+* Command(systemStatus) the displayed information has minimized. Different information can be accessed by providing additional stat type as argument.
+* Command(serverInfo) the displayed information has been updated.
+* Command(help) the displayed information should be less confusing now. You also able to see the most popular commands at a glance.
+* Command(complaint) complaint has been merged with strike, with omitted auto-penalty action.
+* Command(roll) calling has been changed to gacha for single roll and gacha 10 for multi roll
+* Command(pixiv) now is displaying the used software name on the work (if any)
+* Command(artcoinsGenerator) now is only available to user with developer privilege.
+* Command(daily, rep, gift, pay) now are sharing consistent interface and experience.
+* Command(post) now is used to display user's portfolio/recently posted work.
+* Command(cardCollection, inventory) now are displaying detailed infos of the item.
+* Added Command(setprofile) as a centralized command to manage all the profile-related stuff (cover, badges, sticker, etc)
+* Added Command(setsocialmedia) as a centralized command to connect your social accounts.
+* Added Command(setrelationship) as a centralized command to manage your friends and families tree.
+* You can buy more various items on the shop now. (the set price is unofficial and may change in the near future.)
+* All items you bought/carry are now visible on your inventory (except card.)
+* Moderation Commands are fully functional.
+* Fun Commands are fully updated and functional.
+* All card buffs (except Poppy) are temporarily disabled.
+* Art Feature/Trending System is temporarily disabled.
+* DM Notification System is temporarily disabled.
+* Marketplace, Artbook, Trading System will be released in the later updates alongside all the previously disabled feature.
+
+THIS VERSION IS FAIRLY UNSTABLE AND USES LIMITED FEATURES.
+
 ## **01/22/20 | 5.3.0 ->**
 
 * Added Bot Invite link for cross-server support.
