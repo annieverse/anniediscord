@@ -1,5 +1,5 @@
 const { absence_ticket } = require(`../utils/role-list`)
-const logSystem = require(`../utils/logsSystem`)
+const logSystem = require(`../libs/logs.js`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = (bot,member) => {
@@ -29,7 +29,7 @@ module.exports = (bot,member) => {
 
 		switch (leavepenaltycount) {
 			case 3: // amount needed before deletion
-				removeUserData()
+				//removeUserData()
 				break
 			default: // do this if amount needed for deletion isn't reached
 				bot.db._query(`UPDATE usercheck SET leavepenalty = leavepenalty + 1 WHERE userId = ?`, `get`, [member.id])

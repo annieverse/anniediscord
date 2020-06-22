@@ -1,5 +1,5 @@
-const logSystem = require(`../utils/logsSystem`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+const logSystem = require(`../libs/logs.js`)
+const logSystemConfig = require(`../config/logsSystemModules.json`)
 module.exports = (bot, oldChannel, newChannel) => {
     var metadata = {
         oldChannel: oldChannel,

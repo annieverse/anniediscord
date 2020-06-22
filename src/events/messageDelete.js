@@ -1,4 +1,4 @@
-const logSystem = require(`../utils/logsSystem`)
+const logSystem = require(`../libs/logs.js`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 module.exports = (bot, message) => {
     var metadata = {

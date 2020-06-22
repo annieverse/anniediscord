@@ -61,8 +61,9 @@ class Pistachio {
 		 * @since 6.0.0
 		 * @type {Boolean}
 		 */
-		this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
-		
+		if (this.message){
+			this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
+		}
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
 		this.multiCollector = this.multiCollector.bind(this)

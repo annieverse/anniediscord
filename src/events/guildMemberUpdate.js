@@ -1,6 +1,6 @@
 const BoosterPerks = require(`../utils/BoosterPerks`)
 const { nitro_booster } = require(`../utils/role-list`)
-const logSystem = require(`../utils/logsSystem`)
+const logSystem = require(`../libs/logs.js`)
 const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 
 module.exports = (bot, oldUser, newUser) => {

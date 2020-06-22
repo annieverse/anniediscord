@@ -1,4 +1,5 @@
 const Discord = require(`discord.js`)
+const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./commands/loader`)
@@ -8,6 +9,7 @@ const Express = require(`express`)
 const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
+const logSystem = require(`./libs/logs.js`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -20,6 +22,7 @@ class Annie extends Discord.Client {
          * @type {external:Object}
          */
         this.configs = config
+        //this.configs = new customConfig(this).setConfig()
 
         /**
          * The default prop for accessing current Annie's version.
@@ -109,6 +112,11 @@ class Annie extends Discord.Client {
          * @type {HyperlinkString}
          */ 
         this.supportServer = `https://discord.gg/7nDes9P`
+
+        /**
+         * 
+         */
+        this.logSystem = logSystem
     }
 
 
@@ -125,6 +133,15 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
+            //this.configs = new customConfig(this).setConfig()
+            let configtwo = new customConfig(this).setConfig()
+            for (const [prop, value] of Object.entries(configtwo)) {
+                if (!this.configs.hasOwnProperty(prop)) {
+                    this.configs[prop] = value
+                    this[prop] = value
+                }
+            }
+            
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
