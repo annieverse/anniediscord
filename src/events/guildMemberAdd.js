@@ -1,6 +1,4 @@
 const Banner = require(`../ui/prebuild/welcomer`)
-const logSystem = require(`../utils/logsSystem`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 const { Attachment } = require(`discord.js`)
 
 module.exports = async (bot, member) => {
@@ -13,8 +11,6 @@ module.exports = async (bot, member) => {
         Welcome to **AAU** ${member} ! Please get your roles in <#538843763544555528> for full access to the server. Last but not least enjoy your stay here! :tada:`,
         new Attachment(renderedBanner, `welcome!-${member.id}.jpg`))
 
-    //	Register new data if its a new user, else ignore.
-    await bot.db.validatingNewUser(member.user.id)
     // Add Pencilician role
     member.addRole(`460826503819558914`)
     // Add unverified role 
