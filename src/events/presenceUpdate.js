@@ -16,21 +16,13 @@ module.exports = async ({bot, newMember}) => {
      */
 
 
+     const moduleID = `PRESENCEUPDATE_${newMember.id}`
     //  Return if current presence is not offline
     if (newMember.presence.status != `offline`) return
-
-    const { db, keyv } = bot
-    const user = await db.validateUser(newMember.id)
-
-    //  Also return if user is not registered in db
-    if (!user) return
     //  To avoid performance degradation, add cooling down time before accepting next request of the same user
-    if (await keyv.get(`presenceUpdate-${newMember.id}`)) return
-
-    const Now = Date.now()
-
+    if (await bot.isCooldown(moduleID)) return
     //  2 minutes cooling down
-    await keyv.set(`presenceUpdate-${newMember.id}`, 1, 120000)
-    await db.updateLastLogin(Now, newMember.id)
+    await bot.setCooldown(moduleID, 120)
+    await bot.db.updateLastLogin(newMember.id)
 
 }
