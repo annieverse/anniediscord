@@ -42,6 +42,9 @@ class MessageController {
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
 
+        //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
+        await this.bot.db.registerUser(this.message.author.id)
+
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
