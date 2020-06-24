@@ -37,8 +37,6 @@ class SystemStatus extends Command {
 
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `resource usage`, emoji: emoji(`AAUloading`), user: this.user.id} })
 		.then(async loading => {
-
-			const now = moment()
 			const responsesHistory = this.selectedMetric.startsWith(`command`) ? await db.getDailyCommandUsage(this.dateThreeshold) : await db.getResourceData(this.dateThreeshold)
 			const history = {
 				datasets: responsesHistory.map(data => data[this.selectedMetric]),

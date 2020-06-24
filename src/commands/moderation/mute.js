@@ -27,7 +27,7 @@ class Mute extends Command {
 
 		this.setSequence()
 		reply(this.locale.MUTE.DURATION, {color: `golden`})
-		.then(async confirmation => {
+		.then(async () => {
 			this.sequence.on(`collect`, async msg => {
 				const input = msg.content.toLowerCase()
 				const time = ms(input)

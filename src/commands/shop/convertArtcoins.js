@@ -17,7 +17,7 @@ class ConvertArtcoins extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, commanifier, avatar, bot:{db} }) {
+    async execute({ reply, emoji, trueInt, commanifier, avatar, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
 		//  Returns as guide if user doesn't specify any parameters

@@ -30,7 +30,6 @@ class Pixiv extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, bot }) {
-        const { PIXIV } = bot.locale 
         //  Logging in to get access to the Pixiv API
         await pixiv.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
 

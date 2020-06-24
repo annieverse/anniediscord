@@ -1,5 +1,4 @@
 const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
-const cron = require(`node-cron`)
 const logger = require(`./logger`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
@@ -408,33 +407,6 @@ class Pistachio {
 		let nextexpcurve = main.nextexpcurve
 		let minexp = main.minexp
 		return {level,maxexp,nextexpcurve,minexp}
-	}
-
-	/**
-	 *  Prettify result of user's owned gifts
-	 *  @param {Object} metadata Gifts metadata. Giving information of each reps point.
-	 *  @param {Object} userInventory User inventories metadata.
-	 */
-	parsingAvailableGifts(metadata = {}, userInventory = {}) {
-		let obj = {}
-		let itemdata = ``
-		let giftItems = Object.keys(metadata)
-
-		//  Store items
-		for (let i = 0; i < giftItems.length; i++) {
-			if (userInventory[giftItems[i]] > 0) obj[giftItems[i]] = userInventory[giftItems[i]]
-		}
-		
-		//  Parse string
-		for (let key in obj) {
-			itemdata += `> ${container.emoji(key.toString())}**${obj[key]}x ${key}**\n`
-		}
-
-		//  Returns
-		if (itemdata.length < 1) return null
-
-		let str = `${itemdata}\n\n Above are all your available gifts. Please type **<amount> <itemname>** to send the gift.`
-		return str
 	}
 
 	/**

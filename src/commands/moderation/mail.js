@@ -16,7 +16,7 @@ class Mail extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, name }) {
+    async execute({ reply, name, emoji }) {
 		await this.requestUserMetadata(1)
 
 		//  Returns as guide if user doesn't specify any parameter.

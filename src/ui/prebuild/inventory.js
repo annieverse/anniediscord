@@ -1,6 +1,4 @@
 const palette = require(`../colors/default`)
-const { ITEM_RARITY_COLOR } = require(`../config`)
-const fsn = require(`fs-nextra`)
 const Color = require(`color`)
 const ThemePresets = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)

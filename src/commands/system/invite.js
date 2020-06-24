@@ -17,9 +17,6 @@ class Invite extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, emoji, bot:{user, supportServer} }) {
-
-		const serverInvite = await this.message.channel.createInvite()
-
 		await reply(this.locale.GENERATE_BOT_INVITE, {
 			socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
 			color: `crimson`

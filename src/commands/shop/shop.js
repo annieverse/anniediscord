@@ -21,7 +21,7 @@ class Shop extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, commanifier, loadAsset, bot:{db, locale:{SHOP}} }) {
+    async execute({ reply, emoji, commanifier, bot:{db} }) {
 		await this.requestUserMetadata(1)
 		//  Fetch purchasable items in the db
 		const items = await db.getPurchasableItems()
@@ -72,7 +72,7 @@ class Shop extends Command {
 
 				if ((items.length-1) != key) continue
 				box.push(list)
-				break;				
+				break			
 			}
 
 			list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 

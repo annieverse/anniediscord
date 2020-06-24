@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const User = require(`../../libs/user`)
 const moment = require(`moment`)
 /**
  * Gives a reputation point to a user. Once a day.

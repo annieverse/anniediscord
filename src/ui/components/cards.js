@@ -160,7 +160,7 @@ class Card {
 	 *	@param {Integer} cornerRadius integer value for card cornerning radius.
 	 *	@createBase
 	 */
-	createBase({color=``, gradient=false, cornerRadius=DEFAULT.CORNER_RADIUS}) {
+	createBase({color=``, cornerRadius=DEFAULT.CORNER_RADIUS}) {
 		const grad = this.canv.createLinearGradient(0, 0,  Math.floor(this.width/1.5), 0)
 		const themeInRgb = Color(this.color.highlight).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
@@ -325,7 +325,6 @@ class Card {
 		releaseHook=false,
 		marginTop=this.marginTop,
 		size=null,
-		marginLeft=this.marginLeft,
 		captionMargin=15,
 		captionColor=this.color.caption,
 		color=this.color.text}) {

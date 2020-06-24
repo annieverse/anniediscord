@@ -19,7 +19,7 @@ class Gacha extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, commanifier, choice, bot:{db} }) {
+    async execute({ reply, emoji, name, trueInt, choice, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
     	//  Handle if user doesn't have any lucky ticket to be opened.
@@ -104,7 +104,7 @@ class Gacha extends Command {
         let rng = Math.random() * totalProbability
         //  Handle if rng is hitting infinity
         if (rng === `-infinity`) {
-            throw new RangeError(`${fn} variable 'rng' has reached -infinite. Now it will fallback rng's value to 100.`)
+            this.logger.error(`${fn} variable 'rng' has reached -infinite. Now it will fallback rng's value to 100.`)
             rng = 100
         }
         const fitInRanges = closestBelow(weightsPool, rng)

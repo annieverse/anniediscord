@@ -1,5 +1,3 @@
-/* eslint-disable no-unreachable */
-const Experience = require(`../../libs/exp`)
 const Command = require(`../../libs/commands`)
 /**
  * Eats the capsules you get from gacha and gives you EXP in return
@@ -53,7 +51,7 @@ class UseCapsule extends Command {
 				gainedExp: commanifier(totalGainedExp)
 			}
 		})
-		.then(confirmation => {
+		.then(()=> {
 			this.sequence.on(`collect`, async msg => {
 				let input = msg.content.toLowerCase()
 

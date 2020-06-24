@@ -1,7 +1,6 @@
 const Cards = require(`../components/cards`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
-const commanifier = require(`../../utils/commanifier`)
 const formatK = require(`../../utils/formatK`)
 
 class UI {
@@ -22,7 +21,6 @@ class UI {
 		let startPos_x = 10
 		let startPos_y = 10
 		let baseWidth = this.width - 20
-		let baseHeight = this.height - 20
 
 		let card = new Cards({
 			width: this.width,
@@ -48,7 +46,6 @@ class UI {
 		const inventory = this.user.inventory.raw
 		const badges = inventory.filter(key => key.type_name === `Badges`)
 
-		const badgeDisplayLimit = 7
 		const symetric_xy = 18
 		const diameter = Math.round(symetric_xy / 2)
 		const y_badge = 208
