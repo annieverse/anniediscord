@@ -82,7 +82,6 @@ class Pistachio {
 		this.avatar = this.avatar.bind(this)
 		this.displayAvatar = this.displayAvatar.bind(this)
 		this.getExpMetadata = this.getExpMetadata(this)
-		this.parsingAvailableGifts = this.parsingAvailableGifts.bind(this)
 		this.formatString = this.formatString.bind(this)
 		this.chunk = this.chunk.bind(this)
 		this.socketing = this.socketing.bind(this)

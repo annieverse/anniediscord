@@ -29,16 +29,17 @@ class Experience extends Points {
 
     /**
      *  Running EXP workflow.
+     *  @param {number} [expToBeAdded=this.baseGainedExp] amount of exp to be added into user's current exp pool
      *  @returns {boolean}
      */
-    async execute() {
+    async execute(expToBeAdded=this.baseGainedExp) {
     	this.exp = await this.db.getUserExp(this.message.author.id)
 
     	//  Apply booster if presents
     	if (this.exp.booster_id) await this.applyBooster()
 
     	//  Calculate and get detailed exp data
-        this.totalGainedExp = this.baseGainedExp * this.expMultiplier
+        this.totalGainedExp = expToBeAdded * this.expMultiplier
     	this.prevExp = this.xpFormula(this.exp.current_exp)
     	this.newExp = this.xpFormula(this.exp.current_exp + this.totalGainedExp)
 
