@@ -128,8 +128,8 @@ class LogsSystem {
         if (this.logChannel.guild.id != oldEmoji.guild.id) return
         if (emojiUpdate_NAME && (oldEmoji.name != newEmoji.name)){
             logger.info(`Emoji Name Changed > From: ${oldEmoji.name} To: ${newEmoji.name}`)
-            this.Pistachio.reply(`**Emoji Name Changed: From: **{0} **To: **{1}`, {
-                socket: [oldEmoji.name, newEmoji.name],
+            this.Pistachio.reply(`**Emoji Name Changed: From: **{{old}} **To: **{{new}}`, {
+                socket: {"old": oldEmoji.name, "new": newEmoji.name},
                 timestamp: true,
                 field: this.logChannel,
                 color: palette.red,
@@ -143,8 +143,8 @@ class LogsSystem {
         const { bot: { logger }, bot, emoji } = this.data
         if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Created: ${emoji.name}`)
-        this.Pistachio.reply(`**Emoji Created: **{0}`, {
-            socket: [emoji.name],
+        this.Pistachio.reply(`**Emoji Created: **{{emoji}}`, {
+            socket: {"emoji": emoji.name},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -157,8 +157,8 @@ class LogsSystem {
         const { bot: { logger }, bot, emoji } = this.data
         if (this.logChannel.guild.id != emoji.guild.id) return
         logger.info(`Emoji Deleted: ${emoji.name}`)
-        this.Pistachio.reply(`**Emoji Deleted: **@{0}`, {
-            socket: [emoji.name],
+        this.Pistachio.reply(`**Emoji Deleted: **{{emoji}}`, {
+            socket: {"emoji":emoji.name},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -174,8 +174,8 @@ class LogsSystem {
         if (this.logChannel.guild.id != newRole.guild.id) return
         if (oldRole.name != newRole.name){
             logger.info(`Role name changed: ${newRole.name}`)
-            this.Pistachio.reply(`**Role Name Changed: {0}**\n**Old Role: **{1}`, {
-                socket: [newRole, oldRole.name],
+            this.Pistachio.reply(`**Role Name Changed: {{new}}**\n**Old Role: **{{old}}`, {
+                socket: {"new":newRole, "old":oldRole.name},
                 timestamp: true,
                 color: palette.red,
                 field: this.logChannel,
@@ -190,8 +190,8 @@ class LogsSystem {
         const { bot: { logger }, bot, role } = this.data
         if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Created: ${role.name}`)
-        this.Pistachio.reply(`**Role Created: {0}**`, {
-            socket: [role],
+        this.Pistachio.reply(`**Role Created: {{role}}**`, {
+            socket: {"role":role},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -205,8 +205,8 @@ class LogsSystem {
         const { bot: { logger }, bot, role } = this.data
         if (this.logChannel.guild.id != role.guild.id) return
         logger.info(`Role Deleted: ${role.name}`)
-        this.Pistachio.reply(`**Role Deleted: @{0}**`, {
-            socket: [role.name],
+        this.Pistachio.reply(`**Role Deleted: @{{role}}**`, {
+            socket: {"role":role.name},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -224,8 +224,8 @@ class LogsSystem {
         if (oldMessage.content != newMessage.content){
             if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
             logger.info(`Message edited in #${newMessage.channel.name}`)
-            this.Pistachio.reply(`**{0} Edited their message in: **{1}\n**Old: **{2}`, {
-                socket: [newMessage.author, newMessage.channel, oldMessage.content],
+            this.Pistachio.reply(`**{{author}} Edited their message in: **{{new}}\n**Old: **{{old}}`, {
+                socket: {"author":newMessage.author, "new":newMessage.channel, "old":oldMessage.content},
                 footer: `ChannelID: ${newMessage.channel.id}`,
                 timestamp: true,
                 color: palette.red,
@@ -241,8 +241,8 @@ class LogsSystem {
         var message = messages.first()
         if (this.logChannel.guild.id != message.guild.id) return
         logger.info(`Bulk Message delete in #${message.channel.name}`)
-        this.Pistachio.reply(`**{0} Messages bulk deleted in {1}**`, {
-            socket: [messages.size, message.channel],
+        this.Pistachio.reply(`**{{amount}} Messages bulk deleted in {{channel}}**`, {
+            socket: {"amount":messages.size, "channel":message.channel},
             footer: `ChannelID: ${message.channel.id}`,
             timestamp: true,
             field: this.logChannel,
@@ -260,8 +260,8 @@ class LogsSystem {
         if (message.attachments.size > 0) {
             var index = 1
             message.attachments.forEach(element=>{
-                this.Pistachio.reply(`**Message deleted in {0}**\n**Message Content: **\n{1}`, {
-                    socket: [message.channel, message.content ? message.content : `No Text`],
+                this.Pistachio.reply(`**Message deleted in {{channel}}**\n**Message Content: **\n{{content}}`, {
+                    socket: {"channel":message.channel, "content":message.content ? message.content : `No Text`},
                     footer: `ChannelID: ${message.channel.id} Attachment #${index}`,
                     timestamp: true,
                     color: palette.red,
@@ -273,8 +273,8 @@ class LogsSystem {
                 index++
             })
         } else {
-            this.Pistachio.reply(`**Message deleted in {0} Message Content:**\n{1}`,{
-                socket: [message.channel, message.content ? message.content : message.embeds.length > 0 ? `Was an embed`: `No Text`],
+            this.Pistachio.reply(`**Message deleted in {{channel}} Message Content:**\n{{content}}`,{
+                socket: {"channel":message.channel, "content":message.content ? message.content : message.embeds.length > 0 ? `Was an embed`: `No Text`},
                 footer: `ChannelID: ${message.channel.id}`,
                 timestamp: true,
                 color: palette.red,
@@ -289,8 +289,8 @@ class LogsSystem {
         const { bot: { logger }, bot, guild, user } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Member Banned From ${guild.id}, ${user}`)
-        this.Pistachio.reply(`**Member Banned: **{0} - {1}`, {
-            socket: [user, user.username],
+        this.Pistachio.reply(`**Member Banned: **{{user}} - {{name}}`, {
+            socket: {"user":user, "name":user.username},
             timestamp: true,
             color: palette.red,
             field: this.logChannel,
@@ -304,8 +304,8 @@ class LogsSystem {
         const { bot: { logger }, bot, guild, user } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Member Ban revoked From ${guild.id}, ${user}`)
-        this.Pistachio.reply(`**Member Ban revoked: **{0} - {1}`, {
-            socket: [user, user.username],
+        this.Pistachio.reply(`**Member Ban revoked: **{{user}} - {{name}}`, {
+            socket: {"user":user, "name":user.username},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -318,8 +318,8 @@ class LogsSystem {
     guildCreate() {
         const { bot: { logger }, bot, guild } = this.data
         logger.info(`New guild joined ${guild.id}`)
-        this.Pistachio.reply(`**New Guild Joined: **{0} - {1}`, {
-            socket: [guild.id, guild.name],
+        this.Pistachio.reply(`**New Guild Joined: **{{id}} - {{name}}`, {
+            socket: {"id":guild.id, "name":guild.name},
             timestamp: true,
             color: palette.green,
             field: this.SupportServerLogChannel,
@@ -336,6 +336,7 @@ class LogsSystem {
             if (generalChannel) return generalChannel
             return false
         }
+
         const getChannel = (guild) => {
             let channel = guild.channels
                 .filter(c => c.type === `text` && c.permissionsFor(guild.client.user).has(`SEND_MESSAGES`))
@@ -344,6 +345,7 @@ class LogsSystem {
             if (!channel) return false
             return channel
         }
+
         let hasSystemChannelID = guild.systemChannelID != null 
         if (hasSystemChannelID) return this.Pistachio.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
 
@@ -385,8 +387,8 @@ class LogsSystem {
     guildDelete() {
         const { bot: { logger }, bot, guild } = this.data
         logger.info(`Guild Left ${guild.id}`)
-        this.Pistachio.reply(`**Guild Left: **{0} - {1}`, {
-            socket: [guild.id, guild.name],
+        this.Pistachio.reply(`**Guild Left: **{{id}} - {{name}}`, {
+            socket: {"id":guild.id, "name":guild.name},
             timestamp: true,
             color: palette.red,
             field: this.SupportServerLogChannel,
@@ -400,8 +402,8 @@ class LogsSystem {
         const { bot: { logger }, bot, guild } = this.data
         if (this.logChannel.guild.id != guild.id) return
         logger.info(`Guild Unavailable ${guild.id}`)
-        this.Pistachio.reply(`**Guild Unavailable: **{0} - {1}`, {
-            socket: [guild.id, guild.name],
+        this.Pistachio.reply(`**Guild Unavailable: **{{id}} - {{name}}`, {
+            socket: {"id":guild.id, "name":guild.name},
             timestamp: true,
             color: palette.red,
             field: this.SupportServerLogChannel,
@@ -416,8 +418,8 @@ class LogsSystem {
         if (this.logChannel.guild.id != newGuild.id) return
         if (oldGuild.name != newGuild.name){
             logger.info(`Guild Name change ${oldGuild.name} => ${newGuild.name} | ${newGuild.id}`)
-            this.Pistachio.reply(`**Guild Name change: **{0} -> {1}`, {
-                socket: [oldGuild.name, newGuild.name],
+            this.Pistachio.reply(`**Guild Name change: **{{old}} -> {{new}}`, {
+                socket: {"old":oldGuild.name, "new":newGuild.name},
                 timestamp: true,
                 color: palette.red,
                 field: this.logChannel,
@@ -428,8 +430,8 @@ class LogsSystem {
         }
         if (oldGuild.region != newGuild.region) {
             logger.info(`Guild region change ${oldGuild.region} => ${newGuild.region} | ${newGuild.id}`)
-            this.Pistachio.reply(`**Guild region change: **{0} -> {1}`, {
-                socket: [oldGuild.region, newGuild.region],
+            this.Pistachio.reply(`**Guild region change: **{{old}} -> {{new}}`, {
+                socket: {"old":oldGuild.region, "new":newGuild.region},
                 timestamp: true,
                 color: palette.red,
                 field: this.logChannel,
@@ -444,8 +446,8 @@ class LogsSystem {
         const { bot: { logger }, bot, member } = this.data
         if (this.logChannel.guild.id != member.guild.id) return
         logger.info(`Member Joined ${member.guild.id}, ${member}`)
-        this.Pistachio.reply(`**Member Joined: **{0} - {1}`, {
-            socket: [member, member.user.username],
+        this.Pistachio.reply(`**Member Joined: **{{member}} - {{username}}`, {
+            socket: {"member":member, "username":member.user.username},
             timestamp: true,
             color: palette.green,
             field: this.logChannel,
@@ -460,8 +462,8 @@ class LogsSystem {
         if (this.logChannel.guild.id != member.guild.id) return
         if (!member.bannable) return
         logger.info(`Member Left ${member.guild.id}, ${member}`)
-        this.Pistachio.reply(`**Member Left: **{0} - {1}`, {
-            socket: [member, member.user.username],
+        this.Pistachio.reply(`**Member Left: **{{member}} - {{username}}`, {
+            socket: {"member":member, "username":member.user.username},
             timestamp: true,
             field: this.logChannel,
             color: palette.red,
@@ -476,8 +478,8 @@ class LogsSystem {
         if (this.logChannel.guild.id != newMember.guild.id) return
         if(oldMember.nickname != newMember.nickname){
             logger.info(`Nick name change ${oldMember.id} -> ${newMember.nickname}`)
-            this.Pistachio.reply(`** {0} nickname change: **{1} - {2}`, {
-                socket: [newMember, oldMember.nickname, newMember.nickname],
+            this.Pistachio.reply(`** {{member}} nickname change: **{{old}} - {{new}}`, {
+                socket: {"member":newMember, "old":oldMember.nickname, "new":newMember.nickname},
                 timestamp: true,
                 field: this.logChannel,
                 color: palette.red,
@@ -492,8 +494,8 @@ class LogsSystem {
         const { bot: { logger }, bot, members, guild } = this.data
         if (this.logChannel.guild.id != members.first().guild.id) return
         logger.info(`Members from ${guild.id}, ${guild.name}`)
-        this.Pistachio.reply(`** {0} Members from: **{1} - {2}`, {
-            socket: [members.length, guild.id, guild.name],
+        this.Pistachio.reply(`** {{amount}} Members from: **{{id}} - {{name}}`, {
+            socket: {"amount":members.length, "id":guild.id, "name":guild.name},
             timestamp: true,
             field: this.logChannel,
             color: palette.green,
@@ -506,6 +508,7 @@ class LogsSystem {
     record() {
         const { typeOfLog, bot } = this.data
         if (!typeOfLog) return
+        if (!this.data.bot.log_channel) return
         this.logChannel = bot.channels.get(this.data.bot.log_channel)
         if (!this.logChannel) return
         if (!bot.WANT_CUSTOM_LOGS) return

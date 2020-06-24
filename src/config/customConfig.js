@@ -24,10 +24,10 @@ class config {
         let userConfig = this.bot.db.getGuildConfigurations(guildId)
 
         const defaultConfig = {
-            "WANT_CUSTOM_LOGS": true,
-            "channelCreate": true,
-            "channelDelete": true,
-            "channelUpdate": true,
+            "WANT_CUSTOM_LOGS": false,
+            "channelCreate": false,
+            "channelDelete": false,
+            "channelUpdate": false,
             "channelUpdate_MASTER": false,
             "channelUpdate_NAME": false,
             "channelUpdate_TOPIC": false,
@@ -63,7 +63,7 @@ class config {
             "modmail_logChannel": `460267216324263936`,
             "modmail_plugin": true,
             "feeds_channel": null,
-            "log_channel": `724732289572929728`,
+            "log_channel": null,
             "welcome_module": false,
             /**
              *  -----------------------------------------------------------
@@ -75,7 +75,7 @@ class config {
             "guild_id": `577121315480272908`,
         }
 
-        const required = [`log_channel`, `guild_id`]
+        const required = [`guild_id`]
         const notCustomizable = [`commands`, `points`, `permissions`, `port`, `dev`, `version`, `modmail_guildId`]
 
         const finalConfig = Object.assign({}, defaultConfig)

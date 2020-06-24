@@ -133,19 +133,28 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
-            //this.configs = new customConfig(this).setConfig()
-            let configtwo = new customConfig(this).setConfig()
-            for (const [prop, value] of Object.entries(configtwo)) {
-                if (!this.configs.hasOwnProperty(prop)) {
-                    this.configs[prop] = value
-                    this[prop] = value
-                }
-            }
-            
+            this.updateConfig()
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
             process.exit()
+        }
+    }
+
+    /**
+     * updates global config
+     * @param {guild} guild uses support server as default
+     */
+    updateConfig(guild=`577121315480272908`){
+        let configtwo = new customConfig(this).setConfig(guild)
+        for (const [prop, value] of Object.entries(configtwo)) {
+            if (!this.configs.hasOwnProperty(prop)) {
+                this.configs[prop] = value // sets value in tree
+                this[prop] = value         // sets global use
+            } else {
+                this.configs[prop] = value
+                this[prop] = value
+            }
         }
     }
 
