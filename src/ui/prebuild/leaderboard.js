@@ -1,9 +1,6 @@
 const Cards = require(`../../ui/components/cards`)
-const formatK = require(`../../utils/formatK`)
 const commanifier = require(`../../utils/commanifier`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
-const loadAsset = require(`../../utils/loadAsset`)
-const Color = require(`color`)
 
 class UI {
 	/**

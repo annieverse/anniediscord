@@ -1,6 +1,5 @@
-/* eslint-disable no-unreachable */
-const Experience = require(`../../libs/exp`)
 const Command = require(`../../libs/commands`)
+const Experience = require(`../../libs/exp`)
 /**
  * Eats the capsules you get from gacha and gives you EXP in return
  * @author klerikdust
@@ -43,7 +42,7 @@ class UseCapsule extends Command {
 		this.setSequence()
 
 		//  Confirmation
-		reply(this.locale.EAT_POWERCAPSULE.CONFIRMATION, {
+		this.confirmation = await reply(this.locale.EAT_POWERCAPSULE.CONFIRMATION, {
 			color: `golden`,
 			notch: true,
 			thumbnail: avatar(this.user.id),
@@ -53,34 +52,34 @@ class UseCapsule extends Command {
 				gainedExp: commanifier(totalGainedExp)
 			}
 		})
-		.then(confirmation => {
-			this.sequence.on(`collect`, async msg => {
-				let input = msg.content.toLowerCase()
+		this.sequence.on(`collect`, async msg => {
+			let input = msg.content.toLowerCase()
 
-				//  Returns if user asked to cancel the transaction
-				if (this.cancelParameters.includes(input)) {
-					this.endSequence()
-					msg.delete()
-					return reply(this.locale.ACTION_CANCELLED)
-				}
-
-				//  Silent ghosting
-				if (!input.startsWith(`y`)) return
+			//  Returns if user asked to cancel the transaction
+			if (this.cancelParameters.includes(input)) {
+				this.endSequence()
 				msg.delete()
+				return reply(this.locale.ACTION_CANCELLED)
+			}
 
-				//  Deduct item & adds new experience points
-				await db.updateInventory({itemId: 70, value: amount, operation:`-`, userId: this.user.id})
-				reply(this.locale.EAT_POWERCAPSULE.SUCCESSFUL, {
-					socket: {
-						user: name(this.user.id),
-						emoji: emoji(`power_capsule`),
-						amount: commanifier(amount),
-						gainedExp: commanifier(totalGainedExp)
-					},
-					color: `lightgreen`
-				})	
-				return this.endSequence()		
+			//  Silent ghosting
+			if (!input.startsWith(`y`)) return
+			msg.delete()
+
+			//  Deduct item & adds new experience points
+			this.confirmation.delete()
+			await db.updateInventory({itemId: 70, value: amount, operation:`-`, userId: this.user.id})
+			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
+			reply(this.locale.EAT_POWERCAPSULE.SUCCESSFUL, {
+				socket: {
+					user: name(this.user.id),
+					emoji: emoji(`power_capsule`),
+					amount: commanifier(amount),
+					gainedExp: commanifier(totalGainedExp)
+				},
+				color: `lightgreen`
 			})
+			return this.endSequence()		
 		})
 	}
 }

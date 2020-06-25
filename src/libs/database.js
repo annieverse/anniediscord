@@ -1115,13 +1115,6 @@ class Database {
             , `EXP booster for USER_ID ${userId} has been nullified.`
         )
 	}
-
-	updateExpBooster(newvalue) {
-		sql.run(`UPDATE usercheck 
-            SET expbooster = "${newvalue}",
-                expbooster_duration = ${Date.now()}
-            WHERE userId = "${this.id}"`)
-	}
 	
 	/**
 	 * 	Set default db author. Supports method chaining.
@@ -1271,42 +1264,6 @@ class Database {
 		)
 	}
 
-	/** -------------------------------------------------------------------------------
-	 *  Limited Shop & Events Methods
-	 *  @todo
-	 *  * REQUIRE UPDATES @Bait_God
-	 *  -------------------------------------------------------------------------------
-	 */	
-
-	/**
-	 * Delete row data from given table.
-	 * @param tablename of target table.
-	 * @param id of userId
-	 * @param idtype of the id type.
-	 */
-	removeRowDataFromEventData(id, idtype = `name`, time) {
-		return sql.run(`DELETE FROM event_data WHERE active = 1 AND ${idtype} = '${id}' AND start_time = ${time} AND repeat_after = 0`).then(() => {
-			return logger.info(`Event: ${id} with start time of: ${time} has been deleted from the database.`)
-		})
-	}
-
-	updateEventDataActiveToOne(id, time){
-		return sql.run(`UPDATE event_data SET active = 1 WHERE name = '${id}' and start_time = ${time}`)
-	}
-
-	updateRowDataFromEventData(set, where){
-		return sql.run(`UPDATE event_data SET ${set} WHERE ${where}`)
-	}
-
-	/**
-			*   Pull data from event_data table.
-			* @param tablename of target table.
-			* @param id of userId
-			*/
-	pullEventData() {
-		return sql.all(`SELECT * FROM event_data WHERE NOT category = 'weekly' ORDER BY start_time`).then(async parsed => parsed)
-	}
-	
 	/**
 	 * Fetch user's relationship info
 	 * @param {string} [userId=``] target user id

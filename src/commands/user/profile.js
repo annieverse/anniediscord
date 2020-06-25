@@ -17,7 +17,7 @@ class Profile extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, bot:{db}, emoji, name }) {
+    async execute({ reply, emoji, name }) {
         await this.requestUserMetadata(2)
 
         //  Handle if user doesn't exists

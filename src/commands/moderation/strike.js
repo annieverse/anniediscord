@@ -17,7 +17,7 @@ class Strike extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, collector, name, bot:{db} }) {
+    async execute({ reply, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
 
 		//  Display tutorial if no input was given

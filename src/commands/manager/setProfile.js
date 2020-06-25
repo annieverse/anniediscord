@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const superagent = require(`superagent`)
 /**
  * Edit and customize your profile decorations such as covers, stickers, badges, etc.
  * @author klerikdust

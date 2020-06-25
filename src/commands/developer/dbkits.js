@@ -17,7 +17,7 @@ class DatabaseKits extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, palette, name, bot:{db} }) {
+	async execute({ reply, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
 		//	Return if user doesn't specify arguments.
 		if (!this.fullArgs) return reply(this.locale.DBKITS.AUTHORIZED, {socket: {user: name(this.user.id)}})

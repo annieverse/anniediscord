@@ -18,7 +18,7 @@ class JoinEvent extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, addRole, findRole, name, bot:{db} }) {
+    async execute({ reply, addRole, emoji, findRole, name, bot:{db} }) {
 		await this.requestUserMetadata(2)
 
 		//  Filter command to only working in AAU.
@@ -26,7 +26,7 @@ class JoinEvent extends Command {
 
 		const eventRole = findRole(`Event Participant`)
 		//  Returns if user already have the ticket.
-		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(author.id)} })
+		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
 		if (this.user.meta.artcoins < this.fee) return reply(this.locale.EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
 		//  Deduct user's balance if user hadn't foxie card

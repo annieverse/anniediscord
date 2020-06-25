@@ -1,7 +1,6 @@
 const Permission = require(`../libs/permissions`)
 const Points = require(`./points`)
 const Command = require(`./commands`)
-const moment = require(`moment`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -139,7 +138,6 @@ class MessageController {
      * @returns {StringCode}
      */
     _registerPermission() {
-        const fn = `[MessageController._registerPermission()]`
         const userPerm = new Permission(this.message).getUserPermission(this.message.author.id)
         this.message.author.permissions = userPerm
         return `OK`

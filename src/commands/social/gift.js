@@ -63,8 +63,8 @@ class Gift extends Command {
 			}
 
 			const amountToSend = params[0].endsWith(`x`) ? trueInt(params[0].replace(/\x/g, ``)) : trueInt(params[0])
-			// eslint-disable-next-line no-useless-escape
 			const selectedItem = input.slice(input.indexOf(params[1]))
+			// eslint-disable-next-line no-useless-escape
 			const item = availableGifts.filter(key => (key.alias.toLowerCase() === selectedItem.replace(/\ /g, `_`))
 				|| (key.name.toLowerCase === selectedItem)) [0]
 

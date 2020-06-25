@@ -16,7 +16,7 @@ class RemoveRole extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, collector, name, removeRole, findRole, emoji }) {
+    async execute({ reply, name, removeRole, findRole, emoji }) {
 		await this.requestUserMetadata(1)
 
 		//  Handle if user doesn't specify the target user
