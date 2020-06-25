@@ -22,7 +22,6 @@ class Annie extends Discord.Client {
          * @type {external:Object}
          */
         this.configs = config
-        //this.configs = new customConfig(this).setConfig()
 
         /**
          * The default prop for accessing current Annie's version.
