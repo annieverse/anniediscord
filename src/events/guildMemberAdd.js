@@ -1,7 +1,5 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { Attachment } = require(`discord.js`)
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../config/logsSystemModules.json`)
 
 module.exports = async (bot, member) => {
 
@@ -27,9 +25,10 @@ module.exports = async (bot, member) => {
     bot.logger.info(`[${member.guild.name}]${bot.users.get(member.id).tag} has joined the server.`)
 
     var metadata = {
-		member: member,
+        member: member,
+        guild: member.guild,
 		typeOfLog: `guildMemberRemove`,
 		bot: bot
 	}
-	if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberRemove) new logSystem(metadata).record()
+	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberRemove) new bot.logSystem(metadata).record()
 }

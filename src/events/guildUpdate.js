@@ -1,11 +1,11 @@
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+
 module.exports = (bot, oldGuild, newGuild) => {
     var metadata = {
         oldGuild: oldGuild,
         newGuild: newGuild,
+        guild: oldGuild,
         typeOfLog: `guildUpdate`,
         bot: bot
     }
-    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildUpdate) new logSystem(metadata).record()
+    if (bot.WANT_CUSTOM_LOGS && bot.guildUpdate) new bot.logSystem(metadata).record()
 }

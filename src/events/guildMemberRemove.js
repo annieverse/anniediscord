@@ -1,6 +1,5 @@
 const { absence_ticket } = require(`../utils/role-list`)
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+
 
 module.exports = (bot,member) => {
 
@@ -68,8 +67,9 @@ module.exports = (bot,member) => {
 	}
 	var metadata = {
 		member: member,
+		guild: member.guild,
 		typeOfLog: `guildMemberRemove`,
 		bot: bot
 	}
-	if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberRemove) new logSystem(metadata).record()
+	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberRemove) new bot.logSystem(metadata).record()
 }

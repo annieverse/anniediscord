@@ -217,7 +217,7 @@ class LogsSystem {
     }
 
     messageUpdate() {
-        const { bot: { logger }, oldMessage, newMessage } = this.data
+        const { bot: { logger }, oldMessage, newMessage, bot} = this.data
         const { messageUpdate_MASTER } = bot
         if (!messageUpdate_MASTER) return
         if (this.logChannel.guild.id != newMessage.guild.id) return
@@ -256,21 +256,16 @@ class LogsSystem {
         const { bot: { logger }, message } = this.data
         if (message.author.bot) return
         if (this.logChannel.guild.id != message.guild.id) return
-        logger.info(`Message deleted in #${message.channel.name} Message Content:\n${message.content ? message.content : `No Text`}`)
+        logger.info(`Message deleted in #${message.channel.name} Message Content: ${message.content ? message.content : `No Text`}`)
         if (message.attachments.size > 0) {
-            var index = 1
-            message.attachments.forEach(element=>{
-                this.Pistachio.reply(`**Message deleted in {{channel}}**\n**Message Content: **\n{{content}}`, {
-                    socket: {"channel":message.channel, "content":message.content ? message.content : `No Text`},
-                    footer: `ChannelID: ${message.channel.id} Attachment #${index}`,
-                    timestamp: true,
-                    color: palette.red,
-                    field: this.logChannel,
-                    image: element.url,
-                    header: message.author.username,
-                    author: message.author
-                })
-                index++
+            this.Pistachio.reply(`**Message deleted in {{channel}}**\n**Message Content: **\n{{content}}`, {
+                socket: {"channel":message.channel, "content":message.content ? message.content : `No Text`},
+                footer: `ChannelID: ${message.channel.id} Attachments ${message.attachments.size}`,
+                timestamp: true,
+                color: palette.red,
+                field: this.logChannel,
+                header: message.author.username,
+                author: message.author
             })
         } else {
             this.Pistachio.reply(`**Message deleted in {{channel}} Message Content:**\n{{content}}`,{
@@ -506,8 +501,10 @@ class LogsSystem {
     }
 
     record() {
-        const { typeOfLog, bot } = this.data
+        const { typeOfLog, bot, guild } = this.data
         if (!typeOfLog) return
+        this.data.bot.updateConfig(guild.id)
+        console.log(guild.id)
         if (!this.data.bot.log_channel) return
         this.logChannel = bot.channels.get(this.data.bot.log_channel)
         if (!this.logChannel) return

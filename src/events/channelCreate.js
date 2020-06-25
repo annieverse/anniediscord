@@ -1,6 +1,7 @@
 module.exports = (bot, channel) => {
     var metadata = {
         channel: channel,
+        guild: channel.guild,
         typeOfLog: `channelCreate`,
         bot: bot
     }

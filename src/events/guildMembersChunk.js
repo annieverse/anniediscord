@@ -1,5 +1,4 @@
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+
 module.exports = (bot, members, guild) => {
     var metadata = {
         guild: guild,
@@ -7,5 +6,5 @@ module.exports = (bot, members, guild) => {
         typeOfLog: `guildMembersChunk`,
         bot: bot
     }
-    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMembersChunk) new logSystem(metadata).record()
+    if (bot.WANT_CUSTOM_LOGS && bot.guildMembersChunk) new bot.logSystem(metadata).record()
 }

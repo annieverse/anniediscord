@@ -1,11 +1,11 @@
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+
 module.exports = (bot, emoji) => {
     var metadata = {
         emoji: emoji,
+        guild: emoji.guild,
         typeOfLog: `emojiDelete`,
         bot: bot
     }
 
-    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.emojiDelete) new logSystem(metadata).record()
+    if (bot.WANT_CUSTOM_LOGS && bot.emojiDelete) new bot.logSystem(metadata).record()
 }

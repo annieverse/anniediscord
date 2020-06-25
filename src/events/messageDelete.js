@@ -1,11 +1,10 @@
-const logSystem = require(`../libs/logs.js`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 module.exports = (bot, message) => {
     var metadata = {
         message: message,
         typeOfLog: `messageDelete`,
-        bot: bot
+        bot: bot,
+        guild: message.guild
     }
     
-    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.messageDelete) new logSystem(metadata).record()
+    if (bot.WANT_CUSTOM_LOGS && bot.messageDelete) new bot.logSystem(metadata).record()
 }
