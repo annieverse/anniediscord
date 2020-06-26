@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const { realpath } = require("fs-nextra")
 /**
  * Manage custom configs per sever
  * @author Frying Pan
@@ -26,22 +25,27 @@ class Config extends Command {
         let options = Object.keys(this.customizable).join(`\n`).split(`\n`)
         let res = []
         for (let index = 0; index < options.length; index++) {
-            const element = options[index];
-            res.push({"name": "Hover for Details","value": `[${element}](${this.link} "[${index}] true\\false")`})
+            const element = options[index]
+            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] true\\false")`})
         }
         reply(``,{
             columns: res
         })
     }
 
+    /**
+     * deletes elements from object that user shouldn't be able to change
+     * @returns nothing
+     */
     get customizableOptions(){
         for (let index = 0; index < this.notCustomizable.length; index++) {
             delete this.customizable[this.notCustomizable[index]]
         }
         let options = Object.keys(this.customizable).join(`\n`).split(`\n`)
         for (let index = 0; index < options.length; index++) {
-            if (options[index].includes("modmail"))  delete this.customizable[options[index]]
+            if (options[index].includes(`modmail`))  delete this.customizable[options[index]]
         }
+        return null
     }
 }
 

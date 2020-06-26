@@ -711,7 +711,7 @@ class Pistachio {
 				})
 			}else{
 				for (let index = 0; index < options.columns.length; index++) {
-					const element = options.columns[index];
+					const element = options.columns[index]
 					embed.addField(element.name, element.value, true)
 				}
 			}
