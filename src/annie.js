@@ -145,7 +145,9 @@ class Annie extends Discord.Client {
      * @param {guild} guild uses support server as default
      */
     updateConfig(guild=`577121315480272908`){
-        let configtwo = new customConfig(this).setConfig(guild)
+        let configClass = new customConfig(this)
+        let configtwo = configClass.setConfig(guild)
+        this.configClass = configClass
         for (const [prop, value] of Object.entries(configtwo)) {
             if (!this.configs.hasOwnProperty(prop)) {
                 this.configs[prop] = value // sets value in tree

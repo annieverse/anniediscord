@@ -507,8 +507,27 @@ class Pistachio {
             res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.golden)
         }
         return res
+	}
+	
+	/**
+     *  Registering each element of array into its own embed. Does not have a description, just allows for paging fields because of 25 max per embed
+     *  @param {array} [pages=2] source Integer to be registered. Element must be `num`.
+     *  @param {array} [columns=[]] source array to be registered. Element must be `object with keys name and value`.
+     *  @returns {array}
+	 */
+	_registerPagesTwo(pages=2, columns=[]) {
+		let res = []
+        for (let i = 0; i < pages; i++) {
+			if (columns[i]){
+				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.golden)
+				for (let j = 0; j < columns[i].length; j++) {
+					embed.addField(columns[i][j].name,columns[i][j].value,true)
+				}
+				res[i] = embed
+			}
+		}
+        return res
     }
-
 
 	/** Annie's custom message system.
 	 *  @param {String} content as the message content
@@ -560,6 +579,7 @@ class Pistachio {
 		options.customHeader = !options.customHeader ? null : options.customHeader
 		options.timestamp == false ? null : options.timestamp = true
 		options.paging === false ? null : options.paging
+		options.columns = !options.columns ? null : options.columns
 		const fn = `[Pistachio.reply()]`
 
 		//  Handle message with paging property enabled
@@ -648,6 +668,53 @@ class Pistachio {
 		} else if (embed.file) {
 			embed.image.url = null
 			embed.file = null
+		}
+
+		// Adds column fields if any
+		if (options.columns){
+			if (options.columns.length > 25){
+				const array_chunks = (array, chunk_size) => Array(Math.ceil(array.length / chunk_size)).fill().map((_, index) => index * chunk_size).map(begin => array.slice(begin, begin + chunk_size))
+				let chunks = array_chunks(options.columns, 15)
+				let page = 0
+				const embeddedPages = this._registerPagesTwo(chunks.size,chunks)
+				return options.field.send(embeddedPages[0])
+				.then(async msg => {
+					//  Buttons
+					await msg.react(`⏪`)
+					await msg.react(`⏩`)
+					// Filters - These make sure the varibles are correct before running a part of code
+					const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+					const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+					//  Timeout limit for page buttons
+					const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
+					const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
+					//	Left navigation
+					backwards.on(`collect`, r => {
+						r.remove(this.message.author.id)
+						page--
+						if (embeddedPages[page]) {
+							msg.edit(embeddedPages[page])
+						} else {
+							page++
+						}
+					})
+					//	Right navigation
+					forwards.on(`collect`, r => {
+						r.remove(this.message.author.id)
+						page++
+						if (embeddedPages[page]) {
+							msg.edit(embeddedPages[page])
+						} else {
+							page--
+						}
+					})
+				})
+			}else{
+				for (let index = 0; index < options.columns.length; index++) {
+					const element = options.columns[index];
+					embed.addField(element.name, element.value, true)
+				}
+			}
 		}
 
 		let sent = options.field.send(embed)

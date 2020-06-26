@@ -1,6 +1,3 @@
-//const json5 = require('json5')
-//const fs = require('fs')
-//const path = require('path')
 /**
  * Handles user-related data request and changes
  * @since 6.0.0
@@ -23,6 +20,45 @@ class config {
     setConfig(guildId=`577121315480272908`) {
         let userConfig = this.bot.db.getGuildConfigurations(guildId)
 
+        const defaultConfig = this.getCustomizableConfig
+
+        const required = this.getRequired
+        const notCustomizable = this.getNotCustomizable
+        
+        const finalConfig = Object.assign({}, defaultConfig)
+
+        for (const [prop, value] of Object.entries(userConfig)) {
+        if (!defaultConfig.hasOwnProperty(prop) && !notCustomizable.includes(prop)) {
+            throw new Error(`Invalid option: ${prop}`)
+        }
+        finalConfig[prop] = value
+        }
+
+
+        // Make sure all of the required config options are present
+        for (const opt of required) {
+        if (!finalConfig[opt]) {
+            this.logger.error(`Missing required config.json value: ${opt}`)
+            process.exit(1)
+        }
+        }
+
+        if (!finalConfig.log_channel){
+            finalConfig.WANT_CUSTOM_LOGS = true
+        }
+
+        return finalConfig
+    }
+
+    get getRequired(){
+        return [`guild_id`]
+    }
+
+    get getNotCustomizable(){
+        return [`modmail_guildId`]
+    }
+
+    get getCustomizableConfig(){
         const defaultConfig = {
             "WANT_CUSTOM_LOGS": false,
             "channelCreate": true,
@@ -71,36 +107,10 @@ class config {
              *  If not defined, it will use `>` as the default prefix.
              *  @STRING
              */
-            "prefix": process.env.PREFIX || `>`,
+            "prefix": process.env.PREFIX || `~`,
             "guild_id": `577121315480272908`,
         }
-
-        const required = [`guild_id`]
-        const notCustomizable = [`commands`, `points`, `permissions`, `port`, `dev`, `version`, `modmail_guildId`]
-
-        const finalConfig = Object.assign({}, defaultConfig)
-
-        for (const [prop, value] of Object.entries(userConfig)) {
-        if (!defaultConfig.hasOwnProperty(prop) && !notCustomizable.includes(prop)) {
-            throw new Error(`Invalid option: ${prop}`)
-        }
-        finalConfig[prop] = value
-        }
-
-
-        // Make sure all of the required config options are present
-        for (const opt of required) {
-        if (!finalConfig[opt]) {
-            this.logger.error(`Missing required config.json value: ${opt}`)
-            process.exit(1)
-        }
-        }
-
-        if (!finalConfig.log_channel){
-            finalConfig.WANT_CUSTOM_LOGS = true
-        }
-
-        return finalConfig
+        return defaultConfig
     }
 }
 module.exports = config
