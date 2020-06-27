@@ -22,13 +22,13 @@ class JoinEvent extends Command {
 		await this.requestUserMetadata(2)
 
 		//  Filter command to only working in AAU.
-		if (!this.message.guild.id != `459892609838481408`) return
-
+		if (this.message.guild.id != `459891664182312980`) return
+		
 		const eventRole = findRole(`Event Participant`)
 		//  Returns if user already have the ticket.
 		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
-		if (this.user.meta.artcoins < this.fee) return reply(this.locale.EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
+		if (this.user.inventory.artcoins < this.fee) return reply(this.locale.EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
 		//  Deduct user's balance if user hadn't foxie card
 		const hasFoxieCard = this.user.inventory.foxie_card
 		if (!hasFoxieCard) await db.updateInventory({
