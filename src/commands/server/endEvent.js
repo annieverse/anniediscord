@@ -20,7 +20,7 @@ class EndEvent extends Command {
 		await this.requestUserMetadata(1)
 		
 		//  Filter command to only working in AAU.
-		if (!this.message.guild.id != `459892609838481408`) return
+		if (this.message.guild.id != `459891664182312980`) return
 
 		const ticket = findRole(`Event Participant`)
 		const participants = ticket.members.map(m => m.user.id)
