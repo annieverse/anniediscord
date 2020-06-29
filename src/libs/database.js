@@ -1673,7 +1673,7 @@ class Database {
 			'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 			'config_code' TEXT,
 			'guild_id' TEXT,
-			'channel_id' TEXT,
+			'customized_parameter' TEXT,
 			'set_by_user_id' TEXT,
 
 			FOREIGN KEY(guild_id)
