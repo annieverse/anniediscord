@@ -1,4 +1,5 @@
 const Discord = require(`discord.js`)
+const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./commands/loader`)
@@ -8,6 +9,7 @@ const Express = require(`express`)
 const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
+const logSystem = require(`./libs/logs.js`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -109,6 +111,11 @@ class Annie extends Discord.Client {
          * @type {HyperlinkString}
          */ 
         this.supportServer = `https://discord.gg/7nDes9P`
+
+        /**
+         * 
+         */
+        this.logSystem = logSystem
     }
 
 
@@ -125,10 +132,30 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
+            this.updateConfig()
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
             process.exit()
+        }
+    }
+
+    /**
+     * updates global config
+     * @param {guild} guild uses support server as default
+     */
+    updateConfig(guild=`577121315480272908`){
+        let configClass = new customConfig(this)
+        let configtwo = configClass.setConfig(guild)
+        this.configClass = configClass
+        for (const [prop, value] of Object.entries(configtwo)) {
+            if (!this.configs.hasOwnProperty(prop)) {
+                this.configs[prop] = value // sets value in tree
+                this[prop] = value         // sets global use
+            } else {
+                this.configs[prop] = value
+                this[prop] = value
+            }
         }
     }
 

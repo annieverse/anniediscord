@@ -23,4 +23,12 @@ module.exports = async (bot, member) => {
     member.addRole(`632892126824235009`)
 
     bot.logger.info(`[${member.guild.name}]${bot.users.get(member.id).tag} has joined the server.`)
+
+    var metadata = {
+        member: member,
+        guild: member.guild,
+		typeOfLog: `guildMemberRemove`,
+		bot: bot
+	}
+	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberRemove) new bot.logSystem(metadata).record()
 }

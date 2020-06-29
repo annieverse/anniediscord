@@ -1,7 +1,6 @@
 const BoosterPerks = require(`../utils/BoosterPerks`)
 const { nitro_booster } = require(`../utils/role-list`)
-const logSystem = require(`../utils/logsSystem`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
+
 
 module.exports = (bot, oldUser, newUser) => {
 
@@ -72,8 +71,9 @@ module.exports = (bot, oldUser, newUser) => {
 	var metadata = {
 		oldUser: oldUser,
 		newUser: newUser,
+		guild: oldUser.guild,
 		typeOfLog: `guildMemberUpdate`,
 		bot: bot
 	}
-	if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.guildMemberUpdate) new logSystem(metadata).record()
+	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberUpdate) new bot.logSystem(metadata).record()
 }

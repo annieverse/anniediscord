@@ -1,12 +1,11 @@
-const logSystem = require(`../utils/logsSystem`)
-const logSystemConfig = require(`../utils/config/logsSystemModules.json`)
 module.exports = (bot, oldChannel, newChannel) => {
     var metadata = {
         oldChannel: oldChannel,
         newChannel : newChannel,
+        guild: oldChannel.guild,
         typeOfLog: `channelUpdate`,
         bot: bot
     }
 
-    if (logSystemConfig.WANT_CUSTOM_LOGS && logSystemConfig.channelUpdate) new logSystem(metadata).record()
+    if (bot.WANT_CUSTOM_LOGS && bot.channelUpdate) new bot.logSystem(metadata).record()
 }

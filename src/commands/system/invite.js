@@ -17,18 +17,37 @@ class Invite extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, emoji, bot:{user, supportServer} }) {
-		await reply(this.locale.GENERATE_BOT_INVITE, {
-			socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
-			color: `crimson`
-		})
+		try {
+			//attempt to send to dm
+			await reply(this.locale.GENERATE_BOT_INVITE, {
+				socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
+				color: `crimson`,
+				field: this.message.author
+			})
+	
+			return reply(this.locale.GENERATE_SERVER_INVITE, {
+				simplified: true,
+				socket: {
+					serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
+					emoji: emoji(`AnnieSmile`)
+				},
+				field: this.message.author
+			})
+		} catch (error) {
+			// Send to channel if failed send attempt to dm
+			await reply(this.locale.GENERATE_BOT_INVITE, {
+				socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
+				color: `crimson`
+			})
 
-		return reply(this.locale.GENERATE_SERVER_INVITE, {
-			simplified: true,
-			socket: {
-				serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
-				emoji: emoji(`AnnieSmile`)
-			}
-		})
+			return reply(this.locale.GENERATE_SERVER_INVITE, {
+				simplified: true,
+				socket: {
+					serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
+					emoji: emoji(`AnnieSmile`)
+				}
+			})
+		}
 	}
 }
 
