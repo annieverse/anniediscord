@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const { ConsoleTransportOptions } = require("winston/lib/winston/transports")
 /**
  * Update existiing bio to a custom bio for your server
  * @author Pan
