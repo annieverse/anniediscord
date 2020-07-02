@@ -495,7 +495,7 @@ class Database {
 				recently_received_by = ?
 			WHERE user_id = ?`
 			, `run`
-			, [amount, userId, givenBy]
+			, [amount, givenBy, userId]
 		)
 	}
 
