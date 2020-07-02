@@ -1,4 +1,7 @@
-module.exports = (bot, message) => {
+module.exports = async (bot, message) => {
+
+	await bot.updateConfig(message.guild.id)
+    
     var metadata = {
         message: message,
         typeOfLog: `messageDelete`,

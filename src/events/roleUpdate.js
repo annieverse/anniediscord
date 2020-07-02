@@ -1,5 +1,8 @@
 
-module.exports = (bot, oldRole, newRole) => {
+module.exports = async (bot, oldRole, newRole) => {
+
+	await bot.updateConfig(oldRole.guild.id)
+    
     var metadata = {
         oldRole: oldRole,
         newRole: newRole,

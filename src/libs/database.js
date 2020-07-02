@@ -250,6 +250,48 @@ class Database {
 		)
 	}
 
+	/**
+	 * Add the guild to the list of guilds
+	 * @param {String} guild_id guild's id
+	 * @param {String} name Name of guild
+	 * @param {String} bio A little bout the guild
+	 * @returns {QueryResult}
+	 */
+	addGuild(guild, bio){
+		return this._query(`insert or replace into guilds (updated_at, guild_id, name, bio) values (
+			CURRENT_TIMESTAMP,
+			?,
+			?,
+			?,)`
+			, `run`
+			, [guild.id, guild.name, bio])
+	}
+
+	/**
+	 * Insert or update an existing config values
+	 * @param {Object} {object} {config_code, guild_id, customized_parameter, set_by_user_id}
+	 * @returns {QueryResult}
+	 */
+	async setCustomConfig({config_code, guild, customized_parameter, set_by_user_id}){
+		this._query(`INSERT OR IGNORE INTO guilds (guild_id, name) values (?, ?)`
+			, `run`
+			, [guild.id, guild.name])
+
+		this._query(`UPDATE guilds SET updated_at = CURRENT_TIMESTAMP WHERE guild_id = ?`
+			,`run`
+			, [guild.id])
+
+		let config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
+		config_id = config_id.config_id
+		this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
+			, `run`
+			, [config_id, config_code, guild.id])
+		return this._query(`UPDATE guild_configurations SET updated_at = CURRENT_TIMESTAMP, customized_parameter = ?, set_by_user_id = ? 
+			WHERE guild_id = ? AND config_code = ?`
+			, `run`
+			, [customized_parameter, set_by_user_id,  guild.id, config_code])
+	}
+
 	/** -------------------------------------------------------------------------------
 	 *  Commands Methods
 	 *  -------------------------------------------------------------------------------

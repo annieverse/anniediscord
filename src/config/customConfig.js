@@ -17,9 +17,13 @@ class config {
      * update the config with custom values
      * @param {id} guildId uses support server as default
      */
-    setConfig(guildId=`577121315480272908`) {
-        let userConfig = this.bot.db.getGuildConfigurations(guildId)
-
+    async setConfig(guildId=`577121315480272908`) {
+        let userConfigArray = await this.bot.db.getGuildConfigurations(guildId)
+        let userConfig = {}
+        for (let index = 0; index < userConfigArray.length; index++) {
+            const element = userConfigArray[index]
+            userConfig[element.config_code] = element.customized_parameter
+        }
         const defaultConfig = this.getCustomizableConfig
 
         const required = this.getRequired
@@ -46,7 +50,6 @@ class config {
         if (!finalConfig.log_channel){
             finalConfig.WANT_CUSTOM_LOGS = true
         }
-
         return finalConfig
     }
 
@@ -55,7 +58,62 @@ class config {
     }
 
     get getNotCustomizable(){
-        return [`modmail_guildId`]
+        return [`modmail_guildId`, `guild_id`]
+    }
+
+    get getCustomizableConfigValueOptions(){
+        const defaultConfig = {
+            "WANT_CUSTOM_LOGS": `true/false`,
+            "channelCreate": `true/false`,
+            "channelDelete": `true/false`,
+            "channelUpdate": `true/false`,
+            "channelUpdate_MASTER": `true/false`,
+            "channelUpdate_NAME": `true/false`,
+            "channelUpdate_TOPIC": `true/false`,
+            "channelUpdate_NSFW": `true/false`,
+            "channelUpdate_TYPE": `true/false`,
+            "channelUpdate_CATEGORY": `true/false`,
+            "emojiCreate": `true/false`,
+            "emojiDelete": `true/false`,
+            "emojiUpdate": `true/false`,
+            "emojiUpdate_MASTER": `true/false`,
+            "emojiUpdate_NAME": `true/false`,
+            "messageDeleteBulk": `true/false`,
+            "messageDelete": `true/false`,
+            "messageUpdate": `true/false`,
+            "messageUpdate_MASTER": `true/false`,
+            "messageUpdate_EDITED": `true/false`,
+            "roleCreate": `true/false`,
+            "roleDelete": `true/false`,
+            "roleUpdate": `true/false`,
+            "roleUpdate_MASTER": `true/false`,
+            "guildBanAdd": `true/false`,
+            "guildBanRemove": `true/false`,
+            "guildCreate": `true/false`,
+            "guildDelete": `true/false`,
+            "guildMemberAdd": `true/false`,
+            "guildMemberRemove": `true/false`,
+            "guildMembersChunk": `true/false`,
+            "guildMemberUpdate": `true/false`,
+            "guildUnavailable": `true/false`,
+            "guildUpdated": `true/false`,
+            "modmail_guildId": `channel id, name, or link like #general`,
+            "modmail_category": `channel id, name, or link like #general`,
+            "modmail_logChannel": `channel id, name, or link like #general`,
+            "modmail_plugin": `true/false`,
+            "feeds_channel": `channel id, name, or link like #general`,
+            "log_channel": `channel id, name, or link like #general`,
+            "welcome_module": `true/false`,
+            /**
+             *  -----------------------------------------------------------
+             *  This is the command prefix that Annie will be using.
+             *  If not defined, it will use `>` as the default prefix.
+             *  @STRING
+             */
+            "prefix": `any prefix you would like the bot to use`,
+            "guild_id": `channel id, name, or link like #general`,
+        }
+        return defaultConfig
     }
 
     get getCustomizableConfig(){
@@ -107,7 +165,7 @@ class config {
              *  If not defined, it will use `>` as the default prefix.
              *  @STRING
              */
-            "prefix": process.env.PREFIX || `~`,
+            "prefix": process.env.PREFIX || `>`,
             "guild_id": `577121315480272908`,
         }
         return defaultConfig

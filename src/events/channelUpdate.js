@@ -1,4 +1,7 @@
-module.exports = (bot, oldChannel, newChannel) => {
+module.exports = async (bot, oldChannel, newChannel) => {
+    
+    await bot.updateConfig(oldChannel.guild.id)
+
     var metadata = {
         oldChannel: oldChannel,
         newChannel : newChannel,

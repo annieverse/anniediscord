@@ -1,4 +1,7 @@
-module.exports = (bot, channel) => {
+module.exports = async (bot, channel) => {
+    
+    await bot.updateConfig(channel.guild.id)
+    
     var metadata = {
         channel: channel,
         guild: channel.guild,
