@@ -251,6 +251,27 @@ class Database {
 	}
 
 	/**
+	 * Retrieve the existing guild's bio
+	 * @param {String} guild guild id
+	 * @returns {String}
+	 */
+	getExistingGuildBio(guild){
+		return this._query(`SELECT bio FROM guilds WHERE guild_id = ?`,`get`, [guild])
+	}
+
+
+	/**
+	 * Set a new bio for the guild
+	 * @param {String} guild guild id
+	 * @param {String} bio 
+	 */
+	setGuildBio(guild, bio){
+		return this._query(`UPDATE guilds SET bio = ? WHERE guild_id = ?`
+		, `run`
+		, [bio, guild])
+	}
+
+	/**
 	 * Add the guild to the list of guilds
 	 * @param {String} guild_id guild's id
 	 * @param {String} name Name of guild

@@ -103,13 +103,12 @@ class Config extends Command {
         } else if (option == `channel id, name, or link like #general`) {
             let channel
             try {
-                channel =  msg.mentions.channels.first().id ||  msg.guild.channels.get(msg.content).id || msg.guild.channels.find(channel => channel.name === testValue.toLowerCase()).id
+                channel =  msg.mentions.channels.first().id
             } catch (error) {
                 channel = null
             }
             if (channel) return channel
-            if (!channel) return `rejected`
-            /* try {
+             try {
                 channel = msg.guild.channels.get(msg.content).id
             } catch (error) {
                 channel = null
@@ -119,7 +118,7 @@ class Config extends Command {
                 channel = msg.guild.channels.find(channel => channel.name === testValue.toLowerCase()).id
             } catch (error) {
                 return `rejected`
-            } */
+            } 
             return channel
         } else if (option == `any prefix you would like the bot to use`){
             return testValue
