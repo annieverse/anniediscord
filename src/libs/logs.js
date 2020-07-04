@@ -501,9 +501,8 @@ class LogsSystem {
     }
 
     record() {
-        const { typeOfLog, bot, guild } = this.data
+        const { typeOfLog, bot } = this.data
         if (!typeOfLog) return
-        this.data.bot.updateConfig(guild.id)
         if (!this.data.bot.log_channel) return
         this.logChannel = bot.channels.get(this.data.bot.log_channel)
         if (!this.logChannel) return

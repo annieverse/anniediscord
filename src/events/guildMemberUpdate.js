@@ -2,8 +2,19 @@ const BoosterPerks = require(`../utils/BoosterPerks`)
 const { nitro_booster } = require(`../utils/role-list`)
 
 
-module.exports = (bot, oldUser, newUser) => {
+module.exports = async (bot, oldUser, newUser) => {
 
+	await bot.updateConfig(oldUser.guild.id)
+
+	var metadata = {
+		oldUser: oldUser,
+		newUser: newUser,
+		guild: oldUser.guild,
+		typeOfLog: `guildMemberUpdate`,
+		bot: bot
+	}
+	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberUpdate) new bot.logSystem(metadata).record()
+	
 	//	Get logger from @Client
 	const { logger } = bot
 
@@ -68,12 +79,4 @@ module.exports = (bot, oldUser, newUser) => {
 			.then(r => logger.info(`booster color roles removed from ${r.user.tag}`)) // 
 			.catch(()=>null) // Ignore the error
 	}
-	var metadata = {
-		oldUser: oldUser,
-		newUser: newUser,
-		guild: oldUser.guild,
-		typeOfLog: `guildMemberUpdate`,
-		bot: bot
-	}
-	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberUpdate) new bot.logSystem(metadata).record()
 }

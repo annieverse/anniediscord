@@ -90,7 +90,6 @@ async function portfolio(stacks, member) {
 					canv.addImage(photo, posx, posy - ((height * dx / width) - dy)/2, dx, height * dx / width,1)
 				}
 			} catch (e) {
-				//console.log(err);
 				db._query(`DELETE FROM userartworks WHERE url = ?`, `run`, [src])
 			}
 		}

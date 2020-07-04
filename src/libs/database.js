@@ -250,6 +250,69 @@ class Database {
 		)
 	}
 
+	/**
+	 * Retrieve the existing guild's bio
+	 * @param {String} guild guild id
+	 * @returns {String}
+	 */
+	getExistingGuildBio(guild){
+		return this._query(`SELECT bio FROM guilds WHERE guild_id = ?`,`get`, [guild])
+	}
+
+
+	/**
+	 * Set a new bio for the guild
+	 * @param {String} guild guild id
+	 * @param {String} bio 
+	 */
+	setGuildBio(guild, bio){
+		return this._query(`UPDATE guilds SET bio = ? WHERE guild_id = ?`
+		, `run`
+		, [bio, guild])
+	}
+
+	/**
+	 * Add the guild to the list of guilds
+	 * @param {String} guild_id guild's id
+	 * @param {String} name Name of guild
+	 * @param {String} bio A little bout the guild
+	 * @returns {QueryResult}
+	 */
+	addGuild(guild, bio){
+		return this._query(`insert or replace into guilds (updated_at, guild_id, name, bio) values (
+			CURRENT_TIMESTAMP,
+			?,
+			?,
+			?,)`
+			, `run`
+			, [guild.id, guild.name, bio])
+	}
+
+	/**
+	 * Insert or update an existing config values
+	 * @param {Object} {object} {config_code, guild_id, customized_parameter, set_by_user_id}
+	 * @returns {QueryResult}
+	 */
+	async setCustomConfig({config_code, guild, customized_parameter, set_by_user_id}){
+		this._query(`INSERT OR IGNORE INTO guilds (guild_id, name) values (?, ?)`
+			, `run`
+			, [guild.id, guild.name])
+
+		this._query(`UPDATE guilds SET updated_at = CURRENT_TIMESTAMP WHERE guild_id = ?`
+			,`run`
+			, [guild.id])
+
+		let config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
+		config_id = config_id.config_id
+		this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
+			, `run`
+			, [config_id, config_code, guild.id])
+		return this._query(`UPDATE guild_configurations SET updated_at = CURRENT_TIMESTAMP, customized_parameter = ?, set_by_user_id = ? 
+			WHERE guild_id = ? AND config_code = ?`
+			, `run`
+			, [customized_parameter, set_by_user_id,  guild.id, config_code])
+	}
+
 	/** -------------------------------------------------------------------------------
 	 *  Commands Methods
 	 *  -------------------------------------------------------------------------------
@@ -432,7 +495,7 @@ class Database {
 				recently_received_by = ?
 			WHERE user_id = ?`
 			, `run`
-			, [amount, userId, givenBy]
+			, [amount, givenBy, userId]
 		)
 	}
 
@@ -1673,7 +1736,7 @@ class Database {
 			'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 			'config_code' TEXT,
 			'guild_id' TEXT,
-			'channel_id' TEXT,
+			'customized_parameter' TEXT,
 			'set_by_user_id' TEXT,
 
 			FOREIGN KEY(guild_id)

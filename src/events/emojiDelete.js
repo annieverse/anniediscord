@@ -1,5 +1,8 @@
 
-module.exports = (bot, emoji) => {
+module.exports = async (bot, emoji) => {
+    
+    await bot.updateConfig(emoji.guild.id)
+
     var metadata = {
         emoji: emoji,
         guild: emoji.guild,

@@ -1,5 +1,8 @@
 
-module.exports = (bot, guild) => {
+module.exports = async (bot, guild) => {
+    
+    await bot.updateConfig(guild.id)
+    
     var metadata = {
         guild: guild,
         typeOfLog: `guildUnavailable`,

@@ -515,11 +515,15 @@ class Pistachio {
      *  @param {array} [columns=[]] source array to be registered. Element must be `object with keys name and value`.
      *  @returns {array}
 	 */
-	_registerPagesTwo(pages=2, columns=[]) {
+	_registerPagesTwo(pages=2, columns=[], text) {
 		let res = []
+		pages++
         for (let i = 0; i < pages; i++) {
 			if (columns[i]){
 				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.golden)
+				if (text){
+					embed.setDescription(text)
+				}
 				for (let j = 0; j < columns[i].length; j++) {
 					embed.addField(columns[i][j].name,columns[i][j].value,true)
 				}
@@ -676,7 +680,7 @@ class Pistachio {
 				const array_chunks = (array, chunk_size) => Array(Math.ceil(array.length / chunk_size)).fill().map((_, index) => index * chunk_size).map(begin => array.slice(begin, begin + chunk_size))
 				let chunks = array_chunks(options.columns, 15)
 				let page = 0
-				const embeddedPages = this._registerPagesTwo(chunks.size,chunks)
+				const embeddedPages = this._registerPagesTwo(chunks.size,chunks, content)
 				return options.field.send(embeddedPages[0])
 				.then(async msg => {
 					//  Buttons

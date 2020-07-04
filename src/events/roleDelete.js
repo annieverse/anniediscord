@@ -1,5 +1,8 @@
 
-module.exports = (bot, role) => {
+module.exports = async (bot, role) => {
+
+	await bot.updateConfig(role.guild.id)
+    
     var metadata = {
         role: role,
         typeOfLog: `roleDelete`,

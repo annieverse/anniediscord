@@ -3,6 +3,16 @@ const { Attachment } = require(`discord.js`)
 
 module.exports = async (bot, member) => {
 
+    await bot.updateConfig(member.guild.id)
+
+    var metadata = {
+        member: member,
+        guild: member.guild,
+		typeOfLog: `guildMemberRemove`,
+		bot: bot
+	}
+    if (bot.WANT_CUSTOM_LOGS && bot.guildMemberadd) new bot.logSystem(metadata).record()
+    
     //  Ignore if incoming event was from outer guild (not aau)
     if (member.guild.id != `459891664182312980`) return
     //  Display image
@@ -24,11 +34,4 @@ module.exports = async (bot, member) => {
 
     bot.logger.info(`[${member.guild.name}]${bot.users.get(member.id).tag} has joined the server.`)
 
-    var metadata = {
-        member: member,
-        guild: member.guild,
-		typeOfLog: `guildMemberRemove`,
-		bot: bot
-	}
-	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberRemove) new bot.logSystem(metadata).record()
 }

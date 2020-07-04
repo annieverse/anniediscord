@@ -31,12 +31,14 @@ class MessageController {
      * @returns {class}
      */
     async run(minimal=false) {
+        await this.bot.updateConfig(this.message.guild.id)
         /** -----------------------------------------------------------------
          *  Exceptor
          *  -----------------------------------------------------------------
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
+        this.bot.updateConfig(this.message.guild.id)
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
@@ -123,7 +125,7 @@ class MessageController {
      * @returns {Boolean}
      */
     get isModmailMessage(){
-        return this.message.channel.parentID == `507048639747850240`
+        return this.message.channel.parentID == this.bot.modmail_category
     }
 
     /**

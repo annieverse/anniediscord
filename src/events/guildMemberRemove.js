@@ -1,5 +1,7 @@
-module.exports = (bot,member) => {
+module.exports = async (bot,member) => {
 
+	await bot.updateConfig(member.guild.id)
+	
 	var metadata = {
 		member: member,
 		guild: member.guild,
