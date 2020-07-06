@@ -19,33 +19,22 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(1)
-		let users = this.fullArgs.split(`\n`)
-		for (let index = 0; index < users.length; index++) {
-			const element = users[index];
-			try {
-				reply(`${element}:  ${this.bot.guilds.get(`459891664182312980`).members.find(m => m.user.tag == element).id}`)
-			} catch (error) {
-				reply(`Cant find user, tried using this tag: ${element}`)
-			}
-		}
-		//this.bot.guilds.get(`459891664182312980`).members.find(m => m.user.tag == this.fullArgs).id
+		this.bot.db.updateInventory({itemId: this.args[0], value:this.args[1], operation:`+`, userId: this.args[2]})
 		return
-		/*
 		return reply(`test`, {
 			simplified: true,
 			prebuffer: true,
 			image: await new GUI(this.user, this.bot).build()
 		})
-		*/
 	}
 }
 
 module.exports.help = {
 	start: Test,
-	name: `test`,
-	aliases: [`test`],
+	name: `updateinv`,
+	aliases: [`update`],
 	description: `Dummy command to test anything.`,
-	usage: `test <>`,
+	usage: `updateinv <itemid> <amount> <userid>`,
 	group: `Developer`,
 	permissionLevel: 4,
 	multiUser: true,
