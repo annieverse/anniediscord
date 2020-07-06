@@ -439,6 +439,9 @@ class LogsSystem {
 
     guildMemberAdd(){
         const { bot: { logger }, bot, member } = this.data
+        console.log(`in logsystem member add`)
+        console.log(this.logChannel.guild.id)
+        console.log(member.guild.id)
         if (this.logChannel.guild.id != member.guild.id) return
         logger.info(`Member Joined ${member.guild.id}, ${member}`)
         this.Pistachio.reply(`**Member Joined: **{{member}} - {{username}}`, {
@@ -504,7 +507,7 @@ class LogsSystem {
         const { typeOfLog, bot } = this.data
         if (!typeOfLog) return
         if (!this.data.bot.log_channel) return
-        this.logChannel = bot.channels.get(this.data.bot.log_channel)
+        this.logChannel = bot.guilds.get(bot.guild_id).channels.get(this.data.bot.log_channel)
         if (!this.logChannel) return
         if (!bot.WANT_CUSTOM_LOGS) return
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()

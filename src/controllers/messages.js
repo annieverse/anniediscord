@@ -52,7 +52,7 @@ class MessageController {
          *  -- minimal
          *  -----------------------------------------------------------------
          */
-        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
+        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message, modmail: false}).run()
         //  Limit modules in minimal state.
         if (minimal) return
 

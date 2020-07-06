@@ -58,6 +58,10 @@ class Config extends Command {
                     this.endSequence()
                     return reply(`Sorry but the selected value was rejected`)
                 }
+                if (getOption == `none to remove`){
+                    this.endSequence()
+                    return reply(`Sorry but the selected value was rejected due to not existing yet`)
+                }
                 this.endSequence()
                 let metadata = {
                     config_code: this.varible,
@@ -82,7 +86,7 @@ class Config extends Command {
                     return reply(`Value inputed didn't match any avaible options.`)
                 }
                 this.nextSequence()
-                reply(`Please supply what you would like the value to change ${this.varible} to`)
+                reply(this.varible == `welcome_text` ? `Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.` : `Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
             }
 
 
@@ -93,6 +97,8 @@ class Config extends Command {
     getAcceptedOption(varible, msg){
         let option = this.valueOptions[varible]
         let testValue = msg.content
+        let resetVarible = this.customizable
+        if (testValue.toLowerCase() == `reset`) return resetVarible[varible]
         if ( option == `true/false`){
             let acceptedOptions = [`true`, `false`]
             if (acceptedOptions.includes(testValue.toLowerCase())) {
@@ -120,11 +126,84 @@ class Config extends Command {
                 return `rejected`
             } 
             return channel
-        } else if (option == `any prefix you would like the bot to use`){
+        } else if (option == `any prefix you would like the bot to use` || option == `text`){
             return testValue
+        } else if (option == `role id, name, or @ like @admin`) {
+            let role
+            try {
+                role =  msg.mentions.roles.first().id
+            } catch (error) {
+                role = null
+            }
+            if (role) return role
+                try {
+                role = msg.guild.roles.get(msg.content).id
+            } catch (error) {
+                role = null
+            }
+            if (role) return role
+            try {
+                role = msg.guild.roles.find(r => r.name === testValue.toLowerCase()).id
+            } catch (error) {
+                return `rejected`
+            } 
+            return role
+        } else if (option == `a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014`){
+            let existingRoles = this.bot[varible]
+            let str = ``
+            str += existingRoles
+            existingRoles = str.split(`, `)
+            existingRoles = this.removeItemAll(existingRoles, ``)
+            if (testValue[0] == `-`){
+                if (existingRoles.length == 0) return `none to remove`
+                let role = this.getRole(msg, testValue)
+                if (role == `rejected`) return `none to remove`
+                let array = this.removeItemAll(existingRoles, role)
+                array.length == 0 ? array = `` : array = array.join(`, `)
+                return array
+                
+            } else if (testValue[0] == `+`){
+                let role = this.getRole(msg, testValue)
+                if (role == `rejected`) return `none to remove`
+                existingRoles.push(role)
+                existingRoles = existingRoles.reduce((unique, item) => {
+                    return unique.includes(item) ? unique : [...unique, item]
+                }, [])
+                existingRoles = this.removeItemAll(existingRoles, ``)
+                existingRoles = existingRoles.join(`, `)
+                return existingRoles
+            } else {
+                return `rejected`
+            }
         } else {
             return `rejected`
         }
+    }
+    removeItemAll(arr, value) {
+        var i = 0;
+        while (i < arr.length) {
+          if (arr[i].trim() === value) {
+            arr.splice(i, 1);
+          } else {
+            ++i;
+          }
+        }
+        return arr;
+    }
+    getRole(msg, testValue){
+        let role
+        try {
+            role =  msg.mentions.roles.first().id
+        } catch (error) {
+            role = null
+        }
+        if (role) return role
+            try {
+            role = msg.guild.roles.get(testValue.substring(2)).id
+        } catch (error) {
+            return `rejected`
+        }
+        return role
     }
 
     findElement(arr, propName) {

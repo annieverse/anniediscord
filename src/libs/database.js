@@ -301,12 +301,18 @@ class Database {
 		this._query(`UPDATE guilds SET updated_at = CURRENT_TIMESTAMP WHERE guild_id = ?`
 			,`run`
 			, [guild.id])
-
-		let config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
-		config_id = config_id.config_id
-		this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
+		let config_id
+		try {
+			config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
+			config_id = config_id.config_id
+			this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
 			, `run`
 			, [config_id, config_code, guild.id])
+		} catch (error) {
+			this._query(`INSERT OR IGNORE INTO guild_configurations (config_code, guild_id) values (?, ?)`
+			, `run`
+			, [config_code, guild.id])
+		}
 		return this._query(`UPDATE guild_configurations SET updated_at = CURRENT_TIMESTAMP, customized_parameter = ?, set_by_user_id = ? 
 			WHERE guild_id = ? AND config_code = ?`
 			, `run`
