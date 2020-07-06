@@ -180,15 +180,15 @@ class Config extends Command {
         }
     }
     removeItemAll(arr, value) {
-        var i = 0;
+        var i = 0
         while (i < arr.length) {
           if (arr[i].trim() === value) {
-            arr.splice(i, 1);
+            arr.splice(i, 1)
           } else {
-            ++i;
+            ++i
           }
         }
-        return arr;
+        return arr
     }
     getRole(msg, testValue){
         let role

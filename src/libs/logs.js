@@ -439,9 +439,6 @@ class LogsSystem {
 
     guildMemberAdd(){
         const { bot: { logger }, bot, member } = this.data
-        console.log(`in logsystem member add`)
-        console.log(this.logChannel.guild.id)
-        console.log(member.guild.id)
         if (this.logChannel.guild.id != member.guild.id) return
         logger.info(`Member Joined ${member.guild.id}, ${member}`)
         this.Pistachio.reply(`**Member Joined: **{{member}} - {{username}}`, {

@@ -16,18 +16,7 @@ module.exports = annie => {
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`dnd`)
 		updateTable()
-		async function updateTable(){
-			let tableInfo = await annie.db._query(`PRAGMA table_info(guild_configurations)`,`all`)
-			for (let index = 0; index < tableInfo.length; index++) {
-				const element = tableInfo[index];
-				if (element.name == `customized_parameter`) return
-				if (element.name == `channel_id`){
-					await annie.db._query(`ALTER TABLE guild_configurations RENAME COLUMN channel_id TO customized_parameter`,`run`)
-					let test = await annie.db._query(`SELECT customized_parameter FROM guild_configurations`,`get`)
-					logger.info(`TEST: ${test.customized_parameter}`)
-				}
-			}
-		}
+		
 	} else {
 		/**
 		 * 	--------------------------------------------------
@@ -64,5 +53,18 @@ module.exports = annie => {
 		Routine.autoStatus()
 		// Remove featured daily post
 		Routine.removeFeaturedDailyPostLoop()
+	}
+	
+	async function updateTable(){
+		let tableInfo = await annie.db._query(`PRAGMA table_info(guild_configurations)`,`all`)
+		for (let index = 0; index < tableInfo.length; index++) {
+			const element = tableInfo[index]
+			if (element.name == `customized_parameter`) return
+			if (element.name == `channel_id`){
+				await annie.db._query(`ALTER TABLE guild_configurations RENAME COLUMN channel_id TO customized_parameter`,`run`)
+				let test = await annie.db._query(`SELECT customized_parameter FROM guild_configurations`,`get`)
+				logger.info(`TEST: ${test.customized_parameter}`)
+			}
+		}
 	}
 }
