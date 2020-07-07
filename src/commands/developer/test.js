@@ -1,5 +1,5 @@
 const Command = require(`../../libs/commands`)
-const GUI = require(`../../ui/prebuild/welcomer`)
+//const GUI = require(`../../ui/prebuild/welcomer`)
 /**
  * 	Dummy command to test anything.
  * 	@author klerikdust
@@ -21,7 +21,7 @@ class Test extends Command {
 		await this.requestUserMetadata(1)
 		let users = this.fullArgs.split(`\n`)
 		for (let index = 0; index < users.length; index++) {
-			const element = users[index];
+			const element = users[index]
 			try {
 				reply(`${element}:  ${this.bot.guilds.get(`459891664182312980`).members.find(m => m.user.tag == element).id}`)
 			} catch (error) {

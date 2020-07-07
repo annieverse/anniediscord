@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const GUI = require(`../../ui/prebuild/welcomer`)
 /**
  * 	Dummy command to test anything.
  * 	@author klerikdust
@@ -17,15 +16,10 @@ class Test extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 		this.bot.db.updateInventory({itemId: this.args[0], value:this.args[1], operation:`+`, userId: this.args[2]})
 		return
-		return reply(`test`, {
-			simplified: true,
-			prebuffer: true,
-			image: await new GUI(this.user, this.bot).build()
-		})
 	}
 }
 

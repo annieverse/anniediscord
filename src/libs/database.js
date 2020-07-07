@@ -390,7 +390,7 @@ class Database {
 	async registerUser(userId=``) {
 		const fn = `[Database.registerUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		return this._query(`
+		this._query(`
 			INSERT INTO users(user_id)
 			SELECT $userId
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
@@ -398,6 +398,31 @@ class Database {
 			, {userId: userId}
 			, `Registering USER_ID ${userId} into users table if doesn't exist`
 		)
+		this._query(`
+			INSERT INTO user_dailies(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_dailies table if doesn't exist`
+		)
+		this._query(`
+			INSERT INTO user_exp(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_exp table if doesn't exist`
+		)
+		this._query(`
+			INSERT INTO user_reputations(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_reputations table if doesn't exist`
+		)
+		return
 	}
 
 	/**
