@@ -38,7 +38,7 @@ class MessageController {
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
-        this.bot.updateConfig(this.message.guild.id)
+        
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
