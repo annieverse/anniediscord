@@ -38,7 +38,7 @@ class MessageController {
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
-        this.bot.updateConfig(this.message.guild.id)
+        
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
@@ -52,7 +52,7 @@ class MessageController {
          *  -- minimal
          *  -----------------------------------------------------------------
          */
-        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
+        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message, modmail: false}).run()
         //  Limit modules in minimal state.
         if (minimal) return
 

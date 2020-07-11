@@ -301,12 +301,18 @@ class Database {
 		this._query(`UPDATE guilds SET updated_at = CURRENT_TIMESTAMP WHERE guild_id = ?`
 			,`run`
 			, [guild.id])
-
-		let config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
-		config_id = config_id.config_id
-		this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
+		let config_id
+		try {
+			config_id = await this._query(`SELECT config_id FROM guild_configurations WHERE config_code = ? AND guild_id = ?`, `get`,[config_code, guild.id])
+			config_id = config_id.config_id
+			this._query(`INSERT OR IGNORE INTO guild_configurations (config_id, config_code, guild_id) values (?, ?, ?)`
 			, `run`
 			, [config_id, config_code, guild.id])
+		} catch (error) {
+			this._query(`INSERT OR IGNORE INTO guild_configurations (config_code, guild_id) values (?, ?)`
+			, `run`
+			, [config_code, guild.id])
+		}
 		return this._query(`UPDATE guild_configurations SET updated_at = CURRENT_TIMESTAMP, customized_parameter = ?, set_by_user_id = ? 
 			WHERE guild_id = ? AND config_code = ?`
 			, `run`
@@ -384,7 +390,7 @@ class Database {
 	async registerUser(userId=``) {
 		const fn = `[Database.registerUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		return this._query(`
+		this._query(`
 			INSERT INTO users(user_id)
 			SELECT $userId
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
@@ -392,6 +398,31 @@ class Database {
 			, {userId: userId}
 			, `Registering USER_ID ${userId} into users table if doesn't exist`
 		)
+		this._query(`
+			INSERT INTO user_dailies(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_dailies table if doesn't exist`
+		)
+		this._query(`
+			INSERT INTO user_exp(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_exp table if doesn't exist`
+		)
+		this._query(`
+			INSERT INTO user_reputations(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_reputations table if doesn't exist`
+		)
+		return
 	}
 
 	/**

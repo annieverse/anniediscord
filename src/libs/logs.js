@@ -504,7 +504,7 @@ class LogsSystem {
         const { typeOfLog, bot } = this.data
         if (!typeOfLog) return
         if (!this.data.bot.log_channel) return
-        this.logChannel = bot.channels.get(this.data.bot.log_channel)
+        this.logChannel = bot.guilds.get(bot.guild_id).channels.get(this.data.bot.log_channel)
         if (!this.logChannel) return
         if (!bot.WANT_CUSTOM_LOGS) return
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()

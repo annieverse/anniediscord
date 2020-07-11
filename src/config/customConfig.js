@@ -46,9 +46,12 @@ class config {
             process.exit(1)
         }
         }
+        if (finalConfig.guild_id != guildId){
+            finalConfig.guild_id = guildId
+        }
 
         if (!finalConfig.log_channel){
-            finalConfig.WANT_CUSTOM_LOGS = true
+            finalConfig.WANT_CUSTOM_LOGS = false
         }
         return finalConfig
     }
@@ -104,6 +107,10 @@ class config {
             "feeds_channel": `channel id, name, or link like #general`,
             "log_channel": `channel id, name, or link like #general`,
             "welcome_module": `true/false`,
+            "welcome_text": `text`,
+            "welcome_channel": `channel id, name, or link like #general`,
+            "welcome_autoRole": `role id, name, or @ like @admin`,
+            "welcome_roles": `a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014`,
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.
@@ -157,8 +164,12 @@ class config {
             "modmail_logChannel": `460267216324263936`,
             "modmail_plugin": true,
             "feeds_channel": null,
-            "log_channel": `724732289572929728`,
+            "log_channel": null,
             "welcome_module": true,
+            "welcome_text": `Welcome To **{{guild}}** {{user}}!`,
+            "welcome_channel": null,
+            "welcome_autoRole": null,
+            "welcome_roles": [],
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.
