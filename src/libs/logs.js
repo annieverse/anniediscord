@@ -220,6 +220,7 @@ class LogsSystem {
         const { bot: { logger }, oldMessage, newMessage, bot} = this.data
         const { messageUpdate_MASTER } = bot
         if (!messageUpdate_MASTER) return
+        if (newMessage.channel.type ==`dm`) return
         if (this.logChannel.guild.id != newMessage.guild.id) return
         if (oldMessage.content != newMessage.content){
             if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
@@ -255,6 +256,7 @@ class LogsSystem {
     messageDelete() {
         const { bot: { logger }, message } = this.data
         if (message.author.bot) return
+        if (message.channel.type ==`dm`) return
         if (this.logChannel.guild.id != message.guild.id) return
         logger.info(`Message deleted in #${message.channel.name} Message Content: ${message.content ? message.content : `No Text`}`)
         if (message.attachments.size > 0) {

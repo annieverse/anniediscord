@@ -212,6 +212,16 @@ class Pistachio {
 	 *  Flexible Components
 	 *  ------------------------------------------
 	 */
+
+	 /**
+	  * If there is a nitro role set up on server, it will be used to determine if a user is a vip
+	  * @returns {Boolean}
+	  */
+	isVip(){
+		//return this.message.member.roles.has(`654254766016299038`)
+		return this.bot.nitro_role ? this.message.member.roles.has(this.bot.nitro_role) : false
+	}
+
 	/**
 	 * Automatically convert any weird number notation into a real value.
 	 * @author Fwubbles

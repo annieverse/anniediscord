@@ -1039,7 +1039,7 @@ class Database {
 	 */
 	registerPost({userId=``, url=``, caption=``, channelId=``, guildId=``}) {
 		return this._query(`
-			INSERT INTO user_posts (
+			INSERT OR IGNORE INTO user_posts (
 				user_id,
 				url,
 				caption,
@@ -1052,6 +1052,46 @@ class Database {
 			`run`
 			, [userId, url, caption, channelId, guildId]
 		)
+	}
+
+	/**
+	 * Get all post data by suppling the message's original url
+	 * @param {Object} url
+	 */
+	async getpostData({url=``}){
+		return this._query(`SELECT * FROM user_posts WHERE url = ?`, `get`, [url])
+	}
+
+	/**
+	 * Removes one heart to post's record and corrects amount if likes go below 0
+	 * @param {Object} url
+	 */
+	removeHeart({url=``}){
+		this._query(`UPDATE user_posts SET 
+		total_likes = total_likes - 1 
+		WHERE url = ?`,
+		`run`
+		,[url])
+		let res = this._query(`SELECT * FROM user_posts WHERE url = ?`, `get`, [url])
+		if (res.total_likes < 0) this._query(`UPDATE user_posts SET 
+		total_likes = 0 
+		WHERE url = ?`,
+		`run`
+		,[url])
+		return
+	}
+
+	/**
+	 * Adds one heart to post's record
+	 * @param {Object} url, recently_liked_by
+	 */
+	addHeart({url=``, recently_liked_by=``}){
+		return this._query(`UPDATE user_posts SET 
+		recently_liked_by = ?, 
+		total_likes = total_likes + 1 
+		WHERE url = ?`,
+		`run`
+		,[recently_liked_by, url])
 	}
 
 	/**
@@ -1271,9 +1311,9 @@ class Database {
 	*/
 	enableNotification(userId=``) {
 		return this._query(`
-			UPDATE user
+			UPDATE users
 			SET receive_notification = 1
-			WHERE id = ?`
+			WHERE user_id = ?`
 			, `run`
 			, [userId]
 		)
@@ -1286,14 +1326,22 @@ class Database {
 	*/
 	disableNotification(userId=``) {
 		return this._query(`
-			UPDATE user
+			UPDATE users
 			SET receive_notification = 0
-			WHERE id = ?`
+			WHERE user_id = ?`
 			, `run`
 			, [userId]
 		)
 	}
-        
+	
+	/**
+	 * Retrives user's notification status
+	 * @param {QueryResult} [userId=``] of target user id
+	 */
+	getNotificationStatus(userId=``){
+		return this._query(`SELECT receive_notification FROM users WHERE user_id = ?`,`get`,[userId])
+	}
+
 	//  Check if post already stored in featured list
 	featuredPostMetadata(url) {
 		return this.client.get(`

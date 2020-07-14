@@ -1,5 +1,7 @@
 module.exports = async (bot, channel) => {
     
+    if (channel.type == `dm`) return
+    
     await bot.updateConfig(channel.guild.id)
     
     var metadata = {

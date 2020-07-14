@@ -182,9 +182,9 @@
     "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
     "EXEC_CODE": "Command executed in **{{time}}**\n```json\n{{result}}\n```",
     "FEATURED": {
-        "FIRST_LIKE": "**{0}** liked your post.",
-        "LIKED": "**{0}** and **{1} others** liked your post.",
-        "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
+        "FIRST_LIKE": "**{reactor}** liked your post.",
+        "LIKED": "**{{reactor}}** and **{{amount}} others** liked your post.",
+        "SUCCESSFUL": "Congratulations, **{{0}}**!\nyour post in {{channel}} has been featured!"
     },
     "FLIPCOIN": {
         "RESPONSES": [

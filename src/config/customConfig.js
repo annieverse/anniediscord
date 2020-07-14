@@ -46,13 +46,15 @@ class config {
             process.exit(1)
         }
         }
-        if (finalConfig.guild_id != guildId){
-            finalConfig.guild_id = guildId
-        }
+        if (finalConfig.guild_id != guildId) finalConfig.guild_id = guildId
 
-        if (!finalConfig.log_channel){
-            finalConfig.WANT_CUSTOM_LOGS = false
-        }
+        if (!(finalConfig.post_collect_channels.length > 0)) finalConfig.post_heart_module = false
+
+        if (!finalConfig.post_vip_notification_general_channel) finalConfig.post_vip_notification_module = false
+
+        if (!finalConfig.nitro_role) finalConfig.nitro_notifications = false
+
+        if (!finalConfig.log_channel) finalConfig.WANT_CUSTOM_LOGS = false
         return finalConfig
     }
 
@@ -111,6 +113,15 @@ class config {
             "welcome_channel": `channel id, name, or link like #general`,
             "welcome_autoRole": `role id, name, or @ like @admin`,
             "welcome_roles": `a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014`,
+            "nickname_changer": `role id, name, or @ like @admin`,
+            "post_collect_channels": `a - (to remove) or + (to add) followed by channel id, or link like #general`,
+            "post_vip_notification_general_channel": `channel id, name, or link like #general`,
+            "post_vip_notification_module": `true/false`,
+            "post_heart_module": `true/false`,
+            "nitro_role": `role id, name, or @ like @admin`,
+            "nitro_notifications": `true/false`,
+            "featured_requirement": `number`,
+            "featured/trending_module": `true/false`,
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.
@@ -170,6 +181,15 @@ class config {
             "welcome_channel": null,
             "welcome_autoRole": null,
             "welcome_roles": [],
+            "nickname_changer": null,
+            "post_collect_channels": [],
+            "post_vip_notification_general_channel": null,
+            "post_vip_notification_module": false,
+            "post_heart_module": false,
+            "nitro_role": null,
+            "nitro_notifications": true,
+            "featured_requirement": 10,
+            "featured_trending_module": false,
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.

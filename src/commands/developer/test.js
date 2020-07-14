@@ -19,6 +19,7 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(1)
+
 		let users = this.fullArgs.split(`\n`)
 		for (let index = 0; index < users.length; index++) {
 			const element = users[index]

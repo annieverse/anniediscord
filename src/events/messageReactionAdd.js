@@ -1,13 +1,17 @@
-const Heart = require(`../utils/artFeaturingManager`)
-const BoosterColor = require(`../utils/BoosterColorManager`)
+const {heartReactionHandler} = require(`../struct/posts/heartHandler.js`)
+//const BoosterColor = require(`../utils/BoosterColorManager`)
 //const ClassroomManager = require(`../utils/ClassroomManager`)
 
 module.exports = async(Components) => {
-
-    new Heart(Components).Add()
-
-     //  Handling empty reactions
+    
+    //  Handling empty reactions
     if (!Components.reaction) return
+
+    await Components.annie.updateConfig(Components.reaction.message.guild.id)
+    
+    Components.reactor = await Components.annie.fetchUser(Components.user.id)
+    
+    return new heartReactionHandler(Components).add()
 
     //  Extracting required vars for BoosterPerk check
     let messageID = Components.reaction.message.id
