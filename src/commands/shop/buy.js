@@ -105,6 +105,16 @@ class Buy extends Command {
 				//  Ghostingly ignore if user didn't type the confirmation word
 				if (!input.startsWith(`y`)) return
 				//  Handles if user's balance is onsufficient to pay the total
+				if (!this.user.inventory[paymentItem.alias]){
+					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
+						socket: {
+							emoji: emoji(paymentItem.alias),
+							amount: commanifier(this.total)
+						}, 
+						color: `red`
+					})
+					return this.endSequence()
+				}
 				if (this.user.inventory[paymentItem.alias] < this.total) {
 					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
 						socket: {
