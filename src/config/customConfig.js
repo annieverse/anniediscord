@@ -3,7 +3,18 @@
  * @since 6.0.0
  */
 class config {
-
+    /**
+     * In order to add a config that can be changed, add varible name in @getCustomizableConfigValueOptions and @getCustomizableConfig and follow pattern
+     * For reference each string code listed in @getCustomizableConfigValueOptions is listed below:
+     * true/false = Boolean
+     * channel id, name, or link like #general = @string channel object by id, name or mention\n
+     * role id, name, or @ like @admin = @string role object by id, name or mention
+     * a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014 = @array of role objects by id or mention
+     * a - (to remove) or + (to add) followed by channel id, or link like #general = @array of role objects by id or mention
+     * text = @string anything type 
+     * number = @String test for only a number inputed
+     * For any other codes, add to config command then add to code list above
+     */
     /**
      * @param {Object} bot current <AnnieClient> instance object 
      * @param {Object} message current <Message> instance object

@@ -1,7 +1,7 @@
 const Permission = require(`../libs/permissions`)
 const Points = require(`./points`)
 const Command = require(`./commands`)
-const {heartHandler} = require(`../struct/posts/heartHandler`)
+//const {heartHandler} = require(`../struct/posts/heartHandler`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -64,7 +64,7 @@ class MessageController {
          */
         if (this.isDirectMessage) return new Command({bot:this.bot, message:this.message}).runDM()
         if (this.isModmailMessage) return new Command({bot:this.bot, message:this.message, modmail:true}).runDM()
-        if (this.isFeedMessage) return new heartHandler(this).intialPost()
+        if (this.isFeedMessage) return //new heartHandler(this).intialPost()
 
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})

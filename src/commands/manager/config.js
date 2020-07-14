@@ -34,9 +34,9 @@ class Config extends Command {
             columns: res
         })
         
-        this.setSequence(3, 300000)
+        this.setSequence(4, 300000)
 		this.sequence.on(`collect`, async msg => {
-			const input = msg.content.toLowerCase()
+            const input = msg.content.toLowerCase()
 			/**
 			 * ---------------------
 			 * Sequence Cancellations.
@@ -55,22 +55,24 @@ class Config extends Command {
             if (this.onSequence == 2){
                 let getOption = this.getAcceptedOption(this.varible, msg)
                 if (getOption == `rejected`){
-                    this.endSequence()
-                    return reply(`Sorry but the selected value was rejected`)
+                    reply(`Sorry but the selected value was rejected`)
+                    return this.endSequence()
                 }
                 if (getOption == `none to remove`){
-                    this.endSequence()
-                    return reply(`Sorry but the selected value was rejected due to not existing yet`)
+                    reply(`Sorry but the selected value was rejected due to not existing yet`)
+                    return this.endSequence()
                 }
-                this.endSequence()
+                
                 let metadata = {
                     config_code: this.varible,
                     guild: this.message.guild,
                     customized_parameter: getOption,
                     set_by_user_id: this.message.author.id,
                 }
+                // test to see if guild is in guild table and if not add it
                 db.setCustomConfig(metadata)
-                return reply(`The value for ${this.varible} has been updated to ${getOption}`)
+                reply(`The value for ${this.varible} has been updated to ${getOption}`)
+                return this.endSequence()
             }
 
 			/**
@@ -175,7 +177,15 @@ class Config extends Command {
             } else {
                 return `rejected`
             }
-        } else {
+        } else if (option = `number`){
+            let test
+            try {
+                test = parseInt(testValue)
+            } catch (error) {
+                test = 10
+            }
+            return test
+        }else {
             return `rejected`
         }
     }

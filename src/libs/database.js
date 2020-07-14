@@ -294,7 +294,7 @@ class Database {
 	 * @returns {QueryResult}
 	 */
 	async setCustomConfig({config_code, guild, customized_parameter, set_by_user_id}){
-		this._query(`INSERT OR IGNORE INTO guilds (guild_id, name) values (?, ?)`
+		this._query(`INSERT OR IGNORE INTO guilds (guild_id, name, bio) values (?, ?, 'I am an awsome server come join me')`
 			, `run`
 			, [guild.id, guild.name])
 

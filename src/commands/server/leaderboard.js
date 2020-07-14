@@ -49,6 +49,7 @@ class Leaderboard extends Command {
 		})
 		.then(async load => {
 			const lbData = await db.indexRanking(selectedGroup)
+			console.log(lbData)
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()
@@ -63,10 +64,11 @@ class Leaderboard extends Command {
 			})
 
 			const author = lbData.filter(key => key.id === this.user.id)[0]
+			
 			reply(this.locale.LEADERBOARD.AUTHOR_RANK, {
 				simplified: true,
 				socket: {
-					rank: lbData.indexOf(author),
+					rank: lbData.indexOf(author) + 1,
 					points: commanifier(author.points),
 					emoji: emoji(selectedGroup),
 				}
