@@ -1,4 +1,4 @@
-const {heartReactionHandler} = require(`../struct/posts/heartHandler.js`)
+const {heartReactionHandler} = require(`../struct/posts/likesHandler.js`)
 //const BoosterColor = require(`../utils/BoosterColorManager`)
 //const ClassroomManager = require(`../utils/ClassroomManager`)
 

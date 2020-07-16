@@ -1,11 +1,11 @@
-const MessageController = require(`../../controllers/messages`)
+const {MessageController} = require(`../../controllers/messages`)
 const Pistachio = require(`../../libs/pistachio`)
 /**
  *  Handle art post collection when reacted
  *  @heartReactionHandler
  *  @author Pan
  */
-class heartReactionHandler{ 
+class heartReactionHandler { 
     constructor(data) {
         this.defaultEmoji = `❤️`
         this.data = data
@@ -131,7 +131,7 @@ class heartReactionHandler{
 		 */
 		const regularNotification = async () => {
 			this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
-				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes - 1},
+				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes == 1 ? postmeta.total_likes: postmeta.total_likes - 1},
 				thumbnail: this.artwork,
 				field: this.message.author,
 				notch: true
@@ -150,7 +150,7 @@ class heartReactionHandler{
 		 */
 		const premiumNotification = async () => {
 			this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
-				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes - 1},
+				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes == 1 ? postmeta.total_likes: postmeta.total_likes - 1},
 				thumbnail: this.artwork,
 				field: this.message.author,
 				notch: true
@@ -200,14 +200,22 @@ class heartReactionHandler{
     }
 }
 
-class heartHandler extends MessageController{
-    constructor(stacks){
-        super(stacks)
+/**
+ * Handle art post collection when submitted
+ * @heartHandler
+ * @author Pan
+ */
+class heartHandler {
+
+    constructor(data){
+        this.data = data
+        this.bot = data.bot
         this.defaultEmoji = `❤️`
         this.communityNotificationLabel = `comnotif:${this.data.message.author.id}`
         this.message = this.data.message
         this.notificationTimeout = 3600
         this.moduleID = `HEARTHANDLER_${this.message.author.id}`
+        this.pistachio = new Pistachio({bot: this.bot, message: this.message})
     }
 
     /**
@@ -219,7 +227,7 @@ class heartHandler extends MessageController{
         if (this.communityNotificationIsCooldown()) return
 
         //  Send notification to general. Deletes after 30s.
-        this.reply(`**${this.data.message.author.username}** has posted new art in ${this.data.message.channel} !`, {
+        this.reply(`**${this.message.author.username}** has posted new art in ${this.data.message.channel} !`, {
             deleteIn: 30,
             field: this.data.message.guild.channels.get(this.bot.post_vip_notification_general_channel)
         })
@@ -243,22 +251,54 @@ class heartHandler extends MessageController{
      * @intialPost
      */
     async intialPost(){
-        return console.log(Object.keys(this))
-        //  Get attachment metadata
-        let img = this.data.message.attachments.first()
-        //  React the message
-        this.data.message.react(this.defaultEmoji)
+
+        // Returns if the heart module is disbled
+        if (!this.bot.post_heart_module) return
+
+        //  Returns if no artwork url was found
+        if (!this.artwork) return 
+        //  Returns if current channel is not listed in arts channels.
+        if (this.nonArtChannels) return
+        //  Returns if user react is a this.bot
+        if (this.isBot) return
+
+        const postmeta = await this.bot.db.getpostData({url: this.artwork})
+        if (postmeta) return
+        const {receive_notification} = await this.bot.db.getNotificationStatus(this.message.author.id)
         //  If user is a VIP user and notification enabled, sent community notification.
-        if (this.isVip() && this.data.meta.get_notification && this.bot.post_vip_notification_module) this.communityNotification()
+        if (this.pistachio.isVip() && receive_notification && this.bot.post_vip_notification_module) this.communityNotification()
+        //  React the message
+        this.message.react(this.defaultEmoji)
         //  Save the record
-        //userId=``, url=``, caption=``, channelId=``, guildId=``
-        this.db.registerPost({
+        this.bot.db.registerPost({
             userId: this.data.message.author.id,
-            url: img.url,
-            caption: this.data.message.content,
-            channelId: this.data.message.channel.name,
+            url: this.artwork,
+            caption: this.caption,
+            channelId: this.data.message.channel.id,
             guildId: this.data.message.guild.id
         })
+
+
+    }
+    get caption() {
+        //  Return blank caption
+        if (!this.message.content) return ``
+        //  Chop caption with length exceed 180 characters.
+        if (this.message.content.length >= 180) return this.message.content.substring(0, 180) + `. .`
+
+        return this.message.content
+    }
+
+    get artwork() {
+        return this.message.attachments.first() ? this.message.attachments.first().url : null
+    }
+
+    get nonArtChannels() {
+        return !this.bot.post_collect_channels.includes(this.message.channel.id)
+    }
+
+    get isBot(){
+        return this.message.author.bot
     }
 }
 module.exports = {heartReactionHandler, heartHandler}
