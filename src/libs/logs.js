@@ -258,6 +258,7 @@ class LogsSystem {
         if (message.author.bot) return
         if (message.channel.type ==`dm`) return
         if (this.logChannel.guild.id != message.guild.id) return
+        if (message.content.toLowerCase() == (`y` || `n`)) return
         logger.info(`Message deleted in #${message.channel.name} Message Content: ${message.content ? message.content : `No Text`}`)
         if (message.attachments.size > 0) {
             this.Pistachio.reply(`**Message deleted in {{channel}}**\n**Message Content: **\n{{content}}`, {

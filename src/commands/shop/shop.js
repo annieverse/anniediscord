@@ -64,10 +64,9 @@ class Shop extends Command {
 				state = 0
 				list = ``
 			}
-			
 			//  If array has less than five elements, lock totalElements mutation.
 			else if (totalElements < 5) {
-				list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
+				list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
 				\`${item.description}\`
 				${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
 				state++
@@ -77,7 +76,7 @@ class Shop extends Command {
 				break			
 			}
 
-			list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
+			list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
 			\`${item.description}\`
 			${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
 			state++
