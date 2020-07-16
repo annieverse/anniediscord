@@ -27,7 +27,7 @@ class Config extends Command {
         let res = []
         for (let index = 0; index < this.options.length; index++) {
             const element = this.options[index]
-            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] current value: ${this.bot[element]}\nOptions to change to are: ${this.valueOptions[element]}")`})
+            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] current value: ${JSON.stringify(this.bot[element])}\nOptions to change to are: ${JSON.stringify(this.valueOptions[element])}")`})
         }
 
         reply(`To update a value type the name of the varible or the number in the "[]"`,{
@@ -87,6 +87,7 @@ class Config extends Command {
                     this.endSequence()
                     return reply(`Value inputed didn't match any avaible options.`)
                 }
+                
                 this.nextSequence()
                 reply(this.varible == `welcome_text` ? `Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.` : `Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
             }
@@ -177,7 +178,7 @@ class Config extends Command {
             } else {
                 return `rejected`
             }
-        } else if (option = `number`){
+        } else if (option == `number`){
             let test
             try {
                 test = parseInt(testValue)
@@ -185,6 +186,8 @@ class Config extends Command {
                 test = 10
             }
             return test
+        }else if (option == `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`){
+            return `rejected`
         }else {
             return `rejected`
         }

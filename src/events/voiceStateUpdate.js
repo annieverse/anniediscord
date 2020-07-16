@@ -1,10 +1,8 @@
-const database = require(`../utils/databaseManager`)
 const experience = require(`../utils/ExperienceFormula`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
 
 module.exports = (bot, oldMember, newMember) => {
 
+	return
 	//	Get keyv and logger from @Client
 	const { keyv, logger } = bot
 
@@ -16,7 +14,7 @@ module.exports = (bot, oldMember, newMember) => {
 	let oldMemberChannel = oldMember.voiceChannel
 
 	// db connection
-	let db = new database(newMember.user.id)
+	let db = bot.db
 
 	// grabs a afk channel if one exists, if not do nothing (No exp for being in vc)
 	let afkChannel = bot.channels.get(bot.guilds.get(newMember.guild.id).afkChannelID)

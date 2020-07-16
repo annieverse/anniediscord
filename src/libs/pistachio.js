@@ -527,7 +527,7 @@ class Pistachio {
 	 */
 	_registerPagesTwo(pages=2, columns=[], text) {
 		let res = []
-		pages++
+		pages = pages++
         for (let i = 0; i < pages; i++) {
 			if (columns[i]){
 				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.golden)
@@ -690,7 +690,7 @@ class Pistachio {
 				const array_chunks = (array, chunk_size) => Array(Math.ceil(array.length / chunk_size)).fill().map((_, index) => index * chunk_size).map(begin => array.slice(begin, begin + chunk_size))
 				let chunks = array_chunks(options.columns, 15)
 				let page = 0
-				const embeddedPages = this._registerPagesTwo(chunks.size,chunks, content)
+				const embeddedPages = this._registerPagesTwo(chunks.length, chunks, content)
 				return options.field.send(embeddedPages[0])
 				.then(async msg => {
 					//  Buttons
