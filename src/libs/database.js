@@ -967,7 +967,7 @@ class Database {
 			ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 			ON item_rarities.rarity_id = items.rarity_id
-			WHERE user_inventories.user_id = ? user_inventories.guild_id = ?`
+			WHERE user_inventories.user_id = ? AND user_inventories.guild_id = ?`
 			, `all`
 			, [userId, guildId]
 		)
@@ -997,7 +997,7 @@ class Database {
 		return this._query(`
 			SELECT *
 			FROM user_reputations
-			WHERE user_id = ? AND guild_id`
+			WHERE user_id = ? AND guild_id = ?`
 			, `get`
 			, [userId, guildId]
 		)
