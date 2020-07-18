@@ -48,7 +48,7 @@ class Leaderboard extends Command {
 			simplified: true
 		})
 		.then(async load => {
-			const lbData = await db.indexRanking(selectedGroup)
+			const lbData = await db.indexRanking(selectedGroup, this.message.guild.id)
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()

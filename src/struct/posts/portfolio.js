@@ -17,9 +17,18 @@ class Portfolio extends Controller {
         this.db.registerPost({
             userId: this.meta.author.id,
             url: this.url,
-            location: this.message.channel.name,
-            description: this.message.content
+            caption: this.caption,
+            channelId: this.message.channel.id,
+            guildId: this.message.guild.id
         })
+    }
+    get caption() {
+        //  Return blank caption
+        if (!this.message.content) return ``
+        //  Chop caption with length exceed 180 characters.
+        if (this.message.content.length >= 180) return this.message.content.substring(0, 180) + `. .`
+
+        return this.message.content
     }
 }
 

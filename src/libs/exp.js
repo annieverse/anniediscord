@@ -33,7 +33,7 @@ class Experience extends Points {
      *  @returns {boolean}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
-    	this.exp = await this.db.getUserExp(this.message.author.id)
+    	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
 
     	//  Apply booster if presents
     	if (this.exp.booster_id) await this.applyBooster()
@@ -47,7 +47,7 @@ class Experience extends Points {
     	if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
 
     	//  Update user's exp data.
-    	await this.db.addUserExp(this.totalGainedExp, this.message.author.id)
+    	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
     	return true
     }
@@ -89,7 +89,7 @@ class Experience extends Points {
     		for (let i=0; i<levelDiff; i++) {
     			stackedTotalGainedReward += this.expConfig.currencyRewardPerLevelUp * (this.prevExp.level + i)
     		}
-    		await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id})
+    		await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
     		return this.reply(this.locale.LEVELUP.JUMPING, {
     			color: `purple`,
     			socket: {
@@ -103,7 +103,7 @@ class Experience extends Points {
 
     	//  Regular reward
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
-    	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id})
+    	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		return this.reply(this.locale.LEVELUP.REGULAR, {
 			color: `crimson`,
 			socket: {

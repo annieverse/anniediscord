@@ -68,7 +68,7 @@ class UseCapsule extends Command {
 
 			//  Deduct item & adds new experience points
 			this.confirmation.delete()
-			await db.updateInventory({itemId: 70, value: amount, operation:`-`, userId: this.user.id})
+			await db.updateInventory({itemId: 70, value: amount, operation:`-`, userId: this.user.id, guildId:this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
 			reply(this.locale.EAT_POWERCAPSULE.SUCCESSFUL, {
 				socket: {

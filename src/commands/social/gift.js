@@ -78,8 +78,8 @@ class Gift extends Command {
 				color: `red`
 			})
 
-			await db.addUserReputation(amountToSend, this.user.id, this.message.author.id)
-			await db.updateInventory({itemId: item.item_id, value: amountToSend, operation: `-`, userId: this.author.id})
+			await db.addUserReputation(amountToSend, this.user.id, this.message.author.id, this.message.guild.id)
+			await db.updateInventory({itemId: item.item_id, value: amountToSend, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
 			this.displayAvailableGifts.delete()
 			this.displayAvailableGiftsFooter.delete()
 			this.endSequence()

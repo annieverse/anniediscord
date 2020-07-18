@@ -161,18 +161,19 @@ class Database {
 	 * @param {itemsMetadata} meta item's metadata
 	 * @returns {boolean}
 	 */
-	async updateInventory({itemId, value=0, operation=`+`, userId}) {
+	async updateInventory({itemId, value=0, operation=`+`, userId, guildId}) {
 		const fn = `[Database.updateInventory()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
 				INSERT INTO user_inventories (item_id, user_id)
-				SELECT $itemId, $userId
-				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)`
+				SELECT $itemId, $userId, $guildId
+				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
 				, `run`
-				, {itemId: itemId, userId: userId}
+				, {itemId: itemId, userId: userId, guildId: guildId}
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
@@ -180,14 +181,14 @@ class Database {
 				SET 
 					quantity = quantity ${operation} ?,
 					updated_at = datetime('now')
-				WHERE item_id = ? AND user_id = ?`
+				WHERE item_id = ? AND user_id = ? AND guild_id = ?`
 				, `run`
-				, [value, itemId, userId]
+				, [value, itemId, userId, guildId]
 			)
 		}
 		
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId} | GUILD_ID ${guildId}`)
 		return true
 	}
 
@@ -387,7 +388,7 @@ class Database {
 	 * @param {string} [userId=``] User's discord id.
 	 * @returns {QueryResult}
 	 */
-	async registerUser(userId=``) {
+	async registerUser(userId=``,guildId=``) {
 		const fn = `[Database.registerUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
 		this._query(`
@@ -399,27 +400,27 @@ class Database {
 			, `Registering USER_ID ${userId} into users table if doesn't exist`
 		)
 		this._query(`
-			INSERT INTO user_dailies(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId)`
+			INSERT INTO user_dailies(user_id, guild_id)
+			SELECT $userId, $guildId
+			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
-			, {userId: userId}
+			, {userId: userId, guildId: guildId}
 			, `Registering USER_ID ${userId} into user_dailies table if doesn't exist`
 		)
 		this._query(`
-			INSERT INTO user_exp(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId)`
+			INSERT INTO user_exp(user_id, guild_id)
+			SELECT $userId, $guildId
+			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
-			, {userId: userId}
+			, {userId: userId, guildId: guildId}
 			, `Registering USER_ID ${userId} into user_exp table if doesn't exist`
 		)
 		this._query(`
-			INSERT INTO user_reputations(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId)`
+			INSERT INTO user_reputations(user_id, guild_id)
+			SELECT $userId, $guildId
+			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
-			, {userId: userId}
+			, {userId: userId, guildId: guildId}
 			, `Registering USER_ID ${userId} into user_reputations table if doesn't exist`
 		)
 		return
@@ -517,16 +518,16 @@ class Database {
 	 * @param {string} [givenBy=null] giver user's discord id. Optional
 	 * @returns {QueryResult}
 	 */
-	addUserReputation(amount=0, userId=``, givenBy=null) {
+	addUserReputation(amount=0, userId=``, givenBy=null, guildId=``) {
 		return this._query(`
 			UPDATE user_reputations 
 			SET 
 				total_reps = total_reps + ?,
 				last_received_at = datetime('now'),
 				recently_received_by = ?
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `run`
-			, [amount, givenBy, userId]
+			, [amount, givenBy, userId, guildId]
 		)
 	}
 
@@ -535,14 +536,14 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	updateReputationGiver(userId=``) {
+	updateReputationGiver(userId=``,guildId=``) {
 		return this._query(`
 			UPDATE user_reputations 
 			SET 
 				last_giving_at = datetime('now')
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `run`
-			, [userId]
+			, [userId, guildId]
 		)
 	}
 
@@ -552,15 +553,15 @@ class Database {
 	 * @param {string} [user_id=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	updateUserDailies(streak=0, userId=``) {
+	updateUserDailies(streak=0, userId=``, guildId=``) {
 		return this._query(`
 			UPDATE user_dailies 
 			SET 
 				updated_at = datetime('now'),
 				total_streak = ?
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `run`
-			, [streak, userId]
+			, [streak, userId, guildId]
 		)
 	}
 
@@ -804,12 +805,12 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	getUserExp(userId=``) {
+	getUserExp(userId=``,guildId=``) {
 		return this._query(`
 			SELECT * FROM user_exp 
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `get`
-			, [userId]
+			, [userId, guildId]
 		)
 	}
 
@@ -819,13 +820,13 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	addUserExp(amount=0, userId=``) {
+	addUserExp(amount=0, userId=``, guildId=``) {
 		return this._query(`
 			UPDATE user_exp 
 			SET current_exp = current_exp + ?
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `run`
-			, [amount, userId]
+			, [amount, userId, guildId]
 		)
 	}
 	
@@ -932,7 +933,7 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserInventory(userId=``) {
+	async getUserInventory(userId=``,guildId=``) {
 		return this._query(`
 			SELECT 
 
@@ -966,9 +967,9 @@ class Database {
 			ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 			ON item_rarities.rarity_id = items.rarity_id
-			WHERE user_inventories.user_id = ?`
+			WHERE user_inventories.user_id = ? user_inventories.guild_id = ?`
 			, `all`
-			, [userId]
+			, [userId, guildId]
 		)
 	}
 
@@ -977,13 +978,13 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserDailies(userId=``) {
+	async getUserDailies(userId=``,guildId=``) {
 		return this._query(`
 			SELECT *
 			FROM user_dailies
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id = ?`
 			, `get`
-			, [userId]
+			, [userId,guildId]
 		)
 	}
 
@@ -992,13 +993,13 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserReputations(userId=``) {
+	async getUserReputations(userId=``, guildId=``) {
 		return this._query(`
 			SELECT *
 			FROM user_reputations
-			WHERE user_id = ?`
+			WHERE user_id = ? AND guild_id`
 			, `get`
-			, [userId]
+			, [userId, guildId]
 		)
 	}
 
@@ -1022,14 +1023,14 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserPosts(userId=``) {
+	async getUserPosts(userId=``,guildId=``) {
 		return this._query(`
 			SELECT *
 			FROM user_posts
-			WHERE user_id = ?
+			WHERE user_id = ? AND guild_id = ?
 			ORDER BY registered_at DESC`
 			, `all`
-			, [userId]
+			, [userId,guildId]
 		)
 	}
 	
@@ -1367,41 +1368,40 @@ class Database {
 	* @param {string} [group=``] of target category
 	* @returns {QueryResult}
 	*/
-	async indexRanking(group=``) {
-
+	async indexRanking(group=``,guildId=``) {
 		if (group === `exp`) return this._query(`
-			SELECT user_id AS id, current_exp AS points FROM user_exp
+			SELECT user_id AS id, current_exp AS points FROM user_exp WHERE guild_id = ?
 			ORDER BY current_exp DESC`
 			, `all`
-			, []
+			, [guildId]
 			, `Fetching exp leaderboard`
 			, true	
 		)
 
 		if (group === `artcoins`) return this._query(`
-			SELECT user_id AS id, quantity AS points FROM user_inventories
+			SELECT user_id AS id, quantity AS points FROM user_inventories WHERE guild_id = ?
 			WHERE item_id = 52
 			ORDER BY quantity DESC`
 			, `all`
-			, []
+			, [guildId]
 			, `Fetching artcoins leaderboard`
 			, true	
 		)
 
 		if (group === `fame`) return this._query(`
-			SELECT user_id AS id, total_reps AS points FROM user_reputations
+			SELECT user_id AS id, total_reps AS points FROM user_reputations WHERE guild_id = ?
 			ORDER BY total_reps DESC`
 			, `all`
-			, []
+			, [guildId]
 			, `Fetching fame leaderboard`
 			, true	
 		)
 
 		if (group === `artists`) return this._query(`
-			SELECT userId AS id, liked_counts AS points FROM userdata
+			SELECT userId AS id, liked_counts AS points FROM userdata WHERE guild_id = ?
 			ORDER BY liked_counts DESC`
 			, `all`
-			, []
+			, [guildId]
 			, `Fetching artists leaderboard`
 			, true	
 		)
@@ -1412,7 +1412,7 @@ class Database {
 	 * @param {string} [userId=``] target user id
 	 * @returns {QueryResult}
 	 */
-    getUserRelations(userId=``) {
+    getUserRelations(userId=``,guildId=``) {
 		return this._query(`
 			SELECT 
 				relationships.relationship_id AS "relationship_id",
@@ -1428,9 +1428,10 @@ class Database {
 			WHERE 
 				user_relationships.user_id_A = ?
 				AND user_relationships.relationship_id > 0
-				AND user_relationships.relationship_id IS NOT NULL`
+				AND user_relationships.relationship_id IS NOT NULL
+				AND guild_id = ?`
 			, `all`
-			, [userId]
+			, [userId, guildId]
 		)
     }
 

@@ -40,8 +40,8 @@ class Dailies extends Command {
 		if (hasPoppy) totalStreak = this.user.dailies.total_streak + 1
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0 
 
-		await db.updateUserDailies(totalStreak, this.user.id)
-		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.id})
+		await db.updateUserDailies(totalStreak, this.user.id, this.message.guild.id)
+		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 		await reply(this.locale.DAILIES.CLAIMED, {
 			color: hasPoppy ? `purple` : `lightgreen`,
 			notch: true,

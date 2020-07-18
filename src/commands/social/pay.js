@@ -86,8 +86,8 @@ class Pay extends Command {
 				if (this.onSequence <= 2) {
 					//  Silently ghosting if user's confirmation message is invalid
 					if (!input.startsWith(`y`)) return
-					await db.updateInventory({itemId: 52, value: this.amount, operation: `+`, userId: this.user.id})
-					await db.updateInventory({itemId: 52, value: this.amount, operation: `-`, userId: this.author.id})
+					await db.updateInventory({itemId: 52, value: this.amount, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+					await db.updateInventory({itemId: 52, value: this.amount, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
 					msg.delete()
 					reply(this.locale.PAY.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
