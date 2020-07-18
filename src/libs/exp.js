@@ -136,9 +136,9 @@ class Experience extends Points {
 			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.floor(level)
-			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			var nextexpcurve = maxexp - minexp
+			var maxexp = Math.round(100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100)			
+			var minexp = Math.round(100 * (Math.pow(level, 2)) + 50 * level + 100)
+			var nextexpcurve = Math.round(maxexp - minexp)
 			level = level + 1
 
 			return {
@@ -176,9 +176,9 @@ class Experience extends Points {
 		}
 		var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 		level = Math.floor(level)
-		var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-		var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-		var nextexpcurve = maxexp - minexp
+		var maxexp = Math.round(100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100)
+		var minexp = Math.round(100 * (Math.pow(level, 2)) + 50 * level + 100)
+		var nextexpcurve = Math.round(maxexp - minexp)
 		level = level + 1
 
 		return {
