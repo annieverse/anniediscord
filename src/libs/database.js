@@ -834,12 +834,13 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getStrikeRecords(userId=``) {
+	async getStrikeRecords(userId=``, guildId=``) {
 		return this._query(`
 			SELECT * FROM strikes
-			WHERE user_id = ?`
+			WHERE user_id = ? and guild_id = ?
+			ORDER BY datetime(registered_at) DESC`
 			, `all`
-			, [userId]
+			, [userId, guildId]
 			, `Fetching strikes for USER_ID ${userId}`
 			, true
 		)
