@@ -1,5 +1,4 @@
 `use-strict`
-const rank = require(`../config/ranks`)
 const Experience = require(`./exp`)
 const Permission = require(`./permissions`)
 /**

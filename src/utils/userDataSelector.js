@@ -1,6 +1,5 @@
 `use-strict`
 const userSelector = require(`./userSelector`)
-const rank = require(`../config/ranks`)
 
 /**
  *  This where user-related data stored.

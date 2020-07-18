@@ -1,4 +1,3 @@
-const {MessageController} = require(`../../controllers/messages`)
 const Pistachio = require(`../../libs/pistachio`)
 /**
  *  Handle art post collection when reacted
@@ -82,7 +81,6 @@ class heartReactionHandler {
         let postmeta = await this.data.annie.db.getpostData({url: this.artwork})
         
         if (!postmeta) {
-            console.log(this.artwork)
             this.data.annie.db.registerPost({
                 userId: this.message.author.id,
                 url: this.artwork,
@@ -157,7 +155,7 @@ class heartReactionHandler {
 			})
 
 			if (once) {
-				reply(once, {field: this.message.author})
+				this.pistachio.reply(once, {field: this.message.author})
 				return this.db.disableNotification(this.message.author.id)
 			}	
 		}

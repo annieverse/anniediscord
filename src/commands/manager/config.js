@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 /**
  * Manage custom configs per sever
- * @author Frying Pan
+ * @author Pan
  */
 class Config extends Command {
 
@@ -89,7 +89,14 @@ class Config extends Command {
                 }
                 
                 this.nextSequence()
-                reply(this.varible == `welcome_text` ? `Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.` : `Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
+                let welcomeText = this.varible == `welcome_text`
+                let setRanks = this.varible == `set_ranks`
+                if (welcomeText) reply(`Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.`)
+                if (setRanks) {
+                    this.endSequence()
+                    return reply(`Please use ${this.prefix}setranks to modify this setting`)
+                }
+                reply(`Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
             }
 
 
