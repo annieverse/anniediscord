@@ -55,7 +55,7 @@ module.exports = annie => {
 		//	Change Booster Role color
 		Routine.roleChange()
 		//	Automatically change annie status
-		Routine.autoStatus()
+		//Routine.autoStatus()
 		// Remove featured daily post
 		Routine.removeFeaturedDailyPostLoop()
 	}
