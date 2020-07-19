@@ -829,7 +829,23 @@ class Database {
 			, [amount, userId, guildId]
 		)
 	}
-	
+
+	/**
+	 * Setting user's experience points into `user_exp` table
+	 * @param {number} [amount=0] amount to be added
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	setUserExp(amount=0, userId=``, guildId=``) {
+		return this._query(`
+			UPDATE user_exp 
+			SET current_exp = ?
+			WHERE user_id = ? AND guild_id = ?`
+			, `run`
+			, [amount, userId, guildId]
+		)
+	}
+
 	/**
 	 * Pull user's strike records if presents.
 	 * @param {string} [userId=``] target user's discord id
