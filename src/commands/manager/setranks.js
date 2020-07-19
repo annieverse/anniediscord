@@ -345,18 +345,18 @@ class setRanks extends Command {
         for (x in list) {
             switch (parm) {
                 case `LEVEL`:
-                    if (list.hasOwnProperty(x) && list[x].LEVEL === obj) {
+                    if (Object.prototype.hasOwnProperty.call(list,x) && list[x].LEVEL === obj) {
                         return true
                     }
                     break
                 case `ROLE`:
-                    if (list.hasOwnProperty(x) && list[x].ROLE === obj) {
+                    if (Object.prototype.hasOwnProperty.call(list,x) && list[x].ROLE === obj) {
                         return true
                     }
                     break
             
                 default:
-                    if (list.hasOwnProperty(x) && list[x] === obj) {
+                    if (Object.prototype.hasOwnProperty.call(list,x) && list[x] === obj) {
                         return true
                     }
                     break
