@@ -50,7 +50,8 @@
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
         "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
-        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this item. Please type `y` to confirm the purchase."
+        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this item. Please type `y` to confirm the purchase.",
+        "ITEM_NOT_AVAILIBLE": "The item, **{{item}}**, is not availible on this server."
     },
     "BOOSTER": {
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
@@ -182,9 +183,9 @@
     "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
     "EXEC_CODE": "Command executed in **{{time}}**\n```json\n{{result}}\n```",
     "FEATURED": {
-        "FIRST_LIKE": "**{0}** liked your post.",
-        "LIKED": "**{0}** and **{1} others** liked your post.",
-        "SUCCESSFUL": "Congratulations, **{0}**!\nyour post in {1} has been featured!"
+        "FIRST_LIKE": "**{reactor}** liked your post.",
+        "LIKED": "**{{reactor}}** and **{{amount}} others** liked your post.",
+        "SUCCESSFUL": "Congratulations, **{{0}}**!\nyour post in {{channel}} has been featured!"
     },
     "FLIPCOIN": {
         "RESPONSES": [

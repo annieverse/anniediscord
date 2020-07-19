@@ -1,6 +1,7 @@
 const Permission = require(`../libs/permissions`)
 const Points = require(`./points`)
 const Command = require(`./commands`)
+const likesHandler = require(`../struct/posts/likesHandler`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -23,6 +24,7 @@ class MessageController {
         this.permission = data.bot.permissions
         this.userId = data.message.author.id
         this.logger = data.bot.logger
+        this.data = data
     }
 
     /**
@@ -31,20 +33,19 @@ class MessageController {
      * @returns {class}
      */
     async run(minimal=false) {
-        await this.bot.updateConfig(this.message.guild.id)
         /** -----------------------------------------------------------------
          *  Exceptor
          *  -----------------------------------------------------------------
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
-        
+        await this.bot.updateConfig(this.message.guild.id)
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
 
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.registerUser(this.message.author.id)
+        await this.bot.db.registerUser(this.message.author.id, this.message.guild.id)
 
         /** 
          *  -----------------------------------------------------------------
@@ -64,7 +65,7 @@ class MessageController {
          */
         if (this.isDirectMessage) return new Command({bot:this.bot, message:this.message}).runDM()
         if (this.isModmailMessage) return new Command({bot:this.bot, message:this.message, modmail:true}).runDM()
-        if (await this.isFeedMessage()) return
+        if (this.isFeedMessage) return new likesHandler.heartHandler(this.data).intialPost()
 
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
@@ -107,17 +108,8 @@ class MessageController {
      *  Require Database API 
      * 	@returns {Boolean}
      */
-    async isFeedMessage() {
-        const config = await this.bot.db.getGuildConfigurations(this.message.guild.id)
-        // False if guild hasn't set any custom configurations for the guild
-        if (!config.length) return false
-        const feedsConfig = config.filter(el => el.type === `FEEDS`)
-        // False if guild hasn't set their feeds channel yet
-        if (!feedsConfig.length) return false
-        // False if current channel id isn't match with the registered feeds channel id
-        if (!feedsConfig.channel_id != this.message.guild.channel)
-
-        return true
+    get isFeedMessage() {
+        return this.bot.post_collect_channels.includes(this.message.channel.id)
     }
 
     /**

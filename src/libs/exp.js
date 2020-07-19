@@ -33,7 +33,7 @@ class Experience extends Points {
      *  @returns {boolean}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
-    	this.exp = await this.db.getUserExp(this.message.author.id)
+    	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
 
     	//  Apply booster if presents
     	if (this.exp.booster_id) await this.applyBooster()
@@ -47,7 +47,7 @@ class Experience extends Points {
     	if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
 
     	//  Update user's exp data.
-    	await this.db.addUserExp(this.totalGainedExp, this.message.author.id)
+    	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
     	return true
     }
@@ -89,7 +89,7 @@ class Experience extends Points {
     		for (let i=0; i<levelDiff; i++) {
     			stackedTotalGainedReward += this.expConfig.currencyRewardPerLevelUp * (this.prevExp.level + i)
     		}
-    		await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id})
+    		await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
     		return this.reply(this.locale.LEVELUP.JUMPING, {
     			color: `purple`,
     			socket: {
@@ -103,7 +103,7 @@ class Experience extends Points {
 
     	//  Regular reward
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
-    	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id})
+    	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		return this.reply(this.locale.LEVELUP.REGULAR, {
 			color: `crimson`,
 			socket: {
@@ -136,9 +136,9 @@ class Experience extends Points {
 			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.floor(level)
-			var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-			var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-			var nextexpcurve = maxexp - minexp
+			var maxexp = Math.round(100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100)			
+			var minexp = Math.round(100 * (Math.pow(level, 2)) + 50 * level + 100)
+			var nextexpcurve = Math.round(maxexp - minexp)
 			level = level + 1
 
 			return {
@@ -176,9 +176,9 @@ class Experience extends Points {
 		}
 		var level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 		level = Math.floor(level)
-		var maxexp = 100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100
-		var minexp = 100 * (Math.pow(level, 2)) + 50 * level + 100
-		var nextexpcurve = maxexp - minexp
+		var maxexp = Math.round(100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100)
+		var minexp = Math.round(100 * (Math.pow(level, 2)) + 50 * level + 100)
+		var nextexpcurve = Math.round(maxexp - minexp)
 		level = level + 1
 
 		return {

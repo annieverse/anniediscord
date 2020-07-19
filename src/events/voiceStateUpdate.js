@@ -1,10 +1,9 @@
-const database = require(`../utils/databaseManager`)
-const experience = require(`../utils/ExperienceFormula`)
-const sql = require(`sqlite`)
-sql.open(`.data/database.sqlite`)
+//const experience = require(`../utils/ExperienceFormula`)
 
-module.exports = (bot, oldMember, newMember) => {
+module.exports = (/*bot, oldMember, newMember */) => {
 
+	return
+	/*
 	//	Get keyv and logger from @Client
 	const { keyv, logger } = bot
 
@@ -16,7 +15,7 @@ module.exports = (bot, oldMember, newMember) => {
 	let oldMemberChannel = oldMember.voiceChannel
 
 	// db connection
-	let db = new database(newMember.user.id)
+	let db = bot.db
 
 	// grabs a afk channel if one exists, if not do nothing (No exp for being in vc)
 	let afkChannel = bot.channels.get(bot.guilds.get(newMember.guild.id).afkChannelID)
@@ -24,17 +23,17 @@ module.exports = (bot, oldMember, newMember) => {
 
 	// Checks to make sure the user is not a bot
 	if (oldMember.user.bot || newMember.user.bot) return
-
+*/
 	/**
      * for when a user joins a VC
      * @joinVC
-     */
+     *//*
 	async function joinVC() { if (newMemberChannel.id !== afkChannel.id) return keyv.set(newMember.user.id, new Date()) }
-
+*/
 	/**
      * for when a user leaves a VC
      * @leaveVC
-     */
+     *//*
 	async function leaveVC() {
 		if (oldMemberChannel.id !== afkChannel.id) {
 			let TimeJoined = new Date(await keyv.get(oldMember.user.id))
@@ -92,11 +91,11 @@ module.exports = (bot, oldMember, newMember) => {
 			keyv.delete(oldMember.user.id)
 		}
 	}
-
+*/
 	/**
      * For when a user changes/switches VC channels
      * @changeVC
-     */
+     *//*
 	async function changeVC() { if (newMemberChannel.id === afkChannel.id) { leaveVC() } else if ((newMemberChannel.id === afkChannel.id) && (oldMemberChannel.id !== afkChannel.id)) { joinVC() } }
 
 
@@ -111,5 +110,5 @@ module.exports = (bot, oldMember, newMember) => {
 	// switching vc
 	let isSwitch = (oldMemberChannel.id != newMemberChannel.id) || (newMemberChannel.id != oldMemberChannel.id)
 	if (isSwitch) return changeVC()
-
+*/
 }

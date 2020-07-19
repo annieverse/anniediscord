@@ -212,6 +212,16 @@ class Pistachio {
 	 *  Flexible Components
 	 *  ------------------------------------------
 	 */
+
+	 /**
+	  * If there is a nitro role set up on server, it will be used to determine if a user is a vip
+	  * @returns {Boolean}
+	  */
+	isVip(){
+		//return this.message.member.roles.has(`654254766016299038`)
+		return this.bot.nitro_role ? this.message.member.roles.has(this.bot.nitro_role) : false
+	}
+
 	/**
 	 * Automatically convert any weird number notation into a real value.
 	 * @author Fwubbles
@@ -517,7 +527,7 @@ class Pistachio {
 	 */
 	_registerPagesTwo(pages=2, columns=[], text) {
 		let res = []
-		pages++
+		pages = pages++
         for (let i = 0; i < pages; i++) {
 			if (columns[i]){
 				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.golden)
@@ -680,7 +690,7 @@ class Pistachio {
 				const array_chunks = (array, chunk_size) => Array(Math.ceil(array.length / chunk_size)).fill().map((_, index) => index * chunk_size).map(begin => array.slice(begin, begin + chunk_size))
 				let chunks = array_chunks(options.columns, 15)
 				let page = 0
-				const embeddedPages = this._registerPagesTwo(chunks.size,chunks, content)
+				const embeddedPages = this._registerPagesTwo(chunks.length, chunks, content)
 				return options.field.send(embeddedPages[0])
 				.then(async msg => {
 					//  Buttons

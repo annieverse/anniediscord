@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 /**
  * Manage custom configs per sever
- * @author Frying Pan
+ * @author Pan
  */
 class Config extends Command {
 
@@ -27,16 +27,16 @@ class Config extends Command {
         let res = []
         for (let index = 0; index < this.options.length; index++) {
             const element = this.options[index]
-            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] current value: ${this.bot[element]}\nOptions to change to are: ${this.valueOptions[element]}")`})
+            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] current value: ${JSON.stringify(this.bot[element])}\nOptions to change to are: ${JSON.stringify(this.valueOptions[element])}")`})
         }
 
         reply(`To update a value type the name of the varible or the number in the "[]"`,{
             columns: res
         })
         
-        this.setSequence(3, 300000)
+        this.setSequence(4, 300000)
 		this.sequence.on(`collect`, async msg => {
-			const input = msg.content.toLowerCase()
+            const input = msg.content.toLowerCase()
 			/**
 			 * ---------------------
 			 * Sequence Cancellations.
@@ -55,22 +55,24 @@ class Config extends Command {
             if (this.onSequence == 2){
                 let getOption = this.getAcceptedOption(this.varible, msg)
                 if (getOption == `rejected`){
-                    this.endSequence()
-                    return reply(`Sorry but the selected value was rejected`)
+                    reply(`Sorry but the selected value was rejected`)
+                    return this.endSequence()
                 }
                 if (getOption == `none to remove`){
-                    this.endSequence()
-                    return reply(`Sorry but the selected value was rejected due to not existing yet`)
+                    reply(`Sorry but the selected value was rejected due to not existing yet`)
+                    return this.endSequence()
                 }
-                this.endSequence()
+                
                 let metadata = {
                     config_code: this.varible,
                     guild: this.message.guild,
                     customized_parameter: getOption,
                     set_by_user_id: this.message.author.id,
                 }
+                // test to see if guild is in guild table and if not add it
                 db.setCustomConfig(metadata)
-                return reply(`The value for ${this.varible} has been updated to ${getOption}`)
+                reply(`The value for ${this.varible} has been updated to ${getOption}`)
+                return this.endSequence()
             }
 
 			/**
@@ -85,8 +87,16 @@ class Config extends Command {
                     this.endSequence()
                     return reply(`Value inputed didn't match any avaible options.`)
                 }
+                
                 this.nextSequence()
-                reply(this.varible == `welcome_text` ? `Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.` : `Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
+                let welcomeText = this.varible == `welcome_text`
+                let setRanks = this.varible == `set_ranks`
+                if (welcomeText) reply(`Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.`)
+                if (setRanks) {
+                    this.endSequence()
+                    return reply(`Please use ${this.prefix}setranks to modify this setting`)
+                }
+                reply(`Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
             }
 
 
@@ -175,7 +185,17 @@ class Config extends Command {
             } else {
                 return `rejected`
             }
-        } else {
+        } else if (option == `number`){
+            let test
+            try {
+                test = parseInt(testValue)
+            } catch (error) {
+                test = 10
+            }
+            return test
+        }else if (option == `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`){
+            return `rejected`
+        }else {
             return `rejected`
         }
     }

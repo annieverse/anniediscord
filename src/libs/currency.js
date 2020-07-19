@@ -24,7 +24,7 @@ class Currency extends Points {
     	//  Calculate
         this.totalGainedCurrency = this.baseGainedCurrency * this.currencyMultiplier
     	//  Update user's currency data.
-    	await this.db.updateInventory({itemId: 52, value: this.totalGainedCurrency, operation: `+`, userId: this.message.author.id})
+    	await this.db.updateInventory({itemId: 52, value: this.totalGainedCurrency, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
     	this.logger.info(`[Currency.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedCurrency}AC(${this.currencyMultiplier * 100}%)`)
     	return true
     }

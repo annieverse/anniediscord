@@ -57,6 +57,7 @@ class Shop extends Command {
 
 		for (let key=0; key<items.length; key++) {
 			const item = items[key]
+			
 			//  If iteration has reached the limit, reset list & shift to next index in the array.
 			if (state >= 5) {
 				box.push(list)
@@ -65,9 +66,9 @@ class Shop extends Command {
 			}
 			//  If array has less than five elements, lock totalElements mutation.
 			else if (totalElements < 5) {
-				list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
+				list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
 				\`${item.description}\`
-				${emojiParser(item.item_price_alias)}${commaParser(item.price)}\n\n`
+				${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
 				state++
 
 				if ((items.length-1) != key) continue
@@ -75,9 +76,9 @@ class Shop extends Command {
 				break			
 			}
 
-			list += `${emojiParser(item.alias)} [${item.type_name}] **${item.name}** 
+			list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
 			\`${item.description}\`
-			${emojiParser(item.item_price_alias)}${commaParser(item.price)}\n\n`
+			${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
 			state++
 			totalElements = totalElements - 1
 		}

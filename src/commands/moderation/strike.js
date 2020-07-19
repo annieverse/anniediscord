@@ -26,7 +26,7 @@ class Strike extends Command {
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
 		//  Fetching user's strike records
-		const records = await db.getStrikeRecords(this.user.id)
+		const records = await db.getStrikeRecords(this.user.id, this.message.guild.id)
 		if (!records.length) reply(this.locale.STRIKE.NULL_RECORD, {socket: {user: name(this.user.id), color: `golden`} })
 		else reply(this.locale.STRIKE.DISPLAY_RECORD, {
 			socket: {

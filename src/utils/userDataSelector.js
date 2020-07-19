@@ -1,6 +1,5 @@
 `use-strict`
 const userSelector = require(`./userSelector`)
-const rank = require(`../config/ranks`)
 
 /**
  *  This where user-related data stored.
@@ -30,8 +29,8 @@ class Data {
 		try {
 			const user = await new userSelector(this.data).get()
 			let res = await this.db.userMetadata(user.id)
-			const currentRankLevel = this.closestBelow(rank.DEFAULT.map(el => el.LEVEL), res.level)
-			const rankData = rank.DEFAULT.filter(el => el.LEVEL === currentRankLevel)
+			const currentRankLevel = this.closestBelow(this.bot.ranks.map(el => el.LEVEL), res.level)
+			const rankData = this.bot.ranks.filter(el => el.LEVEL === currentRankLevel)
 
 			//	Assign new data props
 			res.total_cards = await this.db.totalCollectedCards(user.id)

@@ -1,5 +1,4 @@
 `use-strict`
-const rank = require(`../config/ranks`)
 const Experience = require(`./exp`)
 const Permission = require(`./permissions`)
 /**
@@ -71,14 +70,14 @@ class User {
 			if (dataLevel <= 1) return user
 
 			user.main = await db.getUser(user.id)
-			user.posts = await db.getUserPosts(user.id)
+			user.posts = await db.getUserPosts(user.id, this.message.guild.id)
 			user.socialMedias = await db.getUserSocialMedia(user.id)
-			user.reputations = await db.getUserReputations(user.id)
-			user.dailies = await db.getUserDailies(user.id)
-			user.relationships = await db.getUserRelations(user.id)
+			user.reputations = await db.getUserReputations(user.id, this.message.guild.id)
+			user.dailies = await db.getUserDailies(user.id, this.message.guild.id)
+			user.relationships = await db.getUserRelations(user.id,this.message.guild.id)
 
 			//  Fetching exp
-			const experienceData = await db.getUserExp(user.id)
+			const experienceData = await db.getUserExp(user.id, this.message.guild.id)
 			const parsedExp = new Experience({bot: this.bot, message:this.message}).xpFormula(experienceData.current_exp)
 			user.exp = {
 				raw: experienceData,
@@ -90,7 +89,7 @@ class User {
 			}
 
 			//  Fetching inventories 
-			const inventoryData = await db.getUserInventory(user.id)
+			const inventoryData = await db.getUserInventory(user.id, this.message.guild.id)
 			const simplifiedInventory = this._simplifyInventory(inventoryData)
 			user.inventory = {
 				raw: inventoryData,
@@ -98,8 +97,9 @@ class User {
 			}
 
 			//  Fetching current rank
-			const currentRankLevel = this._closestBelow(rank.DEFAULT.map(el => el.LEVEL), user.exp.level)
-			const rankData = rank.DEFAULT.filter(el => el.LEVEL === currentRankLevel)
+			const currentRankLevel = this._closestBelow(this.bot.ranks.map(el => el.LEVEL), user.exp.level)
+			const rankData = this.bot.ranks.filter(el => el.LEVEL === currentRankLevel)
+			
 			user.rank = {
 				name: rankData[0].NAME,
 				color: rankData[0].COLOR,

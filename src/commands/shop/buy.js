@@ -44,7 +44,10 @@ class Buy extends Command {
 	    const previewItem = await loadAsset(item.alias)
 		const paymentItem = await db.getItem(item.item_price_id)
 
-    	//  Ask user to input the amount to buy if multi-stacking is allowed
+		// Return if item is not avaible on server
+		if (this.item.item_id == 1 && !this.bot.nickname_changer) return reply(this.locale.BUY.ITEM_NOT_AVAILIBLE, {color: `red`, socket: {item: `${emoji(item.alias)} ${item.name}`}})
+		
+		//  Ask user to input the amount to buy if multi-stacking is allowed
     	if (item.type_max_stacks > 1) {
     		this.askAmount = await reply(this.locale.BUY.ITEM_AMOUNT, {color: `golden`, socket: {item: `${emoji(item.alias)} ${item.name}`}})
     	}
@@ -105,6 +108,16 @@ class Buy extends Command {
 				//  Ghostingly ignore if user didn't type the confirmation word
 				if (!input.startsWith(`y`)) return
 				//  Handles if user's balance is onsufficient to pay the total
+				if (!this.user.inventory[paymentItem.alias]){
+					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
+						socket: {
+							emoji: emoji(paymentItem.alias),
+							amount: commanifier(this.total)
+						}, 
+						color: `red`
+					})
+					return this.endSequence()
+				}
 				if (this.user.inventory[paymentItem.alias] < this.total) {
 					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
 						socket: {
