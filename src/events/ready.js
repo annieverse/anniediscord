@@ -67,6 +67,36 @@ module.exports = annie => {
 		await addGuildIdColTo_user_dailies()
 		await addGuildIdColTo_user_exp()
 		await addGuildIdColTo_user_reputations()
+		await addGuildIdColTo_user_inventories()
+	}
+
+	async function addGuildIdColTo_user_inventories(){
+		await annie.db._query(`BEGIN TRANSACTION`,`run`)
+
+		await annie.db._query(`CREATE TABLE "users2" (
+			"registered_at"	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			"updated_at"	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			"user_id"	TEXT,
+			"item_id"	INTEGER,
+			"quantity"	INTEGER DEFAULT 0,
+			"in_use"	INTEGER DEFAULT 0,
+			"guild_id"	TEXT,
+			FOREIGN KEY("item_id") REFERENCES "items"("item_id") ON DELETE CASCADE ON UPDATE CASCADE,
+			FOREIGN KEY("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE,
+			PRIMARY KEY("user_id","item_id","guild_id")
+		)`,`run`
+		)
+		await annie.db._query(`INSERT INTO users2(registered_at, updated_at, user_id, item_id, quantity, in_use, guild_id)
+		SELECT registered_at, updated_at, user_id, item_id, quantity, in_use, guild_id
+		FROM user_inventories`,`run`)
+
+		await annie.db._query(`DROP TABLE user_inventories`,`run`)
+
+		await annie.db._query(`ALTER TABLE users2 RENAME TO user_inventories`,`run`)
+
+		await annie.db._query(`COMMIT TRANSACTION`,`run`)
+		
+		return logger.info(`guild col added to user_inventories`)
 	}
 
 	async function addGuildIdColTo_user_reputations(){

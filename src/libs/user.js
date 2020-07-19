@@ -99,6 +99,7 @@ class User {
 			//  Fetching current rank
 			const currentRankLevel = this._closestBelow(this.bot.ranks.map(el => el.LEVEL), user.exp.level)
 			const rankData = this.bot.ranks.filter(el => el.LEVEL === currentRankLevel)
+			
 			user.rank = {
 				name: rankData[0].NAME,
 				color: rankData[0].COLOR,

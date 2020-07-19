@@ -127,13 +127,14 @@ class config {
                     finalConfig.ranks = backupRanks
                     break
                 }
-                newRank.LEVEL = element.LEVEL
-                newRank.COLOR = role.color
-                newRank.NAME = role.name
+                newRank = {
+                    "LEVEL": element.LEVEL,
+                    "COLOR": role.color,
+                    "NAME": role.name
+                }
                 finalConfig.ranks.push(newRank)
             }
         }
-
         //
         //
         //

@@ -68,7 +68,7 @@ class Leaderboard extends Command {
 				simplified: true,
 				socket: {
 					rank: lbData.indexOf(author) + 1,
-					points: commanifier(author.points),
+					points: commanifier(author.points) > 1 ? commanifier(author.points) : commanifier(author.points) + 1,
 					emoji: emoji(selectedGroup),
 				}
 			})

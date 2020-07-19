@@ -169,7 +169,7 @@ class Database {
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-				INSERT INTO user_inventories (item_id, user_id)
+				INSERT INTO user_inventories (item_id, user_id, guild_id)
 				SELECT $itemId, $userId, $guildId
 				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
 				, `run`
@@ -1379,8 +1379,8 @@ class Database {
 		)
 
 		if (group === `artcoins`) return this._query(`
-			SELECT user_id AS id, quantity AS points FROM user_inventories WHERE guild_id = ?
-			WHERE item_id = 52
+			SELECT user_id AS id, quantity AS points FROM user_inventories
+			WHERE item_id = 52 AND guild_id = ?
 			ORDER BY quantity DESC`
 			, `all`
 			, [guildId]
