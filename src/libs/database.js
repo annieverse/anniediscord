@@ -383,42 +383,25 @@ class Database {
 	 */	
 	
 	/**
-	 * Register a user into users table entries if doesn't exist.
+	 * Register a user into user-tree tables if doesn't exist.
 	 * @param {string} [userId=``] User's discord id.
 	 * @returns {QueryResult}
 	 */
-	async registerUser(userId=``) {
-		const fn = `[Database.registerUser()]`
+	async validateUser(userId=``) {
+		const fn = `[Database.validateUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		this._query(`
+		const res = await this._query(`
 			INSERT INTO users(user_id)
 			SELECT $userId
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 			, `run`
 			, {userId: userId}
 		)
-		this._query(`
-			INSERT INTO user_dailies(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId)`
-			, `run`
-			, {userId: userId}
-		)
-		this._query(`
-			INSERT INTO user_exp(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId)`
-			, `run`
-			, {userId: userId}
-		)
-		this._query(`
-			INSERT INTO user_reputations(user_id)
-			SELECT $userId
-			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId)`
-			, `run`
-			, {userId: userId}
-		)
-		return
+		if (res.changes >= 1) {
+			logger.info(`New USER_ID ${userId} has been registered in users table.`)
+			await this._registerUserSecondaryData(userId)
+		}
+		return res
 	}
 
 	/**
@@ -435,6 +418,41 @@ class Database {
 			, `run`
 			, [userId]
 			, `Deleting USER_ID ${userId} from database`
+		)
+	}
+
+	/**
+	 * Registering user's secondary tables data.
+	 * @param {string} [userId=``] User's discord id.
+	 * @private
+	 * @returns {QueryResult}
+	 */
+	async _registerUserSecondaryData(userId=``) {
+		const fn = `[Database._registerNewUser()]`
+		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
+		await this._query(`
+			INSERT INTO user_dailies(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_dailies table`
+		)
+		await this._query(`
+			INSERT INTO user_exp(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_exp table`
+		)
+		await this._query(`
+			INSERT INTO user_reputations(user_id)
+			SELECT $userId
+			WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId)`
+			, `run`
+			, {userId: userId}
+			, `Registering USER_ID ${userId} into user_reputations table`
 		)
 	}
 

@@ -1,7 +1,7 @@
 const { expect } = require(`chai`)
 const CommandsLoader = require(`../src/commands/loader`)
 /**
- * @reference ./src/struct/commands/loader.js
+ * @reference ./src/commands/loader.js
  */
 describe(`Commands Loader`, () => {
 
@@ -23,8 +23,8 @@ describe(`Commands Loader`, () => {
             `usage`, 
             `group`,
             `public`, 
-            `required_usermetadata`,
-            `multi_user`
+            `permissionLevel`,
+            `multiUser`
         ]
         Object.keys(res.commands.get(`eval`).help).map(prop => expect(references).to.include(prop))
     })

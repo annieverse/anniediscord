@@ -11,11 +11,6 @@ describe(`Database`, () => {
         expect(db.client.open).is.equal(true)
     })
 
-    it(`[.validatingTables()] should successfully validating tables`, async () => {
-        const db = await new Database().connect(`./test/dummy/database.sqlite`, `../../test/dummy/database.sqlite`)
-        expect(await db.validatingTables()).is.equal(true)
-    })
-
     it(`[._query()] should returns 1 from simple query (SELECT 1)`, async () => {
         const db = await new Database().connect(`./test/dummy/database.sqlite`, `../../test/dummy/database.sqlite`)
         const res = await db._query(`SELECT 1`)
@@ -23,9 +18,9 @@ describe(`Database`, () => {
     })
 
     describe(`User Validation`, async () => {
-        it(`[.validatingNewUser()] should register id if not present`, async () => {
+        it(`[.validateUser()] should register id if not present`, async () => {
             const db = await new Database().connect(`./test/dummy/database.sqlite`, `../../test/dummy/database.sqlite`)
-            const res = await db.validatingNewUser(`123`, `Name Test`)
+            const res = await db.validateUser(`123`)
             await db.deleteUser(`123`)
             expect(res.changes).is.equal(1)
         })
