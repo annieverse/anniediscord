@@ -15,7 +15,6 @@ module.exports = annie => {
 		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`dnd`)
-		updates()
 		
 	} else {
 		/**
@@ -31,11 +30,6 @@ module.exports = annie => {
 		 * 	Primary task
 		 * 	--------------------------------------------------
 		 */
-
-		// Can be deleted after
-		updateTable()
-		fixDefault()
-
 
 		//	Scheduling for database backup
 		Routine.databaseBackup()
@@ -60,6 +54,13 @@ module.exports = annie => {
 		Routine.removeFeaturedDailyPostLoop()
 	}
 	
+	/**
+	 *	--------------------------------------------------
+	 *	Require more test prior the capability of adding multi-guild data support.
+	 *  Refer to: v6.1.0 Crash & Data Lost #235 by BaitGod01
+	 *  --------------------------------------------------
+	 */
+	 /*
 	async function updates() {
 		await updateTable()
 		await fixDefault()
@@ -226,8 +227,6 @@ module.exports = annie => {
 		return logger.info(`Default value fixed`)
 	}
 
-
-
 	async function alterTables() {
 		// for user_exp
 		let bool = true
@@ -332,4 +331,5 @@ module.exports = annie => {
 			}
 		}
 	}
+	*/
 }

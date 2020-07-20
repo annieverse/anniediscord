@@ -1,12 +1,12 @@
 {
   "name": "anniediscord",
-  "version": "6.1.0",
+  "version": "6.1.2",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
     "lint": "eslint src",
     "unit-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/mocha \"test/*.js\"",
-    "start": "cross-env NODE_ENV=production pm2 start index.js --no-daemon --max-memory-restart 400M",
+    "start": "cross-env NODE_ENV=production pm2 start index.js --no-daemon --max-memory-restart",
     "beta": "cross-env NODE_ENV=development nodemon index.js",
     "test": "npm run lint && npm run unit-test && echo 'Test passed.'"
   },
@@ -15,8 +15,8 @@
   },
   "author": {
     "name": "klerikdust",
-    "email": "klerikdust@gmail.com",
-    "url": "https://klerikdust.github.io"
+    "email": "naphzbilly@gmail.com",
+    "url": "https://naphz.com"
   },
   "contributors": [
     "Pan/Bait God (https://github.com/BaitGod01)",

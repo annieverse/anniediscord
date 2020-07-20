@@ -2,7 +2,31 @@
 
 ___
 
-## **06/22/20 | 6.1.0 ->**
+## **07/20/20 | 6.1.2 ->**
+
+* Updated test suite for Database lib and Permission Controller.
+* Temporarily disabled multi-guild parameter until next update.
+* Added developer command for old data restoration.
+* Bug: unreachable commands due to missing guild_id column on most db lib methods Fixed.
+
+## **07/20/20 | 6.1.1 ->**
+
+* Bug: Crashing presenceUpdate Fixed.
+* Bug: Routine.autoStatus() calling non-existent function Fixed.
+* Bug: Artcoins Leaderboard showing the wrong amount Fixed.
+
+## **07/18/20 | 6.1.0 ->**
+
+* Functional Heart Module. Posts will start to receive hearts and record likes. Trending system is still disabled for the time being.
+* Nickname Changer almost done. You are able to buy if set up on the server but may not use just yet.
+* Added Level Ranks Customization. Add your own roles to use as ranks by using `>setranks`
+* Added Server's Custom Configurations. Edit various modules options and fine-tune for your server.
+* Bug: Strike Command Fixed. Record recorded last by fixed to show the correct person.
+* Bug: Leaderboard Fixed. Fixed your place value so {{rank}} socket doesn't appear.
+* Bug: Purchase/Buy Fixed. Double-check the required amount to be paid before proceeding the transaction.
+* Bug: Experience System Fixed. Rounded values are now *actually* rounded (no pun intended).
+
+## **06/22/20 | 6.0.2 ->**
 
 * Strike perm level tag added.
 * Disable Classrom module.

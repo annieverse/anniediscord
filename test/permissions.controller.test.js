@@ -4,7 +4,7 @@ const PermissionController = require(`../src/libs/permissions.js`)
  * @reference ./src/controller/permissions.js
  */
 describe(`Permission Controller`, () => {
-    describe(`.authorityCheck()`, () => {
+    describe(`.getUserPermission()`, () => {
         it(`should able to fetch admin-level on admin user`, () => {
             const dummyMessageObject = {
                 channel: {
@@ -13,13 +13,15 @@ describe(`Permission Controller`, () => {
                 author: {
                     id: `123`
                 },
-                member: {
-                    highestRole: {
-                        permissions: `ADMINISTRATOR`
-                    }
+                guild: {
+                    members: new Map().set(`123`, {
+                        highestRole: {
+                            permissions: `ADMINISTRATOR`
+                        }    
+                    })
                 }
             }
-            const res = new PermissionController(dummyMessageObject).authorityCheck()
+            const res = new PermissionController(dummyMessageObject).getUserPermission()
             expect(res.level).to.equal(3)
             expect(res.permissionString).to.equal(`ADMINISTRATOR`)
         })
@@ -31,13 +33,15 @@ describe(`Permission Controller`, () => {
                 author: {
                     id: `123`
                 },
-                member: {
-                    highestRole: {
-                        permissions: `SEND_MESSAGES`
-                    }
+                guild: {
+                    members: new Map().set(`123`, {
+                        highestRole: {
+                            permissions: `SEND_MESSAGES`
+                        }    
+                    })
                 }
             }
-            const res = new PermissionController(dummyMessageObject).authorityCheck()
+            const res = new PermissionController(dummyMessageObject).getUserPermission()
             expect(res.level).to.equal(0)
             expect(res.permissionString).to.equal(`SEND_MESSAGES`)
         })
@@ -49,13 +53,15 @@ describe(`Permission Controller`, () => {
                 author: {
                     id: `230034968515051520`
                 },
-                member: {
-                    highestRole: {
-                        permissions: `ADMINISTRATOR`
-                    }
+                guild: {
+                    members: new Map().set(`123`, {
+                        highestRole: {
+                            permissions: `ADMINISTRATOR`
+                        }    
+                    })
                 }
             }
-            const res = new PermissionController(dummyMessageObject).authorityCheck()
+            const res = new PermissionController(dummyMessageObject).getUserPermission()
             expect(res.level).to.equal(4)
             expect(res.permissionString).to.equal(`ADMINISTRATOR`)
         })
@@ -67,13 +73,15 @@ describe(`Permission Controller`, () => {
                 author: {
                     id: `123`
                 },
-                member: {
-                    highestRole: {
-                        permissions: `ADMINISTRATOR`
-                    }
+                guild: {
+                    members: new Map().set(`123`, {
+                        highestRole: {
+                            permissions: `ADMINISTRATOR`
+                        }    
+                    })
                 }
             }
-            const res = new PermissionController(dummyMessageObject).authorityCheck()
+            const res = new PermissionController(dummyMessageObject).getUserPermission()
             expect(res.level).to.equal(0)
             expect(res.name).to.equal(`User`)
         })
