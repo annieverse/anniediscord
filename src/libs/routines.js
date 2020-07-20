@@ -51,6 +51,12 @@ class Routines {
      */
 	roleChange() {
 
+		/**
+		 * Pan: I think i know a way to bring this to all servers will work on at a later date
+		 * 
+		 * 
+		 * 
+		 */
 		const client = this.client
 		const logger = this.logger
 		/**
@@ -179,7 +185,7 @@ class Routines {
 	/**
      *  Automatically change current this.client status presence
      *  @autoStatus
-     */
+     *//*
 	autoStatus() {
 		const client = this.client
 		const logger = this.logger
@@ -298,7 +304,7 @@ class Routines {
 			}
 		}
     }
-    
+    */
 
     /**
      *  Automatically record resource usage data every 5 min.

@@ -34,7 +34,31 @@ class Experience extends Points {
      */
     async execute(expToBeAdded=this.baseGainedExp) {
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
-
+		if (this.message.guild.id == `459891664182312980`) {
+			let user = this.message.author
+			let roles = []
+			for (let index = 0; index < user.lastMessage.member._roles.length; index++) {
+				const element = user.lastMessage.member._roles[index]
+				roles.push(this.message.guild.roles.get(element).name)
+			}
+			let role, roleLevel
+			for (let index = 0; index < this.bot.backupRanks.length; index++) {
+				const element = this.bot.backupRanks[index].NAME
+				for (let j = 0; j < roles.length; j++) {
+					const element2 = roles[j]
+					if (element == element2) {
+						role = element
+						roleLevel = this.bot.backupRanks[index].LEVEL
+						break
+					}
+					if (role) break
+				}
+			}
+			let xpToAdd = await this.xpReverseFormula(roleLevel)
+			if (this.exp.current_exp < xpToAdd.maxexp) await this.db.addUserExp(Math.round(xpToAdd.maxexp), this.message.author.id, this.message.guild.id)
+			if (!this.exp.current_exp) await this.db.setUserExp(Math.round(xpToAdd.maxexp), this.message.author.id, this.message.guild.id)
+			if ((this.exp.current_exp < xpToAdd.maxexp) || !this.exp.current_exp) await this.db.forgivenessGift(this.message.author.id, this.message.guild.id, roleLevel)
+		}
     	//  Apply booster if presents
     	if (this.exp.booster_id) await this.applyBooster()
 

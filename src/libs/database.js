@@ -829,7 +829,74 @@ class Database {
 			, [amount, userId, guildId]
 		)
 	}
-	
+
+	/**
+	 * Give some ac for the lost of levels
+	 * @param {string} [userId = ``]
+	 * @param {string} [guildId = ``] 
+	 * @returns {QueryResult}
+	 */
+	forgivenessGift(userId=``, guildId=``, level){
+		let amountRoGive = 50000
+		switch (level) {
+			case 180:
+				amountRoGive = 750000
+				break
+			case 100:
+				amountRoGive = 600000
+				break
+			case 85:
+				amountRoGive = 550000
+				break
+			case 70:
+				amountRoGive = 500000
+				break
+			case 60:
+				amountRoGive = 450000
+				break
+			case 50:
+				amountRoGive = 400000
+				break
+			case 45:
+				amountRoGive = 350000
+				break
+			case 40:
+				amountRoGive = 300000
+				break
+			case 35:
+				amountRoGive = 250000
+				break
+			case 30:
+				amountRoGive = 200000
+				break
+			case 25:
+				amountRoGive = 150000
+				break
+			case 20:
+				amountRoGive = 100000
+				break
+			default:
+				break
+		}
+		this.updateInventory({itemId: 52, value: amountRoGive, operation: `+`, userId: userId, guildId: guildId})
+	}
+
+	/**
+	 * Setting user's experience points into `user_exp` table
+	 * @param {number} [amount=0] amount to be added
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	setUserExp(amount=0, userId=``, guildId=``) {
+		return this._query(`
+			UPDATE user_exp 
+			SET current_exp = ?
+			WHERE user_id = ? AND guild_id = ?`
+			, `run`
+			, [amount, userId, guildId]
+		)
+	}
+
 	/**
 	 * Pull user's strike records if presents.
 	 * @param {string} [userId=``] target user's discord id
