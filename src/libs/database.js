@@ -1562,6 +1562,563 @@ class Database {
 		)
     }
 
+	/**
+	 * Migrating old data (15 May)
+	 * Purposely made because of #234 data-lost accident
+	 * @returns {void}
+	 */
+    async recoverOldData() {
+
+		await this._query(`DELETE FROM user_exp`, `run`)
+		await this._query(`DELETE FROM user_inventories`, `run`)
+
+
+		await this._query(`
+			UPDATE usercheck 
+			SET lastdaily = datetime(lastdaily/1000, 'unixepoch')`
+			, `run`
+			, []
+			, `Converting usercheck's lastdaily into a proper datetime`
+		)
+		await this._query(`
+			UPDATE usercheck 
+			SET repcooldown = datetime(repcooldown/1000, 'unixepoch')`
+			, `run`
+			, []
+			, `Converting usercheck's repcooldown into a proper datetime`
+		)		
+
+		await this._query(`
+			INSERT INTO user_dailies (
+				updated_at,
+				user_id,
+				total_streak
+			) 
+			SELECT 
+				usercheck.lastdaily,
+				users.user_id,
+				usercheck.totaldailystreak
+			FROM usercheck, users
+			WHERE users.user_id = usercheck.userId`
+			, `run`
+			, []
+			, `Migrating usercheck's dailies into user_dailies`
+		)
+		await this._query(`
+			INSERT INTO user_reputations (
+				user_id,
+				total_reps
+			)
+			SELECT 
+				userId, 
+				reputations
+			FROM userdata`
+			, `run`
+			, []
+			, `Migrating userdata's reps into user_reputations`
+		)
+		await this._query(`
+			INSERT INTO user_exp (
+				user_id,
+				current_exp,
+				booster_id,
+				booster_activated_at
+			) 
+			SELECT 
+				usercheck.userId user_id,
+				userdata.currentexp current_exp,
+				(SELECT item_id FROM items WHERE alias = usercheck.expbooster),
+				usercheck.expbooster_duration
+			FROM usercheck, userdata
+			WHERE usercheck.userId = userdata.userId`
+			, `run`
+			, []
+			, `Migrating userdata and usercheck exp data into user_exp`
+		)
+		await this._query(`
+			INSERT INTO user_posts (
+				registered_at,
+				user_id,
+				url,
+				caption,
+				guild_id,
+				recently_liked_by
+			) 
+			SELECT 
+				(SELECT datetime(timestamp / 1000, 'unixepoch')),
+				userartworks.userId,
+				userartworks.url,
+				userartworks.description,
+				459892609838481408,
+				230034968515051520
+			FROM userartworks, users
+			WHERE users.user_id = userartworks.userId`
+			, `run`
+			, []
+			, `Migrating userartworks into user_posts`
+		)
+
+		/**  --------------------------
+		  *  Remove non-existent userId in userbadges (deprecated) table.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM userbadges
+			WHERE userId NOT IN (
+				SELECT user_id 
+				FROM users
+			)`
+			, `run`
+			, []
+			, `Remove non-existent userId in userbadges (deprecated) table.`
+		)
+
+		/**  --------------------------
+		  *  Remove non-existent user_id in item_inventory (deprecated) table.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM item_inventory
+			WHERE user_id NOT IN (
+				SELECT user_id 
+				FROM users
+			)`
+			, `run`
+			, []
+			, `Remove non-existent user_id in item_inventory (deprecated) table.`
+		)
+
+		/**  --------------------------
+		  *  Remove non-existent item_id in item_inventory (deprecated) table.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM item_inventory
+			WHERE item_id NOT IN (
+				SELECT item_id 
+				FROM items
+			)`
+			, `run`
+			, []
+			, `Remove non-existent item in item_inventory (deprecated) table.`
+		)
+
+		/**  --------------------------
+		  *  Delete duplicate items in item_inventory.
+		  *  --------------------------
+		  */
+		await this._query(`
+			DELETE FROM item_inventory
+			WHERE rowid NOT IN (
+				SELECT min(rowid)
+				FROM item_inventory
+				GROUP BY item_id, user_id
+			)`
+			, `run`
+			, []
+			, `Remove duplicate items in item_inventory.`
+		)
+
+		/**  --------------------------
+		  *  USER INVENTORIES
+		  *  --------------------------
+		  */
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity
+			) 
+			SELECT 
+				item_inventory.user_id,
+				item_inventory.item_id,
+				item_inventory.quantity
+			FROM item_inventory, users
+			WHERE 
+				users.user_id = item_inventory.user_id`
+			, `run`
+			, []
+			, `Migrating item_inventory into user_inventories`
+		)	
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov') AS itemId,
+				1,
+				1
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.cover IS NOT NULL
+			AND t1.cover != ''
+			AND t1.cover != 'defaultcover1'`
+			, `run`
+			, []
+			, `Migrating userdata's cover into user_inventories`
+		)
+
+		await this._query(`
+			UPDATE user_inventories
+			SET in_use = 1
+			WHERE user_id || '_' || item_id IN (
+				SELECT 
+					userId || '_' || (SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov') AS key
+				FROM userdata t1
+
+				INNER JOIN user_inventories t2 
+					ON t2.user_id = t1.userId 
+					AND t2.item_id = (SELECT item_id FROM items WHERE alias = cover OR alias = cover || '_cov')
+
+				WHERE t1.cover IS NOT NULL
+				AND t1.cover != ''
+				AND t1.cover != 'defaultcover1'
+			)`
+			, `run`
+			, []
+			, `Set cover in_use value to 1 based on user-applied cover in userdata`
+		)	
+
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = interfacemode) AS itemId,
+				1,
+				1
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.interfacemode IS NOT NULL
+			AND t1.interfacemode != ''`
+			, `run`
+			, []
+			, `Migrating userdata's interfacemode into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = sticker) AS itemId,
+				1,
+				1
+			FROM userdata t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.sticker IS NOT NULL
+			AND t1.sticker != ''`
+			, `run`
+			, []
+			, `Migrating userdata's sticker into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = expbooster) AS itemId,
+				1,
+				1
+			FROM usercheck t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.expbooster IS NOT NULL
+			AND t1.expbooster != ''`
+			, `run`
+			, []
+			, `Migrating usercheck's exp boosters into user_inventories`
+		)
+
+		/**
+		 *  Sub-migrating
+		 *  Migrates each badges in userbadges into individual row in user_inventories
+		 */
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot1) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot1 IS NOT NULL
+			AND t1.slot1 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot1) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot2) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot2 IS NOT NULL
+			AND t1.slot2 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot2) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot3) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot3 IS NOT NULL
+			AND t1.slot3 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot3) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot4) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot4 IS NOT NULL
+			AND t1.slot4 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot4) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot5) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot5 IS NOT NULL
+			AND t1.slot5 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot5) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slot6) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slot6 IS NOT NULL
+			AND t1.slot6 != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slot6) into user_inventories`
+		)
+		await this._query(`
+			INSERT INTO user_inventories (
+				user_id,
+				item_id,
+				quantity,
+				in_use
+			) 
+			SELECT 
+				userId,
+				(SELECT item_id FROM items WHERE alias = slotanime) AS itemId,
+				1,
+				1
+			FROM userbadges t1
+
+			LEFT JOIN user_inventories t2 
+				ON t2.user_id = t1.userId 
+				AND t2.item_id = itemId
+
+			WHERE t2.user_id IS NULL 
+			AND t2.item_id IS NULL
+			AND t1.slotanime IS NOT NULL
+			AND t1.slotanime != ''`
+			, `run`
+			, []
+			, `Migrating userbadges(slotanime) into user_inventories`
+		)
+
+
+		/**
+		 * ---------------------------------------------------------
+		 * Registering relationships
+		 * ---------------------------------------------------------
+		 */
+		await this._query(`
+			INSERT INTO user_relationships (
+				user_id_A,
+				user_id_B,
+				relationship_id
+			)
+			SELECT
+				userId1,
+				userId2,
+				relationType2
+			FROM relationship
+			WHERE relationType2 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating relationship(A) into user_relationships`
+		)
+		await this._query(`
+			INSERT INTO user_relationships (
+				user_id_A,
+				user_id_B,
+				relationship_id
+			)
+			SELECT
+				userId2,
+				userId1,
+				relationType1
+			FROM relationship
+			WHERE relationType1 IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating relationship(B) into user_relationships`
+		)
+
+		/**  --------------------------
+		  *  USER SOCIAL MEDIAS
+		  *  --------------------------
+		  */
+		await this._query(`
+			INSERT INTO user_socialmedias (
+				user_id,
+				url,
+				account_type
+			) 
+			SELECT 
+				userdata.userId,
+				userdata.anime_link,
+				'MAL/Kitsu'
+			FROM userdata, users
+			WHERE 
+				users.user_id = userdata.userId
+				AND userdata.anime_link IS NOT NULL`
+			, `run`
+			, []
+			, `Migrating userdata's anime link into user_socialmedias`
+		)
+    }
+
 	/** -------------------------------------------------------------------------------
 	 *  Pre-V6 Migrations Methods
 	 *  -------------------------------------------------------------------------------

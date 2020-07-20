@@ -136,6 +136,11 @@
         "GUIDE": "The pattern is similar to my dbkits, so make sure to input the cli command inside a square brackets.",
         "MISSING_STMT": "Please write the command statement inside **[]** brackets."
     },
+    "DATA_RECOVERY": {
+        "ALREADY_RAN": "I've already performed this action **{{date}}**",
+        "INITIAL": "Begin the process ...",
+        "SUCCESSFUL": "Data recovery for **{{totalUsers}} users** has been successfully performed."
+    },
     "DBKITS": {
         "AUTHORIZED": "Good evening, **{{user}}**. You can access my db query module.",
         "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
