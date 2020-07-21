@@ -34,8 +34,7 @@ class Experience extends Points {
      */
     async execute(expToBeAdded=this.baseGainedExp) {
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
-
-        /*
+        
 		if (this.message.guild.id == `459891664182312980`) {
 			let user = this.message.author
 			let roles = []
@@ -61,7 +60,6 @@ class Experience extends Points {
 			if (!this.exp.current_exp) await this.db.setUserExp(Math.round(xpToAdd.maxexp), this.message.author.id, this.message.guild.id)
 			if ((this.exp.current_exp < xpToAdd.maxexp) || !this.exp.current_exp) await this.db.forgivenessGift(this.message.author.id, this.message.guild.id, roleLevel)
 		}
-        */
         
     	//  Apply booster if presents
     	if (this.exp.booster_id) await this.applyBooster()
@@ -97,7 +95,7 @@ class Experience extends Points {
 
     	//  Handle if booster already expired
     	if (now.diff(this.exp.booster_actived_at, `minutes`) > booster.duration) {
-    		await this.db.nullifyExpBooster(this.message.author.id)
+    		await this.db.nullifyExpBooster(this.message.author.id, this.message.guild.id)
     		return false
     	}
 

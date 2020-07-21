@@ -29,7 +29,7 @@ class ModNotification {
         this.modRoleId = `551603523070984222` 
         this.verificationChId = `538843763544555528`
         this.moderatorChannelId = `588438012787163146`
-        this.moduleID = `${Components.message.author.id}-REQUESTING_VERIFICATION`
+        this.moduleID = `${Components.message.author.id}-REQUESTING_VERIFICATION-${Components.message.guild.id}`
     }
 
 
