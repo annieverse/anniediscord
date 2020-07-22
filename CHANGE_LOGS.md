@@ -2,6 +2,11 @@
 
 ___
 
+## **07/22/20 | 6.1.3 ->**
+
+* Re-added multi-guild parameters on existing db functions. User now may be able to store different account data (exp/inventory/etc) based on guild they are in.
+* Bug: Infinite Dailies Claim has been fixed.
+
 ## **07/20/20 | 6.1.2 ->**
 
 * Updated test suite for Database lib and Permission Controller.
