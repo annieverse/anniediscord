@@ -20,7 +20,7 @@ describe(`Database`, () => {
     describe(`User Validation`, async () => {
         it(`[.validateUser()] should register id if not present`, async () => {
             const db = await new Database().connect(`./test/dummy/database.sqlite`, `../../test/dummy/database.sqlite`)
-            const res = await db.validateUser(`123`)
+            const res = await db.validateUser(`123`,`634111906625617960`)
             await db.deleteUser(`123`)
             expect(res.changes).is.equal(1)
         })

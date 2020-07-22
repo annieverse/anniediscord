@@ -34,7 +34,7 @@ class heartReactionHandler {
         //  Returns if user react is a this.bot
         if (this.isBot) return
 
-        this.moduleID = `REMOVINGLIKE_${this.reactor.id}_${this.message.id}`
+        this.moduleID = `REMOVINGLIKE_${this.reactor.id}_${this.message.id}_${this.message.guild.id}`
         //  Returns if user has recently liked the post
         if (await this.bot.isCooldown(this.moduleID)) return
         // Set new cooldown for liking post
@@ -72,7 +72,7 @@ class heartReactionHandler {
         //  Returns if user react is a this.bot
         if (this.isBot) return
         
-        this.moduleID = `ADDINGLIKE_${this.reactor.id}_${this.message.id}`
+        this.moduleID = `ADDINGLIKE_${this.reactor.id}_${this.message.id}_${this.message.guild.id}`
         //  Returns if user has recently liked the post
         if (await this.bot.isCooldown(this.moduleID)) return
         // Set new cooldown for liking post
@@ -212,7 +212,7 @@ class heartHandler {
         this.communityNotificationLabel = `comnotif:${this.data.message.author.id}`
         this.message = this.data.message
         this.notificationTimeout = 3600
-        this.moduleID = `HEARTHANDLER_${this.message.author.id}`
+        this.moduleID = `HEARTHANDLER_${this.message.author.id}_${this.message.guild.id}`
         this.pistachio = new Pistachio({bot: this.bot, message: this.message})
     }
 

@@ -23,7 +23,7 @@ class Experience extends Points {
 			maxexp: 0,
 			nextexpcurve: 0
 		}
-		this.moduleID = `EXP_GAIN_${data.message.author.id}`
+		this.moduleID = `EXP_GAIN_${data.message.author.id}_${data.message.author.id}`
 	}
 
 

@@ -16,7 +16,7 @@ class PointController {
          * The default identifier for current instance.
          * @type {string}
          */
-        this.moduleID = `POINTS_${data.message.author.id}`
+        this.moduleID = `POINTS_${data.message.author.id}_${data.message.guild.id}`
 		this.run()
 	}
 

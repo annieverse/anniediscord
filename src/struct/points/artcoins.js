@@ -19,7 +19,7 @@ class Artcoins extends Points {
 		this.updated = data.updated
 		this.meta = data.meta
 		this.commanifier = data.commanifier
-		this.moduleID = `AC_GAIN_${data.message.author.id}`
+		this.moduleID = `AC_GAIN_${data.message.author.id}_${data.message.guild.id}`
 		this.totalGain = data.bot.config.currency.totalGain
     }
 

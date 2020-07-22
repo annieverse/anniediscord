@@ -18,7 +18,7 @@ const likesHandler = require(`../struct/posts/likesHandler`)
  */
 class MessageController {
     constructor(data = {}) {
-        this.moduleID = `MSG_${data.message.author.id}`
+        this.moduleID = `MSG_${data.message.author.id}_${data.message.author.id}`
         this.bot = data.bot
         this.message = data.message
         this.permission = data.bot.permissions
@@ -45,7 +45,7 @@ class MessageController {
         if (this.unauthorizedEnvironment) return
 
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.validateUser(this.message.author.id)
+        await this.bot.db.validateUser(this.message.author.id, this.message.guild.id)
 
         /** 
          *  -----------------------------------------------------------------

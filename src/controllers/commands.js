@@ -22,7 +22,7 @@ class CommandController {
          * The default identifier for current instance.
          * @type {string}
          */
-        this.moduleID = `CMD_${data.message.author.id}`
+        this.moduleID = `CMD_${data.message.author.id}_${data.message.guild.id}`
 
         /**
          * The default prop for accessing command's prefix.
