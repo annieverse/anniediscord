@@ -35,7 +35,8 @@ class JoinEvent extends Command {
 			itemId: 52,
 			value: this.fee,
 			operation:`-`,
-			userId: this.user.id
+			userId: this.user.id,
+			guildId: this.message.guild.id
 		})
 
 		//  Assign role to the user

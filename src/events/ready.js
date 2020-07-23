@@ -60,6 +60,7 @@ module.exports = annie => {
 	 *  Refer to: v6.1.0 Crash & Data Lost #235 by BaitGod01
 	 *  --------------------------------------------------
 	 */
+	
 	async function updates() {
 		await fillGuildsOfTables() // fills guild ids of the tables it can
 		await makeGuildIdPKuser_relationships() // makes table have guild_id pk
@@ -113,10 +114,5 @@ module.exports = annie => {
 		// does not have PK
 		await annie.db._query(`UPDATE user_relationships SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
 	}
-	// for user_dailies
-	// unique, has pk
-	//await annie.db._query(`UPDATE user_dailies SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
-	// for user_reputations
-	// unique, has pk
-	//await annie.db._query(`UPDATE user_reputations SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
+
 }

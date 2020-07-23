@@ -129,8 +129,8 @@ class Buy extends Command {
 					return this.endSequence()
 				}
 				//  Deduct balance & deliver item
-				await db.updateInventory({itemId: paymentItem.item_id, value: this.total, operation: `-`, userId: this.user.id})
-				await db.updateInventory({itemId: item.item_id, value: this.amount, operation: `+`, userId: this.user.id})
+				await db.updateInventory({itemId: paymentItem.item_id, value: this.total, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+				await db.updateInventory({itemId: item.item_id, value: this.amount, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 				reply(this.locale.BUY.SUCCESSFUL, {
 					color: `lightgreen`,
 					socket: {
