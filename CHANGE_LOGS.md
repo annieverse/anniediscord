@@ -2,6 +2,10 @@
 
 ___
 
+## **07/24/20 | 6.1.4 ->**
+
+* Bug: Unreachable commands due to missing guild_id parameter on db method calling has been fixed.
+
 ## **07/22/20 | 6.1.3 ->**
 
 * Re-added multi-guild parameters on existing db functions. User now may be able to store different account data (exp/inventory/etc) based on guild they are in.
