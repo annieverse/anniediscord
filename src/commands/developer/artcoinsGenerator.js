@@ -72,7 +72,7 @@ class ArtcoinsGenerator extends Command {
 				 * ---------------------
 				 */
 				if (this.onSequence <= 2) {
-					await db.updateInventory({itemId: 52, value: amount, userId: this.user.id})
+					await db.updateInventory({itemId: 52, value: amount, userId: this.user.id, guildId: this.message.guild.id})
 					reply(this.locale.ADDAC.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
 				}

@@ -59,7 +59,7 @@ class ConvertArtcoins extends Command {
 			//  Silently ghosting.
 			if (!input.startsWith(`y`)) return
 			//	Deduct balance & add new exp
-			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id})
+			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
 
 			msg.delete()

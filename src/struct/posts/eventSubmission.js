@@ -38,7 +38,7 @@ class SubmissionManager extends Controller {
      *  @distributeReward
      */
     distributeReward() {
-        this.db.sendTenChocolateBoxes(this.message.author.id)
+        this.db.sendTenChocolateBoxes(this.message.author.id, this.message.guild.id)
     }
 
 

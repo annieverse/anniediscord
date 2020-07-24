@@ -56,8 +56,8 @@ class Experience extends Points {
 				}
 			}
 			let xpToAdd = await this.xpReverseFormula(roleLevel)
-			if (this.exp.current_exp < xpToAdd.maxexp) await this.db.addUserExp(Math.round(xpToAdd.maxexp), this.message.author.id, this.message.guild.id)
-			if (!this.exp.current_exp) await this.db.setUserExp(Math.round(xpToAdd.maxexp), this.message.author.id, this.message.guild.id)
+			if (this.exp.current_exp < xpToAdd.maxexp) await this.db.addUserExp(Math.round(xpToAdd.minexp), this.message.author.id, this.message.guild.id)
+			if (!this.exp.current_exp) await this.db.setUserExp(Math.round(xpToAdd.minexp), this.message.author.id, this.message.guild.id)
 			if ((this.exp.current_exp < xpToAdd.maxexp) || !this.exp.current_exp) await this.db.forgivenessGift(this.message.author.id, this.message.guild.id, roleLevel)
 		}
         

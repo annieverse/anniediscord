@@ -51,11 +51,11 @@ class Gacha extends Command {
         }
 
         //  Subtract user's lucky tickets
-        await db.updateInventory({itemId: 71, value: amountToOpen, operation: `-`, userId: this.user.id})
+        await db.updateInventory({itemId: 71, value: amountToOpen, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
         //  Storing items into user's inventory
         for (let i=0; i<this.loots.length; i++) {
             const item = this.loots[i]
-            await db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id})
+            await db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
         }
 
         //  Displaying result

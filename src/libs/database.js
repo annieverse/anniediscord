@@ -169,8 +169,8 @@ class Database {
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-				INSERT INTO user_inventories (item_id, user_id)
-				SELECT $itemId, $userId
+				INSERT INTO user_inventories (item_id, user_id, guild_id)
+				SELECT $itemId, $userId, $guildId
 				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, {itemId: itemId, userId: userId, guildId: guildId}
@@ -419,7 +419,6 @@ class Database {
 		}
 		if (res.changes >= 1) {
 			logger.info(`New USER_ID ${userId} has been registered in users table.`)
-			//await this._registerUserSecondaryData(userId, guildId)
 		}
 		return res
 	}
@@ -1210,8 +1209,8 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	sendTenChocolateBoxes(userId=``) {
-		return this.updateInventory({itemId: 81, value:10, operation:`+`, userId})	
+	sendTenChocolateBoxes(userId=``, guildId =``) {
+		return this.updateInventory({itemId: 81, value:10, operation:`+`, userId: userId, guildId: guildId})	
 	}
 
 	/**
