@@ -5,6 +5,9 @@ ___
 ## **07/24/20 | 6.1.4 ->**
 
 * Bug: Unreachable commands due to missing guild_id parameter on db method calling has been fixed.
+* Removed Benchmark test.
+* Reduced binary size of dummy db.
+* Routine.databaseBackup() has been deprecated.
 
 ## **07/22/20 | 6.1.3 ->**
 
