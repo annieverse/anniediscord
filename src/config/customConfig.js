@@ -208,6 +208,13 @@ class config {
             "featured_requirement": `number`,
             "featured/trending_module": `true/false`,
             "set_ranks": `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`,
+            "booster_color_list": `a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014`,
+            "annoncement_channel": `channel id, name, or link like #general`,
+            "mute_role": `role id, name, or @ like @admin`,
+            "event_participant": `role id, name, or @ like @admin`,
+            "vip_artcoin_package": `number`,
+            "booster_color_messages": `channel id followed by a - (to remove) or + (to add) followed by role id, or @ like @admin would look like 7239682694966435453 + 723968269496615014`,
+            "booster_colors": `object like {"EMOJI_NAME": "name", "EMOJI_ID": "id", "ROLE": "role id, or @ like @admin"}`,
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.
@@ -277,6 +284,13 @@ class config {
             "featured_requirement": 10,
             "featured_trending_module": false,
             "set_ranks": [],
+            "booster_color_list": [],
+            "annoncement_channel": null,
+            "mute_role": null,
+            "event_participant": null,
+            "vip_artcoin_package": 10000,
+            "booster_color_messages": [],
+            "booster_colors": [],
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.

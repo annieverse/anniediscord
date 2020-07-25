@@ -34,7 +34,8 @@ module.exports = annie => {
 		//	Scheduling for database backup
 		Routine.databaseBackup()
 		//	Recording resource usage every 5 mins
-		Routine.resourceUsageLogging()
+		// Missing parm Client.ping
+		//Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
 		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes

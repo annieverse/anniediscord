@@ -17,7 +17,7 @@ class Routines {
         this.client = Client
         this.logger = Client.logger
         this.db = Client.db
-		this.env = Client.env
+		this.env = Client.dev
 		this.pixivCacheDirectory = path.join(__dirname, `../../.pixivcaches`)
     }
 
