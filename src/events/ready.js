@@ -15,7 +15,6 @@ module.exports = annie => {
 		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`dnd`)
-		updates()
 	} else {
 		/**
 		 * 	--------------------------------------------------
@@ -30,9 +29,6 @@ module.exports = annie => {
 		 * 	Primary task
 		 * 	--------------------------------------------------
 		 */
-
-		//	Scheduling for database backup
-		Routine.databaseBackup()
 		//	Recording resource usage every 5 mins
 		// Missing parm Client.ping
 		//Routine.resourceUsageLogging()
@@ -49,8 +45,6 @@ module.exports = annie => {
 
 		//	Change Booster Role color
 		Routine.roleChange()
-		//	Automatically change annie status
-		//Routine.autoStatus()
 		// Remove featured daily post
 		Routine.removeFeaturedDailyPostLoop()
 	}
