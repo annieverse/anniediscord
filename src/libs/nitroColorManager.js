@@ -11,19 +11,12 @@ class nitroColorManager {
     }
 
     /**
-     * let metadata = {
-        bot: Components.annie, 
-        reaction: Components.reaction, 
-        user: Components.user
-    }
-     */
-    /**
      * Tests if the users has the role already
      * @param {String} [role = id] 
      * @returns {Boolean}
      */
     userHasRole(role){
-        return components.bot.guilds.get(this.guild).members.get(components.user.id).has(role)
+        return this.components.bot.guilds.get(this.guild).members.get(this.components.user.id).has(role)
     }
 
     /**
@@ -31,35 +24,38 @@ class nitroColorManager {
      * @returns {Boolean}
      */
     userIsBooster(){
-        return components.bot.guilds.get(this.guild).members.get(components.user.id).has(components.bot.nitro_role)
+        return this.components.bot.guilds.get(this.guild).members.get(this.components.user.id).has(this.components.bot.nitro_role)
     }
 
     /**
      * Add's color to user based on selected color reaction
      */
     add(){
-        if (!components.bot.booster_colors) return
-        if (!this.userIsBooster()) return components.reaction.remove(components.user)
-        let result = components.bot.booster_colors.filter(obj => {
+        if (!this.components.bot.booster_colors) return
+        if (!this.userIsBooster()) return this.components.reaction.remove(this.components.user)
+        let result = this.components.bot.booster_colors.filter(obj => {
             return obj.id === this.emoji.id
         })
         if (this.userHasRole(result[0].ROLE)) return
-        components.bot.guilds.get(this.guild).members.get(components.user.id).addRole(result[0].ROLE)
+        this.components.bot.guilds.get(this.guild).members.get(this.components.user.id).addRole(result[0].ROLE)
     }
 
     /**
      * Remove's color to user based on selected color reaction
      */
     remove(){
-        if (!components.bot.booster_colors) return
+        if (!this.components.bot.booster_colors) return
+        let result = this.components.bot.booster_colors.filter(obj => {
+            return obj.id === this.emoji.id
+        })
         if (!this.userHasRole(result[0].ROLE)) return
         if (!this.userIsBooster()) return
         let roles = []
-        for (let index = 0; index < components.bot.booster_colors.length; index++) {
-            const element = components.bot.booster_colors[index];
+        for (let index = 0; index < this.components.bot.booster_colors.length; index++) {
+            const element = this.components.bot.booster_colors[index]
             roles.push(element.ROLE)
         }
-        components.bot.guilds.get(this.guild).members.get(components.user.id).removeRoles(roles)
+        this.components.bot.guilds.get(this.guild).members.get(this.components.user.id).removeRoles(roles)
     }
 }
 

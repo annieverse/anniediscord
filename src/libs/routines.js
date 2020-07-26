@@ -1,8 +1,6 @@
 const cron = require(`node-cron`)
-const moment = require(`moment`)
 const fs = require(`fs`)
 const path = require(`path`)
-const { Attachment } = require(`discord.js`)
 const getCpuUsage = require(`../utils/cpuUsage`)
 const getMemUsage = require(`../utils/memoryUsage`)
 const dailyFeatured = require(`../struct/posts/dailyFeatured`)
