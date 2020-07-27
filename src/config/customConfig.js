@@ -205,6 +205,7 @@ class config {
             "post_heart_module": `true/false`,
             "nitro_role": `role id, name, or @ like @admin`,
             "nitro_notifications": `true/false`,
+            "nitro_role_color_changer": `true/false`,
             "featured_requirement": `number`,
             "featured/trending_module": `true/false`,
             "set_ranks": `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`,
@@ -291,6 +292,7 @@ class config {
             "vip_artcoin_package": 10000,
             "booster_color_messages": [],
             "booster_colors": [],
+            "nitro_role_color_changer": false,
             /**
              *  -----------------------------------------------------------
              *  This is the command prefix that Annie will be using.
