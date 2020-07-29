@@ -320,6 +320,23 @@ class Database {
 			, [customized_parameter, set_by_user_id,  guild.id, config_code])
 	}
 
+	async getNitroColorChange(){
+		let nitro_role_color_changer = await this._query(`SELECT * FROM guild_configurations WHERE config_code = 'nitro_role_color_changer' AND customized_parameter = 'true'`,`all`)
+		let nitro_role = await this._query(`SELECT * FROM guild_configurations WHERE config_code = 'nitro_role'`,`all`)
+		let allowed = [], newObj = {}
+		for (let i = 0; i < nitro_role_color_changer.length; i++) {
+			const elementOne = nitro_role_color_changer[i]
+			for (let j = 0; j < nitro_role.length; j++) {
+				const elementTwo = nitro_role[j]
+				newObj.guild_id = elementOne.guild_id
+				newObj.nitro_role = elementTwo.customized_parameter
+				if (elementOne.guild_id == elementTwo.guild_id) allowed.push(newObj)
+				newObj = {}
+			}
+		}
+		return allowed
+	}
+
 	/** -------------------------------------------------------------------------------
 	 *  Commands Methods
 	 *  -------------------------------------------------------------------------------

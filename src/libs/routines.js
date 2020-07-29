@@ -17,23 +17,28 @@ class Routines {
         this.db = Client.db
 		this.env = Client.dev
 		this.pixivCacheDirectory = path.join(__dirname, `../../.pixivcaches`)
+		this.allowedGuilds = []
     }
 
-
+	async getServers(){
+		let res = await this.client.db.getNitroColorChange()
+		this.allowedGuilds = res
+	}
     /**
      * Change color of role
      * @roleChange
      */
-	roleChange() {
+	async roleChange() {
 
-		/**
-		 * Pan: I think i know a way to bring this to all servers will work on at a later date
-		 * 
-		 * 
-		 * 
-		 */
 		const client = this.client
 		const logger = this.logger
+
+		/**
+		 * get activated role change servers
+		 */
+		
+		await this.getServers()
+
 		/**
          * The Varible "x" is in terms of minutes
          * for example:
@@ -46,9 +51,7 @@ class Routines {
          * The roleSelector is a list of every role you want to change.
          * TODO: Use group id instead of group name.
          */
-		let roleSelector=[
-			`585550404197285889`
-		]
+		let roleSelector= this.allowedGuilds
 		/**
          * The colorArray is a list of every color you want to change.
          */
@@ -102,11 +105,10 @@ class Routines {
              * @param {string} role 
              * @returns {object} Role Object
              */
-			async function grabRole(role){
-				return client.guilds.get(`459891664182312980`).roles.find(n => n.id === role)
+			async function grabRole(role, guild_id){
+				return client.guilds.get(guild_id).roles.find(n => n.id === role)
 			}
 
-            
 			/**
              * @returns {string} A(n) color in hex format from the colorArray
              */
@@ -129,14 +131,14 @@ class Routines {
              * runs the core processing of the whole function
              * @param {string} roleName Role name
              */
-			async function main(roleName) {
+			async function main(roleName, guild_id) {
 
 				// For random color
 				//let color = await randomColor();
 				// Use colorArray
 				let color = await setColor()
                 
-				let role = await grabRole(roleName)
+				let role = await grabRole(roleName, guild_id)
 				logger.info(`The color for "${role.name}" has been changed to "${color}" from "${role.hexColor}"`)
 				role.setColor(color)
 			}
@@ -147,7 +149,7 @@ class Routines {
              */
 			function run(role) {
 				for (let index = 0; index < role.length; index++) {
-					main(role[index])
+					main(role[index].nitro_role, role[index].guild_id)
 				}
 			}
 
