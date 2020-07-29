@@ -1204,6 +1204,10 @@ class Database {
 		,[recently_liked_by, url])
 	}
 
+	checkVIPStatus(userId=``, guildId=``){
+		return this._query(`SELECT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = 128 AND quantity = 1 AND user_id = $userId AND guildId = $guildId)`,`get`,{guildId: guildId, userId: userId})
+	}
+
 	/**
 	 * Sending 10 chocolate boxes to the user's inventory
 	 * @param {string} [userId=``] target user's discord id

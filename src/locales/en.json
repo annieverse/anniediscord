@@ -407,7 +407,8 @@
         "SUCCESSFULLY_REMOVED": "Your relationship with **{{user}}** has been removed.",
         "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
         "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
-        "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them."
+        "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them.",
+        "IS_EMPTY": "I'm sorry your dont seem to have any right now try setting some up with setrelationship"
     },
     "GIVE_REPUTATION": {
         "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",

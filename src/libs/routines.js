@@ -1,8 +1,6 @@
 const cron = require(`node-cron`)
-const moment = require(`moment`)
 const fs = require(`fs`)
 const path = require(`path`)
-const { Attachment } = require(`discord.js`)
 const getCpuUsage = require(`../utils/cpuUsage`)
 const getMemUsage = require(`../utils/memoryUsage`)
 const dailyFeatured = require(`../struct/posts/dailyFeatured`)
@@ -17,7 +15,7 @@ class Routines {
         this.client = Client
         this.logger = Client.logger
         this.db = Client.db
-		this.env = Client.env
+		this.env = Client.dev
 		this.pixivCacheDirectory = path.join(__dirname, `../../.pixivcaches`)
     }
 

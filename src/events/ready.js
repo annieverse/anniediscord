@@ -30,7 +30,8 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		//	Recording resource usage every 5 mins
-		Routine.resourceUsageLogging()
+		// Missing parm Client.ping
+		//Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
 		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes
@@ -46,67 +47,6 @@ module.exports = annie => {
 		Routine.roleChange()
 		// Remove featured daily post
 		Routine.removeFeaturedDailyPostLoop()
-	}
-	
-	/**
-	 *	--------------------------------------------------
-	 *	Require more test prior the capability of adding multi-guild data support.
-	 *  Refer to: v6.1.0 Crash & Data Lost #235 by BaitGod01
-	 *  --------------------------------------------------
-	 */
-	
-	async function updates() {
-		await fillGuildsOfTables() // fills guild ids of the tables it can
-		await makeGuildIdPKuser_relationships() // makes table have guild_id pk
-		await FillGuildIdsOfuser_dailiesAnduser_reputations() // fills rest of guild_ids once all tables have pk
-	}
-
-	async function FillGuildIdsOfuser_dailiesAnduser_reputations() {	
-		// for user_dailies
-		// unique, has pk
-		await annie.db._query(`UPDATE OR REPLACE user_dailies SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
-		await annie.db._query(`UPDATE OR REPLACE user_reputations SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
-	}
-
-	async function makeGuildIdPKuser_relationships() {
-		await annie.db._query(`PRAGMA foreign_keys = OFF`,`run`)
-		await annie.db._query(`BEGIN TRANSACTION`,`run`)
-		await annie.db._query(`CREATE TABLE "user_relationships2" (
-			"registered_at"	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			"updated_at"	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			"user_id_A"	TEXT,
-			"user_id_B"	TEXT,
-			"relationship_id"	TEXT,
-			"guild_id"	TEXT,
-			FOREIGN KEY("user_id_A") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE,
-			FOREIGN KEY("user_id_B") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE,
-			FOREIGN KEY("relationship_id") REFERENCES "relationships"("relationship_id") ON DELETE CASCADE ON UPDATE CASCADE,
-			PRIMARY KEY("user_id_A","user_id_B","guild_id")
-		)`,`run`
-		)
-		await annie.db._query(`INSERT INTO user_relationships2(registered_at, updated_at, user_id_A, user_id_B, relationship_id, guild_id)
-		SELECT registered_at, updated_at, user_id_A, user_id_B, relationship_id, guild_id
-		FROM user_relationships`,`run`)
-		await annie.db._query(`DROP TABLE user_relationships`,`run`)
-		await annie.db._query(`ALTER TABLE user_relationships2 RENAME TO user_relationships`,`run`)
-		
-		await annie.db._query(`PRAGMA foreign_keys = ON`,`run`)
-		
-		await annie.db._query(`COMMIT TRANSACTION`,`run`)
-		
-		return logger.info(`guild col added to user_relationships`)
-	}
-
-	async function fillGuildsOfTables() {
-		// for user_exp
-		// has PK
-		await annie.db._query(`UPDATE user_exp SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
-		// for user_inventories
-		// has PK
-		await annie.db._query(`UPDATE user_inventories SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
-		// for user_relationships
-		// does not have PK
-		await annie.db._query(`UPDATE user_relationships SET guild_id = ? WHERE guild_id IS NULL`,`run`,[`459891664182312980`])
 	}
 
 }

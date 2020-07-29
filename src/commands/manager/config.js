@@ -91,6 +91,11 @@ class Config extends Command {
                 this.nextSequence()
                 let welcomeText = this.varible == `welcome_text`
                 let setRanks = this.varible == `set_ranks`
+                let boosterColors = this.varible == `booster_colors`
+                if (boosterColors){
+                    this.endSequence()
+                    return reply(`Please use ${this.prefix}setboostercolors to modify this seting`)
+                }
                 if (welcomeText) reply(`Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.`)
                 if (setRanks) {
                     this.endSequence()
@@ -117,46 +122,12 @@ class Config extends Command {
                 return `rejected`
             }
         } else if (option == `channel id, name, or link like #general`) {
-            let channel
-            try {
-                channel =  msg.mentions.channels.first().id
-            } catch (error) {
-                channel = null
-            }
-            if (channel) return channel
-             try {
-                channel = msg.guild.channels.get(msg.content).id
-            } catch (error) {
-                channel = null
-            }
-            if (channel) return channel
-            try {
-                channel = msg.guild.channels.find(channel => channel.name === testValue.toLowerCase()).id
-            } catch (error) {
-                return `rejected`
-            } 
+            let channel = this.getChannel(msg, testValue)
             return channel
         } else if (option == `any prefix you would like the bot to use` || option == `text`){
             return testValue
         } else if (option == `role id, name, or @ like @admin`) {
-            let role
-            try {
-                role =  msg.mentions.roles.first().id
-            } catch (error) {
-                role = null
-            }
-            if (role) return role
-                try {
-                role = msg.guild.roles.get(msg.content).id
-            } catch (error) {
-                role = null
-            }
-            if (role) return role
-            try {
-                role = msg.guild.roles.find(r => r.name === testValue.toLowerCase()).id
-            } catch (error) {
-                return `rejected`
-            } 
+            let role = this.getRole(msg, testValue)
             return role
         } else if (option == `a - (to remove) or + (to add) followed by role id, or @ like @admin would look like + 723968269496615014`){
             let existingRoles = this.bot[varible]
@@ -166,14 +137,14 @@ class Config extends Command {
             existingRoles = this.removeItemAll(existingRoles, ``)
             if (testValue[0] == `-`){
                 if (existingRoles.length == 0) return `none to remove`
-                let role = this.getRole(msg, testValue)
+                let role = this.getRole(msg, testValue.substring(2))
                 if (role == `rejected`) return `none to remove`
                 let array = this.removeItemAll(existingRoles, role)
                 array.length == 0 ? array = `` : array = array.join(`, `)
                 return array
                 
             } else if (testValue[0] == `+`){
-                let role = this.getRole(msg, testValue)
+                let role = this.getRole(msg, testValue.substring(2))
                 if (role == `rejected`) return `none to remove`
                 existingRoles.push(role)
                 existingRoles = existingRoles.reduce((unique, item) => {
@@ -195,6 +166,42 @@ class Config extends Command {
             return test
         }else if (option == `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`){
             return `rejected`
+        } else if (option == `channel id followed by a - (to remove) or + (to add) followed by role id, or @ like @admin would look like 7239682694966435453 + 723968269496615014`){
+            let options = testValue.split(` `)
+            let channel = this.getChannel(msg, options[0])
+            if (channel == `rejected`) return channel 
+            channel = msg.guild.channels.get(channel)
+            let existingMessages = this.bot[varible]
+            let messageId
+            let str = ``
+            str += existingMessages
+            existingMessages = str.split(`, `)
+            existingMessages = this.removeItemAll(existingMessages, ``)
+            if (options[1] == `-`){
+                if (existingMessages.length == 0) return `none to remove`
+                channel.fetchMessage(options[2]).then(message => {
+                    messageId = message.id
+                }).catch(messageId = null)
+                if (!messageId) return `rejected`
+                let array = this.removeItemAll(existingMessages, messageId)
+                array.length == 0 ? array = `` : array = array.join(`, `)
+                return array
+                
+            } else if (options[1] == `+`){
+                channel.fetchMessage(options[2]).then(message => {
+                    messageId = message.id
+                }).catch(messageId = null)
+                if (!messageId) return `rejected`
+                existingMessages.push(messageId)
+                existingMessages = existingMessages.reduce((unique, item) => {
+                    return unique.includes(item) ? unique : [...unique, item]
+                }, [])
+                existingMessages = this.removeItemAll(existingMessages, ``)
+                existingMessages = existingMessages.join(`, `)
+                return existingMessages
+            } else {
+                return `rejected`
+            }
         }else {
             return `rejected`
         }
@@ -219,11 +226,39 @@ class Config extends Command {
         }
         if (role) return role
             try {
-            role = msg.guild.roles.get(testValue.substring(2)).id
+            role = msg.guild.roles.get(testValue).id
+        } catch (error) {
+            role = null
+        }
+        if (role) return role
+        try {
+            role = msg.guild.roles.find(r => r.name === testValue.toLowerCase()).id
         } catch (error) {
             return `rejected`
-        }
+        } 
         return role
+    }
+
+    getChannel(msg, testValue){
+        let channel
+            try {
+                channel =  msg.mentions.channels.first().id
+            } catch (error) {
+                channel = null
+            }
+            if (channel) return channel
+             try {
+                channel = msg.guild.channels.get(msg.content).id
+            } catch (error) {
+                channel = null
+            }
+            if (channel) return channel
+            try {
+                channel = msg.guild.channels.find(channel => channel.name === testValue.toLowerCase()).id
+            } catch (error) {
+                return `rejected`
+            } 
+            return channel
     }
 
     findElement(arr, propName) {
