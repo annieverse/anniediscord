@@ -2,6 +2,11 @@
 
 ___
 
+## **07/29/20 | 6.1.5 ->**
+
+* Bug: "EN" Localization error for Relationship Command has been fixed.
+* Bug: Server booster's dynamic role color has been fixed and fully-functional. May need an additional configuration in order to enable the feature.
+
 ## **07/24/20 | 6.1.4 ->**
 
 * Bug: Unreachable commands due to missing guild_id parameter on db method calling has been fixed.
