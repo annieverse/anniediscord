@@ -80,6 +80,15 @@ class Points {
         return this.bot.plugins.includes(`ACTIVE_ARTCOINS`)
     }
 
+    closestValue(needle, array){
+        return Math.max.apply(null,array.filter(function(v)
+        { return v <= needle }))
+    }
+
+    closestPreviousValue(needle, array){
+        return Math.max.apply(null,array.filter(function(v)
+			{ return v < needle }))
+    }
 }
 
 module.exports = Points
