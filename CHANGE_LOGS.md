@@ -2,7 +2,7 @@
 
 ___
 
-## **07/29/20 | 6.1.6 ->**
+## **08/01/20 | 6.1.6 ->**
 
 * Bug: Weeb/Anime Leaderboard has been fixed.
 * Bug: Logger lib path in reconnect event has been fixed.
