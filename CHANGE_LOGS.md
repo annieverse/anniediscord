@@ -2,6 +2,12 @@
 
 ___
 
+## **07/29/20 | 6.1.6 ->**
+
+* Bug: Weeb/Anime Leaderboard has been fixed.
+* Bug: Logger lib path in reconnect event has been fixed.
+* Rank Role will be updated everytime user leveling up. In order to use it, "custom_rank" module must be enabled in the guild.
+
 ## **07/29/20 | 6.1.5 ->**
 
 * Bug: "EN" Localization error for Relationship Command has been fixed.
