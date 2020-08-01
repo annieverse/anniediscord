@@ -21,7 +21,7 @@ class Leaderboard extends Command {
 			[`artcoins`, `ac`, `artcoin`, `balance`],
 			[`fame`, `rep`,  `reputation`, `reputations`, `reps`],
 			[`artists`, `arts`, `artist`, `art`, `artwork`],
-			[`anime`, `weeb`, `otaku`, `weebs`, `mal`],
+			/*[`anime`, `weeb`, `otaku`, `weebs`, `mal`],*/
 			[`halloween`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
 		]
     }
