@@ -144,7 +144,7 @@ class Commands {
 		return true
 	}
 
-	async requestAuthorMetadata(dataLevel=1) {
+	async requestAuthorMetadata(dataLevel=1) { 
 		const fn = `[Commands.requestAuthorMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
 		const result = await this.userClass.requestMetadata(this.message.author.id, dataLevel)

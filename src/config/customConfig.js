@@ -107,6 +107,7 @@ class config {
             {"LEVEL": 180, "COLOR": `#fda746`, "NAME":`Altered Pencilician`}
         ]
         finalConfig.backupRanks = backupRanks
+        finalConfig.custom_ranks = false
         if (typeof finalConfig.set_ranks == `string`) finalConfig.set_ranks = JSON.parse(finalConfig.set_ranks)
         if (finalConfig.set_ranks.length > 0){
             finalConfig.ranks = []
@@ -135,6 +136,7 @@ class config {
                 }
                 finalConfig.ranks.push(newRank)
             }
+            finalConfig.custom_ranks = true
         }
         //
         //
