@@ -1628,7 +1628,59 @@ class Database {
 			, [userA, userB]
 			, `Removing ${userA} and ${userB} relationship.`
 		)
-    }
+	}
+	
+	setTheme(theme, userId, guildId){
+		let themeToSet, themeToUnset
+		if (theme == `dark`) {
+			themeToSet = `3`
+			themeToUnset = `4`
+		} else if (theme == `light`) {
+			themeToSet = `4`
+			themeToUnset = `3`
+		}
+		this._query(`UPDATE user_inventories SET in_use = 1 WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme`
+		,`run`
+		,{theme: themeToSet, userId: userId, guildId: guildId})
+		this._query(`UPDATE user_inventories SET in_use = 0 WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme`
+		,`run`
+		,{theme: themeToUnset, userId: userId, guildId: guildId})
+		return
+	}
+
+	/**
+	 * Checks if the user owns the specified theme in their inventory
+	 * @param {string} theme 
+	 * @param {string} userId 
+	 * @param {string} guildId 
+	 * @returns {QueryResult} query
+	 */
+	checkIfThemeOwned(theme, userId, guildId){
+		if (theme == `dark`) {
+			theme = `3`
+		} else if (theme == `light`) {
+			theme = `4`
+		}
+		return this._query(`SELECT EXISTS 
+		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme)`
+		,`get`
+		,{theme: theme, userId: userId, guildId: guildId})
+	}
+
+
+	async findCurrentTheme(userId, guildId){
+		let res = await this._query(`SELECT EXISTS 
+		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
+		,`get`
+		,{theme: `4`, userId: userId, guildId: guildId})
+		if (Object.values(res)[0] == 1) return `light`
+		res = await this._query(`SELECT EXISTS 
+		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
+		,`get`
+		,{theme: `3`, userId: userId, guildId: guildId})
+		if (Object.values(res)[0] == 1) return `dark`
+		return `none`
+	}
 
 	/**
 	 * Migrating old data (15 May)
