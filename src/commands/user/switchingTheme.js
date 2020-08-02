@@ -22,7 +22,7 @@ class SwitchTheme extends Command {
         await this.requestUserMetadata(2)
         
         //  Returns if user not categorized as server booster/donator
-        if (!this.user.premium) return reply(this.locale.SWITCH_THEME.UNAVAILABLE, {color: `red`})
+        //if (!this.user.premium) return reply(this.locale.SWITCH_THEME.UNAVAILABLE, {color: `red`})
         //  Returns if user didn't specify any keyword
         if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {color: `red`})
 
