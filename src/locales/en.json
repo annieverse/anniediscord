@@ -489,7 +489,10 @@
         "MISSING_KEYWORD": "Please include the theme name you want to use.",
         "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**`",
         "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
-        "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name."
+        "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name.",
+        "NO_THEME_OWNED": "Sorry but it seems you dont own this item, you can visit the shop to buy it though.",
+        "ALREADY_THAT_THEME": "You theme is already set to that",
+        "NO_THEMES_OWNED":"Sorry but it seems you dont own any themes"
     },
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
