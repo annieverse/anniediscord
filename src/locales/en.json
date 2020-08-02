@@ -317,6 +317,11 @@
         "INVALID_DATE": "I'm not sure if that's correct date. :0",
         "DURATION": "Okay, now please type the mute duration."
     },
+    "UNMUTE": {
+        "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
+        "SUCCESSFUL": "Successfully unmuted **{{user}}**",
+        "NO_MUTE_ROLE": "I'm Sorry but no mute role could be found."
+    },
     "PANDA": {
         "RESPONSES": [
             ":panda:",
