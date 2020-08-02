@@ -2,6 +2,12 @@
 
 ___
 
+## **08/02/20 | 6.2.0 ->**
+
+* Bug: setTheme command has been fixed and now can be used by any privilege levels.
+* Mute command now checks for manually-configured mute role in the guild.
+* Added new unmute command.
+
 ## **08/01/20 | 6.1.6 ->**
 
 * Bug: Weeb/Anime Leaderboard has been fixed.
