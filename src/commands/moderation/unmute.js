@@ -16,7 +16,7 @@ class UnMute extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, name, addRole, removeRole, emoji }) {
+    async execute({ reply, removeRole }) {
 		await this.requestUserMetadata(1)
 
 		//  Handle if user doesn't specify the target user to be muted
