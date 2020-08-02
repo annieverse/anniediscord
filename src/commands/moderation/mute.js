@@ -47,6 +47,7 @@ class Mute extends Command {
 				if (!time) return reply(this.locale.MUTE.INVALID_DATE, {color: `red`})
 				//  Lookup into available mute role in the guild
 				let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
+				if (this.bot.mute_role) muteRole = this.message.guild.roles.find(r => (r.id == this.bot.mute_role))
 				//  If mute role hasn't been made yet, create one.
 				if (!muteRole) {
 					try {
