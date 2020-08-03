@@ -2,6 +2,10 @@
 
 ___
 
+## **08/03/20 | 6.2.1 ->**
+
+* Bug: Wrong color variable on level card has been fixed.
+
 ## **08/02/20 | 6.2.0 ->**
 
 * Bug: setTheme command has been fixed and now can be used by any privilege levels.
