@@ -131,7 +131,7 @@ class config {
                 }
                 newRank = {
                     "LEVEL": element.LEVEL,
-                    "COLOR": role.color,
+                    "COLOR": role.hexColor,
                     "NAME": role.name
                 }
                 finalConfig.ranks.push(newRank)
