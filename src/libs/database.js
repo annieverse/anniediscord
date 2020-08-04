@@ -263,30 +263,35 @@ class Database {
 
 	/**
 	 * Set a new bio for the guild
-	 * @param {String} guild guild id
-	 * @param {String} bio 
+	 * @param {string} [guildId=``] Target guild id
+	 * @param {string} [bio=``] The new bio to be set 
 	 */
-	setGuildBio(guild, bio){
-		return this._query(`UPDATE guilds SET bio = ? WHERE guild_id = ?`
-		, `run`
-		, [bio, guild])
+	setGuildBio(guildId=``, bio=``){
+		const fn = `[Database.setGuildBio()]`
+		return this._query(`
+			UPDATE guilds 
+			SET bio = ?, updated_at = CURRENT_TIMESTAMP 
+			WHERE guild_id = ?`
+			, `run`
+			, [bio, guildId]
+			, `${fn} updating new bio for GUILD_ID ${guildId}`
+		)
 	}
 
 	/**
-	 * Add the guild to the list of guilds
-	 * @param {String} guild_id guild's id
-	 * @param {String} name Name of guild
-	 * @param {String} bio A little bout the guild
+	 * Registering guild to the list of guilds 
+	 * @param {object} [guild={}] to be registered from.
 	 * @returns {QueryResult}
 	 */
-	addGuild(guild, bio){
-		return this._query(`INSERT OR IGNORE INTO guilds (updated_at, guild_id, name, bio) VALUES (
-			CURRENT_TIMESTAMP,
-			?,
-			?,
-			?)`
+	registerGuild(guild={}) {
+		const fn = `[Database.registerGuild()]`
+		return this._query(`
+			INSERT OR IGNORE INTO guilds (updated_at, guild_id, name) 
+			VALUES (CURRENT_TIMESTAMP, ?, ?)`
 			, `run`
-			, [guild.id, guild.name, bio])
+			, [guild.id, guild.name]
+			, `${fn} performing check on ${guild.id}@${guild.name}`
+		)
 	}
 
 	/**
