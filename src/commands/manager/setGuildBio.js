@@ -1,6 +1,6 @@
 const Command = require(`../../libs/commands`)
 /**
- * Update existiing bio to a custom bio for your server
+ * Update existing guild bio to a custom bio of your choice.
  * @author Pan
  */
 class setGuildBio extends Command {
@@ -18,14 +18,17 @@ class setGuildBio extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, bot:{db} }) {
-        let oldBio = await this.db.getExistingGuildBio(this.message.guild.id)
-        !oldBio.bio ? oldBio = `no bio previously` : oldBio = oldBio.bio
+        let guild = await this.db.getExistingGuildBio(this.message.guild.id)
         let newBio = this.fullArgs
-        if (newBio.length > 300) return reply(`I'm sorry but that bio is too long please keep it under 300 characters`)
-        reply(`Are you sure you want to change your guild bio from "{{oldBio}}" \nTo: "{{newBio}}"\n Please respond with yes or no`,{
-            socket:{"oldBio": oldBio, "newBio": newBio}
-        })
 
+        //  Handle if guild hasn't registered yet
+        if (!guild) return reply(this.locale.SETGUILDBIO.GUILD_UNREGISTERED, {socket: {prefix: this.bot.prefix}})
+        //  Handle if user doesn't input any parameter
+        if (!this.fullArgs) return reply(this.locale.SETGUILDBIO.MISSING_ARG, {socket: {prefix: this.bot.prefix}})
+        //  Handle new bio with over 300 characters
+        if (newBio.length > 300) return reply(this.locale.SETGUILDBIO.EXCEEDING_LIMIT, {color: `red`})
+
+        reply(this.locale.SETGUILDBIO.CONFIRMATION, {color: `golden`, socket: {newBio: newBio}})
         this.setSequence(1, 300000)
 		this.sequence.on(`collect`, async msg => {
 			const input = msg.content.toLowerCase()
@@ -45,22 +48,15 @@ class setGuildBio extends Command {
              * ---------------------
              */
             if (this.onSequence == 1) {
-                if ([`y`,`yes`].includes(input)){
-                    this.endSequence()
-                    db.setGuildBio(this.message.guild.id, newBio)
-                    return reply(`Okay your guild bio has been updated.`)
-                } else {
+                if (!input.startsWith(`y`)) {
                     this.endSequence()
                     return reply(this.locale.ACTION_CANCELLED)
                 }
+                this.endSequence()
+                db.setGuildBio(this.message.guild.id, newBio)
+                return reply(this.locale.SETGUILDBIO.SUCCESSFUL, {color: `lightgreen`})
             }
-
-
         })
-    }
-
-    async existingBio(){
-        return await this.db.getExistingGuildBio(this.message.guild.id)
     }
 }
 
@@ -68,8 +64,8 @@ module.exports.help = {
     start: setGuildBio,
     name: `setGuildBio`,
     aliases: [`setguildbio`],
-    description: `Update existiing bio to a custom bio for your server.`,
-    usage: `setBio <bio>`,
+    description: `Update existing guild bio to a custom bio of your choice.`,
+    usage: `setguildbio <bio>`,
     group: `Manager`,
     permissionLevel: 3,
     multiUser: false

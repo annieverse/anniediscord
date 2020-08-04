@@ -457,6 +457,13 @@
         "EXCEEDING_LIMIT": "Great bio! but can you reduce it to maximum at **156 characters?** I've trouble fitting this into my small pocket ...",
         "SUCCESSFUL": "Yay! your new profile's bio has been set!"
     },
+    "SETGUILDBIO": {
+        "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
+        "MISSING_ARG": "If you wish to set a new bio for your guild, please type the new bio next to the command! `{{prefix}}setguildbio <newbio>`",
+        "GUILD_UNREGISTERED": "Due to system failure, this guild hasn't been registered yet. Please contact my developer to help registering your guild.",
+        "CONFIRMATION": "Are you sure you want to set bio for this guild to:\n`{{newBio}}`?\n\n Type `y` to confirm the action.",
+        "SUCCESSFUL": "The bio for this guild has been successfully updated!"
+    },
     "SETSOCIALMEDIA": {
         "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
         "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
