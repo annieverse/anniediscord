@@ -530,7 +530,7 @@ class Pistachio {
 		pages = pages++
         for (let i = 0; i < pages; i++) {
 			if (columns[i]){
-				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.golden)
+				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.crimson)
 				if (text){
 					embed.setDescription(text)
 				}

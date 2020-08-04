@@ -117,6 +117,19 @@
         "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
         "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed."
     },
+    "CONFIGURATIONS": {
+        "HEADER": "**Hi, {{user}}!** {{emoji}}\n\n This is your control center of managing my configurations for this guild.\nBelow are the available modules:\n",
+        "FOOTER_GUIDE": "Type **{{prefix}}config <ModuleName>** to start configuring the selected module.",
+        "INVALID_MODULE": "Sorry, I couldn't find any module with that name.",
+        "GUIDE_FOR_SETRANKS": "Please use **{{prefix}}setranks** to modify this module.",
+        "GUIDE_FOR_SETBOOSTERCOLORS": "Please use **{{this.prefix}}setboostercolors** to modify this module.",
+        "GUIDE_FOR_WELCOMETEXT": "**Now please type the new welcomer message!**",
+        "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Use {{guild}} to display the guild name and {{user}} to display the joined user. To reset setting, type reset.",
+        "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",
+        "SUCCESSFUL": "The **{{module}}** module for this guild has been successfully updated!",
+        "REJECTED": "Sorry, but the selected value was rejected.",
+        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet."
+    },
     "CRAFT": {
         "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
         "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",

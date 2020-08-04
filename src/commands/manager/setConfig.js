@@ -1,9 +1,9 @@
 const Command = require(`../../libs/commands`)
 /**
- * Manage custom configs per sever
+ * Manage custom configs for the current guild
  * @author Pan
  */
-class Config extends Command {
+class SetConfig extends Command {
 
     /**
      * @param {external:CommandComponents} Stacks refer to Commands Controller.
@@ -21,20 +21,39 @@ class Config extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({reply, bot:{db}}) {
+    async execute({reply, name, emoji, bot:{db}}) {
+        await this.requestUserMetadata(1)
         this.customizableOptions
         this.options = Object.keys(this.customizable).join(`\n`).split(`\n`)
         let res = []
         for (let index = 0; index < this.options.length; index++) {
             const element = this.options[index]
-            res.push({"name": `Hover for Details`,"value": `[${element}](${this.link} "[${index}] current value: ${JSON.stringify(this.bot[element])}\nOptions to change to are: ${JSON.stringify(this.valueOptions[element])}")`})
+            res.push({name: element,"value": `[${element}](${this.link} "[${index}] current value: ${JSON.stringify(this.bot[element])}\nOptions to change to are: ${JSON.stringify(this.valueOptions[element])}")`})
         }
 
-        reply(`To update a value type the name of the varible or the number in the "[]"`,{
-            columns: res
-        })
-        
-        this.setSequence(4, 300000)
+        //  Handle if user doesn't include any parameter
+        if (!this.fullArgs) {
+            await reply(this.locale.CONFIGURATIONS.HEADER, {color: `crimson`, socket: {user: name(this.user.id), emoji: emoji(`AnnieWave`)}, columns: res})
+            return reply(this.locale.CONFIGURATIONS.FOOTER_GUIDE, {color: `crimson`, socket: {prefix: this.bot.prefix}})
+        }
+ 
+        let testIfNum = /^\d+$/.test(this.fullArgs)
+        testIfNum ? this.module = this.options[parseInt(this.fullArgs)] : this.module = this.findElement(this.options, this.fullArgs)
+
+        //  Handle if the selected module doesn't exists.
+        if (!this.module) return reply(this.locale.CONFIGURATIONS.INVALID_MODULE, {color: `red`})   
+        //  Return if user attempting to manage booster color
+        if (this.module === `booster_colors`) return reply(this.locale.CONFIGURATIONS.GUIDE_FOR_SETBOOSTERCOLORS, {color: `red`, socket:{prefix: this.prefix}})
+        //  Return if user attempting to manage rank configurations
+        if (this.module === `set_ranks`) return reply(this.locale.CONFIGURATIONS.GUIDE_FOR_SETRANKS, {color: `red`, socket:{prefix: this.prefix}})
+        //  Display diff prompt if user attempting to manage welcomer text configurations.
+        if (this.module === `welcome_text`) {
+            reply(this.locale.CONFIGURATIONS.GUIDE_FOR_WELCOMETEXT, {color: `golden`, footer: this.locale.CONFIGURATIONS.GUIDE_FOR_WELCOMETEXT_FOOTER})
+        }
+        else {
+            reply(this.locale.CONFIGURATIONS.CONFIRMATION, {color: `golden`, socket:{module: this.module}})
+        }
+        this.setSequence(3, 300000)
 		this.sequence.on(`collect`, async msg => {
             const input = msg.content.toLowerCase()
 			/**
@@ -49,62 +68,30 @@ class Config extends Command {
             
             /**
              * ---------------------
-             * 2.) Check value against accepted values and confirm
+             * Check value against accepted values and confirm.
              * ---------------------
              */
-            if (this.onSequence == 2){
-                let getOption = this.getAcceptedOption(this.varible, msg)
-                if (getOption == `rejected`){
-                    reply(`Sorry but the selected value was rejected`)
+            if (this.onSequence == 1){
+                let getOption = this.getAcceptedOption(this.module, msg)
+                if (getOption === `rejected`){
+                    reply(this.locale.CONFIGURATIONS.REJECTED, {color: `red`})
                     return this.endSequence()
                 }
-                if (getOption == `none to remove`){
-                    reply(`Sorry but the selected value was rejected due to not existing yet`)
+                if (getOption === `none to remove`){
+                    reply(this.locale.CONFIGURATIONS.NONE_TO_REMOVE, {color: `red`})
                     return this.endSequence()
                 }
-                
                 let metadata = {
-                    config_code: this.varible,
+                    config_code: this.module,
                     guild: this.message.guild,
                     customized_parameter: getOption,
                     set_by_user_id: this.message.author.id,
                 }
-                // test to see if guild is in guild table and if not add it
+                // Test to see if guild is in guild table and if not add it
                 db.setCustomConfig(metadata)
-                reply(`The value for ${this.varible} has been updated to ${getOption}`)
+                reply (this.locale.CONFIGURATIONS.SUCCESSFUL, {color: `lightgreen`, socket:{module: this.module} })
                 return this.endSequence()
             }
-
-			/**
-             * ---------------------
-             * 1.) Inputting varible name/index, and get selected varible
-             * ---------------------
-             */
-            if (this.onSequence == 1) {
-                let testIfNum = /^\d+$/.test(input)
-                testIfNum ? this.varible = this.options[parseInt(input)] : this.varible = this.findElement(this.options, input)
-                if (!this.varible) {
-                    this.endSequence()
-                    return reply(`Value inputed didn't match any avaible options.`)
-                }
-                
-                this.nextSequence()
-                let welcomeText = this.varible == `welcome_text`
-                let setRanks = this.varible == `set_ranks`
-                let boosterColors = this.varible == `booster_colors`
-                if (boosterColors){
-                    this.endSequence()
-                    return reply(`Please use ${this.prefix}setboostercolors to modify this seting`)
-                }
-                if (welcomeText) reply(`Please supply what you would like the value to change [${this.varible}](${this.link} "Use {{guild}} to display guild name and {{user}} to display the user's tag") to. To reset setting type reset.`)
-                if (setRanks) {
-                    this.endSequence()
-                    return reply(`Please use ${this.prefix}setranks to modify this setting`)
-                }
-                reply(`Please supply what you would like the value to change ${this.varible} to. To reset setting type reset.`)
-            }
-
-
         })
         
     }
@@ -285,11 +272,11 @@ class Config extends Command {
 }
 
 module.exports.help = {
-    start: Config,
-    name: `config`,
-    aliases: [],
-    description: `Manage your settings for your server for the bot`,
-    usage: `config <setting>`,
+    start: SetConfig,
+    name: `setConfig`,
+    aliases: [`setconfig`, `setconf`, `config`],
+    description: `Manage custom configurations for the current guild`,
+    usage: `setconfig <ModuleCode>`,
     group: `Manager`,
     permissionLevel: 3,
     multiUser: false
