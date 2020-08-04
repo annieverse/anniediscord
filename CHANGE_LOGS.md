@@ -2,6 +2,13 @@
 
 ___
 
+## **08/04/20 | 6.2.2 ->**
+
+* refactor(setConfig): now uses short-handed syntax.
+* refactor(database): changed naming .addGuild() to .registerGuild(). Also updated its function documentation.
+* refactor(setGuildBio): improved flow.
+* Bug: Guild register function has been fixed.
+
 ## **08/03/20 | 6.2.1 ->**
 
 * Bug: Wrong color variable on level card has been fixed.
