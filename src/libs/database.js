@@ -280,11 +280,11 @@ class Database {
 	 * @returns {QueryResult}
 	 */
 	addGuild(guild, bio){
-		return this._query(`insert or replace into guilds (updated_at, guild_id, name, bio) values (
+		return this._query(`INSERT OR IGNORE INTO guilds (updated_at, guild_id, name, bio) VALUES (
 			CURRENT_TIMESTAMP,
 			?,
 			?,
-			?,)`
+			?)`
 			, `run`
 			, [guild.id, guild.name, bio])
 	}
@@ -638,7 +638,37 @@ class Database {
 	}
 
 	/**
+	 * Trading System Plugin
+	 */
+	/**
+	 * sets the block status to true for a trade user
+	 * @param {string} user_id 
+	 * @param {string} reason 
+	 *//*
+	blockUser(user_id, reason = `The Moderator didn't supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.`){
+		this._query(`
+			UPDATE modmail_blocked_users 
+			SET blocked = 1 AND reason = ?
+			WHERE user_id = ?`
+			, `run`
+			, [user_id, reason]
+			, `blocking user table: modmail_blocked_users`
+			)
+	}*/
+	/**
+	 * End of Trading System Plugin 
+	 */
+
+	/**
 	 * MODMAIL Plugin
+	 */
+	/**
+	 * Records message to corresponding thread id
+	 * @param {string} user_id 
+	 * @param {string} mod_id 
+	 * @param {string} guild_id 
+	 * @param {string} thread_id 
+	 * @param {string} text 
 	 */
     writeToThread(user_id, mod_id, guild_id, thread_id, text){
         this._query(`
@@ -648,7 +678,10 @@ class Database {
 			, [user_id, mod_id, guild_id, thread_id, text]
 			)
 	}
-
+	/**
+	 * Retrieves all blocked users
+	 * @returns {QueryResult}
+	 */
 	getBlockedUsers(){
 		return this._query(`
 				SELECT user_id
@@ -660,6 +693,10 @@ class Database {
 			)
 	}
 
+	/**
+	 * retireves the reason a user was blocked from continuing a thread
+	 * @param {string} user_id 
+	 */
 	getBlockedUserReason(user_id){
 		return this._query(`
 				SELECT reason
@@ -671,6 +708,10 @@ class Database {
 			)
 	}
 
+	/**
+	 * retrieves all users on blocked list
+	 * @returns {QueryResult}
+	 */
 	getBlockedUsersList(){
 		return this._query(`
 			SELECT user_id
@@ -681,6 +722,10 @@ class Database {
 		)
 	}
 
+	/**
+	 * creates a record for the user in blocked users
+	 * @param {string} user_id 
+	 */
 	registerUserInBlockList(user_id){
 		this._query(`
 			INSERT INTO modmail_blocked_users (registered_at, user_id, blocked)
@@ -690,6 +735,11 @@ class Database {
 			)
 	}
 
+	/**
+	 * sets the block status to true for a user
+	 * @param {string} user_id 
+	 * @param {string} reason 
+	 */
 	blockUser(user_id, reason = `The Moderator didn't supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.`){
 		this._query(`
 			UPDATE modmail_blocked_users 
@@ -701,6 +751,10 @@ class Database {
 			)
 	}
 
+	/**
+	 * sets the block status to false for a user
+	 * @param {string} user_id 
+	 */
 	unblockUser(user_id){
 		this._query(`
 			UPDATE modmail_blocked_users 
@@ -711,6 +765,10 @@ class Database {
 			)
 	}
 
+	/**
+	 * checks if a user is currently blocked for modmail thread
+	 * @param {string} id 
+	 */
 	isblockedUser(id){
 		this._query(`
 				SELECT *
@@ -723,6 +781,12 @@ class Database {
 			)
 	}
 
+	/**
+	 * searches for an already open thread to continue.
+	 * @param {string} id 
+	 * @param {boolean} dm 
+	 * @returns {QueryResult}
+	 */
 	async alreadyOpenThread(id, dm = true){
 		let search
 		if (dm) {
@@ -752,6 +816,11 @@ class Database {
 		return search
 	}
 
+	/**
+	 * Update modmail thread channel for a thread
+	 * @param {string} id 
+	 * @param {string} threadId 
+	 */
 	updateChannel(id, threadId){
 		this._query(`
 				UPDATE modmail_threads
@@ -762,6 +831,11 @@ class Database {
 			)
 	}
 
+	/**
+	 * retrieve all logs associated with a user
+	 * @param {string} userId 
+	 * @returns {QueryResult}
+	 */
 	getlogsForUser(userId){
 		return this._query(`
 			SELECT *
@@ -775,6 +849,10 @@ class Database {
 		)
 	}
 
+	/**
+	 * Closes a thread based on the thread id
+	 * @param {string} thread_id 
+	 */
 	closeThread(thread_id){
 		this._query(`
 		UPDATE modmail_threads SET status = 'closed'
@@ -784,6 +862,14 @@ class Database {
 		)
 	}
 
+	/**
+	 * Makes a new modmail thread if it doesent exist
+	 * @param {string} user_id 
+	 * @param {string} guild_id 
+	 * @param {string} thread_id 
+	 * @param {string} status 
+	 * @param {boolean} is_anonymous 
+	 */
 	makeNewThread(user_id, guild_id, thread_id, status, is_anonymous){
 		try {
 			this._query(`
@@ -797,6 +883,9 @@ class Database {
 			this.makeNewThread(user_id, guild_id, thread_id, status, is_anonymous)
 		}
 		
+		/**
+		 * @returns {string} random string
+		 */
 		function makeRandomId(){
 			var result = ``
 			var characters = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`
@@ -808,6 +897,10 @@ class Database {
 		}
 	}
 
+	/**
+	 * deletes a thread based on thread id
+	 * @param {string} id 
+	 */
 	deleteLog(id) {
 		this._query(`
 			DELETE FROM modmail_thread_messages
@@ -825,6 +918,11 @@ class Database {
 		)
 	}
 
+	/**
+	 * retrieves thread based on thread id
+	 * @param {string} id 
+	 * @returns {QueryResult}
+	 */
 	getLogByThreadId(id){
 		return this._query(`
 			SELECT *
@@ -836,6 +934,11 @@ class Database {
 		)
 	}
 	
+	/**
+	 * Retrieves all information on a thread by id
+	 * @param {string} id 
+	 * @returns {QueryResult}
+	 */
 	getThreadTicket(id){
 		return this._query(`
 			SELECT *
@@ -2224,6 +2327,49 @@ class Database {
 	 * @returns {boolean}
 	 */
 	async verifyingTables() {
+		/**
+		 * --------------------------
+		 * Trade System Plugin
+		 * --------------------------
+		 */
+		await this._query(`CREATE TABLE IF NOT EXISTS trading_trades (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'trade_id' REAL UNIQUE NOT NULL,
+			'status' TEXT NOT NULL,
+			'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`
+            , `run`
+			, []
+			, `Verifying table trading_trades`)
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS trading_transaction (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_one_id' TEXT NOT NULL,
+			'user_two_id' TEXT NOT NULL,
+			'guild_id' TEXT NOT NULL,
+			'trade_id' TEXT NOT NULL,
+			'user_one_item' TEXT NOT NULL,
+			'user_two_item' TEXT NOT NULL)`
+            , `run`
+			, []
+			, `Verifying table trading_transaction`)
+
+			
+		await this._query(`CREATE TABLE IF NOT EXISTS trading_blocked_users (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT NOT NULL UNIQUE,
+			'blocked' INTEGER DEFAULT 0,
+			'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`
+            , `run`
+			, []
+			, `Verifying table trading_blocked_users`)
+		
+		/**
+		 * --------------------------
+		 * End of Trade System Plugin
+		 * --------------------------
+		 */
 		
 		/**
 		 * --------------------------
@@ -2264,9 +2410,9 @@ class Database {
 			, `Verifying table modmail_blocked_users`)
 			
 		/**
-		 * 
+		 * --------------------------
 		 * END OF MODMAIL PLUGIN
-		 * 
+		 * --------------------------
 		 */
 
 		/**
