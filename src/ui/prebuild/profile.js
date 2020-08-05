@@ -1,4 +1,5 @@
 const Cards = require(`../components/cards`)
+const Color = require(`color`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
 const formatK = require(`../../utils/formatK`)
@@ -21,6 +22,7 @@ class UI {
 		let startPos_x = 10
 		let startPos_y = 10
 		let baseWidth = this.width - 20
+		const adjustedPrimaryColorContrast = this.user.usedTheme.alias === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
 
 		let card = new Cards({
 			width: this.width,
@@ -33,7 +35,7 @@ class UI {
 		if (this.user.usedSticker) card.canv.addImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`), startPos_x, startPos_y + 194, baseWidth, 206)
 
 		//  Cover
-		card.canv.setColor(this.user.rank.color)
+		card.canv.setColor(adjustedPrimaryColorContrast)
 			.addRect(startPos_x, startPos_y, baseWidth, 194)
 			.addImage(await loadAsset(this.user.usedCover.alias), startPos_x, startPos_y, baseWidth, 194)
 
@@ -67,7 +69,7 @@ class UI {
 			.addText(this.user.user.username, startPos_x + 70, 272)
 
 		//  User's Title
-		card.canv.setColor(this.user.rank.color)
+		card.canv.setColor(adjustedPrimaryColorContrast)
 			.setTextFont(`7pt roboto`)
 			.addText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
@@ -77,7 +79,7 @@ class UI {
 
 		// Rank Bar
 		card.canv.save()
-			.setColor(this.user.rank.color)
+			.setColor(adjustedPrimaryColorContrast)
 			.createBeveledClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.addRect(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setColor(card._resolveColor(`white`))
@@ -111,7 +113,7 @@ class UI {
 
 		//  Footer Components [Heart, Level, Fame/Reputation Points]
 		card.canv.setTextAlign(`center`)
-			.setColor(this.user.rank.color)
+			.setColor(adjustedPrimaryColorContrast)
 			.setTextFont(`17pt roboto`)
 			.addText(formatK(this.user.inventory.artcoins), 70, 370)
 			.addText(this.user.exp.level, 160, 370)
