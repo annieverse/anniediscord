@@ -2,6 +2,17 @@
 
 ___
 
+## **08/05/20 | 6.2.5 ->**
+
+* Bug: Unbalanced color contrast on user's profile card has been fixed and adjusted.
+* Bug: Unresizable/static image on Cards.addCover() library has been fixed.
+* Bug: Missing emojis on title and footer part of Leaderboard command has been fixed.
+* refactor(leaderboard): added local-ranking identifier.
+* refactor(invite): display notification when dm invite is successfully sent.
+* Trimmed-out unused "EN" strings.
+
+* refactor(ready): display help cmd on presence status.
+
 ## **08/05/20 | 6.2.4 ->**
 
 * Bug: Routine.resourceUsageLogging() has been updated and now fully-functional.
