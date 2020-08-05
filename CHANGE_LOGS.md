@@ -2,6 +2,11 @@
 
 ___
 
+## **08/05/20 | 6.2.4 ->**
+
+* Bug: Routine.resourceUsageLogging() has been updated and now fully-functional.
+* refactor(ready): display help cmd on presence status.
+
 ## **08/05/20 | 6.2.3 ->**
 
 * Bug: updates user's rank on level up has been fixed.
