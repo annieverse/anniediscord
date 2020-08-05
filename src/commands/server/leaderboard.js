@@ -17,12 +17,11 @@ class Leaderboard extends Command {
 		 * @type {array}
 		 */
 		this.keywords = [
-			[`exp`, `xp`, `lvl`, `level`],
-			[`artcoins`, `ac`, `artcoin`, `balance`],
-			[`fame`, `rep`,  `reputation`, `reputations`, `reps`],
-			[`artists`, `arts`, `artist`, `art`, `artwork`],
-			/*[`anime`, `weeb`, `otaku`, `weebs`, `mal`],*/
-			[`halloween`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
+			[`exp`, `exp`, `xp`, `lvl`, `level`],
+			[`artcoins`, `artcoins`, `ac`, `artcoin`, `balance`],
+			[`fame`, `fames`, `rep`,  `reputation`, `reputations`, `reps`],
+			[`artists`, `hearts`, `arts`, `artist`, `art`, `artwork`],
+			[`halloween`, `candies`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
 		]
     }
 
@@ -38,7 +37,9 @@ class Leaderboard extends Command {
 		//  Returns if parameter is invalid.
 		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
 		//  Store key of selected group
-		const selectedGroup = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0][0]
+		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
+		const selectedGroup = selectedGroupParent[0]
+		const selectedGroupIdentifier = selectedGroupParent[1]
 		return reply(this.locale.COMMAND.FETCHING, {
 			socket: {
 				command: `${selectedGroup} leaderboard`,
@@ -56,7 +57,7 @@ class Leaderboard extends Command {
 			}
 			const img = await new GUI(this.user, lbData, name, avatar).build()
 			load.delete()
-			await reply(`${emoji(selectedGroup)} **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**`, {
+			await reply(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**`, {
 				prebuffer: true,
 				image: img.toBuffer(),
 				simplified: true
@@ -68,7 +69,7 @@ class Leaderboard extends Command {
 				socket: {
 					rank: lbData.indexOf(author) + 1,
 					points: commanifier(author.points) == 0 ? commanifier(author.points + 1): commanifier(author.points),
-					emoji: emoji(selectedGroup),
+					emoji: selectedGroupIdentifier,
 				}
 			})
 		})
