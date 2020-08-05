@@ -290,6 +290,7 @@
         "OTHER_USER_EMPTY": "{0} don't have any items in their bag.",
         "INVALID_USER": "Sorry i couldn't find that user."
     },
+    "INVITE_LINK_SENT": "{{emoji}}  **I've sent the invite link to your DM!**",
     "LEADERBOARD": {
         "GUIDE": "Hi, checkout our global leaderboard below!\n\n**>leaderboard exp**\nfor global EXP & Level user ranking\n\n**>leaderboard ac**\nlist of rich users across the discord continent!\n\n**>leaderboard fame**\nCheckout who's the most popular user.\n\n**>leaderboard art**\nMost popular artists in discord.\n\n**>leaderboard weeb**\nLet's see who's the strongest weeb king/queen based on their total of completed animes. ;)",
         "INVALID_CATEGORY": "Sorry i can't find anything from that category",

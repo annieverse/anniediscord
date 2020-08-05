@@ -18,14 +18,14 @@ class Invite extends Command {
      */
 	async execute({ reply, emoji, bot:{user, supportServer} }) {
 		try {
-			//attempt to send to dm
+			// Attempt to send to dm
 			await reply(this.locale.GENERATE_BOT_INVITE, {
 				socket: {botInviteLink: `[Let's add me to your server!](https://discordapp.com/api/oauth2/authorize?client_id=${user.id}&permissions=8&scope=bot)`},
 				color: `crimson`,
 				field: this.message.author
 			})
 	
-			return reply(this.locale.GENERATE_SERVER_INVITE, {
+			await reply(this.locale.GENERATE_SERVER_INVITE, {
 				simplified: true,
 				socket: {
 					serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
@@ -33,6 +33,7 @@ class Invite extends Command {
 				},
 				field: this.message.author
 			})
+			return reply(this.locale.INVITE_LINK_SENT, {color: `lightgreen`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
 			await reply(this.locale.GENERATE_BOT_INVITE, {
