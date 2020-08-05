@@ -2,6 +2,10 @@
 
 ___
 
+## **08/05/20 | 6.2.3 ->**
+
+* Bug: updates user's rank on level up has been fixed.
+
 ## **08/04/20 | 6.2.2 ->**
 
 * refactor(setConfig): now uses short-handed syntax.
