@@ -125,6 +125,7 @@ class Experience extends Points {
     	//  Regular reward
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
+		await this.updateRank(this.newExp.level)
 		return this.reply(this.locale.LEVELUP.REGULAR, {
 			color: `crimson`,
 			socket: {
