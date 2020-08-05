@@ -284,11 +284,10 @@ class Routines {
     */
 
     /**
-     *  Automatically record resource usage data every 5 min.
-     *  @resourceUsageLogging
+     * Automatically record resource usage data every 5 min.
+     * @returns {void}
      */
     resourceUsageLogging() {
-
         /**
          * The Variable "x" is in terms of minutes
          * for example:
@@ -307,20 +306,17 @@ class Routines {
 				 * 	Note: the available data to be stored currently only covered the necessary ones.
 				 * 	More new different kind of data will be recorded in the future.
 				 */
-				let params = [this.env.dev ? `development` : `production`, this.client.uptime, this.client.ping, getCpuUsage(), getMemUsage()]
-            
+				let params = [this.client.uptime, this.client.ping, getCpuUsage(), getMemUsage()]
 				this.db._query(`
-					INSERT INTO resource_usage(timestamp, environment, uptime, ping, cpu, memory)
-					VALUES(datetime('now'), ?, ?, ?, ?, ?)`
+					INSERT INTO resource_log(uptime, ping, cpu, memory)
+					VALUES(?, ?, ?, ?)`
 					, `run`
 					, params
 				)
-	
 				this.logger.info(`Resource usage has been recorded.`)
             }, null)
         }, 60000*x)
     }
-
 
     async removeFeaturedDailyPostLoop() {
         let fdp = new dailyFeatured(this.client)

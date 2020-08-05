@@ -30,8 +30,7 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		//	Recording resource usage every 5 mins
-		// Missing parm Client.ping
-		//Routine.resourceUsageLogging()
+		Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
 		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes
