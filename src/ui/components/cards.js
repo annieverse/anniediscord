@@ -131,17 +131,23 @@ class Card {
 	}
 
 
-	addCover({img=``, gradient=false}) {
+	addCover({img=``, gradient=false }) {
 		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/1.5))
 		const themeInRgb = Color(this.color.main).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
+		const imgSize = sizeOf(img)
+		const dynamicHeight = () => {
+			if (imgSize.width < this.width) return imgSize.height+(this.width - imgSize.width)
+			if (imgSize.width > this.width) return imgSize.height-(imgSize.width - this.width)
+			return this.width/1.5
+		}
 
 		grad.addColorStop(1, this.color.main)
 		grad.addColorStop(0, semiTransparent)
 
 		this.canv
 		.setGlobalAlpha(0.2)
-		.addImage(img, 0, 0)
+		.addImage(img, 0, 0, this.width, dynamicHeight())
 		.setGlobalAlpha(1)
 
 		if (gradient) {
