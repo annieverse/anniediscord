@@ -57,7 +57,7 @@ class Leaderboard extends Command {
 			}
 			const img = await new GUI(this.user, lbData, name, avatar).build()
 			load.delete()
-			await reply(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**`, {
+			await reply(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${this.message.guild.name}'s Ranking`, {
 				prebuffer: true,
 				image: img.toBuffer(),
 				simplified: true
