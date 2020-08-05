@@ -2,7 +2,7 @@ const Routines = require(`../libs/routines`)
 module.exports = annie => {
 
 
-	const { dev, logger } = annie
+	const { dev, logger, prefix } = annie
 	const Routine = new Routines(annie)
 
 
@@ -24,6 +24,7 @@ module.exports = annie => {
 		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
+		annie.user.setActivity(`${prefix}help`, {type: `WATCHING`})
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
