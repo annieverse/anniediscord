@@ -40,7 +40,6 @@ class SwitchTheme extends Command {
         if (lightThemeStrings.includes(this.fullArgs)) {
             if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME)
             let hasTheme = await this.userHasTheme(...arguments, `light`)
-            console.log(hasTheme)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED)
             db.setTheme(`light`, this.user.id, this.message.guild.id)
             return reply(this.locale.SWITCH_THEME.SET_LIGHTMODE, {color: `lightgreen`})
@@ -64,7 +63,6 @@ class SwitchTheme extends Command {
      */
     async userHasTheme({bot:{db}}, theme){
         let res = await db.checkIfThemeOwned(theme, this.user.id, this.message.guild.id)
-        console.log(res)
         return Object.values(res)[0] == 1 ? true : false
     }
 }
