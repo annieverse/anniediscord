@@ -19,7 +19,6 @@ class Strike extends Command {
      */
     async execute({ reply, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
-		console.log(this.commandName)
 		//  Display tutorial if no input was given
 		if (!this.fullArgs) return reply(this.locale.STRIKE.GUIDE)
 		//  Returns if target is not a valid member.
