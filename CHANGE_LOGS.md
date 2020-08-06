@@ -2,6 +2,12 @@
 
 ___
 
+## **08/06/20 | 6.2.6 ->**
+
+* Bug: module failure on setConfig command has been fixed.
+* docs(user_experience): new template.
+* refactor(strike): added new alias.
+
 ## **08/05/20 | 6.2.5 ->**
 
 * Bug: Unbalanced color contrast on user's profile card has been fixed and adjusted.
