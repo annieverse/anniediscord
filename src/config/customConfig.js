@@ -216,7 +216,7 @@ class config {
             "mute_role": `role id, name, or @ like @admin`,
             "event_participant": `role id, name, or @ like @admin`,
             "vip_artcoin_package": `number`,
-            "booster_color_messages": `channel id followed by a - (to remove) or + (to add) followed by role id, or @ like @admin would look like 7239682694966435453 + 723968269496615014`,
+            "booster_color_messages": `channel id followed by a - (to remove) or + (to add) followed by message id would look like 7239682694966435453 + 723968269496615014`,
             "booster_colors": `object like {"EMOJI_NAME": "name", "EMOJI_ID": "id", "ROLE": "role id, or @ like @admin"}`,
             /**
              *  -----------------------------------------------------------

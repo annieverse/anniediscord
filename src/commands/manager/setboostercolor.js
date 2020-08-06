@@ -3,7 +3,7 @@ const Command = require(`../../libs/commands`)
  * Edit and customize your profile decorations such as covers, stickers, badges, etc.
  * @author Pan
  */
-class setRanks extends Command {
+class setBoosterColor extends Command {
 
     /**
      * @param {external:CommandComponents} Stacks refer to Commands Controller.
@@ -575,8 +575,8 @@ class setRanks extends Command {
 
 
 module.exports.help = {
-    start: setRanks,
-    name: `setranks`, 
+    start: setBoosterColor,
+    name: `setboostercolor`, 
     aliases: [], 
     description: `Edit and customize ranks used on your server`,
     usage: `setranks`,

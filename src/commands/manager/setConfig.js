@@ -72,7 +72,7 @@ class SetConfig extends Command {
              * ---------------------
              */
             if (this.onSequence == 1){
-                let getOption = this.getAcceptedOption(this.module, msg)
+                let getOption = await this.getAcceptedOption(this.module, msg)
                 if (getOption === `rejected`){
                     reply(this.locale.CONFIGURATIONS.REJECTED, {color: `red`})
                     return this.endSequence()
@@ -96,7 +96,7 @@ class SetConfig extends Command {
         
     }
 
-    getAcceptedOption(varible, msg){
+    async getAcceptedOption(varible, msg){
         let option = this.valueOptions[varible]
         let testValue = msg.content
         let resetVarible = this.customizable
@@ -153,7 +153,7 @@ class SetConfig extends Command {
             return test
         }else if (option == `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`){
             return `rejected`
-        } else if (option == `channel id followed by a - (to remove) or + (to add) followed by role id, or @ like @admin would look like 7239682694966435453 + 723968269496615014`){
+        } else if (option == `channel id followed by a - (to remove) or + (to add) followed by message id would look like 7239682694966435453 + 723968269496615014`){
             let options = testValue.split(` `)
             let channel = this.getChannel(msg, options[0])
             if (channel == `rejected`) return channel 
@@ -166,7 +166,7 @@ class SetConfig extends Command {
             existingMessages = this.removeItemAll(existingMessages, ``)
             if (options[1] == `-`){
                 if (existingMessages.length == 0) return `none to remove`
-                channel.fetchMessage(options[2]).then(message => {
+                await channel.fetchMessage(options[2]).then(message => {
                     messageId = message.id
                 }).catch(messageId = null)
                 if (!messageId) return `rejected`
@@ -175,7 +175,7 @@ class SetConfig extends Command {
                 return array
                 
             } else if (options[1] == `+`){
-                channel.fetchMessage(options[2]).then(message => {
+                await channel.fetchMessage(options[2]).then(message => {
                     messageId = message.id
                 }).catch(messageId = null)
                 if (!messageId) return `rejected`
@@ -235,7 +235,7 @@ class SetConfig extends Command {
             }
             if (channel) return channel
              try {
-                channel = msg.guild.channels.get(msg.content).id
+                channel = msg.guild.channels.get(testValue).id
             } catch (error) {
                 channel = null
             }

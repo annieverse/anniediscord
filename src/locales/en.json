@@ -122,7 +122,7 @@
         "FOOTER_GUIDE": "Type **{{prefix}}config <ModuleName>** to start configuring the selected module.",
         "INVALID_MODULE": "Sorry, I couldn't find any module with that name.",
         "GUIDE_FOR_SETRANKS": "Please use **{{prefix}}setranks** to modify this module.",
-        "GUIDE_FOR_SETBOOSTERCOLORS": "Please use **{{this.prefix}}setboostercolors** to modify this module.",
+        "GUIDE_FOR_SETBOOSTERCOLORS": "Please use **{{prefix}}setboostercolors** to modify this module.",
         "GUIDE_FOR_WELCOMETEXT": "**Now please type the new welcomer message!**",
         "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Use {{guild}} to display the guild name and {{user}} to display the joined user. To reset setting, type reset.",
         "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",

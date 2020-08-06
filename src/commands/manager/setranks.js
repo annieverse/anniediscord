@@ -371,7 +371,7 @@ class setRanks extends Command {
         let amount_of_ranks, role, level
         let newRanks = []
         reply(`How many rank options would you like. For example, 5 ranks, 10 ranks etc. 16 is the max.`)
-        this.setSequence(20)
+        this.setSequence(30)
         this.sequence.on(`collect`, async msg =>{
             let input = msg.content.toLowerCase()
             let parameters = input.split(` `)
