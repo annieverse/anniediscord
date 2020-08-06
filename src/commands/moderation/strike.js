@@ -19,7 +19,6 @@ class Strike extends Command {
      */
     async execute({ reply, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
-
 		//  Display tutorial if no input was given
 		if (!this.fullArgs) return reply(this.locale.STRIKE.GUIDE)
 		//  Returns if target is not a valid member.
@@ -65,7 +64,7 @@ class Strike extends Command {
 				})
 				reason += imageLinks.join(`\n`)
 			}
-				
+			this.commandName == `complaint`? reason = `**complaint:** ${reason}` : reason = `**STRIKE:** ${reason}` 
 			// Register new strike entry
 			await db.registerStrike({ 
 				user_id: this.user.id,
@@ -97,7 +96,7 @@ class Strike extends Command {
 module.exports.help = {
 	start: Strike,
 	name: `strike`,
-	aliases: [`strike`,`strikes`, `strikez`],
+	aliases: [`strike`,`strikes`, `strikez`,`complaint`],
 	description: `Gives user a strike point.`,
 	usage: `strike <User>`,
 	group: `Moderation`,
