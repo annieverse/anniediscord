@@ -3,6 +3,7 @@ const palette = require(`../ui/colors/default.json`)
 const Long = require(`long`)
 const Pistachio = require(`../libs/pistachio`)
 const GUI = require(`../ui/prebuild/welcomer`)
+const moment = require(`moment`)
 /**
  *  Handling log records
  *  @LogsSystem
@@ -315,16 +316,13 @@ class LogsSystem {
     }
 
     async guildCreate() {
-        const { bot: { logger }, bot, guild } = this.data
-        logger.info(`New guild joined ${guild.id}`)
-        this.Pistachio.reply(`**New Guild Joined: **{{id}} - {{name}}`, {
-            socket: {"id":guild.id, "name":guild.name},
-            timestamp: true,
-            color: palette.green,
-            field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`,
-            author: bot.user,
-            header: bot.user.username
+        const { bot: { logger, locale, prefix, supportServer }, bot, guild } = this.data
+        const guildCode = `**${guild.id}@${guild.name}**`
+
+        logger.info(`New guild joined ${guildCode}`)
+        this.Pistachio.reply(`I've been invited to **${guildCode}** guild! ${this.Pistachio.emoji(`AnnieHype`)}`, {
+            color: `lightgreen`,
+            field: this.SupportServerLogChannel
         })
 
         // Post a message in the server joined
@@ -345,61 +343,41 @@ class LogsSystem {
             return channel
         }
 
-        let hasSystemChannelID = guild.systemChannelID != null 
-        if (hasSystemChannelID) return this.Pistachio.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
+        const afterInvitationMessage = (targetChannel={}) => {
+             return this.Pistachio.reply(locale[`en`].LOGS.GUILDCREATE.AFTER_INVITATION, {
+                image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
+                prebuffer: true,
+                field: targetChannel,
+                color: `crimson`,
+                socket: {
+                    wiki: `https://github.com/klerikdust/anniediscord/wiki`,
+                    prefix: prefix,
+                    emoji: this.Pistachio.emoji(`AnnieSmile`),
+                    supportServer: supportServer
+                }
+            })
+        }
+
+        let systemChannel = guild.systemChannelID ? guild.channels.get(guild.systemChannelID) : null
+        if (systemChannel) return afterInvitationMessage(systemChannel)
 
         let hasGeneral = getDefaultChannel(guild, `general`)
-        if (hasGeneral) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
-            field: hasGeneral,
-            author: bot.user,
-            header: bot.user.username,
-            simplified: true,
-			prebuffer: true,
-            image: await new GUI(bot.user, bot).build()
-        })
+        if (hasGeneral) return afterInvitationMessage(hasGeneral)
 
         let hasBotChannel = getDefaultChannel(guild, `bot`)
-        if (hasBotChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
-            field: hasBotChannel,
-            author: bot.user,
-            header: bot.user.username,
-            simplified: true,
-			prebuffer: true,
-            image: await new GUI(bot.user, bot).build()
-        })
+        if (hasBotChannel) return afterInvitationMessage(hasBotChannel)
 
         let hasLogChannel = getDefaultChannel(guild, `logs`)
-        if (hasLogChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
-            field: hasLogChannel,
-            author: bot.user,
-            header: bot.user.username,
-            simplified: true,
-			prebuffer: true,
-            image: await new GUI(bot.user, bot).build()
-        })
+        if (hasLogChannel) return afterInvitationMessage(hasLogChannel)
 
         let hasChatableChannel = getChannel(guild)
-        if (hasChatableChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
-            field: hasChatableChannel,
-            author: bot.user,
-            header: bot.user.username,
-            simplified: true,
-			prebuffer: true,
-            image: await new GUI(bot.user, bot).build()
-        })
+        if (hasChatableChannel) return afterInvitationMessage(hasChatableChannel)
 
         try {
             let owner = guild.owner
-            return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
-                field: owner,
-                author: bot.user,
-                header: bot.user.username,
-                simplified: true,
-                prebuffer: true,
-                image: await new GUI(bot.user, bot).build()
-            })
+            return afterInvitationMessage(owner)
         } catch (e) {
-            return logger.info(`There was no way To Send a Message to the server`)
+            return logger.info(`Fail to send AFTER_INVITATION message to GUILD_ID ${guild_id}`)
         }
     }
 
