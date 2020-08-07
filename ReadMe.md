@@ -6,25 +6,27 @@
 
 ![annie](https://cdn.discordapp.com/avatars/501461775821176832/578de3a27b252ad2bf1e73bf1dd27210.png?size=256)
 
-Supporting the core function of the biggest art community in discord,
-**Anime Artist United.**
+## Overview
 
-[![Discord](https://img.shields.io/discord/459891664182312980.svg?color=%237bb6ed&label=&logo=Discord&logoColor=%23f2f2f2&style=flat-square)](https://discord.gg/Tjsck8F)
+A quality-experience Discord Bot that aimed for artists! or anyone that wanted to try out as well! You can have a customized profile, level card, collecting card, gacha, and many more!
 
-[Join the community!](https://discord.gg/Tjsck8F)
+### Why you should choose annie?
+* **Carefully Designed.** 
+Built with aesthetics and minimalistic-style in mind.
+* **Personalized.**
+Majority of her features are modular enough for you to customize with.
+* **To stay-connected.**
+Our goal is to connect artists & art-appreciators around the discord community, regardless of the server they are in.
+* **Quality over quantity experience**
+  She may have very little amount of commands for you to play with. But we are ensuring you will get the best experience while using it.
 
-Dedicated-Artist Discord Bot to fulfill your artistic needs.
-We connect every artist around the discord community.
-We got tons of upcoming features ahead!
+Annie's main goal is to enrich your guild experience as great as possible.
+If you are interested, have a visit to our [Support Server](https://discord.gg/7nDes9P) and try it for yourself!
 
-## Why artist should choose Annie
+## Useful Links
 
-- Annie biggest feature is involving around arts.
-- Most-innovative features out there.
-- Quality over quantity experience.
-- Portfolio and Social Card.
-- Minimalist.
+* [Invite Annie to your server](https://discord.com/oauth2/authorize?client_id=501461775821176832&permissions=268823638&scope=bot)
+* [Website](https://anniediscord.github.io/)
+* [Documentations](https://github.com/klerikdust/anniediscord/wiki)
+* [Commands List](https://github.com/klerikdust/anniediscord/wiki/Commands)
 
-## **Development**
-
-Feel free to checkout the development progress in our [Discord Server!](https://discord.gg/7nDes9P)
