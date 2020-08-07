@@ -2,6 +2,12 @@
 
 ___
 
+## **08/07/20 | 6.2.8 ->**
+
+* docs(ReadMe.md): updates.
+* fix(setBoosterColor): wrong lettercase and description.
+* fix(setRanks): wrong lettercase and description.
+
 ## **08/07/20 | 6.2.7 ->**
 
 * Bug: static clientID in invite command has been fixed.
