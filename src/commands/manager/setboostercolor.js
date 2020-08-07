@@ -1,9 +1,9 @@
 const Command = require(`../../libs/commands`)
 /**
- * Edit and customize your profile decorations such as covers, stickers, badges, etc.
+ * Edit and customize booster roles in your guild.
  * @author Pan
  */
-class setBoosterColor extends Command {
+class SetBoosterColor extends Command {
 
     /**
      * @param {external:CommandComponents} Stacks refer to Commands Controller.
@@ -575,11 +575,11 @@ class setBoosterColor extends Command {
 
 
 module.exports.help = {
-    start: setBoosterColor,
-    name: `setboostercolor`, 
+    start: SetBoosterColor,
+    name: `setBoosterColor`, 
     aliases: [], 
-    description: `Edit and customize ranks used on your server`,
-    usage: `setranks`,
+    description: `Edit and customize booster roles in your guild`,
+    usage: `setboostercolor`,
     group: `Manager`,
     permissionLevel: 3,
     multiUser: false
