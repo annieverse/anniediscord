@@ -150,7 +150,7 @@ class config {
     }
 
     get getNotCustomizable(){
-        return [`modmail_guildId`, `guild_id`]
+        return [`modmail_guildId`, `guild_id`,`guildCreate`,`guildDelete`,`guildUnavailable`]
     }
 
     get getCustomizableConfigValueOptions(){
