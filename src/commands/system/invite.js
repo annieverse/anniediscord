@@ -20,7 +20,7 @@ class Invite extends Command {
 		try {
 			// Attempt to send to dm
 			await reply(this.locale.GENERATE_BOT_INVITE, {
-				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=501461775821176832&permissions=268823638&scope=bot)`},
+				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=268823638&scope=bot)`},
 				color: `crimson`,
 				field: this.message.author
 			})
@@ -37,7 +37,7 @@ class Invite extends Command {
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
 			await reply(this.locale.GENERATE_BOT_INVITE, {
-				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=501461775821176832&permissions=268823638&scope=bot)`},
+				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=268823638&scope=bot)`},
 				color: `crimson`
 			})
 
