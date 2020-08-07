@@ -2,6 +2,7 @@
 const palette = require(`../ui/colors/default.json`)
 const Long = require(`long`)
 const Pistachio = require(`../libs/pistachio`)
+const GUI = require(`../ui/prebuild/welcomer`)
 /**
  *  Handling log records
  *  @LogsSystem
@@ -10,7 +11,7 @@ class LogsSystem {
 
     constructor(data) {
         this.data = data
-        this.SupportServerLogChannel = data.bot.channels.get(`724732289572929728`)
+        this.SupportServerLogChannel = data.bot.guilds.get(`577121315480272908`).channels.get(`724732289572929728`)
         this.Pistachio = this.makePistachio(this.data.bot)
     }
 
@@ -313,7 +314,7 @@ class LogsSystem {
         })
     }
 
-    guildCreate() {
+    async guildCreate() {
         const { bot: { logger }, bot, guild } = this.data
         logger.info(`New guild joined ${guild.id}`)
         this.Pistachio.reply(`**New Guild Joined: **{{id}} - {{name}}`, {
@@ -348,35 +349,55 @@ class LogsSystem {
         if (hasSystemChannelID) return this.Pistachio.reply(`Hello`, { field: bot.channels.get(guild.systemChannelID) })
 
         let hasGeneral = getDefaultChannel(guild, `general`)
-        if (hasGeneral) return this.Pistachio.reply(`Hello`, {
+        if (hasGeneral) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
             field: hasGeneral,
             author: bot.user,
-            header: bot.user.username })
+            header: bot.user.username,
+            simplified: true,
+			prebuffer: true,
+            image: await new GUI(bot.user, bot).build()
+        })
 
         let hasBotChannel = getDefaultChannel(guild, `bot`)
-        if (hasBotChannel) return this.Pistachio.reply(`Hello`, {
+        if (hasBotChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
             field: hasBotChannel,
             author: bot.user,
-            header: bot.user.username })
+            header: bot.user.username,
+            simplified: true,
+			prebuffer: true,
+            image: await new GUI(bot.user, bot).build()
+        })
 
         let hasLogChannel = getDefaultChannel(guild, `logs`)
-        if (hasLogChannel) return this.Pistachio.reply(`Hello`, {
+        if (hasLogChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
             field: hasLogChannel,
             author: bot.user,
-            header: bot.user.username })
+            header: bot.user.username,
+            simplified: true,
+			prebuffer: true,
+            image: await new GUI(bot.user, bot).build()
+        })
 
         let hasChatableChannel = getChannel(guild)
-        if (hasChatableChannel) return this.Pistachio.reply(`Hello`, {
+        if (hasChatableChannel) return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
             field: hasChatableChannel,
             author: bot.user,
-            header: bot.user.username })
+            header: bot.user.username,
+            simplified: true,
+			prebuffer: true,
+            image: await new GUI(bot.user, bot).build()
+        })
 
         try {
             let owner = guild.owner
-            return this.Pistachio.reply(`Hello`, {
+            return this.Pistachio.reply(`Hello, thank you for inviting me to your server, **${guild.name}**`, {
                 field: owner,
                 author: bot.user,
-                header: bot.user.username })
+                header: bot.user.username,
+                simplified: true,
+                prebuffer: true,
+                image: await new GUI(bot.user, bot).build()
+            })
         } catch (e) {
             return logger.info(`There was no way To Send a Message to the server`)
         }
@@ -506,10 +527,13 @@ class LogsSystem {
     record() {
         const { typeOfLog, bot } = this.data
         if (!typeOfLog) return
-        if (!this.data.bot.log_channel) return
+        if (typeOfLog == `guildCreate`) return this.guildCreate()
+        if (typeOfLog == `guildDelete`) return this.guildDelete()
+        if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
+        if (!this.data.bot.log_channel) return 
         this.logChannel = bot.guilds.get(bot.guild_id).channels.get(this.data.bot.log_channel)
-        if (!this.logChannel) return
-        if (!bot.WANT_CUSTOM_LOGS) return
+        if (!this.logChannel) return 
+        if (!bot.WANT_CUSTOM_LOGS) return 
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()
         if (typeOfLog == `channelCreate`) return this.channelCreate()
         if (typeOfLog == `channelDelete`) return this.channelDelete()
@@ -524,13 +548,10 @@ class LogsSystem {
         if (typeOfLog == `roleDelete`) return this.roleDelete()
         if (typeOfLog == `guildBanAdd`) return this.guildBanAdd()
         if (typeOfLog == `guildBanRemove`) return this.guildBanRemove()
-        if (typeOfLog == `guildCreate`) return this.guildCreate()
-        if (typeOfLog == `guildDelete`) return this.guildDelete()
         if (typeOfLog == `guildMemberAdd`) return this.guildMemberAdd()
         if (typeOfLog == `guildMemberRemove`) return this.guildMemberRemove()
         if (typeOfLog == `guildMembersChunk`) return this.guildMembersChunk()
         if (typeOfLog == `guildMemberUpdate`) return this.guildMemberUpdate()
-        if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
         if (typeOfLog == `guildUpdate`) return this.guildUpdate()
     }
 
