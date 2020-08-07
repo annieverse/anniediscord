@@ -2,6 +2,12 @@
 
 ___
 
+## **08/07/20 | 6.2.7 ->**
+
+* Bug: static clientID in invite command has been fixed.
+* Bug: unable to send log messages in a newly added guild has been fixed.
+* refactor(logs): added quick guide content in AFTER_INVITATION message.
+
 ## **08/06/20 | 6.2.6 ->**
 
 * Bug: module failure on setConfig command has been fixed.
