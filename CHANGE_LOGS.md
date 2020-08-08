@@ -2,6 +2,10 @@
 
 ___
 
+## **08/08/20 | 6.2.10 ->**
+
+* fix(database): aggregate user relationships data.
+
 ## **08/08/20 | 6.2.9 ->**
 
 * fix(setprofiledescription): unreachable command.
