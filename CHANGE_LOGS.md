@@ -2,6 +2,10 @@
 
 ___
 
+## **08/08/20 | 6.2.9 ->**
+
+* fix(setprofiledescription): unreachable command.
+
 ## **08/07/20 | 6.2.8 ->**
 
 * docs(ReadMe.md): updates.
