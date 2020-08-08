@@ -11,13 +11,13 @@
 A quality-experience Discord Bot that aimed for artists! or anyone that wanted to try out as well! You can have a customized profile, level card, collecting card, gacha, and many more!
 
 ### Why you should choose annie?
-* **Carefully Designed.** 
+* **Carefully Designed.**  
 Built with aesthetics and minimalistic-style in mind.
-* **Personalized.**
+* **Personalized.**  
 Majority of her features are modular enough for you to customize with.
-* **To stay-connected.**
+* **To stay-connected.**  
 Our goal is to connect artists & art-appreciators around the discord community, regardless of the server they are in.
-* **Quality over quantity experience**
+* **Quality over quantity experience.**  
   She may have very little amount of commands for you to play with. But we are ensuring you will get the best experience while using it.
 
 Annie's main goal is to enrich your guild experience as great as possible.
