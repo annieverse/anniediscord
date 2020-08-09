@@ -281,8 +281,8 @@
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
     },
     "HUG": {
-        "THEMSELVES": "**{{user}}** hugging a thin air. :<",
-        "OTHER_USER": "**{{user}}** hugging **{{targetUser}}** <3"
+        "THEMSELVES": "**{{user}}** is hugging a thin air. :<",
+        "OTHER_USER": "**{{user}}** is hugging **{{targetUser}}** <3"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
@@ -351,8 +351,8 @@
         ]
     },
     "PAT": {
-        "THEMSELVES": "**{0}** is patting themselves. :< ",
-        "OTHER_USER": "**{0}** is patting **{1}**, how adorable!"
+        "THEMSELVES": "**{{user}}** is patting themselves. :< ",
+        "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
         "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",

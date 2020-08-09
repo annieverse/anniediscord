@@ -23,14 +23,14 @@ class Pat extends Command {
 
         //  Lonely pat
         if (!this.fullArgs) return reply(this.locale.PAT.THEMSELVES, {
-            socket: [this.user],
+            socket: {user: name(this.user.id)},
             image: body.link,
             prebuffer: true,
         })
 
         //  Patting other user
         return reply(this.locale.PAT.OTHER_USER, {
-            socket: [this.user, this.fullArgs],
+            socket: {user: name(this.user.id), targetUser: this.fullArgs},
             image: body.link,
             prebuffer: true,
         })
