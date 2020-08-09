@@ -1,4 +1,5 @@
 const Routines = require(`../libs/routines`)
+const commanifier = require(`../utils/commanifier`)
 module.exports = annie => {
 
 
@@ -24,7 +25,7 @@ module.exports = annie => {
 		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
-		annie.user.setActivity(`${prefix}help`, {type: `WATCHING`})
+		annie.user.setActivity(`${commanifier(annie.users.size)} users | ${prefix}help`, {type: `WATCHING`})
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
