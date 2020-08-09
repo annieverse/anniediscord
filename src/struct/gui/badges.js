@@ -1,6 +1,6 @@
 const { Canvas } = require(`canvas-constructor`) 
 const { resolve, join } = require(`path`)
-const { get } = require(`snekfetch`)
+const { get } = require(`node-fetch`)
 const imageUrlRegex = /\?size=2048$/g
 const Theme = require(`../../ui/colors/themes`)
 
@@ -46,7 +46,7 @@ async function badge(stacks, member) {
 
 	const {
 		body: avatar
-	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+	} = await get(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
 	const badgesdata = data.badges
 
 	delete badgesdata.userId

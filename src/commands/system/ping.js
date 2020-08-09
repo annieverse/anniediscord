@@ -15,7 +15,7 @@ class Ping extends Command {
 	async execute({ reply, commanifier }) {
 		await this.requestUserMetadata(2)
 		return reply(this.locale.REQUEST_PING, {
-			socket: {ping: commanifier(Math.round(this.bot.ping))}
+			socket: {ping: commanifier(Math.round(this.bot.ws.ping))}
 		})
 	}
 }

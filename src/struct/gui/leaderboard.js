@@ -150,7 +150,7 @@ const render = async (stacks, metadata) => {
 		get nickname_formatter() {
 			let name
 			try {
-				name = bot.users.get(user.group[this.index].id).username
+				name = bot.users.cache.get(user.group[this.index].id).username
 			} catch (err) {
 				name = `User Left`
 			}
@@ -308,7 +308,7 @@ const render = async (stacks, metadata) => {
 		get nickname_formatter() {
 			let name
 			try {
-				name = bot.users.get(user.group[this.index].id).username
+				name = bot.users.cache.get(user.group[this.index].id).username
 			} catch (err) {
 				name = `User Left`
 			}

@@ -1,6 +1,6 @@
 const { Canvas } = require(`canvas-constructor`) 
 const { resolve, join } = require(`path`)
-const { get } = require(`snekfetch`)
+const { get } = require(`node-fetch`)
 const moment = require(`moment`)
 const probe = require(`probe-image-size`)
 const Theme = require(`../../ui/colors/themes`)

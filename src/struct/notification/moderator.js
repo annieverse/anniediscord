@@ -56,7 +56,7 @@ class ModNotification {
      *  @modRole
      */
     get modRole() {
-        return this.message.guild.roles.get(this.modRoleId)
+        return this.message.guild.roles.cache.get(this.modRoleId)
     }
 
 

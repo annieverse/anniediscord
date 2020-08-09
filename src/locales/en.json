@@ -207,10 +207,10 @@
     },
     "FLIPCOIN": {
         "RESPONSES": [
-            "Landed on **{0}!** Yay!",
-            "The coin has landed on **{0}.**",
-            "Whoa! **{0}!**",
-            "As i expected! landed on **{0}!**"
+            "Landed on **{{result}}!** Yay!",
+            "The coin has landed on **{{result}}.**",
+            "Whoa! **{{result}}!**",
+            "As I expected! landed on **{{result}}!**"
         ]
     },
     "FOX": {
@@ -280,8 +280,8 @@
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
     },
     "HUG": {
-        "THEMSELVES": "**{0}** hugging a thin air. :<",
-        "OTHER_USER": "**{0}** hugging **{1}** <3"
+        "THEMSELVES": "**{{user}}** hugging a thin air. :<",
+        "OTHER_USER": "**{{user}}** hugging **{{otherUser}}** <3"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
@@ -334,12 +334,14 @@
         "MISSING_ARG": "You are authorized to use the **Mute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully muted **{{user}}** for **{{duration}}**! {{emoji}}",
         "INVALID_DATE": "I'm not sure if that's correct date. :0",
-        "DURATION": "Okay, now please type the mute duration."
+        "DURATION": "Okay, now please type the mute duration.",
+        "USER_HAS_ROLE": "I'm sorry, {{user}}, is already muted currently."
     },
     "UNMUTE": {
         "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully unmuted **{{user}}**",
-        "NO_MUTE_ROLE": "I'm Sorry but no mute role could be found."
+        "NO_MUTE_ROLE": "I'm sorry but no mute role could be found.",
+        "USER_DOESNT_HAVE_ROLE": "I'm sorry, {{user}}, is not muted currently."
     },
     "PANDA": {
         "RESPONSES": [
@@ -350,8 +352,8 @@
         ]
     },
     "PAT": {
-        "THEMSELVES": "**{0}** is patting themselves. :< ",
-        "OTHER_USER": "**{0}** is patting **{1}**, how adorable!"
+        "THEMSELVES": "**{{user}}** is patting themselves. :< ",
+        "OTHER_USER": "**{{user}}** is patting **{{otherUser}}**, how adorable!"
     },
     "PAY": {
         "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",
@@ -463,7 +465,7 @@
         }
     },
     "ROLLDICE": {
-        "MISSING_ARGS": "Please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>"
+        "MISSING_ARGS": "Please use this command like: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
         "SHORT_GUIDE": "Please include the follow-up message **{0}**!"

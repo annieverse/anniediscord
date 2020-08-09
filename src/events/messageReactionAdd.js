@@ -10,7 +10,7 @@ module.exports = async(Components) => {
 
     await Components.annie.updateConfig(Components.reaction.message.guild.id)
     
-    Components.reactor = await Components.annie.fetchUser(Components.user.id)
+    Components.reactor = await Components.annie.users.fetch(Components.user.id)
     
     new heartReactionHandler(Components).add()
 

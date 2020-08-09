@@ -477,7 +477,7 @@ class SetBoosterColor extends Command {
         }
         if (role) return role
         try {
-            role = msg.guild.roles.get(roleTest).id
+            role = msg.guild.roles.cache.get(roleTest).id
         } catch (error) {
             role = null
         }
@@ -576,7 +576,7 @@ class SetBoosterColor extends Command {
 
 module.exports.help = {
     start: SetBoosterColor,
-    name: `setBoosterColor`, 
+    name: `setboostercolor`, 
     aliases: [], 
     description: `Edit and customize booster roles in your guild`,
     usage: `setboostercolor`,

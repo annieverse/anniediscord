@@ -90,11 +90,11 @@ class Experience extends Points {
 			let role = this.bot.guilds.get(this.message.guild.id).roles.find(r => r.name == element.NAME)
 			lowerRankRoles.push(role.id)
 		})
-		await this.bot.guilds.get(this.message.guild.id).members.get(this.message.author.id).removeRoles(lowerRankRoles)
+		await this.bot.guilds.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = this.bot.ranks.find(r => r.LEVEL == level).NAME
 		let role = this.bot.guilds.get(this.message.guild.id).roles.find(r => r.name == roleFromList)
-		this.bot.guilds.get(this.message.guild.id).members.get(this.message.author.id).addRole(role)
+		this.bot.guilds.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.add(role)
 	}
 
     /**

@@ -1,9 +1,9 @@
-const { RichEmbed, Attachment, MessageCollector } = require(`discord.js`)
+const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
 const logger = require(`./logger`)
 const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
-const { get } = require(`snekfetch`)
+const { get } = require(`node-fetch`)
 /**
  *  @class Pistachio
  *  @version 0.4.0
@@ -151,11 +151,11 @@ class Pistachio {
 			const role = this.findRole(targetRole)
 			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
 			logger.debug(`${fn} assigned ${role.name} to USER_ID ${userId}`)
-			return this.message.guild.members.get(userId).addRole(role)
+			return this.message.guild.members.cache.get(userId).roles.add(role)
 		}
 
 		logger.debug(`${fn} assigned ${targetRole.name} to USER_ID ${userId}`)
-		return this.message.guild.members.get(userId).addRole(targetRole)
+		return this.message.guild.members.cache.get(userId).roles.add(targetRole)
 	}
 
 	/**
@@ -173,11 +173,11 @@ class Pistachio {
 			const role = this.findRole(targetRole)
 			if (!role.id) return logger.error(`${fn} cannot find role with keyword(${targetRole})`)
 			logger.debug(`${fn} removed ${role.name} from USER_ID ${userId}`)
-			return this.message.guild.members.get(userId).removeRole(role)
+			return this.message.guild.members.cache.get(userId).roles.remove(role)
 		}
 
 		logger.debug(`${fn} removed ${targetRole.name} from USER_ID ${userId}`)
-		return this.message.guild.members.get(userId).removeRole(targetRole)
+		return this.message.guild.members.cache.get(userId).roles.remove(targetRole)
 	}
 
     /**
@@ -239,7 +239,7 @@ class Pistachio {
 	 *  @returns {String}
 	 */
 	name(userId=``) {
-		const user = this.bot.users.get(userId) 
+		const user = this.bot.users.cache.get(userId) 
 		return user ? user.username : userId
 	}
 
@@ -249,7 +249,7 @@ class Pistachio {
 	 *  @returns {Emoji|String}
 	 */
 	emoji(name=``) {
-		return this.bot.emojis.find(e => e.name === name) || `(???)`
+		return this.bot.emojis.cache.find(e => e.name === name) || `(???)`
 	}
 
 	/**
@@ -368,7 +368,7 @@ class Pistachio {
 	*/
 	avatar(id, compress = false, size = `?size=512`) {
 		try {
-			let url = this.bot.users.get(id).displayAvatarURL
+			let url = this.bot.users.cache.get(id).displayAvatarURL()
 			if (compress) {
 				return get(url.replace(/\?size=2048$/g, size))
 					.then(data => data.body)
@@ -499,7 +499,7 @@ class Pistachio {
 	displayAvatar(userId=``) {
 		this.message.react(`📸`)
 		const [avatar, name] = [this.avatar(userId), this.name(userId)]
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 		.setImage(avatar)
 		.setAuthor(name, avatar)
 		.setColor(this.palette.darkmatte)
@@ -514,7 +514,7 @@ class Pistachio {
     _registerPages(pages=[]) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new RichEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.golden)
+            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.golden)
         }
         return res
 	}
@@ -530,7 +530,7 @@ class Pistachio {
 		pages = pages++
         for (let i = 0; i < pages; i++) {
 			if (columns[i]){
-				let embed = new RichEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.crimson)
+				let embed = new MessageEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.crimson)
 				if (text){
 					embed.setDescription(text)
 				}
@@ -618,7 +618,8 @@ class Pistachio {
                     if (embeddedPages[page]) {
                         msg.edit(embeddedPages[page])
                     } else {
-                        page++
+						page = embeddedPages.length-1
+						msg.edit(embeddedPages[page])
                     }
                 })
                 //	Right navigation
@@ -628,7 +629,8 @@ class Pistachio {
                     if (embeddedPages[page]) {
                         msg.edit(embeddedPages[page])
                     } else {
-                        page--
+						page = 0
+						msg.edit(embeddedPages[page])
                     }
                 })
             })
@@ -653,10 +655,10 @@ class Pistachio {
 		}
 	
 		//  Returns simple message w/o embed
-		if (options.simplified) return options.field.send(content, options.image ? new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
+		if (options.simplified) return options.field.send(content, options.image ? new MessageAttachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
 		//  Add notch/chin
 		if (options.notch) content = `\u200C\n${content}\n\u200C`
-		const embed = new RichEmbed()
+		const embed = new MessageEmbed()
 			.setColor(this.palette[options.color] || options.color)
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
@@ -677,7 +679,7 @@ class Pistachio {
 		}
 		//  Add image preview
 		if (options.image) {
-			embed.attachFile(new Attachment(options.prebuffer ? options.image : await this.loadAsset(options.image), `preview.jpg`))
+			embed.attachFiles(new MessageAttachment(options.prebuffer ? options.image : await this.loadAsset(options.image), `preview.jpg`))
 			embed.setImage(`attachment://preview.jpg`)
 		} else if (embed.file) {
 			embed.image.url = null
@@ -704,22 +706,24 @@ class Pistachio {
 					const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
 					//	Left navigation
 					backwards.on(`collect`, r => {
-						r.remove(this.message.author.id)
+						r.users.remove(this.message.author.id)
 						page--
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page])
 						} else {
-							page++
+							page = embeddedPages.length-1
+							msg.edit(embeddedPages[page])
 						}
 					})
 					//	Right navigation
 					forwards.on(`collect`, r => {
-						r.remove(this.message.author.id)
+						r.users.remove(this.message.author.id)
 						page++
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page])
 						} else {
-							page--
+							page = 0
+							msg.edit(embeddedPages[page])
 						}
 					})
 				})
@@ -736,7 +740,7 @@ class Pistachio {
 		return sent
 		.then(msg => {
 			//  Convert deleteIn parameter into milliseconds.
-			msg.delete(options.deleteIn * 1000)
+			msg.delete({timeout: options.deleteIn * 1000})
 		})
 	}
 }

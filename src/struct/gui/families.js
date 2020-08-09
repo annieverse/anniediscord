@@ -103,7 +103,7 @@ async function relation(stacks, member) {
     }
 
     for (var i=0;i<Math.min(familyrelations.length, 9); i++) {
-        var relUser = await stacks.bot.fetchUser(familyrelations[i].theirUserId)
+        var relUser = await stacks.bot.users.fetch(familyrelations[i].theirUserId)
         var userAvatar = await stacks.avatar(relUser.id, true)
         listEntry(relUser.username, userAvatar, familyrelations[i].theirRelation, 30, 70 + i*33)
     }

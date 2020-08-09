@@ -63,7 +63,7 @@ class UI {
 		}
 
 		//  Floating avatar
-        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL), 30, 340, 30, 30, 15)
+        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL()), 30, 340, 30, 30, 15)
 
         //  Title Bar
         this.card.canv.setColor(this.card.color.text)

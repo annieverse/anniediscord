@@ -102,7 +102,7 @@ async function friend(stacks, member) {
     }
 
     for (var i=0;i<Math.min(friendrelations.length, 9); i++) {
-        var relUser = await stacks.bot.fetchUser(friendrelations[i].theirUserId)
+        var relUser = await stacks.bot.users.fetch(friendrelations[i].theirUserId)
         var userAvatar = await stacks.avatar(relUser.id, true)
         listEntry(relUser.username, userAvatar, friendrelations[i].theirRelation, 30, 70 + i*33)
     }

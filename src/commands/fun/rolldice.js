@@ -26,7 +26,7 @@ class RollDice extends Command {
      */
     async execute({ reply }) {
 
-        if (!this.args[0] || !this.args[0].includes(`d`)) return reply(this.locale.ROLLDICE.MISSING_ARGS)
+        if (!this.args[0] || !this.args[0].includes(`d`)) return reply(this.locale.ROLLDICE.MISSING_ARGS,{socket:{"prefix":this.bot.prefix}})
         let diceOptions = this.fullArgs.split(`d`)
         let modiferPlus, modiferMinus
         if (diceOptions[1].includes(`+`)) {

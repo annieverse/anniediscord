@@ -24,7 +24,7 @@ class Ban extends Command {
 		//  Handle if target user doesn't exists
 		if (!this.user) return reply(this.locale.BAN.TARGET_DOESNT_EXISTS, {color: `red`})
 		//  Handle if target user permission is equal to admin privilege
-		if (this.user.hasPermission(`ADMINISTRATOR`)) return reply(this.locale.BAN.TARGET_HAS_ADMIN_PRIVILEGE, {color: `red`})
+		if (this.user.permissions.has(`ADMINISTRATOR`)) return reply(this.locale.BAN.TARGET_HAS_ADMIN_PRIVILEGE, {color: `red`})
 
 		await this.message.guild.member(this.user).ban()
 		return reply(this.locale.BAN.SUCCESSFUL, {socket: {user: name(this.user.id)}, color: `lightgreen`})

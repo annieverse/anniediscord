@@ -61,7 +61,7 @@ class closeThread extends Command {
             if (messageFromDm){
                 reply(`This thread has been closed.`)
             } else {
-                this.bot.guilds.get(search.guild_id).members.get(search.user_id).send(`This thread has been closed.`)
+                this.bot.guilds.get(search.guild_id).members.cache.get(search.user_id).send(`This thread has been closed.`)
             }
            
         }
@@ -82,7 +82,7 @@ class closeThread extends Command {
      * Send a message to the log channel indicating the thread closed and give the thread id
      */
     logEvent(threadTicket){
-        let threadUser = this.bot.guilds.get(threadTicket.guild_id).members.get(threadTicket.user_id) 
+        let threadUser = this.bot.guilds.get(threadTicket.guild_id).members.cache.get(threadTicket.user_id) 
         let member = {
             username: threadTicket.is_anonymous == 0 ? `${threadUser.user.username}#${threadUser.user.discriminator}` : `anonymous`,
             accountAge: threadUser.user.createdAt, 

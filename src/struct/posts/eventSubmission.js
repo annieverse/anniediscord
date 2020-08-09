@@ -47,7 +47,7 @@ class SubmissionManager extends Controller {
      *  @removeTicket
      */
     removeTicket() {
-        this.message.guild.member(this.message.author.id).removeRole(this.eventTicket)
+        this.message.guild.member(this.message.author.id).roles.remove(this.eventTicket)
     }
 
     

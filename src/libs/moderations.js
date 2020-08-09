@@ -7,7 +7,7 @@ class Moderations {
      */
     constructor(message={}, userId=``) {
         this.message = message
-        this.user = message.guild.members.get(userId)
+        this.user = message.guild.members.cache.get(userId)
         this.author = `[${message.guild.name}] ${message.author.tag} -`
     }
 
@@ -46,15 +46,15 @@ class Moderations {
          * If mute role already present, use it.
          */
         if (muteRole) {
-            this.user.addRole(muteRole.id)
+            this.user.roles.add(muteRole.id)
             return logger.info(`${this.user.id} has been muted`)
         }
 
         /**
          *  Else, create a new one.
          */
-        const newMuteRole = this.message.guild.createRole({ name: `muted` })
-        this.user.addRole(newMuteRole.id)
+        const newMuteRole = this.message.guild.roles.create({ name: `muted` })
+        this.user.roles.add(newMuteRole.id)
         return logger.info(`${this.user.id} has been muted`)
     }
 

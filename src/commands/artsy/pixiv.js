@@ -56,7 +56,7 @@ class Pixiv extends Command {
 
                     loadmsg.delete()
                     return reply(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
-                        customHeader: [`by ${data.user.name}`, bot.user.displayAvatarURL],
+                        customHeader: [`by ${data.user.name}`, bot.user.displayAvatarURL()],
                         image: img,
                         prebuffer: true
                     })

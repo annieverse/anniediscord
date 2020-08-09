@@ -42,7 +42,7 @@ class UI {
 		//  Avatar
 		card.canv.setColor(this.user.premium ? card._resolveColor(`yellow`) :  card._resolveColor(card.color.main))
 			.addCircle(startPos_x + 70, 200, 52) 
-			.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL), startPos_x + 20, 150, 100, 100, 50)
+			.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL()), startPos_x + 20, 150, 100, 100, 50)
 
 		//  Badges
 		const inventory = this.user.inventory.raw

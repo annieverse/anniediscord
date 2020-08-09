@@ -1,6 +1,6 @@
 const {
     get
-} = require(`snekfetch`)
+} = require(`node-fetch`)
 const {
     Canvas
 } = require(`canvas-constructor`)
@@ -29,7 +29,7 @@ class RichNotification {
     async render() {
         let canvas_x = 500
         let canvas_y = 60
-        const { body: avatar } = await get(this.components.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+        const { body: avatar } = await get(this.components.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
         const { body: post } = await get(this.components.postPreview)
 
         let canv = new Canvas(canvas_x, canvas_y) // x y

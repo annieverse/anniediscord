@@ -1,6 +1,6 @@
 const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
-const { get } = require(`snekfetch`)
+const { get } = require(`node-fetch`)
 const imageUrlRegex = /\?size=2048$/g
 const moment = require(`moment`)
 const Theme = require(`../../ui/colors/themes`)
@@ -48,8 +48,8 @@ async function stat(stacks, member) {
 
 	const {
 		body: avatar
-	} = await get(member.user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
-	const getLastOnline = () => bot.users.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : `No data retrieved.`
+	} = await get(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
+	const getLastOnline = () => bot.users.cache.get(member.id).presence.status != `offline` ? `Currently Active` : user.log ? moment(user.log).fromNow() : `No data retrieved.`
 
 
 

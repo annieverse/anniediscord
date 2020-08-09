@@ -33,7 +33,7 @@ class ShowLogs extends Command {
         
         const guild = this.bot.guilds.get(this.guildId)
         const guildMember = guild.members
-        let threadUser = this.bot.guilds.get(this.guildId).members.get(threadTicket.user_id) 
+        let threadUser = this.bot.guilds.get(this.guildId).members.cache.get(threadTicket.user_id) 
 
         // Descending by date
         userThreads.sort((a, b) => {

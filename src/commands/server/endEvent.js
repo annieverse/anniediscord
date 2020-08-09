@@ -29,7 +29,7 @@ class EndEvent extends Command {
 		if (participants.length < 1) return reply(this.locale.EVENT.END_NOPARTICIPANTLEFT, {socket: {user: name(this.user.id)} })
 		//  Removing tickets
 		for (let i = 0; i < participants.length; i++) {
-			await this.message.guild.members.get(participants[i]).removeRole(ticket)
+			await this.message.guild.members.cache.get(participants[i]).roles.remove(ticket)
 		}
 		//  Successful!
 		return reply(this.locale.EVENT.END, {socket: {participants: participants.length}, color: `lightgreen`})
@@ -42,7 +42,7 @@ module.exports.help = {
 	aliases: [`endevent`, `eventend`],
 	description: `Takes all expired event ticket from participants`,
 	usage: `eventend`,
-	group: `Moderation`,
+	group: `Server`,
 	permissionLevel: 2,
 	multiUser: false
 }

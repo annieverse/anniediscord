@@ -33,6 +33,7 @@
   ],
   "repository": "github:klerikdust/anniediscord",
   "dependencies": {
+    "@discordjs/opus": "^0.3.2",
     "async-redis": "^1.1.7",
     "axios": ">=0.19.2",
     "better-sqlite3": "^7.1.0",
@@ -44,13 +45,14 @@
     "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
     "cross-env": "^7.0.2",
-    "discord.js": "^11.5.1",
+    "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs-nextra": "^0.5.1",
     "glob": "^7.1.6",
     "humanize-duration": "^3.23.1",
     "jimp": "^0.16.0",
+    "long": "^4.0.0",
     "mocha": "^8.1.1",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
@@ -68,6 +70,6 @@
   },
   "devDependencies": {
     "eslint": "5.16.0",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.4"
   }
 }

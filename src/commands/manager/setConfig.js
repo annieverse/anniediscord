@@ -166,7 +166,7 @@ class SetConfig extends Command {
             existingMessages = this.removeItemAll(existingMessages, ``)
             if (options[1] == `-`){
                 if (existingMessages.length == 0) return `none to remove`
-                await channel.fetchMessage(options[2]).then(message => {
+                await channel.messages.fetch(options[2]).then(message => {
                     messageId = message.id
                 }).catch(messageId = null)
                 if (!messageId) return `rejected`
@@ -175,7 +175,7 @@ class SetConfig extends Command {
                 return array
                 
             } else if (options[1] == `+`){
-                await channel.fetchMessage(options[2]).then(message => {
+                await channel.messages.fetch(options[2]).then(message => {
                     messageId = message.id
                 }).catch(messageId = null)
                 if (!messageId) return `rejected`
@@ -213,7 +213,7 @@ class SetConfig extends Command {
         }
         if (role) return role
             try {
-            role = msg.guild.roles.get(testValue).id
+            role = msg.guild.roles.cache.get(testValue).id
         } catch (error) {
             role = null
         }

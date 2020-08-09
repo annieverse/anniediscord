@@ -34,7 +34,7 @@ class Help extends Command {
 					serverLink: supportServer
 				},
 				color: this.defaultColor,
-				thumbnail: this.bot.user.displayAvatarURL
+				thumbnail: this.bot.user.displayAvatarURL()
 			})
 			
 			.then(response => {
@@ -52,7 +52,7 @@ class Help extends Command {
 							serverLink: supportServer,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
-						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL],
+						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
 						color: this.defaultColor
 					})
 					reply(this.locale.HELP.COMMANDPEDIA.USAGE_EXAMPLES, {

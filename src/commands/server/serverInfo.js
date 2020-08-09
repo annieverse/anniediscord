@@ -46,7 +46,7 @@ class ServerInfo extends Command {
 
 		`, {
 			header: this.message.guild.name,
-			thumbnail: this.message.guild.iconURL
+			thumbnail: this.message.guild.iconURL()
 		})
 	}
 }

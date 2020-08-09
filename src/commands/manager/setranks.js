@@ -482,7 +482,7 @@ class SetRanks extends Command {
         }
         if (role) return role
         try {
-            role = msg.guild.roles.get(roleTest).id
+            role = msg.guild.roles.cache.get(roleTest).id
         } catch (error) {
             role = null
         }

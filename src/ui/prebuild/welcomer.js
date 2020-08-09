@@ -17,8 +17,8 @@ class UI {
 	}
 
 	async build() {
-		const user = this.bot.users.get(this.member.id)
-		const avatar = await urlToBuffer(user.displayAvatarURL)
+		const user = this.bot.users.cache.get(this.member.id)
+		const avatar = await urlToBuffer(user.displayAvatarURL())
 
 		let canvas_x = 800
 		let canvas_y = 250

@@ -25,13 +25,16 @@ class UnMute extends Command {
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
 		//  Lookup into available mute role in the guild
-		let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
-		if (this.bot.mute_role) muteRole = this.message.guild.roles.find(r => (r.id == this.bot.mute_role))
+		let muteRole = this.message.guild.roles.cache.find(r => (r.name === `muted`) || (r.name === `mute`))
+		if (this.bot.mute_role) muteRole = this.message.guild.roles.cache.find(r => (r.id == this.bot.mute_role))
 		//  If mute role hasn't been made yet, create one.
 		if (!muteRole) {
-			return reply(this.locale.MUTE.NO_MUTE_ROLE)
+			return reply(this.locale.UNMUTE.NO_MUTE_ROLE)
 		}
+		
+		if (!this.user.roles.cache.has(muteRole.id)) return reply(this.locale.UNMUTE.USER_DOESNT_HAVE_ROLE,{socket:{"user":this.user}})
 		removeRole(muteRole, this.user.id)
+		reply(this.locale.UNMUTE.SUCCESSFUL,{socket:{"user":this.user}})
 	}
 }
 

@@ -31,7 +31,7 @@ class UI {
     async build() {
         //  Base and card owner's avatar
         this.card.createBase({cornerRadius: 25})
-        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL), 15, 15, 30, 30, 15)
+        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL()), 15, 15, 30, 30, 15)
 
         //  Title Bar
         this.card.canv.setColor(this.card.color.text)
@@ -44,8 +44,8 @@ class UI {
         //  Main Content
         for (let i=0; i<Math.min(this.relationships.length, 9); i++) {
             const rel = this.relationships[i]
-            const user = this.bot.users.get(rel.assigned_user_id)
-            const relAvatar = user ? await urlToBuffer(user.displayAvatarURL) : await loadAsset(`error`)
+            const user = this.bot.users.cache.get(rel.assigned_user_id)
+            const relAvatar = user ? await urlToBuffer(user.displayAvatarURL()) : await loadAsset(`error`)
             const relName = user ? this.nameParser(user.id) : rel.assigned_user_id
             this.listEntry(relName, relAvatar, rel.relationship_name, 30, 70 + i*33)
         }

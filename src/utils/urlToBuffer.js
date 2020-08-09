@@ -1,4 +1,4 @@
-const { get } = require(`snekfetch`)
+const { get } = require(`node-fetch`)
 
 /**
  * Parse image from url to buffer.

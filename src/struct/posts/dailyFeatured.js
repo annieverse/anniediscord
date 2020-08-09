@@ -1,4 +1,4 @@
-const { RichEmbed, Attachment} = require(`discord.js`)
+const { MessageEmbed, MessageAttachment} = require(`discord.js`)
 class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
@@ -33,21 +33,21 @@ class DailyFeaturedPost {
     async getMessageArray(){
         var testDay = 1 * 12 * 60 * 60 * 1000 // amount of days * amount of hours * hours * minutes * miliseconds
         var dateNow = Date.now()
-        await this.bot.channels.get(this.dailyFeaturedChannel).fetchMessages({limit:100}).then(async messages => {
+        await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch({limit:100}).then(async messages => {
             let messageArray = messages.keyArray()
             if (messageArray){
                 messageArray.forEach(async element => {
-                    await this.bot.channels.get(this.dailyFeaturedChannel).fetchMessage(element).then(msg =>{
+                    await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch(element).then(msg =>{
                         let messageDate = (new Date(msg.createdAt)).getTime()
                         let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
                         if (isMsgReadyToBeDeleted) {
                             this.messageIds.push(msg.id)
-                            const embed = new RichEmbed()
+                            const embed = new MessageEmbed()
                                 .setColor(msg.embeds[0].color)
                                 .setDescription(msg.embeds[0].description)
-                                .attachFile(new Attachment(msg.embeds[0].image.url, `preview.jpg`))
-                                .setImage(`attachment://preview.jpg`)
-                                .setAuthor(msg.embeds[0].author.name, msg.embeds[0].author.iconURL)
+                                .attachFiles(new MessageAttachment(msg.embeds[0].image.url, `preview.jpg`))
+                                .setImage(`MessageAttachment://preview.jpg`)
+                                .setAuthor(msg.embeds[0].author.name, msg.embeds[0].author.iconURL())
                             this.bot.channels.get(this.featuredChannel).send(embed)
                         }
                     })

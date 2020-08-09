@@ -30,13 +30,12 @@ class User {
 		try {
 			const userPattern = /^(?:<@!?)?([0-9]+)>?$/
 			if (userPattern.test(target)) target = target.replace(userPattern, `$1`)
-			let members = this.message.guild.members
-
+			let members = this.message.guild.members.cache
 			const filter = member => member.user.id === target ||
                 member.displayName.toLowerCase() === target.toLowerCase() ||
                 member.user.username.toLowerCase() === target.toLowerCase() ||
                 member.user.tag.toLowerCase() === target.toLowerCase()
-
+			
 			const user = members.filter(filter).first()
 			if (!user) {
 				this.user = null

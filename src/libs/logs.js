@@ -2,8 +2,6 @@
 const palette = require(`../ui/colors/default.json`)
 const Long = require(`long`)
 const Pistachio = require(`../libs/pistachio`)
-const GUI = require(`../ui/prebuild/welcomer`)
-const moment = require(`moment`)
 /**
  *  Handling log records
  *  @LogsSystem

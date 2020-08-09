@@ -23,14 +23,14 @@ class Hug extends Command {
 
         //  Lonely hug
         if (!this.fullArgs) return reply(this.locale.HUG.THEMSELVES, {
-            socket: [this.user],
+            socket: {"user":this.message.author},
             image: body.link,
             prebuffer: true,
         })
 
         //  Hugging other user
         return reply(this.locale.HUG.OTHER_USER, {
-            socket: [this.user, this.fullArgs],
+            socket: {"user":this.message.author, "otherUser":this.user},
             image: body.link,
             prebuffer: true,
         })
@@ -46,5 +46,5 @@ module.exports.help = {
     usage: `hug <User>(Optional)`,
     group: `Fun`,
     permissionLevel: 0,
-    multiUser: false
+    multiUser: true
 }

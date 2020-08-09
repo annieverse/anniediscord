@@ -1,5 +1,5 @@
-const {Attachment} = require(`discord.js`)
-const {get} = require(`snekfetch`)
+const {MessageAttachment} = require(`discord.js`)
+const {get} = require(`node-fetch`)
 const {Canvas} = require(`canvas-constructor`)
 const {resolve,join} = require(`path`)
 const palette = require(`./colorset.json`)
@@ -26,12 +26,12 @@ class Banner {
 
 
 	async render() {
-		const user = this.bot.users.get(this.member.id)
-		const { body: avatar } = await get(user.displayAvatarURL.replace(imageUrlRegex, `?size=512`))
+		const user = this.bot.users.cache.get(this.member.id)
+		const { body: avatar } = await get(user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
 		const configProfile = new profileManager()
 
 		this.ch.send(`Welcome to **AAU** ${user} ! Please get your roles in <#538843763544555528> for full access to the server. Last but not least enjoy your stay here! :tada:`,
-			new Attachment(await welcomeCard(), `welcome!-${user.tag}.jpg`))
+			new MessageAttachment(await welcomeCard(), `welcome!-${user.tag}.jpg`))
 
 
 		async function welcomeCard() {
