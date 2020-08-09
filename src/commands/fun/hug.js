@@ -17,20 +17,20 @@ class Hug extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply }) {
+    async execute({ reply, name }) {
         await this.requestUserMetadata(1)
         const { body } = await superagent.get(`https://some-random-api.ml/animu/hug`)
 
         //  Lonely hug
         if (!this.fullArgs) return reply(this.locale.HUG.THEMSELVES, {
-            socket: [this.user],
+            socket: {user: name(this.user.id)},
             image: body.link,
             prebuffer: true,
         })
 
         //  Hugging other user
         return reply(this.locale.HUG.OTHER_USER, {
-            socket: [this.user, this.fullArgs],
+            socket: {user: name(this.user.id), targetUser: this.fullArgs},
             image: body.link,
             prebuffer: true,
         })

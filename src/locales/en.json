@@ -281,8 +281,8 @@
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
     },
     "HUG": {
-        "THEMSELVES": "**{0}** hugging a thin air. :<",
-        "OTHER_USER": "**{0}** hugging **{1}** <3"
+        "THEMSELVES": "**{{user}}** hugging a thin air. :<",
+        "OTHER_USER": "**{{user}}** hugging **{{targetUser}}** <3"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
