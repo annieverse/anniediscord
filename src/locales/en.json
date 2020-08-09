@@ -128,7 +128,8 @@
         "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",
         "SUCCESSFUL": "The **{{module}}** module for this guild has been successfully updated!",
         "REJECTED": "Sorry, but the selected value was rejected.",
-        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet."
+        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet.",
+        "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{{format}}"
     },
     "CRAFT": {
         "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
