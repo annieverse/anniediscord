@@ -2,6 +2,14 @@
 
 ___
 
+## **08/09/20 | 6.2.11 ->**
+
+* fix(pat): empty string sockets.
+* fix(hug): empty string sockets.
+* fix(log): post collecting.
+* chores(ready): displays user size in the presence status.
+* build(deps): bump superagent from 5.3.1 to 6.0.0.
+
 ## **08/08/20 | 6.2.10 ->**
 
 * fix(database): aggregate user relationships data.
