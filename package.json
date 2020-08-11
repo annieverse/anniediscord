@@ -32,6 +32,9 @@
     "bot"
   ],
   "repository": "github:klerikdust/anniediscord",
+  "bugs": {
+    "url": "https://github.com/klerikdust/anniediscord/issues"
+  },
   "dependencies": {
     "async-redis": "^1.1.7",
     "axios": ">=0.19.2",
