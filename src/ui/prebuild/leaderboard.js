@@ -39,7 +39,6 @@ class UI {
 					width: 500
 				})
 			}
-
 			//  User name
 			const userName = this.nameParser(topTenRows[row].id)
 			card.addContent({

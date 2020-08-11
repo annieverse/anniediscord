@@ -2,7 +2,7 @@ const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const palette = require(`../../ui/colors/default`)
 const RarityColor = require(`../../config/itemRarityColor`)
-const fsn = require(`fs-nextra`)
+const fs = require(`fs`)
 const Color = require(`color`)
 const ThemePresets = require(`../../ui/colors/themes`)
 
@@ -51,8 +51,8 @@ const InventoryInterface = async (container, usertheme) => {
 	 * 	@param {String|ID} id filename(item_alias)
 	 *  @getAsset
 	 */
-	const getAsset = (id) => fsn.readFile(`./src/assets/${id}.png`)
-	.catch(async ()=>{return fsn.readFile(`./src/assets/error.png`)})
+	const getAsset = (id) => fs.readFileSync(`./src/assets/${id}.png`)
+	.catch(async ()=>{return fs.readFileSync(`./src/assets/error.png`)})
 	//const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
 
 

@@ -314,7 +314,7 @@ class LogsSystem {
     }
 
     async guildCreate() {
-        const { bot: { logger, locale, prefix, supportServer }, bot, guild } = this.data
+        const { bot: { logger, locale, prefix, supportServer }, guild } = this.data
         const guildCode = `**${guild.id}@${guild.name}**`
 
         logger.info(`New guild joined ${guildCode}`)
@@ -375,7 +375,7 @@ class LogsSystem {
             let owner = guild.owner
             return afterInvitationMessage(owner)
         } catch (e) {
-            return logger.info(`Fail to send AFTER_INVITATION message to GUILD_ID ${guild_id}`)
+            return logger.info(`Fail to send AFTER_INVITATION message to GUILD_ID ${guild.id}`)
         }
     }
 

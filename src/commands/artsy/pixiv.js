@@ -1,5 +1,5 @@
 const Command = require(`../../libs/commands`)
-const fsn = require(`fs-nextra`)
+const fs = require(`fs`)
 const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
@@ -112,7 +112,7 @@ class Pixiv extends Command {
     async getImageCache(id=``) {
         const fn = `[Pixiv.getImageCache()]`
         this.logger.debug(`${fn} fetching cache with path (${id})`)
-        return fsn.readFile(`./${id}`).catch(() => {
+        return fs.readFileSync(`./${id}`).catch(() => {
             this.logger.error(`${fn} has failed to fetch pixiv img with path (${id})`)
             return false
         })

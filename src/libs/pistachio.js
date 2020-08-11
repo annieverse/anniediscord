@@ -1,9 +1,8 @@
 const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
 const logger = require(`./logger`)
-const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
-const { get } = require(`node-fetch`)
+const fetch = require(`node-fetch`)
 /**
  *  @class Pistachio
  *  @version 0.4.0
@@ -357,7 +356,7 @@ class Pistachio {
 				}
 			})
 		}
-		return fsn.readFile(ultimateFile)
+		return fs.readFileSync(ultimateFile)
 	}
 
 	/**
@@ -368,15 +367,15 @@ class Pistachio {
 	*/
 	avatar(id, compress = false, size = `?size=512`) {
 		try {
-			let url = this.bot.users.cache.get(id).displayAvatarURL()
+			let url = this.bot.users.cache.get(id).displayAvatarURL({format: `png`, dynamic: false})
 			if (compress) {
-				return get(url.replace(/\?size=2048$/g, size))
-					.then(data => data.body)
+				return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
+					.then(data => data.buffer())
 			}
 
 			return url
 		}
-		catch(e) { return this.loadAsset(`error`) }
+		catch(e) {return this.loadAsset(`error`) }
 	}
 
 	/**

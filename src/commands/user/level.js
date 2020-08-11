@@ -31,11 +31,10 @@ class Level extends Command {
 			}
 		})
 		.then(async loading => {
-			const img = await new GUI(this.user).build()
 			await reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
-				image: img.toBuffer(),
+				image: await new GUI(this.user).build(),
 				socket: {
 					emoji: emoji(`AnnieDab`),
 					user: name(this.user.id),

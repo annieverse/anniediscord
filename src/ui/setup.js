@@ -1,10 +1,10 @@
-const { Canvas } = require(`canvas-constructor`) 
+const canvas = require(`canvas`) 
 const { resolve, join } = require(`path`)
-
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), `roboto-thin`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-light.ttf`)),`roboto-light`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), `roboto-medium`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), `roboto-bold`)
-Canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-black.ttf`)), `roboto-black`)
+const { Canvas } = require(`canvas-constructor`) 
+canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-thin.ttf`)), {"family":`roboto-thin`})
+canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-light.ttf`)),{"family":`roboto-light`})
+canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-medium.ttf`)), {"family":`roboto-medium`})
+canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-bold.ttf`)), {"family":`roboto-bold`})
+canvas.registerFont(resolve(join(__dirname, `../fonts/roboto-black.ttf`)), {"family":`roboto-black`})
 
 module.exports = Canvas
