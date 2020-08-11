@@ -17,7 +17,7 @@ class Pat extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply }) {
+    async execute({ reply, name }) {
         await this.requestUserMetadata(1)
         const { body } = await superagent.get(`https://some-random-api.ml/animu/pat`)
 
