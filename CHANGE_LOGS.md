@@ -2,6 +2,10 @@
 
 ___
 
+## **08/11/20 | 6.2.13 ->**
+
+* fix(gacha): randomize rewards pool on same weight.
+
 ## **08/11/20 | 6.2.12 ->**
 
 * docs(package): added bugs section.
