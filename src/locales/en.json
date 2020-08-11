@@ -128,7 +128,8 @@
         "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",
         "SUCCESSFUL": "The **{{module}}** module for this guild has been successfully updated!",
         "REJECTED": "Sorry, but the selected value was rejected.",
-        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet."
+        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet.",
+        "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{{format}}"
     },
     "CRAFT": {
         "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
@@ -280,8 +281,8 @@
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
     },
     "HUG": {
-        "THEMSELVES": "**{{user}}** hugging a thin air. :<",
-        "OTHER_USER": "**{{user}}** hugging **{{otherUser}}** <3"
+        "THEMSELVES": "**{{user}}** is hugging a thin air. :<",
+        "OTHER_USER": "**{{user}}** is hugging **{{targetUser}}** <3"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
@@ -353,7 +354,7 @@
     },
     "PAT": {
         "THEMSELVES": "**{{user}}** is patting themselves. :< ",
-        "OTHER_USER": "**{{user}}** is patting **{{otherUser}}**, how adorable!"
+        "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
         "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",

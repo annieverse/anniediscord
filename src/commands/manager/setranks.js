@@ -582,7 +582,7 @@ class SetRanks extends Command {
 module.exports.help = {
     start: SetRanks,
     name: `setRanks`, 
-    aliases: [], 
+    aliases: [`setranks`, `setrank`, `setRanks`], 
     description: `Edit and customize role-ranking system in your guild.`,
     usage: `setranks`,
     group: `Manager`,

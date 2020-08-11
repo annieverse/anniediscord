@@ -109,7 +109,10 @@ class Gacha extends Command {
         }
         const fitInRanges = closestBelow(weightsPool, rng)
         const item = rewardsPool.filter(item => item.weight === fitInRanges)
-        return item[0]
+        //  Variable 'result' will determine if there are multiple items in the same weight
+        //  then randomize the array. Otherwise, returns the first index.
+        const result = item.length > 1 ? item[Math.floor(Math.random () * item.length)] : item[0]
+        return result
     }
 
     /**

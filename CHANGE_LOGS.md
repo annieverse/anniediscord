@@ -2,6 +2,25 @@
 
 ___
 
+## **08/11/20 | 6.2.13 ->**
+
+* fix(gacha): randomize rewards pool on same weight.
+
+## **08/11/20 | 6.2.12 ->**
+
+* docs(package): added bugs section.
+* fix(pat): missing name parser.
+* perf(assets): compressed img size.
+* style(welcomer): update background img.
+
+## **08/09/20 | 6.2.11 ->**
+
+* fix(pat): empty string sockets.
+* fix(hug): empty string sockets.
+* fix(log): post collecting.
+* chores(ready): displays user size in the presence status.
+* build(deps): bump superagent from 5.3.1 to 6.0.0.
+
 ## **08/08/20 | 6.2.10 ->**
 
 * fix(database): aggregate user relationships data.

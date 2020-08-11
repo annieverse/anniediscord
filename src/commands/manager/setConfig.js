@@ -81,6 +81,10 @@ class SetConfig extends Command {
                     reply(this.locale.CONFIGURATIONS.NONE_TO_REMOVE, {color: `red`})
                     return this.endSequence()
                 }
+                if (getOption === `format`){
+                    reply(this.locale.CONFIGURATIONS.WRONG_FORMAT, {color: `red`,socket:{"format":`\`+ <channel target>\` or \`- <channel target>\``}})
+                    return this.endSequence()
+                }
                 let metadata = {
                     config_code: this.module,
                     guild: this.message.guild,
@@ -186,6 +190,31 @@ class SetConfig extends Command {
                 existingMessages = this.removeItemAll(existingMessages, ``)
                 existingMessages = existingMessages.join(`, `)
                 return existingMessages
+            } else {
+                return `rejected`
+            }
+        }else if (option == `a - (to remove) or + (to add) followed by channel id, or link like #general`){
+            let options = testValue.split(` `)
+            if (options.length < 2) return `format`
+            let channel = this.getChannel(msg, options[1])
+            if (channel == `rejected`) return channel 
+            let existingChannels = this.bot[varible]
+            let str = `` + existingChannels
+            existingChannels = str.split(`, `)
+            existingChannels = this.removeItemAll(existingChannels, ``)
+            if (options[0] == `-`){
+                if (existingChannels.length == 0) return `none to remove`
+                let array = this.removeItemAll(existingChannels, channel)
+                array.length == 0 ? array = `` : array = array.join(`, `)
+                return array
+            } else if (options[0] == `+`){
+                existingChannels.push(channel)
+                existingChannels = existingChannels.reduce((unique, item) => {
+                    return unique.includes(item) ? unique : [...unique, item]
+                }, [])
+                existingChannels = this.removeItemAll(existingChannels, ``)
+                existingChannels = existingChannels.join(`, `)
+                return existingChannels
             } else {
                 return `rejected`
             }
