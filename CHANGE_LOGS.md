@@ -2,6 +2,13 @@
 
 ___
 
+## **08/11/20 | 6.2.12 ->**
+
+* docs(package): added bugs section.
+* fix(pat): missing name parser.
+* perf(assets): compressed img size.
+* style(welcomer): update background img.
+
 ## **08/09/20 | 6.2.11 ->**
 
 * fix(pat): empty string sockets.
