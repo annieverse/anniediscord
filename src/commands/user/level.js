@@ -18,6 +18,7 @@ class Level extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, name, emoji }) {
+		if (!this.bot.xp_module) return reply(this.locale.COMMAND.DISABLED)
 		await this.requestUserMetadata(2)
 
 		//  Handle if user doesn't exists

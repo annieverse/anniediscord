@@ -33,6 +33,7 @@ class Experience extends Points {
      *  @returns {boolean}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
+		if (!this.bot.xp_module) return
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
         
     	//  Apply booster if presents
@@ -111,6 +112,7 @@ class Experience extends Points {
     		}
 			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 			await this.updateRank(this.newExp.level)
+			if (!this.bot.level_up_message) return
     		return this.reply(this.locale.LEVELUP.JUMPING, {
     			color: `purple`,
     			socket: {
@@ -126,6 +128,7 @@ class Experience extends Points {
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
+		if (!this.bot.level_up_message) return
 		return this.reply(this.locale.LEVELUP.REGULAR, {
 			color: `crimson`,
 			socket: {
