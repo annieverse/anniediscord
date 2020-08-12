@@ -416,10 +416,7 @@ class Card {
 			.setColor(captionColor)
 			.printText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
-		if (img) {
-			img = await resolveImage(img)
-			this.canv.printImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
-		}
+		
 		if (avatar) {
 			avatar = await resolveImage(avatar)
 			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-5, customAvatarWidth, customAvatarHeight, customAvatarRadius)
@@ -439,7 +436,10 @@ class Card {
 			if (avatar) this.reservedSpace += customAvatarRadius
 			this.reservedSpace += marginTop
 		}
-
+		if (img) {
+			img = await resolveImage(img)
+			this.canv.printImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
+		}
 		return this
 	}
 }

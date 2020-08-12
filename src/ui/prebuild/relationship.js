@@ -1,8 +1,6 @@
 const Cards = require(`../components/cards`)
-const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
 const {resolveImage} = require(`canvas-constructor`)
-const { use } = require("chai")
 
 class UI {
     /**
