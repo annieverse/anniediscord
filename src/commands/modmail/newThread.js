@@ -69,7 +69,7 @@ class newThread extends Command {
      */
     relayMessageFromDM(){
         let username = this.thread.is_anonymous == 0 ? `${this.message.author.username}#${this.message.author.discriminator}` : `anonymous`
-        this.bot.guilds.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+        this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
     }
 
     /**
@@ -78,8 +78,8 @@ class newThread extends Command {
      */
     relayMessageFromChannel(){
         let username = `${this.message.author.username}`
-        this.bot.guilds.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] » **(${username}) ༶•  Moderator:** ${this.message}`)
-        this.bot.guilds.get(this.guildId).members.cache.get(this.thread.user_id).send( `**༶•  Moderator:** ${this.message}`)
+        this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] » **(${username}) ༶•  Moderator:** ${this.message}`)
+        this.bot.guilds.cache.get(this.guildId).members.cache.get(this.thread.user_id).send( `**༶•  Moderator:** ${this.message}`)
         if (!this.messageHasAttachments){
             this.message.delete()
         }
@@ -176,11 +176,11 @@ class newThread extends Command {
             username: this.thread.is_anonymous == 0 ? `${this.message.author.username}#${this.message.author.discriminator}` : `anonymous`,
             accountAge: this.message.author.createdAt, 
             id: this.thread.is_anonymous == 0 ? this.message.author.id :`anonymous`,
-            nickname: this.thread.is_anonymous == 0 ? this.bot.guilds.get(this.guildId).members.cache.get(this.message.author.id).nickname: `anonymous`,
-            joined: this.bot.guilds.get(this.guildId).members.cache.get(this.message.author.id).joinedAt
+            nickname: this.thread.is_anonymous == 0 ? this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).nickname: `anonymous`,
+            joined: this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).joinedAt
         }
         // Make Private Channel on server
-        this.bot.guilds.get(this.guildId).channels.create(channelName).then(async channel => {
+        this.bot.guilds.cache.get(this.guildId).channels.create(channelName).then(async channel => {
             // Set channel to modmail category
             await channel.setParent(this.modmailCategory)
             // Sync channel to modmail category permissions
@@ -214,17 +214,17 @@ class newThread extends Command {
         const requestFromModMailCategory = this.message.channel.parentID == this.modmailCategory
         if (hasAttachments){
             if (isDm){
-                this.message.attachments.array().forEach(e => this.bot.guilds.get(this.guildId).channels.get(this.thread.channel).send({
+                this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send({
                     files: [e.url]
                 }))
-                return this.message.attachments.array().forEach(e => this.bot.guilds.get(this.guildId).channels.get(modmailConfig.logChannel).send({
+                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(modmailConfig.logChannel).send({
                     files: [e.url]
                 }).then(m => this.bot.db.writeToThread(this.message.author.id, `USER`, this.guildId, this.threadId, m.url)))
             } else if (requestFromModMailCategory){
-                this.message.attachments.array().forEach(e => this.bot.guilds.get(this.guildId).channels.get(this.thread.channel).send({
+                this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send({
                     files: [e.url]
                 }))
-                return this.message.attachments.array().forEach(e => this.bot.guilds.get(this.guildId).channels.get(modmailConfig.logChannel).send({
+                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(modmailConfig.logChannel).send({
                     files: [e.url]
                 }).then(m => this.bot.db.writeToThread(`MOD`, this.message.author.id, this.guildId, this.threadId, m.url)))
             }

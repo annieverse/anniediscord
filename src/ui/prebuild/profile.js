@@ -41,7 +41,7 @@ class UI {
 		//  Avatar
 		card.canv.setColor(this.user.premium ? card._resolveColor(`yellow`) :  card._resolveColor(card.color.main))
 			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 20, 150, 100, 100, 50)
+			.printCircularImage(await resolveImage(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const inventory = this.user.inventory.raw
 		const badges = inventory.filter(key => key.type_name === `Badges`)

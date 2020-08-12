@@ -61,7 +61,7 @@ class closeThread extends Command {
             if (messageFromDm){
                 reply(`This thread has been closed.`)
             } else {
-                this.bot.guilds.get(search.guild_id).members.cache.get(search.user_id).send(`This thread has been closed.`)
+                this.bot.guilds.cache.get(search.guild_id).members.cache.get(search.user_id).send(`This thread has been closed.`)
             }
            
         }
@@ -74,7 +74,7 @@ class closeThread extends Command {
      */
     async closeThread(thread){
         this.bot.db.closeThread(thread.thread_id)
-        this.bot.guilds.get(thread.guild_id).channels.get(thread.channel).delete()
+        this.bot.guilds.cache.get(thread.guild_id).channels.get(thread.channel).delete()
         this.logEvent(thread)
     }
 
@@ -82,7 +82,7 @@ class closeThread extends Command {
      * Send a message to the log channel indicating the thread closed and give the thread id
      */
     logEvent(threadTicket){
-        let threadUser = this.bot.guilds.get(threadTicket.guild_id).members.cache.get(threadTicket.user_id) 
+        let threadUser = this.bot.guilds.cache.get(threadTicket.guild_id).members.cache.get(threadTicket.user_id) 
         let member = {
             username: threadTicket.is_anonymous == 0 ? `${threadUser.user.username}#${threadUser.user.discriminator}` : `anonymous`,
             accountAge: threadUser.user.createdAt, 
@@ -90,7 +90,7 @@ class closeThread extends Command {
             nickname: threadTicket.is_anonymous == 0 ? threadUser.nickname : `anonymous`,
             joined: threadUser.joinedAt
         }
-        this.bot.guilds.get(threadTicket.guild_id).channels.get(modmailConfig.logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
+        this.bot.guilds.cache.get(threadTicket.guild_id).channels.get(modmailConfig.logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
     }
 }
 

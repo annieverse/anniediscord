@@ -1,5 +1,5 @@
 const Canvas = require(`../setup`)
-const {resolveImage} = require(`canvas-constructor`)
+const { resolveImage } = require(`canvas-constructor`)
 const sizeOf = require(`buffer-image-size`)
 const Color = require(`color`)
 const { DEFAULT, DATABAR, CONTENT } = require(`../config`)
@@ -355,7 +355,6 @@ class Card {
 		return this
 	}
 
-
 	/**
 	 *	Add content/body section to the card.
 	 *	@param {*} Object 
@@ -378,7 +377,7 @@ class Card {
 		captionMargin=20,
 		img=null,
 		avatar=null,
-		avatarRadius=null
+		avatarRadius=10
 		}) {
 		//	Handle sensitive case
 		if (typeof size === `string`) size = size.toUpperCase()
@@ -392,22 +391,23 @@ class Card {
 		const mainMarginLeft = () => {
 			let combinedCustomXAxis = 0
 			if (justify) combinedCustomXAxis += this._getHorizontalAlign(justify)
+			/** 
+			*  If avatar parameter is supplied, then the text's X position
+			*  will be sum by avatarRadius value.
+			*  EXAMPLE: 
+			*  avatarRadius = 10
+			*  textX = 50
+			*  w/o Avatar -> 50 = X position = textX
+			*  w/ Avatar -> 60 = X position = textX + avatarRadius 
+			*  (therefore, avatar will be placed on the text's original X position.) 
+			*/
 			if (avatar) combinedCustomXAxis += customAvatarWidth + 20
 			return combinedCustomXAxis + marginLeft
 		}
 		const avatarMarginLeft = () => {
 			let combinedCustomXAxis = 0
-			if (justify === `center`) return this._getHorizontalAlign(`center`)-customAvatarRadius
+			if (justify === `center`) return this._getHorizontalAlign(`center`)//-customAvatarRadius
 			return combinedCustomXAxis + marginLeft
-		}
-		const avatarMarginTop = () => (this.reservedSpace+marginTop)-(customAvatarRadius+5)
-
-		if (main) {
-			this.canv
-			.setColor(mainColor)
-			.setTextAlign(align)
-			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
-			.printText(main, mainMarginLeft(), this.reservedSpace+marginTop)
 		}
 
 		if (caption) {
@@ -422,8 +422,16 @@ class Card {
 		}
 		if (avatar) {
 			avatar = await resolveImage(avatar)
-			this.canv.printCircularImage(avatar, avatarMarginLeft(), avatarMarginTop(), customAvatarWidth, customAvatarHeight, customAvatarRadius)
+			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-5, customAvatarWidth, customAvatarHeight, customAvatarRadius)
 		}
+		if (main) {
+			this.canv
+			.setColor(mainColor)
+			.setTextAlign(align)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
+			.printText(main, mainMarginLeft(), this.reservedSpace+marginTop)
+		}
+
 		//	Add state for flexible Y positioning
 		if (!inline || (inline && releaseHook)) {
 			if (caption) this.reservedSpace += captionMargin 

@@ -26,7 +26,8 @@ class UI {
 		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
 		await card
 		//	Avatar representative
-		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 75 })
+		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 75,
+		avatarRadius: 12 })
 		card
 		//	Author and rank name
 		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 25 })
@@ -57,7 +58,7 @@ class UI {
 			contentSize: `MICRO`,
 			contentColor: `inherit`,
 			barColor: `main`,
-			marginTop: 85,
+			marginTop: 75,
 			disableShadow: true
 		})
 	

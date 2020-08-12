@@ -120,13 +120,15 @@ class config {
                 const element = finalConfig.set_ranks[index]
                 let role 
                 try {
-                    role = this.bot.guilds.get(guildId).roles.cache.get(element.ROLE)
+                    role = this.bot.guilds.cache.get(guildId).roles.cache.get(element.ROLE)
                 } catch (error) {
                     finalConfig.ranks = backupRanks
+                    finalConfig.custom_ranks = false
                     break
                 }
                 if (!role) {
                     finalConfig.ranks = backupRanks
+                    finalConfig.custom_ranks = false
                     break
                 }
                 newRank = {
