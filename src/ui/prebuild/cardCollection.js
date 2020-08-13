@@ -36,7 +36,7 @@ class canvasGUI {
      *  @param {Integer} index current index position of item's object
      */
 	async itemVisual(x, y, dx, dy, dm, index = 0) {
-		this.canv.addImage(await loadAsset(this.container.alias[index]), x, y, dx, dy, dm)
+		this.canv.printImage(await loadAsset(this.container.alias[index]), x, y, dx, dy, dm)
 	}
 
 
@@ -52,10 +52,10 @@ class canvasGUI {
 		this.canv.setColor(palette.white)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Roboto`)
-		this.canv.addText(this.container.item[index], x, y)
+		this.canv.printText(this.container.item[index], x, y)
 		//  Rarity
 		this.canv.setTextFont(`9pt Roboto`)
-		this.canv.addText(`★`.repeat(this.container.rarity[index]), x, y + 15)
+		this.canv.printText(`★`.repeat(this.container.rarity[index]), x, y + 15)
 	}
 
 
@@ -89,7 +89,7 @@ class canvasGUI {
      */
 	shadowGround(x = this.startPos_x + 4, y = this.startPos_y + 4, dx = this.baseWidth - 8, dy = this.baseHeight - 8) {
 		this.dropShadow()
-		this.canv.addRect(x, y, dx, dy) // (x, y, x2, y2)   
+		this.canv.printRectangle(x, y, dx, dy) // (x, y, x2, y2)   
 	}
 
 
@@ -101,9 +101,9 @@ class canvasGUI {
      *  @param {Integer|Float} dy second vertical coordinates point after x
      */
 	drawCardBase(x, y, dx, dy) {
-		this.canv.createBeveledClip(x, y, dx, dy, 7)
+		this.canv.createRoundedClip(x, y, dx, dy, 7)
 		this.canv.setColor(palette.nightmode)
-		this.canv.addRect(x, y, dx, dy)
+		this.canv.printRectangle(x, y, dx, dy)
 
 	}
 
@@ -115,7 +115,7 @@ class canvasGUI {
 		this.shadowGround()
 		this.removeShadowLayer()
 		//  Load item asset
-		this.canv.addImage(await loadAsset(this.container[index].alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
+		this.canv.printImage(await loadAsset(this.container[index].alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
 		//  Render
 		return this.canv.toBuffer()
 	}
@@ -146,7 +146,7 @@ class canvasGUI {
 			if (index == 5) y = (-1*(originalY * 2)) + height
 			if (index == 10) y = (-1*(originalY * 5)) + height * 2
 			if (index == 5 || index == 10) x = originalX
-			canv.addImage(element, x, y, baseWidth, baseHeight, baseHeight)
+			canv.printImage(element, x, y, baseWidth, baseHeight, baseHeight)
 			canv.save()
 			x += (baseWidth-25)
 		})

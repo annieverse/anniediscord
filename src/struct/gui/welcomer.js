@@ -45,25 +45,25 @@ class Banner {
 
 			canv.save()
 			canv.save()
-				.createBeveledClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
-				.addImage(await configProfile.getAsset(`aug19_welcomer`), 0, 0, 800, 300, 400)
+				.createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
+				.printImage(await configProfile.getAsset(`aug19_welcomer`), 0, 0, 800, 300, 400)
 			canv.context.globalAlpha = 0.6
 			canv.setColor(palette.black)
-				.addRect(start_x, start_y, canvas_x - 40, canvas_y - 40)
+				.printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
 				.restore()
 
 
 				.setTextAlign(`left`)
 				.setTextFont(`41pt RobotoBold`)
 				.setColor(palette.lightgray)
-				.addText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`.` : user.username}.`, 390, 150) //102
+				.printText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`.` : user.username}.`, 390, 150) //102
 			
 				.setTextFont(`42pt Whitney`)
 				.setColor(palette.white)
-				.addText(`Hello,`, 240, 150)
+				.printText(`Hello,`, 240, 150)
 
 				.setColor(palette.white)
-				.addRoundImage(avatar, 20, 30, 205, 205, 100)
+				.printCircularImage(avatar, 20, 30, 205, 205, 100)
 
 			return canv.toBuffer()
 		}

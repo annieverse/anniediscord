@@ -62,9 +62,9 @@ async function stat(stacks, member) {
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
 		.setColor(user.theme.main)
-		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
-		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
-		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
+		.printRectangle(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
+		.createRoundedClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
+		.printRectangle(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
 		.setShadowBlur(0)
 		.setShadowOffsetY(0)
 		.save()
@@ -76,44 +76,44 @@ async function stat(stacks, member) {
 	 *    USER
 	 *    AVATAR
 	 */
-	canv.createBeveledClip(startPos_x, startPos_y-100, baseWidth+100, 360, 100, 1)
+	canv.createRoundedClip(startPos_x, startPos_y-100, baseWidth+100, 360, 100, 1)
 		.setColor(rank.color)
 		.setGlobalAlpha(0.5)
-		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
+		.printRectangle(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 		.setGlobalAlpha(0.25)
-		.addImage(avatar, startPos_x, startPos_y-10, baseWidth, baseWidth)
+		.printImage(avatar, startPos_x, startPos_y-10, baseWidth, baseWidth)
 		.setGlobalAlpha(1)
 		.setColor(gradient)
-		.addRect(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
+		.printRectangle(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 
 		.setColor(user.theme.main)
 		.setTextAlign(`Left`)
 		.setTextFont(`9pt RobotoBold`)
-		.addText(`Last online`, startPos_x + 23, 88)
+		.printText(`Last online`, startPos_x + 23, 88)
 
 		.setTextFont(`20pt RobotoBold`)
-		.addText(getLastOnline(), startPos_x + 30, 115)
+		.printText(getLastOnline(), startPos_x + 30, 115)
 
 		.setTextAlign(`end`)
 		.setTextFont(`9pt RobotoBold`)
-		.addText(`Current experience points`, baseWidth - 13, 180)
+		.printText(`Current experience points`, baseWidth - 13, 180)
 
 		.setTextFont(`24pt RobotoBold`)
-		.addText(commanifier(user.cur) + ` EXP`, baseWidth - 13, 210)
+		.printText(commanifier(user.cur) + ` EXP`, baseWidth - 13, 210)
 		.restore()
 
 		.setColor(user.theme.text)
 		.setTextAlign(`Left`)
 		.setTextFont(`9pt RobotoBold`)
-		.addText(`Ranking`, startPos_x + 28, 290)
+		.printText(`Ranking`, startPos_x + 28, 290)
 
 		.setColor(rank.color)
 		.setTextFont(`33pt RobotoBold`)
-		.addText(await bot.db.userExpRanking(member.id) + 1, startPos_x + 33, 350)
+		.printText(await bot.db.userExpRanking(member.id) + 1, startPos_x + 33, 350)
 
 		.setColor(user.theme.text)
 		.setTextFont(`9pt RobotoBold`)
-		.addText(`from a total of `+commanifier(bot.users.size)+` members`, startPos_x + 38, 366)
+		.printText(`from a total of `+commanifier(bot.users.size)+` members`, startPos_x + 38, 366)
 
 
 	return canv.toBuffer()

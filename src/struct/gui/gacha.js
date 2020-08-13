@@ -1,9 +1,10 @@
-const { Canvas } = require(`canvas-constructor`)
+const { Canvas, resolveImage } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
+const canvas = require(`canvas`)
 
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-bold.ttf`)), `RobotoBold`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 
 /**
@@ -40,7 +41,7 @@ class gachaGUI {
      */
 	async itemVisual(x, y, dx, dy, dm, index = 0) {
 		const { relabel, loadAsset } = this.stacks
-		this.canv.addImage(await loadAsset(relabel(this.container.alias[index])), x, y, dx, dy, dm)
+		this.canv.printImage(await resolveImage(await loadAsset(relabel(this.container.alias[index]))), x, y, dx, dy, dm)
 	}
 
 
@@ -56,10 +57,10 @@ class gachaGUI {
 		this.canv.setColor(palette.white)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Whitney`) 
-		this.canv.addText(this.container.item[index], x, y)
+		this.canv.printText(this.container.item[index], x, y)
 		//  Rarity
 		this.canv.setTextFont(`9pt Whitney`)
-		this.canv.addText(`★`.repeat(this.container.rarity[index]), x, y + 15)
+		this.canv.printText(`★`.repeat(this.container.rarity[index]), x, y + 15)
 	}
 
 
@@ -93,7 +94,7 @@ class gachaGUI {
      */
 	shadowGround(x = this.startPos_x+4, y = this.startPos_y+4, dx = this.baseWidth-8, dy = this.baseHeight-8) {
 		this.dropShadow()
-		this.canv.addRect(x, y, dx, dy) // (x, y, x2, y2)   
+		this.canv.printRectangle(x, y, dx, dy) // (x, y, x2, y2)   
 	}
 
 
@@ -106,9 +107,9 @@ class gachaGUI {
      */
 	drawCardBase(x, y, dx, dy) {
 		const { palette } = this.stacks
-		this.canv.createBeveledClip(x, y, dx, dy, 7)
+		this.canv.createRoundedClip(x, y, dx, dy, 7)
 		this.canv.setColor(palette.nightmode)
-		this.canv.addRect(x, y, dx, dy)
+		this.canv.printRectangle(x, y, dx, dy)
 
 	}
 
@@ -133,7 +134,7 @@ class gachaGUI {
 			this.shadowGround()
 			this.removeShadowLayer()
 			//  Load item asset
-			this.canv.addImage(await loadAsset(relabel(this.container.alias[0])), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
+			this.canv.printImage(await resolveImage(await loadAsset(relabel(this.container.alias[0]))), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
 			//  Render
 			return this.canv.toBuffer()
 		} else {
@@ -191,7 +192,7 @@ class gachaGUI {
                 
 				//  Render without base if its a card item
 				if (item(`type`) === `card`) {
-					this.canv.addImage(await loadAsset(relabel(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10, card_dy)
+					this.canv.printImage(await resolveImage(await loadAsset(relabel(item(`alias`)))), dynamicX-2, set_y-4, card_dx+5, card_dy+10, card_dy)
 					continue
 				}
                 

@@ -37,18 +37,18 @@ class RichNotification {
         canv.save()
         canv.save()
             .setColor(palette.white)
-            .addRect(0, 0, canvas_x, canvas_y)
+            .printRectangle(0, 0, canvas_x, canvas_y)
             .setGlobalAlpha(0.2)
-            .addImage(post, 0, 0, canvas_x, 1000)
+            .printImage(post, 0, 0, canvas_x, 1000)
             .restore()
 
 
             if (this.components.featured) {
-                canv.addImage(post, canvas_x-150, -75, 150, 150)
+                canv.printImage(post, canvas_x-150, -75, 150, 150)
                 .setTextAlign(`left`)
                 .setTextFont(`11pt RobotoBold`)
                 .setColor(palette.darkmatte)
-                .addText(`Congratulations! your post has been featured!`, 20, 35) 
+                .printText(`Congratulations! your post has been featured!`, 20, 35) 
 
                 return canv.toBuffer()
             }
@@ -57,12 +57,12 @@ class RichNotification {
             canv.setTextAlign(`left`)
             .setTextFont(`11pt RobotoBold`)
             .setColor(palette.darkmatte)
-            .addText(this.components.likerName, 67, 35) //102
+            .printText(this.components.likerName, 67, 35) //102
 
             .setTextAlign(`left`)
             .setTextFont(`11pt Whitney`)
             .setColor(palette.darkmatte)
-            .addText(`has liked your post in`, canv.measureText(this.components.likerName).width + this.nameSpacing(this.components.likerName), 35) //102
+            .printText(`has liked your post in`, canv.measureText(this.components.likerName).width + this.nameSpacing(this.components.likerName), 35) //102
 
 
             const channelTextRange = canv.measureText(this.components.likerName + `has liked your post in`).width + this.nameSpacing(this.components.likerName) + 4
@@ -70,11 +70,11 @@ class RichNotification {
             canv.setTextAlign(`left`)
             .setTextFont(`11pt RobotoBold`)
             .setColor(palette.blue)
-            .addText(this.components.channel, channelTextRange, 35) //102
+            .printText(this.components.channel, channelTextRange, 35) //102
 
 
             .setColor(palette.white)
-            .addRoundImage(avatar, 15, 10, 40, 40, 20)
+            .printCircularImage(avatar, 15, 10, 40, 40, 20)
 
         return canv.toBuffer()
     }

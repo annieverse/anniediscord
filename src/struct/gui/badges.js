@@ -1,12 +1,13 @@
-const { Canvas } = require(`canvas-constructor`) 
+const { Canvas, resolveImage } = require(`canvas-constructor`) 
 const { resolve, join } = require(`path`)
-const { get } = require(`node-fetch`)
+const fetch = require(`node-fetch`)
 const imageUrlRegex = /\?size=2048$/g
 const Theme = require(`../../ui/colors/themes`)
+const canvas = require(`canvas`) 
 
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBold`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function badge(stacks, member) {
 	const { loadAsset, meta: {data} } = stacks
@@ -46,7 +47,7 @@ async function badge(stacks, member) {
 
 	const {
 		body: avatar
-	} = await get(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
+	} = await fetch(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`),{method: `GET`}).then(data => data.buffer())
 	const badgesdata = data.badges
 
 	delete badgesdata.userId
@@ -62,9 +63,9 @@ async function badge(stacks, member) {
 		.setShadowOffsetY(5)
 		.setShadowBlur(10)
 		.setColor(user.theme.main)
-		.addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
-		.createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
-		.addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
+		.printRectangle(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
+		.createRoundedClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
+		.printRectangle(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
 		.setShadowBlur(0)
 		.setShadowOffsetY(0)
 		.save()
@@ -72,7 +73,7 @@ async function badge(stacks, member) {
 	/**
 	 *    USER AVATAR
 	 */
-	canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
+	canv.printCircularImage(await resolveImage(avatar), 15, 15, 30, 30, 15)
 
 	/**
 	 *    TITLE BAR
@@ -80,9 +81,9 @@ async function badge(stacks, member) {
 		.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
-		.addText(`Badges Collection`, 55, 35)
+		.printText(`Badges Collection`, 55, 35)
 		.setColor(user.theme.separator)
-		.addRect(startPos_x, 48, baseWidth, 2) // bottom border
+		.printRectangle(startPos_x, 48, baseWidth, 2) // bottom border
 
 	const symetric_xy = 45
 	const diameter = Math.round(symetric_xy / 2)
@@ -93,12 +94,12 @@ async function badge(stacks, member) {
 	async function setBadge(xy, diameter, pos_y) {
 		for (var i=0; i<=Math.min(key.length, 18); i++) {
 			var j = Math.floor(i/4)
-			canv.addImage(await loadAsset(key[i]), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
+			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
 		}
 		if (key.length == 19) {
-			canv.addImage(await loadAsset(key[i]), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
+			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		} else if (key.length > 19) {
-			canv.addImage(await loadAsset(`plus`), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
+			canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		}
 	}
 

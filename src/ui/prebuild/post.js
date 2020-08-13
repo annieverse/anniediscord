@@ -39,46 +39,46 @@ class UI {
 		if (this.post.caption) this.caption = this.post.caption.replace(/<[^>]*>?/gm, ``)
 		if (this.caption.length > 0 && this.caption.length <= 50) {
 			if (this.formatString(this.caption, 1).second) {
-				this.card.canv.addText(this.formatString(this.caption, 1).first, 70, 377)
-					.addText(this.formatString(this.caption, 1).second, 70, 390)
+				this.card.canv.printText(this.formatString(this.caption, 1).first, 70, 377)
+					.printText(this.formatString(this.caption, 1).second, 70, 390)
 			} 
 			else {
-				this.card.canv.addText(this.formatString(this.caption, 1).first, 70, 377)
+				this.card.canv.printText(this.formatString(this.caption, 1).first, 70, 377)
 			}
 		} 
 		else if (this.caption.length > 50 && this.caption.length <= 100) {
 			if (this.formatString(this.caption, 2).third) {
-				this.card.canv.addText(this.formatString(this.caption, 2).first, 70, 70)
-					.addText(this.formatString(this.caption, 2).second, 70, 85)
-					.addText(this.formatString(this.caption, 2).third, 70, 100)
+				this.card.canv.printText(this.formatString(this.caption, 2).first, 70, 70)
+					.printText(this.formatString(this.caption, 2).second, 70, 85)
+					.printText(this.formatString(this.caption, 2).third, 70, 100)
 			} else {
-				this.card.canv.addText(this.formatString(this.caption, 2).first, 70, 85)
-					.addText(this.formatString(this.caption, 2).second, 70, 100)
+				this.card.canv.printText(this.formatString(this.caption, 2).first, 70, 85)
+					.printText(this.formatString(this.caption, 2).second, 70, 100)
 			}
 		} 
 		else if (this.caption.length > 100) {
-			this.card.canv.addText(this.formatString(this.caption, 3).first, 70, 70)
-				.addText(this.formatString(this.caption, 3).second, 70, 85)
-				.addText(this.formatString(this.caption, 3).third+`...`, 70, 100)
+			this.card.canv.printText(this.formatString(this.caption, 3).first, 70, 70)
+				.printText(this.formatString(this.caption, 3).second, 70, 85)
+				.printText(this.formatString(this.caption, 3).third+`...`, 70, 100)
 		}
 
 		//  Floating avatar
-        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL()), 30, 340, 30, 30, 15)
+        this.card.canv.printCircularImage(await urlToBuffer(this.user.user.displayAvatarURL()), 30, 340, 30, 30, 15)
 
         //  Title Bar
         this.card.canv.setColor(this.card.color.text)
         .setTextAlign(`left`)
         .setTextFont(`12pt roboto-bold`)
-        .addText(this.user.user.username, 70, 360)
+        .printText(this.user.user.username, 70, 360)
         .setTextAlign(`right`)
         .setTextFont(`9pt roboto-light`)
-        .addText(moment(this.user.recentPostLocalTimestamp).fromNow(), this.baseWidth-15, 358)
+        .printText(moment(this.user.recentPostLocalTimestamp).fromNow(), this.baseWidth-15, 358)
 
 		//  Displayed image/artwork of the post
 		this.card.canv.save()
-        	.createBeveledClip(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight/1.3, 25)
+        	.createRoundedClip(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight/1.3, 25)
 			.setColor(this.card.color.separator)
-			.addRect(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight/1.3)
+			.printRectangle(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight/1.3)
 		let proberes = await probe(this.post.url)
 		let imageWidth = proberes.width
 		let imageHeight = proberes.height
@@ -91,7 +91,7 @@ class UI {
 			const dx = imageWidth * this.baseHeight / imageHeight
 			const dy = this.baseHeight
 			const resolution = 1
-			this.card.canv.addImage(photo, x, y, dx, dy, resolution)
+			this.card.canv.printImage(photo, x, y, dx, dy, resolution)
 
 		//  Or if the image has higher heights than its width (portrait orientation), downscale to closest width fit.
 		} else {
@@ -100,7 +100,7 @@ class UI {
 			const dx = this.baseWidth
 			const dy = imageHeight * this.baseWidth / imageWidth
 			const resolution = 1
-			this.card.canv.addImage(photo, x, y, dx, dy, resolution)
+			this.card.canv.printImage(photo, x, y, dx, dy, resolution)
 		}
 
 

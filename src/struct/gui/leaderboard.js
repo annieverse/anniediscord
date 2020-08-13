@@ -163,7 +163,7 @@ const render = async (stacks, metadata) => {
 			canv.setTextAlign(`left`)
 			canv.setColor(palette.white)
 			canv.setTextFont(`12pt RobotoBlack`)
-				.addText(this.nickname_formatter, size.x2 + 160, this.y)
+				.printText(this.nickname_formatter, size.x2 + 160, this.y)
 			return this
 		}
 
@@ -174,7 +174,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt RobotoBlack`)
-				.addText(`${reps} ★`, size.x - 50, this.y)
+				.printText(`${reps} ★`, size.x - 50, this.y)
 			return this
 		}
 
@@ -184,7 +184,7 @@ const render = async (stacks, metadata) => {
 			if (user.group[this.index].id === author.id) {
 				this.highlight_user = true
 				canv.setColor(palette.golden)
-					.addRect(size.x2, this.y - 35, size.x - size.x2, 60)
+					.printRectangle(size.x2, this.y - 35, size.x - size.x2, 60)
 					.restore()
 			}
 			canv.restore()
@@ -198,7 +198,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt RobotoBlack`)
-				.addText(`${reps} ❤`, size.x - 50, this.y)
+				.printText(`${reps} ❤`, size.x - 50, this.y)
 			return this
 		}
 
@@ -208,7 +208,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt RobotoBlack`)
-				.addText(`${reps}`, size.x - 50, this.y)
+				.printText(`${reps}`, size.x - 50, this.y)
 			return this
 		}
 
@@ -218,7 +218,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextFont(`15pt RobotoBlack`)
 				.setTextAlign(`right`)
-				.addText(commanifier(user.group[this.index].ac), size.x - 50, this.y)
+				.printText(commanifier(user.group[this.index].ac), size.x - 50, this.y)
 			return this
 		}
 
@@ -228,7 +228,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextFont(`15pt RobotoBlack`)
 				.setTextAlign(`right`)
-				.addText(commanifier(user.group[this.index].cdy), size.x - 50, this.y)
+				.printText(commanifier(user.group[this.index].cdy), size.x - 50, this.y)
 			return this
 		}
 
@@ -238,7 +238,7 @@ const render = async (stacks, metadata) => {
 			this.text_check
 			canv.setTextAlign(`right`)
 			canv.setTextFont(`15pt Robotoblack`)
-				.addText(user.group[this.index].lv, size.x - 50, this.y)
+				.printText(user.group[this.index].lv, size.x - 50, this.y)
 			return this
 		}
 
@@ -247,7 +247,7 @@ const render = async (stacks, metadata) => {
 		get exp() {
 			canv.setTextAlign(`left`)
 			canv.setTextFont(`12pt Whitney`)
-			canv.addText(commanifier(user.group[this.index].xp) + ` XP`, size.x2 + 160, this.y + 20)
+			canv.printText(commanifier(user.group[this.index].xp) + ` XP`, size.x2 + 160, this.y + 20)
 			return this
 		}
 
@@ -257,7 +257,7 @@ const render = async (stacks, metadata) => {
 			canv.setColor(palette.white)
 			canv.setTextAlign(`left`)
 			canv.setTextFont(`17pt RobotoBold`)
-			canv.addText(`#${this.index + 1}`, size.x2 + 30, this.y)
+			canv.printText(`#${this.index + 1}`, size.x2 + 30, this.y)
 			return this
 		}
 
@@ -265,7 +265,7 @@ const render = async (stacks, metadata) => {
 		//  Returns avatar
 		async avatar() {
 			const userAvatar = await avatar(user.group[this.index].id, true, `?size = 256`)
-			canv.addRoundImage(userAvatar, size.x2 + 80, this.y - 30, 50, 50, 25)
+			canv.printCircularImage(userAvatar, size.x2 + 80, this.y - 30, 50, 50, 25)
 			return this
 		}
 
@@ -583,13 +583,13 @@ const render = async (stacks, metadata) => {
 				.setShadowBlur(15)
 				.setColor(palette.darkmatte)
 
-				.addRect(size.x2 + 15, size.y2 + 10, size.x - 45, size.y - 45)
-				.createBeveledClip(size.x2, size.y2, size.x - 20, size.y - 20, 15)
+				.printRectangle(size.x2 + 15, size.y2 + 10, size.x - 45, size.y - 45)
+				.createRoundedClip(size.x2, size.y2, size.x - 20, size.y - 20, 15)
 				.setShadowBlur(0)
 				.setShadowOffsetY(0)
 				.setColor(palette.nightmode)
-				.addRect(size.x2, size.y2, size.x, size.y)
-				.addRect(size.x2 + 150, size.y2, size.x, size.y)
+				.printRectangle(size.x2, size.y2, size.x, size.y)
+				.printRectangle(size.x2 + 150, size.y2, size.x, size.y)
 				.restore()
 				.setColor(palette.white)
 				.setTextFont(`16pt RobotoBold`)

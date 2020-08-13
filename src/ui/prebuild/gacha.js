@@ -52,7 +52,7 @@ class UI {
 			this.shadowGround()
 			this.removeShadowLayer()
 			//  Load item asset
-			this.canv.addImage(await loadAsset(item.alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
+			this.canv.printImage(await loadAsset(item.alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
 		} else {
 			//   Add base shape
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
@@ -62,7 +62,7 @@ class UI {
 		}      
 
 		//  Add flare overlay for item with rarity above 3
-		if (item.rarity_level > 3) this.canv.addImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`), 0, 0, this.canvas_x, this.canvas_y)
+		if (item.rarity_level > 3) this.canv.printImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`), 0, 0, this.canvas_x, this.canvas_y)
 		return this.canv.toBuffer()
 	}
 
@@ -96,7 +96,7 @@ class UI {
 				if (i > 0) this.canv.setColor(palette.darkmatte)
 				//  Render without base if its a card item
 				if (item(`type_name`) === `Cards`) {
-					this.canv.addImage(await loadAsset(item(`alias`)), dynamicX-2, set_y-4, card_dx+5, card_dy+10, card_dy)
+					this.canv.printImage(await loadAsset(item(`alias`)), dynamicX-2, set_y-4, card_dx+5, card_dy+10, card_dy)
 					continue
 				}
 				//  Draw card base
@@ -115,7 +115,7 @@ class UI {
 		//  Add flare overlay for item with rarity above 3
 		const rareRarities = this.container.filter(item => item.rarity_level > 3).map(item => item.rarity_level)
 		const highestRarityInPool = Math.max.apply(Math, rareRarities)
-		if (highestRarityInPool > 3) this.canv.addImage(await loadAsset(`rarityflare_${highestRarityInPool}`), 0, 0, this.canvas_x, this.canvas_y)
+		if (highestRarityInPool > 3) this.canv.printImage(await loadAsset(`rarityflare_${highestRarityInPool}`), 0, 0, this.canvas_x, this.canvas_y)
 		return this.canv.toBuffer()
 	}
 
@@ -130,7 +130,7 @@ class UI {
      *  @param {Integer} index current index position of item's object
      */
 	async itemVisual(x, y, dx, dy, dm, index = 0) {
-		this.canv.addImage(await loadAsset(this.container[index].alias), x, y, dx, dy, dm)
+		this.canv.printImage(await loadAsset(this.container[index].alias), x, y, dx, dy, dm)
 	}
 
 	/**
@@ -146,10 +146,10 @@ class UI {
 		this.canv.setColor(palette.white)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Roboto`) 
-		this.canv.addText(`${item.quantity}x ${item.name}`, x, y)
+		this.canv.printText(`${item.quantity}x ${item.name}`, x, y)
 		//  Rarity
 		this.canv.setTextFont(`9pt Sans`)
-		this.canv.addText(`★`.repeat(this.container[index].rarity_level), x, y + 15)
+		this.canv.printText(`★`.repeat(this.container[index].rarity_level), x, y + 15)
 	}
 
 	/**
@@ -180,7 +180,7 @@ class UI {
      */
 	shadowGround(x = this.startPos_x+4, y = this.startPos_y+4, dx = this.baseWidth-8, dy = this.baseHeight-8) {
 		this.dropShadow()
-		this.canv.addRect(x, y, dx, dy) // (x, y, x2, y2)   
+		this.canv.printRectangle(x, y, dx, dy) // (x, y, x2, y2)   
 	}
 
 	/**
@@ -191,9 +191,9 @@ class UI {
      *  @param {Integer|Float} dy second vertical coordinates point after x
      */
 	drawCardBase(x, y, dx, dy) {
-		this.canv.createBeveledClip(x, y, dx, dy, 7)
+		this.canv.createRoundedClip(x, y, dx, dy, 7)
 		this.canv.setColor(theme.dark.main)
-		this.canv.addRect(x, y, dx, dy)
+		this.canv.printRectangle(x, y, dx, dy)
 
 	}
 
