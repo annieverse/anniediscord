@@ -1665,7 +1665,8 @@ class Database {
 			WHERE 
 				user_relationships.user_id_A = ?
 				AND user_relationships.relationship_id > 0
-				AND user_relationships.relationship_id IS NOT NULL`
+				AND user_relationships.relationship_id IS NOT NULL
+			ORDER BY user_relationships.registered_at DESC`
 			, `all`
 			, [userId]
 		)
@@ -1688,19 +1689,20 @@ class Database {
 	 * @param {string} [userA=``] Author's user id
 	 * @param {string} [userB=``] Target user's id to be assigned
 	 * @param {number} [relationshipId=0] assigned relationship's role id
+	 * @param {string} [guildId=``] the guild id where the relationship is being registered in.
 	 * @returns {QueryResult}
 	 */
-    async setUserRelationship(userA=``, userB=``, relationshipId=0) {
+    async setUserRelationship(userA=``, userB=``, relationshipId=0, guildId=``) {
 		const fn = `[Database.setUserRelationship()]`
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id)
-				SELECT $userA, $userB, $relationshipId
+	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id, guild_id)
+				SELECT $userA, $userB, $relationshipId, $guildId
 				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
 				, `run`
-				, {userA: userA, userB: userB, relationshipId: relationshipId}	
-				, `Registering new relationship for ${userA} and ${userB}`
+				, {userA: userA, userB: userB, relationshipId: relationshipId, guildId: guildId}	
+				, `Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
