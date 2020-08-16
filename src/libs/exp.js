@@ -46,7 +46,7 @@ class Experience extends Points {
 
     	//  Send level up message if new level is higher than previous level
 		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
-		await this.updateRank(this.newExp.level)
+		await this.updateRank()
     	//  Update user's exp data.
     	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
@@ -92,9 +92,10 @@ class Experience extends Points {
 			lowerRankRoles.push(role.id)
 		})
 		await this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
+		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = this.bot.ranks.find(r => r.LEVEL == level).NAME
-		let role = this.bot.guilds.cache.get(this.message.guild.id).cache.roles.cache.find(r => r.name == roleFromList)
+		let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.find(r => r.name == roleFromList)
 		this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.add(role)
 	}
 
