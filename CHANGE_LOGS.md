@@ -2,6 +2,10 @@
 
 ___
 
+## **08/16/20 | 7.0.2 ->**
+
+* fix(exp): -infinite values on rank update.
+
 ## **08/16/20 | 7.0.1 ->**
 
 * fix(ready): wrong caching on presencestatus.
