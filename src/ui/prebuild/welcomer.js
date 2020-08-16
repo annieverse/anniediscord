@@ -1,7 +1,7 @@
-const urlToBuffer = require(`../../utils/urlToBuffer`)
 const Canvas = require(`../setup`)
 const loadAsset = require((`../../utils/loadAsset`))
 const palette = require(`../colors/default`)
+const { resolveImage } = require("canvas-constructor")
 
 class UI {
 	/**
@@ -18,7 +18,7 @@ class UI {
 
 	async build() {
 		const user = this.bot.users.cache.get(this.member.id)
-		const avatar = await urlToBuffer(user.displayAvatarURL())
+		const avatar = await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false}))
 
 		let canvas_x = 800
 		let canvas_y = 250
@@ -30,7 +30,7 @@ class UI {
 		canv.save()
 		canv.save()
 			.createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
-			.printImage(await loadAsset(`welcomer`), 0, 0, 800, 300, 400)
+			.printImage(await resolveImage(await loadAsset(`welcomer`)), 0, 0, 800, 300)//, 400)
 		canv.context.globalAlpha = 0.7
 		canv.setColor(palette.black)
 			.printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
@@ -46,7 +46,7 @@ class UI {
 			.printText(`Hi,`, 240, 150)
 
 			.setColor(palette.white)
-			.printCircularImage(avatar, 20, 30, 205, 205, 100)
+			.printCircularImage(avatar, 120, 130, 100)
 
 		return canv.toBuffer()
 	}

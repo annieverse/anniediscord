@@ -22,7 +22,7 @@ module.exports = async (bot, member) => {
 
     //  Display image
     const renderedBanner = await new Banner(member, bot).build()
-    let welcomeChannel = bot.welcome_channel || bot.guilds.get(metadata.guild.id).channels.find(channel => channel.name == `general`).id
+    let welcomeChannel = bot.welcome_channel || bot.guilds.cache.get(metadata.guild.id).channels.cache.find(channel => channel.name == `general`).id
     let welcomeText = setUpWelcomeText()
     if (!welcomeChannel) {
         try {
@@ -31,7 +31,7 @@ module.exports = async (bot, member) => {
             bot.logger.info(`[guildMemberAdd.js] There was no welcome channel and the user's dm were locked.`)
         }
     } else {
-        bot.guilds.get(metadata.guild.id).channels.get(welcomeChannel).send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
+        bot.guilds.cache.get(metadata.guild.id).channels.cache.get(welcomeChannel).send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
     }
     
     addRoles()
