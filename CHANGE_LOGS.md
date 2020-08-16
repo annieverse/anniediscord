@@ -2,6 +2,11 @@
 
 ___
 
+## **08/16/20 | 7.0.1 ->**
+
+* fix(ready): wrong caching on presencestatus.
+* fix(core): wrong img refs.
+
 ## **08/16/20 | 7.0.0 ->**
 
 * Added new modular configurations for EXP System.
