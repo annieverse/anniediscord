@@ -88,7 +88,8 @@
     "COMMAND": {
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
         "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
-        "STILL_COOLDOWN": "**{{timeLeft}}s** left till your next command."
+        "STILL_COOLDOWN": "**{{timeLeft}}s** left till your next command.",
+        "DISABLED":"I'm sorry but this command/module is diabled on this server."
     },
     "CARDCOLLECTION_AUTHOR_EMPTY": "You don't have any card collection. Go test your luck with my gacha system!",
     "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection.",
@@ -208,10 +209,10 @@
     },
     "FLIPCOIN": {
         "RESPONSES": [
-            "Landed on **{0}!** Yay!",
-            "The coin has landed on **{0}.**",
-            "Whoa! **{0}!**",
-            "As i expected! landed on **{0}!**"
+            "Landed on **{{result}}!** Yay!",
+            "The coin has landed on **{{result}}.**",
+            "Whoa! **{{result}}!**",
+            "As I expected! landed on **{{result}}!**"
         ]
     },
     "FOX": {
@@ -335,12 +336,14 @@
         "MISSING_ARG": "You are authorized to use the **Mute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully muted **{{user}}** for **{{duration}}**! {{emoji}}",
         "INVALID_DATE": "I'm not sure if that's correct date. :0",
-        "DURATION": "Okay, now please type the mute duration."
+        "DURATION": "Okay, now please type the mute duration.",
+        "USER_HAS_ROLE": "I'm sorry, {{user}}, is already muted currently."
     },
     "UNMUTE": {
         "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully unmuted **{{user}}**",
-        "NO_MUTE_ROLE": "I'm Sorry but no mute role could be found."
+        "NO_MUTE_ROLE": "I'm sorry but no mute role could be found.",
+        "USER_DOESNT_HAVE_ROLE": "I'm sorry, {{user}}, is not muted currently."
     },
     "PANDA": {
         "RESPONSES": [
@@ -464,7 +467,7 @@
         }
     },
     "ROLLDICE": {
-        "MISSING_ARGS": "Please use this command like: >rd d6 or >rd 2d6\n >rd <amount of dice to roll>d<amount of sides on the dice>"
+        "MISSING_ARGS": "Please use this command like: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
         "SHORT_GUIDE": "Please include the follow-up message **{0}**!"

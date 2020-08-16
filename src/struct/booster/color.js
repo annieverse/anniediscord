@@ -17,7 +17,7 @@ class BoosterColorManager {
             message:Components.reaction.message, 
 			meta: {author:null}
         },
-        this.userGuild = Components.reaction.message.guild.members.get(Components.user.id)
+        this.userGuild = Components.reaction.message.guild.members.cache.get(Components.user.id)
         this.logger = Components.bot.logger
         this.colorList = {
             "col_grape_soda": `Grape Soda ♡`,
@@ -82,7 +82,7 @@ class BoosterColorManager {
     assignColor(colorData) {
         if (!colorData) return false
 
-        this.userGuild.addRole(colorData.id)
+        this.userGuild.roles.add(colorData.id)
         this.logger.info(`${this.components.user.username} has received ${colorData.name} from Booster Perks channel.`)
     }
 
@@ -95,7 +95,7 @@ class BoosterColorManager {
     revokeColor(colorData) {
         if (!colorData) return false
 
-        this.userGuild.removeRole(colorData.id)
+        this.userGuild.roles.remove(colorData.id)
         this.logger.info(`${this.components.user.username} has revoked ${colorData.name} from Booster Perks channel.`)
     }
 
@@ -135,7 +135,7 @@ class BoosterColorManager {
 
         //  Notify user if non-booster user can't get Booster Perk's custom color
         if (!this.userIsBooster()) {
-            this.components.reaction.remove(this.components.user)
+            this.components.reaction.users.remove(this.components.user)
             return this.sendingDMNotification(`You need to be a **Server Booster** to get **${colorData.name}** color.`)
         }
 

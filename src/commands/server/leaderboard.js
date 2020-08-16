@@ -30,6 +30,7 @@ class Leaderboard extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, emoji, avatar, commanifier, name, bot:{db} }) {
+		
 		await this.requestUserMetadata(2)
 
 		//  Returns a guide if no parameter was specified.
@@ -40,6 +41,7 @@ class Leaderboard extends Command {
 		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
 		const selectedGroup = selectedGroupParent[0]
 		const selectedGroupIdentifier = selectedGroupParent[1]
+		if (selectedGroup == `exp` && !this.bot.xp_module) return reply(this.locale.COMMAND.DISABLED)
 		return reply(this.locale.COMMAND.FETCHING, {
 			socket: {
 				command: `${selectedGroup} leaderboard`,

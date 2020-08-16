@@ -306,7 +306,7 @@ class Routines {
 				 * 	Note: the available data to be stored currently only covered the necessary ones.
 				 * 	More new different kind of data will be recorded in the future.
 				 */
-				let params = [this.client.uptime, this.client.ping, getCpuUsage(), getMemUsage()]
+				let params = [this.client.uptime, this.client.ws.ping, getCpuUsage(), getMemUsage()]
 				this.db._query(`
 					INSERT INTO resource_log(uptime, ping, cpu, memory)
 					VALUES(?, ?, ?, ?)`

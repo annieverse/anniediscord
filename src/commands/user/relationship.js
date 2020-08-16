@@ -17,7 +17,7 @@ class Relationship extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji, name}) {
+	async execute({ reply, emoji, name, avatar }) {
         await this.requestUserMetadata(2)
 
         //  Handle if user doesn't exists
@@ -41,7 +41,7 @@ class Relationship extends Command {
                 emoji: emoji(`AnnieWink`),
                 user: name(this.user.id)
             },
-            image: (await new GUI(this.user, name, this.bot).build()).toBuffer()
+            image: await new GUI(this.user, name, avatar, this.bot).build()
         })
         return this.fetching.delete()
     }

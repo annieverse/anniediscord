@@ -50,7 +50,7 @@ class HeartCollector {
 				return this.msg.content
 			},
 			get favs() {
-				Stacks.reaction.fetchUsers()
+				Stacks.reaction.users.fetch()
 
 				function test() {
 					if (Stacks.reaction.users.size > Stacks.reaction.count) {
@@ -220,7 +220,7 @@ class HeartCollector {
 		//  Returns if current channel is not listed in arts channels.
 		if (this.metadata.nonArtChannels) return
 		//  Returns if user trying to heart their own post
-		if (this.metadata.selfLiking) return reaction.remove(user)
+		if (this.metadata.selfLiking) return reaction.users.remove(user)
 		//  Returns if user has recently liked the post
 		if (await this.keyv.get(this.reactid)) return
 

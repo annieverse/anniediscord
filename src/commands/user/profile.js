@@ -36,7 +36,7 @@ class Profile extends Command {
                 emoji: emoji(`AnnieSmile`),
                 command: `Profile`
             },
-            image: (await new GUI(this.user).build()).toBuffer(),
+            image: (await new GUI(this.user,this.bot).build()).toBuffer(),
             prebuffer: true,
             simplified: true 
         })

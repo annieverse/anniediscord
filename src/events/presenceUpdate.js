@@ -1,4 +1,4 @@
-module.exports = async (bot, oldMember, newMember) => {
+module.exports = async (bot, oldPresence, newPresence) => {
 
 
     /**
@@ -16,13 +16,13 @@ module.exports = async (bot, oldMember, newMember) => {
      */
 
 
-    const moduleID = `PRESENCEUPDATE_${newMember.id}` || `PRESENCEUPDATE_${oldMember.id}`
+    const moduleID = `PRESENCEUPDATE_${newPresence.id}` || `PRESENCEUPDATE_${oldPresence.id}`
     //  Return if current presence is not offline
-    if (newMember.presence.status != `offline`) return
+    if (newPresence.presence.status != `offline`) return
     //  To avoid performance degradation, add cooling down time before accepting next request of the same user
     if (await bot.isCooldown(moduleID)) return
     //  2 minutes cooling down
     await bot.setCooldown(moduleID, 120)
-    await bot.db.updateLastLogin(newMember.id)
+    await bot.db.updateLastLogin(newPresence.id)
 
 }

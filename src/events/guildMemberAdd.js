@@ -1,5 +1,5 @@
 const Banner = require(`../ui/prebuild/welcomer`)
-const { Attachment } = require(`discord.js`)
+const { MessageAttachment } = require(`discord.js`)
 
 module.exports = async (bot, member) => {    
     
@@ -13,7 +13,7 @@ module.exports = async (bot, member) => {
 
     if (bot.WANT_CUSTOM_LOGS && bot.guildMemberAdd) new bot.logSystem(metadata).record()
     
-    bot.logger.info(`[${member.guild.name}]${bot.users.get(member.id).tag} has joined ${member.guild.name}.`)
+    bot.logger.info(`[${member.guild.name}]${bot.users.cache.get(member.id).tag} has joined ${member.guild.name}.`)
     
     // Ignore if welcome module is turned off
     if (!bot.welcome_module) return
@@ -26,19 +26,19 @@ module.exports = async (bot, member) => {
     let welcomeText = setUpWelcomeText()
     if (!welcomeChannel) {
         try {
-            member.send(welcomeText, new Attachment(renderedBanner, `welcome!-${member.id}.jpg`))
+            member.send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
         } catch (error) {
             bot.logger.info(`[guildMemberAdd.js] There was no welcome channel and the user's dm were locked.`)
         }
     } else {
-        bot.guilds.get(metadata.guild.id).channels.get(welcomeChannel).send(welcomeText, new Attachment(renderedBanner, `welcome!-${member.id}.jpg`))
+        bot.guilds.get(metadata.guild.id).channels.get(welcomeChannel).send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
     }
     
     addRoles()
 
     function addRoles(){
         let autoRole = bot.welcome_autoRole
-        if (autoRole) member.addRole(autoRole)
+        if (autoRole) member.roles.add(autoRole)
         let additionalRoles = bot.welcome_roles
         let str = `` + additionalRoles
         additionalRoles = str.split(`, `)
@@ -46,7 +46,7 @@ module.exports = async (bot, member) => {
         if (additionalRoles.length == 0) return
         for (let index = 0; index < additionalRoles.length; index++) {
             const element = additionalRoles[index]
-            member.addRole(element)
+            member.roles.add(element)
         }
 
         function removeItemAll(arr, value) {

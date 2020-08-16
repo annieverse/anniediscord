@@ -18,7 +18,7 @@ class FlipCoin extends Command {
      */
 	async execute({ reply, choice }) {
 		return reply(choice(this.locale.FLIPCOIN.RESPONSES), {
-			socket: [choice([`Heads`, `Tails`])]
+			socket: {"result":choice([`Heads`, `Tails`])}
 		})
 	}
 

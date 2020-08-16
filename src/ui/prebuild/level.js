@@ -19,14 +19,16 @@ class UI {
 	async build() {
 		const currentBarPercentage = this.user.exp.current_exp <=  this.user.exp.minexp ? 0 : (this.user.exp.current_exp - this.user.exp.minexp) / this.user.exp.nextexpcurve
 		const adjustedPrimaryColorContrast = this.user.usedTheme.alias === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
-
-		return new Cards({ width: 260, height: 260, theme: this.user.usedTheme.alias, primaryColor: adjustedPrimaryColorContrast, align: `center` })
+		let card = await new Cards({ width: 260, height: 260, theme: this.user.usedTheme.alias, primaryColor: adjustedPrimaryColorContrast, align: `center` })
 		//	Base card
 		.createBase({})
 		//  Add top cover
 		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
+		await card
 		//	Avatar representative
-		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL), justify: `center`, marginTop: 75 })
+		.addContent({ avatar: await urlToBuffer(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 65,
+		avatarRadius: 12 })
+		card
 		//	Author and rank name
 		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 25 })
 		//	Add experience bar
@@ -56,12 +58,13 @@ class UI {
 			contentSize: `MICRO`,
 			contentColor: `inherit`,
 			barColor: `main`,
-			marginTop: 85,
+			marginTop: 75,
 			disableShadow: true
 		})
 	
 		//	Finalize
 		.ready()
+		return card.getBuffer()
 	}
 }
 

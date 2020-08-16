@@ -85,14 +85,14 @@ class SystemStatus extends Command {
 			.addTitle({main: `${title} (${this.dateThreeshold} days)`, caption: `Annie's System Metrics`, align: `left`, inline: true})
 			.addTitle({main: liveData[this.selectedMetric], caption: `(${percentage <= 0 ? `` : `+`}${percentage.toFixed(2)}%)`, align: `right`, inline: true, releaseHook: true})
 			//	Response Time Chart for the past 24 hours.
-			.addContent({img: chartLayer, marginTop: 20})
+			.addContent({img: chartLayer, marginTop: -60})
 
 			loading.delete()
 			//  Render card
 			await reply(``, {
 				prebuffer: true,
 				simplified: true,
-				image: await cardLayer.ready().toBuffer()
+				image: (await cardLayer).ready().toBuffer()
 			})
 		})
 	}

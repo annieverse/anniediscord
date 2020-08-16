@@ -18,15 +18,15 @@ module.exports = annie => {
 	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
 	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
 	if (!annie.dev) {
-		annie.on(`presenceUpdate`, async (oldMember, newMember) => reqEvent(`presenceUpdate`)(annie, oldMember, newMember))
-		annie.on(`reconnecting`, (annie) => reqEvent(`reconnecting`)(annie))
+		annie.on(`presenceUpdate`, async (oldPresence, newPresence) => reqEvent(`presenceUpdate`)(annie, oldPresence, newPresence))
+		annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie))
 		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie))
 		annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member))
 		annie.on(`guildMemberRemove`, async (member) => reqEvent(`guildMemberRemove`)(annie, member))
 		annie.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(annie, oldUser, newUser))
 		annie.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({annie, reaction, user, message_object}))
 		annie.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({annie, reaction, user, message_object}))
-		annie.on(`voiceStateUpdate`, async (oldMember, newMember) => reqEvent(`voiceStateUpdate`)(annie, oldMember, newMember))
+		annie.on(`voiceStateUpdate`, async (oldState, newState) => reqEvent(`voiceStateUpdate`)(annie, oldState, newState))
 		annie.on(`raw`, async (packet) => reqEvent(`raw`)(annie, packet))
 		// Mostly for Logging only
 		annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel))

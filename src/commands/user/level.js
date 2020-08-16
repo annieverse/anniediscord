@@ -18,6 +18,7 @@ class Level extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, name, emoji }) {
+		if (!this.bot.xp_module) return reply(this.locale.COMMAND.DISABLED)
 		await this.requestUserMetadata(2)
 
 		//  Handle if user doesn't exists
@@ -31,11 +32,10 @@ class Level extends Command {
 			}
 		})
 		.then(async loading => {
-			const img = await new GUI(this.user).build()
 			await reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
-				image: img.toBuffer(),
+				image: await new GUI(this.user).build(),
 				socket: {
 					emoji: emoji(`AnnieDab`),
 					user: name(this.user.id),

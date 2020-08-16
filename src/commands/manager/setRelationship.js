@@ -74,7 +74,7 @@ class SetRelationship extends Command {
 
                 //  Relationship deletion
                 if (this.action.startsWith(`delete`)) {
-                    await db.removeUserRelationship(this.author.id, this.user.id)
+                    await db.removeUserRelationship(this.author.id, this.user.id, this.message.guild.id)
                     reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REMOVED, {color: `lightgreen`, socket: {user: name(this.user.id)} })
                     return this.endSequence()
                 }
@@ -85,7 +85,7 @@ class SetRelationship extends Command {
                     const foundMatchedRelationship = availableRelationships.filter(rel => (rel.relationship_id === parseInt(selectedRelationship)) || (rel.name === selectedRelationship))
 
                     if (!foundMatchedRelationship.length) return
-                    await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id))
+                    await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id), this.message.guild.id)
                     reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REGISTERED, {
                         color: `lightgreen`,
                         thumbnail: avatar(this.user.id),
@@ -103,7 +103,7 @@ class SetRelationship extends Command {
 
             //  Default action. Assigning relationship.
             const foundMatchedRelationship = availableRelationships.filter(rel => (rel.relationship_id === parseInt(input)) || (rel.name === input))
-            await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id))
+            await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id), this.message.guild.id)
             reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REGISTERED, {
                 color: `lightgreen`,
                 thumbnail: avatar(this.user.id),

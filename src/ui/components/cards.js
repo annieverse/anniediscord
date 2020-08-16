@@ -1,4 +1,5 @@
 const Canvas = require(`../setup`)
+const { resolveImage } = require(`canvas-constructor`)
 const sizeOf = require(`buffer-image-size`)
 const Color = require(`color`)
 const { DEFAULT, DATABAR, CONTENT } = require(`../config`)
@@ -38,6 +39,9 @@ class Card {
 		this.avatar = {width: 50, height: 50}
 	}
 
+	getBuffer(){
+		return this.canv.toBuffer()
+	}
 
 	/**
 	 * 	Finisher method chain..
@@ -71,14 +75,12 @@ class Card {
 		return defaultOpt
 	}
 
-
 	/**
 	 *  ----------------------------------------------------------------------------------------
 	 * 	CARDS COMPONENTS SECTION
 	 * ----------------------------------------------------------------------------------------
 	 * 
 	 */
-
 
 	/**
 	 * @current of user currentexp.
@@ -87,7 +89,6 @@ class Card {
 	_barSize(current, barlength) {
 		return Math.floor(Math.floor(current*100)/100 * barlength)
 	}
-
 
 	/**
 	 *  Creating a linebar that similar to exp bar.
@@ -116,13 +117,13 @@ class Card {
 		.save()
 		//	Base pipe
 		.setColor(barColor)
-		.createBeveledClip(dynamicMarginLeft, this.reservedSpace+marginTop, width, height, 240)
-		.addRect(dynamicMarginLeft, this.reservedSpace+marginTop, width, height)
+		.createRoundedClip(dynamicMarginLeft, this.reservedSpace+marginTop, width, height, 240)
+		.printRectangle(dynamicMarginLeft, this.reservedSpace+marginTop, width, height)
 		.restore()
 		//	Filled pipe
 		this.canv.setColor(fillColor)
-		.createBeveledClip(dynamicMarginLeft,  this.reservedSpace+marginTop, progressBar, height, 240)
-		.addRect(dynamicMarginLeft, this.reservedSpace+marginTop, progressBar, height)  
+		.createRoundedClip(dynamicMarginLeft,  this.reservedSpace+marginTop, progressBar, height, 240)
+		.printRectangle(dynamicMarginLeft, this.reservedSpace+marginTop, progressBar, height)  
 		.restore()
 
 		if (!inline) this.reservedSpace += marginTop+height
@@ -130,8 +131,7 @@ class Card {
 		return this
 	}
 
-
-	addCover({img=``, gradient=false }) {
+	async addCover({img=``, gradient=false }) {
 		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/1.5))
 		const themeInRgb = Color(this.color.main).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
@@ -141,24 +141,24 @@ class Card {
 			if (imgSize.width > this.width) return imgSize.height-(imgSize.width - this.width)
 			return this.width/1.5
 		}
-
+		
+		let image = await resolveImage(img)
+		img = image
 		grad.addColorStop(1, this.color.main)
 		grad.addColorStop(0, semiTransparent)
-
 		this.canv
 		.setGlobalAlpha(0.2)
-		.addImage(img, 0, 0, this.width, dynamicHeight())
+		.printImage(img, 0, 0, this.width, dynamicHeight())
 		.setGlobalAlpha(1)
 
 		if (gradient) {
 			this.canv
 			.setColor(grad)
-			.addRect(0, 0, this.width, this.height)
+			.printRectangle(0, 0, this.width, this.height)
 		}
 
 		return this
 	}
-
 
 	/**
 	 *	Initialize canvas with base card layer.
@@ -177,12 +177,11 @@ class Card {
 
 		this.canv
 		.setColor(this._resolveColor(color, this.color.main))
-		.createBeveledClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
-		.addRect(0, 0, this.width, this.height)
+		.createRoundedClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
+		.printRectangle(0, 0, this.width, this.height)
 
 		return this
 	}
-
 
 	/**
 	 * 	Creating a FAB-like bar that displays a bit piece of information.
@@ -246,7 +245,7 @@ class Card {
 			.setShadowBlur(15)
 			.setColor(this.color.main)
 	
-			.addRect(leftMarginState()+20, topMarginState()+20, width-40, height-35)
+			.printRectangle(leftMarginState()+20, topMarginState()+20, width-40, height-35)
 			.setShadowBlur(0)
 			.setShadowOffsetY(0)
 			
@@ -254,20 +253,20 @@ class Card {
 
 		//	If custom color is not specified, will follow default theming preset instead.
 		this.canv.setColor(barColor)
-		.createBeveledClip(leftMarginState(), topMarginState(), width, height, DEFAULT.DATABAR.CORNER_RADIUS)
-		.addRect(marginLeft, topMarginState(), this.width, this.height)
+		.createRoundedClip(leftMarginState(), topMarginState(), width, height, DEFAULT.DATABAR.CORNER_RADIUS)
+		.printRectangle(marginLeft, topMarginState(), this.width, this.height)
 		//  Content
 		this.canv
 		.setTextAlign(align)
 		.setColor(contentColor)
 		.setTextFont(CONTENT[`MAIN_TEXT`].SIZE[contentSize])
-		.addText(content, leftMarginState()+(width/2), topMarginState()+(height/1.4))
+		.printText(content, leftMarginState()+(width/2), topMarginState()+(height/1.4))
 		//  Label
 		this.canv
 		.setTextAlign(align)
 		.setColor(labelColor)
 		.setTextFont(CONTENT[`LABEL`].SIZE[labelSize])
-		.addText(label, leftMarginState()+(width/2), topMarginState()+(height/3.9))
+		.printText(label, leftMarginState()+(width/2), topMarginState()+(height/3.9))
 
 
 		this.canv.restore()
@@ -286,13 +285,12 @@ class Card {
 	createVerticalSeparator({margin=20, thickness=1}) {
 		this.canv
 		.setColor(this.color.separator)
-		.addRect(0, this.reservedSpace + margin, this.width, thickness)
+		.printRectangle(0, this.reservedSpace + margin, this.width, thickness)
 
 		this.reservedSpace += (margin*2)
 
 		return this
 	}
-
 
 	/**
 	 *  ----------------------------------------------------------------------------------------
@@ -317,7 +315,6 @@ class Card {
 		return alignPresets[alignName]
 	}
 
-
 	/**
 	 * 	Add title section to the card.
 	 * 	@param {*} Object 
@@ -334,21 +331,19 @@ class Card {
 		captionMargin=15,
 		captionColor=this.color.caption,
 		color=this.color.text}) {
-
 		color = this._resolveColor(color, this.color.text)
 		captionColor = this._resolveColor(captionColor, this.color.text)
-
 		this.canv
 		.setColor(color)
 		.setTextAlign(align)
 		.setTextFont(size ? `${parseInt(size)}pt roboto-light` : DEFAULT.HEADER.TITLE.FONT)
-		.addText(main, this._getHorizontalAlign(align), this.reservedSpace+marginTop)
+		.printText(main, this._getHorizontalAlign(align), this.reservedSpace+marginTop)
 
 		if (caption) {
 			this.canv
 			.setTextFont(DEFAULT.HEADER.CAPTION.FONT)
 			.setColor(captionColor)
-			.addText(caption, this._getHorizontalAlign(align), this.reservedSpace+marginTop+captionMargin)
+			.printText(caption, this._getHorizontalAlign(align), this.reservedSpace+marginTop+captionMargin)
 		}
 		
 		//	Add state for flexible Y positioning
@@ -360,13 +355,12 @@ class Card {
 		return this
 	}
 
-
 	/**
 	 *	Add content/body section to the card.
 	 *	@param {*} Object 
 	 * 	@addContent
 	 */
-	addContent({
+	async addContent({
 		main=``,
 		caption=null,
 		align=this.align,
@@ -383,9 +377,8 @@ class Card {
 		captionMargin=20,
 		img=null,
 		avatar=null,
-		avatarRadius=null
+		avatarRadius=10
 		}) {
-
 		//	Handle sensitive case
 		if (typeof size === `string`) size = size.toUpperCase()
 		//	Handle custom color selectio
@@ -398,33 +391,43 @@ class Card {
 		const mainMarginLeft = () => {
 			let combinedCustomXAxis = 0
 			if (justify) combinedCustomXAxis += this._getHorizontalAlign(justify)
+			/** 
+			*  If avatar parameter is supplied, then the text's X position
+			*  will be sum by avatarRadius value.
+			*  EXAMPLE: 
+			*  avatarRadius = 10
+			*  textX = 50
+			*  w/o Avatar -> 50 = X position = textX
+			*  w/ Avatar -> 60 = X position = textX + avatarRadius 
+			*  (therefore, avatar will be placed on the text's original X position.) 
+			*/
 			if (avatar) combinedCustomXAxis += customAvatarWidth + 20
 			return combinedCustomXAxis + marginLeft
 		}
 		const avatarMarginLeft = () => {
 			let combinedCustomXAxis = 0
-			if (justify === `center`) return this._getHorizontalAlign(`center`)-customAvatarRadius
+			if (justify === `center`) return this._getHorizontalAlign(`center`)//-customAvatarRadius
 			return combinedCustomXAxis + marginLeft
-		}
-		const avatarMarginTop = () => (this.reservedSpace+marginTop)-(customAvatarRadius+5)
-
-		if (main) {
-			this.canv
-			.setColor(mainColor)
-			.setTextAlign(align)
-			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
-			.addText(main, mainMarginLeft(), this.reservedSpace+marginTop)
 		}
 
 		if (caption) {
 			this.canv
 			.setTextFont(CONTENT.CAPTION.SIZE.LARGE)
 			.setColor(captionColor)
-			.addText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
+			.printText(caption, marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
-
-		if (img) this.canv.addImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
-		if (avatar) this.canv.addRoundImage(avatar, avatarMarginLeft(), avatarMarginTop(), customAvatarWidth, customAvatarHeight, customAvatarRadius)
+		
+		if (avatar) {
+			avatar = await resolveImage(avatar)
+			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-5, customAvatarWidth, customAvatarHeight, customAvatarRadius)
+		}
+		if (main) {
+			this.canv
+			.setColor(mainColor)
+			.setTextAlign(align)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
+			.printText(main, mainMarginLeft(), this.reservedSpace+marginTop)
+		}
 
 		//	Add state for flexible Y positioning
 		if (!inline || (inline && releaseHook)) {
@@ -433,7 +436,10 @@ class Card {
 			if (avatar) this.reservedSpace += customAvatarRadius
 			this.reservedSpace += marginTop
 		}
-
+		if (img) {
+			img = await resolveImage(img)
+			this.canv.printImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
+		}
 		return this
 	}
 }

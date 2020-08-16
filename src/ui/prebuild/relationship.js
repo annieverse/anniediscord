@@ -1,6 +1,6 @@
 const Cards = require(`../components/cards`)
-const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
+const {resolveImage} = require(`canvas-constructor`)
 
 class UI {
     /**
@@ -10,11 +10,12 @@ class UI {
      * @legacy
      * @return {Canvas}
      */
-    constructor(user={}, nameParser, bot) {
+    constructor(user={}, nameParser, avatarParser, bot) {
         this.bot = bot
         this.user = user
         this.relationships = user.relationships
         this.nameParser = nameParser
+        this.avatarParser = avatarParser
         this.width = 320
         this.height = 430
         this.startPos_x = 10
@@ -31,41 +32,41 @@ class UI {
     async build() {
         //  Base and card owner's avatar
         this.card.createBase({cornerRadius: 25})
-        this.card.canv.addRoundImage(await urlToBuffer(this.user.user.displayAvatarURL), 15, 15, 30, 30, 15)
+        this.card.canv.printCircularImage(await resolveImage(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), 35, 35, 15, 15, 7)
 
         //  Title Bar
         this.card.canv.setColor(this.card.color.text)
         .setTextAlign(`left`)
         .setTextFont(`11pt roboto-bold`)
-        .addText(`Relationship`, 55, 35)
+        .printText(`Relationship`, 55, 35)
         .setColor(this.card.color.separator)
-        .addRect(this.startPos_x, 48, this.width, 2) // bottom border
+        .printRectangle(this.startPos_x, 48, this.width, 2) // bottom border
 
         //  Main Content
         for (let i=0; i<Math.min(this.relationships.length, 9); i++) {
             const rel = this.relationships[i]
-            const user = this.bot.users.get(rel.assigned_user_id)
-            const relAvatar = user ? await urlToBuffer(user.displayAvatarURL) : await loadAsset(`error`)
+            const user = this.bot.users.cache.get(rel.assigned_user_id)
+            const relAvatar = user ? await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false})) : await resolveImage(await loadAsset(`error`))
             const relName = user ? this.nameParser(user.id) : rel.assigned_user_id
             this.listEntry(relName, relAvatar, rel.relationship_name, 30, 70 + i*33)
         }
-
         //  Footer
         this.card.canv.setTextAlign(`left`)
         .setTextFont(`10pt roboto-bold`)
-        .addText(`I have a total of `+this.relationships.length+` family members ❤`, 30, 390)
-        return this.card.ready()
+        .printText(`I have a total of `+this.relationships.length+` family members ❤`, 30, 390)
+        this.card.ready()
+        return this.card.getBuffer()
     }
 
     listEntry(username, avatar, relation, x, y) {
         this.card.canv.setColor(this.card.color.text)
-        .addRoundImage(avatar, x + 4, y, 38, 38, 19)
+        .printCircularImage(avatar, x + 25, y + 20, 19, 19, 9)
         .setTextAlign(`left`)
         .setTextFont(`12pt roboto-bold`)
-        .addText(username, x + 50, y + 20)
+        .printText(username, x + 50, y + 20)
         .setColor(this.card.color.text)
         .setTextFont(`7pt roboto`)
-        .addText(relation, x + 50, y + 34)
+        .printText(relation, x + 50, y + 34)
     }
 }
 

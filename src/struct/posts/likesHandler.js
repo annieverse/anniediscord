@@ -68,7 +68,7 @@ class heartReactionHandler {
 		//  Returns if current channel is not listed in arts channels.
         if (this.nonArtChannels) return
         //  Returns if user trying to heart their own post
-        if (this.selfLiking) this.reaction.remove(this.reactor)
+        if (this.selfLiking) this.reaction.users.remove(this.reactor)
         //  Returns if user react is a this.bot
         if (this.isBot) return
         

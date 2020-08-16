@@ -25,13 +25,13 @@ class Mute extends Command {
 		//  Handle if target user doesn't exists
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
+
 		this.setSequence()
 		reply(this.locale.MUTE.DURATION, {color: `golden`})
 		.then(async () => {
 			this.sequence.on(`collect`, async msg => {
 				const input = msg.content.toLowerCase()
 				const time = ms(input)
-
 				/**
 				 * ---------------------
 				 * Sequence Cancellations.
@@ -46,12 +46,12 @@ class Mute extends Command {
 				//  Handle if input time is not a valid date
 				if (!time) return reply(this.locale.MUTE.INVALID_DATE, {color: `red`})
 				//  Lookup into available mute role in the guild
-				let muteRole = this.message.guild.roles.find(r => (r.name === `muted`) || (r.name === `mute`))
-				if (this.bot.mute_role) muteRole = this.message.guild.roles.find(r => (r.id == this.bot.mute_role))
+				let muteRole = this.message.guild.roles.cache.find(r => (r.name === `muted`) || (r.name === `mute`))
+				if (this.bot.mute_role) muteRole = this.message.guild.roles.cache.find(r => (r.id == this.bot.mute_role))
 				//  If mute role hasn't been made yet, create one.
 				if (!muteRole) {
 					try {
-						muteRole = await this.message.guild.createRole({
+						muteRole = await this.message.guild.roles.create({
 							name: `muted`,
 							color: `#000000`,
 							permissions: []
@@ -70,7 +70,9 @@ class Mute extends Command {
 						this.logger.error(`Failed to create mute role. > `, e)
 					}
 				}
-	
+				
+				if (this.user.roles.cache.has(muteRole.id)) return reply(this.locale.MUTE.USER_HAS_ROLE,{socket:{"user":this.user}})
+
 				addRole(muteRole, this.user.id)
 				reply(this.locale.MUTE.SUCCESSFUL, {
 					color: `lightgreen`,

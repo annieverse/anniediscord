@@ -33,6 +33,7 @@ class Experience extends Points {
      *  @returns {boolean}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
+		if (!this.bot.xp_module) return
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
         
     	//  Apply booster if presents
@@ -45,7 +46,7 @@ class Experience extends Points {
 
     	//  Send level up message if new level is higher than previous level
 		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
-		
+		await this.updateRank(this.newExp.level)
     	//  Update user's exp data.
     	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
@@ -87,14 +88,14 @@ class Experience extends Points {
 		let lowerRankRoles = []
 		this.bot.ranks.forEach(element => {
 			rankLevels.push(element.LEVEL)
-			let role = this.bot.guilds.get(this.message.guild.id).roles.find(r => r.name == element.NAME)
+			let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.find(r => r.name == element.NAME)
 			lowerRankRoles.push(role.id)
 		})
-		await this.bot.guilds.get(this.message.guild.id).members.get(this.message.author.id).removeRoles(lowerRankRoles)
+		await this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = this.bot.ranks.find(r => r.LEVEL == level).NAME
-		let role = this.bot.guilds.get(this.message.guild.id).roles.find(r => r.name == roleFromList)
-		this.bot.guilds.get(this.message.guild.id).members.get(this.message.author.id).addRole(role)
+		let role = this.bot.guilds.cache.get(this.message.guild.id).cache.roles.cache.find(r => r.name == roleFromList)
+		this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.add(role)
 	}
 
     /**
@@ -111,6 +112,7 @@ class Experience extends Points {
     		}
 			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 			await this.updateRank(this.newExp.level)
+			if (!this.bot.level_up_message) return
     		return this.reply(this.locale.LEVELUP.JUMPING, {
     			color: `purple`,
     			socket: {
@@ -126,6 +128,7 @@ class Experience extends Points {
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
+		if (!this.bot.level_up_message) return
 		return this.reply(this.locale.LEVELUP.REGULAR, {
 			color: `crimson`,
 			socket: {

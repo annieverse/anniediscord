@@ -14,7 +14,7 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
-		logger.info(`currently serving in ${annie.guilds.size} guilds and ${annie.users.size} users`)
+		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.cache.size} users`)
 		annie.user.setStatus(`dnd`)
 	} else {
 		/**

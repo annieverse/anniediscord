@@ -25,12 +25,12 @@ module.exports = async (bot, oldUser, newUser) => {
 
 	if( ticket && newUser.roles.has(ticket.id) && (oldUser.nickname !== newUser.nickname) ) {
 		bot.logger.info(`${newUser.nickname} used the nickname changer ticket.`)
-		newUser.removeRole(ticket)
+		newUser.roles.remove(ticket)
 	}
 	
 	if (muted && newUser.roles.has(muted.id)){
 		if (eventParticipant && newUser.roles.has(eventParticipant.id)){
-			newUser.removeRole(eventParticipant.id)
+			newUser.roles.remove(eventParticipant.id)
 			bot.logger.info(`${newUser.nickname} was given the ${muted.name} role so their event participant role has been taken away.`)
 		}
 	}
@@ -52,7 +52,7 @@ module.exports = async (bot, oldUser, newUser) => {
 	if (BoostingServerStopped){
 		const BoosterColorList = bot.booster_color_list
 		
-		newUser.removeRoles(BoosterColorList)
+		newUser.roles.remove(BoosterColorList)
 			.then(r => bot.logger.info(`booster color roles removed from ${r.user.tag}`)) // 
 			.catch(()=>null) // Ignore the error
 	}

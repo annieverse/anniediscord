@@ -1,4 +1,3 @@
-const fsn = require(`fs-nextra`)
 const fs = require(`fs`)
 const path = require(`path`)
 
@@ -33,7 +32,8 @@ const loadAsset = async (id=``) => {
 			}
 		})
 	}
-	return fsn.readFile(ultimateFile)
+	var file = fs.readFileSync(ultimateFile)
+	return file
 }
 
 module.exports = loadAsset

@@ -14,7 +14,7 @@ class Transaction {
 
 	// Adding role
 	Roles(data) {
-		this.message.guild.members.get(this.author.id).addRole(this.message.guild.roles.find(n => n.name === data.name))
+		this.message.guild.members.cache.get(this.author.id).roles.add(this.message.guild.roles.find(n => n.name === data.name))
 	}
 
 

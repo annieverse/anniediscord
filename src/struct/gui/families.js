@@ -1,10 +1,11 @@
-const { Canvas } = require(`canvas-constructor`)
+const { Canvas, resolveImage } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const Theme = require(`../../ui/colors/themes`)
+const canvas = require(`canvas`)
 
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBold`)
-Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBold`)
+canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function relation(stacks, member) {
     const { meta: {data}, bot: {db} } = stacks
@@ -63,9 +64,9 @@ async function relation(stacks, member) {
         .setShadowOffsetY(5)
         .setShadowBlur(10)
         .setColor(user.theme.main)
-        .addRect(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
-        .createBeveledClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
-        .addRect(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
+        .printRectangle(startPos_x + 7, startPos_y + 7, baseWidth - 14, baseHeight - 14) // (x, y, x2, y2)
+        .createRoundedClip(startPos_x, startPos_y, baseWidth, baseHeight, 25)
+        .printRectangle(startPos_x, startPos_y, baseWidth, baseHeight) // (x, y, x2, y2)
         .setShadowBlur(0)
         .setShadowOffsetY(0)
         .save()
@@ -74,7 +75,7 @@ async function relation(stacks, member) {
      *    USER
      *    AVATAR
      */
-    canv.addRoundImage(avatar, 15, 15, 30, 30, 15)
+    canv.printCircularImage(avatar, 15, 15, 30, 30, 15)
 
     /**
      *    TITLE BAR
@@ -82,9 +83,9 @@ async function relation(stacks, member) {
         .setColor(user.theme.text)
         .setTextAlign(`left`)
         .setTextFont(`11pt RobotoBold`)
-        .addText(`Family`, 55, 35)
+        .printText(`Family`, 55, 35)
         .setColor(user.theme.separator)
-        .addRect(startPos_x, 48, baseWidth, 2) // bottom border
+        .printRectangle(startPos_x, 48, baseWidth, 2) // bottom border
 
     if (relations.length == 0) {
         return canv.toBuffer()
@@ -93,24 +94,24 @@ async function relation(stacks, member) {
 
     const listEntry = (username, avatar, relation, x, y) => {
         canv.setColor(rank.color)
-            .addRoundImage(avatar, x + 4, y, 38, 38, 19)
+            .printCircularImage(avatar, x + 4, y, 38, 38, 19)
             .setTextAlign(`left`)
             .setTextFont(`13pt RobotoBold`)
-            .addText(username, x + 50, y + 20)
+            .printText(username, x + 50, y + 20)
             .setColor(user.theme.text)
             .setTextFont(`8pt RobotoBold`)
-            .addText(relation, x + 50, y + 34)
+            .printText(relation, x + 50, y + 34)
     }
 
     for (var i=0;i<Math.min(familyrelations.length, 9); i++) {
-        var relUser = await stacks.bot.fetchUser(familyrelations[i].theirUserId)
+        var relUser = await stacks.bot.users.fetch(familyrelations[i].theirUserId)
         var userAvatar = await stacks.avatar(relUser.id, true)
         listEntry(relUser.username, userAvatar, familyrelations[i].theirRelation, 30, 70 + i*33)
     }
 
     canv.setTextAlign(`left`)
         .setTextFont(`10pt RobotoBold`)
-        .addText(`I have a total of `+familyrelations.length+` family members ❤`, 30, 390)
+        .printText(`I have a total of `+familyrelations.length+` family members ❤`, 30, 390)
 
 
     return canv.toBuffer()

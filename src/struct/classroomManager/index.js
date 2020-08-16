@@ -12,7 +12,7 @@ class ClassroomManager {
             message:Components.reaction.message, 
 			meta: {author:null}
         }
-        this.userGuild = Components.reaction.message.guild.members.get(Components.user.id)
+        this.userGuild = Components.reaction.message.guild.members.cache.get(Components.user.id)
         this.logger = Components.bot.logger
         this.pistachio = new Pistachio(this.components).bag()
         this.keyv = Components.bot.keyv
@@ -25,7 +25,7 @@ class ClassroomManager {
      *  @apprenticeshipRole
      */
     get apprenticeshipRole() {
-        return this.components.message.guild.roles.get(`621714766947287052`)
+        return this.components.message.guild.roles.cache.get(`621714766947287052`)
     }
 
 
@@ -45,7 +45,7 @@ class ClassroomManager {
      */
     assignRole(roleData) {
         if (!roleData) return
-        this.userGuild.addRole(roleData.id)
+        this.userGuild.roles.add(roleData.id)
         this.logger.info(`${this.components.user.username} has received ${roleData.name} from Classroom Guide channel.`)
     }
 
@@ -57,7 +57,7 @@ class ClassroomManager {
      */
     revokeRole(roleData) {
         if (!roleData) return
-        this.userGuild.removeRole(roleData.id)
+        this.userGuild.roles.remove(roleData.id)
         this.logger.info(`${this.components.user.username} has revoked ${roleData.name} from Classroom Guide channel.`)
     }
 

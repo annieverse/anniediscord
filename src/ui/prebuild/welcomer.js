@@ -17,8 +17,8 @@ class UI {
 	}
 
 	async build() {
-		const user = this.bot.users.get(this.member.id)
-		const avatar = await urlToBuffer(user.displayAvatarURL)
+		const user = this.bot.users.cache.get(this.member.id)
+		const avatar = await urlToBuffer(user.displayAvatarURL())
 
 		let canvas_x = 800
 		let canvas_y = 250
@@ -29,24 +29,24 @@ class UI {
 
 		canv.save()
 		canv.save()
-			.createBeveledClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
-			.addImage(await loadAsset(`welcomer`), 0, 0, 800, 300, 400)
+			.createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
+			.printImage(await loadAsset(`welcomer`), 0, 0, 800, 300, 400)
 		canv.context.globalAlpha = 0.7
 		canv.setColor(palette.black)
-			.addRect(start_x, start_y, canvas_x - 40, canvas_y - 40)
+			.printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
 			.restore()
 
 			.setTextAlign(`left`)
 			.setTextFont(`41pt roboto-bold`)
 			.setColor(palette.lightgray)
-			.addText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`..` : user.username+`!`}`, 320, 150) //102
+			.printText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`..` : user.username+`!`}`, 320, 150) //102
 		
 			.setTextFont(`42pt roboto`)
 			.setColor(palette.white)
-			.addText(`Hi,`, 240, 150)
+			.printText(`Hi,`, 240, 150)
 
 			.setColor(palette.white)
-			.addRoundImage(avatar, 20, 30, 205, 205, 100)
+			.printCircularImage(avatar, 20, 30, 205, 205, 100)
 
 		return canv.toBuffer()
 	}

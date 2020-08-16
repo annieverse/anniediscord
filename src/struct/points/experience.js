@@ -71,7 +71,7 @@ class Experience extends Points {
 	 * 	@addRank
 	 */
 	addRank() {
-		this.message.guild.member(this.message.author.id).addRole(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.updated.level).title))
+		this.message.guild.member(this.message.author.id).roles.add(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.updated.level).title))
 	}
 
 	
@@ -87,7 +87,7 @@ class Experience extends Points {
 		for (let i in userDuplicateRanks) {
 			idpool.push(((this.ranks.ranksCheck(userDuplicateRanks[i]).rank).id).toString())
 		}
-		return this.message.guild.member(this.message.author.id).removeRoles(idpool)
+		return this.message.guild.member(this.message.author.id).roles.remove(idpool)
 	}
 
 
@@ -131,8 +131,8 @@ class Experience extends Points {
 	get fixLevel() {
 		let wrongRank = this.ranks.ranksCheck(this.meta.data.level).wrongRank
 		let correctRank = this.ranks.ranksCheck(this.meta.data.level).correctRank
-		wrongRank == undefined ? null : this.message.guild.member(this.message.author.id).removeRole(wrongRank)
-		return this.message.guild.member(this.message.author.id).addRole(correctRank)
+		wrongRank == undefined ? null : this.message.guild.member(this.message.author.id).roles.remove(wrongRank)
+		return this.message.guild.member(this.message.author.id).roles.add(correctRank)
 	}
 
 	/**

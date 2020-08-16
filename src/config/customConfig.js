@@ -88,24 +88,8 @@ class config {
             {"LEVEL": 100, "COLOR": `#f4e762`, "NAME":`The Creator`},
             {"LEVEL": 180, "COLOR": `#fda746`, "NAME":`Altered Pencilician`}
         ]
-        let backupRanks = [
-            {"LEVEL": 0, "COLOR": `#f1c1db`, "NAME":`Pencilician`},
-            {"LEVEL": 5, "COLOR": `#e68fd6`, "NAME":`Crayola Knight`},
-            {"LEVEL": 10, "COLOR": `#df7de6`, "NAME":`Crayomancer`},
-            {"LEVEL": 15, "COLOR": `#b36ee6`, "NAME":`Brush Wizard`},
-            {"LEVEL": 20, "COLOR": `#9d55dd`, "NAME":`Sketch Summoner`},
-            {"LEVEL": 25, "COLOR": `#7764ff`, "NAME":`Legendary Doodler`},
-            {"LEVEL": 30, "COLOR": `#4a7bfa`, "NAME":`Artifice Master`},
-            {"LEVEL": 35, "COLOR": `#288cf2`, "NAME":`Hellbound Painter`},
-            {"LEVEL": 40, "COLOR": `#44abff`, "NAME":`Pastel Paladin`},
-            {"LEVEL": 45, "COLOR": `#4ed1e7`, "NAME":`Color Elementalist`},
-            {"LEVEL": 50, "COLOR": `#59e7ab`, "NAME":`Copic Crusader`},
-            {"LEVEL": 60, "COLOR": `#6ff18b`, "NAME":`Earthwork Alchemist`},
-            {"LEVEL": 70, "COLOR": `#90ff80`, "NAME":`Canvas Conqueror`},
-            {"LEVEL": 85, "COLOR": `#caff7e`, "NAME":`Fame Dweller`},
-            {"LEVEL": 100, "COLOR": `#f4e762`, "NAME":`The Creator`},
-            {"LEVEL": 180, "COLOR": `#fda746`, "NAME":`Altered Pencilician`}
-        ]
+        let backupRanks = finalConfig.ranks
+
         finalConfig.backupRanks = backupRanks
         finalConfig.custom_ranks = false
         if (typeof finalConfig.set_ranks == `string`) finalConfig.set_ranks = JSON.parse(finalConfig.set_ranks)
@@ -120,13 +104,15 @@ class config {
                 const element = finalConfig.set_ranks[index]
                 let role 
                 try {
-                    role = this.bot.guilds.get(guildId).roles.get(element.ROLE)
+                    role = this.bot.guilds.cache.get(guildId).roles.cache.get(element.ROLE)
                 } catch (error) {
                     finalConfig.ranks = backupRanks
+                    finalConfig.custom_ranks = false
                     break
                 }
                 if (!role) {
                     finalConfig.ranks = backupRanks
+                    finalConfig.custom_ranks = false
                     break
                 }
                 newRank = {
@@ -208,6 +194,8 @@ class config {
             "nitro_role": `role id, name, or @ like @admin`,
             "nitro_notifications": `true/false`,
             "nitro_role_color_changer": `true/false`,
+            "xp_module": `true/false`,
+            "level_up_message": `true/false`,
             "featured_requirement": `number`,
             "featured/trending_module": `true/false`,
             "set_ranks": `object like {"LEVEL": "number", "ROLE": "role id, name, or @ like @admin"}`,
@@ -284,6 +272,8 @@ class config {
             "post_heart_module": false,
             "nitro_role": null,
             "nitro_notifications": true,
+            "xp_module": true,
+            "level_up_message": true,
             "featured_requirement": 10,
             "featured_trending_module": false,
             "set_ranks": [],

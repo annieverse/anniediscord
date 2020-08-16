@@ -40,16 +40,26 @@ class UI {
 				})
 			}
 
-			//  User name
-			const userName = this.nameParser(topTenRows[row].id)
+			//  User ranking
 			card.addContent({
+				main: `#${ranking}`,
+				mainColor: colorByRank,
+				inline: true,
+				marginLeft: 80
+			})
+
+			//  User name
+			//  This one required to be async, since we use canvas constructor's .resolveImage()
+			//  to handle the avatar.
+			const userName = this.nameParser(topTenRows[row].id)
+			await card.addContent({
 				main: userName.length >= 18 ? userName.slice(0, 18) + `...` : userName,
 				fontWeight: `bold`,
 				size: 12,
 				avatar: await this.avatarParser(topTenRows[row].id, true), 
-				avatarRadius: 20,
+				avatarRadius: 10,
 				mainColor: colorByRank,
-				marginLeft: 120,
+				marginLeft: 140,
 				inline: true
 			})
 
@@ -60,15 +70,7 @@ class UI {
 				align: `right`,
 				marginLeft: -40,
 				mainColor: colorByRank,
-				inline: true,
-			})
-
-			//  User ranking
-			card.addContent({
-				main: `#${ranking}`,
-				mainColor: colorByRank,
 				releaseHook: true,
-				marginLeft: 80
 			})
 		}
 		return card.ready()

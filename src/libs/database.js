@@ -1649,7 +1649,7 @@ class Database {
 	 * @param {string} [userId=``] target user id
 	 * @returns {QueryResult}
 	 */
-    getUserRelations(userId=``) {
+    getUserRelations(userId=``, guildId=``) {
 		return this._query(`
 			SELECT 
 				relationships.relationship_id AS "relationship_id",
@@ -1665,9 +1665,10 @@ class Database {
 			WHERE 
 				user_relationships.user_id_A = ?
 				AND user_relationships.relationship_id > 0
-				AND user_relationships.relationship_id IS NOT NULL`
+				AND user_relationships.relationship_id IS NOT NULL
+				AND user_relationships.guild_id = ?`
 			, `all`
-			, [userId]
+			, [userId, guildId]
 		)
     }
 
@@ -1725,15 +1726,16 @@ class Database {
 	 * @param {string} [userB=``] Target user's id to be assigned.
 	 * @returns {QueryResult}
 	 */
-    removeUserRelationship(userA=``, userB=``) {
+    removeUserRelationship(userA=``, userB=``, guildId=``) {
 		return this._query(`
             DELETE FROM user_relationships
             WHERE 
             	user_id_A = ?
-            	AND user_id_B = ?`
+				AND user_id_B = ?
+				AND guild_id = ?`
 			, `run`
-			, [userA, userB]
-			, `Removing ${userA} and ${userB} relationship.`
+			, [userA, userB, guildId]
+			, `Removing ${userA} and ${userB} relationship for guild: ${guildId}.`
 		)
 	}
 	
