@@ -57,7 +57,7 @@ class UI {
 			//   Add base shape
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 			//  Load item assets
-			await this.itemVisual(55, 50, 100, 100, 50)
+			await this.itemVisual(55, 50, 100, 100)
 			await this.itemText(100, 170)
 		}      
 
@@ -102,7 +102,7 @@ class UI {
 				//  Draw card base
 				this.drawCardBase(dynamicX, set_y, card_dx, card_dy)
 				//  Adjusting item graphic
-				await this.itemVisual(card2card_distancex(i) + 38, set_y + 35, 100, 100, 50, currentIndex)
+				await this.itemVisual(card2card_distancex(i) + 38, set_y + 35, 100, 100, currentIndex)
 				//  Adjusting text
 				this.itemText(card2card_distancex(i) + 85, set_y + 150, currentIndex)
 			}
@@ -129,8 +129,8 @@ class UI {
      *  @param {Integer|Float} dm overall diameter/size
      *  @param {Integer} index current index position of item's object
      */
-	async itemVisual(x, y, dx, dy, dm, index = 0) {
-		this.canv.printImage(await loadAsset(this.container[index].alias), x, y, dx, dy, dm)
+	async itemVisual(x, y, dx, dy, index = 0) {
+		this.canv.printImage(await loadAsset(this.container[index].alias), x, y, dx, dy)
 	}
 
 	/**
