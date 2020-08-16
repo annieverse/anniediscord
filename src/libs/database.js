@@ -1649,7 +1649,7 @@ class Database {
 	 * @param {string} [userId=``] target user id
 	 * @returns {QueryResult}
 	 */
-    getUserRelations(userId=``, guildId=``) {
+    getUserRelations(userId=``) {
 		return this._query(`
 			SELECT 
 				relationships.relationship_id AS "relationship_id",
@@ -1665,10 +1665,9 @@ class Database {
 			WHERE 
 				user_relationships.user_id_A = ?
 				AND user_relationships.relationship_id > 0
-				AND user_relationships.relationship_id IS NOT NULL
-				AND user_relationships.guild_id = ?`
+				AND user_relationships.relationship_id IS NOT NULL`
 			, `all`
-			, [userId, guildId]
+			, [userId]
 		)
     }
 

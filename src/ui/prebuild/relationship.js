@@ -32,41 +32,27 @@ class UI {
     async build() {
         //  Base and card owner's avatar
         this.card.createBase({cornerRadius: 25})
-        this.card.canv.printCircularImage(await resolveImage(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), 35, 35, 15, 15, 7)
-
-        //  Title Bar
-        this.card.canv.setColor(this.card.color.text)
-        .setTextAlign(`left`)
-        .setTextFont(`11pt roboto-bold`)
-        .printText(`Relationship`, 55, 35)
-        .setColor(this.card.color.separator)
-        .printRectangle(this.startPos_x, 48, this.width, 2) // bottom border
-
         //  Main Content
-        for (let i=0; i<Math.min(this.relationships.length, 9); i++) {
+        for (let i=0; i<Math.min(this.relationships.length, 7); i++) {
             const rel = this.relationships[i]
             const user = this.bot.users.cache.get(rel.assigned_user_id)
             const relAvatar = user ? await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false})) : await resolveImage(await loadAsset(`error`))
             const relName = user ? this.nameParser(user.id) : rel.assigned_user_id
-            this.listEntry(relName, relAvatar, rel.relationship_name, 30, 70 + i*33)
+            this.listEntry(relName, relAvatar, rel.relationship_name, 30, 30 + i*50)
         }
-        //  Footer
-        this.card.canv.setTextAlign(`left`)
-        .setTextFont(`10pt roboto-bold`)
-        .printText(`I have a total of `+this.relationships.length+` family members ❤`, 30, 390)
         this.card.ready()
         return this.card.getBuffer()
     }
 
     listEntry(username, avatar, relation, x, y) {
         this.card.canv.setColor(this.card.color.text)
-        .printCircularImage(avatar, x + 25, y + 20, 19, 19, 9)
+        .printCircularImage(avatar, x + 30, y + 30, 19, 19, 9)
         .setTextAlign(`left`)
         .setTextFont(`12pt roboto-bold`)
-        .printText(username, x + 50, y + 20)
+        .printText(username, x + 65, y + 30)
         .setColor(this.card.color.text)
         .setTextFont(`7pt roboto`)
-        .printText(relation, x + 50, y + 34)
+        .printText(relation, x + 65, y + 44)
     }
 }
 
