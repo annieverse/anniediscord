@@ -30,7 +30,7 @@ class UI {
 		avatarRadius: 12 })
 		card
 		//	Author and rank name
-		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 25 })
+		.addTitle({ main: this.user.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 40 })
 		//	Add experience bar
 		.addLinebar({  
 			current: currentBarPercentage, 
