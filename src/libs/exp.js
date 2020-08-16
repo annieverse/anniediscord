@@ -46,7 +46,6 @@ class Experience extends Points {
 
     	//  Send level up message if new level is higher than previous level
 		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
-		await this.updateRank()
     	//  Update user's exp data.
     	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)

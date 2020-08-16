@@ -1,4 +1,4 @@
-const { Canvas, resolveImage } = require(`canvas-constructor`)
+const { Canvas } = require(`canvas-constructor`)
 const { resolve, join } = require(`path`)
 const Theme = require(`../../ui/colors/themes`)
 const canvas = require(`canvas`)
