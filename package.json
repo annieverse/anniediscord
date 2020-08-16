@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "6.2.13",
+  "version": "7.0.0",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "test": "npm run lint && npm run unit-test && echo 'Test passed.'"
   },
   "engines": {
-    "node": "10.16.0"
+    "node": "12.18.3"
   },
   "author": {
     "name": "klerikdust",

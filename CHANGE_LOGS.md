@@ -2,6 +2,18 @@
 
 ___
 
+## **08/16/20 | 7.0.0 ->**
+
+* Added new modular configurations for EXP System.
+* Various canvas-based code has been rewritten to follow djs v12 structure.
+* fix(gacha): remove invalid param in UI.itemVisual()
+* fix(setRelationship): setrel missing guild_id param.
+* fix(relationship): the card is now displayed by the registered date in descendant order.
+* fix(level): wrong margin top.
+* fix(setRanks): wrong filename.
+* style(relationship): simplified UI.
+* build(deps): now uses discord.js v12.
+
 ## **08/11/20 | 6.2.13 ->**
 
 * fix(gacha): randomize rewards pool on same weight.
