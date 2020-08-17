@@ -120,7 +120,7 @@ class Gacha extends Command {
      * type {number}
      */
     get drawCounts() {
-        return !this.args[0] ? 1 : 10
+        return !this.args[0] || this.args[0] == 1 ? 1 : 10
     }
 
 }

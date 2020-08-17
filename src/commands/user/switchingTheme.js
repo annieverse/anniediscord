@@ -27,20 +27,19 @@ class SwitchTheme extends Command {
         if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {color: `red`})
 
         let currentTheme = await this.currentTheme(...arguments)
-        if (currentTheme == `none`) return reply(this.locale.SWITCH_THEME.NO_THEMES_OWNED)
         
         if (darkThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME)
+            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {color: `red`})
             let hasTheme = await this.userHasTheme(...arguments, `dark`)
-            if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED)
+            if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`dark`, this.user.id, this.message.guild.id)
             return reply(this.locale.SWITCH_THEME.SET_NIGHTMODE, {color: `lightgreen`})
         }
 
         if (lightThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME)
+            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {color: `red`})
             let hasTheme = await this.userHasTheme(...arguments, `light`)
-            if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED)
+            if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`light`, this.user.id, this.message.guild.id)
             return reply(this.locale.SWITCH_THEME.SET_LIGHTMODE, {color: `lightgreen`})
         }

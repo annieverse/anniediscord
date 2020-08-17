@@ -22,11 +22,11 @@ class Invite extends Command {
 		this.tools = {reply, emoji, user, supportServer}
 		try {
 			//  Attempt to send through DM.
-			await this.sendInvites(this.message.author)
+			await this.sendInvites(this.message.author,...arguments)
 			return reply(this.locale.INVITE_LINK_SENT, {color: `lightgreen`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
-			return this.sendInvites(this.message.channel)
+			return this.sendInvites(this.message.channel,...arguments)
 		}
 	}
 
@@ -35,7 +35,7 @@ class Invite extends Command {
      * @param {object} [targetChannel={}] target channel to be sent in..
      * @returns {void}
      */
-	async sendInvites(targetChannel={}) {
+	async sendInvites(targetChannel={},{reply}) {
 		await reply(this.locale.GENERATE_BOT_INVITE, {
 			socket: {botInviteLink: `[Let's add me to your server!](${this.botInviteUrl})`},
 			color: `crimson`,

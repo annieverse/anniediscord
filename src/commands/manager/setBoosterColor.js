@@ -576,8 +576,8 @@ class SetBoosterColor extends Command {
 
 module.exports.help = {
     start: SetBoosterColor,
-    name: `setboostercolor`, 
-    aliases: [], 
+    name: `setBoosterColor`, 
+    aliases: [`setboostercolor`], 
     description: `Edit and customize booster roles in your guild`,
     usage: `setboostercolor`,
     group: `Manager`,
