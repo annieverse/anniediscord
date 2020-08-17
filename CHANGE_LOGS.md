@@ -2,6 +2,13 @@
 
 ___
 
+## **08/18/20 | 7.0.5 ->**
+
+* fix(guildMemberUpdate): deprecated var reference.
+* fix(profile): unable to render card that has badges in it.
+* fix(theme): switcher can't read theme in inventory.
+* fix(gacha): deprecated canvas param usage.
+
 ## **08/17/20 | 7.0.4 ->**
 
 * fix(presenceUpdate): removed deprecated djs functions.
