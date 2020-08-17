@@ -10,6 +10,8 @@ class Invite extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
+		this.permmissionInteger = 268823638
+		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
 	}
 
     /**
@@ -17,38 +19,36 @@ class Invite extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, emoji, bot:{user, supportServer} }) {
+		this.tools = {reply, emoji, user, supportServer}
 		try {
-			// Attempt to send to dm
-			await reply(this.locale.GENERATE_BOT_INVITE, {
-				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=268823638&scope=bot)`},
-				color: `crimson`,
-				field: this.message.author
-			})
-	
-			await reply(this.locale.GENERATE_SERVER_INVITE, {
-				simplified: true,
-				socket: {
-					serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
-					emoji: emoji(`AnnieSmile`)
-				},
-				field: this.message.author
-			})
+			//  Attempt to send through DM.
+			await this.sendInvites(this.message.author)
 			return reply(this.locale.INVITE_LINK_SENT, {color: `lightgreen`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
-			await reply(this.locale.GENERATE_BOT_INVITE, {
-				socket: {botInviteLink: `[Let's add me to your server!](https://discord.com/oauth2/authorize?client_id=${user.id}&permissions=268823638&scope=bot)`},
-				color: `crimson`
-			})
-
-			return reply(this.locale.GENERATE_SERVER_INVITE, {
-				simplified: true,
-				socket: {
-					serverLink: `• ${supportServer}\n• https://discord.gg/n3B9tK7`,
-					emoji: emoji(`AnnieSmile`)
-				}
-			})
+			return this.sendInvites(this.message.channel)
 		}
+	}
+
+    /**
+     * Default template for sending invites.
+     * @param {object} [targetChannel={}] target channel to be sent in..
+     * @returns {void}
+     */
+	async sendInvites(targetChannel={}) {
+		await reply(this.locale.GENERATE_BOT_INVITE, {
+			socket: {botInviteLink: `[Let's add me to your server!](${this.botInviteUrl})`},
+			color: `crimson`,
+			field: targetChannel
+		})
+		await reply(this.locale.GENERATE_SERVER_INVITE, {
+			simplified: true,
+			socket: {
+				serverLink: `• ${this.tools.supportServer}`,
+				emoji: this.tools.emoji(`AnnieSmile`)
+			},
+			field: targetChannel
+		})
 	}
 }
 
