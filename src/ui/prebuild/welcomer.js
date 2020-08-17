@@ -1,7 +1,7 @@
 const Canvas = require(`../setup`)
 const loadAsset = require((`../../utils/loadAsset`))
 const palette = require(`../colors/default`)
-const { resolveImage } = require("canvas-constructor")
+const { resolveImage } = require(`canvas-constructor`)
 
 class UI {
 	/**
