@@ -10,7 +10,7 @@ class LogsSystem {
 
     constructor(data) {
         this.data = data
-        this.SupportServerLogChannel = data.bot.guilds.get(`577121315480272908`).channels.get(`724732289572929728`)
+        this.SupportServerLogChannel = data.bot.guilds.cache.get(`577121315480272908`).channels.cache.get(`724732289572929728`)
         this.Pistachio = this.makePistachio(this.data.bot)
     }
 
@@ -507,7 +507,7 @@ class LogsSystem {
         if (typeOfLog == `guildDelete`) return this.guildDelete()
         if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
         if (!this.data.bot.log_channel) return 
-        this.logChannel = bot.guilds.get(bot.guild_id).channels.get(this.data.bot.log_channel)
+        this.logChannel = bot.guilds.cache.get(bot.guild_id).channels.cache.get(this.data.bot.log_channel)
         if (!this.logChannel) return 
         if (!bot.WANT_CUSTOM_LOGS) return 
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()
