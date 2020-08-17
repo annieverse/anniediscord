@@ -11,6 +11,7 @@ canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `Ro
  *  Handles canvas-powered graphic result from gacha roll
  *  @param {Object} Stacks de'facto parameter
  *  @param {Object} container An object of parsed roll result.
+ *  @deprecated v7.x.x
  */
 class gachaGUI {
 	constructor(Stacks, container){
