@@ -91,7 +91,6 @@ class UI {
 				const currentIndex = this.indexrow[opt][i]
 				const dynamicX = i < 1 ? this.startPos_x : card2card_distancex(i)
 				const item = (prop) => this.container[currentIndex][prop]
-				console.log(this.container[currentIndex])
 				//  Setup new restore and color if current iteration is not an init.
 				if (currentIndex > 0) this.canv.restore()
 				if (i > 0) this.canv.setColor(palette.darkmatte)
