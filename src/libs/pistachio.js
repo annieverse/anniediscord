@@ -218,7 +218,7 @@ class Pistachio {
 	  */
 	isVip(){
 		//return this.message.member.roles.has(`654254766016299038`)
-		return this.bot.nitro_role ? this.message.member.roles.has(this.bot.nitro_role) : false
+		return this.bot.nitro_role ? this.message.member.roles.cache.has(this.bot.nitro_role) : false
 	}
 
 	/**
