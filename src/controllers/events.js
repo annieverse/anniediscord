@@ -18,7 +18,6 @@ module.exports = annie => {
 	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
 	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
 	if (!annie.dev) {
-		annie.on(`presenceUpdate`, async (oldPresence, newPresence) => reqEvent(`presenceUpdate`)(annie, oldPresence, newPresence))
 		annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie))
 		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie))
 		annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member))
