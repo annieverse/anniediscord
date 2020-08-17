@@ -54,10 +54,10 @@ class UI {
 		async function setBadge(xy, diameter, pos_y) {
 			for (let i=0; i<badges.length; i++) {
 				if (i >= 7) {
-					card.canv.printImage(await loadAsset(`plus`), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
+					card.canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 128 + 140, pos_y, xy, xy)//, diameter)
 					break
 				}
-				card.canv.printImage(await loadAsset(badges[i].alias), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
+				card.canv.printImage(await resolveImage(await loadAsset(badges[i].alias)), startPos_x + 128 + i*20, pos_y, xy, xy)//, diameter, diameter)
 			}
 		}
 
