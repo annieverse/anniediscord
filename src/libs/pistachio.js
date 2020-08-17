@@ -612,7 +612,7 @@ class Pistachio {
                 const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
                 //	Left navigation
                 backwards.on(`collect`, r => {
-                    r.remove(this.message.author.id)
+                    r.users.remove(this.message.author.id)
                     page--
                     if (embeddedPages[page]) {
                         msg.edit(embeddedPages[page])
@@ -623,7 +623,7 @@ class Pistachio {
                 })
                 //	Right navigation
                 forwards.on(`collect`, r => {
-                    r.remove(this.message.author.id)
+                    r.users.remove(this.message.author.id)
                     page++
                     if (embeddedPages[page]) {
                         msg.edit(embeddedPages[page])
