@@ -2,6 +2,11 @@
 
 ___
 
+## **08/17/20 | 7.0.4 ->**
+
+* fix(presenceUpdate): removed deprecated djs functions.
+* refactor(invite): modularized and revised invite message.
+
 ## **08/17/20 | 7.0.3 ->**
 
 * fix(welcomer): update code to follow djs v12 structs.
