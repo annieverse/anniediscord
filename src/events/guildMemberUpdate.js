@@ -14,7 +14,7 @@ module.exports = async (bot, oldUser, newUser) => {
 	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberUpdate) new bot.logSystem(metadata).record()
 
 	function getRoles(r) {
-		return bot.guilds.get(bot.guild_id).roles.find(n => n.name === r)
+		return bot.guilds.cache.get(bot.guild_id).roles.cache.find(n => n.name === r)
 	}
 	
 	let ticket, muted, eventParticipant
