@@ -48,16 +48,15 @@ class UI {
 		const badges = inventory.filter(key => key.type_name === `Badges`)
 
 		const symetric_xy = 18
-		const diameter = Math.round(symetric_xy / 2)
 		const y_badge = 208
-		await setBadge(symetric_xy, diameter, y_badge)
-		async function setBadge(xy, diameter, pos_y) {
+		await setBadge(symetric_xy, y_badge)
+		async function setBadge(xy, pos_y) {
 			for (let i=0; i<badges.length; i++) {
 				if (i >= 7) {
-					card.canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 128 + 140, pos_y, xy, xy)//, diameter)
+					card.canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 128 + 140, pos_y, xy, xy)
 					break
 				}
-				card.canv.printImage(await resolveImage(await loadAsset(badges[i].alias)), startPos_x + 128 + i*20, pos_y, xy, xy)//, diameter, diameter)
+				card.canv.printImage(await resolveImage(await loadAsset(badges[i].alias)), startPos_x + 128 + i*20, pos_y, xy, xy)
 			}
 		}
 
