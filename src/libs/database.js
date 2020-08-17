@@ -1779,11 +1779,13 @@ class Database {
 
 
 	async findCurrentTheme(userId, guildId){
+		// first see if light theme is equiped
 		let res = await this._query(`SELECT EXISTS 
 		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
 		,`get`
 		,{theme: `4`, userId: userId, guildId: guildId})
 		if (Object.values(res)[0] == 1) return `light`
+		// second see if dark theme is equiped
 		res = await this._query(`SELECT EXISTS 
 		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
 		,`get`
