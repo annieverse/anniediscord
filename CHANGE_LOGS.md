@@ -2,6 +2,10 @@
 
 ___
 
+## **08/17/20 | 7.0.3 ->**
+
+* fix(welcomer): update code to follow djs v12 structs.
+
 ## **08/16/20 | 7.0.2 ->**
 
 * fix(exp): -infinite values on rank update.
