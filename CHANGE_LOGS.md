@@ -2,6 +2,10 @@
 
 ___
 
+## **08/19/20 | 7.0.7 ->**
+
+* fix(command): multi-lang support has been temporarily disabled.
+
 ## **08/19/20 | 7.0.6 ->**
 
 * fix(guildMemberUpdate): temporarily disabled due to odd wrong ref
