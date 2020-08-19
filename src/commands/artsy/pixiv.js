@@ -112,10 +112,13 @@ class Pixiv extends Command {
     async getImageCache(id=``) {
         const fn = `[Pixiv.getImageCache()]`
         this.logger.debug(`${fn} fetching cache with path (${id})`)
-        return fs.readFileSync(`./${id}`).catch(() => {
-            this.logger.error(`${fn} has failed to fetch pixiv img with path (${id})`)
-            return false
-        })
+        const res = await fs.readFileSync(`./${id}`)
+        if (!res) {
+            const err = `${fn} Failed to fetch image with ID ${id} because of: ${err}`
+            this.logger.error(err)
+            throw new Error(err)
+        }
+        return res
     }
 
     /**
