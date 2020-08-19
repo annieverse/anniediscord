@@ -2,6 +2,12 @@
 
 ___
 
+## **08/19/20 | 7.0.6 ->**
+
+* fix(guildMemberUpdate): temporarily disabled due to odd wrong ref
+* fix(raw): deprecate old caching method
+* fix(pixiv): using await on fs.fileReadSync()
+
 ## **08/18/20 | 7.0.5 ->**
 
 * fix(guildMemberUpdate): deprecated var reference.
