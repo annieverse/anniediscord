@@ -35,6 +35,11 @@ module.exports = async (bot, oldUser, newUser) => {
 		}
 	}
 
+	/** 
+	* Temporarily disabled
+	* Reason: ref to Issues - #285 
+	*/
+	/*
 	if (!bot.nitro_role) return
 	const firstTimeBoostingServer = newUser.roles.has(bot.nitro_role) && !oldUser.roles.has(bot.nitro_role)
 	//	Send out special perks if user receiving Shining Rich Star role.
@@ -56,4 +61,5 @@ module.exports = async (bot, oldUser, newUser) => {
 			.then(r => bot.logger.info(`booster color roles removed from ${r.user.tag}`)) // 
 			.catch(()=>null) // Ignore the error
 	}
+	*/
 }
