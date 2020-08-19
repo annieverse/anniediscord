@@ -140,7 +140,12 @@ class Commands {
 		}
 		const result = await this.userClass.requestMetadata(targetUser.id, dataLevel)
 		this.user = result
+		/**
+		 * Multi-language support
+		 * Temporarily disabled
+		 *
 		if (result.lang) this.locale = this.bot.locale[result.lang]
+		*/
 		return true
 	}
 
@@ -149,7 +154,12 @@ class Commands {
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
 		const result = await this.userClass.requestMetadata(this.message.author.id, dataLevel)
 		this.author = result
+		/**
+		 * Multi-language support
+		 * Temporarily disabled
+		 *
 		if (result.lang) this.locale = this.bot.locale[result.lang]
+		*/
 		return true
 	}
 
