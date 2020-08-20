@@ -1777,6 +1777,22 @@ class Database {
 		,{theme: theme, userId: userId, guildId: guildId})
 	}
 
+	/**
+	 * Checks if the user owns the specified theme in their inventory
+	 * @param {string} theme 
+	 * @param {string} userId 
+	 * @param {string} guildId 
+	 * @returns {QueryResult} query
+	 */
+	GiveThemeToUser(theme, userId, guildId){
+		if (theme == `dark`) {
+			theme = `3`
+		} else if (theme == `light`) {
+			theme = `4`
+		}
+		return this.updateInventory({itemId: theme, value: 1, operation: `+`, userId: userId, guildId: guildId})
+	}
+
 
 	async findCurrentTheme(userId, guildId){
 		// first see if light theme is equiped

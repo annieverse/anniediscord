@@ -10,7 +10,7 @@ class SetProfile extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
-        this.profileDecorations = [`Stickers`, `Covers`, `Badges`, `Themes`]
+        this.profileDecorations = [`Stickers`, `Covers`, `Badges`]
         this.actions = [`equip`, `unequip`]
     }
 
