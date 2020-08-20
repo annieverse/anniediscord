@@ -190,7 +190,7 @@ class Pistachio {
 		try {
 			const rolePattern = /^(?:<@&?)?([0-9]+)>?$/
 			if (rolePattern.test(target)) target = target.replace(rolePattern, `$1`)
-			const roles = this.message.guild.roles
+			const roles = this.message.guild.roles.cache
 			const filter = role => role.id === target ||
 			role.name.toLowerCase() === target.toLowerCase() ||
 			role === target

@@ -23,8 +23,9 @@ class JoinEvent extends Command {
 
 		//  Filter command to only working in AAU.
 		if (this.message.guild.id != `459891664182312980`) return
-		
-		const eventRole = findRole(`Event Participant`)
+		if (!this.bot.event_participant) return reply(this.locale.EVJOIN.ROLE_NOT_SET_UP, {color: `red`})
+		const eventRole = findRole(this.bot.event_participant)
+		console.log(eventRole)
 		//  Returns if user already have the ticket.
 		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
