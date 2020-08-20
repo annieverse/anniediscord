@@ -18,8 +18,8 @@ class Invite extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji, bot:{user, supportServer} }) {
-		this.tools = {reply, emoji, user, supportServer}
+	async execute({ reply, emoji, messageGuildInvite, bot:{user, supportServer} }) {
+		this.tools = {reply, emoji, user, supportServer, messageGuildInvite}
 		try {
 			//  Attempt to send through DM.
 			await this.sendInvites(this.message.author,...arguments)
@@ -42,9 +42,9 @@ class Invite extends Command {
 			field: targetChannel
 		})
 		await reply(this.locale.GENERATE_SERVER_INVITE, {
-			simplified: true,
+			simplified: false,
 			socket: {
-				serverLink: `• ${this.tools.supportServer}`,
+				serverLink: `• [Support Server](${this.tools.supportServer})\n• [${this.message.guild.name} Server](${await this.tools.messageGuildInvite()})`,
 				emoji: this.tools.emoji(`AnnieSmile`)
 			},
 			field: targetChannel

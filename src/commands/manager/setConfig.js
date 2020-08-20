@@ -218,7 +218,10 @@ class SetConfig extends Command {
             } else {
                 return `rejected`
             }
-        }else {
+        }else if (option == `invite`){
+            let inviteLink = await this.bot.fetchInvite(`${testValue}`).then(invite => {return invite.toString()}).catch(()=>{return `rejected`})
+            return inviteLink
+        } else {
             return `rejected`
         }
     }
