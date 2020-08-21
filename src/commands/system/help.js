@@ -135,7 +135,7 @@ class Help extends Command {
 		let str = ``
 		for (let group in obj) {
 			const cmdNames = obj[group].map(el => `\`${el.help.name}\``)
-			str += `${group}\n${cmdNames.join(`,`)}\n`
+			this.message.author.permissions.name == `Developer` ?	str += `${group}\n${cmdNames.join(`,`)}\n` : group != `Developer` ? str += `${group}\n${cmdNames.join(`,`)}\n` : null
 		}
 		return str
 	}

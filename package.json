@@ -9,6 +9,7 @@
     "start": "cross-env NODE_ENV=production pm2 start index.js",
     "beta": "cross-env NODE_ENV=development nodemon index.js",
     "dev": "cross-env NODE_ENV=development node index.js",
+    "dev_regular": "cross-env NODE_ENV=production nodemon index.js",
     "test": "npm run lint && npm run unit-test && echo 'Test passed.'"
   },
   "engines": {
