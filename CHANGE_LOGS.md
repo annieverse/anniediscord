@@ -2,6 +2,15 @@
 
 ___
 
+## **08/21/20 | 7.0.8 ->**
+
+* User now able to use dark theme for free (#297)
+* Reduced command cooldown time to 2 seconds (#296)
+* Applying privacy in the Help Command (#295)
+* fix(joinEvent, pistachio, and en): event join for AAU (#298)
+* fix(invite): invite link to requested server (#299)
+* build(deps): bump axios from 0.19.2 to 0.20.0 (#300)
+
 ## **08/19/20 | 7.0.7 ->**
 
 * fix(command): multi-lang support has been temporarily disabled.
