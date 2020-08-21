@@ -21,8 +21,6 @@ class SwitchTheme extends Command {
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
         await this.requestUserMetadata(2)
         
-        //  Returns if user not categorized as server booster/donator
-        //if (!this.user.premium) return reply(this.locale.SWITCH_THEME.UNAVAILABLE, {color: `red`})
         //  Returns if user didn't specify any keyword
         if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {color: `red`})
 
@@ -55,14 +53,18 @@ class SwitchTheme extends Command {
 
     
     /**
-     * Returns a boolean for if the user has the choosen theme
+     * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it
      * @param {object} [argument pass through]
      * @param {string} theme 
      * @returns {boolean} boolean
      */
     async userHasTheme({bot:{db}}, theme){
         let res = await db.checkIfThemeOwned(theme, this.user.id, this.message.guild.id)
-        return Object.values(res)[0] == 1 ? true : false
+        let resAnswer = Object.values(res)[0] == 1 ? true : false
+        if (resAnswer) return true
+        // Give item to user
+        await db.GiveThemeToUser(theme, this.user.id, this.message.guild.id)
+        return true
     }
 }
 
