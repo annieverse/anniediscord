@@ -4,6 +4,6 @@ let config = {}
  *  @default 3 seconds
  *  @type {number}
  */
-config.cooldown = 5
+config.cooldown = 2
 
 module.exports = config
