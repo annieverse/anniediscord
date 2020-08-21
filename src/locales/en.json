@@ -197,7 +197,8 @@
         "ALREADY_HAS": "**{{user}}** you have unused ticket, go submit your art now!",
         "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event. Go take your dailies if you haven't yet!",
         "SUCCESSFUL": "**{{user}}** has joined the event.\n{{foxieMessage}}{{emoji}}",
-        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing."
+        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing.",
+        "ROLE_NOT_SET_UP": "I'm sorry but it seems your event role on this server is not set up."
     },
     "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",
     "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
