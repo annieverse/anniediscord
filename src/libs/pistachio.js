@@ -62,6 +62,7 @@ class Pistachio {
 		if (this.message){
 			this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
 		}
+		this.messageGuildInvite = this.messageGuildInvite.bind(this)
 		this.deleteMessages = this.deleteMessages.bind(this)
 		this.collector = this.collector.bind(this)
 		this.multiCollector = this.multiCollector.bind(this)
@@ -95,6 +96,13 @@ class Pistachio {
 	 *  Guild-level Components
 	 *  ------------------------------------------
 	 */
+	/**
+	 * Generates a invite link if one is not set
+	 * @returns Link
+	 */
+	messageGuildInvite(){
+		return !this.bot.messageGuildInvite ? this.message.channel.createInvite() : this.bot.messageGuildInvite
+	}
 
 	/**
 	 *  Delete bulk of messages in current channel

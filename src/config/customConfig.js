@@ -213,6 +213,7 @@ class config {
              *  @STRING
              */
             "prefix": `any prefix you would like the bot to use`,
+            "messageGuildInvite": `invite`,
             "guild_id": `channel id, name, or link like #general`,
         }
         return defaultConfig
@@ -292,6 +293,7 @@ class config {
              *  @STRING
              */
             "prefix": process.env.PREFIX || `>`,
+            "messageGuildInvite": null,
             "guild_id": `577121315480272908`,
         }
         return defaultConfig
