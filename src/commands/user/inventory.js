@@ -11,7 +11,8 @@ class Inventory extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
-		this.itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && (item.type_name != `Cards`)
+		this.ignoreItems = [`Cards`, `Themes`]
+		this.itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
 	}
 
 	/**
@@ -30,10 +31,11 @@ class Inventory extends Command {
 		.then(async loading => {
 			//  Remove faulty values and sort order by quantity descendantly
 			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.quantity - b.quantity).reverse()
+			this.user.inventory.raw = filteredInventory
 			await reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
-				image: await GUI(filteredInventory, this.user.usedTheme.alias),
+				image: (await new GUI(this.user, this.bot).build()).toBuffer(),
 				socket: {
 					user: name(this.user.id),
 					emoji: emoji(`AnniePogg`),
