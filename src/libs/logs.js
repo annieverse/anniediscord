@@ -323,24 +323,6 @@ class LogsSystem {
             field: this.SupportServerLogChannel
         })
 
-        // Post a message in the server joined
-        const getDefaultChannel = (guild, channelName) => {
-
-            // Check for a "general" channel, which is often default chat
-            const generalChannel = guild.channels.find(channel => channel.name === channelName)
-            if (generalChannel) return generalChannel
-            return false
-        }
-
-        const getChannel = (guild) => {
-            let channel = guild.channels
-                .filter(c => c.type === `text` && c.permissionsFor(guild.client.user).has(`SEND_MESSAGES`))
-                .sort((a, b) => a.position - b.position || Long.fromString(a.id).sub(Long.fromString(b.id)).toNumber())
-                .first()
-            if (!channel) return false
-            return channel
-        }
-
         const afterInvitationMessage = (targetChannel={}) => {
              return this.Pistachio.reply(locale[`en`].LOGS.GUILDCREATE.AFTER_INVITATION, {
                 image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
@@ -356,26 +338,11 @@ class LogsSystem {
             })
         }
 
-        let systemChannel = guild.systemChannelID ? guild.channels.get(guild.systemChannelID) : null
-        if (systemChannel) return afterInvitationMessage(systemChannel)
-
-        let hasGeneral = getDefaultChannel(guild, `general`)
-        if (hasGeneral) return afterInvitationMessage(hasGeneral)
-
-        let hasBotChannel = getDefaultChannel(guild, `bot`)
-        if (hasBotChannel) return afterInvitationMessage(hasBotChannel)
-
-        let hasLogChannel = getDefaultChannel(guild, `logs`)
-        if (hasLogChannel) return afterInvitationMessage(hasLogChannel)
-
-        let hasChatableChannel = getChannel(guild)
-        if (hasChatableChannel) return afterInvitationMessage(hasChatableChannel)
-
         try {
             let owner = guild.owner
             return afterInvitationMessage(owner)
         } catch (e) {
-            return logger.info(`Fail to send AFTER_INVITATION message to GUILD_ID ${guild.id}`)
+            return logger.info(`Fail to send AFTER_INVITATION message to owner of GUILD_ID ${guild.id}`)
         }
     }
 
