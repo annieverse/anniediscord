@@ -2,6 +2,17 @@
 
 ___
 
+## **08/24/20 | 7.0.9 ->**
+
+* refactor(shop): improved UI and added footer guide
+* refactor(commands): merged social category to user category
+* refactor(logs): dropped AFTER_INVITATION msg on guld channel
+* refactor(invite): simplified msg
+* refactor(inventory): removed footer text
+* refactor(inventory): now container sorted by rarity
+* refactor(inventory): optimized ui rendering
+* refactor(inventory): vertical dimension is automatically scaled depending on the current container size
+
 ## **08/21/20 | 7.0.8 ->**
 
 * User now able to use dark theme for free (#297)
