@@ -14,11 +14,11 @@ const {resolveImage} = require(`canvas-constructor`)
  */
 const InventoryInterface = async (container, usertheme) => {
 
-	let canvas_x = 580
-	let canvas_y = 478
-	let startPos_x = 10
-	let startPos_y = 15
-	let canv = new Canvas(canvas_x, canvas_y) // x y
+	let canvas_x = 550
+	let canvas_y = 475
+	let startPos_x = 5
+	let startPos_y = 5
+	let canv = null
 	let theme = ThemePresets[usertheme]
 
 	/**
@@ -38,6 +38,21 @@ const InventoryInterface = async (container, usertheme) => {
 			.printRectangle(startPos_x, startPos_y, canvas_x, canvas_y)
 			.printRectangle(startPos_x + 150, startPos_y, canvas_x, canvas_y)
 			.restore()
+	}
+
+	const scaleYBasedOnContainerSize = async () => {
+		const size = container.length
+		if (size <= 7) return canvas_y = 100
+		if (size <= 14) return canvas_y = 175
+		if (size <= 21) return canvas_y = 250
+		if (size <= 28) return canvas_y = 325
+		if (size <= 35) return canvas_y = 400
+		if (size <= 42) return canvas_y = 475
+		return canvas_y
+	}
+
+	const build = () => {
+		canv = new Canvas(canvas_x, canvas_y)
 	}
 
 	/**
@@ -156,7 +171,6 @@ const InventoryInterface = async (container, usertheme) => {
 		 */
 		const itemRenderable = ({index=0, rowNth=0}) => container[index + columnBreak[rowNth]] ? true : false
 
-
 		//	Default color for blank grid
 		canv.setColor(theme.secondary)
 		//	Recursively rendering from left to rightmost column
@@ -171,6 +185,7 @@ const InventoryInterface = async (container, usertheme) => {
 				renderQuantity(container[i + columnBreak[0]].quantity, gridZero)
 
 			}
+
 
 			//	Row 1 ( 7 - 14 grid )
 			const gridOne = aspectRatio({index: i, rowNth: 1})
@@ -219,8 +234,10 @@ const InventoryInterface = async (container, usertheme) => {
 		}
 	}
 
+	await scaleYBasedOnContainerSize()
+	build()
 	baseLayer()
-	await grid(startPos_x + 20, startPos_y + 5, 70, 70, 7, 6)
+	await grid(startPos_x+5, startPos_y+5, 70, 70, 7, 6)
 	return canv.toBuffer()
 }
 
