@@ -238,7 +238,7 @@
         "INSUFFICIENT_TICKET": "Hey, you don't have enough **Lucky Ticket.** Go get some in my shop! {{emoji}}",
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
-    "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n\n{{serverLink}}",
+    "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",
     "GETLOG": {
         "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",

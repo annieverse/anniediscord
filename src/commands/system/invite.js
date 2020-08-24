@@ -42,9 +42,9 @@ class Invite extends Command {
 			field: targetChannel
 		})
 		await reply(this.locale.GENERATE_SERVER_INVITE, {
-			simplified: false,
+			simplified: true,
 			socket: {
-				serverLink: `• [Support Server](${this.tools.supportServer})\n• [${this.message.guild.name} Server](${await this.tools.messageGuildInvite()})`,
+				serverLink: this.tools.supportServer,
 				emoji: this.tools.emoji(`AnnieSmile`)
 			},
 			field: targetChannel
@@ -55,9 +55,9 @@ class Invite extends Command {
 module.exports.help={
 	start: Invite,
 	name:`invite`,
-	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `invite`],
-	description: `Generates Server & Bot invitation link`,
-	usage: `invite <Bot>(Optional)`,
+	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `invite`, `botinvite`, `invitebot`],
+	description: `Generates Support Server & Bot Invitation link`,
+	usage: `invite`,
 	group: `System`,
 	permissionLevel: 0,
 	multiUser: false
