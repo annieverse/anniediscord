@@ -30,7 +30,7 @@ class Inventory extends Command {
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.id, emoji: emoji(`AAUloading`)}})
 		.then(async loading => {
 			//  Remove faulty values and sort order by quantity descendantly
-			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.quantity - b.quantity).reverse()
+			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.rarity_id - b.rarity_id).reverse()
 			this.user.inventory.raw = filteredInventory
 			await reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
