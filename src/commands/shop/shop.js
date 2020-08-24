@@ -39,6 +39,7 @@ class Shop extends Command {
 		const sortedItems = items.sort((a,b) => b.price - a.price)
 		this.fetching = await reply(this.locale.SHOP.RETRIEVING, {simplified: true, socket: {emoji: emoji(`AAUloading`), itemType: `items`}})
 		await reply(this.splittingList(sortedItems, emoji, commanifier), {paging: true, color: `golden`})
+		await reply(this.locale.SHOP.FOOTER, {socket: {prefix: this.bot.prefix}, color: `golden`})
 		return this.fetching.delete()
 	}
 
@@ -57,6 +58,9 @@ class Shop extends Command {
 
 		for (let key=0; key<items.length; key++) {
 			const item = items[key]
+			const displayedItem = `${emojiParser(item.alias)} **${item.name}** 
+				*${item.description}*
+				\`\`\`fix\nID: ${item.item_id}\n[${item.rarity_name}] ${item.type_name}\n${commaParser(item.price)} @each\n\`\`\`\n\n`
 			
 			//  If iteration has reached the limit, reset list & shift to next index in the array.
 			if (state >= 5) {
@@ -66,19 +70,14 @@ class Shop extends Command {
 			}
 			//  If array has less than five elements, lock totalElements mutation.
 			else if (totalElements < 5) {
-				list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
-				\`${item.description}\`
-				${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
-				state++
+				list += displayedItem
 
 				if ((items.length-1) != key) continue
 				box.push(list)
 				break			
 			}
 
-			list += `${emojiParser(item.alias)} [[${item.type_name}](${this.message.url} "${item.item_id}")] **${item.name}** 
-			\`${item.description}\`
-			${emojiParser(item.item_price_alias)} ${commaParser(item.price)}\n\n`
+			list += displayedItem
 			state++
 			totalElements = totalElements - 1
 		}
