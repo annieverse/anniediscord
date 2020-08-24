@@ -54,7 +54,7 @@ module.exports.help = {
 	aliases: [`reps`, `reputation`, `reputations`, `reputationpoint`, `praise`, `commend`],
 	description: `Gives a reputation point to a user. Once a day.`,
 	usage: `rep <User>`,
-	group: `Social`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: true
 }

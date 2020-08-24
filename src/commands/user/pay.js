@@ -103,7 +103,7 @@ module.exports.help = {
 	aliases: [`pay`, `transfer`, `transfers`, `share`],
 	description: `Share artcoins with your friends!`,
 	usage: `pay <User>`,
-	group: `Social`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: true
 }
