@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const stringSimilarity = require('string-similarity');
 /**
  * Buy any purchasable items our shop!
  * @author klerikdust
@@ -12,10 +13,14 @@ class Buy extends Command {
 		super(Stacks)
 		this.itemFilter = item => {
 			return item.name.toLowerCase() === this.fullArgs.toLowerCase()
-			|| item.item_id === parseInt(this.fullArgs)
 			|| item.alias === this.fullArgs.toLowerCase().replace(` `, `_`)
+			|| item.item_id === parseInt(this.fullArgs)
 		}
-		this.displayedItemPreview = [1, 3, 9]
+		/**
+		 * Insert the type id into this array if you wish to display its preview when user purchasing it.
+		 * @type {array}
+		 */
+		this.availablePreviews = [1, 3, 9]
     }
 
     /**
@@ -30,120 +35,139 @@ class Buy extends Command {
 		if (!purchasableItems.length) return reply(this.locale.BUY.EMPTY_SHOP, {color: `red`})
 		//  Display guide if user doesn't specify any additional arg
 		if (!this.fullArgs) return reply(this.locale.BUY.SHORT_GUIDE, {socket: {prefix: this.prefix}})
+
+		/**
+		 * --------------------
+		 * DYNAMIC SEARCH STRING
+		 * --------------------
+		 * Browser items to the closest keyword that given by the user.
+		 * By doing this, they can simply type `buy 10 chocolate`, `buy chocolate` or even `buy chocs 10`
+		 * up to their preference. The goal is to make the syntax as semantic as possible.
+		 *
+		 * If searching string by closest rating point is not possible, or the rating is too low
+		 * Then it'll use the old method which suports search by item ID or item alias, but less accurate.
+		 */
+		let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, purchasableItems.map(i => i.name))
+		this.item = searchStringResult.bestMatch.rating >= 0.4
+		? purchasableItems.filter(i => i.name === searchStringResult.bestMatch.target)[0] 
+		: purchasableItems.filter(this.itemFilter)[0]
 		//  Handle if item with the given keyword cannot be found
-		const item = purchasableItems.filter(this.itemFilter)[0]
-		this.item = item
-		if (!item) return reply(this.locale.BUY.INVALID_ITEM, {color: `red`})
-		//  Handle if the item doesn't allow user to multi stack and user already have it
-		const selectedItemInsideInventory = this.user.inventory.raw.filter(key => key.item_id === item.item_id)
-    	if ((selectedItemInsideInventory.length >= 1) && item.type_max_stacks <= 1) {
-    		return reply(this.locale.BUY.NO_DUPLICATE_ITEM, {color: `red`, socket: {itemType: item.type_name}})
+		if (!this.item) return reply(this.locale.BUY.INVALID_ITEM, {color: `red`})
+		//  Incase user attempted to include unit-amount shorhandedly.
+		this.amountToBuy = !this.args[1] ? 1 : this.fullArgs.replace(/\D/g, ``)
+
+		/**
+		 * --------------------
+		 * PREVENT PURCHASING DUPE ITEM
+		 * --------------------
+		 * Handle if the item doesn't allow user to have multi stack
+		 * and user must already has the item.
+		 * 
+		 * In order to successfully preventing user from buying dupe item:
+		 *  1.) Item's type must limiting the allowed stacks that user could have.
+		 *  2.) User must already at least one of the item in their inventory.
+		 */
+		const selectedItemInsideInventory = this.user.inventory.raw.filter(key => key.item_id === this.item.item_id)
+    	if ((selectedItemInsideInventory.length >= 1) && this.item.type_max_stacks <= 1) {
+    		return reply(this.locale.BUY.NO_DUPLICATE, {color: `red`, socket: { itemType: this.item.type_name.toLowerCase() }})
     	}
 
-	    this.setSequence(10)
-	    const previewItem = await loadAsset(item.alias)
-		const paymentItem = await db.getItem(item.item_price_id)
+	    const previewItem = await loadAsset(this.item.alias)
+		const paymentItem = await db.getItem(this.item.item_price_id)
 
-		// Return if item is not avaible on server
-		if (this.item.item_id == 1 && !this.bot.nickname_changer) return reply(this.locale.BUY.ITEM_NOT_AVAILIBLE, {color: `red`, socket: {item: `${emoji(item.alias)} ${item.name}`}})
-		
-		//  Ask user to input the amount to buy if multi-stacking is allowed
-    	if (item.type_max_stacks > 1) {
-    		this.askAmount = await reply(this.locale.BUY.ITEM_AMOUNT, {color: `golden`, socket: {item: `${emoji(item.alias)} ${item.name}`}})
-    	}
-    	else {
-    		this.amount = 1
-			this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
-				socket: {
-					total: `${emoji(paymentItem.alias)}${commanifier(item.price)}`,
-					item: `[${this.amount}x]${item.name}`
-				},
-				color: `golden`,
-				image: this.displayedItemPreview.includes(item.item_id) ? previewItem : null,
-				prebuffer: true
-			})
-			//  Skip the ask-for-amount page
-		    this.nextSequence() 
-    	}
-
-		this.sequence.on(`collect`, async msg => {
-			let input = msg.content.toLowerCase()
-
-			/** --------------------
-			 *  Sequence Cancellations
-			 *  --------------------
-			 */
-			if (this.cancelParameters.includes(input)) {
-				this.endSequence()
-				return reply(this.locale.ACTION_CANCELLED)
-			}
-
-			/** --------------------
-			 *  1.) Ask user for amount to buy
-			 *  --------------------
-			 */
-			if (this.onSequence <= 1) {
-				this.amount = trueInt(input)
-				//  Handle if given amount is not valid
-				if (!this.amount) return reply(this.locale.BUY.INVALID_ITEM_AMOUNT, {socket: {emoji: emoji(`AnnieDead`)}, color: `red`})
-				this.total = item.price * this.amount 
-				this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
-					socket: {
-						total: `${emoji(paymentItem.alias)}${commanifier(this.total)}`,
-						item: `${emoji(item.alias)} [${item.type_name}] ${commanifier(this.amount)}x ${item.name}`
-					},
-					color: `golden`,
-					image: this.displayedItemPreview.includes(item.item_id) ? previewItem : null,
-					prebuffer: true
-				})
-				this.askAmount.delete()
-				return this.nextSequence()
-			}
-
-			/** --------------------
-			 *  2.) Checkout
-			 *  --------------------
-			 */
-			if (this.onSequence <= 2) {
-				//  Ghostingly ignore if user didn't type the confirmation word
-				if (!input.startsWith(`y`)) return
-				//  Handles if user's balance is onsufficient to pay the total
-				if (!this.user.inventory[paymentItem.alias]){
-					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
-						socket: {
-							emoji: emoji(paymentItem.alias),
-							amount: commanifier(this.total)
-						}, 
-						color: `red`
-					})
-					return this.endSequence()
-				}
-				if (this.user.inventory[paymentItem.alias] < this.total) {
-					reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
-						socket: {
-							emoji: emoji(paymentItem.alias),
-							amount: commanifier(this.total - this.user.inventory[paymentItem.alias])
-						}, 
-						color: `red`
-					})
-					return this.endSequence()
-				}
-				//  Deduct balance & deliver item
-				await db.updateInventory({itemId: paymentItem.item_id, value: this.total, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
-				await db.updateInventory({itemId: item.item_id, value: this.amount, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
-				reply(this.locale.BUY.SUCCESSFUL, {
-					color: `lightgreen`,
-					socket: {
-						item: `${emoji(item.alias)} [${item.type_name}] ${commanifier(this.amount)}x ${item.name}`,
-						emoji: emoji(`AnnieSmile`)
-					}
-				})
-
-				msg.delete()
-				this.checkout.delete()
-				return this.endSequence()
-			}	
+		//  Handle if the payment is currently not supported.
+		if (!paymentItem.item_id) return reply(this.locale.BUY.PAYMENT_UNSUPPORTED, {color: `red`})
+		//  Handle if item (Nickname Changer) isn't available to purchase in the current guild.
+		if (this.item.item_id == 1 && !this.bot.nickname_changer) return reply(this.locale.BUY.ITEM_NOTAVAILABLE_IN_THE_GUILD, {
+			color: `red`,
+			socket: {item: this.item.name}
 		})
+
+		this.amountToBuy = this.amountToBuy || 1
+		this.total = this.item.price * this.amountToBuy
+		this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
+			socket: {
+				total: `${emoji(paymentItem.alias)}${commanifier(this.total)}`,
+				item: `[${this.amountToBuy}x]${this.item.name}`,
+				itemType: this.item.type_name.toLowerCase()
+			},
+			color: `golden`,
+			image: this.availablePreviews.includes(this.item.type_id) ? previewItem : null,
+			prebuffer: true
+		})
+
+		/**
+		 * --------------------
+		 * REACT-BASED CONFIRMATION (EXPERIMENTAL)
+		 * --------------------
+		 * @author klerikdust
+		 * I've decided to try out this button-style of confirmation
+		 * since it seems easier to reach and more intuitive especially for mobile user.
+		 *
+		 * I'll plan to move this to its own lib component once I get good feedback about this change,
+		 * and hopefully the user receiving less error.
+		 */
+		await this.checkout.react(`✅`)
+        const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
+        const confirmationButton = this.checkout.createReactionCollector(confirmationButtonFilter, { time: 120000 })
+ 		confirmationButton.on(`collect`, async r => {
+			//  Handles if user's balance is onsufficient to pay the total
+			if (!this.user.inventory[paymentItem.alias]){
+				reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
+					socket: {
+						emoji: emoji(paymentItem.alias),
+						amount: commanifier(this.total)
+					}, 
+					color: `red`
+				})
+				return this.endSequence()
+			}
+			if (this.user.inventory[paymentItem.alias] < this.total) {
+				reply(this.locale.BUY.INSUFFICIENT_BALANCE, {
+					socket: {
+						emoji: emoji(paymentItem.alias),
+						amount: commanifier(this.total - this.user.inventory[paymentItem.alias])
+					}, 
+					color: `red`
+				})
+				return this.endSequence()
+			}
+			//  Deduct balance & deliver item
+			await db.updateInventory({itemId: paymentItem.item_id, value: this.total, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+			await db.updateInventory({itemId: this.item.item_id, value: this.amountToBuy, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+			reply(this.locale.BUY.SUCCESSFUL, {
+				color: `lightgreen`,
+				socket: {
+					item: `${emoji(this.item.alias)} [${this.item.type_name}] ${commanifier(this.amountToBuy)}x ${this.item.name}`,
+					emoji: emoji(`AnnieSmile`)
+				}
+			})
+			this.checkout.delete()
+
+			//  Ask user if they want to apply to cover right away or not.
+			if (this.item.type_id === 1) {
+				this.coverQuickApplyPrompt = await reply(this.locale.BUY.QUICKAPPLY_COVER)
+				await this.coverQuickApplyPrompt.react(`✅`)
+		        const coverQuickApplyButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
+		        const coverQuickApplyButton = this.coverQuickApplyPrompt.createReactionCollector(coverQuickApplyButtonFilter, { time: 120000 })
+		        coverQuickApplyButton.on(`collect`, async r => {
+		        	const getAllOwnedCovers = this.user.inventory.raw.filter(i => i.type_id === 1 && i.in_use === 1).map(i => i.item_id)
+		        	//  Applying item
+		        	await this.bot.db._query(`UPDATE user_inventories SET in_use = 0 WHERE item_id = ? AND user_id = ? AND guild_id = ?`, `run`, [this.item.item_id, this.user.id, this.message.guild.id])
+		        	await this.bot.db.useItem(this.item.item_id, this.user.id)
+		        	this.coverQuickApplyPrompt.delete()
+		        	//  Successfully applying cover
+		        	return reply(this.locale.SETPROFILE.SUCCESSFUL, {
+		        		color: `lightgreen`,
+		        		socket: {
+		        			item: `${emoji(this.item.alias)} ${this.item.name}`,
+		        			itemType: `cover`,
+		        			actionType: `equipped`
+		        		}
+		        	})
+		        })
+			}	
+ 		})
 	}
 }
 

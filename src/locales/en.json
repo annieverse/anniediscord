@@ -50,8 +50,11 @@
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
         "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
-        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this item. Please type `y` to confirm the purchase.",
-        "ITEM_NOT_AVAILIBLE": "The item, **{{item}}**, is not availible on this server."
+        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this {{itemType}} item? then, please react to the button to confirm the purchase.",
+        "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** isn't available to purchase in this guild. Ask your administrator or guild owner to set it up.",
+        "NON_PURCHASABLE_ITEM": "Sorry, you cannot buy this item.",
+        "QUICKAPPLY_COVER": "Do you wish to apply it to your profile card as well?",
+        "PAYMENT_UNSUPPORTED": "Currently the payment method for this item is not supported. Sorry for this inconvenience!"
     },
     "BOOSTER": {
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
