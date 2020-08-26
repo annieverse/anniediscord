@@ -61,7 +61,7 @@ class CardCollection extends Command {
 module.exports.help = {
 	start: CardCollection,
 	name: `cardCollection`,
-	aliases: [`cardcollection`, `mycard`, `card`, `cards`],
+	aliases: [`cardcollection`, `mycard`, `card`, `cards`, `cc`],
 	description: `View yours or someones collected cards`,
 	usage: `cardcollection`,
 	group: `User`,
