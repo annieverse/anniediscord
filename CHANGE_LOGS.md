@@ -2,6 +2,13 @@
 
 ___
 
+## **08/26/20 | 7.0.10 ->**
+
+* style(asset): added new cover
+* fix(locale): random backtick in SWITCH_THEME
+* fix(profile): displaying unequipped badges
+* refactor(buy): improved UX (experimental)
+
 ## **08/24/20 | 7.0.9 ->**
 
 * refactor(shop): improved UI and added footer guide
