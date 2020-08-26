@@ -45,8 +45,7 @@ class UI {
 			.printCircularImage(await resolveImage(this.user.user.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const inventory = this.user.inventory.raw
-		const badges = inventory.filter(key => key.type_name === `Badges`)
-
+		const badges = inventory.filter(key => key.type_name === `Badges` && key.in_use === 1)
 		const symetric_xy = 18
 		const y_badge = 208
 		await setBadge(symetric_xy, y_badge)
