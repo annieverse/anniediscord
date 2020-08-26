@@ -525,7 +525,7 @@
     "SWITCH_THEME": {
         "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**.",
         "MISSING_KEYWORD": "Please include the theme name you want to use.",
-        "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**`",
+        "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**",
         "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
         "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name.",
         "NO_THEME_OWNED": "Sorry but it seems you dont own this item, you can visit the shop to buy it though.",
