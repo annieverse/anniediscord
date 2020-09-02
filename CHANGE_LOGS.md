@@ -2,6 +2,13 @@
 
 ___
 
+## **09/02/20 | 7.0.11 ->**
+
+* refactor(themeSwitch): renamed command to setTheme
+* refactor(help): improved ux
+* refactor(cardCollection): added new alias
+* fix(setTheme): wrong cmd group
+
 ## **08/26/20 | 7.0.10 ->**
 
 * style(asset): added new cover
