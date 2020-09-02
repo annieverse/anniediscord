@@ -1,6 +1,7 @@
 const Canvas = require(`../setup`)
 const loadAsset = require(`../../utils/loadAsset`)
 const palette = require(`../colors/default`)
+const {resolveImage} = require(`canvas-constructor`)
 
 /**
  *  Handles canvas-powered graphic result from gacha roll
@@ -36,7 +37,7 @@ class canvasGUI {
      *  @param {Integer} index current index position of item's object
      */
 	async itemVisual(x, y, dx, dy, dm, index = 0) {
-		this.canv.printImage(await loadAsset(this.container.alias[index]), x, y, dx, dy, dm)
+		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
 	}
 
 
@@ -55,7 +56,7 @@ class canvasGUI {
 		this.canv.printText(this.container.item[index], x, y)
 		//  Rarity
 		this.canv.setTextFont(`9pt Roboto`)
-		this.canv.printText(`★`.repeat(this.container.rarity[index]), x, y + 15)
+		this.canv.printText(`★`.repeat(this.container[index].rarity), x, y + 15)
 	}
 
 
@@ -115,7 +116,7 @@ class canvasGUI {
 		this.shadowGround()
 		this.removeShadowLayer()
 		//  Load item asset
-		this.canv.printImage(await loadAsset(this.container[index].alias), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
+		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 		//  Render
 		return this.canv.toBuffer()
 	}
@@ -142,14 +143,14 @@ class canvasGUI {
 
 		let canv = new Canvas(mergerWidth, mergerHeight)
 
-		strips.forEach((element, index) => {
-			if (index == 5) y = (-1*(originalY * 2)) + height
-			if (index == 10) y = (-1*(originalY * 5)) + height * 2
-			if (index == 5 || index == 10) x = originalX
-			canv.printImage(element, x, y, baseWidth, baseHeight, baseHeight)
+		for (let i=0; i<strips.length; i++) {
+			if (i == 5) y = (-1*(originalY * 2)) + height
+			if (i == 10) y = (-1*(originalY * 5)) + height * 2
+			if (i == 5 || i == 10) x = originalX
+			canv.printImage(await resolveImage(strips[i]), x, y, baseWidth, baseHeight)
 			canv.save()
-			x += (baseWidth-25)
-		})
+			x += (baseWidth-25)			
+		}
 		return canv.toBuffer()
 	}
 }

@@ -2,6 +2,10 @@
 
 ___
 
+## **09/03/20 | 7.0.12 ->**
+
+* fix(gacha, cardCollection): couldnt render card asset
+
 ## **09/02/20 | 7.0.11 ->**
 
 * refactor(themeSwitch): renamed command to setTheme
