@@ -52,7 +52,7 @@ class UI {
 			this.shadowGround()
 			this.removeShadowLayer()
 			//  Load item asset
-			this.canv.printImage(await resolveImage(await loadAsset(item.alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight, this.baseHeight)
+			this.canv.printImage(await resolveImage(await loadAsset(item.alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 		} else {
 			//   Add base shape
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
@@ -96,7 +96,7 @@ class UI {
 				if (i > 0) this.canv.setColor(palette.darkmatte)
 				//  Render without base if its a card item
 				if (item(`type_name`) === `Cards`) {
-					this.canv.printImage(await resolveImage(await loadAsset(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10, card_dy)
+					this.canv.printImage(await resolveImage(await loadAsset(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10)
 					continue
 				}
 				//  Draw card base
