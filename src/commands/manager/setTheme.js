@@ -1,9 +1,9 @@
 const Command = require(`../../libs/commands`)
 /**
- * Theme switcher for donator
+ * Switch your profile theme to Light or Dark.
  * @author klerikdust
  */
-class SwitchTheme extends Command {
+class setTheme extends Command {
 
     /**
      * @param {external:CommandComponents} Stacks refer to Commands Controller.
@@ -70,11 +70,11 @@ class SwitchTheme extends Command {
 
 
 module.exports.help = {
-	start: SwitchTheme,
-	name: `switchingTheme`,
-	aliases: [`theme`, `themeswitch`, `switchtheme`],
-	description: `Theme switcher for donator`,
-	usage: `theme <Night/Day>`,
+	start: setTheme,
+	name: `setTheme`,
+	aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
+	description: `Switch your profile theme to Light or Dark.`,
+	usage: `theme <Light/Dark>`,
     group: `User`,
     permissionLevel: 0,
 	multiUser: false
