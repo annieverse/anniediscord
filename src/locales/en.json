@@ -278,7 +278,7 @@
         "COOLING_DOWN": "Your next roll still in cooldown."
     },
     "HELP": {
-        "LANDING": "**Hi {{user}}!** I'm Annie and how I can help you?\n\n**• Recommended Commands**\nTry my most popular commands among of our user! they are sorted based on our collected command usage data.\n{{recommendedCommands}}\n\n**• Discover more**\nIf you are looking for comprehensive list, take a look at Commandpedia by pressing to the :book: button on this message.\n\nUnable to find what you are looking for? don't be worry! my developers are always available to answer your questions right away.\n{{serverLink}}",
+        "LANDING": "are you looking for a quick start?{{emoji}}\n\n`{{prefix}}level`\n*You might want to check how much exp you get after those hours of chit-chatting.*\n\n`{{prefix}}balance`\n*Come check how many artcoins you had in your wallet right now.*\n\n`{{prefix}}daily`\n*Annie rewards you free 250 artcoins for every 23 hours. So, make sure to not skip this freebies!*\n\n`{{prefix}}leaderboard`\n*Curious who got the highest exp, artcoins and fame points? then try this!*\n\n`{{prefix}}profile`\n*You will be able to see your current rank, level, artcoins and fame points at a glance.*\n\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
         "COMMANDPEDIA": {
             "HEADER": "Below you can see all the commands I know\nFor further assistance, please have a visit to my {{serverLink}}\n\n{{commandList}}",
             "USAGE_EXAMPLES": "Use **{{prefix}}help <CommandName>** to get information about a command."

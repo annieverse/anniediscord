@@ -12,13 +12,14 @@ class Help extends Command {
 		super(Stacks)
 		this.defaultColor = `crimson`
 		this.commandpediaButton = `📖`
+		this.ignoreGroups = [`Developer`, `modmail`]
 	}
 
     /**
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, bot:{db, supportServer} }) {
+	async execute({ reply, name, emoji, bot:{db, supportServer} }) {
 		await this.requestUserMetadata(1)
 		const cmds = this.getCommandStructures()
 
@@ -31,9 +32,12 @@ class Help extends Command {
 				socket: {
 					user: name(this.user.id),
 					recommendedCommands: this.prettifySuggestions(commandSuggestions),
-					serverLink: supportServer
+					serverLink: supportServer,
+					emoji: emoji(`AnnieWave`),
+					prefix: this.bot.prefix
 				},
 				color: this.defaultColor,
+				header: `Hi, ${name(this.user.id)}!`,
 				thumbnail: this.bot.user.displayAvatarURL()
 			})
 			
@@ -49,7 +53,7 @@ class Help extends Command {
 					response.delete()
 					reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
-							serverLink: supportServer,
+							serverLink: `[Support Server](${supportServer})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
 						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
@@ -106,7 +110,7 @@ class Help extends Command {
 	getCommandStructures() {
 		let obj = {}
 		let groups = this.bot.commands.names.map(el => el.help.group)
-		let uniqueGroups = [...new Set(groups)]
+		let uniqueGroups = [...new Set(groups)].filter(el => !this.ignoreGroups.includes(el))
 		for (let groupName of uniqueGroups) {
 			const groupChilds = this.bot.commands.names.filter(el => el.help.group === groupName)
 			obj[groupName] = groupChilds
@@ -146,7 +150,7 @@ class Help extends Command {
 	 * @returns {String}
 	 */
 	prettifySuggestions(arr=[]) {
-		const cmdNames = arr.map(el => { return `\`${el.command_alias}\``})
+		const cmdNames = arr.map(el => { return `\`${this.bot.prefix}${el.command_alias}\``})
 		return cmdNames.join(`,`)
 	}
 
