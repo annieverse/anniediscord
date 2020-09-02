@@ -75,7 +75,7 @@ module.exports.help = {
 	aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
 	description: `Switch your profile theme to Light or Dark.`,
 	usage: `theme <Light/Dark>`,
-    group: `User`,
+    group: `Manager`,
     permissionLevel: 0,
 	multiUser: false
 }
