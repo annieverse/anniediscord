@@ -235,7 +235,7 @@ module.exports.help = {
 	aliases: [`gch`,`gacha`, `reroll`],
 	description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
 	usage: `gacha <Amount>`,
-	group: `Shop`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
 }

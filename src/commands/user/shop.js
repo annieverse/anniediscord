@@ -91,7 +91,7 @@ module.exports.help = {
 	aliases: [`shops`, `marketplace`, `market`],
 	description: `Buy any purchasable items in our shop!`,
 	usage: `shop`,
-	group: `Shop`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
 }

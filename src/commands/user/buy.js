@@ -171,10 +171,10 @@ class Buy extends Command {
 module.exports.help = {
 	start: Buy,
 	name: `buy`,
-	aliases: [`purchase`, `redeem`],
-	description: `Buy any purchasable items our shop!`,
+	aliases: [`purchase`, `buyy`],
+	description: `Buy any purchasable items in our shop!`,
 	usage: `buy <ItemID/ItemName>`,
-	group: `Shop`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
 }

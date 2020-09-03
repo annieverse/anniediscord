@@ -80,9 +80,9 @@ module.exports.help = {
 	start: ConvertArtcoins,
 	name: `convertArtcoins`,
 	aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`],
-	description: `Converts Artcoins into EXP at the rate of 1:2`,
+	description: `Converts Artcoins into EXP at the rate of 1:8`,
 	usage: `cartcoin <Amount>`,
-	group: `Shop`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
 }
