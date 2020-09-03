@@ -440,18 +440,21 @@ class Database {
 	/**
 	 * Register a user into user-tree tables if doesn't exist.
 	 * @param {string} [userId=``] User's discord id.
+	 * @param {string} [guildId=``] the guild where user get registered.
+	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
 	 * @returns {QueryResult}
 	 */
-	async validateUser(userId=``, guildId=``) {
+	async validateUser(userId=``, guildId=``, userName=``) {
 		const fn = `[Database.validateUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
+		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
 		const res = await this._query(`
-			INSERT INTO users(user_id)
-			SELECT $userId
+			INSERT INTO users(user_id, name)
+			SELECT $userId, $userName
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 			, `run`
-			, {userId: userId}
+			, {userId: userId, userName: userName}
 		)
 		let secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
 		let test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
