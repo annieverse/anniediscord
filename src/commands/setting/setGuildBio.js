@@ -66,7 +66,7 @@ module.exports.help = {
     aliases: [`setguildbio`],
     description: `Update existing guild bio to a custom bio of your choice.`,
     usage: `setguildbio <bio>`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 3,
     multiUser: false
 }

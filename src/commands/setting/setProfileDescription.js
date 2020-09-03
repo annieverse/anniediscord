@@ -36,7 +36,7 @@ module.exports.help = {
 	aliases: [`sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
 	description: `Set user's profile bio/description`,
 	usage: `setdesc <Message>`,
-	group: `Manager`,
+	group: `Setting`,
 	permissionLevel: 0,
 	multiUser: false
 }

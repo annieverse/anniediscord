@@ -66,7 +66,7 @@ module.exports.help = {
     aliases: [`linkaccount`, `linksocmed`, `linksocialmedia`, `setaccount`, `connectaccount`, `setsocialmedia`],
     description: `Registering your social media account.`,
     usage: `setsocialmedia <AccountURL>`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 0,
     multiUser: false
 }

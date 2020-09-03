@@ -580,7 +580,7 @@ module.exports.help = {
     aliases: [`setboostercolor`], 
     description: `Edit and customize booster roles in your guild`,
     usage: `setboostercolor`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 3,
     multiUser: false
 }

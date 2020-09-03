@@ -146,7 +146,7 @@ module.exports.help = {
     aliases: [`setprof`, `setp`, `editprofile`, `editprof`, `editp`, `setprofile`], 
     description: `Edit and customize your profile decorations such as covers, stickers, badges, etc.`,
     usage: `setprofile`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 0,
     multiUser: false
 }

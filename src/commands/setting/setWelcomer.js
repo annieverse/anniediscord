@@ -232,7 +232,7 @@ module.exports.help = {
     aliases: [`setwelcomer`, `setwelcome`, `setwlcm`],
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer <subModuleCode>`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 3,
     multiUser: false
 }

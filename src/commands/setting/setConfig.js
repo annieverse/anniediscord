@@ -309,7 +309,7 @@ module.exports.help = {
     aliases: [`setconfig`, `setconf`, `config`],
     description: `Manage custom configurations for the current guild`,
     usage: `setconfig <ModuleCode>`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 3,
     multiUser: false
 }

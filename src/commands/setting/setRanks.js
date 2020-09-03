@@ -585,7 +585,7 @@ module.exports.help = {
     aliases: [`setranks`, `setrank`, `setRanks`], 
     description: `Edit and customize role-ranking system in your guild.`,
     usage: `setranks`,
-    group: `Manager`,
+    group: `Setting`,
     permissionLevel: 3,
     multiUser: false
 }
