@@ -475,6 +475,14 @@
     "SAY": {
         "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
     },
+    "SETLEVELUPMESSAGE": {
+        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n`{{prefix}}setlvlupmsg enable`\n*By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).*\n\n`{{prefix}}setlvlupmsg disable`\n*Getting tired of annoying level-up message? then it's time to disable it.*",
+        "INVALID_ACTION": "{{emoji}} Sorry, I only accept **enable** or **disable** action in this module.",
+        "ALREADY_ENABLED": "This module already enabled by **{{user}}, {{date}}**",
+        "ALREADY_DISABLED": "{{emoji}} This module hasn't been enabled yet in this guild.",
+        "SUCCESSFULLY_ENABLED": "{{emoji}} **Level-up Message Module** has been successfully enabled in this guild!",
+        "SUCCESSFULLY_DISABLED": "{{emoji}} **Level-up Message Module** has been successfully disabled in this guild!"
+    },
     "SERVER_BOOST": {
         "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
     },
