@@ -96,7 +96,7 @@ module.exports.help = {
 	aliases: [`lb`,`leaderboard`, `rank`, `ranking`],
 	description: `Displays global leaderboard`,
 	usage: `lb`,
-	group: `Server`,
+	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
 }
