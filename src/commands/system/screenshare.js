@@ -31,7 +31,7 @@ module.exports.help = {
 	aliases: [`tea`],
 	description: `Gives a link to screen share in the server`,
 	usage: `screenshare`,
-	group: `Server`,
+	group: `System`,
 	permissionLevel: 0,
 	multiUser: false,
 }

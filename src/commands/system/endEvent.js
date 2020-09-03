@@ -42,7 +42,7 @@ module.exports.help = {
 	aliases: [`endevent`, `eventend`],
 	description: `Takes all expired event ticket from participants`,
 	usage: `eventend`,
-	group: `Server`,
+	group: `System`,
 	permissionLevel: 2,
 	multiUser: false
 }

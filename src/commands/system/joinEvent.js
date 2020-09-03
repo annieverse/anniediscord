@@ -60,7 +60,7 @@ module.exports.help = {
 	aliases: [`join`, `joinevent`, `enterevent`],
 	description: `AAU's Exclusive Command. 250 Artcoins fee will be deducted once joined the server event.`,
 	usage: `join`,
-	group: `Server`,
+	group: `System`,
 	permissionLevel: 0,
 	multiUser: false
 }

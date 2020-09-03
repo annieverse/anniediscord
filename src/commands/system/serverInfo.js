@@ -57,7 +57,7 @@ module.exports.help = {
 	aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
 	description: `Displays info about the server`,
 	usage: `serverinfo`,
-	group: `Server`,
+	group: `System`,
 	permissionLevel: 0,
 	multiUser: false
 }
