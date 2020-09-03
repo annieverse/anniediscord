@@ -19,9 +19,9 @@ class ServerInfo extends Command {
      */
     async execute({ reply, name, commanifier }) {
 		let members = this.message.guild.memberCount
-		let botSize =  this.message.guild.members.filter(a => a.user.bot).size
+		let botSize =  this.message.guild.members.cache.filter(a => a.user.bot).size
 		let userSize = members - botSize
-		let onmem = this.message.guild.members.filter(a => a.user.presence.status === `online`).size
+		let onmem = this.message.guild.members.cache.filter(a => a.user.presence.status === `online`).size
 
 		return reply(`
 			${this.message.guild.region.charAt(0).toUpperCase() + this.message.guild.region.slice(1)}-based Guild
@@ -38,9 +38,9 @@ class ServerInfo extends Command {
 			${onmem} users are currently active in this server! go greet them!
 
 			**• Hmm, what about the channels and roles?**
-			Hah! they have ${this.message.guild.channels.size} channels and ${this.message.guild.roles.size} roles!
+			Hah! they have ${this.message.guild.channels.cache.size} channels and ${this.message.guild.roles.cache.size} roles!
 			Is that what you are looking for?
-			Wait, they also have ${this.bot.channels.get(this.message.guild.systemChannelID)} as their main channel.
+			Wait, they also have ${this.bot.channels.cache.get(this.message.guild.systemChannelID)} as their main channel.
 
 			Okay, that's all I know! 
 
