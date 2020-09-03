@@ -2,6 +2,22 @@
 
 ___
 
+## **09/04/20 | 7.1.0 ->**
+
+* feat(setLevelUpMessage): quick setting to levelup message module
+* feat(setWelcomer): easier control for managing welcomer module
+* refactor(gacha): added purchase-chaining
+* refactor(exp): canvas-based level up message
+* refactor(setLevelupMessage): remove uneccessary condition
+* refactor(validateUser): added username param
+* refactor(help): added thumbnail in the commandpedia section
+* refactor(server): merge to system category
+* refactor(leaderboard): merge to user category
+* refactor(shop): merge to user category
+* refactor(manager): renamed category to setting
+* fix(serverInfo): undefined methods
+* fix(buy): cover auto-equip
+
 ## **09/03/20 | 7.0.12 ->**
 
 * fix(gacha, cardCollection): couldnt render card asset
