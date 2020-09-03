@@ -66,20 +66,17 @@ class SetLevelupMessage extends Command {
      */
     async enable() {
         const fn = `[setLevelupMessage.enable()]`
-        //  Only check if guild already has configs registered
-        if (this.config.length > 0) {
-            const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 1))[0]
-            //  Handle if module already enabled before the action.
-            if (config) {
-                const now = moment()
-                const localizeTime = await this.bot.db.toLocaltime(config.updated_at)
-                return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
-                    socket: {
-                        user: this.tool.name(config.set_by_user_id),
-                        date: moment(localizeTime).fromNow()
-                    }
-                })
-            }
+        const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 1))[0]
+        //  Handle if module already enabled before the action.
+        if (config) {
+            const now = moment()
+            const localizeTime = await this.bot.db.toLocaltime(config.updated_at)
+            return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
+                socket: {
+                    user: this.tool.name(config.set_by_user_id),
+                    date: moment(localizeTime).fromNow()
+                }
+            })
         }
         this.configurationMetadata.config_code = `level_up_message`
         this.configurationMetadata.customized_parameter = 1
@@ -100,12 +97,9 @@ class SetLevelupMessage extends Command {
      */
     disable() {
         const fn = `[setLevelupMessage.disable()]`
-        //  Only check if guild already has configs registered
-        if (this.config.length > 0) {
-            const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 0))[0]
-            //  Handle if welcomer already disabled before the action.
-            if (config) return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {color: `golden`, socket: {emoji: this.tool.emoji(`warn`)} })
-        }
+        const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 0))[0]
+        //  Handle if welcomer already disabled before the action.
+        if (config) return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {color: `golden`, socket: {emoji: this.tool.emoji(`warn`)} })
         this.configurationMetadata.config_code = `level_up_message`
         this.configurationMetadata.customized_parameter = 0
         this.bot.db.setCustomConfig(this.configurationMetadata)
