@@ -46,7 +46,7 @@
         "INVALID_ITEM": "I can't find any item with that name..",
         "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
         "NO_DUPLICATE": "You are already own that {{itemType}}",
-        "SUCCESSFUL": "**{{item}}** has been delivered to your inventory! {{emoji}}",
+        "SUCCESSFUL": "{{emoji}} **{{item}}** has been delivered to your inventory!",
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
         "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
@@ -235,11 +235,12 @@
             "{{emoji}} *{{user}}, do you know what's lying behind this card?*"
         ],
         "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
-        "DUPLICATE_CARDS": "You owned duplicate of **{0} card**. \nThe new one will be dismantled into {1}**10,000** Artcoins.**",
-        "INVALID_AMOUNT": "Please put a valid amount of ticket you want to open.",
-        "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls.",
-        "INSUFFICIENT_TICKET": "Hey, you don't have enough **Lucky Ticket.** Go get some in my shop! {{emoji}}",
-        "COOLING_DOWN": "Your next roll still in cooldown."
+        "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** tickets at once.",
+        "AMOUNT_OUTOFRANGE": "{{emoji}} You can only do **1** or **10** pulls.",
+        "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Lucky Ticket!**",
+        "SUGGEST_TO_BUY": "Wanna buy some {{emoji}} **Lucky Tickets** first?",
+        "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `dailies` first. {{emoji}}",
+        "ASK_TO_OPEN": "Wanna open them now?"
     },
     "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",

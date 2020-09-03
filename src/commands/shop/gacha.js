@@ -12,73 +12,177 @@ class Gacha extends Command {
      */
     constructor(Stacks) {
 		super(Stacks)
+
+        /**
+         * The received loots will be stored in this array
+         * @type {array} 
+         */
         this.loots = []
+
+        /**
+         * The maximum threeshold of opening gacha will be limited to range in this array.
+         * @type {array} 
+         */
+        this.amountToOpenRanges = [1, 10]
     }
 
     /**
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, choice, bot:{db} }) {
+    async execute({ reply, emoji, name, trueInt, commanifier, choice }) {
     	await this.requestUserMetadata(2)
-
-    	//  Handle if user doesn't have any lucky ticket to be opened.
-    	if (!this.user.inventory.lucky_ticket) return reply(this.locale.GACHA.INSUFFICIENT_TICKET, {socket: {emoji: emoji(`AnnieDead`)}, color: `red`})
-    	const amountToOpen = this.args[0] ? trueInt(this.args[0]) : 1 
-    	//  Handle if amount be opened is invalid
-    	if (!amountToOpen) return reply(this.locale.GACHA.INVALID_AMOUNT, {color: `red`, socket: {emoji: emoji(`AnnieCry`)} })
-        //  Handle if amount to be opened is out of range (1/10)
-        if (![1, 10].includes(amountToOpen)) return reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {color: `red`})
-    	//  Handle if amount to be opened is higher than the owned ones
-    	if (this.user.inventory.lucky_ticket < amountToOpen) return reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
-    		socket: {emoji: emoji(`AnnieDead`)},
-            color: `red`
+    	this.amountToOpen = this.args[0] ? trueInt(this.args[0]) : 1
+        this.tools = { reply, emoji, name, trueInt, commanifier, choice } 
+        //  Handle if amount to be opened is out of defined range.
+        if (!this.amountToOpenRanges.includes(this.amountToOpen)) return reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {
+            color: `golden`,
+            socket: {emoji: emoji(`warn`)}
         })
-    	const rewardsPool = await db.getGachaRewardsPool()
-    	//  Handle if no rewards are available to be pulled from gacha.
-    	if (!rewardsPool.length) return reply(this.locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: emoji(`AnnieCry`)} })
-        this.fetching = await reply(choice(this.locale.GACHA.OPENING_WORDS), {
+        //  Direct roll if user already has the tickets.
+        if (this.user.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll()
+
+        /**
+         * --------------------
+         * STARTS PURCHASE CHAINING
+         * --------------------
+         * @author klerikdust
+         * Q: What's the reason of adding this?
+         * A: I've seen a lot of people, especially the newbie ones are often
+         * having trouble of how to purchase the stuff to participate in the gacha. Browsing through the shop
+         * usually kind of overwhelming them, which might intimidates them to look further.
+         * My hope after implementing this so-called-purchase-chaining model is, we'll able to gauge new user's interest
+         * to play with our gacha with small effort (no need to get through the buy command first)
+         * and enjoy the rest of the content.
+         */
+        this.insufficientTicketWarning = await reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
+		   socket: {emoji: emoji(`fail`), prefix: this.bot.prefix},
+           color: `red`
+        })
+        const gachaItem = await this.bot.db.getItem(71)
+        const payment = await this.bot.db.getPriceOf(71)
+        const paymentItem = await this.bot.db.getItem(payment.item_price_id)
+        const userCurrentCurrency = this.user.inventory[paymentItem.alias]
+        const amountToPay = payment.price*this.amountToOpen
+
+        //  Handle if user doesn't have enough artcoins to buy tickets
+        if (userCurrentCurrency < amountToPay) return reply(this.locale.GACHA.SUGGEST_TO_GRIND, {
+            simplified: true,
+            socket: {emoji: emoji(`AnnieSmile`)}
+        })
+
+        /**
+         * --------------------
+         * 1.) GIVE PURCHASE OFFER TO USER
+         * --------------------
+         */
+        return reply(this.locale.GACHA.SUGGEST_TO_BUY, {
+            simplified: true,
+            socket: {emoji: emoji(`lucky_ticket`)}
+        })
+        .then(async msg => {
+            await msg.react(`✅`)
+            const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
+            const confirmationButton = msg.createReactionCollector(confirmationButtonFilter, { time: 60000 })
+            confirmationButton.on(`collect`, async r => {
+                msg.delete()
+                this.insufficientTicketWarning.delete()
+
+                /**
+                 * --------------------
+                 * 2.) CHECKOUT TRANSACTION
+                 * --------------------
+                 */
+                this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
+                    socket: {
+                        total: `${emoji(paymentItem.alias)}${commanifier(amountToPay)}`,
+                        item: `[${this.amountToOpen}x] ${gachaItem.name}`,
+                        itemType: gachaItem.type_name
+                    },
+                    color: `golden`,
+                })
+
+                await this.checkout.react(`✅`)
+                const purchaseButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
+                const purchaseButton = this.checkout.createReactionCollector(confirmationButtonFilter, { time: 60000 })
+                purchaseButton.on(`collect`, async r => {
+                    //  Deduct balance & deliver lucky tickets
+                    await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: this.amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+                    await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+                    this.checkout.delete()
+                    reply(this.locale.BUY.SUCCESSFUL, {
+                        color: `lightgreen`,
+                        socket: {
+                            item: `${emoji(gachaItem.alias)} [${gachaItem.type_name}] ${commanifier(this.amountToOpen)}x ${gachaItem.name}`,
+                            emoji: emoji(`success`)
+                        }
+                    })
+
+                    /**
+                     * --------------------
+                     * 3.) ASK USER IF THEY WANT TO STRAIGHT OPEN IT OR NOT.
+                     * --------------------
+                     */
+                    reply(this.locale.GACHA.ASK_TO_OPEN, {simplified: true})
+                    .then(async askToOpen => {
+                        await askToOpen.react(`✅`)
+                        const openButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
+                        const openButton = askToOpen.createReactionCollector(confirmationButtonFilter, { time: 60000 })
+                        openButton.on(`collect`, async r => {
+                            openButton.stop()
+                            return this.startsRoll()
+                        })
+                    })
+                })
+            })
+        })
+    }
+
+    async startsRoll() {
+        const rewardsPool = await this.bot.db.getGachaRewardsPool()
+        //  Handle if no rewards are available to be pulled from gacha.
+        if (!rewardsPool.length) return this.tools.reply(this.locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: this.tools.emoji(`AnnieCry`)} })
+        this.fetching = await this.tools.reply(this.tools.choice(this.locale.GACHA.OPENING_WORDS), {
             simplified: true,
             socket: {
-                user: name(this.user.id),
-                emoji: emoji(`AnnieStabby`)
+                user: this.tools.name(this.user.id),
+                emoji: this.tools.emoji(`AnnieStabby`)
             }
         })
         //  Registering loot
-        for (let i=0; i<amountToOpen; i++) {
+        for (let i=0; i<this.amountToOpen; i++) {
             const loot = this.getLoot(rewardsPool)
             this.loots.push(loot)
         }
 
         //  Subtract user's lucky tickets
-        await db.updateInventory({itemId: 71, value: amountToOpen, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
-        //  Storing items into user's inventory
+        await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+        //  Storing received loots into user's inventory
         for (let i=0; i<this.loots.length; i++) {
             const item = this.loots[i]
-            await db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+            await this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
         }
 
         //  Displaying result
-        await reply(this.locale.COMMAND.TITLE, {
+        await this.tools.reply(this.locale.COMMAND.TITLE, {
             prebuffer: true,
             image: await new GUI(this.loots, this.drawCounts).build(),
             simplified: true,
             socket: {
                 command: `has opened ${this.drawCounts} Lucky Tickets!`,
-                user: name(this.user.id),
-                emoji: emoji(`lucky_ticket`)
+                user: this.tools.name(this.user.id),
+                emoji: this.tools.emoji(`lucky_ticket`)
             }
         })
         this.fetching.delete()
-        return reply(this.displayDetailedLoots(emoji), {simplified: true})
+        return this.tools.reply(this.displayDetailedLoots(this.tools.emoji), {simplified: true})   
     }
 
     /**
      * Aggregate and prettify this.loots into a readable list.
-     * @param {function} emojiParser refer to Pistachio.emoji()
      * @returns {string}
      */
-    displayDetailedLoots(emojiParser) {
+    displayDetailedLoots() {
         let str = ``
         let items = this.loots.map(item => item.name)
         let uniqueItems = [...new Set(items)]
@@ -86,7 +190,7 @@ class Gacha extends Command {
             const item = this.loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
-            str += `${emojiParser(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
+            str += `${this.tools.emoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
         }
         return str
     }
@@ -128,8 +232,8 @@ class Gacha extends Command {
 module.exports.help = {
 	start: Gacha,
 	name: `gacha`,
-	aliases: [`multi-gacha`,`gacha`],
-	description: `Opens a Lucky Ticket and wins various exclusive rewards such as covers, badges, gifts and even 5-star cards!`,
+	aliases: [`gch`,`gacha`, `reroll`],
+	description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
 	usage: `gacha <Amount>`,
 	group: `Shop`,
 	permissionLevel: 0,
