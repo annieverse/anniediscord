@@ -139,24 +139,21 @@ class Buy extends Command {
 				color: `lightgreen`,
 				socket: {
 					item: `${emoji(this.item.alias)} [${this.item.type_name}] ${commanifier(this.amountToBuy)}x ${this.item.name}`,
-					emoji: emoji(`AnnieSmile`)
+					emoji: emoji(`success`)
 				}
 			})
 			this.checkout.delete()
 
 			//  Ask user if they want to apply to cover right away or not.
 			if (this.item.type_id === 1) {
-				this.coverQuickApplyPrompt = await reply(this.locale.BUY.QUICKAPPLY_COVER)
+				this.coverQuickApplyPrompt = await reply(this.locale.BUY.QUICKAPPLY_COVER, {simplified: true})
 				await this.coverQuickApplyPrompt.react(`✅`)
 		        const coverQuickApplyButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
 		        const coverQuickApplyButton = this.coverQuickApplyPrompt.createReactionCollector(coverQuickApplyButtonFilter, { time: 120000 })
 		        coverQuickApplyButton.on(`collect`, async r => {
-		        	const getAllOwnedCovers = this.user.inventory.raw.filter(i => i.type_id === 1 && i.in_use === 1).map(i => i.item_id)
-		        	//  Applying item
-		        	await this.bot.db._query(`UPDATE user_inventories SET in_use = 0 WHERE item_id = ? AND user_id = ? AND guild_id = ?`, `run`, [this.item.item_id, this.user.id, this.message.guild.id])
-		        	await this.bot.db.useItem(this.item.item_id, this.user.id)
 		        	this.coverQuickApplyPrompt.delete()
-		        	//  Successfully applying cover
+					await this.bot.db.detachCovers(this.user.id, this.message.guild.id)
+		        	await this.bot.db.useItem(this.item.item_id, this.user.id, this.message.guild.id)
 		        	return reply(this.locale.SETPROFILE.SUCCESSFUL, {
 		        		color: `lightgreen`,
 		        		socket: {

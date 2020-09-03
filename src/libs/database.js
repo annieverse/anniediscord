@@ -196,19 +196,23 @@ class Database {
 	 * Set user item's `in_use`` value to `1`
 	 * @param {number} [itemId] target item's id.
 	 * @param {string} [userId=``] User's discord id.
+	 * @param {string} [guildId=``] target guild where user's inventory is stored.
 	 * @returns {QueryResult}
 	 */
-	useItem(itemId, userId=``) {
+	useItem(itemId, userId=``, guildId=``) {
 		const fn = `[Database.useItem()]`
-		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)		
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)		
 		return this._query(`
 			UPDATE user_inventories
 			SET in_use = 1
 			WHERE 
 				user_id = ?
-				AND item_id = ?`
+				AND item_id = ?
+				AND guild_id = ?`
 			, `run`
-			, [userId, itemId]
+			, [userId, itemId, guildId]
 		)
 	}
 
@@ -230,6 +234,34 @@ class Database {
 			, `run`
 			, [userId, itemId]
 		)
+	}
+	
+	/**
+	 * Detach user's covers. Aftewards, combined with `this.useItem()`
+	 * @param {string} [userId=``] target user's id.
+	 * @param {string} [guildId=``] target guild where user's inventory is stored.
+	 * @returns {QueryResult}
+	 */
+	async detachCovers(userId=``, guildId=``) {
+		const fn = `[Database.detachCovers()]`
+		if (!itemId) throw new TypeError(`${fn} parameter 'itemId' cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)	
+    	const res = await this.bot.db._query(`
+    		UPDATE user_inventories
+    		SET in_use = 0
+    		WHERE 
+    			user_id = ?
+    			AND guild_id = ?
+    			AND item_id IN (
+    				SELECT item_id
+    				FROM items
+    				WHERE type_id = 1 
+    			)`
+    		, `run`
+    		, [userId, guildId]
+    		, `${fn} Detaching covers from USER_ID ${userId} in GUILD_ID ${guildId}`
+    	)
+    	return res
 	}
 	
 	/** -------------------------------------------------------------------------------
