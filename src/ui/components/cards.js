@@ -137,11 +137,10 @@ class Card {
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
 		const imgSize = sizeOf(img)
 		const dynamicHeight = () => {
-			if (imgSize.width < this.width) return imgSize.height+(this.width - imgSize.width)
-			if (imgSize.width > this.width) return imgSize.height-(imgSize.width - this.width)
+			if (imgSize.width < this.width) return imgSize.height+((this.width - imgSize.width)/1.5)
+			if (imgSize.width > this.width) return imgSize.height-((imgSize.width - this.width)/1.5)
 			return this.width/1.5
 		}
-		
 		let image = await resolveImage(img)
 		img = image
 		grad.addColorStop(1, this.color.main)
@@ -327,8 +326,10 @@ class Card {
 		inline=false,
 		releaseHook=false,
 		marginTop=this.marginTop,
+		marginLeft=0,
 		size=null,
 		captionMargin=15,
+		fontWeight=`light`,
 		captionColor=this.color.caption,
 		color=this.color.text}) {
 		color = this._resolveColor(color, this.color.text)
@@ -336,16 +337,15 @@ class Card {
 		this.canv
 		.setColor(color)
 		.setTextAlign(align)
-		.setTextFont(size ? `${parseInt(size)}pt roboto-light` : DEFAULT.HEADER.TITLE.FONT)
-		.printText(main, this._getHorizontalAlign(align), this.reservedSpace+marginTop)
-
+		.setTextFont(size ? `${parseInt(size)}pt roboto-${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
+		.printText(main, this._getHorizontalAlign(align)+marginLeft, this.reservedSpace+marginTop)
+		console.debug(this.reservedSpace+marginTop,this.reservedSpace+marginTop+captionMargin)
 		if (caption) {
 			this.canv
-			.setTextFont(DEFAULT.HEADER.CAPTION.FONT)
+			.setTextFont(size ? `${parseInt(size/1.5)}pt roboto-${fontWeight}` : DEFAULT.HEADER.CAPTION.FONT)
 			.setColor(captionColor)
-			.printText(caption, this._getHorizontalAlign(align), this.reservedSpace+marginTop+captionMargin)
+			.printText(caption, this._getHorizontalAlign(align)+marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
-		
 		//	Add state for flexible Y positioning
 		if (!inline || (releaseHook && inline)) {
 			if (caption) this.reservedSpace += captionMargin

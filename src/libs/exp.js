@@ -1,6 +1,7 @@
 const Points = require(`./points`)
 const commanifier = require((`../utils/commanifier`))
 const moment = require(`moment`)
+const GUI = require(`../ui/prebuild/levelUpmessage`)
 
 /**
  * @typedef {ExpData}
@@ -105,6 +106,7 @@ class Experience extends Points {
     async levelUpPerks() {
     	//  Handle level jumping (over 1 level threeshold)
     	const levelDiff = this.newExp.level - this.prevExp.level
+        const img = await new GUI(await this._getMinimalUserMetadata(), this.newExp.level).build()
     	if (levelDiff > 1) {
     		let stackedTotalGainedReward = 0
     		for (let i=0; i<levelDiff; i++) {
@@ -113,15 +115,11 @@ class Experience extends Points {
 			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 			await this.updateRank(this.newExp.level)
 			if (!this.bot.level_up_message) return
-    		return this.reply(this.locale.LEVELUP.JUMPING, {
-    			color: `purple`,
-    			socket: {
-    				user: this.message.author.username,
-    				gainedLevel: `${this.newExp.level}(${levelDiff}+)`,
-    				gainedReward: commanifier(stackedTotalGainedReward),
-    				emoji: this.emoji(`artcoins`)
-    			}
-    		})
+            return this.reply(``, {
+                simplified: true,
+                prebuffer: true,
+                image: await img
+            })
     	} 
 
     	//  Regular reward
@@ -129,14 +127,10 @@ class Experience extends Points {
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
 		if (!this.bot.level_up_message) return
-		return this.reply(this.locale.LEVELUP.REGULAR, {
-			color: `crimson`,
-			socket: {
-				user: this.message.author.username,
-				gainedLevel: this.newExp.level,
-				gainedReward: commanifier(totalGainedReward),
-				emoji: this.emoji(`artcoins`)
-			}
+		return this.reply(``, {
+			simplified: true,
+            prebuffer: true,
+            image: await img
 		})
     }
 
@@ -221,6 +215,18 @@ class Experience extends Points {
     get baseGainedExp() {
     	const [min, max] = this.expConfig.baseAmount
     	return this.randomize(min, max)
+    }
+
+    async _getMinimalUserMetadata() {
+        let user = this.message.author
+        //  Fetching inventories 
+        const inventoryData = await this.bot.db.getUserInventory(this.message.author.id, this.message.guild.id)
+        //  Custom properties
+        const theme = inventoryData.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
+        user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+        const cover = inventoryData.filter(key => (key.type_name === `Covers`) && (key.in_use === 1))
+        user.usedCover = cover.length > 0 ? cover[0] : await db.getItem(`defaultcover1`)
+        return user
     }
 
 }
