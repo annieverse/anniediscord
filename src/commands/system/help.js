@@ -13,6 +13,7 @@ class Help extends Command {
 		this.defaultColor = `crimson`
 		this.commandpediaButton = `📖`
 		this.ignoreGroups = [`Developer`, `modmail`]
+		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
 	}
 
     /**
@@ -56,6 +57,7 @@ class Help extends Command {
 							serverLink: `[Support Server](${supportServer})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
+						thumbnail: this.commandpediaThumbnail,
 						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
 						color: this.defaultColor
 					})
