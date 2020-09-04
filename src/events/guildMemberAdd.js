@@ -16,7 +16,7 @@ module.exports = async (bot, member) => {
     bot.logger.info(`[${member.guild.name}]${bot.users.cache.get(member.id).tag} has joined ${member.guild.name}.`)
     
     // Ignore if welcome module is turned off
-    if (!bot.welcome_module) return
+    if (!parseInt(bot.welcome_module)) return
     
     if (bot.guild_id != member.guild.id) return bot.logger.info(`[guildMemberAdd.js] Guild id doesnt match, stopping event from continuing`)
 
