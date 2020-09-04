@@ -1660,7 +1660,11 @@ class Database {
 	*/
 	async indexRanking(group=``,guildId=``) {
 		if (group === `exp`) return this._query(`
-			SELECT user_id AS id, current_exp AS points FROM user_exp WHERE guild_id = ?
+			SELECT 
+				user_id AS id, 
+				current_exp AS points 
+			FROM user_exp 
+			WHERE guild_id = ?
 			ORDER BY current_exp DESC`
 			, `all`
 			, [guildId]
@@ -1669,8 +1673,12 @@ class Database {
 		)
 
 		if (group === `artcoins`) return this._query(`
-			SELECT user_id AS id, quantity AS points FROM user_inventories 
-			WHERE item_id = 52 AND guild_id = ?
+			SELECT 
+				user_id AS id, 
+				quantity AS points 
+			FROM user_inventories 
+			WHERE item_id = 52 
+				AND guild_id = ?
 			ORDER BY quantity DESC`
 			, `all`
 			, [guildId]
@@ -1679,7 +1687,11 @@ class Database {
 		)
 
 		if (group === `fame`) return this._query(`
-			SELECT user_id AS id, total_reps AS points FROM user_reputations WHERE guild_id = ?
+			SELECT 
+				user_id AS id, 
+				total_reps AS points 
+			FROM user_reputations 
+			WHERE guild_id = ?
 			ORDER BY total_reps DESC`
 			, `all`
 			, [guildId]
@@ -1688,8 +1700,12 @@ class Database {
 		)
 
 		if (group === `artists`) return this._query(`
-			SELECT userId AS id, liked_counts AS points FROM userdata
-			ORDER BY liked_counts DESC`
+			SELECT 
+				user_id AS id, 
+				SUM(total_likes) AS points 
+			FROM user_posts
+			GROUP BY user_id
+			ORDER BY points DESC`
 			, `all`
 			, []
 			, `Fetching artists leaderboard`

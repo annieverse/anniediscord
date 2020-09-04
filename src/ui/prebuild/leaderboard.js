@@ -20,6 +20,7 @@ class UI {
 	}
 
 	async build() {
+		console.debug(this.lbData)
 		let card = new Cards({width: 520, height: 550, theme: `dark`}).createBase({cornerRadius: 50})
 		let topTenRows = this.lbData.slice(0, 10)
 		card.addCover({ img: await urlToBuffer(this.avatarParser(topTenRows[0].id)), gradient: true }) 

@@ -51,7 +51,8 @@ class Leaderboard extends Command {
 			simplified: true
 		})
 		.then(async load => {
-			const lbData = await db.indexRanking(selectedGroup, this.message.guild.id)
+			//  Fetch points data and eliminates zero values if present.
+			const lbData = (await db.indexRanking(selectedGroup, this.message.guild.id)).filter(node => node.points > 0)
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()
