@@ -2,6 +2,10 @@
 
 ___
 
+## **09/04/20 | 7.1.3 ->**
+
+* fix(ui): lvlup message Y pos
+
 ## **09/04/20 | 7.1.2 ->**
 
 * fix(welcomer): rounded module value
