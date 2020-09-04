@@ -2,6 +2,14 @@
 
 ___
 
+## **09/04/20 | 7.1.1 ->**
+
+* refactor(ui): leaderboard components readjusted
+* refactor(leaderboard): improved homepage's layout
+* refactor(leaderboard): added bal alias for artcoins rank
+* fix(leaderboard): fetchable art ranks
+* fix(exp): missing ref in getMinimalUserMetadata()
+
 ## **09/04/20 | 7.1.0 ->**
 
 * feat(setLevelUpMessage): quick setting to levelup message module
