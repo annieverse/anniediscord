@@ -26,7 +26,7 @@ class UI {
 			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
 			avatarRadius: 7,
 			marginLeft: 25,
-			marginTop: 30,
+			marginTop: 28,
 			inline: true
 		})
 		//  Main text content
