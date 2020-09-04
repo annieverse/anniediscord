@@ -114,7 +114,7 @@ class Experience extends Points {
     		}
 			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 			await this.updateRank(this.newExp.level)
-			if (!this.bot.level_up_message) return
+			if (!parseInt(this.bot.level_up_message)) return
             return this.reply(``, {
                 simplified: true,
                 prebuffer: true,
@@ -126,7 +126,7 @@ class Experience extends Points {
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
-		if (!this.bot.level_up_message) return
+		if (!parseInt(this.bot.level_up_message)) return
 		return this.reply(``, {
 			simplified: true,
             prebuffer: true,
