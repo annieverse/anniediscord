@@ -137,9 +137,9 @@ class Card {
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
 		const imgSize = sizeOf(img)
 		const dynamicHeight = () => {
-			if (imgSize.width < this.width) return imgSize.height+((this.width - imgSize.width)/1.5)
+			if (imgSize.width < this.width) return imgSize.height+((this.width - imgSize.width))
 			if (imgSize.width > this.width) return imgSize.height-((imgSize.width - this.width)/1.5)
-			return this.width/1.5
+			return this.height
 		}
 		let image = await resolveImage(img)
 		img = image
@@ -155,7 +155,6 @@ class Card {
 			.setColor(grad)
 			.printRectangle(0, 0, this.width, this.height)
 		}
-
 		return this
 	}
 
@@ -240,8 +239,9 @@ class Card {
 		//	Apply shadow if the selected theme is allowing object shadow elevation.
 		if (!disableShadow && this.color.allowedShadow) {
 			this.canv.setShadowColor(shadowColor)
-			.setShadowOffsetY(10)
-			.setShadowBlur(15)
+			.setShadowOffsetX(0)
+			.setShadowOffsetY(7)
+			.setShadowBlur(35)
 			.setColor(this.color.main)
 	
 			.printRectangle(leftMarginState()+20, topMarginState()+20, width-40, height-35)
@@ -419,7 +419,7 @@ class Card {
 		
 		if (avatar) {
 			avatar = await resolveImage(avatar)
-			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-5, customAvatarWidth, customAvatarHeight, customAvatarRadius)
+			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-3, customAvatarWidth, customAvatarHeight, customAvatarRadius)
 		}
 		if (main) {
 			this.canv
