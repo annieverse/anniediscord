@@ -2,6 +2,12 @@
 
 ___
 
+## **09/04/20 | 7.1.2 ->**
+
+* fix(welcomer): rounded module value
+* fix(lvlUpMessage): rounded module value
+* fix(leaderboard): unable to display user with zero point
+
 ## **09/04/20 | 7.1.1 ->**
 
 * refactor(ui): leaderboard components readjusted
