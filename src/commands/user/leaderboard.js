@@ -18,7 +18,7 @@ class Leaderboard extends Command {
 		 */
 		this.keywords = [
 			[`exp`, `exp`, `xp`, `lvl`, `level`],
-			[`artcoins`, `artcoins`, `ac`, `artcoin`, `balance`],
+			[`artcoins`, `artcoins`, `ac`, `artcoin`, `balance`, `bal`],
 			[`fame`, `fames`, `rep`,  `reputation`, `reputations`, `reps`],
 			[`artists`, `hearts`, `arts`, `artist`, `art`, `artwork`],
 			[`halloween`, `candies`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
