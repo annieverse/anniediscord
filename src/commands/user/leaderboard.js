@@ -23,6 +23,12 @@ class Leaderboard extends Command {
 			[`artists`, `hearts`, `arts`, `artist`, `art`, `artwork`],
 			[`halloween`, `candies`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
 		]
+
+		/**
+		 * URL source for leaderboard's thumbnail
+		 * @type {string}
+		 */
+		this.thumbnail = `https://i.ibb.co/2jnLwx2/leaderboard.png`
     }
 
     /**
@@ -30,13 +36,23 @@ class Leaderboard extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, emoji, avatar, commanifier, name, bot:{db} }) {
-		
 		await this.requestUserMetadata(2)
 
 		//  Returns a guide if no parameter was specified.
-		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE)
+		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE, {
+			color: `crimson`,
+			thumbnail: this.thumbnail,
+			header: `Hi, ${name(this.user.id)}!`,
+			socket: {
+				prefix: this.bot.prefix,
+				emoji: emoji(`AnnieDab`)
+			}
+		})
 		//  Returns if parameter is invalid.
-		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
+		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY, {
+			color: `red`,
+			socket: {emoji: emoji(`fail`)}
+		})
 		//  Store key of selected group
 		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
 		const selectedGroup = selectedGroupParent[0]
@@ -56,7 +72,13 @@ class Leaderboard extends Command {
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()
-				return reply(this.locale.LEADERBOARD.NO_DATA, {socket: {category: selectedGroup}})
+				return reply(this.locale.LEADERBOARD.NO_DATA, {
+					color: `golden`,
+					socket: {
+						category: selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1),
+						emoji: emoji(`warn`)
+					}
+				})
 			}
 			const img = await new GUI(this.user, lbData, name, avatar).build()
 			load.delete()
