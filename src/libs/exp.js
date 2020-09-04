@@ -223,9 +223,9 @@ class Experience extends Points {
         const inventoryData = await this.bot.db.getUserInventory(this.message.author.id, this.message.guild.id)
         //  Custom properties
         const theme = inventoryData.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-        user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+        user.usedTheme = theme.length ? theme[0] : await this.bot.db.getItem(`light`)
         const cover = inventoryData.filter(key => (key.type_name === `Covers`) && (key.in_use === 1))
-        user.usedCover = cover.length > 0 ? cover[0] : await db.getItem(`defaultcover1`)
+        user.usedCover = cover.length > 0 ? cover[0] : await this.bot.db.getItem(`defaultcover1`)
         return user
     }
 
