@@ -2,6 +2,13 @@
 
 ___
 
+## **09/06/20 | 7.2.0 ->**
+
+* feat(setCover): quick setting to manage user profile cover
+* refactor(ui): lvlup message upscaled resolution
+* refactor(setProfile): drop supports for cover action
+* refactor(buy): update db methods for cover quick-apply action
+
 ## **09/04/20 | 7.1.3 ->**
 
 * fix(ui): lvlup message Y pos
