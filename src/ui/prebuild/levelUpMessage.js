@@ -16,7 +16,7 @@ class UI {
 	}
 
 	async build() {
-		let card = await new Cards({width: 150, height: 50, theme: this.user.usedTheme.alias})
+		let card = await new Cards({width: 180, height: 60, theme: this.user.usedTheme.alias})
 		//  Base
 		card.createBase({cornerRadius: 100})
 		//  Semi-opaque background
@@ -24,18 +24,18 @@ class UI {
 		//  User's avatar on left
 		await card.addContent({ 
 			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
-			avatarRadius: 7,
-			marginLeft: 25,
-			marginTop: 28,
+			avatarRadius: 9,
+			marginLeft: 29,
+			marginTop: 33,
 			inline: true
 		})
 		//  Main text content
 		card.addTitle({ 
 			main: `Level up to ${this.level}!`,
-			size: 8, 
+			size: 10, 
 			fontWeight: `bold`,
-			marginLeft: -5,
-			marginTop: 29,
+			marginLeft: 5,
+			marginTop: 34,
 			align: `left`,
 			inline: true
 		})
