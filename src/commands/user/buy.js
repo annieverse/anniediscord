@@ -152,8 +152,8 @@ class Buy extends Command {
 		        const coverQuickApplyButton = this.coverQuickApplyPrompt.createReactionCollector(coverQuickApplyButtonFilter, { time: 120000 })
 		        coverQuickApplyButton.on(`collect`, async r => {
 		        	this.coverQuickApplyPrompt.delete()
-					await this.bot.db.detachCovers(this.user.id, this.message.guild.id)
-		        	await this.bot.db.useItem(this.item.item_id, this.user.id, this.message.guild.id)
+					await this.bot.db.detachCovers(this.user.id)
+		        	await this.bot.db.applyCover(this.item.item_id, this.user.id)
 		        	return reply(this.locale.SETPROFILE.SUCCESSFUL, {
 		        		color: `lightgreen`,
 		        		socket: {
