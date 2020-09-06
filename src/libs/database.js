@@ -237,29 +237,47 @@ class Database {
 	}
 	
 	/**
-	 * Detach user's covers. Aftewards, combined with `this.useItem()`
+	 * Applying new cover to user's profile.
+	 * @param {number} [coverId] target cover to be applied.
 	 * @param {string} [userId=``] target user's id.
-	 * @param {string} [guildId=``] target guild where user's inventory is stored.
 	 * @returns {QueryResult}
 	 */
-	async detachCovers(userId=``, guildId=``) {
+	async applyCover(coverId, userId=``) {
+		const fn = `[Database.applyCover()]`
+		if (!coverId) throw new TypeError(`${fn} parameter 'coverId' cannot be blank.`)
+    	const res = await this._query(`
+    		UPDATE user_inventories
+    		SET in_use = 1
+    		WHERE 
+    			item_id = ?
+    			AND user_id = ?`
+    		, `run`
+    		, [coverId, userId]
+    		, `${fn} Applying cover[${coverId}] for USER_ID ${userId}`
+    	)
+    	return res
+	}
+
+	/**
+	 * Detach user's covers. Aftewards, combined with `this.useItem()`
+	 * @param {string} [userId=``] target user's id.
+	 * @returns {QueryResult}
+	 */
+	async detachCovers(userId=``) {
 		const fn = `[Database.detachCovers()]`
-		if (!itemId) throw new TypeError(`${fn} parameter 'itemId' cannot be blank.`)
-		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)	
-    	const res = await this.bot.db._query(`
+    	const res = await this._query(`
     		UPDATE user_inventories
     		SET in_use = 0
     		WHERE 
     			user_id = ?
-    			AND guild_id = ?
     			AND item_id IN (
     				SELECT item_id
     				FROM items
     				WHERE type_id = 1 
     			)`
     		, `run`
-    		, [userId, guildId]
-    		, `${fn} Detaching covers from USER_ID ${userId} in GUILD_ID ${guildId}`
+    		, [userId]
+    		, `${fn} Detaching covers from USER_ID ${userId}`
     	)
     	return res
 	}

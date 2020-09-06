@@ -10,13 +10,15 @@ class UI {
 	 * Profile UI Builder.
 	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
+	 * @param {object} [bot] current client's instance object
+	 * @param {object} [testResolution] manipulating card's width and height for testing/previewing purpose.
 	 * @legacy
 	 * @return {Canvas}
 	 */
-	constructor(user={},bot) {
+	constructor(user={}, bot={}, testResolution={}) {
 		this.user = user
-		this.width = 320
-		this.height = 430
+		this.width = testResolution.width || 320
+		this.height = testResolution.height || 430
 		this.bot = bot
 	}
 

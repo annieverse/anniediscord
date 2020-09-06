@@ -491,6 +491,17 @@
         "EXCEEDING_LIMIT": "Great bio! but can you reduce it to maximum at **156 characters?** I've trouble fitting this into my small pocket ...",
         "SUCCESSFUL": "Yay! your new profile's bio has been set!"
     },
+    "SETCOVER": {
+        "GUIDE": "This is where you can set your owned profile covers and you can start by simply type `{{prefix}}setcover <Name/ID>`.",
+        "NO_EQUIPPABLE_COVER": "{{emoji}} Sorry! It seems you don't have any equippable covers at the moment.",
+        "ITEM_DOESNT_EXISTS": "{{emoji}} I couldn't find any of your cover with that given name/ID.",
+        "PREVIEW_CONFIRMATION": "Are you sure you want to apply **{{cover}}** as your account cover? if yes, please press to the green button to start applying it. {{emoji}}",
+        "FETCHING": "{{emoji}} `generating preview for {{itemId}}@{{userId}}`",
+        "SUCCESSFUL": "{{emoji}} **{{cover}}** has successfully applied as your profile cover!",
+        "ALREADY_USED": "{{emoji}} You're currently using **{{cover}}** as your profile cover, baka.",
+        "OWNED_COVER_LIST": "Below are the covers you had in your inventory right now:\n{{list}}",
+        "SUGGEST_TO_BUY": "But you don't seem to have any covers right now, so have a visit to `{{prefix}}shop covers` and get one for yourself!"
+    },
     "SETGUILDBIO": {
         "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
         "MISSING_ARG": "If you wish to set a new bio for your guild, please type the new bio next to the command! `{{prefix}}setguildbio <newbio>`",
