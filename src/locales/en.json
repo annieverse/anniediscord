@@ -528,7 +528,8 @@
         "INVALID_ACTION": "Please only use either `equip` or `unequip`.",
         "EQUIPPING_NOTHING": "Hey, there are nothing available to equip, baka. {{emoji}}",
         "UNEQUIPPING_NOTHING": "What are you trying to unequip? {{emoji}}",
-        "MISSING_TARGET_ITEM": "Please don't forget to include the item id."
+        "MISSING_TARGET_ITEM": "Please don't forget to include the item id.",
+        "DEPRECATE_COVER_ACTION": "{{emoji}} This option is no longer available to use. Please use `{{prefix}}setcover` instead."
     },
     "SETWELCOMER": {
         "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n`{{prefix}}setwelcomer enable`\n*One first step you might want to try to make sure this module is enabled in the guild.*\n\n`{{prefix}}setwelcomer channel <targetChannel>`\n*Set the target channel where you want the welcomer message to be sent in.*\neg. __{{prefix}}setwelcomer channel #general__\n\n`{{prefix}}setwelcomer text <message>`\n*You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for shortcut.*\neg. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n`{{prefix}}setwelcomer preview`\n*Wanna see how's your welcomer looks like before your comrades see it?*\n\n`{{prefix}}setwelcomer disable`\n*Tired of spammy welcomer message? you can disable this module anytime.*",

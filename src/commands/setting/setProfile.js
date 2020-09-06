@@ -28,6 +28,14 @@ class SetProfile extends Command {
         if (!items.length) return reply (this.locale.SETPROFILE.INVALID_ITEM, {color: `red`, socket: {emoji: emoji(`AnnieCry`)} })
         //  Handle if the target item is not in profile decorations category.
         if (!this.profileDecorations.includes(items[0].type_name)) return reply(this.locale.SETPROFILE.NON_PROFILEDECORATION, {color: `red`})
+        //  Handle if user trying to use deprecated `setprofile covers` action
+        if (items[0].type_id === 1) return reply(this.locale.SETPROFILE.DEPRECATE_COVER_ACTION, {
+            color: `golden`,
+            socket: {
+                emoji: emoji(`warn`),
+                prefix: this.bot.prefix
+            }
+        })
 
         const equippedItems = items.filter(key => key.in_use === 1)
         const unequippedItems = items.filter(key => key.in_use === 0)
