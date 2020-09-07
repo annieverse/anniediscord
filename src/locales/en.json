@@ -361,8 +361,8 @@
         "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
-        "SHORT_GUIDE": "**Pay System** lets you share your artcoins with other user!\nStart by typing `{{prefix}}pay <user>`",
-        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **{{level}}** to use this feature.",
+        "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **3% tax fee** for each transaction you made.",
+        "LVL_TOO_LOW": "{{emoji}} You need to be atleast **LV {{level}}** to use this feature.",
         "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
         "USER_CONFIRMATION": "You are going to transfer your artcoins to **{{user}}'s** account. Please type the amount.",
         "INVALID_AMOUNT": "You need to put a valid number.",

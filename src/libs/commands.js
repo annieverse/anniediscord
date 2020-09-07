@@ -133,12 +133,12 @@ class Commands {
 	async requestUserMetadata(dataLevel=1) {
 		const fn = `[Commands.requestUserMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
-		const targetUser = this._userSelector()
+		const targetUser = await this._userSelector()
 		if (!targetUser) {
 			this.user = null
 			return false
 		}
-		const result = await this.userClass.requestMetadata(targetUser.id, dataLevel)
+		const result = await this.userClass.requestMetadata(targetUser, dataLevel)
 		this.user = result
 		/**
 		 * Multi-language support
@@ -152,7 +152,7 @@ class Commands {
 	async requestAuthorMetadata(dataLevel=1) { 
 		const fn = `[Commands.requestAuthorMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
-		const result = await this.userClass.requestMetadata(this.message.author.id, dataLevel)
+		const result = await this.userClass.requestMetadata(this.message.author, dataLevel)
 		this.author = result
 		/**
 		 * Multi-language support
@@ -164,7 +164,7 @@ class Commands {
 	}
 
 	_userSelector() {
-		return this.commandProperties.multiUser && this.fullArgs ? this.userClass.lookFor(this.fullArgs) : this.userClass.lookFor(this.message.author.id)
+		return this.commandProperties.multiUser && this.fullArgs ? this.userClass.lookFor(this.fullArgs) : this.message.member
 	}
 
 

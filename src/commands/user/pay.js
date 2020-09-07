@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const stringSimilarity = require('string-similarity');
 /**
  * Share artcoins with your friends!
  * @author klerikdust
@@ -11,6 +12,8 @@ class Pay extends Command {
     constructor(Stacks) {
 		super(Stacks)
 		this.requirementLevel = 5
+		this.thumbnail = `https://i.ibb.co/fGFTRgK/pay.png`
+		this.tax = 0.3
     }
 
     /**
@@ -23,11 +26,20 @@ class Pay extends Command {
 
 		//  Returns if user level is below the requirement
 		if (this.author.exp.level < this.requirementLevel) return reply(this.locale.PAY.LVL_TOO_LOW, {
-			socket: {level: this.requirement_level},
-			color: `red`
+			color: `golden`,
+			socket: {
+				level: this.requirementLevel,
+				emoji: emoji(`warn`)
+			}
 		})
 		//  Displays as guide if user doesn't specify any parameter
-		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE)
+		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE, {
+			color: `crimson`,
+			header: `Hi, ${name(this.user.id)}`,
+			socket: {prefix: this.bot.prefix},
+			thumbnail: this.thumbnail
+		})
+
 		//  Handle if target is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		//  Handle if user is trying to pay themselves
@@ -100,7 +112,7 @@ class Pay extends Command {
 module.exports.help = {
 	start: Pay,
 	name: `pay`,
-	aliases: [`pay`, `transfer`, `transfers`, `share`],
+	aliases: [`pay`, `transfer`, `transfers`, `share`, `give`],
 	description: `Share artcoins with your friends!`,
 	usage: `pay <User>`,
 	group: `User`,
