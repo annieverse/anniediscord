@@ -21,7 +21,7 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(2)
-		let card = await new Cards({width: 180, height: 60, theme: this.user.usedTheme.alias})
+		let card = await new Cards({width: 250, height: 80, theme: this.user.usedTheme.alias})
 		//  Base
 		card.createBase({cornerRadius: 100})
 		//  Semi-opaque background
@@ -29,18 +29,18 @@ class Test extends Command {
 		//  User's avatar on left
 		await card.addContent({ 
 			avatar: await urlToBuffer(this.user.user.displayAvatarURL({format: `png`, dynamic: false})),
-			avatarRadius: 9,
-			marginLeft: 29,
-			marginTop: 33,
+			avatarRadius: 10,
+			marginLeft: 42,
+			marginTop: 43,
 			inline: true
 		})
 		//  Main text content
 		card.addTitle({ 
 			main: `Level up to ${this.user.exp.level}!`,
-			size: 10, 
+			size: 13, 
 			fontWeight: `bold`,
-			marginLeft: 5,
-			marginTop: 34,
+			marginLeft: 25,
+			marginTop: 46,
 			align: `left`,
 			inline: true
 		})
