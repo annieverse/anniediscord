@@ -89,11 +89,12 @@ class Leaderboard extends Command {
 			})
 
 			const author = lbData.filter(key => key.id === this.user.id)[0]
-			reply(this.locale.LEADERBOARD.AUTHOR_RANK, {
+			const footer = author ? this.locale.LEADERBOARD.AUTHOR_RANK : this.locale.LEADERBOARD.UNRANKED
+			reply(footer, {
 				simplified: true,
 				socket: {
 					rank: lbData.indexOf(author) + 1,
-					points: author.points ? commanifier(author.points) : 0,
+					points: author ? commanifier(author.points) : 0,
 					emoji: selectedGroupIdentifier,
 				}
 			})
