@@ -30,6 +30,7 @@ class User {
 	async lookFor(target) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
+    	this.usedKeyword = target
         //  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
 		if (this.userIDPattern.test(target)) target = target.replace(this.userIDPattern, `$1`)
         target = target.toLowerCase()

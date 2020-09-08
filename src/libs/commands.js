@@ -140,6 +140,8 @@ class Commands {
 		}
 		const result = await this.userClass.requestMetadata(targetUser, dataLevel)
 		this.user = result
+		//  Remove user searchstring keyword from arg pool
+		this.fullArgs = this.fullArgs.replace(this.userClass.usedKeyword, `.`)
 		/**
 		 * Multi-language support
 		 * Temporarily disabled
