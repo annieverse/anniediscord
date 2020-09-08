@@ -17,7 +17,6 @@ class User {
         this.bot = bot
 		this.message = message
 		this.logger = bot.logger
-		this.userIDPattern = /^(?:<@!?)?([0-9]+)>?$/
     }
 
     /**
@@ -30,15 +29,20 @@ class User {
 	async lookFor(target) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
-    	this.usedKeyword = target
-        //  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
-		if (this.userIDPattern.test(target)) target = target.replace(this.userIDPattern, `$1`)
+		this.args = target.split(` `)        	
         target = target.toLowerCase()
+        //  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
+        for (let i=0; i<this.args.length; i++) {
+			if (/^(?:<@!?)?([0-9]+)>?$/.test(this.args[i])) {
+				this.args[i] = this.args[i].replace(/\D/g, ``)
+				this.closestKeyword = this.args[i]
+				break
+			}     	
+        }
     	//  The acceptable rating can be adjusted between range of 0.1 to 1.
     	//  The higher the number, the more strict the result would be.
-		const acceptableRating = 0.1
+		const acceptableRating = 0.2
 		const aggregatedMembers = this.message.guild.members.cache
-
 		try {
 			//  Lookup by username
 			const findByUsername = stringSimilarity.findBestMatch(target, aggregatedMembers.filter(node => node.user.bot === false).map(node => node.user.username.toLowerCase()))
@@ -46,6 +50,7 @@ class User {
 				const res = aggregatedMembers.filter(node => node.user.username.toLowerCase() === findByUsername.bestMatch.target).first()
 				this.logger.debug(`${fn} found user with keyword '${target}' via username check. (${findByUsername.bestMatch.rating * 100}% accurate)`)
 				this.user = res
+				this.usedKeyword = findByUsername.bestMatch.target
 				return res
 			}
 			//  Lookup by nickname
@@ -54,16 +59,26 @@ class User {
 				const res = aggregatedMembers
 				.filter(node => ![null, undefined].includes(node.nickname) && (node.user.bot === false))
 				.filter(node => node.nickname.toLowerCase() === findByNickname.bestMatch.target).first()
-				this.logger.debug(`${fn} found user with keyword '${target}' via nickname check. (${findByUsername.bestMatch.rating * 100}% accurate)`)
+				this.logger.debug(`${fn} found user with keyword '${target}' via nickname check. (${findByNickname.bestMatch.rating * 100}% accurate)`)
 				this.user = res
+				this.usedKeyword = findByNickname.bestMatch.target
 				return res
 			}
 			//  Lookup by ID
-			const findByID = stringSimilarity.findBestMatch(target, aggregatedMembers.map(node => node.id))
-			if (findByID.bestMatch.rating >= acceptableRating) {
-				const res = aggregatedMembers.filter(node => node.id === findByID.bestMatch.target).first()
-				this.logger.debug(`${fn} found user with keyword '${target}' via ID check. (${findByUsername.bestMatch.rating * 100}% accurate)`)	
-				this.user = res			
+			let findByID = null
+			let collectionOfID = aggregatedMembers.map(node => node.id)
+			for (let i=0; i<this.args.length; i++) {
+				let current = stringSimilarity.findBestMatch(this.args[i], collectionOfID)
+				if(current.bestMatch.rating >= 0.9) {
+					findByID = current.bestMatch.target
+					break
+				}
+			}
+			if (findByID) {
+				const res = aggregatedMembers.filter(node => node.id === findByID).first()
+				this.logger.debug(`${fn} found user with keyword '${target}' via ID check.`)	
+				this.user = res		
+				this.usedKeyword = this.closestKeyword
 				return res
 			}
 		}
@@ -115,7 +130,6 @@ class User {
 			this.user.relationships = await db.getUserRelations(this.user.id,this.message.guild.id)
 
 			//  User's parsed experience points data
-			console.debug(this.user.id)
 			const experienceData = await db.getUserExp(this.user.id, this.message.guild.id)
 			const parsedExp = new Experience({bot: this.bot, message:this.message}).xpFormula(experienceData.current_exp)
 			this.user.exp = {
