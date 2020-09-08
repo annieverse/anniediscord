@@ -2,6 +2,10 @@
 
 ___
 
+## **09/08/20 | 7.2.3 ->**
+
+* fix(userLookup): differentiate number-typed on second parameter
+
 ## **09/08/20 | 7.2.2 ->**
 
 * refactor(userLookup): double filtering on ID searchstring
