@@ -582,7 +582,8 @@ class Pistachio {
 		footer: null,
 		customHeader: null,
 		timestamp: false,
-		paging: false
+		paging: false,
+		status: null
 	}) {
 		options.socket = !options.socket ? [] : options.socket
 		options.color = !options.color ? this.palette.darkmatte : options.color
@@ -601,6 +602,7 @@ class Pistachio {
 		options.timestamp == false ? null : options.timestamp = true
 		options.paging === false ? null : options.paging
 		options.columns = !options.columns ? null : options.columns
+		options.status = !options.status ? null : options.status.toLowerCase()
 		const fn = `[Pistachio.reply()]`
 
 		//  Handle message with paging property enabled
@@ -647,7 +649,6 @@ class Pistachio {
 		if (!content && (typeof content != `string`)) {
 			logger.error(`${fn} parameter 'content' should only be string. Because of this, now user will only see my localization msg handler.`)
 			content = this.bot.locale.en.LOCALIZATION_ERROR
-
 		}
 
 		//  Find all the available {{}} socket in the string.
@@ -659,6 +660,16 @@ class Pistachio {
 			//  Index `0` has key with the double curly braces, index `1` only has the inside value.
 			const pieceToAttach = options.socket[key[1]]
 			if (pieceToAttach) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
+		}
+
+		//  Mutate message if status property is defined
+		const statuses = new Map
+		statuses.set(`success`, `lightgreen`)
+		statuses.set(`warn`, `golden`)
+		statuses.set(`fail`, `red`)
+		if (statuses.has(options.status)) {
+			content = `${this.emoji(options.status)} ${content}`
+			options.color = statuses.get(options.status)
 		}
 	
 		//  Returns simple message w/o embed

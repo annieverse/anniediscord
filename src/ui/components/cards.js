@@ -339,7 +339,6 @@ class Card {
 		.setTextAlign(align)
 		.setTextFont(size ? `${parseInt(size)}pt roboto-${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
 		.printText(main, this._getHorizontalAlign(align)+marginLeft, this.reservedSpace+marginTop)
-		console.debug(this.reservedSpace+marginTop,this.reservedSpace+marginTop+captionMargin)
 		if (caption) {
 			this.canv
 			.setTextFont(size ? `${parseInt(size/1.5)}pt roboto-${fontWeight}` : DEFAULT.HEADER.CAPTION.FONT)

@@ -33,10 +33,9 @@ class User {
         //  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
 		if (this.userIDPattern.test(target)) target = target.replace(this.userIDPattern, `$1`)
         target = target.toLowerCase()
-
     	//  The acceptable rating can be adjusted between range of 0.1 to 1.
     	//  The higher the number, the more strict the result would be.
-		const acceptableRating = 0.3
+		const acceptableRating = 0.1
 		const aggregatedMembers = this.message.guild.members.cache
 
 		try {
@@ -59,11 +58,12 @@ class User {
 				return res
 			}
 			//  Lookup by ID
-			const findByID = aggregatedMembers.filter(node => node.id === target).first()
-			if (findByID) {
+			const findByID = stringSimilarity.findBestMatch(target, aggregatedMembers.map(node => node.id))
+			if (findByID.bestMatch.rating >= acceptableRating) {
+				const res = aggregatedMembers.filter(node => node.id === findByID.bestMatch.target).first()
 				this.logger.debug(`${fn} found user with keyword '${target}' via ID check. (${findByUsername.bestMatch.rating * 100}% accurate)`)	
-				this.user = findByID			
-				return findByID
+				this.user = res			
+				return res
 			}
 		}
 		catch(e) {
