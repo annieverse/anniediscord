@@ -31,21 +31,14 @@ class User {
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
 		this.args = target.split(` `)        	
         target = target.toLowerCase()
-        //  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
-        for (let i=0; i<this.args.length; i++) {
-			if (/^(?:<@!?)?([0-9]+)>?$/.test(this.args[i])) {
-				this.args[i] = this.args[i].replace(/\D/g, ``)
-				this.closestKeyword = this.args[i]
-				break
-			}     	
-        }
     	//  The acceptable rating can be adjusted between range of 0.1 to 1.
     	//  The higher the number, the more strict the result would be.
-		const acceptableRating = 0.2
+		const acceptableRating = 0.6
 		const aggregatedMembers = this.message.guild.members.cache
 		try {
 			//  Lookup by username
-			const findByUsername = stringSimilarity.findBestMatch(target, aggregatedMembers.filter(node => node.user.bot === false).map(node => node.user.username.toLowerCase()))
+			const findByUsername = stringSimilarity.findBestMatch(target, aggregatedMembers
+				.map(node => node.user.username.toLowerCase()))
 			if (findByUsername.bestMatch.rating >= acceptableRating) {
 				const res = aggregatedMembers.filter(node => node.user.username.toLowerCase() === findByUsername.bestMatch.target).first()
 				this.logger.debug(`${fn} found user with keyword '${target}' via username check. (${findByUsername.bestMatch.rating * 100}% accurate)`)
@@ -54,7 +47,9 @@ class User {
 				return res
 			}
 			//  Lookup by nickname
-			const findByNickname = stringSimilarity.findBestMatch(target, aggregatedMembers.filter(node => (node.user.bot === false) && node.nickname).map(node => node.nickname.toLowerCase()))
+			const findByNickname = stringSimilarity.findBestMatch(target, aggregatedMembers
+				.filter(node => node.nickname)
+				.map(node => node.nickname.toLowerCase()))
 			if (findByNickname.bestMatch.rating >= acceptableRating) {
 				const res = aggregatedMembers
 				.filter(node => ![null, undefined].includes(node.nickname))
@@ -66,20 +61,20 @@ class User {
 			}
 			//  Lookup by ID
 			let findByID = null
-			let collectionOfID = aggregatedMembers.map(node => node.id)
 			for (let i=0; i<this.args.length; i++) {
-				let current = stringSimilarity.findBestMatch(this.args[i], collectionOfID)
-				if(current.bestMatch.rating >= 0.9) {
-					findByID = current.bestMatch.target
+        		//  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
+				const parsedID = this.args[i].replace(/[^0-9a-z-A-Z ]/g, ``)
+				const res = aggregatedMembers.filter(node => node.id === parsedID).first()
+				if (res) {
+					findByID = res
+					this.usedKeyword = this.args[i]
 					break
 				}
 			}
 			if (findByID) {
-				const res = aggregatedMembers.filter(node => node.id === findByID).first()
 				this.logger.debug(`${fn} found user with keyword '${target}' via ID check.`)	
-				this.user = res		
-				this.usedKeyword = this.closestKeyword
-				return res
+				this.user = findByID
+				return findByID
 			}
 		}
 		catch(e) {
