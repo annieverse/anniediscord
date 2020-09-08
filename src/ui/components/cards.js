@@ -198,6 +198,7 @@ class Card {
 		labelColor=null,
 		disableShadow=false,
 		shadowColor=null,
+		shadowBlur=15,
 		marginTop=0,
 		inline=false,
 		marginLeft=this.marginLeft,
@@ -241,7 +242,7 @@ class Card {
 			this.canv.setShadowColor(shadowColor)
 			.setShadowOffsetX(0)
 			.setShadowOffsetY(7)
-			.setShadowBlur(35)
+			.setShadowBlur(shadowBlur)
 			.setColor(this.color.main)
 	
 			.printRectangle(leftMarginState()+20, topMarginState()+20, width-40, height-35)

@@ -432,7 +432,7 @@
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
     "RELATIONSHIP": {
-        "GUIDE": "Start add someone to your relationship trees!",
+        "GUIDE": "Start assigning a unique relationship status with your friends!\nsimply type `{{prefix}}setrel <user>` to get started!\n\nBelow are the available relationship status that you can use:\n{{list}}",
         "SET_TO_SELF": "You can't add a relationship to yourself, baka. {{emoji}}",
         "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
         "UNAVAILABLE": "There is no assignable relationship at the moment.",

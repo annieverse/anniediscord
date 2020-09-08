@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const stringSimilarity = require('string-similarity')
 /**
  * Edit and customize your relationship trees.
  * @author sunnyrainyworks.
@@ -11,6 +12,11 @@ class SetRelationship extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
+        /**
+         * Thumbnail's img source
+         * @type {string}
+         */
+        this.thumbnail = `https://i.ibb.co/WFkWgrw/relationship.png`
     }
 
     /**
@@ -25,14 +31,21 @@ class SetRelationship extends Command {
         const prettifiedRelationshipsList = this.prettifyList(availableRelationships)
 
         //  Handle if no relationships are available to be assigned.
-        if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE)
+        if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE, {status: `warn`})
         //  Handle if user doesn't provide any argument
-        if (!this.fullArgs) return reply(this.locale.RELATIONSHIP.GUIDE)
+        if (!this.fullArgs) return reply(this.locale.RELATIONSHIP.GUIDE, {
+            color: `crimson`,
+            header: `Hi, ${name(this.user.id)}!`,
+            thumbnail: this.thumbnail,
+            socket: {
+                list: this.prettifyList(availableRelationships),
+                prefix: this.bot.prefix
+            }
+        })
         //  Handle if target doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+        if (!this.user) return reply(this.locale.USER.IS_INVALID, {status: `fail`})
         //  Handle if target is the author
         if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {color: `red`, socket: {emoji: emoji(`AnnieMad`)} })
-
         //  Handle if target already registered in author's relationship tree
         const alreadyInRelationship = this.author.relationships.filter(rel => rel.assigned_user_id === this.user.id)
         if (alreadyInRelationship.length) {
