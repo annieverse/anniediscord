@@ -57,7 +57,7 @@ class User {
 			const findByNickname = stringSimilarity.findBestMatch(target, aggregatedMembers.filter(node => (node.user.bot === false) && node.nickname).map(node => node.nickname.toLowerCase()))
 			if (findByNickname.bestMatch.rating >= acceptableRating) {
 				const res = aggregatedMembers
-				.filter(node => ![null, undefined].includes(node.nickname) && (node.user.bot === false))
+				.filter(node => ![null, undefined].includes(node.nickname))
 				.filter(node => node.nickname.toLowerCase() === findByNickname.bestMatch.target).first()
 				this.logger.debug(`${fn} found user with keyword '${target}' via nickname check. (${findByNickname.bestMatch.rating * 100}% accurate)`)
 				this.user = res

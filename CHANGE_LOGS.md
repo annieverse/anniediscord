@@ -2,6 +2,11 @@
 
 ___
 
+## **09/08/20 | 7.2.2 ->**
+
+* refactor(userLookup): double filtering on ID searchstring
+* fix(userLookup): removed used keyword in the arg
+
 ## **09/08/20 | 7.2.1 ->**
 
 * refactor(setRelationship): refreshed homepage
