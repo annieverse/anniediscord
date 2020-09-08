@@ -2,6 +2,14 @@
 
 ___
 
+## **09/08/20 | 7.2.1 ->**
+
+* refactor(setRelationship): refreshed homepage
+* refactor(pay): improved UX
+* refactor(userLookup): improved searchstring algoritm
+* refactor(ui): upscale lvlup message
+* fix(leaderboard): footer with author having zero points
+
 ## **09/06/20 | 7.2.0 ->**
 
 * feat(setCover): quick setting to manage user profile cover
