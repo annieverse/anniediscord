@@ -78,8 +78,8 @@ class Pay extends Command {
 				amount: `${emoji(`artcoins`)} ${commanifier(this.total)}`
 			}
 		})
-		this.addConfirmButton(`checkout`, this.confirmation)
- 		return this.confirmationButton.get(`checkout`).on(`collect`, async r => {
+		this.addConfirmationButton(`checkout`, this.confirmation)
+ 		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance

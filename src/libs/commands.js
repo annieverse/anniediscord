@@ -180,24 +180,24 @@ class Commands {
 	 * @param {string} [id=this._generateUUID] as an identifier of the current confirmation button
 	 * @param {collection} [targetMessage=this.message] target message to registered to
 	 * @param {string} [targetUserId] target user that has the privilege of using the confirmation-state
-	 * @example `this.confirmButtons.get(ID)``
+	 * @example `this.confirmationButtons.get(ID)``
 	 * @author klerikdust
 	 * @returns {object}
 	 */
-	addConfirmButton(id=this._generateUUID(), targetMessage=this.message, targetUserId=this.message.author.id) {
+	addConfirmationButton(id=this._generateUUID(), targetMessage=this.message, targetUserId=this.message.author.id) {
 		//  Initialize the container first, if not present
-		if (!this.confirmButtons) this.confirmButtons = new Map()
+		if (!this.confirmationButtons) this.confirmationButtons = new Map()
 		const confirmationEmoji = `✅`
 		targetMessage.react(confirmationEmoji)
         const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === confirmationEmoji && user.id === targetUserId
         const confirmationButton = targetMessage.createReactionCollector(confirmationButtonFilter, { time: 300000, max: 1 })
-		this.confirmButtons.set(id, confirmationButton)
+		this.confirmationButtons.set(id, confirmationButton)
 		//  Optional metadata for debugging purpose
 		return {
 			id: id,
 			buttonMessageId: targetMessage.id,
 			buttonUserId: targetUserId,
-			totalAvailableButtons: this.confirmButtons.size,
+			totalAvailableButtons: this.confirmationButtons.size,
 			registeredAt: new Date()
 		}
 	}
