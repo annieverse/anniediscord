@@ -174,11 +174,53 @@ class Commands {
 		return true
 	}
 
+	/**
+	 * Registering a react-based button as the medium to get confirmation-state from the user.
+	 * After calling the method, the button can be accessed by looking up through key in `this.confirmButtons` (Map)
+	 * @param {string} [id=this._generateUUID] as an identifier of the current confirmation button
+	 * @param {collection} [targetMessage=this.message] target message to registered to
+	 * @param {string} [targetUserId] target user that has the privilege of using the confirmation-state
+	 * @example `this.confirmButtons.get(ID)``
+	 * @author klerikdust
+	 * @returns {object}
+	 */
+	addConfirmButton(id=this._generateUUID(), targetMessage=this.message, targetUserId=this.message.author.id) {
+		//  Initialize the container first, if not present
+		if (!this.confirmButtons) this.confirmButtons = new Map()
+		const confirmationEmoji = `✅`
+		targetMessage.react(confirmationEmoji)
+        const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === confirmationEmoji && user.id === targetUserId
+        const confirmationButton = targetMessage.createReactionCollector(confirmationButtonFilter, { time: 300000, max: 1 })
+		this.confirmButtons.set(id, confirmationButton)
+		//  Optional metadata for debugging purpose
+		return {
+			id: id,
+			buttonMessageId: targetMessage.id,
+			buttonUserId: targetUserId,
+			totalAvailableButtons: this.confirmButtons.size,
+			registeredAt: new Date()
+		}
+	}
+
+	/**
+	 * Mainly generate ID as a multiple instance's identifier in
+	 * a method the generates multiple instance of the same type.
+	 * @returns {string}
+	 */
+	_generateUUID() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+			let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		});
+	}
+
+	/**
+	 * Selecting user based on the condition of `this.fullArgs` and command's multiUser property.
+	 * @returns {object}
+	 */
 	_userSelector() {
 		return this.commandProperties.multiUser && this.fullArgs ? this.userClass.lookFor(this.fullArgs) : this.message.member
 	}
-
-
 }
 
 

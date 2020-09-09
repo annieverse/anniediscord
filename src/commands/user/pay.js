@@ -78,23 +78,8 @@ class Pay extends Command {
 				amount: `${emoji(`artcoins`)} ${commanifier(this.total)}`
 			}
 		})
-
-		/**
-		 * --------------------
-		 * REACT-BASED CONFIRMATION (EXPERIMENTAL)
-		 * --------------------
-		 * @author klerikdust
-		 * I've decided to try out this button-style of confirmation
-		 * since it seems easier to reach and more intuitive especially for mobile user.
-		 *
-		 * I'll plan to move this to its own lib component once I get good feedback about this change,
-		 * and hopefully the user receiving less error.
-		 */
-		await this.confirmation.react(`✅`)
-        const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
-        const confirmationButton = this.confirmation.createReactionCollector(confirmationButtonFilter, { time: 120000 })
- 		return confirmationButton.on(`collect`, async r => {
- 			confirmationButton.stop()
+		this.addConfirmButton(`checkout`, this.confirmation)
+ 		return this.confirmationButton.get(`checkout`).on(`collect`, async r => {
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance
