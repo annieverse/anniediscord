@@ -51,7 +51,6 @@ class Pay extends Command {
 			socket: {prefix: this.bot.prefix},
 			thumbnail: this.thumbnail
 		})
-		console.debug(`the result is ${this.fullArgs}`)
 		//  Handle if target is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {status: `fail`})
 		//  Handle if user is trying to pay themselves

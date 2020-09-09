@@ -1,5 +1,6 @@
 `use-strict`
 const User = require(`./user`)
+const stringSimilarity = require(`string-similarity`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -141,7 +142,15 @@ class Commands {
 		const result = await this.userClass.requestMetadata(targetUser, dataLevel)
 		this.user = result
 		//  Remove user searchstring keyword from arg pool
-		this.fullArgs = this.fullArgs.replace(this.userClass.usedKeyword, `.`)
+		if (this.args.length > 1) {
+			const acceptableRating = 0.3
+			for (let i=0; i<this.args.length; i++) {
+				const rating = stringSimilarity.compareTwoStrings(this.userClass.usedKeyword, this.args[i])
+				if (rating >= acceptableRating) {
+					this.fullArgs = this.fullArgs.replace(this.args[i], ``)
+				}
+			}
+		}
 		/**
 		 * Multi-language support
 		 * Temporarily disabled
