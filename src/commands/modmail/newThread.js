@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 const humanizeDuration = require(`humanize-duration`)
 const moment = require(`moment`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * Makes a new thread if one doesnt exist, and if one does exist, it continues.
  * @author The Frying Pan
@@ -13,12 +13,12 @@ class newThread extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
-        this.stacks = Stacks
         this.threadId = `123abc`
-        this.guildId = modmailConfig.guildId
-        this.modmailCategory = modmailConfig.category
+        this.guildId = this.bot.modmail_guildId
+        this.modmailCategory = this.bot.modmail_category
         this.thread = null
         this.time = Date.now()
+        this.runCommand = true
     }
 
     /**
@@ -49,13 +49,14 @@ class newThread extends Command {
             await this.alreadyOpenThread(reply, false)
         }
 
+        if (!this.runCommand) return
         // Add attachments to end of message if they exist
         this.attachAttacments
 
         // Record messages to db then send to corresponding channel
         if (isDm){
             this.bot.db.writeToThread(this.message.author.id, `USER`, this.guildId, this.threadId, this.message.content)
-            if (this.thread) return this.relayMessageFromDM()
+            if (this.thread) return this.relayMessageFromDM(...arguments)
         } else if (requestFromModMailCategory){
             this.bot.db.writeToThread(`MOD`, this.message.author.id, this.guildId, this.threadId, this.message.content)
             if (this.thread) return this.relayMessageFromChannel()
@@ -69,7 +70,36 @@ class newThread extends Command {
      */
     relayMessageFromDM(){
         let username = this.thread.is_anonymous == 0 ? `${this.message.author.username}#${this.message.author.discriminator}` : `anonymous`
-        this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+        try{
+            this.bot.guilds.cache.get(this.guildId).channels.cache.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+        }catch(err){
+            err.name == `TypeError` && err.message == `Cannot read property 'send' of undefined` ? this.updateLostThread(...arguments) : null
+        }
+    }
+
+    /**
+     * Close old thread and start a new one 
+     */
+    async updateLostThread(){
+        this.bot.db.closeThread(this.thread.thread_id)
+        this.logEvent(this.thread)
+        this.bot.guilds.cache.get(this.thread.guild_id).members.cache.get(this.thread.user_id).send(`The channel for this thread was deleted, So i have opened a new thread for you.`)
+        this.execute(...arguments)
+    }
+
+    /**
+     * Send a message to the log channel indicating the thread closed and give the thread id
+     */
+    logEvent(threadTicket){
+        let threadUser = this.bot.guilds.cache.get(threadTicket.guild_id).members.cache.get(threadTicket.user_id) 
+        let member = {
+            username: threadTicket.is_anonymous == 0 ? `${threadUser.user.username}#${threadUser.user.discriminator}` : `anonymous`,
+            accountAge: threadUser.user.createdAt, 
+            id: threadTicket.is_anonymous == 0 ? threadUser.id : `anonymous`,
+            nickname: threadTicket.is_anonymous == 0 ? threadUser.nickname : `anonymous`,
+            joined: threadUser.joinedAt
+        }
+        this.bot.guilds.cache.get(threadTicket.guild_id).channels.cache.get(this.bot.modmail_logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
     }
 
     /**
@@ -78,7 +108,7 @@ class newThread extends Command {
      */
     relayMessageFromChannel(){
         let username = `${this.message.author.username}`
-        this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] » **(${username}) ༶•  Moderator:** ${this.message}`)
+        this.bot.guilds.cache.get(this.guildId).channels.cache.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] » **(${username}) ༶•  Moderator:** ${this.message}`)
         this.bot.guilds.cache.get(this.guildId).members.cache.get(this.thread.user_id).send( `**༶•  Moderator:** ${this.message}`)
         if (!this.messageHasAttachments){
             this.message.delete()
@@ -101,7 +131,7 @@ class newThread extends Command {
         } else if (this.message.channel.parentID == this.modmailCategory){
             search = await this.bot.db.alreadyOpenThread(this.message.channel.id, dm)
         }
-        
+
         // Let search be filled then test
         const emptySearchResults = search == `none`
 
@@ -109,7 +139,7 @@ class newThread extends Command {
             if (messageFromDm){
                 return await this.makeNewThread(reply, anonymous)
             }
-        } else {
+        } else if (search.channel){
             this.threadId = search.thread_id
             this.thread = search
         }
@@ -157,9 +187,10 @@ class newThread extends Command {
      * @returns {null} nothing
      */
     async makeNewThread(reply, anon = 0){
+        this.runCommand = false
         // translate boolean (true/false) to boolean (0/1)
         anon ? anon = 1 : anon = 0
-
+        
         // Initial thread making
         this.threadId = this.makeRandomId
         this.bot.db.makeNewThread(this.message.author.id, this.guildId, this.threadId, `open`, anon)
@@ -180,11 +211,8 @@ class newThread extends Command {
             joined: this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).joinedAt
         }
         // Make Private Channel on server
-        this.bot.guilds.cache.get(this.guildId).channels.create(channelName).then(async channel => {
-            // Set channel to modmail category
-            await channel.setParent(this.modmailCategory)
-            // Sync channel to modmail category permissions
-            await channel.lockPermissions()
+        this.bot.guilds.cache.get(this.guildId).channels.create(channelName,{parent: this.modmailCategory}).then(async channel => {
+            
             // Record the channel's id to thread's database information
             await this.bot.db.updateChannel(channel.id, this.threadId)
 
@@ -192,7 +220,7 @@ class newThread extends Command {
             let header = await this.constructHeader(userInfo)
 
             // Notify Mods
-            let mentionrole = modmailConfig.mentionRole ? `<@&${modmailConfig.mentionRole}` : `@here`
+            let mentionrole = /*modmailConfig.mentionRole ? `<@&${modmailConfig.mentionRole}` : `@here` Add in later patch*/ `@The Frying Pan#8677 `
             channel.send(`${mentionrole} New modmail thread (${userInfo.username})`)
 
             // Header
@@ -203,8 +231,8 @@ class newThread extends Command {
             //Post First Message
             channel.send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${userInfo.username}:** ${this.message}`)
             
-            let repsonseMessage = modmailConfig.repsonseMessage ? modmailConfig.repsonseMessage : `Thank you for your message! Our mod team will reply to you here as soon as possible.`
-            reply(repsonseMessage)
+            let repsonseMessage = `Thank you for your message! Our mod team will reply to you here as soon as possible.` /*modmailConfig.repsonseMessage ? modmailConfig.repsonseMessage : `Thank you for your message! Our mod team will reply to you here as soon as possible.`Add in later patch*/
+            return reply(repsonseMessage)
         })
     }
 
@@ -217,14 +245,14 @@ class newThread extends Command {
                 this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send({
                     files: [e.url]
                 }))
-                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(modmailConfig.logChannel).send({
+                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.bot.modmail_logChannel).send({
                     files: [e.url]
                 }).then(m => this.bot.db.writeToThread(this.message.author.id, `USER`, this.guildId, this.threadId, m.url)))
             } else if (requestFromModMailCategory){
                 this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send({
                     files: [e.url]
                 }))
-                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(modmailConfig.logChannel).send({
+                return this.message.attachments.array().forEach(e => this.bot.guilds.cache.get(this.guildId).channels.get(this.bot.modmail_logChannel).send({
                     files: [e.url]
                 }).then(m => this.bot.db.writeToThread(`MOD`, this.message.author.id, this.guildId, this.threadId, m.url)))
             }

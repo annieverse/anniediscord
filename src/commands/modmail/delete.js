@@ -1,5 +1,5 @@
 const Command = require(`../../libs/commands`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * Command's Class description
  * @author yourname
@@ -11,7 +11,7 @@ class DeleteLogs extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
-        this.guildId = modmailConfig.guildId
+        this.guildId = this.bot.modmail_guildId
     }
 
     /**
