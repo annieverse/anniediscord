@@ -141,6 +141,28 @@ class Annie extends Discord.Client {
     }
 
     /**
+     * Registering configuration nodes for each guild
+     * @author klerikdust
+     * @returns {void}
+     */
+    async registerGuildConfigurations() {
+        const initTime = process.hrtime()
+        const configClass = new customConfig(this)
+        const getGuilds = this.guilds.cache.map(node => node.id)
+        //  Iterating over all the available guilds
+        for (let i=0; i<getGuilds.length; i++) {
+            let guild = this.guilds.cache.get(getGuilds[i])
+            guild.configs = new Map()
+            //  Iterating over all the available configurations
+            for (let x=0; x<configClass.availableConfigurations.length, x++) {
+                const cfg = configClass.availableConfigurations[x]
+                guild.config.set(cfg.name, cfg)
+            }
+        }
+        logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
+    }
+
+    /**
      * updates global config
      * @param {guild} guild uses support server as default
      */
