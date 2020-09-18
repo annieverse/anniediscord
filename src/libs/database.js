@@ -527,8 +527,8 @@ class Database {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
 		if (table == `user_dailies`){
 			await this._query(`
-				INSERT INTO user_dailies(user_id, guild_id)
-				SELECT $userId, $guildId
+				INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
+				SELECT datetime('now','-1 day'), -1, $userId, $guildId
 				WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, {userId: userId, guildId: guildId}
@@ -548,8 +548,8 @@ class Database {
 		
 		if (table == `user_reputations`){
 			await this._query(`
-				INSERT INTO user_reputations(user_id, guild_id)
-				SELECT $userId, $guildId
+				INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
+				SELECT datetime('now','-1 day'), $userId, $guildId
 				WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, {userId: userId, guildId: guildId}

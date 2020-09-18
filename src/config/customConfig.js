@@ -515,7 +515,7 @@ class config {
                  *  Main channel for announcing important messages
                  *  @type {object}
                  */
-                name: `ANNOUNCEMENT_CHANNEL`
+                name: `ANNOUNCEMENT_CHANNEL`,
                 description: `Main channel for announcing important messages`,
                 customizable: true,
                 allowedTypes: [`string`],
@@ -594,8 +594,8 @@ class config {
                  *  @type {object}
                  */
                 name: `PREFIX`,
-                description: `A prefix that being used to call Annie's Command.`
-                customizable: true
+                description: `A prefix that being used to call Annie's Command.`,
+                customizable: true,
                 allowedTypes: [`string`],
                 value: process.env.PREFIX || `>`
             },

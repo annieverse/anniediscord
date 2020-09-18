@@ -154,7 +154,7 @@ class Annie extends Discord.Client {
             let guild = this.guilds.cache.get(getGuilds[i])
             guild.configs = new Map()
             //  Iterating over all the available configurations
-            for (let x=0; x<configClass.availableConfigurations.length, x++) {
+            for (let x=0; x<configClass.availableConfigurations.length; x++) {
                 const cfg = configClass.availableConfigurations[x]
                 guild.config.set(cfg.name, cfg)
             }
