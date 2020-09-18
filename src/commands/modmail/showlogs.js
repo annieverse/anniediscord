@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
 const humanizeDuration = require(`humanize-duration`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * show conversation for a specified thread
  * @author The Frying Pan
@@ -13,7 +13,7 @@ class ShowLogs extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
-        this.guildId = modmailConfig.guildId
+        this.guildId = this.bot.modmail_guildId
     }
 
     /**

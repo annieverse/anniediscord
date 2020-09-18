@@ -39,13 +39,14 @@ class MessageController {
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
-        await this.bot.updateConfig(this.message.guild.id)
+        this.isDirectMessage ? await this.bot.updateConfig(`459891664182312980`) : await this.bot.updateConfig(this.message.guild.id)
+        this.isDirectMessage ? this.guild = `459891664182312980` : this.guild = this.message.guild.id
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
 
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.validateUser(this.message.author.id, this.message.guild.id, this.message.author.username)
+        await this.bot.db.validateUser(this.message.author.id, /*this.message.guild.id*/ this.guild, this.message.author.username)
 
         /** 
          *  -----------------------------------------------------------------

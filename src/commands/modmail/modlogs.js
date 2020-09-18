@@ -1,6 +1,6 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * Retrieves log ids for specified user
  * @author The Frying Pan
@@ -28,7 +28,7 @@ class Logs extends Command {
 
         const requestedUserIsMessageAuthor = this.user.id == this.message.author.id
         const requestedUserIsNotMessageAuthor = this.user.id != this.message.author.id
-        const requestMadeInModmailCategory = this.message.channel.parentID == modmailConfig.category
+        const requestMadeInModmailCategory = this.message.channel.parentID == this.bot.modmail_category
 
         if (requestedUserIsMessageAuthor || requestedUserIsNotMessageAuthor){
             this.showLog({reply, chunk, specialArg})
