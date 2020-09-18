@@ -1,5 +1,5 @@
 const Command = require(`../../libs/commands`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * unblocks a user from using modmail
  * @author The Frying Pan
@@ -23,7 +23,7 @@ class UnBlock extends Command {
        
         const requestedUserIsNotMessageAuthor = this.user.id != this.message.author.id
         const requestedUserIsMessageAuthor = this.user.id = this.message.author.id
-        const requestMadeInModmailCategory = this.message.channel.parentID == modmailConfig.category
+        const requestMadeInModmailCategory = this.message.channel.parentID == this.bot.modmail_category
 
         if (requestedUserIsNotMessageAuthor) {
             this.bot.db.unblockUser(this.user.id)

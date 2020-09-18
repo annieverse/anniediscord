@@ -1,5 +1,5 @@
 const Command = require(`../../libs/commands`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 /**
  * Command's Class description
  * @author The Frying Pan
@@ -12,7 +12,7 @@ class closeThread extends Command {
     constructor(Stacks) {
         super(Stacks)
         this.stacks = Stacks
-        this.modmailCategory = modmailConfig.category
+        this.modmailCategory = this.bot.modmail_category
     }
 
     /**
@@ -74,7 +74,7 @@ class closeThread extends Command {
      */
     async closeThread(thread){
         this.bot.db.closeThread(thread.thread_id)
-        this.bot.guilds.cache.get(thread.guild_id).channels.get(thread.channel).delete()
+        this.bot.guilds.cache.get(thread.guild_id).channels.cache.get(thread.channel).delete()
         this.logEvent(thread)
     }
 
@@ -90,7 +90,7 @@ class closeThread extends Command {
             nickname: threadTicket.is_anonymous == 0 ? threadUser.nickname : `anonymous`,
             joined: threadUser.joinedAt
         }
-        this.bot.guilds.cache.get(threadTicket.guild_id).channels.get(modmailConfig.logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
+        this.bot.guilds.cache.get(threadTicket.guild_id).channels.cache.get(this.bot.modmail_logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
     }
 }
 

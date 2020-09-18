@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 const humanizeDuration = require(`humanize-duration`)
 const moment = require(`moment`)
-const modmailConfig = require(`./modmailConfig.json`)
+
 
 /**
  * Makes a anonymous thread
@@ -15,10 +15,11 @@ class Anon extends Command {
     constructor(Stacks) {
         super(Stacks)
         this.threadId = `123abc`
-        this.guildId = modmailConfig.guildId
-        this.modmailCategory = modmailConfig.category
+        this.guildId = this.bot.modmail_guildId
+        this.modmailCategory = this.bot.modmail_category
         this.thread = null
         this.time = Date.now()
+        this.runCommand = true
     }
 
     /**
@@ -71,7 +72,37 @@ class Anon extends Command {
     relayMessageFromDM(){
         // build the display username then send message to channel
         let username = `anonymous`
-        this.bot.guilds.cache.get(this.guildId).channels.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+        try{
+            this.bot.guilds.cache.get(this.guildId).channels.cache.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+        }catch(err){
+            err.name == `TypeError` && err.message == `Cannot read property 'send' of undefined` ? this.updateLostThread(...arguments) : null
+        }
+        //this.bot.guilds.cache.get(this.guildId).channels.cache.get(this.thread.channel).send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${username}:** ${this.message}`)
+    }
+
+    /**
+     * Close old thread and start a new one 
+     */
+    async updateLostThread(){
+        this.bot.db.closeThread(this.thread.thread_id)
+        this.logEvent(this.thread)
+        this.bot.guilds.cache.get(this.thread.guild_id).members.cache.get(this.thread.user_id).send(`The channel for this thread was deleted, So i have opened a new thread for you.`)
+        this.execute(...arguments)
+    }
+    
+    /**
+     * Send a message to the log channel indicating the thread closed and give the thread id
+     */
+    logEvent(threadTicket){
+        let threadUser = this.bot.guilds.cache.get(threadTicket.guild_id).members.cache.get(threadTicket.user_id) 
+        let member = {
+            username: threadTicket.is_anonymous == 0 ? `${threadUser.user.username}#${threadUser.user.discriminator}` : `anonymous`,
+            accountAge: threadUser.user.createdAt, 
+            id: threadTicket.is_anonymous == 0 ? threadUser.id : `anonymous`,
+            nickname: threadTicket.is_anonymous == 0 ? threadUser.nickname : `anonymous`,
+            joined: threadUser.joinedAt
+        }
+        this.bot.guilds.cache.get(threadTicket.guild_id).channels.cache.get(this.bot.modmail_logChannel).send(`Modmail thread with ${member.username} (${member.id}) was closed by ${this.message.author.username}\nLog ID: ${threadTicket.thread_id}`)
     }
 
     /**
@@ -168,7 +199,7 @@ class Anon extends Command {
             let header = await this.constructHeader(userInfo)
 
             // Notify Mods
-            let mentionrole = modmailConfig.mentionRole ? `<@&${modmailConfig.mentionRole}` : `@here`
+            let mentionrole = `@here`//modmailConfig.mentionRole ? `<@&${modmailConfig.mentionRole}` : `@here`
             channel.send(`${mentionrole} New modmail thread (${userInfo.username})`)
 
             // Header
@@ -184,7 +215,7 @@ class Anon extends Command {
             //Post First Message
             channel.send(`[${moment.utc(this.time).format(`HH:mm`)}] « **${userInfo.username}:** ${this.message}`)
             
-            let repsonseMessage = modmailConfig.repsonseMessage ? modmailConfig.repsonseMessage : `Thank you for your message! Our mod team will reply to you here as soon as possible.`
+            let repsonseMessage = `Thank you for your message! Our mod team will reply to you here as soon as possible.`//modmailConfig.repsonseMessage ? modmailConfig.repsonseMessage : `Thank you for your message! Our mod team will reply to you here as soon as possible.`
             reply(repsonseMessage)
         })
     }
