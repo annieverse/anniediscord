@@ -2,6 +2,16 @@
 
 ___
 
+## **18/08/20 | 7.2.4 ->**
+
+* fix(database): allow direct daily and rep claim for new user
+* fix(command): improved naming in .addConfirmationButton()
+* refactor(Modmail) Working state
+* refactor(config): standardize configurations list
+* refactor(command): added .addConfirmButton()
+* refactor(command): trimmed used keyword from userLookup for clean arg pool
+* build(deps): [security] bump bl from 4.0.2 to 4.0.3
+
 ## **09/08/20 | 7.2.3 ->**
 
 * fix(userLookup): differentiate number-typed on second parameter
