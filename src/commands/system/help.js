@@ -14,6 +14,9 @@ class Help extends Command {
 		this.commandpediaButton = `📖`
 		this.ignoreGroups = [`Developer`, `modmail`]
 		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
+		this.commandpediaBanner = `https://i.ibb.co/5X3S3yq/1.png`
+		this.permmissionInteger = 268823638
+		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
 	}
 
     /**
@@ -54,15 +57,15 @@ class Help extends Command {
 					response.delete()
 					reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
-							serverLink: `[Support Server](${supportServer})`,
+							prefix: this.bot.prefix,
+							serverLink: `[Join Support Server](${supportServer})`,
+							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
+						image: this.commandpediaBanner,
+						prebuffer: true,
 						thumbnail: this.commandpediaThumbnail,
 						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
-						color: this.defaultColor
-					})
-					reply(this.locale.HELP.COMMANDPEDIA.USAGE_EXAMPLES, {
-						socket: {prefix: this.prefix},
 						color: this.defaultColor
 					})
 				})
@@ -140,8 +143,8 @@ class Help extends Command {
 	prettifyCommandpedia(obj=[]) {
 		let str = ``
 		for (let group in obj) {
-			const cmdNames = obj[group].map(el => `\`${el.help.name}\``)
-			this.message.author.permissions.name == `Developer` ?	str += `${group}\n${cmdNames.join(`,`)}\n` : group != `Developer` ? str += `${group}\n${cmdNames.join(`,`)}\n` : null
+			const cmdNames = obj[group].map(el => `\`${this.bot.prefix}${el.help.usage.toLowerCase()}\``)
+			str += `**${group}**\n${cmdNames.join(`,`).replace(/,/g, `\n`)}\n\n`
 		}
 		return str
 	}
