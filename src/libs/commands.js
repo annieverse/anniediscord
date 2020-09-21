@@ -141,6 +141,8 @@ class Commands {
 		}
 		const result = await this.userClass.requestMetadata(targetUser, dataLevel)
 		this.user = result
+		//  If multi user property isn't enabled, then skip keyword parsing
+		if (!this.commandProperties.multiUser) return true
 		//  Remove user searchstring keyword from arg pool
 		if (this.args.length > 1) {
 			const acceptableRating = 0.3
