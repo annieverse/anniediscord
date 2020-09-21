@@ -2,7 +2,12 @@
 
 ___
 
-## **18/08/20 | 7.2.4 ->**
+## **09/21/20 | 7.2.5 ->**
+
+* refactor(help): more informative commmandpedia
+* fix(commands): skip keyword replacement on command without multiUser property enabled
+
+## **09/18/20 | 7.2.4 ->**
 
 * fix(database): allow direct daily and rep claim for new user
 * fix(command): improved naming in .addConfirmationButton()
