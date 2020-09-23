@@ -111,10 +111,6 @@ class Annie extends Discord.Client {
          * @type {HyperlinkString}
          */ 
         this.supportServer = `https://discord.gg/7nDes9P`
-
-        /**
-         * 
-         */
         this.logSystem = logSystem
     }
 
@@ -228,8 +224,8 @@ class Annie extends Discord.Client {
      */
     _listeningToPort(port=0, log=true) {
         const app = Express()
+        app.listen(3000)
         app.get(`/`, (request, response) => response.sendStatus(200))
-        app.listen(port)
         if (!log) return
         logger.info(`Listening to port ${port}`)
     }

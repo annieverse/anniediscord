@@ -50,6 +50,7 @@
     "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
     "cross-env": "^7.0.2",
+    "dblapi.js": "^2.4.1",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
