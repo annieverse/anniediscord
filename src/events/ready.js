@@ -24,14 +24,6 @@ module.exports = annie => {
 		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
 		annie.user.setActivity(`${commanifier(annie.users.cache.size)} users | ${prefix}help`, {type: `WATCHING`})
-		annie.dbl.postStats(annie.guilds.cache.size)
-		annie.dbl.webhook.on('vote', vote => {
-			annie.logger.info(`USER_ID: ${vote.user} just voted!`)
-			annie.db.updateInventory({itemId: 52, userId: vote.user, value: 3000})
-			const user = annie.users.cache.get(vote.user)
-			user.send(`**Thanks for the voting, ${user.user.username}!** I've sent ${annie.emojis.find(node => node.name === `artcoins`)}**3,000** to your inventory as the reward!
-				You can check it by typing \`${prefix}bal\` or \`${prefix}inventory\``)
-		})
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task

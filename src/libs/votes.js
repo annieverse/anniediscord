@@ -21,6 +21,7 @@ class Votes {
 	        }
 	    )
 	    this.bot.registerNode(dbl, `dbl`)
+		dbl.postStats(this.bot.guilds.cache.size)
 		dbl.webhook.on(`ready`, hook => this.logger.info(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`))
 		dbl.webhook.on('vote', vote => {
 			this.logger.info(`USER_ID: ${vote.user} just voted!`)
