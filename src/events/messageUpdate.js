@@ -1,5 +1,6 @@
 
-module.exports = (bot, oldMessage, newMessage) => {
+module.exports = (bot, oldMessage, newMessage, configs) => {
+    
     var metadata = {
         oldMessage: oldMessage,
         newMessage: newMessage,
@@ -8,5 +9,5 @@ module.exports = (bot, oldMessage, newMessage) => {
         bot: bot
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.messageUpdate) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`MESSAGE_UPDATE`).value) new bot.logSystem(metadata).record()
 }

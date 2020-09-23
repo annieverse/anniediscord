@@ -131,8 +131,9 @@ class Annie extends Discord.Client {
             await this._initializingDatabase()
             await this._initializingCommands()
             this._listeningToEvents()
-            this.login(token)
-            this.updateConfig()
+            await this.login(token)
+            //this.updateConfig()
+            this.registerGuildConfigurations()
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
@@ -156,9 +157,10 @@ class Annie extends Discord.Client {
             //  Iterating over all the available configurations
             for (let x=0; x<configClass.availableConfigurations.length; x++) {
                 const cfg = configClass.availableConfigurations[x]
-                guild.config.set(cfg.name, cfg)
+                guild.configs.set(cfg.name, cfg)
             }
         }
+       // console.log(this.guilds.cache.get())
         logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
     }
 

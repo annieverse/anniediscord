@@ -1,12 +1,10 @@
-module.exports = async (bot,member) => {
+module.exports = async (bot,member, configs) => {
 
-	await bot.updateConfig(member.guild.id)
-	
 	var metadata = {
 		member: member,
 		guild: member.guild,
 		typeOfLog: `guildMemberRemove`,
 		bot: bot
 	}
-	if (bot.WANT_CUSTOM_LOGS && bot.guildMemberRemove) new bot.logSystem(metadata).record()
+	if (configs.get(`LOG_MODULE`).value && configs.get(`GUILD_MEMBER_REMOVE`).value) new bot.logSystem(metadata).record()
 }

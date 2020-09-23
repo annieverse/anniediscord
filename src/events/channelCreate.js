@@ -1,14 +1,14 @@
-module.exports = async (bot, channel) => {
+module.exports = async (bot, channel, configs) => {
     
     if (channel.type == `dm`) return
-    
-    await bot.updateConfig(channel.guild.id)
-    
+        
     var metadata = {
         channel: channel,
         guild: channel.guild,
         typeOfLog: `channelCreate`,
-        bot: bot
+        bot: bot,
+        configs: configs
     }
-    if (bot.WANT_CUSTOM_LOGS && bot.channelCreate) new bot.logSystem(metadata).record()
+    
+    if (configs.get(`LOG_MODULE`).value && configs.get(`CHANNEL_CREATE`).value) new bot.logSystem(metadata).record()
 }

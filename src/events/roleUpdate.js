@@ -1,8 +1,6 @@
 
-module.exports = async (bot, oldRole, newRole) => {
+module.exports = async (bot, oldRole, newRole, configs) => {
 
-	await bot.updateConfig(oldRole.guild.id)
-    
     var metadata = {
         oldRole: oldRole,
         newRole: newRole,
@@ -11,5 +9,5 @@ module.exports = async (bot, oldRole, newRole) => {
         guild: oldRole.guild
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.roleUpdate) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`ROLE_UPDATE`).value) new bot.logSystem(metadata).record()
 }

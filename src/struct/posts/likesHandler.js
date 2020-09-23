@@ -15,6 +15,7 @@ class heartReactionHandler {
         this.bot = data.annie
         this.notificationTimeout = 3600000
         this.pistachio = new Pistachio({bot: this.bot, message: this.message})
+        this.configs = data.configs
     }
 
     /**

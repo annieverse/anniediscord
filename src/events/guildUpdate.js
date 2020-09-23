@@ -1,8 +1,6 @@
 
-module.exports = async (bot, oldGuild, newGuild) => {
+module.exports = async (bot, oldGuild, newGuild, configs) => {
 
-    await bot.updateConfig(oldGuild.id)
-    
     var metadata = {
         oldGuild: oldGuild,
         newGuild: newGuild,
@@ -10,5 +8,5 @@ module.exports = async (bot, oldGuild, newGuild) => {
         typeOfLog: `guildUpdate`,
         bot: bot
     }
-    if (bot.WANT_CUSTOM_LOGS && bot.guildUpdate) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`GUILD_UPDATED`).value) new bot.logSystem(metadata).record()
 }

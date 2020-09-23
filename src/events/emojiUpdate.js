@@ -1,7 +1,5 @@
 
-module.exports = async (bot, oldEmoji, newEmoji) => {
-
-    await bot.updateConfig(oldEmoji.guild.id)
+module.exports = async (bot, oldEmoji, newEmoji, configs) => {
 
     var metadata = {
         oldEmoji: oldEmoji,
@@ -11,5 +9,5 @@ module.exports = async (bot, oldEmoji, newEmoji) => {
         bot: bot
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.emojiUpdate) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`EMOJI_UPDATE`).value) new bot.logSystem(metadata).record()
 }

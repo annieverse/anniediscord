@@ -1,8 +1,6 @@
 
-module.exports = async (bot, role) => {
+module.exports = async (bot, role, configs) => {
 
-	await bot.updateConfig(role.guild.id)
-    
     var metadata = {
         role: role,
         typeOfLog: `roleDelete`,
@@ -10,5 +8,5 @@ module.exports = async (bot, role) => {
         guild: role.guild
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.roleDelete) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`ROLE_DELETE`).value) new bot.logSystem(metadata).record()
 }

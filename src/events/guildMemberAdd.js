@@ -1,9 +1,8 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { MessageAttachment } = require(`discord.js`)
 
-module.exports = async (bot, member) => {    
+module.exports = async (bot, member, configs) => {    
     
-    await bot.updateConfig(member.guild.id)
     var metadata = {
         member: member,
         guild: member.guild,
@@ -11,18 +10,18 @@ module.exports = async (bot, member) => {
 		bot: bot
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.guildMemberAdd) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`GUILD_MEMBER_ADD`).value) new bot.logSystem(metadata).record()
     
     bot.logger.info(`[${member.guild.name}]${bot.users.cache.get(member.id).tag} has joined ${member.guild.name}.`)
     
     // Ignore if welcome module is turned off
-    if (!parseInt(bot.welcome_module)) return
+    if (!configs.get(`WELCOMER_MODULE`).value) return
     
-    if (bot.guild_id != member.guild.id) return bot.logger.info(`[guildMemberAdd.js] Guild id doesnt match, stopping event from continuing`)
+    if (metadata.guild.id != member.guild.id) return bot.logger.info(`[guildMemberAdd.js] Guild id doesnt match, stopping event from continuing`)
 
     //  Display image
     const renderedBanner = await new Banner(member, bot).build()
-    let welcomeChannel = bot.welcome_channel || bot.guilds.cache.get(metadata.guild.id).channels.cache.find(channel => channel.name == `general`).id
+    let welcomeChannel = configs.get(`WELCOMER_CHANNEL`).value || bot.guilds.cache.get(metadata.guild.id).channels.cache.find(channel => channel.name == `general`).id
     let welcomeText = setUpWelcomeText()
     if (!welcomeChannel) {
         try {
@@ -37,9 +36,8 @@ module.exports = async (bot, member) => {
     addRoles()
 
     function addRoles(){
-        let autoRole = bot.welcome_autoRole
-        if (autoRole) member.roles.add(autoRole)
-        let additionalRoles = bot.welcome_roles
+        if (!configs.get(`WELCOMER_ROLE_AUTOASSIGN`).value) return
+        let additionalRoles = configs.get(`WELCOMER_ROLES`).value 
         let str = `` + additionalRoles
         additionalRoles = str.split(`, `)
         additionalRoles = removeItemAll(additionalRoles, ``)
@@ -63,7 +61,8 @@ module.exports = async (bot, member) => {
     }
 
     function setUpWelcomeText(){
-        let text = bot.welcome_text
+        let text = configs.get(`WELCOMER_TEXT`).value
+        if (text.length < 1) text = `Welcome {{user}}!`
         let metadata = {
             guild: member.guild.name,
             user: member
