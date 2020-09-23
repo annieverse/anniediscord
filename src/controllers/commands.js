@@ -122,6 +122,9 @@ class CommandController {
     async runDM() {
         const fn = `[CommandController.runDM()] USER_ID:${this.message.author.id}`   
         const initTime = process.hrtime()
+        const memberGuilds = this.bot.guilds.cache.filter(node => node.members.cache.get(this.message.author.id)).map(node => node.id)
+        const partOfGuild = memberGuilds.includes(`459891664182312980`)
+        if (!partOfGuild) return
         if (!this.commandName) {
             // Handle any message that isnt a command
             this.commandProperties = this.getCommandProperties(`newThread`)
