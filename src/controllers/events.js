@@ -6,7 +6,6 @@ module.exports = annie => {
 	const fetchGuildConfigs = (id) => annie.guilds.cache.get(id).configs
 	//	Cached message
 	let message_object
-
 	annie.on(`ready`, async() => reqEvent(`ready`)(annie))
 	annie.on(`error`, async (e) => reqEvent(`error`)(annie, e, message_object))
 	annie.on(`warn`, async (e) => reqEvent(`warn`)(annie, e, message_object))

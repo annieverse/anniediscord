@@ -161,34 +161,59 @@ class Database {
 	 * @param {itemsMetadata} meta item's metadata
 	 * @returns {boolean}
 	 */
-	async updateInventory({itemId, value=0, operation=`+`, userId, guildId}) {
+	async updateInventory({itemId, value=0, operation=`+`, distributeMultiAccounts=false, userId, guildId}) {
 		const fn = `[Database.updateInventory()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
-		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
-		let res = {
-			//	Insert if no data entry exists.
-			insert: await this._query(`
-				INSERT INTO user_inventories (item_id, user_id, guild_id)
-				SELECT $itemId, $userId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
-				, `run`
-				, {itemId: itemId, userId: userId, guildId: guildId}
-			),
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
-				UPDATE user_inventories
-				SET 
-					quantity = quantity ${operation} ?,
-					updated_at = datetime('now')
-				WHERE item_id = ? AND user_id = ? AND guild_id = ?`
-				, `run`
-				, [value, itemId, userId, guildId]
-			)
+		if (!guildId && !distributeMultiAccounts) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		let res
+		if (distributeMultiAccounts) {
+			res = {
+				//	Insert if no data entry exists.
+				insert: await this._query(`
+					INSERT INTO user_inventories (item_id, user_id)
+					SELECT $itemId, $userId
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)`
+					, `run`
+					, {itemId: itemId, userId: userId}
+				),
+				//	Try to update available row. It won't crash if no row is found.
+				update: await this._query(`
+					UPDATE user_inventories
+					SET 
+						quantity = quantity ${operation} ?,
+						updated_at = datetime('now')
+					WHERE item_id = ? AND user_id = ?`
+					, `run`
+					, [value, itemId, userId]
+				)
+			}
+		}
+		else {
+			res = {
+				//	Insert if no data entry exists.
+				insert: await this._query(`
+					INSERT INTO user_inventories (item_id, user_id, guild_id)
+					SELECT $itemId, $userId, $guildId
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
+					, `run`
+					, {itemId: itemId, userId: userId, guildId: guildId}
+				),
+				//	Try to update available row. It won't crash if no row is found.
+				update: await this._query(`
+					UPDATE user_inventories
+					SET 
+						quantity = quantity ${operation} ?,
+						updated_at = datetime('now')
+					WHERE item_id = ? AND user_id = ? AND guild_id = ?`
+					, `run`
+					, [value, itemId, userId, guildId]
+				)
+			}
 		}
 		
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`${fn} ${type}(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.info(`${fn} ${type}(${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return true
 	}
 

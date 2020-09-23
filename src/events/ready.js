@@ -1,12 +1,10 @@
 const Routines = require(`../libs/routines`)
 const commanifier = require(`../utils/commanifier`)
+const VotesManager = require(`../libs/votes`)
 module.exports = annie => {
-
-
 	const { dev, logger, prefix } = annie
 	const Routine = new Routines(annie)
-
-
+	new VotesManager(annie)
 	if (dev) {
 		/**
 		 * 	--------------------------------------------------
