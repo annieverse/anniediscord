@@ -44,7 +44,7 @@ module.exports = annie => {
 
 		annie.on(`guildUnavailable`, async (guild) => reqEvent(`guildMemberAdd`)(annie, guild)) // Support server only
 		annie.on(`guildUpdate`, async (oldGuild, newGuild) => reqEvent(`guildUpdate`)(annie, oldGuild, newGuild, fetchGuildConfigs(oldGuild.id)))
-		annie.on(`guildMembersChunk`, async (members, guild) => reqEvent(`guildMembersChunk`)(annie, members, guild, fetchGuildConfigs(guild.id)))
+		//annie.on(`guildMembersChunk`, async (members, guild) => reqEvent(`guildMembersChunk`)(annie, members, guild, fetchGuildConfigs(guild.id)))
 	}
 
 }
