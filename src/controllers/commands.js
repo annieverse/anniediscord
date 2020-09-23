@@ -82,7 +82,6 @@ class CommandController {
         if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
         const Command = this._findFile(this.commandProperties.name)
         if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
-        
         const commandComponents = {bot: this.bot, message: this.message, commandProperties: this.commandProperties}
         const PistachioComponents = new Pistachio(commandComponents)
 

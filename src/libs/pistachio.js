@@ -88,6 +88,7 @@ class Pistachio {
 		this.socketing = this.socketing.bind(this)
 		this._registerPages = this._registerPages.bind(this)
 		this.reply = this.reply.bind(this)
+		this.fetchGuildConfigs = this.fetchGuildConfigs.bind(this) 
 	}
 
 
@@ -102,6 +103,11 @@ class Pistachio {
 	 */
 	messageGuildInvite(){
 		return !this.bot.messageGuildInvite ? this.message.channel.createInvite() : this.bot.messageGuildInvite
+	}
+
+	fetchGuildConfigs(parameter){
+		if (!this._isGuildLayerAvailable) return
+		return this.bot.guilds.cache.get(this.message.guild.id).configs.get(parameter).value
 	}
 
 	/**

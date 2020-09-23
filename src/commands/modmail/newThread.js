@@ -14,8 +14,8 @@ class newThread extends Command {
     constructor(Stacks) {
         super(Stacks)
         this.threadId = `123abc`
-        this.guildId = this.bot.modmail_guildId
-        this.modmailCategory = this.bot.modmail_category
+        this.guildId = this.bot.guilds.cache.get(`459891664182312980`).configs.get(`MODMAIL_GUILD_ID`).value
+        this.modmailCategory = this.bot.guilds.cache.get(`459891664182312980`).configs.get(`MODMAIL_CATEGORY`).value
         this.thread = null
         this.time = Date.now()
         this.runCommand = true
@@ -44,9 +44,10 @@ class newThread extends Command {
                 let blockReason = await this.bot.db.getBlockedUserReason(this.message.author.id)
                 return reply(`You have been blocked from using modmail. Because of the following reason:\n${blockReason}`)
             }
-            await this.alreadyOpenThread(reply, true)        
+            
+            await this.alreadyOpenThread(reply, true, false)        
         } else if (requestFromModMailCategory){
-            await this.alreadyOpenThread(reply, false)
+            await this.alreadyOpenThread(reply, false, false)
         }
 
         if (!this.runCommand) return
@@ -187,6 +188,7 @@ class newThread extends Command {
      * @returns {null} nothing
      */
     async makeNewThread(reply, anon = 0){
+
         this.runCommand = false
         // translate boolean (true/false) to boolean (0/1)
         anon ? anon = 1 : anon = 0
@@ -197,17 +199,18 @@ class newThread extends Command {
         
         // Update global thread incase thread_id changed
         this.thread = await this.bot.db.alreadyOpenThread(this.message.author.id)
+        this.threadId = this.thread.thread_id
 
         // Setup channel properties
-        let channelName = this.thread.is_anonymous == 0 ? `${this.message.author.username.substring(0,9)}-${this.message.author.discriminator}` : `anonymous`
-
-        // Setup user info
+        let channelName = this.thread.is_anonymous ? `anonymous` : `${this.message.author.username.substring(0,9)}-${this.message.author.discriminator}`
+        let nickname = this.thread.is_anonymous ? `anonymous` : this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).nickname
+        let username = this.thread.is_anonymous ? `anonymous` : `${this.message.author.username}#${this.message.author.discriminator}`
         // Setup user info
         let userInfo = {
-            username: this.thread.is_anonymous == 0 ? `${this.message.author.username}#${this.message.author.discriminator}` : `anonymous`,
+            username: username == `anonymous` ? `anonymous` : username ? username : null,
             accountAge: this.message.author.createdAt, 
-            id: this.thread.is_anonymous == 0 ? this.message.author.id :`anonymous`,
-            nickname: this.thread.is_anonymous == 0 ? this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).nickname: `anonymous`,
+            id: this.thread.is_anonymous ? `anonymous` : this.message.author.id,
+            nickname: nickname == `anonymous` ? `anonymous` : nickname ? nickname : username,
             joined: this.bot.guilds.cache.get(this.guildId).members.cache.get(this.message.author.id).joinedAt
         }
         // Make Private Channel on server

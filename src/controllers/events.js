@@ -19,7 +19,7 @@ module.exports = annie => {
 	annie.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(annie, guild, fetchGuildConfigs(`577121315480272908`)))
 	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user, fetchGuildConfigs(guild.id)))
 	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user, fetchGuildConfigs(guild.id)))
-	annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel, fetchGuildConfigs(channel.guild.id)))
+	annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel, channel.type != `dm` ? fetchGuildConfigs(channel.guild.id) : null))
 	if (!annie.dev) {
 		annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie)) // Support Server only
 		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie)) // not guild dependent

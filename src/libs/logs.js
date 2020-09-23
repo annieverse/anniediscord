@@ -473,7 +473,7 @@ class LogsSystem {
         if (typeOfLog == `guildCreate`) return this.guildCreate()
         if (typeOfLog == `guildDelete`) return this.guildDelete()
         if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
-        if (!configs.get(`LOG_CHANNEL`).value) return console.log(`no log channel`)
+        if (!configs.get(`LOG_CHANNEL`).value) return
         this.logChannel = bot.guilds.cache.get(guildId).channels.cache.get(configs.get(`LOG_CHANNEL`).value)
         if (!this.logChannel) return 
         if (!configs.get(`LOG_MODULE`).value) return 

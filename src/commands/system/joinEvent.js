@@ -18,14 +18,13 @@ class JoinEvent extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, addRole, emoji, findRole, name, bot:{db} }) {
+    async execute({ reply, addRole, emoji, findRole, name, bot:{db}, fetchGuildConfigs }) {
 		await this.requestUserMetadata(2)
-
+		
 		//  Filter command to only working in AAU.
 		if (this.message.guild.id != `459891664182312980`) return
-		if (!this.bot.event_participant) return reply(this.locale.EVJOIN.ROLE_NOT_SET_UP, {color: `red`})
-		const eventRole = findRole(this.bot.event_participant)
-		console.log(eventRole)
+		if (!fetchGuildConfigs(`EVENT_PARTICIPANT_ROLE`)) return reply(this.locale.EVJOIN.ROLE_NOT_SET_UP, {color: `red`})
+		const eventRole = findRole(fetchGuildConfigs(`EVENT_PARTICIPANT_ROLE`))
 		//  Returns if user already have the ticket.
 		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
