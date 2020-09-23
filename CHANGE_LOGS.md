@@ -2,6 +2,10 @@
 
 ___
 
+## **09/24/20 | 7.3.1 ->**
+
+* fix(votes): duplicated events
+
 ## **09/23/20 | 7.3.0 ->**
 
 * feat(vote): added vote command with reward
