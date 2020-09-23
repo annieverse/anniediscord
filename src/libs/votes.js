@@ -28,7 +28,7 @@ class Votes {
 			this.bot.db.updateInventory({itemId: 52, userId: vote.user, value: this.reward, distributeMultiAccounts: true})
 			const user = this.bot.users.cache.get(vote.user)
 			try {
-				user.send(`**Thanks for the voting, ${user.user.username}!** I've sent ${this.bot.emojis.find(node => node.name === `artcoins`)}**${commanifier(this.reward)}** to your inventory as the reward!\nYou can check it by typing \`${this.prefix}bal\` or \`${this.prefix}inventory\` in the server.`)
+				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${this.bot.emojis.cache.find(node => node.name === `artcoins`)}**${commanifier(this.reward)}** to your inventory as the reward!\nYou can check it by typing \`${this.prefix}bal\` or \`${this.prefix}inventory\` in the server.`)
 			}
 			catch {
 				this.logger.warn(`${fn} has failed to send reward notification due to locked DM for USER_ID: ${vote.user}`)
