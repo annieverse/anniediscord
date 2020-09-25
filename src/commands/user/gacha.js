@@ -107,7 +107,7 @@ class Gacha extends Command {
                 const purchaseButton = this.checkout.createReactionCollector(confirmationButtonFilter, { time: 60000 })
                 purchaseButton.on(`collect`, async r => {
                     //  Deduct balance & deliver lucky tickets
-                    await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: this.amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+                    await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
                     await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
                     this.checkout.delete()
                     reply(this.locale.BUY.SUCCESSFUL, {
