@@ -19,21 +19,30 @@ class Logs extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name }) {
+	async execute({ reply, name, emoji }) {
         await this.requestUserMetadata(1)
         
         //  Target date
         let parseRef = this.args[0] || `today`
         //  Get log file
         let file = await this._pullFile(parseRef)
-        if (!file) return reply(this.locale.GETLOG.ERR)
+        if (!file) return reply(this.locale.GETLOG.NULL, {
+            color: `red`,
+            socket: {
+                user: name(this.user.id),
+                emoji: emoji(`AnnieCry`)          
+            }
+        })
 
         //  Output attachment
         return reply(this.locale.GETLOG.RETURNING, {
-            socket: [name(this.user.id)],
+            socket: {
+                user: name(this.user.id),
+                emoji: emoji(`AnnieSmile`)
+            },
             simplified: true,
             image: this.logPath + file,
-            prebuffer: true
+            prebuffer: true,
         })
     }
     

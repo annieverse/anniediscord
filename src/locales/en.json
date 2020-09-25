@@ -245,9 +245,10 @@
     "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",
     "GETLOG": {
+        "NULL": "Sorry **{{user}}** ... I can't find any saved logs in my directory. {{emoji}}",
         "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
         "ERR": "Ops, something went wrong,..",
-        "RETURNING": "Hello **{0}**, here's your requested file."
+        "RETURNING": "Hi **{{user}}**!, here's my system log. {{emoji}}"
     },
     "GIFT": {
         "SHORT_GUIDE": "You are now able to gift someone you admire!\nStart by typing `{{prefix}}gift <user>`",
