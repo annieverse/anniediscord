@@ -21,8 +21,8 @@ module.exports = annie => {
 		 */
 		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
-		annie.user.setActivity(`${commanifier(annie.users.cache.size)} users | ${prefix}help`, {type: `WATCHING`})
 		annie.user.setStatus(`online`)
+		annie.user.setActivity(`${commanifier(annie.users.cache.size)} users | ${prefix}help`, {type: `WATCHING`})
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
