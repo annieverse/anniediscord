@@ -607,9 +607,6 @@
     },
     "VOTE": {
         "IS_COOLDOWN": "Your next vote still in cooldown. Make sure to periodically check your vote availability at {{page}}!",
-        "IS_COOLDOWN_WITHOUT_TIMER": "Your next vote still in cooldown. Comeback later!",
-        "SUCCESSFUL_HEADER": "Thankyou for the vote!",
-        "READY": "I know you are busy! but could lend a minute to vote me at {{url}}? and dont't worry about the reward! I've already prepared something special for you- {{emoji}}",
-        "STREAK": "You also have reached {{days}} days of vote streak!"
+        "READY": "I know you are busy! but could you lend a minute to vote me at {{url}}? and dont't worry about the reward! I've already prepared something special for you- {{emoji}}",
     }
 }
