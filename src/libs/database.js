@@ -313,6 +313,18 @@ class Database {
 	 */
 
 	/**
+	 * Fetch all the available guild configurations.
+	 * @returns {QueryResult}
+	 */
+	async getAllGuildsConfigurations() {
+		return this._query(`
+			SELECT * 
+			FROM guild_configurations`
+			, `all`
+		)
+	}
+
+	/**
 	 * Fetch guild's configurations in the guild_configurations table.
 	 * @param {string} [guildId=``] Target guild id 
 	 * @returns {QueryResult}
@@ -361,8 +373,8 @@ class Database {
 	registerGuild(guild={}) {
 		const fn = `[Database.registerGuild()]`
 		return this._query(`
-			INSERT OR IGNORE INTO guilds (updated_at, guild_id, name) 
-			VALUES (CURRENT_TIMESTAMP, ?, ?)`
+			INSERT OR IGNORE INTO guilds (guild_id, name) 
+			VALUES (?, ?)`
 			, `run`
 			, [guild.id, guild.name]
 			, `${fn} performing check on ${guild.id}@${guild.name}`
@@ -398,6 +410,81 @@ class Database {
 			WHERE guild_id = ? AND config_code = ?`
 			, `run`
 			, [customized_parameter, set_by_user_id,  guild.id, config_code])
+	}
+	/**
+	 * Insert or update an existing config values
+	 * @param {Object} {object} {config_code, guild_id, customized_parameter, set_by_user_id}
+	 * @returns {QueryResult}
+	 */
+	async updateGuildConfiguration({configCode=null, guild=null, customizedParameter=null, setByUserId=null}) {
+	 	const fn = `[Database.updateGuildConfiguration()]`
+	 	if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be string and non-faulty value.`)
+	 	if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
+	 	if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
+
+	 	//  Register guild incase they aren't registered yet
+	 	this.registerGuild(guild)
+		const res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO guild_configurations (config_code, customized_parameter, guild_id, set_by_user_id)
+				SELECT $configCode, $customizedParameter, $guildId, $setByUserId
+				WHERE NOT EXISTS (
+					SELECT 1 
+					FROM guild_configurations
+					WHERE 
+						config_code = $configCode
+						AND guild_id = $guildId
+				)`
+				, `run`
+				, {
+					configCode: configCode,
+					customizedParameter: customizedParameter,
+					guildId: guild.id,
+					setByUserId: setByUserId
+				}
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE guild_configurations
+				SET 
+					customized_parameter = ?,
+					updated_at = datetime('now')
+				WHERE 
+					config_code = ?
+					AND guild_id = ?`
+				, `run`
+				, [customizedParameter, configCode, guild.id]
+			)
+		}
+		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
+		return true
+	}
+
+	/**
+	 * Delete a guild's config from guild_configurations table
+	 * @param {string} [configCode=``] the identifier code for a configuration/module
+	 * @parma {string} [guildId=``] target guild 
+	 * @returns {boolean}
+	 */
+	async deleteGuildConfiguration(configCode=``, guildId=``) {
+		const fn = `[Database.deleteGuildConfiguration()]`
+		if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be a string-typed ID`)
+	 	if (!guildId || typeof guildId !== `string`) throw new TypeError(`${fn} property "guildId" must be a string-typed ID`)
+	 	//  Run entry
+		const res = await this._query(`
+			DELETE FROM guild_configurations
+			WHERE
+				config_code = ?
+				AND guild_id = ?`
+			, `run`
+			, [configCode, guildId]
+			, `Performing config(${configCode}) deletion for GUILD_ID:${guildId}`
+		)
+		const type = res.changes ? `DELETED` : `NO_CHANGES`
+		logger.info(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
+		return true
 	}
 
 	async getNitroColorChange(){
@@ -718,6 +805,15 @@ class Database {
 			, [timestamp]
 		)
 		return res.timestamp
+	}
+
+	/**
+	 * Get current timestamp in SQlite format
+	 * @returns {string}
+	 */
+	async getCurrentTimestamp() {
+		const res = await this._query(`SELECT CURRENT_TIMESTAMP`)
+		return res.CURRENT_TIMESTAMP
 	}
 
 	/**

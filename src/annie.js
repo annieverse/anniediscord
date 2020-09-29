@@ -128,7 +128,7 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
-            this.updateConfig()
+            //this.updateConfig()
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
@@ -144,18 +144,50 @@ class Annie extends Discord.Client {
     async registerGuildConfigurations() {
         const initTime = process.hrtime()
         const configClass = new customConfig(this)
+        const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
         const getGuilds = this.guilds.cache.map(node => node.id)
         //  Iterating over all the available guilds
         for (let i=0; i<getGuilds.length; i++) {
             let guild = this.guilds.cache.get(getGuilds[i])
+            let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
             guild.configs = new Map()
             //  Iterating over all the available configurations
             for (let x=0; x<configClass.availableConfigurations.length; x++) {
-                const cfg = configClass.availableConfigurations[x]
-                guild.config.set(cfg.name, cfg)
+                let cfg = configClass.availableConfigurations[x]
+                //  Register existing configs into guild's nodes if available
+                if (existingGuildConfigs.length > 0) {
+                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                    if (matchConfigCode) {
+                        cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
+                        cfg.setByUserId = matchConfigCode.set_by_user_id
+                        cfg.registeredAt = matchConfigCode.registered_at
+                        cfg.updatedAt = matchConfigCode.updated_at
+                    }
+                }
+                guild.configs.set(cfg.name, cfg)
             }
         }
         logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
+    }
+
+    /**
+     * Parsing configuration value into a proper type based on what's already defined in customConfigs.json
+     * @param {*} [config=``] the target config to be checked its type
+     * @param {array} [typePool=[]] list of allowed types for the config
+     * @since 7.3.3
+     * @author klerikdust
+     * @private
+     * @returns {*}
+     */
+    _parseConfigurationBasedOnType(config=``, typePool=[]) {
+        if (typePool.includes(`array`) || typePool.includes(`object`)) return JSON.parse(config)
+        else if (typePool.includes(`number`) || typePool.includes(`boolean`)) return parseInt(config)
+        else if (typePool.includes(`float`) || typePool.includes(`real`)) return parseFloat(config)
+        else if (typePool.includes(`string`)) return config.toString()
+        else {
+            logger.warn(`[Annie._parseConfigsBasedOnType()] failed to parse the allowed types for "${config}" and now it will return as its original value.`)
+            return config
+        }
     }
 
     /**

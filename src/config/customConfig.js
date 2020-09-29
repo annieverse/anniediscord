@@ -43,10 +43,12 @@ class config {
         const finalConfig = Object.assign({}, defaultConfig)
 
         for (const [prop, value] of Object.entries(userConfig)) {
-        if (!defaultConfig.hasOwnProperty(prop) && !notCustomizable.includes(prop)) {
-            throw new Error(`Invalid option: ${prop}`)
-        }
-        finalConfig[prop] = value
+            /*
+            if (!defaultConfig.hasOwnProperty(prop) && !notCustomizable.includes(prop)) {
+                throw new Error(`Invalid option: ${prop}`)
+            }
+            */
+            finalConfig[prop] = value
         }
 
 
@@ -501,6 +503,17 @@ class config {
             },
             {
                 /**
+                 *  A module that enables a customized role-rank system in the guild.
+                 *  @type {object}
+                 */
+                name: `CUSTOM_RANK_MODULE`,
+                description: `A module that enables a customized role-rank system in the guild.`,
+                customizable: true,
+                allowedTypes: [`number`],
+                value: 0
+            },
+            {
+                /**
                  *  A list of role id for the server booster
                  *  @type {object}
                  */
@@ -604,7 +617,7 @@ class config {
                  *  Allowing guild invite to be generated.
                  *  @type {object}
                  */
-                name: MESSAGE_GUILD_INVITE,
+                name: `MESSAGE_GUILD_INVITE`,
                 description: `Allowing guild invite to be generated.`,
                 customizable: true,
                 allowedTypes: [`number`],
