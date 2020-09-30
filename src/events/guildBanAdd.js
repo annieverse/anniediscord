@@ -1,7 +1,5 @@
 
-module.exports = async (bot, guild, user) => {
-
-    await bot.updateConfig(guild.id)
+module.exports = async (bot, guild, user, configs) => {
 
     var metadata = {
         guild: guild,
@@ -9,5 +7,5 @@ module.exports = async (bot, guild, user) => {
         typeOfLog: `guildBanAdd`,
         bot: bot
     }
-    if (bot.WANT_CUSTOM_LOGS && bot.guildBanAdd) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`GUILD_BAN_ADD`).value) new bot.logSystem(metadata).record()
 }

@@ -468,15 +468,15 @@ class LogsSystem {
     }
 
     record() {
-        const { typeOfLog, bot } = this.data
+        const { typeOfLog, bot, configs, guild: {guildId} } = this.data
         if (!typeOfLog) return
         if (typeOfLog == `guildCreate`) return this.guildCreate()
         if (typeOfLog == `guildDelete`) return this.guildDelete()
         if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
-        if (!this.data.bot.log_channel) return 
-        this.logChannel = bot.guilds.cache.get(bot.guild_id).channels.cache.get(this.data.bot.log_channel)
+        if (!configs.get(`LOG_CHANNEL`).value) return
+        this.logChannel = bot.guilds.cache.get(guildId).channels.cache.get(configs.get(`LOG_CHANNEL`).value)
         if (!this.logChannel) return 
-        if (!bot.WANT_CUSTOM_LOGS) return 
+        if (!configs.get(`LOG_MODULE`).value) return 
         if (typeOfLog == `channelUpdate`) return this.channelUpdate()
         if (typeOfLog == `channelCreate`) return this.channelCreate()
         if (typeOfLog == `channelDelete`) return this.channelDelete()
