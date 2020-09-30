@@ -1,76 +1,71 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { MessageAttachment } = require(`discord.js`)
-
 module.exports = async (bot, member) => {    
-    
-    await bot.updateConfig(member.guild.id)
-    var metadata = {
-        member: member,
-        guild: member.guild,
-		typeOfLog: `guildMemberAdd`,
-		bot: bot
+    //  Import configs
+    let instance = `[Events@guildMemberAdd]`
+    let guild = bot.guilds.cache.get(member.guild.id)
+    let configs = guild.configs
+    bot.logger.info(`${instance} ${bot.users.cache.get(member.id).tag} has joined ${guild.name}@${guild.id}`)
+
+    /**
+     * Parsing welcomer text's sockets.
+     * @param {string} [text=``] target string to be parsed from
+     * @returns {string}
+     */
+    const parseWelcomerText = (text=``) => {
+        let res = ``
+        res = text.replace(/{{guild}}/gi, guild.name)
+        res = text.replace(/{{user}}/gi, member)
+        return res
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.guildMemberAdd) new bot.logSystem(metadata).record()
-    
-    bot.logger.info(`[${member.guild.name}]${bot.users.cache.get(member.id).tag} has joined ${member.guild.name}.`)
-    
-    // Ignore if welcome module is turned off
-    if (!parseInt(bot.welcome_module)) return
-    
-    if (bot.guild_id != member.guild.id) return bot.logger.info(`[guildMemberAdd.js] Guild id doesnt match, stopping event from continuing`)
-
-    //  Display image
-    const renderedBanner = await new Banner(member, bot).build()
-    let welcomeChannel = bot.welcome_channel || bot.guilds.cache.get(metadata.guild.id).channels.cache.find(channel => channel.name == `general`).id
-    let welcomeText = setUpWelcomeText()
-    if (!welcomeChannel) {
-        try {
-            member.send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
-        } catch (error) {
-            bot.logger.info(`[guildMemberAdd.js] There was no welcome channel and the user's dm were locked.`)
-        }
-    } else {
-        bot.guilds.cache.get(metadata.guild.id).channels.cache.get(welcomeChannel).send(welcomeText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
-    }
-    
-    addRoles()
-
-    function addRoles(){
-        let autoRole = bot.welcome_autoRole
-        if (autoRole) member.roles.add(autoRole)
-        let additionalRoles = bot.welcome_roles
-        let str = `` + additionalRoles
-        additionalRoles = str.split(`, `)
-        additionalRoles = removeItemAll(additionalRoles, ``)
-        if (additionalRoles.length == 0) return
-        for (let index = 0; index < additionalRoles.length; index++) {
-            const element = additionalRoles[index]
-            member.roles.add(element)
-        }
-
-        function removeItemAll(arr, value) {
-            var i = 0
-            while (i < arr.length) {
-              if (arr[i].trim() === value) {
-                arr.splice(i, 1)
-              } else {
-                ++i
-              }
+    /**
+     *  -------------------------------------------------------
+     *  LOG MODULE
+     *  -------------------------------------------------------
+     */
+    let customLogs = configs.get(`LOGS_MODULE`)
+    let guildMemberAdd = configs.get(`GUILD_MEMBER_ADD`)
+    if (customLogs.value && guildMemberAdd.value) new bot.logSystem(metadata).record()
+    /**
+     *  -------------------------------------------------------
+     *  WELCOMER MODULE
+     *  -------------------------------------------------------
+     */
+    let welcomerModule = configs.get(`WELCOMER_MODULE`)
+    if (welcomerModule.value) {
+        //  Prepare welcomer target channel
+        let welcomerChannel = configs.get(`WELCOMER_CHANNEL`)
+        let getTargetWelcomerChannel = welcomerChannel.value ? welcomerChannel.value : guild.channels.cache.find(channel => channel.name == `general`).id
+        //  Prepare welcomer banner img
+        let renderedBanner = await new Banner(member, bot).build()
+        //  Prepare greeting text
+        let welcomerText = configs.get(`WELCOMER_TEXT`)
+        let getWelcomerText = parseWelcomerText(welcomerText.value)
+        //  Attempt to DM the joined user if guild's owner hasn't setup the welcomer channel yet
+        if (!getTargetWelcomerChannel) {
+            try {
+                member.send(getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
+            } catch (error) {
+                bot.logger.warn(`${instance} failed to send the requested welcomer message due to there was no welcomer channel and the user's dm were locked.`)
             }
-            return arr
+        } else {
+            await guild.channels.cache.get(getTargetWelcomerChannel).send(getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
+            bot.logger.info(`${instance} successfully sent requested welcomer message for GUILD_ID:${guild.id}`)
         }
     }
-
-    function setUpWelcomeText(){
-        let text = bot.welcome_text
-        let metadata = {
-            guild: member.guild.name,
-            user: member
+    /**
+     *  -------------------------------------------------------
+     *  WELCOMER'S AUTOROLE MODULE
+     *  -------------------------------------------------------
+     */
+    const welcomerAutoRoleModule = configs.get(`WELCOMER_ROLES_MODULE`)
+    if (!welcomerRolesModule.value) {
+        //  Skip role assignment if no roles are registered
+        const welcomerRolesList = configs.get(`WELCOMER_ROLES_LIST`)
+        if (welcomerRolesList.value.length <= 0) return
+        for (let i=0; i<welcomerRolesList.value.length; i++) {
+            member.roles.add(welcomerAutoRoleList.value[i])
         }
-        text = text.replace(/{{guild}}/gi, metadata.guild)
-        text = text.replace(/{{user}}/gi, metadata.user)
-        return text
     }
-
 }
