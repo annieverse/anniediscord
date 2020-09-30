@@ -25,6 +25,7 @@ class MessageController {
         this.userId = data.message.author.id
         this.logger = data.bot.logger
         this.data = data
+        this.guild = data.message.guild.id
     }
 
     /**
@@ -39,15 +40,11 @@ class MessageController {
          */
         //  Ignore if its from a bot user
         if (this.isBotUser) return
-        this.isDirectMessage ? await this.bot.updateConfig(`459891664182312980`) : await this.bot.updateConfig(this.message.guild.id)
-        this.isDirectMessage ? this.guild = `459891664182312980` : this.guild = this.message.guild.id
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
-
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.validateUser(this.message.author.id, /*this.message.guild.id*/ this.guild, this.message.author.username)
-
+        await this.bot.db.validateUser(this.message.author.id, this.guild, this.message.author.username)
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
@@ -57,17 +54,13 @@ class MessageController {
         if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message, modmail: false}).run()
         //  Limit modules in minimal state.
         if (minimal) return
-
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
          *  -- extended
          *  -----------------------------------------------------------------
          */
-        if (this.isDirectMessage) return new Command({bot:this.bot, message:this.message}).runDM()
-        if (this.isModmailMessage) return new Command({bot:this.bot, message:this.message, modmail:true}).runDM()
         if (this.isFeedMessage) return new likesHandler.heartHandler(this.data).intialPost()
-
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
     }
@@ -114,14 +107,6 @@ class MessageController {
     }
 
     /**
-     * Check if user sent message from modmail channel
-     * @returns {Boolean}
-     */
-    get isModmailMessage(){
-        return this.message.channel.parentID == this.bot.modmail_category
-    }
-
-    /**
      *  -------------------------------------------------------------------------------
      *  Private Methods
      * -------------------------------------------------------------------------------
@@ -130,12 +115,11 @@ class MessageController {
     /**
      * Assign user's permission level to <Message> properties.
      * Accessable through <message.author.permissions> afterwards.
-     * @returns {StringCode}
+     * @returns {void}
      */
     _registerPermission() {
         const userPerm = new Permission(this.message).getUserPermission(this.message.author.id)
         this.message.author.permissions = userPerm
-        return `OK`
      }
 
     /**
@@ -143,7 +127,6 @@ class MessageController {
      *  Specific server features for Anime Artists United (459891664182312980)
      *  -------------------------------------------------------------------------------
      */
-
 
     /**
      *  Check if it sent to #verification channel
@@ -160,141 +143,6 @@ class MessageController {
     get isEventSubmission() {
         return [`460615254553001994`].includes(this.message.channel.id) && this._hasAttachment()
     }
-
-    /**
-     *  Check if it's a message by Naph in general
-     *  @isArtPost
-     */
-    get isNaphMsg() {
-        //  Temporarily disabled.
-        return false
-    }
-
-    /**
-     *  Check if it's a message by Ralu in an art channel
-     *  @isArtPost
-     */
-    get isRaluMsg() {
-        //  Temporarily disabled.
-        return false
-    }
-    async isRaluBuffActive() {
-        if (await this.keyv.get(`ralubuff`)) return true
-        return false
-    }
-
-
-    /**
-     * 	Get user collected card and find which has buff with exp related.
-     * 	And apply the effect.
-     * 	@cardBuffs
-     */
-    cardBuffs() {
-
-        /**
-         * 	Find card in user data based on the following requirements:
-         * 	1.) The last part of the key must starts with _card (or just "card" also works)
-         * 	2.) The value should be true (not null, negative or zero)
-         * 	@cardStacks
-         */
-        const cardStacks = Object
-            .entries(this.meta.data)
-            .filter(value => value[0].endsWith(`_card`) && value[1])
-            .reduce((result, [key, value]) => Object.assign(result, {[key]: value}), {})
-
-
-        /**
-         * 	Legacy code.
-         * 	Won't touch yet.
-         * 	@get_metadata
-         */
-        const get_metadata = () => {
-            let arr = []
-
-            class requirements {
-                constructor(carddata) {
-                    this.data = carddata
-                }
-
-                //  Returns true if the message should has attachment.
-                get attachment_required() {
-                    return this.data.skills.main.effect.attachment_only ? true : false
-                }
-
-
-                //  Returns true if the card is active-typing exp booster.
-                get exp_multiplier_type() {
-                    const booster_type = [`exp_booster`, `exp_ac_booster`]
-                    if (this.data.rarity < 5) return false
-                    return booster_type.includes(this.data.skills.main.type) &&
-                    this.data.skills.main.effect.status === `active` ?
-                        true : false
-                }
-
-                set user_channel(userChannel){
-                    this.channel = userChannel
-                }
-
-                //  Returns true if channel is the correct card's activation channel.
-                get true_channel() {
-                    //  Always return true for "all" categorized channel
-                    if (this.data.skills.main.channel.includes(`all`)) return true
-                    return this.data.skills.main.channel.includes(this.channel.id) ? true : false
-                }
-
-
-                // Conditional check
-                get met_condition() {
-                    //  exp_booster in right channel?
-                    if (this.exp_multiplier_type && this.true_channel) {
-                        return true
-                    }
-
-                    //  No conditions have met.
-                    else return false
-                }
-
-            }
-
-            for (let key in cardStacks) {
-                const req = new requirements(this.bot.cards[key])
-                req.user_channel = this.message.channel
-                if (req.met_condition) {
-                    arr.push(this.bot.cards[key])
-                }
-            }
-
-            return arr
-
-        }
-
-        var bonus = {exp:0, ac:0}
-
-        // Loop over and active the card's skills.
-        let filtered_card_stack = get_metadata()
-        //  Returns if no buffs are available to use
-        if (filtered_card_stack.length < 1) return bonus
-
-
-        for (let key in filtered_card_stack) {
-            //  Get skill metadata
-            const skill_data = filtered_card_stack[key].skills.main.effect
-            //  Assign bonus
-            if (skill_data.exp) bonus.exp += skill_data.exp
-            if (skill_data.ac) bonus.ac += skill_data.ac
-        }
-        return bonus
-    }
-
-    get pingHugo(){
-        return this.message.content.trim().toLowerCase().includes(`coffee`) ? true : false
-    }
-
-    get isInGenTwo(){
-        return this.message.channel.id == `548950548343291914` ? true : false
-    }
-
-
 }
 
 
