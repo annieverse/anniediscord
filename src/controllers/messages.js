@@ -25,7 +25,8 @@ class MessageController {
         this.userId = data.message.author.id
         this.logger = data.bot.logger
         this.data = data
-        this.guild = data.message.guild.id
+        this.guildId = data.message.guild.id
+        this.guild = data.bot.guilds.cache.get(data.message.guild.id)
     }
 
     /**
@@ -44,14 +45,14 @@ class MessageController {
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.validateUser(this.message.author.id, this.guild, this.message.author.username)
+        await this.bot.db.validateUser(this.message.author.id, this.guildId, this.message.author.username)
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
          *  -- minimal
          *  -----------------------------------------------------------------
          */
-        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message, modmail: false}).run()
+        if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
         //  Limit modules in minimal state.
         if (minimal) return
         /** 
@@ -60,7 +61,7 @@ class MessageController {
          *  -- extended
          *  -----------------------------------------------------------------
          */
-        if (this.isFeedMessage) return new likesHandler.heartHandler(this.data).intialPost()
+        if (this.isPostModuleActive) return new likesHandler.heartHandler(this.data).intialPost()
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
     }
@@ -98,12 +99,21 @@ class MessageController {
     }
 
     /**
-     * 	Check if user has meet the condition for feed post.
-     *  Require Database API 
-     * 	@returns {Boolean}
+     * 	Check if the current guild has post module enabled
+     * 	@returns {number}
      */
-    get isFeedMessage() {
-        return this.bot.post_collect_channels.includes(this.message.channel.id)
+    get isPostModuleActive() {
+        return this.guild.configs.get(`POST_MODULE`).value
+    } 
+
+    /**
+     * 	Check if the message is sent to post enabled channels
+     *  Require Database API 
+     * 	@returns {number}
+     */
+    get sentInPostChannels() {
+        const config = this.guild.configs.get(`POST_CHANNELS`)
+        return config.value.includes(this.message.channel.id)
     }
 
     /**

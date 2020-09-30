@@ -82,8 +82,18 @@ class Commands {
          * @type {string}
          */	
 		this.locale = Stacks.bot.locale[`en`]	
+
+		/**
+         * Logger libs
+         * @type {object}
+         */	
 		this.logger = Stacks.bot.logger
 	
+		/**
+         * Current guild instance
+         * @type {object}
+         */	
+		this.guild = this.message.guild ? Stacks.bot.guilds.cache.get(Stacks.message.guild.id) : null
 	}
 
 	/**

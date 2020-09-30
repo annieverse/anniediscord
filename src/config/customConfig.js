@@ -316,28 +316,6 @@ class config {
             },
             {
                 /**
-                 *  The higher you set the level, the more types of log you will receive
-                 *  @type {object}
-                 */
-                name: `LOGS_LEVEL`,
-                description: `The higher you set the level, the more types of log you will receive`,
-                customizable: true,
-                allowedTypes: [`number`],
-                value: 1
-            },
-            // {
-            //     /**
-            //      *  The higher you set the level, the more types of log you will receive
-            //      *  @type {object}
-            //      */
-            //     name: `LOG_LEVEL`,
-            //     description: `The higher you set the level, the more types of log you will receive`,
-            //     customizable: true,
-            //     allowedTypes: [`number`],
-            //     value: 1
-            // },
-            {
-                /**
                  *  The target channel where logs message will be sent in
                  *  @type {object}
                  */
@@ -886,17 +864,6 @@ class config {
                 allowedTypes: [`array`],
                 value: []
             },
-            // {
-            //     /**
-            //      *  Main channel for announcing important messages
-            //      *  @type {object}
-            //      */
-            //     name: `ANNOUNCEMENT_CHANNEL`,
-            //     description: `Main channel for announcing important messages`,
-            //     customizable: true,
-            //     allowedTypes: [`string`],
-            //     value: null
-            // },
             {
                 /**
                  *  A role to be assigned to mute user
@@ -1327,18 +1294,28 @@ class config {
                  allowedTypes: [`string`],
                  value: null
              },
-             {
+            {
                 /**
-                  *  The channel where upvoted posts are sent to
-                  *  @type {object}
-                  */
-                 name: `FEED_CHANNEL`,
-                 description: `The channel where upvoted posts are sent to`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: null
-             }
-
+                 *  A module that enables User's Post System
+                 *  @type {object}
+                 */
+                name: `POST_MODULE`,
+                description: `A module that enables User's Post System`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
+                 *  The target channels where post will be collected
+                 *  @type {object}
+                 */
+                name: `POST_CHANNELS`,
+                description: `The target channels where post will be collected`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: []
+            }
         ]
     }
 }

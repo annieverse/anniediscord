@@ -1,4 +1,5 @@
 `use-strict`
+const Themes = require(`../ui/colors/themes`)
 const Experience = require(`./exp`)
 const Permission = require(`./permissions`)
 const stringSimilarity = require('string-similarity');
@@ -17,6 +18,7 @@ class User {
         this.bot = bot
 		this.message = message
 		this.logger = bot.logger
+		this.guild = bot.guilds.cache.get(message.guild.id)
     }
 
     /**
@@ -136,7 +138,13 @@ class User {
 				minexp: parsedExp.minexp
 			}
 
-			//  User's parsed inventory data. Access .raw if you wanted verbose version of inventory meta.
+			
+			/**
+			 *  --------------------------------------------------
+			 *  INVENTORY MANAGEMENT
+			 *  Access inventory.raw if you wanted a verbose version of inventory meta structure
+			 *  --------------------------------------------------
+			 */
 			const inventoryData = await db.getUserInventory(this.user.id, this.message.guild.id)
 			const simplifiedInventory = this._simplifyInventory(inventoryData)
 			this.user.inventory = {
@@ -144,25 +152,61 @@ class User {
 				...simplifiedInventory
 			}
 
-			//  User's current rank data based on exp level.
-			const currentRankLevel = this._closestBelow(this.bot.ranks.map(el => el.LEVEL), this.user.exp.level)
-			const rankData = this.bot.ranks.filter(el => el.LEVEL === currentRankLevel)
+			/**
+			 *  --------------------------------------------------
+			 *  RANK MANAGEMENT
+			 *  If custom ranks aren't registered in the guild yet, then use the default one instead.
+			 *  There is also fallback handler in case user's level is lower than what's available in the ranks pool.
+			 *  --------------------------------------------------
+			 */
+			const theme = this.user.inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
+			this.user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+			//  If custom ranks aren't registered in the guild yet, then use the default one instead.
+			const rankList = this.guild.configs.get(`RANKS_LIST`).value
+			const selectedRankPool = async () => {
+				if (rankList.length > 0) {
+					let ranks = []
+					for (let i=0; i<rankList.length; i++) {
+						const node = rankList[i]
+						const getRole = this.guild.roles.cache.has(node.ROLE) 
+						? this.guild.roles.cache.get(node.ROLE) 
+						: {
+							hexColor: `#000`,
+							name: node.ROLE
+						}
+						ranks.push({
+							NAME: getRole.name,
+							LEVEL: node.LEVEL,
+							COLOR: getRole.hexColor
+						})
+					}
+					return ranks
+				}
+				return this.bot.configs.defaultRanks
+			}
+			const ranks = await selectedRankPool()
+			const currentRankLevel = this._closestBelow(ranks.map(node => node.LEVEL), this.user.exp.level)
+			let rankData = ranks.filter(el => el.LEVEL === currentRankLevel)
+			//  Handle if user's level is lower than whats available in the rank pool
+			if (rankData.length <= 0) rankData = [{NAME: `No Rank`, COLOR: Themes[this.user.usedTheme.alias].text, LEVEL: currentRankLevel}] 
 			this.user.rank = {
 				name: rankData[0].NAME,
 				color: rankData[0].COLOR,
 				level: rankData[0].LEVEL
 			}
 
-			//  User's misc properties. These might come in handy in developer's side.
-			const theme = this.user.inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-			this.user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+			/**
+			 *  --------------------------------------------------
+			 *  MISC PROPERTIES MANAGEMENT
+			 *  These might come in handy in developer's side, such as shortcut.
+			 *  --------------------------------------------------
+			 */
 			const cover = user.inventory.raw.filter(key => (key.type_name === `Covers`) && (key.in_use === 1))
 			this.user.usedCover = cover.length > 0 ? cover[0] : await db.getItem(`defaultcover1`)
 			const sticker = user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
 			this.user.usedSticker = sticker.length ? sticker[0] : null
 			this.user.isSelf = this.isSelf
 			this.user.title = new Permission(this.message).getUserPermission(this.user.id).name
-
 			return this.user
 		}
 		catch(e) {

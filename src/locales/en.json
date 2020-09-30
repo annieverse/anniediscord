@@ -92,7 +92,7 @@
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
         "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
         "STILL_COOLDOWN": "**{{timeLeft}}s** left till your next command.",
-        "DISABLED":"I'm sorry but this command/module is diabled on this server."
+        "DISABLED":"I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
     },
     "CARDCOLLECTION_AUTHOR_EMPTY": "You don't have any card collection. Go test your luck with my gacha system!",
     "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection.",

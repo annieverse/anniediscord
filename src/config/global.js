@@ -45,9 +45,9 @@ config.prefix = process.env.PREFIX || `>`
  */
 config.plugins = [`ACTIVE_EXP`, `ACTIVE_ARTCOINS`]
 
-
 config.permissions = require(`./permissions`)
 config.points = require(`./points`)
 config.commands = require(`./commands`)
+config.defaultRanks = require(`./defaultRanks`)
 
 module.exports = config

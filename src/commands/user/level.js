@@ -18,9 +18,13 @@ class Level extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
 	async execute({ reply, name, emoji }) {
-		if (!this.bot.xp_module) return reply(this.locale.COMMAND.DISABLED)
+		//  Handle if the EXP module isn't enabled in current guild
+		if (!this.guild.configs.get(`EXP_MODULE`).value) return reply(this.locale.COMMAND.DISABLED, {
+			socket: {command: `EXP Module`},
+			status: `warn`
+		})
+		//  Fetch user's metadata
 		await this.requestUserMetadata(2)
-
 		//  Handle if user doesn't exists
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		reply(this.locale.COMMAND.FETCHING, {

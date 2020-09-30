@@ -6,7 +6,6 @@ const Pistachio = require(`../libs/pistachio`)
  * @property {Object} [bot={}] Current <AnnieClient> instance
  * @property {Object} [message={}] Current <Message> instance
  */
-
 /**
  * Centralized Controller to handle incoming command request
  * @since 6.0.0
@@ -22,7 +21,7 @@ class CommandController {
          * The default identifier for current instance.
          * @type {string}
          */
-        this.moduleID = (data.message.channel.type == `dm` || data.modmail) ? `CMD_${data.message.author.id}_${data.message.id}` : `CMD_${data.message.author.id}_${data.message.guild.id}`
+        this.moduleID = `CMD_${data.message.author.id}_${data.message.guild.id}`
 
         /**
          * The default prop for accessing command's prefix.
@@ -43,14 +42,7 @@ class CommandController {
          * @since 1.0.0
          * @type {String}
          */	
-        if (data.message.channel.type == `dm` || data.modmail) {
-            this.modmail = data.modmail
-            if (data.message.content.startsWith(data.bot.prefix)) {
-                this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
-            }   
-        } else {
-            this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
-        }
+        this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
 
         /**
          * The default locale properties for command controller.
@@ -111,77 +103,6 @@ class CommandController {
         catch(e) {
             this.logger.error(`${fn} ${e}`)
             return PistachioComponents.reply(this.locale.ERROR, {color: `red`, socket:{error: e} })
-        }
-    }
-
-    /**
-     * Running Command(DM) Controller. Preparing exceptor on several cases before returning the command file.
-     * @returns {CommandClass}
-     */
-    async runDM() {
-        const fn = `[CommandController.runDM()] USER_ID:${this.message.author.id}`   
-        const initTime = process.hrtime()
-        const memberGuilds = this.bot.guilds.cache.filter(node => node.members.cache.get(this.message.author.id)).map(node => node.id)
-        const partOfGuild = memberGuilds.includes(`459891664182312980`)
-        if (!partOfGuild) return
-        if (!this.commandName) {
-            // Handle any message that isnt a command
-            this.commandProperties = this.getCommandProperties(`newThread`)
-            this.commandName = this.commandProperties.name
-
-            // Ignore if no files are match with the given command name
-            if (!this.commandProperties) return this.logger.debug(`${fn} Invalid command`)
-            // Ignore if user's permission level doesn't met the minimum command's permission requirement
-            if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
-    
-            const Command = this._findFile(this.commandProperties.name)
-            if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
-                        
-            const commandComponents = {
-                bot: this.bot,
-                message: this.message,
-                commandProperties: this.commandProperties
-            }
-            const PistachioComponents = new Pistachio(commandComponents)
-            await new Command(commandComponents).execute(PistachioComponents)
-            const cmdFinishTime = this.bot.getBenchmark(initTime)
-
-            //	Log and store the cmd usage to database.
-            this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
-        } else {
-            let allowedCmds = [`ping`, `newThread`, `close`, `anon`, `modlogs`, `showlogs`] // `ping`, `newThread`, `close`, `anon`, `modlogs`, `showlogs` <- This must be allowed for the modmail plugin to work
-                
-            let specialArg = 1
-            if (this.commandName.includes(`modlogs`)) {
-                this.commandName.slice(7).length == 0 ? specialArg = 1 : specialArg = this.commandName.slice(7)
-                this.commandName = this.commandName.substring(0,7)
-            }
-            this.commandProperties = this.getCommandProperties(this.commandName)
-
-            // Ignore if no files are match with the given command name
-            if (!this.commandProperties) return this.logger.debug(`${fn} Invalid command`)
-            // Ignore if user's permission level doesn't met the minimum command's permission requirement
-            if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
-    
-            const Command = this._findFile(this.commandProperties.name)
-            if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
-            if (!allowedCmds.includes(this.commandName)) {
-                this.message.author.send(`I'm sorry but the command you are trying isn't allowed in dms`)
-                return this.logger.debug(`${fn} has tried using a command file with name <${this.commandProperties.name}> but failed because it is dm blocked`)
-            }
-            
-            const commandComponents = {
-                bot: this.bot,
-                message: this.message,
-                commandProperties: this.commandProperties
-            }
-            const PistachioComponents = new Pistachio(commandComponents)
-            PistachioComponents.specialArg = specialArg
-            await new Command(commandComponents).execute(PistachioComponents)
-            const cmdFinishTime = this.bot.getBenchmark(initTime)
-
-            //	Log and store the cmd usage to database.
-            this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
         }
     }
 
