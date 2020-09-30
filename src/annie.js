@@ -128,6 +128,7 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
+            this.startupState = 1
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)

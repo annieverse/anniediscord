@@ -8,5 +8,5 @@ module.exports = async (bot, oldGuild, newGuild, configs) => {
         typeOfLog: `guildUpdate`,
         bot: bot
     }
-    if (configs.get(`LOG_MODULE`).value && configs.get(`GUILD_UPDATED`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`GUILD_UPDATED`).value) new bot.logSystem(metadata).record()
 }

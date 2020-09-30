@@ -6,5 +6,5 @@ module.exports = async (bot, channel, configs) => {
         typeOfLog: `channelDelete`,
         bot: bot
     }
-    if (configs.get(`LOG_MODULE`).value && configs.get(`CHANNEL_DELETE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`CHANNEL_DELETE`).value) new bot.logSystem(metadata).record()
 }

@@ -10,5 +10,5 @@ module.exports = async (bot, channel, configs) => {
         configs: configs
     }
     
-    if (configs.get(`LOG_MODULE`).value && configs.get(`CHANNEL_CREATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`CHANNEL_CREATE`).value) new bot.logSystem(metadata).record()
 }

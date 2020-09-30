@@ -4,6 +4,11 @@ const VotesManager = require(`../libs/votes`)
 module.exports = annie => {
 	const { dev, logger, prefix } = annie
 	const Routine = new Routines(annie)
+	//  Run guild configurations once
+	if (annie.startupState) {
+		annie.startupState = 0
+		annie.registerGuildConfigurations()
+	}
 	if (dev) {
 		/**
 		 * 	--------------------------------------------------
@@ -13,7 +18,6 @@ module.exports = annie => {
 		logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
 		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.cache.size} users`)
 		annie.user.setStatus(`dnd`)
-		annie.registerGuildConfigurations()
 	} else {
 		/**
 		 * 	--------------------------------------------------

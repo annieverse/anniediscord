@@ -8,5 +8,5 @@ module.exports = async (bot, role, configs) => {
         guild: role.guild
     }
     
-    if (configs.get(`LOG_MODULE`).value && configs.get(`ROLE_CREATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`ROLE_CREATE`).value) new bot.logSystem(metadata).record()
 }

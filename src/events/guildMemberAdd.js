@@ -1,10 +1,9 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { MessageAttachment } = require(`discord.js`)
-module.exports = async (bot, member) => {    
+module.exports = async (bot, member, configs) => {    
     //  Import configs
     let instance = `[Events@guildMemberAdd]`
     let guild = bot.guilds.cache.get(member.guild.id)
-    let configs = guild.configs
     bot.logger.info(`${instance} ${bot.users.cache.get(member.id).tag} has joined ${guild.name}@${guild.id}`)
 
     /**

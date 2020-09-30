@@ -8,5 +8,5 @@ module.exports = async (bot, oldChannel, newChannel, configs) => {
         bot: bot
     }
 
-    if (configs.get(`LOG_MODULE`).value && configs.get(`CHANNEL_UPDATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`CHANNEL_UPDATE`).value) new bot.logSystem(metadata).record()
 }

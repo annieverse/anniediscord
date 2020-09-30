@@ -8,5 +8,5 @@ module.exports = async (bot, emoji, configs) => {
         bot: bot
     }
 
-    if (configs.get(`LOG_MODULE`).value && configs.get(`EMOJI_DELETE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`EMOJI_DELETE`).value) new bot.logSystem(metadata).record()
 }

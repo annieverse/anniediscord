@@ -9,5 +9,5 @@ module.exports = (bot, oldMessage, newMessage, configs) => {
         bot: bot
     }
 
-    if (configs.get(`LOG_MODULE`).value && configs.get(`MESSAGE_UPDATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value && configs.get(`MESSAGE_UPDATE`).value) new bot.logSystem(metadata).record()
 }
