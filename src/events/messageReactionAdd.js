@@ -1,15 +1,17 @@
-const {heartReactionHandler} = require(`../struct/posts/likesHandler.js`)
-const BoosterColor = require(`../libs/nitroColorManager`)
+//const {heartReactionHandler} = require(`../struct/posts/likesHandler.js`)
+//const BoosterColor = require(`../libs/nitroColorManager`)
 
 //const ClassroomManager = require(`../utils/ClassroomManager`)
 
-module.exports = async(Components) => {
-    
+module.exports = async(/*Components, configs*/) => {
+    /**
+     * Update once configs are updated
+     
+    Components[`configs`] = configs
+
     //  Handling empty reactions
     if (!Components.reaction) return
 
-    await Components.annie.updateConfig(Components.reaction.message.guild.id)
-    
     Components.reactor = await Components.annie.users.fetch(Components.user.id)
     
     new heartReactionHandler(Components).add()
@@ -19,14 +21,12 @@ module.exports = async(Components) => {
         reaction: Components.reaction, 
         user: Components.user
     }
-    //  Extracting required vars for BoosterPerk check
-    //let messageID = Components.reaction.message.id
-    if (!Components.annie.booster_color_messages) return
-    if (Components.annie.booster_color_messages.length < 1) return
+    
+    if (!configs.get(`BOOSTER_COLORS_MESSAGES`).value) return 
+    if (configs.get(`BOOSTER_COLORS_MESSAGES`).value.length < 1) return
 
-    let isBoosterPerkMessage = Components.annie.booster_color_messages.includes(Components.reaction.message.id)
-    //let isClassroomGuideMessage = (messageID === `634694103438983169`) && (Components.reaction.emoji.name === `✏`)
+    let isBoosterPerkMessage = configs.get(`BOOSTER_COLORS_MESSAGES`).value.includes(Components.reaction.message.id)
 
     if (isBoosterPerkMessage) new BoosterColor(metadata).Add()
-    //if (isClassroomGuideMessage) new ClassroomManager(Components).Add()
+    */
 }

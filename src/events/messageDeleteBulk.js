@@ -1,7 +1,5 @@
 
-module.exports = async (bot, messages) => {
-    
-    await bot.updateConfig(messages.first().guild.id)
+module.exports = async (bot, messages, configs) => {
     
     var metadata = {
         messages: messages,
@@ -10,5 +8,5 @@ module.exports = async (bot, messages) => {
         guild: messages.first().guild
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.messageDeleteBulk) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`MESSAGE_DELETE_BULK`).value) new bot.logSystem(metadata).record()
 }

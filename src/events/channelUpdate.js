@@ -1,7 +1,5 @@
-module.exports = async (bot, oldChannel, newChannel) => {
+module.exports = async (bot, oldChannel, newChannel, configs) => {
     
-    await bot.updateConfig(oldChannel.guild.id)
-
     var metadata = {
         oldChannel: oldChannel,
         newChannel : newChannel,
@@ -10,5 +8,5 @@ module.exports = async (bot, oldChannel, newChannel) => {
         bot: bot
     }
 
-    if (bot.WANT_CUSTOM_LOGS && bot.channelUpdate) new bot.logSystem(metadata).record()
+    if (configs.get(`LOG_MODULE`).value && configs.get(`CHANNEL_UPDATE`).value) new bot.logSystem(metadata).record()
 }

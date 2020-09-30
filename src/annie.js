@@ -128,7 +128,6 @@ class Annie extends Discord.Client {
             await this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
-            //this.updateConfig()
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
@@ -167,6 +166,7 @@ class Annie extends Discord.Client {
                 guild.configs.set(cfg.name, cfg)
             }
         }
+       // console.log(this.guilds.cache.get())
         logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
     }
 
