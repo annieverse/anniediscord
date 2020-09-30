@@ -4,7 +4,6 @@ const VotesManager = require(`../libs/votes`)
 module.exports = annie => {
 	const { dev, logger, prefix } = annie
 	const Routine = new Routines(annie)
-	new VotesManager(annie)
 	if (dev) {
 		/**
 		 * 	--------------------------------------------------
@@ -35,6 +34,8 @@ module.exports = annie => {
 		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes
 		Routine.releasePixivCaches()
+		//  Handling incoming votes
+		new VotesManager(annie)
 		/**
 		 * 	--------------------------------------------------
 		 * 	Below are features that currently binding to AAU guild.

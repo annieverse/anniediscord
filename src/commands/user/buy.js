@@ -48,12 +48,17 @@ class Buy extends Command {
 		 * Then it'll use the old method which suports search by item ID or item alias, but less accurate.
 		 */
 		let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, purchasableItems.map(i => i.name))
-		this.item = searchStringResult.bestMatch.rating >= 0.4
-		? purchasableItems.filter(i => i.name === searchStringResult.bestMatch.target)[0] 
-		: purchasableItems.filter(this.itemFilter)[0]
+		this.item = searchStringResult.bestMatch.rating >= 0.4 ? purchasableItems.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
+		//  Check if searchString framework can't find any relevant result, then use search by itemId
+		if (!this.item) {
+			this.item = purchasableItems.filter(this.itemFilter)[0]
+			this.findByItemId = true
+		}
 		//  Handle if item with the given keyword cannot be found
 		if (!this.item) return reply(this.locale.BUY.INVALID_ITEM, {color: `red`})
-		//  Incase user attempted to include unit-amount shorhandedly.
+		//  If previous search by itemId works, then ommit used itemId's keyword from the arg pool
+		if (this.findByItemId) this.fullArgs = this.fullArgs.replace(this.args[0], ``)
+		//  Incase user attempted to include unit-amount shorhandedly
 		this.amountToBuy = !this.args[1] ? 1 : this.fullArgs.replace(/\D/g, ``)
 
 		/**

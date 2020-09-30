@@ -2,6 +2,15 @@
 
 ___
 
+## **09/25/20 | 7.3.2 ->**
+
+* 1d60074 fix(raw): wrong refs
+* 7d7c5f2 fix(systemLogs): failed to initialize file
+* 719d916 fix(buy): wrong amount calculation when finding item by its id
+* 4ff2ba6 fix(gacha): fail to deduct user's balance on ticket purchase
+* 38b25af fix(localization): improvised string in vote command
+* 6df0f6b refactor(vote): only run in production environment
+
 ## **09/24/20 | 7.3.1 ->**
 
 * fix(votes): duplicated events
