@@ -27,7 +27,12 @@ class SetRank extends Command {
          * Current instance's config code
          * @type {string}
          */  
-        this.configID = `CUSTOM_RANK_MODULE`
+        this.primaryConfigID = `CUSTOM_RANK_MODULE`
+        /**
+         * Current instance's sub config code
+         * @type {string}
+         */  
+        this.subConfigID = `RANKS_LIST`
     }
 
     /**
@@ -35,7 +40,7 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, name, emoji }) {
-        await this.requestUserMetadata(2)
+        await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETRANK.GUIDE, {
             header: `Hi, ${name(this.user.id)}!`,
@@ -50,6 +55,11 @@ class SetRank extends Command {
         if (!this.actions.includes(this.args[0])) return reply(this.locale.SETRANK.INVALID_ACTION, {status: `fail`})
         //  Otherwise, run the action.
         this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
+        this.action = this.args[0]
+        //  This is the main configuration of setwelcomer, so everything dependant on this value
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+        //  This is the sub-part of main configuration such as welcomer's channel, text, etc
+        this.subConfig = this.guildConfigurations.get(this.subConfigID) 
         return this[this.args[0]](...arguments)
     }
 
@@ -58,31 +68,29 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async enable({ reply, name }) {
-        //  Fetch from cache
-        let config = this.guildConfigurations.get(this.configID)
-        if (!config.value && !config.setByUserId) this.firstTimer = true
-        //  Handle if the guild already has enabled the configuration
-        if (config.value) {
-            let localizeTime = await this.bot.db.toLocaltime(config.updatedAt)
+        const fn = `[setRank.enable()]`
+        //  Handle first timer
+        if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) this.firstTimer = true
+        //  Handle if custom ranks already enabled before the action.
+        if (this.primaryConfig.value) {
+            let localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETRANK.ALREADY_ENABLED, {
             status: `warn`,
                 socket: {
-                    user: name(config.setByUserId),
+                    user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
                 }
             })
         }
-        //  Otherwise, update the configuration. Both in the cache and database.
-        config.value = 1
-        config.setByUserId = this.user.id
-        config.updatedAt = await this.bot.db.getCurrentTimestamp()
-        this.guildConfigurations.set(this.configID, config) 
-        this.bot.db.updateGuildConfiguration({
-            configCode: this.configID,
-            guild: this.message.guild,
+        //  Update configs
+        await this.bot.db.updateGuildConfiguration({
+            configCode: this.primaryConfigID,
             customizedParameter: 1,
-            setByUserId: this.message.author.id
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
         })
+        this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
         reply(this.locale.SETRANK.SUCCESSFULLY_ENABLED, {status: `success`})
         //  Spawn tip if user is a first timer
         if (this.firstTimer) return reply(this.locale.SETRANK.FIRST_TIMER_TIP, {
@@ -97,8 +105,7 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async add({ reply, findRole, trueInt, name }) {
-        let subConfigID = `RANKS_LIST`
-        let subConfig = this.guildConfigurations.get(subConfigID)
+        const fn = `[setRank.add()]`
         //  Handle if user doesn't specify the target role name
         if (!this.args[1]) return reply(this.locale.SETRANK.ADD_MISSING_TARGET_ROLE, {
             socket: {prefix: this.bot.prefix},
@@ -108,14 +115,14 @@ class SetRank extends Command {
         const getRole = findRole(this.args[1])
         if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {status: `fail`})
         //  Handle if the role is already registered
-        const getRegisteredRank = subConfig.value.filter(node => node.ROLE === getRole.id)
+        const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
         if (getRegisteredRank.length >= 1) {
-            const localizeTime = await this.bot.db.toLocaltime(subConfig.updatedAt)
+            const localizeTime = await this.bot.db.toLocaltime(this.subConfig.updatedAt)
             return reply(this.locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED, {
                 header: this.locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED_HEADER,
                 socket: {
                     level: getRegisteredRank[0].LEVEL,
-                    user: name(subConfig.setByUserId),
+                    user: name(this.subConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
                     prefix: this.bot.prefix,
                     role: getRole.name
@@ -131,21 +138,20 @@ class SetRank extends Command {
         //  Handle if the specified required level is a faulty value/non-parseable number
         const getRequiredLevel = trueInt(this.args[2])
         if (!getRequiredLevel) return reply(this.locale.SETRANK.ADD_INVALID_REQUIRED_LEVEL, {status: `fail`})
-        //  Register the rank
-        subConfig.setByUserId = this.user.id
-        subConfig.updatedAt = await this.bot.db.getCurrentTimestamp()
-        subConfig.value.push({
+        //  Update configs
+        this.subConfig.value.push({
             "ROLE": getRole.id,
             "LEVEL": getRequiredLevel
         })
-        await this.guildConfigurations.set(subConfigID, subConfig) 
         await this.bot.db.updateGuildConfiguration({
-            configCode: subConfigID,
+            configCode: this.subConfigID,
+            customizedParameter: this.subConfig.value,
             guild: this.message.guild,
-            customizedParameter: JSON.stringify(subConfig.value),
-            setByUserId: this.user.id
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
         })
         //  Finalize
+        this.logger.info(`${fn} added new role-rank(${getRole.id}) for GUILD_ID:${this.message.guild.id}`)
         reply(this.locale.SETRANK.SUCCESSFULLY_ADDED, {
             status: `success`,
             header: this.locale.SETRANK.SUCCESSFULLY_ADDED_HEADER,
@@ -161,34 +167,26 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async delete({ reply, findRole }) {
-        let subConfigID = `RANKS_LIST`
-        let subConfig = this.guildConfigurations.get(subConfigID)
+        const fn = `[setRank.delete()]`
         //  Handle if user doesn't specify the target role name
         if (!this.args[1]) return reply(this.locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {status: `warn`})
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
         if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {status: `fail`})
         //  Handle if the role hasn't been registered in the first place
-        const getRegisteredRank = subConfig.value.filter(node => node.ROLE === getRole.id)
+        const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
         if (getRegisteredRank.length <= 0) return reply(this.locale.SETRANK.DELETE_UNREGISTERED_ROLE, {status: `fail`})
         //  Delete rank from the guild's configurations entry
-        subConfig.setByUserId = this.user.id
-        subConfig.updatedAt = await this.bot.db.getCurrentTimestamp()
-        subConfig.value = subConfig.value.filter(node => node.ROLE !== getRole.id)
-        await this.guildConfigurations.set(subConfigID, subConfig)
-        //  Delete entry from guild_configurations if the new array is empty
-        if (subConfig.value.length <= 0) {
-            await this.bot.db.deleteGuildConfiguration(subConfigID, this.message.guild.id)
-        } 
-        else {
-            await this.bot.db.updateGuildConfiguration({
-                configCode: subConfigID,
-                guild: this.message.guild,
-                customizedParameter: JSON.stringify(subConfig.value),
-                setByUserId: this.user.id
-            })
-        }
+        this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
+        await this.bot.db.updateGuildConfiguration({
+            configCode: this.subConfigID,
+            customizedParameter: this.subConfig.value,
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
+        })
         //  Finalize
+        this.logger.info(`${fn} deleted role-rank(${getRole.id}) from GUILD_ID:${this.message.guild.id}`)
         return reply(this.locale.SETRANK.SUCCESSFULLY_DELETED, {
             header: this.locale.SETRANK.SUCCESSFULLY_DELETED_HEADER,
             status: `success`,
@@ -201,10 +199,8 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async info({ reply, name, emoji, commanifier }) {
-        const mainConfig = this.guildConfigurations.get(this.configID)
-        const subConfig = this.guildConfigurations.get(`RANKS_LIST`)
         //  Handle if the main module is disabled in the guild for the first time
-        if (!mainConfig.value && !mainConfig.setByUserId) {
+        if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) {
             return reply(this.locale.SETRANK.INFO_DISABLED_FIRST_TIME, {
                 color: `red`,
                 thumbnail: this.message.guild.iconURL(),
@@ -217,8 +213,8 @@ class SetRank extends Command {
             })
         }
         //  Handle if the main module is disabled for the few times
-        const localizeTime = await this.bot.db.toLocaltime(mainConfig.updatedAt)
-        if (!mainConfig.value && mainConfig.setByUserId) {
+        const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
+        if (!this.primaryConfig.value && this.primaryConfig.setByUserId) {
             return reply(this.locale.SETRANK.INFO_DISABLED_BY_USER, {
                 color: `red`,
                 thumbnail: this.message.guild.iconURL(),
@@ -226,14 +222,14 @@ class SetRank extends Command {
                 socket: {
                     emoji: emoji(`fail`),
                     prefix: this.bot.prefix,
-                    user: name(mainConfig.setByUserId),
+                    user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
                     guild: this.message.guild.name
                 }
             })
         }
         //  Handle if the main module is enabled, but the guild hasn't setting up the ranks yet.
-        if (mainConfig.value && (subConfig.value.length <= 0)) {
+        if (this.primaryConfig.value && (this.subConfig.value.length <= 0)) {
             return reply(this.locale.SETRANK.INFO_ENABLED_ZERO_RANKS, {
                 color: `lightgreen`,
                 thumbnail: this.message.guild.iconURL(),
@@ -246,18 +242,18 @@ class SetRank extends Command {
             })
         }
         //  Otherwise, display info like usual
-        const localizeSubConfigTime = await this.bot.db.toLocaltime(subConfig.updatedAt)
+        const localizeSubConfigTime = await this.bot.db.toLocaltime(this.subConfig.updatedAt)
         return reply(this.locale.SETRANK.INFO_ENABLED, {
             color: `lightgreen`,
             thumbnail: this.message.guild.iconURL(),
             header: this.locale.SETRANK.HEADER_INFO,
             socket: {
                 emoji: emoji(`success`),
-                rankSize: subConfig.value.length,
+                rankSize: this.subConfig.value.length,
                 guild: this.message.guild.name,
-                list: await this._prettifyList(subConfig.value, ...arguments)
+                list: await this._prettifyList(this.subConfig.value, ...arguments)
             },
-            footer: `Updated by ${name(subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
+            footer: `Updated by ${name(this.subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
         })
     }   
 
@@ -266,11 +262,10 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async reset({ reply, emoji, commanifier }) {
-        let subConfigID = `RANKS_LIST`
-        let subConfig = this.guildConfigurations.get(subConfigID)
+        const fn = `[setRank.reset()]`
         let timestamp = await this.bot.db.getCurrentTimestamp()
         //  Handle if guild doesn't have any registered rank.
-        if (subConfig.value.length <= 0) return reply(this.locale.SETRANK.RESET_NULL_RANKS, {status: `fail`})
+        if (this.subConfig.value.length <= 0) return reply(this.locale.SETRANK.RESET_NULL_RANKS, {status: `fail`})
         //  Confirmation before performing the action
         this.confirmation = await reply(``, {header: this.locale.SETRANK.RESET_CONFIRMATION})
         this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.id)
@@ -284,18 +279,16 @@ class SetRank extends Command {
                 }
             })
             //  Reset values
-            let mainConfig = this.guildConfigurations.get(this.configID)
-            mainConfig.updatedAt = timestamp
-            mainConfig.value = 0
-            mainConfig.setByUserId = this.user.id
-            subConfig.setByUserId = this.user.id
-            subConfig.updatedAt = timestamp
-            subConfig.value = [] 
-            this.guildConfigurations.set(this.configID, mainConfig)
-            this.guildConfigurations.set(subConfigID, subConfig)
-            await this.bot.db.deleteGuildConfiguration(subConfigID, this.message.guild.id)
+            this.primaryConfig.updatedAt = timestamp
+            this.primaryConfig.value = 0
+            this.primaryConfig.setByUserId = this.user.id
+            this.subConfig.setByUserId = this.user.id
+            this.subConfig.updatedAt = timestamp
+            this.subConfig.value = [] 
+            await this.bot.db.deleteGuildConfiguration(this.subConfigID, this.message.guild.id)
             //  Finalize
             this.animation.delete()
+            this.logger.info(`${fn} custom ranks configurations for GUILD_ID:${this.message.guild.id} has been reset.`)
             return reply(this.locale.SETRANK.SUCCESSFULLY_RESET, {status: `success`})
         })
     }   
@@ -305,29 +298,18 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async disable({ reply, name }) {
-        let config = this.guildConfigurations.get(this.configID)
+        const fn = `[setRank.disable()]`
         //  Handle if the guild already has disabled the configuration
-        if (!config.value) {
-            let localizeTime = await this.bot.db.toLocaltime(config.updatedAt)
-            return reply(this.locale.SETRANK.ALREADY_DISABLED, {
-            status: `warn`,
-                socket: {
-                    user: name(config.setByUserId),
-                    date: moment(localizeTime).fromNow()
-                }
-            })
-        }
+        if (!this.primaryConfig.value) return reply(this.locale.SETRANK.ALREADY_DISABLED, {status: `warn`})
         //  Otherwise, update the configuration. Both in the cache and database.
-        config.value = 0
-        config.setByUserId = this.user.id
-        config.updatedAt = await this.bot.db.getCurrentTimestamp()
-        await this.guildConfigurations.set(this.configID, config) 
         await this.bot.db.updateGuildConfiguration({
-            configCode: this.configID,
-            guild: this.message.guild,
+            configCode: this.primaryConfigID,
             customizedParameter: 0,
-            setByUserId: this.message.author.id
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
         })
+        this.logger.info(`${fn} CUSTOM_RANK_MODULE has been disabled for GUILD_ID:${this.message.guild.id}`)
         return reply(this.locale.SETRANK.SUCCESSFULLY_DISABLED, {status: `success`})
     }   
 

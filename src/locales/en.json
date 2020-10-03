@@ -548,7 +548,7 @@
         "DELETE_UNREGISTERED_ROLE": "Eh, what are you trying to delete? this rank-role isn't even registered!",
         "INVALID_ACTION": "Sorry, but I don't recognize that action. :(",
         "ALREADY_ENABLED": "This module has been enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "This module has been disabled by **{{user}}, {{date}}**",
+        "ALREADY_DISABLED": "This module has not been enabled yet.",
         "HEADER_INFO": "Custom Rank Module", 
         "RESET_NULL_RANKS": "Sorry! It's not like I dont wanna do it ... but this guild doesn't have any registered ranks for me to reset-",
         "RESET_CONFIRMATION": "This will delete all custom ranks in the guild, are you sure you want to perform this action?",

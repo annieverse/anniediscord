@@ -434,6 +434,9 @@ class Database {
 	 	if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
 	 	//  Register guild incase they aren't registered yet
 	 	this.registerGuild(guild)
+	 	//  Parsing data type of customizedParameter so it can be stored in the database.
+	 	//  The original type of customizedParameter remains unaffected.
+	 	const parsedValueParameter = typeof customizedParameter === `object` ? JSON.stringify(customizedParameter) : customizedParameter
 		const res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
@@ -449,7 +452,7 @@ class Database {
 				, `run`
 				, {
 					configCode: configCode,
-					customizedParameter: customizedParameter,
+					customizedParameter: parsedValueParameter,
 					guildId: guild.id,
 					setByUserId: setByUserId
 				}
@@ -464,7 +467,7 @@ class Database {
 					config_code = ?
 					AND guild_id = ?`
 				, `run`
-				, [customizedParameter, configCode, guild.id]
+				, [parsedValueParameter, configCode, guild.id]
 			)
 		}
 
