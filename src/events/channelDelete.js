@@ -1,10 +1,9 @@
 module.exports = async (bot, channel, configs) => {
-    
-    var metadata = {
+    let metadata = {
         channel: channel,
         guild: channel.guild,
-        typeOfLog: `channelDelete`,
+        typeOfLog: `CHANNEL_DELETE`,
         bot: bot
     }
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`CHANNEL_DELETE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

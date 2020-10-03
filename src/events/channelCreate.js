@@ -1,14 +1,11 @@
 module.exports = async (bot, channel, configs) => {
-    
     if (channel.type == `dm`) return
-        
-    var metadata = {
+    let metadata = {
         channel: channel,
         guild: channel.guild,
-        typeOfLog: `channelCreate`,
+        typeOfLog: `CHANNEL_CREATE`,
         bot: bot,
         configs: configs
     }
-    
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`CHANNEL_CREATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

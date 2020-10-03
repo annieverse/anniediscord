@@ -1,12 +1,10 @@
 
 module.exports = async (bot, messages, configs) => {
-    
-    var metadata = {
+    let metadata = {
         messages: messages,
-        typeOfLog: `messageDeleteBulk`,
+        typeOfLog: `MESSAGE_DELETE_BULK`,
         bot: bot,
         guild: messages.first().guild
     }
-
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`MESSAGE_DELETE_BULK`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

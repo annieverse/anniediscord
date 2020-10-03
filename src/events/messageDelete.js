@@ -5,5 +5,5 @@ module.exports = async (bot, message, configs) => {
         bot: bot,
         guild: message.guild
     }
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`MESSAGE_DELETE`).value) new bot.logsSystem(metadata)
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

@@ -1,5 +1,4 @@
 `use-strict`
-const palette = require(`../ui/colors/default.json`)
 const Pistachio = require(`../libs/pistachio`)
 /**
  *  A centralized system to log discord-related audits
@@ -45,12 +44,6 @@ class LogsSystem {
          */
         this.configs = this.guild.configs
 
-        /**
-         * Instance of pistachio
-         * @type {object}
-         */
-        this.Pistachio = this.makePistachio(data.bot)
-
 		/**
          * The default locale for current command instance
          * @type {object}
@@ -60,14 +53,14 @@ class LogsSystem {
         //  Handle if typeOfLog is not provided
         if (!data.typeOfLog) return
         //  Run GUILD_CREATE and GUILD_DELETE in support's server
-        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)]()
+        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)](...this.Pistachio)
         //  Handle if logs_module isn't enabled in the current guild instance
-        if (!this.configs.get(`LOGS_MODULE`).value) return console.debug(`fail on logs_module check`)
+        if (!this.configs.get(`LOGS_MODULE`).value) return
         //  Handle if logs channel cannot be found
         this.findLogsChannel()
-        if (!this.logsChannel) return console.debug(`fail on logs_channel check`)
+        if (!this.logsChannel) return
         //  Run log based on given type
-        this[this._configCodeToMethod(data.typeOfLog)]()
+        this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
     }
 
     /**
@@ -89,235 +82,285 @@ class LogsSystem {
         return 
     }
 
-    channelUpdate() {
-        const { bot: { logger }, oldChannel, newChannel, bot } = this.data
-        if (this.logChannel.guild.id != oldChannel.guild.id) return
-        const {channelUpdate_MASTER, channelUpdate_NAME, channelUpdate_TOPIC, channelUpdate_NSFW, channelUpdate_TYPE, channelUpdate_CATEGORY } = bot
-        if (!channelUpdate_MASTER) return
-        if (channelUpdate_NAME && (oldChannel.name != newChannel.name)) {
-            logger.info(`Channel Name Changed: From #${oldChannel.name} To #${newChannel.name}`)
-            this.Pistachio.reply(`**Channel Name Changed: From #{{oldChannelName}} To {{newChannelName}}**`, {
-                socket: {"oldChannelName": oldChannel.name, 
-                    "newChannelName": newChannel},
-                field: this.logChannel,
-                footer: `ID: ${newChannel.id}`,
-                timestamp: true,
-                color: palette.green,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-        if (channelUpdate_TOPIC && (oldChannel.topic != newChannel.topic)) {
-            logger.info(`Channel Topic Changed: For #${newChannel.name}`)
-            if (!oldChannel.topic) oldChannel.topic = `nothing`
-            if (!newChannel.topic) newChannel.topic = `nothing`
-            this.Pistachio.reply(`**Channel Topic Changed: For {{newChannel}}**\n**From:** {{oldTopic}}\n**To:** {{newtopic}}`, {
-                socket: {"newChannel": newChannel, "oldTopic": oldChannel.topic, "newtopic": newChannel.topic},
-                footer: `ID: ${newChannel.id}`,
-                field: this.logChannel,
-                timestamp: true,
-                color: palette.green,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-        if (channelUpdate_NSFW && (oldChannel.nsfw != newChannel.nsfw)) {
-            logger.info(`Channel NSFW status Changed: For #${newChannel.name}`)
-            var yes = `Is Now NSFW`
-            var no = `Is Not NSFW Anymore`
-            this.Pistachio.reply(`**Channel NSFW status Changed: For {{newChannel}}**\n**To:** {{nsfw}}\n`, {
-                socket: {"newChannel": newChannel, "nsfw": newChannel.nsfw ? yes : no},
-                footer: `ID: ${newChannel.id}`,
-                timestamp: true,
-                field: this.logChannel,
-                color: palette.green,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-        if (channelUpdate_TYPE && (oldChannel.type != newChannel.type)) {
-            logger.info(`Channel Type Changed: For #${newChannel.name}`)
-            this.Pistachio.reply(`**Channel Type Changed: For {{newChannel}}**\n**To:** {{newType}}`, {
-                socket: {"newChannel": newChannel, "newType": newChannel.type},
-                footer: `ID: ${newChannel.id}`,
-                field: this.logChannel,
-                timestamp: true,
-                color: palette.green,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-        if (channelUpdate_CATEGORY && (oldChannel.parentID != newChannel.parentID)) {
-            logger.info(`Channel Category Changed: For #${newChannel.name}`)
-            this.Pistachio.reply(`**Channel Category Changed: For {{newChannel}}**\n**From:** {{oldCat}}\n**To:** {{newCat}}`, {
-                socket: {"newChannel":newChannel, "oldCat": oldChannel.parentID ? bot.channels.get(oldChannel.parentID) : `No Category`, "newCat": newChannel.parentID ? bot.channels.get(newChannel.parentID) : `No Category`},
-                footer: `ID: ${newChannel.id}`,
-                field: this.logChannel,
-                timestamp: true,
-                color: palette.green,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
+    /**
+     * CHANNEL_UPDATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    channelUpdate({ reply, emoji }) {
+        const fn = `[Logs.channelUpdate()]`
+        //  Handle if channel update wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.oldChannel.guild.id) return
+        //  Handle if no channel's name changes are made
+        if (this.data.oldChannel.name === this.data.newChannel.name) return
+        //  Send logs
+        this.logger.info(`${fn} A channel's name was updated in GUILD_ID:${this.data.newChannel.guild.id}`)
+        reply(this.locale.LOGS.CHANNEL_UPDATE, {
+            header: `#${this.data.newChannel.name} channel name just got refreshed.`,
+            timestamp: true,
+            field: this.logsChannel,
+            socket: {
+                oldChannel: this.data.oldChannel.name,
+                newChannel: this.data.newChannel,
+                emoji: emoji(`AnnieSmile`)
+            }
+        })
+        
     }
 
-    channelCreate() {
-        const { bot: { logger }, bot, channel } = this.data
-        if (!channel || channel.name == `undefined` || channel.name == undefined) return
-        if (this.logChannel.guild.id != channel.guild.id) return
-        logger.info(`New Channel Created: #${channel.name}`)
-        this.Pistachio.reply(`**Channel Created: #{{channelName}}**\n*check audit logs to see who did it*`, {
-            socket: {"channelName": channel.name},
-            footer: `ID: ${channel.id}`,
+    /**
+     * CHANNEL_CREATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    channelCreate({ reply, emoji }) {
+        const fn = `[Logs.channelCreate()]`
+        //  Handle if channel cannot be found/has invalid metadata
+        if (!this.data.channel || typeof this.data.channel.name === undefined) return
+        //  Handle if channel delete wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.channel.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} A new channel was created in GUILD_ID:${this.data.channel.guild.id}`)
+        return reply(this.locale.LOGS.CHANNEL_CREATE, {
+            header: `${this.data.channel.name} channel was created!`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.green,
-            author: bot.user,
-            header: bot.user.username
+            color: `lightgreen`,
+            field: this.logsChannel,
+            socket: {
+                channel: this.data.channel,
+                emoji: emoji(`AnnieDab`)
+            }
         })
     }
 
-    channelDelete() {
-        const { bot: { logger }, bot, channel } = this.data
-        if (this.logChannel.guild.id != channel.guild.id) return
-        logger.info(`Channel Deleted > ${channel.name}`)
-        this.Pistachio.reply(`**Channel Deleted: #{{channelName}}**\n*check audit logs to see who did it*`, {
-            socket: {"channelName": channel.name},
-            footer: `ID: ${channel.id}`,
+    /**
+     * CHANNEL_DELETE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    channelDelete({ reply, emoji }) {
+        const fn = `[Logs.channelDelete()]`
+        //  Handle if channel delete wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.channel.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} A channel was deleted in GUILD_ID:${this.data.channel.guild.id}`)
+        return reply(this.locale.LOGS.CHANNEL_DELETE, {
+            header: `${this.data.channel.name} channel was deleted.`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            author: bot.user,
-            header: bot.user.username
+            color: `red`,
+            field: this.logsChannel,
+            socket: {
+                channel: this.data.channel.name,
+                emoji: emoji(`AnnieThinking`)
+            }
         })
     }
 
-    emojiUpdate() {
-        const { bot: { logger }, bot, oldEmoji, newEmoji } = this.data
-        const { emojiUpdate_MASTER, emojiUpdate_NAME } = bot
-        if (!emojiUpdate_MASTER) return
-        if (this.logChannel.guild.id != oldEmoji.guild.id) return
-        if (emojiUpdate_NAME && (oldEmoji.name != newEmoji.name)){
-            logger.info(`Emoji Name Changed > From: ${oldEmoji.name} To: ${newEmoji.name}`)
-            this.Pistachio.reply(`**Emoji Name Changed: From: **{{old}} **To: **{{new}}`, {
-                socket: {"old": oldEmoji.name, "new": newEmoji.name},
-                timestamp: true,
-                field: this.logChannel,
-                color: palette.red,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-    }
-
-    emojiCreate() {
-        const { bot: { logger }, bot, emoji } = this.data
-        if (this.logChannel.guild.id != emoji.guild.id) return
-        logger.info(`Emoji Created: ${emoji.name}`)
-        this.Pistachio.reply(`**Emoji Created: **{{emoji}}`, {
-            socket: {"emoji": emoji.name},
+    /**
+     * EMOJI_UPDATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    emojiUpdate({ reply }) {
+        const fn = `[Logs.emojiUpdate()]`
+        //  Handle if emoji update wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.newEmoji.guild.id) return
+        //  Handle if the emoji doesn't actually change
+        if (this.data.oldEmoji.name === this.data.newEmoji.name) return
+        //  Send logs
+        this.logger.info(`${fn} An emoji was updated in GUILD_ID:${this.data.newEmoji.guild.id}`)
+        return reply(this.locale.LOGS.EMOJI_UPDATE, {
+            header: `${this.data.newEmoji.name} emoji just got refreshed!`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            author: bot.user,
-            header: bot.user.username
+            field: this.logsChannel,
+            socket: {
+                newEmoji: this.data.newEmoji.name,
+                oldEmoji: this.data.oldEmoji.name
+            }
         })
     }
 
-    emojiDelete() {
-        const { bot: { logger }, bot, emoji } = this.data
-        if (this.logChannel.guild.id != emoji.guild.id) return
-        logger.info(`Emoji Deleted: ${emoji.name}`)
-        this.Pistachio.reply(`**Emoji Deleted: **{{emoji}}`, {
-            socket: {"emoji":emoji.name},
+    /**
+     * EMOJI_CREATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    emojiCreate({ reply, emoji }) {
+        const fn = `[Logs.emojiCreate()]`
+        //  Handle if emoji delete wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.emoji.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} An emoji was created in GUILD_ID:${this.data.emoji.guild.id}`)
+        return reply(this.locale.LOGS.EMOJI_CREATE, {
+            header: `${this.data.emoji.name} emoji was created!`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            author: bot.user,
-            header: bot.user.username
+            color: `lightgreen`,
+            field: this.logsChannel,
+            socket: {emoji: emoji(this.data.emoji.name)}
         })
     }
 
-    roleUpdate() {
-        const { bot: { logger }, bot, oldRole, newRole } = this.data
-        const { roleUpdate_MASTER } = bot
-        if (!roleUpdate_MASTER) return
-        if (this.logChannel.guild.id != newRole.guild.id) return
-        if (oldRole.name != newRole.name){
-            logger.info(`Role name changed: ${newRole.name}`)
-            this.Pistachio.reply(`**Role Name Changed: {{new}}**\n**Old Role: **{{old}}`, {
-                socket: {"new":newRole, "old":oldRole.name},
-                timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                footer: `ID: ${newRole.id}`,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
-    }
-
-    roleCreate() {
-        const { bot: { logger }, bot, role } = this.data
-        if (this.logChannel.guild.id != role.guild.id) return
-        logger.info(`Role Created: ${role.name}`)
-        this.Pistachio.reply(`**Role Created: {{role}}**`, {
-            socket: {"role":role},
+    /**
+     * EMOJI_DELETE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    emojiDelete({ reply }) {
+        const fn = `[Logs.emojiDelete()]`
+        //  Handle if emoji delete wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.emoji.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} An emoji was deleted in GUILD_ID:${this.data.emoji.guild.id}`)
+        return reply(this.locale.LOGS.EMOJI_DELETE, {
+            header: `${this.data.emoji.name} emoji was deleted.`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            footer: `ID: ${role.id}`,
-            author: bot.user,
-            header: bot.user.username
+            color: `red`,
+            field: this.logsChannel,
+            socket: {emoji: this.data.emoji.name}
         })
     }
 
-    roleDelete() {
-        const { bot: { logger }, bot, role } = this.data
-        if (this.logChannel.guild.id != role.guild.id) return
-        logger.info(`Role Deleted: ${role.name}`)
-        this.Pistachio.reply(`**Role Deleted: @{{role}}**`, {
-            socket: {"role":role.name},
+    /**
+     * ROLE_UPDATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    roleUpdate({ reply }) {
+        const fn = `[Logs.roleUpdate()]`
+        //  Handle if role change wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.newRole.guild.id) return
+        //  Handle if role isn't changed
+        if (this.data.oldRole.name === this.data.newRole.name) return
+        //  Send logs
+        this.logger.info(`${fn} A role was updated in GUILD_ID:${this.data.newRole.guild.id}`)
+        return reply(this.locale.LOGS.ROLE_UPDATE, {
+            header: `A refreshed role, ${this.data.newRole.name}.`,
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            footer: `ID: ${role.id}`,
-            author: bot.user,
-            header: bot.user.username
+            color: this.data.newRole.hexColor,
+            field: this.logsChannel,
+            socket: {
+                oldRole: `${this.data.oldRole.name}(${this.data.oldRole.id})`,
+                newRole: this.data.newRole,
+                color: this.data.newRole.hexColor.toUpperCase()
+            }
         })
     }
 
-    messageUpdate() {
-        const { bot: { logger }, oldMessage, newMessage, bot} = this.data
-        const { messageUpdate_MASTER } = bot
-        if (!messageUpdate_MASTER) return
-        if (newMessage.channel.type ==`dm`) return
-        if (this.logChannel.guild.id != newMessage.guild.id) return
-        if (oldMessage.content != newMessage.content){
-            if (oldMessage.content.length > 1950) oldMessage.content = oldMessage.content.substring(0,1950) + `...`
-            logger.info(`Message edited in #${newMessage.channel.name}`)
-            this.Pistachio.reply(`**{{author}} Edited their message in: **{{new}}\n**Old: **{{old}}`, {
-                socket: {"author":newMessage.author, "new":newMessage.channel, "old":oldMessage.content},
-                footer: `ChannelID: ${newMessage.channel.id}`,
-                timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                header: newMessage.author.username,
-                author: newMessage.author
-            })
-        }
+    /**
+     * ROLE_CREATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    roleCreate({ reply, emoji }) {
+        const fn = `[Logs.roleCreate()]`
+        //  Handle if role change wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.role.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} A role was created in GUILD_ID:${this.data.role.guild.id}`)
+        return reply(this.locale.LOGS.ROLE_CREATE, {
+            header: `A role was created.`,
+            timestamp: true,
+            color: `lightgreen`,
+            field: this.logsChannel,
+            socket: {emoji: emoji(`AnnieHype`)}
+        })
     }
 
-    messageDeleteBulk() {
+    /**
+     * ROLE_DELETE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    roleDelete({ reply, emoji }) {
+        const fn = `[Logs.roledelete()]`
+        //  Handle if role change wasn't from the same guild id
+        if (this.logsChannel.guild.id !== this.data.role.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} A role was deleted in GUILD_ID:${this.data.role.guild.id}`)
+        return reply(this.locale.LOGS.ROLE_DELETE, {
+            header: `${this.data.role.name} role was deleted.`,
+            timestamp: true,
+            color: `red`,
+            field: this.logsChannel,
+            socket: {
+                role: `${this.data.role.name}(${this.data.role.id})`,
+                emoji: emoji(`AnniePogg`)
+            }
+        })
+    }
+
+    /**
+     * MESSAGE_UPDATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    messageUpdate({ reply, emoji }) {
+        const fn = `[Logs.messageUpdate()]`
+        //  Handle if message is coming from direct message interface
+        if (this.data.newMessage.channel.type ==`dm`) return
+        //  Handle if the updated message's guild ID isn't the same log's channel guild's ID 
+        if (this.logsChannel.guild.id !== this.data.newMessage.guild.id) return
+        //  Handle if old's content is the same as new's message content
+        if (this.data.oldMessage.content === this.data.newMessage.content) return
+        this.logger.info(`${fn} a message was edited in GUILD_ID:${this.guild.id}`)
+        if (this.data.oldMessage.content.length > 1950) this.data.oldMessage.content = this.data.oldMessage.content.substring(0,1950) + `...`
+        //  Send logs
+        return reply(this.locale.LOGS.MESSAGE_UPDATE, {
+            header: `A message was edited by ${this.data.newMessage.author.username}.`,
+            thumbnail: this.data.newMessage.author.displayAvatarURL(),
+            timestamp: true,
+            field: this.logsChannel,
+            socket: {
+                channel: this.data.newMessage.channel,
+                oldMessage: this.data.oldMessage.content,
+                newMessage: this.data.newMessage.content,
+                user: this.data.newMessage.author,
+                emoji: emoji(`AnnieSmile`)
+            }
+        })
+    }
+
+    /**
+     * MESSAGE_DELETE_BULK event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    messageDeleteBulk({ reply, commanifier }) {
         const fn = `[Logs.messageDeleteBulk()]`
+        const message = this.data.messages.first()
+        //  Handle if message is coming from direct message interface
+        if (message.channel.type ==`dm`) return
+        //  Preventation, incase the current guild instance isn't in the same place as received message id.
+        if (this.logsChannel.guild.id !== message.guild.id) return
+        this.logger.info(`${fn} a bulk of message was deleted from GUILD_ID:${this.guild.id}`)
+        return reply(this.locale.LOGS.MESSAGE_DELETE_BULK, {
+            header: `Bulk of Messages deletion was performed.`,
+            timestamp: true,
+            color: `red`,
+            field: this.logsChannel,
+            socket: {
+                messages: (this.data.messages.size-1),
+                channel: message.channel
+            }
+        })
+    }
+
+    /**
+     * MESSAGE_DELETE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    messageDelete({ reply }) {
+        const fn = `[Logs.messageDelete()]`
+        //  Handle if message is coming from bot-typed user
+        if (this.message.author.bot) return
         //  Handle if message is coming from direct message interface
         if (this.message.channel.type ==`dm`) return
         //  Preventation, incase the current guild instance isn't in the same place as received message id.
-        const message = this.data.messages.first()
-        if (this.logsChannel.guild.id !== message.guild.id) return
-        this.logger.info(`${fn} a bulk of message was deleted from GUILD_ID:${this.guild.id}`)
-        return this.Pistachio.reply(this.locale.LOGS.MESSAGE_DELETE_BULK, {
-            header: `${this.data.messages.size} messages got bulk deleted by ${this.message.author.username}.`,
+        if (this.logsChannel.guild.id != this.message.guild.id) return
+        this.logger.info(`${fn} a message was deleted from GUILD_ID:${this.guild.id}`)
+        return reply(this.locale.LOGS.MESSAGE_DELETE, {
+            header: `A message was deleted by ${this.message.author.username}.`,
             thumbnail: this.message.author.displayAvatarURL(),
             timestamp: true,
             color: `red`,
@@ -331,198 +374,201 @@ class LogsSystem {
     }
 
     /**
-     * MESSAGE_DELETE event log
+     * GUILD_BAN_ADD event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    messageDelete() {
-        const fn = `[Logs.messageDelete()]`
-        //  Handle if message is coming from bot-typed user
-        if (this.message.author.bot) return
-        //  Handle if message is coming from direct message interface
-        if (this.message.channel.type ==`dm`) return
-        //  Preventation, incase the current guild instance isn't in the same place as received message id.
-        if (this.logsChannel.guild.id != this.message.guild.id) return
-        this.logger.info(`${fn} a message was deleted from GUILD_ID:${this.guild.id}`)
-        return this.Pistachio.reply(this.locale.LOGS.MESSAGE_DELETE, {
-            header: `A message deleted by ${this.message.author.username}.`,
-            thumbnail: this.message.author.displayAvatarURL(),
+    guildBanAdd({ reply, emoji }){
+        const fn = `[Logs.guildBanAdd()]`
+        //  Handle if received guild isn't same as the log's channel guild id
+        if (this.logsChannel.guild.id !== this.data.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} a member was banned from GUILD_ID:${this.data.guild.id}`)
+        return reply(this.locale.LOGS.GUILD_BAN_ADD, {
+            header: `${this.data.user.username} just got banned.`,
+            thumbnail: this.data.user.displayAvatarURL(),
             timestamp: true,
             color: `red`,
             field: this.logsChannel,
             socket: {
-                channel: this.message.channel,
-                content: this.message.content || `???`,
-                user: this.message.author
+                emoji: emoji(`AnnieYandere`),
+                user: this.user
             }
         })
     }
 
-    guildBanAdd(){
-        const { bot: { logger }, bot, guild, user } = this.data
-        if (this.logChannel.guild.id != guild.id) return
-        logger.info(`Member Banned From ${guild.id}, ${user}`)
-        this.Pistachio.reply(`**Member Banned: **{{user}} - {{name}}`, {
-            socket: {"user":user, "name":user.username},
+    /**
+     * GUILD_BAN_REMOVE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    guildBanRemove({ reply, emoji }) {
+        const fn = `[Logs.guildBanRemove()]`
+        //  Handle if received guild isn't same as the log's channel guild id
+        if (this.logsChannel.guild.id !== this.data.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} a user's ban status has been revoked from GUILD_ID:${this.data.guild.id}`)
+        return reply(this.locale.LOGS.GUILD_BAN_REMOVE, {
+            header: `${this.data.user.username} got their ban revoked!`,
+            thumbnail: this.data.user.displayAvatarURL(),
             timestamp: true,
-            color: palette.red,
-            field: this.logChannel,
-            footer: `ID: ${user.id}`,
-            author: bot.user,
-            header: bot.user.username
+            field: this.logsChannel,
+            socket: {
+                emoji: emoji(`AnnieSmile`),
+                user: this.user
+            }
         })
     }
 
-    guildBanRemove() {
-        const { bot: { logger }, bot, guild, user } = this.data
-        if (this.logChannel.guild.id != guild.id) return
-        logger.info(`Member Ban revoked From ${guild.id}, ${user}`)
-        this.Pistachio.reply(`**Member Ban revoked: **{{user}} - {{name}}`, {
-            socket: {"user":user, "name":user.username},
-            timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            footer: `ID: ${user.id}`,
-            author: bot.user,
-            header: bot.user.username
-        })
-    }
-
-    async guildCreate() {
-        const { bot: { logger, locale, prefix, supportServer }, guild } = this.data
-        const guildCode = `**${guild.id}@${guild.name}**`
-
-        logger.info(`New guild joined ${guildCode}`)
-        this.Pistachio.reply(`I've been invited to **${guildCode}** guild! ${this.Pistachio.emoji(`AnnieHype`)}`, {
-            color: `lightgreen`,
-            field: this.SupportServerLogChannel
-        })
-
-        const afterInvitationMessage = (targetChannel={}) => {
-             return this.Pistachio.reply(locale[`en`].LOGS.GUILDCREATE.AFTER_INVITATION, {
-                image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
-                prebuffer: true,
-                field: targetChannel,
+    /**
+     * GUILD_UPDATE event log
+     * @returns {void}
+     */
+    guildUpdate({ reply }) {
+        const fn = `[Logs.guildUpdate()]`
+        //  Handle if received guild isn't same as the log's channel guild id
+        if (this.logsChannel.guild.id !== this.data.newGuild.id) return
+        //  Send logs if guild has changed their's server name
+        if (this.data.oldGuild.name !== this.data.newGuild.name) {
+            logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server name.`)
+            reply(this.locale.LOGS.GUILD_UPDATE_NAME, {
+                header: `A brand new house, ${this.data.user.username}.`,
+                thumbnail: this.data.newGuild.iconURL(),
+                timestamp: true,
                 color: `crimson`,
+                field: this.logsChannel,
                 socket: {
-                    wiki: `https://github.com/klerikdust/anniediscord/wiki`,
-                    prefix: prefix,
-                    emoji: this.Pistachio.emoji(`AnnieSmile`),
-                    supportServer: supportServer
+                    emoji: emoji(`AnnieSmile`),
+                    oldGuild: this.data.oldGuild.name,
+                    newGuild: this.data.newGuild.name
                 }
             })
         }
-
-        try {
-            let owner = guild.owner
-            return afterInvitationMessage(owner)
-        } catch (e) {
-            return logger.info(`Fail to send AFTER_INVITATION message to owner of GUILD_ID ${guild.id}`)
-        }
-    }
-
-    guildDelete() {
-        const { bot: { logger }, bot, guild } = this.data
-        logger.info(`Guild Left ${guild.id}`)
-        this.Pistachio.reply(`**Guild Left: **{{id}} - {{name}}`, {
-            socket: {"id":guild.id, "name":guild.name},
-            timestamp: true,
-            color: palette.red,
-            field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`,
-            author: bot.user,
-            header: bot.user.username
-        })
-    }
-
-    guildUpdate() {
-        const { bot: { logger }, bot, oldGuild, newGuild } = this.data
-        if (this.logChannel.guild.id != newGuild.id) return
-        if (oldGuild.name != newGuild.name){
-            logger.info(`Guild Name change ${oldGuild.name} => ${newGuild.name} | ${newGuild.id}`)
-            this.Pistachio.reply(`**Guild Name change: **{{old}} -> {{new}}`, {
-                socket: {"old":oldGuild.name, "new":newGuild.name},
-                timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                footer: `ID: ${newGuild.id}`,
-                author: bot.user,
-                header: bot.user.username
-            })
-        }
+        //  Send logs if guild has changed their's server region
         if (oldGuild.region != newGuild.region) {
-            logger.info(`Guild region change ${oldGuild.region} => ${newGuild.region} | ${newGuild.id}`)
-            this.Pistachio.reply(`**Guild region change: **{{old}} -> {{new}}`, {
-                socket: {"old":oldGuild.region, "new":newGuild.region},
+            logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server's region.`)
+            reply(this.locale.LOGS.GUILD_UPDATE_REGION, {
+                header: `We are switching region!`,
+                thumbnail: this.data.newGuild.iconURL(),
                 timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                footer: `ID: ${newGuild.id}`,
-                author: bot.user,
-                header: bot.user.username
+                color: `crimson`,
+                field: this.logsChannel,
+                socket: {
+                    emoji: emoji(`AnnieThinking`),
+                    oldGuild: this.data.oldGuild.region,
+                    newGuild: this.data.newGuild.region
+                }
             })
         }
     }
 
-    guildMemberAdd(){
-        const { bot: { logger }, bot, member } = this.data
-        if (this.logChannel.guild.id != member.guild.id) return
-        logger.info(`Member Joined ${member.guild.id}, ${member}`)
-        this.Pistachio.reply(`**Member Joined: **{{member}} - {{username}}`, {
-            socket: {"member":member, "username":member.user.username},
+    /**
+     * GUILD_MEMBER_ADD event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    guildMemberAdd({ reply, emoji }) {
+        const fn = `[Logs.guildMemberAdd()]`
+        //  Handle if joined member's guild id wasn't in the same place as logs channel's guild id 
+        if (this.logsChannel.guild.id !== this.data.member.guild.id) return
+        //  Send logs
+        this.logger.info(`${fn} a new user has joined GUILD_ID:${this.data.guild.id}`)
+        return reply(this.locale.LOGS.GUILD_MEMBER_ADD, {
+            header: `Say hi, to ${this.data.member.username}!`,
+            thumbnail: this.data.member.displayAvatarURL(),
             timestamp: true,
-            color: palette.green,
-            field: this.logChannel,
-            footer: `ID: ${member.id}`,
-            author: bot.user,
-            header: bot.user.username
+            field: this.logsChannel,
+            color: `lightgreen`,
+            socket: {
+                emoji: emoji(`AnnieWave`),
+                user: this.data.member
+            }
         })
     }
 
-    guildMemberRemove(){
-        const { bot: { logger }, bot, member } = this.data
-        if (this.logChannel.guild.id != member.guild.id) return
-        if (!member.bannable) return
-        logger.info(`Member Left ${member.guild.id}, ${member}`)
-        this.Pistachio.reply(`**Member Left: **{{member}} - {{username}}`, {
-            socket: {"member":member, "username":member.user.username},
+    /**
+     * GUILD_MEMBER_REMOVE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    guildMemberRemove({ reply, emoji }) {
+        const fn = `[Logs.guildMemberRemove()]`
+        //  Handle if joined member's guild id wasn't in the same place as logs channel's guild id 
+        if (this.logsChannel.guild.id !== this.data.member.guild.id) return
+        //  Handle if member isn't bannable
+        if (!this.data.member.bannable) return
+        //  Send logs
+        this.logger.info(`${fn} a user has left GUILD_ID:${this.data.guild.id}`)
+        return reply(this.locale.LOGS.GUILD_MEMBER_REMOVE, {
+            header: `Farewell .. ${this.data.member.username}.`,
+            thumbnail: this.data.member.displayAvatarURL(),
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            footer: `ID: ${member.id}`,
-            author: bot.user,
-            header: bot.user.username
+            field: this.logsChannel,
+            color: `red`,
+            socket: {
+                emoji: emoji(`AnnieCry`),
+                user: this.data.member
+            }
         })
     }
 
-    guildMemberUpdate(){
-        const { bot: { logger }, bot,oldMember, newMember } = this.data
-        if (this.logChannel.guild.id != newMember.guild.id) return
-        if(oldMember.nickname != newMember.nickname){
-            logger.info(`Nick name change ${oldMember.id} -> ${newMember.nickname}`)
-            this.Pistachio.reply(`** {{member}} nickname change: **{{old}} - {{new}}`, {
-                socket: {"member":newMember, "old":oldMember.nickname, "new":newMember.nickname},
-                timestamp: true,
-                field: this.logChannel,
-                color: palette.red,
-                footer: `ID: ${newMember.id}`,
-                author: bot.user,
-                header: bot.user.username
+    /**
+     * ------------------------------------------------------------
+     * SUPPORT SERVER'S LOGS
+     * ------------------------------------------------------------
+     */
+    /**
+     * GUILD_CREATE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    async guildCreate({ reply, emoji }) {
+        const fn = `[Logs.guildCreate]`
+        const guildCode = `**${this.data.guild.id}@${this.data.guild.name}**`
+        //  Send logs
+        this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
+        reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
+            color: `lightgreen`,
+            field: this.SupportServerLogChannel,
+            socket: {
+                guildCode: guildCode,
+                emoji: emoji(`AnniePeek2`)
+            }
+        })
+        //  Attempt to DM the guild owner
+        try {
+            return reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
+                image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
+                prebuffer: true,
+                field: this.data.guild.owner,
+                color: `crimson`,
+                socket: {
+                    wiki: `https://github.com/klerikdust/anniediscord/wiki`,
+                    prefix: this.bot.prefix,
+                    emoji: emoji(`AnnieSmile`),
+                    supportServer: this.bot.supportServer
+                }
             })
+        } catch (e) {
+            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id}`)
         }
     }
 
-    guildMembersChunk(){
-        const { bot: { logger }, bot, members, guild } = this.data
-        if (this.logChannel.guild.id != members.first().guild.id) return
-        logger.info(`Members from ${guild.id}, ${guild.name}`)
-        this.Pistachio.reply(`** {{amount}} Members from: **{{id}} - {{name}}`, {
-            socket: {"amount":members.length, "id":guild.id, "name":guild.name},
+    /**
+     * GUILD_DELETE event log
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
+     */
+    guildDelete({ reply, emoji }) {
+        const fn = `[Logs.guildDelete()]`
+        this.logger.info(`${fn} ${this.data.guild.name}@${this.data.guild.id} has kicked me.`)
+        return reply(this.locale.LOGS.GUILD_DELETE, {
+            header: `It's nice to know you, ${this.data.guild.name}.`,
+            thumbnail: this.data.guild.iconURL(),
             timestamp: true,
-            field: this.logChannel,
-            color: palette.green,
-            footer: `ID: ${guild.id}`,
-            author: bot.user,
-            header: bot.user.username
+            field: this.logsChannel,
+            color: `red`,
+            socket: {emoji: emoji(`AnnieCry`)}
         })
     }
 
@@ -545,15 +591,6 @@ class LogsSystem {
             configCode = configCode.replace(targets[x], targets[x].charAt(1).toUpperCase())
         }
         return configCode
-    }
-
-    /**
-     * Initializing Pistachio's class instance
-     * @param {object} [bot] current client's instance
-     * @returns {class}
-     */
-    makePistachio(bot){
-        return new Pistachio({bot})
     }
 }
 

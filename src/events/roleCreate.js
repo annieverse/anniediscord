@@ -1,12 +1,9 @@
-
 module.exports = async (bot, role, configs) => {
-
-    var metadata = {
+    let metadata = {
         role: role,
-        typeOfLog: `roleCreate`,
+        typeOfLog: `ROLE_CREATE`,
         bot: bot,
         guild: role.guild
     }
-    
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`ROLE_CREATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

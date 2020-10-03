@@ -1,13 +1,11 @@
 
 module.exports = (bot, oldMessage, newMessage, configs) => {
-    
-    var metadata = {
+    let metadata = {
         oldMessage: oldMessage,
         newMessage: newMessage,
         guild: oldMessage.guild,
-        typeOfLog: `messageUpdate`,
+        typeOfLog: `MESSAGE_UPDATE`,
         bot: bot
     }
-
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`MESSAGE_UPDATE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }
