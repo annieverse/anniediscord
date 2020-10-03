@@ -4,7 +4,6 @@ module.exports = async (bot, member, configs) => {
     //  Import configs
     let instance = `[Events@guildMemberAdd]`
     let guild = bot.guilds.cache.get(member.guild.id)
-    bot.logger.info(`${instance} ${bot.users.cache.get(member.id).tag} has joined ${guild.name}@${guild.id}`)
 
     /**
      * Parsing welcomer text's sockets.
@@ -17,22 +16,18 @@ module.exports = async (bot, member, configs) => {
         res = text.replace(/{{user}}/gi, member)
         return res
     }
-
     /**
      *  -------------------------------------------------------
      *  LOG MODULE
      *  -------------------------------------------------------
      */
-    let customLogs = configs.get(`LOGS_MODULE`)
-    let guildMemberAdd = configs.get(`GUILD_MEMBER_ADD`)
-    if (customLogs.value && guildMemberAdd.value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata).record()
     /**
      *  -------------------------------------------------------
      *  WELCOMER MODULE
      *  -------------------------------------------------------
      */
-    let welcomerModule = configs.get(`WELCOMER_MODULE`)
-    if (welcomerModule.value) {
+    if (configs.get(`WELCOMER_MODULE`).value) {
         //  Prepare welcomer target channel
         let welcomerChannel = configs.get(`WELCOMER_CHANNEL`)
         let getTargetWelcomerChannel = welcomerChannel.value ? welcomerChannel.value : guild.channels.cache.find(channel => channel.name == `general`).id
@@ -58,8 +53,7 @@ module.exports = async (bot, member, configs) => {
      *  WELCOMER'S AUTOROLE MODULE
      *  -------------------------------------------------------
      */
-    const welcomerAutoRoleModule = configs.get(`WELCOMER_ROLES_MODULE`)
-    if (!welcomerRolesModule.value) {
+    if (configs.get(`WELCOMER_ROLES_MODULE`).value) {
         //  Skip role assignment if no roles are registered
         const welcomerRolesList = configs.get(`WELCOMER_ROLES_LIST`)
         if (welcomerRolesList.value.length <= 0) return

@@ -1,4 +1,3 @@
-
 module.exports = (bot, oldMessage, newMessage, configs) => {
     let metadata = {
         oldMessage: oldMessage,

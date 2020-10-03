@@ -1,10 +1,9 @@
 module.exports = async (bot,member, configs) => {
-
-	var metadata = {
+	let metadata = {
 		member: member,
 		guild: member.guild,
-		typeOfLog: `guildMemberRemove`,
+		typeOfLog: `GUILD_MEMBER_REMOVE`,
 		bot: bot
 	}
-	if (configs.get(`LOGS_MODULE`).value && configs.get(`GUILD_MEMBER_REMOVE`).value) new bot.logSystem(metadata).record()
+	if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

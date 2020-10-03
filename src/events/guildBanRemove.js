@@ -1,11 +1,9 @@
-
 module.exports = async (bot, guild, user, configs) => {
-
-    var metadata = {
+    let metadata = {
         guild: guild,
         user: user,
-        typeOfLog: `guildBanRemove`,
+        typeOfLog: `GUILD_BAN_REMOVE`,
         bot: bot
     }
-    if (configs.get(`LOGS_MODULE`).value && configs.get(`GUILD_BAN_REMOVE`).value) new bot.logSystem(metadata).record()
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

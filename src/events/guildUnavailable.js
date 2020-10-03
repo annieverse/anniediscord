@@ -1,10 +1,8 @@
-
 module.exports = async (bot, guild) => {
-       
-    var metadata = {
+    let metadata = {
         guild: guild,
-        typeOfLog: `guildUnavailable`,
+        typeOfLog: `GUILD_UNAVAILABLE`,
         bot: bot
     }
-    new bot.logSystem(metadata).record()
+    new bot.logSystem(metadata)
 }

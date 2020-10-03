@@ -1,11 +1,9 @@
-
-module.exports = async (bot, guild) => {
-    
+module.exports = async (bot, guild) => {    
     await bot.db.registerGuild(guild)
-    var metadata = {
+    let metadata = {
         guild: guild,
-        typeOfLog: `guildCreate`,
+        typeOfLog: `GUILD_CREATE`,
         bot: bot
     }
-    new bot.logSystem(metadata).record()
+    new bot.logSystem(metadata)
 }

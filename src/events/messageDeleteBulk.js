@@ -1,4 +1,3 @@
-
 module.exports = async (bot, messages, configs) => {
     let metadata = {
         messages: messages,

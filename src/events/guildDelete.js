@@ -1,9 +1,8 @@
-
 module.exports = async (bot, guild) => {    
-    var metadata = {
+    let metadata = {
         guild: guild,
-        typeOfLog: `guildDelete`,
+        typeOfLog: `GUILD_DELETE`,
         bot: bot
     }
-    new bot.logSystem(metadata).record()
+    new bot.logSystem(metadata)
 }
