@@ -605,7 +605,7 @@ class Pistachio {
 		options.author = !options.author ? null : options.author
 		options.footer = !options.footer ? null : options.footer
 		options.customHeader = !options.customHeader ? null : options.customHeader
-		options.timestamp == false ? null : options.timestamp = true
+		options.timestamp == false ? null : options.timestamp
 		options.paging === false ? null : options.paging
 		options.columns = !options.columns ? null : options.columns
 		options.status = !options.status ? null : options.status.toLowerCase()

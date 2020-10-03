@@ -411,17 +411,27 @@ class Database {
 			, `run`
 			, [customized_parameter, set_by_user_id,  guild.id, config_code])
 	}
+
+
 	/**
-	 * Insert or update an existing config values
-	 * @param {Object} {object} {config_code, guild_id, customized_parameter, set_by_user_id}
+	 * Options to be supplied to `this.updateGuildConfiguration()` parameters
+	 * @typedef {object} guildConfigurations
+	 * @property {string} [configCode=null] type of the configuration to be stored. Must be uppercased.
+	 * @property {object} [guild+=null] Target guild_id to be stored.
+	 * @property {string} [setByUserId=null] Identifier for the registrar.
+	 * @property {map} [cacheTo=null] Target cache object to be stored into. If value is not provided, then result won't be cached.
+	 */
+
+	/**
+	 * Insert or update an existing guild config values
+	 * @param {guildConfigurations} obj
 	 * @returns {QueryResult}
 	 */
-	async updateGuildConfiguration({configCode=null, guild=null, customizedParameter=null, setByUserId=null}) {
+	async updateGuildConfiguration({configCode=null, guild=null, customizedParameter=null, setByUserId=null, cacheTo={}}) {
 	 	const fn = `[Database.updateGuildConfiguration()]`
 	 	if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be string and non-faulty value.`)
 	 	if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
 	 	if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
-
 	 	//  Register guild incase they aren't registered yet
 	 	this.registerGuild(guild)
 		const res = {
@@ -457,8 +467,17 @@ class Database {
 				, [customizedParameter, configCode, guild.id]
 			)
 		}
+
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.info(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
+		//  Cache result if provided 
+		if (cacheTo) {
+			const targetConfig = cacheTo.get(configCode)
+			targetConfig.value = customizedParameter
+			targetConfig.setByUserId = setByUserId
+			targetConfig.updatedAt = await this.getCurrentTimestamp()
+			logger.info(`${fn} cached ${configCode}@${guild.id}`)
+		}
 		return true
 	}
 

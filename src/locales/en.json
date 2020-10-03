@@ -568,17 +568,17 @@
         "SUCCESSFULLY_DISABLED": "Done! **Custom Rank Module** has been successfully disabled in this guild!"
     },
     "SETWELCOMER": {
-        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n`{{prefix}}setwelcomer enable`\n*One first step you might want to try to make sure this module is enabled in the guild.*\n\n`{{prefix}}setwelcomer channel <targetChannel>`\n*Set the target channel where you want the welcomer message to be sent in.*\neg. __{{prefix}}setwelcomer channel #general__\n\n`{{prefix}}setwelcomer text <message>`\n*You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for shortcut.*\neg. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n`{{prefix}}setwelcomer preview`\n*Wanna see how's your welcomer looks like before your comrades see it?*\n\n`{{prefix}}setwelcomer disable`\n*Tired of spammy welcomer message? you can disable this module anytime.*",
-        "INVALID_ACTION": "Sorry, I don't recognize this action in the welcomer module.",
+        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setwelcomer enable`\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n`{{prefix}}setwelcomer channel <targetChannel>`\n> Set the target channel where you want the welcomer message to be sent in.\neg. __{{prefix}}setwelcomer channel #general__\n\n`{{prefix}}setwelcomer text <message>`\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\neg. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n`{{prefix}}setwelcomer preview`\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n`{{prefix}}setwelcomer disable`\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰───────────────────╯",
+        "INVALID_ACTION": "Sorry, I only recognize the following actions `{{availableActions}}`",
         "ALREADY_ENABLED": "This module already enabled by **{{user}}, {{date}}**",
-        "SUCCESSFULLY_ENABLED": "{{emoji}} **Welcomer Module** has been successfully enabled in this guild!",
-        "ALREADY_DISABLED": "{{emoji}} This module hasn't been enabled yet in this guild.",
-        "SUCCESSFULLY_DISABLED": "{{emoji}} **Welcomer Module** has been successfully disabled in this guild!",
-        "EMPTY_CHANNEL_PARAMETER": "{{emoji}} Don't forget to specify the channel name!",
-        "INVALID_CHANNEL": "{{emoji}} Sorry, I can't find any channel with that name.",
-        "CHANNEL_SUCCESSFULLY_REGISTERED": "{{emoji}} Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
-        "EMPTY_TEXT_PARAMETER": "{{emoji}} Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
-        "TEXT_SUCCESSFULLY_REGISTERED": "{{emoji}} Yay! this guild's welcomer message has been updated!",
+        "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
+        "ALREADY_DISABLED": "This module hasn't been enabled yet in this guild.",
+        "SUCCESSFULLY_DISABLED": "**Welcomer Module** has been successfully disabled in this guild!",
+        "EMPTY_CHANNEL_PARAMETER": "Don't forget to specify the channel name!",
+        "INVALID_CHANNEL": "Sorry, I can't find any channel with that name.",
+        "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
+        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
+        "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
         "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}"        
     },
     "SHOP": {

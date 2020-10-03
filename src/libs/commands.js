@@ -188,7 +188,7 @@ class Commands {
 
 	/**
 	 * Registering a react-based button as the medium to get confirmation-state from the user.
-	 * After calling the method, the button can be accessed by looking up through key in `this.confirmButtons` (Map)
+	 * After calling the method, the button can be accessed by looking up through key in `this.confirmationButtons` (Map)
 	 * @param {string} [id=this._generateUUID] as an identifier of the current confirmation button
 	 * @param {collection} [targetMessage=this.message] target message to registered to
 	 * @param {string} [targetUserId] target user that has the privilege of using the confirmation-state

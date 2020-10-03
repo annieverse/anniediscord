@@ -697,7 +697,7 @@ class config {
                 description: `The content of the message that going to be displayed when a user has joined guild`,
                 customizable: true,
                 allowedTypes: [`string`],
-                value: `Welcome to **{{guild}}**, {{user}}!`
+                value: `Welcome to {{guild}}, {{user}}!`
             },
             {
                 /**
