@@ -462,12 +462,13 @@ class Database {
 				UPDATE guild_configurations
 				SET 
 					customized_parameter = ?,
+					set_by_user_id = ?,
 					updated_at = datetime('now')
 				WHERE 
 					config_code = ?
 					AND guild_id = ?`
 				, `run`
-				, [parsedValueParameter, configCode, guild.id]
+				, [parsedValueParameter, setByUserId, configCode, guild.id]
 			)
 		}
 
