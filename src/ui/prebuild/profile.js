@@ -74,10 +74,10 @@ class UI {
 
 		//  Verified/Blue Badge if any
 		const verifiedStartingPoint = card.canv.measureText(this.user.user.username).width * 1.3 + 2
-		if (this.user.verified) card.canv.printImage(await loadAsset(`verified_badge`), startPos_x + 70 + verifiedStartingPoint, 256, 16, 16)
+		if (this.user.main.verified) card.canv.printImage(await resolveImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
 
 		// Rank Bar
-		if (this.bot.xp_module) card.canv.save()
+		card.canv.save()
 			.setColor(adjustedPrimaryColorContrast)
 			.createRoundedClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.printRectangle(startPos_x + 150, startPos_y + 250, 130, 20)
@@ -115,14 +115,14 @@ class UI {
 			.setColor(adjustedPrimaryColorContrast)
 			.setTextFont(`17pt roboto`)
 			.printText(formatK(this.user.inventory.artcoins), 70, 370)
-			if (this.bot.xp_module) card.canv.printText(this.user.exp.level, 160, 370)
-			card.canv.printText(formatK(this.user.reputations.total_reps), 250, 370)
+			.printText(this.user.exp.level, 160, 370)
+			.printText(formatK(this.user.reputations.total_reps), 250, 370)
 
 			.setColor(card.color.text)
 			.setTextFont(`7pt roboto`)
 			.printText(`ARTCOINS`, 70, 390)
-			if (this.bot.xp_module) card.canv.printText(`LEVEL`, 160, 390) 
-			card.canv.printText(`FAME`, 250, 390) 
+			.printText(`LEVEL`, 160, 390) 
+			.printText(`FAME`, 250, 390) 
 
 		return card.ready()
 	}

@@ -692,6 +692,8 @@ class Pistachio {
 		if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
 		//  Add footer
 		if (options.footer) embed.setFooter(options.footer)
+		//  Add timestamp on footer part
+		if (options.timestamp) embed.setTimestamp()
 		// Add url
 		if (options.url) embed.setURL(options.url)
 		//  Add image preview

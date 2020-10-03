@@ -315,7 +315,8 @@
     "LOGS": {
         "GUILDCREATE": {
             "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n{{supportServer}}"
-        }
+        },
+        "MESSAGE_DELETE": "Hi! I just saw one message got deleted by **{{user}}** in this channel called as **{{channel}}**. If I could remember, the content was something like this:\n> {{content}}" 
     },
     "MANAGE_PROFILE": {
         "ALREADY_DIPLAYED": "Sorry, but you are Already displaying that {0}",

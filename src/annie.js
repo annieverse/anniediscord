@@ -9,7 +9,7 @@ const Express = require(`express`)
 const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
-const logSystem = require(`./libs/logs.js`)
+const logsSystem = require(`./libs/logs.js`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -111,7 +111,7 @@ class Annie extends Discord.Client {
          * @type {HyperlinkString}
          */ 
         this.supportServer = `https://discord.gg/7nDes9P`
-        this.logSystem = logSystem
+        this.logsSystem = logsSystem
     }
 
 

@@ -19,14 +19,19 @@ const GUI = require(`../ui/prebuild/levelUpMessage`)
 class Experience extends Points {
     constructor(client) {
         super(client)
-
         /**
          * The default multiplier will be `1` or equal to 100%.
          * @since 6.0.0
          * @type {number}
          */
-        this.expMultiplier = this.expConfig.factor
-    }
+		this.expMultiplier = this.expConfig.factor
+
+        /**
+         * Current guild's config instance
+         * @type {map}
+         */
+		this.configs = this.bot.guilds.cache.get(this.message.guild.id).configs
+		}
 
     /**
      *  Running EXP workflow.
@@ -34,7 +39,7 @@ class Experience extends Points {
      *  @returns {boolean}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
-		if (!this.bot.xp_module) return
+		if (!this.configs.get(`EXP_MODULE`).value) return
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
         
     	//  Apply booster if presents
@@ -83,7 +88,7 @@ class Experience extends Points {
 	 * @param {Number} level 
 	 */
 	async updateRank(level){
-		if (!this.bot.custom_ranks) return
+		if (!this.configs.get(`CUSTOM_RANK_MODULE`).value) return
 		let rankLevels = []
 		let lowerRankRoles = []
 		this.bot.ranks.forEach(element => {
@@ -126,7 +131,7 @@ class Experience extends Points {
     	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
-		if (!parseInt(this.bot.level_up_message)) return
+		if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
 		return this.reply(``, {
 			simplified: true,
             prebuffer: true,

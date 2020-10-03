@@ -31,7 +31,8 @@ class Dailies extends Command {
 		const COOLDOWN_MSG = this.user.isSelf ? this.locale.DAILIES.AUTHOR_IN_COOLDOWN : this.locale.DAILIES.OTHERS_IN_COOLDOWN
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(COOLDOWN_MSG, {
 			color: `red`,
-			socket: {time: moment(lastClaimAt).add(...this.cooldown).fromNow(), user: name(this.user.id)}
+			socket: {time: moment(lastClaimAt).add(...this.cooldown).fromNow(), user: name(this.user.id)},
+			footer: `Type ${this.bot.prefix}vote to get 5,000 artcoins!`
 		})
 		//  If user hasn't claimed their dailies over 2 days, the current total streak will be reset to zero.
 		let totalStreak = now.diff(lastClaimAt, `days`) >= 2 ? 0 : this.user.dailies.total_streak + 1

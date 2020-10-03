@@ -1,21 +1,92 @@
 `use-strict`
 const palette = require(`../ui/colors/default.json`)
-const Long = require(`long`)
 const Pistachio = require(`../libs/pistachio`)
 /**
- *  Handling log records
- *  @LogsSystem
+ *  A centralized system to log discord-related audits
+ *  Each logs type will be divided into different methods
+ *  @author Pan
+ *  @revised by klerikdust
  */
 class LogsSystem {
-
-    constructor(data) {
+    constructor(data={}) {
+        /**
+         * Primary meta which includes current client instance, guildId and give type of log
+         * @type {object}
+         */
         this.data = data
+
+        /**
+         * Default log channel in Annie's support server
+         * @type {object}
+         */
         this.SupportServerLogChannel = data.bot.guilds.cache.get(`577121315480272908`).channels.cache.get(`724732289572929728`)
-        this.Pistachio = this.makePistachio(this.data.bot)
+
+        /**
+         * Current guild's instance
+         * @type {object}
+         */
+        this.guild = data.bot.guilds.cache.get(data.guild.id)
+
+        /**
+         * Current message's instance
+         * @type {object}
+         */
+        this.message = data.message
+
+        /**
+         * Current client's logger instance
+         * @type {external:winston}
+         */
+        this.logger = data.bot.logger
+
+        /**
+         * Current guild's configurations factory
+         * @type {map}
+         */
+        this.configs = this.guild.configs
+
+        /**
+         * Instance of pistachio
+         * @type {object}
+         */
+        this.Pistachio = this.makePistachio(data.bot)
+
+		/**
+         * The default locale for current command instance
+         * @type {object}
+         */	
+		this.locale = data.bot.locale[`en`]	
+
+        //  Handle if typeOfLog is not provided
+        if (!data.typeOfLog) return
+        //  Run GUILD_CREATE and GUILD_DELETE in support's server
+        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)]()
+        //  Handle if logs_module isn't enabled in the current guild instance
+        if (!this.configs.get(`LOGS_MODULE`).value) return console.debug(`fail on logs_module check`)
+        //  Handle if logs channel cannot be found
+        this.findLogsChannel()
+        if (!this.logsChannel) return console.debug(`fail on logs_channel check`)
+        //  Run log based on given type
+        this[this._configCodeToMethod(data.typeOfLog)]()
     }
 
-    makePistachio(bot){
-        return new Pistachio({bot})
+    /**
+     * A set of searchflow to find the target log channel for the current guild
+     * @returns {void}
+     */
+    findLogsChannel() {
+        const fn = `[Logs.findLogsChannel()]`
+        //  Find a log channel by custom configuration if available
+        const channel = this.guild.channels.cache
+        const customLogChannel = channel.get(this.configs.get(`LOGS_CHANNEL`).value)
+        if (channel.has(this.configs.get(`LOGS_CHANNEL`))) return this.logsChannel = customLogChannel
+        //  Find a log channel by system assumption
+        const assumptionLogChannel = channel.find(node => (node.name.toLowerCase() === `logs`) || (node.name.toLowerCase() === `log`))
+        if (assumptionLogChannel !== undefined) return this.logsChannel = assumptionLogChannel
+        //  Fallback
+        this.logger.info(`${fn} fail to find the target log channel for GUILD_ID:${this.guildId}`)
+        this.logsChannel = null
+        return 
     }
 
     channelUpdate() {
@@ -238,49 +309,52 @@ class LogsSystem {
     }
 
     messageDeleteBulk() {
-        const { bot: { logger }, bot, messages } = this.data
-        var message = messages.first()
-        if (this.logChannel.guild.id != message.guild.id) return
-        logger.info(`Bulk Message delete in #${message.channel.name}`)
-        this.Pistachio.reply(`**{{amount}} Messages bulk deleted in {{channel}}**`, {
-            socket: {"amount":messages.size, "channel":message.channel},
-            footer: `ChannelID: ${message.channel.id}`,
+        const fn = `[Logs.messageDeleteBulk()]`
+        //  Handle if message is coming from direct message interface
+        if (this.message.channel.type ==`dm`) return
+        //  Preventation, incase the current guild instance isn't in the same place as received message id.
+        const message = this.data.messages.first()
+        if (this.logsChannel.guild.id !== message.guild.id) return
+        this.logger.info(`${fn} a bulk of message was deleted from GUILD_ID:${this.guild.id}`)
+        return this.Pistachio.reply(this.locale.LOGS.MESSAGE_DELETE_BULK, {
+            header: `${this.data.messages.size} messages got bulk deleted by ${this.message.author.username}.`,
+            thumbnail: this.message.author.displayAvatarURL(),
             timestamp: true,
-            field: this.logChannel,
-            color: palette.red,
-            author: bot.user,
-            header: bot.user.username
+            color: `red`,
+            field: this.logsChannel,
+            socket: {
+                channel: this.message.channel,
+                content: this.message.content || `???`,
+                user: this.message.author
+            }
         })
     }
 
+    /**
+     * MESSAGE_DELETE event log
+     * @returns {Pistachio.reply}
+     */
     messageDelete() {
-        const { bot: { logger }, message } = this.data
-        if (message.author.bot) return
-        if (message.channel.type ==`dm`) return
-        if (this.logChannel.guild.id != message.guild.id) return
-        if (message.content.toLowerCase() == (`y` || `n`)) return
-        logger.info(`Message deleted in #${message.channel.name} Message Content: ${message.content ? message.content : `No Text`}`)
-        if (message.attachments.size > 0) {
-            this.Pistachio.reply(`**Message deleted in {{channel}}**\n**Message Content: **\n{{content}}`, {
-                socket: {"channel":message.channel, "content":message.content ? message.content : `No Text`},
-                footer: `ChannelID: ${message.channel.id} Attachments ${message.attachments.size}`,
-                timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                header: message.author.username,
-                author: message.author
-            })
-        } else {
-            this.Pistachio.reply(`**Message deleted in {{channel}} Message Content:**\n{{content}}`,{
-                socket: {"channel":message.channel, "content":message.content ? message.content : message.embeds.length > 0 ? `Was an embed`: `No Text`},
-                footer: `ChannelID: ${message.channel.id}`,
-                timestamp: true,
-                color: palette.red,
-                field: this.logChannel,
-                header: message.author.username,
-                author: message.author
-            })
-        }
+        const fn = `[Logs.messageDelete()]`
+        //  Handle if message is coming from bot-typed user
+        if (this.message.author.bot) return
+        //  Handle if message is coming from direct message interface
+        if (this.message.channel.type ==`dm`) return
+        //  Preventation, incase the current guild instance isn't in the same place as received message id.
+        if (this.logsChannel.guild.id != this.message.guild.id) return
+        this.logger.info(`${fn} a message was deleted from GUILD_ID:${this.guild.id}`)
+        return this.Pistachio.reply(this.locale.LOGS.MESSAGE_DELETE, {
+            header: `A message deleted by ${this.message.author.username}.`,
+            thumbnail: this.message.author.displayAvatarURL(),
+            timestamp: true,
+            color: `red`,
+            field: this.logsChannel,
+            socket: {
+                channel: this.message.channel,
+                content: this.message.content || `???`,
+                user: this.message.author
+            }
+        })
     }
 
     guildBanAdd(){
@@ -350,21 +424,6 @@ class LogsSystem {
         const { bot: { logger }, bot, guild } = this.data
         logger.info(`Guild Left ${guild.id}`)
         this.Pistachio.reply(`**Guild Left: **{{id}} - {{name}}`, {
-            socket: {"id":guild.id, "name":guild.name},
-            timestamp: true,
-            color: palette.red,
-            field: this.SupportServerLogChannel,
-            footer: `ID: ${guild.id}`,
-            author: bot.user,
-            header: bot.user.username
-        })
-    }
-
-    guildUnavailable() {
-        const { bot: { logger }, bot, guild } = this.data
-        if (this.logChannel.guild.id != guild.id) return
-        logger.info(`Guild Unavailable ${guild.id}`)
-        this.Pistachio.reply(`**Guild Unavailable: **{{id}} - {{name}}`, {
             socket: {"id":guild.id, "name":guild.name},
             timestamp: true,
             color: palette.red,
@@ -467,37 +526,35 @@ class LogsSystem {
         })
     }
 
-    record() {
-        const { typeOfLog, bot, configs, guild: {guildId} } = this.data
-        if (!typeOfLog) return
-        if (typeOfLog == `guildCreate`) return this.guildCreate()
-        if (typeOfLog == `guildDelete`) return this.guildDelete()
-        if (typeOfLog == `guildUnavailable`) return this.guildUnavailable()
-        if (!configs.get(`LOG_CHANNEL`).value) return
-        this.logChannel = bot.guilds.cache.get(guildId).channels.cache.get(configs.get(`LOG_CHANNEL`).value)
-        if (!this.logChannel) return 
-        if (!configs.get(`LOG_MODULE`).value) return 
-        if (typeOfLog == `channelUpdate`) return this.channelUpdate()
-        if (typeOfLog == `channelCreate`) return this.channelCreate()
-        if (typeOfLog == `channelDelete`) return this.channelDelete()
-        if (typeOfLog == `emojiUpdate`) return this.emojiUpdate()
-        if (typeOfLog == `emojiCreate`) return this.emojiCreate()
-        if (typeOfLog == `emojiDelete`) return this.emojiDelete()
-        if (typeOfLog == `messageUpdate`) return this.messageUpdate()
-        if (typeOfLog == `messageDeleteBulk`) return this.messageDeleteBulk()
-        if (typeOfLog == `messageDelete`) return this.messageDelete()
-        if (typeOfLog == `roleUpdate`) return this.roleUpdate()
-        if (typeOfLog == `roleCreate`) return this.roleCreate()
-        if (typeOfLog == `roleDelete`) return this.roleDelete()
-        if (typeOfLog == `guildBanAdd`) return this.guildBanAdd()
-        if (typeOfLog == `guildBanRemove`) return this.guildBanRemove()
-        if (typeOfLog == `guildMemberAdd`) return this.guildMemberAdd()
-        if (typeOfLog == `guildMemberRemove`) return this.guildMemberRemove()
-        if (typeOfLog == `guildMembersChunk`) return this.guildMembersChunk()
-        if (typeOfLog == `guildMemberUpdate`) return this.guildMemberUpdate()
-        if (typeOfLog == `guildUpdate`) return this.guildUpdate()
+    /**
+     * Parsing CONFIG_CODE case into configCode.
+     * @param {string} [configCode=``] target config code to parse from
+     * @author klerikdust
+     * @returns {string}
+     */
+    _configCodeToMethod(configCode=``) {
+        if (!configCode) throw new TypeError(`[Logs._configCodeToMethod()] parameter 'configCode' must be a valid string.`)
+        let targets = []
+        configCode = configCode.toLowerCase()
+        for (let i=0; i<configCode.length; i++) {
+            if (configCode[i] === `_`) {
+                targets.push(`_${configCode[i + 1]}`) 
+            }
+        }
+        for (let x=0; x<targets.length; x++) {
+            configCode = configCode.replace(targets[x], targets[x].charAt(1).toUpperCase())
+        }
+        return configCode
     }
 
+    /**
+     * Initializing Pistachio's class instance
+     * @param {object} [bot] current client's instance
+     * @returns {class}
+     */
+    makePistachio(bot){
+        return new Pistachio({bot})
+    }
 }
 
 
