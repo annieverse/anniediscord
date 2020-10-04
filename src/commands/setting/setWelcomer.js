@@ -16,7 +16,7 @@ class SetWelcomer extends Command {
          * An array of the available options for welcomer module
          * @type {array}
          */
-        this.actions = [`enable`, `disable`, `channel`, `text`, `preview`]
+        this.actions = [`enable`, `disable`, `channel`, `text`, `role`, `preview`]
 
         /**
          * Reference key to welcomer sub-modules config code.
@@ -26,7 +26,8 @@ class SetWelcomer extends Command {
             "enable": `WELCOMER_MODULE`,
             "disable": `WELCOMER_MODULE`,
             "channel": `WELCOMER_CHANNEL`,
-            "text": `WELCOMER_TEXT`
+            "text": `WELCOMER_TEXT`,
+            "role": `WELCOMER_ROLES`
         }
 
         /**
@@ -60,7 +61,6 @@ class SetWelcomer extends Command {
         //  Run action
         this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
         this.action = this.args[0]
-        this.actionParameter = this.fullArgs.slice(this.args[0].length+1)
         this.selectedModule = this.actionReference[this.action]
         //  This is the main configuration of setwelcomer, so everything dependant on this value
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
@@ -136,11 +136,11 @@ class SetWelcomer extends Command {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
         //  Handle if search keyword isn't provided
-        if (!this.actionParameter) return reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {status: `warn`})
+        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {status: `warn`})
         //  Do channel searching by three possible conditions
         const searchChannel = this.message.mentions.channels.first()
-        || this.message.guild.channels.cache.get(this.actionParameter)
-        || this.message.guild.channels.cache.find(channel => channel.name === this.actionParameter.toLowerCase())
+        || this.message.guild.channels.cache.get(this.args[1])
+        || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
         if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {status: `fail`})
         //  Update configs
@@ -167,14 +167,14 @@ class SetWelcomer extends Command {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
         //  Handle if text content isn't provided
-        if (!this.actionParameter) return reply(this.locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
+        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
             socket: {prefix: this.bot.prefix},
             status: `warn`
         })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
-            customizedParameter: this.actionParameter,
+            customizedParameter: this.args[1],
             guild: this.message.guild,
             setByUserId: this.user.id,
             cacheTo: this.guildConfigurations
@@ -209,6 +209,38 @@ class SetWelcomer extends Command {
             simplified: true,
             prebuffer: true,
             image: img
+        })
+    }
+
+    /**
+     * Adding role when user joined the guild 
+     * @returns {reply}
+     */
+    async role({ reply, emoji, findRole }) {
+        const fn = `[setWelcomer.role()]`
+        //  Handle if the user hasn't enabled the module yet
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
+        //  Handle if search keyword isn't provided
+        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
+            socket: {prefix: this.bot.prefix},
+            status: `warn`
+        })
+        //  Do role searching
+        const searchRole = findRole(this.args[1])
+        //  Handle if target role couldn't be found
+        if (!searchRole) return reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
+        //  Update configs
+        await this.bot.db.updateGuildConfiguration({
+            configCode: this.selectedModule,
+            customizedParameter: [searchRole.id],
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
+        })
+        this.logger.info(`${fn} A new role has been registered for GUILD_ID:${this.message.guild.id}`)
+        return reply(this.locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
+            socket: {role: searchRole},
+            status: `success`
         })
     }
 

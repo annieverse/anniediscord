@@ -1,13 +1,10 @@
 const BoosterPerks = require(`../libs/nitroPerks`)
-
 module.exports = async (bot, oldUser, newUser, configs) => {
-
-
-	var metadata = {
+	let metadata = {
 		oldUser: oldUser,
 		newUser: newUser,
 		guild: oldUser.guild,
-		typeOfLog: `guildMemberUpdate`,
+		typeOfLog: `GUILD_MEMBER_UPDATE`,
 		bot: bot
 	}
 

@@ -499,12 +499,12 @@
         "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
     },
     "SETLEVELUPMESSAGE": {
-        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n`{{prefix}}setlvlupmsg enable`\n*By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).*\n\n`{{prefix}}setlvlupmsg disable`\n*Getting tired of annoying level-up message? then it's time to disable it.*",
-        "INVALID_ACTION": "{{emoji}} Sorry, I only accept **enable** or **disable** action in this module.",
+        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setlvlupmsg enable`\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n`{{prefix}}setlvlupmsg disable`\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰───────────────────╯",
+        "INVALID_ACTION": "Sorry, I only accept **enable** or **disable** action in this module.",
         "ALREADY_ENABLED": "This module already enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "{{emoji}} This module hasn't been enabled yet in this guild.",
-        "SUCCESSFULLY_ENABLED": "{{emoji}} **Level-up Message Module** has been successfully enabled in this guild!",
-        "SUCCESSFULLY_DISABLED": "{{emoji}} **Level-up Message Module** has been successfully disabled in this guild!"
+        "ALREADY_DISABLED": "This module hasn't been enabled yet in this guild.",
+        "SUCCESSFULLY_ENABLED": "Yay! **Level-up Message Module** has been successfully enabled in this guild!",
+        "SUCCESSFULLY_DISABLED": "Done! **Level-up Message Module** has been successfully disabled!\nthis guild won't receive any level-up message again in the future."
     },
     "SERVER_BOOST": {
         "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
@@ -607,7 +607,10 @@
         "ALREADY_DISABLED": "This module hasn't been enabled yet in this guild.",
         "SUCCESSFULLY_DISABLED": "**Welcomer Module** has been successfully disabled in this guild!",
         "EMPTY_CHANNEL_PARAMETER": "Don't forget to specify the channel name!",
+        "EMPTY_ROLE_PARAMETER": "Don't forget to specify the role!\ne.g. `{{prefix}}setwelcome role @bunny`",
         "INVALID_CHANNEL": "Sorry, I can't find any channel with that name.",
+        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
+        "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
         "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",

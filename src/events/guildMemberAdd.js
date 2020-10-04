@@ -1,6 +1,6 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { MessageAttachment } = require(`discord.js`)
-module.exports = async (bot, member, configs) => {    
+module.exports = async (bot, member, configs) => {   
     //  Import configs
     let instance = `[Events@guildMemberAdd]`
     let guild = bot.guilds.cache.get(member.guild.id)
@@ -12,7 +12,7 @@ module.exports = async (bot, member, configs) => {
      */
     const parseWelcomerText = (text=``) => {
         let res = ``
-        res = text.replace(/{{guild}}/gi, guild.name)
+        res = text.replace(/{{guild}}/gi, `**${guild.name}**`)
         res = text.replace(/{{user}}/gi, member)
         return res
     }
@@ -21,7 +21,14 @@ module.exports = async (bot, member, configs) => {
      *  LOG MODULE
      *  -------------------------------------------------------
      */
-    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata).record()
+    //  Logging metadata
+    let metadata = {
+        typeOfLog: `GUILD_MEMBER_ADD`,
+        bot: bot,
+        member: member,
+        guild: guild
+    }
+    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
     /**
      *  -------------------------------------------------------
      *  WELCOMER MODULE
@@ -30,7 +37,7 @@ module.exports = async (bot, member, configs) => {
     if (configs.get(`WELCOMER_MODULE`).value) {
         //  Prepare welcomer target channel
         let welcomerChannel = configs.get(`WELCOMER_CHANNEL`)
-        let getTargetWelcomerChannel = welcomerChannel.value ? welcomerChannel.value : guild.channels.cache.find(channel => channel.name == `general`).id
+        let getTargetWelcomerChannel = welcomerChannel.value ? welcomerChannel.value : guild.systemChannelID
         //  Prepare welcomer banner img
         let renderedBanner = await new Banner(member, bot).build()
         //  Prepare greeting text
@@ -53,12 +60,12 @@ module.exports = async (bot, member, configs) => {
      *  WELCOMER'S AUTOROLE MODULE
      *  -------------------------------------------------------
      */
-    if (configs.get(`WELCOMER_ROLES_MODULE`).value) {
-        //  Skip role assignment if no roles are registered
-        const welcomerRolesList = configs.get(`WELCOMER_ROLES_LIST`)
-        if (welcomerRolesList.value.length <= 0) return
-        for (let i=0; i<welcomerRolesList.value.length; i++) {
-            member.roles.add(welcomerAutoRoleList.value[i])
-        }
+    //  Skip role assignment if no roles are registered
+    const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
+    if (welcomerRolesList.value.length <= 0) return
+    for (let i=0; i<welcomerRolesList.value.length; i++) {
+        const role = guild.roles.cache.get(welcomerRolesList.value[i])
+        member.roles.add(role)
     }
+    bot.logger.info(`${instance} successfully assigned ${welcomerRolesList.value.length} WELCOME_ROLES for GUILD_ID:${guild.id}`)   
 }

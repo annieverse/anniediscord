@@ -15,12 +15,9 @@ module.exports = annie => {
 	})
 	annie.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(annie, guild, fetchGuildConfigs(`577121315480272908`)))
 	annie.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(annie, guild, fetchGuildConfigs(`577121315480272908`)))
-	annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user, fetchGuildConfigs(guild.id)))
-	annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user, fetchGuildConfigs(guild.id)))
-	annie.on(`channelDelete`, async (channel) => reqEvent(`channelDelete`)(annie, channel, fetchGuildConfigs(channel.guild.id)))
-	annie.on(`channelUpdate`, async (oldChannel, newChannel) => reqEvent(`channelUpdate`)(annie, oldChannel, newChannel, fetchGuildConfigs(oldChannel.guild.id)))
-	annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel, channel.type != `dm` ? fetchGuildConfigs(channel.guild.id) : null))
+	annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member, fetchGuildConfigs(member.guild.id)))
 	if (!annie.dev) {
+
 		/** --------------------------------------
 		 *  Everything below this is used for logging purpose
 		 *  --------------------------------------
@@ -36,6 +33,11 @@ module.exports = annie => {
 		annie.on(`emojiUpdate`, async (oldEmoji, newEmoji) => reqEvent(`emojiUpdate`)(annie, oldEmoji, newEmoji, fetchGuildConfigs(oldEmoji.guild.id)))
 		annie.on(`channelDelete`, async (channel) => reqEvent(`channelDelete`)(annie, channel, fetchGuildConfigs(channel.guild.id)))
 		annie.on(`channelUpdate`, async (oldChannel, newChannel) => reqEvent(`channelUpdate`)(annie, oldChannel, newChannel, fetchGuildConfigs(oldChannel.guild.id)))
+		annie.on(`channelCreate`, async (channel) => reqEvent(`channelCreate`)(annie, channel, channel.type != `dm` ? fetchGuildConfigs(channel.guild.id) : null))
+		annie.on(`guildBanAdd`, async (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user, fetchGuildConfigs(guild.id)))
+		annie.on(`guildBanRemove`, async (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user, fetchGuildConfigs(guild.id)))
+		annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member, fetchGuildConfigs(member.guild.id)))
+		annie.on(`guildMemberRemove`, async (member) => reqEvent(`guildMemberRemove`)(annie, member, fetchGuildConfigs(member.guild.id)))
 
 		/** --------------------------------------
 		 *  Miscelanous Events
@@ -43,22 +45,9 @@ module.exports = annie => {
 		 */		
 		annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie)) // Support Server only
 		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie)) // not guild dependent
-		annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member, fetchGuildConfigs(member.guild.id)))
-		annie.on(`guildMemberRemove`, async (member) => reqEvent(`guildMemberRemove`)(annie, member, fetchGuildConfigs(member.guild.id)))
-		annie.on(`guildMemberUpdate`, async(oldUser, newUser) => reqEvent(`guildMemberUpdate`)(annie, oldUser, newUser, fetchGuildConfigs(oldUser.guild.id)))
 		annie.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({annie, reaction, user, message_object}, fetchGuildConfigs(reaction.message.guild.id)))
 		annie.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({annie, reaction, user, message_object}, fetchGuildConfigs(reaction.message.guild.id)))
 		annie.on(`raw`, async (packet) => reqEvent(`raw`)(annie, packet))
-		// Mostly for Logging only
-		annie.on(`roleCreate`, async (role) => reqEvent(`roleCreate`)(annie, role, fetchGuildConfigs(role.guild.id)))
-		annie.on(`roleDelete`, async (role) => reqEvent(`roleDelete`)(annie, role, fetchGuildConfigs(role.guild.id)))
-		annie.on(`roleUpdate`, async (oldRole, newRole) => reqEvent(`roleUpdate`)(annie, oldRole, newRole, fetchGuildConfigs(oldRole.guild.id)))
-		annie.on(`emojiCreate`, async (emoji) => reqEvent(`emojiCreate`)(annie, emoji, fetchGuildConfigs(emoji.guild.id)))
-		annie.on(`emojiDelete`, async (emoji) => reqEvent(`emojiDelete`)(annie, emoji, fetchGuildConfigs(emoji.guild.id)))
-		annie.on(`emojiUpdate`, async (oldEmoji, newEmoji) => reqEvent(`emojiUpdate`)(annie, oldEmoji, newEmoji, fetchGuildConfigs(oldEmoji.guild.id)))
-
-		annie.on(`guildUnavailable`, async (guild) => reqEvent(`guildMemberAdd`)(annie, guild)) // Support server only
-		annie.on(`guildUpdate`, async (oldGuild, newGuild) => reqEvent(`guildUpdate`)(annie, oldGuild, newGuild, fetchGuildConfigs(oldGuild.id)))
 	}
 
 }

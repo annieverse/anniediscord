@@ -712,21 +712,10 @@ class config {
             },
             {
                 /**
-                 *  A module that automatically assign roles from WELCOMER_ROLES to the newly joined user
-                 *  @type {object}
-                 */
-                name: `WELCOMER_ROLES_MODULE`,
-                description: `A module that automatically assign roles from WELCOMER_ROLES_LIST to the newly joined user`,
-                customizable: true,
-                allowedTypes: [`boolean`],
-                value: 1
-            },
-            {
-                /**
                  *  A given set of roles when user has joined the guild
                  *  @type {object}
                  */
-                name: `WELCOMER_ROLES_LIST`,
+                name: `WELCOMER_ROLES`,
                 description: `A given set of roles when user has joined the guild`,
                 customizable: true,
                 allowedTypes: [`array`],

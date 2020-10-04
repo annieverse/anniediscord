@@ -18,19 +18,16 @@ class SetLevelupMessage extends Command {
         this.actions = [`enable`, `disable`]
 
         /**
-         * Parameter strucure to be supplied into guild configuration register.
-         * @type {object}
-         */
-        this.configurationMetadata = {
-            guild: this.message.guild,
-            set_by_user_id: this.message.author.id        
-        }
-
-        /**
          * Thumbnail's img source
          * @type {string}
          */
          this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
+
+        /**
+         * Current instance's config code
+         * @type {string}
+         */  
+        this.primaryConfigID = `LEVEL_UP_MESSAGE`
     }
 
     /**
@@ -50,66 +47,71 @@ class SetLevelupMessage extends Command {
             }
         })
         //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(this.args[0].toLowerCase())) return reply(this.locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
-            color: `red`,
-            socket: {emoji: emoji(`fail`)}
+        this.selectedAction = this.args[0].toLowerCase()
+        if (!this.actions.includes(this.selectedAction)) return reply(this.locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
+            socket: {actions: this.actions.join(`, `)},
+            status: `fail`
         })   
         //  Run action
-        this.tool = { reply, name, emoji }
-        this.config = await this.bot.db.getGuildConfigurations(this.message.guild.id)
-        return this[this.args[0].toLowerCase()]()
+        this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+        return this[this.selectedAction](...arguments)
     }
 
     /**
      * Enabling levelup-message module
-     * @returns {string}
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
      */
-    async enable() {
+    async enable({ reply, name }) {
         const fn = `[setLevelupMessage.enable()]`
-        const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 1))[0]
         //  Handle if module already enabled before the action.
-        if (config) {
+        if (this.primaryConfig.value) {
             const now = moment()
-            const localizeTime = await this.bot.db.toLocaltime(config.updated_at)
-            return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
+            const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
+            return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
+                status: `warn`,
                 socket: {
-                    user: this.tool.name(config.set_by_user_id),
+                    user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
                 }
             })
         }
-        this.configurationMetadata.config_code = `level_up_message`
-        this.configurationMetadata.customized_parameter = 1
-        this.bot.db.setCustomConfig(this.configurationMetadata)
-        this.logger.info(`${fn} level_up_message for GUILD_ID ${this.message.guild.id} has been enabled.`)
-        return this.tool.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
-            color: `lightgreen`,
-            socket: {
-                prefix: this.bot.prefix,
-                emoji: this.tool.emoji(`success`)
-            }
+        //  Update configs
+        await this.bot.db.updateGuildConfiguration({
+            configCode: this.primaryConfigID,
+            customizedParameter: 1,
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
+        })
+        this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
+        return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
+            socket: {prefix: this.bot.prefix},
+            status: `success`
         })
     }
 
     /**
      * Disabling levelup-message module
-     * @returns {string}
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @returns {Pistachio.reply}
      */
-    disable() {
+    async disable({ reply }) {
         const fn = `[setLevelupMessage.disable()]`
-        const config = this.config.filter(element => (element.config_code === `level_up_message`) && (parseInt(element.customized_parameter) === 0))[0]
-        //  Handle if welcomer already disabled before the action.
-        if (config) return this.tool.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {color: `golden`, socket: {emoji: this.tool.emoji(`warn`)} })
-        this.configurationMetadata.config_code = `level_up_message`
-        this.configurationMetadata.customized_parameter = 0
-        this.bot.db.setCustomConfig(this.configurationMetadata)
-        this.logger.info(`${fn} level_up_message for GUILD_ID ${this.message.guild.id} has been disabled.`)
-        return this.tool.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, {
-            color: `lightgreen`,
-            socket: {emoji: this.tool.emoji(`success`)}
+        //  Handle if module already disabled before the action.
+        if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {status: `warn`})
+        //  Update configs
+        await this.bot.db.updateGuildConfiguration({
+            configCode: this.primaryConfigID,
+            customizedParameter: 0,
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
         })
+        this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)
+        return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, {status: `success`})
     }
-
 }
 
 module.exports.help = {

@@ -436,7 +436,11 @@ class Database {
 	 	this.registerGuild(guild)
 	 	//  Parsing data type of customizedParameter so it can be stored in the database.
 	 	//  The original type of customizedParameter remains unaffected.
-	 	const parsedValueParameter = typeof customizedParameter === `object` ? JSON.stringify(customizedParameter) : customizedParameter
+	 	const parsedValueParameter = typeof customizedParameter === `object` 
+	 	? JSON.stringify(customizedParameter) 
+	 	: typeof customizedParameter === `number` 
+	 	? parseInt(customizedParameter)
+	 	: customizedParameter
 		const res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`

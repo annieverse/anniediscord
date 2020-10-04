@@ -172,7 +172,6 @@ class Annie extends Discord.Client {
                 guild.configs.set(cfg.name, cfg)
             }
         }
-       // console.log(this.guilds.cache.get())
         logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
     }
 
@@ -189,7 +188,7 @@ class Annie extends Discord.Client {
         if (typePool.includes(`array`) || typePool.includes(`object`)) return JSON.parse(config)
         else if (typePool.includes(`number`) || typePool.includes(`boolean`)) return parseInt(config)
         else if (typePool.includes(`float`) || typePool.includes(`real`)) return parseFloat(config)
-        else if (typePool.includes(`string`)) return config.toString()
+        else if (typePool.includes(`string`)) return config
         else {
             logger.warn(`[Annie._parseConfigsBasedOnType()] failed to parse the allowed types for "${config}" and now it will return as its original value.`)
             return config

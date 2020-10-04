@@ -91,9 +91,11 @@ class Experience extends Points {
 		if (!this.configs.get(`CUSTOM_RANK_MODULE`).value) return
 		let rankLevels = []
 		let lowerRankRoles = []
-		this.bot.ranks.forEach(element => {
+        let registeredRanks = this.configs.get(`RANKS_LIST`).value
+        if (registeredRanks.length <= 0) return
+		registeredRanks.forEach(element => {
 			rankLevels.push(element.LEVEL)
-			let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.find(r => r.name == element.NAME)
+			let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.get(element.ROLE)
 			lowerRankRoles.push(role.id)
 		})
 		await this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)

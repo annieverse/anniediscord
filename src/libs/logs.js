@@ -72,7 +72,7 @@ class LogsSystem {
         //  Find a log channel by custom configuration if available
         const channel = this.guild.channels.cache
         const customLogChannel = channel.get(this.configs.get(`LOGS_CHANNEL`).value)
-        if (channel.has(this.configs.get(`LOGS_CHANNEL`))) return this.logsChannel = customLogChannel
+        if (channel.has(this.configs.get(`LOGS_CHANNEL`).value)) return this.logsChannel = customLogChannel
         //  Find a log channel by system assumption
         const assumptionLogChannel = channel.find(node => (node.name.toLowerCase() === `logs`) || (node.name.toLowerCase() === `log`))
         if (assumptionLogChannel !== undefined) return this.logsChannel = assumptionLogChannel
@@ -474,8 +474,8 @@ class LogsSystem {
         //  Send logs
         this.logger.info(`${fn} a new user has joined GUILD_ID:${this.data.guild.id}`)
         return reply(this.locale.LOGS.GUILD_MEMBER_ADD, {
-            header: `Say hi, to ${this.data.member.username}!`,
-            thumbnail: this.data.member.displayAvatarURL(),
+            header: `Say hi, to ${this.data.member.user.username}!`,
+            thumbnail: this.data.member.user.displayAvatarURL(),
             timestamp: true,
             field: this.logsChannel,
             color: `lightgreen`,
