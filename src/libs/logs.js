@@ -53,7 +53,7 @@ class LogsSystem {
         //  Handle if typeOfLog is not provided
         if (!data.typeOfLog) return
         //  Run GUILD_CREATE and GUILD_DELETE in support's server
-        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)](...this.Pistachio)
+        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
         //  Handle if logs_module isn't enabled in the current guild instance
         if (!this.configs.get(`LOGS_MODULE`).value) return
         //  Handle if logs channel cannot be found
@@ -392,7 +392,7 @@ class LogsSystem {
             field: this.logsChannel,
             socket: {
                 emoji: emoji(`AnnieYandere`),
-                user: this.user
+                user: this.data.user
             }
         })
     }
@@ -415,7 +415,7 @@ class LogsSystem {
             field: this.logsChannel,
             socket: {
                 emoji: emoji(`AnnieSmile`),
-                user: this.user
+                user: this.data.user
             }
         })
     }
@@ -500,8 +500,8 @@ class LogsSystem {
         //  Send logs
         this.logger.info(`${fn} a user has left GUILD_ID:${this.data.guild.id}`)
         return reply(this.locale.LOGS.GUILD_MEMBER_REMOVE, {
-            header: `Farewell .. ${this.data.member.username}.`,
-            thumbnail: this.data.member.displayAvatarURL(),
+            header: `Farewell .. ${this.data.member.user.username}.`,
+            thumbnail: this.data.member.user.displayAvatarURL(),
             timestamp: true,
             field: this.logsChannel,
             color: `red`,
@@ -524,14 +524,14 @@ class LogsSystem {
      */
     async guildCreate({ reply, emoji }) {
         const fn = `[Logs.guildCreate]`
-        const guildCode = `**${this.data.guild.id}@${this.data.guild.name}**`
+        const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
             color: `lightgreen`,
             field: this.SupportServerLogChannel,
             socket: {
-                guildCode: guildCode,
+                guildCode: `**${guildCode}**`,
                 emoji: emoji(`AnniePeek2`)
             }
         })
@@ -544,13 +544,13 @@ class LogsSystem {
                 color: `crimson`,
                 socket: {
                     wiki: `https://github.com/klerikdust/anniediscord/wiki`,
-                    prefix: this.bot.prefix,
+                    prefix: this.data.bot.prefix,
                     emoji: emoji(`AnnieSmile`),
-                    supportServer: this.bot.supportServer
+                    supportServer: this.data.bot.supportServer
                 }
             })
         } catch (e) {
-            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id}`)
+            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stacks}`)
         }
     }
 
@@ -566,7 +566,7 @@ class LogsSystem {
             header: `It's nice to know you, ${this.data.guild.name}.`,
             thumbnail: this.data.guild.iconURL(),
             timestamp: true,
-            field: this.logsChannel,
+            field: this.SupportServerLogChannel,
             color: `red`,
             socket: {emoji: emoji(`AnnieCry`)}
         })

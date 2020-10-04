@@ -25,8 +25,8 @@ class MessageController {
         this.userId = data.message.author.id
         this.logger = data.bot.logger
         this.data = data
-        this.guildId = data.message.guild.id
-        this.guild = data.bot.guilds.cache.get(data.message.guild.id)
+        this.guildId = this.isDirectMessage ? null : data.message.guild.id
+        this.guild = this.isDirectMessage ? null : data.bot.guilds.cache.get(data.message.guild.id)
     }
 
     /**
@@ -44,8 +44,8 @@ class MessageController {
         this._registerPermission()
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
-        //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id.
-        await this.bot.db.validateUser(this.message.author.id, this.guildId, this.message.author.username)
+        //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id. Only ran inside guild's field.
+        if (!this.isDirectMessage) await this.bot.db.validateUser(this.message.author.id, this.guildId, this.message.author.username)
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector

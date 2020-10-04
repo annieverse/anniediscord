@@ -314,7 +314,7 @@
     },
     "LOGS": {
         "GUILDCREATE": {
-            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n{{supportServer}}",
+            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` in your guild to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}})",
             "INTERNAL_LOG": "Hm?! I got invited to **{{guildCode}}**! I hope I don't disappoint them this time. {{emoji}}"
         },
         "MESSAGE_DELETE": "Hi! I just saw one message got deleted by **{{user}}** in this channel called as **{{channel}}**. If I could remember, the content was something like this:\n\n> {{content}}",

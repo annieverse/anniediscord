@@ -37,7 +37,7 @@ module.exports = async (bot, member, configs) => {
     if (configs.get(`WELCOMER_MODULE`).value) {
         //  Prepare welcomer target channel
         let welcomerChannel = configs.get(`WELCOMER_CHANNEL`)
-        let getTargetWelcomerChannel = welcomerChannel.value ? welcomerChannel.value : guild.systemChannelID
+        let getTargetWelcomerChannel = welcomerChannel.value
         //  Prepare welcomer banner img
         let renderedBanner = await new Banner(member, bot).build()
         //  Prepare greeting text
@@ -45,12 +45,14 @@ module.exports = async (bot, member, configs) => {
         let getWelcomerText = parseWelcomerText(welcomerText.value)
         //  Attempt to DM the joined user if guild's owner hasn't setup the welcomer channel yet
         if (!getTargetWelcomerChannel) {
-            try {
-                member.send(getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
-            } catch (error) {
-                bot.logger.warn(`${instance} failed to send the requested welcomer message due to there was no welcomer channel and the user's dm were locked.`)
-            }
+                member.send(`__**A letter from ${guild.name}.**__\n` + getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
+                .then(() => bot.logger.info(`${instance} succesfully sent requested welcomer message to new member's DM due to unprovided guild's target welcomer channel.`))
+                .catch(()=> bot.logger.warn(`${instance} failed to send the requested welcomer message due to there was no welcomer channel and the user's dm were locked.`))
         } else {
+            //  Handle if target channel is invalid or cannot be found
+            if (!guild.channels.cache.has(getTargetWelcomerChannel)) {
+                return bot.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`) 
+            }
             await guild.channels.cache.get(getTargetWelcomerChannel).send(getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
             bot.logger.info(`${instance} successfully sent requested welcomer message for GUILD_ID:${guild.id}`)
         }
@@ -63,9 +65,16 @@ module.exports = async (bot, member, configs) => {
     //  Skip role assignment if no roles are registered
     const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
     if (welcomerRolesList.value.length <= 0) return
+    let successfulRoleAdded = 0
     for (let i=0; i<welcomerRolesList.value.length; i++) {
-        const role = guild.roles.cache.get(welcomerRolesList.value[i])
-        member.roles.add(role)
+        const roleId = welcomerRolesList.value[i]
+        //  Handle if role cannot be found due to deleted/invalid
+        if (!guild.roles.cache.has(roleId)) {
+            bot.logger.warn(`${instance} failed to find welcomer's role for GUILD_ID:${guild.id} due to deleted or invalid ID.`)
+            continue
+        }
+        member.roles.add(roleId)
+        successfulRoleAdded++
     }
-    bot.logger.info(`${instance} successfully assigned ${welcomerRolesList.value.length} WELCOME_ROLES for GUILD_ID:${guild.id}`)   
+    if (successfulRoleAdded > 0) bot.logger.info(`${instance} successfully assigned ${successfulRoleAdded} WELCOME_ROLES for GUILD_ID:${guild.id}`)   
 }

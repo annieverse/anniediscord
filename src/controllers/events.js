@@ -15,7 +15,6 @@ module.exports = annie => {
 	})
 	annie.on(`guildCreate`, async (guild) => reqEvent(`guildCreate`)(annie, guild, fetchGuildConfigs(`577121315480272908`)))
 	annie.on(`guildDelete`, async (guild) => reqEvent(`guildDelete`)(annie, guild, fetchGuildConfigs(`577121315480272908`)))
-	annie.on(`guildMemberAdd`, async(member) => reqEvent(`guildMemberAdd`)(annie, member, fetchGuildConfigs(member.guild.id)))
 	if (!annie.dev) {
 
 		/** --------------------------------------
