@@ -71,7 +71,16 @@ class CommandController {
         // Ignore if no files are match with the given command name
         if (!this.commandProperties) return
         // Ignore if user's permission level doesn't met the minimum command's permission requirement
-        if (this.isNotEnoughPermissionLevel) return this.logger.debug(`${fn} tries to use PERM_LVL ${this.commandProperties.permissionLevel} command`)
+        if (this.isNotEnoughPermissionLevel) {
+            const permData = () => {
+                for (let config in this.bot.permission) {
+                    const perm = this.bot.permission[config]
+                    if (perm.level === this.commandProperties.permissionLevel) return perm
+                }
+            }
+            this.message.channel.send(`**${this.bot.emojis.cache.get(`751024231189315625`)} You need LV${permData().level} (${permData().name}) privileges to use this command.**`)
+            return this.logger.debug(`${fn} tries to use PERM_LVL ${permData().level} command`)
+        }
         const Command = this._findFile(this.commandProperties.name)
         if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
         const commandComponents = {bot: this.bot, message: this.message, commandProperties: this.commandProperties}

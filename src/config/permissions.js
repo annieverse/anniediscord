@@ -3,7 +3,7 @@ module.exports = {
         name: `Developer`,
         level: 4,
         description: `Super user.`,
-        accounts: [`230034968515051520`, `277266191540551680`, `510246523939061760`],
+        accounts: [`230034968515051520`, `277266191540551680`],
         permissionString: `ADMINISTRATOR`
     },
     administrator: {
