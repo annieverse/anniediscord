@@ -525,6 +525,15 @@
         "OWNED_COVER_LIST": "Below are the covers you had in your inventory right now:\n{{list}}",
         "SUGGEST_TO_BUY": "But you don't seem to have any covers right now, so have a visit to `{{prefix}}shop covers` and get one for yourself!"
     },
+    "SETEXP": {
+        "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setexp enable`\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n`{{prefix}}setexp disable`\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n╰───────────────────╯",
+        "INVALID_ACTION": "Sorry! but I only accept the following actions `{{actions}}`",
+        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
+        "ALREADY_ENABLED_BY_DEFAULT": "Baka! I've already enabled this module by default! {{emoji}}",
+        "SUCCESSFULLY_ENABLED": "Yay! **EXP Leveling Module** has been enabled in this guild! your members will start gaining experience points soon.",
+        "ALREADY_DISABLED": "This module hasn't been enabled yet.",
+        "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future."
+    },
     "SETGUILDBIO": {
         "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
         "MISSING_ARG": "If you wish to set a new bio for your guild, please type the new bio next to the command! `{{prefix}}setguildbio <newbio>`",
