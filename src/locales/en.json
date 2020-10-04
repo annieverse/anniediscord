@@ -498,6 +498,14 @@
     "SAY": {
         "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
     },
+    "SELLFRAGMENTS": {
+        "GUIDE": "I know you are probably tired looking at your collected fragments sitting there in your inventory doing nothing. But fortunately, with this command it will allows you to sell those fragments for a few amount of artcoins! interested to try? follow the format below. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\ne.g. __{{prefix}}sellfrag 10__ or __{{prefix}}sellfrag all__\n\n> Keep in mind, the conversion rate is **{{rate}}**, so you need to have at least {{emojiFragment}}**{{min}} Fragments** in order to use this command!",
+        "EMPTY_FRAGMENTS": "Oops, what you are trying to do? you don't even have any fragments to sell. {{emoji}}",
+        "INVALID_AMOUNT": "Please type a proper number or `all` to sell all your available fragments.",
+        "AMOUNT_TOO_LOW": "You need to put at least {{emoji}}**{{amount}} Fragments** to sell.",
+        "CONFIRMATION": "You are going to sell {{fragmentsEmoji}}**{{fragmentsAmount}}** for {{artcoinsEmoji}}**{{artcoinsAmount}}**. Shall we continue? ",
+        "SUCCESSFUL": "**Fragments sold!**"
+    },
     "SETLEVELUPMESSAGE": {
         "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setlvlupmsg enable`\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n`{{prefix}}setlvlupmsg disable`\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰───────────────────╯",
         "INVALID_ACTION": "Sorry, I only accept **enable** or **disable** action in this module.",

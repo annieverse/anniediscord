@@ -376,6 +376,8 @@ class Card {
 		releaseHook=false,
 		captionMargin=20,
 		img=null,
+		imgDy=0,
+		imgDx=0,
 		avatar=null,
 		avatarRadius=10
 		}) {
@@ -438,7 +440,7 @@ class Card {
 		}
 		if (img) {
 			img = await resolveImage(img)
-			this.canv.printImage(img, marginLeft, this.reservedSpace+marginTop-marginBottom)
+			this.canv.printImage(img, marginLeft+this._getHorizontalAlign(justify), this.reservedSpace+marginTop-marginBottom, imgDx, imgDy)
 		}
 		return this
 	}
