@@ -2,6 +2,26 @@
 
 ___
 
+## **10/04/20 | 7.4.0 ->**
+
+* 343ddfe feat(command): display message when perm being handled
+* 9b73db4 feat(sellFragment): a command to sell user fragments
+* cbdc6fc feat(setExp): command that allows you to enable or disable the exp leveling system
+* 95aba94 feat(setLogs): configure logs module
+* cd0f376 chores: removed modmail feature
+* a0696b9 refactor(events): testable event simulations
+* 3f635d9 refactor(setlvlupmsg): adapts new configurations
+* 605c0c0 refactor(events): update refs
+* df57aee refactor(logSystem): adapts with new guild configurations
+* 357ecca refactor(setRank): adapts with new configuration structure
+* b0105b8 refactor(setWelcomer): adapts with new configuration structure
+* 437aa8f refactor(logs): reorganized flow
+* 7616712 refactor(events): adapt new config structure
+* 3d7d323 refactor(userLib): extended rank handler
+* 71d8408 refactor(messageController): removed modmail flow
+* 7c90a8a refactor: resolving conflicts (#318)
+* f5ba4c0 refactor(configs): rewrite config identifier
+
 ## **09/25/20 | 7.3.2 ->**
 
 * 1d60074 fix(raw): wrong refs
