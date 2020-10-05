@@ -2,6 +2,11 @@
 
 ___
 
+## **10/05/20 | 7.4.2 ->**
+
+* 7191353 fix(welcomer): fail to fill guild socket
+* 44691af fix(setCover): apply effect to current guild instance
+
 ## **10/05/20 | 7.4.1 ->**
 
 * 0ce8c49 fix(exp): rank doesnt get assigned on levelup
