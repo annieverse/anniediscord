@@ -94,8 +94,8 @@ class SetCover extends Command {
         confirmationButton.on(`collect`, async r => {
             confirmationButton.stop()
             //  Perform action
-            await db.detachCovers(this.user.id)
-            await db.applyCover(this.cover.item_id, this.user.id)
+            await db.detachCovers(this.user.id, this.message.guild.id)
+            await db.applyCover(this.cover.item_id, this.user.id, this.message.guild.id)
             return reply(this.locale.SETCOVER.SUCCESSFUL, {
                 color: `lightgreen`,
                 socket: {

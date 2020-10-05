@@ -265,20 +265,23 @@ class Database {
 	 * Applying new cover to user's profile.
 	 * @param {number} [coverId] target cover to be applied.
 	 * @param {string} [userId=``] target user's id.
+	 * @param {string} [guidId=``] target guild
 	 * @returns {QueryResult}
 	 */
-	async applyCover(coverId, userId=``) {
+	async applyCover(coverId, userId=``, guildId=``) {
 		const fn = `[Database.applyCover()]`
 		if (!coverId) throw new TypeError(`${fn} parameter 'coverId' cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)
     	const res = await this._query(`
     		UPDATE user_inventories
     		SET in_use = 1
     		WHERE 
     			item_id = ?
-    			AND user_id = ?`
+    			AND user_id = ?
+    			AND guild_id = ?`
     		, `run`
     		, [coverId, userId]
-    		, `${fn} Applying cover[${coverId}] for USER_ID ${userId}`
+    		, `${fn} Applying cover[${coverId}] for USER_ID${userId} in GUILD_ID:${guildId}`
     	)
     	return res
 	}
@@ -286,23 +289,25 @@ class Database {
 	/**
 	 * Detach user's covers. Aftewards, combined with `this.useItem()`
 	 * @param {string} [userId=``] target user's id.
+	 * @param {string} [guidId=``] target guild
 	 * @returns {QueryResult}
 	 */
-	async detachCovers(userId=``) {
+	async detachCovers(userId=``, guildId=``) {
 		const fn = `[Database.detachCovers()]`
     	const res = await this._query(`
     		UPDATE user_inventories
     		SET in_use = 0
     		WHERE 
     			user_id = ?
+    			AND guild_id = ?
     			AND item_id IN (
     				SELECT item_id
     				FROM items
     				WHERE type_id = 1 
     			)`
     		, `run`
-    		, [userId]
-    		, `${fn} Detaching covers from USER_ID ${userId}`
+    		, [userId, guildId]
+    		, `${fn} Detaching covers from USER_ID:${userId} in GUILD_ID:${guildId}`
     	)
     	return res
 	}
