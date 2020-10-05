@@ -27,11 +27,17 @@ class Experience extends Points {
 		this.expMultiplier = this.expConfig.factor
 
         /**
+         * Current guild's instance object
+         * @type {object}
+         */
+        this.guild = this.bot.guilds.cache.get(this.message.guild.id)
+
+        /**
          * Current guild's config instance
          * @type {map}
          */
-		this.configs = this.bot.guilds.cache.get(this.message.guild.id).configs
-		}
+		this.configs = this.guild.configs
+	}
 
     /**
      *  Running EXP workflow.
@@ -85,25 +91,34 @@ class Experience extends Points {
 	
 	/**
 	 * Takes the level of a user and finds the corresponding rank role, after removing previous rank roles
-	 * @param {Number} level 
+	 * @param {number} [level=0] 
 	 */
-	async updateRank(level){
+	async updateRank(level=0){
+        const fn = `[Exp.updateRank()]`
+        //  Handle if custom ranks module isn't enabled
 		if (!this.configs.get(`CUSTOM_RANK_MODULE`).value) return
-		let rankLevels = []
-		let lowerRankRoles = []
+        //  Handle if no custom ranks are registered
         let registeredRanks = this.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
+        let rankLevels = []
+        let lowerRankRoles = []
 		registeredRanks.forEach(element => {
 			rankLevels.push(element.LEVEL)
-			let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.get(element.ROLE)
+			let role = this.guild.roles.cache.get(element.ROLE)
 			lowerRankRoles.push(role.id)
 		})
-		await this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
+		await this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
 		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
-		let roleFromList = this.bot.ranks.find(r => r.LEVEL == level).NAME
-		let role = this.bot.guilds.cache.get(this.message.guild.id).roles.cache.find(r => r.name == roleFromList)
-		this.bot.guilds.cache.get(this.message.guild.id).members.cache.get(this.message.author.id).roles.add(role)
+		let roleFromList = registeredRanks.filter(node => node.LEVEL === level)[0]
+        //  Handle if given role doesn't exist in configuration
+        if (!roleFromList) return this.logger.warn(`${fn} can't find any custom role-rank associated with LV${level} in GUILD_ID:${this.message.guild.id}`)
+        //  Handle if role doesn't exist in the guild
+        if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
+		let role = this.guild.roles.cache.get(roleFromList.ROLE)
+        //  Start assign the rolerank
+		await this.guild.members.cache.get(this.message.author.id).roles.add(role)
+        this.logger.info(`${fn} successfully added RANK_ID:${role.id} to USER_ID:${this.message.author.id} in GUILD_ID:${this.message.guild.id}`)
 	}
 
     /**
