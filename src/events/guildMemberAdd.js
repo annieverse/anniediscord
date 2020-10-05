@@ -11,10 +11,9 @@ module.exports = async (bot, member, configs) => {
      * @returns {string}
      */
     const parseWelcomerText = (text=``) => {
-        let res = ``
-        res = text.replace(/{{guild}}/gi, `**${guild.name}**`)
-        res = text.replace(/{{user}}/gi, member)
-        return res
+        text = text.replace(/{{guild}}/gi, `**${guild.name}**`)
+        text = text.replace(/{{user}}/gi, member)
+        return text
     }
     /**
      *  -------------------------------------------------------
