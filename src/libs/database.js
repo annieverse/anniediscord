@@ -280,7 +280,7 @@ class Database {
     			AND user_id = ?
     			AND guild_id = ?`
     		, `run`
-    		, [coverId, userId]
+    		, [coverId, userId, guildId]
     		, `${fn} Applying cover[${coverId}] for USER_ID${userId} in GUILD_ID:${guildId}`
     	)
     	return res
