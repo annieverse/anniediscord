@@ -2,6 +2,10 @@
 
 ___
 
+## **10/05/20 | 7.4.1 ->**
+
+* 0ce8c49 fix(exp): rank doesnt get assigned on levelup
+
 ## **10/04/20 | 7.4.0 ->**
 
 * 343ddfe feat(command): display message when perm being handled
