@@ -386,8 +386,7 @@ class Pistachio {
 				return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
 					.then(data => data.buffer())
 			}
-
-			return url
+			return url + size
 		}
 		catch(e) {return this.loadAsset(`error`) }
 	}
