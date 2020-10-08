@@ -67,7 +67,15 @@ class Leaderboard extends Command {
 		})
 		.then(async load => {
 			//  Fetch points data and eliminates zero values if present.
-			const lbData = (await db.indexRanking(selectedGroup, this.message.guild.id)).filter(node => node.points > 0)
+			let lbData = (await db.indexRanking(selectedGroup, this.message.guild.id)).filter(node => node.points > 0)
+			let validIds = 0
+			for (let i=0; i<lbData.length; i++) {
+				//  If member doesn't exist in the guild, then discard from result set
+				while (!this.message.member.guild.members.cache.has(lbData[i].id)) lbData.splice(i, 1)
+				validIds++
+				//  Once we collected 10 valid ids, break the loop
+				if (validIds >= 10) break
+			}
 			//  Handle if no returned leaderboard data
 			if (!lbData.length) {
 				load.delete()
