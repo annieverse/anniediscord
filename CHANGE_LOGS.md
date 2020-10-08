@@ -2,6 +2,12 @@
 
 ___
 
+## **10/08/20 | 7.4.3 ->**
+
+df22526 fix(event): fail to trigger guildDelete
+d2f2add refactor(leaderboard): ommits non-existant member from top ten result set
+b926133 refactor(avatar): upscale displayed user avatar
+
 ## **10/05/20 | 7.4.2 ->**
 
 * 7191353 fix(welcomer): fail to fill guild socket
