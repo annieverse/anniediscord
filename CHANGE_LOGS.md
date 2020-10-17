@@ -2,6 +2,10 @@
 
 ___
 
+## **10/17/20 | 7.4.4 ->**
+
+* 919ae2f fix(pixiv): added user-agent on auth
+
 ## **10/08/20 | 7.4.3 ->**
 
 * df22526 fix(event): fail to trigger guildDelete
