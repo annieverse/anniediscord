@@ -70,7 +70,7 @@ class Pixiv extends Command {
     async fetchCustomSearch(keyword = ``) {
         const fn = `[Pixiv.fetchCustomSearch()]`
         this.logger.debug(`${fn} looking up for image with (keyword: ${keyword})`)
-        const res = await pixiv.searchIllustPopularPreview(keyword)
+        const res = await pixiv.searchIllust(keyword)
         const postData = res.illusts[Math.floor(Math.random() * res.illusts.length)]
 
         return postData
