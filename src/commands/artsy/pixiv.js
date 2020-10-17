@@ -1,6 +1,6 @@
 const Command = require(`../../libs/commands`)
 const fs = require(`fs`)
-const PixivApi = require(`pixiv-api-client`)
+const PixivApi = require(`pixiv-app-api`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
 
@@ -32,7 +32,6 @@ class Pixiv extends Command {
 	async execute({ reply, bot }) {
         //  Logging in to get access to the Pixiv API
         await pixiv.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
-
         const fullArgs = this.fullArgs
         reply(this.locale.PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
             simplified: true,
@@ -47,7 +46,7 @@ class Pixiv extends Command {
                         return reply(this.locale.PIXIV.NO_RESULT, {color: `red`})
                     }
 
-                    const img = await this.getImage(data.image_urls.medium, data.id)
+                    const img = await this.getImage(data.imageUrls.medium, data.id)
                     //  Handle if no returned result from given img path
                     if (!img) {
                         loadmsg.delete()
@@ -61,7 +60,7 @@ class Pixiv extends Command {
                         prebuffer: true
                     })
             })
-	}
+    }
 
     /**
      * Fetch artworks by custom search/filter. Returns object of choosen index.
