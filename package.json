@@ -59,7 +59,7 @@
     "humanize-duration": "^3.23.1",
     "jimp": "^0.16.0",
     "long": "^4.0.0",
-    "mocha": "^8.1.2",
+    "mocha": "^8.2.0",
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.31",
     "node-cmd": "^3.0.0",
