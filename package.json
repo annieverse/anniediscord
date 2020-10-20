@@ -67,7 +67,7 @@
     "node-fetch": "^2.6.0",
     "parse-ms": "^2.1.0",
     "pixiv-api-client": "^0.22.0",
-    "pixiv-app-api": "^1.2.1",
+    "pixiv-app-api": "github:klerikdust/pixiv-app-api",
     "pixiv-img": "^1.0.0",
     "pm2": "^4.5.0",
     "probe-image-size": "^5.0.0",
