@@ -2,6 +2,11 @@
 
 ___
 
+## **10/20/20 | 7.4.5 ->**
+
+* e7d7a73 assets: upscale new cards
+* 279d766 build(pixiv): use forked package
+
 ## **10/17/20 | 7.4.4 ->**
 
 * 919ae2f fix(pixiv): added user-agent on auth
