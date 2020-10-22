@@ -688,7 +688,7 @@ class Pistachio {
 			if (!key) continue
 			//  Index `0` has key with the double curly braces, index `1` only has the inside value.
 			const pieceToAttach = options.socket[key[1]]
-			if (pieceToAttach) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
+			if (pieceToAttach || pieceToAttach === 0) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
 		}
 
 		//  Mutate message if status property is defined
