@@ -1,4 +1,5 @@
 const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
+const GUI = require(`../ui/prebuild/cardCollection`)
 const logger = require(`./logger`)
 const fs = require(`fs`)
 const path = require(`path`)
@@ -521,12 +522,17 @@ class Pistachio {
     /**
      *  Registering each element of array into its own embed.
      *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
+     *  @param {object} [src=null] reply's options parameters for customized embed.
      *  @returns {array}
      */
-    _registerPages(pages=[]) {
+    _registerPages(pages=[], src=null) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i]).setColor(this.palette.golden)
+            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i])
+            if (src.color) res[i].setColor(this.palette[src.color] || src.color)
+            if (src.header) res[i].setTitle(src.header)
+            if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
+           	if (src.cardPreviews) res[i].setFooter(`Press the eyes emoji to preview. (${i+1}/${pages.length})`)
         }
         return res
 	}
@@ -588,7 +594,8 @@ class Pistachio {
 		customHeader: null,
 		timestamp: false,
 		paging: false,
-		status: null
+		status: null,
+		cardPreviews: false
 	}) {
 		options.socket = !options.socket ? [] : options.socket
 		options.color = !options.color ? this.palette.darkmatte : options.color
@@ -608,12 +615,13 @@ class Pistachio {
 		options.paging === false ? null : options.paging
 		options.columns = !options.columns ? null : options.columns
 		options.status = !options.status ? null : options.status.toLowerCase()
+		options.cardPreviews = !options.cardPreviews ? null : options.cardPreviews
 		const fn = `[Pistachio.reply()]`
 
 		//  Handle message with paging property enabled
 		if (options.paging) {
 			let page = 0
-			const embeddedPages = this._registerPages(content)
+			const embeddedPages = this._registerPages(content, options)
 			return options.field.send(embeddedPages[0])
             .then(async msg => {
                 //  Buttons
@@ -625,6 +633,22 @@ class Pistachio {
                 //  Timeout limit for page buttons
                 const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
                 const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
+                //  Add preview button if cardPreviews is enabled
+                if (options.cardPreviews) {
+                	await msg.react(`👀`)
+                	let previewFilter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
+                	let preview = msg.createReactionCollector(previewFilter, { time: 300000 })
+                	let previewedPages = []
+                	preview.on(`collect`, async r => {
+                	    r.users.remove(this.message.author.id)
+                	    if (previewedPages.includes(page)) return
+                	    previewedPages.push(page)
+                		let loading = await options.field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
+                		let img = await new GUI(options.cardPreviews[page]).create()
+                		options.field.send(``, new MessageAttachment(img))
+                		loading.delete()
+                	})
+                }
                 //	Left navigation
                 backwards.on(`collect`, r => {
                     r.users.remove(this.message.author.id)

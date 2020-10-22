@@ -139,14 +139,27 @@ class canvasGUI {
 		let baseWidth = this.baseWidth
 		let baseHeight = this.baseHeight
 		let mergerWidth = this.amount > 5 ? width * 5 - ((30 * 7) + (x)) : width * this.amount - ((30 * this.amount) + (this.amount == 1 ? 0 : x))
-		let mergerHeight = this.amount > 5 ? this.amount > 10 ? this.canvas_y * 3 - (originalY*5) : this.canvas_y * 2 - this.startPos_y : this.canvas_y
+		let mergerHeight = this.amount <= 5 
+		? this.canvas_y - this.startPos_y
+		: this.amount <= 10 
+		? this.canvas_y * 2 - this.startPos_y
+		: this.amount <= 15
+		? this.canvas_y * 3 - this.startPos_y
+		: this.amount <= 20
+		? this.canvas_y * 4 - this.startPos_y
+		: this.amount <= 25
+		? this.canvas_y * 5 - this.startPos_y
+		: this.canvas_y
 
 		let canv = new Canvas(mergerWidth, mergerHeight)
 
 		for (let i=0; i<strips.length; i++) {
 			if (i == 5) y = (-1*(originalY * 2)) + height
 			if (i == 10) y = (-1*(originalY * 5)) + height * 2
-			if (i == 5 || i == 10) x = originalX
+			if (i == 15) y = (-1*(originalY * 5)) + height * 3	
+			if (i == 20) y = (-1*(originalY * 5)) + height * 4
+			if (i == 25) y = (-1*(originalY * 5)) + height * 5
+			if (i == 5 || i == 10 || i == 15 || i == 20 || i == 25) x = originalX
 			canv.printImage(await resolveImage(strips[i]), x, y, baseWidth, baseHeight)
 			canv.save()
 			x += (baseWidth-25)			
