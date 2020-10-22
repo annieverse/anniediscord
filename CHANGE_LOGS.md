@@ -2,6 +2,11 @@
 
 ___
 
+## **10/22/20 | 7.4.6 ->**
+
+* e92ede8 fix(balance): display zero qty for null account
+* 3076f9a refactor(cardsCollection): added card quantity and paging on every ten cards split
+
 ## **10/20/20 | 7.4.5 ->**
 
 * e7d7a73 assets: upscale new cards
