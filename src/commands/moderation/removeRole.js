@@ -68,7 +68,7 @@ module.exports.help = {
 	name:`removeRole`,
 	aliases: [`rmvrole`, `deleterolefrom`, `roleremove`, `rolerevoke`, `removerole`],
 	description: `Removes role from specific user.`,
-	usage: ` removerole <User>`,
+	usage: `removerole <User>`,
 	group: `Moderation`,
 	permissionLevel: 2,
 	multiUser: true

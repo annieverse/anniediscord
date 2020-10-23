@@ -92,5 +92,6 @@ module.exports.help = {
 	usage: `usecapsule <Amount>`,
 	group: `User`,
 	permissionLevel: 0,
-	multiUser: false
+	multiUser: false,
+	invisible: true
 }

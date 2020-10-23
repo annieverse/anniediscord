@@ -34,4 +34,5 @@ module.exports.help = {
 	group: `System`,
 	permissionLevel: 0,
 	multiUser: false,
+	invisible: true
 }

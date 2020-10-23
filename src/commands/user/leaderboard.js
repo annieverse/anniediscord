@@ -124,7 +124,7 @@ class Leaderboard extends Command {
 module.exports.help = {
 	start: Leaderboard,
 	name:`leaderboard`,
-	aliases: [`lb`,`leaderboard`, `rank`, `ranking`],
+	aliases: [`ranking`, `leaderboard`, `rank`, `ranking`],
 	description: `Displays global leaderboard`,
 	usage: `lb`,
 	group: `User`,

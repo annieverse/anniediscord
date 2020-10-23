@@ -117,7 +117,7 @@ class Help extends Command {
 		let groups = this.bot.commands.names.map(el => el.help.group)
 		let uniqueGroups = [...new Set(groups)].filter(el => !this.ignoreGroups.includes(el))
 		for (let groupName of uniqueGroups) {
-			const groupChilds = this.bot.commands.names.filter(el => el.help.group === groupName)
+			const groupChilds = this.bot.commands.names.filter(el => el.help.group === groupName && !el.help.invisible)
 			obj[groupName] = groupChilds
 		}
 		return obj

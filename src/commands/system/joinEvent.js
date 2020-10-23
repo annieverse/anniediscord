@@ -61,5 +61,6 @@ module.exports.help = {
 	usage: `join`,
 	group: `System`,
 	permissionLevel: 0,
-	multiUser: false
+	multiUser: false,
+	invisible: true
 }

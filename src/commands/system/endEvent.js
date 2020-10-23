@@ -44,5 +44,6 @@ module.exports.help = {
 	usage: `eventend`,
 	group: `System`,
 	permissionLevel: 2,
-	multiUser: false
+	multiUser: false,
+	invisible: true
 }
