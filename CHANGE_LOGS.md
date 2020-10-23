@@ -2,6 +2,14 @@
 
 ___
 
+## **10/23/20 | 7.4.7 ->**
+
+308ea78 refactor(command): improved cd register
+56e4981 refactor(pay): shared ui, reduced tax and lvl requirement
+1d89d58 refactor(commands): added invisible property and fixes to some command usage string
+5477f7e refactor(stats): display general annie status for non-developer
+1f9fbfa refactor(welcomer): invert theme
+
 ## **10/22/20 | 7.4.6 ->**
 
 * e92ede8 fix(balance): display zero qty for null account
