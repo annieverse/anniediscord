@@ -40,7 +40,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "async-redis": "^1.1.7",
-    "axios": ">=0.20.0",
+    "axios": ">=0.21.0",
     "better-sqlite3": "^7.1.1",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
