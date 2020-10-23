@@ -385,7 +385,7 @@
         "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **3% tax fee** for each transaction you made.",
         "LVL_TOO_LOW": "You need to be atleast **LV {{level}}** to use this feature.",
         "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
-        "USER_CONFIRMATION": "Transfering **{{amount}} (3% tax included)** to **{{user}}'s** account? if yes, please press the green button to confirm this transaction.",
+        "USER_CONFIRMATION": "Transfering **{{amount}} (2% tax included)** to **{{user}}'s** account?",
         "INVALID_AMOUNT": "Don't forget to specify the amount you want to send!",
         "INVALID_NUMBER": "Please input a valid amount you want to send.",
         "INSUFFICIENT_BALANCE": "You don't have enough balance to continue this transaction.",
