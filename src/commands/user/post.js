@@ -55,5 +55,6 @@ module.exports.help = {
 	usage: `post <User>(Optional)`,
 	group: `User`,
 	permissionLevel: 0,
-	multiUser: true
+	multiUser: true,
+    invisible: true
 }

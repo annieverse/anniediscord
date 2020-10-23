@@ -94,9 +94,8 @@ class CommandController {
                 color: `red`,
                 socket: {timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cooldownToLocalTime), `seconds`, true)).toFixed(2)}
             })
-            await new Command(commandComponents).execute(PistachioComponents)
             this.bot.setCooldown(this.moduleID, this.bot.configs.commands.cooldown)
-
+            await new Command(commandComponents).execute(PistachioComponents)
             const cmdFinishTime = this.bot.getBenchmark(initTime)
             const cmdUsageData = {
                 guild_id: this.message.guild.id,
