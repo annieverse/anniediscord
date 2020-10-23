@@ -31,18 +31,17 @@ class UI {
 		canv.save()
 			.createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
 			.printImage(await resolveImage(await loadAsset(`welcomer`)), 0, 0, 800, 300)//, 400)
-		canv.context.globalAlpha = 0.7
-		canv.setColor(palette.black)
+		canv.context.globalAlpha = 0.8
+		canv.setColor(palette.white)
 			.printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
 			.restore()
 
 			.setTextAlign(`left`)
 			.setTextFont(`41pt roboto-bold`)
-			.setColor(palette.lightgray)
+			.setColor(palette.nightmode)
 			.printText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`..` : user.username+`!`}`, 320, 150) //102
 		
 			.setTextFont(`42pt roboto`)
-			.setColor(palette.white)
 			.printText(`Hi,`, 240, 150)
 
 			.setColor(palette.white)
