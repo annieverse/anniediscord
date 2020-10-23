@@ -575,6 +575,13 @@ class Database {
 		)
 	}
 
+	async getTotalCommandUsage() {
+		return this._query(`
+			SELECT COUNT(command_alias) as 'total'
+			FROM commands_log
+		`)
+	}
+
 	getResourceData(day=30) {
 		return this._query(`
 			SELECT

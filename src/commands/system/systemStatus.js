@@ -4,6 +4,7 @@ const moment = require(`moment`)
 const memUsage = require(`../../utils/memoryUsage`)
 const cpuUsage = require(`../../utils/cpuUsage`)
 const Command = require(`../../libs/commands`)
+const pkg = require(`../../../package`)
 /**
  * Gives info about the current bot performance.
  * @author klerikdust
@@ -26,6 +27,8 @@ class SystemStatus extends Command {
 	async execute({ reply, emoji, trueInt, commanifier, bot:{db, ping, uptime} }) {
 		await this.requestUserMetadata(1)
 
+		//  Display regular stats for non-developer
+		if (this.message.author.permissions.level < 4 || !this.fullArgs) return this.displayGeneralStatus(...arguments)
 		//  Handle user's custom data category
 		if (this.args[0]) this.selectedMetric = this.args[0]
 		//  Handle user's custom data parameter
@@ -97,7 +100,29 @@ class SystemStatus extends Command {
 		})
 	}
 
-
+	/**
+	 * Default response when no additional arg is provided
+	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 * @returns {reply}
+	 */
+	async displayGeneralStatus({ reply, name, commanifier }) {
+		const { total } = await this.bot.db.getTotalCommandUsage()
+		const uptimeDuration = moment.duration(this.bot.uptime)
+		return reply(`Maintained by \`${this.bot.users.cache.get(`230034968515051520`).tag}\` & \`${this.bot.users.cache.get(`277266191540551680`).tag}\`\n\`\`\`\n{{status}}\n\`\`\``, {
+			color: `crimson`,
+			header: `The State of Annie`,
+			thumbnail: this.bot.user.displayAvatarURL(),
+			socket: {
+				status: `- Master 			:: v${pkg.version}
+- Node.js			:: v${pkg.engines.node}
+- Uptime 			:: ${uptimeDuration.days()}d:${uptimeDuration.hours()}h:${uptimeDuration.minutes()}m:${uptimeDuration.seconds()}s
+- Memory 			:: ${this.formatBytes(memUsage())}
+- Latency			:: ${commanifier(this.bot.ws.ping)}ms
+- Commands Ran       :: ${commanifier(total)}
+- Guilds 			:: ${commanifier(this.bot.guilds.cache.size)}`
+			}
+		})
+	}
 
 	/**
 	 * Used to format returned bytes value into more human-readable data.
@@ -120,8 +145,8 @@ class SystemStatus extends Command {
 module.exports.help = {
 	start: SystemStatus,
 	name: `systemStatus`,
-	aliases: [`anniestatus`, `botinfo`, `annieinfo`, `info`],
-	description: `Gives info about the current bot performance.`,
+	aliases: [`stats`, `botinfo`, `annieinfo`, `info`, `anniestatus`],
+	description: `Gives info about the current Annie's Statistic.`,
 	usage: `stats`,
 	group: `System`,
 	permissionLevel: 0,
