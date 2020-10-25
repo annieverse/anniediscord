@@ -66,7 +66,7 @@
     "node-cron": "^2.0.3",
     "node-fetch": "^2.6.0",
     "parse-ms": "^2.1.0",
-    "pixiv-api-client": "^0.23.0",
+    "pixiv-api-client": "^0.24.0",
     "pixiv-app-api": "github:klerikdust/pixiv-app-api",
     "pixiv-img": "^1.0.0",
     "pm2": "^4.5.0",
