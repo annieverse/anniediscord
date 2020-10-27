@@ -27,7 +27,12 @@ module.exports = annie => {
 		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
-		annie.user.setActivity(`${commanifier(annie.users.cache.size)} users | ${prefix}help`, {type: `WATCHING`})
+		const presenceRefresh = annie.user.setActivity(`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users | ${prefix}help`, {type: `WATCHING`})
+		presenceRefresh
+		setInterval(() => {
+			presenceRefresh
+		//  Refresh activity for every 30 minutes
+		}, 1800000)
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
