@@ -69,9 +69,14 @@ class Leaderboard extends Command {
 			//  Fetch points data and eliminates zero values if present.
 			let lbData = (await db.indexRanking(selectedGroup, this.message.guild.id)).filter(node => node.points > 0)
 			let validIds = 0
+			//  Fetching uncached users
+			for (let i=0; i<lbData.length; i++) {
+				try {await this.message.guild.members.fetch(lbData[i].id)}
+				catch(e){}
+			}
 			for (let i=0; i<lbData.length; i++) {
 				//  If member doesn't exist in the guild, then discard from result set
-				while (!this.message.member.guild.members.cache.has(lbData[i].id)) lbData.splice(i, 1)
+				while (!this.message.guild.members.cache.has(lbData[i].id)) lbData.splice(i, 1)
 				validIds++
 				//  Once we collected 10 valid ids, break the loop
 				if (validIds >= 10) break
@@ -124,7 +129,7 @@ class Leaderboard extends Command {
 module.exports.help = {
 	start: Leaderboard,
 	name:`leaderboard`,
-	aliases: [`ranking`, `leaderboard`, `rank`, `ranking`],
+	aliases: [`rank`, `leaderboard`, `rank`, `ranking`, `lb`, `leaderboards`],
 	description: `Displays global leaderboard`,
 	usage: `lb`,
 	group: `User`,
