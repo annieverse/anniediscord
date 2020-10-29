@@ -2,6 +2,14 @@
 
 ___
 
+## **10/29/20 | 7.4.8 ->**
+
+* 580333a chores: deprecate unused settings
+* e58ec4a refactor: adds notice on setting commands
+* 0f240ee fix(exp): user cache
+* bdebda5 fix(stats): user fetch
+* 8485958 fix(leaderboard): cache users
+
 ## **10/23/20 | 7.4.7 ->**
 
 308ea78 refactor(command): improved cd register
