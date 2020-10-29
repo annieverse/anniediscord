@@ -71,6 +71,7 @@ class Leaderboard extends Command {
 			let validIds = 0
 			//  Fetching uncached users
 			for (let i=0; i<lbData.length; i++) {
+				if (i >= 20) break
 				try {await this.message.guild.members.fetch(lbData[i].id)}
 				catch(e){}
 			}
