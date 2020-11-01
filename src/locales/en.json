@@ -211,6 +211,10 @@
         "LIKED": "**{{reactor}}** and **{{amount}} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{{0}}**!\nyour post in {{channel}} has been featured!"
     },
+    "FACEGEN": {
+        "FETCHING": "{{emoji}} `Generating a fresh anime-face you've never seen before ...`",
+        "HEADER": "AI-Generated Character provided by [Gwern@TWDNE](https://www.gwern.net/index)"
+    },
     "FLIPCOIN": {
         "RESPONSES": [
             "Landed on **{{result}}!** Yay!",
