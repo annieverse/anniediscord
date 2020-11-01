@@ -43,7 +43,7 @@ class Pay extends Command {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
 		//  Returns if user level is below the requirement
-		//if (this.author.exp.level < this.requirementLevel) return reply(this.locale.PAY.LVL_TOO_LOW, {status: `warn`, socket: {level: this.requirementLevel}})
+		if (this.author.exp.level < this.requirementLevel) return reply(this.locale.PAY.LVL_TOO_LOW, {status: `warn`, socket: {level: this.requirementLevel}})
 		//  Displays as guide if user doesn't specify any parameter
 		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE, {
 			color: `crimson`,
