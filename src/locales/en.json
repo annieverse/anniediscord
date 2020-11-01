@@ -16,6 +16,10 @@
         "HAS_ROLE_ALREADY": "Sorry, but **{{user}}** has that role already.",
         "ROLE_ADDED": "Successfully assigned the role!"
     },
+    "AFFILIATES": {
+        "EMPTY": "Ops, there are no registered affiliates at the moment!",
+        "DISPLAY": "**Hi, {{user}}!** here you can see all the servers that has been supporting the development of Annie.\n{{list}}"
+    },
     "ASK": {
         "ANSWERS": [
             "Yes.",
