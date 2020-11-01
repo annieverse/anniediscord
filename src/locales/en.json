@@ -64,7 +64,7 @@
         "INSUFFICIENT_AMOUNT": "You only have **{{amount}}** artcoins. Grind harder!",
         "INVALID_AMOUNT": "To use the converter, you need to put atleast **8 artcoins.**",
         "SUCCESSFUL": "Successfully convert **{{artcoins}}** into **{{exp}}** !",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nType `y` to confirm the conversion."
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nPress the button to confirm the conversion."
     },
     "CATEXP": {
         "UNAVAILABLE": "You don't have any exp to claim.",

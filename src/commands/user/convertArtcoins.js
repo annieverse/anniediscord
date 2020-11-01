@@ -32,8 +32,6 @@ class ConvertArtcoins extends Command {
 		//  Returns if user amount input is below the acceptable threeshold
 		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {color: `red`})
 		const totalGainedExp = amountToUse / this.artcoinsRatio
-
-		this.setSequence(5)
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
 			thumbnail: avatar(this.user.id),
 			color: `golden`,
@@ -44,26 +42,11 @@ class ConvertArtcoins extends Command {
 				gainedExp: commanifier(totalGainedExp)
 			}
 		})
-		this.sequence.on(`collect`, async msg => {
-			let input = msg.content.toLowerCase()
-
-			/** --------------------
-			 *  Sequence Cancellations
-			 *  --------------------
-			 */
-			if (this.cancelParameters.includes(input)) {
-				this.endSequence()
-				return reply(this.locale.ACTION_CANCELLED)
-			}
-
-			//  Silently ghosting.
-			if (!input.startsWith(`y`)) return
+		this.addConfirmationButton(`checkout`, this.confirmation)
+ 		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
 			//	Deduct balance & add new exp
 			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
-
-			msg.delete()
-			this.endSequence()
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
 				color: `lightgreen`,
