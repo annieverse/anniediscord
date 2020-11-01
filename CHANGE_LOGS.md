@@ -2,6 +2,16 @@
 
 ___
 
+## **11/01/20 | 7.5.0 ->**
+
+* 685adfe feat(faceGenerate): ai-generated character face provided by TWDNE
+* 56bfe2c feat(affiliates): affiliates manager
+* 408c846 refactor: attach affiliate link on some commands
+* 7c639ff refactor(commandLib): ommits tokenized userKeywords from fullArgs set
+* cbf21f6 refactor(pay): adapt args with the new user structure
+* cfccfb7 refactor(userSearch): changed algorithm to fit with limited member gateway
+* ccb8461 refactor(cartcoin): replace flow to button based
+
 ## **10/29/20 | 7.4.8 ->**
 
 * 580333a chores: deprecate unused settings
