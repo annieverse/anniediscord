@@ -49,6 +49,15 @@ class Invite extends Command {
 			},
 			field: targetChannel
 		})
+		const affiliate = await this.bot.db.getAffiliates()
+		await reply(this.locale.GENERATE_AFFILIATE_INVITE, {
+			simplified: true,
+			socket: {
+				affiliateLink: affiliate[0].invite_link,
+				emoji: this.tools.emoji(`AnnieDab`)
+			},
+			field: targetChannel
+		})
 	}
 }
 
