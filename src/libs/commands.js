@@ -1,6 +1,5 @@
 `use-strict`
 const User = require(`./user`)
-const stringSimilarity = require(`string-similarity`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -154,13 +153,10 @@ class Commands {
 		//  If multi user property isn't enabled, then skip keyword parsing
 		if (!this.commandProperties.multiUser) return true
 		//  Remove user searchstring keyword from arg pool
-		if (this.args.length > 1) {
-			const acceptableRating = 0.3
-			for (let i=0; i<this.args.length; i++) {
-				const rating = stringSimilarity.compareTwoStrings(this.userClass.usedKeyword, this.args[i])
-				if (rating >= acceptableRating) {
-					this.fullArgs = this.fullArgs.replace(this.args[i], ``)
-				}
+		if (this.userClass.usedKeyword) {
+			const tokenizedKeywords = this.userClass.usedKeyword.split(` `)
+			for (let i=0; i<tokenizedKeywords.length; i++) {
+				this.fullArgs = this.fullArgs.replace(tokenizedKeywords[i], ``)
 			}
 		}
 		/**
