@@ -102,4 +102,5 @@ module.exports.help = {
 	group: `Moderation`,
 	permissionLevel: 2,
 	multiUser: true
+	rawArgs: true
 }

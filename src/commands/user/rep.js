@@ -56,5 +56,6 @@ module.exports.help = {
 	usage: `rep <User>`,
 	group: `User`,
 	permissionLevel: 0,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

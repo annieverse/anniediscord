@@ -99,5 +99,6 @@ module.exports.help = {
 	usage: `mute <User>`,
 	group: `Moderation`,
 	permissionLevel: 2,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

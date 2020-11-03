@@ -74,5 +74,6 @@ module.exports.help = {
 	usage: `mail <User>`,
 	group: `Moderation`,
 	permissionLevel: 3,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

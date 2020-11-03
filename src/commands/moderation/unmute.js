@@ -46,5 +46,6 @@ module.exports.help = {
 	usage: `unmute <User>`,
 	group: `Moderation`,
 	permissionLevel: 2,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }
