@@ -2,6 +2,11 @@
 
 ___
 
+## **11/03/20 | 7.5.1 ->**
+
+* 127e6ce fix: userKeyword dependant on some commands
+* 4ca29b5 refactor(commandLib): added rawArgs property to keep the userKeyword present
+
 ## **11/01/20 | 7.5.0 ->**
 
 * 685adfe feat(faceGenerate): ai-generated character face provided by TWDNE
