@@ -152,6 +152,8 @@ class Commands {
 		this.user = result
 		//  If multi user property isn't enabled, then skip keyword parsing
 		if (!this.commandProperties.multiUser) return true
+		//  If command specified `rawArgs` property, then userKeyword won't be removed.
+		if (!this.commandProperties.rawArgs) return true
 		//  Remove user searchstring keyword from arg pool
 		if (this.userClass.usedKeyword) {
 			const tokenizedKeywords = this.userClass.usedKeyword.split(` `)
