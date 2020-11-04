@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "7.4.7",
+  "version": "7.5.1",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {
@@ -38,7 +38,7 @@
     "url": "https://github.com/klerikdust/anniediscord/issues"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
+    "@discordjs/opus": "^0.3.3",
     "async-redis": "^1.1.7",
     "axios": ">=0.21.0",
     "better-sqlite3": "^7.1.1",
@@ -51,7 +51,7 @@
     "color": "^3.1.2",
     "cross-env": "^7.0.2",
     "dblapi.js": "^2.4.1",
-    "discord.js": "^12.2.0",
+    "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs-nextra": "^0.5.1",
@@ -59,7 +59,7 @@
     "humanize-duration": "^3.23.1",
     "jimp": "^0.16.0",
     "long": "^4.0.0",
-    "mocha": "^8.1.2",
+    "mocha": "^8.2.1",
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.31",
     "node-cmd": "^3.0.0",

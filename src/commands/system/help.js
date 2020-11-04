@@ -32,6 +32,7 @@ class Help extends Command {
 
 			// Display 5 most used commands suggestions
 			const commandSuggestions = await db.mostUsedCommands()
+			const affiliate = await db.getAffiliates()
 			return reply(this.locale.HELP.LANDING, {
 				socket: {
 					user: name(this.user.id),
@@ -60,6 +61,7 @@ class Help extends Command {
 							prefix: this.bot.prefix,
 							serverLink: `[Join Support Server](${supportServer})`,
 							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
+							affiliateInviteLink: `[My Affiliate](${affiliate[0].invite_link})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
 						image: this.commandpediaBanner,

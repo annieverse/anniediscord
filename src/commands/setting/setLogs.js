@@ -40,15 +40,18 @@ class SetLogs extends Command {
     async execute({ reply, name, emoji }) {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
-        if (!this.fullArgs) return reply(this.locale.SETLOGS.GUIDE, {
-            header: `Hi, ${name(this.user.id)}!`,
-            color: `crimson`,
-            thumbnail: this.thumbnail,
-            socket: {
-                prefix: this.bot.prefix,
-                emoji: emoji(`AnnieSmile`)
-            }
-        })
+        if (!this.fullArgs) {
+            reply(this.locale.SETLOGS.GUIDE, {
+                header: `Hi, ${name(this.user.id)}!`,
+                color: `crimson`,
+                thumbnail: this.thumbnail,
+                socket: {
+                    prefix: this.bot.prefix,
+                    emoji: emoji(`AnnieSmile`)
+                }
+            })
+            return reply(`Logs for \`MEMBER_JOIN\` and \`MEMBER_LEAVE\` have been temporarily disabled. We are currently working on the fix!`, {simplified: true})
+        }
         //  Handle if selected action doesn't exists
         if (!this.actions.includes(this.args[0])) return reply(this.locale.SETLOGS.INVALID_ACTION, {
             socket: {actions: this.actions.join(`, `)},

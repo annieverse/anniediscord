@@ -109,7 +109,7 @@ class CommandController {
             return this.bot.db.recordsCommandUsage(cmdUsageData)
         }
         catch(e) {
-            this.logger.error(`${fn} ${e}`)
+            this.logger.error(`${fn} ${e.stack}`)
             return PistachioComponents.reply(this.locale.ERROR, {color: `red`, socket:{error: e} })
         }
     }

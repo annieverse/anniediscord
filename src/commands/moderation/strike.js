@@ -101,5 +101,6 @@ module.exports.help = {
 	usage: `strike <User>`,
 	group: `Moderation`,
 	permissionLevel: 2,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

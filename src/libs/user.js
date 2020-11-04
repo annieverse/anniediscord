@@ -2,7 +2,6 @@
 const Themes = require(`../ui/colors/themes`)
 const Experience = require(`./exp`)
 const Permission = require(`./permissions`)
-const stringSimilarity = require('string-similarity');
 
 /**
  * Handles user-related data request and changes
@@ -31,58 +30,85 @@ class User {
 	async lookFor(target) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
-		this.args = target.split(` `)        	
-        target = target.toLowerCase()
-    	//  The acceptable rating can be adjusted between range of 0.1 to 1.
-    	//  The higher the number, the more strict the result would be.
-		const acceptableRating = 0.6
-		const aggregatedMembers = this.message.guild.members.cache
+		//  Normalize keyword and ommits bracket if target contains mention     	
+        target = target.toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
+		this.args = target.split(` `)
+        const collection = this.message.guild.members
+		//  Lookup by full string nickname/username
 		try {
-			//  Lookup by username
-			const findByUsername = stringSimilarity.findBestMatch(target, aggregatedMembers
-				.map(node => node.user.username.toLowerCase()))
-			if (findByUsername.bestMatch.rating >= acceptableRating) {
-				const res = aggregatedMembers.filter(node => node.user.username.toLowerCase() === findByUsername.bestMatch.target).first()
-				this.logger.debug(`${fn} found user with keyword '${target}' via username check. (${findByUsername.bestMatch.rating * 100}% accurate)`)
-				this.user = res
-				this.usedKeyword = findByUsername.bestMatch.target
-				return res
+			let findByFullString = await collection.fetch({query:target, limit:1})
+			findByFullString = findByFullString.values().next().value.user
+			if (findByFullString) {
+				this.logger.debug(`${fn} successfully found user by complete string`)
+				this.user = findByFullString
+				this.usedKeyword = target
+				return this.user
 			}
-			//  Lookup by nickname
-			const findByNickname = stringSimilarity.findBestMatch(target, aggregatedMembers
-				.filter(node => node.nickname)
-				.map(node => node.nickname.toLowerCase()))
-			if (findByNickname.bestMatch.rating >= acceptableRating) {
-				const res = aggregatedMembers
-				.filter(node => ![null, undefined].includes(node.nickname))
-				.filter(node => node.nickname.toLowerCase() === findByNickname.bestMatch.target).first()
-				this.logger.debug(`${fn} found user with keyword '${target}' via nickname check. (${findByNickname.bestMatch.rating * 100}% accurate)`)
-				this.user = res
-				this.usedKeyword = findByNickname.bestMatch.target
-				return res
-			}
-			//  Lookup by ID
-			let findByID = null
-			for (let i=0; i<this.args.length; i++) {
-        		//  Omit surrounded symbols if user using @mention method to be used as the searchstring keyword.
-				const parsedID = this.args[i].replace(/[^0-9a-z-A-Z ]/g, ``)
-				const res = aggregatedMembers.filter(node => node.id === parsedID).first()
-				if (res) {
-					findByID = res
-					this.usedKeyword = this.args[i]
-					break
+		}
+		catch(e){}
+		//  Lookup by full string user ID
+		try {
+			let findByFullStringID = await collection.fetch(target)
+			findByFullStringID = collection.cache.get(target).user
+			this.logger.debug(`${fn} successfully found user by complete string of user ID`)
+			this.user = findByFullStringID
+			this.usedKeyword = target
+			return this.user
+		}
+		catch(e){}
+		//  Lookup by iterating tokens
+		let findByStringToken
+		let findByIDToken
+		let findByCombinedStringTokens
+		for (let i=0; i<this.args.length; i++) {
+			const token = this.args[i]
+			//  Check for string-type token
+			try {
+				findByStringToken = await collection.fetch({query:token, limit:1})
+				findByStringToken = findByStringToken.values().next().value.user
+				if (findByStringToken) {
+					this.logger.debug(`${fn} successfully found user by using string token '${token}'`)
+					this.user = findByStringToken
+					this.usedKeyword = token
+					return this.user
 				}
 			}
-			if (findByID) {
-				this.logger.debug(`${fn} found user with keyword '${target}' via ID check.`)	
-				this.user = findByID
-				return findByID
+			catch(e){}
+			//  Check for userID-type token
+			try {
+				findByIDToken = await collection.fetch(token)
+				findByIDToken = collection.cache.get(token).user
+				if (findByIDToken) {
+					this.logger.debug(`${fn} successfully found user by using ID token '${token}'`)
+					this.user = findByIDToken
+					this.usedKeyword = token
+					return this.user
+				}
+			}
+			catch(e){}
+			//  Combine tokens and find the closest correlation
+			let combinedTokens = token
+			const neighbors = this.args.filter((element, index) => index !== i)
+			for (let x=0; x<neighbors.length; x++) {
+				const neighborToken = neighbors[x]
+				combinedTokens += ` ` + neighborToken
+				try {
+					findByCombinedStringTokens = await collection.fetch({query:combinedTokens, limit:1})
+					findByCombinedStringTokens = findByStringToken.values().next().value.user
+					if (findByCombinedStringTokens) {
+						this.logger.debug(`${fn} successfully found user by using combined string tokens '${combinedTokens}'`)
+						this.user = findByCombinedStringTokens
+						this.usedKeyword = combinedTokens
+						return this.user
+					}
+				}
+				catch(e){}
 			}
 		}
-		catch(e) {
-			this.logger.error(`${fn} has failed to search user with keyword '${target}' > ${e.stack}`)
-			return null
-		}
+		//  Fallback
+		this.logger.warn(`${fn} fail to fetch user with keyword '${target}'. None of the searchstring gives adequate result.`)
+		this.user = null
+		return null
     }
 
     /**

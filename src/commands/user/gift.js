@@ -120,5 +120,6 @@ module.exports.help = {
 	usage: `gift <User>`,
 	group: `User`,
 	permissionLevel: 0,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

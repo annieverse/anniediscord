@@ -2,6 +2,29 @@
 
 ___
 
+## **11/03/20 | 7.5.1 ->**
+
+* 127e6ce fix: userKeyword dependant on some commands
+* 4ca29b5 refactor(commandLib): added rawArgs property to keep the userKeyword present
+
+## **11/01/20 | 7.5.0 ->**
+
+* 685adfe feat(faceGenerate): ai-generated character face provided by TWDNE
+* 56bfe2c feat(affiliates): affiliates manager
+* 408c846 refactor: attach affiliate link on some commands
+* 7c639ff refactor(commandLib): ommits tokenized userKeywords from fullArgs set
+* cbf21f6 refactor(pay): adapt args with the new user structure
+* cfccfb7 refactor(userSearch): changed algorithm to fit with limited member gateway
+* ccb8461 refactor(cartcoin): replace flow to button based
+
+## **10/29/20 | 7.4.8 ->**
+
+* 580333a chores: deprecate unused settings
+* e58ec4a refactor: adds notice on setting commands
+* 0f240ee fix(exp): user cache
+* bdebda5 fix(stats): user fetch
+* 8485958 fix(leaderboard): cache users
+
 ## **10/23/20 | 7.4.7 ->**
 
 308ea78 refactor(command): improved cd register

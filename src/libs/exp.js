@@ -107,6 +107,7 @@ class Experience extends Points {
 			let role = this.guild.roles.cache.get(element.ROLE)
 			lowerRankRoles.push(role.id)
 		})
+        await this.guild.members.fetch(this.message.author.id)
 		await this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
 		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
@@ -114,6 +115,7 @@ class Experience extends Points {
         //  Handle if given role doesn't exist in configuration
         if (!roleFromList) return this.logger.warn(`${fn} can't find any custom role-rank associated with LV${level} in GUILD_ID:${this.message.guild.id}`)
         //  Handle if role doesn't exist in the guild
+
         if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
 		let role = this.guild.roles.cache.get(roleFromList.ROLE)
         //  Start assign the rolerank

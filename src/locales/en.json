@@ -16,6 +16,10 @@
         "HAS_ROLE_ALREADY": "Sorry, but **{{user}}** has that role already.",
         "ROLE_ADDED": "Successfully assigned the role!"
     },
+    "AFFILIATES": {
+        "EMPTY": "Ops, there are no registered affiliates at the moment!",
+        "DISPLAY": "**Hi, {{user}}!** here you can see all the servers that has been supporting the development of Annie.\n{{list}}"
+    },
     "ASK": {
         "ANSWERS": [
             "Yes.",
@@ -64,7 +68,7 @@
         "INSUFFICIENT_AMOUNT": "You only have **{{amount}}** artcoins. Grind harder!",
         "INVALID_AMOUNT": "To use the converter, you need to put atleast **8 artcoins.**",
         "SUCCESSFUL": "Successfully convert **{{artcoins}}** into **{{exp}}** !",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nType `y` to confirm the conversion."
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nPress the button to confirm the conversion."
     },
     "CATEXP": {
         "UNAVAILABLE": "You don't have any exp to claim.",
@@ -211,6 +215,10 @@
         "LIKED": "**{{reactor}}** and **{{amount}} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{{0}}**!\nyour post in {{channel}} has been featured!"
     },
+    "FACEGEN": {
+        "FETCHING": "{{emoji}} `Generating a fresh anime-face you've never seen before ...`",
+        "HEADER": "AI-Generated Character provided by [Gwern@TWDNE](https://www.gwern.net/index)"
+    },
     "FLIPCOIN": {
         "RESPONSES": [
             "Landed on **{{result}}!** Yay!",
@@ -242,7 +250,8 @@
         "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `dailies` first. {{emoji}}",
         "ASK_TO_OPEN": "Wanna open them now?"
     },
-    "GENERATE_SERVER_INVITE": "Also, have a visit to my home! {{emoji}}\n{{serverLink}}",
+    "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
+    "GENERATE_AFFILIATE_INVITE": "Don't forget to check my affiliated server too! {{emoji}}\n{{affiliateLink}}",
     "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",
     "GETLOG": {
         "NULL": "Sorry **{{user}}** ... I can't find any saved logs in my directory. {{emoji}}",
@@ -282,7 +291,7 @@
     "HELP": {
         "LANDING": "are you looking for a quick start?{{emoji}}\n\n`{{prefix}}level`\n*You might want to check how much exp you get after those hours of chit-chatting.*\n\n`{{prefix}}balance`\n*Come check how many artcoins you had in your wallet right now.*\n\n`{{prefix}}daily`\n*Annie rewards you free 250 artcoins for every 23 hours. So, make sure to not skip this freebies!*\n\n`{{prefix}}leaderboard`\n*Curious who got the highest exp, artcoins and fame points? then try this!*\n\n`{{prefix}}profile`\n*You will be able to see your current rank, level, artcoins and fame points at a glance.*\n\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
         "COMMANDPEDIA": {
-            "HEADER": "`()` indicates that the argument is optional and you can leave it blank.\nIf `<>` is the only one that presents, then you are required to include an additional argument in order for command to work.\n\n{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <commandName>` to get informations about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}}",
+            "HEADER": "`()` indicates that the argument is optional and you can leave it blank.\nIf `<>` is the only one that presents, then you are required to include an additional argument in order for command to work.\n\n{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <commandName>` to get informations about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}} | {{affiliateInviteLink}}",
             "USAGE_EXAMPLES": "Use **{{prefix}}help <CommandName>** to get information about a command."
         },
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
@@ -314,7 +323,7 @@
     },
     "LOGS": {
         "GUILDCREATE": {
-            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` in your guild to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}})",
+            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` in your guild to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}}) | [Affiliated Server]({{affiliatedServer}})",
             "INTERNAL_LOG": "Hm?! I got invited to **{{guildCode}}**! I hope I don't disappoint them this time. {{emoji}}"
         },
         "MESSAGE_DELETE": "Hi! I just saw one message got deleted by **{{user}}** in this channel called as **{{channel}}**. If I could remember, the content was something like this:\n\n> {{content}}",

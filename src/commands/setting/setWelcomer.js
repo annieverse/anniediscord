@@ -43,6 +43,10 @@ class SetWelcomer extends Command {
      */
     async execute({ reply, name, emoji }) {
         await this.requestUserMetadata(1)
+        //  Disable
+        return reply(`**Welcomer Module** has been temporarily disabled due to Discord's new Gateway Intents. We are currently working on the fix.`, {
+            status: `warn`
+        })
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETWELCOMER.GUIDE, {
             color: `crimson`,

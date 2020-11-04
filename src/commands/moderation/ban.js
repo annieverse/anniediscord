@@ -39,5 +39,6 @@ module.exports.help={
 	usage: `ban <User>`,
 	group: `Moderation`,
 	permissionLevel: 3,
-	multiUser: true
+	multiUser: true,
+	rawArgs: true
 }

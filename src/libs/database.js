@@ -2058,6 +2058,39 @@ class Database {
 	}
 
 	/**
+	 * Check and create affiliates table if not exists
+	 * @returns {boolean}
+	 */
+	async initializeAffiliatesTable() {
+		await this._query(`CREATE TABLE IF NOT EXISTS affiliates (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'guild_id' TEXT NOT NULL,
+			'description' TEXT DEFAULT 'Another awesome guild!',
+			'invite_link' TEXT,
+			'notes' TEXT)`
+            , `run`
+			, []
+			, `Verifying table affiliates`
+		)
+		return true		
+	}
+
+	/**
+	 * Fetch all the registered servers in affiliate table
+	 * @return {QueryResult} 
+	 */
+	async getAffiliates() {
+		return this._query(`
+			SELECT *
+			FROM affiliates`
+			, `all`
+			, []
+			, `Fetching affiliates list`
+		)
+	}
+
+	/**
 	 * Migrating old data (15 May)
 	 * Purposely made because of #234 data-lost accident
 	 * @returns {void}

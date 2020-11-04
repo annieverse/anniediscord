@@ -525,6 +525,7 @@ class LogsSystem {
     async guildCreate({ reply, emoji }) {
         const fn = `[Logs.guildCreate]`
         const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
+        const affiliate = await this.data.bot.db.getAffiliates()
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
@@ -546,7 +547,8 @@ class LogsSystem {
                     wiki: `https://github.com/klerikdust/anniediscord/wiki`,
                     prefix: this.data.bot.prefix,
                     emoji: emoji(`AnnieSmile`),
-                    supportServer: this.data.bot.supportServer
+                    supportServer: this.data.bot.supportServer,
+                    affiliatedServer: affiliate[0].invite_link
                 }
             })
         } catch (e) {
