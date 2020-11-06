@@ -437,6 +437,15 @@
         "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
         "SUCCESSFUL": "Yay! **{{amount}}** messages have been successfully deleted! {{emoji}}"
     },
+    "QUEST": {
+        "DISPLAY": "\n\n╭───────────────────╮\n\n{{description}}\n**Rewards: {{reward}}**\n\n╰───────────────────╯`",
+        "SUCCESSFUL": "**{{user}}** just completed the quest and received **{{reward}}**!",
+        "INCORRECT_ANSWER": "Boo, incorrect answer!",
+        "FOOTER": "Type one correct answer to complete the quest.",
+        "FETCHING": "{{emoji}} `Looking into the quest board...`",
+        "COOLDOWN": "Your next quest will be available in\n:clock1: **{{time}}**",
+        "EMPTY": "Sorry, no quests are available to take at the moment!"
+    },
     "RECYCLE": {
         "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
         "CONVERSATION_COMPLETED": "You have converted {0}, {1}, into {2} {3}",

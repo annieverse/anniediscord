@@ -151,6 +151,8 @@ class User {
 			this.user.dailies = await db.getUserDailies(this.user.id, this.message.guild.id)
 			//  User's relationship trees.
 			this.user.relationships = await db.getUserRelations(this.user.id,this.message.guild.id)
+			//  User's quests data
+			this.user.quests = await db.getUserQuests(this.user.id, this.message.guild.id)
 
 			//  User's parsed experience points data
 			const experienceData = await db.getUserExp(this.user.id, this.message.guild.id)

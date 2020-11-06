@@ -2057,6 +2057,187 @@ class Database {
 		return `none`
 	}
 
+
+	/**
+	 *  ----------------------------------------------------------
+	 *  QUEST-RELATED METHODS
+	 *  ----------------------------------------------------------
+	 */
+ 	/**
+ 	 * Create master quest table if doesn't exist
+ 	 * @return {QueryResult}
+ 	 */
+	initializeQuestTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS quests (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'quest_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+			'reward_amount' INTEGER DEFAULT 1,
+			'name' TEXT,
+			'description' TEXT,
+			'correct_answer' TEXT)`
+		   	, `run`
+		   	, []
+		   	, `Verifying quests table`
+		)
+	}
+
+ 	/**
+ 	 * Create user's quest manager table if doesn't exist
+ 	 * @return {QueryResult}
+ 	 */
+	initializeUserQuestTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS user_quests (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT,
+			'guild_id' TEXT,
+			'next_quest_id' INTEGER,
+
+			PRIMARY KEY(user_id, guild_id)
+
+		    FOREIGN KEY(next_quest_id)
+		    REFERENCES quests(quest_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		    FOREIGN KEY(user_id)
+		    REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE
+
+		    FOREIGN KEY(guild_id)
+		    REFERENCES guilds(guild_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE)`
+		   	, `run`
+		   	, []
+		   	, `Verifying user_quest table`
+		)
+	}
+
+ 	/**
+ 	 * Create quest log table if doesn't exist
+ 	 * @return {QueryResult}
+ 	 */
+	initializeQuestLogTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS quest_log (
+			registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			quest_id INTEGER,
+			user_id TEXT,
+			guild_id TEXT,
+			answer TEXT)`
+			, `run`
+			, []
+			, `Verifying quest_log table`
+		)
+	}
+
+ 	/**
+ 	 * Update user's quest data after completing a quest
+ 	 * @param {string} [userId=``] target user's data to be updated
+ 	 * @param {string} [guildId=``] target guild where user's data going to be updated
+ 	 * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
+ 	 * @return {QueryResult}
+ 	 */
+	updateUserQuest(userId=``, guildId=``, nextQuestId=``) {
+		return this._query(`
+			UPDATE user_quests
+			SET 
+				updated_at = datetime('now'),
+				next_quest_id = ?
+			WHERE
+				user_id = ?
+				AND guild_id = ?`
+			, `run`
+			, [nextQuestId, userId, guildId]
+			, `Updating ${userId}@${guildId} quest data`
+		)
+	}
+
+ 	/**
+ 	 * Log user's quest activity after completing a quest
+ 	 * @param {string} [userId=``] user that completes the quest
+ 	 * @param {string} [guildId=``] target guild where quest get completed
+ 	 * @param {string} [questId=``] the quest user just took
+ 	 * @param {string} [answer=``] the answer used to clear the quest
+ 	 * @return {QueryResult}
+ 	 */
+	recordQuestActivity(userId=``, guildId=``, questId=``, answer=``) {
+		return this._query(`
+			INSERT INTO quest_log(
+				quest_id,
+				user_id,
+				guild_id,
+				answer
+			)
+			VALUES(?, ?, ?, ?)`
+			, `run`
+			, [questId, userId, guildId, answer]
+			, `Storing ${userId}@${guildId} quest's activity to quest_log table`
+		)
+	}
+
+ 	/**
+ 	 * Refreshing user next's quest_id
+ 	 * @param {string} [userId=``] target user's data to be updated
+ 	 * @param {string} [guildId=``] target guild where user's data going to be updated
+ 	 * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
+ 	 * @return {QueryResult}
+ 	 */
+	updateUserNextActiveQuest(userId=``, guildId=``, nextQuestId=``) {
+		return this._query(`
+			UPDATE user_quests
+			SET next_quest_id = ?
+			WHERE
+				user_id = ?
+				AND guild_id = ?`
+			, `run`
+			, [nextQuestId, userId, guildId]
+			, `Updating next active quest ID for ${userId}@${guildId}`
+		)
+	}
+
+ 	/**
+ 	 * Pull user's quest data. It will create a new entry first if user is first-timer.
+ 	 * @param {string} [userId=``] target user's data to be pulled
+ 	 * @param {string} [guildId=``] target guild where user's data going to be pulled
+ 	 * @return {QueryResult}
+ 	 */
+	async getUserQuests(userId=``, guildId=``) {
+		//  Register user's quest data if not present
+		await this._query(`
+			INSERT INTO user_quests (user_id, guild_id)
+			SELECT $userId, $guildId
+			WHERE NOT EXISTS (SELECT 1 FROM user_quests WHERE user_id = $userId AND guild_id = $guildId)`
+			, `run`
+			, {userId: userId, guildId: guildId}
+		)
+		return this._query(`
+			SELECT *
+			FROM user_quests
+			WHERE 
+				user_id = ?
+				AND guild_id = ?`
+			, `get`
+			, [userId, guildId]
+		)
+	}
+
+ 	/**
+ 	 * Pull all the available quests in quests master table
+ 	 * @return {QueryResult}
+ 	 */
+	getAllQuests() {
+		return this._query(`
+			SELECT *
+			FROM quests`
+			, `all`
+			, []
+			, `Fetching all the available quests in master quests table`
+		)
+	}
+
 	/**
 	 * Check and create affiliates table if not exists
 	 * @returns {boolean}
@@ -2727,51 +2908,7 @@ class Database {
 		 * End of Trade System Plugin
 		 * --------------------------
 		 */
-		
-		/**
-		 * --------------------------
-		 * Modmail Plugin
-		 * --------------------------
-		 */
-		await this._query(`CREATE TABLE IF NOT EXISTS modmail_threads (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'guild_id' TEXT NOT NULL,
-			'thread_id' REAL UNIQUE NOT NULL,
-			'status' TEXT NOT NULL,
-			'is_anonymous' INTEGER NOT NULL DEFAULT 0,
-			'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`
-            , `run`
-			, []
-			, `Verifying table modmail_threads`)
 			
-		await this._query(`CREATE TABLE IF NOT EXISTS modmail_thread_messages (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL,
-			'mod_id' TEXT NOT NULL,
-			'guild_id' TEXT NOT NULL,
-			'thread_id' TEXT NOT NULL,
-			'message' TEXT NOT NULL)`
-            , `run`
-			, []
-			, `Verifying table modmail_thread_messages`)
-
-			
-		await this._query(`CREATE TABLE IF NOT EXISTS modmail_blocked_users (
-			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			'user_id' TEXT NOT NULL UNIQUE,
-			'blocked' INTEGER DEFAULT 0,
-			'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`
-            , `run`
-			, []
-			, `Verifying table modmail_blocked_users`)
-			
-		/**
-		 * --------------------------
-		 * END OF MODMAIL PLUGIN
-		 * --------------------------
-		 */
-
 		/**
 		 * --------------------------
 		 * USER TREE
