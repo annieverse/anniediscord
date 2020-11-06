@@ -2207,8 +2207,8 @@ class Database {
 	async getUserQuests(userId=``, guildId=``) {
 		//  Register user's quest data if not present
 		await this._query(`
-			INSERT INTO user_quests (user_id, guild_id)
-			SELECT $userId, $guildId
+			INSERT INTO user_quests (updated_at, user_id, guild_id)
+			SELECT datetime('now','-1 day'), $userId, $guildId
 			WHERE NOT EXISTS (SELECT 1 FROM user_quests WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
 			, {userId: userId, guildId: guildId}
