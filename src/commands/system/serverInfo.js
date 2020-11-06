@@ -21,7 +21,6 @@ class ServerInfo extends Command {
 		let members = this.message.guild.memberCount
 		let botSize =  this.message.guild.members.cache.filter(a => a.user.bot).size
 		let userSize = members - botSize
-		let onmem = this.message.guild.members.cache.filter(a => a.user.presence.status === `online`).size
 
 		return reply(`
 			${this.message.guild.region.charAt(0).toUpperCase() + this.message.guild.region.slice(1)}-based Guild
@@ -34,8 +33,6 @@ class ServerInfo extends Command {
 
 			**• How many members do we have?**
 			I can smell ${commanifier(userSize)} hoomans are currently living in this guild and the rest ${commanifier(botSize)} creatures are my friend. x)
-			But, did you know?
-			${onmem} users are currently active in this server! go greet them!
 
 			**• Hmm, what about the channels and roles?**
 			Hah! they have ${this.message.guild.channels.cache.size} channels and ${this.message.guild.roles.cache.size} roles!
