@@ -229,7 +229,9 @@ class Commands {
 	 * @returns {object}
 	 */
 	_userSelector() {
-		return this.commandProperties.multiUser && this.fullArgs ? this.userClass.lookFor(this.fullArgs) : this.message.member
+		return this.commandProperties.multiUser && this.fullArgs 
+		? this.userClass.lookFor(this.fullArgs) 
+		: this.userClass.lookFor(this.message.author.id)
 	}
 }
 

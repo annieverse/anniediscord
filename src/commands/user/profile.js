@@ -17,7 +17,7 @@ class Profile extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name }) {
+    async execute({ reply, emoji, name, avatar }) {
         await this.requestUserMetadata(2)
 
         //  Handle if user doesn't exists
@@ -36,7 +36,7 @@ class Profile extends Command {
                 emoji: emoji(`AnnieSmile`),
                 command: `Profile`
             },
-            image: (await new GUI(this.user,this.bot).build()).toBuffer(),
+            image: (await new GUI(this.user,this.bot, {}, avatar).build()).toBuffer(),
             prebuffer: true,
             simplified: true 
         })
