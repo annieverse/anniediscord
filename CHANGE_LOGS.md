@@ -2,6 +2,16 @@
 
 ___
 
+## **11/06/20 | 7.6.0 ->**
+
+* 0543774 feat(artquest): beta
+* 4c8d049 refactor(setrel): clear define prefix
+* 874af83 refactor(serverInfo): removes presence tracker
+* 6fc763d refactor(cardCollection): hide preview for cards under 10 elements in single page
+* 0e7f569 refactor: simplified commandpedia to improve ux
+* e7c16bb fix(level): fail ref
+* d9a8d72 fix(profile): fail ref
+
 ## **11/03/20 | 7.5.1 ->**
 
 * 127e6ce fix: userKeyword dependant on some commands
