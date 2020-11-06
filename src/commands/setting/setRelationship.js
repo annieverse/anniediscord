@@ -152,7 +152,7 @@ module.exports.help = {
     name: `setRelationship`,
     aliases: [`setrel`, `setrelationship`, `setrelations`, `setrelation`, `addrelationship`, `setrelationship`, `addrel`],
     description: `Edit and customize your relationship trees`,
-    usage: `setrelation`,
+    usage: `setrelationship`,
     group: `Setting`,
     permissionLevel: 0,
     multiUser: true
