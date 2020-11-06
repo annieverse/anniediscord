@@ -12,7 +12,7 @@ class Help extends Command {
 		super(Stacks)
 		this.defaultColor = `crimson`
 		this.commandpediaButton = `📖`
-		this.ignoreGroups = [`Developer`, `modmail`]
+		this.ignoreGroups = [`Developer`, `modmail`, `Moderation`]
 		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
 		this.commandpediaBanner = `https://i.ibb.co/5X3S3yq/1.png`
 		this.permmissionInteger = 268823638
@@ -146,9 +146,25 @@ class Help extends Command {
 		let str = ``
 		for (let group in obj) {
 			const cmdNames = obj[group].map(el => `\`${this.bot.prefix}${el.help.usage.toLowerCase()}\``)
-			str += `**${group}**\n${cmdNames.join(`,`).replace(/,/g, `\n`)}\n\n`
+			str += `**${group}**\n*${this._getCategoryDescription(group)}*\n${cmdNames.join(`,`).replace(/,/g, `\n`)}\n\n`
 		}
 		return str
+	}
+
+	/**
+	 * Pull category's description
+	 * @param {string} [category]
+	 * @return {string}
+	 */
+	_getCategoryDescription(category=``) {
+		const descriptions = {
+			Artsy: `Annie's art-related commands will fall under this category, and still undergoing development!`,
+			Fun: `Wanna have fun with your friends? try this out!`,
+			Setting: `Configurations that you may need to set up your guild and your custom profile!`,
+			System: `Miscellaneous commands`,
+			User: `Everything you need are in here. Well-refined, just for you.`
+		}
+		return descriptions[category]
 	}
 
 	/**

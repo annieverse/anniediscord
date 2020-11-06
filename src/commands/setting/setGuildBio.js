@@ -68,6 +68,7 @@ module.exports.help = {
     usage: `setguildbio <bio>`,
     group: `Setting`,
     permissionLevel: 3,
-    multiUser: false
+    multiUser: false,
+    invisible: true
 }
 

@@ -156,5 +156,6 @@ module.exports.help = {
     usage: `setprofile`,
     group: `Setting`,
     permissionLevel: 0,
-    multiUser: false
+    multiUser: false,
+    invisible: true
 }

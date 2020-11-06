@@ -33,9 +33,9 @@ class SetBio extends Command {
 module.exports.help = {
 	start: SetBio,
 	name: `setProfileDescription`,
-	aliases: [`sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
-	description: `Set user's profile bio/description`,
-	usage: `setdesc <Message>`,
+	aliases: [`setdescrip`, `sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
+	description: `Set your profile bio/description`,
+	usage: `setbio <Message>`,
 	group: `Setting`,
 	permissionLevel: 0,
 	multiUser: false

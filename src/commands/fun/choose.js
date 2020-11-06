@@ -51,7 +51,7 @@ module.exports.help = {
 	name: `choose`,
 	aliases: [`choose`, `pick`],
 	description: `I'll try to pick any options you give!`,
-	usage: `choose <OptionsToPick>`,
+	usage: `choose <options>`,
 	group: `Fun`,
 	permissionLevel: 0,
 	multiUser: false

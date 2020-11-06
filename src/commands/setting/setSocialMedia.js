@@ -68,6 +68,7 @@ module.exports.help = {
     usage: `setsocialmedia <AccountURL>`,
     group: `Setting`,
     permissionLevel: 0,
-    multiUser: false
+    multiUser: false,
+    invisible: true
 }
 

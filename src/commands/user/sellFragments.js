@@ -101,5 +101,6 @@ module.exports.help = {
 	usage: `sellfragments <amount/all>`,
 	group: `User`,
 	permissionLevel: 0,
-	multiUser: false
+	multiUser: false,
+    invisible: true
 }

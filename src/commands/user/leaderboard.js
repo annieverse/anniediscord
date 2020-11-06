@@ -132,7 +132,7 @@ module.exports.help = {
 	name:`leaderboard`,
 	aliases: [`rank`, `leaderboard`, `rank`, `ranking`, `lb`, `leaderboards`],
 	description: `Displays global leaderboard`,
-	usage: `lb`,
+	usage: `leaderboard`,
 	group: `User`,
 	permissionLevel: 0,
 	multiUser: false
