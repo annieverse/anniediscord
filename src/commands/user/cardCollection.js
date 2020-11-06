@@ -27,42 +27,23 @@ class CardCollection extends Command {
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		//  Fetch cards type in user's inventory and sort by rarity descendantly
 		let filteredInventory = this.user.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (b.rarity_level - a.rarity_level))
-		//  If total owned cards beyond the upper limit, then split
-		if (filteredInventory.length > this.upperLimit) {
-			this.shouldSplitResult = true
-			this.splittedInventory = []
-			let box = []
-			let checkpoint = 0
-			for (let i=0; i<filteredInventory.length; i++) {
-				checkpoint++
-				box.push(filteredInventory[i])
-				if (checkpoint === this.upperLimit || i == filteredInventory.length-1) {
-					this.splittedInventory.push(box)
-					box = []
-					checkpoint = 0
-				}
-			}		
-		}
+		this.shouldSplitResult = true
+		this.splittedInventory = []
+		let box = []
+		let checkpoint = 0
+		for (let i=0; i<filteredInventory.length; i++) {
+			checkpoint++
+			box.push(filteredInventory[i])
+			if (checkpoint === this.upperLimit || i == filteredInventory.length-1) {
+				this.splittedInventory.push(box)
+				box = []
+				checkpoint = 0
+			}
+		}		
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)}})
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.id, emoji: emoji(`AAUloading`)}})
 		.then(async loading => {
-			//  Display single page without button
-			if (!this.splittedInventory) {
-				await reply(this.displayDetailedCardCollection(filteredInventory), {
-					prebuffer: true,
-					color: `crimson`,
-					image: await new GUI(filteredInventory).create(),
-					header: `${name(this.user.id)}'s Card Collections`,
-					thumbnail: avatar(this.user.id),
-					socket: {
-						user: name(this.user.id),
-						emoji: emoji(`AnniePogg`),
-						command: `Cards Collection`
-					}
-				})
-				return loading.delete()
-			}
 			await reply(this.prettifiedCardInventory(), {
 				paging: true,
 				cardPreviews: this.splittedInventory,
