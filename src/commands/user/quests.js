@@ -69,6 +69,7 @@ class Quests extends Command {
 			await db.updateUserQuest(this.user.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
 			await db.recordQuestActivity(nextQuestId, this.user.id, this.message.guild.id, answer)
 			//  Successful
+			this.endSequence()
 			return reply(this.locale.QUEST.SUCCESSFUL, {
 				status: `success`,
 				socket: {
