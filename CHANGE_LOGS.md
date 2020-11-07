@@ -2,6 +2,10 @@
 
 ___
 
+## **11/07/20 | 7.6.1 ->**
+
+* b5240fa refactor(quest): increase listen limit and added cancel option.
+
 ## **11/06/20 | 7.6.0 ->**
 
 * 0543774 feat(artquest): beta
