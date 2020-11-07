@@ -55,9 +55,16 @@ class Quests extends Command {
 			}
 		})
 		this.fetching.delete()
-		this.setSequence(3)
+		this.setSequence(10)
 		this.sequence.on(`collect`, async msg => {
 			let answer = msg.content.toLowerCase()
+			// Handle if user asked to cancel the quest
+			if ([`cancel`, `n`, `no`].includes(answer)) {
+				reply(this.locale.QUEST.CANCEL)
+				msg.delete()
+				this.quest.delete()
+				return this.endSequence()
+			}
 			//  Handle if the answer is incorrect
 			if (answer !== activeQuest.correct_answer) {
 				reply(this.locale.QUEST.INCORRECT_ANSWER, {status: `warn`, deleteIn: 3})

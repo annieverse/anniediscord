@@ -444,7 +444,8 @@
         "FOOTER": "Type one correct answer to complete the quest.",
         "FETCHING": "{{emoji}} `Looking into the quest board...`",
         "COOLDOWN": "Your next quest will be available in\n:clock1: **{{time}}**",
-        "EMPTY": "Sorry, no quests are available to take at the moment!"
+        "EMPTY": "Sorry, no quests are available to take at the moment!",
+        "CANCEL": "Alright, quest has been cancelled."
     },
     "RECYCLE": {
         "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
