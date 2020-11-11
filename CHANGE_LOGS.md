@@ -2,6 +2,12 @@
 
 ___
 
+## **11/11/20 | 7.6.2 ->**
+
+* 4529818 fix: invisible rawArg and setCover avatar parser
+* 3be0216 chores: removed footer warn on setLogs
+* 0be03a4 chores: enabled Welcomer Module
+
 ## **11/07/20 | 7.6.1 ->**
 
 * b5240fa refactor(quest): increase listen limit and added cancel option.
