@@ -26,7 +26,7 @@ class SetCover extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, name, emoji, bot:{db} }) {
+    async execute({ reply, name, emoji, avatar, bot:{db} }) {
         await this.requestUserMetadata(2)
         let ownedCovers = this.user.inventory.raw.filter(item => item.type_id === 1)
         //  Handle if user doesn't specify any arg
@@ -75,7 +75,7 @@ class SetCover extends Command {
                 emoji: emoji(`AAUloading`)
             } 
         })
-        let img = await new GUI(this.user, this.bot, {width: 320, height: 310}).build()
+        let img = await new GUI(this.user, this.bot, {width: 320, height: 310}, avatar).build()
         this.confirmation = await reply(this.locale.SETCOVER.PREVIEW_CONFIRMATION, {
             prebuffer: true,
             color: `golden`,
