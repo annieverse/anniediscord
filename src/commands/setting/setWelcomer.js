@@ -266,7 +266,6 @@ module.exports.help = {
     usage: `setWelcomer`,
     group: `Setting`,
     permissionLevel: 3,
-    multiUser: false,
-    invisible: true
+    multiUser: false
 }
 
