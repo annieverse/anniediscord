@@ -29,14 +29,14 @@ class UI {
 		//  Semi-opaque background
 		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
 		await card.addContent({
-			avatar: await urlToBuffer(this.user.user.displayAvatarURL({format: `png`, dynamic: false})),
+			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
 			avatarRadius: 7,
 			marginTop: 65,
 			marginLeft: 80,
 			inline: true
 		})
 		//  Balance Author
-		card.addTitle({main: this.user.user.username + `,`, size: 12, marginLeft: 60, marginTop: 60, fontWeight: `bold`})
+		card.addTitle({main: this.user.username + `,`, size: 12, marginLeft: 60, marginTop: 60, fontWeight: `bold`})
 		.addTitle({main: `you will receive ...`, size: 9, marginLeft: 70, marginTop: 15})
 		//  Artcoins visual
 		const amountTextLength = commanifier(this.amountToGet).length
