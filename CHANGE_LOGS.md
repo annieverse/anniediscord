@@ -2,6 +2,10 @@
 
 ___
 
+## **11/12/20 | 7.6.3 ->**
+
+* 7e21587 fix(sellFrags): missing avatar parser
+
 ## **11/11/20 | 7.6.2 ->**
 
 * 4529818 fix: invisible rawArg and setCover avatar parser
