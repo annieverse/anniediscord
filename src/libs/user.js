@@ -125,6 +125,8 @@ class User {
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
 		try {
 			this.user = user
+			//  Data checking
+			await this.bot.db.validateUser(this.user.id, this.message.guild.id, this.user.username)
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 1
 			 *  --------------------------------------------------------------------
