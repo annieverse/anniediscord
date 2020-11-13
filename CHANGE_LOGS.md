@@ -2,6 +2,10 @@
 
 ___
 
+## **11/13/20 | 7.6.4 ->**
+
+* b57843d refactor(user): always validate userdata on command
+
 ## **11/12/20 | 7.6.3 ->**
 
 * 7e21587 fix(sellFrags): missing avatar parser
