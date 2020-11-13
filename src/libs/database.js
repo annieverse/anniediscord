@@ -606,6 +606,19 @@ class Database {
 	 *  -------------------------------------------------------------------------------
 	 */	
 	
+
+	doesUserRegisteredInTheGuild(userId=``, guildId=``) {
+		return this._query(`
+			SELECT COUNT(*) AS is_registered
+			FROM user_exp
+			WHERE 
+				user_id = ?
+				AND guild_id = ?`
+			, `get`
+			, [userId, guildId]
+		)
+	}
+
 	/**
 	 * Register a user into user-tree tables if doesn't exist.
 	 * @param {string} [userId=``] User's discord id.

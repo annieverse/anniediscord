@@ -126,7 +126,8 @@ class User {
 		try {
 			this.user = user
 			//  Data checking
-			await this.bot.db.validateUser(this.user.id, this.message.guild.id, this.user.username)
+			const userValidate = await this.bot.db.doesUserRegisteredInTheGuild(this.user.id, this.message.guild.id)
+			if (userValidate.is_registered === 0) await this.bot.db.validateUser(this.user.id, this.message.guild.id, this.user.username)
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 1
 			 *  --------------------------------------------------------------------
