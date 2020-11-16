@@ -217,7 +217,7 @@ class SetWelcomer extends Command {
      * Adding role when user joined the guild 
      * @returns {reply}
      */
-    async role({ reply, emoji, findRole }) {
+    async role({ reply, findRole }) {
         const fn = `[setWelcomer.role()]`
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
@@ -226,21 +226,26 @@ class SetWelcomer extends Command {
             socket: {prefix: this.bot.prefix},
             status: `warn`
         })
-        //  Do role searching
-        const searchRole = findRole(this.args[1])
-        //  Handle if target role couldn't be found
-        if (!searchRole) return reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
+        let rolesContainer = []
+        let specifiedRoles = this.args.slice(1)
+        for (let i=0; i<specifiedRoles.length; i++) {
+            //  Do role searching
+            const searchRole = findRole(specifiedRoles[i])
+            //  Handle if target role couldn't be found
+            if (!searchRole) return reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
+            rolesContainer.push(searchRole)
+        }
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
-            customizedParameter: [searchRole.id],
+            customizedParameter: rolesContainer.map(role => role.id),
             guild: this.message.guild,
             setByUserId: this.user.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} A new role has been registered for GUILD_ID:${this.message.guild.id}`)
+        this.logger.info(`${fn} ${rolesContainer.length} new role(s) has been registered for GUILD_ID:${this.message.guild.id}`)
         return reply(this.locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
-            socket: {role: searchRole},
+            socket: {role: rolesContainer.join(` `)},
             status: `success`
         })
     }
