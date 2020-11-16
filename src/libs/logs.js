@@ -42,7 +42,7 @@ class LogsSystem {
          * Current guild's configurations factory
          * @type {map}
          */
-        this.configs = this.guild.configs
+        this.configs = this.guild ? this.guild.configs : null
 
 		/**
          * The default locale for current command instance
@@ -538,10 +538,12 @@ class LogsSystem {
         })
         //  Attempt to DM the guild owner
         try {
+            //  Fetch owner user data
+            const owner = await this.data.bot.users.fetch(this.data.guild.ownerID)
             return reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
                 image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
                 prebuffer: true,
-                field: this.data.guild.owner,
+                field: owner,
                 color: `crimson`,
                 socket: {
                     wiki: `https://github.com/klerikdust/anniediscord/wiki`,
@@ -552,7 +554,7 @@ class LogsSystem {
                 }
             })
         } catch (e) {
-            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stacks}`)
+            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stack}`)
         }
     }
 
