@@ -1,5 +1,6 @@
 module.exports = async (bot, guild, configs) => {    
     await bot.db.registerGuild(guild)
+    await bot.registerGuildConfigurations()
     let metadata = {
         guild: guild,
         configs: configs,
