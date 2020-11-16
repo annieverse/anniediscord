@@ -172,9 +172,10 @@ class SetWelcomer extends Command {
             status: `warn`
         })
         //  Update configs
+        const welcomerText = this.args.slice(1).join(` `)
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
-            customizedParameter: this.args[1],
+            customizedParameter: welcomerText,
             guild: this.message.guild,
             setByUserId: this.user.id,
             cacheTo: this.guildConfigurations
