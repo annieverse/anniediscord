@@ -2,6 +2,13 @@
 
 ___
 
+## **11/16/20 | 7.6.5 ->**
+
+9fba2e7 refactor(setWelcomer): allows multiple roles assign
+70aabd0 fix(setWelcomer): append whole arguments
+d8e69fb fix(newGuild): fail to send dm
+185dbf1 fix(guildCache): rebuild cache on new server
+
 ## **11/13/20 | 7.6.4 ->**
 
 * b57843d refactor(user): always validate userdata on command
