@@ -93,6 +93,12 @@ class Commands {
          * @type {object}
          */	
 		this.guild = this.message.guild ? Stacks.bot.guilds.cache.get(Stacks.message.guild.id) : null
+
+        /**
+         * Annie's role
+         * @type {snowflake}
+         */
+        this.annieRole = this.message.guild ? this.message.guild.roles.cache.find(role => role.name === this.bot.user.username) : null
 	}
 
 	/**

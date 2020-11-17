@@ -217,7 +217,7 @@ class SetWelcomer extends Command {
      * Adding role when user joined the guild 
      * @returns {reply}
      */
-    async role({ reply, findRole }) {
+    async role({ reply, emoji, findRole }) {
         const fn = `[setWelcomer.role()]`
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
@@ -233,6 +233,15 @@ class SetWelcomer extends Command {
             const searchRole = findRole(specifiedRoles[i])
             //  Handle if target role couldn't be found
             if (!searchRole) return reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
+            //  Handle if role is higher than annie
+            if (searchRole.position > this.annieRole.position) return reply(this.locale.SETWELCOMER.ROLE_TOO_HIGH, {
+                color: `crimson`,
+                socket: {
+                    role: searchRole,
+                    annieRole: this.annieRole.name,
+                    emoji: emoji(`AnnieCry`)
+                }
+            })
             rolesContainer.push(searchRole)
         }
         //  Update configs

@@ -104,7 +104,7 @@ class SetRank extends Command {
      * Registering new role-rank
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async add({ reply, findRole, trueInt, name }) {
+    async add({ reply, findRole, trueInt, name, emoji }) {
         const fn = `[setRank.add()]`
         //  Handle if user doesn't specify the target role name
         if (!this.args[1]) return reply(this.locale.SETRANK.ADD_MISSING_TARGET_ROLE, {
@@ -114,6 +114,15 @@ class SetRank extends Command {
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
         if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {status: `fail`})
+        //  Handle if target role is too high
+        if (getRole.position > this.annieRole.position) return reply(this.locale.SETRANK.ROLE_TOO_HIGH, {
+            color: `crimson`,
+            socket: {
+                role: getRole,
+                annieRole: this.annieRole.name,
+                emoji: emoji(`AnnieCry`)
+            }
+        })
         //  Handle if the role is already registered
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
         if (getRegisteredRank.length >= 1) {

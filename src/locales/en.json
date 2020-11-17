@@ -633,7 +633,8 @@
         "SUCCESSFULLY_DELETED_HEADER": "The rank has been deleted!",
         "SUCCESSFULLY_DELETED": "**{{role}}** has been successfully removed from the rank-role configurations of this guild. Keep in mind, the existing member may still have the role attached if you don't delete it manually.",
         "SUCCESSFULLY_ENABLED": "Yay! **Custom Rank Module** has been successfully enabled in this guild!",
-        "SUCCESSFULLY_DISABLED": "Done! **Custom Rank Module** has been successfully disabled in this guild!"
+        "SUCCESSFULLY_DISABLED": "Done! **Custom Rank Module** has been successfully disabled in this guild!",
+        "ROLE_TOO_HIGH": "Uhh, **{{role}}** is unreachable and too high! can you move it under **{{annieRole}}** role first? {{emoji}}"
     },
     "SETWELCOMER": {
         "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setwelcomer enable`\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n`{{prefix}}setwelcomer channel <targetChannel>`\n> Set the target channel where you want the welcomer message to be sent in.\neg. __{{prefix}}setwelcomer channel #general__\n\n`{{prefix}}setwelcomer text <message>`\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\neg. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n`{{prefix}}setwelcomer preview`\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n`{{prefix}}setwelcomer disable`\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰───────────────────╯",
@@ -650,7 +651,8 @@
         "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
-        "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}"        
+        "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}",
+        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}"        
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
