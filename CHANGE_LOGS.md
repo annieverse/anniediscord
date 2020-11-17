@@ -2,6 +2,10 @@
 
 ___
 
+## **11/17/20 | 7.6.6 ->**
+
+* 1fb84e9 refactor: added role safeguard on setrank and setwelcomer
+
 ## **11/16/20 | 7.6.5 ->**
 
 * 9fba2e7 refactor(setWelcomer): allows multiple roles assign
