@@ -2,6 +2,10 @@
 
 ___
 
+## **11/18/20 | 7.6.7 ->**
+
+* dd5ca1c fix(avatar): unable to display gif-typed avatar
+
 ## **11/17/20 | 7.6.6 ->**
 
 * 1fb84e9 refactor: added role safeguard on setrank and setwelcomer
