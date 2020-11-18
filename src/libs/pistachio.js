@@ -379,10 +379,12 @@ class Pistachio {
 	*   second param to return as compressed buffer. (which is needed by canvas)
 	*	@param {String|ID} id id of user to be fetched from.
 	*	@param {Boolean} compress set true to return as compressed buffer.
+	*   @param {boolean} [dynamic=false]
+	*   @return {buffer}
 	*/
-	avatar(id, compress = false, size = `?size=512`) {
+	avatar(id, compress = false, size = `?size=512`, dynamic=false) {
 		try {
-			let url = this.bot.users.cache.get(id).displayAvatarURL({format: `png`, dynamic: false})
+			let url = this.bot.users.cache.get(id).displayAvatarURL({format: `png`, dynamic: dynamic})
 			if (compress) {
 				return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
 					.then(data => data.buffer())
@@ -511,7 +513,7 @@ class Pistachio {
 	 */
 	displayAvatar(userId=``) {
 		this.message.react(`📸`)
-		const [avatar, name] = [this.avatar(userId), this.name(userId)]
+		const [avatar, name] = [this.avatar(userId, false, `?size=512`, true), this.name(userId)]
 		const embed = new MessageEmbed()
 		.setImage(avatar)
 		.setAuthor(name, avatar)
