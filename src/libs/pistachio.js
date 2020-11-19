@@ -708,7 +708,7 @@ class Pistachio {
 		//  Add notch/chin
 		if (options.notch) content = `\u200C\n${content}\n\u200C`
 		const embed = new MessageEmbed()
-			.setColor(this.palette[options.color] || options.color)
+			.setColor(this.palette.crimson)
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
 		//  Add header
