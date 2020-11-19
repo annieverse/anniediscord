@@ -387,7 +387,7 @@
         ]
     },
     "PAT": {
-        "THEMSELVES": "**{{user}}** is patting themselves. :< ",
+        "THEMSELVES": "**{{user}}** is patting themselves... {{emoji}}",
         "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
