@@ -2,6 +2,11 @@
 
 ___
 
+## **11/19/20 | 7.6.8 ->**
+
+d9affd4 refactor(fun): now pat and hug uses purrbot.site API
+0999b1a refactor(reply): enforces color consistency by only using primary palette
+
 ## **11/18/20 | 7.6.7 ->**
 
 * dd5ca1c fix(avatar): unable to display gif-typed avatar
