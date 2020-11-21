@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "7.6.9",
+  "version": "7.6.10",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
   "scripts": {

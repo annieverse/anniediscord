@@ -2,10 +2,19 @@
 
 ___
 
+## **11/21/20 | 7.6.10 ->**
+
+1ac0591 style(leaderboard): light background and small element adjustments
+cb1b08a fix(lb): undefined output on new server
+
+## **11/20/20 | 7.6.9 ->**
+
+* refactor(roleDelete): ommits from cache and db when registered ranks or welcomer roles got deleted
+
 ## **11/19/20 | 7.6.8 ->**
 
-d9affd4 refactor(fun): now pat and hug uses purrbot.site API
-0999b1a refactor(reply): enforces color consistency by only using primary palette
+* d9affd4 refactor(fun): now pat and hug uses purrbot.site API
+* 0999b1a refactor(reply): enforces color consistency by only using primary palette
 
 ## **11/18/20 | 7.6.7 ->**
 
