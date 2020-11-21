@@ -142,6 +142,7 @@ class User {
 			 *  --------------------------------------------------------------------
 			 *  Consists of discord properties data + user's customized locale + extended metadata from own database.
 			 */
+			await db.registerGuild(this.guild)
 			//  Basic data such as saved username, language, user_id and registered date
 			this.user.main = await db.getUser(this.user.id)
 			//  User's past posted messages that were recorded by Annie.

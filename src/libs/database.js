@@ -378,10 +378,11 @@ class Database {
 	registerGuild(guild={}) {
 		const fn = `[Database.registerGuild()]`
 		return this._query(`
-			INSERT OR IGNORE INTO guilds (guild_id, name) 
-			VALUES (?, ?)`
+			INSERT INTO guilds (guild_id, name)
+			SELECT $guildId, $guildName
+			WHERE NOT EXISTS (SELECT 1 FROM guilds WHERE guild_id = $guildId)`
 			, `run`
-			, [guild.id, guild.name]
+			, {guildId:guild.id, guildName:guild.name}
 			, `${fn} performing check on ${guild.id}@${guild.name}`
 		)
 	}
