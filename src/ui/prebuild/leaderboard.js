@@ -20,12 +20,12 @@ class UI {
 	}
 
 	async build() {
-		let card = new Cards({width: 520, height: 550, theme: `dark`}).createBase({cornerRadius: 50})
+		let card = new Cards({width: 520, height: 550, theme: `light`}).createBase({})
 		let topTenRows = this.lbData.slice(0, 10)
 		await card.addCover({ img: await urlToBuffer(this.avatarParser(topTenRows[0].id)), gradient: true })
 		for (let row in topTenRows) {
 			let ranking = parseInt(row) + 1
-			let colorByRank = ranking <= 1 ? `yellow` : ranking <= 2 ? `lightblue` : ranking <= 3 ? `palebrown` : `text`
+			let colorByRank = ranking <= 1 ? `darkgold` : ranking <= 2 ? `blue` : ranking <= 3 ? `darkbrown` : `text`
 
 			//  Add highlight and lighten the text if current row is the author
 			if (topTenRows[row].id === this.user.id) {
@@ -65,7 +65,7 @@ class UI {
 
 			//  User points (EXP/AC/HEARTS/ETC)
 			card.addContent({
-				main: commanifier(topTenRows[row].points),
+				main: commanifier(Math.floor(topTenRows[row].points)),
 				justify: `right`,
 				align: `right`,
 				marginLeft: -40,

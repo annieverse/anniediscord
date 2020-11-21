@@ -241,7 +241,7 @@ class Card {
 		if (!disableShadow && this.color.allowedShadow) {
 			this.canv.setShadowColor(shadowColor)
 			.setShadowOffsetX(0)
-			.setShadowOffsetY(7)
+			.setShadowOffsetY(10)
 			.setShadowBlur(shadowBlur)
 			.setColor(this.color.main)
 	
