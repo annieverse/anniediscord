@@ -41,7 +41,15 @@ class CardCollection extends Command {
 			}
 		}		
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
-		if (!filteredInventory.length) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)}})
+		if (!filteredInventory.length) {
+			return reply (INVALID_INVENTORY, {color: `red`, socket: {
+					prefix: this.bot.prefix,
+					emoji: emoji(`AnnieCry`),
+					user: name(this.user.id)
+				},
+				footer: this.user.isSelf ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
+			})
+		}
 		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.id, emoji: emoji(`AAUloading`)}})
 		.then(async loading => {
 			await reply(this.prettifiedCardInventory(), {

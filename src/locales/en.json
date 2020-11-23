@@ -98,8 +98,9 @@
         "STILL_COOLDOWN": "**{{timeLeft}}s** left till your next command.",
         "DISABLED":"I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
     },
-    "CARDCOLLECTION_AUTHOR_EMPTY": "You don't have any card collection. Go test your luck with my gacha system!",
-    "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection.",
+    "CARDCOLLECTION_AUTHOR_EMPTY": "**Aw, your card collection is empty and *full of dust*.** {{emoji}}",
+    "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection. {{emoji}}",
+    "CARDCOLLECTION_EMPTY_TIPS": "Have some artcoins to spare? let's gacha!",
     "CHOOSE": {
         "GUIDE": "I'll try to pick any options you give!",
         "INVALID_OPTIONS": "Ehh, give me multiple options to choose!",
