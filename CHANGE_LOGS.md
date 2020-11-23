@@ -2,10 +2,17 @@
 
 ___
 
+## **11/23/20 | 7.6.11 ->**
+
+* fde44bf refactor(collection): improved empty collection msg
+* 3ac127d refactor(facegen): naming
+* 3f8988e refactor(commandpedia): optimized ui
+* 5a91ffe refactor(presence): displays splitted data
+
 ## **11/21/20 | 7.6.10 ->**
 
-1ac0591 style(leaderboard): light background and small element adjustments
-cb1b08a fix(lb): undefined output on new server
+* 1ac0591 style(leaderboard): light background and small element adjustments
+* cb1b08a fix(lb): undefined output on new server
 
 ## **11/20/20 | 7.6.9 ->**
 
