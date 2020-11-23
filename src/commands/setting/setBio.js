@@ -32,7 +32,7 @@ class SetBio extends Command {
 
 module.exports.help = {
 	start: SetBio,
-	name: `setProfileDescription`,
+	name: `setBio`,
 	aliases: [`setdescrip`, `sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
 	description: `Set your profile bio/description`,
 	usage: `setbio <Message>`,

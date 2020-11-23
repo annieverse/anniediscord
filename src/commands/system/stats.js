@@ -73,7 +73,7 @@ class SystemStatus extends Command {
 
 module.exports.help = {
 	start: SystemStatus,
-	name: `systemStatus`,
+	name: `stats`,
 	aliases: [`stats`, `botinfo`, `annieinfo`, `info`, `anniestatus`],
 	description: `Gives info about the current Annie's Statistic.`,
 	usage: `stats`,

@@ -61,8 +61,8 @@ class ConvertArtcoins extends Command {
 
 module.exports.help = {
 	start: ConvertArtcoins,
-	name: `convertArtcoins`,
-	aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`],
+	name: `cartcoin`,
+	aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`, `artcoinconvert`, `convertartcoin`],
 	description: `Converts Artcoins into EXP at the rate of 1:8`,
 	usage: `cartcoin <Amount>`,
 	group: `User`,

@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const category = require(`../../config/commandCategories`)
 /**
  * 	Displaying all the available commands. Complete with the usage.
  * 	@author klerikdust
@@ -77,6 +78,14 @@ class Help extends Command {
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const res = await this.findCommandByKeyword(this.fullArgs, cmds)
 		if (!res) return reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {color: `red`})
+		//  Handle helpCategory display
+		if (this.helpCategory) {
+			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
+			return reply(category[res.toUpperCase()] + `\n**Here's the list!**\n${commands.join(`, `)}`, {
+				header: `The ${res} Commands!`,
+				thumbnail: this.bot.user.displayAvatarURL()
+			})
+		}
 		const perm = this.getPermissionProperties(res.help.permissionLevel)
 		const cmdName = res.help.name.charAt(0).toUpperCase() + res.help.name.slice(1)
 		const cmdDesc = `"${res.help.description.charAt(0).toUpperCase() + res.help.description.slice(1)}"`
@@ -96,6 +105,12 @@ class Help extends Command {
 	 */
 	async findCommandByKeyword(keyword=``, src={}) {
 		let res = null
+		let parents = (Object.keys(src)).map(node => node.toLowerCase())
+		keyword = keyword.endsWith(`s`) ? keyword.slice(0, keyword.length-1) : keyword
+		if (parents.includes(keyword)) {
+			this.helpCategory = true
+			return keyword.charAt(0).toUpperCase() + keyword.slice(1)
+		}
 		//  Returns if keyword has matched with parent
 		if (src[keyword]) res = src[keyword]
 		//  Find on deep layer and recursively
@@ -145,8 +160,8 @@ class Help extends Command {
 	prettifyCommandpedia(obj=[]) {
 		let str = ``
 		for (let group in obj) {
-			const cmdNames = obj[group].map(el => `\`${this.bot.prefix}${el.help.usage.toLowerCase()}\``)
-			str += `**${group}**\n*${this._getCategoryDescription(group)}*\n${cmdNames.join(`,`).replace(/,/g, `\n`)}\n\n`
+			const cmdNames = obj[group].map(el => `\`${el.help.name.toLowerCase()}\``)
+			str += `**${group}**\n*${this._getCategoryDescription(group)}*\n${cmdNames.join(`, `)}\n\n`
 		}
 		return str
 	}
@@ -158,10 +173,10 @@ class Help extends Command {
 	 */
 	_getCategoryDescription(category=``) {
 		const descriptions = {
-			Artsy: `Annie's art-related commands will fall under this category, and still undergoing development!`,
-			Fun: `Wanna have fun with your friends? try this out!`,
-			Setting: `Configurations that you may need to set up your guild and your custom profile!`,
-			System: `Miscellaneous commands`,
+			Artsy: `Art-related commands will fall under this category and still undergoing development!`,
+			Fun: `Wanna have fun with your friends?!`,
+			Setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
+			System: `Miscellaneous commands to check the state of Annie.`,
 			User: `Everything you need are in here. Well-refined, just for you.`
 		}
 		return descriptions[category]
