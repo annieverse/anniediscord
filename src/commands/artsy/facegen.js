@@ -41,7 +41,7 @@ class FaceGenerate extends Command {
 }
 module.exports.help = {
 	start: FaceGenerate,
-	name: `faceGenerate`,
+	name: `facegen`,
 	aliases: [`facegen`, `anigen`, `waifugen`, `wfgen`, `fcgen`, `waifu`, `generatewaifu`],
 	description: `AI-Generated Anime Face provided by Gwern@TWDNE`,
 	usage: `facegen`,
