@@ -64,11 +64,11 @@
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
     },
     "CARTCOIN": {
-        "SHORT_GUIDE": "You can start converting your artcoins into exp by typing `>cartcoin <amount/all>`\n**The conversion rate is 1:8**",
-        "INSUFFICIENT_AMOUNT": "You only have **{{amount}}** artcoins. Grind harder!",
-        "INVALID_AMOUNT": "To use the converter, you need to put atleast **8 artcoins.**",
-        "SUCCESSFUL": "Successfully convert **{{artcoins}}** into **{{exp}}** !",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}}** EXP ?\nPress the button to confirm the conversion."
+        "SHORT_GUIDE": "**Start converting your artcoins into EXP by typing\n`{{prefix}}cartcoin <amount/all>`** {{emoji}}",
+        "INSUFFICIENT_AMOUNT": "Eehh- right now you only have **{{amount}}** artcoins. Go grind harder! {{emoji}}",
+        "INVALID_AMOUNT": "You need to put atleast **8 artcoins**, *baka!* {{emoji}}",
+        "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!",
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion."
     },
     "CATEXP": {
         "UNAVAILABLE": "You don't have any exp to claim.",

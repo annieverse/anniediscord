@@ -18,19 +18,33 @@ class ConvertArtcoins extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, trueInt, commanifier, avatar, bot:{db} }) {
+    async execute({ reply, emoji, name, trueInt, commanifier, avatar, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
 		//  Returns as guide if user doesn't specify any parameters
-		if (!this.args[0]) return reply(this.locale.CARTCOIN.SHORT_GUIDE)
+		if (!this.args[0]) return reply(this.locale.CARTCOIN.SHORT_GUIDE, {
+			socket: {
+				emoji: emoji(`AnnieHype`),
+				prefix: this.bot.prefix
+			},
+			footer: `Keep in mind the conversion rate is 1:${this.artcoinsRatio}`
+		})
 		const amountToUse = this.args[0].startsWith(`all`) ? this.user.inventory.artcoins : trueInt(this.args[0])
 		//  Returns if user's artcoins is below the amount of going to be used
 		if (this.user.inventory.artcoins < amountToUse) return reply(this.locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
-			socket: {amount: `${emoji(`artcoins`)}${commanifier(this.user.inventory.artcoins)}`},
-			color: `red`
+			color: `red`,
+			socket: {
+				amount: `${emoji(`artcoins`)}${commanifier(this.user.inventory.artcoins)}`,
+				emoji: emoji(`AnnieYandere`)
+			}
 		})
 		//  Returns if user amount input is below the acceptable threeshold
-		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {color: `red`})
+		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {
+			color: `red`,
+			socket: {
+				emoji: emoji(`AnnieMad`)
+			}
+		})
 		const totalGainedExp = amountToUse / this.artcoinsRatio
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
 			thumbnail: avatar(this.user.id),
@@ -49,7 +63,6 @@ class ConvertArtcoins extends Command {
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
-				color: `lightgreen`,
 				socket: {
 					artcoins: `${emoji(`artcoins`)} ${commanifier(amountToUse)}`,
 					exp: `${commanifier(totalGainedExp)} EXP`
