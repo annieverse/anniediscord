@@ -486,9 +486,9 @@
     },
     "GIVE_REPUTATION": {
         "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",
-        "SHORT_GUIDE": "Your rep is available. Go rep someone you admire! {{emoji}}",
+        "SHORT_GUIDE": "**Go rep someone you admire!** {{emoji}}\ne.g. **`{{prefix}}rep @friend`**",
         "SELF_TARGETING": "You can't rep yourself, baka. {{emoji}}",
-        "SUCCESSFUL": "{{user}} has received\n**+1 reputation point**"
+        "SUCCESSFUL": "{{user}} has received\n**+1 reputation point!**"
     },
     "REQUEST_PING": "Request received in **{{ping}} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",

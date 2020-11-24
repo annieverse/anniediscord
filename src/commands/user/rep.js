@@ -21,7 +21,6 @@ class Reputation extends Command {
     async execute({ reply, emoji, name, avatar, bot:{db} }) {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
-
 		const now = moment()
 		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
 		//  Returns if user's last reps give still under 23 hours.
@@ -29,9 +28,10 @@ class Reputation extends Command {
 			socket: {time: moment(lastGiveAt).add(...this.cooldown).fromNow()},
 			color: `red`
 		})
-
 		//	Displays short-guide if user doesn't specify any parameter
-		if (!this.fullArgs) return reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {socket: {emoji: emoji(`AnnieWink`)} })
+		if (!this.fullArgs) return reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {
+			socket: {emoji: emoji(`AnnieWink`), prefix: this.bot.prefix} 
+		})
 		//	Handle if target user is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 		//	Handle if user is trying to rep themselves
