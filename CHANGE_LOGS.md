@@ -2,6 +2,12 @@
 
 ___
 
+## **11/24/20 | 7.6.12 ->**
+
+* b2c7fb3 refactor(quest): safeguard and improved ui
+* 1bda510 refactor(rep): improved responses
+* c07ab1a refactor(cartcoin): improved responses
+
 ## **11/23/20 | 7.6.11 ->**
 
 * fde44bf refactor(collection): improved empty collection msg
