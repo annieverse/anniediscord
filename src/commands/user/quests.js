@@ -28,6 +28,9 @@ class Quests extends Command {
 		const quests = await db.getAllQuests()
 		//  Handle if no quests are available to take
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY, {status: `warn`})
+		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
+		const sessionID = `QUEST_SESSION@${this.user.id}`
+		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji:emoji(`AnnieMad`)}})
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
@@ -43,15 +46,16 @@ class Quests extends Command {
 			nextQuestId = Math.floor(Math.random() * quests.length) || 1
 			await db.updateUserNextActiveQuest(this.user.id, this.message.guild.id, nextQuestId)
 		}
+		this.bot.setCooldown(sessionID, 120)
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 		this.quest = await reply(this.locale.QUEST.DISPLAY, {
-			header: activeQuest.name,
-			color: `crimson`,
+			header: `${name(this.user.id)} is taking a quest!`,
 			footer: this.locale.QUEST.FOOTER,
 			thumbnail: avatar(this.user.id),
 			socket: {
+				questTitle: activeQuest.name,
 				description: activeQuest.description,
-				reward: `${emoji(`artcoins`)}${activeQuest.reward_amount}`
+				reward: `${emoji(`artcoins`)}${commanifier(activeQuest.reward_amount)}`
 			}
 		})
 		this.fetching.delete()
@@ -63,6 +67,7 @@ class Quests extends Command {
 				reply(this.locale.QUEST.CANCEL)
 				msg.delete()
 				this.quest.delete()
+				this.bot.db.redis.del(sessionID)
 				return this.endSequence()
 			}
 			//  Handle if the answer is incorrect
@@ -77,9 +82,10 @@ class Quests extends Command {
 			await db.recordQuestActivity(nextQuestId, this.user.id, this.message.guild.id, answer)
 			//  Successful
 			this.endSequence()
+			this.bot.db.redis.del(sessionID)
 			return reply(this.locale.QUEST.SUCCESSFUL, {
-				status: `success`,
 				socket: {
+					praise: this.locale.QUEST.PRAISE[Math.floor(Math.random() * this.locale.QUEST.PRAISE.length)],
 					user: name(this.user.id),
 					reward: `${emoji(`artcoins`)}${commanifier(activeQuest.reward_amount)}`
 				}

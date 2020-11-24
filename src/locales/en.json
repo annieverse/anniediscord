@@ -439,14 +439,16 @@
         "SUCCESSFUL": "Yay! **{{amount}}** messages have been successfully deleted! {{emoji}}"
     },
     "QUEST": {
-        "DISPLAY": "\n\n╭───────────────────╮\n\n{{description}}\n**Rewards: {{reward}}**\n\n╰───────────────────╯`",
-        "SUCCESSFUL": "**{{user}}** just completed the quest and received **{{reward}}**!",
+        "DISPLAY": "\n\n╭*:;,．★ ～☆*───────────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰───────────────────☆～*:;,．*╯",
+        "SUCCESSFUL": "{{praise}}, **{{user}}**! you just completed the quest and received **{{reward}}**!",
         "INCORRECT_ANSWER": "Boo, incorrect answer!",
         "FOOTER": "Type one correct answer to complete the quest.",
         "FETCHING": "{{emoji}} `Looking into the quest board...`",
         "COOLDOWN": "Your next quest will be available in\n:clock1: **{{time}}**",
         "EMPTY": "Sorry, no quests are available to take at the moment!",
-        "CANCEL": "Alright, quest has been cancelled."
+        "CANCEL": "Alright, quest has been cancelled.",
+        "PRAISE": ["Awesome", "Nice", "GG", "Genius", "Goodjob", "Impressive"],
+        "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}"
     },
     "RECYCLE": {
         "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
