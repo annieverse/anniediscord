@@ -21,7 +21,7 @@ class Relationship extends Command {
         await this.requestUserMetadata(2)
 
         //  Handle if user doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+        if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if user doesn't have any relationships
         if (!this.user.relationships.length) return reply(this.locale.RELATIONSHIP.IS_EMPTY, {color: `red`})
 

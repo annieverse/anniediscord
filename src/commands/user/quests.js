@@ -27,7 +27,7 @@ class Quests extends Command {
 		await this.requestUserMetadata(2)
 		const quests = await db.getAllQuests()
 		//  Handle if no quests are available to take
-		if (!quests.length) return reply(this.locale.QUEST.EMPTY, {status: `warn`})
+		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION@${this.user.id}`
 		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji:emoji(`AnnieMad`)}})

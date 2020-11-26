@@ -23,7 +23,7 @@ class Inventory extends Command {
 		await this.requestUserMetadata(2)
 
 		//  Handle if couldn't find the invntory's author
-		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		//  Handle if couldn't fetch the inventory
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.INVENTORY.AUTHOR_EMPTY : this.locale.INVENTORY.OTHER_USER_EMPTY
 		if (this.user.inventory.raw.length <= 0) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.id)} })

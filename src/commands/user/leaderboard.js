@@ -40,7 +40,6 @@ class Leaderboard extends Command {
 
 		//  Returns a guide if no parameter was specified.
 		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE, {
-			color: `crimson`,
 			thumbnail: this.thumbnail,
 			header: `Hi, ${name(this.user.id)}!`,
 			socket: {
@@ -49,10 +48,7 @@ class Leaderboard extends Command {
 			}
 		})
 		//  Returns if parameter is invalid.
-		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY, {
-			color: `red`,
-			socket: {emoji: emoji(`fail`)}
-		})
+		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
 		//  Store key of selected group
 		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
 		const selectedGroup = selectedGroupParent[0]

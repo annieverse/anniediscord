@@ -21,7 +21,7 @@ class Profile extends Command {
         await this.requestUserMetadata(2)
 
         //  Handle if user doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+        if (!this.user) return reply(this.locale.USER.IS_INVALID)
         this.fetching = await reply(this.locale.COMMAND.FETCHING, {
             socket: {
                 emoji: emoji(`AAUloading`),
