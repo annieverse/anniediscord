@@ -23,8 +23,9 @@ class Relationship extends Command {
         //  Handle if user doesn't exists
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if user doesn't have any relationships
-        if (!this.user.relationships.length) return reply(this.locale.RELATIONSHIP.IS_EMPTY, {color: `red`})
-
+        if (!this.user.relationships.length) return reply(this.locale.RELATIONSHIP.IS_EMPTY, {
+            socket: {prefix: this.bot.prefix}
+        })
         this.fetching = await reply(this.locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
