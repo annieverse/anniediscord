@@ -21,12 +21,12 @@ class Balance extends Command {
 		//  Handle if user couldn't be found
 		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		return reply(this.locale.DISPLAY_BALANCE, {
+			thumbnail: avatar(this.user.id),
 			socket: {
 				emoji: emoji(`artcoins`), 
-				amount: commanifier(this.user.inventory.artcoins || 0)
+				amount: commanifier(this.user.inventory.artcoins || 0),
+				tips: this.user.isSelf ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
 			},
-			notch: true,
-			thumbnail: avatar(this.user.id)
 		})
 	}
 }

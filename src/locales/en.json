@@ -169,7 +169,7 @@
         "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
         "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
     },
-    "DISPLAY_BALANCE": "**Remaining Balance**\n{{emoji}} **{{amount}}**",
+    "DISPLAY_BALANCE": "╭:;,．★ ～☆──────╮\nOwned Artcoins\n{{emoji}} **{{amount}}**\n╰──────☆～:;,．╯\n{{tips}}",
     "DISTREWARD": {
         "CONFIRMATION": "🎁 🡆 **{0}'s Inventory** ?\nPlease type the reward ranking",
         "SUCCESSFUL": "**{0}** has successfully received **{1}** package!",
