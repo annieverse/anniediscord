@@ -597,10 +597,11 @@ class Pistachio {
 		timestamp: false,
 		paging: false,
 		status: null,
-		cardPreviews: false
+		cardPreviews: false,
+		topNotch: null
 	}) {
 		options.socket = !options.socket ? [] : options.socket
-		options.color = !options.color ? this.palette.darkmatte : options.color
+		options.color = !options.color ? this.palette.crimson : options.color
 		options.url = !options.url ? null : options.url
 		options.image = !options.image ? null : options.image
 		options.imageGif = !options.imageGif ? null : options.imageGif
@@ -618,6 +619,7 @@ class Pistachio {
 		options.columns = !options.columns ? null : options.columns
 		options.status = !options.status ? null : options.status.toLowerCase()
 		options.cardPreviews = !options.cardPreviews ? null : options.cardPreviews
+		options.topNotch = !options.topNotch ? null : options.topNotch
 		const fn = `[Pistachio.reply()]`
 
 		//  Handle message with paging property enabled
@@ -695,11 +697,10 @@ class Pistachio {
 
 		//  Mutate message if status property is defined
 		const statuses = new Map
-		statuses.set(`success`, `lightgreen`)
-		statuses.set(`warn`, `golden`)
-		statuses.set(`fail`, `red`)
+		statuses.set(`success`, `#ffc9e2`)
+		statuses.set(`warn`, `crimson`)
+		statuses.set(`fail`, `crimson`)
 		if (statuses.has(options.status)) {
-			content = `${this.emoji(options.status)} ${content}`
 			options.color = statuses.get(options.status)
 		}
 	
@@ -708,7 +709,7 @@ class Pistachio {
 		//  Add notch/chin
 		if (options.notch) content = `\u200C\n${content}\n\u200C`
 		const embed = new MessageEmbed()
-			.setColor(this.palette.crimson)
+			.setColor(this.palette[options.color] || options.color)
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
 		//  Add header
@@ -786,7 +787,7 @@ class Pistachio {
 			}
 		}
 
-		let sent = options.field.send(embed)
+		let sent = options.field.send(options.topNotch, embed)
 		if (!options.deleteIn) return sent
 		return sent
 		.then(msg => {

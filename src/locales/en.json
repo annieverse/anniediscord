@@ -90,7 +90,7 @@
         "ERROR": "Uhh, something went wrong."
     },
     "USER": {
-        "IS_INVALID": "Sorry, I couldn't find that user."
+        "IS_INVALID": "**Sorry- I'm unable to find that user.**"
     },
     "COMMAND": {
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
@@ -148,9 +148,9 @@
         "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
     },
     "DAILIES": {
-        "AUTHOR_IN_COOLDOWN": "You can take your dailies again\n:clock1: **{{time}}**",
-        "OTHERS_IN_COOLDOWN": "{{user}} can take their dailies again\n:clock1: **{{time}}**",
-        "CLAIMED": "{{user}} have received\n**{{amount}}** artcoins!",
+        "AUTHOR_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯\nUse **`{{prefix}}vote`** to get 5,000 artcoins!",
+        "OTHERS_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nTheir dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯",
+        "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHi, {{user}}! here is your\n**{{amount}} artcoins!**\n╰────────☆～*:;,．*╯\n{{praise}}",
         "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
         "THANKS_HELP": "Thanks for the help!",
         "STREAK_INCREASING": "Keep it up!"
