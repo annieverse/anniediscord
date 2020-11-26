@@ -32,6 +32,9 @@
         ],
         "SHORT_GUIDE": "Feel free to ask me anything!"
     },
+    "AVATAR": {
+        "INITIAL": "*Say cheese... ♡*"
+    },
     "BADGECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",

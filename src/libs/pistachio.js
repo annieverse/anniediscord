@@ -517,7 +517,7 @@ class Pistachio {
 		const embed = new MessageEmbed()
 		.setImage(avatar)
 		.setAuthor(name, avatar)
-		.setColor(this.palette.darkmatte)
+		.setColor(this.palette.crimson)
 		this.message.channel.send(embed)
 	}
 

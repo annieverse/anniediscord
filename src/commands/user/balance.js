@@ -28,7 +28,7 @@ class Balance extends Command {
 				tips: this.user.isSelf ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
 			},
 		})
-	}
+	}s
 }
 
 

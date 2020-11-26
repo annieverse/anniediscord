@@ -19,7 +19,19 @@ class Avatar extends Command {
 	async execute({ reply, displayAvatar }) {
 		await this.requestUserMetadata(1)
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		this.avatarInit = await reply(this.locale.AVATAR.INITIAL)
+		await this.delay(1750)
+		this.avatarInit.delete()
 		return displayAvatar(this.user.id)
+	}
+
+	/**
+	 * Set a time delay
+	 * @param {number} [ms=0]
+	 * @return {promise}
+	 */
+	async delay(ms=0) {
+		return new Promise(res => setTimeout(res, ms))
 	}
 }
 
