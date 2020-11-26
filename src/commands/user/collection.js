@@ -24,7 +24,7 @@ class CardCollection extends Command {
 	 */
 	async execute({ reply, emoji, name, avatar }) {
 		await this.requestUserMetadata(2)
-		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		//  Fetch cards type in user's inventory and sort by rarity descendantly
 		let filteredInventory = this.user.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (b.rarity_level - a.rarity_level))
 		this.shouldSplitResult = true
@@ -42,7 +42,7 @@ class CardCollection extends Command {
 		}		
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) {
-			return reply (INVALID_INVENTORY, {color: `red`, socket: {
+			return reply (INVALID_INVENTORY, {socket: {
 					prefix: this.bot.prefix,
 					emoji: emoji(`AnnieCry`),
 					user: name(this.user.id)
@@ -55,7 +55,6 @@ class CardCollection extends Command {
 			await reply(this.prettifiedCardInventory(), {
 				paging: true,
 				cardPreviews: this.splittedInventory,
-				color: `crimson`,
 				thumbnail: avatar(this.user.id),
 				header: `${name(this.user.id)}'s Card Collections`
 			})

@@ -48,7 +48,6 @@ class ConvertArtcoins extends Command {
 		const totalGainedExp = amountToUse / this.artcoinsRatio
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
 			thumbnail: avatar(this.user.id),
-			color: `golden`,
 			notch: true,
 			socket: {
 				emoji: emoji(`artcoins`),
@@ -63,6 +62,7 @@ class ConvertArtcoins extends Command {
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
+				status: `success`,
 				socket: {
 					artcoins: `${emoji(`artcoins`)} ${commanifier(amountToUse)}`,
 					exp: `${commanifier(totalGainedExp)} EXP`

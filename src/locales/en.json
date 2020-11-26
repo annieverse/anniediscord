@@ -248,7 +248,7 @@
         ],
         "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
         "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** tickets at once.",
-        "AMOUNT_OUTOFRANGE": "{{emoji}} You can only do **1** or **10** pulls.",
+        "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls, *baka*. {{emoji}}",
         "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Lucky Ticket!**",
         "SUGGEST_TO_BUY": "Wanna buy some {{emoji}} **Lucky Tickets** first?",
         "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `dailies` first. {{emoji}}",
@@ -264,16 +264,17 @@
         "RETURNING": "Hi **{{user}}**!, here's my system log. {{emoji}}"
     },
     "GIFT": {
-        "SHORT_GUIDE": "You are now able to gift someone you admire!\nStart by typing `{{prefix}}gift <user>`",
-        "INVALID_USER": "Sorry, i couldn't find that user.",
-        "SELF_TARGETING": "Aw, sadly you can't gift yourself.",
-        "INSUFFICIENT_AMOUNT": "You need **{{item}}** more to complete the gifting.",
-        "INVALID_ITEM": "I don't think thats a valid item..",
-        "INVALID_AMOUNT": "Please type a proper amount you want to gift!",
+        "SHORT_GUIDE": "╭*:;,．★ ～☆*──────────────╮\n**Who's gonna receive the gift from you, today?♡**\ne.g. **`{{prefix}}gift @crush 10 {{referenceItem}}`**\n╰────────────☆～*:;,．*╯\n～*Below are the gifts that you able to send!\n{{items}}",
+        "SELF_TARGETING": "**Boo, you can't gift yourself.** {{emoji}}",
+        "INSUFFICIENT_AMOUNT": "You only have **{{gift}}**, *baka*. {{emoji}}",
+        "MISSING_ITEM": "Don't forget to specify the gift you want to send!\n{{example}}",
+        "INVALID_AMOUNT": "Please type the amount you want to send!\n{{example}}",
         "DISPLAYGIFT_HEADER": "Your gifts",
-        "SUCCESSFUL": "{{user}} has received\n**{{item}}(+{{gainedReps}} reps)**",
-        "UNAVAILABLE": "You don't have any gift at the moment.",
-        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift."
+        "SUCCESSFUL": "╭*:;,．★ ～☆*───────╮\n{{user}} has received\n**{{gift}}**\n╰─────☆～*:;,．*╯\nThanks for the gift!♡♡",
+        "UNAVAILABLE": "**Aw, you don't have any gifts at the moment!**\nBut don't worry- you can attain them from **`{{prefix}}gacha`** and my **`{{prefix}}shop`**!♡ {{emoji}}",
+        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
+        "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
+        "CONFIRMATION": "You are going to gift **{{user}}** with **{{gift}}**? once confirmed, the gift will be turned into {{amount}}+ reputation points for them.\n─────────────────☆～:;,．"
     },
     "HALLOWEEN_GACHA": {
         "OPENING_WORDS": [

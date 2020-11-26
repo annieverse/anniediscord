@@ -36,8 +36,7 @@ class Gacha extends Command {
         this.tools = { reply, emoji, name, trueInt, commanifier, choice } 
         //  Handle if amount to be opened is out of defined range.
         if (!this.amountToOpenRanges.includes(this.amountToOpen)) return reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {
-            color: `golden`,
-            socket: {emoji: emoji(`warn`)}
+            socket: {emoji:emoji(`AnnieYandere`)}
         })
         //  Direct roll if user already has the tickets.
         if (this.user.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll()
@@ -175,7 +174,7 @@ class Gacha extends Command {
             }
         })
         this.fetching.delete()
-        return this.tools.reply(this.displayDetailedLoots(this.tools.emoji), {simplified: true})   
+        await this.tools.reply(this.displayDetailedLoots(this.tools.emoji), {simplified: true})   
     }
 
     /**
