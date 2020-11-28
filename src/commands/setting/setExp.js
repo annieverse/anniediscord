@@ -105,7 +105,9 @@ class SetExp extends Command {
     async disable({ reply }) {
         const fn = `[setExp.disable()]`
         //  Handle if module already disabled before the action.
-        if (!this.primaryConfig.value) return reply(this.locale.SETEXP.ALREADY_DISABLED, {status: `warn`})
+        if (!this.primaryConfig.value) return reply(this.locale.SETEXP.ALREADY_DISABLED, {
+            socket: {prefix:this.bot.prefix}
+        })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,

@@ -22,6 +22,12 @@ class SetLevelupMessage extends Command {
          * @type {string}
          */  
         this.primaryConfigID = `LEVEL_UP_MESSAGE`
+
+        /**
+         * Thumbnail's img source
+         * @type {string}
+         */
+         this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
     }
 
     /**
@@ -33,6 +39,7 @@ class SetLevelupMessage extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${name(this.user.id)}!`,
+            thumbnail: this.thumbnail,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: emoji(`AnnieGeek`)
