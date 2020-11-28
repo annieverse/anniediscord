@@ -28,8 +28,9 @@ class Buy extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, emoji, trueInt, commanifier, loadAsset, bot:{db} }) {
-    	await this.requestUserMetadata(2)
-
+    	await this.requestUserMetadata(1)
+		//  Temporary close
+		return reply(this.locale.SHOP.TEMPORARILY_CLOSED, {socket:{emoji:emoji(`AnniePeek2`)}})
 		//  Handle if there are no items available to purchase
 		const purchasableItems = await db.getPurchasableItems()
 		if (!purchasableItems.length) return reply(this.locale.BUY.EMPTY_SHOP, {color: `red`})

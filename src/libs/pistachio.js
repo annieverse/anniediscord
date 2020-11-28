@@ -530,9 +530,10 @@ class Pistachio {
     _registerPages(pages=[], src=null) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(pages[i])
+            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
             if (src.color) res[i].setColor(this.palette[src.color] || src.color)
             if (src.header) res[i].setTitle(src.header)
+           	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
             if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
            	if (src.cardPreviews) res[i].setFooter(`Press the eyes emoji to preview. (${i+1}/${pages.length})`)
         }
@@ -677,7 +678,6 @@ class Pistachio {
                 })
             })
 		}
-
 		//  Replace content with error message if content is a faulty value
 		if (!content && (typeof content != `string`)) {
 			logger.error(`${fn} parameter 'content' should only be string. Because of this, now user will only see my localization msg handler.`)
