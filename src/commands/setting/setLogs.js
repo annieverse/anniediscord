@@ -17,10 +17,10 @@ class SetLogs extends Command {
          */
         this.actions = [`enable`, `disable`, `channel`]
         /**
-         * Thumbnail's img source
+         * Banner's img source
          * @type {string}
          */
-        this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
+        this.banner = `https://i.ibb.co/bJGGDDn/logs.png`
         /**
          * Current instance's config code
          * @type {string}
@@ -43,8 +43,8 @@ class SetLogs extends Command {
         if (!this.fullArgs) {
             return reply(this.locale.SETLOGS.GUIDE, {
                 header: `Hi, ${name(this.user.id)}!`,
-                color: `crimson`,
-                thumbnail: this.thumbnail,
+                prebuffer: true,
+                image: this.banner,
                 socket: {
                     prefix: this.bot.prefix,
                     emoji: emoji(`AnnieSmile`)
@@ -54,7 +54,6 @@ class SetLogs extends Command {
         //  Handle if selected action doesn't exists
         if (!this.actions.includes(this.args[0])) return reply(this.locale.SETLOGS.INVALID_ACTION, {
             socket: {actions: this.actions.join(`, `)},
-            status: `fail`
         })
         //  This is the main configuration of setlogs, so everything dependant on this value
         this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
@@ -102,11 +101,7 @@ class SetLogs extends Command {
         if (!this.primaryConfig.value) {
             let localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETLOGS.ALREADY_DISABLED, {
-            status: `warn`,
-                socket: {
-                    user: name(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
-                }
+                socket: {prefix:this.bot.prefix}
             })
         }
         //  Update configs
@@ -125,24 +120,24 @@ class SetLogs extends Command {
      * Define target logs channel
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async channel({ reply, name }) {
+    async channel({ reply, name, emoji }) {
         const fn = `[setLogs.channel()]`
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) return reply(this.locale.SETLOGS.SHOULD_BE_ENABLED, {
-            socket: {prefix: this.bot.prefix},
-            status: `warn`
+            socket: {prefix: this.bot.prefix}
         })
         //  Handle if user hasn't specified the target channel
         if (!this.args[1]) return reply(this.locale.SETLOGS.MISSING_CHANNEL, {
-            socket: {prefix: this.bot.prefix},
-            status: `warn`
+            socket: {prefix: this.bot.prefix, emoji:emoji(`AnnieSmile`)}
         })
         //  Do channel searching by three possible conditions
         const searchChannel = this.message.mentions.channels.first()
         || this.message.guild.channels.cache.get(this.args[1])
         || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply(this.locale.SETLOGS.INVALID_CHANNEL, {status: `fail`})
+        if (!searchChannel) return reply(this.locale.SETLOGS.INVALID_CHANNEL, {
+            socket: {emoji:emoji(`AnnieThinking`)}
+        })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.subConfigID,

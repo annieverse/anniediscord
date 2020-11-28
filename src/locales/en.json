@@ -579,16 +579,16 @@
         "SUCCESSFUL": "The bio for this guild has been successfully updated!"
     },
     "SETLOGS": {
-        "GUIDE": "This is your control center for configuring the **Logs System**. Check out what are the available actions for this module:\n\n╭───────────────────╮\n\n`{{prefix}}setlog enable`\n> This action will enable activity-logging feature in your guild once you enable it and for the types of logs you will receive, are following the default preset.\n\n`{{prefix}}setlogs channel <targetChannel>`\n> This action defines which channel should Annie send the logs in and make sure Annie has an access to that channel as well!\ne.g. __{{prefix}}setlogs channel #logs__\n\n`{{prefix}}setlogs disable`\n> I know you are probably feeling annoyed getting all the useless logs from me, that's why this action exists.\n\n╰───────────────────╯",
+        "GUIDE": "This is your control center for configuring the **Logs System**. Check out what are the available actions for this module:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlog enable`**\n> This action will enable activity-logging feature in your guild once you enable it and for the types of logs you will receive, are following the default preset.\n\n**`{{prefix}}setlogs channel <targetChannel>`**\n> This action defines which channel should Annie send the logs in and make sure Annie has an access to that channel as well!\ne.g. __{{prefix}}setlogs channel #logs__\n\n**`{{prefix}}setlogs disable`**\n> I know you are probably feeling annoyed getting all the useless logs from me, that's why this action exists.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sowwy! please only use one of these actions `{{actions}}`",
         "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "This module hasn't been enabled yet.",
+        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setlogs enable`**",
         "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
         "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
         "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!",
         "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}setlog enable`",
-        "MISSING_CHANNEL": "Don't forget to include the target logs channel, okay?\ne.g. `{{prefix}}setlog channel #bunny`",
-        "INVALID_CHANNEL": "Hmm, this doesn't seems like a valid channel. Can you try other channel instead?"
+        "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}setlog channel #mylogs`**",
+        "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}"
 
     },
     "SETSOCIALMEDIA": {
