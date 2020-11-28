@@ -493,6 +493,9 @@
         "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request."
     },
+    "REMINDER": {
+        "SUCCESSFULLY_SET": "**A reminder has been set!♡**\ntesting"
+    },
     "GIVE_REPUTATION": {
         "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour rep will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
         "SHORT_GUIDE": "**Go rep someone you admire!** {{emoji}}\ne.g. **`{{prefix}}rep @friend`**",
