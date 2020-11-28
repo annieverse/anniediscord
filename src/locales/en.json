@@ -536,10 +536,10 @@
         "SUCCESSFUL": "**Fragments sold!**"
     },
     "SETLEVELUPMESSAGE": {
-        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setlvlupmsg enable`\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n`{{prefix}}setlvlupmsg disable`\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰───────────────────╯",
+        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n**`{{prefix}}setlvlupmsg disable`**\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sorry, I only accept **enable** or **disable** action in this module.",
-        "ALREADY_ENABLED": "This module already enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "This module hasn't been enabled yet in this guild.",
+        "ALREADY_ENABLED": "The Level Up Message already enabled by **{{user}}, {{date}}**",
+        "ALREADY_DISABLED": "**The Level Up Message hasn't been enabled yet in this guild-♡**\nTo enable, type **`{{prefix}}setlvlupmsg enable`**",
         "SUCCESSFULLY_ENABLED": "Yay! **Level-up Message Module** has been successfully enabled in this guild!",
         "SUCCESSFULLY_DISABLED": "Done! **Level-up Message Module** has been successfully disabled!\nthis guild won't receive any level-up message again in the future."
     },

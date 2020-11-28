@@ -18,12 +18,6 @@ class SetLevelupMessage extends Command {
         this.actions = [`enable`, `disable`]
 
         /**
-         * Thumbnail's img source
-         * @type {string}
-         */
-         this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
-
-        /**
          * Current instance's config code
          * @type {string}
          */  
@@ -38,8 +32,6 @@ class SetLevelupMessage extends Command {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
-            color: `crimson`,
-            thumbnail: this.thumbnail,
             header: `Hi, ${name(this.user.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
@@ -50,7 +42,6 @@ class SetLevelupMessage extends Command {
         this.selectedAction = this.args[0].toLowerCase()
         if (!this.actions.includes(this.selectedAction)) return reply(this.locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
             socket: {actions: this.actions.join(`, `)},
-            status: `fail`
         })   
         //  Run action
         this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
@@ -70,7 +61,6 @@ class SetLevelupMessage extends Command {
             const now = moment()
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
-                status: `warn`,
                 socket: {
                     user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
@@ -100,7 +90,9 @@ class SetLevelupMessage extends Command {
     async disable({ reply, emoji }) {
         const fn = `[setLevelupMessage.disable()]`
         //  Handle if module already disabled before the action.
-        if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {status: `warn`})
+        if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+            socket:{prefix:this.bot.prefix}
+        })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
