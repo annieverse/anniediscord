@@ -11,7 +11,13 @@ class Vote extends Command {
          * The website to vote Annie
          * @type {string}
          */ 
-		this.page = `[Discord Bot List Page](https://top.gg/bot/501461775821176832/vote)`
+		this.page = `https://top.gg/bot/501461775821176832`
+
+		/**
+		 * Banner's img source
+		 * @type {string}
+		 */
+		this.banner = `https://i.ibb.co/GV4GTP0/votes.png`
 	}
 
 	/**
@@ -22,16 +28,18 @@ class Vote extends Command {
 		await this.requestUserMetadata(2)
 		//  Handle if user's vote still in cooldown
 		if (await this.bot.dbl.hasVoted(this.user.id)) return reply(this.locale.VOTE.IS_COOLDOWN, {
-			status: `fail`,
-			header: `Hi, ${name(this.user.id)}!`,
-			socket: {page: this.page}
+			socket: {
+				page: `[write a review](${this.page})`,
+				emoji: emoji(`AnniePeek2`)
+			}
 		})
-		reply(this.locale.VOTE.READY, {
+		return reply(this.locale.VOTE.READY, {
 			header: `Hi, ${name(this.user.id)}!`,
-			color: `lightgreen`,
+			prebuffer: true,
+			image: this.banner,
 			socket: {
 				emoji: emoji(`AnnieSmile`),
-				url: this.page
+				url: `[Discord Bot List](${this.page}/vote)`
 			}
 		})
 	}

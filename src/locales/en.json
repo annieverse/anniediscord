@@ -724,7 +724,7 @@
         "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!"
     },
     "VOTE": {
-        "IS_COOLDOWN": "Your next vote still in cooldown. Make sure to periodically check your vote availability at {{page}}!",
-        "READY": "I know you are busy! but could you lend a minute to vote me at {{url}}? and dont't worry about the reward! I've already prepared something special for you- {{emoji}}"
+        "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰─While we at it, why not **{{page}}** about me first? {{emoji}}",
+        "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
     }
 }
