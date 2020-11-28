@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const GUI = require(`../../ui/prebuild/profile`)
 /**
  * Set user's profile bio/description
  * @author klerikdust
@@ -10,22 +11,46 @@ class SetBio extends Command {
     constructor(Stacks) {
 		super(Stacks)
 		this.charactersLimit = 156
+		this.banner = `https://i.ibb.co/hRsbK0g/setbio.png`
     }
 
     /**
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here
      */
-    async execute({ reply, bot:{db} }) {
+    async execute({ reply, avatar, emoji, bot:{db} }) {
 		await this.requestUserMetadata(2)
-
 		//  Handle if user doesn't specify the new bio/description
-		if (!this.fullArgs) return reply(this.locale.SETBIO.MISSING_ARG, {color: `red`})
+		if (!this.fullArgs) return reply(this.locale.SETBIO.MISSING_ARG, {
+			prebuffer: true,
+			image: this.banner,
+			socket:{prefix:this.bot.prefix}
+		})
 		//  Handle if user input is exceeding the character limit
-		if (this.fullArgs.length > this.charactersLimit) return reply(this.locale.SETBIO.EXCEEDING_LIMIT, {color: `red`})
-
-		await db.setUserBio(this.fullArgs, this.user.id)
-		return reply(this.locale.SETBIO.SUCCESSFUL, {color: `lightgreen`})
+		if (this.fullArgs.length > this.charactersLimit) return reply(this.locale.SETBIO.EXCEEDING_LIMIT, {
+			socket: {
+				emoji: emoji(`AnnieCry`),
+				chars: this.fullArgs.length-this.charactersLimit
+			}
+		})
+        this.user.main.bio = this.fullArgs
+        this.rendering = await reply(this.locale.SETBIO.RENDERING, {
+            simplified: true,
+            socket: {emoji: emoji(`AAUloading`)} 
+        })
+        let img = await new GUI(this.user, this.bot, {width: 320, height: 360}, avatar).build()
+        this.confirmation = await reply(this.locale.SETBIO.PREVIEW_CONFIRMATION, {
+            prebuffer: true,
+            image: img.toBuffer()
+        })
+        this.rendering.delete()
+        this.addConfirmationButton(`applyBio`, this.confirmation)
+        return this.confirmationButtons.get(`applyBio`).on(`collect`, async r => {
+        	//  Perform update
+        	await db.setUserBio(this.fullArgs, this.user.id)
+        	this.finalizeConfirmation(r)
+			return reply(``, {customHeader: [`Yay! your new profile's bio has been set!♡`, avatar(this.user.id)]})
+        })
 	}
 
 }
