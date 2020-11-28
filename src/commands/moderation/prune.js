@@ -30,8 +30,7 @@ class Prune extends Command {
 		//	Successful
 		return reply(this.locale.PRUNE.SUCCESSFUL, {
 			socket: {amount: amount, emoji: emoji(`AnnieYay`)},
-			deleteIn: 5,
-			color: `lightgreen`
+			deleteIn: 5
 		})
 	}
 }

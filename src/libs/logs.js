@@ -124,7 +124,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.CHANNEL_CREATE, {
             header: `${this.data.channel.name} channel was created!`,
             timestamp: true,
-            color: `lightgreen`,
             field: this.logsChannel,
             socket: {
                 channel: this.data.channel,
@@ -147,7 +146,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.CHANNEL_DELETE, {
             header: `${this.data.channel.name} channel was deleted.`,
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {
                 channel: this.data.channel.name,
@@ -194,7 +192,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.EMOJI_CREATE, {
             header: `${this.data.emoji.name} emoji was created!`,
             timestamp: true,
-            color: `lightgreen`,
             field: this.logsChannel,
             socket: {emoji: emoji(this.data.emoji.name)}
         })
@@ -214,7 +211,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.EMOJI_DELETE, {
             header: `${this.data.emoji.name} emoji was deleted.`,
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {emoji: this.data.emoji.name}
         })
@@ -260,7 +256,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.ROLE_CREATE, {
             header: `A role was created.`,
             timestamp: true,
-            color: `lightgreen`,
             field: this.logsChannel,
             socket: {emoji: emoji(`AnnieHype`)}
         })
@@ -280,7 +275,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.ROLE_DELETE, {
             header: `${this.data.role.name} role was deleted.`,
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {
                 role: `${this.data.role.name}(${this.data.role.id})`,
@@ -336,7 +330,6 @@ class LogsSystem {
         return reply(this.locale.LOGS.MESSAGE_DELETE_BULK, {
             header: `Bulk of Messages deletion was performed.`,
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {
                 messages: (this.data.messages.size-1),
@@ -363,7 +356,6 @@ class LogsSystem {
             header: `A message was deleted by ${this.message.author.username}.`,
             thumbnail: this.message.author.displayAvatarURL(),
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {
                 channel: this.message.channel,
@@ -388,7 +380,6 @@ class LogsSystem {
             header: `${this.data.user.username} just got banned.`,
             thumbnail: this.data.user.displayAvatarURL(),
             timestamp: true,
-            color: `red`,
             field: this.logsChannel,
             socket: {
                 emoji: emoji(`AnnieYandere`),
@@ -435,7 +426,6 @@ class LogsSystem {
                 header: `A brand new house, ${this.data.user.username}.`,
                 thumbnail: this.data.newGuild.iconURL(),
                 timestamp: true,
-                color: `crimson`,
                 field: this.logsChannel,
                 socket: {
                     emoji: emoji(`AnnieSmile`),
@@ -451,7 +441,6 @@ class LogsSystem {
                 header: `We are switching region!`,
                 thumbnail: this.data.newGuild.iconURL(),
                 timestamp: true,
-                color: `crimson`,
                 field: this.logsChannel,
                 socket: {
                     emoji: emoji(`AnnieThinking`),
@@ -478,7 +467,6 @@ class LogsSystem {
             thumbnail: this.data.member.user.displayAvatarURL(),
             timestamp: true,
             field: this.logsChannel,
-            color: `lightgreen`,
             socket: {
                 emoji: emoji(`AnnieWave`),
                 user: this.data.member
@@ -504,7 +492,6 @@ class LogsSystem {
             thumbnail: this.data.member.user.displayAvatarURL(),
             timestamp: true,
             field: this.logsChannel,
-            color: `red`,
             socket: {
                 emoji: emoji(`AnnieCry`),
                 user: this.data.member
@@ -529,7 +516,6 @@ class LogsSystem {
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
-            color: `lightgreen`,
             field: this.SupportServerLogChannel,
             socket: {
                 guildCode: `**${guildCode}**`,
@@ -544,7 +530,6 @@ class LogsSystem {
                 image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
                 prebuffer: true,
                 field: owner,
-                color: `crimson`,
                 socket: {
                     wiki: `https://github.com/klerikdust/anniediscord/wiki`,
                     prefix: this.data.bot.prefix,
@@ -571,7 +556,6 @@ class LogsSystem {
             thumbnail: this.data.guild.iconURL(),
             timestamp: true,
             field: this.SupportServerLogChannel,
-            color: `red`,
             socket: {emoji: emoji(`AnnieCry`)}
         })
     }
