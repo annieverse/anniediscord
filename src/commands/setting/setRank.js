@@ -19,10 +19,10 @@ class SetRank extends Command {
          */
         this.actions = [`enable`, `add`, `delete`, `info`, `reset`, `disable`]
         /**
-         * Thumbnail's img source
+         * Banner's img source
          * @type {string}
          */
-        this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
+        this.banner = `https://i.ibb.co/HPHYHDf/setrank.png`
         /**
          * Current instance's config code
          * @type {string}
@@ -44,8 +44,8 @@ class SetRank extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETRANK.GUIDE, {
             header: `Hi, ${name(this.user.id)}!`,
-            color: `crimson`,
-            thumbnail: this.thumbnail,
+            prebuffer: true,
+            image: this.banner,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: emoji(`AnnieSelfie`)
@@ -113,10 +113,9 @@ class SetRank extends Command {
         })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
-        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {status: `fail`})
+        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket:{emoji:emoji(`AnnieCry`)} })
         //  Handle if target role is too high
         if (getRole.position > this.annieRole.position) return reply(this.locale.SETRANK.ROLE_TOO_HIGH, {
-            color: `crimson`,
             socket: {
                 role: getRole,
                 annieRole: this.annieRole.name,
@@ -134,15 +133,16 @@ class SetRank extends Command {
                     user: name(this.subConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
                     prefix: this.bot.prefix,
-                    role: getRole.name
+                    role: getRole.name.toLowerCase()
                 },
-                status: `fail`
             })
         }       
         //  Handle if user doesn't specify the target required level
         if (!this.args[2]) return reply(this.locale.SETRANK.ADD_MISSING_REQUIRED_LEVEL, {
-            socket: {prefix: this.bot.prefix},
-            status: `warn`
+            socket: {
+                prefix: this.bot.prefix,
+                role: getRole.name.toLowerCase()
+            },
         })
         //  Handle if the specified required level is a faulty value/non-parseable number
         const getRequiredLevel = trueInt(this.args[2])
@@ -175,16 +175,16 @@ class SetRank extends Command {
      * Deleting a rank-role from the guild's configurations
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async delete({ reply, findRole }) {
+    async delete({ reply, findRole, emoji }) {
         const fn = `[setRank.delete()]`
         //  Handle if user doesn't specify the target role name
-        if (!this.args[1]) return reply(this.locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {status: `warn`})
+        if (!this.args[1]) return reply(this.locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {socket: {emoji:emoji(`AnnieYandere`)}})
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
-        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {status: `fail`})
+        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket: {emoji:emoji(`AnnieCry`)}})
         //  Handle if the role hasn't been registered in the first place
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
-        if (getRegisteredRank.length <= 0) return reply(this.locale.SETRANK.DELETE_UNREGISTERED_ROLE, {status: `fail`})
+        if (getRegisteredRank.length <= 0) return reply(this.locale.SETRANK.DELETE_UNREGISTERED_ROLE, {socket: {emoji:emoji(`AnnieMad`)}})
         //  Delete rank from the guild's configurations entry
         this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
         await this.bot.db.updateGuildConfiguration({
@@ -211,7 +211,6 @@ class SetRank extends Command {
         //  Handle if the main module is disabled in the guild for the first time
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) {
             return reply(this.locale.SETRANK.INFO_DISABLED_FIRST_TIME, {
-                color: `red`,
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
@@ -225,7 +224,6 @@ class SetRank extends Command {
         const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
         if (!this.primaryConfig.value && this.primaryConfig.setByUserId) {
             return reply(this.locale.SETRANK.INFO_DISABLED_BY_USER, {
-                color: `red`,
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
@@ -240,7 +238,6 @@ class SetRank extends Command {
         //  Handle if the main module is enabled, but the guild hasn't setting up the ranks yet.
         if (this.primaryConfig.value && (this.subConfig.value.length <= 0)) {
             return reply(this.locale.SETRANK.INFO_ENABLED_ZERO_RANKS, {
-                color: `lightgreen`,
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
@@ -253,7 +250,7 @@ class SetRank extends Command {
         //  Otherwise, display info like usual
         const localizeSubConfigTime = await this.bot.db.toLocaltime(this.subConfig.updatedAt)
         return reply(this.locale.SETRANK.INFO_ENABLED, {
-            color: `lightgreen`,
+            status: `success`,
             thumbnail: this.message.guild.iconURL(),
             header: this.locale.SETRANK.HEADER_INFO,
             socket: {
@@ -309,7 +306,7 @@ class SetRank extends Command {
     async disable({ reply, name }) {
         const fn = `[setRank.disable()]`
         //  Handle if the guild already has disabled the configuration
-        if (!this.primaryConfig.value) return reply(this.locale.SETRANK.ALREADY_DISABLED, {status: `warn`})
+        if (!this.primaryConfig.value) return reply(this.locale.SETRANK.ALREADY_DISABLED, {socket:{prefix:this.bot.prefix}})
         //  Otherwise, update the configuration. Both in the cache and database.
         await this.bot.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
@@ -330,13 +327,14 @@ class SetRank extends Command {
      */
     async _prettifyList(source=[], { name, commanifier }) {
         let res = ``
+        let arr = []
         let expCalc = new Experience({bot: this.bot, message:this.message})
         for (let i=0; i<source.length; i++) {
-            if (i <= 0) res += `\n╭───────────────────╮\n\n`
+            if (i <= 0) res += `\n╭*:;,．★ ～☆*──────────╮\n\n`
             const rank = source[i]
             const expMeta = await expCalc.xpReverseFormula(rank.LEVEL)
             res += `**• LV${rank.LEVEL} - ${this._getRoleName(rank.ROLE)}**\n> Required EXP: ${commanifier(expMeta.minexp)}\n\n`
-            if (i === (source.length-1)) res += `╰───────────────────╯\n`
+            if (i === (source.length-1)) res += `╰──────────☆～*:;,．*╯\n`
         }
         return res
     }
