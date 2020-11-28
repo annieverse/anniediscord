@@ -2,6 +2,28 @@
 
 ___
 
+## **11/28/20 | 7.6.13 ->**
+
+* 778eecd build: package test
+* 4a726b6 chore: temporarily disable shop
+* 5cc06fb style(leaderboard): use primary palette and new banner
+* 12ae3aa refactor: ui and ux improvementss
+* 4048f36 refactor(vote): improved layosut
+* a00f0c7 refactor(setbio): improved flow
+* 8e589c0 refactor(setCover): improved response and layout
+* 54c81a2 refactor(setExp): improved response
+* d82fdb1 refactor(setlvlupmsg): improved ui
+* 69b246f refactor(logs): improved flow
+* b026729 refactor(setranks): improved flow
+* ecde679 refactor(setRelationship): confirm by target user
+* 2f614f1 refactor(relationships): improved UI and settings flow
+* 51aa484 refactor(relationship): guide on empty card
+* b80b9a2 refactor(command): userinvalid color
+* 8791560 refactor(gift): improved flow and ui
+* 743827d refactor(avatar): added initial message
+* 20ed578 refactor(balance): improved ui
+* 12f94bf refactor(dailies): improved ui
+
 ## **11/24/20 | 7.6.12 ->**
 
 * b2c7fb3 refactor(quest): safeguard and improved ui
