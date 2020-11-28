@@ -552,15 +552,15 @@
         "SUCCESSFUL": "Yay! your new profile's bio has been set!"
     },
     "SETCOVER": {
-        "GUIDE": "This is where you can set your owned profile covers and you can start by simply type `{{prefix}}setcover <Name/ID>`.",
-        "NO_EQUIPPABLE_COVER": "{{emoji}} Sorry! It seems you don't have any equippable covers at the moment.",
-        "ITEM_DOESNT_EXISTS": "{{emoji}} I couldn't find any of your cover with that given name/ID.",
-        "PREVIEW_CONFIRMATION": "Are you sure you want to apply **{{cover}}** as your account cover? if yes, please press to the green button to start applying it. {{emoji}}",
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nThis is where you can set your owned profile covers!\nstart by simply type **`{{prefix}}setcover <coverID/Name>`**\n╰──────────☆～*:;,．*╯",
+        "NO_EQUIPPABLE_COVER": "**Sorry- It seems you don't have any equippable covers at the moment.**",
+        "ITEM_DOESNT_EXISTS": "**Is that cover even exist?** {{emoji}}",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nApply **{{cover}}** as your account background?\n╰──────────☆～*:;,．*╯\nIf yes, please react to the green button to start applying it! {{emoji}}",
         "FETCHING": "{{emoji}} `generating preview for {{itemId}}@{{userId}}`",
-        "SUCCESSFUL": "{{emoji}} **{{cover}}** has successfully applied as your profile cover!",
-        "ALREADY_USED": "{{emoji}} You're currently using **{{cover}}** as your profile cover, baka.",
+        "SUCCESSFUL": "{{emoji}} **{{cover}}** successfully equipped!♡",
+        "ALREADY_USED": "You're currently using **{{cover}}** as your profile cover, *baka.* {{emoji}}",
         "OWNED_COVER_LIST": "Below are the covers you had in your inventory right now:\n{{list}}",
-        "SUGGEST_TO_BUY": "But you don't seem to have any covers right now, so have a visit to `{{prefix}}shop covers` and get one for yourself!"
+        "SUGGEST_TO_BUY": "But you don't seem to have any covers right now, so have a visit to **`{{prefix}}shop covers`** and get one for yourself!♡ {{emoji}}"
     },
     "SETEXP": {
         "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n╰──────────☆～*:;,．*╯",

@@ -16,10 +16,10 @@ class SetCover extends Command {
     constructor(Stacks) {
         super(Stacks)
         /**
-         * Thumbnail's img source
+         * Banner's img source
          * @type {string}
          */
-         this.thumbnail = `https://i.ibb.co/dBJN742/cover.png`
+         this.banner = `https://i.ibb.co/0F31FM0/setwelcomer.png`
     }
 
     /**
@@ -34,18 +34,18 @@ class SetCover extends Command {
             ownedCovers = ownedCovers.filter(i => i.in_use === 0)
             const FOOTER = !ownedCovers.length ? this.locale.SETCOVER.SUGGEST_TO_BUY : this.locale.SETCOVER.OWNED_COVER_LIST
             return reply(`${this.locale.SETCOVER.GUIDE}\n\n${FOOTER}`, {
-                color: `crimson`,
-                thumbnail: this.thumbnail,
                 header: `Hi, ${name(this.user.id)}!`,
+                prebuffer: true,
+                image: this.banner,
                 socket: {
                     prefix: this.bot.prefix,
-                    emoji: emoji(`AnnieGeek`),
+                    emoji: emoji(`AnnieSmuggy`),
                     list: this.prettifyList(ownedCovers)
                 }
             })
         }
         //  Handle if user doesn't have any equippable cover
-        if (!ownedCovers.length) return reply(this.locale.SETCOVER.NO_EQUIPPABLE_COVER, {color: `golden`, socket: {emoji: emoji(`warn`)} })
+        if (!ownedCovers.length) return reply(this.locale.SETCOVER.NO_EQUIPPABLE_COVER, {})
         const searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, ownedCovers.map(i => i.name))
         this.cover = searchStringResult.bestMatch.rating >= 0.4
         //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
@@ -56,12 +56,11 @@ class SetCover extends Command {
         //  Finally if no item's name/ID are match, then return null
         : null
         //  Handle if dynamic search string doesn't give any result
-        if (!this.cover) return reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {color: `red`, socket: {emoji: emoji(`fail`)} })
+        if (!this.cover) return reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji:emoji(`AnnieThinking`)} })
         //  Handle if user tries to use cover that currently being used.
         if (this.user.usedCover.item_id === this.cover.item_id) return reply(this.locale.SETCOVER.ALREADY_USED, {
-            color: `red`,
             socket: {
-                emoji: emoji(`fail`),
+                emoji: emoji(`AnnieMad`),
                 cover: this.cover.name
             }
         })
@@ -78,31 +77,24 @@ class SetCover extends Command {
         let img = await new GUI(this.user, this.bot, {width: 320, height: 310}, avatar).build()
         this.confirmation = await reply(this.locale.SETCOVER.PREVIEW_CONFIRMATION, {
             prebuffer: true,
-            color: `golden`,
             image: img.toBuffer(),
             socket: {
                 cover: this.cover.name,
                 emoji: emoji(`AnnieSmile`)
             }
         })
-
-        //  React-based confirmation
         this.fetching.delete()
-        await this.confirmation.react(`✅`)
-        const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
-        const confirmationButton = this.confirmation.createReactionCollector(confirmationButtonFilter, { time: 120000 })
-        confirmationButton.on(`collect`, async r => {
-            confirmationButton.stop()
+        this.addConfirmationButton(`applyCover`, this.confirmation)
+        return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
             //  Perform action
             await db.detachCovers(this.user.id, this.message.guild.id)
             await db.applyCover(this.cover.item_id, this.user.id, this.message.guild.id)
-            return reply(this.locale.SETCOVER.SUCCESSFUL, {
-                color: `lightgreen`,
-                socket: {
-                    emoji: emoji(`success`),
-                    cover: this.cover.name
-                } 
-            })
+            //  Finalize
+            this.finalizeConfirmation(r)
+            return reply(this.locale.SETCOVER.SUCCESSFUL, {socket: {
+                cover: this.cover.name,
+                emoji: emoji(this.cover.alias)
+            }})
         })
     }
 
@@ -115,7 +107,7 @@ class SetCover extends Command {
         let str = ``
         for (let i = 0; i<list.length; i++) {
             const item = list[i]
-            str += `[ID:${item.item_id}] ${item.name}${list.length === (list.length-1) ? `` : `\n`}`
+            str += `╰☆～(${item.item_id}) **${item.name}**${list.length === (list.length-1) ? `` : `\n`}`
         }
         return str
     }
