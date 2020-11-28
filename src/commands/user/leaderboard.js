@@ -25,10 +25,10 @@ class Leaderboard extends Command {
 		]
 
 		/**
-		 * URL source for leaderboard's thumbnail
+		 * Banner for leaderboard
 		 * @type {string}
 		 */
-		this.thumbnail = `https://i.ibb.co/2jnLwx2/leaderboard.png`
+		this.banner = `https://i.ibb.co/zHK1cf2/leaderboard.png`
     }
 
     /**
@@ -40,15 +40,18 @@ class Leaderboard extends Command {
 
 		//  Returns a guide if no parameter was specified.
 		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE, {
-			thumbnail: this.thumbnail,
 			header: `Hi, ${name(this.user.id)}!`,
+			prebuffer: true,
+			image: this.banner,
 			socket: {
 				prefix: this.bot.prefix,
 				emoji: emoji(`AnnieDab`)
 			}
 		})
 		//  Returns if parameter is invalid.
-		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY)
+		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY, {
+			socket: {emoji:emoji(`AnnieThinking`)}
+		})
 		//  Store key of selected group
 		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
 		const selectedGroup = selectedGroupParent[0]

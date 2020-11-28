@@ -312,9 +312,9 @@
     },
     "INVITE_LINK_SENT": "{{emoji}}  **I've sent the invite link to your DM!**",
     "LEADERBOARD": {
-        "GUIDE": "Did you know this guild has its own ranking leaderboard? check out the commands below! {{emoji}}\n\n`{{prefix}}lb exp`\n*List of user with highest experience points & level. Their hours of chit-chatting do really pay off.*\n\n`{{prefix}}lb bal`\n*List of rich users with the highest balance account. They are either coming from rich family or dedicating their time on grinding coins.*\n\n`{{prefix}}lb fame`\n*List of most-loved users with highest popularity of fame points. They are way too fabulous for my taste.*\n\n`{{prefix}}lb art`\n*List of most-faved artists with highest engagement artwork across the discord guilds. Artists, unite!*",
-        "INVALID_CATEGORY": "{{emoji}} Sorry i couldn't find anything from that category.",
-        "NO_DATA": "{{emoji}} No ranking data found yet for **{{category}} Leaderboard.** Come back later!",
+        "GUIDE": "Did you know this guild has its own ranking leaderboard? check out the commands below! {{emoji}}\n\n**`{{prefix}}lb exp`**\n> List of user with highest experience points & level. Their hours of chit-chatting do really pay off.\n\n**`{{prefix}}lb bal`**\n> List of rich users with the highest balance account. They are either coming from rich family or dedicating their time on grinding coins.\n\n**`{{prefix}}lb fame`**\n> List of most-loved users with highest popularity of fame points. They are way too fabulous for my taste.",
+        "INVALID_CATEGORY": "**Sorry- but there's no leaderboard for that category, yet.** {{emoji}}",
+        "NO_DATA": "No ranking data found yet for **{{category}} Leaderboard.** Come back later!",
         "AUTHOR_RANK": "You are currently **#{{rank}}** with total **{{points}}** {{emoji}}",
         "UNRANKED": "You are unranked."
     },

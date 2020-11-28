@@ -25,14 +25,14 @@ class UI {
 		await card.addCover({ img: await urlToBuffer(this.avatarParser(topTenRows[0].id)), gradient: true })
 		for (let row in topTenRows) {
 			let ranking = parseInt(row) + 1
-			let colorByRank = ranking <= 1 ? `darkgold` : ranking <= 2 ? `blue` : ranking <= 3 ? `darkbrown` : `text`
+			let colorByRank = ranking <= 1 ? `crimson` : ranking <= 2 ? `blue` : ranking <= 3 ? `darkbrown` : `text`
 
 			//  Add highlight and lighten the text if current row is the author
 			if (topTenRows[row].id === this.user.id) {
 				colorByRank = `purewhite`
 				card.createDataBar({
-					barColor: `golden`, 
-					shadowColor: `golden`,
+					barColor: `pink`, 
+					shadowColor: `pink`,
 					inline: true,
 					marginTop: 22,
 					height: 50,
