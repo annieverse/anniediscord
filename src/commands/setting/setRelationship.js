@@ -70,7 +70,7 @@ class SetRelationship extends Command {
                 relationship: relationship.name,
             }
         })
-        this.addConfirmationButton(`setRelationship`, this.confirmation, this.author.id)
+        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
             //  Update relationship data on author side
             await this.bot.db.setUserRelationship(this.author.id, this.user.id, parseInt(relationship.relationship_id), this.message.guild.id)
