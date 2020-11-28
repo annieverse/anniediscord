@@ -19,7 +19,7 @@ class Relationship extends Command {
      */
 	async execute({ reply, emoji, name, avatar }) {
         await this.requestUserMetadata(2)
-
+        await this.requestAuthorMetadata(2)
         //  Handle if user doesn't exists
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if user doesn't have any relationships
@@ -42,7 +42,7 @@ class Relationship extends Command {
                 emoji: emoji(`AnnieWink`),
                 user: name(this.user.id)
             },
-            image: await new GUI(this.user, name, avatar, this.bot).build()
+            image: await new GUI(this.user, name, avatar, this.bot, this.author).build()
         })
         return this.fetching.delete()
     }

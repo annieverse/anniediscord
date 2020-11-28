@@ -17,6 +17,11 @@ class SetRelationship extends Command {
          * @type {string}
          */
         this.banner = `https://i.ibb.co/2kr1m6d/Group-7.png`
+        /**
+         * Relationship trees limit
+         * @type {string}
+         */
+        this.limit = 7
     }
 
     /**
@@ -46,9 +51,14 @@ class SetRelationship extends Command {
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if target is the author
         if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: emoji(`AnnieMad`)} })
+        //  Handle if user already reached the maximum relationship members and attempted to add new member
+        const userRels = this.author.relationships.map(node => node.assigned_user_id)
+        if ((userRels.length >= 7) && !userRels.includes(this.user.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
+            socket: {emoji:emoji(`AnnieSmuggy`)}
+        })
         //  Handle if the specified gift cannot be found
         let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableRelationships.map(i => i.name))
-        const relationship = searchStringResult.bestMatch.rating >= 0.4 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
+        const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
         if (!relationship) return reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji:emoji(`AnnieThinking`)} })
         //  Render confirmation
         this.confirmation = await reply(this.locale.RELATIONSHIP.TARGET_CONFIRMATION, {
@@ -60,7 +70,7 @@ class SetRelationship extends Command {
                 relationship: relationship.name,
             }
         })
-        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.id)
+        this.addConfirmationButton(`setRelationship`, this.confirmation, this.author.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
             //  Update relationship data on author side
             await this.bot.db.setUserRelationship(this.author.id, this.user.id, parseInt(relationship.relationship_id), this.message.guild.id)

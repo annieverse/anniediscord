@@ -490,6 +490,7 @@
         "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them.",
         "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
         "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
+        "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request."
     },
     "GIVE_REPUTATION": {

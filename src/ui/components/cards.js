@@ -132,7 +132,7 @@ class Card {
 	}
 
 	async addCover({img=``, gradient=false }) {
-		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/1.5))
+		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/2))
 		const themeInRgb = Color(this.color.main).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
 		const imgSize = sizeOf(img)
