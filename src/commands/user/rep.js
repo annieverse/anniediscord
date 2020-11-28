@@ -25,24 +25,23 @@ class Reputation extends Command {
 		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
 		//  Returns if user's last reps give still under 23 hours.
 		if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
+			thumbnail: avatar(this.author.id),
 			socket: {time: moment(lastGiveAt).add(...this.cooldown).fromNow()},
-			color: `red`
 		})
 		//	Displays short-guide if user doesn't specify any parameter
 		if (!this.fullArgs) return reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {
 			socket: {emoji: emoji(`AnnieWink`), prefix: this.bot.prefix} 
 		})
 		//	Handle if target user is invalid
-		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
+		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		//	Handle if user is trying to rep themselves
-		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {color: `red`, socket: {emoji: emoji(`AnnieMad`)} })
+		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)} })
 
 		await db.addUserReputation(1, this.user.id, this.author.id,this.message.guild.id)
 		await db.updateReputationGiver(this.author.id, this.message.guild.id)
 		return reply(this.locale.GIVE_REPUTATION.SUCCESSFUL, {
+			status: `success`,
 			thumbnail: avatar(this.user.id),
-			notch: true,
-			color: `lightgreen`,
 			socket: {user: name(this.user.id)}
 		})
 	}

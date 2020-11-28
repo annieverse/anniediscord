@@ -274,7 +274,7 @@
         "UNAVAILABLE": "**Aw, you don't have any gifts at the moment!**\nBut don't worry- you can attain them from **`{{prefix}}gacha`** and my **`{{prefix}}shop`**!♡ {{emoji}}",
         "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
         "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
-        "CONFIRMATION": "You are going to gift **{{user}}** with **{{gift}}**? once confirmed, the gift will be turned into {{amount}}+ reputation points for them.\n─────────────────☆～:;,．"
+        "CONFIRMATION": "Gift **{{user}}** with **{{gift}}**?\n─────────────────☆～:;,．\nOnce reacted, the gift will be turned into {{amount}}+ rep points for them."
     },
     "HALLOWEEN_GACHA": {
         "OPENING_WORDS": [
@@ -396,15 +396,15 @@
         "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
-        "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **3% tax fee** for each transaction you made.",
+        "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **2% tax fee** for each transaction you made.",
         "LVL_TOO_LOW": "You need to be atleast **LV {{level}}** to use this feature.",
         "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
-        "USER_CONFIRMATION": "Transfering **{{amount}} (2% tax included)** to **{{user}}'s** account?",
+        "USER_CONFIRMATION": "Transfering **{{amount}} (2% tax included)** to **{{user}}'s** account?\n─────────────────☆～:;,．\nReact to the button to confirm the transaction.",
         "INVALID_AMOUNT": "Don't forget to specify the amount you want to send!",
         "INVALID_NUMBER": "Please input a valid amount you want to send.",
         "INSUFFICIENT_BALANCE": "You don't have enough balance to continue this transaction.",
         "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
-        "SUCCESSFUL": "**{{target}}** has successfully received your artcoins!",
+        "SUCCESSFUL": "**{{target}}** has received your artcoins!♡",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**",
         "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction."
     },
@@ -479,8 +479,8 @@
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
     "RELATIONSHIP": {
-        "GUIDE": "Start assigning a unique relationship status with your friends!\nsimply type `{{prefix}}setrel <user>` to get started!\n\nBelow are the available relationship status that you can use:\n{{list}}",
-        "SET_TO_SELF": "You can't add a relationship to yourself, baka. {{emoji}}",
+        "GUIDE": "╭*:;,．★ ～☆*──────────────╮\nStart assigning a unique relationship status with your friends!\ne.g. **`{{prefix}}setrel @nao little sister`**\n╰────────────☆～*:;,．*╯\nBelow are the available relationship status that you can use:\n{{list}}",
+        "SET_TO_SELF": "You can't add a relationship to yourself, *baka.* {{emoji}}",
         "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
         "UNAVAILABLE": "There is no assignable relationship at the moment.",
         "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** now is \n{{user}}'s {{role}}!",
@@ -488,13 +488,15 @@
         "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
         "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
         "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them.",
-        "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**"
+        "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
+        "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
+        "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request."
     },
     "GIVE_REPUTATION": {
-        "IN_COOLDOWN": "You can give reputation point again\n:clock1: **{{time}}**",
+        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour rep will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
         "SHORT_GUIDE": "**Go rep someone you admire!** {{emoji}}\ne.g. **`{{prefix}}rep @friend`**",
-        "SELF_TARGETING": "You can't rep yourself, baka. {{emoji}}",
-        "SUCCESSFUL": "{{user}} has received\n**+1 reputation point!**"
+        "SELF_TARGETING": "You can't rep yourself, *baka*. {{emoji}}",
+        "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} has received\n**+1 reputation point!**\n╰────────☆～*:;,．*╯\nHow generous~♡"
     },
     "REQUEST_PING": "Request received in **{{ping}} ms**",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
@@ -644,15 +646,15 @@
         "ROLE_TOO_HIGH": "Uhh, **{{role}}** is unreachable and too high! can you move it under **{{annieRole}}** role first? {{emoji}}"
     },
     "SETWELCOMER": {
-        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭───────────────────╮\n\n`{{prefix}}setwelcomer enable`\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n`{{prefix}}setwelcomer channel <targetChannel>`\n> Set the target channel where you want the welcomer message to be sent in.\neg. __{{prefix}}setwelcomer channel #general__\n\n`{{prefix}}setwelcomer text <message>`\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\neg. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n`{{prefix}}setwelcomer preview`\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n`{{prefix}}setwelcomer disable`\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰───────────────────╯",
-        "INVALID_ACTION": "Sorry, I only recognize the following actions `{{availableActions}}`",
-        "ALREADY_ENABLED": "This module already enabled by **{{user}}, {{date}}**",
+        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles!\ne.g. __{{prefix}}setwelcomer roles @muffins @cupcake__\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
+        "ALREADY_ENABLED": "The Welcomer already enabled by **{{user}}, {{date}}**",
         "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
-        "ALREADY_DISABLED": "This module hasn't been enabled yet in this guild.",
+        "ALREADY_DISABLED": "**Welcomer hasn't been enabled yet in this guild.**\nTo enable it, use **`{{prefix}}setwelcomer enable`**",
         "SUCCESSFULLY_DISABLED": "**Welcomer Module** has been successfully disabled in this guild!",
-        "EMPTY_CHANNEL_PARAMETER": "Don't forget to specify the channel name!",
+        "EMPTY_CHANNEL_PARAMETER": "**Don't forget to specify the channel name!**\ne.g. **`{{prefix}}setwelcomer channel #general`**",
         "EMPTY_ROLE_PARAMETER": "Don't forget to specify the role!\ne.g. `{{prefix}}setwelcome role @bunny`",
-        "INVALID_CHANNEL": "Sorry, I can't find any channel with that name.",
+        "INVALID_CHANNEL": "**Sorry- I'm unable to find that channel.** {{emoji}}",
         "INVALID_ROLE": "Sorry, I can't find any role with that name.",
         "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
         "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
@@ -675,12 +677,12 @@
     },
     "SWITCH_THEME": {
         "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**.",
-        "MISSING_KEYWORD": "Please include the theme name you want to use.",
-        "SET_NIGHTMODE": "Your theme configuration has been set to **Night Mode.**",
-        "SET_LIGHTMODE": "Your theme configuration has been set to **Light Mode.**",
-        "NO_MATCHING_KEYWORD": "Sorry i can't find any theme with that name.",
+        "MISSING_KEYWORD": "**Please specify the theme you want to use!~♡**\ne.g. **`{{prefix}}theme dark`**",
+        "SET_NIGHTMODE": "Yay! successfully set to **Night Mode!**",
+        "SET_LIGHTMODE": "Yay! successfully set to **Light Mode!**",
+        "NO_MATCHING_KEYWORD": "**Sorry- i can't find any theme with that name.** {{emoji}}",
         "NO_THEME_OWNED": "Sorry but it seems you dont own this item, you can visit the shop to buy it though.",
-        "ALREADY_THAT_THEME": "You theme is already set to that",
+        "ALREADY_THAT_THEME": "You are currently using this theme, *baka.* {{emoji}}",
         "NO_THEMES_OWNED":"Sorry but it seems you dont own any themes"
     },
     "SYS_NOTIFICATION": {

@@ -12,6 +12,7 @@ class ConvertArtcoins extends Command {
     constructor(Stacks) {
 		super(Stacks)
 		this.artcoinsRatio = 8
+		this.banner = `https://i.ibb.co/1RYgGJV/artcoins-convert.png`
     }
 
     /**
@@ -23,6 +24,8 @@ class ConvertArtcoins extends Command {
 
 		//  Returns as guide if user doesn't specify any parameters
 		if (!this.args[0]) return reply(this.locale.CARTCOIN.SHORT_GUIDE, {
+			prebuffer: true,
+			image: this.banner,
 			socket: {
 				emoji: emoji(`AnnieHype`),
 				prefix: this.bot.prefix
@@ -32,7 +35,6 @@ class ConvertArtcoins extends Command {
 		const amountToUse = this.args[0].startsWith(`all`) ? this.user.inventory.artcoins : trueInt(this.args[0])
 		//  Returns if user's artcoins is below the amount of going to be used
 		if (this.user.inventory.artcoins < amountToUse) return reply(this.locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
-			color: `red`,
 			socket: {
 				amount: `${emoji(`artcoins`)}${commanifier(this.user.inventory.artcoins)}`,
 				emoji: emoji(`AnnieYandere`)
@@ -40,7 +42,6 @@ class ConvertArtcoins extends Command {
 		})
 		//  Returns if user amount input is below the acceptable threeshold
 		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {
-			color: `red`,
 			socket: {
 				emoji: emoji(`AnnieMad`)
 			}

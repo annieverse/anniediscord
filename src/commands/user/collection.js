@@ -16,6 +16,7 @@ class CardCollection extends Command {
 		 * @type {number}
 		 */
 		this.upperLimit = 10
+		this.banner = `https://i.ibb.co/rvmZCBW/cardcollection.png`
 	}
 
 	/**
@@ -42,7 +43,10 @@ class CardCollection extends Command {
 		}		
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) {
-			return reply (INVALID_INVENTORY, {socket: {
+			return reply (INVALID_INVENTORY, {
+				prebuffer: true,
+				image: this.banner,
+				socket: {
 					prefix: this.bot.prefix,
 					emoji: emoji(`AnnieCry`),
 					user: name(this.user.id)

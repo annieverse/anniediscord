@@ -19,10 +19,10 @@ class Pay extends Command {
 		 */
 		this.requirementLevel = 3
 		/**
-		 * Source thumbnail img for the guide case
+		 * Source banner img for the guide case
 		 * @type {string}
 		 */
-		this.thumbnail = `https://i.ibb.co/fGFTRgK/pay.png`
+		this.banner = `https://i.ibb.co/HVTBF4f/pay.png`
 		/**
 		 * Tax rate to be deducted from sender's balance
 		 * @type {number|float}
@@ -47,9 +47,10 @@ class Pay extends Command {
 		//  Displays as guide if user doesn't specify any parameter
 		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE, {
 			color: `crimson`,
-			header: `Hi, ${name(this.user.id)}`,
-			socket: {prefix: this.bot.prefix},
-			thumbnail: this.thumbnail
+			header: `Hi, ${name(this.author.id)}`,
+			prebuffer: true,
+			image: this.banner,
+			socket: {prefix: this.bot.prefix}
 		})
 		//  Handle if target is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {status: `fail`})
@@ -64,13 +65,12 @@ class Pay extends Command {
 		//  Handle if user inputted amount to send way above limit.
 		if (this.amountToSend > this.maxAllowed) return reply(this.locale.PAY.EXCEEDING_LIMIT, {status: `warn`, socket:{limit: commanifier(this.maxAllowed)} })
 		//  Handle if user trying to send artcoins above the amount they had
-		if (parseInt(this.author.inventory.artcoins) < this.amountToSend) return reply(this.locale.PAY.INSUFFICIENT_BALANCE, {status: `warn`})
+		if (this.author.inventory.artcoins < this.amountToSend) return reply(this.locale.PAY.INSUFFICIENT_BALANCE, {status: `warn`})
 		//  Parse amount of tax to be deducted from the transaction
 		this.amountOfTax = this.amountToSend * this.tax
 		this.total = Math.round(this.amountToSend - this.amountOfTax)
 		//  Render confirmation
 		this.confirmation = await reply(this.locale.PAY.USER_CONFIRMATION, {
-			color: `golden`,
 			prebuffer: true,
 			image: await new GUI(this.user, this.total).build(),
 			socket: {
@@ -84,7 +84,11 @@ class Pay extends Command {
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance
 			await db.updateInventory({itemId: 52, value: this.amountToSend, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
- 			reply(this.locale.PAY.SUCCESSFUL, {status: `success`, socket:{target: name(this.user.id)} })
+ 			this.finalizeConfirmation(r)
+ 			reply(``, {
+ 				customHeader: [`${name(this.user.id)} has received your artcoins!♡`, avatar(this.user.id)],
+ 				socket:{target: name(this.user.id)} 
+ 			})
  		})
  	}
 }

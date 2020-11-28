@@ -35,7 +35,7 @@ class SellFragments extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, trueInt, commanifier, name }) {
+    async execute({ reply, emoji, trueInt, avatar, commanifier, name }) {
     	await this.requestUserMetadata(2)
     	//  Display guild if user doesn't specify any arg
     	if (!this.fullArgs) return reply(this.locale.SELLFRAGMENTS.GUIDE, {
@@ -54,14 +54,12 @@ class SellFragments extends Command {
     	//  Handle if user doesn't have any fragments in their inventory
     	if (!this.user.inventory.fragments) return reply(this.locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
     		socket: {emoji: emoji(`AnnieMad`)},
-    		status: `fail`
     	})
     	//  Handle if user specified an invalid amount
     	this.amountToSell = this.args[0].startsWith(`all`) ? this.user.inventory.fragments : trueInt(this.args[0])
-    	if (!this.amountToSell) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT, {status: `fail`})
+    	if (!this.amountToSell) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
     	//  Handle if user's specified amount is lower than the minimum sell 
     	if (this.amountToSell < this.minimumToSell) return reply(this.locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
-    		status: `fail`,
     		socket: {
     			amount: this.minimumToSell,
     			emoji: emoji(`fragments`)
@@ -71,7 +69,6 @@ class SellFragments extends Command {
     	this.receivedAmount = Math.floor(this.amountToSell / this.rate)
     	//  Confirmation
     	this.confirmation = await reply(this.locale.SELLFRAGMENTS.CONFIRMATION, {
-    		color: `golden`,
     		prebuffer: true,
     		image: await new GUI(this.user, this.receivedAmount).build(),
     		socket: {
@@ -88,7 +85,8 @@ class SellFragments extends Command {
     		//  Deduct fragments from user's inventory
     		await this.bot.db.updateInventory({itemId: 51, userId: this.user.id, guildId: this.message.guild.id, value: this.amountToSell, operation: `-`})
     		//  Successful
-    		return reply(this.locale.SELLFRAGMENTS.SUCCESSFUL, {status: `success`})
+            this.finalizeConfirmation(msg)
+    		return reply(``, {customHeader: [`Fragments has been sold!`, avatar(this.user.id)]})
     	})
 	}
 }

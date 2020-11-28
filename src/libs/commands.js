@@ -219,6 +219,15 @@ class Commands {
 	}
 
 	/**
+	 * Finalizing confirmation phase
+	 * @param {object} [response={}] target confirmation response to finalize with
+	 * @returns {string}
+	 */
+	finalizeConfirmation(response={}) {
+		return response.message.reactions.removeAll().catch(e => this.logger.warn(`Failed to finalize transaction.`))
+	}
+
+	/**
 	 * Mainly generate ID as a multiple instance's identifier in
 	 * a method the generates multiple instance of the same type.
 	 * @returns {string}

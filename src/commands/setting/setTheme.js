@@ -10,40 +10,42 @@ class setTheme extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
+        this.banner = `https://i.ibb.co/XzWZt6q/switch-theme.png`
 	}
 
     /**
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{db} }) {
+	async execute({ reply, emoji, bot:{db} }) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
         await this.requestUserMetadata(2)
-        
         //  Returns if user didn't specify any keyword
-        if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {color: `red`})
-
+        if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {
+            prebuffer: true,
+            image: this.banner,
+            socket: {prefix:this.bot.prefix} 
+        })
         let currentTheme = await this.currentTheme(...arguments)
-        
         if (darkThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {color: `red`})
+            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
             let hasTheme = await this.userHasTheme(...arguments, `dark`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`dark`, this.user.id, this.message.guild.id)
-            return reply(this.locale.SWITCH_THEME.SET_NIGHTMODE, {color: `lightgreen`})
+            return reply(this.locale.SWITCH_THEME.SET_NIGHTMODE, {status: `success`})
         }
 
         if (lightThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {color: `red`})
+            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
             let hasTheme = await this.userHasTheme(...arguments, `light`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`light`, this.user.id, this.message.guild.id)
-            return reply(this.locale.SWITCH_THEME.SET_LIGHTMODE, {color: `lightgreen`})
+            return reply(this.locale.SWITCH_THEME.SET_LIGHTMODE, {status: `success`})
         }
 
         //  Handle if no theme match with the keyword
-        return reply(this.locale.SWITCH_THEME.NO_MATCHING_KEYWORD)
+        return reply(this.locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {socket: {emoji:emoji(`AnnieCry`)} })
     }
 
     async currentTheme({bot:{db}}){

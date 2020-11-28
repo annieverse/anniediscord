@@ -1,9 +1,9 @@
 const Command = require(`../../libs/commands`)
+const GUI = require(`../../ui/prebuild/setRelationship`)
 const stringSimilarity = require('string-similarity')
 /**
- * Edit and customize your relationship trees.
- * @author sunnyrainyworks.
- * @revised in v6.0.0 by klerikdust
+ * Assign your friend into your relationship trees!
+ * @author klerikdust
  */
 class SetRelationship extends Command {
 
@@ -13,10 +13,10 @@ class SetRelationship extends Command {
     constructor(Stacks) {
         super(Stacks)
         /**
-         * Thumbnail's img source
+         * Banner's img source
          * @type {string}
          */
-        this.thumbnail = `https://i.ibb.co/WFkWgrw/relationship.png`
+        this.banner = `https://i.ibb.co/2kr1m6d/Group-7.png`
     }
 
     /**
@@ -31,103 +31,42 @@ class SetRelationship extends Command {
         const prettifiedRelationshipsList = this.prettifyList(availableRelationships)
 
         //  Handle if no relationships are available to be assigned.
-        if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE, {status: `warn`})
+        if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE)
         //  Handle if user doesn't provide any argument
-        if (!this.fullArgs) return reply(this.locale.RELATIONSHIP.GUIDE, {
-            color: `crimson`,
-            header: `Hi, ${name(this.user.id)}!`,
-            thumbnail: this.thumbnail,
+        if (!this.fullArgs && this.user.isSelf) return reply(this.locale.RELATIONSHIP.GUIDE, {
+            header: `Hi, ${name(this.author.id)}!`,
+            prebuffer: true,
+            image: this.banner,
             socket: {
                 list: this.prettifyList(availableRelationships),
                 prefix: this.bot.prefix
             }
         })
         //  Handle if target doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID, {status: `fail`})
+        if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if target is the author
-        if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {color: `red`, socket: {emoji: emoji(`AnnieMad`)} })
-        //  Handle if target already registered in author's relationship tree
-        const alreadyInRelationship = this.author.relationships.filter(rel => rel.assigned_user_id === this.user.id)
-        if (alreadyInRelationship.length) {
-            this.changeAndDeleteOptions = true
-            await reply(this.locale.RELATIONSHIP.ALREADY_REGISTERED, {
-                color: `red`,
-                socket: {
-                    user: name(alreadyInRelationship[0].assigned_user_id),            
-                    role: alreadyInRelationship[0].relationship_name
-                }
-            })
-            await reply(this.locale.RELATIONSHIP.CHANGE_DELETE_GUIDE, {simplified: true})
-        }
-        else {
-            await reply(this.locale.RELATIONSHIP.SELECTION, {color: `golden`, socket: {user: name(this.user.id), list: prettifiedRelationshipsList} })
-            await reply(this.locale.RELATIONSHIP.SELECTION_GUIDE, {simplified: true})
-        }
-
-        this.setSequence(3)
-        this.sequence.on(`collect`, async msg => {
-            let input = msg.content.toLowerCase()
-            let parameters = input.split(` `)
-
-            /** --------------------
-             *  Sequence Cancellations
-             *  --------------------
-             */
-            if (this.cancelParameters.includes(input)) {
-                reply(this.locale.ACTION_CANCELLED)
-                return this.endSequence()
+        if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: emoji(`AnnieMad`)} })
+        //  Handle if the specified gift cannot be found
+        let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableRelationships.map(i => i.name))
+        const relationship = searchStringResult.bestMatch.rating >= 0.4 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
+        if (!relationship) return reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji:emoji(`AnnieThinking`)} })
+        //  Render confirmation
+        this.confirmation = await reply(this.locale.RELATIONSHIP.TARGET_CONFIRMATION, {
+            prebuffer: true,
+            image: await new GUI(this.user, relationship.name).build(),
+            socket: {
+                user: name(this.user.id),
+                mention: this.user,
+                relationship: relationship.name,
             }
-
-            /** --------------------
-             *  Sequence Change & Delete action
-             *  --------------------
-             */
-            if (this.changeAndDeleteOptions) {
-                this.action = parameters[0]
-
-                //  Relationship deletion
-                if (this.action.startsWith(`delete`)) {
-                    await db.removeUserRelationship(this.author.id, this.user.id, this.message.guild.id)
-                    reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REMOVED, {color: `lightgreen`, socket: {user: name(this.user.id)} })
-                    return this.endSequence()
-                }
-
-                //  Relationship change
-                if (this.action.startsWith(`change`)) {
-                    const selectedRelationship = input.slice(parameters[0].length+1)
-                    const foundMatchedRelationship = availableRelationships.filter(rel => (rel.relationship_id === parseInt(selectedRelationship)) || (rel.name === selectedRelationship))
-
-                    if (!foundMatchedRelationship.length) return
-                    await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id), this.message.guild.id)
-                    reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REGISTERED, {
-                        color: `lightgreen`,
-                        thumbnail: avatar(this.user.id),
-                        notch: true,
-                        socket: {
-                            user: name(this.author.id),
-                            assignedUser: name(this.user.id),
-                            role: foundMatchedRelationship[0].name
-                        }
-                    })
-                    return this.endSequence()
-                }
-                return
-            }
-
-            //  Default action. Assigning relationship.
-            const foundMatchedRelationship = availableRelationships.filter(rel => (rel.relationship_id === parseInt(input)) || (rel.name === input))
-            await db.setUserRelationship(this.author.id, this.user.id, parseInt(foundMatchedRelationship[0].relationship_id), this.message.guild.id)
-            reply(this.locale.RELATIONSHIP.SUCCESSFULLY_REGISTERED, {
-                color: `lightgreen`,
-                thumbnail: avatar(this.user.id),
-                notch: true,
-                socket: {
-                    user: name(this.author.id),
-                    assignedUser: name(this.user.id),
-                    role: foundMatchedRelationship[0].name
-                }
-            })
-            return this.endSequence()
+        })
+        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.id)
+        return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
+            //  Update relationship data on author side
+            await this.bot.db.setUserRelationship(this.author.id, this.user.id, parseInt(relationship.relationship_id), this.message.guild.id)
+            //  Successful
+            this.finalizeConfirmation(r)
+            return reply(``, {customHeader: [`${name(this.user.id)} has accepted your relationship request!`, avatar(this.user.id)]})
         })
     }
 
@@ -140,7 +79,7 @@ class SetRelationship extends Command {
         let str = ``
         for (let i = 0; i<list.length; i++) {
             const rel = list[i]
-            str += `[${rel.relationship_id}] **${rel.name}**\n`
+            str += `╰☆～(${rel.relationship_id}) **${rel.name}**\n`
         }
         return str
     }
@@ -151,7 +90,7 @@ module.exports.help = {
     start: SetRelationship,
     name: `setRelationship`,
     aliases: [`setrel`, `setrelationship`, `setrelations`, `setrelation`, `addrelationship`, `setrelationship`, `addrel`],
-    description: `Edit and customize your relationship trees`,
+    description: `Assign your friend into your relationship trees!`,
     usage: `setrelationship`,
     group: `Setting`,
     permissionLevel: 0,

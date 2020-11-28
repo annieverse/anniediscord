@@ -31,10 +31,10 @@ class SetWelcomer extends Command {
         }
 
         /**
-         * Thumbnail's img source
+         * banner's img source
          * @type {string}
          */
-         this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
+         this.banner = `https://i.ibb.co/sJr8Wzt/set-Welcomer.png`
     }
 
     /**
@@ -45,8 +45,8 @@ class SetWelcomer extends Command {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETWELCOMER.GUIDE, {
-            color: `crimson`,
-            thumbnail: this.thumbnail,
+            prebuffer: true,
+            image: this.banner,
             header: `Hi, ${name(this.user.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
@@ -55,8 +55,7 @@ class SetWelcomer extends Command {
         })
         //  Handle if the selected options doesn't exists
         if (!this.actions.includes(this.args[0].toLowerCase())) return reply(this.locale.SETWELCOMER.INVALID_ACTION, {
-            socket: {availableActions: this.actions.join(`, `)},
-            status: `fail`
+            socket: {availableActions: this.actions.join(`, `)}
         })   
         //  Run action
         this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
@@ -81,7 +80,6 @@ class SetWelcomer extends Command {
             const now = moment()
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETWELCOMER.ALREADY_ENABLED, {
-                status: `warn`,
                 socket: {
                     user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
@@ -98,11 +96,8 @@ class SetWelcomer extends Command {
         })
         this.logger.info(`${fn} WELCOMER_MODULE for GUILD_ID:${this.message.guild.id} has been enabled.`)
         return reply(this.locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
-            color: `lightgreen`,
-            socket: {
-                prefix: this.bot.prefix,
-                emoji: emoji(`success`)
-            }
+            status: `success`,
+            socket: {prefix: this.bot.prefix}
         })
     }
 
@@ -113,7 +108,7 @@ class SetWelcomer extends Command {
     async disable({ reply }) {
         const fn = `[setWelcomer.disable()]`
         //  Handle if welcomer already disabled before the action.
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`})
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}})
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
@@ -131,18 +126,18 @@ class SetWelcomer extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {string}
      */
-    async channel({ reply }) {
+    async channel({ reply, emoji }) {
         const fn = `[setWelcomer.channel()]`
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {status: `warn`})
+        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {socket: {prefix:this.bot.prefix}})
         //  Do channel searching by three possible conditions
         const searchChannel = this.message.mentions.channels.first()
         || this.message.guild.channels.cache.get(this.args[1])
         || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {status: `fail`})
+        if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {socket: {emoji:emoji(`AnnieCry`)} })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
@@ -165,11 +160,10 @@ class SetWelcomer extends Command {
     async text({ reply, emoji }) {
         const fn = `[setWelcomer.text()]`
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if text content isn't provided
         if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
             socket: {prefix: this.bot.prefix},
-            status: `warn`
         })
         //  Update configs
         const welcomerText = this.args.slice(1).join(` `)
@@ -194,7 +188,7 @@ class SetWelcomer extends Command {
     async preview({ reply, emoji }) {
         const fn = `[setWelcomer.preview()]`
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         this.renderingMsg = await reply(this.locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
@@ -220,7 +214,7 @@ class SetWelcomer extends Command {
     async role({ reply, emoji, findRole }) {
         const fn = `[setWelcomer.role()]`
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {status: `warn`}) 
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if search keyword isn't provided
         if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
             socket: {prefix: this.bot.prefix},

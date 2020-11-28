@@ -88,76 +88,15 @@ class Gift extends Command {
 			await db.addUserReputation(amount, this.user.id, this.message.author.id, this.message.guild.id)
 			//  Deduct gifts from sender
 			await db.updateInventory({itemId: gift.item_id, value: amount, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
- 			reply(this.locale.GIFT.SUCCESSFUL, {
-				status: `success`,
-				thumbnail: avatar(this.user.id),
+ 			this.finalizeConfirmation(r)
+ 			reply(``, {
+				customHeader: [`${name(this.user.id)} has received your gifts!♡`, avatar(this.user.id), ],
 				socket: {
 					user: name(this.user.id),
 					gift: `${emoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
 				} 
 			})
  		})
-
-
-		this.setSequence(5)
-		this.fetching = await reply(this.locale.COMMAND.FETCHING, {
-			simplified: true, 
-			socket: {
-				user: this.author.id,
-				command: `gift`,
-				emoji: emoji(`AAUloading`)
-			}
-		})
-
-		this.setSequence(2)
-		this.fetching.delete()
-		this.displayAvailableGifts = await reply(this.displayGifts(availableGifts, emoji), {header: this.locale.GIFT.DISPLAYGIFT_HEADER})
-		this.displayAvailableGiftsFooter = await reply(this.locale.GIFT.GUIDE_TO_PICK_GIFT, {simplified: true})
-		this.sequence.on(`collect`, async msg => {
-			const input = msg.content.toLowerCase()
-			const params = input.split(` `)
-
-			/** --------------------
-			 *  Sequence Cancellations
-			 *  --------------------
-			 */
-			if (this.cancelParameters.includes(input)) {
-				this.endSequence()
-				return reply(this.locale.ACTION_CANCELLED)
-			}
-
-			const amountToSend = params[0].endsWith(`x`) ? trueInt(params[0].replace(/\x/g, ``)) : trueInt(params[0])
-			const selectedItem = input.slice(input.indexOf(params[1]))
-			// eslint-disable-next-line no-useless-escape
-			const item = availableGifts.filter(key => (key.alias.toLowerCase() === selectedItem.replace(/\ /g, `_`))
-				|| (key.name.toLowerCase === selectedItem)) [0]
-
-			//  Handle if can't parse the desired user's gift amount
-			if (!amountToSend) return reply(this.locale.GIFT.INVALID_AMOUNT, {color: `red`})
-			//  Handle if selected item doesn't exists in the author/sender's inventory
-			if (!item) return reply(this.locale.GIFT.INVALID_ITEM, {color: `red`})
-			//  Handle if the amount to send is lower than total owned item
-			if (item.quantity < amountToSend) return reply(this.locale.GIFT.INSUFFICIENT_AMOUNT, {
-				socket: {item: `${emoji(item.alias)} (${commanifier(amountToSend-item.quantity)}x) ${item.name}`},
-				color: `red`
-			})
-
-			await db.addUserReputation(amountToSend, this.user.id, this.message.author.id, this.message.guild.id)
-			await db.updateInventory({itemId: item.item_id, value: amountToSend, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
-			this.displayAvailableGifts.delete()
-			this.displayAvailableGiftsFooter.delete()
-			this.endSequence()
-			return reply(this.locale.GIFT.SUCCESSFUL, {
-				notch: true,
-				thumbnail: avatar(this.user.id),
-				color: `lightgreen`,
-				socket: {
-					user: name(this.user.id),
-					gainedReps: amountToSend,
-					item: `${emoji(item.alias)} (${commanifier(amountToSend)}x) ${item.name}`
-				}
-			})
-		})
 	}
 
 	/**
