@@ -17,11 +17,6 @@ class SetLogs extends Command {
          */
         this.actions = [`enable`, `disable`, `channel`]
         /**
-         * Banner's img source
-         * @type {string}
-         */
-        this.banner = `https://i.ibb.co/bJGGDDn/logs.png`
-        /**
          * Current instance's config code
          * @type {string}
          */  
@@ -43,8 +38,7 @@ class SetLogs extends Command {
         if (!this.fullArgs) {
             return reply(this.locale.SETLOGS.GUIDE, {
                 header: `Hi, ${name(this.user.id)}!`,
-                prebuffer: true,
-                image: this.banner,
+                image: `banner_setlogs`,
                 socket: {
                     prefix: this.bot.prefix,
                     emoji: emoji(`AnnieSmile`)

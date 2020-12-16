@@ -15,7 +15,6 @@ class Help extends Command {
 		this.commandpediaButton = `📖`
 		this.ignoreGroups = [`Developer`, `modmail`, `Moderation`]
 		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
-		this.commandpediaBanner = `https://i.ibb.co/5X3S3yq/1.png`
 		this.permmissionInteger = 268823638
 		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
 	}
@@ -65,8 +64,7 @@ class Help extends Command {
 							affiliateInviteLink: `[My Affiliate](${affiliate[0].invite_link})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
-						image: this.commandpediaBanner,
-						prebuffer: true,
+						image: `banner_help`,
 						thumbnail: this.commandpediaThumbnail,
 						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
 						color: this.defaultColor

@@ -527,8 +527,7 @@ class LogsSystem {
             //  Fetch owner user data
             const owner = await this.data.bot.users.fetch(this.data.guild.ownerID)
             return reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
-                image: `https://user-images.githubusercontent.com/42025692/89634706-006a8700-d8d0-11ea-9bdc-bf91a46f3661.png`,
-                prebuffer: true,
+                image: `banner_help`,
                 field: owner,
                 socket: {
                     wiki: `https://github.com/klerikdust/anniediscord/wiki`,

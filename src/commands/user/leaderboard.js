@@ -23,12 +23,6 @@ class Leaderboard extends Command {
 			[`artists`, `hearts`, `arts`, `artist`, `art`, `artwork`],
 			[`halloween`, `candies`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
 		]
-
-		/**
-		 * Banner for leaderboard
-		 * @type {string}
-		 */
-		this.banner = `https://i.ibb.co/zHK1cf2/leaderboard.png`
     }
 
     /**
@@ -41,8 +35,7 @@ class Leaderboard extends Command {
 		//  Returns a guide if no parameter was specified.
 		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE, {
 			header: `Hi, ${name(this.user.id)}!`,
-			prebuffer: true,
-			image: this.banner,
+			image: `banner_leaderboard`,
 			socket: {
 				prefix: this.bot.prefix,
 				emoji: emoji(`AnnieDab`)

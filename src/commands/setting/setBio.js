@@ -11,7 +11,6 @@ class SetBio extends Command {
     constructor(Stacks) {
 		super(Stacks)
 		this.charactersLimit = 156
-		this.banner = `https://i.ibb.co/hRsbK0g/setbio.png`
     }
 
     /**
@@ -22,8 +21,7 @@ class SetBio extends Command {
 		await this.requestUserMetadata(2)
 		//  Handle if user doesn't specify the new bio/description
 		if (!this.fullArgs) return reply(this.locale.SETBIO.MISSING_ARG, {
-			prebuffer: true,
-			image: this.banner,
+			image: `banner_setbio`,
 			socket:{prefix:this.bot.prefix}
 		})
 		//  Handle if user input is exceeding the character limit

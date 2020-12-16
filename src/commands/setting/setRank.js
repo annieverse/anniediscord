@@ -19,11 +19,6 @@ class SetRank extends Command {
          */
         this.actions = [`enable`, `add`, `delete`, `info`, `reset`, `disable`]
         /**
-         * Banner's img source
-         * @type {string}
-         */
-        this.banner = `https://i.ibb.co/HPHYHDf/setrank.png`
-        /**
          * Current instance's config code
          * @type {string}
          */  
@@ -44,8 +39,7 @@ class SetRank extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETRANK.GUIDE, {
             header: `Hi, ${name(this.user.id)}!`,
-            prebuffer: true,
-            image: this.banner,
+            image: `banner_setranks`,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: emoji(`AnnieSelfie`)

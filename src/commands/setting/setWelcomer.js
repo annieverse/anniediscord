@@ -29,12 +29,6 @@ class SetWelcomer extends Command {
             "text": `WELCOMER_TEXT`,
             "role": `WELCOMER_ROLES`
         }
-
-        /**
-         * banner's img source
-         * @type {string}
-         */
-         this.banner = `https://i.ibb.co/sJr8Wzt/set-Welcomer.png`
     }
 
     /**
@@ -45,8 +39,7 @@ class SetWelcomer extends Command {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETWELCOMER.GUIDE, {
-            prebuffer: true,
-            image: this.banner,
+            image: `banner_setwelcomer`,
             header: `Hi, ${name(this.user.id)}!`,
             socket: {
                 prefix: this.bot.prefix,

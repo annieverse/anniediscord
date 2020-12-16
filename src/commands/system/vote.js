@@ -12,12 +12,6 @@ class Vote extends Command {
          * @type {string}
          */ 
 		this.page = `https://top.gg/bot/501461775821176832`
-
-		/**
-		 * Banner's img source
-		 * @type {string}
-		 */
-		this.banner = `https://i.ibb.co/GV4GTP0/votes.png`
 	}
 
 	/**
@@ -35,8 +29,7 @@ class Vote extends Command {
 		})
 		return reply(this.locale.VOTE.READY, {
 			header: `Hi, ${name(this.user.id)}!`,
-			prebuffer: true,
-			image: this.banner,
+			image: `banner_votes`,
 			socket: {
 				emoji: emoji(`AnnieSmile`),
 				url: `[Discord Bot List](${this.page}/vote)`

@@ -23,12 +23,6 @@ class SellFragments extends Command {
 		 * @type {number}
 		 */
 		this.rate = 5
-
-		/**
-		 * Source URL for SellFragment's Guide Banner
-		 * @type {string}
-		 */
-		this.banner = `https://user-images.githubusercontent.com/42025692/95013847-2b255180-066d-11eb-98c9-f397ab9d7e7f.jpg`
     }
 
     /**
@@ -41,8 +35,7 @@ class SellFragments extends Command {
     	if (!this.fullArgs) return reply(this.locale.SELLFRAGMENTS.GUIDE, {
     		header: `Hi, ${name(this.user.id)}!`,
     		color: `crimson`,
-    		image: this.banner,
-    		prebuffer: true,
+    		image: `banner_sellfragments`,
     		socket: {
     			prefix: this.bot.prefix,
     			emoji: emoji(`AnniePogg`),

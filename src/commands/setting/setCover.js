@@ -15,11 +15,6 @@ class SetCover extends Command {
      */
     constructor(Stacks) {
         super(Stacks)
-        /**
-         * Banner's img source
-         * @type {string}
-         */
-         this.banner = `https://i.ibb.co/0F31FM0/setwelcomer.png`
     }
 
     /**
@@ -35,8 +30,7 @@ class SetCover extends Command {
             const FOOTER = !ownedCovers.length ? this.locale.SETCOVER.SUGGEST_TO_BUY : this.locale.SETCOVER.OWNED_COVER_LIST
             return reply(`${this.locale.SETCOVER.GUIDE}\n\n${FOOTER}`, {
                 header: `Hi, ${name(this.user.id)}!`,
-                prebuffer: true,
-                image: this.banner,
+                image: `banner_setbackground`,
                 socket: {
                     prefix: this.bot.prefix,
                     emoji: emoji(`AnnieSmuggy`),

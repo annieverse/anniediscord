@@ -19,11 +19,6 @@ class Pay extends Command {
 		 */
 		this.requirementLevel = 3
 		/**
-		 * Source banner img for the guide case
-		 * @type {string}
-		 */
-		this.banner = `https://i.ibb.co/HVTBF4f/pay.png`
-		/**
 		 * Tax rate to be deducted from sender's balance
 		 * @type {number|float}
 		 */
@@ -48,8 +43,7 @@ class Pay extends Command {
 		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE, {
 			color: `crimson`,
 			header: `Hi, ${name(this.author.id)}`,
-			prebuffer: true,
-			image: this.banner,
+			image: `banner_pay`,
 			socket: {prefix: this.bot.prefix}
 		})
 		//  Handle if target is invalid

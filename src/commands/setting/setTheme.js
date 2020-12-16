@@ -10,7 +10,6 @@ class setTheme extends Command {
      */
 	constructor(Stacks) {
 		super(Stacks)
-        this.banner = `https://i.ibb.co/XzWZt6q/switch-theme.png`
 	}
 
     /**
@@ -23,8 +22,7 @@ class setTheme extends Command {
         await this.requestUserMetadata(2)
         //  Returns if user didn't specify any keyword
         if (!this.fullArgs) return reply(this.locale.SWITCH_THEME.MISSING_KEYWORD, {
-            prebuffer: true,
-            image: this.banner,
+            image: `banner_settheme`,
             socket: {prefix:this.bot.prefix} 
         })
         let currentTheme = await this.currentTheme(...arguments)

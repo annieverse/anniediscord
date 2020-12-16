@@ -13,11 +13,6 @@ class SetRelationship extends Command {
     constructor(Stacks) {
         super(Stacks)
         /**
-         * Banner's img source
-         * @type {string}
-         */
-        this.banner = `https://i.ibb.co/2kr1m6d/Group-7.png`
-        /**
          * Relationship trees limit
          * @type {string}
          */
@@ -40,8 +35,7 @@ class SetRelationship extends Command {
         //  Handle if user doesn't provide any argument
         if (!this.fullArgs && this.user.isSelf) return reply(this.locale.RELATIONSHIP.GUIDE, {
             header: `Hi, ${name(this.author.id)}!`,
-            prebuffer: true,
-            image: this.banner,
+            image: `banner_setrelationship`,
             socket: {
                 list: this.prettifyList(availableRelationships),
                 prefix: this.bot.prefix
