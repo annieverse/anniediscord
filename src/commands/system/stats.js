@@ -1,8 +1,5 @@
-const Card = require(`../../ui/components/cards`)
-const Chart = require(`../../ui/components/charts`)
 const moment = require(`moment`)
 const memUsage = require(`../../utils/memoryUsage`)
-const cpuUsage = require(`../../utils/cpuUsage`)
 const Command = require(`../../libs/commands`)
 const pkg = require(`../../../package`)
 /**
@@ -22,7 +19,7 @@ class SystemStatus extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji, trueInt, commanifier, bot:{db, ping, uptime} }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 		return this.displayGeneralStatus(...arguments)
 	}
@@ -32,7 +29,7 @@ class SystemStatus extends Command {
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 * @returns {reply}
 	 */
-	async displayGeneralStatus({ reply, name, commanifier }) {
+	async displayGeneralStatus({ reply, commanifier }) {
 		const { total } = await this.bot.db.getTotalCommandUsage()
 		const uptimeDuration = moment.duration(this.bot.uptime)
 		const naph = await this.bot.users.fetch(`230034968515051520`)

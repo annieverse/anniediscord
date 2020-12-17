@@ -1,7 +1,5 @@
 const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/pay`)
-const urlToBuffer = require(`../../utils/urlToBuffer`)
-const loadAsset = require(`../../utils/loadAsset`)
 /**
  * Share artcoins with your friends!
  * @author klerikdust

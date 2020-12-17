@@ -64,8 +64,12 @@ class Leaderboard extends Command {
 			//  Fetching uncached users
 			for (let i=0; i<lbData.length; i++) {
 				if (i >= 20) break
-				try {await this.message.guild.members.fetch(lbData[i].id)}
-				catch(e){}
+				try {
+					await this.message.guild.members.fetch(lbData[i].id)
+				}
+				catch(e) {
+					continue
+				}
 			}
 			for (let i=0; i<lbData.length; i++) {
 				//  If member doesn't exist in the guild, then discard from result set

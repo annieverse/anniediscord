@@ -1,8 +1,6 @@
 const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/profile`)
-const moment = require(`moment`)
-const { MessageAttachment } = require(`discord.js`)
-const stringSimilarity = require('string-similarity');
+const stringSimilarity = require(`string-similarity`)
 
 /**
  * Setting up your profile cover

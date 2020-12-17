@@ -38,7 +38,6 @@ class config {
         const defaultConfig = this.getCustomizableConfig
 
         const required = this.getRequired
-        const notCustomizable = this.getNotCustomizable
         
         const finalConfig = Object.assign({}, defaultConfig)
 

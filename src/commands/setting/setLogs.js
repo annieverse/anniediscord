@@ -89,11 +89,10 @@ class SetLogs extends Command {
      * Disable Action
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async disable({ reply, name }) {
+    async disable({ reply }) {
         const fn = `[setLogs.disable()]`
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) {
-            let localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETLOGS.ALREADY_DISABLED, {
                 socket: {prefix:this.bot.prefix}
             })
@@ -114,7 +113,7 @@ class SetLogs extends Command {
      * Define target logs channel
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async channel({ reply, name, emoji }) {
+    async channel({ reply, emoji }) {
         const fn = `[setLogs.channel()]`
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) return reply(this.locale.SETLOGS.SHOULD_BE_ENABLED, {

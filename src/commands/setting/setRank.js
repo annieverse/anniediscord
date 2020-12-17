@@ -201,7 +201,7 @@ class SetRank extends Command {
      * Displaying the configuration status of current guild
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async info({ reply, name, emoji, commanifier }) {
+    async info({ reply, name, emoji }) {
         //  Handle if the main module is disabled in the guild for the first time
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) {
             return reply(this.locale.SETRANK.INFO_DISABLED_FIRST_TIME, {
@@ -261,7 +261,7 @@ class SetRank extends Command {
      * Wipes out all custom ranks configurations in current guild
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async reset({ reply, emoji, commanifier }) {
+    async reset({ reply, emoji }) {
         const fn = `[setRank.reset()]`
         let timestamp = await this.bot.db.getCurrentTimestamp()
         //  Handle if guild doesn't have any registered rank.
@@ -269,7 +269,7 @@ class SetRank extends Command {
         //  Confirmation before performing the action
         this.confirmation = await reply(``, {header: this.locale.SETRANK.RESET_CONFIRMATION})
         this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.id)
-        this.confirmationButtons.get(`RESET_CONFIRMATION`).on(`collect`, async msg => {
+        this.confirmationButtons.get(`RESET_CONFIRMATION`).on(`collect`, async () => {
             this.confirmation.delete()
             this.animation = await reply(this.locale.SETRANK.RESET_ANIMATION, {
                 simplified: true,
@@ -297,7 +297,7 @@ class SetRank extends Command {
      * Disables the module
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async disable({ reply, name }) {
+    async disable({ reply }) {
         const fn = `[setRank.disable()]`
         //  Handle if the guild already has disabled the configuration
         if (!this.primaryConfig.value) return reply(this.locale.SETRANK.ALREADY_DISABLED, {socket:{prefix:this.bot.prefix}})
@@ -319,9 +319,8 @@ class SetRank extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {string}
      */
-    async _prettifyList(source=[], { name, commanifier }) {
+    async _prettifyList(source=[], { commanifier }) {
         let res = ``
-        let arr = []
         let expCalc = new Experience({bot: this.bot, message:this.message})
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭*:;,．★ ～☆*──────────╮\n\n`

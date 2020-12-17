@@ -1,2 +1,2 @@
-module.exports = (bot) => {
+module.exports = () => {
 }

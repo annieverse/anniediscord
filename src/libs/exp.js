@@ -1,5 +1,4 @@
 const Points = require(`./points`)
-const commanifier = require((`../utils/commanifier`))
 const moment = require(`moment`)
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 

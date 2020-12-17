@@ -19,7 +19,7 @@ class ConvertArtcoins extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, trueInt, commanifier, avatar, bot:{db} }) {
+    async execute({ reply, emoji, trueInt, commanifier, avatar, bot:{db} }) {
     	await this.requestUserMetadata(2)
 
 		//  Returns as guide if user doesn't specify any parameters
@@ -57,7 +57,7 @@ class ConvertArtcoins extends Command {
 			}
 		})
 		this.addConfirmationButton(`checkout`, this.confirmation)
- 		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
+ 		return this.confirmationButtons.get(`checkout`).on(`collect`, async () => {
 			//	Deduct balance & add new exp
 			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)

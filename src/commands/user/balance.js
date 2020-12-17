@@ -26,9 +26,9 @@ class Balance extends Command {
 				emoji: emoji(`artcoins`), 
 				amount: commanifier(this.user.inventory.artcoins || 0),
 				tips: this.user.isSelf ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
-			},
+			}
 		})
-	}s
+	}
 }
 
 

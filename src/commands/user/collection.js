@@ -1,4 +1,3 @@
-const GUI = require(`../../ui/prebuild/cardCollection`)
 const Command = require(`../../libs/commands`)
 /**
  * Views all items in your inventory

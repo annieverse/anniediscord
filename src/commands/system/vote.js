@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const moment = require(`moment`)
 /**
  * Upvote Annie and get the reward!
  * @author klerikdust

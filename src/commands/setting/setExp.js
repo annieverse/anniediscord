@@ -72,7 +72,6 @@ class SetExp extends Command {
                 socket: {emoji: emoji(`AnniePout`)},
                 color: `crimson`
             })
-            const now = moment()
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETEXP.ALREADY_ENABLED, {
                 status: `warn`,

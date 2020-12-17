@@ -45,7 +45,9 @@ class User {
 				return this.user
 			}
 		}
-		catch(e){}
+		catch(e) {
+			this.logger.debug(`${fn} en error occured during user finding through full nickname/username`)
+		}
 		//  Lookup by full string user ID
 		try {
 			let findByFullStringID = await collection.fetch(target)
@@ -55,7 +57,9 @@ class User {
 			this.usedKeyword = target
 			return this.user
 		}
-		catch(e){}
+		catch(e) {
+			this.logger.debug(`${fn} an error occured during user finding through full user ID`)
+		}
 		//  Lookup by iterating tokens
 		let findByStringToken
 		let findByIDToken
@@ -73,7 +77,9 @@ class User {
 					return this.user
 				}
 			}
-			catch(e){}
+			catch(e) {
+				this.logger.debug(`${fn} an error occured during user finding through string-type token`)
+			}
 			//  Check for userID-type token
 			try {
 				findByIDToken = await collection.fetch(token)
@@ -85,7 +91,9 @@ class User {
 					return this.user
 				}
 			}
-			catch(e){}
+			catch(e) {
+				this.logger.debug(`${fn} an error occured during user finding through userID-type token`)
+			}
 			//  Combine tokens and find the closest correlation
 			let combinedTokens = token
 			const neighbors = this.args.filter((element, index) => index !== i)
@@ -102,7 +110,9 @@ class User {
 						return this.user
 					}
 				}
-				catch(e){}
+				catch(e) {
+					this.logger.debug(`${fn} an error occured during user finding through combined tokens and close correlation`)
+				}
 			}
 		}
 		//  Fallback

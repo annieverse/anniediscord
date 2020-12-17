@@ -12,7 +12,7 @@ class Affiliates extends Command {
 	 * Running command workflow
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 */
-	async execute({ reply, name, avatar }) {
+	async execute({ reply, name }) {
 		await this.requestUserMetadata(1)
 		const affiliateList = await this.bot.db.getAffiliates()
 		//  Handle if there are no registered affiliates
@@ -39,7 +39,7 @@ class Affiliates extends Command {
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
-            res += `**• ${this.bot.guilds.cache.get(server.guild_id)}**\n"*${server.description}*"\n\[Click here to join!](${server.invite_link})\n\n`
+            res += `**• ${this.bot.guilds.cache.get(server.guild_id)}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
         return res

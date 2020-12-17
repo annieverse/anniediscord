@@ -1,7 +1,7 @@
 const Command = require(`../../libs/commands`)
 const inventoryGUI = require(`../../ui/prebuild/inventory`)
 const giftGUI = require(`../../ui/prebuild/gift`)
-const stringSimilarity = require('string-similarity');
+const stringSimilarity = require(`string-similarity`)
 /**
  * Send gifts to your friends! They will receive 1 reputation point for each gift you send.
  * @author klerikdust
@@ -20,7 +20,7 @@ class Gift extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, avatar, commanifier, name, trueInt, bot:{db} }) {
+    async execute({ reply, emoji, avatar, commanifier, name, bot:{db} }) {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
 		const availableGifts = this.author.inventory.raw.filter(this.itemFilter)
@@ -48,21 +48,20 @@ class Gift extends Command {
 		}
 		// Invalid target
 		if (!this.user) return reply(this.locale.USER.IS_INVALID)
-		const targetUserRef = this.user.username.replace(/\_/g, ``)
 		// Returns if user trying to gift themselves.
 		if (this.user.isSelf) return reply(this.locale.GIFT.SELF_TARGETING, {socket: {emoji:emoji(`AnnieYandere`)} })
 		//  Handle if the specified gift cannot be found
 		let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableGifts.map(i => i.name))
 		const gift = searchStringResult.bestMatch.rating >= 0.2 ? availableGifts.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
 		if (!gift) return reply(this.locale.GIFT.MISSING_ITEM, {
-			socket: {example:`e.g. **\`${this.bot.prefix}gift ${targetUserRef} 10 ${availableGifts[0].name.toLowerCase()}\`**`}
+			socket: {example:`e.g. **\`${this.bot.prefix}gift ${this.user.username} 10 ${availableGifts[0].name.toLowerCase()}\`**`}
 		})
 		//  Handle if can't parse the desired user's gift amount
 		const amount = this.fullArgs.replace(/\D/g, ``)
 		if (!amount) return reply(this.locale.GIFT.INVALID_AMOUNT, {
 			socket: {
 				gift: gift.name,
-				example: `e.g. **\`${this.bot.prefix}gift ${targetUserRef} 10 ${gift.name.toLowerCase()}\`**`
+				example: `e.g. **\`${this.bot.prefix}gift ${this.user.username} 10 ${gift.name.toLowerCase()}\`**`
 			}
 		})
 		//  Handle if the amount to send is lower than total owned item

@@ -65,7 +65,6 @@ class SetLevelupMessage extends Command {
         const fn = `[setLevelupMessage.enable()]`
         //  Handle if module already enabled before the action.
         if (this.primaryConfig.value) {
-            const now = moment()
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
                 socket: {
@@ -94,7 +93,7 @@ class SetLevelupMessage extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    async disable({ reply, emoji }) {
+    async disable({ reply }) {
         const fn = `[setLevelupMessage.disable()]`
         //  Handle if module already disabled before the action.
         if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {

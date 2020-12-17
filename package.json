@@ -1,17 +1,16 @@
 {
   "name": "anniediscord",
   "version": "7.6.13",
-  "description": "Art-dedicated Discord Bot",
-  "main": "server.js",
+  "description": "An artsy bot — bring the best aesthetic vibe, to your community.",
+  "main": "index.js",
   "private": true,
   "scripts": {
     "lint": "eslint src",
     "unit-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/mocha \"test/*.js\"",
-    "start": "cross-env NODE_ENV=production pm2 start index.js",
-    "beta": "cross-env NODE_ENV=development nodemon index.js",
-    "dev": "cross-env NODE_ENV=development node index.js",
-    "dev_regular": "cross-env NODE_ENV=production nodemon index.js",
-    "test": "npm run lint && npm run unit-test && echo 'Test passed.'"
+    "start": "cross-env NODE_ENV=production pm2 start index.js --name \"production\"",
+    "staging": "cross-env NODE_ENV=staging pm2 start index.js --name \"staging\"",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "npm run lint && npm run unit-test"
   },
   "engines": {
     "node": "12.18.3"
@@ -28,12 +27,6 @@
     "Fwubbles (https://github.com/Fwubbles)"
   ],
   "license": "MIT",
-  "keywords": [
-    "nodejs",
-    "javascript",
-    "discordjs",
-    "bot"
-  ],
   "repository": "github:klerikdust/anniediscord",
   "bugs": {
     "url": "https://github.com/klerikdust/anniediscord/issues"
@@ -53,7 +46,6 @@
     "dblapi.js": "^2.4.1",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
     "fs-nextra": "^0.5.1",
     "glob": "^7.1.6",
     "humanize-duration": "^3.23.1",

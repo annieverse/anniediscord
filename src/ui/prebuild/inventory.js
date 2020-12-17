@@ -1,9 +1,7 @@
-const palette = require(`../colors/default`)
 const Color = require(`color`)
 const Cards = require(`../components/cards`)
 const ThemePresets = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)
-const Canvas = require(`../setup`)
 const {resolveImage} = require(`canvas-constructor`)
 
 class UI {

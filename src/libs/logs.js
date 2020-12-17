@@ -319,7 +319,7 @@ class LogsSystem {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    messageDeleteBulk({ reply, commanifier }) {
+    messageDeleteBulk({ reply }) {
         const fn = `[Logs.messageDeleteBulk()]`
         const message = this.data.messages.first()
         //  Handle if message is coming from direct message interface
@@ -415,13 +415,13 @@ class LogsSystem {
      * GUILD_UPDATE event log
      * @returns {void}
      */
-    guildUpdate({ reply }) {
+    guildUpdate({ emoji, reply }) {
         const fn = `[Logs.guildUpdate()]`
         //  Handle if received guild isn't same as the log's channel guild id
         if (this.logsChannel.guild.id !== this.data.newGuild.id) return
         //  Send logs if guild has changed their's server name
         if (this.data.oldGuild.name !== this.data.newGuild.name) {
-            logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server name.`)
+            this.logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server name.`)
             reply(this.locale.LOGS.GUILD_UPDATE_NAME, {
                 header: `A brand new house, ${this.data.user.username}.`,
                 thumbnail: this.data.newGuild.iconURL(),
@@ -435,8 +435,8 @@ class LogsSystem {
             })
         }
         //  Send logs if guild has changed their's server region
-        if (oldGuild.region != newGuild.region) {
-            logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server's region.`)
+        if (this.data.oldGuild.region != this.data.newGuild.region) {
+            this.logger.info(`${fn} GUILD_ID:${this.data.newGuild.id} has changed their server's region.`)
             reply(this.locale.LOGS.GUILD_UPDATE_REGION, {
                 header: `We are switching region!`,
                 thumbnail: this.data.newGuild.iconURL(),

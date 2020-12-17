@@ -83,7 +83,7 @@ class Gacha extends Command {
             await msg.react(`✅`)
             const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
             const confirmationButton = msg.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-            confirmationButton.on(`collect`, async r => {
+            confirmationButton.on(`collect`, async () => {
                 msg.delete()
                 this.insufficientTicketWarning.delete()
 
@@ -102,9 +102,8 @@ class Gacha extends Command {
                 })
 
                 await this.checkout.react(`✅`)
-                const purchaseButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
                 const purchaseButton = this.checkout.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-                purchaseButton.on(`collect`, async r => {
+                purchaseButton.on(`collect`, async () => {
                     //  Deduct balance & deliver lucky tickets
                     await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
                     await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
@@ -125,9 +124,8 @@ class Gacha extends Command {
                     reply(this.locale.GACHA.ASK_TO_OPEN, {simplified: true})
                     .then(async askToOpen => {
                         await askToOpen.react(`✅`)
-                        const openButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
                         const openButton = askToOpen.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-                        openButton.on(`collect`, async r => {
+                        openButton.on(`collect`, async () => {
                             openButton.stop()
                             return this.startsRoll()
                         })

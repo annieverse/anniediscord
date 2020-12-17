@@ -19,7 +19,7 @@ class Inventory extends Command {
 	 * Running command workflow
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 */
-	async execute({ reply, name, emoji, commanifier }) {
+	async execute({ reply, name, emoji }) {
 		await this.requestUserMetadata(2)
 
 		//  Handle if couldn't find the invntory's author

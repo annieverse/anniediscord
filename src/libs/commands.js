@@ -224,7 +224,7 @@ class Commands {
 	 * @returns {string}
 	 */
 	finalizeConfirmation(response={}) {
-		return response.message.reactions.removeAll().catch(e => this.logger.warn(`Failed to finalize transaction.`))
+		return response.message.reactions.removeAll().catch(e => this.logger.warn(`Failed to finalize transaction. > ${e.stack}`))
 	}
 
 	/**
@@ -233,10 +233,10 @@ class Commands {
 	 * @returns {string}
 	 */
 	_generateUUID() {
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-			let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-			return v.toString(16);
-		});
+		return `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`.replace(/[xy]/g, (c) => {
+			let r = Math.random() * 16 | 0, v = c == `x` ? r : (r & 0x3 | 0x8)
+			return v.toString(16)
+		})
 	}
 
 	/**

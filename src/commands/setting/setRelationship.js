@@ -1,6 +1,6 @@
 const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/setRelationship`)
-const stringSimilarity = require('string-similarity')
+const stringSimilarity = require(`string-similarity`)
 /**
  * Assign your friend into your relationship trees!
  * @author klerikdust
@@ -26,10 +26,7 @@ class SetRelationship extends Command {
     async execute({ reply, emoji, name, avatar, bot:{db} }) {
         await this.requestUserMetadata(2)
         await this.requestAuthorMetadata(2)
-
         const availableRelationships = await db.getAvailableRelationships()
-        const prettifiedRelationshipsList = this.prettifyList(availableRelationships)
-
         //  Handle if no relationships are available to be assigned.
         if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE)
         //  Handle if user doesn't provide any argument

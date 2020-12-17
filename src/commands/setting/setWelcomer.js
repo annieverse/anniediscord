@@ -66,11 +66,10 @@ class SetWelcomer extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {string}
      */
-    async enable({ reply, name, emoji }) {
+    async enable({ reply, name }) {
         const fn = `[setWelcomer.enable()]`
         //  Handle if welcomer already enabled before the action.
         if (this.primaryConfig.value) {
-            const now = moment()
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
@@ -171,7 +170,7 @@ class SetWelcomer extends Command {
         await reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
         this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: emoji(`AnnieSmile`)} })
         this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.id)
-        this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, msg => this.preview(...arguments))
+        this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview(...arguments))
     }
 
     /**
