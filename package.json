@@ -3,6 +3,7 @@
   "version": "7.6.13",
   "description": "Art-dedicated Discord Bot",
   "main": "server.js",
+  "private": true,
   "scripts": {
     "lint": "eslint src",
     "unit-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/mocha \"test/*.js\"",
@@ -77,6 +78,7 @@
   },
   "devDependencies": {
     "eslint": "5.16.0",
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.6",
+    "semantic-release": "^17.3.0"
   }
 }

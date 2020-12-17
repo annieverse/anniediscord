@@ -1,0 +1,68 @@
+name: Annieverse
+
+# Only trigger master push
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # Build and run test suite
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Setting up nodejs environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 12
+      # Installing dependencies
+      - name: Installing Dependencies
+        run: npm install
+      # Linting Test
+      - name: Codestyle Test
+        run: npm run lint:check
+
+  # Versionize and release the package
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    needs: [build]
+    steps:
+      # Checking out
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      # Setting up nodejs environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 12
+      # Installing dependencies
+      - name: Installing Dependencies
+        run: npm install
+      # Run semantic-release script
+      - name: Versionize and publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
+
+  # Deploying to staging server
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-20.04
+    needs: [build, release]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Push to staging server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: cd ${{ secrets.PROJECT_PATH }} && git pull && pm2 restart index.js
