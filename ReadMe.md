@@ -4,24 +4,38 @@
 ![LastCommit](https://img.shields.io/github/last-commit/klerikdust/anniediscord.svg?style=flat-square)
 ![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
 
-![annie](https://cdn.discordapp.com/avatars/501461775821176832/578de3a27b252ad2bf1e73bf1dd27210.png?size=256)
+![annie](https://i.ibb.co/YpzBxS5/anniebanner.png)
 
 ## Overview
 
-A quality-experience Discord Bot that aimed for artists! or anyone that wanted to try out as well! You can have a customized profile, level card, collecting card, gacha, and many more!
+The only perfectly-combined artsy & aesthetic discord bot you will ever find. Fully packed Leveling and Economy System to keep your members engaged to the server. Minimalist Welcomer and Server Management modules.
 
 ### Why you should choose annie?
-* **Carefully Designed.**  
-Built with aesthetics and minimalistic-style in mind.
-* **Personalized.**  
-Majority of her features are modular enough for you to customize with.
-* **To stay-connected.**  
-Our goal is to connect artists & art-appreciators around the discord community, regardless of the server they are in.
-* **Quality over quantity experience.**  
-  She may have very little amount of commands for you to play with. But we are ensuring you will get the best experience while using it.
 
-Annie's main goal is to enrich your guild experience as great as possible.
-If you are interested, have a visit to our [Support Server](https://discord.gg/7nDes9P) and try it for yourself!
+* **UI-first design.**  
+Are you a fan of non-distractive and minimalist design? great. Annie's features have been built with aesthetics and minimalistic-style in mind to keep you focused doing things you love.
+
+* **   
+
+* **A Customizable Rank-roles System.**  
+A server without Ranks and EXP system is boring. Luckily Annie has provided you with a fully packed leveling system modules like Level Card, Levelup Card, Leaderboard Card and many others. All the commands are well-displayed in a beautiful GUI.
+
+* **  
+
+* **Unique Server Economy System, unlike any other.**    
+Annie has her own currency called as Artcoins. You will be able to gain artcoins through server's chatting activity, dailies, vote and our newly-added quest system. All your hard-grinded artcoins are securely stored in your very own inventory. 
+
+* **  
+
+* **Artquest, yes an art quest.**  
+Say no more mainstream quest system. Annie provided you with her art-centric questing system that not only interactive, but also exercises your artistic-sense.
+
+* **  
+
+* **Constantly Developed.**  
+We have lot of things in our roadmap that we want to implement in the future version of Annie. We've been constantly updating it to enhance your *annie-experience* as great as possible!
+
+Wants to get in touch or sharing feedback to improve Annie? have a visit to her [Support Server](https://discord.gg/7nDes9P)!
 
 ## Useful Links
 
