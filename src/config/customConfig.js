@@ -1303,6 +1303,17 @@ class config {
                 customizable: true,
                 allowedTypes: [`array`],
                 value: []
+            },
+            {
+                /**
+                 *  The target channel where level-up message will be sent in
+                 *  @type {object}
+                 */
+                name: `LEVEL_UP_MESSAGE_CHANNEL`,
+                description: `The target channel where level-up message will be sent in`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
             }
         ]
     }

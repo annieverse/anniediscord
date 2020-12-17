@@ -127,6 +127,7 @@ class Experience extends Points {
      *  @type {replyObject}
      */
     async levelUpPerks() {
+        const fn = `[Experience.levelUpPerks]`
     	//  Handle level jumping (over 1 level threeshold)
     	const levelDiff = this.newExp.level - this.prevExp.level
         const img = await new GUI(await this._getMinimalUserMetadata(), this.newExp.level).build()
@@ -150,6 +151,24 @@ class Experience extends Points {
     	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
 		await this.updateRank(this.newExp.level)
 		if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
+        //  Send lvl-up message to custom channel if provided
+        const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
+        if (customLevelUpMessageChannel) {
+            //  Handle if channel cannot be seen or sent in
+            if (!this.guild.channels.cache.has(customLevelUpMessageChannel)) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
+            try {
+                return this.reply(`**Congratulation, ${this.message.author.username}!♡** `, {
+                    field: this.guild.channels.cache.get(customLevelUpMessageChannel),
+                    simplified: true,
+                    prebuffer: true,
+                    image: await img
+                })
+            }
+            catch (e) {
+                this.logger.warn(`${fn} an error occured during the message transport. Probably due to lack of permission issue. ${e.stack}`)
+            }
+        }
+        //  Otherwise, send message to the channel where user got leveled-up.
 		return this.reply(``, {
 			simplified: true,
             prebuffer: true,

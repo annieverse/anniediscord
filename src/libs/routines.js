@@ -3,9 +3,6 @@ const fs = require(`fs`)
 const path = require(`path`)
 const getCpuUsage = require(`../utils/cpuUsage`)
 const getMemUsage = require(`../utils/memoryUsage`)
-const dailyFeatured = require(`../struct/posts/dailyFeatured`)
-
-
 /**
  *  Please only add new method if it intentionally used for scheduled task like in ready.js
  *  @param {Object} Client current this.client instance
@@ -18,12 +15,14 @@ class Routines {
 		this.env = Client.dev
 		this.pixivCacheDirectory = path.join(__dirname, `../../.pixivcaches`)
 		this.allowedGuilds = []
+		this.supportServer = Client.guilds.cache.get(`577121315480272908`)
     }
 
 	async getServers(){
 		let res = await this.client.db.getNitroColorChange()
 		this.allowedGuilds = res
 	}
+
     /**
      * Change color of role
      * @roleChange
@@ -158,131 +157,6 @@ class Routines {
 		}
 	}
 
-
-	/**
-     *  Automatically change current this.client status presence
-     *  @autoStatus
-     *//*
-	autoStatus() {
-		const client = this.client
-		const logger = this.logger
-		const db = this.db
-		const env = this.env
-
-		let x = 1 // number of minutes
-
-		update()
-		setInterval(update, 60000 * x)
-
-		async function update(){
-
-			let data = await db.pullEventData(`event_data`)
-			
-			if (data[0] === undefined) {
-				if (env.dev) {
-					return client.user.setActivity(`maintenance.`, {
-						type: `LISTENING`
-					})
-				} else {
-					return client.user.setActivity(null)
-				}
-			}
-
-			let metadata =
-			{
-				event : data[0].name,
-				time: data[0].start_time,
-				status: data[0].active,
-				currentTime: (new Date()),
-			}
-			let bufferTime =
-			{
-				before: (new Date(metadata.time - 1.8e+7)),
-				after: (new Date(metadata.time + 7.2e+6)),
-				start: (new Date(metadata.time)),
-			}
-
-			// Find the distance between now and the count down date
-			let distance = bufferTime.start.getTime() - metadata.currentTime.getTime()
-			// Time calculations for hours and minutes
-			let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-			let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-			let timer = `${hours}h ${minutes}m`
-
-			let tests =
-			{
-				eventHasEnded: metadata.status === 1,
-				eventIsOver: bufferTime.after < metadata.currentTime,
-				doesEventEqualPresenceGame: client.user.presence.game === (undefined || null) ? false : client.user.presence.game.name === `[EVENT] ${metadata.event}`,
-				presenceTypeIsPlaying: client.user.presence.game === (undefined || null) ? false : client.user.presence.game.type === 0,
-				presenceGameIsNull: client.user.presence.game == (undefined || null),
-				eventDontRepeat: data.repeat_after === 0,
-				eventIsHappening: bufferTime.start < metadata.currentTime && bufferTime.after > metadata.currentTime,
-				eventHasntStarted: bufferTime.before < metadata.currentTime && bufferTime.start > metadata.currentTime
-				
-			}
-
-			// watching = type 3
-			// playing = type 0
-			
-			if (tests.eventHasEnded){
-				return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
-			}			
-			
-			if (tests.eventIsOver) {
-				eventEnded()
-			} else if (tests.presenceGameIsNull) {
-				if (tests.doesEventEqualPresenceGame && tests.presenceTypeIsPlaying) return
-			}
-
-			if (tests.eventHasntStarted) {
-				eventStartingIn()			
-			} else if (tests.eventIsHappening) {
-				eventGoing()
-			}
-			
-			function eventEnded(){
-				env.dev ? ()=>
-				{
-					client.user.setStatus(`dnd`)
-					client.user.setActivity(`maintenance.`, {
-						type: `LISTENING`
-					})
-				} : () => 
-				{
-					client.user.setStatus(`online`)
-					client.user.setActivity(null)
-				}
-				
-				tests.eventDontRepeat? ()=>{
-					db.updateEventDataActiveToOne(`${metadata.event}`, metadata.time)
-					return db.removeRowDataFromEventData(`name`, `'${metadata.event}'`, metadata.time)
-				} : () =>
-				{
-					let diff = data.length - metadata.time
-					return db.updateRowDataFromEventData(`start_time = ${metadata.time + data.length}, length = ${diff}`, `name = '${metadata.event}' AND start_time = ${metadata.time}` )
-				}
-				
-				return logger.info(`[STATUS CHANGE] ${client.user.username} is now set to null`)
-			}
-
-			function eventStartingIn() {
-				client.user.setActivity(`[EVENT] ${metadata.event} in ${timer}`, {
-					type: `WATCHING`
-				})
-				return  logger.info(`[STATUS CHANGE] ${client.user.username} is now WATCHING ${metadata.event}`)
-			}
-
-			function eventGoing() {
-				client.user.setActivity(`[EVENT] ${metadata.event}`, {
-					type: `PLAYING`
-				})
-				return  logger.info(`[STATUS CHANGE] ${client.user.username} is now PLAYING ${metadata.event}`)
-			}
-		}
-    }
-    */
-
     /**
      * Automatically record resource usage data every 5 min.
      * @returns {void}
@@ -317,13 +191,7 @@ class Routines {
             }, null)
         }, 60000*x)
     }
-
-    async removeFeaturedDailyPostLoop() {
-        let fdp = new dailyFeatured(this.client)
-        await fdp.loop()
-	}
 	
-
 	/**
 	 * 	Check if pixiv cache's directory is exists or not.
 	 * 	If no, create the directory.
@@ -337,7 +205,6 @@ class Routines {
 			}
 		})
 	}
-
 
 	/**
 	 * 	Deletes Pixiv Caches for every 30 minutes.

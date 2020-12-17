@@ -15,7 +15,7 @@ class SetLevelupMessage extends Command {
          * An array of the available options for welcomer module
          * @type {array}
          */
-        this.actions = [`enable`, `disable`]
+        this.actions = [`enable`, `disable`, `channel`]
 
         /**
          * Current instance's config code
@@ -109,6 +109,92 @@ class SetLevelupMessage extends Command {
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)
         return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, {status: `success`})
+    }
+
+    /**
+     * Registering custom channel for the level-up message.
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {Pistachio.reply}
+     */
+    async channel({ reply, emoji }) {
+        const fn = `[setLevelupMessage.channel]`
+        const subConfigId = `LEVEL_UP_MESSAGE_CHANNEL`
+        //  Handle if module hasn't been enabled yet
+        if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+            socket:{prefix:this.bot.prefix}
+        })
+        //  Handle if the custom channel already present
+        const customLevelUpMessageChannel = this.guildConfigurations.get(subConfigId).value
+        if (customLevelUpMessageChannel) {
+            //  Handle if no channel parameter has been inputted
+            const { isExists, res } = this._getChannel(customLevelUpMessageChannel)
+            const displayingExistingData = isExists ? `DISPLAY_REGISTERED_CHANNEL` : `DISPLAY_UNREACHABLE_CHANNEL`
+            if (!this.args[1]) return reply(this.locale.SETLEVELUPMESSAGE[displayingExistingData], {
+                socket: {
+                    prefix: this.bot.prefix,
+                    channel: res || customLevelUpMessageChannel
+                }
+            })
+            //  Handle if user has asked to reset the custom channel
+            if (this.args[1] === `reset`) {
+                //  Update and finalize
+                await this.bot.db.updateGuildConfiguration({
+                    configCode: subConfigId,
+                    customizedParameter: ``,
+                    guild: this.message.guild,
+                    setByUserId: this.user.id,
+                    cacheTo: this.guildConfigurations
+                })
+                this.logger.info(`${fn} ${subConfigId} successfully reset channel for GUILD_ID:${this.message.guild.id}.`)
+                return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
+                    status: `success`,
+                    socket: {emoji: emoji(`hearts`)}
+                })
+            }
+        }
+        else {
+            //  Handle if no channel parameter has been inputted
+            if (!this.args[1]) return reply(this.locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
+                socket: {prefix: this.bot.prefix}
+            })
+        }
+        //  Handle if target channel does not exist
+        const { isExists, res } = this._getChannel(this.args[1])
+        if (!isExists) return reply(this.locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
+            socket: {emoji: emoji(`AnnieCry`)}
+        })
+        //  Update and finalize
+        await this.bot.db.updateGuildConfiguration({
+            configCode: subConfigId,
+            customizedParameter: res.id,
+            guild: this.message.guild,
+            setByUserId: this.user.id,
+            cacheTo: this.guildConfigurations
+        })
+        this.logger.info(`${fn} ${subConfigId} successfully set CHANNEL_ID:${res.id} for GUILD_ID:${this.message.guild.id}.`)
+        return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
+            status: `success`,
+            socket: {
+                channel: res,
+                emoji: emoji(`hearts`)
+            }
+        })
+    }
+
+    /**
+     * Fetching channel in the guild
+     * @param {*} channelKeyword
+     * @return {object}
+     */
+    _getChannel(channelKeyword) {
+        //  Omit surrounded symbols if user using #mention method to be used as the searchstring keyword
+        channelKeyword = channelKeyword.replace(/[^0-9a-z-A-Z ]/g, ``)
+        const channels = this.message.guild.channels.cache
+        const channel = channels.get(channelKeyword) || channels.find(node => node.name.toLowerCase() === channelKeyword.toLowerCase()) 
+        return {
+            isExists: channel ? true : false,
+            res: channel
+        }
     }
 }
 
