@@ -1,4 +1,5 @@
-module.exports = async (bot, guild, configs) => {    
+module.exports = async (bot, guild, configs) => {  
+	await bot.guilds.cache.delete(guild.id)  
     let metadata = {
         guild: guild,
         configs: configs,

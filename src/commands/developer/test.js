@@ -18,8 +18,8 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(2)
-		this.bot.emit(`guildCreate`, this.message.guild)
-		return reply(`**guildCreate** event has been simulated.`, {status: `success`})
+		this.bot.emit(`guildDelete`, this.message.guild)
+		return reply(`**guildDelete** event has been simulated.`, {status: `success`})
 	}
 }
 
