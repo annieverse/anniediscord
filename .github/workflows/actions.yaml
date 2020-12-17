@@ -65,4 +65,4 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script: cd ${{ secrets.PROJECT_PATH }} && git pull && pm2 restart index.js
+          script: cd ${{ secrets.PROJECT_PATH }} && git checkout -- package-lock.json && git pull && pm2 restart index.js
