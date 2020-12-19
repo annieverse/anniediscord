@@ -36,6 +36,7 @@ jobs:
       # Checking out
       - name: Checkout
         uses: actions/checkout@v2
+          persist-credentials: false
         with:
           fetch-depth: 0
       # Setting up nodejs environment
