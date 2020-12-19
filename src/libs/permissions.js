@@ -16,11 +16,10 @@ class PermissionController {
         if (config.developer.accounts.includes(userId)) return config.developer
         // User without developer privileges in dm interface will be automatically assigned as a regular user.
         if (this.message.channel.type === `dm`) return config.user
-
-        const perm = new Permissions(this._getUser(userId).roles.highest.permissions)
+        const member = this._getUser(userId)
         for (let type in config) {
             if (type === `developer`) continue
-            if (perm.has(config[type].permissionString)) {
+            if (member.hasPermission(config[type].permissionString)) {
                 return config[type]
             }
         }
