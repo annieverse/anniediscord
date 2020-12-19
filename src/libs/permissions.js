@@ -1,6 +1,4 @@
 const config = require(`../config/permissions`)
-const { Permissions } = require(`discord.js`)
-
 class PermissionController {
     constructor(message={}) {
         this.message = message
