@@ -156,7 +156,8 @@
         "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHi, {{user}}! here is your\n**{{amount}} artcoins!**\n╰────────☆～*:;,．*╯\n{{praise}}",
         "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
         "THANKS_HELP": "Thanks for the help!",
-        "STREAK_INCREASING": "Keep it up!"
+        "STREAK_INCREASING": "Keep it up!",
+        "TO_REMIND": "Don't wanna lose streak? use my new **`{{prefix}}remind`** command!"
     },
     "CLI": {
         "GUIDE": "The pattern is similar to my dbkits, so make sure to input the cli command inside a square brackets.",

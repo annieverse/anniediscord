@@ -47,7 +47,7 @@ class Dailies extends Command {
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0 
 		await db.updateUserDailies(totalStreak, this.user.id, this.message.guild.id)
 		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
-		return reply(this.locale.DAILIES.CLAIMED, {
+		reply(this.locale.DAILIES.CLAIMED, {
 			status: `success`,
 			thumbnail: avatar(this.user.id),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
@@ -56,6 +56,10 @@ class Dailies extends Command {
 				user: name(this.user.id),
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
+		})
+		return reply(this.locale.DAILIES.TO_REMIND, {
+			simplified: true,
+			socket: {prefix:this.bot.prefix}
 		})
 	}
 }
