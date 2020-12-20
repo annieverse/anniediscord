@@ -17,7 +17,7 @@ class Remind extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, bot:{reminders} }) {
+    async execute({ reply, emoji, bot:{reminders} }) {
         await this.requestUserMetadata(1)
         //  Displays guide and user's active reminders
         if (!this.fullArgs) {
