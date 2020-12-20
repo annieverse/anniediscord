@@ -48,6 +48,7 @@
     "chart.js": "^2.9.4",
     "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
+    "cron-job-manager": "^2.1.4",
     "cross-env": "^7.0.2",
     "dblapi.js": "^2.4.1",
     "discord.js": "^12.4.1",
@@ -72,6 +73,7 @@
     "probe-image-size": "^5.0.0",
     "string-similarity": "^4.0.2",
     "superagent": "^6.0.0",
+    "uuid": "^8.3.2",
     "winston": "^3.3.1",
     "winston-daily-rotate-file": "^4.5.0"
   },

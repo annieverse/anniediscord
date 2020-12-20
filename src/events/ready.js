@@ -4,10 +4,11 @@ const VotesManager = require(`../libs/votes`)
 module.exports = annie => {
 	const { dev, logger, prefix } = annie
 	const Routine = new Routines(annie)
-	//  Run guild configurations once
+	//  Run configurations once
 	if (annie.startupState) {
 		annie.startupState = 0
 		annie.registerGuildConfigurations()
+		annie.registerReminders()
 	}
 	if (dev) {
 		/**

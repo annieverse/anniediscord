@@ -494,7 +494,9 @@
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request."
     },
     "REMINDER": {
-        "SUCCESSFULLY_SET": "**A reminder has been set!♡**\ntesting"
+        "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+        "INVALID_DATE": "**Oops, tell me when to remind!** {{emoji}}\n╰─should be like **`{{prefix}}remind to sleep in 8 hours`**",
+        "SUCCESSFUL": "**Annie, at your service!♡** {{emoji}}\n╰─I will remind you that {{time}}!"
     },
     "GIVE_REPUTATION": {
         "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour rep will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",

@@ -10,6 +10,7 @@ const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
 const LogSystem = require(`./libs/logs.js`)
+const Reminder = require(`./libs/reminder`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -214,6 +215,13 @@ class Annie extends Discord.Client {
         }
     }
 
+    /**
+     * Registering saved reminders into cron
+     * @return {void}
+     */
+    registerReminders() {
+        this.reminders = new Reminder(this)
+    }
 
     /**
      * Recommended method to use when trying to shutdown Annie.

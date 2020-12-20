@@ -262,6 +262,97 @@ class Database {
 	}
 	
 	/**
+	 * Fetch registered user's reminders
+	 * @param {string} userId
+	 * @return {array}
+	 */
+	getUserReminders(userId=``) {
+		return this._query(`
+			SELECT * 
+			FROM user_reminders
+			WHERE user_id = ?`
+			, `all`
+			, [userId]	
+		)
+	}
+
+	/**
+	 * Fetch all registered user's reminders
+	 * @return {array}
+	 */
+	getAllReminders() {
+		return this._query(`
+			SELECT * 
+			FROM user_reminders`
+			, `all`	
+		)
+	}
+
+	/**
+	 * Registering a new reminder
+	 * @param {object}
+	 * @return {QueryResult}
+	 */
+	registerUserReminder(context={}) {
+		return this._query(`
+			INSERT INTO user_reminders(
+				registered_at,
+				reminder_id,
+				user_id,
+				message,
+				remind_at
+			)
+			VALUES(?, ?, ?, ?, ?)`
+			, `run`
+			, [
+				context.registeredAt.toString(),
+				context.id,
+				context.userId, 
+				context.message, 
+				JSON.stringify(context.remindAt)
+			]
+		)
+	}
+
+	/**
+	 * Deleting reminder from database
+	 * @return {QueryResult}
+	 */
+	deleteUserReminder(reminderId=``) {
+		return this._query(`
+			DELETE FROM user_reminders
+			WHERE reminder_id = ?`
+			, `run`
+			, [reminderId]
+		)
+	}
+
+	/**
+	 * Create user_reminder master table
+	 * @return {QueryResult}
+	 */
+	registerUserRemindersMasterTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS user_reminders (
+
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'reminder_id' TEXT PRIMARY KEY,
+			'user_id' TEXT,
+			'message' TEXT,
+			'remind_at' TEXT,
+ 
+			FOREIGN KEY(user_id)
+			REFERENCES users(user_id) 
+				ON DELETE CASCADE
+				ON UPDATE CASCADE
+ 
+			)`
+			, `run`
+			, []
+			, `Verifying table user_reminders`
+		)
+	}
+
+	/**
 	 * Applying new cover to user's profile.
 	 * @param {number} [coverId] target cover to be applied.
 	 * @param {string} [userId=``] target user's id.
