@@ -39,7 +39,7 @@
     "@semantic-release/npm": "^7.0.9",
     "@semantic-release/release-notes-generator": "^9.0.1",
     "async-redis": "^1.1.7",
-    "axios": ">=0.21.0",
+    "axios": ">=0.21.1",
     "better-sqlite3": "^7.1.1",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
