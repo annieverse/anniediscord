@@ -35,8 +35,12 @@ class Quests extends Command {
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.QUEST.COOLDOWN, {
-			socket: {time:  moment(lastClaimAt).add(...this.cooldown).fromNow()},
-			color: `red`
+			topNotch: `**Shall we do something else first?** ${emoji(`AnnieThinking`)}`,
+			thumbnail: avatar(this.user.id),
+			socket: {
+				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
+				prefix: this.bot.prefix
+			},
 		})
 		this.fetching = await reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: emoji(`AAUloading`)} })
 		//  Update ID if active quest couldn't be found with the saved quest_id

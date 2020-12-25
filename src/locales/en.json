@@ -445,15 +445,15 @@
         "SUCCESSFUL": "Yay! **{{amount}}** messages have been successfully deleted! {{emoji}}"
     },
     "QUEST": {
-        "DISPLAY": "\n\n╭*:;,．★ ～☆*───────────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰───────────────────☆～*:;,．*╯",
-        "SUCCESSFUL": "{{praise}}, **{{user}}**! you just completed the quest and received **{{reward}}**!",
+        "DISPLAY": "\n\n╭*:;,．★ ～☆*────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
+        "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰─You've completed it and received {{reward}}!",
         "INCORRECT_ANSWER": "Boo, incorrect answer!",
         "FOOTER": "Type one correct answer to complete the quest.",
         "FETCHING": "{{emoji}} `Looking into the quest board...`",
-        "COOLDOWN": "Your next quest will be available in\n:clock1: **{{time}}**",
+        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour next quest will be available\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nClaim your **`{{prefix}}daily`** if you haven't yet!",
         "EMPTY": "Sorry, no quests are available to take at the moment!",
         "CANCEL": "Alright, quest has been cancelled.",
-        "PRAISE": ["Awesome", "Nice", "GG", "Genius", "Goodjob", "Impressive"],
+        "PRAISE": ["Awesome", "Nice", "GG", "Genius", "Goodjob", "Impressive", "Magnificent", "Astounding"],
         "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}"
     },
     "RECYCLE": {
