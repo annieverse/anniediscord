@@ -349,6 +349,18 @@ class Annie extends Discord.Client {
         return await this.db.redis.set(label, moment().format(), `EX`, time)
     }
 
+    /**
+     *  An Emoji finder. Fetch all the available emoji based on given emoji name
+     *  @param {string} [keyword=``] emoji keyword to search
+     *  @return {string}
+     */
+    getEmoji(keyword=``) {
+        const parseId = keyword.replace(/\D/g, ``)
+        const byId = this.emojis.cache.get(keyword) || this.emojis.cache.get(parseId)
+        const byName = this.emojis.cache.find(e => e.name.toLowerCase() === keyword.toLowerCase())
+        //  Find by ID first, if not found then try by name. Otherwise, fallback as `(???)`
+        return byId ? byId : byName ? byName : `(???)`
+    }
 }
 
 module.exports = Annie

@@ -98,7 +98,7 @@
     "COMMAND": {
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
         "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
-        "STILL_COOLDOWN": "**{{timeLeft}}s** left till your next command.",
+        "STILL_COOLDOWN": "**Can we relax for a bit, {{user}}?** {{emoji}}\n╰─You have {{timeLeft}}s left till your next command!",
         "DISABLED":"I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
     },
     "CARDCOLLECTION_AUTHOR_EMPTY": "**Aw, your card collection is empty and *full of dust*.** {{emoji}}",
