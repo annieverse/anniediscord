@@ -1,7 +1,7 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const Command = require(`../../libs/commands`)
 /**
- * Displays your profile card, including timeline, badges, relationship, and statistics
+ * Displaying your personalized card!
  * @author klerikdust
  */
 class Profile extends Command {
@@ -17,18 +17,12 @@ class Profile extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, avatar }) {
+    async execute({ reply, emoji, name }) {
         await this.requestUserMetadata(2)
-
         //  Handle if user doesn't exists
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
-        this.fetching = await reply(this.locale.COMMAND.FETCHING, {
-            socket: {
-                emoji: emoji(`AAUloading`),
-                command: `profile`,
-                user: this.user.id
-            },
-            simplified: true
+        this.fetching = await reply(this.locale.PROFILECARD.FETCHING, {
+            socket: {emoji: emoji(`AAUloading`)}
         })
         await reply(this.locale.COMMAND.TITLE, {
             socket: {
@@ -36,7 +30,7 @@ class Profile extends Command {
                 emoji: emoji(`AnnieSmile`),
                 command: `Profile`
             },
-            image: (await new GUI(this.user,this.bot, {}, avatar).build()).toBuffer(),
+            image: (await new GUI(this.user, this.bot).build()).toBuffer(),
             prebuffer: true,
             simplified: true 
         })
@@ -47,8 +41,8 @@ class Profile extends Command {
 module.exports.help = {
 	start: Profile,
 	name: `profile`,
-	aliases: [`profile`, `p`, `timeline`, `portfolio`, `badges`, `badge`, `family`, `friend`, `friends`],
-	description: `Displays your profile card, including timeline, badges, relationship, and statistics`,
+	aliases: [`profile`, `p`, `prof`],
+	description: `Displaying your personalized card!`,
 	usage: `profile <User>(Optional)`,
 	group: `User`,
 	permissionLevel: 0,

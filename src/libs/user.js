@@ -243,12 +243,19 @@ class User {
 			 *  These might come in handy in developer's side, such as shortcut.
 			 *  --------------------------------------------------
 			 */
-			const cover = user.inventory.raw.filter(key => (key.type_name === `Covers`) && (key.in_use === 1))
-			this.user.usedCover = cover.length > 0 ? cover[0] : await db.getItem(`defaultcover1`)
+			const cover = await db.getUserCover(this.user.id, this.guild.id)
+			if (cover) {
+				this.user.usedCover = cover
+			}
+			else {
+				this.user.usedCover = await db.getItem(`defaultcover1`)
+				this.user.usedCover.isDefault = true
+			}
 			const sticker = user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
 			this.user.usedSticker = sticker.length ? sticker[0] : null
 			this.user.isSelf = this.isSelf
 			this.user.title = new Permission(this.message).getUserPermission(this.user.id).name
+			this.user.avatar = this.user.displayAvatarURL({format: `png`, dynamic: true})
 			return this.user
 		}
 		catch(e) {

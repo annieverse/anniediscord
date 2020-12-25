@@ -3,10 +3,11 @@ const path = require(`path`)
 
 /**
  *  Load image based on given id from default ./src/images/ directory.
- *  @param {String} id filename 
+ *  @param {String} id filename
+ *  @param {string} assetsPath 
  *  @returns {Buffer}
  */
-const loadAsset = async (id=``) => {
+const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
 	// List all files in a directory in Node.js recursively in a synchronous fashion
 	const walkSync = (dir, filelist = []) => {
 		fs.readdirSync(dir).forEach(file => {
@@ -16,10 +17,10 @@ const loadAsset = async (id=``) => {
 		})
 		return filelist
 	}
-	let allFiles = walkSync(`./src/assets`) // Starts with the main directory and includes all files in the sub directories
+	let allFiles = walkSync(assetsPath) // Starts with the main directory and includes all files in the sub directories
 	let ultimateFile
 	allFiles.forEach((file) => {
-		if (file.includes(id)){ 
+		if (file.includes(id)){
 			let filePath = `./${file.replace(/\\/g, `/`)}`
 			return ultimateFile = filePath
 		}
@@ -32,8 +33,7 @@ const loadAsset = async (id=``) => {
 			}
 		})
 	}
-	var file = fs.readFileSync(ultimateFile)
-	return file
+	return fs.readFileSync(ultimateFile)
 }
 
 module.exports = loadAsset

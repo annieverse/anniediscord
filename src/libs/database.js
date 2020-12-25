@@ -353,6 +353,117 @@ class Database {
 	}
 
 	/**
+	 *  --------------------------------
+	 *  #USER COVER MANAGEMENT
+	 *  --------------------------------
+	 */
+
+	/**
+	 * Initializing user_self_covers table
+	 * @return {QueryResult}
+	 */
+	initializeUserSelfCoverTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS user_self_covers (
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'cover_id' TEXT,
+			'user_id' TEXT,
+			'guild_id' TEXT,
+			PRIMARY KEY(user_id, guild_id),
+		    FOREIGN KEY(user_id)
+		    REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE)`
+		   	, `run`
+		   	, []
+		   	, `Verifying quests user_self_covers`
+		)
+	}
+
+	/**
+	 * Return user's cover data on specific guild
+	 * @param {string} userId
+	 & @param {string} guildId
+	 * @return {QueryResult}
+	 */
+	async getUserCover(userId=``, guildId=``) {
+		let onSelfCover = await this._query(`
+			SELECT 
+				registered_at,
+				cover_id AS alias,
+				user_id,
+				guild_id
+			FROM user_self_covers
+			WHERE
+				user_id = ?
+				AND guild_id = ?`
+			, `all`
+			, [userId, guildId]
+		)
+		//  If self-upload is available, then return
+		if (onSelfCover.length > 0) {
+			onSelfCover[0].isSelfUpload = true
+			return onSelfCover[0]
+		}
+		//  Else- find in user's inventory
+		const inventory = await this.getUserInventory(userId, guildId)
+		return inventory.filter(item => item.type_id === 1 && item.in_use === 1)[0]
+	}
+
+	/**
+	 * Deleting self-upload cover
+	 * @param {string} userId
+	 * @param {string} guildId
+	 * @return {QueryResult}
+	 */
+	deleteSelfUploadCover(userId=``, guildId=``) {
+		return this._query(`
+			DELETE FROM user_self_covers
+			WHERE
+				user_id = ?
+				AND guild_id = ?`
+			, `run`
+			, [userId, guildId]
+			, `Performing self-upload cover deletion on USER_ID:${userId} on GUILD_ID:${guildId}`
+		)
+	}
+
+	/**
+	 * Applying new cover to user's profile.
+	 * @param {number} [coverId] target cover to be applied.
+	 * @param {string} [userId=``] target user's id.
+	 * @param {string} [guidId=``] target guild
+	 * @returns {QueryResult}
+	 */
+	async applySelfUploadCover(coverId, userId=``, guildId=``) {
+		const fn = `[Database.appleSelfCover()]`
+		if (!coverId) throw new TypeError(`${fn} parameter 'coverId' cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)
+		const res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+				INSERT INTO user_self_covers (cover_id, user_id, guild_id)
+				SELECT $coverId, $userId, $guildId
+				WHERE NOT EXISTS (SELECT 1 FROM user_self_covers WHERE user_id = $userId AND guild_id = $guildId)`
+				, `run`
+				, {coverId: coverId, userId: userId, guildId: guildId}
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_self_covers
+				SET 
+					cover_id = ?,
+					registered_at = datetime('now')
+				WHERE 
+					user_id = ? 
+					AND guild_id = ?`
+				, `run`
+				, [coverId, userId, guildId]
+			)
+		}
+    	return res
+	}
+
+	/**
 	 * Applying new cover to user's profile.
 	 * @param {number} [coverId] target cover to be applied.
 	 * @param {string} [userId=``] target user's id.

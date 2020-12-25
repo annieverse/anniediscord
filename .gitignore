@@ -1,6 +1,9 @@
 # Node's Dependencies
 node_modules
 
+# User's self uploading cover
+src/assets/selfupload
+
 # Server Logs
 logs
 

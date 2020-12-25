@@ -57,6 +57,7 @@
     "fs-nextra": "^0.5.1",
     "glob": "^7.1.6",
     "humanize-duration": "^3.23.1",
+    "image-size": "^0.9.3",
     "jimp": "^0.16.0",
     "long": "^4.0.0",
     "mocha": "^8.2.1",
@@ -79,7 +80,9 @@
   },
   "devDependencies": {
     "eslint": "5.16.0",
+    "http": "0.0.1-security",
     "nodemon": "^2.0.6",
-    "semantic-release": "^17.3.0"
+    "semantic-release": "^17.3.0",
+    "url": "^0.11.0"
   }
 }

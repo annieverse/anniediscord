@@ -1,6 +1,7 @@
 const Canvas = require(`../setup`)
 const { resolveImage } = require(`canvas-constructor`)
-const sizeOf = require(`buffer-image-size`)
+const loadAsset = require(`../../utils/loadAsset`)
+const sizeOfBuffer = require(`buffer-image-size`)
 const Color = require(`color`)
 const { DEFAULT, DATABAR, CONTENT } = require(`../config`)
 const palette = require(`../colors/default`)
@@ -135,7 +136,7 @@ class Card {
 		const grad = this.canv.createLinearGradient(0, 0, 0, Math.floor(this.height/2))
 		const themeInRgb = Color(this.color.main).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
-		const imgSize = sizeOf(img)
+		const imgSize = sizeOfBuffer(img)
 		const dynamicHeight = () => {
 			if (imgSize.width < this.width) return imgSize.height+((this.width - imgSize.width))
 			if (imgSize.width > this.width) return imgSize.height-((imgSize.width - this.width)/1.5)
@@ -168,11 +169,9 @@ class Card {
 		const grad = this.canv.createLinearGradient(0, 0,  Math.floor(this.width/1.5), 0)
 		const themeInRgb = Color(this.color.highlight).rgb().array()
 		const semiTransparent = `rgba(${themeInRgb.join(`,`)},0.2)`
-
 		grad.addColorStop(1, this.color.highlight)
 		grad.addColorStop(0.5, semiTransparent)
 		grad.addColorStop(0, this.color.main)
-
 		this.canv
 		.setColor(this._resolveColor(color, this.color.main))
 		.createRoundedClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
@@ -434,7 +433,7 @@ class Card {
 		//	Add state for flexible Y positioning
 		if (!inline || (inline && releaseHook)) {
 			if (caption) this.reservedSpace += captionMargin 
-			if (img) this.reservedSpace += sizeOf(img).height
+			if (img) this.reservedSpace += sizeOfBuffer(img).height
 			if (avatar) this.reservedSpace += customAvatarRadius
 			this.reservedSpace += marginTop
 		}
@@ -443,6 +442,26 @@ class Card {
 			this.canv.printImage(img, marginLeft+this._getHorizontalAlign(justify), this.reservedSpace+marginTop-marginBottom, imgDx, imgDy)
 		}
 		return this
+	}
+
+	/**
+	 * Fit image into card, proportionally.
+	 * @param {buffer|string} img can be a prepared-buffer or image ID
+	 * @param {number} top y position of the image. Optional
+	 * @return {void}
+	 */
+	async addBackgroundLayer(img=``, isSelfUpload=false, top=0, minHeight=0) {
+		let bg = typeof img === `string` ? await loadAsset(img, isSelfUpload ? `./src/assets/selfupload` : `./src/assets`) : img
+		const {
+			width: bgWidth, 
+			height: bgHeight
+		} = sizeOfBuffer(bg)
+		const combinedHeight = bgHeight * (this.width/bgWidth)
+		const dynamic = {
+		 	height: combinedHeight < minHeight ? minHeight : combinedHeight,
+		 	width: combinedHeight < minHeight ? this.width + (minHeight-combinedHeight) : this.width
+		}
+		this.canv.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
 	}
 }
 

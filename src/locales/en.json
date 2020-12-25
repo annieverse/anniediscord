@@ -426,6 +426,7 @@
     },
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
+        "FETCHING": "{{emoji}} *Hold on- your profile card still in build ...*",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
     },
     "PORTFOLIOCARD": {
@@ -565,15 +566,20 @@
         "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**"
     },
     "SETCOVER": {
-        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nThis is where you can set your owned profile covers!\nstart by simply type **`{{prefix}}setcover <coverID/Name>`**\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Let's decorate your profile cover!♡**\nstarts with **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",
         "NO_EQUIPPABLE_COVER": "**Sorry- It seems you don't have any equippable covers at the moment.**",
         "ITEM_DOESNT_EXISTS": "**Is that cover even exist?** {{emoji}}",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nApply **{{cover}}** as your account background?\n╰──────────☆～*:;,．*╯\nIf yes, please react to the green button to start applying it! {{emoji}}",
-        "FETCHING": "{{emoji}} `generating preview for {{itemId}}@{{userId}}`",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nApply **{{cover}}** as your profile background?\n╰──────────☆～*:;,．*╯\nIf yes, please react to the green button to start applying it! {{emoji}}",
+        "PREVIEW_SELF_UPLOAD": "╭*:;,．★ ～☆*────────────╮\nUpload this one as your profile background?\n╰──────────☆～*:;,．*╯\nKeep in mind, {{emoji}}**{{uploadCost}}** will be deducted from your inventory after you uploaded this.♡",
+        "FETCHING": "{{emoji}} *Stay sit! I'm rendering the preview for you ...*",
         "SUCCESSFUL": "{{emoji}} **{{cover}}** successfully equipped!♡",
+        "SUCCESSFUL_ON_SELF_UPLOAD": "**Yey! everything went smooth!♡**\n╰─You've successfully uploaded your own cover!",
         "ALREADY_USED": "You're currently using **{{cover}}** as your profile cover, *baka.* {{emoji}}",
-        "OWNED_COVER_LIST": "Below are the covers you had in your inventory right now:\n{{list}}",
-        "SUGGEST_TO_BUY": "But you don't seem to have any covers right now, so have a visit to **`{{prefix}}shop covers`** and get one for yourself!♡ {{emoji}}"
+        "DISPLAY_USED_SELF_COVER": "You are currently using self-uploaded cover.",
+        "DISPLAY_USED_REGULAR_COVER": "You are currently using **{{cover}}** as your profile cover.",
+        "OWNED_COVERS": "If you wish to switch- checkout your owned covers below.\n",
+        "SUGGEST_TO_UPLOAD": "Let's upload/buy one to make your profile more unique!♡ {{emoji}}",
+        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover."
     },
     "SETEXP": {
         "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n╰──────────☆～*:;,．*╯",

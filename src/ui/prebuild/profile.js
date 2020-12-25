@@ -1,6 +1,5 @@
 const Cards = require(`../components/cards`)
 const Color = require(`color`)
-//const urlToBuffer = require(`../../utils/urlToBuffer`)
 const loadAsset = require(`../../utils/loadAsset`)
 const formatK = require(`../../utils/formatK`)
 const {resolveImage} = require(`canvas-constructor`)
@@ -15,20 +14,41 @@ class UI {
 	 * @legacy
 	 * @return {Canvas}
 	 */
-	constructor(user={}, bot={}, testResolution={}, avatarParser={}) {
+	constructor(user={}, bot={}, testResolution={}) {
+		/**
+		 * User's meta
+		 * @type {user}
+		 */
 		this.user = user
+
+		/**
+		 * Card's width
+		 * @type {number}
+		 */
 		this.width = testResolution.width || 320
+
+		/**
+		 * Card's height
+		 * @type {number}
+		 */
 		this.height = testResolution.height || 430
+
+		/**
+		 * Current client's instance
+		 * @type {client}
+		 */
 		this.bot = bot
-		this.avatarParser = avatarParser
 	}
 
+	/**
+	 * Rendering card
+	 * @return {canvas}
+	 */
 	async build() {
 		let startPos_x = 10
 		let startPos_y = 10
 		let baseWidth = this.width - 20
 		const adjustedPrimaryColorContrast = this.user.usedTheme.alias === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
-
 		let card = new Cards({
 			width: this.width,
 			height: this.height,
@@ -37,15 +57,14 @@ class UI {
 		.createBase({cornerRadius: 25})
 		//  Sticker
 		if (this.user.usedSticker) card.canv.printImage(await resolveImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
-
 		//  Cover
-		card.canv.setColor(adjustedPrimaryColorContrast)
-			.printRectangle(startPos_x, startPos_y, baseWidth, 194)
-			.printImage(await resolveImage(await loadAsset(this.user.usedCover.alias)), startPos_x, startPos_y, baseWidth, 194)
+		await card.addBackgroundLayer(this.user.usedCover.alias, this.user.usedCover.isSelfUpload, 0, 197)
+		card.canv.setColor(card.color.base)
+		.printRectangle(0, 197, this.width, this.height)
 		//  Avatar
-		card.canv.setColor(this.user.premium ? card._resolveColor(`yellow`) :  card._resolveColor(card.color.main))
+		card.canv.setColor(card.color.base)
 			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.avatarParser(this.user.id)), startPos_x + 70, 200, 50, 50, 25)
+			.printCircularImage(await resolveImage(this.user.avatar), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const inventory = this.user.inventory.raw
 		const badges = inventory.filter(key => key.type_name === `Badges` && key.in_use === 1)
@@ -128,14 +147,20 @@ class UI {
 		return card.ready()
 	}
 
+	/**
+	 * Resizing font size based on name length
+	 * @param {string} name
+	 * @return {string}
+	 */
 	resizeLongNickname(name = ``) {
 		return name.length <= 12 ? `14pt` : name.length <= 17 ? `11pt` : `9pt`
 	}
 
 	/**
 	 * Formatting each paragraph.
-	 * @string of user description.
-	 * @numlines of paragraph.
+	 * @param {string} string of user description.
+	 * @param {number} numlines of paragraph.
+	 * @return {object}
 	 */
 	formatString(string, numlines) {
 		var paraLength = Math.round((string.length) / numlines)
@@ -174,7 +199,6 @@ class UI {
 			fourth: paragraphs[3]?paragraphs[3]:``
 		}
 	}
-
 }
 
 module.exports = UI

@@ -28,13 +28,16 @@ module.exports = annie => {
 		logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
-		const availablePresences = [`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users`, `${prefix}help`]
-		const presenceRefresh = (data) => annie.user.setActivity(data, {type: `WATCHING`})
-		presenceRefresh(availablePresences[1])
 		setInterval(() => {
-			presenceRefresh(availablePresences[Math.floor(Math.random() * availablePresences.length)])
-		//  Refresh activity for every 1 minute
-		}, 60000)
+			annie.user.setActivity(
+				[
+					`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users`,
+					`${prefix}help`
+				][Math.floor(Math.random() * 2)],
+				{type: `WATCHING`}
+			)
+		//  Refresh activity for every 30 seconds
+		}, 30000)
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
