@@ -75,6 +75,10 @@ class SetCover extends Command {
                 }
             })
         }
+        //  Handle if user asked to use default cover
+        else if (this.fullArgs === `default`) {
+            this.cover = await db.getItem(`defaultcover1`)
+        }
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
