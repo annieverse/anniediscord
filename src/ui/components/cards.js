@@ -475,7 +475,7 @@ class Card {
 		const semiTransparent = (opacity=0) => `rgba(${themeInRgb.join(`,`)}, ${opacity})`
 		grad.addColorStop(1, this.color.main)
 		grad.addColorStop(0.5, semiTransparent(`0.9`))
-		grad.addColorStop(0, semiTransparent(`0.5`))
+		grad.addColorStop(0, semiTransparent(`0.7`))
 		if (gradient) {
 			this.canv
 			.setGlobalAlpha(0.5)
