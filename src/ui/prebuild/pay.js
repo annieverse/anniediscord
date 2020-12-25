@@ -26,8 +26,13 @@ class UI {
 		})
 		//  Base card
 		.createBase({})
-		//  Semi-opaque background
-		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
+		//  Add top cover
+		await card.addBackgroundLayer(this.user.usedCover.alias, {
+			isSelfUpload: this.user.usedCover.isSelfUpload, 
+			minHeight: 180,
+			gradient: true,
+			gradientHeight: 180
+		})
 		await card.addContent({
 			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
 			avatarRadius: 7,

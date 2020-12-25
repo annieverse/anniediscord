@@ -255,7 +255,6 @@ class User {
 			this.user.usedSticker = sticker.length ? sticker[0] : null
 			this.user.isSelf = this.isSelf
 			this.user.title = new Permission(this.message).getUserPermission(this.user.id).name
-			this.user.avatar = this.user.displayAvatarURL({format: `png`, dynamic: true})
 			return this.user
 		}
 		catch(e) {

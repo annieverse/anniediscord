@@ -2,7 +2,6 @@ const Cards = require(`../../ui/components/cards`)
 const formatK = require(`../../utils/formatK`)
 const commanifier = require(`../../utils/commanifier`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
-const loadAsset = require(`../../utils/loadAsset`)
 const Color = require(`color`)
 
 class UI {
@@ -23,14 +22,16 @@ class UI {
 		//	Base card
 		.createBase({})
 		//  Add top cover
-		.addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
-		await card
+		await card.addBackgroundLayer(this.user.usedCover.alias,{
+			isSelfUpload: this.user.usedCover.isSelfUpload, 
+			minHeight: 180,
+			gradient: true,
+			gradientHeight: 180
+		})
 		//	Avatar representative
-		.addContent({ avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 65,
-		avatarRadius: 12 })
-		card
+		await card.addContent({ avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 65, avatarRadius: 12 })
 		//	Author and rank name
-		.addTitle({ main: this.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 40 })
+		card.addTitle({ main: this.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 40 })
 		//	Add experience bar
 		.addLinebar({  
 			current: currentBarPercentage, 

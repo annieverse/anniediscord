@@ -58,13 +58,16 @@ class UI {
 		//  Sticker
 		if (this.user.usedSticker) card.canv.printImage(await resolveImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
 		//  Cover
-		await card.addBackgroundLayer(this.user.usedCover.alias, this.user.usedCover.isSelfUpload, 0, 197)
+		await card.addBackgroundLayer(this.user.usedCover.alias, {
+			isSelfUpload: this.user.usedCover.isSelfUpload,
+			minHeight: 197
+		})
 		card.canv.setColor(card.color.base)
 		.printRectangle(0, 197, this.width, this.height)
 		//  Avatar
 		card.canv.setColor(card.color.base)
 			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.user.avatar), startPos_x + 70, 200, 50, 50, 25)
+			.printCircularImage(await resolveImage(this.user.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const inventory = this.user.inventory.raw
 		const badges = inventory.filter(key => key.type_name === `Badges` && key.in_use === 1)

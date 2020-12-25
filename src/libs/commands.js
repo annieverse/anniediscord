@@ -68,13 +68,6 @@ class Commands {
 		 * @type {stirng}
 		 */
 		this.instanceId = `${this.commandProperties.name.toUpperCase()}_${this.message.author.id}`
-	
-		/**
-         * User lib
-         * @since 6.0.0
-         * @type {UserClass}
-         */	
-		this.userClass = new User(Stacks.bot, Stacks.message)
 
 		/**
          * The default locale for current command instance
@@ -154,15 +147,15 @@ class Commands {
 			this.user = null
 			return false
 		}
-		const result = await this.userClass.requestMetadata(targetUser, dataLevel)
+		const result = await new User(this.bot, this.message).requestMetadata(targetUser, dataLevel)
 		this.user = result
 		//  If multi user property isn't enabled, then skip keyword parsing
 		if (!this.commandProperties.multiUser) return true
 		//  If command specified `rawArgs` property, then userKeyword won't be removed.
 		if (this.commandProperties.rawArgs) return true
 		//  Remove user searchstring keyword from arg pool
-		if (this.userClass.usedKeyword) {
-			const tokenizedKeywords = this.userClass.usedKeyword.split(` `)
+		if (result.usedKeyword) {
+			const tokenizedKeywords = result.usedKeyword.split(` `)
 			for (let i=0; i<tokenizedKeywords.length; i++) {
 				this.fullArgs = this.fullArgs.replace(tokenizedKeywords[i], ``)
 			}
@@ -179,7 +172,7 @@ class Commands {
 	async requestAuthorMetadata(dataLevel=1) { 
 		const fn = `[Commands.requestAuthorMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
-		const result = await this.userClass.requestMetadata(this.message.author, dataLevel)
+		const result = await new User(this.bot, this.message).requestMetadata(this.message.author, dataLevel)
 		this.author = result
 		/**
 		 * Multi-language support
@@ -244,9 +237,10 @@ class Commands {
 	 * @returns {object}
 	 */
 	_userSelector() {
+		const userClass = new User(this.bot, this.message)
 		return this.commandProperties.multiUser && this.fullArgs 
-		? this.userClass.lookFor(this.fullArgs) 
-		: this.userClass.lookFor(this.message.author.id)
+		? userClass.lookFor(this.fullArgs) 
+		: userClass.lookFor(this.message.author.id)
 	}
 }
 

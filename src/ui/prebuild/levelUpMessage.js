@@ -1,6 +1,5 @@
 const Cards = require(`../../ui/components/cards`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
-const loadAsset = require(`../../utils/loadAsset`)
 
 class UI {
 	/**
@@ -19,8 +18,12 @@ class UI {
 		let card = await new Cards({width: 250, height: 80, theme: this.user.usedTheme.alias})
 		//  Base
 		card.createBase({cornerRadius: 100})
-		//  Semi-opaque background
-		.addCover({ img: await loadAsset(this.user.usedCover.alias) })
+		//  Add top cover
+		await card.addBackgroundLayer(this.user.usedCover.alias,{
+			isSelfUpload: this.user.usedCover.isSelfUpload, 
+			gradient: true,
+			gradientHeight: 160
+		})
 		//  User's avatar on left
 		await card.addContent({ 
 			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),

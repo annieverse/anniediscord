@@ -35,7 +35,10 @@ class UI {
         //  Base and card owner's avatar
         await this.card.createBase({})
         //  Background
-        .addCover({ img: await loadAsset(this.user.usedCover.alias), gradient: true })
+        await this.card.addBackgroundLayer(this.user.usedCover.alias,{
+            isSelfUpload: this.user.usedCover.isSelfUpload, 
+            gradient: true
+        })
         //  Main Content
         for (let i=0; i<Math.min(this.relationships.length, 7); i++) {
             const rel = this.relationships[i]

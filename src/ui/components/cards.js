@@ -447,10 +447,19 @@ class Card {
 	/**
 	 * Fit image into card, proportionally.
 	 * @param {buffer|string} img can be a prepared-buffer or image ID
+	 * @param {boolean} isSelfUpload set true if source image is from selfupload dir
 	 * @param {number} top y position of the image. Optional
+	 * @param {number} minHeight specified number will be the minimum height of supplied image
+	 * @param {boolean} gradient set true to allows gradient transparency on the image
 	 * @return {void}
 	 */
-	async addBackgroundLayer(img=``, isSelfUpload=false, top=0, minHeight=0) {
+	async addBackgroundLayer(img=``, {
+		isSelfUpload=false,
+		top=0, 
+		minHeight=0,
+		gradient=false,
+		gradientHeight=Math.floor(this.height/2)
+	}) {
 		let bg = typeof img === `string` ? await loadAsset(img, isSelfUpload ? `./src/assets/selfupload` : `./src/assets`) : img
 		const {
 			width: bgWidth, 
@@ -461,7 +470,23 @@ class Card {
 		 	height: combinedHeight < minHeight ? minHeight : combinedHeight,
 		 	width: combinedHeight < minHeight ? this.width + (minHeight-combinedHeight) : this.width
 		}
-		this.canv.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
+		const grad = this.canv.createLinearGradient(0, 0, 0, gradientHeight)
+		const themeInRgb = Color(this.color.main).rgb().array()
+		const semiTransparent = (opacity=0) => `rgba(${themeInRgb.join(`,`)}, ${opacity})`
+		grad.addColorStop(1, this.color.main)
+		grad.addColorStop(0.5, semiTransparent(`0.9`))
+		grad.addColorStop(0, semiTransparent(`0.5`))
+		if (gradient) {
+			this.canv
+			.setGlobalAlpha(0.5)
+			.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
+			.setGlobalAlpha(1)
+			.setColor(grad)
+			.printRectangle(0, 0, this.width, this.height)
+		}
+		else {
+			this.canv.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
+		}
 	}
 }
 

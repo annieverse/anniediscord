@@ -18,8 +18,9 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(2)
-		this.bot.emit(`guildDelete`, this.message.guild)
-		return reply(`**guildDelete** event has been simulated.`, {status: `success`})
+		const gui = require(`../../ui/prebuild/levelUpMessage`)
+		const img = await new gui(this.user, 60).build()
+		return reply(`test`, {prebuffer:true, image: img, simplified:true})
 	}
 }
 
