@@ -1,3 +1,17 @@
+# [7.9.0](https://github.com/klerikdust/anniediscord/compare/v7.8.0...v7.9.0) (2020-12-25)
+
+
+### Bug Fixes
+
+* **gradient:** increase gradient range on addBackgroundLayer ([68a04b4](https://github.com/klerikdust/anniediscord/commit/68a04b483b5d066c48b74a025b090ba561ecf086))
+
+
+### Features
+
+* **defaultCover:** added option to use default cover in the setcover command ([f27da6c](https://github.com/klerikdust/anniediscord/commit/f27da6c07c2f552f465ccd64d6564f506659601f))
+* **selfUpload:** setcover now allows user to self-upload their own image ([5f51741](https://github.com/klerikdust/anniediscord/commit/5f51741b9acf44a4b89a135c897f5219b3851c7d))
+* **ui:** self-upload cover on other prebuild uis ([45f27b6](https://github.com/klerikdust/anniediscord/commit/45f27b6aae2cab0ccc09bafdabf3e041fd93f0f2))
+
 # Change Logs
 
 ___
