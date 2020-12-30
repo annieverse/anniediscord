@@ -91,7 +91,9 @@ class Commands {
          * Annie's role
          * @type {snowflake}
          */
-        this.annieRole = this.message.guild ? this.message.guild.roles.cache.find(role => role.name === this.bot.user.username) : null
+        this.annieRole = this.message.guild 
+        ? this.message.guild.members.fetch(Stacks.bot.user.id).then(m => m.roles.highest)
+        : null
 	}
 
 	/**
