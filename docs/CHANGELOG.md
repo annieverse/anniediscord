@@ -1,3 +1,10 @@
+## [7.9.1](https://github.com/klerikdust/anniediscord/compare/v7.9.0...v7.9.1) (2020-12-30)
+
+
+### Bug Fixes
+
+* **setRank:** undefined position on changed default role name ([8812985](https://github.com/klerikdust/anniediscord/commit/8812985eec9c48c63db5b955050e206c7a349284))
+
 # [7.9.0](https://github.com/klerikdust/anniediscord/compare/v7.8.0...v7.9.0) (2020-12-25)
 
 
