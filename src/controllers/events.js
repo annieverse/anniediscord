@@ -42,11 +42,11 @@ module.exports = annie => {
 		 *  Miscelanous Events
 		 *  --------------------------------------
 		 */		
-		annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie)) // Support Server only
-		annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie)) // not guild dependent
+		//annie.on(`shardReconnecting`, (annie) => reqEvent(`reconnecting`)(annie)) // Support Server only
+		//annie.on(`disconnect`, (annie) => reqEvent(`disconnect`)(annie)) // not guild dependent
 		annie.on(`messageReactionAdd`, async (reaction, user) => reqEvent(`messageReactionAdd`)({annie, reaction, user, message_object}, fetchGuildConfigs(reaction.message.guild.id)))
-		annie.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({annie, reaction, user, message_object}, fetchGuildConfigs(reaction.message.guild.id)))
-		annie.on(`raw`, async (packet) => reqEvent(`raw`)(annie, packet))
+		//annie.on(`messageReactionRemove`, async (reaction, user) => reqEvent(`messageReactionRemove`)({annie, reaction, user, message_object}, fetchGuildConfigs(reaction.message.guild.id)))
+		//annie.on(`raw`, async (packet) => reqEvent(`raw`)(annie, packet))
 	}
 
 }
