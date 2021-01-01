@@ -1,3 +1,10 @@
+## [7.10.1](https://github.com/klerikdust/anniediscord/compare/v7.10.0...v7.10.1) (2021-01-01)
+
+
+### Bug Fixes
+
+* **event:** reduced blocking-functions in point module ([2af48a3](https://github.com/klerikdust/anniediscord/commit/2af48a37299c353623632d0afa891aed80befac1))
+
 # [7.10.0](https://github.com/klerikdust/anniediscord/compare/v7.9.1...v7.10.0) (2021-01-01)
 
 
