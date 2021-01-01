@@ -1,5 +1,6 @@
 `use-strict`
 const Themes = require(`../ui/colors/themes`)
+const palette = require(`../ui/colors/default`)
 const Experience = require(`./exp`)
 const Permission = require(`./permissions`)
 
@@ -230,10 +231,10 @@ class User {
 			const currentRankLevel = this._closestBelow(ranks.map(node => node.LEVEL), this.user.exp.level)
 			let rankData = ranks.filter(el => el.LEVEL === currentRankLevel)
 			//  Handle if user's level is lower than whats available in the rank pool
-			if (rankData.length <= 0) rankData = [{NAME: `No Rank`, COLOR: Themes[this.user.usedTheme.alias].text, LEVEL: currentRankLevel}] 
+			if (rankData.length <= 0) rankData = [{NAME: `Unranked`, COLOR: Themes[this.user.usedTheme.alias].text, LEVEL: currentRankLevel}] 
 			this.user.rank = {
 				name: rankData[0].NAME,
-				color: rankData[0].COLOR,
+				color: rankData[0].COLOR === `#000000` ?  palette.crimson : rankData[0].COLOR,
 				level: rankData[0].LEVEL
 			}
 
