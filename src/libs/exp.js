@@ -103,7 +103,7 @@ class Experience extends Points {
 			lowerRankRoles.push(role.id)
 		})
         await this.guild.members.fetch(this.message.author.id)
-		this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles).catch(e => this.logger.warn(`${fn} role remove error has been handled.`))
+		this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles).catch(e => this.logger.warn(`${fn} role remove error has been handled. > ${e.stack}`))
 		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = registeredRanks.filter(node => node.LEVEL === level)[0]
@@ -114,7 +114,7 @@ class Experience extends Points {
         if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
 		let role = this.guild.roles.cache.get(roleFromList.ROLE)
         //  Start assign the rolerank
-		this.guild.members.cache.get(this.message.author.id).roles.add(role).catch(e => this.logger.warn(`${fn} role assign error has been handled.`))
+		this.guild.members.cache.get(this.message.author.id).roles.add(role).catch(e => this.logger.warn(`${fn} role assign error has been handled. > ${e.stack}`))
         this.logger.info(`${fn} successfully added RANK_ID:${role.id} to USER_ID:${this.message.author.id} in GUILD_ID:${this.message.guild.id}`)
 	}
 

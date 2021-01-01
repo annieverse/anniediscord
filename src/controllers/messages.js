@@ -1,7 +1,6 @@
 const Permission = require(`../libs/permissions`)
 const Points = require(`./points`)
 const Command = require(`./commands`)
-const likesHandler = require(`../struct/posts/likesHandler`)
 const AutoResponder = require(`../libs/autoResponder`)
 
 /**
