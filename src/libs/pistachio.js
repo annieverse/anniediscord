@@ -599,7 +599,8 @@ class Pistachio {
 		paging: false,
 		status: null,
 		cardPreviews: false,
-		topNotch: null
+		topNotch: null,
+		raw: false
 	}) {
 		options.socket = !options.socket ? [] : options.socket
 		options.color = !options.color ? this.palette.crimson : options.color
@@ -621,6 +622,7 @@ class Pistachio {
 		options.status = !options.status ? null : options.status.toLowerCase()
 		options.cardPreviews = !options.cardPreviews ? null : options.cardPreviews
 		options.topNotch = !options.topNotch ? null : options.topNotch
+		options.raw = !options.raw ? false : options.raw
 		const fn = `[Pistachio.reply()]`
 
 		//  Handle message with paging property enabled
@@ -786,7 +788,7 @@ class Pistachio {
 				}
 			}
 		}
-
+		if (options.raw) return embed
 		let sent = options.field.send(options.topNotch, embed)
 		if (!options.deleteIn) return sent
 		return sent

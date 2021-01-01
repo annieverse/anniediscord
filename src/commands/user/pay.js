@@ -72,6 +72,10 @@ class Pay extends Command {
 		})
 		this.addConfirmationButton(`checkout`, this.confirmation)
  		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance

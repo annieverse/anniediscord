@@ -199,8 +199,10 @@ class Commands {
 		//  Initialize the container first, if not present
 		if (!this.confirmationButtons) this.confirmationButtons = new Map()
 		const confirmationEmoji = `✅`
+		const cancelEmoji = this.bot.emojis.cache.get(`794593423575351307`)
 		targetMessage.react(confirmationEmoji)
-        const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === confirmationEmoji && user.id === targetUserId
+		targetMessage.react(cancelEmoji)
+        const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji.name].includes(reaction.emoji.name) && user.id === targetUserId
         const confirmationButton = targetMessage.createReactionCollector(confirmationButtonFilter, { time: 300000, max: 1 })
 		this.confirmationButtons.set(id, confirmationButton)
 		//  Optional metadata for debugging purpose
@@ -214,12 +216,28 @@ class Commands {
 	}
 
 	/**
-	 * Finalizing confirmation phase
-	 * @param {object} [response={}] target confirmation response to finalize with
+	 * Finalizing confirmation phase.
+	 * @param {object} [response={}] target confirmation response to finalize with.
 	 * @returns {string}
 	 */
 	finalizeConfirmation(response={}) {
 		return response.message.reactions.removeAll().catch(e => this.logger.warn(`Failed to finalize transaction. > ${e.stack}`))
+	}
+
+	/**
+	 * Check if cancellation on confirmation phase.
+	 * @param {object} [response={}] target confirmation response to cancel with.
+	 * @return {boolean}
+	 */
+	isCancelled(response={}) {
+		const r = response.message.reactions.cache
+		if (r.has(`794593423575351307`)) {
+			if (r.get(`794593423575351307`).count >= 2) {
+				this.finalizeConfirmation(response)
+				return true
+			}
+		}
+		return false
 	}
 
 	/**

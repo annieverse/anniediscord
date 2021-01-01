@@ -1,5 +1,5 @@
 {
-    "ACTION_CANCELLED": "Alright, action cancelled.",
+    "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "GUIDE": "You are authorized to use the **Artcoins Generator**.",
         "SUCCESSFUL": "Successfully refilled!",
