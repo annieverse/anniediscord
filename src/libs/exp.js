@@ -137,13 +137,18 @@ class Experience extends Points {
     			stackedTotalGainedReward += this.expConfig.currencyRewardPerLevelUp * (this.prevExp.level + i)
     		}
 			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-			await this.updateRank(this.newExp.level)
-			if (!parseInt(this.bot.level_up_message)) return
-            return this.reply(``, {
-                simplified: true,
-                prebuffer: true,
-                image: await img
-            })
+			try {
+				await this.updateRank(this.newExp.level)
+				if (!parseInt(this.bot.level_up_message)) return
+				return this.reply(``, {
+					simplified: true,
+					prebuffer: true,
+					image: await img
+				})
+			}
+			catch(e) {
+				this.logger.warn(`${fn} handled permission error.`)
+			}
     	} 
 
     	//  Regular reward
