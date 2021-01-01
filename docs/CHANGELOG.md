@@ -1,3 +1,24 @@
+# [7.10.0](https://github.com/klerikdust/anniediscord/compare/v7.9.1...v7.10.0) (2021-01-01)
+
+
+### Bug Fixes
+
+* **defaultPalette:** fallback on colorless role-rank ([471aebd](https://github.com/klerikdust/anniediscord/commit/471aebd47e34d4a4a62297245d2f77175633bd15))
+* **events:** reduce loads on blocking connection ([08094fe](https://github.com/klerikdust/anniediscord/commit/08094fecebfcadedd840a166faf7f8cf0f0d9e09))
+* **exp:** missing perm on lvlup perk ([5fea0f1](https://github.com/klerikdust/anniediscord/commit/5fea0f1820cb7e20ad8b9366dcd995e1f6374c42))
+* **gacha:** double react exploits ([ef8579a](https://github.com/klerikdust/anniediscord/commit/ef8579af7b7e74e2c05018702cde8105a1cfd9b8))
+* **levelUp:** custom cover not applied ([890d0b9](https://github.com/klerikdust/anniediscord/commit/890d0b9b12194ea4d421f506e4bd9cb73859ccff))
+* **UI:** ommit unsupported symbols from rank name ([11efb6b](https://github.com/klerikdust/anniediscord/commit/11efb6b7b4d8922817c8d7e39142dc56f0770731))
+* **userLookup:** fail to parse user on mention/id. ([b22a3cc](https://github.com/klerikdust/anniediscord/commit/b22a3cc29c88a37e4f644e3194b4a1f3d2547481))
+
+
+### Features
+
+* **AR:** allows server  to create their own autoresponder. ([f5f09bf](https://github.com/klerikdust/anniediscord/commit/f5f09bf596a9d1649fd6ae5dcb90aed514cf81f4))
+* **cancelOpt:** added cancel-button on transaction. ([9a99d01](https://github.com/klerikdust/anniediscord/commit/9a99d01d37d51fa5a30b2080e45522f97427f72c))
+* **cancelOpt:** widely-covered commands ([c38dc58](https://github.com/klerikdust/anniediscord/commit/c38dc580bfd9f098d813f4b16fc817061d323842))
+* **levelCard:** the displayed exp now is rounded. ([300b762](https://github.com/klerikdust/anniediscord/commit/300b76283fc1c7f4e2827da17d261d4851c29576))
+
 ## [7.9.1](https://github.com/klerikdust/anniediscord/compare/v7.9.0...v7.9.1) (2020-12-30)
 
 
