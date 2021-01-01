@@ -9,6 +9,7 @@ module.exports = annie => {
 		annie.startupState = 0
 		annie.registerGuildConfigurations()
 		annie.registerReminders()
+		annie.registerGuildAutoResponders()
 	}
 	if (dev) {
 		/**

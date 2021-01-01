@@ -35,6 +35,27 @@
     "AVATAR": {
         "INITIAL": "*Say cheese... ♡*"
     },
+    "AUTORESPONDER": {
+        "GUIDE": "This is your control center to manage autoresponders in **{{guild}}!** To get started, check the available actions below. {{emoji}}\n{{statusEmoji}} The AR module currently is **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> First-time using my AR module? then look no further, enable the module before doing everything else!\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Let's add a new AR! fill the <trigger> with message you want me to listen and <response> as my response to it!\n__e.g. {{prefix}}ar add welcome - enjoy your stay!__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Got bored with the AR? then it's time to delete it! fill the <id/trigger> with the AR you want to delete.\ne.g. __{{prefix}}ar delete welcome__\n\n**`{{prefix}}ar info`**\n> Having hard time remembering all the ARs you just registered? let's check them through this action!\n\n**`{{prefix}}ar reset`**\n> How many ARs you've created already?! too many? oh well... restarting from scratch will be a better option I think.\n\n**`{{prefix}}ar disable`**\n> ARs aren't fun anymore? aw, don't worry then. You can disable the entire ARs anytime!\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "**Eeh, what action was that??** {{emoji}}\n╰─I only accept {{actions}}.",
+        "ALREADY_ENABLED": "The AR module has been enabled by **{{user}}**, **{{time}}.** {{emoji}}",
+        "SUCCESSFULLY_ENABLED": "**Yay! AR successfully enabled!♡** {{emoji}}\n╰─Now it's time to create some cute autoresponders!",
+        "ALREADY_DISABLED": "**Wait, AR module isn't even enabled!** {{emoji}}\n╰─Go type **`{{prefix}}ar enable`** to enable it!",
+        "SUCCESSFULLY_DISABLED": "**Alright, it's done!♡** {{emoji}}\n╰─The AR module has successfully disabled!",
+        "EMPTY": "**Oops, empty ARs.** {{emoji}}\n╰─Try create some with **`{{prefix}}ar add <trigger> - <response>`**",
+        "DISPLAY": "Currently there are total of **{{ars}}** registered ARs in **{{guild}}** where the latest one was added by {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
+        "REGISTER_NO_PARAM": "**Don't forget to follow the format!♡**\ne.g **`{{prefix}}ar add I'm kawaii - no way, I'm more kawaii.`**",
+        "REGISTER_MISSING_SEPARATOR": "**Oops, you were missing the separator.**\ne.g **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
+        "REGISTER_EMPTY_RESPONSE": "**What's my response supposed to be?** {{emoji}}\n╰─try type **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
+        "REGISTER_CONFIRMATION": "So, are we going for this AR?\n╭*:;,．★ ～☆*──────────╮\n**What you just sent** → {{trigger}}\n**I'll respond with** → {{response}}\n╰──────────☆～*:;,．*╯\nIf this is what you wanted, kindly react to the green button to confirm it.",
+        "REGISTER_SUCCESSFUL": "**Yay! I've learned new AR!♡** {{emoji}}\n╰─Keep in mind, there's 15s cooldown for each AR to avoid spam.",
+        "REGISTER_FOOTER_TIP": "Now try type **`{{trigger}}`** {{emoji}}",
+        "RESET_CONFIRMATION": "╭*:;,．★ ～☆*──────────╮\n**Reset ARs from this server?** {{emoji}}\nThis action is irreversible and **{{totalArs}}** ARs will be deleted once you pressed the green button.\n╰──────────☆～*:;,．*╯",
+        "SUCCESSFULLY_RESET": "**Baibai my precious ARs!!**\n╰─{{totalArs}} autoresponders successfully deleted from this server!",
+        "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Is there any ARs you want to delete?**\nStart by typing **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nBelow are the registered ARs in {{guild}}.\n{{list}}",
+        "DELETE_TARGET_INVALID": "**Is that AR even exists??** {{emoji}}\n╰─Make sure to check the registered ARs first!",
+        "SUCCESSFULLY_DELETED": "**Aye, successfully deleted!♡** {{emoji}}\n╰─I'm no longer listening to that AR."
+    },
     "BADGECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",

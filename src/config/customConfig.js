@@ -1314,6 +1314,17 @@ class config {
                 customizable: true,
                 allowedTypes: [`string`],
                 value: ``
+            },
+            {
+                /**
+                 *  Toggle Annie's Autoresponder Module
+                 *  @type {object}
+                 */
+                name: `AR_MODULE`,
+                description: `Toggle Annie's Autoresponder Module`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
             }
         ]
     }

@@ -2,6 +2,7 @@ const Permission = require(`../libs/permissions`)
 const Points = require(`./points`)
 const Command = require(`./commands`)
 const likesHandler = require(`../struct/posts/likesHandler`)
+const AutoResponder = require(`../libs/autoResponder`)
 
 /**
  * @typedef {ClientPrimaryProps}
@@ -52,6 +53,7 @@ class MessageController {
          *  -- minimal
          *  -----------------------------------------------------------------
          */
+        if (this.isARModuleEnabled) new AutoResponder(this.bot, this.message,this.guild)
         if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
         //  Limit modules in minimal state.
         if (minimal) return
@@ -64,6 +66,14 @@ class MessageController {
         if (this.isPostModuleActive) return new likesHandler.heartHandler(this.data).intialPost()
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
+    }
+
+    /**
+     * Check if server has AR module enabled
+     * @return {boolean}
+     */
+    get isARModuleEnabled() {
+        return this.guild.configs.get(`AR_MODULE`).value
     }
 
     /**

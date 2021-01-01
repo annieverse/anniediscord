@@ -127,6 +127,45 @@ class Database {
 	}
 
 	/**
+	 * Check if cache exist in redis or not.
+	 * @param {string} [key=``] Target cache's key.
+	 * @return {boolean}
+	 */
+	async isCacheExist(key=``) {
+		const cache = await this.redis.get(key)
+		return cache !== null ? true : false
+	}
+
+	/**
+	 * Retrieve cache.
+	 * @param {string} [key=``] Target cache's key.
+	 * @return {string|null}
+	 */
+	getCache(key=``) {
+		return this.redis.get(key)
+	}
+
+	/**
+	 * Register cache.
+	 * @param {string} [key=``] Target cache's key.
+	 * @param {string} [value=``] The content to be filled in.
+	 * @return {boolean}
+	 */
+	setCache(key=``, value=``) {
+		return this.redis.set(key, value)
+	}
+
+	/**
+	 * Clearing out cache.
+	 * @param {string} [key=``] Target cache's key.
+	 * @return {boolean}
+	 */
+	clearCache(key=``) {
+		logger.info(`[Redis.clearCache] cleared cache in key '${key}'.`)
+		return this.redis.del(key)
+	}
+
+	/**
 	 * 	Standardized method for executing sql query
 	 * 	@param {string} [stmt=``] sql statement
 	 * 	@param {string} [type=`get`] `get` for single result, `all` for multiple result
@@ -349,6 +388,165 @@ class Database {
 			, `run`
 			, []
 			, `Verifying table user_reminders`
+		)
+	}
+
+	/**
+	 *  --------------------------------
+	 *  #GUILD AUTORESPONDER MANAGEMENT
+	 *  --------------------------------
+	 */
+
+	/**
+	 * Create autoresponders master table.
+	 * @return {QueryResult}
+	 */
+	registerAutoResponderMasterTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS autoresponders (
+
+			'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'ar_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+			'guild_id' TEXT,
+			'user_id' TEXT,
+			'trigger' TEXT,
+			'response' TEXT
+ 
+			)`
+			, `run`
+			, []
+			, `Verifying table autoresponders`
+		)
+	}
+
+	/**
+	 * Retrieve all guilds that have auto responders registered.
+	 * @return {QueryResult}
+	 */
+	getGuildsWithAutoResponders() {
+		return this._query(`
+			SELECT DISTINCT guild_id
+			FROM autoresponders`
+			, `all`
+			, []
+			, `Retrieving guild_ids with registered ARs.`
+		)
+	}
+
+	/**
+	 * @typedef {object} AutoresponderMetadata
+	 * @property {string} [guildId=``] Target guild.
+	 * @property {string} [userId=``] Set by user.
+	 * @property {string} [trigger=``] Trigger to specific message.
+	 * @property {string} [response=``] The response from trigger.
+	 */
+
+	/**
+	 * Registering new autoresponder to specific guild.
+	 * @param {AutoresponderMetadata} [meta={}] The AR metadata to be registered.
+	 * @return {QueryResult}
+	 */
+	async registerAutoResponder({guildId=``, userId=``, trigger=``, response=``}) {
+		//  Insert into cache
+		let cache = []
+		const cacheID = `REGISTERED_AR@${guildId}`
+		if (await this.isCacheExist(cacheID)) cache = JSON.parse(await this.getCache(cacheID))
+		await this._query(`
+			INSERT INTO autoresponders(
+				guild_id,
+				user_id,
+				trigger,
+				response
+			)
+			VALUES(?, ?, ?, ?)`
+			, `run`
+			, [guildId, userId, trigger, response]
+			, `Inserting new AR for GUILD_ID:${guildId}`
+		)
+		const ARmeta = (await this._query(`
+			SELECT *
+			FROM autoresponders
+			WHERE guild_id = ?
+			ORDER BY ar_id DESC`
+			, `all`
+			, [guildId]
+		))[0]
+		cache.push({
+			registered_at: ARmeta.registered_at,
+			guild_id: ARmeta.guild_id,
+			ar_id: ARmeta.ar_id,
+			user_id: ARmeta.user_id,
+			trigger: ARmeta.trigger,
+			response: ARmeta.response
+		})
+		this.setCache(cacheID, JSON.stringify(cache))
+	}
+
+	/**
+	 * Deleting an autoresponder from specific guild.
+	 * @param {number} id Target AR id.
+	 * @param {string} [guildId=``] Target guild.
+	 * @return {QueryResult}
+	 */
+	async deleteAutoResponder(id, guildId=``) {
+		//  Delete element from cache if available
+		const cacheID = `REGISTERED_AR@${guildId}`
+		if (await this.isCacheExist(cacheID)) {
+			const cache = JSON.parse(await this.getCache(cacheID))
+			const updatedCache = cache.filter(node => node.ar_id !== id)
+			//  Delete whole array if updatedCache is empty
+			if (updatedCache.length <= 0) {
+				this.clearCache(cacheID)
+			}
+			//  Else, just update the array
+			else {
+				this.setCache(cacheID, updatedCache)
+			}
+		}
+		return this._query(`
+			DELETE FROM autoresponders
+			WHERE 
+				ar_id = ?
+				AND guild_id = ?`
+			, `run`
+			, [id, guildId]
+			, `Deleting AR with ID:${id} from GUILD_ID:${guildId}`
+		)
+	}
+
+	/**
+	 * Deletes all the registered ARs from specific guild.
+	 * @param {string} [guildId=``] Target guild.
+	 * @return {QueryResult}
+	 */
+	clearAutoResponders(guildId=``) {
+		//  Clear ARs in cache
+		this.clearCache(`REGISTERED_AR@${guildId}`)
+		return this._query(`
+			DELETE FROM autoresponders
+			WHERE guild_id = ?`
+			, `run`
+			, [guildId]
+			, `Deleting all ARs from GUILD_ID:${guildId}`
+		)
+	}
+
+	/**
+	 * Retrieving all the registered ARs from specific guild.
+	 * @param {string} [guildId=``] Target guild.
+	 * @param {boolean} [fetchCache=true] Toggle false to make it always fetching from database.
+	 * @return {QueryResult}
+	 */
+	async getAutoResponders(guildId=``, fetchCache=true) {
+		//  Check in cache
+		const cacheID = `REGISTERED_AR@${guildId}`
+		if (fetchCache && await this.isCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
+		return this._query(`
+			SELECT *
+			FROM autoresponders
+			WHERE guild_id = ?`
+			, `all`
+			, [guildId]
+			, `Retrieving all the registered ARs from GUILD_ID:${guildId}`
 		)
 	}
 

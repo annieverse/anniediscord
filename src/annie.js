@@ -177,6 +177,30 @@ class Annie extends Discord.Client {
     }
 
     /**
+     * Registering guild's registere ARs into cache.
+     * @return {boolean}
+     */
+    async registerGuildAutoResponders() {
+        const fn = `[Annie.registerGuildAutoResponders]`
+        //  Handle if there are no guild that have registered ARs.
+        const ars = await this.db.getGuildsWithAutoResponders()
+        if (ars.length <= 0) {
+            this.logger.info(`${fn} there are no guilds with registered ARs.`)
+            return false
+        }
+        //  Iterate over all the available guilds
+        let totalArs = 0
+        for (let i=0; i<ars.length; i++) {
+            const guildId = ars[i].guild_id
+            const registeredArs = await this.db.getAutoResponders(guildId, false)
+            totalArs += registeredArs.length
+            this.db.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
+        }
+        this.logger.info(`${fn} ${totalArs} autoresponders in ${ars.length} guilds have successfully registered into cache.`)
+        return true
+    }
+
+    /**
      * Parsing configuration value into a proper type based on what's already defined in customConfigs.json
      * @param {*} [config=``] the target config to be checked its type
      * @param {array} [typePool=[]] list of allowed types for the config
