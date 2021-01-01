@@ -203,6 +203,10 @@ class AutoResponder extends Command {
         })
 		this.addConfirmationButton(`register_confirmation`, this.registerConfirmation)
  		return this.confirmationButtons.get(`register_confirmation`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
             //  Register
             db.registerAutoResponder({
                 guildId: this.guild.id,
@@ -285,6 +289,10 @@ class AutoResponder extends Command {
         })
 		this.addConfirmationButton(`reset_confirmation`, this.resetConfirmation)
  		return this.confirmationButtons.get(`reset_confirmation`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
             //  Wipeout ARs
             db.clearAutoResponders(this.guild.id)
             this.finalizeConfirmation(r)

@@ -125,6 +125,10 @@ class SetCover extends Command {
         this.fetching.delete()
         this.addConfirmationButton(`applyCover`, this.confirmation)
         return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
             await db.detachCovers(this.user.id, this.message.guild.id)
             if (this.cover.isSelfUpload) {
                 db.applySelfUploadCover(this.cover.item_id, this.user.id, this.message.guild.id)

@@ -57,7 +57,11 @@ class ConvertArtcoins extends Command {
 			}
 		})
 		this.addConfirmationButton(`checkout`, this.confirmation)
- 		return this.confirmationButtons.get(`checkout`).on(`collect`, async () => {
+ 		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
 			//	Deduct balance & add new exp
 			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)

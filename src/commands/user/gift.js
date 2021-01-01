@@ -83,6 +83,10 @@ class Gift extends Command {
 		})
 		this.addConfirmationButton(`gift`, this.confirmation)
  		return this.confirmationButtons.get(`gift`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: emoji(`AnnieSleep`)}
+			})
 			//  Adds reputation point to target user
 			await db.addUserReputation(amount, this.user.id, this.message.author.id, this.message.guild.id)
 			//  Deduct gifts from sender

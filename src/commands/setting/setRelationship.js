@@ -63,6 +63,10 @@ class SetRelationship extends Command {
         })
         this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(``, {
+				customHeader: [`Oops, they rejected your relationship request...`, avatar(this.user.id)]
+			})
             //  Update relationship data on author side
             await this.bot.db.setUserRelationship(this.author.id, this.user.id, parseInt(relationship.relationship_id), this.message.guild.id)
             //  Successful
