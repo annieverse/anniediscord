@@ -41,7 +41,7 @@ class User {
 			if (findByFullString) {
 				this.logger.debug(`${fn} successfully found user by complete string`)
 				this.user = findByFullString
-				this.usedKeyword = target
+				this.user.usedKeyword = target
 				return this.user
 			}
 		}
@@ -54,7 +54,7 @@ class User {
 			findByFullStringID = collection.cache.get(target).user
 			this.logger.debug(`${fn} successfully found user by complete string of user ID`)
 			this.user = findByFullStringID
-			this.usedKeyword = target
+			this.user.usedKeyword = target
 			return this.user
 		}
 		catch(e) {
@@ -73,7 +73,7 @@ class User {
 				if (findByStringToken) {
 					this.logger.debug(`${fn} successfully found user by using string token '${token}'`)
 					this.user = findByStringToken
-					this.usedKeyword = token
+					this.user.usedKeyword = token
 					return this.user
 				}
 			}
@@ -87,7 +87,7 @@ class User {
 				if (findByIDToken) {
 					this.logger.debug(`${fn} successfully found user by using ID token '${token}'`)
 					this.user = findByIDToken
-					this.usedKeyword = token
+					this.user.usedKeyword = token
 					return this.user
 				}
 			}
@@ -106,7 +106,7 @@ class User {
 					if (findByCombinedStringTokens) {
 						this.logger.debug(`${fn} successfully found user by using combined string tokens '${combinedTokens}'`)
 						this.user = findByCombinedStringTokens
-						this.usedKeyword = combinedTokens
+						this.user.usedKeyword = combinedTokens
 						return this.user
 					}
 				}
