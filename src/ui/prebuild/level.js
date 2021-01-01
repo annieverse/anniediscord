@@ -43,7 +43,7 @@ class UI {
 		})
 		//  Required exp to the next level
 		.createDataBar({ 
-			content: `${formatK(this.user.exp.maxexp - this.user.exp.current_exp)} EXP`, 
+			content: `${formatK(Math.round(this.user.exp.maxexp - this.user.exp.current_exp))} EXP`, 
 			label: `until level ${commanifier(this.user.exp.level + 1)}`, 
 			labelSize: `MICRO`,
 			size: `SMALL`, 
