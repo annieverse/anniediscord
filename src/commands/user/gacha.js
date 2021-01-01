@@ -75,61 +75,53 @@ class Gacha extends Command {
          * 1.) GIVE PURCHASE OFFER TO USER
          * --------------------
          */
-        return reply(this.locale.GACHA.SUGGEST_TO_BUY, {
+        this.suggestToBuy = await reply(this.locale.GACHA.SUGGEST_TO_BUY, {
             simplified: true,
             socket: {emoji: emoji(`lucky_ticket`)}
         })
-        .then(async msg => {
-            await msg.react(`✅`)
-            const confirmationButtonFilter = (reaction, user) => reaction.emoji.name === `✅` && user.id === this.message.author.id
-            const confirmationButton = msg.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-            confirmationButton.on(`collect`, async () => {
-                msg.delete()
-                this.insufficientTicketWarning.delete()
+		this.addConfirmationButton(`suggestToBuy`, this.suggestToBuy)
+        this.confirmationButtons.get(`suggestToBuy`).on(`collect`, async () => {
+            this.suggestToBuy.delete()
+            this.insufficientTicketWarning.delete()
+
+            /**
+             * --------------------
+             * 2.) CHECKOUT TRANSACTION
+             * --------------------
+             */
+            this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
+                socket: {
+                    total: `${emoji(paymentItem.alias)}${commanifier(amountToPay)}`,
+                    item: `[${this.amountToOpen}x] ${gachaItem.name}`,
+                    itemType: gachaItem.type_name
+                },
+                color: `golden`,
+            })
+
+            this.addConfirmationButton(`checkout`, this.checkout)
+            this.confirmationButtons.get(`checkout`).on(`collect`, async () => {
+                this.checkout.delete()
+                //  Deduct balance & deliver lucky tickets
+                await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+                await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+                reply(this.locale.BUY.SUCCESSFUL, {
+                    color: `lightgreen`,
+                    socket: {
+                        item: `${emoji(gachaItem.alias)} [${gachaItem.type_name}] ${commanifier(this.amountToOpen)}x ${gachaItem.name}`,
+                        emoji: emoji(`success`)
+                    }
+                })
 
                 /**
                  * --------------------
-                 * 2.) CHECKOUT TRANSACTION
+                 * 3.) ASK USER IF THEY WANT TO STRAIGHT OPEN IT OR NOT.
                  * --------------------
                  */
-                this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
-                    socket: {
-                        total: `${emoji(paymentItem.alias)}${commanifier(amountToPay)}`,
-                        item: `[${this.amountToOpen}x] ${gachaItem.name}`,
-                        itemType: gachaItem.type_name
-                    },
-                    color: `golden`,
-                })
-
-                await this.checkout.react(`✅`)
-                const purchaseButton = this.checkout.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-                purchaseButton.on(`collect`, async () => {
-                    //  Deduct balance & deliver lucky tickets
-                    await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
-                    await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
-                    this.checkout.delete()
-                    reply(this.locale.BUY.SUCCESSFUL, {
-                        color: `lightgreen`,
-                        socket: {
-                            item: `${emoji(gachaItem.alias)} [${gachaItem.type_name}] ${commanifier(this.amountToOpen)}x ${gachaItem.name}`,
-                            emoji: emoji(`success`)
-                        }
-                    })
-
-                    /**
-                     * --------------------
-                     * 3.) ASK USER IF THEY WANT TO STRAIGHT OPEN IT OR NOT.
-                     * --------------------
-                     */
-                    reply(this.locale.GACHA.ASK_TO_OPEN, {simplified: true})
-                    .then(async askToOpen => {
-                        await askToOpen.react(`✅`)
-                        const openButton = askToOpen.createReactionCollector(confirmationButtonFilter, { time: 60000 })
-                        openButton.on(`collect`, async () => {
-                            openButton.stop()
-                            return this.startsRoll()
-                        })
-                    })
+                this.askToOpenGacha = await reply(this.locale.GACHA.ASK_TO_OPEN, {simplified: true})
+                this.addConfirmationButton(`askToOpenGacha`, this.askToOpenGacha)
+                this.confirmationButtons.get(`askToOpenGacha`).on(`collect`, async () => {
+                        this.askToOpenGacha.delete()
+                        this.startsRoll()
                 })
             })
         })
@@ -143,7 +135,7 @@ class Gacha extends Command {
             simplified: true,
             socket: {
                 user: this.tools.name(this.user.id),
-                emoji: this.tools.emoji(`AnnieStabby`)
+                emoji: this.tools.emoji(`AnnieYay`)
             }
         })
         //  Registering loot
