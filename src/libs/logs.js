@@ -526,7 +526,7 @@ class LogsSystem {
         try {
             //  Fetch owner user data
             const owner = await this.data.bot.users.fetch(this.data.guild.ownerID)
-            return reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
+            await reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
                 image: `banner_help`,
                 field: owner,
                 socket: {
@@ -537,8 +537,14 @@ class LogsSystem {
                     affiliatedServer: affiliate[0].invite_link
                 }
             })
+            const affiliates = await this.data.bot.db.getAffiliates()
+            const featuredAffiliate = affiliates.filter(node => node.guild_id === `643872402731958288`)
+            return reply(`Also, checkout our affiliate who have supported the development of Annie! ${emoji(`AnnieYay`)}\n${featuredAffiliate[0].invite_link}`, {
+                simplified: true,
+                field: owner
+            })
         } catch (e) {
-            return this.logger.info(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stack}`)
+            return this.logger.warn(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stack}`)
         }
     }
 

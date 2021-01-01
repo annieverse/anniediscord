@@ -318,7 +318,7 @@
     "HELP": {
         "LANDING": "are you looking for a quick start?{{emoji}}\n\n`{{prefix}}level`\n*You might want to check how much exp you get after those hours of chit-chatting.*\n\n`{{prefix}}balance`\n*Come check how many artcoins you had in your wallet right now.*\n\n`{{prefix}}daily`\n*Annie rewards you free 250 artcoins for every 23 hours. So, make sure to not skip this freebies!*\n\n`{{prefix}}leaderboard`\n*Curious who got the highest exp, artcoins and fame points? then try this!*\n\n`{{prefix}}profile`\n*You will be able to see your current rank, level, artcoins and fame points at a glance.*\n\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
         "COMMANDPEDIA": {
-            "HEADER": "`()` indicates that the argument is optional and you can leave it blank.\nIf `<>` is the only one that presents, then you are required to include an additional argument in order for command to work.\n\n{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <commandName>` to get informations about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}} | {{affiliateInviteLink}}",
+            "HEADER": "`()` indicates that the argument is optional and you can leave it blank.\nIf `<>` is the only one that presents, then you are required to include an additional argument in order for command to work.\n\n{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <commandName>` to get informations about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}}",
             "USAGE_EXAMPLES": "Use **{{prefix}}help <name/category>** to get information about a command or category."
         },
         "UNABLE_TO_FIND_COMMAND": "There's no command or category match with that keyword."
@@ -350,7 +350,7 @@
     },
     "LOGS": {
         "GUILDCREATE": {
-            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, checkout my [wiki on GitHub.]({{wiki}}) or type `{{prefix}}help` in your guild to see all the available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}}) | [Affiliated Server]({{affiliatedServer}})",
+            "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, type **`{{prefix}}help`** in your server to see all my available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}}) ",
             "INTERNAL_LOG": "Hm?! I got invited to **{{guildCode}}**! I hope I don't disappoint them this time. {{emoji}}"
         },
         "MESSAGE_DELETE": "Hi! I just saw one message got deleted by **{{user}}** in this channel called as **{{channel}}**. If I could remember, the content was something like this:\n\n> {{content}}",

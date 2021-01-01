@@ -18,9 +18,8 @@ class Test extends Command {
      */
 	async execute({ reply }) {
 		await this.requestUserMetadata(2)
-		const gui = require(`../../ui/prebuild/levelUpMessage`)
-		const img = await new gui(this.user, 60).build()
-		return reply(`test`, {prebuffer:true, image: img, simplified:true})
+		this.bot.emit(`guildCreate`, this.message.guild)
+		return reply(`test`, {simplified:true})
 	}
 }
 

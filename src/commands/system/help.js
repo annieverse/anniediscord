@@ -61,7 +61,6 @@ class Help extends Command {
 							prefix: this.bot.prefix,
 							serverLink: `[Join Support Server](${supportServer})`,
 							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
-							affiliateInviteLink: `[My Affiliate](${affiliate[0].invite_link})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
 						image: `banner_help`,
