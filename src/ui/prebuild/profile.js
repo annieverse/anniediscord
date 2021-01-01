@@ -2,6 +2,7 @@ const Cards = require(`../components/cards`)
 const Color = require(`color`)
 const loadAsset = require(`../../utils/loadAsset`)
 const formatK = require(`../../utils/formatK`)
+const symbolParser = require(`../../utils/symbolParser`)
 const {resolveImage} = require(`canvas-constructor`)
 
 class UI {
@@ -106,7 +107,7 @@ class UI {
 			.printRectangle(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setColor(card._resolveColor(`white`))
 			.setTextFont(`8pt roboto-bold`)
-			.printText(this.user.rank.name, startPos_x + 215, startPos_y + 264)
+			.printText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
 			.restore()
 
 		//  Description

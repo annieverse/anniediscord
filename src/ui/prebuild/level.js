@@ -2,6 +2,7 @@ const Cards = require(`../../ui/components/cards`)
 const formatK = require(`../../utils/formatK`)
 const commanifier = require(`../../utils/commanifier`)
 const urlToBuffer = require(`../../utils/urlToBuffer`)
+const symbolParser = require(`../../utils/symbolParser`)
 const Color = require(`color`)
 
 class UI {
@@ -31,7 +32,7 @@ class UI {
 		//	Avatar representative
 		await card.addContent({ avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 65, avatarRadius: 12 })
 		//	Author and rank name
-		card.addTitle({ main: this.user.username, caption: this.user.rank.name, captionColor: `inherit`, size: 15, marginTop: 40 })
+		card.addTitle({ main: this.user.username, caption: symbolParser(this.user.rank.name), captionColor: `inherit`, size: 15, marginTop: 40 })
 		//	Add experience bar
 		.addLinebar({  
 			current: currentBarPercentage, 
