@@ -41,14 +41,11 @@ class Experience extends Points {
     /**
      *  Running EXP workflow.
      *  @param {number} [expToBeAdded=this.baseGainedExp] amount of exp to be added into user's current exp pool
-     *  @returns {boolean}
+     *  @returns {void}
      */
     async execute(expToBeAdded=this.baseGainedExp) {
 		if (!this.configs.get(`EXP_MODULE`).value) return
     	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
-        
-    	//  Apply booster if presents
-    	if (this.exp.booster_id) await this.applyBooster()
 
     	//  Calculate and get detailed exp data
         this.totalGainedExp = expToBeAdded * this.expMultiplier
@@ -56,11 +53,10 @@ class Experience extends Points {
     	this.newExp = this.xpFormula(this.exp.current_exp + this.totalGainedExp)
 
     	//  Send level up message if new level is higher than previous level
-		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
+		if (this.newExp.level > this.prevExp.level) this.levelUpPerks()
     	//  Update user's exp data.
-    	await this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
+    	this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
-    	return true
     }
 
     /**
@@ -107,7 +103,7 @@ class Experience extends Points {
 			lowerRankRoles.push(role.id)
 		})
         await this.guild.members.fetch(this.message.author.id)
-		await this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
+		this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles).catch(e => this.logger.warn(`${fn} role remove error has been handled.`))
 		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = registeredRanks.filter(node => node.LEVEL === level)[0]
@@ -118,7 +114,7 @@ class Experience extends Points {
         if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
 		let role = this.guild.roles.cache.get(roleFromList.ROLE)
         //  Start assign the rolerank
-		await this.guild.members.cache.get(this.message.author.id).roles.add(role)
+		this.guild.members.cache.get(this.message.author.id).roles.add(role).catch(e => this.logger.warn(`${fn} role assign error has been handled.`))
         this.logger.info(`${fn} successfully added RANK_ID:${role.id} to USER_ID:${this.message.author.id} in GUILD_ID:${this.message.guild.id}`)
 	}
 
@@ -128,57 +124,35 @@ class Experience extends Points {
      */
     async levelUpPerks() {
         const fn = `[Experience.levelUpPerks]`
-    	//  Handle level jumping (over 1 level threeshold)
-    	const levelDiff = this.newExp.level - this.prevExp.level
         const img = await new GUI(await this._getMinimalUserMetadata(), this.newExp.level).build()
-    	if (levelDiff > 1) {
-    		let stackedTotalGainedReward = 0
-    		for (let i=0; i<levelDiff; i++) {
-    			stackedTotalGainedReward += this.expConfig.currencyRewardPerLevelUp * (this.prevExp.level + i)
-    		}
-			await this.db.updateInventory({itemId: 52, value: stackedTotalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-			try {
-				await this.updateRank(this.newExp.level)
-				if (!parseInt(this.bot.level_up_message)) return
-				return this.reply(``, {
+		try {
+			//  Regular reward
+			const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
+			this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
+			this.updateRank(this.newExp.level)
+			if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
+			//  Send lvl-up message to custom channel if provided
+			const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
+			if (customLevelUpMessageChannel) {
+				//  Handle if channel cannot be seen or sent in
+				if (!this.guild.channels.cache.has(customLevelUpMessageChannel)) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
+				return this.reply(`**Congratulation, ${this.message.author.username}!♡** `, {
+					field: this.guild.channels.cache.get(customLevelUpMessageChannel),
 					simplified: true,
 					prebuffer: true,
 					image: await img
 				})
 			}
-			catch(e) {
-				this.logger.warn(`${fn} handled permission error.`)
-			}
-    	} 
-
-    	//  Regular reward
-    	const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
-    	await this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-		await this.updateRank(this.newExp.level)
-		if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
-        //  Send lvl-up message to custom channel if provided
-        const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
-        if (customLevelUpMessageChannel) {
-            //  Handle if channel cannot be seen or sent in
-            if (!this.guild.channels.cache.has(customLevelUpMessageChannel)) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
-            try {
-                return this.reply(`**Congratulation, ${this.message.author.username}!♡** `, {
-                    field: this.guild.channels.cache.get(customLevelUpMessageChannel),
-                    simplified: true,
-                    prebuffer: true,
-                    image: await img
-                })
-            }
-            catch (e) {
-                this.logger.warn(`${fn} an error occured during the message transport. Probably due to lack of permission issue. ${e.stack}`)
-            }
-        }
-        //  Otherwise, send message to the channel where user got leveled-up.
-		return this.reply(``, {
-			simplified: true,
-            prebuffer: true,
-            image: await img
-		})
+			//  Otherwise, send message to the channel where user got leveled-up.
+			return this.reply(``, {
+				simplified: true,
+				prebuffer: true,
+				image: await img
+			})
+		}
+		catch(e) {
+			this.logger.warn(`${fn} something went wrong, but carefully handled. > ${e.stack}`)
+		}
     }
 
     /**

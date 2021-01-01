@@ -46,7 +46,7 @@ class MessageController {
         //  Ignore any user interaction in dev environment
         if (this.unauthorizedEnvironment) return
         //  Check user in the database, if doesn't exist, insert a new row with value of current message author's id. Only ran inside guild's field.
-        if (!this.isDirectMessage) await this.bot.db.validateUser(this.message.author.id, this.guildId, this.message.author.username)
+        if (!this.isDirectMessage) this.bot.db.validateUser(this.message.author.id, this.guildId, this.message.author.username)
         /** 
          *  -----------------------------------------------------------------
          *  Module Selector
@@ -57,13 +57,6 @@ class MessageController {
         if (this.isCommandMessage) return new Command({bot:this.bot, message:this.message}).run()
         //  Limit modules in minimal state.
         if (minimal) return
-        /** 
-         *  -----------------------------------------------------------------
-         *  Module Selector
-         *  -- extended
-         *  -----------------------------------------------------------------
-         */
-        if (this.isPostModuleActive) return new likesHandler.heartHandler(this.data).intialPost()
         //  Automatically executing [Points Controller] when no other module requirements are met
         return new Points({bot:this.bot, message:this.message})
     }

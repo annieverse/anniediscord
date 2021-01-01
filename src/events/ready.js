@@ -37,8 +37,8 @@ module.exports = annie => {
 				][Math.floor(Math.random() * 2)],
 				{type: `WATCHING`}
 			)
-		//  Refresh activity for every 30 seconds
-		}, 30000)
+		//  Refresh activity for every 60 seconds
+		}, 60000)
 		/**
 		 * 	--------------------------------------------------
 		 * 	Primary task
@@ -52,17 +52,5 @@ module.exports = annie => {
 		Routine.releasePixivCaches()
 		//  Handling incoming votes
 		new VotesManager(annie)
-		/**
-		 * 	--------------------------------------------------
-		 * 	Below are features that currently binding to AAU guild.
-		 * 	Can be disabled or adjusted for cross-server proposal.
-		 * 	--------------------------------------------------
-		 */
-
-		//	Change Booster Role color
-		Routine.roleChange()
-		// Remove featured daily post
-		Routine.removeFeaturedDailyPostLoop()
 	}
-
 }
