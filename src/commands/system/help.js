@@ -32,7 +32,6 @@ class Help extends Command {
 
 			// Display 5 most used commands suggestions
 			const commandSuggestions = await db.mostUsedCommands()
-			const affiliate = await db.getAffiliates()
 			return reply(this.locale.HELP.LANDING, {
 				socket: {
 					user: name(this.user.id),
