@@ -1,3 +1,10 @@
+## [7.10.6](https://github.com/klerikdust/anniediscord/compare/v7.10.5...v7.10.6) (2021-01-02)
+
+
+### Performance Improvements
+
+* **cache:** adds ttl cache on exp gain ([d642668](https://github.com/klerikdust/anniediscord/commit/d642668733777412d1ae1e8185740306cf53e56d))
+
 ## [7.10.5](https://github.com/klerikdust/anniediscord/compare/v7.10.4...v7.10.5) (2021-01-02)
 
 
