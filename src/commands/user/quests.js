@@ -69,7 +69,7 @@ class Quests extends Command {
 			// Handle if user asked to cancel the quest
 			if ([`cancel`, `n`, `no`].includes(answer)) {
 				reply(this.locale.QUEST.CANCEL)
-				msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id}`))
+				msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 				this.quest.delete()
 				this.bot.db.redis.del(sessionID)
 				return this.endSequence()
@@ -79,7 +79,7 @@ class Quests extends Command {
 				reply(this.locale.QUEST.INCORRECT_ANSWER, {status: `warn`, deleteIn: 3})
 				return
 			}
-			msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id}`))
+			msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
 			await db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.id})
 			await db.updateUserQuest(this.user.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
