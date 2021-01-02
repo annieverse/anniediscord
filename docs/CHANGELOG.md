@@ -1,3 +1,10 @@
+## [7.10.4](https://github.com/klerikdust/anniediscord/compare/v7.10.3...v7.10.4) (2021-01-02)
+
+
+### Bug Fixes
+
+* **quest:** permission handler ([604652a](https://github.com/klerikdust/anniediscord/commit/604652a25808dda276cd6c26267ad029496a20b6))
+
 ## [7.10.3](https://github.com/klerikdust/anniediscord/compare/v7.10.2...v7.10.3) (2021-01-02)
 
 
