@@ -23,7 +23,7 @@ class Invite extends Command {
 		try {
 			//  Attempt to send through DM.
 			await this.sendInvites(this.message.author,...arguments)
-			return reply(this.locale.INVITE_LINK_SENT, {color: `lightgreen`, socket:{ emoji:`:e_mail:` }})
+			return reply(this.locale.INVITE_LINK_SENT, {status: `success`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
 			return this.sendInvites(this.message.channel,...arguments)
@@ -35,27 +35,16 @@ class Invite extends Command {
      * @param {object} [targetChannel={}] target channel to be sent in..
      * @returns {void}
      */
-	async sendInvites(targetChannel={},{reply}) {
+	async sendInvites(targetChannel={},{reply, emoji}) {
 		await reply(this.locale.GENERATE_BOT_INVITE, {
 			socket: {botInviteLink: `[Let's add me to your server!](${this.botInviteUrl})`},
-			color: `crimson`,
 			field: targetChannel
 		})
 		await reply(this.locale.GENERATE_SERVER_INVITE, {
 			simplified: true,
 			socket: {
 				serverLink: this.tools.supportServer,
-				emoji: this.tools.emoji(`AnnieSmile`)
-			},
-			field: targetChannel
-		})
-		const affiliates = await this.bot.db.getAffiliates()
-		const featuredAffiliate = affiliates.filter(node => node.guild_id === `643872402731958288`)
-		await reply(this.locale.GENERATE_AFFILIATE_INVITE, {
-			simplified: true,
-			socket: {
-				affiliateLink: featuredAffiliate[0].invite_link,
-				emoji: this.tools.emoji(`AnnieDab`)
+				emoji: emoji(`AnnieSmile`)
 			},
 			field: targetChannel
 		})

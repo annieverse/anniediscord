@@ -512,7 +512,6 @@ class LogsSystem {
     async guildCreate({ reply, emoji }) {
         const fn = `[Logs.guildCreate]`
         const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
-        const affiliate = await this.data.bot.db.getAffiliates()
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
@@ -526,22 +525,14 @@ class LogsSystem {
         try {
             //  Fetch owner user data
             const owner = await this.data.bot.users.fetch(this.data.guild.ownerID)
-            await reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
+            reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
                 image: `banner_help`,
                 field: owner,
                 socket: {
-                    wiki: `https://github.com/klerikdust/anniediscord/wiki`,
                     prefix: this.data.bot.prefix,
-                    emoji: emoji(`AnnieSmile`),
-                    supportServer: this.data.bot.supportServer,
-                    affiliatedServer: affiliate[0].invite_link
+                    emoji: emoji(`AnnieYay`),
+                    supportServer: this.data.bot.supportServer
                 }
-            })
-            const affiliates = await this.data.bot.db.getAffiliates()
-            const featuredAffiliate = affiliates.filter(node => node.guild_id === `643872402731958288`)
-            return reply(`Also, checkout our affiliate who have supported the development of Annie! ${emoji(`AnnieYay`)}\n${featuredAffiliate[0].invite_link}`, {
-                simplified: true,
-                field: owner
             })
         } catch (e) {
             return this.logger.warn(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stack}`)
