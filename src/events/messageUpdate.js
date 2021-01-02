@@ -1,4 +1,6 @@
 module.exports = (bot, oldMessage, newMessage, configs) => {
+	//  Handle if configs is empty
+	if (configs === null) return
     let metadata = {
         oldMessage: oldMessage,
         newMessage: newMessage,

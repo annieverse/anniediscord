@@ -21,7 +21,7 @@ module.exports = annie => {
 		 *  Everything below this is used for logging purpose
 		 *  --------------------------------------
 		 */
-		annie.on(`messageUpdate`, (oldMessage, newMessage) => reqEvent(`messageUpdate`)(annie, oldMessage, newMessage, fetchGuildConfigs(oldMessage.guild.id)))
+		annie.on(`messageUpdate`, (oldMessage, newMessage) => reqEvent(`messageUpdate`)(annie, oldMessage, newMessage, oldMessage.channel.type === `dm` ? null : fetchGuildConfigs(oldMessage.guild.id)))
 		annie.on(`messageDelete`, (message) => reqEvent(`messageDelete`)(annie, message, fetchGuildConfigs(message.guild.id)))
 		annie.on(`messageDeleteBulk`, (messages) => reqEvent(`messageDeleteBulk`)(annie, messages, fetchGuildConfigs(messages.first().guild.id)))
 		annie.on(`roleCreate`, (role) => reqEvent(`roleCreate`)(annie, role, fetchGuildConfigs(role.guild.id)))
