@@ -1,3 +1,10 @@
+## [7.10.5](https://github.com/klerikdust/anniediscord/compare/v7.10.4...v7.10.5) (2021-01-02)
+
+
+### Bug Fixes
+
+* **exp:** blocking-flow on update rank ([3abf379](https://github.com/klerikdust/anniediscord/commit/3abf3796c254d0f6029d1fe48b6b39dddc707e80))
+
 ## [7.10.4](https://github.com/klerikdust/anniediscord/compare/v7.10.3...v7.10.4) (2021-01-02)
 
 
