@@ -1,3 +1,10 @@
+## [7.10.2](https://github.com/klerikdust/anniediscord/compare/v7.10.1...v7.10.2) (2021-01-02)
+
+
+### Bug Fixes
+
+* **URL:** disconnected on dm sent ([7c606b3](https://github.com/klerikdust/anniediscord/commit/7c606b368dd80b996f75d0ca62cd092759366cad))
+
 ## [7.10.1](https://github.com/klerikdust/anniediscord/compare/v7.10.0...v7.10.1) (2021-01-01)
 
 
