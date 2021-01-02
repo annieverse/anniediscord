@@ -53,7 +53,7 @@ class Experience extends Points {
     	this.newExp = this.xpFormula(this.exp.current_exp + this.totalGainedExp)
 
     	//  Send level up message if new level is higher than previous level
-		if (this.newExp.level > this.prevExp.level) this.levelUpPerks()
+		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
     	//  Update user's exp data.
     	this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
     	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
@@ -103,7 +103,7 @@ class Experience extends Points {
 			lowerRankRoles.push(role.id)
 		})
         await this.guild.members.fetch(this.message.author.id)
-		this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles).catch(e => this.logger.warn(`${fn} role remove error has been handled. > ${e.stack}`))
+		await this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles).catch(e => this.logger.warn(`${fn} role remove error has been handled. > ${e.stack}`))
 		level = this.newExp.level
 		level = this.closestValue(level, rankLevels)
 		let roleFromList = registeredRanks.filter(node => node.LEVEL === level)[0]
@@ -114,7 +114,7 @@ class Experience extends Points {
         if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
 		let role = this.guild.roles.cache.get(roleFromList.ROLE)
         //  Start assign the rolerank
-		this.guild.members.cache.get(this.message.author.id).roles.add(role).catch(e => this.logger.warn(`${fn} role assign error has been handled. > ${e.stack}`))
+		await this.guild.members.cache.get(this.message.author.id).roles.add(role).catch(e => this.logger.warn(`${fn} role assign error has been handled. > ${e.stack}`))
         this.logger.info(`${fn} successfully added RANK_ID:${role.id} to USER_ID:${this.message.author.id} in GUILD_ID:${this.message.guild.id}`)
 	}
 
@@ -129,7 +129,7 @@ class Experience extends Points {
 			//  Regular reward
 			const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
 			this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-			this.updateRank(this.newExp.level)
+			await this.updateRank(this.newExp.level)
 			if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
 			//  Send lvl-up message to custom channel if provided
 			const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
