@@ -1,6 +1,7 @@
 const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
 const logger = require(`./logger`)
+const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
 
@@ -1594,33 +1595,66 @@ class Database {
 	 */	
 
 	/**
-	 * Pull user's experience points metadata from `user_exp` table
-	 * @param {string} [userId=``] target user's discord id
+	 * Pull user's experience points metadata.
+	 * @param {string} [userId=``] Target user's discord id.
+	 * @param {string} [guildId=``] Target guild.
 	 * @returns {QueryResult}
 	 */
-	getUserExp(userId=``, guildId=``) {
-		return this._query(`
+	async getUserExp(userId=``, guildId=``) {
+		const initTime = process.hrtime()
+		const fn = `[Database.getUserExp]`
+		const key = `EXP_${userId}@${guildId}`
+		//  Retrieve from cache if available
+		const cache = await this.getCache(key)
+		if (cache) {
+			logger.debug(`${fn} retrieved ${key} from cache. (${getBenchmark(initTime)})`)
+			return JSON.parse(cache)
+		}
+		//  Otherwise fetch from db and store it to cache for later use.
+		const exp = await this._query(`
 			SELECT * FROM user_exp 
 			WHERE user_id = ? AND guild_id = ?`
 			, `get`
 			, [userId, guildId]
 		)
+		//  Store for 60 minutes
+		await this.redis.set(key, JSON.stringify(exp), `EX`, 3600)
+		logger.debug(`${fn} retrieved ${key} from database. (${getBenchmark(initTime)})`)
+		return exp
 	}
 
 	/**
-	 * Adding user's experience points into `user_exp` table
-	 * @param {number} [amount=0] amount to be added
-	 * @param {string} [userId=``] target user's discord id
+	 * Adding user's experience points.
+	 * @param {number} [amount=0] Amount to be added.
+	 * @param {string} [userId=``] Target user's discord id.
+	 * @param {string} [guildId=``] Target guild id.
 	 * @returns {QueryResult}
 	 */
-	addUserExp(amount=0, userId=``) {
-		return this._query(`
+	addUserExp(amount=0, userId=``, guildId=``) {
+		const fn = `[Database.addUserExp]`
+		const key = `EXP_${userId}@${guildId}`
+		//  Update on database.
+		const dbTime = process.hrtime()
+		this._query(`
 			UPDATE user_exp 
 			SET current_exp = current_exp + ?
-			WHERE user_id = ?`
+			WHERE 
+				user_id = ?
+				AND guild_id = ?`
 			, `run`
-			, [amount, userId]
-		)
+			, [amount, userId, guildId]
+		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
+		//  Update on cache.
+		this._query(`
+			SELECT * FROM user_exp 
+			WHERE user_id = ? AND guild_id = ?`
+			, `get`
+			, [userId, guildId]
+		).then(async res => {
+			const cacheTime = process.hrtime()
+			await this.redis.set(key, JSON.stringify(res))
+			return logger.debug(`${fn} updated ${key} on cache. (${getBenchmark(cacheTime)})`)
+		})
 	}
 
 	/**
