@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === `production`) {
     }))
 }
 
-if (process.env.NODE_ENV === `development`) {
+if ([`development`, `production`].includes(process.env.NODE_ENV)) {
     winston.add(new winston.transports.Console({
         level: `debug`,
         format: combine(
