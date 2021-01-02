@@ -1,3 +1,10 @@
+## [7.10.3](https://github.com/klerikdust/anniediscord/compare/v7.10.2...v7.10.3) (2021-01-02)
+
+
+### Bug Fixes
+
+* **messageUpdate:** unhandled DM flow ([ab4e017](https://github.com/klerikdust/anniediscord/commit/ab4e017429672d3f5dd8aa55af219ad8100bbe44))
+
 ## [7.10.2](https://github.com/klerikdust/anniediscord/compare/v7.10.1...v7.10.2) (2021-01-02)
 
 
