@@ -5,7 +5,7 @@ module.exports = annie => {
 	annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
 	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
 	annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
-	if (annie.dev) {
+	if (!annie.dev) {
 		/** --------------------------------------
 		 *  Everything below this is used for logging purpose
 		 *  --------------------------------------
