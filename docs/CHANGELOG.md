@@ -1,3 +1,15 @@
+## [7.10.7](https://github.com/klerikdust/anniediscord/compare/v7.10.6...v7.10.7) (2021-01-03)
+
+
+### Bug Fixes
+
+* **events:** production events ([62e8b74](https://github.com/klerikdust/anniediscord/commit/62e8b7407070eb8a232c998c219d6067f1aff230))
+
+
+### Performance Improvements
+
+* **messageEvent:** optimized gc and data validation ([c7809bc](https://github.com/klerikdust/anniediscord/commit/c7809bc5bfb7b89ebc3c4cbe638c9f3741c3f229))
+
 ## [7.10.6](https://github.com/klerikdust/anniediscord/compare/v7.10.5...v7.10.6) (2021-01-02)
 
 
