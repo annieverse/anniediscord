@@ -1,4 +1,4 @@
-module.exports = async (bot, oldRole, newRole, configs) => {
+module.exports = async (bot, oldRole, newRole) => {
     let metadata = {
         oldRole: oldRole,
         newRole: newRole,
@@ -6,5 +6,5 @@ module.exports = async (bot, oldRole, newRole, configs) => {
         bot: bot,
         guild: oldRole.guild
     }
-    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+    if (bot.fetchGuildConfigs(oldRole.guild.id).get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }

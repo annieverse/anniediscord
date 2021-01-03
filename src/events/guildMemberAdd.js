@@ -1,10 +1,10 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { MessageAttachment } = require(`discord.js`)
-module.exports = async (bot, member, configs) => {   
+module.exports = async (bot, member) => {   
     //  Import configs
     let instance = `[Events@guildMemberAdd]`
     let guild = bot.guilds.cache.get(member.guild.id)
-
+    let configs = bot.fetchGuildConfigs(guild.id)
     /**
      * Parsing welcomer text's sockets.
      * @param {string} [text=``] target string to be parsed from

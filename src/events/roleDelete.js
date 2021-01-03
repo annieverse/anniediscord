@@ -1,4 +1,5 @@
-module.exports = async (bot, role, configs) => {
+module.exports = async (bot, role) => {
+	const configs = bot.fetchGuildConfigs(role.guild.id)
     let metadata = {
         role: role,
         typeOfLog: `ROLE_DELETE`,

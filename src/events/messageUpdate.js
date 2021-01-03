@@ -1,4 +1,5 @@
-module.exports = (bot, oldMessage, newMessage, configs) => {
+module.exports = (bot, oldMessage, newMessage) => {
+    const configs = oldMessage.channel.type === `dm` ? null : bot.fetchGuildConfigs(oldMessage.guild.id)
 	//  Handle if configs is empty
 	if (configs === null) return
     let metadata = {

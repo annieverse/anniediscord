@@ -9,8 +9,12 @@ const Express = require(`express`)
 const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
-const LogSystem = require(`./libs/logs.js`)
+const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
+const Permission = require(`./libs/permissions`)
+const AutoResponder = require(`./libs/autoResponder`)
+const PointsController = require(`./controllers/points`)
+const CommandController = require(`./controllers/commands`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -93,6 +97,34 @@ class Annie extends Discord.Client {
          * @type {external:Locales}
          */
         this.locale = new Localizer()
+
+        /**
+         * The default permission manager.
+         * @param {object} [message={}] Target message instance.
+         * @return {external:PermissionController}
+         */
+        this.permissionController = (message={}) => new Permission(message)
+
+        /**
+         * AR Manager.
+         * @param {object} [message={}] Target message instance.
+         * @return {external:AutoResponder}
+         */
+        this.autoResponderController = (message={}) => new AutoResponder(this, message, message.guild)
+
+        /**
+         * Points Manager.
+         * @param {object} [message={}] Target message instance.
+         * @return {external:PointManager}
+         */
+        this.pointsController = (message={}) => new PointsController({bot:this, message:message})
+
+        /**
+         * Command Manager.
+         * @param {object} [message={}] Target message instance.
+         * @return {external:CommandController}
+         */
+        this.commandController = (message={}) => new CommandController({bot:this, message:message})
 
         /**
          * The default function for calculating task performance in milliseconds.
@@ -384,6 +416,25 @@ class Annie extends Discord.Client {
         const byName = this.emojis.cache.find(e => e.name.toLowerCase() === keyword.toLowerCase())
         //  Find by ID first, if not found then try by name. Otherwise, fallback as `(???)`
         return byId ? byId : byName ? byName : `(???)`
+    }
+
+    /**
+     * Assign user's permission level to <Message> properties.
+     * Accessable through <message.author.permissions> afterwards.
+     * @param {object} [messageInstance={}] Target message instance to be parsed from.
+     * @return {object}
+     */
+    getUserPermission(messageInstance={}) {
+        return this.permissionManager.getUserPermission(messageInstance)
+     }
+
+    /**
+     *  Fetching guild's configurations.
+     *  @param {string} [id=``] Target guild id.
+     *  @return {map|null}
+     */
+    fetchGuildConfigs(id=``) {
+        return this.guilds.cache.get(id).configs
     }
 }
 

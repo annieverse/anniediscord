@@ -1,5 +1,6 @@
-module.exports = async (bot, channel, configs) => {
-    if (channel.type == `dm`) return
+module.exports = async (bot, channel) => {
+    if (channel.type === `dm`) return
+    const configs = bot.fetchGuildConfigs(channel.guild.id)
     let metadata = {
         channel: channel,
         guild: channel.guild,

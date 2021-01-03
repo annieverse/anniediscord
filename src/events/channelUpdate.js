@@ -1,4 +1,4 @@
-module.exports = async (bot, oldChannel, newChannel, configs) => { 
+module.exports = async (bot, oldChannel, newChannel) => { 
     let metadata = {
         oldChannel: oldChannel,
         newChannel : newChannel,
@@ -6,5 +6,5 @@ module.exports = async (bot, oldChannel, newChannel, configs) => {
         typeOfLog: `CHANNEL_UPDATE`,
         bot: bot
     }
-    if (configs.get(`LOGS_MODULE`)) new bot.logSystem(metadata)
+    if (bot.fetchGuildConfigs(oldChannel.guild.id).get(`LOGS_MODULE`)) new bot.logSystem(metadata)
 }

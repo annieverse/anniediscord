@@ -55,6 +55,7 @@ class CommandController {
          * @type {number}
          */ 
         this.cooldownTime = data.bot.points.cooldown
+        this.run()
     }
 
 
@@ -67,7 +68,6 @@ class CommandController {
         const now = moment()
         const initTime = process.hrtime()
         this.commandProperties = this.getCommandProperties(this.commandName)
-
         // Ignore if no files are match with the given command name
         if (!this.commandProperties) return
         // Ignore if user's permission level doesn't met the minimum command's permission requirement

@@ -1,4 +1,4 @@
-module.exports = async (bot, oldEmoji, newEmoji, configs) => {
+module.exports = async (bot, oldEmoji, newEmoji) => {
     let metadata = {
         oldEmoji: oldEmoji,
         newEmoji: newEmoji,
@@ -6,5 +6,5 @@ module.exports = async (bot, oldEmoji, newEmoji, configs) => {
         typeOfLog: `EMOJI_UPDATE`,
         bot: bot
     }
-    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+    if (bot.fetchGuildConfigs(oldEmoji.guild.id).get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
 }
