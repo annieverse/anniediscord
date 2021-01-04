@@ -1,6 +1,6 @@
 const commanifier = require(`../utils/commanifier`)
 const VotesManager = require(`../libs/votes`)
-const Routines = require(`./libs/routines`)
+const Routines = require(`../libs/routines`)
 
 module.exports = annie => {
 	//  Run configurations once
