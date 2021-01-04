@@ -158,7 +158,7 @@ class CommandController {
     }
     
 	get isNotEnoughPermissionLevel() {
-		return this.commandProperties.permissionLevel > this.message.author.permissions.level
+		return this.commandProperties.permissionLevel > this.bot.permissionController(this.message).getUserPermission(this.message.author.id).level
 	}
 
 }
