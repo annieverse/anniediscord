@@ -12,7 +12,6 @@ class CommandsLoader {
 		this.queryOnFile = null
 		this.queryOnDir = null
 		this.totalFiles = 0
-		this.execute()
 	}
 
 

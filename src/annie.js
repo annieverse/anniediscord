@@ -372,7 +372,7 @@ class Annie extends Discord.Client {
      */
     _initializingCommands() {
         const initTime = process.hrtime()
-        const res = new CommandsLoader()
+        const res = new CommandsLoader().execute()
         this.commands = res
         return logger.info(`${res.totalFiles} Commands has successfully registered (${getBenchmark(initTime)})`)
     }
