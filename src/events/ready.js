@@ -1,7 +1,10 @@
 const commanifier = require(`../utils/commanifier`)
 const VotesManager = require(`../libs/votes`)
+const Routines = require(`./libs/routines`)
+
 module.exports = annie => {
 	//  Run configurations once
+	const Routine = new Routines(annie)
 	if (annie.startupState) {
 		annie.startupState = false
 		annie.registerGuildConfigurations()
@@ -37,11 +40,11 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		//	Recording resource usage every 5 mins
-		annie.routines.resourceUsageLogging()
+		Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
-		annie.routines.pixivCacheDirCheck()
+		Routine.pixivCacheDirCheck()
 		//	Release pixiv caches every 30 minutes
-		annie.routines.releasePixivCaches()
+		Routine.releasePixivCaches()
 		//  Handling incoming votes
 		new VotesManager(annie)
 	}

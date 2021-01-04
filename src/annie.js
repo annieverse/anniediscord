@@ -16,7 +16,6 @@ const AutoResponder = require(`./libs/autoResponder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
 const CommandController = require(`./controllers/commands`)
-const Routines = require(`./libs/routines`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -134,12 +133,6 @@ class Annie extends Discord.Client {
          * @return {external:CommandController}
          */
         this.experienceLibs = (message={}) => new Experience({bot:this, message:message})
-
-        /**
-         * Handles Routines Framework.
-         * @return {external:Routines}
-         */
-        this.routines = new Routines(this)
 
         /**
          * The default function for calculating task performance in milliseconds.
