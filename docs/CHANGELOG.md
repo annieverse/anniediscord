@@ -1,3 +1,11 @@
+## [7.10.10](https://github.com/klerikdust/anniediscord/compare/v7.10.9...v7.10.10) (2021-01-04)
+
+
+### Bug Fixes
+
+* **handler:** uncatched handler on exp framework ([361d479](https://github.com/klerikdust/anniediscord/commit/361d479817aee137d1a3864a3b9c96174eb7712a))
+* **routines:** unreachable root node ([dee722a](https://github.com/klerikdust/anniediscord/commit/dee722af4e1ad0220d22ec8fca09624f6c290d37))
+
 ## [7.10.9](https://github.com/klerikdust/anniediscord/compare/v7.10.8...v7.10.9) (2021-01-04)
 
 
