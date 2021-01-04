@@ -1,3 +1,10 @@
+## [7.10.11](https://github.com/klerikdust/anniediscord/compare/v7.10.10...v7.10.11) (2021-01-04)
+
+
+### Bug Fixes
+
+* **routines:** wrong ref ([9c09236](https://github.com/klerikdust/anniediscord/commit/9c09236a0ad87ff51844481ac93debb2e12440e8))
+
 ## [7.10.10](https://github.com/klerikdust/anniediscord/compare/v7.10.9...v7.10.10) (2021-01-04)
 
 
