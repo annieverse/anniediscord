@@ -174,7 +174,7 @@ class Annie extends Discord.Client {
      * @returns {String}
      */
     async prepareLogin(token) {
-        process.on(`unhandledRejection`, err => logger.error(err.stack))
+        process.on(`unhandledRejection`, err => logger.warn(`Catched rejection. > ${err.stack}`))
         try {
             this._initializingDatabase()
             this._initializingCommands()
