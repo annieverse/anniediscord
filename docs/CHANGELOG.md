@@ -1,3 +1,10 @@
+## [7.10.9](https://github.com/klerikdust/anniediscord/compare/v7.10.8...v7.10.9) (2021-01-04)
+
+
+### Bug Fixes
+
+* **cmdLoader:** invalid params field ([86bd3b8](https://github.com/klerikdust/anniediscord/commit/86bd3b82cf1cc9adc78e12aabc90d2c79c7d06b5))
+
 ## [7.10.8](https://github.com/klerikdust/anniediscord/compare/v7.10.7...v7.10.8) (2021-01-04)
 
 
