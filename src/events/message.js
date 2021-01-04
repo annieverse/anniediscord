@@ -14,12 +14,12 @@ module.exports = async (bot, message) => {
     if (bot.dev && user.permissions.level < 1) return bot.logger.debug(`${instanceId} blocked in dev environment.`)
     //  Reject further flow if message is dm-typed.
     if (message.channel.type === `dm`) return bot.logger.debug(`${instanceId} blocked incoming DM.`)
-    //  Ran data validation on each user for every 60 minutes.
+    //  Ran data validation on each user for every 1 minute.
     const dataValidateID = `DATA_VALIDATION@${user.id}`
     bot.db.redis.get(dataValidateID).then(async res => {
         if (res !== null) return
         await bot.db.validateUser(user.id, guild.id, user.username)
-        bot.db.redis.set(dataValidateID, `1`, `EX`, 3600)
+        bot.db.redis.set(dataValidateID, `1`, `EX`, 60)
     })
     //  Check if AR module is enabled.
     if (bot.guilds.cache.get(guild.id).configs.get(`AR_MODULE`).value) bot.autoResponderController(message)
