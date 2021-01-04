@@ -14,7 +14,9 @@ const Reminder = require(`./libs/reminder`)
 const Permission = require(`./libs/permissions`)
 const AutoResponder = require(`./libs/autoResponder`)
 const PointsController = require(`./controllers/points`)
+const Experience = require(`./libs/exp`)
 const CommandController = require(`./controllers/commands`)
+const Routines = require(`./libs/routines`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -127,6 +129,19 @@ class Annie extends Discord.Client {
         this.commandController = (message={}) => new CommandController({bot:this, message:message})
 
         /**
+         * Experience Framework
+         * @param {object} [message={}] Target message instance.
+         * @return {external:CommandController}
+         */
+        this.experienceLibs = (message={}) => new Experience({bot:this, message:message})
+
+        /**
+         * Handles Routines Framework.
+         * @return {external:Routines}
+         */
+        this.routines = new Routines(this)
+
+        /**
          * The default function for calculating task performance in milliseconds.
          * @since 6.0.0
          * @type {SecretKey}
@@ -150,6 +165,12 @@ class Annie extends Discord.Client {
          * @type {external:Object}
          */ 
         this.logSystem = LogSystem
+
+        /**
+         * State checker on startup.
+         * @type {boolean}
+         */
+        this.startupState = true
     }
 
 
@@ -160,13 +181,12 @@ class Annie extends Discord.Client {
      * @returns {String}
      */
     async prepareLogin(token) {
+        process.on(`unhandledRejection`, err => logger.error(err.stack))
         try {
-            this._rejectionHandler()
-            await this._initializingDatabase()
-            await this._initializingCommands()
+            this._initializingDatabase()
+            this._initializingCommands()
             this._listeningToEvents()
             this.login(token)
-            this.startupState = 1
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
@@ -330,21 +350,6 @@ class Annie extends Discord.Client {
         if (!log) return
         logger.info(`Listening to port ${port}`)
     }
-  
-
-    /**
-     * Handles promise rejection
-     * @since 6.0.0
-     * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
-     * @returns {WinstonLogging}
-     */
-    _rejectionHandler(log=true) {
-        process.on(`unhandledRejection`, err => {
-            if (!log) return
-            return logger.error(err.stack)
-        })
-    }
-
 
     /**
      * Initialize and connect the database
@@ -352,9 +357,9 @@ class Annie extends Discord.Client {
      * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
      * @returns {WinstonLogging}
      */
-    async _initializingDatabase(log=true) {
+    _initializingDatabase(log=true) {
         const initTime = process.hrtime()
-        this.db = await new Database().connect()
+        this.db = new Database().connect()
         if (!log) return
         return logger.info(`Database has successfully connected (${getBenchmark(initTime)})`)
     }
@@ -363,14 +368,12 @@ class Annie extends Discord.Client {
     /**
      * Initialize and register all the available commands
      * @since 6.0.0
-     * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
      * @returns {WinstonLogging}
      */
-    async _initializingCommands(log=true) {
+    _initializingCommands() {
         const initTime = process.hrtime()
-        const res = await new CommandsLoader().default()
+        const res = new CommandsLoader()
         this.commands = res
-        if (!log) return
         return logger.info(`${res.totalFiles} Commands has successfully registered (${getBenchmark(initTime)})`)
     }
 

@@ -12,10 +12,11 @@ class CommandsLoader {
 		this.queryOnFile = null
 		this.queryOnDir = null
 		this.totalFiles = 0
+		this.execute()
 	}
 
 
-	default() {
+	execute() {
 		/**
 		 * Recursively pull available categories in command's root directory
 		 * @example user/system/social/shop/etc

@@ -1,8 +1,6 @@
 `use-strict`
 const Themes = require(`../ui/colors/themes`)
 const palette = require(`../ui/colors/default`)
-const Experience = require(`./exp`)
-const Permission = require(`./permissions`)
 
 /**
  * Handles user-related data request and changes
@@ -171,7 +169,7 @@ class User {
 
 			//  User's parsed experience points data
 			const experienceData = await db.getUserExp(this.user.id, this.message.guild.id)
-			const parsedExp = new Experience({bot: this.bot, message:this.message}).xpFormula(experienceData.current_exp)
+			const parsedExp = this.bot.experienceLibs(this.message).xpFormula(experienceData.current_exp)
 			this.user.exp = {
 				raw: experienceData,
 				current_exp: experienceData.current_exp,
@@ -255,7 +253,7 @@ class User {
 			const sticker = user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
 			this.user.usedSticker = sticker.length ? sticker[0] : null
 			this.user.isSelf = this.isSelf
-			this.user.title = new Permission(this.message).getUserPermission(this.user.id).name
+			this.user.title = this.bot.permissionController(this.message).getUserPermission(this.user.id).name
 			return this.user
 		}
 		catch(e) {

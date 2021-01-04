@@ -98,14 +98,14 @@ class Database {
 	 * @param {string} [fsPath=`../../.data/database.sqlite`]
 	 * @returns {this}
 	 */
-	async connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
+	connect(path=`.data/database.sqlite`, fsPath=`../../.data/database.sqlite`) {
 		/**
 		 * This will check if the db file exists or not.
 		 * If file is not found, throw an error.
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
 		this.client = new SqliteClient(path)
-		await this.connectRedis()
+		this.connectRedis()
 		return this
 	}
 
