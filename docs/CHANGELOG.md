@@ -1,3 +1,16 @@
+## [7.10.8](https://github.com/klerikdust/anniediscord/compare/v7.10.7...v7.10.8) (2021-01-04)
+
+
+### Bug Fixes
+
+* **permissions:** refetch perms in cmd controller ([6c69325](https://github.com/klerikdust/anniediscord/commit/6c6932504a00b01e4d195ea9208f02c2963cc0c5))
+* **userValidation:** validation ttl too high ([15b0619](https://github.com/klerikdust/anniediscord/commit/15b061952851e8506e4b99f952b1b3425c177fe6))
+
+
+### Performance Improvements
+
+* eliminates unnecessary blocking-stack ([10c3201](https://github.com/klerikdust/anniediscord/commit/10c3201d8bbf044a463e4be5f815a731c81049ba))
+
 ## [7.10.7](https://github.com/klerikdust/anniediscord/compare/v7.10.6...v7.10.7) (2021-01-03)
 
 
