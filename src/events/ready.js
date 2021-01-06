@@ -29,9 +29,11 @@ module.exports = annie => {
 		annie.logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		annie.logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
-		const presencePools = [`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users`, `${annie.prefix}help`]
 		setInterval(() => {
-			annie.user.setActivity(presencePools[Math.floor(Math.random() * presencePools.length)], {type: `WATCHING`})
+			annie.user.setActivity(
+				[`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users`, `${annie.prefix}help`]
+				[Math.floor(Math.random() * presencePools.length)], {type: `WATCHING`}
+			)
 		//  Refresh activity for every 60 seconds
 		}, 60000)
 		/**

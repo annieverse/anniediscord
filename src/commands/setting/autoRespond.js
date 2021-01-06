@@ -259,7 +259,7 @@ class AutoResponder extends Command {
         })
         //  Performs deletion
         targetAR = targetAR[0]
-        await db.deleteAutoResponder(targetAR.ar_id, this.guild.id)
+        await db.deleteAutoResponder(targetAR.ar_id, this.guild.id)   
         return reply(this.locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
             socket: {emoji:emoji(`hearts`)},
             status: `success`
