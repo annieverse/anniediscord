@@ -1,3 +1,10 @@
+## [7.10.12](https://github.com/klerikdust/anniediscord/compare/v7.10.11...v7.10.12) (2021-01-06)
+
+
+### Bug Fixes
+
+* **event:** static presence ([acc7cc8](https://github.com/klerikdust/anniediscord/commit/acc7cc8e62eb57a71719abf2fbfd6d5a373a02a2))
+
 ## [7.10.11](https://github.com/klerikdust/anniediscord/compare/v7.10.10...v7.10.11) (2021-01-04)
 
 
