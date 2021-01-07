@@ -500,7 +500,7 @@ class Database {
 			}
 			//  Else, just update the array
 			else {
-				this.setCache(cacheID, updatedCache)
+				this.setCache(cacheID, JSON.stringify(updatedCache)) 
 			}
 		}
 		return this._query(`
