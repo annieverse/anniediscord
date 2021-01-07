@@ -1,3 +1,10 @@
+## [7.10.13](https://github.com/klerikdust/anniediscord/compare/v7.10.12...v7.10.13) (2021-01-07)
+
+
+### Bug Fixes
+
+* **redis:** stored non-stringified value ([c15c010](https://github.com/klerikdust/anniediscord/commit/c15c010fe28e4f24c3ae724272d20bdb5cda8617))
+
 ## [7.10.12](https://github.com/klerikdust/anniediscord/compare/v7.10.11...v7.10.12) (2021-01-06)
 
 
