@@ -7,14 +7,13 @@ const commandController = require(`../controllers/commands`)
  * @since 4.0.1
  */
 module.exports = (client, message) => {
-    const instanceId = `[Event.message] ${message.author.id}@${message.guild.id}`
     //  Ignore if its from a bot user
-    if (message.author.bot) return client.logger.debug(`${instanceId} blocked bot-user message.`)
+    if (message.author.bot) return client.logger.debug(`blocked bot-user message.`)
+    //  Reject further flow if message is dm-typed.
+    if (message.channel.type === `dm`) return client.logger.debug(`blocked incoming DM.`)
     let permission = getUserPermission(message, message.author.id)
     //  Ignore any user interaction in dev environment
-    if (client.dev && permission.level < 4) return client.logger.debug(`${instanceId} blocked in dev environment.`)
-    //  Reject further flow if message is dm-typed.
-    if (message.channel.type === `dm`) return client.logger.debug(`${instanceId} blocked incoming DM.`)
+    if (client.dev && permission.level < 4) return client.logger.debug(`[Event.message] ${message.author.id}@${message.guild.id} blocked in dev environment.`)
     //  Ran data validation on each user for every 1 minute.
     const dataValidateID = `DATA_VALIDATION@${message.author.id}`
     client.db.redis.get(dataValidateID).then(async res => {
