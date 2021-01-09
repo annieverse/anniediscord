@@ -1,3 +1,10 @@
+## [7.10.16](https://github.com/klerikdust/anniediscord/compare/v7.10.15...v7.10.16) (2021-01-09)
+
+
+### Bug Fixes
+
+* **event:** handles unauthorized dm ([9d291ca](https://github.com/klerikdust/anniediscord/commit/9d291ca612c8d8763e12588e6e736dc937771bf8))
+
 ## [7.10.15](https://github.com/klerikdust/anniediscord/compare/v7.10.14...v7.10.15) (2021-01-09)
 
 
