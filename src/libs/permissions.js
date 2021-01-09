@@ -9,7 +9,7 @@ module.exports = (message={}, userId={}) => {
     // Check for developer privileges
     if (config[4].accounts.includes(userId)) return config[4]
     // User without developer privileges in dm interface will be automatically assigned as a regular user.
-    if (this.message.channel.type === `dm`) return config[0]
+    if (message.channel.type === `dm`) return config[0]
     const member = message.guild.members.cache.get(userId)
     for (let privilege in config) {
         if (privilege.level === 4) continue
