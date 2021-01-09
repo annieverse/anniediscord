@@ -1,3 +1,10 @@
+## [7.10.14](https://github.com/klerikdust/anniediscord/compare/v7.10.13...v7.10.14) (2021-01-09)
+
+
+### Performance Improvements
+
+* optimized controllers in message event ([bce7a52](https://github.com/klerikdust/anniediscord/commit/bce7a52a689e48c0745dfa157d046dad1ed03c06))
+
 ## [7.10.13](https://github.com/klerikdust/anniediscord/compare/v7.10.12...v7.10.13) (2021-01-07)
 
 
