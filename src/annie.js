@@ -11,11 +11,8 @@ const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
 const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
-const Permission = require(`./libs/permissions`)
-const AutoResponder = require(`./libs/autoResponder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
-const CommandController = require(`./controllers/commands`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -100,32 +97,11 @@ class Annie extends Discord.Client {
         this.locale = new Localizer()
 
         /**
-         * The default permission manager.
-         * @param {object} [message={}] Target message instance.
-         * @return {external:PermissionController}
-         */
-        this.permissionController = (message={}) => new Permission(message)
-
-        /**
-         * AR Manager.
-         * @param {object} [message={}] Target message instance.
-         * @return {external:AutoResponder}
-         */
-        this.autoResponderController = (message={}) => new AutoResponder(this, message, message.guild)
-
-        /**
          * Points Manager.
          * @param {object} [message={}] Target message instance.
          * @return {external:PointManager}
          */
         this.pointsController = (message={}) => new PointsController({bot:this, message:message})
-
-        /**
-         * Command Manager.
-         * @param {object} [message={}] Target message instance.
-         * @return {external:CommandController}
-         */
-        this.commandController = (message={}) => new CommandController({bot:this, message:message})
 
         /**
          * Experience Framework

@@ -209,6 +209,9 @@
         "COOLING_DOWN": "You can make changes again in 5 seconds."
     },
     "ERROR": "Ops, something went wrong.\n```diff\n- {{error}}\n```",
+    "ERROR_ON_PRODUCTION": "**Oops, I just got hit by something . . .** {{emoji}}\n╰─Sorry for this inconvenience; I'll forward it to my developers.",
+    "ERROR_ON_DEV": "Hmm, does not working as expected. {{emoji}}\n```diff\n- {{error}}\n```",
+    "REPORTING_ERROR": "Hey, my command controller was failing while parsing user's request. I've generated the logs below to help you troubleshooting it. {{emoji}}\n─────────────────☆～:;\n**Accident Timestamp::**\n╰─{{timestamp}}\n**Affected User::**\n╰─{{user}}\n**Affected Command::**\n╰─{{command}}\n─────────────────☆～:;,\nBelow is the printed response during accident.\n```diff\n- {{error}}\n```",
     "LOCALIZATION_ERROR": "**I've encountered localization error. T_T\nPlease help me reporting this to my developers so I can serve you better!**",
     "EVAL": {
         "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"

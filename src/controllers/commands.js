@@ -1,166 +1,92 @@
-const { readdirSync } = require(`fs`)
 const moment = require(`moment`)
+const Response = require(`../libs/response`)
+const findCommandProperties = require(`../utils/findCommandProperties`)
+const availablePermissions = require(`../config/permissions`)
 const Pistachio = require(`../libs/pistachio`)
-/**
- * @typedef {ClientPrimaryProps}
- * @property {Object} [bot={}] Current <AnnieClient> instance
- * @property {Object} [message={}] Current <Message> instance
- */
+const { cooldown } = require(`../config/commands`)
 /**
  * Centralized Controller to handle incoming command request
  * @since 6.0.0
- * @param {Object} data supplied data from <MessageController>.
+ * @param {object} [client={}] Current client's instance.
+ * @param {object} [message={}] Target message's instance.
+ * @param {object} [userPermission={}] User's privilege structure.
+ * @return {winston}
  */
-class CommandController {
-    constructor(data={}) {
-        this.bot = data.bot
-        this.message = data.message
-        this.logger = data.bot.logger
-
-        /**
-         * The default identifier for current instance.
-         * @type {string}
-         */
-        this.moduleID = `CMD_${data.message.author.id}_${data.message.guild.id}`
-
-        /**
-         * The default prop for accessing command's prefix.
-         * @since 1.0.0
-         * @type {String}
-         */
-		this.prefix = data.bot.prefix
-
-        /**
-         * Tokenize message into an array.
-         * @since 1.0.0
-         * @type {Array}
-         */
-        this.messageArray = data.message.content.split(` `)
-        
-		/**
-         * The used command name.
-         * @since 1.0.0
-         * @type {String}
-         */	
-        this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
-
-        /**
-         * The default locale properties for command controller.
-         * @type {object}
-         */ 
-        this.locale = data.bot.locale[`en`]
-
-        /**
-         * The default property for command cooldown.
-         * @type {number}
-         */ 
-        this.cooldownTime = data.bot.points.cooldown
-        this.run()
-    }
-
-
-    /**
-     * Running Command Controller. Preparing exceptor on several cases before returning the command file.
-     * @returns {CommandClass}
-     */
-    async run() {
-        const fn = `[CommandController.run()] USER_ID:${this.message.author.id}`   
-        const now = moment()
-        const initTime = process.hrtime()
-        this.commandProperties = this.getCommandProperties(this.commandName)
-        // Ignore if no files are match with the given command name
-        if (!this.commandProperties) return
-        // Ignore if user's permission level doesn't met the minimum command's permission requirement
-        if (this.isNotEnoughPermissionLevel) {
-            const permData = () => {
-                for (let config in this.bot.permission) {
-                    const perm = this.bot.permission[config]
-                    if (perm.level === this.commandProperties.permissionLevel) return perm
-                }
-            }
-            this.message.channel.send(`**${this.bot.emojis.cache.get(`751024231189315625`)} You need LV${permData().level} (${permData().name}) privileges to use this command.**`)
-            return this.logger.debug(`${fn} tries to use PERM_LVL ${permData().level} command`)
-        }
-        const Command = this._findFile(this.commandProperties.name)
-        if (!Command) return this.logger.debug(`${fn} has failed to find command file with name <${this.commandProperties.name}>`)
-        const commandComponents = {bot: this.bot, message: this.message, commandProperties: this.commandProperties}
-        const PistachioComponents = new Pistachio(commandComponents)
-
-        try {
-            //  Handle if command still in cooldown
-            const cd = await this.bot.isCooldown(this.moduleID)
-            const cooldownToLocalTime = await this.bot.db.toLocaltime(cd)
-            if (cd) return PistachioComponents.reply(this.locale.COMMAND.STILL_COOLDOWN, {
+module.exports = async (client={}, message={}, userPermission={}) => {
+    const controllerId = `[Controller.Command][${message.author.id}@${message.guild.id}]`
+    const instanceId = `CMD_${message.author.id}@${message.guild.id}`
+    const initTime = process.hrtime()
+    const tokenizedContent = message.content.split(` `)
+    const targetCommand = tokenizedContent[0].slice(client.prefix.length).toLowerCase()
+    const command = findCommandProperties(client, targetCommand)
+    // Handle if no files are match with the given command name
+    if (!command) return client.logger.debug(`${controllerId} there's no matched command with target key '${targetCommand}'`) 
+    // Handle if user doesn't have enough permission level to use the command
+    let reply = new Response(message)
+    if (command.permissionLevel > userPermission.level) {
+        await reply.send(``, {customHeader: [`You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`, message.author.displayAvatarURL({dynamic: true})]})
+        client.logger.debug(`${controllerId} tries to use PERM_LVL:${command.permissionLevel} command`)
+        return reply = null
+    }   
+    try {
+        //  Handle if command still in cooldown
+        let userCooldown = await client.isCooldown(instanceId)
+        if (userCooldown) {
+            await reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
                 socket: {
-                    emoji: this.bot.getEmoji(`AnnieYandereAnim`),
-                    user: this.message.author.username,
-                    timeLeft: (this.bot.configs.commands.cooldown - now.diff(moment(cooldownToLocalTime), `seconds`, true)).toFixed(2)
+                    emoji: client.getEmoji(`AnnieYandereAnim`),
+                    user: message.author.username,
+                    timeLeft: (cooldown - moment().diff(moment(userCooldown), `seconds`, true)).toFixed(2)
                 }
             })
-            this.bot.setCooldown(this.moduleID, this.bot.configs.commands.cooldown)
-            await new Command(commandComponents).execute(PistachioComponents)
-            const cmdFinishTime = this.bot.getBenchmark(initTime)
-            const cmdUsageData = {
-                guild_id: this.message.guild.id,
-                user_id: this.message.author.id,
-                command_alias: this.commandName,
-                resolved_in: cmdFinishTime
+            return reply = null
+        }
+        client.setCooldown(instanceId, cooldown)
+        let commandComponents = {bot: client, message: message, commandProperties: command}
+        let PistachioComponents = new Pistachio(commandComponents)
+        let cmd = new command.start(commandComponents)
+        await cmd.execute(PistachioComponents)
+        const cmdFinishTime = client.getBenchmark(initTime)
+        const cmdUsageData = {
+            guild_id: message.guild.id,
+            user_id: message.author.id,
+            command_alias: targetCommand,
+            resolved_in: cmdFinishTime
+        }
+        //	Log and store the cmd usage to database.
+        client.logger.info(`${controllerId} ran ${this.commandName} command (${cmdFinishTime})`)
+        //  Prepare for GC
+        reply = null
+        cmd = null
+        PistachioComponents = null
+        commandComponents = null
+        userCooldown = null
+        return client.db.recordsCommandUsage(cmdUsageData)
+    }
+    catch(e) {
+        client.logger.error(`${controllerId} Oops, something went wrong. > ${e.stack}`)
+        if (client.dev) {
+            reply.send(client.locale.en.ERROR_ON_DEV, {
+                socket: {
+                    error: e,
+                    emoji: client.getEmoji(`AnnieThinking`)
+                }
+            })
+            return reply = null
+        }
+        await reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: client.getEmoji(`AnniePout`)}})
+        await reply.send(client.locale.en.REPORTING_ERROR, {
+            header: message.guild.name,
+            thumbnail: message.guild.iconURL(),
+            field: client.channels.cache.get(`797521371889532988`),
+            socket: {
+                timestamp: new Date(),
+                user: `${message.author.username}@${message.author.id}`,
+                command: command.name,
+                error: e,
+                emoji: client.getEmoji(`AnniePeek1`)
             }
-
-            //	Log and store the cmd usage to database.
-            this.logger.info(`${fn} ran ${this.commandName} command (${cmdFinishTime})`)
-            return this.bot.db.recordsCommandUsage(cmdUsageData)
-        }
-        catch(e) {
-            this.logger.error(`${fn} ${e.stack}`)
-            return PistachioComponents.reply(this.locale.ERROR, {color: `red`, socket:{error: e} })
-        }
+        })
+        return reply = null
     }
-
-	/**
-	 * Browser through filedisk and Find command file with the given keyword 
-	 * @param {String} filename source filename
-	 * @returns {CommandComponentClass}
-	 */
-	_findFile(filename) {
-		if (!filename) throw new TypeError(`[CommandController._findFile()] parameter "filename" cannot be blank.`)
-		if (!filename.endsWith(`.js`)) filename = filename + `.js`
-		/**
-		 * Recursively pull available categories in command's root directory
-		 * @example user/system/social/shop/etc
-		 */
-		let directories = readdirSync(`./src/commands/`).filter(file => !file.includes(`.`))
-		for (const index in directories) {
-			const dir = directories[index]
-			/**
-			 * Recursively pull files from a category
-			 * @example user/system/social/shop/etc
-			 */
-			const files = readdirSync(`./src/commands/` + dir)
-			const newPath = `../commands/${dir}/${filename}`
-			if (files.includes(filename)) return require(newPath).help.start
-		}
-		return null
-    }
-    
-	/**
-	 * Fetch command's properties from registered commands in client properties.
-	 * @since 6.0.0
-	 * @param {String} commandName target command name
-	 * @returns {CommandObject}
-	 */
-	getCommandProperties(commandName=``) {
-		const fn = `[Commands.getCommandProperties()]`
-        if (!commandName) throw new TypeError(`${fn} parameter "commandName" cannot be blank.`)
-        const res = this.bot.commands.names.get(commandName) || this.bot.commands.names.get(this.bot.commands.aliases.get(commandName))
-        if (!res) return null
-		return res.help
-    }
-    
-	get isNotEnoughPermissionLevel() {
-		return this.commandProperties.permissionLevel > this.bot.permissionController(this.message).getUserPermission(this.message.author.id).level
-	}
-
 }
-
-module.exports = CommandController
