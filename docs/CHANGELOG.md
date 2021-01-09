@@ -1,3 +1,10 @@
+## [7.10.15](https://github.com/klerikdust/anniediscord/compare/v7.10.14...v7.10.15) (2021-01-09)
+
+
+### Bug Fixes
+
+* **permission:** wrong ref ([20cd545](https://github.com/klerikdust/anniediscord/commit/20cd545b2e953bcdf29868b162677da0e20d1c1a))
+
 ## [7.10.14](https://github.com/klerikdust/anniediscord/compare/v7.10.13...v7.10.14) (2021-01-09)
 
 
