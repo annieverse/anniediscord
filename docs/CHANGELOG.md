@@ -1,3 +1,10 @@
+## [7.10.21](https://github.com/klerikdust/anniediscord/compare/v7.10.20...v7.10.21) (2021-01-10)
+
+
+### Bug Fixes
+
+* **cmdController:** wrong ref on log ([61d591d](https://github.com/klerikdust/anniediscord/commit/61d591d4283fa933026f6fc673c9df91d85be1f9))
+
 ## [7.10.20](https://github.com/klerikdust/anniediscord/compare/v7.10.19...v7.10.20) (2021-01-10)
 
 
