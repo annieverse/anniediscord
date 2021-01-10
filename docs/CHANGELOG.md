@@ -1,3 +1,10 @@
+## [7.10.19](https://github.com/klerikdust/anniediscord/compare/v7.10.18...v7.10.19) (2021-01-10)
+
+
+### Bug Fixes
+
+* **user:** registration flow ([3dc499a](https://github.com/klerikdust/anniediscord/commit/3dc499ac1fa1b9c37eefc68d3c2cc21ec8c44970))
+
 ## [7.10.18](https://github.com/klerikdust/anniediscord/compare/v7.10.17...v7.10.18) (2021-01-10)
 
 
