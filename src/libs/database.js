@@ -1617,8 +1617,8 @@ class Database {
 			, `get`
 			, [userId, guildId]
 		)
-		//  Store for 60 minutes
-		await this.redis.set(key, JSON.stringify(exp), `EX`, 3600)
+		//  Store for 1 minute
+		await this.redis.set(key, JSON.stringify(exp), `EX`, 60)
 		logger.debug(`${fn} retrieved ${key} from database. (${getBenchmark(initTime)})`)
 		return exp
 	}
