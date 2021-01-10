@@ -1,3 +1,10 @@
+## [7.10.18](https://github.com/klerikdust/anniediscord/compare/v7.10.17...v7.10.18) (2021-01-10)
+
+
+### Bug Fixes
+
+* **permission:** fails to enumarate available perms ([dadad1b](https://github.com/klerikdust/anniediscord/commit/dadad1bfb0b360a8913c03616831d53e01cb89b9))
+
 ## [7.10.17](https://github.com/klerikdust/anniediscord/compare/v7.10.16...v7.10.17) (2021-01-10)
 
 
