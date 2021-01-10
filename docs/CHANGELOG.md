@@ -1,3 +1,10 @@
+## [7.10.20](https://github.com/klerikdust/anniediscord/compare/v7.10.19...v7.10.20) (2021-01-10)
+
+
+### Bug Fixes
+
+* **database:** overriden cache on getUserExp ([faa183d](https://github.com/klerikdust/anniediscord/commit/faa183dd0bda4be06a977d6beaf9d150e1fce1d8))
+
 ## [7.10.19](https://github.com/klerikdust/anniediscord/compare/v7.10.18...v7.10.19) (2021-01-10)
 
 
