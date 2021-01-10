@@ -19,11 +19,13 @@ module.exports = async (message={}, userId={}) => {
         return privilege[0]
     }
     const member = await message.guild.members.fetch(userId)
-    for (let i in privilege) {
-        if (privilege[i].level === 4) continue
-        if (member.hasPermission(privilege[i].permissionString)) {
-            logger.debug(`${instanceId} assigned as ${privilege[i].name}`)
-            return privilege[i]
+    const descendingPrivileges = Object.keys(privilege).sort((a, b) => b - a)
+    for (let i=0; i<descendingPrivileges.length; i++) {
+        const pvObj = privilege[descendingPrivileges[i]]
+        if (pvObj.level === 4) continue
+        if (member.hasPermission(pvObj.permissionString)) {
+            logger.debug(`${instanceId} assigned as ${pvObj.name}`)
+            return pvObj
         }
     }
     // Returns as regular user if no level is matched
