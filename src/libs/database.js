@@ -1606,7 +1606,7 @@ class Database {
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
 		const cache = await this.getCache(key)
-		if (cache) {
+		if (cache !== null) {
 			logger.debug(`${fn} retrieved ${key} from cache. (${getBenchmark(initTime)})`)
 			return JSON.parse(cache)
 		}
