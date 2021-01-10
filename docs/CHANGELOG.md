@@ -1,3 +1,10 @@
+## [7.10.17](https://github.com/klerikdust/anniediscord/compare/v7.10.16...v7.10.17) (2021-01-10)
+
+
+### Bug Fixes
+
+* **permission:** lower levels fail to fetch ([ad8f5ca](https://github.com/klerikdust/anniediscord/commit/ad8f5ca0b0e61cc221ee86bb104d5b7f04c47733))
+
 ## [7.10.16](https://github.com/klerikdust/anniediscord/compare/v7.10.15...v7.10.16) (2021-01-09)
 
 
