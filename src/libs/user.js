@@ -254,7 +254,7 @@ class User {
 			const sticker = user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
 			this.user.usedSticker = sticker.length ? sticker[0] : null
 			this.user.isSelf = this.isSelf
-			this.user.title = getUserPermission(this.message, this.user.id).name
+			this.user.title = (await getUserPermission(this.message, this.user.id)).name
 			return this.user
 		}
 		catch(e) {
