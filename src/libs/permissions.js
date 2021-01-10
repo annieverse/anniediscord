@@ -28,5 +28,5 @@ module.exports = async (message={}, userId={}) => {
     }
     // Returns as regular user if no level is matched
     logger.debug(`${instanceId} fallback as regular user`)
-    return config[0]
+    return privilege[0]
 }
