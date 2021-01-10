@@ -1,3 +1,10 @@
+## [7.10.22](https://github.com/klerikdust/anniediscord/compare/v7.10.21...v7.10.22) (2021-01-10)
+
+
+### Bug Fixes
+
+* **permission:** wrong filter order ([6b754c6](https://github.com/klerikdust/anniediscord/commit/6b754c6a342a91d243dad30d463d35c27ad8c322))
+
 ## [7.10.21](https://github.com/klerikdust/anniediscord/compare/v7.10.20...v7.10.21) (2021-01-10)
 
 
