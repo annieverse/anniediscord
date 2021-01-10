@@ -54,7 +54,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             resolved_in: cmdFinishTime
         }
         //	Log and store the cmd usage to database.
-        client.logger.info(`${controllerId} ran ${this.commandName} command (${cmdFinishTime})`)
+        client.logger.info(`${controllerId} ran ${targetCommand} command (${cmdFinishTime})`)
         //  Prepare for GC
         reply = null
         cmd = null
