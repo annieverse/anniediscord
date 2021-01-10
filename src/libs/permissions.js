@@ -14,7 +14,7 @@ module.exports = (message={}, userId={}) => {
     for (let privilege in config) {
         if (privilege.level === 4) continue
         if (member.hasPermission(privilege.permissionString)) {
-            return config[privilege.level]
+            return privilege
         }
     }
     // Returns as regular user if no level is matched
