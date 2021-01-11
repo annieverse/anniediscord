@@ -1,3 +1,10 @@
+## [7.10.24](https://github.com/klerikdust/anniediscord/compare/v7.10.23...v7.10.24) (2021-01-11)
+
+
+### Performance Improvements
+
+* **points:** eliminated unused class ([e1f5934](https://github.com/klerikdust/anniediscord/commit/e1f59342856960f3f901ef3a73e83e08020b4f8f))
+
 ## [7.10.23](https://github.com/klerikdust/anniediscord/compare/v7.10.22...v7.10.23) (2021-01-11)
 
 
