@@ -1,3 +1,10 @@
+## [7.10.23](https://github.com/klerikdust/anniediscord/compare/v7.10.22...v7.10.23) (2021-01-11)
+
+
+### Bug Fixes
+
+* **user:** false positive return ([d700611](https://github.com/klerikdust/anniediscord/commit/d700611efd5c81383df760d866e42b6619083c73))
+
 ## [7.10.22](https://github.com/klerikdust/anniediscord/compare/v7.10.21...v7.10.22) (2021-01-10)
 
 
