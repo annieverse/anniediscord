@@ -138,7 +138,7 @@ class User {
 			//  Data checking
 			const userValidate = await this.bot.db.doesUserRegisteredInTheGuild(this.user.id, this.message.guild.id)
 			if (userValidate.is_registered === 0) {
-				this.logger.info(`${fn} registering new user's metadata for ${this.user.id}@${this.messge.guild.id}`)
+				this.logger.info(`${fn} registering new user's metadata for ${this.user.id}@${this.message.guild.id}`)
 				await this.bot.db.validateUser(this.user.id, this.message.guild.id, this.user.username)
 			}
 			/** --------------------------------------------------------------------
