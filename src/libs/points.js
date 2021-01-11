@@ -1,4 +1,3 @@
-const Pistachio = require(`./pistachio`)
 /**
  * Master/Parent Module that handles EXP and Artcoins
  * @since 6.0.0
@@ -22,24 +21,6 @@ class Points {
          * @type {external:Object}
          */
         this.expConfig = this.bot.points.exp
-
-        /**
-         * Pistachio's frameworks for point modules.
-         * @type {external:Object}
-         */
-        this.pistachio = new Pistachio({bot: this.bot, message: this.message})
-
-        /**
-         * Handling response message system. Using Pistachio's reply module.
-         * @type {function}
-         */
-        this.reply = this.pistachio.reply
-
-        /**
-         * Pistachio's emoji parser.
-         * @type {function}
-         */
-        this.emoji = this.pistachio.emoji
 
         /**
          * Uses default log handler
