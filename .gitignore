@@ -18,3 +18,6 @@ logs
 
 # ide specific folder
 .idea
+
+# VIM files
+*.swp
