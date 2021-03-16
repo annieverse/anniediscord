@@ -1,3 +1,10 @@
+## [7.11.3](https://github.com/klerikdust/anniediscord/compare/v7.11.2...v7.11.3) (2021-03-16)
+
+
+### Bug Fixes
+
+* **affiliates:** string quote on guild cache find.) ([742f2c1](https://github.com/klerikdust/anniediscord/commit/742f2c16d1f547125fe6d31616c7f4e58667d666))
+
 ## [7.11.2](https://github.com/klerikdust/anniediscord/compare/v7.11.1...v7.11.2) (2021-03-16)
 
 
