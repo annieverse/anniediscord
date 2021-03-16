@@ -1,3 +1,10 @@
+## [7.11.4](https://github.com/klerikdust/anniediscord/compare/v7.11.3...v7.11.4) (2021-03-16)
+
+
+### Bug Fixes
+
+* **votes:** uses diff port. ([d83c8f9](https://github.com/klerikdust/anniediscord/commit/d83c8f96ee022d8a92198f0e75734a4980c84769))
+
 ## [7.11.3](https://github.com/klerikdust/anniediscord/compare/v7.11.2...v7.11.3) (2021-03-16)
 
 
