@@ -1,3 +1,11 @@
+## [7.11.5](https://github.com/klerikdust/anniediscord/compare/v7.11.4...v7.11.5) (2021-03-16)
+
+
+### Bug Fixes
+
+* **logs:** broadcast indexing. ([ebeefc9](https://github.com/klerikdust/anniediscord/commit/ebeefc94542ab1aa5517e81f1f9f7f318c70acb3))
+* **logs:** out of async region. ([e44a57f](https://github.com/klerikdust/anniediscord/commit/e44a57f233e90f4235400743e91aa28755eb8bc4))
+
 ## [7.11.4](https://github.com/klerikdust/anniediscord/compare/v7.11.3...v7.11.4) (2021-03-16)
 
 
