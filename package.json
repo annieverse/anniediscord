@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "7.11.5",
+  "version": "7.11.6",
   "description": "An artsy bot — bring the best aesthetic vibe, to your community.",
   "main": "index.js",
   "private": true,

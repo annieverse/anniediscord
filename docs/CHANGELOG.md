@@ -1,3 +1,10 @@
+## [7.11.6](https://github.com/klerikdust/anniediscord/compare/v7.11.5...v7.11.6) (2021-03-16)
+
+
+### Bug Fixes
+
+* **logs:** asynchrounous server support channel fetch. ([73d95da](https://github.com/klerikdust/anniediscord/commit/73d95da51c2ee6c1316d2ad609a3cdb76a4f41ba))
+
 ## [7.11.5](https://github.com/klerikdust/anniediscord/compare/v7.11.4...v7.11.5) (2021-03-16)
 
 
