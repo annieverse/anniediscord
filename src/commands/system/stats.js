@@ -47,7 +47,7 @@ class SystemStatus extends Command {
 - Memory 				:: ${this.formatBytes(memUsage())}
 - Latency				:: ${commanifier(this.bot.ws.ping)}ms
 - Commands Ran      	 :: ${commanifier(total)}
-- Servers				:: ${commanifier(this.bot.guilds.cache.size)}`
+- Servers				:: ${commanifier((await this.bot.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0))}`
 			}
 		})
 	}
