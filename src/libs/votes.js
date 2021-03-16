@@ -13,20 +13,22 @@ class Votes {
 		this.execute()
 	}
 
-	execute() {
+	async execute() {
 		const fn = `[Votes.execute()]`
-		const dbl = new DBL(process.env.DBLTOKEN, {
+		//  Uses the existing vote connection
+		const existingDblConnection = (await this.bot.shard.broadcastEval(`if (this.dbl) this.dbl`)).filter(cluster => cluster !== null)
+		const dbl = existingDblConnection[0] || new DBL(process.env.DBLTOKEN, {
 	        webhookAuth: process.env.DBLWEBHOOK_AUTH,
 	        webhookPort: process.env.DBLWEBHOOK_PORT
 	        }
 	    )
 	    this.bot.registerNode(dbl, `dbl`)
-		dbl.postStats(this.bot.guilds.cache.size)
 		dbl.webhook.on(`ready`, hook => this.logger.info(`Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`))
-		dbl.webhook.on(`vote`, vote => {
+		dbl.webhook.on(`vote`, async vote => {
 			this.logger.info(`USER_ID: ${vote.user} just voted!`)
+			dbl.postStats((await this.bot.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0))
 			this.bot.db.updateInventory({itemId: 52, userId: vote.user, value: this.reward, distributeMultiAccounts: true})
-			const user = this.bot.users.cache.get(vote.user)
+			const user = await this.bot.users.fetch(vote.user)
 			try {
 				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${this.bot.emojis.cache.find(node => node.name === `artcoins`)}**${commanifier(this.reward)}** to your inventory as the reward!\nYou can check it by typing \`${this.prefix}bal\` or \`${this.prefix}inventory\` in the server.`)
 			}

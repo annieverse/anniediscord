@@ -23,7 +23,7 @@ class Reminder {
         const savedReminders = await this.db.getAllReminders()
         if (savedReminders.length <= 0) return this.logger.info(`${fn} there are no saved reminders.`)
         //  Iterate over the reminders and register them to cron
-        this.logger.info(`Begin initializing reminders ...`)
+        let activeReminders = 0
         for (let i=0; i<savedReminders.length; i++) {
             const context = savedReminders[i]
             let normalizedContext = {
@@ -34,10 +34,11 @@ class Reminder {
                 remindAt: JSON.parse(context.remind_at)
             }
             normalizedContext.remindAt.timestamp = new Date(normalizedContext.remindAt.timestamp)
+            if (normalizedContext.remindAt.timestamp <= new Date()) continue
             this.startReminder(normalizedContext)
-            this.logger.info(`${fn} successfully setup reminder for ${normalizedContext.id}`)
+            activeReminders++
         }
-        this.logger.info(`${fn} successfully initializing ${savedReminders.length} reminders!`)
+        this.logger.info(`${fn} ${activeReminders} reminders have been added into cron`)
     }
 
     /**

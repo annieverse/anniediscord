@@ -1,7 +1,6 @@
 const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
-const ascii = require(`./config/startupAscii`)
 const CommandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
 const logger = require(`./libs/logger`)
@@ -17,7 +16,6 @@ const Experience = require(`./libs/exp`)
 class Annie extends Discord.Client {
     constructor() {
         super()
-        logger.debug(ascii.default)
 
         /**
          * The default prop for accessing the global point configurations.
@@ -172,33 +170,28 @@ class Annie extends Discord.Client {
         const initTime = process.hrtime()
         const configClass = new customConfig(this)
         const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
-        const shards = (await this.shard.broadcastEval(`this.guilds.cache`))
-        .map(shard => shard.map(guild => guild.id))
-        //  Iterating over all the available shards
-        for (let s=0; s<shards.length; s++) {
-            const getGuilds = shards[s]
-            for (let i=0; i<getGuilds.length; i++) {
-                let guild = this.guilds.cache.get(getGuilds[i])
-                let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
-                guild.configs = new Map()
-                //  Iterating over all the available configurations
-                for (let x=0; x<configClass.availableConfigurations.length; x++) {
-                    let cfg = configClass.availableConfigurations[x]
-                    //  Register existing configs into guild's nodes if available
-                    if (existingGuildConfigs.length > 0) {
-                        const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
-                        if (matchConfigCode) {
-                            cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
-                            cfg.setByUserId = matchConfigCode.set_by_user_id
-                            cfg.registeredAt = matchConfigCode.registered_at
-                            cfg.updatedAt = matchConfigCode.updated_at
-                        }
+        const getGuilds = this.guilds.cache.map(guild => guild.id)
+        for (let i=0; i<getGuilds.length; i++) {
+            let guild = this.guilds.cache.get(getGuilds[i])
+            let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
+            guild.configs = new Map()
+            //  Iterating over all the available configurations
+            for (let x=0; x<configClass.availableConfigurations.length; x++) {
+                let cfg = configClass.availableConfigurations[x]
+                //  Register existing configs into guild's nodes if available
+                if (existingGuildConfigs.length > 0) {
+                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                    if (matchConfigCode) {
+                        cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
+                        cfg.setByUserId = matchConfigCode.set_by_user_id
+                        cfg.registeredAt = matchConfigCode.registered_at
+                        cfg.updatedAt = matchConfigCode.updated_at
                     }
-                    guild.configs.set(cfg.name, cfg)
                 }
+                guild.configs.set(cfg.name, cfg)
             }
-            logger.info(`Registered configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
         }
+        logger.info(`Registered configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
     }
 
     /**
@@ -213,6 +206,9 @@ class Annie extends Discord.Client {
             this.logger.info(`${fn} there are no guilds with registered ARs.`)
             return false
         }
+        //  Handle if the guilds in current shard don't have registered ARs
+        console.debug(ars)
+
         //  Iterate over all the available guilds
         let totalArs = 0
         for (let i=0; i<ars.length; i++) {

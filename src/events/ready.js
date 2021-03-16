@@ -48,8 +48,6 @@ module.exports = annie => {
 		Routine.resourceUsageLogging()
 		//	Check if pixiv cache's dir exists or not
 		Routine.pixivCacheDirCheck()
-		//	Release pixiv caches every 30 minutes
-		Routine.releasePixivCaches()
 		//  Handling incoming votes
 		new VotesManager(annie)
 	}
