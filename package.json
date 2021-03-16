@@ -39,7 +39,7 @@
     "@semantic-release/npm": "^7.0.9",
     "@semantic-release/release-notes-generator": "^9.0.1",
     "async-redis": "^1.1.7",
-    "axios": ">=0.21.0",
+    "axios": "^0.21.1",
     "better-sqlite3": "^7.1.1",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
@@ -70,7 +70,7 @@
     "pixiv-api-client": "^0.24.0",
     "pixiv-app-api": "github:klerikdust/pixiv-app-api",
     "pixiv-img": "^1.0.0",
-    "pm2": "^4.5.1",
+    "pm2": "^4.5.5",
     "probe-image-size": "^5.0.0",
     "string-similarity": "^4.0.2",
     "superagent": "^6.0.0",
@@ -82,7 +82,7 @@
     "eslint": "5.16.0",
     "http": "0.0.1-security",
     "nodemon": "^2.0.6",
-    "semantic-release": "^17.3.0",
+    "semantic-release": "^17.4.2",
     "url": "^0.11.0"
   }
 }
