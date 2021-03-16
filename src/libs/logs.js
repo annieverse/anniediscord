@@ -545,7 +545,7 @@ class LogsSystem {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    guildDelete({ reply, emoji }) {
+    async guildDelete({ reply, emoji }) {
         const fn = `[Logs.guildDelete()]`
         this.logger.info(`${fn} ${this.data.guild.name}@${this.data.guild.id} has kicked me.`)
         return reply(this.locale.LOGS.GUILD_DELETE, {
