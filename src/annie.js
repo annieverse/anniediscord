@@ -140,22 +140,22 @@ class Annie extends Discord.Client {
          * @type {boolean}
          */
         this.startupState = true
+        this.prepareLogin()
     }
 
 
     /**
      * Initialize Annie and login to discord
      * @since 6.0.0
-     * @param {String} token the bot token
-     * @returns {String}
+     * @returns {void}
      */
-    async prepareLogin(token) {
+    prepareLogin() {
         process.on(`unhandledRejection`, err => logger.warn(`Catched rejection. > ${err.stack}`))
         try {
             this._initializingDatabase()
             this._initializingCommands()
             this._listeningToEvents()
-            this.login(token)
+            this.login(process.env.TOKEN)
         }
         catch(e) {
             logger.error(`Client has failed to start > ${e.stack}`)
@@ -410,5 +410,5 @@ class Annie extends Discord.Client {
     }
 }
 
-module.exports = Annie
+module.exports = new Annie()
 
