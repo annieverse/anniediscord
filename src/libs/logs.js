@@ -15,16 +15,10 @@ class LogsSystem {
         this.data = data
 
         /**
-         * Default log channel in Annie's support server
-         * @type {object}
-         */
-        this.SupportServerLogChannel = data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`)[0]
-
-        /**
          * Current guild's instance
          * @type {object}
          */
-        this.guild = data.bot.shard.broadcastEval(`this.guilds.cache.get('${data.guild.id}')`)[0]
+        this.guild = data.guild
 
         /**
          * Current message's instance
@@ -43,25 +37,23 @@ class LogsSystem {
          * @type {object}
          */	
 		this.locale = data.bot.locale[`en`]	
-        this.guild.then(g => {
-            /**
-             * Current guild's configurations factory
-             * @type {map}
-             */
-            this.configs = g ? g.configs : null
-            //  Handle if typeOfLog is not provided
-            if (!data.typeOfLog) return
-            //  Run GUILD_CREATE and GUILD_DELETE in support's server
-            if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
-            if (!this.configs) return
-            //  Handle if logs_module isn't enabled in the current guild instance
-            if (!this.configs.get(`LOGS_MODULE`).value) return
-            //  Handle if logs channel cannot be found
-            this.findLogsChannel()
-            if (!this.logsChannel) return
-            //  Run log based on given type
-            this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
-        })
+        /**
+         * Current guild's configurations factory
+         * @type {map}
+         */
+        this.configs = this.guild ? this.guild.configs : null
+        //  Handle if typeOfLog is not provided
+        if (!data.typeOfLog) return
+        //  Run GUILD_CREATE and GUILD_DELETE in support's server
+        if ([`GUILD_CREATE`, `GUILD_DELETE`].includes(data.typeOfLog)) return this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
+        if (!this.configs) return
+        //  Handle if logs_module isn't enabled in the current guild instance
+        if (!this.configs.get(`LOGS_MODULE`).value) return
+        //  Handle if logs channel cannot be found
+        this.findLogsChannel()
+        if (!this.logsChannel) return
+        //  Run log based on given type
+        this[this._configCodeToMethod(data.typeOfLog)](new Pistachio({bot: data.bot}))
     }
 
     /**
@@ -320,14 +312,14 @@ class LogsSystem {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    async messageDeleteBulk({ reply }) {
+    messageDeleteBulk({ reply }) {
         const fn = `[Logs.messageDeleteBulk()]`
         const message = this.data.messages.first()
         //  Handle if message is coming from direct message interface
         if (message.channel.type ==`dm`) return
         //  Preventation, incase the current guild instance isn't in the same place as received message id.
         if (this.logsChannel.guild.id !== message.guild.id) return
-        this.logger.info(`${fn} a bulk of message was deleted from GUILD_ID:${(await this.guild).id}`)
+        this.logger.info(`${fn} a bulk of message was deleted from GUILD_ID:${this.guild.id}`)
         return reply(this.locale.LOGS.MESSAGE_DELETE_BULK, {
             header: `Bulk of Messages deletion was performed.`,
             timestamp: true,
@@ -344,7 +336,7 @@ class LogsSystem {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    async messageDelete({ reply }) {
+    messageDelete({ reply }) {
         const fn = `[Logs.messageDelete()]`
         //  Handle if message is coming from bot-typed user
         if (this.message.author.bot) return
@@ -352,7 +344,7 @@ class LogsSystem {
         if (this.message.channel.type ==`dm`) return
         //  Preventation, incase the current guild instance isn't in the same place as received message id.
         if (this.logsChannel.guild.id != this.message.guild.id) return
-        this.logger.info(`${fn} a message was deleted from GUILD_ID:${await (this.guild).id}`)
+        this.logger.info(`${fn} a message was deleted from GUILD_ID:${this.guild.id}`)
         return reply(this.locale.LOGS.MESSAGE_DELETE, {
             header: `A message was deleted by ${this.message.author.username}.`,
             thumbnail: this.message.author.displayAvatarURL(),
@@ -516,7 +508,7 @@ class LogsSystem {
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
-            field: await this.SupportServerLogChannel,
+            field: (await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`))[0],
             socket: {
                 guildCode: `**${guildCode}**`,
                 emoji: emoji(`AnniePeek2`)
@@ -552,7 +544,7 @@ class LogsSystem {
             header: `It's nice to know you, ${this.data.guild.name}.`,
             thumbnail: this.data.guild.iconURL(),
             timestamp: true,
-            field: await this.SupportServerLogChannel,
+            field: (await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`))[0],
             socket: {emoji: emoji(`AnnieCry`)}
         })
     }
