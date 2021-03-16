@@ -172,29 +172,34 @@ class Annie extends Discord.Client {
         const initTime = process.hrtime()
         const configClass = new customConfig(this)
         const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
-        const getGuilds = this.guilds.cache.map(node => node.id)
-        //  Iterating over all the available guilds
-        for (let i=0; i<getGuilds.length; i++) {
-            let guild = this.guilds.cache.get(getGuilds[i])
-            let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
-            guild.configs = new Map()
-            //  Iterating over all the available configurations
-            for (let x=0; x<configClass.availableConfigurations.length; x++) {
-                let cfg = configClass.availableConfigurations[x]
-                //  Register existing configs into guild's nodes if available
-                if (existingGuildConfigs.length > 0) {
-                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
-                    if (matchConfigCode) {
-                        cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
-                        cfg.setByUserId = matchConfigCode.set_by_user_id
-                        cfg.registeredAt = matchConfigCode.registered_at
-                        cfg.updatedAt = matchConfigCode.updated_at
+        const shards = (await this.shard.broadcastEval(`this.guilds.cache`))
+        .map(shard => shard.map(guild => guild.id))
+        //  Iterating over all the available shards
+        for (let s=0; s<shards.length; s++) {
+            const getGuilds = shards[s]
+            console.debug(getGuilds)
+            for (let i=0; i<getGuilds.length; i++) {
+                let guild = this.guilds.cache.get(getGuilds[i])
+                let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
+                guild.configs = new Map()
+                //  Iterating over all the available configurations
+                for (let x=0; x<configClass.availableConfigurations.length; x++) {
+                    let cfg = configClass.availableConfigurations[x]
+                    //  Register existing configs into guild's nodes if available
+                    if (existingGuildConfigs.length > 0) {
+                        const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                        if (matchConfigCode) {
+                            cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
+                            cfg.setByUserId = matchConfigCode.set_by_user_id
+                            cfg.registeredAt = matchConfigCode.registered_at
+                            cfg.updatedAt = matchConfigCode.updated_at
+                        }
                     }
+                    guild.configs.set(cfg.name, cfg)
                 }
-                guild.configs.set(cfg.name, cfg)
             }
+            logger.info(`Registered configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
         }
-        logger.info(`Successfully registering configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
     }
 
     /**

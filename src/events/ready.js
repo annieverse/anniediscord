@@ -17,9 +17,12 @@ module.exports = annie => {
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
-		annie.logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
-		annie.logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.cache.size} users`)
-		annie.user.setStatus(`dnd`)
+		annie.shard.broadcastEval(`this.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)`)
+		.then(res => {
+			annie.logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
+			annie.logger.info(`currently serving ${res.reduce((acc, memberCount) => acc + memberCount, 0)} users`)
+			annie.user.setStatus(`dnd`)
+		})
 	} else {
 		/**
 		 * 	--------------------------------------------------
@@ -27,11 +30,13 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		annie.logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
-		annie.logger.info(`currently serving in ${annie.guilds.cache.size} guilds and ${annie.users.size} users`)
 		annie.user.setStatus(`online`)
 		setInterval(() => {
-			const pools = [`${commanifier(annie.guilds.cache.reduce((a, g) => a + g.memberCount, 0))} users`, `${annie.prefix}help`]
-			annie.user.setActivity(pools[Math.floor(Math.random() * pools.length)], {type: `WATCHING`})
+			annie.shard.broadcastEval(`this.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)`)
+			.then(res => {
+				const pools = [`${commanifier(res.reduce((acc, memberCount) => acc + memberCount, 0))} users`, `${annie.prefix}help`]
+				annie.user.setActivity(pools[Math.floor(Math.random() * pools.length)], {type: `WATCHING`})
+			})
 		//  Refresh activity for every 60 seconds
 		}, 60000)
 		/**

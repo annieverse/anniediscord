@@ -2,6 +2,7 @@ const moment = require(`moment`)
 const memUsage = require(`../../utils/memoryUsage`)
 const Command = require(`../../libs/commands`)
 const pkg = require(`../../../package`)
+const shardName = require(`../../config/shardName`)
 /**
  * Gives info about the current bot performance.
  * @author klerikdust
@@ -39,13 +40,14 @@ class SystemStatus extends Command {
 			header: `The State of Annie`,
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
-				status: `- Master 			:: v${pkg.version}
-- Node.js			:: v${pkg.engines.node}
-- Uptime 			:: ${uptimeDuration.days()}d:${uptimeDuration.hours()}h:${uptimeDuration.minutes()}m:${uptimeDuration.seconds()}s
-- Memory 			:: ${this.formatBytes(memUsage())}
-- Latency			:: ${commanifier(this.bot.ws.ping)}ms
-- Commands Ran       :: ${commanifier(total)}
-- Guilds 			:: ${commanifier(this.bot.guilds.cache.size)}`
+				status: `- Cluster				:: ${shardName[this.message.guild.shard.id]}
+- Master 				:: v${pkg.version}
+- Node.js				:: v${pkg.engines.node}
+- Uptime 				:: ${uptimeDuration.days()}d:${uptimeDuration.hours()}h:${uptimeDuration.minutes()}m:${uptimeDuration.seconds()}s
+- Memory 				:: ${this.formatBytes(memUsage())}
+- Latency				:: ${commanifier(this.bot.ws.ping)}ms
+- Commands Ran      	 :: ${commanifier(total)}
+- Servers				:: ${commanifier(this.bot.guilds.cache.size)}`
 			}
 		})
 	}
