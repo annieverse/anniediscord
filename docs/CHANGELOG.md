@@ -1,3 +1,10 @@
+## [7.11.1](https://github.com/klerikdust/anniediscord/compare/v7.11.0...v7.11.1) (2021-03-16)
+
+
+### Bug Fixes
+
+* affiliate guild broadcast through shard.) ([04baeb4](https://github.com/klerikdust/anniediscord/commit/04baeb4bb06d0233011f27b512a2cd8ebe0c9fa0))
+
 # [7.11.0](https://github.com/klerikdust/anniediscord/compare/v7.10.24...v7.11.0) (2021-03-16)
 
 
