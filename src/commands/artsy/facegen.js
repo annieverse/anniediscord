@@ -26,7 +26,7 @@ class FaceGenerate extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, avatar, emoji }) {
+	async execute({ reply, emoji }) {
         const getID = Math.floor(Math.random() * this.range)
         this.fetching = await reply(this.locale.FACEGEN.FETCHING, {simplified: true, socket: {emoji: emoji(`AAUloading`)} })
         await reply(this.locale.FACEGEN.HEADER, {

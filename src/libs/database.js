@@ -1650,7 +1650,7 @@ class Database {
 			WHERE user_id = ? AND guild_id = ?`
 			, `get`
 			, [userId, guildId]
-		).then(async res => {
+		).then(async () => {
 			//  Refresh cache by deleting it
 			this.redis.del(key) 
 		})
