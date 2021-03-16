@@ -1,3 +1,12 @@
+## [7.11.2](https://github.com/klerikdust/anniediscord/compare/v7.11.1...v7.11.2) (2021-03-16)
+
+
+### Bug Fixes
+
+* **affiliate:** promised broadcast. ([1f1a769](https://github.com/klerikdust/anniediscord/commit/1f1a7697fbf27a95ceaccbdb382d99cc9b398e15))
+* **affiliates:** destructure array. ([d15f8b0](https://github.com/klerikdust/anniediscord/commit/d15f8b0a7d0089bea86399dbb233b18843dd08ab))
+* **affiliates:** guild prop.) ([42eaa72](https://github.com/klerikdust/anniediscord/commit/42eaa723ef8704f7dc4643742112d2e03ffe4a38))
+
 ## [7.11.1](https://github.com/klerikdust/anniediscord/compare/v7.11.0...v7.11.1) (2021-03-16)
 
 
