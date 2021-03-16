@@ -39,7 +39,7 @@ class Affiliates extends Command {
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
-			let serverSnowflake = await this.bot.shard.broadcastEval(`this.guilds.cache.get(${server.guild_id})`)
+			let serverSnowflake = await this.bot.shard.broadcastEval(`this.guilds.cache.get('${server.guild_id}')`)
             res += `**• ${serverSnowflake[0] ? serverSnowflake[0].name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
