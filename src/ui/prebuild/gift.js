@@ -36,14 +36,14 @@ class UI {
 			gradientHeight: 180
 		})
 		await card.addContent({
-			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
+			avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})),
 			avatarRadius: 7,
 			marginTop: 65,
 			marginLeft: 80,
 			inline: true
 		})
 		//  Balance Author
-		card.addTitle({main: this.user.username + `,`, size: 12, marginLeft: 60, marginTop: 60, fontWeight: `bold`})
+		card.addTitle({main: this.user.master.username + `,`, size: 12, marginLeft: 60, marginTop: 60, fontWeight: `bold`})
 		.addTitle({main: `will receive ...`, size: 9, marginLeft: 70, marginTop: 15})
 		//  Artcoins visual
 		const amountTextLength = commanifier(this.amount).length

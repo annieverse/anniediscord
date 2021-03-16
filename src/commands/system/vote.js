@@ -20,14 +20,14 @@ class Vote extends Command {
 	async execute({ reply, name, emoji }) {
 		await this.requestUserMetadata(2)
 		//  Handle if user's vote still in cooldown
-		if (await this.bot.dbl.hasVoted(this.user.id)) return reply(this.locale.VOTE.IS_COOLDOWN, {
+		if (await this.bot.dbl.hasVoted(this.user.master.id)) return reply(this.locale.VOTE.IS_COOLDOWN, {
 			socket: {
 				page: `[write a review](${this.page})`,
 				emoji: emoji(`AnniePeek2`)
 			}
 		})
 		return reply(this.locale.VOTE.READY, {
-			header: `Hi, ${name(this.user.id)}!`,
+			header: `Hi, ${name(this.user.master.id)}!`,
 			image: `banner_votes`,
 			socket: {
 				emoji: emoji(`AnnieSmile`),

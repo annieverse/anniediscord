@@ -26,7 +26,7 @@ class EndEvent extends Command {
 		const participants = ticket.members.map(m => m.user.id)
 
 		//  Returns if no ghosting participants left
-		if (participants.length < 1) return reply(this.locale.EVENT.END_NOPARTICIPANTLEFT, {socket: {user: name(this.user.id)} })
+		if (participants.length < 1) return reply(this.locale.EVENT.END_NOPARTICIPANTLEFT, {socket: {user: name(this.user.master.id)} })
 		//  Removing tickets
 		for (let i = 0; i < participants.length; i++) {
 			await this.message.guild.members.cache.get(participants[i]).roles.remove(ticket)

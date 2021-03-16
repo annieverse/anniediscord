@@ -28,7 +28,7 @@ class UI {
 			let colorByRank = ranking <= 1 ? `crimson` : ranking <= 2 ? `blue` : ranking <= 3 ? `darkbrown` : `text`
 
 			//  Add highlight and lighten the text if current row is the author
-			if (topTenRows[row].id === this.user.id) {
+			if (topTenRows[row].id === this.user.master.id) {
 				colorByRank = `purewhite`
 				card.createDataBar({
 					barColor: `pink`, 

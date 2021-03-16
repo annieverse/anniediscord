@@ -68,7 +68,7 @@ class UI {
 		//  Avatar
 		card.canv.setColor(card.color.base)
 			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.user.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
+			.printCircularImage(await resolveImage(this.user.master.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const inventory = this.user.inventory.raw
 		const badges = inventory.filter(key => key.type_name === `Badges` && key.in_use === 1)
@@ -88,8 +88,8 @@ class UI {
 		//  Username
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`center`)
-			.setTextFont(`${this.resizeLongNickname(this.user.username)} roboto-bold`)
-			.printText(this.user.username, startPos_x + 70, 272)
+			.setTextFont(`${this.resizeLongNickname(this.user.master.username)} roboto-bold`)
+			.printText(this.user.master.username, startPos_x + 70, 272)
 
 		//  User's Title
 		card.canv.setColor(adjustedPrimaryColorContrast)
@@ -97,7 +97,7 @@ class UI {
 			.printText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
 		//  Verified/Blue Badge if any
-		const verifiedStartingPoint = card.canv.measureText(this.user.username).width * 1.3 + 2
+		const verifiedStartingPoint = card.canv.measureText(this.user.master.username).width * 1.3 + 2
 		if (this.user.main.verified) card.canv.printImage(await resolveImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
 
 		// Rank Bar

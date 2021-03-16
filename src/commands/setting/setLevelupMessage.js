@@ -38,7 +38,7 @@ class SetLevelupMessage extends Command {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
-            header: `Hi, ${name(this.user.id)}!`,
+            header: `Hi, ${name(this.user.master.id)}!`,
             thumbnail: this.thumbnail,
             socket: {
                 prefix: this.bot.prefix,
@@ -78,7 +78,7 @@ class SetLevelupMessage extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
@@ -104,7 +104,7 @@ class SetLevelupMessage extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)
@@ -142,7 +142,7 @@ class SetLevelupMessage extends Command {
                     configCode: subConfigId,
                     customizedParameter: ``,
                     guild: this.message.guild,
-                    setByUserId: this.user.id,
+                    setByUserId: this.user.master.id,
                     cacheTo: this.guildConfigurations
                 })
                 this.logger.info(`${fn} ${subConfigId} successfully reset channel for GUILD_ID:${this.message.guild.id}.`)
@@ -168,7 +168,7 @@ class SetLevelupMessage extends Command {
             configCode: subConfigId,
             customizedParameter: res.id,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${subConfigId} successfully set CHANNEL_ID:${res.id} for GUILD_ID:${this.message.guild.id}.`)

@@ -26,7 +26,7 @@ class JoinEvent extends Command {
 		if (!fetchGuildConfigs(`EVENT_PARTICIPANT_ROLE`)) return reply(this.locale.EVJOIN.ROLE_NOT_SET_UP, {color: `red`})
 		const eventRole = findRole(fetchGuildConfigs(`EVENT_PARTICIPANT_ROLE`))
 		//  Returns if user already have the ticket.
-		if (this.user._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.id)} })
+		if (this.user.master._roles.includes(eventRole.id)) return reply(this.locale.EVJOIN.ALREADY_HAS, {socket: {user: name(this.user.master.id)} })
 		//  Returns if user's balance doesn't meet the minimum fee requirement.
 		if (this.user.inventory.artcoins < this.fee) return reply(this.locale.EVJOIN.INSUFFICIENT_BALANCE, {color: `red`})
 		//  Deduct user's balance if user hadn't foxie card
@@ -35,15 +35,15 @@ class JoinEvent extends Command {
 			itemId: 52,
 			value: this.fee,
 			operation:`-`,
-			userId: this.user.id,
+			userId: this.user.master.id,
 			guildId: this.message.guild.id
 		})
 
 		//  Assign role to the user
-		addRole(eventRole, this.user.id)
+		addRole(eventRole, this.user.master.id)
 		return reply(this.locale.EVJOIN.SUCCESSFUL, {
 			socket: {
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				foxieMessage: this.locale.EVJOIN.FOXIES_BLESSING,
 				emoji: emoji(`AnnieHype`)
 			},

@@ -35,7 +35,7 @@ class CommandLineInterface extends Command {
 			socket: {
 				emoji: emoji(`AAUloading`),
 				command: `cli`,
-				user: this.user.id
+				user: this.user.master.id
 			} 
 		})
 		.then(load => {

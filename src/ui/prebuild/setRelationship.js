@@ -32,7 +32,7 @@ class UI {
 			gradientHeight: 180
 		})
 		await card.addContent({
-			avatar: await urlToBuffer(this.user.displayAvatarURL({format: `png`, dynamic: false})),
+			avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})),
 			avatarRadius: 15,
 			marginTop: 75,
 			justify: `center`

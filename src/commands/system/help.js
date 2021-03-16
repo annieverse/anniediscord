@@ -34,20 +34,20 @@ class Help extends Command {
 			const commandSuggestions = await db.mostUsedCommands()
 			return reply(this.locale.HELP.LANDING, {
 				socket: {
-					user: name(this.user.id),
+					user: name(this.user.master.id),
 					recommendedCommands: this.prettifySuggestions(commandSuggestions),
 					serverLink: supportServer,
 					emoji: emoji(`AnnieWave`),
 					prefix: this.bot.prefix
 				},
 				color: this.defaultColor,
-				header: `Hi, ${name(this.user.id)}!`,
+				header: `Hi, ${name(this.user.master.id)}!`,
 				thumbnail: this.bot.user.displayAvatarURL()
 			})
 			
 			.then(response => {
 				response.react(this.commandpediaButton)
-				const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === this.user.id)
+				const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === this.user.master.id)
 				const bookEmojiCollector = response.createReactionCollector(bookEmoji, {
 					time: 60000
 				})

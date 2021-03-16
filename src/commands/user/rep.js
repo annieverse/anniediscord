@@ -37,12 +37,12 @@ class Reputation extends Command {
 		//	Handle if user is trying to rep themselves
 		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)} })
 
-		await db.addUserReputation(1, this.user.id, this.author.id,this.message.guild.id)
+		await db.addUserReputation(1, this.user.master.id, this.author.id,this.message.guild.id)
 		await db.updateReputationGiver(this.author.id, this.message.guild.id)
 		return reply(this.locale.GIVE_REPUTATION.SUCCESSFUL, {
 			status: `success`,
-			thumbnail: avatar(this.user.id),
-			socket: {user: name(this.user.id)}
+			thumbnail: avatar(this.user.master.id),
+			socket: {user: name(this.user.master.id)}
 		})
 	}
 }

@@ -41,7 +41,7 @@ class User {
 			if (findByFullString) {
 				this.logger.debug(`${fn} successfully found user by complete string`)
 				this.user = findByFullString
-				this.user.usedKeyword = target
+				this.usedKeyword = target
 				return this.user
 			}
 		}
@@ -54,7 +54,7 @@ class User {
 			findByFullStringID = collection.cache.get(target).user
 			this.logger.debug(`${fn} successfully found user by complete string of user ID`)
 			this.user = findByFullStringID
-			this.user.usedKeyword = target
+			this.usedKeyword = target
 			return this.user
 		}
 		catch(e) {
@@ -73,7 +73,7 @@ class User {
 				if (findByStringToken) {
 					this.logger.debug(`${fn} successfully found user by using string token '${token}'`)
 					this.user = findByStringToken
-					this.user.usedKeyword = token
+					this.usedKeyword = token
 					return this.user
 				}
 			}
@@ -87,7 +87,7 @@ class User {
 				if (findByIDToken) {
 					this.logger.debug(`${fn} successfully found user by using ID token '${token}'`)
 					this.user = findByIDToken
-					this.user.usedKeyword = token
+					this.usedKeyword = token
 					return this.user
 				}
 			}
@@ -106,7 +106,7 @@ class User {
 					if (findByCombinedStringTokens) {
 						this.logger.debug(`${fn} successfully found user by using combined string tokens '${combinedTokens}'`)
 						this.user = findByCombinedStringTokens
-						this.user.usedKeyword = combinedTokens
+						this.usedKeyword = combinedTokens
 						return this.user
 					}
 				}
@@ -134,12 +134,11 @@ class User {
 		//  Handle if user object isn't valid
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
 		try {
-			this.user = user
 			//  Data checking
-			const userValidate = await this.bot.db.doesUserRegisteredInTheGuild(this.user.id, this.message.guild.id)
+			const userValidate = await this.bot.db.doesUserRegisteredInTheGuild(user.id, this.message.guild.id)
 			if (userValidate.is_registered === 0) {
-				this.logger.info(`${fn} registering new user's metadata for ${this.user.id}@${this.message.guild.id}`)
-				await this.bot.db.validateUser(this.user.id, this.message.guild.id, this.user.username)
+				this.logger.info(`${fn} registering new user's metadata for ${user.id}@${this.message.guild.id}`)
+				await this.bot.db.validateUser(user.id, this.message.guild.id, user.username)
 			}
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 1
@@ -147,8 +146,8 @@ class User {
 			 *  Only consists of discord properties data + user's customized locale.
 			 */
 			let getUserLocale = await db.getUserLocale(user.id)
-			this.user.lang = getUserLocale ? getUserLocale.lang : `en`
-			if (dataLevel <= 1) return this.user
+			const lang = getUserLocale ? getUserLocale.lang : `en`
+			if (dataLevel <= 1) return {master:user, lang:lang}
 
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 2
@@ -157,24 +156,20 @@ class User {
 			 */
 			await db.registerGuild(this.guild)
 			//  Basic data such as saved username, language, user_id and registered date
-			this.user.main = await db.getUser(this.user.id)
-			//  User's past posted messages that were recorded by Annie.
-			this.user.posts = await db.getUserPosts(this.user.id, this.message.guild.id)
-			//  User's list of registered social medias
-			this.user.socialMedias = await db.getUserSocialMedia(this.user.id)
+			const main = await db.getUser(user.id)
 			//  User's reputations data
-			this.user.reputations = await db.getUserReputations(this.user.id, this.message.guild.id)
+			const reputations = await db.getUserReputations(user.id, this.message.guild.id)
 			//  User's dailies, streak and stuff
-			this.user.dailies = await db.getUserDailies(this.user.id, this.message.guild.id)
+			const dailies = await db.getUserDailies(user.id, this.message.guild.id)
 			//  User's relationship trees.
-			this.user.relationships = await db.getUserRelations(this.user.id,this.message.guild.id)
+			const relationships = await db.getUserRelations(user.id,this.message.guild.id)
 			//  User's quests data
-			this.user.quests = await db.getUserQuests(this.user.id, this.message.guild.id)
+			const quests = await db.getUserQuests(user.id, this.message.guild.id)
 
 			//  User's parsed experience points data
-			const experienceData = await db.getUserExp(this.user.id, this.message.guild.id)
+			const experienceData = await db.getUserExp(user.id, this.message.guild.id)
 			const parsedExp = this.bot.experienceLibs(this.message).xpFormula(experienceData.current_exp)
-			this.user.exp = {
+			const exp = {
 				raw: experienceData,
 				current_exp: experienceData.current_exp,
 				level: parsedExp.level,
@@ -190,9 +185,9 @@ class User {
 			 *  Access inventory.raw if you wanted a verbose version of inventory meta structure
 			 *  --------------------------------------------------
 			 */
-			const inventoryData = await db.getUserInventory(this.user.id, this.message.guild.id)
+			const inventoryData = await db.getUserInventory(user.id, this.message.guild.id)
 			const simplifiedInventory = this._simplifyInventory(inventoryData)
-			this.user.inventory = {
+			const inventory = {
 				raw: inventoryData,
 				...simplifiedInventory
 			}
@@ -204,8 +199,8 @@ class User {
 			 *  There is also fallback handler in case user's level is lower than what's available in the ranks pool.
 			 *  --------------------------------------------------
 			 */
-			const theme = this.user.inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-			this.user.usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+			const theme = inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
+			const usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
 			//  If custom ranks aren't registered in the guild yet, then use the default one instead.
 			const rankList = this.guild.configs.get(`RANKS_LIST`).value
 			const selectedRankPool = async () => {
@@ -230,11 +225,11 @@ class User {
 				return this.bot.configs.defaultRanks
 			}
 			const ranks = await selectedRankPool()
-			const currentRankLevel = this._closestBelow(ranks.map(node => node.LEVEL), this.user.exp.level)
+			const currentRankLevel = this._closestBelow(ranks.map(node => node.LEVEL), exp.level)
 			let rankData = ranks.filter(el => el.LEVEL === currentRankLevel)
 			//  Handle if user's level is lower than whats available in the rank pool
-			if (rankData.length <= 0) rankData = [{NAME: `Unranked`, COLOR: Themes[this.user.usedTheme.alias].text, LEVEL: currentRankLevel}] 
-			this.user.rank = {
+			if (rankData.length <= 0) rankData = [{NAME: `Unranked`, COLOR: Themes[usedTheme.alias].text, LEVEL: currentRankLevel}] 
+			const rank = {
 				name: rankData[0].NAME,
 				color: rankData[0].COLOR === `#000000` ?  palette.crimson : rankData[0].COLOR,
 				level: rankData[0].LEVEL
@@ -246,19 +241,40 @@ class User {
 			 *  These might come in handy in developer's side, such as shortcut.
 			 *  --------------------------------------------------
 			 */
-			const cover = await db.getUserCover(this.user.id, this.guild.id)
+			const cover = await db.getUserCover(user.id, this.guild.id)
+			let usedCover = {}
 			if (cover) {
-				this.user.usedCover = cover
+				usedCover = cover
 			}
 			else {
-				this.user.usedCover = await db.getItem(`defaultcover1`)
-				this.user.usedCover.isDefault = true
+				usedCover = await db.getItem(`defaultcover1`)
+				usedCover.isDefault = true
 			}
-			const sticker = user.inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
-			this.user.usedSticker = sticker.length ? sticker[0] : null
-			this.user.isSelf = this.isSelf
-			this.user.title = (await getUserPermission(this.message, this.user.id)).name
-			return this.user
+			const sticker = inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
+			const usedSticker = sticker.length ? sticker[0] : null
+			const isSelf = this.isSelf(user.id)
+			const title = (await getUserPermission(this.message, user.id)).name
+			return {
+				master:user,
+				main:main,
+				lang:lang,
+				reputations:reputations,
+				dailies:dailies,
+				relationships:relationships,
+				quests:quests,
+				exp:exp,
+				inventory:inventory,
+				theme:theme,
+				usedTheme:usedTheme,
+				rank:rank,
+				cover:cover,
+				usedCover:usedCover,
+				sticker:sticker,
+				usedSticker:usedSticker,
+				isSelf:isSelf,
+				title:title,
+				usedKeyword:this.usedKeyword
+			}
 		}
 		catch(e) {
 			this.bot.logger.error(`${fn} has failed to parse user's metadata > ${e.stack}`)
@@ -294,12 +310,13 @@ class User {
 
 	/**
 	 * Check if the message author is targetting themselves in input arg.
+	 * @param {string} id
 	 * @type {boolean}
 	 */
-	get isSelf() {
+	isSelf(id) {
 		const fn = `[User.isSelf]`
-		this.bot.logger.debug(`${fn} received from ${this.message.author.id} compare with ${this.user.id} is ${this.message.author.id === this.user.id}`)
-		return this.message.author.id === this.user.id
+		this.bot.logger.debug(`${fn} received from ${this.message.author.id} compare with ${id} is ${this.message.author.id === id}`)
+		return this.message.author.id === id
 	}
 
 }

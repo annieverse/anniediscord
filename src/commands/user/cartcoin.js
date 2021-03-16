@@ -48,7 +48,7 @@ class ConvertArtcoins extends Command {
 		})
 		const totalGainedExp = amountToUse / this.artcoinsRatio
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
-			thumbnail: avatar(this.user.id),
+			thumbnail: avatar(this.user.master.id),
 			notch: true,
 			socket: {
 				emoji: emoji(`artcoins`),
@@ -63,7 +63,7 @@ class ConvertArtcoins extends Command {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
 			//	Deduct balance & add new exp
-			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
 			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {

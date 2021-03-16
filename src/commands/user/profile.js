@@ -26,7 +26,7 @@ class Profile extends Command {
         })
         await reply(this.locale.COMMAND.TITLE, {
             socket: {
-                user: name(this.user.id),
+                user: name(this.user.master.id),
                 emoji: emoji(`AnnieSmile`),
                 command: `Profile`
             },

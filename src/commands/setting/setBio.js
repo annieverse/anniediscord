@@ -49,9 +49,9 @@ class SetBio extends Command {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
         	//  Perform update
-        	await db.setUserBio(this.fullArgs, this.user.id)
+        	await db.setUserBio(this.fullArgs, this.user.master.id)
         	this.finalizeConfirmation(r)
-			return reply(``, {customHeader: [`Yay! your new profile's bio has been set!♡`, avatar(this.user.id)]})
+			return reply(``, {customHeader: [`Yay! your new profile's bio has been set!♡`, avatar(this.user.master.id)]})
         })
 	}
 

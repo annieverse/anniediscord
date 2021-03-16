@@ -40,7 +40,7 @@ class SetWelcomer extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,
-            header: `Hi, ${name(this.user.id)}!`,
+            header: `Hi, ${name(this.user.master.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: emoji(`AnnieGeek`)
@@ -83,7 +83,7 @@ class SetWelcomer extends Command {
             configCode: this.selectedModule,
             customizedParameter: 1,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} WELCOMER_MODULE for GUILD_ID:${this.message.guild.id} has been enabled.`)
@@ -106,7 +106,7 @@ class SetWelcomer extends Command {
             configCode: this.selectedModule,
             customizedParameter: 0,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} WELCOMER_MODULE for GUILD_ID:${this.message.guild.id} has been disabled.`)
@@ -135,7 +135,7 @@ class SetWelcomer extends Command {
             configCode: this.selectedModule,
             customizedParameter: searchChannel.id,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} WELCOMER_CHANNEL for GUILD_ID:${this.message.guild.id} has been updated.`)
@@ -163,13 +163,13 @@ class SetWelcomer extends Command {
             configCode: this.selectedModule,
             customizedParameter: welcomerText,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} WELCOME_TEXT for GUILD_ID:${this.message.guild.id} has been updated.`)
         await reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
         this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: emoji(`AnnieSmile`)} })
-        this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.id)
+        this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.master.id)
         this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview(...arguments))
     }
 
@@ -184,7 +184,7 @@ class SetWelcomer extends Command {
         this.renderingMsg = await reply(this.locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
-                user: this.user.id,
+                user: this.user.master.id,
                 command: `WELCOMER_PREVIEW`,
                 emoji: emoji(`AAUloading`)
             }
@@ -235,7 +235,7 @@ class SetWelcomer extends Command {
             configCode: this.selectedModule,
             customizedParameter: rolesContainer.map(role => role.id),
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${rolesContainer.length} new role(s) has been registered for GUILD_ID:${this.message.guild.id}`)

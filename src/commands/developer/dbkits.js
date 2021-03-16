@@ -20,7 +20,7 @@ class DatabaseKits extends Command {
 	async execute({ reply, name, bot:{db} }) {
 		await this.requestUserMetadata(1)
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return reply(this.locale.DBKITS.AUTHORIZED, {socket: {user: name(this.user.id)}})
+		if (!this.fullArgs) return reply(this.locale.DBKITS.AUTHORIZED, {socket: {user: name(this.user.master.id)}})
 
 		try {
 

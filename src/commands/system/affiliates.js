@@ -23,7 +23,7 @@ class Affiliates extends Command {
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
 				list: this._prettifyList(affiliateList, ...arguments),
-				user: name(this.user.id)
+				user: name(this.user.master.id)
 			},
 			color: `crimson`
 		})

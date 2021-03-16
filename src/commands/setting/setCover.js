@@ -41,7 +41,7 @@ class SetCover extends Command {
             ? `DISPLAY_USED_SELF_COVER`
             : `DISPLAY_USED_REGULAR_COVER`
             return reply(`${this.locale.SETCOVER.GUIDE}\n${this.locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
-                header: `Hi, ${name(this.user.id)}!`,
+                header: `Hi, ${name(this.user.master.id)}!`,
                 image: `banner_setbackground`,
                 socket: {
                     prefix: this.bot.prefix,
@@ -106,7 +106,7 @@ class SetCover extends Command {
         this.fetching = await reply(this.locale.SETCOVER.FETCHING, {
             socket: {
                 itemId: this.cover.item_id,
-                userId: this.user.id,
+                userId: this.user.master.id,
                 emoji: emoji(`AAUloading`)
             } 
         })
@@ -129,14 +129,14 @@ class SetCover extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
-            await db.detachCovers(this.user.id, this.message.guild.id)
+            await db.detachCovers(this.user.master.id, this.message.guild.id)
             if (this.cover.isSelfUpload) {
-                db.applySelfUploadCover(this.cover.item_id, this.user.id, this.message.guild.id)
-                db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+                db.applySelfUploadCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
+                db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
             }
             else {
                 db.deleteSelfUploadCover(this.user.id, this.message.guild.id)
-                db.applyCover(this.cover.item_id, this.user.id, this.message.guild.id)
+                db.applyCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
             }
             //  Finalize
             this.finalizeConfirmation(r)

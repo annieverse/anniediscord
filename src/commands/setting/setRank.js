@@ -38,7 +38,7 @@ class SetRank extends Command {
         await this.requestUserMetadata(1)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETRANK.GUIDE, {
-            header: `Hi, ${name(this.user.id)}!`,
+            header: `Hi, ${name(this.user.master.id)}!`,
             image: `banner_setranks`,
             socket: {
                 prefix: this.bot.prefix,
@@ -81,7 +81,7 @@ class SetRank extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
@@ -150,7 +150,7 @@ class SetRank extends Command {
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         //  Finalize
@@ -185,7 +185,7 @@ class SetRank extends Command {
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         //  Finalize
@@ -268,7 +268,7 @@ class SetRank extends Command {
         if (this.subConfig.value.length <= 0) return reply(this.locale.SETRANK.RESET_NULL_RANKS, {status: `fail`})
         //  Confirmation before performing the action
         this.confirmation = await reply(``, {header: this.locale.SETRANK.RESET_CONFIRMATION})
-        this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.id)
+        this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.master.id)
         this.confirmationButtons.get(`RESET_CONFIRMATION`).on(`collect`, async () => {
             this.confirmation.delete()
             this.animation = await reply(this.locale.SETRANK.RESET_ANIMATION, {
@@ -281,8 +281,8 @@ class SetRank extends Command {
             //  Reset values
             this.primaryConfig.updatedAt = timestamp
             this.primaryConfig.value = 0
-            this.primaryConfig.setByUserId = this.user.id
-            this.subConfig.setByUserId = this.user.id
+            this.primaryConfig.setByUserId = this.user.master.id
+            this.subConfig.setByUserId = this.user.master.id
             this.subConfig.updatedAt = timestamp
             this.subConfig.value = [] 
             await this.bot.db.deleteGuildConfiguration(this.subConfigID, this.message.guild.id)
@@ -306,7 +306,7 @@ class SetRank extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} CUSTOM_RANK_MODULE has been disabled for GUILD_ID:${this.message.guild.id}`)

@@ -40,7 +40,7 @@ class SetExp extends Command {
         if (!this.fullArgs) return reply(this.locale.SETEXP.GUIDE, {
             color: `crimson`,
             thumbnail: this.thumbnail,
-            header: `Hi, ${name(this.user.id)}!`,
+            header: `Hi, ${name(this.user.master.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: emoji(`AnnieDab`)
@@ -86,7 +86,7 @@ class SetExp extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
@@ -112,7 +112,7 @@ class SetExp extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)

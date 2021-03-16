@@ -25,11 +25,11 @@ class Strike extends Command {
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
 
 		//  Fetching user's strike records
-		const records = await db.getStrikeRecords(this.user.id, this.message.guild.id)
-		if (!records.length) reply(this.locale.STRIKE.NULL_RECORD, {socket: {user: name(this.user.id), color: `golden`} })
+		const records = await db.getStrikeRecords(this.user.master.id, this.message.guild.id)
+		if (!records.length) reply(this.locale.STRIKE.NULL_RECORD, {socket: {user: name(this.user.master.id), color: `golden`} })
 		else reply(this.locale.STRIKE.DISPLAY_RECORD, {
 			socket: {
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				recordsLength: records.length, 
 				reportedBy: name(records[0].reported_by),
 				list: this.parseRecord(records)
@@ -67,12 +67,12 @@ class Strike extends Command {
 			this.commandName == `complaint`? reason = `**complaint:** ${reason}` : reason = `**STRIKE:** ${reason}` 
 			// Register new strike entry
 			await db.registerStrike({ 
-				user_id: this.user.id,
+				user_id: this.user.master.id,
 				reason: reason,
 				reported_by: this.message.author.id,
 				guild_id: this.message.guild.id
 			})
-			reply(this.locale.STRIKE.ENTRY_REGISTER, {socket: {user: name(this.user.id)}, color: `lightgreen`})
+			reply(this.locale.STRIKE.ENTRY_REGISTER, {socket: {user: name(this.user.master.id)}, color: `lightgreen`})
 			return this.endSequence()
 		})
 

@@ -48,7 +48,7 @@ class AutoResponder extends Command {
 		//  Handle if user doesn't specify any parameter.
 		if (!this.fullArgs) return reply(this.locale.AUTORESPONDER.GUIDE, {
             image: `banner_autoresponder`,
-            header: `Hi, ${name(this.user.id)}!`,
+            header: `Hi, ${name(this.user.master.id)}!`,
 			socket:{
                 emoji: emoji(`AnnieYay`),
                 guild: this.guild.name,
@@ -92,7 +92,7 @@ class AutoResponder extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: this.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.guild.id} has been enabled.`)
@@ -123,7 +123,7 @@ class AutoResponder extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: this.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.guild.id} has been disabled.`)
@@ -195,7 +195,7 @@ class AutoResponder extends Command {
         })
         //  Display AR confirmation
         this.registerConfirmation = await reply(this.locale.AUTORESPONDER.REGISTER_CONFIRMATION, {
-            thumbnail: avatar(this.user.id),
+            thumbnail: avatar(this.user.master.id),
             socket: {
                 trigger: trigger,
                 response: response
@@ -210,7 +210,7 @@ class AutoResponder extends Command {
             //  Register
             db.registerAutoResponder({
                 guildId: this.guild.id,
-                userId: this.user.id,
+                userId: this.user.master.id,
                 trigger: trigger,
                 response: response
             })

@@ -54,14 +54,14 @@ class Gift extends Command {
 		let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableGifts.map(i => i.name))
 		const gift = searchStringResult.bestMatch.rating >= 0.2 ? availableGifts.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
 		if (!gift) return reply(this.locale.GIFT.MISSING_ITEM, {
-			socket: {example:`e.g. **\`${this.bot.prefix}gift ${this.user.username} 10 ${availableGifts[0].name.toLowerCase()}\`**`}
+			socket: {example:`e.g. **\`${this.bot.prefix}gift ${this.user.master.username} 10 ${availableGifts[0].name.toLowerCase()}\`**`}
 		})
 		//  Handle if can't parse the desired user's gift amount
 		const amount = this.fullArgs.replace(/\D/g, ``)
 		if (!amount) return reply(this.locale.GIFT.INVALID_AMOUNT, {
 			socket: {
 				gift: gift.name,
-				example: `e.g. **\`${this.bot.prefix}gift ${this.user.username} 10 ${gift.name.toLowerCase()}\`**`
+				example: `e.g. **\`${this.bot.prefix}gift ${this.user.master.username} 10 ${gift.name.toLowerCase()}\`**`
 			}
 		})
 		//  Handle if the amount to send is lower than total owned item
@@ -76,7 +76,7 @@ class Gift extends Command {
 			prebuffer: true,
 			image: await new giftGUI(this.user, gift, amount).build(),
 			socket: {
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				gift: `${emoji(gift.alias)} ${gift.name}`,
 				amount: commanifier(amount)
 			}
@@ -88,14 +88,14 @@ class Gift extends Command {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
 			//  Adds reputation point to target user
-			await db.addUserReputation(amount, this.user.id, this.message.author.id, this.message.guild.id)
+			await db.addUserReputation(amount, this.user.master.id, this.message.author.id, this.message.guild.id)
 			//  Deduct gifts from sender
-			await db.updateInventory({itemId: gift.item_id, value: amount, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
+			await db.updateInventory({itemId: gift.item_id, value: amount, operation: `-`, userId: this.author.master.id, guildId: this.message.guild.id})
  			this.finalizeConfirmation(r)
  			reply(``, {
-				customHeader: [`${name(this.user.id)} has received your gifts!♡`, avatar(this.user.id), ],
+				customHeader: [`${name(this.user.master.id)} has received your gifts!♡`, avatar(this.user.master.id), ],
 				socket: {
-					user: name(this.user.id),
+					user: name(this.user.master.id),
 					gift: `${emoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
 				} 
 			})

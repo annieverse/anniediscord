@@ -34,7 +34,7 @@ class Leaderboard extends Command {
 
 		//  Returns a guide if no parameter was specified.
 		if (!this.args[0]) return reply(this.locale.LEADERBOARD.GUIDE, {
-			header: `Hi, ${name(this.user.id)}!`,
+			header: `Hi, ${name(this.user.master.id)}!`,
 			image: `banner_leaderboard`,
 			socket: {
 				prefix: this.bot.prefix,
@@ -53,7 +53,7 @@ class Leaderboard extends Command {
 			socket: {
 				command: `${selectedGroup} leaderboard`,
 				emoji: emoji(`AAUloading`),
-				user: this.user.id
+				user: this.user.master.id
 			},
 			simplified: true
 		})
@@ -97,7 +97,7 @@ class Leaderboard extends Command {
 				simplified: true
 			})
 
-			const author = lbData.filter(key => key.id === this.user.id)[0]
+			const author = lbData.filter(key => key.id === this.user.master.id)[0]
 			const footer = author ? this.locale.LEADERBOARD.AUTHOR_RANK : this.locale.LEADERBOARD.UNRANKED
 			reply(footer, {
 				simplified: true,

@@ -31,7 +31,7 @@ class Relationship extends Command {
             socket: {
                 command: `relationship`,
                 emoji: emoji(`AAUloading`),
-                user: this.user.id
+                user: this.user.master.id
             }
         })
         await reply(this.locale.COMMAND.TITLE, {
@@ -40,7 +40,7 @@ class Relationship extends Command {
             socket: {
                 command: `Relationship`,
                 emoji: emoji(`AnnieWink`),
-                user: name(this.user.id)
+                user: name(this.user.master.id)
             },
             image: await new GUI(this.user, name, avatar, this.bot, this.author).build()
         })

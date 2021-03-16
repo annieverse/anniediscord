@@ -177,7 +177,6 @@ class Annie extends Discord.Client {
         //  Iterating over all the available shards
         for (let s=0; s<shards.length; s++) {
             const getGuilds = shards[s]
-            console.debug(getGuilds)
             for (let i=0; i<getGuilds.length; i++) {
                 let guild = this.guilds.cache.get(getGuilds[i])
                 let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)

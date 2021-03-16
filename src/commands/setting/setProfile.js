@@ -112,7 +112,7 @@ class SetProfile extends Command {
      * returns {Database:QueryResult}
      */
     async equip(itemId) {
-        return this.bot.db.useItem(itemId, this.user.id, this.message.guild.id)
+        return this.bot.db.useItem(itemId, this.user.master.id, this.message.guild.id)
     }
 
     /**
@@ -121,7 +121,7 @@ class SetProfile extends Command {
      * returns {Database:QueryResult}
      */
     async unequip(itemId) {
-        return this.bot.db.unuseItem(itemId, this.user.id, this.message.guild.id)
+        return this.bot.db.unuseItem(itemId, this.user.master.id, this.message.guild.id)
     }
 
     /**

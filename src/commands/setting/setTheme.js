@@ -30,7 +30,7 @@ class setTheme extends Command {
             if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
             let hasTheme = await this.userHasTheme(...arguments, `dark`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
-            db.setTheme(`dark`, this.user.id, this.message.guild.id)
+            db.setTheme(`dark`, this.user.master.id, this.message.guild.id)
             return reply(this.locale.SWITCH_THEME.SET_NIGHTMODE, {status: `success`})
         }
 
@@ -38,7 +38,7 @@ class setTheme extends Command {
             if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
             let hasTheme = await this.userHasTheme(...arguments, `light`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
-            db.setTheme(`light`, this.user.id, this.message.guild.id)
+            db.setTheme(`light`, this.user.master.id, this.message.guild.id)
             return reply(this.locale.SWITCH_THEME.SET_LIGHTMODE, {status: `success`})
         }
 
@@ -47,7 +47,7 @@ class setTheme extends Command {
     }
 
     async currentTheme({bot:{db}}){
-        let res = await db.findCurrentTheme(this.user.id, this.message.guild.id)
+        let res = await db.findCurrentTheme(this.user.master.id, this.message.guild.id)
         return res
     }
 
@@ -59,11 +59,11 @@ class setTheme extends Command {
      * @returns {boolean} boolean
      */
     async userHasTheme({bot:{db}}, theme){
-        let res = await db.checkIfThemeOwned(theme, this.user.id, this.message.guild.id)
+        let res = await db.checkIfThemeOwned(theme, this.user.master.id, this.message.guild.id)
         let resAnswer = Object.values(res)[0] == 1 ? true : false
         if (resAnswer) return true
         // Give item to user
-        await db.GiveThemeToUser(theme, this.user.id, this.message.guild.id)
+        await db.GiveThemeToUser(theme, this.user.master.id, this.message.guild.id)
         return true
     }
 }

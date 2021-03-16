@@ -33,7 +33,7 @@ class SellFragments extends Command {
     	await this.requestUserMetadata(2)
     	//  Display guild if user doesn't specify any arg
     	if (!this.fullArgs) return reply(this.locale.SELLFRAGMENTS.GUIDE, {
-    		header: `Hi, ${name(this.user.id)}!`,
+    		header: `Hi, ${name(this.user.master.id)}!`,
     		color: `crimson`,
     		image: `banner_sellfragments`,
     		socket: {
@@ -71,19 +71,19 @@ class SellFragments extends Command {
     			artcoinsEmoji: emoji(`artcoins`) 
     		}
     	})
-    	this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.id)
+    	this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.master.id)
     	this.confirmationButtons.get(`SELLFRAGMENTS_CONFIRMATION`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
     		//  Deliver artcoins to user's inventory
-    		await this.bot.db.updateInventory({itemId: 52, userId: this.user.id, guildId: this.message.guild.id, value: this.receivedAmount, operation: `+`})
+    		await this.bot.db.updateInventory({itemId: 52, userId: this.user.master.id, guildId: this.message.guild.id, value: this.receivedAmount, operation: `+`})
     		//  Deduct fragments from user's inventory
-    		await this.bot.db.updateInventory({itemId: 51, userId: this.user.id, guildId: this.message.guild.id, value: this.amountToSell, operation: `-`})
+    		await this.bot.db.updateInventory({itemId: 51, userId: this.user.master.id, guildId: this.message.guild.id, value: this.amountToSell, operation: `-`})
     		//  Successful
             this.finalizeConfirmation(r)
-    		return reply(``, {customHeader: [`Fragments has been sold!`, avatar(this.user.id)]})
+    		return reply(``, {customHeader: [`Fragments has been sold!`, avatar(this.user.master.id)]})
     	})
 	}
 }

@@ -66,7 +66,7 @@ class Pay extends Command {
 			prebuffer: true,
 			image: await new GUI(this.user, this.total).build(),
 			socket: {
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				amount: `${emoji(`artcoins`)} ${commanifier(this.total)}`
 			}
 		})
@@ -77,13 +77,13 @@ class Pay extends Command {
 				socket: {emoji: emoji(`AnnieSleep`)}
 			})
  			//  Send artcoins to target user
-			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance
 			await db.updateInventory({itemId: 52, value: this.amountToSend, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
  			this.finalizeConfirmation(r)
  			reply(``, {
- 				customHeader: [`${name(this.user.id)} has received your artcoins!♡`, avatar(this.user.id)],
- 				socket:{target: name(this.user.id)} 
+ 				customHeader: [`${name(this.user.master.id)} has received your artcoins!♡`, avatar(this.user.id)],
+ 				socket:{target: name(this.user.master.id)} 
  			})
  		})
  	}

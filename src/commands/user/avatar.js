@@ -22,7 +22,7 @@ class Avatar extends Command {
 		this.avatarInit = await reply(this.locale.AVATAR.INITIAL)
 		await this.delay(1750)
 		this.avatarInit.delete()
-		return displayAvatar(this.user.id)
+		return displayAvatar(this.user.master.id)
 	}
 
 	/**

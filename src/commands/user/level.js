@@ -31,7 +31,7 @@ class Level extends Command {
 			simplified: true,
 			socket: {
 				emoji: emoji(`AAUloading`), 
-				user: this.user.id,
+				user: this.user.master.id,
 				command: `level`
 			}
 		})
@@ -42,7 +42,7 @@ class Level extends Command {
 				image: await new GUI(this.user).build(),
 				socket: {
 					emoji: emoji(`AnnieDab`),
-					user: name(this.user.id),
+					user: name(this.user.master.id),
 					command: `Level`
 				}
 			})

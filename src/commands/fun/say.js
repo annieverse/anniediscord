@@ -20,7 +20,7 @@ class Say extends Command {
 		await this.requestUserMetadata(2)
 
 		//	Displaying short-guide if user doesn't specify any message to send.
-		if (!this.fullArgs) return reply(this.locale.SHORT_GUIDE, {socket: [name(this.user.id)]})
+		if (!this.fullArgs) return reply(this.locale.SHORT_GUIDE, {socket: [name(this.user.master.id)]})
 		//	Spying mode. FAYAHHHH!
 		this.message.delete()
 		return reply(this.fullArgs, {color: `crimson`})

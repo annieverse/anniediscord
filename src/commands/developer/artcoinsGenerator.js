@@ -28,7 +28,7 @@ class ArtcoinsGenerator extends Command {
 		this.setSequence(5)
 
 		let amount = 0
-		reply(this.locale.ADDAC.CONFIRMATION_SEQ_1, {socket: {user: name(this.user.id)}, color: `golden`})
+		reply(this.locale.ADDAC.CONFIRMATION_SEQ_1, {socket: {user: name(this.user.master.id)}, color: `golden`})
 		.then(async confirmation => {
 			this.sequence.on(`collect`, async msg => {
 				let input = msg.content.toLowerCase()
@@ -57,9 +57,9 @@ class ArtcoinsGenerator extends Command {
 						socket: {
 							emoji: emoji(`artcoins`),
 							amount: commanifier(amount),
-							user: name(this.user.id)
+							user: name(this.user.master.id)
 						},
-						thumbnail: avatar(this.user.id),
+						thumbnail: avatar(this.user.master.id),
 						notch: true,
 						color: `golden`
 					})
@@ -72,7 +72,7 @@ class ArtcoinsGenerator extends Command {
 				 * ---------------------
 				 */
 				if (this.onSequence <= 2) {
-					await db.updateInventory({itemId: 52, value: amount, userId: this.user.id, guildId: this.message.guild.id})
+					await db.updateInventory({itemId: 52, value: amount, userId: this.user.master.id, guildId: this.message.guild.id})
 					reply(this.locale.ADDAC.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
 				}

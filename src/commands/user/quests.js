@@ -29,14 +29,14 @@ class Quests extends Command {
 		//  Handle if no quests are available to take
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION@${this.user.id}`
+		const sessionID = `QUEST_SESSION@${this.user.master.id}`
 		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji:emoji(`AnnieMad`)}})
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.QUEST.COOLDOWN, {
 			topNotch: `**Shall we do something else first?** ${emoji(`AnnieThinking`)}`,
-			thumbnail: avatar(this.user.id),
+			thumbnail: avatar(this.user.master.id),
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
 				prefix: this.bot.prefix
@@ -48,14 +48,14 @@ class Quests extends Command {
 		if (!nextQuestId) {
 			//  Make sure the quest_id index not fall below the threeshold
 			nextQuestId = Math.floor(Math.random() * quests.length) || 1
-			await db.updateUserNextActiveQuest(this.user.id, this.message.guild.id, nextQuestId)
+			await db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
 		}
 		this.bot.setCooldown(sessionID, 120)
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 		this.quest = await reply(this.locale.QUEST.DISPLAY, {
-			header: `${name(this.user.id)} is taking a quest!`,
+			header: `${name(this.user.master.id)} is taking a quest!`,
 			footer: this.locale.QUEST.FOOTER,
-			thumbnail: avatar(this.user.id),
+			thumbnail: avatar(this.user.master.id),
 			socket: {
 				questTitle: activeQuest.name,
 				description: activeQuest.description,
@@ -81,16 +81,16 @@ class Quests extends Command {
 			}
 			msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
-			await db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.id})
-			await db.updateUserQuest(this.user.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
-			await db.recordQuestActivity(nextQuestId, this.user.id, this.message.guild.id, answer)
+			await db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.master.id})
+			await db.updateUserQuest(this.user.master.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			await db.recordQuestActivity(nextQuestId, this.user.master.id, this.message.guild.id, answer)
 			//  Successful
 			this.endSequence()
 			this.bot.db.redis.del(sessionID)
 			return reply(this.locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: this.locale.QUEST.PRAISE[Math.floor(Math.random() * this.locale.QUEST.PRAISE.length)],
-					user: name(this.user.id),
+					user: name(this.user.master.id),
 					reward: `${emoji(`artcoins`)}${commanifier(activeQuest.reward_amount)}`
 				}
 			})

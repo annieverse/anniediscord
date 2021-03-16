@@ -37,7 +37,7 @@ class SetLogs extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) {
             return reply(this.locale.SETLOGS.GUIDE, {
-                header: `Hi, ${name(this.user.id)}!`,
+                header: `Hi, ${name(this.user.master.id)}!`,
                 image: `banner_setlogs`,
                 socket: {
                     prefix: this.bot.prefix,
@@ -78,7 +78,7 @@ class SetLogs extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
@@ -102,7 +102,7 @@ class SetLogs extends Command {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)
@@ -136,7 +136,7 @@ class SetLogs extends Command {
             configCode: this.subConfigID,
             customizedParameter: searchChannel.id,
             guild: this.message.guild,
-            setByUserId: this.user.id,
+            setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
         this.logger.info(`${fn} ${this.subConfigID} for GUILD_ID:${this.message.guild.id} has been updated.`)

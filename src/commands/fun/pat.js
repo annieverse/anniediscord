@@ -31,7 +31,7 @@ class Pat extends Command {
         })
         //  Patting other user
         return reply(this.locale.PAT.OTHER_USER, {
-            socket: {user: name(this.author.id), targetUser: name(this.user.id)},
+            socket: {user: name(this.author.master.id), targetUser: name(this.user.master.id)},
             imageGif: body.link
         })
     }

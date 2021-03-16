@@ -29,7 +29,7 @@ class Logs extends Command {
         if (!file) return reply(this.locale.GETLOG.NULL, {
             color: `red`,
             socket: {
-                user: name(this.user.id),
+                user: name(this.user.master.id),
                 emoji: emoji(`AnnieCry`)          
             }
         })
@@ -37,7 +37,7 @@ class Logs extends Command {
         //  Output attachment
         return reply(this.locale.GETLOG.RETURNING, {
             socket: {
-                user: name(this.user.id),
+                user: name(this.user.master.id),
                 emoji: emoji(`AnnieSmile`)
             },
             simplified: true,

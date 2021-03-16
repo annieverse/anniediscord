@@ -28,7 +28,7 @@ class Hug extends Command {
         })
         //  Hugging other user
         return reply(this.locale.HUG.OTHER_USER, {
-            socket: {user: name(this.author.id), targetUser: name(this.user.id)},
+            socket: {user: name(this.author.master.id), targetUser: name(this.user.master.id)},
             imageGif: body.link
         })
     }

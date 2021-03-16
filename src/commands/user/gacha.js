@@ -110,8 +110,8 @@ class Gacha extends Command {
                 })
                 this.checkout.delete()
                 //  Deduct balance & deliver lucky tickets
-                await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
-                await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+                await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
+                await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
                 reply(this.locale.BUY.SUCCESSFUL, {
                     color: `lightgreen`,
                     socket: {
@@ -146,7 +146,7 @@ class Gacha extends Command {
         this.fetching = await this.tools.reply(this.tools.choice(this.locale.GACHA.OPENING_WORDS), {
             simplified: true,
             socket: {
-                user: this.tools.name(this.user.id),
+                user: this.tools.name(this.user.master.id),
                 emoji: this.tools.emoji(`AnnieYay`)
             }
         })
@@ -157,11 +157,11 @@ class Gacha extends Command {
         }
 
         //  Subtract user's lucky tickets
-        await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: this.user.id, guildId: this.message.guild.id})
+        await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
         //  Storing received loots into user's inventory
         for (let i=0; i<this.loots.length; i++) {
             const item = this.loots[i]
-            await this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+            await this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
         }
 
         //  Displaying result
@@ -171,7 +171,7 @@ class Gacha extends Command {
             simplified: true,
             socket: {
                 command: `has opened ${this.drawCounts} Lucky Tickets!`,
-                user: this.tools.name(this.user.id),
+                user: this.tools.name(this.user.master.id),
                 emoji: this.tools.emoji(`lucky_ticket`)
             }
         })

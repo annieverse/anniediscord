@@ -21,7 +21,7 @@ class Remind extends Command {
         await this.requestUserMetadata(1)
         //  Displays guide and user's active reminders
         if (!this.fullArgs) {
-            const userReminders = await reminders.getReminders(this.user.id)
+            const userReminders = await reminders.getReminders(this.user.master.id)
             return reply(this.locale.REMINDER.HOME, {
                 image: `banner_reminder`,
                 socket: {
@@ -31,7 +31,7 @@ class Remind extends Command {
             })
         }
         //  Handle if the date is not valid
-        const context = reminders.getContextFrom(this.fullArgs, this.user.id)
+        const context = reminders.getContextFrom(this.fullArgs, this.user.master.id)
         if (!context.isValidReminder) return reply(this.locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji:emoji(`AnnieYandereAnim`),

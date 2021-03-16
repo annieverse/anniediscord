@@ -29,13 +29,13 @@ class Dailies extends Command {
 		const lastClaimAt = await db.toLocaltime(this.user.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.DAILIES[this.user.isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
-			thumbnail: avatar(this.user.id),
+			thumbnail: avatar(this.user.master.id),
 			topNotch: this.user.isSelf 
 				? `**Are you craving for artcoins?** ${emoji(`AnnieCry`)}` 
-				: `**${name(this.user.id)} already claimed their dailies!** ${emoji(`AnnieMad`)}`,
+				: `**${name(this.user.master.id)} already claimed their dailies!** ${emoji(`AnnieMad`)}`,
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				prefix: this.bot.prefix
 			}
 		})
@@ -45,15 +45,15 @@ class Dailies extends Command {
 		const hasPoppy = this.user.inventory.poppy_card
 		if (hasPoppy) totalStreak = this.user.dailies.total_streak + 1
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0 
-		await db.updateUserDailies(totalStreak, this.user.id, this.message.guild.id)
-		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.id, guildId: this.message.guild.id})
+		await db.updateUserDailies(totalStreak, this.user.master.id, this.message.guild.id)
+		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
 		reply(this.locale.DAILIES.CLAIMED, {
 			status: `success`,
-			thumbnail: avatar(this.user.id),
+			thumbnail: avatar(this.user.master.id),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
 			socket: {
 				amount: `${emoji(`artcoins`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
-				user: name(this.user.id),
+				user: name(this.user.master.id),
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
 		})

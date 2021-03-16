@@ -48,18 +48,18 @@ class CardCollection extends Command {
 				socket: {
 					prefix: this.bot.prefix,
 					emoji: emoji(`AnnieCry`),
-					user: name(this.user.id)
+					user: name(this.user.master.id)
 				},
 				footer: this.user.isSelf ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
 			})
 		}
-		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.id, emoji: emoji(`AAUloading`)}})
+		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: emoji(`AAUloading`)}})
 		.then(async loading => {
 			await reply(this.prettifiedCardInventory(), {
 				paging: true,
 				cardPreviews: this.splittedInventory,
-				thumbnail: avatar(this.user.id),
-				header: `${name(this.user.id)}'s Card Collections`
+				thumbnail: avatar(this.user.master.id),
+				header: `${name(this.user.master.id)}'s Card Collections`
 			})
 			return loading.delete()
 		})

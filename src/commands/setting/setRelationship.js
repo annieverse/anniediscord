@@ -44,7 +44,7 @@ class SetRelationship extends Command {
         if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: emoji(`AnnieMad`)} })
         //  Handle if user already reached the maximum relationship members and attempted to add new member
         const userRels = this.author.relationships.map(node => node.assigned_user_id)
-        if ((userRels.length >= 7) && !userRels.includes(this.user.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
+        if ((userRels.length >= 7) && !userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
             socket: {emoji:emoji(`AnnieSmuggy`)}
         })
         //  Handle if the specified gift cannot be found
@@ -56,22 +56,22 @@ class SetRelationship extends Command {
             prebuffer: true,
             image: await new GUI(this.user, relationship.name).build(),
             socket: {
-                user: name(this.user.id),
-                mention: this.user,
+                user: name(this.user.master.id),
+                mention: this.user.master,
                 relationship: relationship.name,
             }
         })
-        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.id)
+        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.master.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(``, {
-				customHeader: [`Oops, they rejected your relationship request...`, avatar(this.user.id)]
+				customHeader: [`Oops, they rejected your relationship request...`, avatar(this.user.master.id)]
 			})
             //  Update relationship data on author side
-            await this.bot.db.setUserRelationship(this.author.id, this.user.id, parseInt(relationship.relationship_id), this.message.guild.id)
+            await this.bot.db.setUserRelationship(this.author.id, this.user.master.id, parseInt(relationship.relationship_id), this.message.guild.id)
             //  Successful
             this.finalizeConfirmation(r)
-            return reply(``, {customHeader: [`${name(this.user.id)} has accepted your relationship request!`, avatar(this.user.id)]})
+            return reply(``, {customHeader: [`${name(this.user.master.id)} has accepted your relationship request!`, avatar(this.user.master.id)]})
         })
     }
 
