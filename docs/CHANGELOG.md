@@ -1,3 +1,16 @@
+# [7.11.0](https://github.com/klerikdust/anniediscord/compare/v7.10.24...v7.11.0) (2021-03-16)
+
+
+### Features
+
+* **shard:** added base for sharding. ([4e5ddff](https://github.com/klerikdust/anniediscord/commit/4e5ddff4942258569dbed03602d20cfa50b6b36b))
+* **shardCode:** added codename to each shard. ([c769e16](https://github.com/klerikdust/anniediscord/commit/c769e16df96c5f6ebeae5fdc9607157c7654ac30))
+
+
+### Performance Improvements
+
+* **database:** optimize user exp caching. ([951c043](https://github.com/klerikdust/anniediscord/commit/951c04337c645eb9efd6460fa58c62c2b6ceeb2c))
+
 ## [7.10.24](https://github.com/klerikdust/anniediscord/compare/v7.10.23...v7.10.24) (2021-01-11)
 
 
