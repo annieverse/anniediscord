@@ -1617,7 +1617,7 @@ class Database {
 			, `get`
 			, [userId, guildId]
 		)
-		//  Store for 1 minute
+		//  Store for 1 minute expire
 		await this.redis.set(key, JSON.stringify(exp), `EX`, 60)
 		logger.debug(`${fn} retrieved ${key} from database. (${getBenchmark(initTime)})`)
 		return exp
@@ -1651,9 +1651,8 @@ class Database {
 			, `get`
 			, [userId, guildId]
 		).then(async res => {
-			const cacheTime = process.hrtime()
-			await this.redis.set(key, JSON.stringify(res))
-			return logger.debug(`${fn} updated ${key} on cache. (${getBenchmark(cacheTime)})`)
+			//  Refresh cache by deleting it
+			this.redis.del(key) 
 		})
 	}
 
