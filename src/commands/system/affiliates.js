@@ -22,7 +22,7 @@ class Affiliates extends Command {
 			header: `Annie's Affiliated Servers`,
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
-				list: this._prettifyList(affiliateList, ...arguments),
+				list: await this._prettifyList(affiliateList, ...arguments),
 				user: name(this.user.master.id)
 			},
 			color: `crimson`
@@ -34,12 +34,13 @@ class Affiliates extends Command {
      * @param {array} [source=[]] refer to guild configuration structure
      * @returns {string}
      */
-    _prettifyList(source=[]) {
+    async _prettifyList(source=[]) {
         let res = ``
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
-            res += `**• ${this.bot.guilds.cache.get(server.guild_id)}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
+			let serverName = this.bot.shard.broadcastEval(`this.guilds.cache.get(${server.guild_id})`)
+            res += `**• ${serverName || `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
         return res
