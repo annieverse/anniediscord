@@ -242,23 +242,28 @@ class Experience extends Points {
     }
 
     async _getMinimalUserMetadata() {
-        let user = this.message.author
         //  Fetching inventories 
         const inventoryData = await this.bot.db.getUserInventory(this.message.author.id, this.message.guild.id)
         //  Custom properties
         const theme = inventoryData.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-        user.usedTheme = theme.length ? theme[0] : await this.bot.db.getItem(`light`)
+        const usedTheme = theme.length ? theme[0] : await this.bot.db.getItem(`light`)
 		const cover = await this.bot.db.getUserCover(this.message.author.id, this.message.guild.id)
+		let usedCover = {}
 		if (cover) {
-			user.usedCover = cover
+			usedCover = cover
 		}
 		else {
-			user.usedCover = await this.bot.db.getItem(`defaultcover1`)
-			user.usedCover.isDefault = true
+			usedCover = await this.bot.db.getItem(`defaultcover1`)
+			usedCover.isDefault = true
 		}
-        return user
+        return {
+			master: this.message.author,
+			theme: theme,
+			usedTheme: usedTheme,
+			cover: cover,
+			usedCover: usedCover
+		}
     }
-
 }
 
 module.exports = Experience
