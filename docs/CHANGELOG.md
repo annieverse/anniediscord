@@ -1,3 +1,10 @@
+## [7.11.9](https://github.com/klerikdust/anniediscord/compare/v7.11.8...v7.11.9) (2021-03-17)
+
+
+### Bug Fixes
+
+* **vote:** parse int port. ([ed98e13](https://github.com/klerikdust/anniediscord/commit/ed98e13e70fbf8dd78f13463bf21368fe3bd8db7))
+
 ## [7.11.8](https://github.com/klerikdust/anniediscord/compare/v7.11.7...v7.11.8) (2021-03-17)
 
 
