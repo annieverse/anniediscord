@@ -1,3 +1,10 @@
+## [7.11.10](https://github.com/klerikdust/anniediscord/compare/v7.11.9...v7.11.10) (2021-03-17)
+
+
+### Bug Fixes
+
+* **ready:** remove fetch emojis. ([df6772d](https://github.com/klerikdust/anniediscord/commit/df6772dd40fdf0f888d236055c0b742425c3c1c3))
+
 ## [7.11.9](https://github.com/klerikdust/anniediscord/compare/v7.11.8...v7.11.9) (2021-03-17)
 
 
