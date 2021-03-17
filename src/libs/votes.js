@@ -17,7 +17,7 @@ class Votes {
 		const fn = `[Votes.execute()]`
 		const dbl = new DBL(process.env.DBLTOKEN, {
 	        webhookAuth: process.env.DBLWEBHOOK_AUTH,
-	        webhookPort: process.env.DBLWEBHOOK_PORT+this.bot.shard.ids[0]
+	        webhookPort: parseInt(process.env.DBLWEBHOOK_PORT)+this.bot.shard.ids[0]
 	        }
 	    )
 	    this.bot.registerNode(dbl, `dbl`)
