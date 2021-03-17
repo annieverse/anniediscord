@@ -1,3 +1,11 @@
+## [7.11.8](https://github.com/klerikdust/anniediscord/compare/v7.11.7...v7.11.8) (2021-03-17)
+
+
+### Bug Fixes
+
+* **emoji:** cache button on startup fetch. ([4bcf3f5](https://github.com/klerikdust/anniediscord/commit/4bcf3f574f9873849497ce954730820b2d928468))
+* **vote:** uses multiple connection. ([ebc2134](https://github.com/klerikdust/anniediscord/commit/ebc213447d92d54e1c601d90c5796c1d7f63703e))
+
 ## [7.11.7](https://github.com/klerikdust/anniediscord/compare/v7.11.6...v7.11.7) (2021-03-17)
 
 
