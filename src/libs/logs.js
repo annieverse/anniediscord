@@ -493,6 +493,15 @@ class LogsSystem {
     }
 
     /**
+     * Get channel snowflake of support server channel.
+     * @return {object}
+     */
+    async getSupportChannelLog() {
+        const channelPool = await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`)
+        return channelPool.filter(c => c !== null)[0]
+    }
+
+    /**
      * ------------------------------------------------------------
      * SUPPORT SERVER'S LOGS
      * ------------------------------------------------------------
@@ -508,7 +517,7 @@ class LogsSystem {
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
         reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
-            field: (await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`))[0],
+            field: await this.getSupportChannelLog(),
             socket: {
                 guildCode: `**${guildCode}**`,
                 emoji: emoji(`AnniePeek2`)
@@ -544,7 +553,7 @@ class LogsSystem {
             header: `It's nice to know you, ${this.data.guild.name}.`,
             thumbnail: this.data.guild.iconURL(),
             timestamp: true,
-            field: (await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`))[0],
+            field: await this.getSupportChannelLog(),
             socket: {emoji: emoji(`AnnieCry`)}
         })
     }
