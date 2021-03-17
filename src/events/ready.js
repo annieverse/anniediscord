@@ -30,7 +30,6 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		//  Cache cancel button into shard
-		annie.emojis.fetch(`794593423575351307`)
 		annie.logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		annie.user.setStatus(`online`)
 		setInterval(() => {
