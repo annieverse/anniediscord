@@ -40,7 +40,7 @@ class Pay extends Command {
 		//  Displays as guide if user doesn't specify any parameter
 		if (!this.fullArgs) return reply(this.locale.PAY.SHORT_GUIDE, {
 			color: `crimson`,
-			header: `Hi, ${name(this.author.id)}`,
+			header: `Hi, ${this.author.master.username}`,
 			image: `banner_pay`,
 			socket: {prefix: this.bot.prefix}
 		})
@@ -79,11 +79,11 @@ class Pay extends Command {
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance
-			await db.updateInventory({itemId: 52, value: this.amountToSend, operation: `-`, userId: this.author.id, guildId: this.message.guild.id})
+			await db.updateInventory({itemId: 52, value: this.amountToSend, operation: `-`, userId: this.author.master.id, guildId: this.message.guild.id})
  			this.finalizeConfirmation(r)
  			reply(``, {
- 				customHeader: [`${name(this.user.master.id)} has received your artcoins!♡`, avatar(this.user.id)],
- 				socket:{target: name(this.user.master.id)} 
+ 				customHeader: [`${this.user.master.username} has received your artcoins!♡`, this.user.master.displayAvatarURL()],
+ 				socket:{target: this.user.master.username} 
  			})
  		})
  	}
