@@ -61,7 +61,7 @@ class SetRelationship extends Command {
                 relationship: relationship.name,
             }
         })
-        this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.master.id)
+        await this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.master.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(``, {

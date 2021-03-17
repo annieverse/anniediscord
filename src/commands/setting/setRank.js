@@ -268,7 +268,7 @@ class SetRank extends Command {
         if (this.subConfig.value.length <= 0) return reply(this.locale.SETRANK.RESET_NULL_RANKS, {status: `fail`})
         //  Confirmation before performing the action
         this.confirmation = await reply(``, {header: this.locale.SETRANK.RESET_CONFIRMATION})
-        this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.master.id)
+        await this.addConfirmationButton(`RESET_CONFIRMATION`, this.confirmation, this.user.master.id)
         this.confirmationButtons.get(`RESET_CONFIRMATION`).on(`collect`, async () => {
             this.confirmation.delete()
             this.animation = await reply(this.locale.SETRANK.RESET_ANIMATION, {

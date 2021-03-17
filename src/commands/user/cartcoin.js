@@ -56,7 +56,7 @@ class ConvertArtcoins extends Command {
 				gainedExp: commanifier(totalGainedExp)
 			}
 		})
-		this.addConfirmationButton(`checkout`, this.confirmation)
+		await this.addConfirmationButton(`checkout`, this.confirmation)
  		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

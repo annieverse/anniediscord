@@ -169,7 +169,7 @@ class SetWelcomer extends Command {
         this.logger.info(`${fn} WELCOME_TEXT for GUILD_ID:${this.message.guild.id} has been updated.`)
         await reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
         this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: emoji(`AnnieSmile`)} })
-        this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.master.id)
+        await this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.master.id)
         this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview(...arguments))
     }
 

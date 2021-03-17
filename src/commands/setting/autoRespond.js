@@ -201,7 +201,7 @@ class AutoResponder extends Command {
                 response: response
             }
         })
-		this.addConfirmationButton(`register_confirmation`, this.registerConfirmation)
+		await this.addConfirmationButton(`register_confirmation`, this.registerConfirmation)
  		return this.confirmationButtons.get(`register_confirmation`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
@@ -287,7 +287,7 @@ class AutoResponder extends Command {
                 emoji: emoji(`AnnieCry`)
             }
         })
-		this.addConfirmationButton(`reset_confirmation`, this.resetConfirmation)
+		await this.addConfirmationButton(`reset_confirmation`, this.resetConfirmation)
  		return this.confirmationButtons.get(`reset_confirmation`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

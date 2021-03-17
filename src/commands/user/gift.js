@@ -81,7 +81,7 @@ class Gift extends Command {
 				amount: commanifier(amount)
 			}
 		})
-		this.addConfirmationButton(`gift`, this.confirmation)
+		await this.addConfirmationButton(`gift`, this.confirmation)
  		return this.confirmationButtons.get(`gift`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

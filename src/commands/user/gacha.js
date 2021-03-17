@@ -79,7 +79,7 @@ class Gacha extends Command {
             simplified: true,
             socket: {emoji: emoji(`lucky_ticket`)}
         })
-		this.addConfirmationButton(`suggestToBuy`, this.suggestToBuy)
+		await this.addConfirmationButton(`suggestToBuy`, this.suggestToBuy)
         this.confirmationButtons.get(`suggestToBuy`).on(`collect`, async r1 => {
 			//  Handle cancellation
 			if (this.isCancelled(r1)) return reply(this.locale.ACTION_CANCELLED, {
@@ -102,7 +102,7 @@ class Gacha extends Command {
                 color: `golden`,
             })
 
-            this.addConfirmationButton(`checkout`, this.checkout)
+            await this.addConfirmationButton(`checkout`, this.checkout)
             this.confirmationButtons.get(`checkout`).on(`collect`, async r2 => {
                 //  Handle cancellation
                 if (this.isCancelled(r2)) return reply(this.locale.ACTION_CANCELLED, {
@@ -126,7 +126,7 @@ class Gacha extends Command {
                  * --------------------
                  */
                 this.askToOpenGacha = await reply(this.locale.GACHA.ASK_TO_OPEN, {simplified: true})
-                this.addConfirmationButton(`askToOpenGacha`, this.askToOpenGacha)
+                await this.addConfirmationButton(`askToOpenGacha`, this.askToOpenGacha)
                 this.confirmationButtons.get(`askToOpenGacha`).on(`collect`, async r3 => {
                         //  Handle cancellation
                         if (this.isCancelled(r3)) return reply(this.locale.ACTION_CANCELLED, {

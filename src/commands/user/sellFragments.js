@@ -71,7 +71,7 @@ class SellFragments extends Command {
     			artcoinsEmoji: emoji(`artcoins`) 
     		}
     	})
-    	this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.master.id)
+    	await this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.master.id)
     	this.confirmationButtons.get(`SELLFRAGMENTS_CONFIRMATION`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

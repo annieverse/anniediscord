@@ -42,7 +42,7 @@ class SetBio extends Command {
             image: img.toBuffer()
         })
         this.rendering.delete()
-        this.addConfirmationButton(`applyBio`, this.confirmation)
+        await this.addConfirmationButton(`applyBio`, this.confirmation)
         return this.confirmationButtons.get(`applyBio`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

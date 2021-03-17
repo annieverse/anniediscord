@@ -70,7 +70,7 @@ class Pay extends Command {
 				amount: `${emoji(`artcoins`)} ${commanifier(this.total)}`
 			}
 		})
-		this.addConfirmationButton(`checkout`, this.confirmation)
+		await this.addConfirmationButton(`checkout`, this.confirmation)
  		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {

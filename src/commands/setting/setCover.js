@@ -123,7 +123,7 @@ class SetCover extends Command {
             }
         })
         this.fetching.delete()
-        this.addConfirmationButton(`applyCover`, this.confirmation)
+        await this.addConfirmationButton(`applyCover`, this.confirmation)
         return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
