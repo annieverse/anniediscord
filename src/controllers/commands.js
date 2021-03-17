@@ -65,7 +65,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
     }
     catch(e) {
         client.logger.error(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (client.dev) {
+        if (!client.dev) {
             reply.send(client.locale.en.ERROR_ON_DEV, {
                 socket: {
                     error: e,
@@ -74,19 +74,20 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             })
             return reply = null
         }
-        await reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: client.getEmoji(`AnniePout`)}})
-        await reply.send(client.locale.en.REPORTING_ERROR, {
-            header: message.guild.name,
-            thumbnail: message.guild.iconURL(),
-            field: client.channels.cache.get(`797521371889532988`),
-            socket: {
-                timestamp: new Date(),
-                user: `${message.author.username}@${message.author.id}`,
-                command: command.name,
-                error: e,
-                emoji: client.getEmoji(`AnniePeek1`)
-            }
-        })
-        return reply = null
+        reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: client.getEmoji(`AnniePout`)}})
+        client.shard.broadcastEval(`
+            (async () => {
+                const channel = await this.channels.cache.get('797521371889532988')
+                if (channel) {
+                    channel.send(\`─────────────────☆～:;
+**GUILD_ID:** ${message.guild.id} - ${message.guild.name}
+**AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
+**AFFECTED_CMD:** ${targetCommand}
+**TIMESTAMP:** ${new Date()}
+**ISSUE_TRACE:** ${e.message}
+─────────────────☆～:;\`)
+                }
+            })()
+        `)
     }
 }

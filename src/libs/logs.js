@@ -493,15 +493,6 @@ class LogsSystem {
     }
 
     /**
-     * Get channel snowflake of support server channel.
-     * @return {object}
-     */
-    async getSupportChannelLog() {
-        const channelPool = await this.data.bot.shard.broadcastEval(`this.guilds.cache.get('577121315480272908')`)
-        return channelPool.filter(c => c !== null)[0]
-    }
-
-    /**
      * ------------------------------------------------------------
      * SUPPORT SERVER'S LOGS
      * ------------------------------------------------------------
@@ -516,13 +507,14 @@ class LogsSystem {
         const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
         //  Send logs
         this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
-        reply(this.locale.LOGS.GUILDCREATE.INTERNAL_LOG, {
-            field: await this.getSupportChannelLog(),
-            socket: {
-                guildCode: `**${guildCode}**`,
-                emoji: emoji(`AnniePeek2`)
-            }
-        })
+        this.data.bot.shard.broadcastEval(`
+            (async () => {
+                const channel = await this.channels.cache.get('724732289572929728')
+                if (channel) {
+                    channel.send(\`${guildCode} has invited me.\`)
+                }
+            })
+        `)
         //  Attempt to DM the guild owner
         try {
             //  Fetch owner user data
@@ -543,19 +535,19 @@ class LogsSystem {
 
     /**
      * GUILD_DELETE event log
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
      * @returns {Pistachio.reply}
      */
-    async guildDelete({ reply, emoji }) {
+    async guildDelete() {
         const fn = `[Logs.guildDelete()]`
         this.logger.info(`${fn} ${this.data.guild.name}@${this.data.guild.id} has kicked me.`)
-        return reply(this.locale.LOGS.GUILD_DELETE, {
-            header: `It's nice to know you, ${this.data.guild.name}.`,
-            thumbnail: this.data.guild.iconURL(),
-            timestamp: true,
-            field: await this.getSupportChannelLog(),
-            socket: {emoji: emoji(`AnnieCry`)}
-        })
+        this.data.bot.shard.broadcastEval(`
+            (async () => {
+                const channel = await this.channels.cache.get('724732289572929728')
+                if (channel) {
+                    channel.send(\`${guildCode} has kicked me.\`)
+                }
+            })
+        `)
     }
 
     /**
