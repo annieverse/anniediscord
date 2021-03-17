@@ -1,6 +1,6 @@
 const Command = require(`../../libs/commands`)
 const fs = require(`fs`)
-const PixivApi = require(`pixiv-app-api`)
+const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
 
@@ -23,6 +23,25 @@ class Pixiv extends Command {
 	constructor(Stacks) {
         super(Stacks)
         this.cachePath = `./.pixivcaches/`
+        this.forbiddenKeywords = [
+            `lewd`,
+            `r18`,
+            `porn`,
+            `dick`,
+            `ass`,
+            `vagina`,
+            `anal`,
+            `blowjob`,
+            `bdsm`,
+            `furry`,
+            `anus`,
+            `porno`,
+            `boobs`,
+            `boob`,
+            `nipple`,
+            `handjob`,
+            `sex`
+        ]
     }
     
     /**
@@ -31,22 +50,23 @@ class Pixiv extends Command {
      */
 	async execute({ reply, bot }) {
         //  Logging in to get access to the Pixiv API
-        await pixiv.login(process.env.PIXIV_USERNAME, process.env.PIXIV_PASS)
+        await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
         const fullArgs = this.fullArgs
         reply(this.locale.PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
             simplified: true,
             socket: {keyword: fullArgs}})
                 .then(async loadmsg => {
                     //  Dynamically choose recommended/custom search based on input
-                    const data = fullArgs ? await this.fetchCustomSearch(fullArgs) : await this.fetchRecommendedWork()
-
+                    let data = fullArgs ? await this.fetchCustomSearch(fullArgs) : await this.fetchRecommendedWork()
+                    //  Prevent forbidden search
+                    const usedForbiddenKeyword = this.forbiddenKeywords.filter(k => fullArgs.includes(k))
+                    if (usedForbiddenKeyword.length > 0) data = null
                     //  Handle if no returned result from the query
                     if (!data)  {
                         loadmsg.delete()
                         return reply(this.locale.PIXIV.NO_RESULT, {color: `red`})
                     }
-
-                    const img = await this.getImage(data.imageUrls.medium, data.id)
+                    const img = await this.getImage(data.image_urls.medium, data.id)
                     //  Handle if no returned result from given img path
                     if (!img) {
                         loadmsg.delete()

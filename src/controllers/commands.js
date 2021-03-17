@@ -65,7 +65,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
     }
     catch(e) {
         client.logger.error(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (!client.dev) {
+        if (client.dev) {
             reply.send(client.locale.en.ERROR_ON_DEV, {
                 socket: {
                     error: e,
