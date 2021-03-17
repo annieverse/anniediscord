@@ -11,7 +11,7 @@
     "start": "cross-env NODE_ENV=production pm2 start index.js --name \"production\"",
     "staging": "cross-env NODE_ENV=staging pm2 start index.js --name \"staging\"",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "test": "npm run lint:check && npm run unit-test"
+    "test": "npm run lint:check"
   },
   "engines": {
     "node": "12.18.3"

@@ -206,9 +206,6 @@ class Annie extends Discord.Client {
             this.logger.info(`${fn} there are no guilds with registered ARs.`)
             return false
         }
-        //  Handle if the guilds in current shard don't have registered ARs
-        console.debug(ars)
-
         //  Iterate over all the available guilds
         let totalArs = 0
         for (let i=0; i<ars.length; i++) {

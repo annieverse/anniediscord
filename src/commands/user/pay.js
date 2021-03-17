@@ -32,7 +32,7 @@ class Pay extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, commanifier, trueInt, avatar, bot:{db} }) {
+    async execute({ reply, emoji, name, commanifier, trueInt, bot:{db} }) {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
 		//  Returns if user level is below the requirement

@@ -539,7 +539,8 @@ class LogsSystem {
      */
     async guildDelete() {
         const fn = `[Logs.guildDelete()]`
-        this.logger.info(`${fn} ${this.data.guild.name}@${this.data.guild.id} has kicked me.`)
+        const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
+        this.logger.info(`${fn} ${guildCode} has kicked me.`)
         this.data.bot.shard.broadcastEval(`
             (async () => {
                 const channel = await this.channels.cache.get('724732289572929728')
