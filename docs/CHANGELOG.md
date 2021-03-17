@@ -1,3 +1,19 @@
+## [7.11.7](https://github.com/klerikdust/anniediscord/compare/v7.11.6...v7.11.7) (2021-03-17)
+
+
+### Bug Fixes
+
+* **levelUp:** adapt structure.) ([fa30c0e](https://github.com/klerikdust/anniediscord/commit/fa30c0e25c00b4e70bc48f7c04524ccfa8050cd2))
+* **logs:** gets channel through shard broadcast. ([4ff25b1](https://github.com/klerikdust/anniediscord/commit/4ff25b16ca05903bf4f173853436f72e1521f010))
+* **logs:** wrap support server snowflake. ([d6fe689](https://github.com/klerikdust/anniediscord/commit/d6fe689cdba54f49891b35aa2ae19e42222dc60b))
+* **pay:** unresolved username. ([e08ab9d](https://github.com/klerikdust/anniediscord/commit/e08ab9d329d2c234cf427453a292e22363ce2bce))
+* **pixiv:** deprecate login system and now uses refresh token. ([cb79723](https://github.com/klerikdust/anniediscord/commit/cb79723727e3ecc93f602969895ff6fa69215a63))
+
+
+### Performance Improvements
+
+* optimized startup process for sharding. ([be12a94](https://github.com/klerikdust/anniediscord/commit/be12a948910d18d333c22a936ba6255bbf4b0135))
+
 ## [7.11.6](https://github.com/klerikdust/anniediscord/compare/v7.11.5...v7.11.6) (2021-03-16)
 
 
