@@ -15,11 +15,9 @@ class Votes {
 
 	async execute() {
 		const fn = `[Votes.execute()]`
-		//  Uses the existing vote connection
-		const existingDblConnection = (await this.bot.shard.broadcastEval(`if (this.dbl) this.dbl`)).filter(cluster => cluster !== null)
-		const dbl = existingDblConnection[0] || new DBL(process.env.DBLTOKEN, {
+		const dbl = new DBL(process.env.DBLTOKEN, {
 	        webhookAuth: process.env.DBLWEBHOOK_AUTH,
-	        webhookPort: process.env.DBLWEBHOOK_PORT
+	        webhookPort: process.env.DBLWEBHOOK_PORT+this.bot.shard.ids[0]
 	        }
 	    )
 	    this.bot.registerNode(dbl, `dbl`)
