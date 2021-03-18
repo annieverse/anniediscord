@@ -22,6 +22,8 @@ class Reminder {
         //  Handle if there are no registered reminders in the database
         const savedReminders = await this.db.getAllReminders()
         if (savedReminders.length <= 0) return this.logger.info(`${fn} there are no saved reminders.`)
+        //  List of registered contexts from all the available shards.
+        const registeredContexts = await this.client.shard.broadcastEval(`Object.keys(this.reminders.pool.jobs)`)
         //  Iterate over the reminders and register them to cron
         let activeReminders = 0
         for (let i=0; i<savedReminders.length; i++) {
@@ -35,6 +37,8 @@ class Reminder {
             }
             normalizedContext.remindAt.timestamp = new Date(normalizedContext.remindAt.timestamp)
             if (normalizedContext.remindAt.timestamp <= new Date()) continue
+            //  Make sure the context only registered once among all shards.
+            if (registeredContexts.includes(context.reminder_id)) continue
             this.startReminder(normalizedContext)
             activeReminders++
         }
