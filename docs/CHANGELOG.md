@@ -1,3 +1,13 @@
+## [7.11.11](https://github.com/klerikdust/anniediscord/compare/v7.11.10...v7.11.11) (2021-03-18)
+
+
+### Bug Fixes
+
+* **autoResponders:** add pagination. ([4e7993f](https://github.com/klerikdust/anniediscord/commit/4e7993f2fcfdffb7684a2bf35ffd6a574f6aee1c))
+* **reminder:** register context once across shards. ([b2b886c](https://github.com/klerikdust/anniediscord/commit/b2b886ca6646d15764458b66017868f82e43b9c5))
+* **rep:** infinite cooldown. ([acea78d](https://github.com/klerikdust/anniediscord/commit/acea78d9c2b8f545e7ecb1cc724413a02a666a8c))
+* **vote:** added emoji handler. ([5e7520c](https://github.com/klerikdust/anniediscord/commit/5e7520c8dda19dba575a238902e44705b623be72))
+
 ## [7.11.10](https://github.com/klerikdust/anniediscord/compare/v7.11.9...v7.11.10) (2021-03-17)
 
 
