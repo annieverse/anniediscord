@@ -139,7 +139,7 @@ class AutoResponder extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here
      * @return {void}
      */
-    async info({ reply, emoji, name, bot:{db} }) {
+    async info({ reply, emoji, bot:{db} }) {
         //  Fetch registered ARs.
         const ars = await db.getAutoResponders(this.guild.id)
         //  Handle if there are no registered ARs.
@@ -150,17 +150,16 @@ class AutoResponder extends Command {
             }
         })
         const localizedTime = await db.toLocaltime(ars[0].registered_at)
-        return reply(this.locale.AUTORESPONDER.DISPLAY, {
+        const author = await this.bot.users.fetch(ars[0].user_id)
+        return reply(this._parseRegisteredAutoResponders(ars, false, {
+            size: ars.length,
+            user: author ? author.username : ars[0].user_id,
+            time: moment(localizedTime).fromNow(),
+            emoji: await emoji(`692428692999241771`)
+        }), {
             thumbnail: this.guild.iconURL(),
             header: `Learned ARs`,
-            socket: {
-                emoji: await emoji(`692428692999241771`),
-                list: this._parseRegisteredAutoResponders(ars),
-                ars: ars.length,
-                guild: this.guild.name,
-                user: name(ars[0].user_id),
-                time: moment(localizedTime).fromNow()
-            }
+            paging: true
         })
     }
 
@@ -305,19 +304,35 @@ class AutoResponder extends Command {
     /**
      * Parsing registered ARs into proper format.
      * @param {array} [src=[]] ARs source.
-     * @return {string}
+     * @param {object} [headerMetadata={}]
+     * @return {object|string}
      */
-    _parseRegisteredAutoResponders(src=[], simplified=false) {
+    _parseRegisteredAutoResponders(src=[], simplified=false, header={}) {
+        let res = []
         let str = ``
+        let breakpoint = 0
         for (let i=0; i<src.length; i++) {
             const ar = src[i]
             if (simplified) {
                 str += `╰☆～(ID:${ar.ar_id}) **${ar.trigger}**\n`
                 continue
             }
-            str += `[ID:${ar.ar_id}]** "${ar.trigger}"**\n> Annie's Response: ${ar.response}${(i+1) === src.length ? `` : `\n⸻⸻⸻⸻\n`}`
+            breakpoint++
+            if (breakpoint <= 1) {
+                str += `Currently there are total of **${header.size}** registered ARs in **${this.message.guild.name}** where the latest one was added by ${header.user}, ${header.time}. ${header.emoji}\n╭*:;,．★ ～☆*────────╮\n`
+            }
+            str += `[ID:${ar.ar_id}]** "${ar.trigger}"**\n> Annie's Response: ${ar.response}`
+            if (breakpoint >= 5 || i === (src.length-1)) {
+                str += `\n╰──────────☆～*:;,．*╯`
+                breakpoint = 0
+                res.push(str)
+                str = ``
+            }
+            else {
+                str += `\n⸻⸻⸻⸻\n`
+            }
         }
-        return str
+        return simplified ? str : res
     }
 
     /**
