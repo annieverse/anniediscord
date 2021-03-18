@@ -25,7 +25,7 @@ class Choose extends Command {
 		if (!this.tokenizedOptions) return reply(this.locale.CHOOSE.INVALID_OPTIONS, {color: `red`})
 		
 		const result = choice(this.tokenizedOptions)
-		return reply(`${choice(this.locale.CHOOSE.THINKING)} **${result}!** ${emoji(choice(this.locale.CHOOSE.EMOTIONS))}`)
+		return reply(`${choice(this.locale.CHOOSE.THINKING)} **${result}!** ${await emoji(choice(this.locale.CHOOSE.EMOTIONS))}`)
 	}
 
 	/**

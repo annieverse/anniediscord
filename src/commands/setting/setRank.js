@@ -42,7 +42,7 @@ class SetRank extends Command {
             image: `banner_setranks`,
             socket: {
                 prefix: this.bot.prefix,
-                emoji: emoji(`AnnieSelfie`)
+                emoji: await emoji(`692428864021987418`)
             }
         })
         //  Handle if selected action doesn't exists
@@ -107,13 +107,13 @@ class SetRank extends Command {
         })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
-        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket:{emoji:emoji(`AnnieCry`)} })
+        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket:{emoji: await emoji(`692428578683617331`)} })
         //  Handle if target role is too high
         if (getRole.position > this.annieRole.position) return reply(this.locale.SETRANK.ROLE_TOO_HIGH, {
             socket: {
                 role: getRole,
                 annieRole: this.annieRole.name,
-                emoji: emoji(`AnnieCry`)
+                emoji: await emoji(`692428578683617331`)
             }
         })
         //  Handle if the role is already registered
@@ -172,13 +172,13 @@ class SetRank extends Command {
     async delete({ reply, findRole, emoji }) {
         const fn = `[setRank.delete()]`
         //  Handle if user doesn't specify the target role name
-        if (!this.args[1]) return reply(this.locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {socket: {emoji:emoji(`AnnieYandere`)}})
+        if (!this.args[1]) return reply(this.locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {socket: {emoji: await emoji(`790338393015713812`)}})
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1])
-        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket: {emoji:emoji(`AnnieCry`)}})
+        if (!getRole) return reply(this.locale.SETRANK.INVALID_ROLE, {socket: {emoji: await emoji(`692428578683617331`)}})
         //  Handle if the role hasn't been registered in the first place
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
-        if (getRegisteredRank.length <= 0) return reply(this.locale.SETRANK.DELETE_UNREGISTERED_ROLE, {socket: {emoji:emoji(`AnnieMad`)}})
+        if (getRegisteredRank.length <= 0) return reply(this.locale.SETRANK.DELETE_UNREGISTERED_ROLE, {socket: {emoji: await emoji(`692428748838010970`)}})
         //  Delete rank from the guild's configurations entry
         this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
         await this.bot.db.updateGuildConfiguration({
@@ -208,7 +208,7 @@ class SetRank extends Command {
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
-                    emoji: emoji(`fail`),
+                    emoji: await emoji(`751020535865016420`),
                     prefix: this.bot.prefix,
                     guild: this.message.guild.name
                 }
@@ -221,7 +221,7 @@ class SetRank extends Command {
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
-                    emoji: emoji(`fail`),
+                    emoji: await emoji(`751020535865016420`),
                     prefix: this.bot.prefix,
                     user: name(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
@@ -235,7 +235,7 @@ class SetRank extends Command {
                 thumbnail: this.message.guild.iconURL(),
                 header: this.locale.SETRANK.HEADER_INFO,
                 socket: {
-                    emoji: emoji(`success`),
+                    emoji: await emoji(`751016612248682546`),
                     prefix: this.bot.prefix,
                     guild: this.message.guild.name
                 }
@@ -248,7 +248,7 @@ class SetRank extends Command {
             thumbnail: this.message.guild.iconURL(),
             header: this.locale.SETRANK.HEADER_INFO,
             socket: {
-                emoji: emoji(`success`),
+                emoji: await emoji(`751016612248682546`),
                 rankSize: this.subConfig.value.length,
                 guild: this.message.guild.name,
                 list: await this._prettifyList(this.subConfig.value, ...arguments)
@@ -275,7 +275,7 @@ class SetRank extends Command {
                 simplified: true,
                 socket: {
                     guild: `${this.message.guild.name}@${this.message.guild.id}`,
-                    emoji: emoji(`AAUloading`)
+                    emoji: await emoji(`790994076257353779`)
                 }
             })
             //  Reset values

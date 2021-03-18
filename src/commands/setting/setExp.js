@@ -43,7 +43,7 @@ class SetExp extends Command {
             header: `Hi, ${name(this.user.master.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
-                emoji: emoji(`AnnieDab`)
+                emoji: await emoji(`692428597570306218`)
             }
         })
         //  Handle if the selected options doesn't exists
@@ -69,7 +69,7 @@ class SetExp extends Command {
         if (this.primaryConfig.value) {
             //  Handle if module used the default value.
             if (!this.primaryConfig.setByUserId) return reply(this.locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
-                socket: {emoji: emoji(`AnniePout`)},
+                socket: {emoji: await emoji(`692428843058724994`)},
                 color: `crimson`
             })
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)

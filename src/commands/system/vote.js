@@ -23,14 +23,14 @@ class Vote extends Command {
 		if (await this.bot.dbl.hasVoted(this.user.master.id)) return reply(this.locale.VOTE.IS_COOLDOWN, {
 			socket: {
 				page: `[write a review](${this.page})`,
-				emoji: emoji(`AnniePeek2`)
+				emoji: await emoji(`692428785571856404`)
 			}
 		})
 		return reply(this.locale.VOTE.READY, {
 			header: `Hi, ${name(this.user.master.id)}!`,
 			image: `banner_votes`,
 			socket: {
-				emoji: emoji(`AnnieSmile`),
+				emoji: await emoji(`692428927620087850`),
 				url: `[Discord Bot List](${this.page}/vote)`
 			}
 		})

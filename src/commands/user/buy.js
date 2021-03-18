@@ -19,7 +19,7 @@ class Buy extends Command {
     async execute({ reply, emoji }) {
     	await this.requestUserMetadata(1)
 		//  Temporary close
-		return reply(this.locale.SHOP.TEMPORARILY_CLOSED, {socket:{emoji:emoji(`AnniePeek2`)}})
+		return reply(this.locale.SHOP.TEMPORARILY_CLOSED, {socket:{emoji: await emoji(`692428785571856404`)}})
 	}
 }
 

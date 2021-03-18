@@ -45,7 +45,7 @@ class SetCover extends Command {
                 image: `banner_setbackground`,
                 socket: {
                     prefix: this.bot.prefix,
-                    emoji: emoji(`AnnieYay`),
+                    emoji: await emoji(`781504248868634627`),
                     cover: this.user.usedCover.name
                 }
             })
@@ -70,7 +70,7 @@ class SetCover extends Command {
             //  Handle if user doesn't have enough artcoins to upload a new cover
             if (this.user.inventory.artcoins < this.uploadCost) return reply(this.locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
                 socket: {
-                    emoji: emoji(`artcoins`),
+                    emoji: await emoji(`758720612087627787`),
                     requiredLeft: commanifier(this.uploadCost-this.user.inventory.artcoins)
                 }
             })
@@ -93,11 +93,11 @@ class SetCover extends Command {
             //  Finally if no item's name/ID are match, then return null
             : null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji:emoji(`AnnieThinking`)} })
+            if (!this.cover) return reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await emoji(`692428969667985458`)} })
             //  Handle if user tries to use cover that currently being used.
             if (this.user.usedCover.item_id === this.cover.item_id) return reply(this.locale.SETCOVER.ALREADY_USED, {
                 socket: {
-                    emoji: emoji(`AnnieMad`),
+                    emoji: await emoji(`692428748838010970`),
                     cover: this.cover.name
                 }
             })
@@ -107,7 +107,7 @@ class SetCover extends Command {
             socket: {
                 itemId: this.cover.item_id,
                 userId: this.user.master.id,
-                emoji: emoji(`AAUloading`)
+                emoji: await emoji(`790994076257353779`)
             } 
         })
         //  Rendering preview for user to see
@@ -119,7 +119,7 @@ class SetCover extends Command {
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
-                emoji: emoji(this.cover.isSelfUpload ? `artcoins` : `AnnieSmile`)
+                emoji: await emoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
             }
         })
         this.fetching.delete()
@@ -127,7 +127,7 @@ class SetCover extends Command {
         return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
             await db.detachCovers(this.user.master.id, this.message.guild.id)
             if (this.cover.isSelfUpload) {
@@ -144,7 +144,7 @@ class SetCover extends Command {
             reply(this.locale.SETCOVER[successMessage], {
                 socket: {
                     cover: this.cover.name,
-                    emoji: emoji(this.cover.alias)
+                    emoji: await emoji(this.cover.alias, this.bot)
                 }
             })
         })

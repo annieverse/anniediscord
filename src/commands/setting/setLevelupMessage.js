@@ -42,7 +42,7 @@ class SetLevelupMessage extends Command {
             thumbnail: this.thumbnail,
             socket: {
                 prefix: this.bot.prefix,
-                emoji: emoji(`AnnieGeek`)
+                emoji: await emoji(`692428660824604717`)
             }
         })
         //  Handle if the selected options doesn't exists
@@ -148,7 +148,7 @@ class SetLevelupMessage extends Command {
                 this.logger.info(`${fn} ${subConfigId} successfully reset channel for GUILD_ID:${this.message.guild.id}.`)
                 return reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
                     status: `success`,
-                    socket: {emoji: emoji(`hearts`)}
+                    socket: {emoji: await emoji(`789212493096026143`)}
                 })
             }
         }
@@ -161,7 +161,7 @@ class SetLevelupMessage extends Command {
         //  Handle if target channel does not exist
         const { isExists, res } = this._getChannel(this.args[1])
         if (!isExists) return reply(this.locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
-            socket: {emoji: emoji(`AnnieCry`)}
+            socket: {emoji: await emoji(`692428578683617331`)}
         })
         //  Update and finalize
         await this.bot.db.updateGuildConfiguration({
@@ -176,7 +176,7 @@ class SetLevelupMessage extends Command {
             status: `success`,
             socket: {
                 channel: res,
-                emoji: emoji(`hearts`)
+                emoji: await emoji(`789212493096026143`)
             }
         })
     }

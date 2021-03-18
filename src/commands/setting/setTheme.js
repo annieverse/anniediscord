@@ -27,7 +27,7 @@ class setTheme extends Command {
         })
         let currentTheme = await this.currentTheme(...arguments)
         if (darkThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
+            if (currentTheme == `dark`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await emoji(`790338393015713812`)} })
             let hasTheme = await this.userHasTheme(...arguments, `dark`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`dark`, this.user.master.id, this.message.guild.id)
@@ -35,7 +35,7 @@ class setTheme extends Command {
         }
 
         if (lightThemeStrings.includes(this.fullArgs)) {
-            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji:emoji(`AnnieYandere`)} })
+            if (currentTheme == `light`) return reply(this.locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await emoji(`790338393015713812`)} })
             let hasTheme = await this.userHasTheme(...arguments, `light`)
             if (!hasTheme) return reply(this.locale.SWITCH_THEME.NO_THEME_OWNED, {color: `red`})
             db.setTheme(`light`, this.user.master.id, this.message.guild.id)
@@ -43,7 +43,7 @@ class setTheme extends Command {
         }
 
         //  Handle if no theme match with the keyword
-        return reply(this.locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {socket: {emoji:emoji(`AnnieCry`)} })
+        return reply(this.locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {socket: {emoji: await emoji(`692428578683617331`)} })
     }
 
     async currentTheme({bot:{db}}){

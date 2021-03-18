@@ -41,7 +41,7 @@ class SetLogs extends Command {
                 image: `banner_setlogs`,
                 socket: {
                     prefix: this.bot.prefix,
-                    emoji: emoji(`AnnieSmile`)
+                    emoji: await emoji(`692428927620087850`)
                 }
             })
         }
@@ -121,7 +121,7 @@ class SetLogs extends Command {
         })
         //  Handle if user hasn't specified the target channel
         if (!this.args[1]) return reply(this.locale.SETLOGS.MISSING_CHANNEL, {
-            socket: {prefix: this.bot.prefix, emoji:emoji(`AnnieSmile`)}
+            socket: {prefix: this.bot.prefix, emoji: await emoji(`692428927620087850`)}
         })
         //  Do channel searching by three possible conditions
         const searchChannel = this.message.mentions.channels.first()
@@ -129,7 +129,7 @@ class SetLogs extends Command {
         || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
         if (!searchChannel) return reply(this.locale.SETLOGS.INVALID_CHANNEL, {
-            socket: {emoji:emoji(`AnnieThinking`)}
+            socket: {emoji: await emoji(`692428969667985458`)}
         })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({

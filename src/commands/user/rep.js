@@ -30,12 +30,12 @@ class Reputation extends Command {
 		})
 		//	Displays short-guide if user doesn't specify any parameter
 		if (!this.fullArgs) return reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {
-			socket: {emoji: emoji(`AnnieWink`), prefix: this.bot.prefix} 
+			socket: {emoji: await emoji(`692429004417794058`), prefix: this.bot.prefix} 
 		})
 		//	Handle if target user is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		//	Handle if user is trying to rep themselves
-		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)} })
+		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: await emoji(`692428748838010970`)} })
 
 		await db.addUserReputation(1, this.user.master.id, this.author.master.id, this.message.guild.id)
 		await db.updateReputationGiver(this.author.master.id, this.message.guild.id)

@@ -44,7 +44,7 @@ class Invite extends Command {
 			simplified: true,
 			socket: {
 				serverLink: this.tools.supportServer,
-				emoji: emoji(`AnnieSmile`)
+				emoji: await emoji(`692428927620087850`)
 			},
 			field: targetChannel
 		})

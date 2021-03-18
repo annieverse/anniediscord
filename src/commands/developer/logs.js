@@ -30,7 +30,7 @@ class Logs extends Command {
             color: `red`,
             socket: {
                 user: name(this.user.master.id),
-                emoji: emoji(`AnnieCry`)          
+                emoji: await emoji(`AnnieCry`)          
             }
         })
 
@@ -38,7 +38,7 @@ class Logs extends Command {
         return reply(this.locale.GETLOG.RETURNING, {
             socket: {
                 user: name(this.user.master.id),
-                emoji: emoji(`AnnieSmile`)
+                emoji: await emoji(`AnnieSmile`)
             },
             simplified: true,
             image: this.logPath + file,

@@ -36,7 +36,7 @@ class Gacha extends Command {
         this.tools = { reply, emoji, name, trueInt, commanifier, choice } 
         //  Handle if amount to be opened is out of defined range.
         if (!this.amountToOpenRanges.includes(this.amountToOpen)) return reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {
-            socket: {emoji:emoji(`AnnieYandere`)}
+            socket: {emoji: await emoji(`781504248868634627`)}
         })
         //  Direct roll if user already has the tickets.
         if (this.user.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll()
@@ -55,7 +55,7 @@ class Gacha extends Command {
          * and enjoy the rest of the content.
          */
         this.insufficientTicketWarning = await reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
-		   socket: {emoji: emoji(`fail`), prefix: this.bot.prefix},
+		   socket: {emoji: await emoji(`751020535865016420`), prefix: this.bot.prefix},
            color: `red`
         })
         const gachaItem = await this.bot.db.getItem(71)
@@ -67,7 +67,7 @@ class Gacha extends Command {
         //  Handle if user doesn't have enough artcoins to buy tickets
         if (userCurrentCurrency < amountToPay) return reply(this.locale.GACHA.SUGGEST_TO_GRIND, {
             simplified: true,
-            socket: {emoji: emoji(`AnnieSmile`)}
+            socket: {emoji: await emoji(`692428927620087850`)}
         })
 
         /**
@@ -77,13 +77,13 @@ class Gacha extends Command {
          */
         this.suggestToBuy = await reply(this.locale.GACHA.SUGGEST_TO_BUY, {
             simplified: true,
-            socket: {emoji: emoji(`lucky_ticket`)}
+            socket: {emoji: await emoji(`lucky_ticket`)}
         })
 		await this.addConfirmationButton(`suggestToBuy`, this.suggestToBuy)
         this.confirmationButtons.get(`suggestToBuy`).on(`collect`, async r1 => {
 			//  Handle cancellation
 			if (this.isCancelled(r1)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
             this.suggestToBuy.delete()
             this.insufficientTicketWarning.delete()
@@ -95,7 +95,7 @@ class Gacha extends Command {
              */
             this.checkout = await reply(this.locale.BUY.CHECKOUT_PREVIEW, {
                 socket: {
-                    total: `${emoji(paymentItem.alias)}${commanifier(amountToPay)}`,
+                    total: `${await emoji(paymentItem.alias)}${commanifier(amountToPay)}`,
                     item: `[${this.amountToOpen}x] ${gachaItem.name}`,
                     itemType: gachaItem.type_name
                 },
@@ -106,7 +106,7 @@ class Gacha extends Command {
             this.confirmationButtons.get(`checkout`).on(`collect`, async r2 => {
                 //  Handle cancellation
                 if (this.isCancelled(r2)) return reply(this.locale.ACTION_CANCELLED, {
-                    socket: {emoji: emoji(`AnnieSleep`)}
+                    socket: {emoji: await emoji(`781954016271138857`)}
                 })
                 this.checkout.delete()
                 //  Deduct balance & deliver lucky tickets
@@ -115,8 +115,8 @@ class Gacha extends Command {
                 reply(this.locale.BUY.SUCCESSFUL, {
                     color: `lightgreen`,
                     socket: {
-                        item: `${emoji(gachaItem.alias)} [${gachaItem.type_name}] ${commanifier(this.amountToOpen)}x ${gachaItem.name}`,
-                        emoji: emoji(`success`)
+                        item: `${await emoji(gachaItem.alias)} [${gachaItem.type_name}] ${commanifier(this.amountToOpen)}x ${gachaItem.name}`,
+                        emoji: await emoji(`751016612248682546`)
                     }
                 })
 
@@ -130,7 +130,7 @@ class Gacha extends Command {
                 this.confirmationButtons.get(`askToOpenGacha`).on(`collect`, async r3 => {
                         //  Handle cancellation
                         if (this.isCancelled(r3)) return reply(this.locale.ACTION_CANCELLED, {
-                            socket: {emoji: emoji(`AnnieSleep`)}
+                            socket: {emoji: await emoji(`781954016271138857`)}
                         })
                         this.askToOpenGacha.delete()
                         this.startsRoll()
@@ -147,7 +147,7 @@ class Gacha extends Command {
             simplified: true,
             socket: {
                 user: this.tools.name(this.user.master.id),
-                emoji: this.tools.emoji(`AnnieYay`)
+                emoji: await this.tools.emoji(`781504248868634627`)
             }
         })
         //  Registering loot
@@ -172,18 +172,18 @@ class Gacha extends Command {
             socket: {
                 command: `has opened ${this.drawCounts} Lucky Tickets!`,
                 user: this.tools.name(this.user.master.id),
-                emoji: this.tools.emoji(`lucky_ticket`)
+                emoji: await this.tools.emoji(`lucky_ticket`)
             }
         })
         this.fetching.delete()
-        await this.tools.reply(this.displayDetailedLoots(this.tools.emoji), {simplified: true})   
+        await this.tools.reply(await this.displayDetailedLoots(this.tools.emoji), {simplified: true})   
     }
 
     /**
      * Aggregate and prettify this.loots into a readable list.
      * @returns {string}
      */
-    displayDetailedLoots() {
+    async displayDetailedLoots() {
         let str = ``
         let items = this.loots.map(item => item.name)
         let uniqueItems = [...new Set(items)]
@@ -191,7 +191,7 @@ class Gacha extends Command {
             const item = this.loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
-            str += `${this.tools.emoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
+            str += `${await this.tools.emoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
         }
         return str
     }

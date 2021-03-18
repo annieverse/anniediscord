@@ -25,7 +25,7 @@ class Pat extends Command {
         if (!this.user || !this.fullArgs) return reply(this.locale.PAT.THEMSELVES, {
             socket: {
                 user: this.author.username,
-                emoji: emoji(`AnnieCry`)
+                emoji: await emoji(`692428578683617331`)
             },
             imageGif: body.link
         })

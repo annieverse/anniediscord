@@ -50,10 +50,10 @@ class AutoResponder extends Command {
             image: `banner_autoresponder`,
             header: `Hi, ${name(this.user.master.id)}!`,
 			socket:{
-                emoji: emoji(`AnnieYay`),
+                emoji: await emoji(`781504248868634627`),
                 guild: this.guild.name,
                 prefix: this.bot.prefix,
-                statusEmoji: emoji(this.primaryConfig.value ? `success` : `fail`),
+                statusEmoji: await emoji(this.primaryConfig.value ? `751016612248682546` : `751020535865016420`),
                 status: this.primaryConfig.value ? `enabled` : `disabled`
             }
         })
@@ -62,7 +62,7 @@ class AutoResponder extends Command {
         if (!this.availableActions.includes(this.selectedAction)) return reply(this.locale.AUTORESPONDER.INVALID_ACTION, {
             socket: {
                 actions: this._parseAvailableActions(),
-                emoji: emoji(`AnnieThinking`)
+                emoji: await emoji(`692428969667985458`)
             }
         })
         //  Run action
@@ -81,7 +81,7 @@ class AutoResponder extends Command {
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply(this.locale.AUTORESPONDER.ALREADY_ENABLED, {
                 socket: {
-                    emoji: emoji(`AnnieThinking`),
+                    emoji: await emoji(`692428969667985458`),
                     user: name(this.primaryConfig.setByUserId),
                     time:  moment(localizeTime).fromNow()
                 }
@@ -97,7 +97,7 @@ class AutoResponder extends Command {
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.guild.id} has been enabled.`)
         return reply(this.locale.AUTORESPONDER.SUCCESSFULLY_ENABLED, {
-            socket: {emoji: emoji(`hearts`)},
+            socket: {emoji: await emoji(`789212493096026143`)},
             status: `success`
         })
     }
@@ -114,7 +114,7 @@ class AutoResponder extends Command {
             return reply(this.locale.AUTORESPONDER.ALREADY_DISABLED, {
                 socket: {
                     prefix: this.bot.prefix,
-                    emoji: emoji(`AnnieCry`)
+                    emoji: await emoji(`692428578683617331`)
                 }
             })
         }
@@ -128,7 +128,7 @@ class AutoResponder extends Command {
         })
         this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.guild.id} has been disabled.`)
         return reply(this.locale.AUTORESPONDER.SUCCESSFULLY_DISABLED, {
-            socket: {emoji: emoji(`AnnieSmile`)},
+            socket: {emoji: await emoji(`692428927620087850`)},
             status: `success`
         })
     }
@@ -145,7 +145,7 @@ class AutoResponder extends Command {
         //  Handle if there are no registered ARs.
         if (ars.length <= 0) return reply(this.locale.AUTORESPONDER.EMPTY, {
             socket: {
-                emoji: emoji(`AnnieThinking`),
+                emoji: await emoji(`692428969667985458`),
                 prefix: this.bot.prefix
             }
         })
@@ -154,7 +154,7 @@ class AutoResponder extends Command {
             thumbnail: this.guild.iconURL(),
             header: `Learned ARs`,
             socket: {
-                emoji: emoji(`AnnieHype`),
+                emoji: await emoji(`692428692999241771`),
                 list: this._parseRegisteredAutoResponders(ars),
                 ars: ars.length,
                 guild: this.guild.name,
@@ -189,7 +189,7 @@ class AutoResponder extends Command {
         if (!response) return reply(this.locale.AUTORESPONDER.REGISTER_EMPTY_RESPONSE, {
             socket: {
                 prefix: this.bot.prefix,
-                emoji: emoji(`AnnieThinking`),
+                emoji: await emoji(`692428969667985458`),
                 trigger: trigger
             }
         })
@@ -205,7 +205,7 @@ class AutoResponder extends Command {
  		return this.confirmationButtons.get(`register_confirmation`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
             //  Register
             db.registerAutoResponder({
@@ -217,13 +217,13 @@ class AutoResponder extends Command {
             //  Finalize
             this.finalizeConfirmation(r)
             await reply(this.locale.AUTORESPONDER.REGISTER_SUCCESSFUL, {
-                socket: {emoji:emoji(`hearts`)}
+                socket: {emoji: await emoji(`789212493096026143`)}
             })
             reply(this.locale.AUTORESPONDER.REGISTER_FOOTER_TIP, {
                 simplified: true,
                 socket: {
                     trigger: trigger,
-                    emoji: emoji(`AnnieHype`)
+                    emoji: await emoji(`692428692999241771`)
                 }
             })
         })
@@ -239,7 +239,7 @@ class AutoResponder extends Command {
         const ars = await db.getAutoResponders(this.guild.id)
         if (ars.length <= 0) return reply(this.locale.AUTORESPONDER.EMPTY, {
             socket: {
-                emoji: emoji(`AnnieThinking`),
+                emoji: await emoji(`692428969667985458`),
                 prefix: this.bot.prefix
             }
         })
@@ -255,13 +255,13 @@ class AutoResponder extends Command {
         //  Handle if target AR to be deleted does not exists.
         let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword.toLowerCase()))
         if (!targetAR.length) return reply(this.locale.AUTORESPONDER.DELETE_TARGET_INVALID, {
-            socket:{emoji:emoji(`AnniePeek1`)}
+            socket:{emoji: await emoji(`692428807193493657`)}
         })
         //  Performs deletion
         targetAR = targetAR[0]
         await db.deleteAutoResponder(targetAR.ar_id, this.guild.id)   
         return reply(this.locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
-            socket: {emoji:emoji(`hearts`)},
+            socket: {emoji: await emoji(`789212493096026143`)},
             status: `success`
         })
     }
@@ -276,7 +276,7 @@ class AutoResponder extends Command {
         const ars = await db.getAutoResponders(this.guild.id)
         if (ars.length <= 0) return reply(this.locale.AUTORESPONDER.EMPTY, {
             socket: {
-                emoji: emoji(`AnnieThinking`),
+                emoji: await emoji(`692428969667985458`),
                 prefix: this.bot.prefix
             }
         })
@@ -284,14 +284,14 @@ class AutoResponder extends Command {
         this.resetConfirmation = await reply(this.locale.AUTORESPONDER.RESET_CONFIRMATION, {
             socket: {
                 totalArs: ars.length,
-                emoji: emoji(`AnnieCry`)
+                emoji: await emoji(`692428578683617331`,)
             }
         })
 		await this.addConfirmationButton(`reset_confirmation`, this.resetConfirmation)
  		return this.confirmationButtons.get(`reset_confirmation`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: emoji(`781954016271138857`)}
 			})
             //  Wipeout ARs
             db.clearAutoResponders(this.guild.id)

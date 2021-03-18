@@ -41,16 +41,16 @@ class SetRelationship extends Command {
         //  Handle if target doesn't exists
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if target is the author
-        if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: emoji(`AnnieMad`)} })
+        if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await emoji(`751016612248682546`)} })
         //  Handle if user already reached the maximum relationship members and attempted to add new member
         const userRels = this.author.relationships.map(node => node.assigned_user_id)
         if ((userRels.length >= 7) && !userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
-            socket: {emoji:emoji(`AnnieSmuggy`)}
+            socket: {emoji: await emoji(`781956690337202206`)}
         })
         //  Handle if the specified gift cannot be found
         let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableRelationships.map(i => i.name))
         const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
-        if (!relationship) return reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji:emoji(`AnnieThinking`)} })
+        if (!relationship) return reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji: await emoji(`692428969667985458`)} })
         //  Render confirmation
         this.confirmation = await reply(this.locale.RELATIONSHIP.TARGET_CONFIRMATION, {
             prebuffer: true,

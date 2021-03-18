@@ -31,8 +31,8 @@ class Dailies extends Command {
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.DAILIES[this.user.isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: avatar(this.user.master.id),
 			topNotch: this.user.isSelf 
-				? `**Are you craving for artcoins?** ${emoji(`AnnieCry`)}` 
-				: `**${name(this.user.master.id)} already claimed their dailies!** ${emoji(`AnnieMad`)}`,
+				? `**Are you craving for artcoins?** ${await emoji(`692428578683617331`)}` 
+				: `**${name(this.user.master.id)} already claimed their dailies!** ${await emoji(`692428748838010970`)}`,
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
 				user: name(this.user.master.id),
@@ -52,7 +52,7 @@ class Dailies extends Command {
 			thumbnail: avatar(this.user.master.id),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
 			socket: {
-				amount: `${emoji(`artcoins`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
+				amount: `${await emoji(`758720612087627787`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
 				user: name(this.user.master.id),
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}

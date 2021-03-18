@@ -1,6 +1,6 @@
 `use-strict`
 const User = require(`./user`)
-const Discord = require(`discord.js`)
+const emoji = require(`../utils/emojiFetch`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -201,27 +201,7 @@ class Commands {
 		if (!this.confirmationButtons) this.confirmationButtons = new Map()
 		const confirmationEmoji = `✅`
 		//  Recursively find the cancel emoji
-		/**
-		 * Fetch global emojis through shard broadcast eval
-		 * @param {string} id
-		 * @return {object}
-		 */
-		const findEmoji = (id) => {	
-			const temp = this.emojis.cache.get(id)
-			if (!temp) return null
-			// Clone the object because it is modified right after, so as to not affect the cache in client.emojis
-			const emoji = Object.assign({}, temp)
-			// Circular references can't be returned outside of eval, so change it to the id
-			if (emoji.guild) emoji.guild = emoji.guild.id
-			// A new object will be constructed, so simulate raw data by adding this property back
-			emoji.require_colons = emoji.requiresColons
-			return emoji
-		}
-		const broadcastCancelEmoji = await this.bot.shard.broadcastEval(`(${findEmoji}).call(this, '794593423575351307')`)
-		const findCancelEmoji = broadcastCancelEmoji.find(e => e)
-		const raw = await this.bot.api.guilds(findCancelEmoji.guild).get()
-		const guild = new Discord.Guild(this.bot, raw)
-		const cancelEmoji = new Discord.GuildEmoji(this.bot, findCancelEmoji, guild)
+		const cancelEmoji = await emoji(`794593423575351307`, this.bot)
 		targetMessage.react(confirmationEmoji)
 		targetMessage.react(cancelEmoji)
         const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji.name].includes(reaction.emoji.name) && user.id === targetUserId

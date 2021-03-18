@@ -1,9 +1,10 @@
-const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
+const { MessageEmbed, MessageAttachment, MessageCollector, Emoji } = require(`discord.js`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const logger = require(`./logger`)
 const fs = require(`fs`)
 const path = require(`path`)
 const fetch = require(`node-fetch`)
+const emoji = require(`../utils/emojiFetch`)
 /**
  *  @class Pistachio
  *  @version 0.4.0
@@ -49,6 +50,13 @@ class Pistachio {
 		this.palette = require(`../ui/colors/default`)
 
 		/**
+		 * Emoji finder.
+		 * @param {string} keyword
+		 * @return {Emoji|null}
+		 */
+		this.emoji = (keyword) => emoji(keyword, this.bot)
+
+		/**
 		 * Check if <User> property is available in the components
 		 * @since 6.0.0
 		 * @type {Boolean}
@@ -72,7 +80,6 @@ class Pistachio {
 		this.findRole = this.findRole.bind(this)
 		this.trueInt = this.trueInt.bind(this)
 		this.name = this.name.bind(this)
-		this.emoji = this.emoji.bind(this)
 		this.commanifier = this.commanifier.bind(this)
 		this.closestUpper = this.closestUpper.bind(this)
 		this.closestBelow = this.closestBelow.bind(this)
@@ -255,15 +262,6 @@ class Pistachio {
 	name(userId=``) {
 		const user = this.bot.users.cache.get(userId) 
 		return user ? user.username : userId
-	}
-
-	/**
-	 *  An Emoji finder. Fetch all the available emoji based on given emoji name
-	 *  @param {String} name emoji name
-	 *  @returns {Emoji|String}
-	 */
-	emoji(name=``) {
-		return this.bot.emojis.cache.find(e => e.name === name) || `(???)`
 	}
 
 	/**

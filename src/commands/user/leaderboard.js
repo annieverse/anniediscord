@@ -38,12 +38,12 @@ class Leaderboard extends Command {
 			image: `banner_leaderboard`,
 			socket: {
 				prefix: this.bot.prefix,
-				emoji: emoji(`AnnieDab`)
+				emoji: await emoji(`692428597570306218`)
 			}
 		})
 		//  Returns if parameter is invalid.
 		if (!this.wholeKeywords.includes(this.args[0].toLowerCase())) return reply(this.locale.LEADERBOARD.INVALID_CATEGORY, {
-			socket: {emoji:emoji(`AnnieThinking`)}
+			socket: {emoji: await emoji(`692428969667985458`)}
 		})
 		//  Store key of selected group
 		const selectedGroupParent = this.keywords.filter(v => v.includes(this.args[0].toLowerCase()))[0]
@@ -52,7 +52,7 @@ class Leaderboard extends Command {
 		return reply(this.locale.COMMAND.FETCHING, {
 			socket: {
 				command: `${selectedGroup} leaderboard`,
-				emoji: emoji(`AAUloading`),
+				emoji: await emoji(`790994076257353779`),
 				user: this.user.master.id
 			},
 			simplified: true
@@ -85,7 +85,7 @@ class Leaderboard extends Command {
 					color: `golden`,
 					socket: {
 						category: selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1),
-						emoji: emoji(`warn`)
+						emoji: await emoji(`751024231189315625`)
 					}
 				})
 			}

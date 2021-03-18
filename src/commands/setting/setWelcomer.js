@@ -43,7 +43,7 @@ class SetWelcomer extends Command {
             header: `Hi, ${name(this.user.master.id)}!`,
             socket: {
                 prefix: this.bot.prefix,
-                emoji: emoji(`AnnieGeek`)
+                emoji: await emoji(`692428660824604717`)
             }
         })
         //  Handle if the selected options doesn't exists
@@ -129,7 +129,7 @@ class SetWelcomer extends Command {
         || this.message.guild.channels.cache.get(this.args[1])
         || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {socket: {emoji:emoji(`AnnieCry`)} })
+        if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {socket: {emoji: await emoji(`692428578683617331`)} })
         //  Update configs
         await this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
@@ -168,7 +168,7 @@ class SetWelcomer extends Command {
         })
         this.logger.info(`${fn} WELCOME_TEXT for GUILD_ID:${this.message.guild.id} has been updated.`)
         await reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
-        this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: emoji(`AnnieSmile`)} })
+        this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: await emoji(`692428927620087850`)} })
         await this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.master.id)
         this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview(...arguments))
     }
@@ -186,7 +186,7 @@ class SetWelcomer extends Command {
             socket: {
                 user: this.user.master.id,
                 command: `WELCOMER_PREVIEW`,
-                emoji: emoji(`AAUloading`)
+                emoji: await emoji(`790994076257353779`)
             }
         })
         const img = await new GUI(this.message.guild.members.cache.get(this.message.author.id), this.bot).build()
@@ -225,7 +225,7 @@ class SetWelcomer extends Command {
                 socket: {
                     role: searchRole,
                     annieRole: this.annieRole.name,
-                    emoji: emoji(`AnnieCry`)
+                    emoji: await emoji(`692428578683617331`)
                 }
             })
             rolesContainer.push(searchRole)

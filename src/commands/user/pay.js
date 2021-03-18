@@ -47,7 +47,7 @@ class Pay extends Command {
 		//  Handle if target is invalid
 		if (!this.user) return reply(this.locale.USER.IS_INVALID, {status: `fail`})
 		//  Handle if user is trying to pay themselves
-		if (this.user.isSelf) return reply(this.locale.PAY.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)}, color: `red`})
+		if (this.user.isSelf) return reply(this.locale.PAY.SELF_TARGETING, {socket: {emoji: await emoji(`692428748838010970`)}, color: `red`})
 		//  Parse amount of artcoins to be send
 		this.amountToSend = this.fullArgs.replace(/\D/g, ``)
 		//  Handle if user not specifying the amount to send
@@ -67,14 +67,14 @@ class Pay extends Command {
 			image: await new GUI(this.user, this.total).build(),
 			socket: {
 				user: name(this.user.master.id),
-				amount: `${emoji(`artcoins`)} ${commanifier(this.total)}`
+				amount: `${await emoji(`758720612087627787`)} ${commanifier(this.total)}`
 			}
 		})
 		await this.addConfirmationButton(`checkout`, this.confirmation)
  		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})

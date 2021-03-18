@@ -29,7 +29,7 @@ class Prune extends Command {
 		deleteMessages(amount + 1)
 		//	Successful
 		return reply(this.locale.PRUNE.SUCCESSFUL, {
-			socket: {amount: amount, emoji: emoji(`AnnieYay`)},
+			socket: {amount: amount, emoji: await emoji(`781504248868634627`)},
 			deleteIn: 5
 		})
 	}

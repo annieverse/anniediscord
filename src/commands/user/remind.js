@@ -34,7 +34,7 @@ class Remind extends Command {
         const context = reminders.getContextFrom(this.fullArgs, this.user.master.id)
         if (!context.isValidReminder) return reply(this.locale.REMINDER.INVALID_DATE, {
             socket: {
-                emoji:emoji(`AnnieYandereAnim`),
+                emoji: await emoji(`790338393015713812`),
                 prefix: this.bot.prefix
             }
         })
@@ -43,7 +43,7 @@ class Remind extends Command {
         return reply(this.locale.REMINDER.SUCCESSFUL, {
             status: `success`,
             socket: {
-                emoji: emoji(`hearts`),
+                emoji: await emoji(`789212493096026143`),
                 time: moment(context.remindAt.timestamp).fromNow()
             }
         })

@@ -38,15 +38,15 @@ class SellFragments extends Command {
     		image: `banner_sellfragments`,
     		socket: {
     			prefix: this.bot.prefix,
-    			emoji: emoji(`AnniePogg`),
-    			emojiFragment: emoji(`fragments`),
+    			emoji: await emoji(`700731914801250324`),
+    			emojiFragment: await emoji(`577121735917174785`),
     			rate: `${this.rate}:1`,
     			min: this.minimumToSell
     		}
     	})
     	//  Handle if user doesn't have any fragments in their inventory
     	if (!this.user.inventory.fragments) return reply(this.locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
-    		socket: {emoji: emoji(`AnnieMad`)},
+    		socket: {emoji: await emoji(`692428748838010970`)},
     	})
     	//  Handle if user specified an invalid amount
     	this.amountToSell = this.args[0].startsWith(`all`) ? this.user.inventory.fragments : trueInt(this.args[0])
@@ -55,7 +55,7 @@ class SellFragments extends Command {
     	if (this.amountToSell < this.minimumToSell) return reply(this.locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
     		socket: {
     			amount: this.minimumToSell,
-    			emoji: emoji(`fragments`)
+    			emoji: await emoji(`692428748838010970`)
     		}
     	})
     	//  Calculate amount to receive
@@ -67,15 +67,15 @@ class SellFragments extends Command {
     		socket: {
     			fragmentsAmount: commanifier(this.amountToSell),
     			artcoinsAmount: commanifier(this.receivedAmount),
-    			fragmentsEmoji: emoji(`fragments`),
-    			artcoinsEmoji: emoji(`artcoins`) 
+    			fragmentsEmoji: await emoji(`692428748838010970`),
+    			artcoinsEmoji: await emoji(`758720612087627787`) 
     		}
     	})
     	await this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.master.id)
     	this.confirmationButtons.get(`SELLFRAGMENTS_CONFIRMATION`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
     		//  Deliver artcoins to user's inventory
     		await this.bot.db.updateInventory({itemId: 52, userId: this.user.master.id, guildId: this.message.guild.id, value: this.receivedAmount, operation: `+`})

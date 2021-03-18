@@ -27,7 +27,7 @@ class Inventory extends Command {
 		//  Handle if couldn't fetch the inventory
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.INVENTORY.AUTHOR_EMPTY : this.locale.INVENTORY.OTHER_USER_EMPTY
 		if (this.user.inventory.raw.length <= 0) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.master.id)} })
-		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.master.id, emoji: emoji(`AAUloading`)}})
+		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.master.id, emoji: await emoji(`790994076257353779`)}})
 		.then(async loading => {
 			//  Remove faulty values and sort order by rarity
 			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.rarity_id - b.rarity_id).reverse()
@@ -38,7 +38,7 @@ class Inventory extends Command {
 				image: (await new GUI(this.user, this.bot).build()).toBuffer(),
 				socket: {
 					user: name(this.user.master.id),
-					emoji: emoji(`AnniePogg`),
+					emoji: await emoji(`700731914801250324`),
 					command: `Items Inventory`
 				}
 			})

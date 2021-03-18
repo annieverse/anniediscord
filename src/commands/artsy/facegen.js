@@ -28,7 +28,7 @@ class FaceGenerate extends Command {
      */
 	async execute({ reply, emoji }) {
         const getID = Math.floor(Math.random() * this.range)
-        this.fetching = await reply(this.locale.FACEGEN.FETCHING, {simplified: true, socket: {emoji: emoji(`AAUloading`)} })
+        this.fetching = await reply(this.locale.FACEGEN.FETCHING, {simplified: true, socket: {emoji: await emoji(`790994076257353779`)} })
         await reply(this.locale.FACEGEN.HEADER, {
             customHeader: [this.message.author.username, this.message.author.displayAvatarURL()],
             image: this.source + `example-${getID}.jpg`,

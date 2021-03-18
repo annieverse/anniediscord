@@ -27,14 +27,14 @@ class SetBio extends Command {
 		//  Handle if user input is exceeding the character limit
 		if (this.fullArgs.length > this.charactersLimit) return reply(this.locale.SETBIO.EXCEEDING_LIMIT, {
 			socket: {
-				emoji: emoji(`AnnieCry`),
+				emoji: await emoji(`692428578683617331`),
 				chars: this.fullArgs.length-this.charactersLimit
 			}
 		})
         this.user.main.bio = this.fullArgs
         this.rendering = await reply(this.locale.SETBIO.RENDERING, {
             simplified: true,
-            socket: {emoji: emoji(`AAUloading`)} 
+            socket: {emoji: await emoji(`790994076257353779`)} 
         })
         let img = await new GUI(this.user, this.bot, {width: 320, height: 360}, avatar).build()
         this.confirmation = await reply(this.locale.SETBIO.PREVIEW_CONFIRMATION, {
@@ -46,7 +46,7 @@ class SetBio extends Command {
         return this.confirmationButtons.get(`applyBio`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
         	//  Perform update
         	await db.setUserBio(this.fullArgs, this.user.master.id)

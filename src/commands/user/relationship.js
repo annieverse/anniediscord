@@ -30,7 +30,7 @@ class Relationship extends Command {
             simplified: true,
             socket: {
                 command: `relationship`,
-                emoji: emoji(`AAUloading`),
+                emoji: await emoji(`790994076257353779`),
                 user: this.user.master.id
             }
         })
@@ -39,7 +39,7 @@ class Relationship extends Command {
             prebuffer: true,
             socket: {
                 command: `Relationship`,
-                emoji: emoji(`AnnieWink`),
+                emoji: await emoji(`692429004417794058`),
                 user: name(this.user.master.id)
             },
             image: await new GUI(this.user, name, avatar, this.bot, this.author).build()

@@ -27,7 +27,7 @@ class ConvertArtcoins extends Command {
 			prebuffer: true,
 			image: this.banner,
 			socket: {
-				emoji: emoji(`AnnieHype`),
+				emoji: await emoji(`692428692999241771`),
 				prefix: this.bot.prefix
 			},
 			footer: `Keep in mind the conversion rate is 1:${this.artcoinsRatio}`
@@ -36,14 +36,14 @@ class ConvertArtcoins extends Command {
 		//  Returns if user's artcoins is below the amount of going to be used
 		if (this.user.inventory.artcoins < amountToUse) return reply(this.locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
 			socket: {
-				amount: `${emoji(`artcoins`)}${commanifier(this.user.inventory.artcoins)}`,
-				emoji: emoji(`AnnieYandere`)
+				amount: `${await emoji(`758720612087627787`)}${commanifier(this.user.inventory.artcoins)}`,
+				emoji: await emoji(`790338393015713812`)
 			}
 		})
 		//  Returns if user amount input is below the acceptable threeshold
 		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {
 			socket: {
-				emoji: emoji(`AnnieMad`)
+				emoji: await emoji(`692428748838010970`)
 			}
 		})
 		const totalGainedExp = amountToUse / this.artcoinsRatio
@@ -51,7 +51,7 @@ class ConvertArtcoins extends Command {
 			thumbnail: avatar(this.user.master.id),
 			notch: true,
 			socket: {
-				emoji: emoji(`artcoins`),
+				emoji: await emoji(`758720612087627787`),
 				amount: commanifier(amountToUse),
 				gainedExp: commanifier(totalGainedExp)
 			}
@@ -60,7 +60,7 @@ class ConvertArtcoins extends Command {
  		return this.confirmationButtons.get(`checkout`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
 			//	Deduct balance & add new exp
 			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
@@ -69,7 +69,7 @@ class ConvertArtcoins extends Command {
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
 				status: `success`,
 				socket: {
-					artcoins: `${emoji(`artcoins`)} ${commanifier(amountToUse)}`,
+					artcoins: `${await emoji(`758720612087627787`)} ${commanifier(amountToUse)}`,
 					exp: `${commanifier(totalGainedExp)} EXP`
 				}
 			})

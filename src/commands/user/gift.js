@@ -29,19 +29,19 @@ class Gift extends Command {
 		if (!availableGifts.length) return reply(this.locale.GIFT.UNAVAILABLE, {
 			socket: {
 				prefix: this.bot.prefix,
-				emoji: emoji(`AnnieSmile`)
+				emoji: await emoji(`692428927620087850`)
 			}
 		})
 		// Handle if user doesn't specify anything
 		if (!this.fullArgs) {
-			this.loading = await reply(this.locale.GIFT.RENDERING_AVAILABLE_GIFTS, {simplified: true, socket: {emoji:emoji(`AAUloading`) }})
+			this.loading = await reply(this.locale.GIFT.RENDERING_AVAILABLE_GIFTS, {simplified: true, socket: {emoji: emoji(`790994076257353779`) }})
 			await reply(this.locale.GIFT.SHORT_GUIDE, {
 				prebuffer: true,
 				image: (await new inventoryGUI(this.author, this.bot).build()).toBuffer(),
 				socket: {
 					prefix: this.prefix,
 					referenceItem: availableGifts[0].name.toLowerCase(),
-					items: this.displayGifts(availableGifts, ...arguments)
+					items: await this.displayGifts(availableGifts, ...arguments)
 				}
 			})
 			return this.loading.delete()
@@ -49,7 +49,7 @@ class Gift extends Command {
 		// Invalid target
 		if (!this.user) return reply(this.locale.USER.IS_INVALID)
 		// Returns if user trying to gift themselves.
-		if (this.user.isSelf) return reply(this.locale.GIFT.SELF_TARGETING, {socket: {emoji:emoji(`AnnieYandere`)} })
+		if (this.user.isSelf) return reply(this.locale.GIFT.SELF_TARGETING, {socket: {emoji: await emoji(`790338393015713812`)} })
 		//  Handle if the specified gift cannot be found
 		let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableGifts.map(i => i.name))
 		const gift = searchStringResult.bestMatch.rating >= 0.2 ? availableGifts.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
@@ -67,8 +67,8 @@ class Gift extends Command {
 		//  Handle if the amount to send is lower than total owned item
 		if (gift.quantity < amount) return reply(this.locale.GIFT.INSUFFICIENT_AMOUNT, {
 			socket: {
-				gift: `${emoji(gift.alias)} ${commanifier(gift.quantity)}x ${gift.name}`,
-				emoji: emoji(`AnnieDead`)
+				gift: `${await emoji(gift.alias)} ${commanifier(gift.quantity)}x ${gift.name}`,
+				emoji: await emoji(`692428613122785281`)
 			}
 		})
 		//  Render confirmation
@@ -77,7 +77,7 @@ class Gift extends Command {
 			image: await new giftGUI(this.user, gift, amount).build(),
 			socket: {
 				user: name(this.user.master.id),
-				gift: `${emoji(gift.alias)} ${gift.name}`,
+				gift: `${await emoji(gift.alias)} ${gift.name}`,
 				amount: commanifier(amount)
 			}
 		})
@@ -85,7 +85,7 @@ class Gift extends Command {
  		return this.confirmationButtons.get(`gift`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: emoji(`AnnieSleep`)}
+				socket: {emoji: await emoji(`781954016271138857`)}
 			})
 			//  Adds reputation point to target user
 			await db.addUserReputation(amount, this.user.master.id, this.message.author.id, this.message.guild.id)
@@ -96,7 +96,7 @@ class Gift extends Command {
 				customHeader: [`${name(this.user.master.id)} has received your gifts!♡`, avatar(this.user.master.id), ],
 				socket: {
 					user: name(this.user.master.id),
-					gift: `${emoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
+					gift: `${await emoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
 				} 
 			})
  		})
@@ -108,11 +108,11 @@ class Gift extends Command {
 	 * @param {function} [tools] 
 	 * @retuns {string}
 	 */
-	displayGifts(inventory=[], tools) {
+	async displayGifts(inventory=[], tools) {
 		let str = ``
 		for (let i = 0; i<inventory.length; i++) {
 			const item = inventory[i]
-			str += `• ${tools.emoji(item.alias)} ${tools.commanifier(item.quantity)}x ${item.name}`
+			str += `• ${await tools.emoji(item.alias)} ${tools.commanifier(item.quantity)}x ${item.name}`
 			if (i != (inventory.length-1)) str += `\n`
 		}
 		return str

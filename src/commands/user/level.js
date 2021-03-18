@@ -30,7 +30,7 @@ class Level extends Command {
 		reply(this.locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: emoji(`AAUloading`), 
+				emoji: await emoji(`790994076257353779`), 
 				user: this.user.master.id,
 				command: `level`
 			}
@@ -41,7 +41,7 @@ class Level extends Command {
 				prebuffer: true,
 				image: await new GUI(this.user).build(),
 				socket: {
-					emoji: emoji(`AnnieDab`),
+					emoji: await emoji(`692428597570306218`),
 					user: name(this.user.master.id),
 					command: `Level`
 				}

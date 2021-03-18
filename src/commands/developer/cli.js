@@ -20,7 +20,7 @@ class CommandLineInterface extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, palette, emoji }) {
+	async execute({ reply, emoji }) {
 		await this.requestUserMetadata(1)
 
 		//	Return if user doesn't specify arguments.
@@ -33,7 +33,7 @@ class CommandLineInterface extends Command {
 		reply(this.locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: emoji(`AAUloading`),
+				emoji: await emoji(`790994076257353779`),
 				command: `cli`,
 				user: this.user.master.id
 			} 

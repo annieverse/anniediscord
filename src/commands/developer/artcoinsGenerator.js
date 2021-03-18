@@ -55,7 +55,7 @@ class ArtcoinsGenerator extends Command {
 					confirmation.delete()
 					reply(this.locale.ADDAC.CONFIRMATION_SEQ_2, {
 						socket: {
-							emoji: emoji(`artcoins`),
+							emoji: await emoji(`758720612087627787`),
 							amount: commanifier(amount),
 							user: name(this.user.master.id)
 						},

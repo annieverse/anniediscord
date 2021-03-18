@@ -47,13 +47,13 @@ class CardCollection extends Command {
 				image: this.banner,
 				socket: {
 					prefix: this.bot.prefix,
-					emoji: emoji(`AnnieCry`),
+					emoji: await emoji(`692428578683617331`),
 					user: name(this.user.master.id)
 				},
 				footer: this.user.isSelf ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
 			})
 		}
-		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: emoji(`AAUloading`)}})
+		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: await emoji(`790994076257353779`)}})
 		.then(async loading => {
 			await reply(this.prettifiedCardInventory(), {
 				paging: true,

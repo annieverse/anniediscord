@@ -30,19 +30,19 @@ class Quests extends Command {
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION@${this.user.master.id}`
-		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji:emoji(`AnnieMad`)}})
+		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.QUEST.COOLDOWN, {
-			topNotch: `**Shall we do something else first?** ${emoji(`AnnieThinking`)}`,
+			topNotch: `**Shall we do something else first?** ${await emoji(`692428969667985458`)}`,
 			thumbnail: avatar(this.user.master.id),
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
 				prefix: this.bot.prefix
 			},
 		})
-		this.fetching = await reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: emoji(`AAUloading`)} })
+		this.fetching = await reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: await emoji(`790994076257353779`)} })
 		//  Update ID if active quest couldn't be found with the saved quest_id
 		let nextQuestId = this.user.quests.next_quest_id
 		if (!nextQuestId) {
@@ -59,7 +59,7 @@ class Quests extends Command {
 			socket: {
 				questTitle: activeQuest.name,
 				description: activeQuest.description,
-				reward: `${emoji(`artcoins`)}${commanifier(activeQuest.reward_amount)}`
+				reward: `${await emoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
 			}
 		})
 		this.fetching.delete()
@@ -91,7 +91,7 @@ class Quests extends Command {
 				socket: {
 					praise: this.locale.QUEST.PRAISE[Math.floor(Math.random() * this.locale.QUEST.PRAISE.length)],
 					user: name(this.user.master.id),
-					reward: `${emoji(`artcoins`)}${commanifier(activeQuest.reward_amount)}`
+					reward: `${await emoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
 				}
 			})
 		})

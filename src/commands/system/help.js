@@ -37,7 +37,7 @@ class Help extends Command {
 					user: name(this.user.master.id),
 					recommendedCommands: this.prettifySuggestions(commandSuggestions),
 					serverLink: supportServer,
-					emoji: emoji(`AnnieWave`),
+					emoji: await emoji(`692428988177449070`),
 					prefix: this.bot.prefix
 				},
 				color: this.defaultColor,

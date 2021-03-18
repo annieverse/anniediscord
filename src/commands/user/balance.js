@@ -23,7 +23,7 @@ class Balance extends Command {
 		return reply(this.locale.DISPLAY_BALANCE, {
 			thumbnail: avatar(this.user.master.id),
 			socket: {
-				emoji: emoji(`artcoins`), 
+				emoji: await emoji(`758720612087627787`), 
 				amount: commanifier(this.user.inventory.artcoins || 0),
 				tips: this.user.isSelf ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
 			}
