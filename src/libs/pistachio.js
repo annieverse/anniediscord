@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageAttachment, MessageCollector, Emoji } = require(`discord.js`)
+const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const logger = require(`./logger`)
 const fs = require(`fs`)

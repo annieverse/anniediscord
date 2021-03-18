@@ -22,7 +22,7 @@ const broadcastScript = (keyword) => {
  *  @param {object} client Current client instance
  *  @return {string|Discord.Emoji} 
  */
-emojiFetch = async (emojiKeyword, client) => {
+const emojiFetch = async (emojiKeyword, client) => {
     const runScript = await client.shard.broadcastEval(`(${broadcastScript}).call(this, '${emojiKeyword}')`)
     const findEmoji = runScript.find(e => e)
     if (!findEmoji) return `(???)`
