@@ -18,14 +18,14 @@ class Reputation extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, avatar, bot:{db} }) {
+    async execute({ reply, emoji, bot:{db} }) {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
 		const now = moment()
 		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
 		//  Returns if user's last reps give still under 23 hours.
 		if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
-			thumbnail: avatar(this.author.id),
+			thumbnail: this.author.master.displayAvatarURL(),
 			socket: {time: moment(lastGiveAt).add(...this.cooldown).fromNow()},
 		})
 		//	Displays short-guide if user doesn't specify any parameter
@@ -37,12 +37,12 @@ class Reputation extends Command {
 		//	Handle if user is trying to rep themselves
 		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: emoji(`AnnieMad`)} })
 
-		await db.addUserReputation(1, this.user.master.id, this.author.id,this.message.guild.id)
-		await db.updateReputationGiver(this.author.id, this.message.guild.id)
+		await db.addUserReputation(1, this.user.master.id, this.author.master.id, this.message.guild.id)
+		await db.updateReputationGiver(this.author.master.id, this.message.guild.id)
 		return reply(this.locale.GIVE_REPUTATION.SUCCESSFUL, {
 			status: `success`,
-			thumbnail: avatar(this.user.master.id),
-			socket: {user: name(this.user.master.id)}
+			thumbnail: this.user.master.displayAvatarURL(),
+			socket: {user: this.user.master.username}
 		})
 	}
 }
