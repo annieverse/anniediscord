@@ -31,7 +31,7 @@ class SetRelationship extends Command {
         if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE)
         //  Handle if user doesn't provide any argument
         if (!this.fullArgs && this.user.isSelf) return reply(this.locale.RELATIONSHIP.GUIDE, {
-            header: `Hi, ${name(this.author.id)}!`,
+            header: `Hi, ${this.author.master.username}!`,
             image: `banner_setrelationship`,
             socket: {
                 list: this.prettifyList(availableRelationships),
@@ -68,7 +68,7 @@ class SetRelationship extends Command {
 				customHeader: [`Oops, they rejected your relationship request...`, avatar(this.user.master.id)]
 			})
             //  Update relationship data on author side
-            await this.bot.db.setUserRelationship(this.author.id, this.user.master.id, parseInt(relationship.relationship_id), this.message.guild.id)
+            await this.bot.db.setUserRelationship(this.author.master.id, this.user.master.id, parseInt(relationship.relationship_id), this.message.guild.id)
             //  Successful
             this.finalizeConfirmation(r)
             return reply(``, {customHeader: [`${name(this.user.master.id)} has accepted your relationship request!`, avatar(this.user.master.id)]})
