@@ -49,7 +49,6 @@ class Pay extends Command {
 		//  Handle if user is trying to pay themselves
 		if (this.user.isSelf) return reply(this.locale.PAY.SELF_TARGETING, {socket: {emoji: await emoji(`692428748838010970`)}, color: `red`})
 		//  Parse amount of artcoins to be send
-		console.debug(this.fullArgs)
 		this.amountToSend = this.fullArgs.replace(/\D/g, ``)
 		//  Handle if user not specifying the amount to send
 		if (!this.amountToSend) return reply(this.locale.PAY.INVALID_AMOUNT, {status: `fail`})

@@ -23,7 +23,7 @@ class SetRelationship extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-    async execute({ reply, emoji, name, avatar, bot:{db} }) {
+    async execute({ reply, emoji, name, bot:{db} }) {
         await this.requestUserMetadata(2)
         await this.requestAuthorMetadata(2)
         const availableRelationships = await db.getAvailableRelationships()

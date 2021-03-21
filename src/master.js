@@ -34,7 +34,7 @@ module.exports = () => {
                 distributeMultiAccounts: true
             })
             try {
-                const artcoinsEmoji = await this.getEmoji('artcoins')
+                const artcoinsEmoji = await this.getEmoji(`artcoins`)
                 user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
                 this.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
             }
