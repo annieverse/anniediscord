@@ -25,12 +25,12 @@ class User {
      * @param {string} [target] A keyword to be used to do searchstring.
      * @author klerikdust
      * @since v7.2.1
-     * @returns {GuildMember}
+     * @returns {object}
      */
 	async lookFor(target) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
-		//  Normalize keyword and ommits bracket if target contains mention     	
+		//  Normalize keyword and ommits bracket if target contains mention
         target = target.toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
 		this.args = target.split(` `)
         const collection = this.message.guild.members
@@ -40,9 +40,10 @@ class User {
 			findByFullString = findByFullString.values().next().value.user
 			if (findByFullString) {
 				this.logger.debug(`${fn} successfully found user by complete string`)
-				this.user = findByFullString
-				this.usedKeyword = target
-				return this.user
+				return {
+					master: findByFullString,
+					usedKeyword: target
+				}
 			}
 		}
 		catch(e) {
@@ -53,9 +54,10 @@ class User {
 			let findByFullStringID = await collection.fetch(target)
 			findByFullStringID = collection.cache.get(target).user
 			this.logger.debug(`${fn} successfully found user by complete string of user ID`)
-			this.user = findByFullStringID
-			this.usedKeyword = target
-			return this.user
+			return {
+				master: findByFullStringID,
+				usedKeyword: target
+			}
 		}
 		catch(e) {
 			this.logger.debug(`${fn} an error occured during user finding through full user ID`)
@@ -72,9 +74,10 @@ class User {
 				findByStringToken = findByStringToken.values().next().value.user
 				if (findByStringToken) {
 					this.logger.debug(`${fn} successfully found user by using string token '${token}'`)
-					this.user = findByStringToken
-					this.usedKeyword = token
-					return this.user
+					return {
+						master: findByStringToken,
+						usedKeyword: token
+					}
 				}
 			}
 			catch(e) {
@@ -86,9 +89,10 @@ class User {
 				findByIDToken = collection.cache.get(token).user
 				if (findByIDToken) {
 					this.logger.debug(`${fn} successfully found user by using ID token '${token}'`)
-					this.user = findByIDToken
-					this.usedKeyword = token
-					return this.user
+					return {
+						master: findByIDToken,
+						usedKeyword: token
+					}
 				}
 			}
 			catch(e) {
@@ -105,9 +109,10 @@ class User {
 					findByCombinedStringTokens = findByStringToken.values().next().value.user
 					if (findByCombinedStringTokens) {
 						this.logger.debug(`${fn} successfully found user by using combined string tokens '${combinedTokens}'`)
-						this.user = findByCombinedStringTokens
-						this.usedKeyword = combinedTokens
-						return this.user
+						return {
+							master: findByCombinedStringTokens,
+							usedKeyword: combinedTokens
+						}
 					}
 				}
 				catch(e) {
@@ -117,7 +122,6 @@ class User {
 		}
 		//  Fallback
 		this.logger.warn(`${fn} fail to fetch user with keyword '${target}'. None of the searchstring gives adequate result.`)
-		this.user = null
 		return null
     }
 

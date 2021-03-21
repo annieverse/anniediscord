@@ -150,18 +150,20 @@ class Commands {
 			this.user = null
 			return false
 		}
-		const result = await new User(this.bot, this.message).requestMetadata(targetUser, dataLevel)
+		const result = await new User(this.bot, this.message).requestMetadata(targetUser.master, dataLevel)
 		this.user = result
 		//  If multi user property isn't enabled, then skip keyword parsing
 		if (!this.commandProperties.multiUser) return true
 		//  If command specified `rawArgs` property, then userKeyword won't be removed.
 		if (this.commandProperties.rawArgs) return true
 		//  Remove user searchstring keyword from arg pool
-		if (result.usedKeyword) {
-			const tokenizedKeywords = result.usedKeyword.split(` `)
+		if (targetUser.usedKeyword) {
+			let tokenizedKeywords = targetUser.usedKeyword.split(` `)
 			for (let i=0; i<tokenizedKeywords.length; i++) {
 				this.fullArgs = this.fullArgs.replace(tokenizedKeywords[i], ``)
 			}
+			//  Ommit leftover symbols from collection parsing
+			this.fullArgs = this.fullArgs.replace(/[^0-9a-z-A-Z ]/g, ``)
 		}
 		/**
 		 * Multi-language support
