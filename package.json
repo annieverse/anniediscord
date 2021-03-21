@@ -45,7 +45,7 @@
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
     "canvas-constructor": "^4.1.0",
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chart.js": "^2.9.4",
     "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
