@@ -1,3 +1,10 @@
+## [7.11.15](https://github.com/klerikdust/anniediscord/compare/v7.11.14...v7.11.15) (2021-03-21)
+
+
+### Bug Fixes
+
+* **vote:** only send to single shard. ([822cae4](https://github.com/klerikdust/anniediscord/commit/822cae4bc4f160287e8497f7ca1cd8d287637318))
+
 ## [7.11.14](https://github.com/klerikdust/anniediscord/compare/v7.11.13...v7.11.14) (2021-03-21)
 
 
