@@ -43,7 +43,7 @@
     "axios": "^0.21.1",
     "better-sqlite3": "^7.1.1",
     "buffer-image-size": "^0.6.4",
-    "canvas": "^2.6.1",
+    "canvas": "^2.7.0",
     "canvas-constructor": "^4.1.0",
     "chai": "^4.2.0",
     "chart.js": "^2.9.4",
