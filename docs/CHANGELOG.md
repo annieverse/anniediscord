@@ -1,3 +1,12 @@
+## [7.11.12](https://github.com/klerikdust/anniediscord/compare/v7.11.11...v7.11.12) (2021-03-21)
+
+
+### Bug Fixes
+
+* **setRelationship:** foreign author id. ([a260489](https://github.com/klerikdust/anniediscord/commit/a260489b25db9eadc3880d605d3d999f7f2e9caa))
+* **userLookup:** adds usedKeyword into pool. ([d06a68d](https://github.com/klerikdust/anniediscord/commit/d06a68dbf1a65f7f3000ed18858b7ab2cd6b1ec4))
+* **vote:** uses official top.gg api. ([d6adc4d](https://github.com/klerikdust/anniediscord/commit/d6adc4dc1def1d1011453a9b76ed3b86be6fab53))
+
 ## [7.11.11](https://github.com/klerikdust/anniediscord/compare/v7.11.10...v7.11.11) (2021-03-18)
 
 
