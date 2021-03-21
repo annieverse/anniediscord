@@ -65,13 +65,13 @@ class SetRelationship extends Command {
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
 			//  Handle cancellation
 			if (this.isCancelled(r)) return reply(``, {
-				customHeader: [`Oops, they rejected your relationship request...`, avatar(this.user.master.id)]
+				customHeader: [`Oops, they rejected your relationship request...`, this.user.master.displayAvatarURL()]
 			})
             //  Update relationship data on author side
             await this.bot.db.setUserRelationship(this.author.master.id, this.user.master.id, parseInt(relationship.relationship_id), this.message.guild.id)
             //  Successful
             this.finalizeConfirmation(r)
-            return reply(``, {customHeader: [`${name(this.user.master.id)} has accepted your relationship request!`, avatar(this.user.master.id)]})
+            return reply(``, {customHeader: [`${this.user.master.username} has accepted your relationship request!`, this.user.master.displayAvatarURL()]})
         })
     }
 
