@@ -12,6 +12,7 @@ const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
+const emoji = require(`./utils/emojiFetch`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -377,14 +378,10 @@ class Annie extends Discord.Client {
     /**
      *  An Emoji finder. Fetch all the available emoji based on given emoji name
      *  @param {string} [keyword=``] emoji keyword to search
-     *  @return {string}
+     *  @return {Emoji|null}
      */
     getEmoji(keyword=``) {
-        const parseId = keyword.replace(/\D/g, ``)
-        const byId = this.emojis.cache.get(keyword) || this.emojis.cache.get(parseId)
-        const byName = this.emojis.cache.find(e => e.name.toLowerCase() === keyword.toLowerCase())
-        //  Find by ID first, if not found then try by name. Otherwise, fallback as `(???)`
-        return byId ? byId : byName ? byName : `(???)`
+        return emoji(keyword, this)
     }
 
     /**

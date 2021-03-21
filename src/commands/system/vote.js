@@ -17,17 +17,16 @@ class Vote extends Command {
 	 * Running command workflow
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 */
-	async execute({ reply, name, emoji }) {
-		await this.requestUserMetadata(2)
-		//  Handle if user's vote still in cooldown
-		if (await this.bot.dbl.hasVoted(this.user.master.id)) return reply(this.locale.VOTE.IS_COOLDOWN, {
+	async execute({ reply, emoji }) {
+		const req = await this.bot.dblApi.hasVoted(this.message.author.id)
+		if (req.voted) return reply(this.locale.VOTE.IS_COOLDOWN, {
 			socket: {
 				page: `[write a review](${this.page})`,
 				emoji: await emoji(`692428785571856404`)
 			}
 		})
 		return reply(this.locale.VOTE.READY, {
-			header: `Hi, ${name(this.user.master.id)}!`,
+			header: `Hi, ${this.message.author.username}`,
 			image: `banner_votes`,
 			socket: {
 				emoji: await emoji(`692428927620087850`),
