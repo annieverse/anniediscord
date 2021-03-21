@@ -25,7 +25,7 @@ module.exports = () => {
             shardId: this.shard.ids[0],
             shardCount: this.options.shardCount
         })
-        const user = await this.users.fetch(userId)
+        const user = await this.users.fetch(`${userId}`)
         if (user) {
             this.db.updateInventory({
                 itemId: 52, 
