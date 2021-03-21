@@ -39,8 +39,8 @@ module.exports = () => {
 			this.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
 		})
 		.catch(e => {
-			this.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${this.shard.ids[0} so no reward given > ${e.message}`)
-		}
+			this.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${this.shard.ids[0]} so no reward given > ${e.message}`)
+		})
     }
 
     const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
