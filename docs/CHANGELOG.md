@@ -1,3 +1,10 @@
+## [7.11.14](https://github.com/klerikdust/anniediscord/compare/v7.11.13...v7.11.14) (2021-03-21)
+
+
+### Bug Fixes
+
+* **vote:** restructure promise. ([53711bf](https://github.com/klerikdust/anniediscord/commit/53711bfe9231b8ac00689cf3bdc7e4a6ec1d8104))
+
 ## [7.11.13](https://github.com/klerikdust/anniediscord/compare/v7.11.12...v7.11.13) (2021-03-21)
 
 
