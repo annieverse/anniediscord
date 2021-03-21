@@ -1,3 +1,10 @@
+## [7.11.13](https://github.com/klerikdust/anniediscord/compare/v7.11.12...v7.11.13) (2021-03-21)
+
+
+### Bug Fixes
+
+* **vote:** stringify strng. ([91f985b](https://github.com/klerikdust/anniediscord/commit/91f985be892bee13a1399197d4d48f8107ea655d))
+
 ## [7.11.12](https://github.com/klerikdust/anniediscord/compare/v7.11.11...v7.11.12) (2021-03-21)
 
 
