@@ -4,6 +4,9 @@ node_modules
 # User's self uploading cover
 src/assets/selfupload
 
+# Server's custom welcomer bg
+src/assets/customWelcomer
+
 # Server Logs
 logs
 

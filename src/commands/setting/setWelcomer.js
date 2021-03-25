@@ -1,6 +1,10 @@
 const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)
+const fs = require(`fs`)
+const fetch = require(`node-fetch`)
+const { v4: uuidv4 } = require(`uuid`)
+
 /**
  * Manage welcomer module for your guild.
  * @author klerikdust
@@ -16,7 +20,7 @@ class SetWelcomer extends Command {
          * An array of the available options for welcomer module
          * @type {array}
          */
-        this.actions = [`enable`, `disable`, `channel`, `text`, `role`, `preview`]
+        this.actions = [`enable`, `disable`, `channel`, `text`, `role`, `image`, `preview`]
 
         /**
          * Reference key to welcomer sub-modules config code.
@@ -27,7 +31,8 @@ class SetWelcomer extends Command {
             "disable": `WELCOMER_MODULE`,
             "channel": `WELCOMER_CHANNEL`,
             "text": `WELCOMER_TEXT`,
-            "role": `WELCOMER_ROLES`
+            "role": `WELCOMER_ROLES`,
+			"image": `WELCOMER_IMAGE`
         }
     }
 
@@ -243,6 +248,83 @@ class SetWelcomer extends Command {
             socket: {role: rolesContainer.join(` `)},
             status: `success`
         })
+    }
+
+	/**
+	 * Managing welcomer's image. 
+	 * @return {void}
+	 */
+	async image({ reply, emoji }) {
+		const fn = `[setWelcomer.image()]`
+        //  Handle if the user hasn't enabled the module yet
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
+			socket: {prefix: this.bot.prefix}
+		}) 
+		const { isValidUpload, url } = this.getImage()
+		if (!url) return reply(this.locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
+			socket: {
+				emoji: await emoji(`692428692999241771`),
+				prefix: this.bot.prefix
+			}
+		})	
+		if (!isValidUpload) return reply(this.locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+			socket: {
+				emoji: await emoji(`692428969667985458`) 
+			}	
+		})
+        const id = uuidv4()
+		try {
+			const response = await fetch(url)
+			const buffer = await response.buffer()
+			await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
+		}
+		catch (e) {
+			return this.logger.error(`Fail to render custom welcomer image. > ${e.stack}`)
+		}
+		const confirmation = await reply(this.locale.SETWELCOMER.CONFIRMATION_IMAGE, {
+        	image: await new GUI(this.message.guild.members.cache.get(this.message.author.id), this.bot, id).build(),
+			prebuffer: true
+		})		
+		await this.addConfirmationButton(`applyCustomWelcomerImage`, confirmation)
+        return this.confirmationButtons.get(`applyCustomWelcomerImage`).on(`collect`, async r => {
+			//  Handle cancellation
+			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await emoji(`781954016271138857`)}
+			})
+			await this.bot.db.updateGuildConfiguration({
+				configCode: this.selectedModule,
+				customizedParameter: id, 
+				guild: this.message.guild,
+				setByUserId: this.message.author.id,
+				cacheTo: this.guildConfigurations
+			})
+            //  Finalize
+            this.finalizeConfirmation(r)
+            reply(this.locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
+                socket: {
+                    emoji: await emoji(`789212493096026143`)
+                }
+            })
+        })
+
+	}
+	
+	/** 
+     * Check if user has attempted to upload a custom image
+     * @return {object}
+     */
+    getImage() {
+        const hasAttachment = this.message.attachments.first() ? true : false
+		const imageArgs = this.args.slice(1).join(` `)
+        const hasImageURL = imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? true : false 
+        return {
+            isValidUpload: hasAttachment || hasImageURL ? true : false,
+            url: this.message.attachments.first() 
+            ? this.message.attachments.first().url
+            : imageArgs.startsWith(`http`) && imageArgs.length >= 15
+            ? imageArgs
+            : null
+        }
     }
 
     /**

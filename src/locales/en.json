@@ -704,7 +704,7 @@
         "ROLE_TOO_HIGH": "Uhh, **{{role}}** is unreachable and too high! can you move it under **{{annieRole}}** role first? {{emoji}}"
     },
     "SETWELCOMER": {
-        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles!\ne.g. __{{prefix}}setwelcomer roles @muffins @cupcake__\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles!\ne.g. __{{prefix}}setwelcomer roles @muffins @cupcake__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the welcomer. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
         "ALREADY_ENABLED": "The Welcomer already enabled by **{{user}}, {{date}}**",
         "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
@@ -719,7 +719,11 @@
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
         "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}",
-        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}"        
+        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
+		"IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
+		"IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
+		"CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
+		"IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!"
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",

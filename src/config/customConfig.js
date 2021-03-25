@@ -710,6 +710,7 @@ class config {
                 value: null
             },
             {
+
                 /**
                  *  A given set of roles when user has joined the guild
                  *  @type {object}
@@ -719,6 +720,17 @@ class config {
                 customizable: true,
                 allowedTypes: [`array`],
                 value: []
+            },
+			{
+                /**
+                 *  The image that will be displayed as welcomer's background.
+                 *  @type {object}
+                 */
+                name: `WELCOMER_IMAGE`,
+                description: `The image that will be displayed as welcomer's background`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: `welcomer` 
             },
             {
                 /**
