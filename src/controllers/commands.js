@@ -34,7 +34,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
         if (userCooldown) {
             await reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
                 socket: {
-                    emoji: client.getEmoji(`AnnieYandereAnim`),
+                    emoji: await client.getEmoji(`AnnieYandereAnim`),
                     user: message.author.username,
                     timeLeft: (cooldown - moment().diff(moment(userCooldown), `seconds`, true)).toFixed(2)
                 }
@@ -74,7 +74,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             })
             return reply = null
         }
-        reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: client.getEmoji(`AnniePout`)}})
+        reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         client.shard.broadcastEval(`
             (async () => {
                 const channel = await this.channels.cache.get('797521371889532988')
