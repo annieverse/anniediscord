@@ -616,7 +616,7 @@
         "ALREADY_DISABLED": "**The EXP Module hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setexp enable`**",
         "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future.",
 		"MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
-		"MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**`",
+		"MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**",
 		"ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?",
 		"INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
 		"ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",

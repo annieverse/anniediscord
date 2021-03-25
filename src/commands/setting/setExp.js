@@ -203,7 +203,7 @@ class SetExp extends Command {
 		const userClass = new User(this.bot, this.message)
 		const targetUser = await userClass.lookFor(this.args[1])
 		if (!targetUser) return reply(this.locale.USER.IS_INVALID)
-		if (!this.args[2]) return reply(this.locale.SETEXP.MISSING_AMOUNT_ADD, {
+		if (!this.args[2]) return reply(this.locale.SETEXP.MISSING_AMOUNT_ON_ADD, {
 			socket: {
 				prefix: this.bot.prefix,
 				user: targetUser.master.username
