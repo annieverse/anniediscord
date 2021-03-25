@@ -18,8 +18,8 @@ class Vote extends Command {
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 */
 	async execute({ reply, emoji }) {
-		const req = await this.bot.dblApi.hasVoted(this.message.author.id)
-		if (req.voted) return reply(this.locale.VOTE.IS_COOLDOWN, {
+		const voted = await this.bot.dblApi.hasVoted(this.message.author.id)
+		if (voted) return reply(this.locale.VOTE.IS_COOLDOWN, {
 			socket: {
 				page: `[write a review](${this.page})`,
 				emoji: await emoji(`692428785571856404`)
