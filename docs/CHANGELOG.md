@@ -1,3 +1,10 @@
+## [7.12.2](https://github.com/klerikdust/anniediscord/compare/v7.12.1...v7.12.2) (2021-03-25)
+
+
+### Bug Fixes
+
+* **locales:** added theme guide on setwelcomer ([b22043b](https://github.com/klerikdust/anniediscord/commit/b22043bec5dd65c8b9985d0ec129af5d4a26a6b4))
+
 ## [7.12.1](https://github.com/klerikdust/anniediscord/compare/v7.12.0...v7.12.1) (2021-03-25)
 
 
