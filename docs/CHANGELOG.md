@@ -1,3 +1,11 @@
+## [7.12.1](https://github.com/klerikdust/anniediscord/compare/v7.12.0...v7.12.1) (2021-03-25)
+
+
+### Bug Fixes
+
+* **locale:** setexp. ([efa3cdd](https://github.com/klerikdust/anniediscord/commit/efa3cddf5d9f62a7288823cabd5e7dc6fb31f814))
+* **setExp:** combinedexp was added. ([27b0b74](https://github.com/klerikdust/anniediscord/commit/27b0b7491bddb363bca8e361612582a3665b6782))
+
 # [7.12.0](https://github.com/klerikdust/anniediscord/compare/v7.11.15...v7.12.0) (2021-03-25)
 
 
