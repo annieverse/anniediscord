@@ -182,7 +182,7 @@ class SetExp extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
-    		this.bot.db.subtractUserExp(combinedExp, targetUser.master.id, this.message.guild.id)
+    		this.bot.db.subtractUserExp(amountToSubtract, targetUser.master.id, this.message.guild.id)
  			this.finalizeConfirmation(r)
  			reply(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
@@ -245,7 +245,7 @@ class SetExp extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
-    		this.bot.db.addUserExp(combinedExp, targetUser.master.id, this.message.guild.id)
+    		this.bot.db.addUserExp(amountToAdd, targetUser.master.id, this.message.guild.id)
  			this.finalizeConfirmation(r)
  			reply(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
