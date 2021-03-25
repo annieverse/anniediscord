@@ -34,9 +34,6 @@ class Help extends Command {
 			const commandSuggestions = await db.mostUsedCommands()
 			return reply(this.locale.HELP.LANDING, {
 				socket: {
-					user: name(this.user.master.id),
-					recommendedCommands: this.prettifySuggestions(commandSuggestions),
-					serverLink: supportServer,
 					emoji: await emoji(`692428988177449070`),
 					prefix: this.bot.prefix
 				},
@@ -62,7 +59,7 @@ class Help extends Command {
 							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
-						image: `banner_help`,
+						image: `commandpedia`,
 						thumbnail: this.commandpediaThumbnail,
 						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
 						color: this.defaultColor
@@ -73,7 +70,11 @@ class Help extends Command {
 
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const res = await this.findCommandByKeyword(this.fullArgs, cmds)
-		if (!res) return reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {color: `red`})
+		if (!res) return reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {
+			socket: {
+				emoji: await emoji(`692428969667985458`)
+			}
+		})
 		//  Handle helpCategory display
 		if (this.helpCategory) {
 			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
@@ -169,7 +170,7 @@ class Help extends Command {
 	 */
 	_getCategoryDescription(category=``) {
 		const descriptions = {
-			Artsy: `Art-related commands will fall under this category and still undergoing development!`,
+			Artsy: `My artsy stuffs that will assist your creative process!`,
 			Fun: `Wanna have fun with your friends?!`,
 			Setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
 			System: `Miscellaneous commands to check the state of Annie.`,
@@ -184,7 +185,7 @@ class Help extends Command {
 	 * @returns {String}
 	 */
 	prettifySuggestions(arr=[]) {
-		const cmdNames = arr.map(el => { return `\`${this.bot.prefix}${el.command_alias}\``})
+		const cmdNames = arr.map(el => { return `**\`${this.bot.prefix}${el.command_alias}\`**`})
 		return cmdNames.join(`,`)
 	}
 
