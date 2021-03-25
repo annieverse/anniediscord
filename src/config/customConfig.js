@@ -732,6 +732,17 @@ class config {
                 allowedTypes: [`string`],
                 value: `welcomer` 
             },
+			{
+                /**
+                 *  Define light or dark overlay for the welcomer. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_THEME`,
+                description: `Define light or dark overlay for the welcomer`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: `light` 
+            },
             {
                 /**
                  *  A given role when someone bought nickname changer item from the shop

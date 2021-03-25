@@ -723,7 +723,10 @@
 		"IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
 		"IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
 		"CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
-		"IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!"
+		"IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
+		"THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
+		"THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
+		"THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!"
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",

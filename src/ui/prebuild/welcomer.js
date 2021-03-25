@@ -26,6 +26,7 @@ class UI {
 		let start_x = 30
 		let start_y = 30
 		const welcomerBackgroundId = this.backgroundId || this.member.guild.configs.get(`WELCOMER_IMAGE`).value
+		const isDarkTheme = this.member.guild.configs.get(`WELCOMER_THEME`).value === `dark` ? true : false
 		const background = await loadAsset(welcomerBackgroundId)
 		let canv = new Canvas(800, 250)
 		const {
@@ -42,13 +43,13 @@ class UI {
 			.createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
 			.printImage(await resolveImage(background), 0, 0, dynamic.width, dynamic.height)
 		canv.context.globalAlpha = 0.7
-		canv.setColor(palette.white)
+		canv.setColor(isDarkTheme ? palette.nightmode : palette.white)
 			.printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
 			.restore()
 
 			.setTextAlign(`left`)
 			.setTextFont(`41pt roboto-bold`)
-			.setColor(palette.nightmode)
+			.setColor(isDarkTheme ? palette.white : palette.nightmode)
 			.printText(`${this.member.user.username.length >= 10 ? this.member.user.username.substring(0, 10)+`..` : this.member.user.username+`!`}`, 320, 150) //102
 		
 			.setTextFont(`42pt roboto`)

@@ -20,7 +20,7 @@ class SetWelcomer extends Command {
          * An array of the available options for welcomer module
          * @type {array}
          */
-        this.actions = [`enable`, `disable`, `channel`, `text`, `role`, `image`, `preview`]
+        this.actions = [`enable`, `disable`, `channel`, `text`, `role`, `image`, `theme`, `preview`]
 
         /**
          * Reference key to welcomer sub-modules config code.
@@ -32,7 +32,8 @@ class SetWelcomer extends Command {
             "channel": `WELCOMER_CHANNEL`,
             "text": `WELCOMER_TEXT`,
             "role": `WELCOMER_ROLES`,
-			"image": `WELCOMER_IMAGE`
+			"image": `WELCOMER_IMAGE`,
+			"theme": `WELCOMER_THEME`
         }
     }
 
@@ -326,6 +327,45 @@ class SetWelcomer extends Command {
             : null
         }
     }
+
+	/**
+	 * Theme management
+	 * @return {void}
+	 */
+	async theme({ reply, emoji }) {
+		const fn = `[setWelcomer.theme()]`
+        //  Handle if the user hasn't enabled the module yet
+        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
+			socket: {prefix: this.bot.prefix}
+		}) 
+		if (!this.args[1]) return reply(this.locale.SETWELCOMER.THEME_MISSING_NAME, {
+			socket: {
+				prefix: this.bot.prefix,
+				emoji: await emoji(`AnniePeek1`)
+			}
+		})
+		const availableThemes = [`light`, `dark`]
+		if (!availableThemes.includes(this.args[1])) return reply(this.locale.SETWELCOMER.THEME_INVALID, {
+			socket: {
+				emoji: await emoji(`AnnieMad`)
+			}
+		})
+		await this.bot.db.updateGuildConfiguration({
+				configCode: this.selectedModule,
+				customizedParameter: this.args[1], 
+				guild: this.message.guild,
+				setByUserId: this.message.author.id,
+				cacheTo: this.guildConfigurations
+			})
+		return reply(this.locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
+			status: `success`,
+			socket: {
+				theme: this.args[1],
+				user: this.message.author.username,
+				emoji: await emoji(`789212493096026143`)
+			}
+		})
+	}
 
     /**
      * Parse sockets (if available) in the guild's welcomer text.
