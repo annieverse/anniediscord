@@ -608,13 +608,25 @@
         "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover."
     },
     "SETEXP": {
-        "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Migrated from other bots? tired of grinding the exp? or probably just wanna have fun with a quick level jump? worry not, you can add some exp to yourself or other member.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> I know that some people are probably annoying and we want punish them for that behavior. With this action, you'll be able to decrease someone's exp or even yourself!\n\n**`{{prefix}}setexp reset <user>`**\n> Tired of being a high-leveled user? oh well, it can't be helped. This action allows you to turn yours or someone's exp account into a fresh slate.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sorry! but I only accept the following actions `{{actions}}`",
         "ALREADY_ENABLED": "The EXP Module has already enabled by **{{user}}, {{date}}**",
         "ALREADY_ENABLED_BY_DEFAULT": "Baka! I've already enabled this module by default! {{emoji}}",
         "SUCCESSFULLY_ENABLED": "Yay! **EXP Leveling Module** has been enabled in this guild! your members will start gaining experience points soon.",
         "ALREADY_DISABLED": "**The EXP Module hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setexp enable`**",
-        "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future."
+        "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future.",
+		"MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
+		"MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**`",
+		"ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?",
+		"INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
+		"ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",
+		"MISSING_USER_ON_MINUS": "Who's should I subtract the exp from?\ne.g. **`{{prefix}}setexp minus @napu 100`**",
+		"MISSING_AMOUNT_ON_MINUS": "Hey, don't forget to specify the exp!\ne.g. **`{{prefix}}setexp minus @{{user}} 100`**",
+		"INVALID_AMOUNT_TO_MINUS": "Hmm, what even is that. You have to specify a valid number for the subtraction!\ne.g. **`{{prefix}}setexp minus @{{user}} 50`**",
+		"MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?",
+		"MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
+		"MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
+		"RESET_CONFIRMATION": "Reset {{user}}'s exp account?"
     },
     "SETGUILDBIO": {
         "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",

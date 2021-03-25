@@ -1644,16 +1644,57 @@ class Database {
 			, `run`
 			, [amount, userId, guildId]
 		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
-		//  Update on cache.
+		//  Refresh cache by deleting it
+		this.redis.del(key) 
+	}
+
+	/**
+	 * Subtracting user's experience points.
+	 * @param {number} [amount=0] Amount to subtract.
+	 * @param {string} [userId=``] Target user's discord id.
+	 * @param {string} [guildId=``] Target guild id.
+	 * @returns {QueryResult}
+	 */
+	subtractUserExp(amount=0, userId=``, guildId=``) {
+		const fn = `[Database.subtractUserExp]`
+		const key = `EXP_${userId}@${guildId}`
+		//  Update on database.
+		const dbTime = process.hrtime()
 		this._query(`
-			SELECT * FROM user_exp 
-			WHERE user_id = ? AND guild_id = ?`
-			, `get`
+			UPDATE user_exp 
+			SET current_exp = current_exp - ?
+			WHERE 
+				user_id = ?
+				AND guild_id = ?`
+			, `run`
+			, [amount, userId, guildId]
+		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
+		//  Refresh cache by deleting it
+		this.redis.del(key) 
+	}
+
+	/**
+	 * Reset user's exp to zero. 
+	 * @param {string} [userId=``] Target user's discord id.
+	 * @param {string} [guildId=``] Target guild id.
+	 * @return {void}
+	 */
+	resetUserExp(userId=``, guildId=``) {
+		const fn = `[Database.resetUserExp]`
+		const key = `EXP_${userId}@${guildId}`
+		//  Update on database.
+		const dbTime = process.hrtime()
+		this._query(`
+			UPDATE user_exp 
+			SET current_exp = 0 
+			WHERE 
+				user_id = ?
+				AND guild_id = ?`
+			, `run`
 			, [userId, guildId]
-		).then(async () => {
-			//  Refresh cache by deleting it
-			this.redis.del(key) 
-		})
+		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
+		//  Refresh cache by deleting it
+		this.redis.del(key) 
 	}
 
 	/**
