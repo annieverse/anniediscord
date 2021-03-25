@@ -1,3 +1,21 @@
+# [7.12.0](https://github.com/klerikdust/anniediscord/compare/v7.11.15...v7.12.0) (2021-03-25)
+
+
+### Bug Fixes
+
+* **command:** glitch emoji in command cooldown message. ([2e3cd01](https://github.com/klerikdust/anniediscord/commit/2e3cd01fb9f3ba4cbb55ad0b3b389f07bffe208a))
+* **locale:** string adjustment on remidner text. ([ba27b00](https://github.com/klerikdust/anniediscord/commit/ba27b0058a509a174b032c9ec66cb6a6db508e58))
+* **vote:** vote keeps visible even after voting. ([5d52473](https://github.com/klerikdust/anniediscord/commit/5d5247335d573e99edd4db637c1a3d5ec4951505))
+
+
+### Features
+
+* **devkit:** internal mailling system. ([6d52b36](https://github.com/klerikdust/anniediscord/commit/6d52b36eb6b4dc2d808fff4040da0dbb1946a10b))
+* **registerQuest:** allows registering new quest with ease. ([b2fe1f0](https://github.com/klerikdust/anniediscord/commit/b2fe1f0e4d5700dbbbe2639fa180e8a692994918))
+* **removeRelationship:** added option to remove someone from your relationship tree. ([2ae524c](https://github.com/klerikdust/anniediscord/commit/2ae524c2589e68c9d3a8fd34470730336bbab675))
+* **setExp:** added add, subtract, and reset option. ([4fa2f73](https://github.com/klerikdust/anniediscord/commit/4fa2f734bca819a4bb1c21b1c4dbcd9faa7e859d))
+* **welcomer:** added option to use custom image. ([438e999](https://github.com/klerikdust/anniediscord/commit/438e9992459a85accd31480fe6f4632e4dcf4df4))
+
 ## [7.11.15](https://github.com/klerikdust/anniediscord/compare/v7.11.14...v7.11.15) (2021-03-21)
 
 
