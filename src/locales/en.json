@@ -505,7 +505,7 @@
         "FETCHING": "`Fetching {0}'s badge data . .`"
     },
     "RELATIONSHIP": {
-        "GUIDE": "╭*:;,．★ ～☆*──────────────╮\nStart assigning a unique relationship status with your friends!\ne.g. **`{{prefix}}setrel @nao little sister`**\n╰────────────☆～*:;,．*╯\nBelow are the available relationship status that you can use:\n{{list}}",
+        "GUIDE": "╭*:;,．★ ～☆*──────────────╮\nStart assigning a unique relationship status with your friends!\ne.g. **`{{prefix}}setrel @nao little sister`**\nOr perhaps if you want to remove them from your relationship, simply type **`{{prefix}}setrel remove @user`**\n╰────────────☆～*:;,．*╯\nBelow are the available relationship status that you can use:\n{{list}}",
         "SET_TO_SELF": "You can't add a relationship to yourself, *baka.* {{emoji}}",
         "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
         "UNAVAILABLE": "There is no assignable relationship at the moment.",
@@ -517,7 +517,9 @@
         "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
         "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
         "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
-        "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request."
+        "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
+		"TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
+		"DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
     },
     "REMINDER": {
         "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",

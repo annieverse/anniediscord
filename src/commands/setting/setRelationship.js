@@ -42,8 +42,35 @@ class SetRelationship extends Command {
         if (!this.user) return reply(this.locale.USER.IS_INVALID)
         //  Handle if target is the author
         if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await emoji(`751016612248682546`)} })
-        //  Handle if user already reached the maximum relationship members and attempted to add new member
+		//  Handle delete action	
         const userRels = this.author.relationships.map(node => node.assigned_user_id)
+		if (this.fullArgs.startsWith(`delete`) || this.fullArgs.startsWith(`remove`)) {
+			if (!userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
+				socket: {
+					user: this.user.master.username,
+					emoji: await emoji(`790338393015713812`)
+				}
+			})
+			const deleteConfirmation = await reply(this.locale.RELATIONSHIP.DELETE_CONFIRMATION, {
+				header: `Break up with ${this.user.master.username}?`,
+				thumbnail: this.user.master.displayAvatarURL(),
+				socket: {emoji: await emoji(`692428578683617331`)}
+			}) 
+			await this.addConfirmationButton(`setRelationship`, deleteConfirmation, this.author.master.id)
+			return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
+				//  Handle cancellation
+				if (this.isCancelled(r)) return reply(``, {
+					customHeader: [`Good decision. Keep the relationship eternal.`, this.user.master.displayAvatarURL()]
+				})
+				//  Update relationship data on author side
+				await this.bot.db.removeUserRelationship(this.author.master.id, this.user.master.id, this.message.guild.id)
+				//  Successful
+				this.finalizeConfirmation(r)
+				return reply(``, {
+					customHeader: [`${this.user.master.username} is no longer with you.`, this.user.master.displayAvatarURL()]})
+			})
+		}	
+        //  Handle if user already reached the maximum relationship members and attempted to add new member
         if ((userRels.length >= 7) && !userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
             socket: {emoji: await emoji(`781956690337202206`)}
         })

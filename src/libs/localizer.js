@@ -27,7 +27,7 @@ class Localizer {
      */
 	registerLocales() {
         const fn = `[Localizer.registerLocales()]`
-        const locales = this.locales
+        const locales = this.locales.filter(loc => loc.endsWith(`json`))
         if (!locales.length) throw Error(`${fn} can't find any locales in '${this.localesPath}'`)
         locales.forEach(file => {
             const localeCode = file.replace(/.json/, ``)
