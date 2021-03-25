@@ -1,3 +1,10 @@
+## [7.12.3](https://github.com/klerikdust/anniediscord/compare/v7.12.2...v7.12.3) (2021-03-25)
+
+
+### Bug Fixes
+
+* **locale:** string adjustment on setwelcomer guide. ([fd9a361](https://github.com/klerikdust/anniediscord/commit/fd9a3612e27ee65be69dbaf7b7ce5ee2ec4f3c17))
+
 ## [7.12.2](https://github.com/klerikdust/anniediscord/compare/v7.12.1...v7.12.2) (2021-03-25)
 
 
