@@ -36,7 +36,7 @@ class UI {
 		const combinedHeight = bgHeight * (800/bgWidth)
 		const dynamic = {
 		 	height: combinedHeight < 0 ? 0 : combinedHeight,
-		 	width: combinedHeight < 0 ? 800 + (minHeight-combinedHeight) : 800
+		 	width: combinedHeight < 0 ? 800 + (0-combinedHeight) : 800
 		}
 		canv.save()
 		canv.save()

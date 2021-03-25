@@ -23,15 +23,13 @@ class Help extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, emoji, bot:{db, supportServer} }) {
+	async execute({ reply, name, emoji, bot:{supportServer} }) {
 		await this.requestUserMetadata(1)
 		const cmds = this.getCommandStructures()
 
 		//  Displaying the help center if user doesn't specify any arg
 		if (!this.fullArgs)	{
-
 			// Display 5 most used commands suggestions
-			const commandSuggestions = await db.mostUsedCommands()
 			return reply(this.locale.HELP.LANDING, {
 				socket: {
 					emoji: await emoji(`692428988177449070`),

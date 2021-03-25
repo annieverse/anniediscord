@@ -16,7 +16,7 @@ class Mail extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{db}, emoji, commanifier }) {
+	async execute({ reply, emoji }) {
 		await this.requestUserMetadata(1)
 		if (!this.user) return reply(`Sadly, the user is unreachable`)
 		//  Handle if user doesn't specify any arg

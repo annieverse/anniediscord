@@ -131,7 +131,7 @@ class SetExp extends Command {
 	 * Substraction exp action.
 	 * @return {void}
 	 */
-	async minus({ emoji, reply, commanifier, trueInt }) {
+	async minus({ emoji, reply, trueInt }) {
 		if (!this.args[1]) return reply(this.locale.SETEXP.MISSING_USER_ON_MINUS, {
 			socket: {
 				prefix: this.bot.prefix

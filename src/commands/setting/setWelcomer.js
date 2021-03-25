@@ -256,7 +256,6 @@ class SetWelcomer extends Command {
 	 * @return {void}
 	 */
 	async image({ reply, emoji }) {
-		const fn = `[setWelcomer.image()]`
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
 			socket: {prefix: this.bot.prefix}
@@ -333,7 +332,6 @@ class SetWelcomer extends Command {
 	 * @return {void}
 	 */
 	async theme({ reply, emoji }) {
-		const fn = `[setWelcomer.theme()]`
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
 			socket: {prefix: this.bot.prefix}

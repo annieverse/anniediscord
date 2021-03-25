@@ -17,7 +17,7 @@ class RegisterQuest extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, bot:{db}, commanifier }) {
+	async execute({ reply, emoji, bot:{db}, commanifier }) {
 		//  Handle if user doesn't specify any arg
 		if (!this.fullArgs) return reply(`Any quest you want me to register?`)
 		const [name, reward, description, correctAnswer] = this.fullArgs.split(` | `)
