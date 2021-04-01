@@ -72,7 +72,7 @@ class Leaderboard extends Command {
 					if (target.id) validUsers.push(node)
 				}
 				catch(e) {
-					this.client.logger.warn(`[Leaderboard.fetch] USER_ID:${node.id} doesn't exists in GUILD_ID:${this.message.guild.id} > ${e.message}`)
+					this.bot.logger.warn(`[Leaderboard.fetch] USER_ID:${node.id} doesn't exists in GUILD_ID:${this.message.guild.id} > ${e.message}`)
 				}
 			}
 			//  Handle if no returned leaderboard data
