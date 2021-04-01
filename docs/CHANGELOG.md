@@ -1,3 +1,10 @@
+## [7.12.5](https://github.com/klerikdust/anniediscord/compare/v7.12.4...v7.12.5) (2021-04-01)
+
+
+### Performance Improvements
+
+* **leaderboard:** cut loading time and user fetch. ([6190992](https://github.com/klerikdust/anniediscord/commit/61909920bb53ab2b652d541c0252bc5e57eb5f35))
+
 ## [7.12.4](https://github.com/klerikdust/anniediscord/compare/v7.12.3...v7.12.4) (2021-04-01)
 
 
