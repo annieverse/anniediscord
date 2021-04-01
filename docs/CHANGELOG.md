@@ -1,3 +1,11 @@
+## [7.12.4](https://github.com/klerikdust/anniediscord/compare/v7.12.3...v7.12.4) (2021-04-01)
+
+
+### Bug Fixes
+
+* **leaderboard:** discard unreachable member from board. ([b4540f5](https://github.com/klerikdust/anniediscord/commit/b4540f56ae2e5f85593d355aadb72b31ccf157f5))
+* **reminder:** allows empty message on reminder. ([b6b5d1f](https://github.com/klerikdust/anniediscord/commit/b6b5d1fab5628a64d135d6086f8061744d36b35c))
+
 ## [7.12.3](https://github.com/klerikdust/anniediscord/compare/v7.12.2...v7.12.3) (2021-03-25)
 
 
