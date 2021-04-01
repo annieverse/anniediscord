@@ -194,8 +194,11 @@ class Reminder {
         //  Handle if no reminder date has been found during previous iterations
         if (!context.isValidReminder) return context
         //  Ommit date prefix if there's any in the last index
-        if (tokens[tokens.length-1].includes(`in`)) tokens.pop()
-        context.message = tokens.join(` `) 
+        if (tokens[tokens.length-1]) {
+			if (tokens[tokens.length-1].includes(`in`)) tokens.pop()
+		}
+		//  Use default message if custom message is not provided
+        context.message = tokens.length > 0 ? tokens.join(` `) : `Custom message wasn't provided.` 
         return context
     }
 
