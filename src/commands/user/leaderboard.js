@@ -60,30 +60,23 @@ class Leaderboard extends Command {
 		.then(async load => {
 			//  Fetch points data and eliminates zero values if present.
 			let lbData = (await db.indexRanking(selectedGroup, this.message.guild.id)).filter(node => node.points > 0)
-			let validIds = 0
+			let validUsers = []
 			//  Fetching uncached users
 			for (let i=0; i<lbData.length; i++) {
-				if (i >= 20) break
+				//  Make sure to limit the iterations once hit the limit
+				if (validUsers.length >= 10) break
+				const node = lbData[i]
+				//  It will check on the members cache first, if not available, then fetch. 
 				try {
-					await this.message.guild.members.fetch(lbData[i].id)
+					const target = await this.message.guild.members.fetch(node.id)
+					if (target.id) validUsers.push(node)
 				}
 				catch(e) {
-					continue
+					this.client.logger.warn(`[Leaderboard.fetch] USER_ID:${node.id} doesn't exists in GUILD_ID:${this.message.guild.id} > ${e.message}`)
 				}
-			}
-			for (let i=0; i<lbData.length; i++) {
-				//  If member doesn't exist in the guild, then discard from result set
-				do {
-					lbData.splice(i, 1)
-					if (lbData.length <= 0) break
-				}
-				while (!this.message.guild.members.cache.has(lbData[i].id)) 
-				validIds++
-				//  Once we collected 10 valid ids, break the loop
-				if (validIds >= 10) break
 			}
 			//  Handle if no returned leaderboard data
-			if (!lbData.length) {
+			if (!validUsers.length) {
 				load.delete()
 				return reply(this.locale.LEADERBOARD.NO_DATA, {
 					color: `golden`,
@@ -93,7 +86,7 @@ class Leaderboard extends Command {
 					}
 				})
 			}
-			const img = await new GUI(this.user, lbData, name, avatar).build()
+			const img = await new GUI(this.user, validUsers, name, avatar).build()
 			load.delete()
 			await reply(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${this.message.guild.name}'s Ranking`, {
 				prebuffer: true,
@@ -101,7 +94,7 @@ class Leaderboard extends Command {
 				simplified: true
 			})
 
-			const author = lbData.filter(key => key.id === this.user.master.id)[0]
+			const author = validUsers.filter(key => key.id === this.user.master.id)[0]
 			const footer = author ? this.locale.LEADERBOARD.AUTHOR_RANK : this.locale.LEADERBOARD.UNRANKED
 			reply(footer, {
 				simplified: true,
