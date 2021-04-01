@@ -1,3 +1,10 @@
+## [7.12.6](https://github.com/klerikdust/anniediscord/compare/v7.12.5...v7.12.6) (2021-04-01)
+
+
+### Bug Fixes
+
+* **leaderboard:** missing var on logger. ([88f2d8b](https://github.com/klerikdust/anniediscord/commit/88f2d8bbded7adba32a68d4ebe1dd53f3e1961de))
+
 ## [7.12.5](https://github.com/klerikdust/anniediscord/compare/v7.12.4...v7.12.5) (2021-04-01)
 
 
