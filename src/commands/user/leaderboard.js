@@ -73,7 +73,11 @@ class Leaderboard extends Command {
 			}
 			for (let i=0; i<lbData.length; i++) {
 				//  If member doesn't exist in the guild, then discard from result set
-				while (!this.message.guild.members.cache.has(lbData[i].id)) lbData.splice(i, 1)
+				do {
+					lbData.splice(i, 1)
+					if (lbData.length <= 0) break
+				}
+				while (!this.message.guild.members.cache.has(lbData[i].id)) 
 				validIds++
 				//  Once we collected 10 valid ids, break the loop
 				if (validIds >= 10) break
