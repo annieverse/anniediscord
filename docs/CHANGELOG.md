@@ -1,3 +1,15 @@
+# [7.13.0](https://github.com/klerikdust/anniediscord/compare/v7.12.6...v7.13.0) (2021-04-12)
+
+
+### Bug Fixes
+
+* **leaderboard:** footer now displays author's ranking position. ([54f94f6](https://github.com/klerikdust/anniediscord/commit/54f94f6e8a030bd03cab3415798afcc8c2978548))
+
+
+### Features
+
+* **customLevelUpText:** added new action to edit custom level up text per guild. ([c30c5fa](https://github.com/klerikdust/anniediscord/commit/c30c5fa9b808dbf52f19536361b2f79a19b95ce7))
+
 ## [7.12.6](https://github.com/klerikdust/anniediscord/compare/v7.12.5...v7.12.6) (2021-04-01)
 
 
