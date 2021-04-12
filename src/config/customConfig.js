@@ -822,6 +822,17 @@ class config {
             },
             {
                 /**
+                 *  The displayed message content when someones leveled up.
+                 *  @type {object}
+                 */
+                name: `LEVEL_UP_TEXT`,
+                description: `The displayed message content when someones leveled up.`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
+            },
+            {
+                /**
                  *  Requirement amount of likes before post gets to trending channel
                  *  @type {object}
                  */

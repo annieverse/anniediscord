@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const GUI = require(`../../ui/prebuild/levelUpMessage`)
 const moment = require(`moment`)
 /**
  * Enable or disable level-up message module for this guild
@@ -15,7 +16,7 @@ class SetLevelupMessage extends Command {
          * An array of the available options for welcomer module
          * @type {array}
          */
-        this.actions = [`enable`, `disable`, `channel`]
+        this.actions = [`enable`, `disable`, `channel`, `text`]
 
         /**
          * Current instance's config code
@@ -35,7 +36,7 @@ class SetLevelupMessage extends Command {
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
     async execute({ reply, name, emoji }) {
-        await this.requestUserMetadata(1)
+        await this.requestUserMetadata(2)
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${name(this.user.master.id)}!`,
@@ -180,6 +181,54 @@ class SetLevelupMessage extends Command {
             }
         })
     }
+
+    /**
+     * Customizing the content of level up message.
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {Pistachio.reply}
+     */
+     async text({ reply, emoji }) {
+        const fn = `[setLevelupMessage.text]`
+        const subConfigId = `LEVEL_UP_TEXT`
+        if (!this.primaryConfig.value) return reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+            socket:{prefix:this.bot.prefix}
+        })
+        if (!this.args[1]) return reply(this.locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
+            socket:{prefix:this.bot.prefix}
+        })
+        let newText = this.args.slice(1).join(` `)
+        //  Dummy level-up message for the preview
+        await reply(newText, {
+            prebuffer: true,
+            simplified: true,
+            image: await new GUI(this.user, 60).build(),
+            socket: {
+                user: this.message.author
+            }
+        })
+        const confirmation = await reply(this.locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)		
+		await this.addConfirmationButton(`applyCustomLevelUpText`, confirmation)
+        return this.confirmationButtons.get(`applyCustomLevelUpText`).on(`collect`, async r => {
+            if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await emoji(`781954016271138857`)}
+            })
+            await this.bot.db.updateGuildConfiguration({
+                configCode: subConfigId,
+                customizedParameter: newText,
+                guild: this.message.guild,
+                setByUserId: this.user.master.id,
+                cacheTo: this.guildConfigurations
+            })
+            this.logger.debug(`${fn} ${this.subConfigId} for GUILD_ID:${this.message.guild.id} has been updated.`)
+            this.finalizeConfirmation(r)
+ 			reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
+                status: `success`,
+                socket: {
+                    emoji: await emoji(`789212493096026143`)
+                }
+            })
+        })
+     }
 
     /**
      * Fetching channel in the guild

@@ -1,7 +1,7 @@
 const Points = require(`./points`)
 const moment = require(`moment`)
 const GUI = require(`../ui/prebuild/levelUpMessage`)
-const { MessageAttachment } = require(`discord.js`)
+const Response = require(`./response`)
 
 /**
  * @typedef {ExpData}
@@ -30,7 +30,7 @@ class Experience extends Points {
          * Current guild's instance object
          * @type {object}
          */
-        this.guild = this.bot.guilds.cache.get(this.message.guild.id)
+        this.guild = this.message.guild
 
         /**
          * Current guild's config instance
@@ -144,14 +144,33 @@ class Experience extends Points {
 			if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
 			//  Send lvl-up message to custom channel if provided
 			const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
-			let levelUpImage = new MessageAttachment(await img, `levelup.jpg`)
+			const defaultText = this.bot.locale.en.LEVELUP.DEFAULT_RESPONSES
+			const savedText = this.configs.get(`LEVEL_UP_TEXT`).value
+			let displayedText = savedText || defaultText[Math.floor(Math.random() * defaultText.length)]
+			const response = new Response(this.message)
 			if (customLevelUpMessageChannel) {
 				//  Handle if channel cannot be seen or sent in
-				if (!this.guild.channels.cache.has(customLevelUpMessageChannel)) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
-				return this.guild.channels.cache.get(customLevelUpMessageChannel).send(`**Congratulation, ${this.message.author.username}!♡** `, levelUpImage)
+				const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
+				if (!targetChannel) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
+				return response.send(displayedText, {
+					field: targetChannel,
+					prebuffer: true,
+					simplified: true,
+					image: img,
+					socket: {
+						user: this.message.author
+					}
+				})
 			}
 			//  Otherwise, send message to the channel where user got leveled-up.
-			return this.message.channel.send(``, levelUpImage)
+			return response.send(displayedText, {
+				prebuffer: true,
+				image: img,
+				simplified: true,
+				socket: {
+					user: this.message.author
+				}
+			})
 		}
 		catch(e) {
 			this.logger.warn(`${fn} something went wrong, but carefully handled. > ${e.stack}`)
