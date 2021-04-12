@@ -540,7 +540,7 @@
         "SELF_TARGETING": "You can't rep yourself, *baka*. {{emoji}}",
         "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} has received\n**+1 reputation point!**\n╰────────☆～*:;,．*╯\nHow generous~♡"
     },
-    "REQUEST_PING": "Request received in **{{ping}} ms**",
+    "REQUEST_PING": "**Pong!** {{emoji}}\n╰ received in {{ping}} ms!",
     "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
     "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
     "REMOVE_STICKER": {

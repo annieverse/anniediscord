@@ -12,10 +12,13 @@ class Ping extends Command {
 	 * Running command workflow
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 */
-	async execute({ reply, commanifier }) {
-		await this.requestUserMetadata(2)
+	async execute({ reply, commanifier, emoji }) {
 		return reply(this.locale.REQUEST_PING, {
-			socket: {ping: commanifier(Math.round(this.bot.ws.ping))}
+			status: `success`,
+			socket: {
+				ping: commanifier(Math.floor(this.bot.ws.ping)),
+				emoji: await emoji(`789212493096026143`)
+			}
 		})
 	}
 }
