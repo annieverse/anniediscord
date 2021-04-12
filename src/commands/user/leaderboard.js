@@ -94,7 +94,7 @@ class Leaderboard extends Command {
 				simplified: true
 			})
 
-			const author = validUsers.filter(key => key.id === this.user.master.id)[0]
+			const author = lbData.filter(key => key.id === this.user.master.id)[0]
 			const footer = author ? this.locale.LEADERBOARD.AUTHOR_RANK : this.locale.LEADERBOARD.UNRANKED
 			reply(footer, {
 				simplified: true,
