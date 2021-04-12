@@ -69,12 +69,23 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             reply.send(client.locale.en.ERROR_ON_DEV, {
                 socket: {
                     error: e,
-                    emoji: client.getEmoji(`AnnieThinking`)
+                    emoji: await client.getEmoji(`AnnieThinking`)
                 }
             })
             return reply = null
         }
-        reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
+        //  Handle missing-permission error
+        if (e.code === 50013) {
+            reply.send(client.locale.en.ERROR_MISSING_PERMISSION, {
+                socket: {
+                    emoji: await client.getEmoji(`AnnieCry`)
+                }
+            })
+            .catch(permErr => client.logger.warn(`Fail to notify ${controllerId} due to missing SEND_MESSAGE permission. > ${permErr.message}`))
+        }
+        else {
+            reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
+        }
         client.shard.broadcastEval(`
             (async () => {
                 const channel = await this.channels.cache.get('797521371889532988')
