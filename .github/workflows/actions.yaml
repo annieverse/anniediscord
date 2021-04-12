@@ -51,18 +51,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
-
-  # Deploying to staging server
-  deploy:
-    name: Deployment
-    runs-on: ubuntu-20.04
-    needs: [build, release]
-    steps:
-      - uses: actions/checkout@v1
-      - name: Push to staging server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          script: cd ${{ secrets.PROJECT_PATH }} && git checkout -- package-lock.json && git pull && pm2 restart index.js
