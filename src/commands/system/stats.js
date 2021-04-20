@@ -3,6 +3,7 @@ const memUsage = require(`../../utils/memoryUsage`)
 const Command = require(`../../libs/commands`)
 const pkg = require(`../../../package`)
 const shardName = require(`../../config/shardName`)
+const ms = require(`ms`)
 /**
  * Gives info about the current bot performance.
  * @author klerikdust
@@ -30,24 +31,20 @@ class SystemStatus extends Command {
 	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
 	 * @returns {reply}
 	 */
-	async displayGeneralStatus({ reply, commanifier }) {
+	async displayGeneralStatus({ reply, emoji, commanifier }) {
 		const { total } = await this.bot.db.getTotalCommandUsage()
-		const uptimeDuration = moment.duration(this.bot.uptime)
-		const naph = await this.bot.users.fetch(`230034968515051520`)
-		const pan = await this.bot.users.fetch(`277266191540551680`)
-		return reply(`Maintained by \`${naph.username}#${naph.discriminator}\` & \`${pan.username}#${pan.discriminator}\`\n\`\`\`\n{{status}}\n\`\`\``, {
-			color: `crimson`,
+		return reply(this.locale.SYSTEM_STATS.DISPLAY, {
 			header: `The State of Annie`,
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
-				status: `- Cluster				:: ${shardName[this.message.guild.shard.id]}
-- Master 				:: v${pkg.version}
-- Node.js				:: v${pkg.engines.node}
-- Uptime 				:: ${uptimeDuration.days()}d:${uptimeDuration.hours()}h:${uptimeDuration.minutes()}m:${uptimeDuration.seconds()}s
-- Memory 				:: ${this.formatBytes(memUsage())}
-- Latency				:: ${commanifier(this.bot.ws.ping)}ms
-- Commands Ran      	 :: ${commanifier(total)}
-- Servers				:: ${commanifier((await this.bot.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0))}`
+                shard: shardName[this.message.guild.shard.id],
+                ping: commanifier(this.bot.ws.ping),
+                uptime: ms(this.bot.uptime, {long:true}),
+                memory: this.formatBytes(memUsage()),
+                totalCommands: commanifier(total),
+                version: pkg.version,
+                servers: commanifier((await this.bot.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)),
+                emoji: await emoji(`AnnieNyaa`)
 			}
 		})
 	}
