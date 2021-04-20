@@ -3,8 +3,8 @@ const { MessageAttachment } = require(`discord.js`)
 module.exports = async (bot, member) => {   
     //  Import configs
     let instance = `[Events@guildMemberAdd]`
-    let guild = bot.guilds.cache.get(member.guild.id)
-    let configs = bot.fetchGuildConfigs(guild.id)
+    let guild = member.guild
+    let configs = guild.configs
     /**
      * Parsing welcomer text's sockets.
      * @param {string} [text=``] target string to be parsed from
@@ -55,25 +55,25 @@ module.exports = async (bot, member) => {
             await guild.channels.cache.get(getTargetWelcomerChannel).send(getWelcomerText, new MessageAttachment(renderedBanner, `welcome!-${member.id}.jpg`))
             bot.logger.info(`${instance} successfully sent requested welcomer message for GUILD_ID:${guild.id}`)
         }
-    }
-    /**
-     *  -------------------------------------------------------
-     *  WELCOMER'S AUTOROLE MODULE
-     *  -------------------------------------------------------
-     */
-    //  Skip role assignment if no roles are registered
-    const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
-    if (welcomerRolesList.value.length <= 0) return
-    let successfulRoleAdded = 0
-    for (let i=0; i<welcomerRolesList.value.length; i++) {
-        const roleId = welcomerRolesList.value[i]
-        //  Handle if role cannot be found due to deleted/invalid
-        if (!guild.roles.cache.has(roleId)) {
-            bot.logger.warn(`${instance} failed to find welcomer's role for GUILD_ID:${guild.id} due to deleted or invalid ID.`)
-            continue
+        /**
+         *  -------------------------------------------------------
+         *  WELCOMER'S AUTOROLE MODULE
+         *  -------------------------------------------------------
+         */
+        //  Skip role assignment if no roles are registered
+        const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
+        if (welcomerRolesList.value.length <= 0) return
+        let successfulRoleAdded = 0
+        for (let i=0; i<welcomerRolesList.value.length; i++) {
+            const roleId = welcomerRolesList.value[i]
+            //  Handle if role cannot be found due to deleted/invalid
+            if (!guild.roles.cache.has(roleId)) {
+                bot.logger.warn(`${instance} failed to find welcomer's role for GUILD_ID:${guild.id} due to deleted or invalid ID.`)
+                continue
+            }
+            member.roles.add(roleId)
+            successfulRoleAdded++
         }
-        member.roles.add(roleId)
-        successfulRoleAdded++
+        if (successfulRoleAdded > 0) bot.logger.info(`${instance} successfully assigned ${successfulRoleAdded} WELCOME_ROLES for GUILD_ID:${guild.id}`)   
     }
-    if (successfulRoleAdded > 0) bot.logger.info(`${instance} successfully assigned ${successfulRoleAdded} WELCOME_ROLES for GUILD_ID:${guild.id}`)   
 }
