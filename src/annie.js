@@ -12,7 +12,6 @@ const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
-const Currency = require(`./libs/currency`)
 const emoji = require(`./utils/emojiFetch`)
 
 class Annie extends Discord.Client {

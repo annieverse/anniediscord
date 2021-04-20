@@ -1,4 +1,3 @@
-const moment = require(`moment`)
 const memUsage = require(`../../utils/memoryUsage`)
 const Command = require(`../../libs/commands`)
 const pkg = require(`../../../package`)
