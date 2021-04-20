@@ -1026,13 +1026,20 @@ class Database {
 	 * @param {string} [userId=``] User's discord id.
 	 * @param {string} [guildId=``] the guild where user get registered.
 	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
-	 * @returns {QueryResult}
+	 * @returns {QueryResult|boolean}
 	 */
 	async validateUser(userId=``, guildId=``, userName=``) {
 		const fn = `[Database.validateUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
 		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
+        //  If user already validated, don't run.
+        const cacheId = `${userId}@${guildId}`
+        let validatedUsersPool = JSON.parse(await this.getCache(`VALIDATED_USERS_POOL`) || `[]`)
+        if (JSON.parse(validatedUsersPool.includes(cacheId))) return false
+        validatedUsersPool[validatedUsersPool.length] = cacheId
+        this.setCache(`VALIDATED_USERS_POOL`, JSON.stringify(validatedUsersPool))
+        //  Otherwise, perform insertion check query.
 		const res = await this._query(`
 			INSERT INTO users(user_id, name)
 			SELECT $userId, $userName
@@ -2718,9 +2725,9 @@ class Database {
  	 */
 	async getAllQuests() {
         const cacheId = `CACHED_QUESTS_POOL`
-		const cache = await this.redis.get(questId)
+		const cache = await this.redis.get(cacheId)
         if (cache !== null) return JSON.parse(cache)
-		const res = await return this._query(`
+		const res = await this._query(`
 			SELECT *
 			FROM quests`
 			, `all`

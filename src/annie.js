@@ -12,6 +12,7 @@ const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
+const Currency = require(`./libs/currency`)
 const emoji = require(`./utils/emojiFetch`)
 
 class Annie extends Discord.Client {
@@ -366,13 +367,13 @@ class Annie extends Discord.Client {
      *  @since 6.0.0
      *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
      *  @param {number} [time=0] timeout in seconds
-     *  @returns {boolean}
+     *  @returns {void}
      */
-    async setCooldown(label=``, time=0) {
+    setCooldown(label=``, time=0) {
         const fn = `[Annie.setCooldown()]`
         if (time <= 0) logger.error(`${fn} "time" parameter must above 0.`)
         logger.debug(`${fn} registering ${label} with ${time}s timeout`)
-        return await this.db.redis.set(label, moment().format(), `EX`, time)
+        this.db.redis.set(label, moment().format(), `EX`, time)
     }
 
     /**

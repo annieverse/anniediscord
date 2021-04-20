@@ -14,17 +14,20 @@ module.exports = async (client, message) => {
     let permission = await getUserPermission(message, message.author.id)
     //  Ignore any user interaction in dev environment
     if (client.dev && permission.level < 4) return client.logger.debug(`[Event.message] ${message.author.id}@${message.guild.id} blocked in dev environment.`)
-    //  Ran data validation on each user for every 1 minute.
-    const dataValidateID = `DATA_VALIDATION@${message.author.id}`
-    client.db.redis.get(dataValidateID).then(async res => {
-        if (res !== null) return
-        client.db.validateUser(message.author.id, message.guild.id, message.author.username)
-        client.db.redis.set(dataValidateID, `1`, `EX`, 60)
-    })
+    client.db.validateUser(message.author.id, message.guild.id, message.author.username)
     //  Check if AR module is enabled.
-    if (client.guilds.cache.get(message.guild.id).configs.get(`AR_MODULE`).value) autoResponderController(client, message)
+    if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
     //  Check if message is identified as command.
     if (message.content.startsWith(client.prefix) && message.content.length >= (client.prefix.length + 1)) return commandController(client, message, permission)
-    //  Automatically executing [Points Controller] when no other module requirements are met
-    return client.pointsController(message)
+    //  Automatically executing chat points when no other module requirements are met
+    const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
+    if (await client.isCooldown(gainingId)) return
+    client.setCooldown(gainingId, 60)
+    client.db.updateInventory({
+        itemId: 52,
+        value: Math.floor(Math.random() * (5 - 1 + 1) + 1), 
+        userId: message.author.id,
+        guildId: message.guild.id
+    })
+    client.experienceLibs(message).execute()
 }

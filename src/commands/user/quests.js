@@ -49,7 +49,7 @@ class Quests extends Command {
 			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
 			db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
 		}
-		this.bot.setCooldown(sessionID, 120)
+		//this.bot.setCooldown(sessionID, 120)
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 		this.quest = await reply(this.locale.QUEST.DISPLAY, {
 			header: `${name(this.user.master.id)} is taking a quest!`,
@@ -65,6 +65,7 @@ class Quests extends Command {
 		this.setSequence(10)
 		this.sequence.on(`collect`, async msg => {
 			let answer = msg.content.toLowerCase()
+            if (answer.startsWith((this.bot.prefix))) answer = answer.slice(1)
 			// Handle if user asked to cancel the quest
 			if ([`cancel`, `n`, `no`].includes(answer)) {
 				reply(this.locale.QUEST.CANCEL)
