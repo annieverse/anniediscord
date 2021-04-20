@@ -27,6 +27,7 @@ class Quests extends Command {
 		await this.requestUserMetadata(2)
 		const quests = await db.getAllQuests()
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
+        const questIdsPool = quests.map(q => q.quest_id)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION_${this.message.guild.id}@${this.message.author.id}`
 		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
@@ -45,9 +46,8 @@ class Quests extends Command {
 		//  Update ID if active quest couldn't be found with the saved quest_id
 		let nextQuestId = this.user.quests.next_quest_id
 		if (!nextQuestId) {
-			//  Make sure the quest_id index not fall below the threeshold
-			nextQuestId = Math.floor(Math.random() * quests.length) || 1
-			await db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
+			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
+			db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
 		}
 		this.bot.setCooldown(sessionID, 120)
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
@@ -78,13 +78,13 @@ class Quests extends Command {
 				reply(this.locale.QUEST.INCORRECT_ANSWER, {status: `warn`, deleteIn: 3})
 				return
 			}
+			this.endSequence()
 			msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
 			await db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.master.id})
 			await db.updateUserQuest(this.user.master.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
 			await db.recordQuestActivity(nextQuestId, this.user.master.id, this.message.guild.id, answer)
 			//  Successful
-			this.endSequence()
 			this.bot.db.redis.del(sessionID)
 			return reply(this.locale.QUEST.SUCCESSFUL, {
 				socket: {
