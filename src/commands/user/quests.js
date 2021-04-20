@@ -26,10 +26,9 @@ class Quests extends Command {
 	async execute({ reply, commanifier, emoji, avatar, name, bot:{db} }) {
 		await this.requestUserMetadata(2)
 		const quests = await db.getAllQuests()
-		//  Handle if no quests are available to take
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION@${this.user.master.id}`
+		const sessionID = `QUEST_SESSION_${this.message.guild.id}@${this.message.author.id}`
 		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
