@@ -2716,14 +2716,20 @@ class Database {
  	 * Pull all the available quests in quests master table
  	 * @return {QueryResult}
  	 */
-	getAllQuests() {
-		return this._query(`
+	async getAllQuests() {
+        const cacheId = `CACHED_QUESTS_POOL`
+		const cache = await this.redis.get(questId)
+        if (cache !== null) return JSON.parse(cache)
+		const res = await return this._query(`
 			SELECT *
 			FROM quests`
 			, `all`
 			, []
 			, `Fetching all the available quests in master quests table`
 		)
+        //  Store quest pool cache for 3 hours.
+		this.redis.set(cacheId, JSON.stringify(res), `EX`, (60 * 60) * 3)
+        return res
 	}
 
 	/**
