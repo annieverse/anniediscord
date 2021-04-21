@@ -51,6 +51,8 @@ class SellFragments extends Command {
     	//  Handle if user specified an invalid amount
     	this.amountToSell = this.args[0].startsWith(`all`) ? this.user.inventory.fragments : trueInt(this.args[0])
     	if (!this.amountToSell) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
+        //  Prevent user from selling over the amount of their owned fragments
+        if (this.amountToSell > this.user.inventory.fragments) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
     	//  Handle if user's specified amount is lower than the minimum sell 
     	if (this.amountToSell < this.minimumToSell) return reply(this.locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
     		socket: {
