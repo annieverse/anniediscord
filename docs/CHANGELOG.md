@@ -1,3 +1,17 @@
+## [7.13.1](https://github.com/klerikdust/anniediscord/compare/v7.13.0...v7.13.1) (2021-04-20)
+
+
+### Bug Fixes
+
+* **quest:** correctly shuffled and put quick stop after correct answer received. ([8ca79b2](https://github.com/klerikdust/anniediscord/commit/8ca79b218ec4d9ffdf547069416f76447b7f69ec))
+* **welcomer:** role keeps added on disabled module. ([736310c](https://github.com/klerikdust/anniediscord/commit/736310cbacaac502b3ae1aafdf18977499c2358f))
+
+
+### Performance Improvements
+
+* **database:** cached quest pool. ([c3c77f5](https://github.com/klerikdust/anniediscord/commit/c3c77f5e99a2bda280f4833291cf4d3fa32a704e))
+* **database:** pooling validated users. ([ed929ea](https://github.com/klerikdust/anniediscord/commit/ed929ea37d63b0f2d944191fa511ef7e38a7202c))
+
 # [7.13.0](https://github.com/klerikdust/anniediscord/compare/v7.12.6...v7.13.0) (2021-04-12)
 
 
