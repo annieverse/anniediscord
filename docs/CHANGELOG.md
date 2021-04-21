@@ -1,3 +1,10 @@
+## [7.13.2](https://github.com/klerikdust/anniediscord/compare/v7.13.1...v7.13.2) (2021-04-21)
+
+
+### Bug Fixes
+
+* **sellFragments:** prevent user from selling above the amount of they own. ([9f9b67d](https://github.com/klerikdust/anniediscord/commit/9f9b67df03ae7d2b8990b4ac0a82ed7bf24da9ad))
+
 ## [7.13.1](https://github.com/klerikdust/anniediscord/compare/v7.13.0...v7.13.1) (2021-04-20)
 
 
