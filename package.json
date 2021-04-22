@@ -65,7 +65,7 @@
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.31",
     "node-cmd": "^3.0.0",
-    "node-cron": "^2.0.3",
+    "node-cron": "^3.0.0",
     "node-fetch": "^2.6.0",
     "parse-ms": "^3.0.0",
     "pixiv-api-client": "^0.25.0",
