@@ -24,7 +24,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
     let reply = new Response(message)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
-    if (commandChannels.length > 0) {
+    if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
         if (!commandChannels.includes(message.channel.id)) {
             await reply.send(client.locale.en.NON_COMMAND_CHANNEL, {
                 deleteIn: 5,
