@@ -410,6 +410,7 @@
         "DURATION": "Okay, now please type the mute duration.",
         "USER_HAS_ROLE": "I'm sorry, {{user}}, is already muted currently."
     },
+    "NON_COMMAND_CHANNEL": "**No, {{user}}.** You can't use my command here. {{emoji}}",
     "UNMUTE": {
         "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully unmuted **{{user}}**",
@@ -601,6 +602,16 @@
         "EXCEEDING_LIMIT": "**I've trouble fitting this into my small pocket!～** {{emoji}}\n╰─Can you reduce it by {{chars}} characters?",
         "RENDERING": "{{emoji}}`rendering the new bio for you...`",
         "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**"
+    },
+    "SETCOMMAND": {
+        "GUIDE": "Here you can define which command channels that I should only listen to! {{channelStatus}}\n╭*:;,．★ ～☆*────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Here you can add a new channel as my only channel. If you haven't setting up anything previously, I'll listen to every visible channels! You can also add multiple channels at a time by separating it with comma.\n__e.g. {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Planning to remake the server channels? worry not, you can revert the command channels to default. This will ensure that I'm able to listen to every visible channel!\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "**Hmm, what was that?** the only available actions in SetCommand are **`channel`** and **`reset`**, so make sure you typed the correct one!",
+        "INVALID_NEW_CHANNEL": "Hold on, is {{channel}} even a channel? {{emoji}}",
+        "CHANNEL_ALREADY_REGISTERED": "**Eh?** you can't register the same channel twice! {{emoji}}",
+        "CHANNEL_POOL_ALREADY_EMPTY": "Hey, there's nothing to reset! {{emoji}}",
+        "RESET_CONFIRMATION": "Keep in mind, {{totalChannels}} command channels will no longer put in effect and all the visible channels will be available to me. Make sure you are aware with this action, okay? {{emoji}}",
+        "RESET_SUCCESSFUL": "**Alright, done!** {{emoji}}\n╰ My command usage is no longer restricted.",
+        "UPDATE_CHANNEL_SUCCESSFUL": "**Okai, perfect!** {{emoji}}\n╰ {{channel}} channels have been added as my command channel!"
     },
     "SETCOVER": {
         "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Let's decorate your profile cover!♡**\nstarts with **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",

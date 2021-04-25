@@ -21,8 +21,23 @@ module.exports = async (client={}, message={}, userPermission={}) => {
     const command = findCommandProperties(client, targetCommand)
     // Handle if no files are match with the given command name
     if (!command) return client.logger.debug(`${controllerId} there's no matched command with target key '${targetCommand}'`) 
-    // Handle if user doesn't have enough permission level to use the command
     let reply = new Response(message)
+    // Handle non-command-allowed channels
+    const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
+    if (commandChannels.length > 0) {
+        if (!commandChannels.includes(message.channel.id)) {
+            await reply.send(client.locale.en.NON_COMMAND_CHANNEL, {
+                deleteIn: 5,
+                socket: {
+                    user: message.author.username,
+                    emoji: await client.getEmoji(`790338393015713812`)
+                }
+            })
+            return message.delete()
+            .catch(e => client.logger.warn(`${instanceId} <FAIL> deleting author's message on unallowed command > ${e.message}`))
+        }
+    }
+    // Handle if user doesn't have enough permission level to use the command
     if (command.permissionLevel > userPermission.level) {
         await reply.send(``, {customHeader: [`You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`, message.author.displayAvatarURL({dynamic: true})]})
         client.logger.debug(`${controllerId} tries to use PERM_LVL:${command.permissionLevel} command`)

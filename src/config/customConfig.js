@@ -326,6 +326,17 @@ class config {
             },
             {
                 /**
+                 *  List of channels that allow Annie's command usage. Ignored if empty.
+                 *  @type {object}
+                 */
+                name: `COMMAND_CHANNELS`,
+                description: `List of channels that allow Annie's command usage. Ignored if empty`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: []
+            },
+            {
+                /**
                   *  A module that enables Logging System in the guild for creation of channels
                   *  @type {object}
                   */
@@ -598,83 +609,6 @@ class config {
                  customizable: true,
                  allowedTypes: [`boolean`],
                  value: 0
-             },
-             {
-                /**
-                  *  A module that enables Modmail System in the guild
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_PLUGIN`,
-                 description: `A module that enables Modmail System in the guild`,
-                 customizable: false,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
-                /**
-                  *  Where the logs from a thread are posted for Modmail system
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_LOG_CHANNEL`,
-                 description: `Where the logs from a thread are posted for Modmail system`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `460267216324263936`
-             },
-             {
-                /**
-                  *  Where the threads form for Modmail system
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_CATEGORY`,
-                 description: `Where the threads form for Modmail system`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `507048639747850240`
-             },
-             {
-                /**
-                  *  Guild Modmail system is bound to
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_GUILD_ID`,
-                 description: `Guild Modmail system is bound to`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `459891664182312980`
-             },
-             {
-                /**
-                  *  A module that enables Booster Notifications System in the guild
-                  *  @type {object}
-                  */
-                 name: `VIP_POST_NOTIFICATION_MODULE`,
-                 description: `A module that enables Booster Notifications System in the guild`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
-                /**
-                  *  The channel where notifications are posted for the Booster Notifications System
-                  *  @type {object}
-                  */
-                 name: `VIP_POST_NOTIFICATION_CHANNEL`,
-                 description: `The channel where notifications are posted for the Booster Notifications System`,
-                 customizable: true,
-                 allowedTypes: [`string`],
-                 value: null
-             },
-             {
-                /**
-                  *  The channel where upvoted posts are sent to
-                  *  @type {object}
-                  */
-                 name: `FEED_CHANNEL`,
-                 description: `The channel where upvoted posts are sent to`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: null
              },
             {
                 /**
@@ -1250,94 +1184,6 @@ class config {
                  allowedTypes: [`boolean`],
                  value: 0
              },
-             {
-                /**
-                  *  A module that enables Modmail System in the guild
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_PLUGIN`,
-                 description: `A module that enables Modmail System in the guild`,
-                 customizable: false,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
-                /**
-                  *  Where the logs from a thread are posted for Modmail system
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_LOG_CHANNEL`,
-                 description: `Where the logs from a thread are posted for Modmail system`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `460267216324263936`
-             },
-             {
-                /**
-                  *  Where the threads form for Modmail system
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_CATEGORY`,
-                 description: `Where the threads form for Modmail system`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `507048639747850240`
-             },
-             {
-                /**
-                  *  Guild Modmail system is bound to
-                  *  @type {object}
-                  */
-                 name: `MODMAIL_GUILD_ID`,
-                 description: `Guild Modmail system is bound to`,
-                 customizable: false,
-                 allowedTypes: [`string`],
-                 value: `459891664182312980`
-             },
-             {
-                /**
-                  *  A module that enables Booster Notifications System in the guild
-                  *  @type {object}
-                  */
-                 name: `VIP_POST_NOTIFICATION_MODULE`,
-                 description: `A module that enables Booster Notifications System in the guild`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
-                /**
-                  *  The channel where notifications are posted for the Booster Notifications System
-                  *  @type {object}
-                  */
-                 name: `VIP_POST_NOTIFICATION_CHANNEL`,
-                 description: `The channel where notifications are posted for the Booster Notifications System`,
-                 customizable: true,
-                 allowedTypes: [`string`],
-                 value: null
-             },
-            {
-                /**
-                 *  A module that enables User's Post System
-                 *  @type {object}
-                 */
-                name: `POST_MODULE`,
-                description: `A module that enables User's Post System`,
-                customizable: true,
-                allowedTypes: [`boolean`],
-                value: 0
-            },
-            {
-                /**
-                 *  The target channels where post will be collected
-                 *  @type {object}
-                 */
-                name: `POST_CHANNELS`,
-                description: `The target channels where post will be collected`,
-                customizable: true,
-                allowedTypes: [`array`],
-                value: []
-            },
             {
                 /**
                  *  The target channel where level-up message will be sent in
