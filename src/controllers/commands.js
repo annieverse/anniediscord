@@ -79,8 +79,8 @@ module.exports = async (client={}, message={}, userPermission={}) => {
         return client.db.recordsCommandUsage(cmdUsageData)
     }
     catch(e) {
-        client.logger.error(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (client.dev) {
+        client.logger.warn(`${controllerId} Oops, something went wrong. > ${e.stack}`)
+        if (!client.dev) {
             reply.send(client.locale.en.ERROR_ON_DEV, {
                 socket: {
                     error: e,
@@ -89,8 +89,17 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             })
             return reply = null
         }
+        console.debug(e.message)
+        //  Handle unsupported image type from buffer-image-size package
+        if (e.message === `unsupported file type: undefined`) {
+            reply.send(client.locale.en.ERROR_UNSUPPORTED_FILE_TYPE, {
+                socket: {
+                    emoji: await client.getEmoji(`692428843058724994`)
+                }
+            })
+        }
         //  Handle missing-permission error
-        if (e.code === 50013) {
+        else if (e.code === 50013) {
             reply.send(client.locale.en.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
