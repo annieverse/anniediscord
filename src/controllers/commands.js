@@ -80,7 +80,7 @@ module.exports = async (client={}, message={}, userPermission={}) => {
     }
     catch(e) {
         client.logger.warn(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (!client.dev) {
+        if (client.dev) {
             reply.send(client.locale.en.ERROR_ON_DEV, {
                 socket: {
                     error: e,
@@ -89,7 +89,6 @@ module.exports = async (client={}, message={}, userPermission={}) => {
             })
             return reply = null
         }
-        console.debug(e.message)
         //  Handle unsupported image type from buffer-image-size package
         if (e.message === `unsupported file type: undefined`) {
             reply.send(client.locale.en.ERROR_UNSUPPORTED_FILE_TYPE, {
