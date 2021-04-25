@@ -1,3 +1,19 @@
+# [7.14.0](https://github.com/klerikdust/anniediscord/compare/v7.13.2...v7.14.0) (2021-04-25)
+
+
+### Bug Fixes
+
+* **autoResponder:** auto trim AR info content that exceeding the specified breakpoint. ([252bfc6](https://github.com/klerikdust/anniediscord/commit/252bfc66d4f4131ca9c237a3698bdd53f6389b9d))
+* **locale:** EN adjustment for global error string. ([26843cd](https://github.com/klerikdust/anniediscord/commit/26843cda74f4ebdd0826fb4d7f72d52cd2126ca0))
+* **locales:** EN adjustment for stat and command cooldown stsring. ([fc5dca8](https://github.com/klerikdust/anniediscord/commit/fc5dca8a62012905048b5c9a5a8b9891c00edc29))
+
+
+### Features
+
+* **command:** a custom error response when user has uploaded an invalid image url/attachment. ([0316349](https://github.com/klerikdust/anniediscord/commit/0316349c8f73e7f9cfbb64dbc6824a01283a36a4))
+* **commands:** SetCommand module bypassing channel restriction. ([6e2f4cd](https://github.com/klerikdust/anniediscord/commit/6e2f4cdd5f153f7f513163ec7ab998585946d504))
+* **setCommandChannel:** allows server administrator to restrict the command channel. ([9a66064](https://github.com/klerikdust/anniediscord/commit/9a66064dd0b2a39ad672cf108812e1cdb59c3a39))
+
 ## [7.13.2](https://github.com/klerikdust/anniediscord/compare/v7.13.1...v7.13.2) (2021-04-21)
 
 
