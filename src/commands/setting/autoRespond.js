@@ -302,6 +302,17 @@ class AutoResponder extends Command {
     }
 
     /**
+     * Trimming AR content (response/trigger).
+     * @param {string} [str=``] Target AR response/trigger.
+     * @param {number} [breakpoint=70] The string breakpoint before gets trimmed. Optional.
+     * @return {string}
+     */
+    _trimAutoResponderString(str=``, breakpoint=70) {
+        if (str.length >= breakpoint) return str.substring(0, breakpoint) + `...`
+         return str
+    }
+
+    /**
      * Parsing registered ARs into proper format.
      * @param {array} [src=[]] ARs source.
      * @param {object} [headerMetadata={}]
@@ -321,7 +332,7 @@ class AutoResponder extends Command {
             if (breakpoint <= 1) {
                 str += `Currently there are total of **${header.size}** registered ARs in **${this.message.guild.name}** where the latest one was added by ${header.user}, ${header.time}. ${header.emoji}\n╭*:;,．★ ～☆*────────╮\n`
             }
-            str += `[ID:${ar.ar_id}]** "${ar.trigger}"**\n> Annie's Response: ${ar.response}`
+            str += `[ID:${ar.ar_id}]** "${this._trimAutoResponderString(ar.trigger)}"**\n> Annie's Response: ${this._trimAutoResponderString(ar.response)}`
             if (breakpoint >= 5 || i === (src.length-1)) {
                 str += `\n╰──────────☆～*:;,．*╯`
                 breakpoint = 0
