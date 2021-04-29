@@ -1,3 +1,16 @@
+## [7.14.1](https://github.com/klerikdust/anniediscord/compare/v7.14.0...v7.14.1) (2021-04-29)
+
+
+### Bug Fixes
+
+* **command:** ref var. ([e0ac860](https://github.com/klerikdust/anniediscord/commit/e0ac8603aee6ab6d9d795f4defc4fed32dbeb1ba))
+
+
+### Performance Improvements
+
+* **database:** flush validated users pool in 24 hours. ([13a4cb0](https://github.com/klerikdust/anniediscord/commit/13a4cb07a513c2236cad7379e9407b47f9a7c6ac))
+* **message:** improved permission handling. ([d548c1a](https://github.com/klerikdust/anniediscord/commit/d548c1af6b589fca29bc662c123c6cd211d63ab8))
+
 # [7.14.0](https://github.com/klerikdust/anniediscord/compare/v7.13.2...v7.14.0) (2021-04-25)
 
 
