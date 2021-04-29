@@ -6,7 +6,7 @@ const logger = require(`./logger`)
  * @param {string} [userId=``] Target user.
  * @returns {object}
  */
-module.exports = async (message={}, userId={}) => {
+module.exports = (message={}, userId={}) => {
     const instanceId = `[Permissions][${userId}@${message.guild ? message.guild.id : `DM`}]`
     // Check for developer privileges
     if (privilege[4].accounts.includes(userId)) {
@@ -18,7 +18,7 @@ module.exports = async (message={}, userId={}) => {
         logger.debug(`${instanceId} assigned as regular user`)
         return privilege[0]
     }
-    const member = await message.guild.members.fetch(userId)
+    const member = message.member
     const descendingPrivileges = Object.keys(privilege).sort((a, b) => b - a)
     for (let i=0; i<descendingPrivileges.length; i++) {
         const pvObj = privilege[descendingPrivileges[i]]

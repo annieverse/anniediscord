@@ -4,15 +4,16 @@ const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
 const Pistachio = require(`../libs/pistachio`)
 const { cooldown } = require(`../config/commands`)
+const getUserPermission = require(`../libs/permissions`)
 /**
  * Centralized Controller to handle incoming command request
  * @since 6.0.0
  * @param {object} [client={}] Current client's instance.
  * @param {object} [message={}] Target message's instance.
- * @param {object} [userPermission={}] User's privilege structure.
  * @return {winston}
  */
-module.exports = async (client={}, message={}, userPermission={}) => {
+module.exports = async (client={}, message={}) => {
+    const permission = getUserPermission(message, message.author.id)
     const controllerId = `[Controller.Command][${message.author.id}@${message.guild.id}]`
     const instanceId = `CMD_${message.author.id}@${message.guild.id}`
     const initTime = process.hrtime()
