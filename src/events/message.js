@@ -1,4 +1,3 @@
-const getUserPermission = require(`../libs/permissions`)
 const autoResponderController = require(`../controllers/autoResponder`)
 const commandController = require(`../controllers/commands`)
 /**

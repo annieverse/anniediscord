@@ -1040,7 +1040,7 @@ class Database {
         if (JSON.parse(validatedUsersPool.includes(cacheId))) return false
         validatedUsersPool[validatedUsersPool.length] = cacheId
         const stringifiedPool = JSON.stringify(validatedUsersPool)
-        if (validateUsersPool.length <= 0) {
+        if (validatedUsersPool.length <= 0) {
             //  Flush in 24 hours
             this.redis.set(validationCacheKey, stringifiedPool, `EX`, (60 * 60) * 24)
         }
