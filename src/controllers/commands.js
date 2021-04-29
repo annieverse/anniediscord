@@ -13,7 +13,7 @@ const getUserPermission = require(`../libs/permissions`)
  * @return {winston}
  */
 module.exports = async (client={}, message={}) => {
-    const permission = getUserPermission(message, message.author.id)
+    const userPermission = getUserPermission(message, message.author.id)
     const controllerId = `[Controller.Command][${message.author.id}@${message.guild.id}]`
     const instanceId = `CMD_${message.author.id}@${message.guild.id}`
     const initTime = process.hrtime()
