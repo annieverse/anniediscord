@@ -1035,10 +1035,18 @@ class Database {
 		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
         //  If user already validated, don't run.
         const cacheId = `${userId}@${guildId}`
-        let validatedUsersPool = JSON.parse(await this.getCache(`VALIDATED_USERS_POOL`) || `[]`)
+        const validationCacheKey = `VALIDATED_USERS_POOL`
+        let validatedUsersPool = JSON.parse(await this.getCache(validationCacheKey) || `[]`)
         if (JSON.parse(validatedUsersPool.includes(cacheId))) return false
         validatedUsersPool[validatedUsersPool.length] = cacheId
-        this.setCache(`VALIDATED_USERS_POOL`, JSON.stringify(validatedUsersPool))
+        const stringifiedPool = JSON.stringify(validatedUsersPool)
+        if (validateUsersPool.length <= 0) {
+            //  Flush in 24 hours
+            this.redis.set(validationCacheKey, stringifiedPool, `EX`, (60 * 60) * 24)
+        }
+        else {
+            this.redis.set(validationCacheKey, stringifiedPool) 
+        }
         //  Otherwise, perform insertion check query.
 		const res = await this._query(`
 			INSERT INTO users(user_id, name)
