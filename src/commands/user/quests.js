@@ -30,7 +30,9 @@ class Quests extends Command {
         const questIdsPool = quests.map(q => q.quest_id)
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION_${this.message.guild.id}@${this.message.author.id}`
-		if (await this.bot.isCooldown(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
+		if (await db.redis.exists(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
+        //  Session up for 2 minutes
+        db.redis.set(sessionID, 1, `EX`, 60 * 2)
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
