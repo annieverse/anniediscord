@@ -1,3 +1,10 @@
+## [7.14.2](https://github.com/klerikdust/anniediscord/compare/v7.14.1...v7.14.2) (2021-05-01)
+
+
+### Bug Fixes
+
+* **quest:** user session doesn't registered. ([66511bd](https://github.com/klerikdust/anniediscord/commit/66511bd2bd341956e646cf91ad6e7591cbb13aee))
+
 ## [7.14.1](https://github.com/klerikdust/anniediscord/compare/v7.14.0...v7.14.1) (2021-04-29)
 
 
