@@ -5,7 +5,7 @@ const commandController = require(`../controllers/commands`)
  * Mainly used to handle incoming message from user and calculate the possible actions
  * @since 4.0.1
  */
-module.exports = async (client, message) => {
+module.exports = (client, message) => {
     //  Ignore if its from a bot user
     if (message.author.bot) return 
     //  Reject further flow if message is dm-typed.
@@ -17,13 +17,21 @@ module.exports = async (client, message) => {
     if (message.content.startsWith(client.prefix) && message.content.length >= (client.prefix.length + 1)) return commandController(client, message)
     //  Automatically executing chat points when no other module requirements are met
     const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
-    if (await client.isCooldown(gainingId)) return
-    client.setCooldown(gainingId, 60)
-    client.db.updateInventory({
-        itemId: 52,
-        value: Math.floor(Math.random() * (5 - 1 + 1) + 1), 
-        userId: message.author.id,
-        guildId: message.guild.id
+    client.db.redis.get(gainingId)
+    .then(res => {
+        if (res) return
+        //  Expire cooldown state after 1 minute
+        client.db.redis.set(gainingId, 1, `EX`, 60)
+        client.db.updateInventory({
+            itemId: 52,
+            value: Math.floor(Math.random() * (5 - 1 + 1) + 1), 
+            userId: message.author.id,
+            guildId: message.guild.id
+        })
+        if (!message.guild.configs.get(`EXP_MODULE`).value) return
+        client.experienceLibs(message).execute()
     })
-    client.experienceLibs(message).execute()
+    .catch(e => {
+        client.logger.warn(`${gainingId} <FAIL> on message event > ${e.message}`)
+    })
 }

@@ -1,7 +1,6 @@
-const Points = require(`./points`)
-const moment = require(`moment`)
 const GUI = require(`../ui/prebuild/levelUpMessage`)
-const Response = require(`./response`)
+const closestBelow = require(`../utils/closestBelow`)
+const { MessageAttachment } = require(`discord.js`) 
 
 /**
  * @typedef {ExpData}
@@ -12,169 +11,141 @@ const Response = require(`./response`)
  */
 
 /**
- * Sub module of Points. Handling exp systems
+ * Experience gaining controller.
  * @author klerikdust
  * @since 6.0.0
  */
-class Experience extends Points {
-    constructor(client) {
-        super(client)
+class Experience {
+    constructor(client, user, guild) {
         /**
-         * The default multiplier will be `1` or equal to 100%.
-         * @since 6.0.0
-         * @type {number}
+         * Current bot client instance.
+         * @type {Client}
          */
-		this.expMultiplier = this.expConfig.factor
+        this.client = client
+
+        /**
+         * Entailed user for current instance.
+         * @type {User}
+         */
+        this.user = user
 
         /**
          * Current guild's instance object
          * @type {object}
          */
-        this.guild = this.message.guild
-
+        this.guild = guild
         /**
-         * Current guild's config instance
-         * @type {map}
+         * Instance identifier.
+         * @type {string}
          */
-		this.configs = this.guild.configs
+        this.instanceId = `[${this.guild.id}@${this.user.id}]` 
 	}
+    
+    
 
     /**
-     *  Running EXP workflow.
-     *  @param {number} [expToBeAdded=this.baseGainedExp] amount of exp to be added into user's current exp pool
-     *  @returns {void}
+     *  The default gained exp from chatting.
+     *  @type {number}
      */
-    async execute(expToBeAdded=this.baseGainedExp) {
-		if (!this.configs.get(`EXP_MODULE`).value) return
-    	this.exp = await this.db.getUserExp(this.message.author.id, this.message.guild.id)
-
-    	//  Calculate and get detailed exp data
-        this.totalGainedExp = expToBeAdded * this.expMultiplier
-    	this.prevExp = this.xpFormula(this.exp.current_exp)
-    	this.newExp = this.xpFormula(this.exp.current_exp + this.totalGainedExp)
-
-    	//  Send level up message if new level is higher than previous level
-		if (this.newExp.level > this.prevExp.level) await this.levelUpPerks()
-    	//  Update user's exp data.
-    	this.db.addUserExp(this.totalGainedExp, this.message.author.id, this.message.guild.id)
-    	this.logger.info(`[Experience.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedExp}EXP(${this.expMultiplier * 100}%)`)
+    get defaultGain() {
+        const [ max, min ] = [ 10, 15 ]
+    	return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
     /**
-     *  Sum up booster effect to `this.expMultiplier`
-     *  @returns {boolean}
+     *  Running EXP workflow.
+     *  @param {number} [expToBeAdded=this.defaultGain] amount of exp to be added into user's current exp pool
+     *  @returns {void}
      */
-    async applyBooster() {
-    	const fn = `[Experience.applyBooster()]`
-    	const booster = await this.db.getItem(this.exp.booster_id)
-    	const now = moment()
-
-    	//  Handle if booster couldn't be fetched in the database
-    	if (!booster) {
-    		this.logger.error(`${fn} has failed to fetch booster item with id ${this.exp.booster_id}`)
-    		return false
-    	}
-
-    	//  Handle if booster already expired
-    	if (now.diff(this.exp.booster_actived_at, `minutes`) > booster.duration) {
-    		await this.db.nullifyExpBooster(this.message.author.id, this.message.guild.id)
-    		return false
-    	}
-
-    	this.expMultiplier += booster.effect
-    	return true
-	}
+    execute(expToBeAdded=this.defaultGain) {
+    	this.client.db.getUserExp(this.user.id, this.guild.id)
+        .then(exp => {
+            const prevExp = this.xpFormula(exp.current_exp)
+            const newExp = this.xpFormula(exp.current_exp + expToBeAdded)
+            //  Send level up message if new level is higher than previous level
+            if (newExp.level > prevExp.level) {
+		        if (this.guild.configs.get(`CUSTOM_RANK_MODULE`).value) this.updateRank(newExp.level)
+                this.levelUpPerks(newExp.level)
+            }
+            //  Update user's exp data.
+            this.client.db.addUserExp(expToBeAdded, this.user.id, this.guild.id)
+        })
+        .catch(e => {
+            this.client.logger.warn(`${this.instanceId} <FAIL> to gain exp > ${e.message}`)
+        })
+    }
 	
 	/**
 	 * Takes the level of a user and finds the corresponding rank role, after removing previous rank roles
-	 * @param {number} [level=0] 
+	 * @param {number} [level=0] Target updated rank. 
+     * @return {void}
 	 */
 	async updateRank(level=0){
-        const fn = `[Exp.updateRank()]`
-        //  Handle if custom ranks module isn't enabled
-		if (!this.configs.get(`CUSTOM_RANK_MODULE`).value) return
-        //  Handle if no custom ranks are registered
-        let registeredRanks = this.configs.get(`RANKS_LIST`).value
+        let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
-        let rankLevels = []
-        let lowerRankRoles = []
-		registeredRanks.forEach(element => {
-			rankLevels.push(element.LEVEL)
-			let role = this.guild.roles.cache.get(element.ROLE)
-			lowerRankRoles.push(role.id)
-		})
-        await this.guild.members.fetch(this.message.author.id)
+        //  Parse roles
+        const userRankLevel = closestBelow(registeredRanks.map(r => r.LEVEL), level) 
+        const expectedTargetRoleId = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel))
+        //  Skip assignment/removal if target role cannot be found due to infinity level.
+        if (!expectedTargetRoleId) return
+        const userRankRole = this.guild.roles.cache.get(expectedTargetRoleId)
+        //  Assign role if user doesn't have it
+        if (!this.user.roles.cache.has(userRankRole.id)) {
+            try {
+                this.user.roles.add(role)
+            }
+            catch(e) {
+                this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`)
+            }
+        }
+        //  RANKS_STACK support to be released at v7.15.x
+        // if (this.guild.configs.get(`RANKS_STACK`).value) return
+        //  Remove non-current rank roles
+        const nonCurrentRankRoles = registeredRanks.filter(r => r.ROLE !== userRankRole.id).map(r => r.ROLE)
         try {
-			await this.guild.members.cache.get(this.message.author.id).roles.remove(lowerRankRoles)
+		    this.user.roles.remove(nonCurrentRankRoles)
         }
         catch(e) {
-			this.logger.warn(`${fn} role remove error has been handled. > ${e.stack}`)
+			this.client.logger.warn(`${this.instancedId} <FAIL> role remove > ${e.message}`)
         }
-		level = this.newExp.level
-		level = this.closestValue(level, rankLevels)
-		let roleFromList = registeredRanks.filter(node => node.LEVEL === level)[0]
-        //  Handle if given role doesn't exist in configuration
-        if (!roleFromList) return this.logger.warn(`${fn} can't find any custom role-rank associated with LV${level} in GUILD_ID:${this.message.guild.id}`)
-        //  Handle if role doesn't exist in the guild
-
-        if (!this.guild.roles.cache.has(roleFromList.ROLE)) return this.logger.warn(`${fn} custom role-rank with ROLE_ID:${roleFromList.ROLE} in GUILD_ID:${this.message.guild.id}`)
-		let role = this.guild.roles.cache.get(roleFromList.ROLE)
-        //  Start assign the rolerank
-        try {
-			await this.guild.members.cache.get(this.message.author.id).roles.add(role)
-        }
-        catch(e) {
-			this.logger.warn(`${fn} role assign error has been handled. > ${e.stack}`)
-        }
-        this.logger.info(`${fn} successfully added RANK_ID:${role.id} to USER_ID:${this.message.author.id} in GUILD_ID:${this.message.guild.id}`)
 	}
 
     /**
-     *  Sending level-up message and reward to the user.
-     *  @type {replyObject}
+     *  Parsing custom level_up message content.
+     *  @author {klerikdust}
+     *  @param {string} [content=``] Target string.
+     *  @retun {string}
      */
-    async levelUpPerks() {
-        const fn = `[Experience.levelUpPerks]`
-        const img = await new GUI(await this._getMinimalUserMetadata(), this.newExp.level).build()
-		try {
-			//  Regular reward
-			const totalGainedReward = this.expConfig.currencyRewardPerLevelUp * this.newExp.level
-			this.db.updateInventory({itemId: 52, value: totalGainedReward, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-			await this.updateRank(this.newExp.level)
-			if (!this.configs.get(`LEVEL_UP_MESSAGE`).value) return
-			//  Send lvl-up message to custom channel if provided
-			const customLevelUpMessageChannel = this.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
-			const defaultText = this.bot.locale.en.LEVELUP.DEFAULT_RESPONSES
-			const savedText = this.configs.get(`LEVEL_UP_TEXT`).value
-			let displayedText = savedText || defaultText[Math.floor(Math.random() * defaultText.length)]
-			const response = new Response(this.message)
-			if (customLevelUpMessageChannel) {
-				//  Handle if channel cannot be seen or sent in
-				const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
-				if (!targetChannel) return this.logger.warn(`${fn} failed to send the level-up message in ID:${customLevelUpMessageChannel}@${this.guild.id}`)
-				return response.send(displayedText, {
-					field: targetChannel,
-					prebuffer: true,
-					simplified: true,
-					image: img,
-					socket: {
-						user: this.message.author
-					}
-				})
-			}
-			//  Otherwise, send message to the channel where user got leveled-up.
-			return response.send(displayedText, {
-				prebuffer: true,
-				image: img,
-				simplified: true,
-				socket: {
-					user: this.message.author
-				}
-			})
-		}
-		catch(e) {
-			this.logger.warn(`${fn} something went wrong, but carefully handled. > ${e.stack}`)
-		}
+    _parseLevelUpContent(content=``) {
+        content = content.replace(/{{guild}}/gi, `**${this.guild.name}**`)
+        content = content.replace(/{{user}}/gi, this.user)
+        return content
+    }
+
+    /**
+     *  Sending level-up message and reward to the user.
+     *  @author {klerikdust}
+     *  @param {number} [newLevel=0] New level to be displayed in the message.
+     *  return {Message|void}
+     */
+    async levelUpPerks(newLevel=0) {
+        if (!this.guild.configs.get(`LEVEL_UP_MESSAGE`).value) return
+        const img = await new GUI(await this._getMinimalUserMetadata(), newLevel).build()
+        const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
+        const defaultText = this.client.locale.en.LEVELUP.DEFAULT_RESPONSES
+        const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
+        let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
+        const messageComponents = [displayedText, new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]
+        //  Send to custom channel if provided
+        if (customLevelUpMessageChannel) {
+            const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
+            if (!targetChannel) return this.client.logger.warn(`${this.instanceId} <FAIL> invalid level up message channel`)
+            return targetChannel.send(...messageComponents)
+            .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
+        }
+        //  Otherwise, send message to the channel where user got leveled-up.
+        return response.send(...messageComponents)
+        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
     }
 
     /**
@@ -195,7 +166,6 @@ class Experience extends Points {
 			}
 			level < 60 ? level-=1 : level+=0
 			let exp = Math.floor(((390.0625*(Math.pow(level+1, 2)))+375)/4)
-			//lvl = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.sqrt(4 * exp - 375) / 20 - 0.25
 			level = Math.floor(level)
 			var maxexp = Math.round(100 * (Math.pow(level + 1, 2)) + 50 * (level + 1) + 100)			
@@ -210,10 +180,8 @@ class Experience extends Points {
 				level: level
 			}
 		}
-
 		let level = Math.floor(data)
 		const main = formula(level)
-		
 		let maxexp = main.maxexp
 		let nextexpcurve = main.nextexpcurve
 		let minexp = main.minexp
@@ -242,7 +210,6 @@ class Experience extends Points {
 	    const minexp = Math.round(100 * (Math.pow(level, 2)) + 50 * level + 100)
 		const nextexpcurve = Math.round(maxexp - minexp)
 		level = level + 1
-
 		return {
 			level: level,
 			maxexp: maxexp,
@@ -252,31 +219,24 @@ class Experience extends Points {
     }
 
     /**
-     *  Randomizing base gained user's exp using Point.randomizer() and defined value in `.src/config/exp.js`
-     *  @type {number}
+     *  Fetching minimal metadata for the user to be supplied in level-up message ui.
+     *  @return {object}
      */
-    get baseGainedExp() {
-    	const [min, max] = this.expConfig.baseAmount
-    	return this.randomize(min, max)
-    }
-
     async _getMinimalUserMetadata() {
-        //  Fetching inventories 
-        const inventoryData = await this.bot.db.getUserInventory(this.message.author.id, this.message.guild.id)
-        //  Custom properties
+        const inventoryData = await this.client.db.getUserInventory(this.user.id, this.guild.id)
         const theme = inventoryData.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-        const usedTheme = theme.length ? theme[0] : await this.bot.db.getItem(`light`)
-		const cover = await this.bot.db.getUserCover(this.message.author.id, this.message.guild.id)
+        const usedTheme = theme.length ? theme[0] : await this.client.db.getItem(`light`)
+		const cover = await this.client.db.getUserCover(this.user.id, this.guild.id)
 		let usedCover = {}
 		if (cover) {
 			usedCover = cover
 		}
 		else {
-			usedCover = await this.bot.db.getItem(`defaultcover1`)
+			usedCover = await this.client.db.getItem(`defaultcover1`)
 			usedCover.isDefault = true
 		}
         return {
-			master: this.message.author,
+			master: this.user,
 			theme: theme,
 			usedTheme: usedTheme,
 			cover: cover,
