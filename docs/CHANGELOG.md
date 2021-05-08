@@ -1,3 +1,27 @@
+# [7.15.0](https://github.com/klerikdust/anniediscord/compare/v7.14.2...v7.15.0) (2021-05-08)
+
+
+### Bug Fixes
+
+* **exp:** missing fallback levelup channel. ([857c611](https://github.com/klerikdust/anniediscord/commit/857c61191a64b87424c592e63ac6f4072d6f4593))
+* **quest:** session started on cooldown check. ([49f5ead](https://github.com/klerikdust/anniediscord/commit/49f5ead654319e16a9e154c5a352587ccbcaa14d))
+* **userLookup:** ommit discriminator if included. ([9770cd2](https://github.com/klerikdust/anniediscord/commit/9770cd2a14bed693254f75144ef6ba9e8cfe4c64))
+
+
+### Features
+
+* **roleStack:** added option to stack rank roles. ([89bd1a1](https://github.com/klerikdust/anniediscord/commit/89bd1a12e6114ebbc3bbdf731278e42989523078))
+* **setExp:** add and minus action yields live update. ([6ed8803](https://github.com/klerikdust/anniediscord/commit/6ed88030e71b300c790ca68be04e7431f598157d))
+
+
+### Performance Improvements
+
+* **autoResponder:** faster init for AR registering. ([1724d9f](https://github.com/klerikdust/anniediscord/commit/1724d9ff7e23c3e2a7dccba8c8065ba30cc9c221))
+* **autoResponder:** removed unnecessary log. ([fa6d638](https://github.com/klerikdust/anniediscord/commit/fa6d638f164666f3344ed6caec6d9018c869b2b1))
+* **command:** removed unnecessary log. ([598d135](https://github.com/klerikdust/anniediscord/commit/598d1357ae7d676d967690515f6dc084e48240e4))
+* **exp:** improved logic. ([113ca5b](https://github.com/klerikdust/anniediscord/commit/113ca5ba9bc3cff233a1eedea4075f4242b59824))
+* **reminder:** optimize initialization. ([f003b7d](https://github.com/klerikdust/anniediscord/commit/f003b7dadb628453bef7d8c2886b48d486f20381))
+
 ## [7.14.2](https://github.com/klerikdust/anniediscord/compare/v7.14.1...v7.14.2) (2021-05-01)
 
 
