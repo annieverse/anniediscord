@@ -106,9 +106,10 @@ class Annie extends Discord.Client {
          * Experience Framework
          * @param {GuildMember} user Target member.
          * @param {Guild} guild Target guild for the member.
+         * @param {TextChannel} channel Target level-up message channel.
          * @return {external:Experience}
          */
-        this.experienceLibs = (user, guild) => new Experience(this, user, guild)
+        this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
 
         /**
          * The default function for calculating task performance in milliseconds.
