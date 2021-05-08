@@ -271,7 +271,8 @@ class SetExp extends Command {
 		const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
 		if (!targetUser) return reply(this.locale.USER.IS_INVALID)
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
-		let newData = this.bot.experienceLibs(this.message.member, this.message.guild).xpFormula(0)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+		let newData = expLib.xpFormula(0)
 		baseData.exp = {
 			current_exp: 0,
 			level: newData.level,
@@ -292,6 +293,7 @@ class SetExp extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
+            expLib.updateRank(0)
     		this.bot.db.resetUserExp(targetUser.master.id, this.message.guild.id)
  			this.finalizeConfirmation(r)
  			reply(``, {
