@@ -1,3 +1,11 @@
+## [7.15.1](https://github.com/klerikdust/anniediscord/compare/v7.15.0...v7.15.1) (2021-05-08)
+
+
+### Bug Fixes
+
+* **exp:** missing channel param from client ref. ([d49e394](https://github.com/klerikdust/anniediscord/commit/d49e394de09907be3b1cb6723bd0a67075c5f72e))
+* **message:** prepare config handler. ([753b78d](https://github.com/klerikdust/anniediscord/commit/753b78d8a585bcdadced54af8266f957c9ea116c))
+
 # [7.15.0](https://github.com/klerikdust/anniediscord/compare/v7.14.2...v7.15.0) (2021-05-08)
 
 
