@@ -1,6 +1,5 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
-const Experience = require(`../../libs/exp`)
 /**
  * Customize role-rank system in the guild.
  * @author Pan
@@ -321,11 +320,10 @@ class SetRank extends Command {
      */
     async _prettifyList(source=[], { commanifier }) {
         let res = ``
-        let expCalc = new Experience({bot: this.bot, message:this.message})
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭*:;,．★ ～☆*──────────╮\n\n`
             const rank = source[i]
-            const expMeta = await expCalc.xpReverseFormula(rank.LEVEL)
+            const expMeta = await this.bot.experienceLibs(this.message.member, this.message.guild).xpReverseFormula(rank.LEVEL)
             res += `**• LV${rank.LEVEL} - ${this._getRoleName(rank.ROLE)}**\n> Required EXP: ${commanifier(expMeta.minexp)}\n\n`
             if (i === (source.length-1)) res += `╰──────────☆～*:;,．*╯\n`
         }

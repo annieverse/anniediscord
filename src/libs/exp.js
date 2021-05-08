@@ -3,7 +3,7 @@ const closestBelow = require(`../utils/closestBelow`)
 const { MessageAttachment } = require(`discord.js`) 
 
 /**
- * @typedef {ExpData}
+ * @typedef {object} MemberExperience
  * @property {number} [level] calculated level from given current exp
  * @property {number} [maxexp] calculated max cap exp from given current exp
  * @property {number} [nextexpcurve] calculated curve between min and max exp of current level
@@ -16,33 +16,30 @@ const { MessageAttachment } = require(`discord.js`)
  * @since 6.0.0
  */
 class Experience {
+    //  For the 'user' parameter it is recommended to use GuildMember object instead of raw user.
     constructor(client, user, guild) {
         /**
          * Current bot client instance.
          * @type {Client}
          */
         this.client = client
-
         /**
          * Entailed user for current instance.
-         * @type {User}
+         * @type {GuildMember}
          */
         this.user = user
-
         /**
-         * Current guild's instance object
-         * @type {object}
+         * Current guild's instance object.
+         * @type {Guild}
          */
         this.guild = guild
         /**
          * Instance identifier.
          * @type {string}
          */
-        this.instanceId = `[${this.guild.id}@${this.user.id}]` 
+        this.instanceId = `[EXP_LIBS_${this.guild.id}@${this.user.id}]` 
 	}
     
-    
-
     /**
      *  The default gained exp from chatting.
      *  @type {number}
@@ -55,7 +52,7 @@ class Experience {
     /**
      *  Running EXP workflow.
      *  @param {number} [expToBeAdded=this.defaultGain] amount of exp to be added into user's current exp pool
-     *  @returns {void}
+     *  @return {void}
      */
     execute(expToBeAdded=this.defaultGain) {
     	this.client.db.getUserExp(this.user.id, this.guild.id)
@@ -65,7 +62,7 @@ class Experience {
             //  Send level up message if new level is higher than previous level
             if (newExp.level > prevExp.level) {
 		        if (this.guild.configs.get(`CUSTOM_RANK_MODULE`).value) this.updateRank(newExp.level)
-                this.levelUpPerks(newExp.level)
+                if (this.guild.configs.get(`LEVEL_UP_MESSAGE`).value) this.levelUpPerks(newExp.level)
             }
             //  Update user's exp data.
             this.client.db.addUserExp(expToBeAdded, this.user.id, this.guild.id)
@@ -76,45 +73,38 @@ class Experience {
     }
 	
 	/**
-	 * Takes the level of a user and finds the corresponding rank role, after removing previous rank roles
-	 * @param {number} [level=0] Target updated rank. 
+	 * Takes the level of a user and finds the corresponding rank role and removing previous rank roles (if prompted).
+	 * @param {number} [level=0] Target updated rank level. 
      * @return {void}
 	 */
 	async updateRank(level=0){
         let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
-        //  Parse roles
         const userRankLevel = closestBelow(registeredRanks.map(r => r.LEVEL), level) 
-        const expectedTargetRoleId = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel))
-        //  Skip assignment/removal if target role cannot be found due to infinity level.
-        if (!expectedTargetRoleId) return
-        const userRankRole = this.guild.roles.cache.get(expectedTargetRoleId)
-        //  Assign role if user doesn't have it
-        if (!this.user.roles.cache.has(userRankRole.id)) {
-            try {
-                this.user.roles.add(role)
-            }
-            catch(e) {
-                this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`)
-            }
-        }
+        //  Ensuring that unranked role (below minimum threshold) is skipped.
+        if (!isFinite(userRankLevel)) return 
+        const expectedTargetRole = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel)
+        //  Ensure that role is exist in the server/guild.
+        if (!expectedTargetRole) return
+        const userRankRole = this.guild.roles.cache.get(expectedTargetRole.ROLE)
+        //  Assign new rank role
+        this.user.roles.add(userRankRole)
+        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`))
         //  RANKS_STACK support to be released at v7.15.x
         // if (this.guild.configs.get(`RANKS_STACK`).value) return
         //  Remove non-current rank roles
-        const nonCurrentRankRoles = registeredRanks.filter(r => r.ROLE !== userRankRole.id).map(r => r.ROLE)
-        try {
-		    this.user.roles.remove(nonCurrentRankRoles)
-        }
-        catch(e) {
-			this.client.logger.warn(`${this.instancedId} <FAIL> role remove > ${e.message}`)
-        }
+        const nonCurrentRankRoles = registeredRanks
+        .filter(r => r.ROLE !== userRankRole.id)
+        .map(r => r.ROLE)
+        this.user.roles.remove(nonCurrentRankRoles)
+        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role remove > ${e.message}`))
 	}
 
     /**
      *  Parsing custom level_up message content.
      *  @author {klerikdust}
      *  @param {string} [content=``] Target string.
-     *  @retun {string}
+     *  @return {string}
      */
     _parseLevelUpContent(content=``) {
         content = content.replace(/{{guild}}/gi, `**${this.guild.name}**`)
@@ -129,14 +119,14 @@ class Experience {
      *  return {Message|void}
      */
     async levelUpPerks(newLevel=0) {
-        if (!this.guild.configs.get(`LEVEL_UP_MESSAGE`).value) return
+        //  Parsing content for level-up message
         const img = await new GUI(await this._getMinimalUserMetadata(), newLevel).build()
-        const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         const defaultText = this.client.locale.en.LEVELUP.DEFAULT_RESPONSES
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
         const messageComponents = [displayedText, new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]
         //  Send to custom channel if provided
+        const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {
             const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
             if (!targetChannel) return this.client.logger.warn(`${this.instanceId} <FAIL> invalid level up message channel`)
@@ -236,7 +226,8 @@ class Experience {
 			usedCover.isDefault = true
 		}
         return {
-			master: this.user,
+            //  Calling user property in GuildMember object.
+			master: this.user.user,
 			theme: theme,
 			usedTheme: usedTheme,
 			cover: cover,

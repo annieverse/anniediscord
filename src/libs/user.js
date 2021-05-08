@@ -172,7 +172,7 @@ class User {
 
 			//  User's parsed experience points data
 			const experienceData = await db.getUserExp(user.id, this.message.guild.id)
-			const parsedExp = this.bot.experienceLibs(this.message).xpFormula(experienceData.current_exp)
+			const parsedExp = this.bot.experienceLibs(this.message.member, this.message.guild).xpFormula(experienceData.current_exp)
 			const exp = {
 				raw: experienceData,
 				current_exp: experienceData.current_exp,

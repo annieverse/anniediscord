@@ -1,5 +1,4 @@
 const Command = require(`../../libs/commands`)
-const Experience = require(`../../libs/exp`)
 /**
  * Converts Artcoins into EXP at the rate of 2:1
  * @author klerikdust
@@ -63,8 +62,8 @@ class ConvertArtcoins extends Command {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
 			//	Deduct balance & add new exp
-			await db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
-			await new Experience({bot:this.bot, message:this.message}).execute(totalGainedExp)
+			db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
+			this.bot.experienceLibs(this.message.member, this.message.guild).execute(totalGainedExp)
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
 				status: `success`,

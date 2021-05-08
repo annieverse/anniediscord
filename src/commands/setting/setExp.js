@@ -268,7 +268,7 @@ class SetExp extends Command {
 		const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
 		if (!targetUser) return reply(this.locale.USER.IS_INVALID)
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
-		let newData = this.bot.experienceLibs(this.message).xpFormula(0)
+		let newData = this.bot.experienceLibs(this.message.member, this.message.guild).xpFormula(0)
 		baseData.exp = {
 			current_exp: 0,
 			level: newData.level,
