@@ -10,6 +10,8 @@ module.exports = (client, message) => {
     if (message.author.bot) return 
     //  Reject further flow if message is dm-typed.
     if (message.channel.type === `dm`) return 
+    //  Ensure that guild configs have been properly loaded first
+    if (!message.guild.configs) return
     client.db.validateUser(message.author.id, message.guild.id, message.author.username)
     //  Check if AR module is enabled.
     if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
