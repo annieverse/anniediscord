@@ -30,8 +30,11 @@ class User {
 	async lookFor(target) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
-		//  Normalize keyword and ommits bracket if target contains mention
-        target = target.toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
+        target = target.toLowerCase()
+        //  This line will normalize the keyword for searching user.
+        //  So, if the keyword has '#' in it and followed up by 4 numbers (0 - 3 indexes), then only trim the rest (example: naph#7790 -> naph)
+        //  Otherwise, trim non-number and non-alphabetic characters.
+        target = target.match(/#.\d{3}/g) !== null ? target.replace(/#.\d{3}/g, ``) : target.replace(/[^0-9a-z-A-Z ]/g, ``)
 		this.args = target.split(` `)
         const collection = this.message.guild.members
 		//  Lookup by full string nickname/username
