@@ -198,26 +198,21 @@ class Annie extends Discord.Client {
 
     /**
      * Registering guild's registere ARs into cache.
-     * @return {boolean}
+     * @return {void}
      */
     async registerGuildAutoResponders() {
-        const fn = `[Annie.registerGuildAutoResponders]`
-        //  Handle if there are no guild that have registered ARs.
+        const fn = `[SHARD_ID:${this.shard.ids[0]}@AUTO_RESPONDER]`
         const ars = await this.db.getGuildsWithAutoResponders()
-        if (ars.length <= 0) {
-            this.logger.info(`${fn} there are no guilds with registered ARs.`)
-            return false
-        }
-        //  Iterate over all the available guilds
         let totalArs = 0
         for (let i=0; i<ars.length; i++) {
             const guildId = ars[i].guild_id
+            //  Skip if guild is not present in the current shard 
+            if (!this.guilds.cache.has(guildId)) continue
             const registeredArs = await this.db.getAutoResponders(guildId, false)
             totalArs += registeredArs.length
             this.db.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
         }
-        this.logger.info(`${fn} ${totalArs} autoresponders in ${ars.length} guilds have successfully registered into cache.`)
-        return true
+        this.logger.info(`${fn} ${totalArs} ARs have been registered`)
     }
 
     /**
