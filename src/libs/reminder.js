@@ -40,7 +40,7 @@ class Reminder {
         //  Takes a chunk of reminders for current shard.
         //  This is to ensure that reminders are equally distributed across shard.
         const totalShards = this.client.shard.count
-        const chunks = new Array(Math.ceil(savedReminders.length / totalShards)).fill().map(_ => savedReminders.splice(0, totalShards))
+        const chunks = new Array(Math.ceil(savedReminders.length / totalShards)).fill().map(() => savedReminders.splice(0, totalShards))
         const localReminders = chunks[this.client.shard.ids[0]]
         if (!localReminders) return this.logger.warn(`${this.instanceId} empty container`)
         //  Iterate over the reminders and register them to cron
