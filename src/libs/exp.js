@@ -92,9 +92,8 @@ class Experience {
         //  Assign new rank role if target level is not -infinity (due to below threshold).
         if (isFinite(userRankLevel)) this.user.roles.add(userRankRole)
         .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`))
-        //  RANKS_STACK support to be released at v7.15.x
-        // if (this.guild.configs.get(`RANKS_STACK`).value) return
-        //  Remove non-current rank roles
+        if (this.guild.configs.get(`RANKS_STACK`).value) return
+        //  Remove non-current rank roles if RANKS_STACK is disabled
         const nonCurrentRankRoles = registeredRanks
         .filter(r => r.ROLE !== userRankRole.id)
         .map(r => r.ROLE)

@@ -16,7 +16,7 @@ class SetRank extends Command {
          * List of available actions for the current command
          * @type {array}
          */
-        this.actions = [`enable`, `add`, `delete`, `info`, `reset`, `disable`]
+        this.actions = [`enable`, `add`, `delete`, `info`, `stack`, `reset`, `disable`]
         /**
          * Current instance's config code
          * @type {string}
@@ -255,6 +255,24 @@ class SetRank extends Command {
             footer: `Updated by ${name(this.subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
         })
     }   
+
+    /**
+     * Toggle RANKS_STACK support
+     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     */
+    stack({ reply }) {
+        const wasEnabled = this.message.guild.configs.get(`RANKS_STACK`).value ? 1 : 0 
+        this.bot.db.updateGuildConfiguration({
+            configCode: `RANKS_STACK`,
+            //  Act as toggle (enable -> disable or disable -> enable)
+            customizedParameter: wasEnabled ? 0 : 1,
+            guild: this.message.guild,
+            setByUserId: this.message.author.id,
+            cacheTo: this.guildConfigurations
+        })
+        return reply(this.locale.SETRANK[wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`], 
+        {status: `success`})
+    }
 
     /**
      * Wipes out all custom ranks configurations in current guild

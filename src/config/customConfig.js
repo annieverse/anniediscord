@@ -811,6 +811,17 @@ class config {
             },
             {
                 /**
+                 *  Allows rank roles to be stacked or not.
+                 *  @type {object}
+                 */
+                name: `RANKS_STACK`,
+                description: `Allows rank roles to be stacked or not`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
                  *  A list of role id for the server booster
                  *  @type {object}
                  */
