@@ -7,8 +7,8 @@ module.exports = annie => {
 	const Routine = new Routines(annie)
 	if (annie.startupState) {
 		annie.startupState = false
+        annie.registerReminders()
 		annie.registerGuildConfigurations()
-		annie.registerReminders()
 		annie.registerGuildAutoResponders()
 	}
 	if (annie.dev) {

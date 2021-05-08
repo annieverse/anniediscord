@@ -4,12 +4,28 @@ const { v4: uuidv4 } = require(`uuid`)
 const { MessageEmbed } = require(`discord.js`)
 /**
  * Manages Annie's reminder API
- * @abstract
+ * @constructor
  */
 class Reminder {
     constructor(client={}) {
+
+        /**
+         * Bot/client instance
+         * @type {Client}
+         */
         this.client = client
+
+        /**
+         * Cron instance
+         * @type {object}
+         */
         this.pool = new CronManager()
+
+        /**
+         * Instance iddentifier
+         * @type {string}
+         */
+        this.instanceId = `[SHARD_ID:${this.client.shard.ids[0]}_REMINDER_LIB]`
         this.initialize()
     }
     
@@ -18,16 +34,19 @@ class Reminder {
      * @return {class}
      */
     async initialize() {
-        const fn = `[Reminder._initialize]`
         //  Handle if there are no registered reminders in the database
         const savedReminders = await this.db.getAllReminders()
-        if (savedReminders.length <= 0) return this.logger.info(`${fn} there are no saved reminders.`)
-        //  List of registered contexts from all the available shards.
-        const registeredContexts = await this.client.shard.broadcastEval(`Object.keys(this.reminders.pool.jobs)`)
+        if (savedReminders.length <= 0) return this.logger.warn(`${this.instanceId} no saved reminders.`)
+        //  Takes a chunk of reminders for current shard.
+        //  This is to ensure that reminders are equally distributed across shard.
+        const totalShards = this.client.shard.count
+        const chunks = new Array(Math.ceil(savedReminders.length / totalShards)).fill().map(_ => savedReminders.splice(0, totalShards))
+        const localReminders = chunks[this.client.shard.ids[0]]
+        if (!localReminders) return this.logger.warn(`${this.instanceId} empty container`)
         //  Iterate over the reminders and register them to cron
         let activeReminders = 0
-        for (let i=0; i<savedReminders.length; i++) {
-            const context = savedReminders[i]
+        for (let i=0; i<localReminders.length; i++) {
+            const context = localReminders[i]
             let normalizedContext = {
                 registeredAt: context.registered_at,
                 id: context.reminder_id,
@@ -37,12 +56,10 @@ class Reminder {
             }
             normalizedContext.remindAt.timestamp = new Date(normalizedContext.remindAt.timestamp)
             if (normalizedContext.remindAt.timestamp <= new Date()) continue
-            //  Make sure the context only registered once among all shards.
-            if (registeredContexts.includes(context.reminder_id)) continue
             this.startReminder(normalizedContext)
             activeReminders++
         }
-        this.logger.info(`${fn} ${activeReminders} reminders have been added into cron`)
+        this.logger.info(`${this.instanceId} ${activeReminders} reminders have been added into cron`)
     }
 
     /**
@@ -89,7 +106,7 @@ class Reminder {
             try {
                 const embed = new MessageEmbed()
                     .setColor(`#ffc9e2`)
-                    .setDescription(`**Here is your reminder!♡**\n╰─` + context.message)
+                    .setDescription(`**Here is your reminder!♡**\n╰ ` + context.message)
                 targetUser.send(embed)
             }
             //  Handle if user's DM is locked
