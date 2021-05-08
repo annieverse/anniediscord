@@ -28,11 +28,6 @@ class Quests extends Command {
 		const quests = await db.getAllQuests()
 		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
         const questIdsPool = quests.map(q => q.quest_id)
-		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION_${this.message.guild.id}@${this.message.author.id}`
-		if (await db.redis.exists(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
-        //  Session up for 2 minutes
-        db.redis.set(sessionID, 1, `EX`, 60 * 2)
 		const now = moment()
 		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
@@ -44,6 +39,11 @@ class Quests extends Command {
 				prefix: this.bot.prefix
 			},
 		})
+        //  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
+		const sessionID = `QUEST_SESSION_${this.message.author.id}@${this.message.guild.id}`
+		if (await db.redis.exists(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
+        //  Session up for 2 minutes
+        db.redis.set(sessionID, 1, `EX`, 60 * 2)
 		this.fetching = await reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: await emoji(`790994076257353779`)} })
 		//  Update ID if active quest couldn't be found with the saved quest_id
 		let nextQuestId = this.user.quests.next_quest_id
