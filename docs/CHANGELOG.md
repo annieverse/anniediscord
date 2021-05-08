@@ -1,3 +1,10 @@
+## [7.15.2](https://github.com/klerikdust/anniediscord/compare/v7.15.1...v7.15.2) (2021-05-08)
+
+
+### Bug Fixes
+
+* **localization:** added stack section on SetRank module. ([3c53922](https://github.com/klerikdust/anniediscord/commit/3c5392203cedaaef1cca1454bb6369003c5afcfc))
+
 ## [7.15.1](https://github.com/klerikdust/anniediscord/compare/v7.15.0...v7.15.1) (2021-05-08)
 
 
