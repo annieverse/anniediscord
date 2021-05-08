@@ -222,10 +222,11 @@ class Commands {
 	/**
 	 * Finalizing confirmation phase.
 	 * @param {object} [response={}] target confirmation response to finalize with.
-	 * @returns {string}
+	 * @returns {void}
 	 */
 	finalizeConfirmation(response={}) {
-		return response.message.reactions.removeAll().catch(e => this.logger.warn(`Failed to finalize transaction. > ${e.stack}`))
+		response.message.reactions.removeAll()
+        .catch(e => this.logger.warn(`Failed to finalize transaction > ${e.message}`))
 	}
 
 	/**
