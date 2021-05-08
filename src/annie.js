@@ -347,13 +347,8 @@ class Annie extends Discord.Client {
      *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
      *  @returns {boolean}
      */
-    async isCooldown(label=``) {
-        const fn = `[Annie.isCooldown()]`
-        if (this.plugins.includes(`DISABLE_COOLDOWN`)) return false
-        logger.debug(`${fn} checking ${label}`)
-        const res = await this.db.redis.get(label)
-        if (res) logger.debug(`${fn} blocking access for ${label}. Key was registered at ${res}.`)
-        return res
+    isCooldown(label=``) {
+        return this.db.redis.get(label)
     }
 
 
@@ -367,7 +362,6 @@ class Annie extends Discord.Client {
     setCooldown(label=``, time=0) {
         const fn = `[Annie.setCooldown()]`
         if (time <= 0) logger.error(`${fn} "time" parameter must above 0.`)
-        logger.debug(`${fn} registering ${label} with ${time}s timeout`)
         this.db.redis.set(label, moment().format(), `EX`, time)
     }
 

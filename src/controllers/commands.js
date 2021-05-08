@@ -39,11 +39,7 @@ module.exports = async (client={}, message={}) => {
         }
     }
     // Handle if user doesn't have enough permission level to use the command
-    if (command.permissionLevel > userPermission.level) {
-        await reply.send(``, {customHeader: [`You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`, message.author.displayAvatarURL({dynamic: true})]})
-        client.logger.debug(`${controllerId} tries to use PERM_LVL:${command.permissionLevel} command`)
-        return reply = null
-    }   
+    if (command.permissionLevel > userPermission.level) return reply.send(``, {customHeader: [`You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`, message.author.displayAvatarURL({dynamic: true})]})
     try {
         //  Handle if command still in cooldown
         let userCooldown = await client.isCooldown(instanceId)
@@ -91,7 +87,7 @@ module.exports = async (client={}, message={}) => {
             return reply = null
         }
         //  Handle unsupported image type from buffer-image-size package
-        if (e.message === `unsupported file type: undefined`) {
+        if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(client.locale.en.ERROR_UNSUPPORTED_FILE_TYPE, {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
