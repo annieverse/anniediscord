@@ -193,7 +193,7 @@ class Annie extends Discord.Client {
                 guild.configs.set(cfg.name, cfg)
             }
         }
-        logger.info(`Registered configurations for ${getGuilds.length} guilds (${getBenchmark(initTime)})`)
+        logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
 
     /**

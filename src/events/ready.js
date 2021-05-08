@@ -5,6 +5,7 @@ const Routines = require(`../libs/routines`)
 module.exports = annie => {
 	//  Run configurations once
 	const Routine = new Routines(annie)
+    const instanceId = `[SHARD_ID:${annie.shard.ids[0]}@EVENT_READY]`
 	if (annie.startupState) {
 		annie.startupState = false
         annie.registerReminders()
@@ -19,8 +20,7 @@ module.exports = annie => {
 		 */
 		annie.shard.broadcastEval(`this.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)`)
 		.then(res => {
-			annie.logger.info(`${annie.user.username}@${annie.user.id} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
-			annie.logger.info(`currently serving ${res.reduce((acc, memberCount) => acc + memberCount, 0)} users`)
+			annie.logger.info(`${instanceId} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
 			annie.user.setStatus(`dnd`)
 		})
 	} else {
@@ -30,7 +30,7 @@ module.exports = annie => {
 		 * 	--------------------------------------------------
 		 */
 		//  Cache cancel button into shard
-		annie.logger.info(`Successfully logged in. (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
+		annie.logger.info(`${instanceId} successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
 		annie.user.setStatus(`online`)
 		setInterval(() => {
 			annie.shard.broadcastEval(`this.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)`)

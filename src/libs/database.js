@@ -429,7 +429,6 @@ class Database {
 			FROM autoresponders`
 			, `all`
 			, []
-			, `Retrieving guild_ids with registered ARs.`
 		)
 	}
 
@@ -547,7 +546,6 @@ class Database {
 			WHERE guild_id = ?`
 			, `all`
 			, [guildId]
-			, `Retrieving all the registered ARs from GUILD_ID:${guildId}`
 		)
 	}
 

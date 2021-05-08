@@ -25,7 +25,7 @@ class Reminder {
          * Instance iddentifier
          * @type {string}
          */
-        this.instanceId = `[SHARD_ID:${this.client.shard.ids[0]}_REMINDER_LIB]`
+        this.instanceId = `[SHARD_ID:${this.client.shard.ids[0]}@REMINDER]`
         this.initialize()
     }
     
