@@ -81,14 +81,16 @@ class Experience {
         let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
         const userRankLevel = closestBelow(registeredRanks.map(r => r.LEVEL), level) 
-        //  Ensuring that unranked role (below minimum threshold) is skipped.
-        if (!isFinite(userRankLevel)) return 
+        //  Early exit on unranked level. Also remove all the existing rank role.
+        if (!isFinite(userRankLevel)) return this.user.roles.remove(registeredRanks.map(r => r.ROLE))
+        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role clear > ${e.message}`))
         const expectedTargetRole = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel)
-        //  Ensure that role is exist in the server/guild.
         if (!expectedTargetRole) return
+        //  Ensure that role is exist in the server/guild.
         const userRankRole = this.guild.roles.cache.get(expectedTargetRole.ROLE)
-        //  Assign new rank role
-        this.user.roles.add(userRankRole)
+        if (!userRankRole) return
+        //  Assign new rank role if target level is not -infinity (due to below threshold).
+        if (isFinite(userRankLevel)) this.user.roles.add(userRankRole)
         .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`))
         //  RANKS_STACK support to be released at v7.15.x
         // if (this.guild.configs.get(`RANKS_STACK`).value) return

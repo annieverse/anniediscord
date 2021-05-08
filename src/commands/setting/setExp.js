@@ -161,7 +161,8 @@ class SetExp extends Command {
 				emoji: await emoji(`692428748838010970`)
 			}
 		})
-		let newData = this.bot.experienceLibs(this.message).xpFormula(combinedExp)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
 			level: newData.level,
@@ -182,6 +183,7 @@ class SetExp extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
+            expLib.updateRank(newData.level)
     		this.bot.db.subtractUserExp(amountToSubtract, targetUser.master.id, this.message.guild.id)
  			this.finalizeConfirmation(r)
  			reply(``, {
@@ -224,7 +226,8 @@ class SetExp extends Command {
 		})
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
 		const combinedExp = baseData.exp.current_exp + amountToAdd
-		let newData = this.bot.experienceLibs(this.message).xpFormula(combinedExp)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
 			level: newData.level,
@@ -245,7 +248,7 @@ class SetExp extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
-    		this.bot.db.addUserExp(amountToAdd, targetUser.master.id, this.message.guild.id)
+            expLib.execute(amountToAdd)
  			this.finalizeConfirmation(r)
  			reply(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
