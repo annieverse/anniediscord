@@ -161,7 +161,7 @@ class SetExp extends Command {
 				emoji: await emoji(`692428748838010970`)
 			}
 		})
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
 		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
@@ -226,7 +226,7 @@ class SetExp extends Command {
 		})
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
 		const combinedExp = baseData.exp.current_exp + amountToAdd
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
 		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
@@ -271,7 +271,7 @@ class SetExp extends Command {
 		const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
 		if (!targetUser) return reply(this.locale.USER.IS_INVALID)
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild)
+        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
 		let newData = expLib.xpFormula(0)
 		baseData.exp = {
 			current_exp: 0,

@@ -29,7 +29,7 @@ module.exports = (client, message) => {
             guildId: message.guild.id
         })
         if (!message.guild.configs.get(`EXP_MODULE`).value) return
-        client.experienceLibs(message.member, message.guild).execute()
+        client.experienceLibs(message.member, message.guild, message.channel).execute()
     })
     .catch(e => {
         client.logger.warn(`${gainingId} <FAIL> on message event > ${e.message}`)

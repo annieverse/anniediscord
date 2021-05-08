@@ -17,7 +17,8 @@ const { MessageAttachment } = require(`discord.js`)
  */
 class Experience {
     //  For the 'user' parameter it is recommended to use GuildMember object instead of raw user.
-    constructor(client, user, guild) {
+    //  'channel' parameter as the target channel when user leveled up.
+    constructor(client, user, guild, channel) {
         /**
          * Current bot client instance.
          * @type {Client}
@@ -33,6 +34,11 @@ class Experience {
          * @type {Guild}
          */
         this.guild = guild
+        /**
+         * Target levelup channel
+         * @type {TextChannel}
+         */
+        this.targetLevelUpChannel = channel
         /**
          * Instance identifier.
          * @type {string}
@@ -135,7 +141,7 @@ class Experience {
             .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
         }
         //  Otherwise, send message to the channel where user got leveled-up.
-        return response.send(...messageComponents)
+        return this.targetLevelUpChannel.send(...messageComponents)
         .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
     }
 

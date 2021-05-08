@@ -63,7 +63,7 @@ class ConvertArtcoins extends Command {
 			})
 			//	Deduct balance & add new exp
 			db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
-			this.bot.experienceLibs(this.message.member, this.message.guild).execute(totalGainedExp)
+			this.bot.experienceLibs(this.message.member, this.message.guild, this.message.channel).execute(totalGainedExp)
 			this.confirmation.delete()
 			reply(this.locale.CARTCOIN.SUCCESSFUL, {
 				status: `success`,
