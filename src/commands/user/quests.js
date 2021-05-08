@@ -103,7 +103,7 @@ class Quests extends Command {
 module.exports.help = {
 	start: Quests,
 	name: `quests`,
-	aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`],
+	aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`, `q`],
 	description: `Displaying list of daily quests that you can accomplish and wins artcoins! the quest will be available once every 2 hours`,
 	usage: `quest`,
 	group: `User`,
