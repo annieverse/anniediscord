@@ -18,11 +18,8 @@ module.exports = annie => {
 		 * 	Configuration for Development
 		 * 	--------------------------------------------------
 		 */
-		annie.shard.broadcastEval(`this.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)`)
-		.then(res => {
-			annie.logger.info(`${instanceId} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
-			annie.user.setStatus(`dnd`)
-		})
+        annie.logger.info(`${instanceId} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
+        annie.user.setStatus(`dnd`)
 	} else {
 		/**
 		 * 	--------------------------------------------------
