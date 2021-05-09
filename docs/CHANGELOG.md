@@ -1,3 +1,16 @@
+## [7.15.3](https://github.com/klerikdust/anniediscord/compare/v7.15.2...v7.15.3) (2021-05-09)
+
+
+### Bug Fixes
+
+* **shardManager:** increase timeout and spawn interval between shard. ([8133c1c](https://github.com/klerikdust/anniediscord/commit/8133c1ce6b1540ace030eb411d812ad38aef9d77))
+* improved checkout logic of cartcoin, pay, and sellfragment. ([9f011d4](https://github.com/klerikdust/anniediscord/commit/9f011d4ea6de7bb5c7f47793cec3d3a575e5b4a0))
+
+
+### Performance Improvements
+
+* **log:** reduce log stream. ([c19f278](https://github.com/klerikdust/anniediscord/commit/c19f27854bf7c8096c028c0632b3d0859eef4e75))
+
 ## [7.15.2](https://github.com/klerikdust/anniediscord/compare/v7.15.1...v7.15.2) (2021-05-08)
 
 
