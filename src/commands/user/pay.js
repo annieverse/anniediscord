@@ -56,8 +56,6 @@ class Pay extends Command {
 		if (!trueInt(this.amountToSend)) return reply(this.locale.PAY.INVALID_NUMBER, {status: `fail`})
 		//  Handle if user inputted amount to send way above limit.
 		if (this.amountToSend > this.maxAllowed) return reply(this.locale.PAY.EXCEEDING_LIMIT, {status: `warn`, socket:{limit: commanifier(this.maxAllowed)} })
-		//  Handle if user trying to send artcoins above the amount they had
-		if (this.author.inventory.artcoins < this.amountToSend) return reply(this.locale.PAY.INSUFFICIENT_BALANCE, {status: `warn`})
 		//  Parse amount of tax to be deducted from the transaction
 		this.amountOfTax = this.amountToSend * this.tax
 		this.total = Math.round(this.amountToSend - this.amountOfTax)
@@ -76,6 +74,8 @@ class Pay extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
+            //  Handle if user trying to send artcoins above the amount they had
+            if (this.author.inventory.artcoins < this.amountToSend) return reply(this.locale.PAY.INSUFFICIENT_BALANCE, {status: `warn`})
  			//  Send artcoins to target user
 			await db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance

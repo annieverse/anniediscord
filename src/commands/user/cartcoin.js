@@ -32,19 +32,12 @@ class ConvertArtcoins extends Command {
 			footer: `Keep in mind the conversion rate is 1:${this.artcoinsRatio}`
 		})
 		const amountToUse = this.args[0].startsWith(`all`) ? this.user.inventory.artcoins : trueInt(this.args[0])
-		//  Returns if user's artcoins is below the amount of going to be used
-		if (this.user.inventory.artcoins < amountToUse) return reply(this.locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
-			socket: {
-				amount: `${await emoji(`758720612087627787`)}${commanifier(this.user.inventory.artcoins)}`,
-				emoji: await emoji(`790338393015713812`)
-			}
-		})
-		//  Returns if user amount input is below the acceptable threeshold
-		if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {
-			socket: {
-				emoji: await emoji(`692428748838010970`)
-			}
-		})
+        //  Returns if user amount input is below the acceptable threeshold
+        if (!amountToUse || amountToUse < this.artcoinsRatio) return reply(this.locale.CARTCOIN.INVALID_AMOUNT, {
+            socket: {
+                emoji: await emoji(`692428748838010970`)
+            }
+        })
 		const totalGainedExp = amountToUse / this.artcoinsRatio
 		this.confirmation = await reply(this.locale.CARTCOIN.CONFIRMATION, {
 			thumbnail: avatar(this.user.master.id),
@@ -61,6 +54,13 @@ class ConvertArtcoins extends Command {
 			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
+            //  Returns if user's artcoins is below the amount of going to be used
+            if (this.user.inventory.artcoins < amountToUse) return reply(this.locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
+                socket: {
+                    amount: `${await emoji(`758720612087627787`)}${commanifier(this.user.inventory.artcoins)}`,
+                    emoji: await emoji(`790338393015713812`)
+                }
+            })
 			//	Deduct balance & add new exp
 			db.updateInventory({itemId: 52, value: amountToUse, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
 			this.bot.experienceLibs(this.message.member, this.message.guild, this.message.channel).execute(totalGainedExp)
