@@ -26,7 +26,7 @@ class Localizer {
      * @returns {Localizer} This localizer
      */
 	registerLocales() {
-        const fn = `[Localizer.registerLocales()]`
+        const fn = `[LOCALIZATION@REGISTER]`
         const locales = this.locales.filter(loc => loc.endsWith(`json`))
         if (!locales.length) throw Error(`${fn} can't find any locales in '${this.localesPath}'`)
         locales.forEach(file => {

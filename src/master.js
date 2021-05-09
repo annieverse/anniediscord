@@ -58,5 +58,5 @@ module.exports = () => {
         manager.broadcastEval(`(${rewardDistribution}).call(this, '${userId}')`)
         res.status(200).send({ message: `Vote data successfully received.` })
     })
-    server.listen(process.env.PORT, () => logger.info(`Server listening on PORT:${process.env.PORT}`))
+    server.listen(process.env.PORT, () => logger.info(`Server listening on PORT:${process.env.PORT || 3000}`))
 }

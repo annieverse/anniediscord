@@ -111,19 +111,18 @@ class Database {
 
 	/**
 	 * Opening redis database connection
-	 * @returns {boolean}
+	 * @returns {void}
 	 */
 	async connectRedis() {
-		const fn = `[Database.connectRedis()]`
+		const fn = `[DB@REDIS]`
 		const redisClient = await Redis.createClient()
 		redisClient.on(`error`, err => {
 			logger.error(`${fn} ${err}`)
 			process.exit()
 		})
 		redisClient.on(`connect`, () => {
-			logger.info(`${fn} successfully connected to redis.`)
+			logger.info(`${fn} connected`)
 			this.redis = redisClient
-			return true
 		})
 	}
 
@@ -179,19 +178,19 @@ class Database {
 	 *  @returns {QueryResult}
 	 */
 	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=true, ignoreError=false) {
-		const fn = `[Database._query()]`
+		const fn = `[DB@QUERY]`
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
-			if (label) logger.info(`${fn} ${label}`)
+			if (label) logger.debug(`${fn} ${label}`)
 			if (!result) return null
 			if (!rowsOnly) result.stmt = stmt
 			return result
 		}
 		catch (e) {
 			if (ignoreError) return
-			logger.error(`${fn} has failed to run > ${e.stack}\n${stmt}`)
+			logger.error(`${fn} <FAIL> ${e.message}\n${stmt}`)
 			throw e
 		}
 	}
@@ -202,7 +201,7 @@ class Database {
 	 * @returns {boolean}
 	 */
 	async updateInventory({itemId, value=0, operation=`+`, distributeMultiAccounts=false, userId, guildId}) {
-		const fn = `[Database.updateInventory()]`
+		const fn = `[DB@UPDATE_INVENTORY]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!guildId && !distributeMultiAccounts) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
@@ -1615,12 +1614,12 @@ class Database {
 	 */
 	async getUserExp(userId=``, guildId=``) {
 		const initTime = process.hrtime()
-		const fn = `[Database.getUserExp]`
+		const fn = `[DB@GET_USER_EXP]`
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
 		const cache = await this.getCache(key)
 		if (cache !== null) {
-			logger.debug(`${fn} retrieved ${key} from cache. (${getBenchmark(initTime)})`)
+			logger.debug(`${fn} retrieved ${key} from cache (${getBenchmark(initTime)})`)
 			return JSON.parse(cache)
 		}
 		//  Otherwise fetch from db and store it to cache for later use.
@@ -1632,7 +1631,7 @@ class Database {
 		)
 		//  Store for 1 minute expire
 		await this.redis.set(key, JSON.stringify(exp), `EX`, 60)
-		logger.debug(`${fn} retrieved ${key} from database. (${getBenchmark(initTime)})`)
+		logger.debug(`${fn} retrieved ${key} from database (${getBenchmark(initTime)})`)
 		return exp
 	}
 
@@ -1644,7 +1643,7 @@ class Database {
 	 * @returns {QueryResult}
 	 */
 	addUserExp(amount=0, userId=``, guildId=``) {
-		const fn = `[Database.addUserExp]`
+		const fn = `[DB@ADD_USER_EXP]`
 		const key = `EXP_${userId}@${guildId}`
 		//  Update on database.
 		const dbTime = process.hrtime()
@@ -1656,7 +1655,7 @@ class Database {
 				AND guild_id = ?`
 			, `run`
 			, [amount, userId, guildId]
-		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
+		).then(() => logger.debug(`${fn} ${key} - ${amount}EXP (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
 		this.redis.del(key) 
 	}

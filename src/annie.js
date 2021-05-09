@@ -296,8 +296,9 @@ class Annie extends Discord.Client {
      * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
      */
     _listeningToEvents(log=true) {
+        const initTime = process.hrtime()
         require(`./controllers/events`)(this)
-        if (log) logger.info(`Listening to events`)
+        if (log) logger.info(`[SHARD_ID:${this.shard.ids[0]}@EVENT_INIT] events loaded (${getBenchmark(initTime)})`)
     }
 
 
@@ -308,11 +309,12 @@ class Annie extends Discord.Client {
      * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
      */
     _listeningToPort(port=0, log=true) {
+        const initTime = process.hrtime()
         const app = Express()
         app.listen(3000)
         app.get(`/`, (request, response) => response.sendStatus(200))
         if (!log) return
-        logger.info(`Listening to port ${port}`)
+        logger.info(`[SHARD_ID:${this.shard.ids[0]}@PORT_INIT] using port ${port} (${getBenchmark(initTime)})`)
     }
 
     /**
@@ -325,7 +327,7 @@ class Annie extends Discord.Client {
         const initTime = process.hrtime()
         this.db = new Database().connect()
         if (!log) return
-        return logger.info(`Database has successfully connected (${getBenchmark(initTime)})`)
+        return logger.info(`[SHARD_ID:${this.shard.ids[0]}@DATABASE_INIT] db manager loaded (${getBenchmark(initTime)})`)
     }
 
 
@@ -338,7 +340,7 @@ class Annie extends Discord.Client {
         const initTime = process.hrtime()
         const res = new CommandsLoader().execute()
         this.commands = res
-        return logger.info(`${res.totalFiles} Commands has successfully registered (${getBenchmark(initTime)})`)
+        return logger.info(`[SHARD_ID:${this.shard.ids[0]}@COMMANDS_INIT] ${res.totalFiles} commands loaded (${getBenchmark(initTime)})`)
     }
 
 
@@ -361,8 +363,6 @@ class Annie extends Discord.Client {
      *  @returns {void}
      */
     setCooldown(label=``, time=0) {
-        const fn = `[Annie.setCooldown()]`
-        if (time <= 0) logger.error(`${fn} "time" parameter must above 0.`)
         this.db.redis.set(label, moment().format(), `EX`, time)
     }
 
