@@ -9,15 +9,17 @@ const { Webhook } = require(`@top-gg/sdk`)
  *  @return {string}
  */
 const getCustomShardId = (id) => {
-    return `SHARD_ID:${id} | ${shardName[id]}`
+    return `[SHARD_ID:${id}|${shardName[id]}]`
 }
 
 module.exports = () => {
     const { ShardingManager } = require(`discord.js`)
     const manager = new ShardingManager(`./src/annie.js`, { token: process.env.TOKEN })
     const server = express()
-    manager.on(`shardCreate`, shard => logger.info(`${getCustomShardId(shard.id)} successfully launched.`))
-    manager.spawn()
+    manager.on(`shardCreate`, shard => logger.info(`${getCustomShardId(shard.id)} spawned`))
+    //  Spawn shard sequentially with 30 seconds interval. 
+    //  Will send timeout warn in 2 minutes.
+    manager.spawn(`auto`, 30000, 60000*2)
     //  Vote event
     const rewardDistribution = async (userId) => {
         this.users.fetch(userId)
