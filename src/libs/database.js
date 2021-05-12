@@ -974,11 +974,23 @@ class Database {
 		)
 	}
 
+    /**
+     * Pull the total of command usage.
+     * @return {object}
+     */
 	async getTotalCommandUsage() {
-		return this._query(`
-			SELECT COUNT(command_alias) as 'total'
-			FROM commands_log
-		`)
+        const key = `TOTAL_CMD_USAGE`
+        //  Retrieve from cache if available
+		const cache = await this.getCache(key)
+		if (cache !== null) return JSON.parse(cache)
+        //  Else, hit db
+        const res = await this._query(`
+			SELECT COUNT(command_alias) AS 'total'
+			FROM commands_log`
+        )
+        //  Store for 12 hours expire
+		this.redis.set(key, JSON.stringify(res), `EX`, (60*60)*12)
+        return res
 	}
 
 	getResourceData(day=30) {
