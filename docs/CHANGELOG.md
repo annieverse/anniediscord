@@ -1,3 +1,16 @@
+## [7.15.4](https://github.com/klerikdust/anniediscord/compare/v7.15.3...v7.15.4) (2021-05-13)
+
+
+### Bug Fixes
+
+* **localizer:** prevent reload on command trigger. ([0509b6f](https://github.com/klerikdust/anniediscord/commit/0509b6fa6e9226453d8863048449ee1fb0409ee2))
+
+
+### Performance Improvements
+
+* **command:** improved memory handling in command controller. ([bee0e28](https://github.com/klerikdust/anniediscord/commit/bee0e28dba68d77a91ac3002b19db803fe507389))
+* **db:** add caching object to total cmd usage method. ([03a4ee7](https://github.com/klerikdust/anniediscord/commit/03a4ee797d0aaca83c7879805c7ef3a3c73bb9da))
+
 ## [7.15.3](https://github.com/klerikdust/anniediscord/compare/v7.15.2...v7.15.3) (2021-05-09)
 
 
