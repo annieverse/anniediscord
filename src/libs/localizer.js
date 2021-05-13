@@ -18,7 +18,6 @@ class Localizer {
          * @type {array}
          */
         this.localesCode = []
-        this.registerLocales()
     }
 
     /**

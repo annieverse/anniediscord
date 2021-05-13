@@ -93,7 +93,7 @@ class Annie extends Discord.Client {
          * @since 6.0.0
          * @type {external:Locales}
          */
-        this.locale = new Localizer()
+        this.locale = new Localizer().registerLocales()
 
         /**
          * Points Manager.
