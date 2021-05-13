@@ -1,4 +1,3 @@
-const moment = require(`moment`)
 const Response = require(`../libs/response`)
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
@@ -41,51 +40,34 @@ module.exports = async (client={}, message={}) => {
     // Handle if user doesn't have enough permission level to use the command
     if (command.permissionLevel > userPermission.level) return reply.send(``, {customHeader: [`You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`, message.author.displayAvatarURL({dynamic: true})]})
     try {
-        //  Handle if command still in cooldown
-        let userCooldown = await client.isCooldown(instanceId)
-        if (userCooldown) {
-            await reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
-                socket: {
-                    emoji: await client.getEmoji(`AnnieYandereAnim`),
-                    user: message.author.username,
-                    timeLeft: (cooldown - moment().diff(moment(userCooldown), `seconds`, true)).toFixed(2)
-                }
-            })
-            return reply = null
-        }
-        client.setCooldown(instanceId, cooldown)
-        let commandComponents = {bot: client, message: message, commandProperties: command}
-        let PistachioComponents = new Pistachio(commandComponents)
-        let cmd = new command.start(commandComponents)
-        await cmd.execute(PistachioComponents)
-        const cmdFinishTime = client.getBenchmark(initTime)
-        const cmdUsageData = {
+        let userCooldown = await client.db.redis.get(instanceId)
+        if (userCooldown) return reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieYandereAnim`),
+                user: message.author.username,
+                timeLeft: (cooldown - ((Date.now() - userCooldown) / 1000)).toFixed(1)
+            }
+        })
+        client.db.redis.set(instanceId, Date.now(), `EX`, cooldown)
+        const baseCmdControllerComponents = ({bot: client, message: message, commandProperties: command})
+        const cmdComponents = new Pistachio(baseCmdControllerComponents)
+        new command.start(baseCmdControllerComponents).execute(cmdComponents)
+        //	Log and store the cmd usage to database.
+        client.db.recordsCommandUsage({
             guild_id: message.guild.id,
             user_id: message.author.id,
             command_alias: targetCommand,
-            resolved_in: cmdFinishTime
-        }
-        //	Log and store the cmd usage to database.
-        client.logger.info(`${controllerId} ran ${targetCommand} command (${cmdFinishTime})`)
-        //  Prepare for GC
-        reply = null
-        cmd = null
-        PistachioComponents = null
-        commandComponents = null
-        userCooldown = null
-        return client.db.recordsCommandUsage(cmdUsageData)
+            resolved_in: client.getBenchmark(initTime)
+        })
     }
     catch(e) {
         client.logger.warn(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (client.dev) {
-            reply.send(client.locale.en.ERROR_ON_DEV, {
-                socket: {
-                    error: e,
-                    emoji: await client.getEmoji(`AnnieThinking`)
-                }
-            })
-            return reply = null
-        }
+        if (client.dev) return reply.send(client.locale.en.ERROR_ON_DEV, {
+            socket: {
+                error: e,
+                emoji: await client.getEmoji(`AnnieThinking`)
+            }
+        })
         //  Handle unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(client.locale.en.ERROR_UNSUPPORTED_FILE_TYPE, {
