@@ -42,29 +42,23 @@ class User {
 			let findByFullString = await collection.fetch({query:target, limit:1})
 			findByFullString = findByFullString.values().next().value.user
 			if (findByFullString) {
-				this.logger.debug(`${fn} successfully found user by complete string`)
 				return {
 					master: findByFullString,
 					usedKeyword: target
 				}
 			}
 		}
-		catch(e) {
-			this.logger.debug(`${fn} en error occured during user finding through full nickname/username`)
-		}
+		catch(e) {}
 		//  Lookup by full string user ID
 		try {
 			let findByFullStringID = await collection.fetch(target)
 			findByFullStringID = collection.cache.get(target).user
-			this.logger.debug(`${fn} successfully found user by complete string of user ID`)
 			return {
 				master: findByFullStringID,
 				usedKeyword: target
 			}
 		}
-		catch(e) {
-			this.logger.debug(`${fn} an error occured during user finding through full user ID`)
-		}
+		catch(e) {}
 		//  Lookup by iterating tokens
 		let findByStringToken
 		let findByIDToken
@@ -76,31 +70,25 @@ class User {
 				findByStringToken = await collection.fetch({query:token, limit:1})
 				findByStringToken = findByStringToken.values().next().value.user
 				if (findByStringToken) {
-					this.logger.debug(`${fn} successfully found user by using string token '${token}'`)
 					return {
 						master: findByStringToken,
 						usedKeyword: token
 					}
 				}
 			}
-			catch(e) {
-				this.logger.debug(`${fn} an error occured during user finding through string-type token`)
-			}
+			catch(e) {}
 			//  Check for userID-type token
 			try {
 				findByIDToken = await collection.fetch(token)
 				findByIDToken = collection.cache.get(token).user
 				if (findByIDToken) {
-					this.logger.debug(`${fn} successfully found user by using ID token '${token}'`)
 					return {
 						master: findByIDToken,
 						usedKeyword: token
 					}
 				}
 			}
-			catch(e) {
-				this.logger.debug(`${fn} an error occured during user finding through userID-type token`)
-			}
+			catch(e) {}
 			//  Combine tokens and find the closest correlation
 			let combinedTokens = token
 			const neighbors = this.args.filter((element, index) => index !== i)
@@ -111,20 +99,16 @@ class User {
 					findByCombinedStringTokens = await collection.fetch({query:combinedTokens, limit:1})
 					findByCombinedStringTokens = findByStringToken.values().next().value.user
 					if (findByCombinedStringTokens) {
-						this.logger.debug(`${fn} successfully found user by using combined string tokens '${combinedTokens}'`)
 						return {
 							master: findByCombinedStringTokens,
 							usedKeyword: combinedTokens
 						}
 					}
 				}
-				catch(e) {
-					this.logger.debug(`${fn} an error occured during user finding through combined tokens and close correlation`)
-				}
+				catch(e) {}
 			}
 		}
 		//  Fallback
-		this.logger.warn(`${fn} fail to fetch user with keyword '${target}'. None of the searchstring gives adequate result.`)
 		return null
     }
 
@@ -322,7 +306,6 @@ class User {
 	 */
 	isSelf(id) {
 		const fn = `[User.isSelf]`
-		this.bot.logger.debug(`${fn} received from ${this.message.author.id} compare with ${id} is ${this.message.author.id === id}`)
 		return this.message.author.id === id
 	}
 
