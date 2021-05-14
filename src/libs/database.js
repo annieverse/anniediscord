@@ -187,7 +187,6 @@ class Database {
 		}
 		catch (e) {
 			if (ignoreError) return
-			logger.warn(`${fn} <FAIL> ${e.message}\n${stmt}`)
 			throw e
 		}
 	}

@@ -17,6 +17,7 @@
 		"no-irregular-whitespace" : "off",
         "no-empty": "off",
         "no-console": "error",
+        "no-unused-vars": "off",
         "indent": "off",
         "linebreak-style": "off",
         "quotes": [
