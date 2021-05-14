@@ -171,7 +171,6 @@ class Database {
 	 * 	@param {string} [type=`get`] `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
 	 * 	@param {array} [supplies=[]] parameters to be supplied into sql statement.
-	 *  @param {string} [label=``] description for the query. Optional
 	 *  @param {boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional for debugging purposes.
 	 *  @param {boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
 	 *  @private
@@ -183,14 +182,13 @@ class Database {
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
-			if (label) logger.debug(`${fn} ${label}`)
 			if (!result) return null
 			if (!rowsOnly) result.stmt = stmt
 			return result
 		}
 		catch (e) {
 			if (ignoreError) return
-			logger.error(`${fn} <FAIL> ${e.message}\n${stmt}`)
+			logger.warn(`${fn} <FAIL> ${e.message}\n${stmt}`)
 			throw e
 		}
 	}
