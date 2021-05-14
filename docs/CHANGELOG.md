@@ -1,3 +1,15 @@
+## [7.15.5](https://github.com/klerikdust/anniediscord/compare/v7.15.4...v7.15.5) (2021-05-14)
+
+
+### Bug Fixes
+
+* **mail:** reparse args content. ([1c28346](https://github.com/klerikdust/anniediscord/commit/1c28346306cfb84295b4e7177996ee1d7b6fb536))
+
+
+### Performance Improvements
+
+* removed logs in db and permission lib. ([d9825c1](https://github.com/klerikdust/anniediscord/commit/d9825c14ea350be46518632395e5013a99aaa866))
+
 ## [7.15.4](https://github.com/klerikdust/anniediscord/compare/v7.15.3...v7.15.4) (2021-05-13)
 
 
