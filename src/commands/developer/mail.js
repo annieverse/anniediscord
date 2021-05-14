@@ -20,8 +20,13 @@ class Mail extends Command {
 		await this.requestUserMetadata(1)
 		if (!this.user) return reply(`Sadly, the user is unreachable`)
 		//  Handle if user doesn't specify any arg
-		if (!this.fullArgs) return reply(`Who you want me to send DM to? ${await emoji(`AnnieThinking`)}`)
-		const confirmation = await reply(`I'm going to send **${this.user.master}** the following message.\n\`\`\`\n${this.fullArgs}\n\`\`\``)
+        const mailContent = this.message.content
+            .toLowerCase()
+            .split(` `)
+            .slice(2)
+            .join(` `)
+		if (!mailContent) return reply(`Who you want me to send DM to? ${await emoji(`AnnieThinking`)}`)
+		const confirmation = await reply(`I'm going to send **${this.user.master}** the following message.\n\`\`\`\n${mailContent}\n\`\`\``)
 		await this.addConfirmationButton(`send_mail`, confirmation)
  		return this.confirmationButtons.get(`send_mail`).on(`collect`, async r => {
 			//  Handle cancellation
@@ -29,7 +34,7 @@ class Mail extends Command {
 				socket: {emoji: await emoji(`781954016271138857`)}
 			})
 			try {
-				await reply(this.fullArgs, {
+				await reply(mailContent, {
 					field: this.user.master,
 					footer: `This system message is sent by the developer.`
 				})
