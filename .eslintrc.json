@@ -15,6 +15,7 @@
     "rules": {
         "no-mixed-spaces-and-tabs": "off",
 		"no-irregular-whitespace" : "off",
+        "no-empty": "off",
         "no-console": "error",
         "indent": "off",
         "linebreak-style": "off",

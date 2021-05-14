@@ -305,7 +305,6 @@ class User {
 	 * @type {boolean}
 	 */
 	isSelf(id) {
-		const fn = `[User.isSelf]`
 		return this.message.author.id === id
 	}
 

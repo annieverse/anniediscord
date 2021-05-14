@@ -177,7 +177,6 @@ class Database {
 	 *  @returns {QueryResult}
 	 */
 	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=true, ignoreError=false) {
-		const fn = `[DB@QUERY]`
 		//	Return if no statement has found
 		if (!stmt) return null
 		try {

@@ -1,5 +1,4 @@
 const privilege = require(`../config/permissions`)
-const logger = require(`./logger`)
 /**
  * Fetch user's permission level
  * @param {object} [message={}] Target message's instance.
