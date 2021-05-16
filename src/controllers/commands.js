@@ -62,7 +62,7 @@ module.exports = async (client={}, message={}) => {
     }
     catch(e) {
         client.logger.warn(`${controllerId} Oops, something went wrong. > ${e.stack}`)
-        if (client.dev) return reply.send(client.locale.en.ERROR_ON_DEV, {
+        if (!client.dev) return reply.send(client.locale.en.ERROR_ON_DEV, {
             socket: {
                 error: e,
                 emoji: await client.getEmoji(`AnnieThinking`)
