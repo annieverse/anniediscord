@@ -208,7 +208,8 @@ class Database {
 				insert: await this._query(`
 					INSERT INTO user_inventories (item_id, user_id)
 					SELECT $itemId, $userId
-					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)`
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)
+                    AND EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 					, `run`
 					, {itemId: itemId, userId: userId}
 				),
@@ -230,7 +231,8 @@ class Database {
 				insert: await this._query(`
 					INSERT INTO user_inventories (item_id, user_id, guild_id)
 					SELECT $itemId, $userId, $guildId
-					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)
+                    AND EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 					, `run`
 					, {itemId: itemId, userId: userId, guildId: guildId}
 				),
