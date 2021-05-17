@@ -56,7 +56,7 @@
     "express": "^4.17.1",
     "fs-nextra": "^0.5.1",
     "glob": "^7.1.6",
-    "humanize-duration": "^3.23.1",
+    "humanize-duration": "^3.26.0",
     "image-size": "^1.0.0",
     "jimp": "^0.16.0",
     "lodash.clonedeep": "^4.5.0",
