@@ -63,6 +63,7 @@ class Experience {
     execute(expToBeAdded=this.defaultGain) {
     	this.client.db.getUserExp(this.user.id, this.guild.id)
         .then(exp => {
+            if (!exp) return
             const prevExp = this.xpFormula(exp.current_exp)
             const newExp = this.xpFormula(exp.current_exp + expToBeAdded)
             //  Send level up message if new level is higher than previous level

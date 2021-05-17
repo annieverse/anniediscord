@@ -1031,7 +1031,7 @@ class Database {
 	 * @param {string} [userId=``] User's discord id.
 	 * @param {string} [guildId=``] the guild where user get registered.
 	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
-	 * @returns {QueryResult|boolean}
+	 * @returns {void}
 	 */
 	async validateUser(userId=``, guildId=``, userName=``) {
 		const fn = `[Database.validateUser()]`
@@ -1039,50 +1039,42 @@ class Database {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
 		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
         //  If user already validated, don't run.
-        const cacheId = `${userId}@${guildId}`
-        const validationCacheKey = `VALIDATED_USERS_POOL`
-        let validatedUsersPool = JSON.parse(await this.getCache(validationCacheKey) || `[]`)
-        if (JSON.parse(validatedUsersPool.includes(cacheId))) return false
-        validatedUsersPool[validatedUsersPool.length] = cacheId
-        const stringifiedPool = JSON.stringify(validatedUsersPool)
-        if (validatedUsersPool.length <= 0) {
-            //  Flush in 24 hours
-            this.redis.set(validationCacheKey, stringifiedPool, `EX`, (60 * 60) * 24)
-        }
-        else {
-            this.redis.set(validationCacheKey, stringifiedPool) 
-        }
+        const cacheId = `VALIDATEDUSER_${userId}@${guildId}`
+        if (await this.redis.exists(cacheId)) return
+        //  Flush in 12 hours
+        this.redis.set(cacheId, 1, `EX`, (60 * 5)
         //  Otherwise, perform insertion check query.
-		const res = await this._query(`
+		this._query(`
 			INSERT INTO users(user_id, name)
 			SELECT $userId, $userName
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 			, `run`
 			, {userId: userId, userName: userName}
 		)
-		let secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		let test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_dailies`)
-			logger.info(`New USER_ID ${userId} has been registered in user_dailies table.`)
-		}
-		secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_exp`)
-			logger.info(`New USER_ID ${userId} has been registered in user_exp table.`)
-		}
-		secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_reputations`)
-			logger.info(`New USER_ID ${userId} has been registered in user_reputations table.`)
-		}
-		if (res.changes >= 1) {
-			logger.info(`New USER_ID ${userId} has been registered in users table.`)
-		}
-		return res
-	}
+        .then(() => {
+            this._query(`
+                INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
+                SELECT datetime('now','-1 day'), -1, $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )
+            this._query(`
+                INSERT INTO user_exp(user_id, guild_id)
+                SELECT $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )
+            this._query(`
+                INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
+                SELECT datetime('now','-1 day'), $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )	
+        })
+    }
 
 	/**
 	 * Delete a user from user table entries.
