@@ -1,3 +1,10 @@
+## [7.16.1](https://github.com/klerikdust/anniediscord/compare/v7.16.0...v7.16.1) (2021-05-17)
+
+
+### Bug Fixes
+
+* **db:** rework validateUser method. ([8c8cd19](https://github.com/klerikdust/anniediscord/commit/8c8cd19aef3f7c88cdca6d207ca58971005d685b))
+
 # [7.16.0](https://github.com/klerikdust/anniediscord/compare/v7.15.5...v7.16.0) (2021-05-17)
 
 
