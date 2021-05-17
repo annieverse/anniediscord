@@ -1,3 +1,17 @@
+# [7.16.0](https://github.com/klerikdust/anniediscord/compare/v7.15.5...v7.16.0) (2021-05-17)
+
+
+### Bug Fixes
+
+* **commandController:** dev err on prod. ([0fa00e5](https://github.com/klerikdust/anniediscord/commit/0fa00e5f2cc264ace5a931a082b26d3292209036))
+* **ui:** oversize relationship card. ([80791e0](https://github.com/klerikdust/anniediscord/commit/80791e0275e3e972e87f7bdb6bf5d634e030966b))
+
+
+### Features
+
+* **logger:** swapping logger framework from winston to pino. ([a70fabc](https://github.com/klerikdust/anniediscord/commit/a70fabc48331602070a168387a991bb71339b151))
+* **setRelationship:** relationship tree now is global has shared connection. ([e4fcf0e](https://github.com/klerikdust/anniediscord/commit/e4fcf0e7d2edbcc6505389f99c5355db66cea336))
+
 ## [7.15.5](https://github.com/klerikdust/anniediscord/compare/v7.15.4...v7.15.5) (2021-05-14)
 
 
