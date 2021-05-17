@@ -8,21 +8,19 @@ class UI {
 	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {object} [lbData={}] returned result from `Database.indexRanking()`
-	 * @param {function} [nameParser] user_id parser tool. Ref to `Pistachio.name()`
-	 * @param {function} [avatarParser] user's avatar parser tool. Ref to `Pistachio.avatar()`
+     * @parma {Client} client Current bot instance.
 	 * @return {Canvas}
 	 */
-	constructor(user={}, lbData={}, nameParser, avatarParser) {
+	constructor(user={}, lbData={}, client) {
 		this.user = user
 		this.lbData = lbData
-		this.nameParser = nameParser
-		this.avatarParser = avatarParser
+        this.client = client
 	}
 
 	async build() {
 		let card = new Cards({width: 520, height: 550, theme: `light`}).createBase({})
 		let topTenRows = this.lbData.slice(0, 10)
-		await card.addCover({ img: await urlToBuffer(this.avatarParser(topTenRows[0].id)), gradient: true })
+		await card.addCover({ img: await urlToBuffer(await this.client.getUserAvatar(topTenRows[0].id)), gradient: true })
 		for (let row in topTenRows) {
 			let ranking = parseInt(row) + 1
 			let colorByRank = ranking <= 1 ? `crimson` : ranking <= 2 ? `blue` : ranking <= 3 ? `darkbrown` : `text`
@@ -51,12 +49,12 @@ class UI {
 			//  User name
 			//  This one required to be async, since we use canvas constructor's .resolveImage()
 			//  to handle the avatar.
-			const userName = this.nameParser(topTenRows[row].id)
+			const userName = await this.client.getUsername(topTenRows[row].id)
 			await card.addContent({
 				main: userName.length >= 18 ? userName.slice(0, 18) + `...` : userName,
 				fontWeight: `bold`,
 				size: 12,
-				avatar: await this.avatarParser(topTenRows[row].id, true), 
+				avatar: await this.client.getUserAvatar(topTenRows[row].id, true), 
 				avatarRadius: 10,
 				mainColor: colorByRank,
 				marginLeft: 140,

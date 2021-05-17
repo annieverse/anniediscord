@@ -15,19 +15,19 @@ class Hug extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply }) {
+    async execute() {
         await this.requestUserMetadata(2)
         await this.requestAuthorMetadata(2)
         const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
         //  Lonely hug
-        if (!this.user || !this.fullArgs) return reply(this.locale.HUG.THEMSELVES, {
+        if (!this.user || !this.fullArgs) return this.reply(this.locale.HUG.THEMSELVES, {
             socket: {user: this.author.master.username},
             imageGif: body.link,
         })
         //  Hugging other user
-        return reply(this.locale.HUG.OTHER_USER, {
+        return this.reply(this.locale.HUG.OTHER_USER, {
             socket: {user: this.author.master.username, targetUser: this.user.master.username},
             imageGif: body.link
         })

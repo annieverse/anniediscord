@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Output bot's latency
  * @author klerikdust
@@ -10,14 +11,14 @@ class Ping extends Command {
 
 	/**
 	 * Running command workflow
-	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 * @return {void}
 	 */
-	async execute({ reply, commanifier, emoji }) {
-		return reply(this.locale.REQUEST_PING, {
+	async execute() {
+		return this.reply(this.locale.REQUEST_PING, {
 			status: `success`,
 			socket: {
 				ping: commanifier(Math.floor(this.bot.ws.ping)),
-				emoji: await emoji(`789212493096026143`)
+				emoji: await this.bot.getEmoji(`789212493096026143`)
 			}
 		})
 	}

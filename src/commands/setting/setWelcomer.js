@@ -4,6 +4,7 @@ const moment = require(`moment`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
 const { v4: uuidv4 } = require(`uuid`)
+const findRole = require(`../../utils/findRole`)
 
 /**
  * Manage welcomer module for your guild.
@@ -39,21 +40,20 @@ class SetWelcomer extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, name, emoji }) {
+    async execute() {
         await this.requestUserMetadata(1)
-        //  Handle if user doesn't specify any arg
-        if (!this.fullArgs) return reply(this.locale.SETWELCOMER.GUIDE, {
+        if (!this.fullArgs) return this.reply(this.locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,
-            header: `Hi, ${name(this.user.master.id)}!`,
+            header: `Hi, ${this.user.master.username}!`,
             socket: {
                 prefix: this.bot.prefix,
-                emoji: await emoji(`692428660824604717`)
+                emoji: await this.bot.getEmoji(`692428660824604717`)
             }
         })
         //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(this.args[0].toLowerCase())) return reply(this.locale.SETWELCOMER.INVALID_ACTION, {
+        if (!this.actions.includes(this.args[0].toLowerCase())) return this.reply(this.locale.SETWELCOMER.INVALID_ACTION, {
             socket: {availableActions: this.actions.join(`, `)}
         })   
         //  Run action
@@ -64,36 +64,32 @@ class SetWelcomer extends Command {
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
         //  This is the sub-part of main configuration such as welcomer's channel, text, etc
         this.subConfig = this.guildConfigurations.get(this.selectedModule) 
-        return this[this.args[0].toLowerCase()](...arguments)
+        return this[this.args[0].toLowerCase()]()
     }
 
     /**
      * Enabling welcomer module
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
-     * @returns {string}
+     * @return {void}
      */
-    async enable({ reply, name }) {
-        const fn = `[setWelcomer.enable()]`
-        //  Handle if welcomer already enabled before the action.
+    async enable() {
         if (this.primaryConfig.value) {
             const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
-            return reply(this.locale.SETWELCOMER.ALREADY_ENABLED, {
+            return this.reply(this.locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
-                    user: name(this.primaryConfig.setByUserId),
+                    user: await this.bot.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
                 }
             })
         }
         //  Update configs
-        await this.bot.db.updateGuildConfiguration({
+        this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 1,
             guild: this.message.guild,
             setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} WELCOMER_MODULE for GUILD_ID:${this.message.guild.id} has been enabled.`)
-        return reply(this.locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
+        return this.reply(this.locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
             status: `success`,
             socket: {prefix: this.bot.prefix}
         })
@@ -101,51 +97,42 @@ class SetWelcomer extends Command {
 
     /**
      * Disabling welcomer module
-     * @returns {string}
+     * @return {void}
      */
-    async disable({ reply }) {
-        const fn = `[setWelcomer.disable()]`
-        //  Handle if welcomer already disabled before the action.
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}})
-        //  Update configs
-        await this.bot.db.updateGuildConfiguration({
+    async disable() {
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}})
+        this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 0,
             guild: this.message.guild,
             setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} WELCOMER_MODULE for GUILD_ID:${this.message.guild.id} has been disabled.`)
-        return reply(this.locale.SETWELCOMER.SUCCESSFULLY_DISABLED, {status: `success`})
+        return this.reply(this.locale.SETWELCOMER.SUCCESSFULLY_DISABLED, {status: `success`})
     }
 
     /**
      * Set new target channel for welcomer module
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
-     * @returns {string}
+     * @return {void}
      */
-    async channel({ reply, emoji }) {
-        const fn = `[setWelcomer.channel()]`
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
+    async channel() {
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {socket: {prefix:this.bot.prefix}})
+        if (!this.args[1]) return this.reply(this.locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {socket: {prefix:this.bot.prefix}})
         //  Do channel searching by three possible conditions
         const searchChannel = this.message.mentions.channels.first()
         || this.message.guild.channels.cache.get(this.args[1])
         || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {socket: {emoji: await emoji(`692428578683617331`)} })
-        //  Update configs
-        await this.bot.db.updateGuildConfiguration({
+        if (!searchChannel) return this.reply(this.locale.SETWELCOMER.INVALID_CHANNEL, {socket: {emoji: await this.bot.getEmoji(`692428578683617331`)} })
+        this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: searchChannel.id,
             guild: this.message.guild,
             setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} WELCOMER_CHANNEL for GUILD_ID:${this.message.guild.id} has been updated.`)
-        return reply(this.locale.SETWELCOMER.CHANNEL_SUCCESSFULLY_REGISTERED, {
+        return this.reply(this.locale.SETWELCOMER.CHANNEL_SUCCESSFULLY_REGISTERED, {
             status: `success`,
             socket: {channel: `<#${searchChannel.id}>`}
         })
@@ -153,52 +140,48 @@ class SetWelcomer extends Command {
 
     /**
      * Set message to be attached in the welcomer.
-     * @returns {string}
+     * @return {void}
      */
-    async text({ reply, emoji }) {
-        const fn = `[setWelcomer.text()]`
+    async text() {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if text content isn't provided
-        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
+        if (!this.args[1]) return this.reply(this.locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
             socket: {prefix: this.bot.prefix},
         })
         //  Update configs
         const welcomerText = this.args.slice(1).join(` `)
-        await this.bot.db.updateGuildConfiguration({
+        this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: welcomerText,
             guild: this.message.guild,
             setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} WELCOME_TEXT for GUILD_ID:${this.message.guild.id} has been updated.`)
-        await reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
-        this.tipsToPreview = await reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: await emoji(`692428927620087850`)} })
+        await this.reply(this.locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {status: `success`})
+        this.tipsToPreview = await this.reply(this.locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: await this.bot.getEmoji(`692428927620087850`)} })
         await this.addConfirmationButton(`SHOULD_PREVIEW?`, this.tipsToPreview, this.user.master.id)
-        this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview(...arguments))
+        this.confirmationButtons.get(`SHOULD_PREVIEW?`).on(`collect`, () => this.preview())
     }
 
     /**
      * Preview this guild's welcomer message
-     * @returns {reply}
+     * @return {void}
      */
-    async preview({ reply, emoji }) {
-        const fn = `[setWelcomer.preview()]`
+    async preview() {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
-        this.renderingMsg = await reply(this.locale.COMMAND.FETCHING, {
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
+        this.renderingMsg = await this.reply(this.locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
                 user: this.user.master.id,
                 command: `WELCOMER_PREVIEW`,
-                emoji: await emoji(`790994076257353779`)
+                emoji: await this.bot.getEmoji(`790994076257353779`)
             }
         })
-        const img = await new GUI(this.message.guild.members.cache.get(this.message.author.id), this.bot).build()
-        this.logger.info(`${fn} previewing welcomer message for GUILD_ID:${this.message.guild.id}`)
+        const img = await new GUI(this.message.member, this.bot).build()
         this.renderingMsg.delete()
-        return reply(this._parseWelcomeText(), {
+        return this.reply(this._parseWelcomeText(), {
             simplified: true,
             prebuffer: true,
             image: img
@@ -207,14 +190,13 @@ class SetWelcomer extends Command {
 
     /**
      * Adding role when user joined the guild 
-     * @returns {reply}
+     * @return {void}
      */
-    async role({ reply, emoji, findRole }) {
-        const fn = `[setWelcomer.role()]`
+    async role() {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:this.bot.prefix}}) 
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply(this.locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
+        if (!this.args[1]) return this.reply(this.locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
             socket: {prefix: this.bot.prefix},
             status: `warn`
         })
@@ -222,30 +204,29 @@ class SetWelcomer extends Command {
         let specifiedRoles = this.args.slice(1)
         for (let i=0; i<specifiedRoles.length; i++) {
             //  Do role searching
-            const searchRole = findRole(specifiedRoles[i])
+            const searchRole = findRole(specifiedRoles[i], this.message.guild)
             //  Handle if target role couldn't be found
-            if (!searchRole) return reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
+            if (!searchRole) return this.reply(this.locale.SETWELCOMER.INVALID_ROLE, {status: `fail`})
             //  Handle if role is higher than annie
-            if (searchRole.position > this.annieRole.position) return reply(this.locale.SETWELCOMER.ROLE_TOO_HIGH, {
+            if (searchRole.position > this.annieRole.position) return this.reply(this.locale.SETWELCOMER.ROLE_TOO_HIGH, {
                 color: `crimson`,
                 socket: {
                     role: searchRole,
                     annieRole: this.annieRole.name,
-                    emoji: await emoji(`692428578683617331`)
+                    emoji: await this.bot.getEmoji(`692428578683617331`)
                 }
             })
             rolesContainer.push(searchRole)
         }
         //  Update configs
-        await this.bot.db.updateGuildConfiguration({
+        this.bot.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: rolesContainer.map(role => role.id),
             guild: this.message.guild,
             setByUserId: this.user.master.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} ${rolesContainer.length} new role(s) has been registered for GUILD_ID:${this.message.guild.id}`)
-        return reply(this.locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
+        return this.reply(this.locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
             socket: {role: rolesContainer.join(` `)},
             status: `success`
         })
@@ -255,21 +236,21 @@ class SetWelcomer extends Command {
 	 * Managing welcomer's image. 
 	 * @return {void}
 	 */
-	async image({ reply, emoji }) {
+	async image() {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
 			socket: {prefix: this.bot.prefix}
 		}) 
 		const { isValidUpload, url } = this.getImage()
-		if (!url) return reply(this.locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
+		if (!url) return this.reply(this.locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
 			socket: {
-				emoji: await emoji(`692428692999241771`),
+				emoji: await this.bot.getEmoji(`692428692999241771`),
 				prefix: this.bot.prefix
 			}
 		})	
-		if (!isValidUpload) return reply(this.locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+		if (!isValidUpload) return this.reply(this.locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
 			socket: {
-				emoji: await emoji(`692428969667985458`) 
+				emoji: await this.bot.getEmoji(`692428969667985458`) 
 			}	
 		})
         const id = uuidv4()
@@ -281,17 +262,17 @@ class SetWelcomer extends Command {
 		catch (e) {
 			return this.logger.error(`Fail to render custom welcomer image. > ${e.stack}`)
 		}
-		const confirmation = await reply(this.locale.SETWELCOMER.CONFIRMATION_IMAGE, {
-        	image: await new GUI(this.message.guild.members.cache.get(this.message.author.id), this.bot, id).build(),
+		const confirmation = await this.reply(this.locale.SETWELCOMER.CONFIRMATION_IMAGE, {
+        	image: await new GUI(this.message.member, this.bot, id).build(),
 			prebuffer: true
 		})		
 		await this.addConfirmationButton(`applyCustomWelcomerImage`, confirmation)
         return this.confirmationButtons.get(`applyCustomWelcomerImage`).on(`collect`, async r => {
 			//  Handle cancellation
-			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await emoji(`781954016271138857`)}
+			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
 			})
-			await this.bot.db.updateGuildConfiguration({
+			this.bot.db.updateGuildConfiguration({
 				configCode: this.selectedModule,
 				customizedParameter: id, 
 				guild: this.message.guild,
@@ -300,13 +281,12 @@ class SetWelcomer extends Command {
 			})
             //  Finalize
             this.finalizeConfirmation(r)
-            reply(this.locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
+            this.reply(this.locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
                 socket: {
-                    emoji: await emoji(`789212493096026143`)
+                    emoji: await this.bot.getEmoji(`789212493096026143`)
                 }
             })
         })
-
 	}
 	
 	/** 
@@ -331,36 +311,36 @@ class SetWelcomer extends Command {
 	 * Theme management
 	 * @return {void}
 	 */
-	async theme({ reply, emoji }) {
+	async theme() {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return this.reply(this.locale.SETWELCOMER.ALREADY_DISABLED, {
 			socket: {prefix: this.bot.prefix}
 		}) 
-		if (!this.args[1]) return reply(this.locale.SETWELCOMER.THEME_MISSING_NAME, {
+		if (!this.args[1]) return this.reply(this.locale.SETWELCOMER.THEME_MISSING_NAME, {
 			socket: {
 				prefix: this.bot.prefix,
-				emoji: await emoji(`AnniePeek1`)
+				emoji: await this.bot.getEmoji(`AnniePeek1`)
 			}
 		})
 		const availableThemes = [`light`, `dark`]
-		if (!availableThemes.includes(this.args[1])) return reply(this.locale.SETWELCOMER.THEME_INVALID, {
+		if (!availableThemes.includes(this.args[1])) return this.reply(this.locale.SETWELCOMER.THEME_INVALID, {
 			socket: {
-				emoji: await emoji(`AnnieMad`)
+				emoji: await this.bot.getEmoji(`AnnieMad`)
 			}
 		})
-		await this.bot.db.updateGuildConfiguration({
+		this.bot.db.updateGuildConfiguration({
 				configCode: this.selectedModule,
 				customizedParameter: this.args[1], 
 				guild: this.message.guild,
 				setByUserId: this.message.author.id,
 				cacheTo: this.guildConfigurations
 			})
-		return reply(this.locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
+		return this.reply(this.locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
 			status: `success`,
 			socket: {
 				theme: this.args[1],
 				user: this.message.author.username,
-				emoji: await emoji(`789212493096026143`)
+				emoji: await this.bot.getEmoji(`789212493096026143`)
 			}
 		})
 	}
@@ -373,10 +353,9 @@ class SetWelcomer extends Command {
     _parseWelcomeText() {
         let text = this.guildConfigurations.get(`WELCOMER_TEXT`).value
         text = text.replace(/{{guild}}/gi, `**${this.message.guild.name}**`)
-        text = text.replace(/{{user}}/gi, this.message.guild.members.cache.get(this.message.author.id))
+        text = text.replace(/{{user}}/gi, this.message.member)
         return text
     }
-
 }
 
 module.exports.help = {

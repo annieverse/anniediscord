@@ -480,7 +480,7 @@
     },
     "QUEST": {
         "DISPLAY": "\n\n╭*:;,．★ ～☆*────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
-        "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰─You've completed it and received {{reward}}!",
+        "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰ You've completed it and received {{reward}}!",
         "INCORRECT_ANSWER": "Boo, incorrect answer!",
         "FOOTER": "Type one correct answer to complete the quest.",
         "FETCHING": "{{emoji}} `Looking into the quest board...`",
@@ -568,7 +568,7 @@
         "MISSING_ARGS": "Please use this command like: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
-        "SHORT_GUIDE": "Please include the follow-up message **{0}**!"
+        "SHORT_GUIDE": "Please include the message that you want me to read! {{emoji}}"
     },
     "SELLFRAGMENTS": {
         "GUIDE": "I know you are probably tired looking at your collected fragments sitting there in your inventory doing nothing. But fortunately, with this command it will allows you to sell those fragments for a few amount of artcoins! interested to try? follow the format below. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\ne.g. __{{prefix}}sellfrag 10__ or __{{prefix}}sellfrag all__\n\n> Keep in mind, the conversion rate is **{{rate}}**, so you need to have at least {{emojiFragment}}**{{min}} Fragments** in order to use this command!",
@@ -815,6 +815,7 @@
         "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!"
     },
     "VOTE": {
+        "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details.",
         "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰─While we at it, why not **{{page}}** about me first? {{emoji}}",
         "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
     }

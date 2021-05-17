@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const { MessageEmbed } = require(`discord.js`)
 /**
  * Display user's avatar
  * @author klerikdust
@@ -14,27 +15,20 @@ class Avatar extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, displayAvatar }) {
+	async execute() {
 		await this.requestUserMetadata(1)
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
-		this.avatarInit = await reply(this.locale.AVATAR.INITIAL)
-		await this.delay(1750)
-		this.avatarInit.delete()
-		return displayAvatar(this.user.master.id)
-	}
-
-	/**
-	 * Set a time delay
-	 * @param {number} [ms=0]
-	 * @return {promise}
-	 */
-	async delay(ms=0) {
-		return new Promise(res => setTimeout(res, ms))
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+        await this.message.react(`📸`)
+		const [avatar, name] = [this.user.master.displayAvatarURL({ type: `png`, size:512 }), this.user.master.username]
+		const embed = new MessageEmbed()
+		.setImage(avatar)
+		.setAuthor(name, avatar)
+		.setColor(`#912f46`)
+		return this.message.channel.send(embed)
 	}
 }
-
 
 module.exports.help = {
 	start: Avatar,

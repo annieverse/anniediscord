@@ -16,30 +16,29 @@ class Reputation extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, bot:{db} }) {
+    async execute() {
 		await this.requestUserMetadata(2)
 		await this.requestAuthorMetadata(2)
 		const now = moment()
-		const lastGiveAt = await db.toLocaltime(this.author.reputations.last_giving_at)
+		const lastGiveAt = await this.bot.db.toLocaltime(this.author.reputations.last_giving_at)
 		//  Returns if user's last reps give still under 23 hours.
-		if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
+		if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return this.reply(this.locale.GIVE_REPUTATION.IN_COOLDOWN, {
 			thumbnail: this.author.master.displayAvatarURL(),
 			socket: {time: moment(lastGiveAt).add(...this.cooldown).fromNow()},
 		})
 		//	Displays short-guide if user doesn't specify any parameter
-		if (!this.fullArgs) return reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {
-			socket: {emoji: await emoji(`692429004417794058`), prefix: this.bot.prefix} 
+		if (!this.fullArgs) return this.reply(this.locale.GIVE_REPUTATION.SHORT_GUIDE, {
+			socket: {emoji: await this.bot.getEmoji(`692429004417794058`), prefix: this.bot.prefix} 
 		})
 		//	Handle if target user is invalid
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
 		//	Handle if user is trying to rep themselves
-		if (this.user.isSelf) return reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: await emoji(`692428748838010970`)} })
-
-		await db.addUserReputation(1, this.user.master.id, this.author.master.id, this.message.guild.id)
-		await db.updateReputationGiver(this.author.master.id, this.message.guild.id)
-		return reply(this.locale.GIVE_REPUTATION.SUCCESSFUL, {
+		if (this.user.master.id === this.message.author.id) return this.reply(this.locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: await this.bot.getEmoji(`692428748838010970`)} })
+		this.bot.db.addUserReputation(1, this.user.master.id, this.author.master.id, this.message.guild.id)
+		this.bot.db.updateReputationGiver(this.author.master.id, this.message.guild.id)
+		return this.reply(this.locale.GIVE_REPUTATION.SUCCESSFUL, {
 			status: `success`,
 			thumbnail: this.user.master.displayAvatarURL(),
 			socket: {user: this.user.master.username}

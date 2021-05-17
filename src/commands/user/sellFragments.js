@@ -1,5 +1,7 @@
 const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/sellFragment`)
+const commanifier = require(`../../utils/commanifier`)
+const trueInt = require(`../../utils/trueInt`)
 /**
  * Exchange all your unused fragments into artcoins!
  * @author klerikdust
@@ -27,65 +29,64 @@ class SellFragments extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, trueInt, avatar, commanifier, name }) {
+    async execute() {
     	await this.requestUserMetadata(2)
     	//  Display guild if user doesn't specify any arg
-    	if (!this.fullArgs) return reply(this.locale.SELLFRAGMENTS.GUIDE, {
-    		header: `Hi, ${name(this.user.master.id)}!`,
-    		color: `crimson`,
+    	if (!this.fullArgs) return this.reply(this.locale.SELLFRAGMENTS.GUIDE, {
+    		header: `Hi, ${this.user.master.username}!`,
     		image: `banner_sellfragments`,
     		socket: {
     			prefix: this.bot.prefix,
-    			emoji: await emoji(`700731914801250324`),
-    			emojiFragment: await emoji(`577121735917174785`),
+    			emoji: await this.bot.getEmoji(`700731914801250324`),
+    			emojiFragment: await this.bot.getEmoji(`577121735917174785`),
     			rate: `${this.rate}:1`,
     			min: this.minimumToSell
     		}
     	})
     	//  Handle if user doesn't have any fragments in their inventory
-    	if (!this.user.inventory.fragments) return reply(this.locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
-    		socket: {emoji: await emoji(`692428748838010970`)},
+    	if (!this.user.inventory.fragments) return this.reply(this.locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
+    		socket: {emoji: await this.bot.getEmoji(`692428748838010970`)},
     	})
     	//  Handle if user specified an invalid amount
-    	this.amountToSell = this.args[0].startsWith(`all`) ? this.user.inventory.fragments : trueInt(this.args[0])
-    	if (!this.amountToSell) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
+    	const amountToSell = this.args[0].startsWith(`all`) ? this.user.inventory.fragments : trueInt(this.args[0])
+    	if (!amountToSell) return this.reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
     	//  Handle if user's specified amount is lower than the minimum sell 
-    	if (this.amountToSell < this.minimumToSell) return reply(this.locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
+    	if (amountToSell < this.minimumToSell) return this.reply(this.locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
     		socket: {
     			amount: this.minimumToSell,
-    			emoji: await emoji(`692428748838010970`)
+    			emoji: await this.bot.getEmoji(`692428748838010970`)
     		}
     	})
     	//  Calculate amount to receive
-    	this.receivedAmount = Math.floor(this.amountToSell / this.rate)
+    	const receivedAmount = Math.floor(amountToSell / this.rate)
     	//  Confirmation
-    	this.confirmation = await reply(this.locale.SELLFRAGMENTS.CONFIRMATION, {
+    	const confirmation = await this.reply(this.locale.SELLFRAGMENTS.CONFIRMATION, {
     		prebuffer: true,
-    		image: await new GUI(this.user, this.receivedAmount).build(),
+    		image: await new GUI(this.user, receivedAmount).build(),
     		socket: {
-    			fragmentsAmount: commanifier(this.amountToSell),
-    			artcoinsAmount: commanifier(this.receivedAmount),
-    			fragmentsEmoji: await emoji(`692428748838010970`),
-    			artcoinsEmoji: await emoji(`758720612087627787`) 
+    			fragmentsAmount: commanifier(amountToSell),
+    			artcoinsAmount: commanifier(receivedAmount),
+    			fragmentsEmoji: await this.bot.getEmoji(`577121735917174785`),
+    			artcoinsEmoji: await this.bot.getEmoji(`758720612087627787`) 
     		}
     	})
-    	await this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, this.confirmation, this.user.master.id)
+    	await this.addConfirmationButton(`SELLFRAGMENTS_CONFIRMATION`, confirmation, this.user.master.id)
     	this.confirmationButtons.get(`SELLFRAGMENTS_CONFIRMATION`).on(`collect`, async r => {
 			//  Handle cancellation
-			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await emoji(`781954016271138857`)}
+			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
 			})
             //  Prevent user from selling over the amount of their owned fragments
-            if (this.amountToSell > this.user.inventory.fragments) return reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
+            if (amountToSell > this.user.inventory.fragments) return this.reply(this.locale.SELLFRAGMENTS.INVALID_AMOUNT)
     		//  Deliver artcoins to user's inventory
-    		await this.bot.db.updateInventory({itemId: 52, userId: this.user.master.id, guildId: this.message.guild.id, value: this.receivedAmount, operation: `+`})
+    		this.bot.db.updateInventory({itemId: 52, userId: this.user.master.id, guildId: this.message.guild.id, value: receivedAmount, operation: `+`})
     		//  Deduct fragments from user's inventory
-    		await this.bot.db.updateInventory({itemId: 51, userId: this.user.master.id, guildId: this.message.guild.id, value: this.amountToSell, operation: `-`})
+    	    this.bot.db.updateInventory({itemId: 51, userId: this.user.master.id, guildId: this.message.guild.id, value: amountToSell, operation: `-`})
     		//  Successful
             this.finalizeConfirmation(r)
-    		return reply(``, {customHeader: [`Fragments has been sold!`, avatar(this.user.master.id)]})
+    		return this.reply(``, {customHeader: [`Fragments has been sold!`, this.user.master.displayAvatarURL()]}) 
     	})
 	}
 }

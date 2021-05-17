@@ -17,26 +17,27 @@ class DatabaseKits extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, name, bot:{db} }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return reply(this.locale.DBKITS.AUTHORIZED, {socket: {user: name(this.user.master.id)}})
-
+		if (!this.fullArgs) return this.reply(this.locale.DBKITS.AUTHORIZED, {
+            socket: {user: this.user.master.username}
+        })
 		try {
 
 			//	Parse statement
 			const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
 			//	Make sure the the stmt is valid
-			if (!stmt) return reply(this.locale.DBKITS.MISSING_STMT)
+			if (!stmt) return this.reply(this.locale.DBKITS.MISSING_STMT)
 			//	Parse flag
 			const flag = this.fullArgs.match(/[^--]*$/)[0].substring(0, 3)
 			//	Flag check as well
-			if (!flag) return reply(this.locale.DBKITS.MISSING_FLAG)
+			if (!flag) return this.reply(this.locale.DBKITS.MISSING_FLAG)
 
 			const initTime = process.hrtime()
-			const result = await db._query(stmt, flag)
+			const result = await this.bot.db._query(stmt, flag)
 			const parsedResult = JSON.stringify(result).replace(/\,/g, `,\n`)
-			return reply(this.locale.EXEC_CODE, {
+			return this.reply(this.locale.EXEC_CODE, {
 				socket: {
 					time: this.bot.getBenchmark(initTime),
 					result: parsedResult.slice(0, 2000)
@@ -45,7 +46,7 @@ class DatabaseKits extends Command {
 		}
 		catch (e) {
 			//	Catching failed query
-			return reply (this.locale.ERROR, {socket: {error: e}, color: `red`})
+			return this.reply(this.locale.ERROR, {socket: {error: e}, color: `red`})
 		}
 	}
 }

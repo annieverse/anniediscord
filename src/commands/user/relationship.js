@@ -15,36 +15,36 @@ class Relationship extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, emoji, name, avatar }) {
+	async execute() {
         await this.requestUserMetadata(2)
         await this.requestAuthorMetadata(2)
         //  Handle if user doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID)
+        if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
         //  Handle if user doesn't have any relationships
-        if (!this.user.relationships.length) return reply(this.locale.RELATIONSHIP.IS_EMPTY, {
+        if (!this.user.relationships.length) return this.reply(this.locale.RELATIONSHIP.IS_EMPTY, {
             socket: {prefix: this.bot.prefix}
         })
-        this.fetching = await reply(this.locale.COMMAND.FETCHING, {
+        const fetching = await this.reply(this.locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
                 command: `relationship`,
-                emoji: await emoji(`790994076257353779`),
+                emoji: await this.bot.getEmoji(`790994076257353779`),
                 user: this.user.master.id
             }
         })
-        await reply(this.locale.COMMAND.TITLE, {
+        await this.reply(this.locale.COMMAND.TITLE, {
             simplified: true,
             prebuffer: true,
             socket: {
                 command: `Relationship`,
-                emoji: await emoji(`692429004417794058`),
-                user: name(this.user.master.id)
+                emoji: await this.bot.getEmoji(`692429004417794058`),
+                user: this.user.master.username
             },
-            image: await new GUI(this.user, name, avatar, this.bot, this.author).build()
+            image: await new GUI(this.user, this.bot, this.author).build()
         })
-        return this.fetching.delete()
+        return fetching.delete()
     }
 }
 

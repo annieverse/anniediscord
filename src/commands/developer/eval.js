@@ -18,12 +18,12 @@ class DeveloperTool extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply }) {
+	async execute() {
 		const initTime = process.hrtime()
 		try {
 			let evaled = await eval(this.args.join(` `))
 			if (typeof evaled !== `string`) evaled = require(`util`).inspect(evaled)
-			return reply(this.locale.EXEC_CODE, {
+			return this.reply(this.locale.EXEC_CODE, {
 				socket: {
 					time: this.bot.getBenchmark(initTime),
 					result: evaled.slice(0, 2000)
@@ -31,7 +31,7 @@ class DeveloperTool extends Command {
 			})
 		} 
 		catch (err) {
-			return reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
+			return this.reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
 		}
 	}
 }

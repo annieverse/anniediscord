@@ -17,28 +17,27 @@ class Inventory extends Command {
 
 	/**
 	 * Running command workflow
-	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 * @return {void}
 	 */
-	async execute({ reply, name, emoji }) {
+	async execute() {
 		await this.requestUserMetadata(2)
-
 		//  Handle if couldn't find the invntory's author
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
 		//  Handle if couldn't fetch the inventory
-		const INVALID_INVENTORY = this.user.isSelf ? this.locale.INVENTORY.AUTHOR_EMPTY : this.locale.INVENTORY.OTHER_USER_EMPTY
-		if (this.user.inventory.raw.length <= 0) return reply (INVALID_INVENTORY, {color: `red`, socket: {user: name(this.user.master.id)} })
-		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.master.id, emoji: await emoji(`790994076257353779`)}})
+		const INVALID_INVENTORY = this.user.master.id === this.message.author.id ? this.locale.INVENTORY.AUTHOR_EMPTY : this.locale.INVENTORY.OTHER_USER_EMPTY
+		if (this.user.inventory.raw.length <= 0) return this.reply (INVALID_INVENTORY, {socket: {user: this.user.master.username} })
+		this.reply(this.locale.COMMAND.FETCHING, {simplified: true, socket: {command: `inventory`, user: this.user.master.id, emoji: await this.bot.getEmoji(`790994076257353779`)}})
 		.then(async loading => {
 			//  Remove faulty values and sort order by rarity
 			const filteredInventory = this.user.inventory.raw.filter(this.itemsFilter).sort((a,b) => a.rarity_id - b.rarity_id).reverse()
 			this.user.inventory.raw = filteredInventory
-			await reply(this.locale.COMMAND.TITLE, {
+			await this.reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
 				image: (await new GUI(this.user, this.bot).build()).toBuffer(),
 				socket: {
-					user: name(this.user.master.id),
-					emoji: await emoji(`700731914801250324`),
+					user: this.user.master.username,
+					emoji: await this.bot.getEmoji(`700731914801250324`),
 					command: `Items Inventory`
 				}
 			})

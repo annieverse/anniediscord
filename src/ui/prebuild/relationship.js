@@ -6,16 +6,13 @@ class UI {
     /**
      * Relationship UI Builder.
      * to access the buffer, please call `.toBuffer()` after running `this.build()`
-     * @param {User} [user={}] parsed user object from `./src/libs/user`
      * @legacy
      * @return {Canvas}
      */
-    constructor(user={}, nameParser, avatarParser, bot, author) {
+    constructor(user={}, bot, author) {
         this.bot = bot
         this.user = user
         this.relationships = user.relationships
-        this.nameParser = nameParser
-        this.avatarParser = avatarParser
         this.author = author,
         this.width = 320
         this.limit = 7
@@ -44,7 +41,7 @@ class UI {
             const rel = this.relationships[i]
             const user = await this.bot.users.fetch(rel.assigned_user_id)
             const relAvatar = user ? await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false})) : await resolveImage(await loadAsset(`error`))
-            const relName = user ? this.nameParser(user.id) : rel.assigned_user_id
+            const relName = user ? user.username : rel.assigned_user_id
             //  Add highlight and lighten the text if current row is the author
             if (user.id === this.author.id) {
                 this.currentRowIsAuthor = true

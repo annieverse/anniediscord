@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const random = require(`../../utils/random`)
 /**
  * I'll try to pick any options you give!
  * @author klerikdust
@@ -14,18 +15,15 @@ class Choose extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, choice, emoji }) {
+	async execute() {
 		await this.requestUserMetadata(1)
-
 		//  Returns if no question was specified.
-		if (!this.fullArgs) return reply(this.locale.CHOOSE.GUIDE)
+		if (!this.fullArgs) return this.reply(this.locale.CHOOSE.GUIDE)
 		//  Handle if Annie can't parse options from user's input.
-		if (!this.tokenizedOptions) return reply(this.locale.CHOOSE.INVALID_OPTIONS, {color: `red`})
-		
-		const result = choice(this.tokenizedOptions)
-		return reply(`${choice(this.locale.CHOOSE.THINKING)} **${result}!** ${await emoji(choice(this.locale.CHOOSE.EMOTIONS))}`)
+		if (!this.tokenizedOptions) return this.reply(this.locale.CHOOSE.INVALID_OPTIONS, {color: `red`})
+		return this.reply(`${random(this.locale.CHOOSE.THINKING)} **${random(this.tokenizedOptions)}!** ${await this.bot.getEmoji(random(this.locale.CHOOSE.EMOTIONS))}`)
 	}
 
 	/**

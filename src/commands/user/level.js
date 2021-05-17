@@ -15,34 +15,31 @@ class Level extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, name, emoji }) {
+	async execute() {
 		//  Handle if the EXP module isn't enabled in current guild
-		if (!this.guild.configs.get(`EXP_MODULE`).value) return reply(this.locale.COMMAND.DISABLED, {
+		if (!this.message.guild.configs.get(`EXP_MODULE`).value) return this.reply(this.locale.COMMAND.DISABLED, {
 			socket: {command: `EXP Module`},
-			status: `warn`
 		})
-		//  Fetch user's metadata
 		await this.requestUserMetadata(2)
-		//  Handle if user doesn't exists
-		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
-		reply(this.locale.COMMAND.FETCHING, {
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+		this.reply(this.locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: await emoji(`790994076257353779`), 
+				emoji: await this.bot.getEmoji(`790994076257353779`), 
 				user: this.user.master.id,
 				command: `level`
 			}
 		})
 		.then(async loading => {
-			await reply(this.locale.COMMAND.TITLE, {
+			await this.reply(this.locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
 				image: await new GUI(this.user).build(),
 				socket: {
-					emoji: await emoji(`692428597570306218`),
-					user: name(this.user.master.id),
+					emoji: await this.bot.getEmoji(`692428597570306218`),
+					user: this.user.master.username,
 					command: `Level`
 				}
 			})

@@ -8,22 +8,11 @@ const path = require(`path`)
  *  @returns {Buffer}
  */
 const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
-	// List all files in a directory in Node.js recursively in a synchronous fashion
-	const walkSync = (dir, filelist = []) => {
-		fs.readdirSync(dir).forEach(file => {
-			filelist = fs.statSync(path.join(dir, file)).isDirectory()
-				? walkSync(path.join(dir, file), filelist)
-				: filelist.concat(path.join(dir, file))
-		})
-		return filelist
-	}
-	let allFiles = walkSync(assetsPath) // Starts with the main directory and includes all files in the sub directories
+	let allFiles = fs.readdirSync(assetsPath)
 	let ultimateFile
-	allFiles.forEach((file) => {
-		if (file.includes(id)){
-			let filePath = `./${file.replace(/\\/g, `/`)}`
-			return ultimateFile = filePath
-		}
+	allFiles.forEach(file => {
+        let fileWithoutFormat = file.slice(0, -4)
+		if (fileWithoutFormat === id) return ultimateFile = file 
 	})
 	if (!ultimateFile) {
 		allFiles.forEach((f) => {
@@ -33,7 +22,7 @@ const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
 			}
 		})
 	}
-	return fs.readFileSync(ultimateFile)
+	return fs.readFileSync(assetsPath + `/` + ultimateFile)
 }
 
 module.exports = loadAsset

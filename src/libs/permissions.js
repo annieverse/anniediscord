@@ -12,8 +12,13 @@ module.exports = (message={}, userId={}) => {
         description: `System developer privileges`,
         permissionString: `ADMINISTRATOR`
     }
+    const fallbackPrivillege = {
+        level: 0,
+        name: `User`,
+        description: `Regular user`,
+    } 
     // User without developer privileges in dm interface will be automatically assigned as a regular user.
-    if (message.channel.type === `dm`) return privilege[0]
+    if (message.channel.type === `dm`) return fallbackPrivillege
     const member = message.member
     //  Server admin
     if (member.hasPermission(`ADMINISTRATOR`)) return {
@@ -28,9 +33,5 @@ module.exports = (message={}, userId={}) => {
         description: `Server's manager with moderation capabilities`
     }
     //  If no special privileges are match, fall back to regular-user privilege
-    return {
-        level: 0,
-        name: `User`,
-        description: `Regular user`,
-    }
+    return fallbackPrivillege
 }

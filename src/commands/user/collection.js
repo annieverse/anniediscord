@@ -15,16 +15,15 @@ class CardCollection extends Command {
 		 * @type {number}
 		 */
 		this.upperLimit = 10
-		this.banner = `https://i.ibb.co/rvmZCBW/cardcollection.png`
 	}
 
 	/**
 	 * Running command workflow
-	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 * @return {void}
 	 */
-	async execute({ reply, emoji, name, avatar }) {
+	async execute() {
 		await this.requestUserMetadata(2)
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
 		//  Fetch cards type in user's inventory and sort by rarity descendantly
 		let filteredInventory = this.user.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (b.rarity_level - a.rarity_level))
 		this.shouldSplitResult = true
@@ -42,24 +41,23 @@ class CardCollection extends Command {
 		}		
 		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) {
-			return reply (INVALID_INVENTORY, {
-				prebuffer: true,
-				image: this.banner,
+			return this.reply(INVALID_INVENTORY, {
+				image: `banner_collection`,
 				socket: {
 					prefix: this.bot.prefix,
-					emoji: await emoji(`692428578683617331`),
-					user: name(this.user.master.id)
+					emoji: await this.bot.getEmoji(`692428578683617331`),
+					user: this.user.master.username
 				},
-				footer: this.user.isSelf ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
+				footer: this.user.master.id === this.message.author.id ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
 			})
 		}
-		reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: await emoji(`790994076257353779`)}})
+		this.reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: await this.bot.getEmoji(`790994076257353779`)}})
 		.then(async loading => {
-			await reply(this.prettifiedCardInventory(), {
+			await this.reply(this.prettifiedCardInventory(), {
 				paging: true,
 				cardPreviews: this.splittedInventory,
-				thumbnail: avatar(this.user.master.id),
-				header: `${name(this.user.master.id)}'s Card Collections`
+				thumbnail: this.user.master.displayAvatarURL(),
+				header: `${this.user.master.username}'s Card Collections`
 			})
 			return loading.delete()
 		})

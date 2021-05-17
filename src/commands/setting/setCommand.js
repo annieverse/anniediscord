@@ -14,13 +14,13 @@ class SetCommand extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here
+     * @return {void}
      */
-    async execute({ reply }) {
+    async execute() {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = this.message.guild.configs.get(`COMMAND_CHANNELS`).value
 		//  Handle if user doesn't specify the new bio/description
-		if (!this.fullArgs) return reply(this.locale.SETCOMMAND.GUIDE, {
+		if (!this.fullArgs) return this.reply(this.locale.SETCOMMAND.GUIDE, {
             header: `Hi, ${this.message.author.username}!`,
 			image: `banner_setcommand`,
 			socket: {
@@ -31,39 +31,38 @@ class SetCommand extends Command {
             }
 		})
         const targetAction = this.args[0].toLowerCase()
-        if (!actions.includes(targetAction)) return reply(this.locale.SETCOMMAND.INVALID_ACTION, {
+        if (!actions.includes(targetAction)) return this.reply(this.locale.SETCOMMAND.INVALID_ACTION, {
             socket: {prefix: this.bot.prefix}
         })
-        return this[targetAction](...arguments)
+        return this[targetAction]()
 	}
 
     /**
      * Perform channel add action.
-     * @param {PistachioMethods} Object pull any pistachio's methods in here
-     * return {void} 
+     * @return {void}
      */
-    async channel({ emoji, reply }) {
+    async channel() {
         let channelsContainer = this.message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!this.args[1]) return reply(this.locale.SETCOMMAND[channelsContainer.length > 0 ? `CHANNEL_INFO` : `CHANNEL_GUIDE`], {
+        if (!this.args[1]) return this.reply(this.locale.SETCOMMAND[channelsContainer.length > 0 ? `CHANNEL_INFO` : `CHANNEL_GUIDE`], {
             socket: {
                 channels: this._identifyChannels(channelsContainer)
             }
         })
         const specifiedChannels = this.args.slice(1)
-        const thinkingEmoji = await emoji(`692428969667985458`)
-        const madEmoji = await emoji(`692428748838010970`)
+        const thinkingEmoji = await this.bot.getEmoji(`692428969667985458`)
+        const madEmoji = await this.bot.getEmoji(`692428748838010970`)
         //  Iterate over multi channel registering
         for (let i=0; i<specifiedChannels.length; i++) {
             const ch = specifiedChannels[i].toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
             const targetNewChannel = this.message.guild.channels.cache.get(ch)
             || this.message.guild.channels.cache.find(channel => channel.name.toLowerCase() === ch)
-            if (!targetNewChannel) return reply(this.locale.SETCOMMAND.INVALID_NEW_CHANNEL, {
+            if (!targetNewChannel) return this.reply(this.locale.SETCOMMAND.INVALID_NEW_CHANNEL, {
                 socket: {
                     channel: ch,
                     emoji: thinkingEmoji
                 }
             })
-            if (channelsContainer.includes(targetNewChannel.id)) return reply(this.locale.SETCOMMAND.CHANNEL_ALREADY_REGISTERED, {
+            if (channelsContainer.includes(targetNewChannel.id)) return this.reply(this.locale.SETCOMMAND.CHANNEL_ALREADY_REGISTERED, {
                 socket: {
                     emoji: madEmoji
                 }
@@ -78,34 +77,33 @@ class SetCommand extends Command {
             setByUserId: this.message.author.id,
             cacheTo: this.message.guild.configs
         })
-        return reply(this.locale.SETCOMMAND.UPDATE_CHANNEL_SUCCESSFUL, {
+        return this.reply(this.locale.SETCOMMAND.UPDATE_CHANNEL_SUCCESSFUL, {
             status: `success`,
             socket: {
                 channel: specifiedChannels.length,
-                emoji: await emoji(`789212493096026143`)
+                emoji: await this.bot.getEmoji(`789212493096026143`)
             }
         })
     } 
 
     /**
      * Perform channel reset action.
-     * @param {PistachioMethods} Object pull any pistachio's methods in here
-     * return {void} 
+     * @return {void} 
      */
-    async reset({ emoji, reply }) {
+    async reset() {
         const currentChannels = this.message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!currentChannels.length) return reply(this.locale.SETCOMMAND.CHANNEL_POOL_ALREADY_EMPTY)
-        const confirmation = await reply(this.locale.SETCOMMAND.RESET_CONFIRMATION, {
+        if (!currentChannels.length) return this.reply(this.locale.SETCOMMAND.CHANNEL_POOL_ALREADY_EMPTY)
+        const confirmation = await this.reply(this.locale.SETCOMMAND.RESET_CONFIRMATION, {
             header: `Reset command channels?`,
             socket: {
                 totalChannels: currentChannels.length,
-                emoji: await emoji(`692428785571856404`)
+                emoji: await this.bot.getEmoji(`692428785571856404`)
             }
         })
         await this.addConfirmationButton(`COMMAND_CHANNELS_RESET`, confirmation, this.message.author.id)
         this.confirmationButtons.get(`COMMAND_CHANNELS_RESET`).on(`collect`, async r => {
-			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await emoji(`781954016271138857`)}
+			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
 			})
             //  Reset configuration
             this.bot.db.updateGuildConfiguration({
@@ -115,10 +113,10 @@ class SetCommand extends Command {
                 setByUserId: this.message.author.id,
                 cacheTo: this.message.guild.configs
             })
-            return reply(this.locale.SETCOMMAND.RESET_SUCCESSFUL, {
+            return this.reply(this.locale.SETCOMMAND.RESET_SUCCESSFUL, {
                 status: `success`,
                 socket: {
-                    emoji: await emoji(`789212493096026143`)
+                    emoji: await this.bot.getEmoji(`789212493096026143`)
                 }
             })
         })
@@ -148,5 +146,5 @@ module.exports.help = {
 	description: `Set a specific channel for Annie's command usage.`,
 	usage: `setcommand <channel/info/reset>`,
 	group: `Setting`,
-	permissionLevel: 3,
+	permissionLevel: 3
 }

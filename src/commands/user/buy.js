@@ -14,12 +14,10 @@ class Buy extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji }) {
-    	await this.requestUserMetadata(1)
-		//  Temporary close
-		return reply(this.locale.SHOP.TEMPORARILY_CLOSED, {socket:{emoji: await emoji(`692428785571856404`)}})
+    async execute() {
+		return this.reply(this.locale.SHOP.TEMPORARILY_CLOSED, {socket:{emoji: await this.bot.getEmoji(`692428785571856404`)}})
 	}
 }
 

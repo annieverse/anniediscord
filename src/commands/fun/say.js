@@ -14,27 +14,25 @@ class Say extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, name }) {
-		await this.requestUserMetadata(2)
-
-		//	Displaying short-guide if user doesn't specify any message to send.
-		if (!this.fullArgs) return reply(this.locale.SHORT_GUIDE, {socket: [name(this.user.master.id)]})
-		//	Spying mode. FAYAHHHH!
+	async execute() {
+		if (!this.fullArgs) return this.reply(this.locale.SAY.SHORT_GUIDE, {
+            socket: {
+                emoji: await this.bot.getEmoji(`AnnieNyaa`)
+            }
+        })
 		this.message.delete()
-		return reply(this.fullArgs, {color: `crimson`})
+		return this.reply(this.fullArgs, {color: `crimson`})
 	}
-
 }
 
 module.exports.help = {
 	start: Say,
 	name: `say`,
 	aliases: [],
-	description: `Talk through bot.`,
+	description: `Talk through Annie!`,
 	usage: `say <Message>`,
 	group: `Fun`,
-	permissionLevel: 3,
-	multiUser: false
+	permissionLevel: 3
 }

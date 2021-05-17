@@ -1,7 +1,7 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const Command = require(`../../libs/commands`)
 /**
- * Displaying your personalized card!
+ * Displaying user's profile card!
  * @author klerikdust
  */
 class Profile extends Command {
@@ -15,26 +15,26 @@ class Profile extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, name }) {
+    async execute() {
         await this.requestUserMetadata(2)
         //  Handle if user doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID)
-        this.fetching = await reply(this.locale.PROFILECARD.FETCHING, {
-            socket: {emoji: await emoji(`790994076257353779`)}
+        if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+        const fetching = await this.reply(this.locale.PROFILECARD.FETCHING, {
+            socket: {emoji: await this.bot.getEmoji(`790994076257353779`)}
         })
-        await reply(this.locale.COMMAND.TITLE, {
+        await this.reply(this.locale.COMMAND.TITLE, {
             socket: {
-                user: name(this.user.master.id),
-                emoji: await emoji(`692428927620087850`),
+                user: this.user.master.username,
+                emoji: await this.bot.getEmoji(`692428927620087850`),
                 command: `Profile`
             },
             image: (await new GUI(this.user, this.bot).build()).toBuffer(),
             prebuffer: true,
             simplified: true 
         })
-        return this.fetching.delete()
+        return fetching.delete()
 	}
 }
 
@@ -42,7 +42,7 @@ module.exports.help = {
 	start: Profile,
 	name: `profile`,
 	aliases: [`profile`, `p`, `prof`],
-	description: `Displaying your personalized card!`,
+	description: `Displaying user's profile card!`,
 	usage: `profile <User>(Optional)`,
 	group: `User`,
 	permissionLevel: 0,

@@ -1,5 +1,6 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Displays info about the server
  * @author klerikdust
@@ -15,17 +16,16 @@ class ServerInfo extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, name, commanifier }) {
+    async execute() {
 		let members = this.message.guild.memberCount
 		let botSize =  this.message.guild.members.cache.filter(a => a.user.bot).size
 		let userSize = members - botSize
 
-		return reply(`
+		return this.reply(`
 			${this.message.guild.region.charAt(0).toUpperCase() + this.message.guild.region.slice(1)}-based Guild
-
-			Owned by **${name(this.message.guild.ownerID)}**
+			Owned by **${await this.bot.getUsername(this.message.guild.ownerID)}**
 
 			**• When the guild was found?**
 			It's exactly ${moment(this.message.guild.createdAt).fromNow()}.
@@ -37,7 +37,7 @@ class ServerInfo extends Command {
 			**• Hmm, what about the channels and roles?**
 			Hah! they have ${this.message.guild.channels.cache.size} channels and ${this.message.guild.roles.cache.size} roles!
 			Is that what you are looking for?
-			Wait, they also have ${this.bot.channels.cache.get(this.message.guild.systemChannelID)} as their main channel.
+			Wait, they also have ${this.message.guild.channels.cache.get(this.message.guild.systemChannelID)} as their main channel.
 
 			Okay, that's all I know! 
 

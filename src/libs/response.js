@@ -67,6 +67,7 @@ class Response {
 	async send(content=``, plugins = {}) {
 		let socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
+        plugins.color = color
 		let url = plugins.url || null
 		let image = plugins.image || null
 		let imageGif = plugins.imageGif || null
@@ -89,7 +90,7 @@ class Response {
 		if (paging) {
 			let page = 0
 			const embeddedPages = this._registerPages(content, plugins)
-			return plugins.field.send(embeddedPages[0])
+			return field.send(embeddedPages[0])
 	        .then(async msg => {
 	            //  Buttons
 	            await msg.react(`⏪`)
@@ -110,9 +111,9 @@ class Response {
 	            	    r.users.remove(this.message.author.id)
 	            	    if (previewedPages.includes(page)) return
 	            	    previewedPages.push(page)
-	            		let loading = await plugins.field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
+	            		let loading = await field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
 	            		let img = await new GUI(plugins.cardPreviews[page]).create()
-	            		plugins.field.send(``, new MessageAttachment(img))
+	            	    field.send(``, new MessageAttachment(img))
 	            		loading.delete()
 	            	})
 	            }
@@ -153,7 +154,7 @@ class Response {
 			if (pieceToAttach || pieceToAttach === 0) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
 		}
 		//  Mutate message if status property is defined
-		if (this.availableStatuses.has(status)) color = this.availableStatuses.get(status)
+		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 		//  Returns simple message w/o embed
 		if (simplified) return field.send(content,
 		image ? new MessageAttachment(prebuffer ? image : await loadAsset(image)) : null)
@@ -197,19 +198,7 @@ class Response {
 			msg.delete({timeout: deleteIn * 1000})
 		})
 	}
-
-	/**
-	 * List all the available statuses.
-	 * @return {map}
-	 */
-	get availableStatuses() {
-		const statuses = new Map
-		statuses.set(`success`, `#ffc9e2`)
-		statuses.set(`warn`, `crimson`)
-		statuses.set(`fail`, `crimson`)
-		return statuses
-	}
-
+	
     /**
      *  Registering each element of array into its own embed.
      *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
@@ -220,7 +209,8 @@ class Response {
         let res = []
         for (let i = 0; i < pages.length; i++) {
             res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
-            if (src.color) res[i].setColor(this.palette[src.color] || src.color)
+            console.debug(src.color)
+            if (src.color) res[i].setColor(palette[src.color] || src.color || palette[`crimson`])
             if (src.header) res[i].setTitle(src.header)
            	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
             if (src.thumbnail) res[i].setThumbnail(src.thumbnail)

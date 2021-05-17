@@ -15,23 +15,22 @@ class Pat extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji }) {
+    async execute() {
         await this.requestUserMetadata(2)
-        await this.requestAuthorMetadata(2)
         const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
         //  Lonely pat
-        if (!this.user || !this.fullArgs) return reply(this.locale.PAT.THEMSELVES, {
+        if (!this.user || !this.fullArgs) return this.reply(this.locale.PAT.THEMSELVES, {
             socket: {
-                user: this.author.username,
-                emoji: await emoji(`692428578683617331`)
+                user: this.message.author.username,
+                emoji: await this.bot.getEmoji(`692428578683617331`)
             },
             imageGif: body.link
         })
         //  Patting other user
-        return reply(this.locale.PAT.OTHER_USER, {
-            socket: {user: this.author.master.username, targetUser: this.user.master.username},
+        return this.reply(this.locale.PAT.OTHER_USER, {
+            socket: {user: this.message.author.username, targetUser: this.user.master.username},
             imageGif: body.link
         })
     }

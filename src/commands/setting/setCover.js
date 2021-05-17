@@ -4,6 +4,7 @@ const fs = require(`fs`)
 const fetch = require(`node-fetch`)
 const stringSimilarity = require(`string-similarity`)
 const { v4: uuidv4 } = require(`uuid`)
+const commanifier = require(`../../utils/commanifier`)
 
 /**
  * Setting up your own custom background! upload or share the image link you want to use.
@@ -26,9 +27,9 @@ class SetCover extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, name, emoji, commanifier, bot:{db} }) {
+    async execute() {
         await this.requestUserMetadata(2)
         //  Handle if user doesn't specify any arg
         const ownedCovers = this.user.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
@@ -40,12 +41,12 @@ class SetCover extends Command {
             : this.user.usedCover.isSelfUpload 
             ? `DISPLAY_USED_SELF_COVER`
             : `DISPLAY_USED_REGULAR_COVER`
-            return reply(`${this.locale.SETCOVER.GUIDE}\n${this.locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
-                header: `Hi, ${name(this.user.master.id)}!`,
+            return this.reply(`${this.locale.SETCOVER.GUIDE}\n${this.locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+                header: `Hi, ${this.user.master.username}!`,
                 image: `banner_setbackground`,
                 socket: {
                     prefix: this.bot.prefix,
-                    emoji: await emoji(`781504248868634627`),
+                    emoji: await this.bot.getEmoji(`781504248868634627`),
                     cover: this.user.usedCover.name
                 }
             })
@@ -68,21 +69,21 @@ class SetCover extends Command {
                 return this.logger.error(`Fail to render self-upload cover. > ${e.stack}`)
             }
             //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (this.user.inventory.artcoins < this.uploadCost) return reply(this.locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
+            if (this.user.inventory.artcoins < this.uploadCost) return this.reply(this.locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
                 socket: {
-                    emoji: await emoji(`758720612087627787`),
+                    emoji: await this.bot.getEmoji(`758720612087627787`),
                     requiredLeft: commanifier(this.uploadCost-this.user.inventory.artcoins)
                 }
             })
         }
         //  Handle if user asked to use default cover
         else if (this.fullArgs === `default`) {
-            this.cover = await db.getItem(`defaultcover1`)
+            this.cover = await this.bot.db.getItem(`defaultcover1`)
         }
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
-            if (!ownedCovers.length) return reply(this.locale.SETCOVER.NO_EQUIPPABLE_COVER)
+            if (!ownedCovers.length) return this.reply(this.locale.SETCOVER.NO_EQUIPPABLE_COVER)
             const searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
             //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
@@ -93,58 +94,58 @@ class SetCover extends Command {
             //  Finally if no item's name/ID are match, then return null
             : null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await emoji(`692428969667985458`)} })
+            if (!this.cover) return this.reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await this.bot.getEmoji(`692428969667985458`)} })
             //  Handle if user tries to use cover that currently being used.
-            if (this.user.usedCover.item_id === this.cover.item_id) return reply(this.locale.SETCOVER.ALREADY_USED, {
+            if (this.user.usedCover.item_id === this.cover.item_id) return this.reply(this.locale.SETCOVER.ALREADY_USED, {
                 socket: {
-                    emoji: await emoji(`692428748838010970`),
+                    emoji: await this.bot.getEmoji(`692428748838010970`),
                     cover: this.cover.name
                 }
             })
         }
         this.user.usedCover = this.cover
-        this.fetching = await reply(this.locale.SETCOVER.FETCHING, {
+        this.fetching = await this.reply(this.locale.SETCOVER.FETCHING, {
             socket: {
                 itemId: this.cover.item_id,
                 userId: this.user.master.id,
-                emoji: await emoji(`790994076257353779`)
+                emoji: await this.bot.getEmoji(`790994076257353779`)
             } 
         })
         //  Rendering preview for user to see
         let img = await new GUI(this.user, this.bot, {width: 320, height: 310}).build()
         const confirmationMessage = this.locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
-        this.confirmation = await reply(confirmationMessage, {
+        this.confirmation = await this.reply(confirmationMessage, {
             prebuffer: true,
             image: img.toBuffer(),
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
-                emoji: await emoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
+                emoji: await this.bot.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
             }
         })
         this.fetching.delete()
         await this.addConfirmationButton(`applyCover`, this.confirmation)
         return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
 			//  Handle cancellation
-			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await emoji(`781954016271138857`)}
+			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
 			})
-            await db.detachCovers(this.user.master.id, this.message.guild.id)
+            await this.bot.db.detachCovers(this.user.master.id, this.message.guild.id)
             if (this.cover.isSelfUpload) {
-                db.applySelfUploadCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
-                db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
+                this.bot.db.applySelfUploadCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
+                this.bot.db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
             }
             else {
-                db.deleteSelfUploadCover(this.user.id, this.message.guild.id)
-                db.applyCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
+                this.bot.db.deleteSelfUploadCover(this.user.id, this.message.guild.id)
+                this.bot.db.applyCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
             }
             //  Finalize
             this.finalizeConfirmation(r)
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            reply(this.locale.SETCOVER[successMessage], {
+            this.reply(this.locale.SETCOVER[successMessage], {
                 socket: {
                     cover: this.cover.name,
-                    emoji: await emoji(this.cover.alias, this.bot)
+                    emoji: await this.bot.getEmoji(this.cover.alias, this.bot)
                 }
             })
         })

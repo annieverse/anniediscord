@@ -1,5 +1,6 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
  * You can take quest every 2 hours.
@@ -21,19 +22,19 @@ class Quests extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, commanifier, emoji, avatar, name, bot:{db} }) {
+	async execute() {
 		await this.requestUserMetadata(2)
-		const quests = await db.getAllQuests()
-		if (!quests.length) return reply(this.locale.QUEST.EMPTY)
+		const quests = await this.bot.db.getAllQuests()
+		if (!quests.length) return this.reply(this.locale.QUEST.EMPTY)
         const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
-		const lastClaimAt = await db.toLocaltime(this.user.quests.updated_at)
+		const lastClaimAt = await this.bot.db.toLocaltime(this.user.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.QUEST.COOLDOWN, {
-			topNotch: `**Shall we do something else first?** ${await emoji(`692428969667985458`)}`,
-			thumbnail: avatar(this.user.master.id),
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return this.reply(this.locale.QUEST.COOLDOWN, {
+			topNotch: `**Shall we do something else first?** ${await this.bot.getEmoji(`692428969667985458`)}`,
+			thumbnail: this.user.master.displayAvatarURL(),
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
 				prefix: this.bot.prefix
@@ -41,59 +42,55 @@ class Quests extends Command {
 		})
         //  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION_${this.message.author.id}@${this.message.guild.id}`
-		if (await db.redis.exists(sessionID)) return reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await emoji(`692428748838010970`)}})
+		if (await this.bot.db.redis.exists(sessionID)) return this.reply(this.locale.QUEST.SESSION_STILL_RUNNING, {socket: {emoji: await this.bot.getEmoji(`692428748838010970`)}})
         //  Session up for 2 minutes
-        db.redis.set(sessionID, 1, `EX`, 60 * 2)
-		this.fetching = await reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: await emoji(`790994076257353779`)} })
+        this.bot.db.redis.set(sessionID, 1, `EX`, 60 * 2)
+		const fetching = await this.reply(this.locale.QUEST.FETCHING, {simplified: true, socket:{emoji: await this.bot.getEmoji(`790994076257353779`)} })
 		//  Update ID if active quest couldn't be found with the saved quest_id
 		let nextQuestId = this.user.quests.next_quest_id
 		if (!nextQuestId) {
 			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
+			this.bot.db.updateUserNextActiveQuest(this.user.master.id, this.message.guild.id, nextQuestId)
 		}
-		//this.bot.setCooldown(sessionID, 120)
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
-		this.quest = await reply(this.locale.QUEST.DISPLAY, {
-			header: `${name(this.user.master.id)} is taking a quest!`,
+		const quest = await this.reply(this.locale.QUEST.DISPLAY, {
+			header: `${this.user.master.username} is taking a quest!`,
 			footer: this.locale.QUEST.FOOTER,
-			thumbnail: avatar(this.user.master.id),
+			thumbnail: this.user.master.displayAvatarURL(),
 			socket: {
 				questTitle: activeQuest.name,
 				description: activeQuest.description,
-				reward: `${await emoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+				reward: `${await this.bot.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
 			}
 		})
-		this.fetching.delete()
+		fetching.delete()
 		this.setSequence(10)
 		this.sequence.on(`collect`, async msg => {
 			let answer = msg.content.toLowerCase()
             if (answer.startsWith((this.bot.prefix))) answer = answer.slice(1)
 			// Handle if user asked to cancel the quest
-			if ([`cancel`, `n`, `no`].includes(answer)) {
-				reply(this.locale.QUEST.CANCEL)
+			if ([`cancel`].includes(answer)) {
+				this.reply(this.locale.QUEST.CANCEL)
 				msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 				this.quest.delete()
 				this.bot.db.redis.del(sessionID)
 				return this.endSequence()
 			}
 			//  Handle if the answer is incorrect
-			if (answer !== activeQuest.correct_answer) {
-				reply(this.locale.QUEST.INCORRECT_ANSWER, {status: `warn`, deleteIn: 3})
-				return
-			}
+			if (answer !== activeQuest.correct_answer) return this.reply(this.locale.QUEST.INCORRECT_ANSWER, {deleteIn: 3})
 			this.endSequence()
 			msg.delete().catch(e => this.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${this.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
-			await db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.master.id})
-			await db.updateUserQuest(this.user.master.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
-			await db.recordQuestActivity(nextQuestId, this.user.master.id, this.message.guild.id, answer)
+			this.bot.db.updateInventory({itemId: 52, value: activeQuest.reward_amount, guildId: this.message.guild.id, userId: this.user.master.id})
+			this.bot.db.updateUserQuest(this.user.master.id, this.message.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			this.bot.db.recordQuestActivity(nextQuestId, this.user.master.id, this.message.guild.id, answer)
 			//  Successful
 			this.bot.db.redis.del(sessionID)
-			return reply(this.locale.QUEST.SUCCESSFUL, {
+			return this.reply(this.locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: this.locale.QUEST.PRAISE[Math.floor(Math.random() * this.locale.QUEST.PRAISE.length)],
-					user: name(this.user.master.id),
-					reward: `${await emoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+					user: this.user.master.username,
+					reward: `${await this.bot.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
 				}
 			})
 		})

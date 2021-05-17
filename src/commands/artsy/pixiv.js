@@ -46,13 +46,13 @@ class Pixiv extends Command {
     
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, bot }) {
+	async execute() {
         //  Logging in to get access to the Pixiv API
         await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
         const fullArgs = this.fullArgs
-        reply(this.locale.PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+        this.reply(this.locale.PIXIV[fullArgs ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
             simplified: true,
             socket: {keyword: fullArgs}})
                 .then(async loadmsg => {
@@ -64,18 +64,18 @@ class Pixiv extends Command {
                     //  Handle if no returned result from the query
                     if (!data)  {
                         loadmsg.delete()
-                        return reply(this.locale.PIXIV.NO_RESULT, {color: `red`})
+                        return this.reply(this.locale.PIXIV.NO_RESULT, {color: `red`})
                     }
                     const img = await this.getImage(data.image_urls.medium, data.id)
                     //  Handle if no returned result from given img path
                     if (!img) {
                         loadmsg.delete()
-                        return reply(this.locale.PIXIV.FAIL_TO_LOAD, {color: `red`})
+                        return this.reply(this.locale.PIXIV.FAIL_TO_LOAD, {color: `red`})
                     }
 
                     loadmsg.delete()
-                    return reply(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
-                        customHeader: [`by ${data.user.name}`, bot.user.displayAvatarURL()],
+                    return this.reply(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
+                        customHeader: [`by ${data.user.name}`, this.bot.user.displayAvatarURL()],
                         image: img,
                         prebuffer: true
                     })

@@ -17,26 +17,27 @@ class Help extends Command {
 		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
 		this.permmissionInteger = 268823638
 		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
+        this.supportServerUrl = `https://discord.gg/7nDes9Pi` 
 	}
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, name, emoji, bot:{supportServer} }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 		const cmds = this.getCommandStructures()
 
 		//  Displaying the help center if user doesn't specify any arg
 		if (!this.fullArgs)	{
 			// Display 5 most used commands suggestions
-			return reply(this.locale.HELP.LANDING, {
+			return this.reply(this.locale.HELP.LANDING, {
 				socket: {
-					emoji: await emoji(`692428988177449070`),
+					emoji: await this.bot.getEmoji(`692428988177449070`),
 					prefix: this.bot.prefix
 				},
 				color: this.defaultColor,
-				header: `Hi, ${name(this.user.master.id)}!`,
+				header: `Hi, ${this.user.master.username}!`,
 				thumbnail: this.bot.user.displayAvatarURL()
 			})
 			
@@ -50,10 +51,10 @@ class Help extends Command {
 				//  Display Commandpedia layout once user pressed the :book: button
 				bookEmojiCollector.on(`collect`, () => {
 					response.delete()
-					reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
+					this.reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
 							prefix: this.bot.prefix,
-							serverLink: `[Join Support Server](${supportServer})`,
+							serverLink: `[Join Support Server](${this.supportServerUrl})`,
 							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
@@ -68,15 +69,15 @@ class Help extends Command {
 
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const res = await this.findCommandByKeyword(this.fullArgs, cmds)
-		if (!res) return reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {
+		if (!res) return this.reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {
 			socket: {
-				emoji: await emoji(`692428969667985458`)
+				emoji: await this.bot.getEmoji(`692428969667985458`)
 			}
 		})
 		//  Handle helpCategory display
 		if (this.helpCategory) {
 			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
-			return reply(category[res.toUpperCase()] + `\n**Here's the list!**\n${commands.join(`, `)}`, {
+			return this.reply(category[res.toUpperCase()] + `\n**Here's the list!**\n${commands.join(`, `)}`, {
 				header: `The ${res} Commands!`,
 				thumbnail: this.bot.user.displayAvatarURL()
 			})
@@ -86,7 +87,7 @@ class Help extends Command {
 		const cmdDesc = `"${res.help.description.charAt(0).toUpperCase() + res.help.description.slice(1)}"`
 		const footer = `\`\`\`javascript\nUSAGE: ${this.prefix}${res.help.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
 
-		return reply(`**${cmdName}**\n${cmdDesc}\n${footer}`, {
+		return this.reply(`**${cmdName}**\n${cmdDesc}\n${footer}`, {
 			color: this.defaultColor
 		})
 

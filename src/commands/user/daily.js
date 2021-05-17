@@ -1,5 +1,6 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Claims free artcoins everyday. You can also help claiming your friend's dailies.
  * @author klerikdust
@@ -18,24 +19,24 @@ class Dailies extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, name, avatar, commanifier, bot:{db} }) {
+    async execute() {
 		await this.requestUserMetadata(2)
-		await this.requestAuthorMetadata(2)
 		//  Handle if user could not be found
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+        if (this.user.master.id !== this.message.author.id) await this.requestAuthorMetadata(2)
 		const now = moment()
-		const lastClaimAt = await db.toLocaltime(this.user.dailies.updated_at)
+		const lastClaimAt = await this.bot.db.toLocaltime(this.user.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply(this.locale.DAILIES[this.user.isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
-			thumbnail: avatar(this.user.master.id),
-			topNotch: this.user.isSelf 
-				? `**Are you craving for artcoins?** ${await emoji(`692428578683617331`)}` 
-				: `**${name(this.user.master.id)} already claimed their dailies!** ${await emoji(`692428748838010970`)}`,
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return this.reply(this.locale.DAILIES[this.user.isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
+			thumbnail: this.user.master.displayAvatarURL(),
+			topNotch: this.user.master.id === this.message.author.id
+				? `**Are you craving for artcoins?** ${await this.bot.getEmoji(`692428578683617331`)}` 
+				: `**${this.user.master.username} already claimed their dailies!** ${await this.bot.getEmoji(`692428748838010970`)}`,
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-				user: name(this.user.master.id),
+				user: this.user.master.username,
 				prefix: this.bot.prefix
 			}
 		})
@@ -45,19 +46,19 @@ class Dailies extends Command {
 		const hasPoppy = this.user.inventory.poppy_card
 		if (hasPoppy) totalStreak = this.user.dailies.total_streak + 1
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0 
-		await db.updateUserDailies(totalStreak, this.user.master.id, this.message.guild.id)
-		await db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
-		reply(this.locale.DAILIES.CLAIMED, {
+		this.bot.db.updateUserDailies(totalStreak, this.user.master.id, this.message.guild.id)
+		this.bot.db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
+		this.reply(this.locale.DAILIES.CLAIMED, {
 			status: `success`,
-			thumbnail: avatar(this.user.master.id),
+			thumbnail: this.user.master.displayAvatarURL(),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
 			socket: {
-				amount: `${await emoji(`758720612087627787`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
-				user: name(this.user.master.id),
+				amount: `${await this.bot.getEmoji(`758720612087627787`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
+				user: this.user.master.username,
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
 		})
-		return reply(this.locale.DAILIES.TO_REMIND, {
+		return this.reply(this.locale.DAILIES.TO_REMIND, {
 			simplified: true,
 			socket: {prefix:this.bot.prefix}
 		})

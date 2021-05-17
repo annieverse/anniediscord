@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Displaying user's current balance
  * @author klerikdust
@@ -14,18 +15,18 @@ class Balance extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, commanifier, avatar, emoji}) {
+	async execute() {
 		await this.requestUserMetadata(2)
 		//  Handle if user couldn't be found
-		if (!this.user) return reply(this.locale.USER.IS_INVALID)
-		return reply(this.locale.DISPLAY_BALANCE, {
-			thumbnail: avatar(this.user.master.id),
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+		return this.reply(this.locale.DISPLAY_BALANCE, {
+			thumbnail: this.user.master.displayAvatarURL(),
 			socket: {
-				emoji: await emoji(`758720612087627787`), 
+				emoji: await this.bot.getEmoji(`758720612087627787`), 
 				amount: commanifier(this.user.inventory.artcoins || 0),
-				tips: this.user.isSelf ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
+				tips: this.user.id === this.message.author.id ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
 			}
 		})
 	}

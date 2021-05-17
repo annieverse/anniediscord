@@ -1,5 +1,6 @@
 const Command = require(`../../libs/commands`)
-
+const commanifier = require(`../../utils/commanifier`)
+const trueInt = require(`../../utils/trueInt`)
 /**
  * Adds artcoins to a user
  * @author klerikdust
@@ -15,20 +16,20 @@ class ArtcoinsGenerator extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, bot:{db}, name, avatar, trueInt, emoji, commanifier }) {
+	async execute() {
 		await this.requestUserMetadata(2)
-
 		//  Handle if user doesn't specify any arg
-		if (!this.fullArgs) return reply(this.locale.ADDAC.GUIDE)
+		if (!this.fullArgs) return this.reply(this.locale.ADDAC.GUIDE)
 		//  Handle if target user is invalid
-		if (!this.user) return reply(this.locale.USER.IS_INVALID, {color: `red`})
-
+		if (!this.user) return this.reply(this.locale.USER.IS_INVALID, {color: `red`})
 		this.setSequence(5)
-
 		let amount = 0
-		reply(this.locale.ADDAC.CONFIRMATION_SEQ_1, {socket: {user: name(this.user.master.id)}, color: `golden`})
+		this.reply(this.locale.ADDAC.CONFIRMATION_SEQ_1, {
+            socket: {user: this.user.master.username},
+            color: `golden`
+        })
 		.then(async confirmation => {
 			this.sequence.on(`collect`, async msg => {
 				let input = msg.content.toLowerCase()
@@ -41,7 +42,7 @@ class ArtcoinsGenerator extends Command {
 				 */
 				if (this.cancelParameters.includes(input)) {
 					this.endSequence()
-					return reply(this.locale.ACTION_CANCELLED)
+					return this.reply(this.locale.ACTION_CANCELLED)
 				}
 
 				/**
@@ -51,15 +52,15 @@ class ArtcoinsGenerator extends Command {
 				 */
 				if (this.onSequence <= 1) {
 					amount = trueInt(input)
-					if (!amount) return reply(this.locale.ADDAC.NO_NEGATIVE_INPUT)
+					if (!amount) return this.reply(this.locale.ADDAC.NO_NEGATIVE_INPUT)
 					confirmation.delete()
-					reply(this.locale.ADDAC.CONFIRMATION_SEQ_2, {
+					this.reply(this.locale.ADDAC.CONFIRMATION_SEQ_2, {
 						socket: {
-							emoji: await emoji(`758720612087627787`),
+							emoji: await this.bot.getEmoji(`758720612087627787`),
 							amount: commanifier(amount),
-							user: name(this.user.master.id)
+							user: this.user.master.username
 						},
-						thumbnail: avatar(this.user.master.id),
+						thumbnail: this.user.master.displayAvatarURL(),
 						notch: true,
 						color: `golden`
 					})
@@ -72,8 +73,8 @@ class ArtcoinsGenerator extends Command {
 				 * ---------------------
 				 */
 				if (this.onSequence <= 2) {
-					await db.updateInventory({itemId: 52, value: amount, userId: this.user.master.id, guildId: this.message.guild.id})
-					reply(this.locale.ADDAC.SUCCESSFUL, {color: `lightgreen`})
+					this.bot.db.updateInventory({itemId: 52, value: amount, userId: this.user.master.id, guildId: this.message.guild.id})
+					this.reply(this.locale.ADDAC.SUCCESSFUL, {color: `lightgreen`})
 					return this.endSequence()
 				}
 			})
@@ -90,5 +91,6 @@ module.exports.help = {
 	usage: `addac <User>(Optional)`,
 	group: `Developer`,
 	permissionLevel: 4,
-	multiUser: true
+	multiUser: true,
+    rawArgs: true
 }

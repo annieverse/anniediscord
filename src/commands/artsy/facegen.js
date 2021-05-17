@@ -24,18 +24,17 @@ class FaceGenerate extends Command {
     
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * return {void}
      */
-	async execute({ reply, emoji }) {
+	async execute() {
         const getID = Math.floor(Math.random() * this.range)
-        this.fetching = await reply(this.locale.FACEGEN.FETCHING, {simplified: true, socket: {emoji: await emoji(`790994076257353779`)} })
-        await reply(this.locale.FACEGEN.HEADER, {
+        const fetching = await this.reply(this.locale.FACEGEN.FETCHING, {simplified: true, socket: {emoji: await this.bot.getEmoji(`790994076257353779`)} })
+        await this.reply(this.locale.FACEGEN.HEADER, {
             customHeader: [this.message.author.username, this.message.author.displayAvatarURL()],
             image: this.source + `example-${getID}.jpg`,
             prebuffer: true
         })
-        this.logger.info(`[Command.FaceGenerate] displaying image with ID:${getID} `)
-        this.fetching.delete()
+        fetching.delete()
     }
 }
 module.exports.help = {
@@ -45,6 +44,5 @@ module.exports.help = {
 	description: `AI-Generated Anime Face provided by Gwern@TWDNE`,
 	usage: `facegen`,
     group: `Artsy`,
-    permissionLevel: 0,
-	multiUser: false
+    permissionLevel: 0
 }

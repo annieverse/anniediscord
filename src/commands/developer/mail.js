@@ -16,34 +16,34 @@ class Mail extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji }) {
+	async execute() {
 		await this.requestUserMetadata(1)
-		if (!this.user) return reply(`Sadly, the user is unreachable`)
+		if (!this.user) return this.reply(`Sadly, the user is unreachable`)
 		//  Handle if user doesn't specify any arg
         const mailContent = this.message.content
             .toLowerCase()
             .split(` `)
             .slice(2)
             .join(` `)
-		if (!mailContent) return reply(`Who you want me to send DM to? ${await emoji(`AnnieThinking`)}`)
-		const confirmation = await reply(`I'm going to send **${this.user.master}** the following message.\n\`\`\`\n${mailContent}\n\`\`\``)
+		if (!mailContent) return this.reply(`Who you want me to send DM to? ${await this.bot.getEmoji(`AnnieThinking`)}`)
+		const confirmation = await this.reply(`I'm going to send **${this.user.master}** the following message.\n\`\`\`\n${mailContent}\n\`\`\``)
 		await this.addConfirmationButton(`send_mail`, confirmation)
  		return this.confirmationButtons.get(`send_mail`).on(`collect`, async r => {
 			//  Handle cancellation
-			if (this.isCancelled(r)) return reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await emoji(`781954016271138857`)}
+			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
+				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
 			})
 			try {
-				await reply(mailContent, {
+				await this.reply(mailContent, {
 					field: this.user.master,
 					footer: `This system message is sent by the developer.`
 				})
 				this.finalizeConfirmation(r)
-				return reply(`The mail is successfully sent!`)
+				return this.reply(`The mail is successfully sent!`)
 			}
 			catch(e) {
 				this.logger.warn(`[DEVKIT_DM] USER_ID:${this.user.master.id} > ${e.message}`)
-				return reply(`Unfortunately I can't forward the email due to locked DM.`)
+				return this.reply(`Unfortunately I can't forward the email due to locked DM.`)
 			}
 		})
 	}

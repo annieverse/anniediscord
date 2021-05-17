@@ -20,20 +20,20 @@ class CommandLineInterface extends Command {
      * Running command workflow
      * @param {PistachioMethods} Object pull any pistachio's methods in here.
      */
-	async execute({ reply, emoji }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return reply(this.locale.CLI.GUIDE)
+		if (!this.fullArgs) return this.reply(this.locale.CLI.GUIDE)
 		//	Parse statement
 		const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
 		//	Make sure the the stmt is valid
-		if (!stmt) return reply(this.locale.CLI.MISSING_STMT, {color: `red`})
+		if (!stmt) return this.reply(this.locale.CLI.MISSING_STMT, {color: `red`})
 
-		reply(this.locale.COMMAND.FETCHING, {
+		this.reply(this.locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: await emoji(`790994076257353779`),
+				emoji: await this.bot.getEmoji(`790994076257353779`),
 				command: `cli`,
 				user: this.user.master.id
 			} 
@@ -43,11 +43,11 @@ class CommandLineInterface extends Command {
 			return cmd.get(stmt, (err, data) => {
 				if (err) {
 					load.delete()
-					return reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
+					return this.reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
 				}
 				const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
 				load.delete()
-				return reply(this.locale.EXEC_CODE, {
+				return this.reply(this.locale.EXEC_CODE, {
 					socket: {
 						time: this.bot.getBenchmark(initTime),
 						result: parsedResult.slice(0, 2000)

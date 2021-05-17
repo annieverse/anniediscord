@@ -3,6 +3,7 @@ const Command = require(`../../libs/commands`)
 const pkg = require(`../../../package`)
 const shardName = require(`../../config/shardName`)
 const ms = require(`ms`)
+const commanifier = require(`../../utils/commanifier`)
 /**
  * Gives info about the current bot performance.
  * @author klerikdust
@@ -18,21 +19,11 @@ class SystemStatus extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
 	async execute() {
-		await this.requestUserMetadata(1)
-		return this.displayGeneralStatus(...arguments)
-	}
-
-	/**
-	 * Default response when no additional arg is provided
-	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
-	 * @returns {reply}
-	 */
-	async displayGeneralStatus({ reply, emoji, commanifier }) {
 		const { total } = await this.bot.db.getTotalCommandUsage()
-		return reply(this.locale.SYSTEM_STATS.DISPLAY, {
+		return this.reply(this.locale.SYSTEM_STATS.DISPLAY, {
 			header: `The State of Annie`,
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
@@ -43,7 +34,7 @@ class SystemStatus extends Command {
                 totalCommands: commanifier(total),
                 version: pkg.version,
                 servers: commanifier((await this.bot.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)),
-                emoji: await emoji(`AnnieNyaa`)
+                emoji: await this.bot.getEmoji(`AnnieNyaa`)
 			}
 		})
 	}

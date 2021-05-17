@@ -10,20 +10,19 @@ class Affiliates extends Command {
 
 	/**
 	 * Running command workflow
-	 * @param {PistachioMethods} Object pull any pistachio's methods in here.
+	 * @return {void}
 	 */
-	async execute({ reply, name }) {
+	async execute() {
 		await this.requestUserMetadata(1)
 		const affiliateList = await this.bot.db.getAffiliates()
 		//  Handle if there are no registered affiliates
-		if (!affiliateList.length) return reply(this.locale.AFFILIATES.EMPTY, {status: `warn`})
-		//  Limits functionality for non-developer
-		if (!this.fullArgs || (this.message.author.permissions.level < 4)) return reply(this.locale.AFFILIATES.DISPLAY, {
+		if (!affiliateList.length) return this.reply(this.locale.AFFILIATES.EMPTY, {status: `warn`})
+		return this.reply(this.locale.AFFILIATES.DISPLAY, {
 			header: `Annie's Affiliated Servers`,
 			thumbnail: this.bot.user.displayAvatarURL(),
 			socket: {
-				list: await this._prettifyList(affiliateList, ...arguments),
-				user: name(this.user.master.id)
+				list: await this._prettifyList(affiliateList),
+				user: this.user.master.username
 			},
 			color: `crimson`
 		})

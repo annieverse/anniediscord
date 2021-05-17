@@ -15,14 +15,14 @@ class Remind extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, bot:{reminders} }) {
+    async execute() {
         await this.requestUserMetadata(1)
         //  Displays guide and user's active reminders
         if (!this.fullArgs) {
-            const userReminders = await reminders.getReminders(this.user.master.id)
-            return reply(this.locale.REMINDER.HOME, {
+            const userReminders = await this.bot.reminders.getReminders(this.user.master.id)
+            return this.reply(this.locale.REMINDER.HOME, {
                 image: `banner_reminder`,
                 socket: {
                     prefix: this.bot.prefix,
@@ -31,19 +31,18 @@ class Remind extends Command {
             })
         }
         //  Handle if the date is not valid
-        const context = reminders.getContextFrom(this.fullArgs, this.user.master.id)
-        if (!context.isValidReminder) return reply(this.locale.REMINDER.INVALID_DATE, {
+        const context = this.bot.reminders.getContextFrom(this.fullArgs, this.user.master.id)
+        if (!context.isValidReminder) return this.reply(this.locale.REMINDER.INVALID_DATE, {
             socket: {
-                emoji: await emoji(`790338393015713812`),
+                emoji: await this.bot.getEmoji(`790338393015713812`),
                 prefix: this.bot.prefix
             }
         })
-        //  Finalize
-        reminders.register(context)
-        return reply(this.locale.REMINDER.SUCCESSFUL, {
+        this.bot.reminders.register(context)
+        return this.reply(this.locale.REMINDER.SUCCESSFUL, {
             status: `success`,
             socket: {
-                emoji: await emoji(`789212493096026143`),
+                emoji: await this.bot.getEmoji(`789212493096026143`),
                 time: moment(context.remindAt.timestamp).fromNow()
             }
         })

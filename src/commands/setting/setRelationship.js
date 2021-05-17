@@ -21,17 +21,17 @@ class SetRelationship extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-    async execute({ reply, emoji, name, bot:{db} }) {
+    async execute() {
         await this.requestUserMetadata(2)
         await this.requestAuthorMetadata(2)
-        const availableRelationships = await db.getAvailableRelationships()
+        const availableRelationships = await this.bot.db.getAvailableRelationships()
         //  Handle if no relationships are available to be assigned.
-        if (!availableRelationships) return reply(this.locale.RELATIONSHIP.UNAVAILABLE)
+        if (!availableRelationships) return this.reply(this.locale.RELATIONSHIP.UNAVAILABLE)
         //  Handle if user doesn't provide any argument
-        if (!this.fullArgs && this.user.isSelf) return reply(this.locale.RELATIONSHIP.GUIDE, {
-            header: `Hi, ${this.author.master.username}!`,
+        if (!this.fullArgs && this.user.isSelf) return this.reply(this.locale.RELATIONSHIP.GUIDE, {
+            header: `Hi, ${this.message.author.username}!`,
             image: `banner_setrelationship`,
             socket: {
                 list: this.prettifyList(availableRelationships),
@@ -39,51 +39,51 @@ class SetRelationship extends Command {
             }
         })
         //  Handle if target doesn't exists
-        if (!this.user) return reply(this.locale.USER.IS_INVALID)
+        if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
         //  Handle if target is the author
-        if (this.user.isSelf) return reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await emoji(`751016612248682546`)} })
+        if (this.user.isSelf) return this.reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await this.bot.getEmoji(`751016612248682546`)} })
 		//  Handle delete action	
         const userRels = this.author.relationships.map(node => node.assigned_user_id)
 		if (this.fullArgs.startsWith(`delete`) || this.fullArgs.startsWith(`remove`)) {
-			if (!userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
+			if (!userRels.includes(this.user.master.id)) return this.reply(this.locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
 				socket: {
 					user: this.user.master.username,
-					emoji: await emoji(`790338393015713812`)
+					emoji: await this.bot.getEmoji(`790338393015713812`)
 				}
 			})
-			const deleteConfirmation = await reply(this.locale.RELATIONSHIP.DELETE_CONFIRMATION, {
+			const deleteConfirmation = await this.reply(this.locale.RELATIONSHIP.DELETE_CONFIRMATION, {
 				header: `Break up with ${this.user.master.username}?`,
 				thumbnail: this.user.master.displayAvatarURL(),
-				socket: {emoji: await emoji(`692428578683617331`)}
+				socket: {emoji: await this.bot.getEmoji(`692428578683617331`)}
 			}) 
 			await this.addConfirmationButton(`setRelationship`, deleteConfirmation, this.author.master.id)
 			return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
 				//  Handle cancellation
-				if (this.isCancelled(r)) return reply(``, {
+				if (this.isCancelled(r)) return this.reply(``, {
 					customHeader: [`Good decision. Keep the relationship eternal.`, this.user.master.displayAvatarURL()]
 				})
 				//  Update relationship data on author side
-				await this.bot.db.removeUserRelationship(this.author.master.id, this.user.master.id, this.message.guild.id)
+				this.bot.db.removeUserRelationship(this.author.master.id, this.user.master.id, this.message.guild.id)
 				//  Successful
 				this.finalizeConfirmation(r)
-				return reply(``, {
+				return this.reply(``, {
 					customHeader: [`${this.user.master.username} is no longer with you.`, this.user.master.displayAvatarURL()]})
 			})
 		}	
         //  Handle if user already reached the maximum relationship members and attempted to add new member
-        if ((userRels.length >= 7) && !userRels.includes(this.user.master.id)) return reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
-            socket: {emoji: await emoji(`781956690337202206`)}
+        if ((userRels.length >= 7) && !userRels.includes(this.user.master.id)) return this.reply(this.locale.RELATIONSHIP.HIT_LIMIT, {
+            socket: {emoji: await this.bot.getEmoji(`781956690337202206`)}
         })
         //  Handle if the specified gift cannot be found
         let searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, availableRelationships.map(i => i.name))
         const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
-        if (!relationship) return reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji: await emoji(`692428969667985458`)} })
+        if (!relationship) return this.reply(this.locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji: await this.bot.getEmoji(`692428969667985458`)} })
         //  Render confirmation
-        this.confirmation = await reply(this.locale.RELATIONSHIP.TARGET_CONFIRMATION, {
+        this.confirmation = await this.reply(this.locale.RELATIONSHIP.TARGET_CONFIRMATION, {
             prebuffer: true,
             image: await new GUI(this.user, relationship.name).build(),
             socket: {
-                user: name(this.user.master.id),
+                user: this.bot.getUsername(this.user.master.id),
                 mention: this.user.master,
                 relationship: relationship.name,
             }
@@ -91,14 +91,14 @@ class SetRelationship extends Command {
         await this.addConfirmationButton(`setRelationship`, this.confirmation, this.user.master.id)
         return this.confirmationButtons.get(`setRelationship`).on(`collect`, async r => {
 			//  Handle cancellation
-			if (this.isCancelled(r)) return reply(``, {
+			if (this.isCancelled(r)) return this.reply(``, {
 				customHeader: [`Oops, they rejected your relationship request...`, this.user.master.displayAvatarURL()]
 			})
             //  Update relationship data on author side
             await this.bot.db.setUserRelationship(this.author.master.id, this.user.master.id, parseInt(relationship.relationship_id), this.message.guild.id)
             //  Successful
             this.finalizeConfirmation(r)
-            return reply(``, {customHeader: [`${this.user.master.username} has accepted your relationship request!`, this.user.master.displayAvatarURL()]})
+            return this.reply(``, {customHeader: [`${this.user.master.username} has accepted your relationship request!`, this.user.master.displayAvatarURL()]})
         })
     }
 

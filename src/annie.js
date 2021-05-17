@@ -13,6 +13,8 @@ const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
 const emoji = require(`./utils/emojiFetch`)
+const loadAsset = require(`./utils/loadAsset`)
+const fetch = require(`node-fetch`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -151,7 +153,6 @@ class Annie extends Discord.Client {
      * @returns {void}
      */
     prepareLogin() {
-        process.on(`unhandledRejection`, err => logger.warn(`Catched rejection. > ${err.stack}`))
         try {
             this._initializingDatabase()
             this._initializingCommands()
@@ -373,6 +374,36 @@ class Annie extends Discord.Client {
      */
     getEmoji(keyword=``) {
         return emoji(keyword, this)
+    }
+
+    /**
+     * Parse target's username. If not available, fall back to parameter.
+     * @param {string} [userId=``] Target user id
+     * @return {string}
+     */
+    async getUsername(userId=``) {
+        const user = await this.users.fetch(userId)
+        return user ? user.username : userId
+    }
+
+    /**
+	*	Handles user's avatar fetching process. Set `true` on
+	*   second param to return as compressed buffer. (which is needed by canvas)
+	*	@param {String|ID} id id of user to be fetched from.
+	*	@param {Boolean} compress set true to return as compressed buffer.
+    *	@param {string} [size=`?size=512`] Custom size.
+	*   @param {boolean} [dynamic=false]
+	*   @return {buffer}
+	*/
+    async getUserAvatar(id, compress = false, size = `?size=512`, dynamic=false) {
+        const user = await this.users.fetch(id) 
+        if (!user) return loadAsset(`error`)
+		let url = user.displayAvatarURL({format: `png`, dynamic: dynamic})
+        if (compress) {
+            return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
+                .then(data => data.buffer())
+        }
+        return url + size
     }
 
     /**

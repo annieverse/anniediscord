@@ -14,14 +14,12 @@ class Ask extends Command {
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, choice }) {
-		await this.requestUserMetadata(2)
-		//  Returns if no question was specified.
-		if (!this.fullArgs) return reply(this.locale.ASK.SHORT_GUIDE)
-		//  Finishing answer.
-		return reply(choice(this.locale.ASK.ANSWERS))
+	async execute() {
+		if (!this.fullArgs) return this.reply(this.locale.ASK.SHORT_GUIDE)
+        const pool = this.locale.ASK.ANSWERS
+		return this.reply(pool[Math.floor(Math.random() * pool.length)])
 	}
 }
 

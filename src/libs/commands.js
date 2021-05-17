@@ -1,5 +1,6 @@
 `use-strict`
 const User = require(`./user`)
+const Response = require(`./response`)
 const emoji = require(`../utils/emojiFetch`)
 /**
  * Master/Parent module of Command Cluster
@@ -9,6 +10,7 @@ class Commands {
 	constructor(Stacks) {
 		this.bot = Stacks.bot
 		this.message = Stacks.message
+        this.responseClass = new Response(Stacks.message)
 
         /**
          * The default prop for accessing command's prefix.
@@ -96,6 +98,16 @@ class Commands {
         ? this.message.guild.members.fetch(Stacks.bot.user.id).then(m => m.roles.highest)
         : null
 	}
+
+    /**
+     * Response's send wrapper
+     * @param {string} content
+     * @param {object} plugins
+     * @return {*}
+     */
+    reply(content, plugins) {
+        return this.responseClass.send(content, plugins)
+    }
 
 	/**
 	 *  first-level collector handler. Inherited from `Pistachio.collector()`

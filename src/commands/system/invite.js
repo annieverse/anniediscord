@@ -12,21 +12,21 @@ class Invite extends Command {
 		super(Stacks)
 		this.permmissionInteger = 268823638
 		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
+        this.supportServerUrl = `https://discord.gg/7nDes9Pi` 
 	}
 
     /**
      * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
+     * @return {void}
      */
-	async execute({ reply, emoji, messageGuildInvite, bot:{user, supportServer} }) {
-		this.tools = {reply, emoji, user, supportServer, messageGuildInvite}
+	async execute() {
 		try {
 			//  Attempt to send through DM.
-			await this.sendInvites(this.message.author,...arguments)
-			return reply(this.locale.INVITE_LINK_SENT, {status: `success`, socket:{ emoji:`:e_mail:` }})
+			await this.sendInvites(this.message.author)
+			return this.reply(this.locale.INVITE_LINK_SENT, {status: `success`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
-			return this.sendInvites(this.message.channel,...arguments)
+			return this.sendInvites(this.message.channel)
 		}
 	}
 
@@ -35,16 +35,16 @@ class Invite extends Command {
      * @param {object} [targetChannel={}] target channel to be sent in..
      * @returns {void}
      */
-	async sendInvites(targetChannel={},{reply, emoji}) {
-		await reply(this.locale.GENERATE_BOT_INVITE, {
+	async sendInvites(targetChannel={}) {
+		await this.reply(this.locale.GENERATE_BOT_INVITE, {
 			socket: {botInviteLink: `[Let's add me to your server!](${this.botInviteUrl})`},
 			field: targetChannel
 		})
-		await reply(this.locale.GENERATE_SERVER_INVITE, {
+		await this.reply(this.locale.GENERATE_SERVER_INVITE, {
 			simplified: true,
 			socket: {
-				serverLink: this.tools.supportServer,
-				emoji: await emoji(`692428927620087850`)
+				serverLink: this.supportServerUrl,
+				emoji: await this.bot.getEmoji(`692428927620087850`)
 			},
 			field: targetChannel
 		})
