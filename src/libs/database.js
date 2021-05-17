@@ -2482,16 +2482,15 @@ class Database {
 	 * @param {string} [userB=``] Target user's id to be assigned.
 	 * @returns {QueryResult}
 	 */
-    removeUserRelationship(userA=``, userB=``, guildId=``) {
+    removeUserRelationship(userA=``, userB=``) {
 		return this._query(`
             DELETE FROM user_relationships
             WHERE 
             	user_id_A = ?
-				AND user_id_B = ?
-				AND guild_id = ?`
+				AND user_id_B = ?`
 			, `run`
-			, [userA, userB, guildId]
-			, `Removing ${userA} and ${userB} relationship for guild: ${guildId}.`
+			, [userA, userB]
+			, `Removing ${userA} and ${userB} relationship.`
 		)
 	}
 	

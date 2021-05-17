@@ -527,6 +527,7 @@
         "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
         "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
         "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
+        "HIT_LIMIT_OTHERS": "**So unfortunate.** {{user}} already hitting their max relationships. Go ask them to break one of their relationship first. </3",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
 		"TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
 		"DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
