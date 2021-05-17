@@ -1,3 +1,11 @@
+## [7.16.2](https://github.com/klerikdust/anniediscord/compare/v7.16.1...v7.16.2) (2021-05-17)
+
+
+### Bug Fixes
+
+* **database:** added additional clause for update inventory check. ([d588094](https://github.com/klerikdust/anniediscord/commit/d588094807b66adb41db8b464a648c20c3d9bb23))
+* **event:** make user validation to run asychronously. ([5852972](https://github.com/klerikdust/anniediscord/commit/5852972fe22e45001a6a4d6b9156bd3955e08b05))
+
 ## [7.16.1](https://github.com/klerikdust/anniediscord/compare/v7.16.0...v7.16.1) (2021-05-17)
 
 
