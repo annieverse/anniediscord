@@ -12,11 +12,14 @@ class UI {
     constructor(user={}, bot, author) {
         this.bot = bot
         this.user = user
-        this.relationships = user.relationships
-        this.author = author,
-        this.width = 320
         this.limit = 7
-        this.height = 430 - (51.50 * (this.limit - user.relationships.length))
+        //  Trim overlimit rel container
+        this.relationships = user.relationships.length >= this.limit 
+        ? user.relationships.slice(0, this.limit)
+        : user.relationships
+        this.author = author
+        this.width = 320
+        this.height = 430 - (51.50 * (this.limit - this.relationships.length))
         this.startPos_x = 10
         this.startPos_y = 10
         this.baseWidth = this.width - 20
