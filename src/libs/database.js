@@ -1042,7 +1042,7 @@ class Database {
         const cacheId = `VALIDATEDUSER_${userId}@${guildId}`
         if (await this.redis.exists(cacheId)) return
         //  Flush in 12 hours
-        this.redis.set(cacheId, 1, `EX`, (60 * 5)
+        this.redis.set(cacheId, 1, `EX`, (60 * 5))
         //  Otherwise, perform insertion check query.
 		this._query(`
 			INSERT INTO users(user_id, name)
