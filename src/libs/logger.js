@@ -1,6 +1,2 @@
-module.exports = {
-    info: function() {},
-    debug: function() {},
-    warn: function() {},
-    error: function() {}
-}
+const logger = require(`pino`)()
+module.exports = logger

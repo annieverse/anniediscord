@@ -11,13 +11,12 @@ const { Webhook } = require(`@top-gg/sdk`)
 const getCustomShardId = (id) => {
     return `[SHARD_ID:${id}|${shardName[id]}]`
 }
-process.on(`unhandledRejection`, err => console.log(`Catched rejection. > ${err.message}`))
 module.exports = () => {
     const { ShardingManager } = require(`discord.js`)
     const manager = new ShardingManager(`./src/annie.js`, { token: process.env.TOKEN })
     const server = express()
     manager.on(`shardCreate`, shard => {
-        console.log(`${getCustomShardId(shard.id)} spawned`) 
+        logger.info(`${getCustomShardId(shard.id)} spawned`) 
     })
     //  Spawn shard sequentially with 30 seconds interval. 
     //  Will send timeout warn in 2 minutes.

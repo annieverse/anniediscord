@@ -10,7 +10,7 @@
     "unit-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/mocha \"test/*.js\"",
     "start": "cross-env NODE_ENV=production pm2 start index.js --name \"production\"",
     "staging": "cross-env NODE_ENV=staging pm2 start index.js --name \"staging\"",
-    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js | pino-pretty",
     "test": "npm run lint:check"
   },
   "engines": {
@@ -68,21 +68,21 @@
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.0",
     "parse-ms": "^3.0.0",
+    "pino": "^6.11.3",
     "pixiv-api-client": "^0.25.0",
     "pixiv-img": "^1.0.0",
     "pm2": "^4.5.6",
     "probe-image-size": "^5.0.0",
     "string-similarity": "^4.0.2",
     "superagent": "^6.0.0",
-    "uuid": "^8.3.2",
-    "winston": "^3.3.1",
-    "winston-daily-rotate-file": "^4.5.2"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@airbnb/node-memwatch": "^2.0.0",
     "eslint": "5.16.0",
     "http": "0.0.1-security",
     "nodemon": "^2.0.6",
+    "pino-pretty": "^4.8.0",
     "semantic-release": "^17.4.2",
     "url": "^0.11.0"
   }

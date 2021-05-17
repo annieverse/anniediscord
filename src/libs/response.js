@@ -209,7 +209,6 @@ class Response {
         let res = []
         for (let i = 0; i < pages.length; i++) {
             res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
-            console.debug(src.color)
             if (src.color) res[i].setColor(palette[src.color] || src.color || palette[`crimson`])
             if (src.header) res[i].setTitle(src.header)
            	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
