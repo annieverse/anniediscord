@@ -61,7 +61,7 @@
     "jimp": "^0.16.0",
     "lodash.clonedeep": "^4.5.0",
     "long": "^4.0.0",
-    "mocha": "^8.3.2",
+    "mocha": "^8.4.0",
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.31",
     "node-cmd": "^3.0.0",
