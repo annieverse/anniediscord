@@ -27,7 +27,7 @@ class UI {
 		let start_y = 30
 		const welcomerBackgroundId = this.backgroundId || this.member.guild.configs.get(`WELCOMER_IMAGE`).value
 		const isDarkTheme = this.member.guild.configs.get(`WELCOMER_THEME`).value === `dark` ? true : false
-		const background = await loadAsset(welcomerBackgroundId)
+		const background = await loadAsset(welcomerBackgroundId, `./src/assets/customWelcomer`)
 		let canv = new Canvas(800, 250)
 		const {
 			width: bgWidth, 
