@@ -43,9 +43,10 @@ class SetCommand extends Command {
      */
     async channel() {
         let channelsContainer = this.message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!this.args[1]) return this.reply(this.locale.SETCOMMAND[channelsContainer.length > 0 ? `CHANNEL_INFO` : `CHANNEL_GUIDE`], {
+        console.debug(channelsContainer)
+        if (!this.args[1]) return this.reply(this.locale.SETCOMMAND.MISSING_TARGET_CHANNEL, {
             socket: {
-                channels: this._identifyChannels(channelsContainer)
+                emoji: await this.bot.getEmoji(`AnnieMad2`)
             }
         })
         const specifiedChannels = this.args.slice(1)

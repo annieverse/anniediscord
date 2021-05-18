@@ -606,6 +606,7 @@
         "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**"
     },
     "SETCOMMAND": {
+        "MISSING_TARGET_CHANNEL": "Don't forget to specify the channel, okay? {{emoji}}",
         "GUIDE": "Here you can define which command channels that I should only listen to! {{channelStatus}}\n╭*:;,．★ ～☆*────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Here you can add a new channel as my only channel. If you haven't setting up anything previously, I'll listen to every visible channels! You can also add multiple channels at a time by separating it with comma.\n__e.g. {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Planning to remake the server channels? worry not, you can revert the command channels to default. This will ensure that I'm able to listen to every visible channel!\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "**Hmm, what was that?** the only available actions in SetCommand are **`channel`** and **`reset`**, so make sure you typed the correct one!",
         "INVALID_NEW_CHANNEL": "Hold on, is {{channel}} even a channel? {{emoji}}",
