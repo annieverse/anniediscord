@@ -40,7 +40,6 @@ class SetLevelupMessage extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return this.reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${this.user.master.username}!`,
-            thumbnail: this.thumbnail,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: await this.bot.getEmoji(`692428660824604717`)
