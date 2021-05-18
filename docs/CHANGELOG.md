@@ -1,3 +1,12 @@
+## [7.16.4](https://github.com/klerikdust/anniediscord/compare/v7.16.3...v7.16.4) (2021-05-18)
+
+
+### Bug Fixes
+
+* **setCommand:** missing locale. ([06cbb57](https://github.com/klerikdust/anniediscord/commit/06cbb57186953225f424a65db532a65411f31a71))
+* **vote:** invalid path. ([b335d00](https://github.com/klerikdust/anniediscord/commit/b335d0050420df3a0dda6985ddd2de04d1145e1a))
+* **welcomer:** deprecated loadAsset path. ([e4be338](https://github.com/klerikdust/anniediscord/commit/e4be338f850d6d637844802c3dc55e7a77260123))
+
 ## [7.16.3](https://github.com/klerikdust/anniediscord/compare/v7.16.2...v7.16.3) (2021-05-17)
 
 
