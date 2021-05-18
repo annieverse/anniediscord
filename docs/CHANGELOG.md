@@ -1,3 +1,11 @@
+## [7.16.3](https://github.com/klerikdust/anniediscord/compare/v7.16.2...v7.16.3) (2021-05-17)
+
+
+### Bug Fixes
+
+* **gacha:** asychronous storing. ([3cd80aa](https://github.com/klerikdust/anniediscord/commit/3cd80aa1dc4bd32a8d36e7c89b7ace8e7e7d5d5e))
+* **shop:** adapt to new architecture. ([ecc44fc](https://github.com/klerikdust/anniediscord/commit/ecc44fce75bd95d97de5de8025355112c773eb14))
+
 ## [7.16.2](https://github.com/klerikdust/anniediscord/compare/v7.16.1...v7.16.2) (2021-05-17)
 
 
