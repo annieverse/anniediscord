@@ -15,6 +15,8 @@ const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
 		if (fileWithoutFormat === id) return ultimateFile = file 
 	})
 	if (!ultimateFile) {
+        //  Replace path with default one
+        allFiles = fs.readdirSync(`./src/assets`)
 		allFiles.forEach((f) => {
 			if (f.includes(`defaultcover1`)) {
 				let filePath = `./${f.replace(/\\/g, `/`)}`
