@@ -20,15 +20,37 @@ class SetRelationship extends Command {
     }
 
     /**
+     * Fetch the User's snowflake in author's relationship tree.
+     * @return {map}
+     */
+    async _getAuthorRelationshipUsers() { 
+        const res = []
+        for (let i=0; i<this.author.relationships.length; i++) {
+            const obj = this.author.relationships[i]
+            const user = await this.bot.users.fetch(obj.assigned_user_id)
+            if (!user) continue
+            res[i] = user
+        }
+        return res
+    }
+    
+    /**
      * Running command workflow
      * @return {void}
      */
     async execute() {
-        await this.requestUserMetadata(2)
-        await this.requestAuthorMetadata(2)
         const availableRelationships = await this.bot.db.getAvailableRelationships()
-        //  Handle if no relationships are available to be assigned.
-        if (!availableRelationships) return this.reply(this.locale.RELATIONSHIP.UNAVAILABLE)
+        const isRemovalAction = this.fullArgs.startsWith(`delete`) || this.fullArgs.startsWith(`remove`)
+        await this.requestAuthorMetadata(2)
+        //  This will perform the search on local pool if user uses deletion action.
+        //  To ensure they able to delete their relationship tree with ease
+        //  Without the limitation of server.
+        let useRemoveAction = false
+        if (isRemovalAction) {
+            useRemoveAction = true
+            this.fullArgs = this.args.slice(1).join(` `)
+        }
+        await this.requestUserMetadata(2, isRemovalAction ? await this._getAuthorRelationshipUsers() : null)
         //  Handle if user doesn't provide any argument
         if (!this.fullArgs && (this.user.master.id === this.message.author.id)) return this.reply(this.locale.RELATIONSHIP.GUIDE, {
             header: `Hi, ${this.message.author.username}!`,
@@ -44,7 +66,7 @@ class SetRelationship extends Command {
         if (this.user.master.id === this.message.author.id) return this.reply(this.locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await this.bot.getEmoji(`751016612248682546`)} })
 		//  Handle delete action	
         const userRels = this.author.relationships.map(node => node.assigned_user_id)
-		if (this.fullArgs.startsWith(`delete`) || this.fullArgs.startsWith(`remove`)) {
+		if (useRemoveAction) {
 			if (!userRels.includes(this.user.master.id)) return this.reply(this.locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
 				socket: {
 					user: this.user.master.username,
