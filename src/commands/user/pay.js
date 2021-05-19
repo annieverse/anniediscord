@@ -78,9 +78,9 @@ class Pay extends Command {
             //  Handle if user trying to send artcoins above the amount they had
             if (this.author.inventory.artcoins < amountToSend) return this.reply(this.locale.PAY.INSUFFICIENT_BALANCE)
  			//  Send artcoins to target user
-			this.bot.db.updateInventory({itemId: 52, value: this.total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
+			this.bot.db.updateInventory({itemId: 52, value: total, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
 			//  Deduct artcoins from sender's balance
-			this.bot.db.updateInventory({itemId: 52, value: this.amountToSend, operation: `-`, userId: this.author.master.id, guildId: this.message.guild.id})
+			this.bot.db.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: this.author.master.id, guildId: this.message.guild.id})
  			this.finalizeConfirmation(r)
  			this.reply(``, {
  				customHeader: [`${this.user.master.username} has received your artcoins!♡`, this.user.master.displayAvatarURL()],

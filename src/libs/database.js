@@ -2421,6 +2421,102 @@ class Database {
 		)
     }
 
+    /**
+     * -------------------------------------------
+     * GENDER METHODS
+     * -------------------------------------------
+     */
+
+    /**
+     * Create genders table
+     * @return {QueryResult}
+     */
+    createGendersTable() {
+        return this._query(`CREATE TABLE IF NOT EXISTS genders (
+			'gender_id' PRIMARY KEY INTEGER AUTOINCREMENT,
+			'name' TEXT,
+			'alt' TEXT)`
+		   	, `run`
+		)
+    }
+
+    /**
+     * Registering new gender type to genders table.
+     * @param {string} [genderName=``]
+     * @param {string} [alternativeName=``]
+     * @return {QueryResult}
+     */
+    registerNewGender(genderName=``, alternativeName=``) {
+        return this._query(`
+            INSERT INTO genders(name, alt)
+            VALUES(?, ?)`
+            , [genderName, alternativeName]
+            , `[DB@REGISTER_NEW_GENDER] registered new  gender`
+        )
+    }
+
+    /**
+     * Create user_gender table
+     * @return {void}
+     */
+    createUserGenderTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS user_gender (
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT,
+			'gender' TEXT
+			PRIMARY KEY(user_id),
+		    FOREIGN KEY(user_id)
+		    REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE)`
+		   	, `run`
+		   	, []
+		)
+    }
+
+    /**
+     * Pull user's gender data
+     * @param {string} [userId=``] Target user id
+     * @return {object|null}
+     */
+    getUserGender(userId=``) {
+        return this._query(`
+            SELECT * FROM user_gender
+            WHERE user_id = ?`
+            , [userId]
+        )
+    }
+
+    /**
+     * Updating user's gender data
+     * @param {string} [userId=``] Target user id
+     * @param {string} gender New gender
+     * @return {void}
+     */
+    async updateUserGender(userId=``, gender) {
+        //	Insert if no data entry exists.
+        const res = {
+			insert: await this._query(`
+	            INSERT INTO user_gender (user_id, gender)
+				SELECT $userId, $gender
+				WHERE NOT EXISTS (SELECT 1 FROM user_gender WHERE user_id = $userId`
+				, `run`
+				, {userId:userId, gender:gender}	
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_gender
+				SET gender = ?
+				WHERE 
+					user_id = ?`
+				, `run`
+				, [gender, userId]
+			)
+        }
+		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`[DB@UPDATE_USER_GENDER] ${stmtType} (GENDER:${gender})(USER_ID:${userId}`) 
+    }
+
 	/**
 	 * Pull available relationship types
 	 * @returns {QueryResult}
