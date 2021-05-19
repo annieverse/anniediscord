@@ -1,3 +1,10 @@
+## [7.16.6](https://github.com/klerikdust/anniediscord/compare/v7.16.5...v7.16.6) (2021-05-19)
+
+
+### Bug Fixes
+
+* **loadAsset:** wrong path for default img. ([a46eed7](https://github.com/klerikdust/anniediscord/commit/a46eed71b566d2cf9406eb42574328816cee3b01))
+
 ## [7.16.5](https://github.com/klerikdust/anniediscord/compare/v7.16.4...v7.16.5) (2021-05-18)
 
 
