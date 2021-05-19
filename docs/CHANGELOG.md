@@ -1,3 +1,10 @@
+## [7.16.5](https://github.com/klerikdust/anniediscord/compare/v7.16.4...v7.16.5) (2021-05-18)
+
+
+### Bug Fixes
+
+* **setLevelupMessage:** remove thumbnail. ([5d205d0](https://github.com/klerikdust/anniediscord/commit/5d205d0cd013a24e67ab505ea0b8d091b9d993bc))
+
 ## [7.16.4](https://github.com/klerikdust/anniediscord/compare/v7.16.3...v7.16.4) (2021-05-18)
 
 
