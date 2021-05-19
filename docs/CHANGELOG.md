@@ -1,3 +1,10 @@
+## [7.16.7](https://github.com/klerikdust/anniediscord/compare/v7.16.6...v7.16.7) (2021-05-19)
+
+
+### Bug Fixes
+
+* **loadAsset:** replace path parameter. ([0b71125](https://github.com/klerikdust/anniediscord/commit/0b7112547144bbcfad5c5b0e3fb1d694a55e53db))
+
 ## [7.16.6](https://github.com/klerikdust/anniediscord/compare/v7.16.5...v7.16.6) (2021-05-19)
 
 
