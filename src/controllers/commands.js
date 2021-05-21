@@ -53,12 +53,14 @@ module.exports = async (client={}, message={}) => {
     // Attempt on running target command
     try {
         const initTime = process.hrtime()
-        await new command.start({
+        let cmdRan = await new command.start({
             bot: client, 
             message: message, 
             commandProperties: command
         }).execute()
-        client.db.recordsCommandUsage({
+        //  Dispose
+        cmdRan = null
+        return client.db.recordsCommandUsage({
             guild_id: message.guild.id,
             user_id: message.author.id,
             command_alias: targetCommand,

@@ -35,20 +35,13 @@ const { LOCALIZATION_ERROR } = require(`../locales/en`)
 class Response {
 	/**
 	 * @param {object} [message={}] Target message's instance.
-	 * @parma {string} [lang=``] Target language.
 	 */
-	constructor(message={}, lang=`en`) {
+	constructor(message={}) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
 		 */
 		this.message = message
-
-		/**
-		 * Localization Pool
-		 * @type {object}
-		 */
-		this.locale = new Localization()[lang]
 
 		/**
 		 * Default target channel
