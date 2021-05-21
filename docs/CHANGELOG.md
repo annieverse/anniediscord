@@ -1,3 +1,16 @@
+# [7.17.0](https://github.com/klerikdust/anniediscord/compare/v7.16.7...v7.17.0) (2021-05-19)
+
+
+### Bug Fixes
+
+* **invite:** update server invite url. ([3e8659d](https://github.com/klerikdust/anniediscord/commit/3e8659df66559bebed967765bcc0520ae4632d21))
+* **pay:** wrong path ref. ([90bed94](https://github.com/klerikdust/anniediscord/commit/90bed94cc1b1182e85249665ba25e345ed87d373))
+
+
+### Features
+
+* **SetRelationship:** possible to remove relationship tree that is out of range. ([fb1708c](https://github.com/klerikdust/anniediscord/commit/fb1708c5dd8ee560036aabf45d289aeeef05ae8a))
+
 ## [7.16.7](https://github.com/klerikdust/anniediscord/compare/v7.16.6...v7.16.7) (2021-05-19)
 
 
