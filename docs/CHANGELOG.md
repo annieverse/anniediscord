@@ -1,3 +1,10 @@
+## [7.17.2](https://github.com/klerikdust/anniediscord/compare/v7.17.1...v7.17.2) (2021-05-23)
+
+
+### Bug Fixes
+
+* **updateRank:** removed finite condition to remove roles. ([0ae5067](https://github.com/klerikdust/anniediscord/commit/0ae5067d7f1e2d44e6e7efb430447ec4d0875cb5))
+
 ## [7.17.1](https://github.com/klerikdust/anniediscord/compare/v7.17.0...v7.17.1) (2021-05-21)
 
 
