@@ -1,3 +1,10 @@
+## [7.17.1](https://github.com/klerikdust/anniediscord/compare/v7.17.0...v7.17.1) (2021-05-21)
+
+
+### Performance Improvements
+
+* **command:** reduce overhead. experimental. ([ddfc912](https://github.com/klerikdust/anniediscord/commit/ddfc9123a6f644f79b969ef7e5909824d1833ba3))
+
 # [7.17.0](https://github.com/klerikdust/anniediscord/compare/v7.16.7...v7.17.0) (2021-05-19)
 
 
