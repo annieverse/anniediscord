@@ -1,3 +1,10 @@
+## [7.17.3](https://github.com/klerikdust/anniediscord/compare/v7.17.2...v7.17.3) (2021-05-25)
+
+
+### Bug Fixes
+
+* **setLevelupMessage:** direct apply on enable and disable action. ([07e518e](https://github.com/klerikdust/anniediscord/commit/07e518ede2f4d3d6642c1de49845c96fd22a200f))
+
 ## [7.17.2](https://github.com/klerikdust/anniediscord/compare/v7.17.1...v7.17.2) (2021-05-23)
 
 
