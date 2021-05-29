@@ -493,64 +493,6 @@ class LogsSystem {
     }
 
     /**
-     * ------------------------------------------------------------
-     * SUPPORT SERVER'S LOGS
-     * ------------------------------------------------------------
-     */
-    /**
-     * GUILD_CREATE event log
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
-     * @returns {Pistachio.reply}
-     */
-    async guildCreate({ reply, emoji }) {
-        const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
-        //  Send logs
-        this.logger.info(`[LOGS@GUILD_CREATE] ${guildCode} has invited me to their guild.`)
-        this.data.bot.shard.broadcastEval(`
-            (async () => {
-                const channel = await this.channels.cache.get('724732289572929728')
-                if (channel) {
-                    channel.send(\`${guildCode} has invited me.\`)
-                }
-            })
-        `)
-        //  Attempt to DM the guild owner
-        try {
-            //  Fetch owner user data
-            const owner = await this.data.bot.users.fetch(this.data.guild.ownerID)
-            reply(this.locale.LOGS.GUILDCREATE.AFTER_INVITATION, {
-                image: `banner_help`,
-                field: owner,
-                socket: {
-                    prefix: this.data.bot.prefix,
-                    emoji: emoji(`AnnieYay`),
-                    supportServer: this.data.bot.supportServer
-                }
-            })
-        } catch (e) {
-            return this.logger.warn(`${fn} failed to send AFTER_INVITATION message to the owner of GUILD_ID:${this.data.guild.id} > ${e.stack}`)
-        }
-    }
-
-    /**
-     * GUILD_DELETE event log
-     * @returns {Pistachio.reply}
-     */
-    async guildDelete() {
-        const fn = `[Logs.guildDelete()]`
-        const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
-        this.logger.info(`${fn} ${guildCode} has kicked me.`)
-        this.data.bot.shard.broadcastEval(`
-            (async () => {
-                const channel = await this.channels.cache.get('724732289572929728')
-                if (channel) {
-                    channel.send(\`${guildCode} has kicked me.\`)
-                }
-            })
-        `)
-    }
-
-    /**
      * Parsing CONFIG_CODE case into configCode.
      * @param {string} [configCode=``] target config code to parse from
      * @author klerikdust
