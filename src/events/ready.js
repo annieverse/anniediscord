@@ -1,6 +1,6 @@
 const commanifier = require(`../utils/commanifier`)
-const VotesManager = require(`../libs/votes`)
 const Routines = require(`../libs/routines`)
+const Topgg = require(`@top-gg/sdk`)
 
 module.exports = annie => {
 	//  Run configurations once
@@ -37,17 +37,7 @@ module.exports = annie => {
 			})
 		//  Refresh activity for every 60 seconds
 		}, 60000)
-		/**
-		 * 	--------------------------------------------------
-		 * 	Primary task
-		 * 	--------------------------------------------------
-		 */
-		//	Recording resource usage every 5 mins
-		Routine.resourceUsageLogging()
-		//	Check if pixiv cache's dir exists or not
-		Routine.pixivCacheDirCheck()
-		Routine.releasePixivCaches()
-		//  Handling incoming votes
-		new VotesManager(annie)
+		//  Registering vote api into client property.
+		annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)
 	}
 }

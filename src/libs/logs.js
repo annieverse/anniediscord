@@ -503,10 +503,9 @@ class LogsSystem {
      * @returns {Pistachio.reply}
      */
     async guildCreate({ reply, emoji }) {
-        const fn = `[Logs.guildCreate]`
         const guildCode = `${this.data.guild.id}@${this.data.guild.name}`
         //  Send logs
-        this.logger.info(`${fn} ${guildCode} has invited me to their guild.`)
+        this.logger.info(`[LOGS@GUILD_CREATE] ${guildCode} has invited me to their guild.`)
         this.data.bot.shard.broadcastEval(`
             (async () => {
                 const channel = await this.channels.cache.get('724732289572929728')
