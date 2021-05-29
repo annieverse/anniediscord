@@ -1,3 +1,15 @@
+## [7.17.4](https://github.com/klerikdust/anniediscord/compare/v7.17.3...v7.17.4) (2021-05-29)
+
+
+### Bug Fixes
+
+* **events:** ready event will fire once. ([169515f](https://github.com/klerikdust/anniediscord/commit/169515f0d673d7bbcbecc637383a0581d217babb))
+
+
+### Performance Improvements
+
+* optimize events and guild configuration loads. ([905c9c8](https://github.com/klerikdust/anniediscord/commit/905c9c8280515d12fb7e7620e4ebc43dbf040ebc))
+
 ## [7.17.3](https://github.com/klerikdust/anniediscord/compare/v7.17.2...v7.17.3) (2021-05-25)
 
 
