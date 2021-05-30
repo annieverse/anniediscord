@@ -1,3 +1,11 @@
+## [7.17.9](https://github.com/klerikdust/anniediscord/compare/v7.17.8...v7.17.9) (2021-05-30)
+
+
+### Bug Fixes
+
+* **eventController:** wrong ref for client var. ([c5131b6](https://github.com/klerikdust/anniediscord/commit/c5131b67e8ba0d555379acb6ce3ab8ec643999e3))
+* **message:** use standalone client property. ([2dcc904](https://github.com/klerikdust/anniediscord/commit/2dcc904dac6835828aa24b7d11a2f68f9bed758d))
+
 ## [7.17.8](https://github.com/klerikdust/anniediscord/compare/v7.17.7...v7.17.8) (2021-05-30)
 
 
