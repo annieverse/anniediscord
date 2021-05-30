@@ -1,3 +1,10 @@
+## [7.17.8](https://github.com/klerikdust/anniediscord/compare/v7.17.7...v7.17.8) (2021-05-30)
+
+
+### Bug Fixes
+
+* **client:** readjust guild conf register method. ([1d7e11d](https://github.com/klerikdust/anniediscord/commit/1d7e11dc7f83f6921b90ee9882cfe0f8813b0d08))
+
 ## [7.17.7](https://github.com/klerikdust/anniediscord/compare/v7.17.6...v7.17.7) (2021-05-30)
 
 
