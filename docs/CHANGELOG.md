@@ -1,3 +1,10 @@
+## [7.17.11](https://github.com/klerikdust/anniediscord/compare/v7.17.10...v7.17.11) (2021-05-30)
+
+
+### Bug Fixes
+
+* **customConfig:** missing getter type. ([6a1748d](https://github.com/klerikdust/anniediscord/commit/6a1748d22ad394831c4d2819293696c1f12abe86))
+
 ## [7.17.10](https://github.com/klerikdust/anniediscord/compare/v7.17.9...v7.17.10) (2021-05-30)
 
 
