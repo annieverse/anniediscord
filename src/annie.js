@@ -167,45 +167,37 @@ class Annie extends Discord.Client {
     }
 
     /**
-     * Registering configuration nodes for each guild
+     * Registering configuration nodes for each guild or single guild by specifying it in the parameter.
+     * @param {string} [guildId=null] Specify target guild id for single guild register.
      * @author klerikdust
-     * @returns {void}
-     */
-    async registerGuildConfigurations() {
-        const initTime = process.hrtime()
-        const getGuilds = this.guilds.cache.map(guild => guild.id)
-        const savedGuildConfigurations = await this.db.getAllGuildsConfigurations()
-        for (let i=0; i<getGuilds.length; i++) this.registerSingleGuildConfigurations(getGuilds[i], savedGuildConfigurations)
-        this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
-    }
-    
-    /**
-     * Registering configurations for single guild on cache.
-     * @param {string} guildId Target guild
-     * @param {object} [savedConfigsPool=[]] Supply the saved configs from database. If not supplied, then the config will  be registered using default values.
-     * Also as precaution, savedConfigsPool is a global configuration objects that includes all the registered guild configs, not just specific one.
      * @return {void}
      */
-    async registerSingleGuildConfigurations(guildId, savedConfigsPool=[]) {
-        let guild = this.guilds.cache.get(guildId)
-        if (!guild) return this.logger.warn(`GUILD_ID:${guildId} does not exists in SHARD_ID:${this.shard.ids[0]}`)
-        const existingGuildConfigs = savedConfigsPool ? savedConfigsPool.filter(c => c.guild_id === guildId) : []
-        guild.configs = new Map()
-        //  Iterating over all the available configurations
-        for (let x=0; x<customConfig.length; x++) {
-            let cfg = customConfig[x]
-            //  Register existing configs into guild's nodes if available
-            if (existingGuildConfigs.length > 0) {
-                const matchConfigCode = existingGuildConfigs.find(node => node.config_code.toUpperCase() === cfg.name)
-                if (matchConfigCode) {
-                    cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
-                    cfg.setByUserId = matchConfigCode.set_by_user_id
-                    cfg.registeredAt = matchConfigCode.registered_at
-                    cfg.updatedAt = matchConfigCode.updated_at
+    async registerGuildConfigurations(guildId=null) {
+        const initTime = process.hrtime()
+        const registerGuildConfigurations = await this.db.getAllGuildsConfigurations()
+        //  If prompted to register only single guild, then use single-element array.
+        const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
+        for (let i=0; i<getGuilds.length; i++) {
+            let guild = this.guilds.cache.get(guildId)
+            let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
+            guild.configs = new Map()
+            //  Iterating over all the available configurations
+            for (let x=0; x<customConfig.length; x++) {
+                let cfg = customConfig[x]
+                //  Register existing configs into guild's nodes if available
+                if (existingGuildConfigs.length > 0) {
+                    const matchConfigCode = existingGuildConfigs.find(node => node.config_code.toUpperCase() === cfg.name)
+                    if (matchConfigCode) {
+                        cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
+                        cfg.setByUserId = matchConfigCode.set_by_user_id
+                        cfg.registeredAt = matchConfigCode.registered_at
+                        cfg.updatedAt = matchConfigCode.updated_at
+                    }
                 }
+                guild.configs.set(cfg.name, cfg)
             }
-            guild.configs.set(cfg.name, cfg)
-        }
+        } 
+        this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
 
     /**
