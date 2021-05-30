@@ -1,3 +1,15 @@
+## [7.17.12](https://github.com/klerikdust/anniediscord/compare/v7.17.11...v7.17.12) (2021-05-30)
+
+
+### Bug Fixes
+
+* **updateRank:** additional layer to prevent role disappearance. ([c4811c3](https://github.com/klerikdust/anniediscord/commit/c4811c3c6f01c2efcb256369d2350f3b1a8a9f0d))
+
+
+### Performance Improvements
+
+* removed unnecessary startups. ([a50bc19](https://github.com/klerikdust/anniediscord/commit/a50bc1991e67c241d60287b1026d8cbaf8173c67))
+
 ## [7.17.11](https://github.com/klerikdust/anniediscord/compare/v7.17.10...v7.17.11) (2021-05-30)
 
 
