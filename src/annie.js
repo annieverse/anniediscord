@@ -178,7 +178,7 @@ class Annie extends Discord.Client {
         //  If prompted to register only single guild, then use single-element array.
         const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
         for (let i=0; i<getGuilds.length; i++) {
-            let guild = this.guilds.cache.get(guildId)
+            let guild = this.guilds.cache.get(getGuilds[i])
             let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
             guild.configs = new Map()
             //  Iterating over all the available configurations
