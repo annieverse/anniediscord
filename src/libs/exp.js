@@ -88,7 +88,7 @@ class Experience {
         let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
         const userRankLevel = closestBelow(registeredRanks.map(r => r.LEVEL), level) 
-        //  Early exit on unranked level. Also remove all the existing rank role.
+        //  Early exit on unranked level.
         if (!isFinite(userRankLevel)) return
         const expectedTargetRole = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel)
         if (!expectedTargetRole) return
@@ -105,10 +105,13 @@ class Experience {
         if (this.guild.configs.get(`RANKS_STACK`).value) return
         //  Remove non-current rank roles if RANKS_STACK is disabled
         const nonCurrentRankRoles = registeredRanks
-        .filter(r => r.ROLE !== userRankRole.id)
+        //  Added double condition to ensure the current role is filtered from result set.
+        .filter(r => (r.ROLE !== userRankRole.id) || (r.LEVEL !== userRankLevel))
         .map(r => r.ROLE)
         try {
-            this.user.roles.remove(nonCurrentRankRoles)
+            await this.user.roles.remove(nonCurrentRankRoles)
+            //  Doble check in case of role disaopearance accident
+            if (!this.user.roles.cache.has(userRankRole.id)) this.user.roles.add(userRankRole)
         }
         catch(e) {
             this.client.logger.warn(`${this.instanceId} <FAIL> role remove > ${e.message}`)
