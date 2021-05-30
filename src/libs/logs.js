@@ -70,7 +70,7 @@ class LogsSystem {
         const assumptionLogChannel = channel.find(node => (node.name.toLowerCase() === `logs`) || (node.name.toLowerCase() === `log`))
         if (assumptionLogChannel !== undefined) return this.logsChannel = assumptionLogChannel
         //  Fallback
-        this.logger.info(`${fn} fail to find the target log channel for GUILD_ID:${this.guildId}`)
+        this.logger.info(`${fn} fail to find the target log channel for GUILD_ID:${this.guild.id}`)
         this.logsChannel = null
         return 
     }
