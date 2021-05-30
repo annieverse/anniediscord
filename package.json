@@ -73,7 +73,7 @@
     "pixiv-img": "^1.0.0",
     "pm2": "^4.5.6",
     "probe-image-size": "^5.0.0",
-    "string-similarity": "^4.0.2",
+    "string-similarity": "^4.0.3",
     "superagent": "^6.0.0",
     "uuid": "^8.3.2"
   },
