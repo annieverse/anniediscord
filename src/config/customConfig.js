@@ -9,7 +9,7 @@ module.exports = {
      * List of configurations template.
      * @type {object}
      */
-    availableConfigurations() {
+    get availableConfigurations() {
         return [
             {
                /**
