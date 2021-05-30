@@ -1,3 +1,16 @@
+## [7.17.6](https://github.com/klerikdust/anniediscord/compare/v7.17.5...v7.17.6) (2021-05-30)
+
+
+### Bug Fixes
+
+* **event:** removed autochange status. ([e4975d8](https://github.com/klerikdust/anniediscord/commit/e4975d83dadf6172ebcbd68bce49a04f5bc85144))
+* **updateRank:** asynchronous rnak update. ([93d0e6c](https://github.com/klerikdust/anniediscord/commit/93d0e6cbadfb30ad01eb6ab4059211c5f0acf5c6))
+
+
+### Performance Improvements
+
+* **guildConfigurations:** allows conf pooling on startup. ([7e8d760](https://github.com/klerikdust/anniediscord/commit/7e8d7608b53c6e4e576e0b57a183ed546b883631))
+
 ## [7.17.5](https://github.com/klerikdust/anniediscord/compare/v7.17.4...v7.17.5) (2021-05-29)
 
 
