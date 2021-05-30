@@ -240,25 +240,6 @@ class Annie extends Discord.Client {
     }
 
     /**
-     * updates global config
-     * @param {guild} guild uses support server as default
-     */
-    async updateConfig(guild=`577121315480272908`){
-        let configClass = new customConfig(this)
-        let configtwo = await configClass.setConfig(guild)
-        this.configClass = configClass
-        for (const [prop, value] of Object.entries(configtwo)) {
-            if (!this.configs.hasOwnProperty(prop)) {
-                this.configs[prop] = value // sets value in tree
-                this[prop] = value         // sets global use
-            } else {
-                this.configs[prop] = value
-                this[prop] = value
-            }
-        }
-    }
-
-    /**
      * Registering saved reminders into cron
      * @return {void}
      */
