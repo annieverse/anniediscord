@@ -1,3 +1,10 @@
+## [7.17.10](https://github.com/klerikdust/anniediscord/compare/v7.17.9...v7.17.10) (2021-05-30)
+
+
+### Bug Fixes
+
+* **guildConfigurations:** overlapping values between servers. ([00f8edf](https://github.com/klerikdust/anniediscord/commit/00f8edfa7ba096a540655ee699ede07364cbac64))
+
 ## [7.17.9](https://github.com/klerikdust/anniediscord/compare/v7.17.8...v7.17.9) (2021-05-30)
 
 
