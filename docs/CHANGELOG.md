@@ -1,3 +1,12 @@
+## [7.17.7](https://github.com/klerikdust/anniediscord/compare/v7.17.6...v7.17.7) (2021-05-30)
+
+
+### Bug Fixes
+
+* **guildConfigurations:** merge method for single and multi configurations register. ([a726c85](https://github.com/klerikdust/anniediscord/commit/a726c85c0415c53f9877293e369e5d0dd1d903f2))
+* **guildConfigurations:** mising guild object. ([2740560](https://github.com/klerikdust/anniediscord/commit/27405607b36cd6703a5f9b5acb382a6d3333d7b9))
+* **log:** wrong property path for fallback. ([0ef6cec](https://github.com/klerikdust/anniediscord/commit/0ef6cec80eca946502ab35ae999fc6e3f0245a2d))
+
 ## [7.17.6](https://github.com/klerikdust/anniediscord/compare/v7.17.5...v7.17.6) (2021-05-30)
 
 
