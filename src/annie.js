@@ -174,19 +174,22 @@ class Annie extends Discord.Client {
     async registerGuildConfigurations() {
         const initTime = process.hrtime()
         const getGuilds = this.guilds.cache.map(guild => guild.id)
-        for (let i=0; i<getGuilds.length; i++) await this.registerSingleGuildConfigurations(getGuilds[i])
+        const savedGuildConfigurations = await this.db.getAllGuildsConfigurations()
+        for (let i=0; i<getGuilds.length; i++) this.registerSingleGuildConfigurations(getGuilds[i], savedGuildConfigurations)
         this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
     
     /**
      * Registering configurations for single guild on cache.
-     * @param {string} guildId
+     * @param {string} guildId Target guild
+     * @param {object} [savedConfigsPool=[]] Supply the saved configs from database. If not supplied, then the config will  be registered using default values.
+     * Also as precaution, savedConfigsPool is a global configuration objects that includes all the registered guild configs, not just specific one.
      * @return {void}
      */
-    async registerSingleGuildConfigurations(guildId) {
+    async registerSingleGuildConfigurations(guildId, savedConfigsPool=[]) {
         let guild = this.guilds.cache.get(guildId)
         if (!guild) return this.logger.warn(`GUILD_ID:${guildId} does not exists in SHARD_ID:${this.shard.ids[0]}`)
-        const existingGuildConfigs = await this.db.getGuildConfigurations(guildId) 
+        const existingGuildConfigs = savedConfigsPool ? savedConfigsPool.filter(c => c.guild_id === guildId) : []
         guild.configs = new Map()
         //  Iterating over all the available configurations
         for (let x=0; x<customConfig.length; x++) {
