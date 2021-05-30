@@ -1,3 +1,10 @@
+## [7.17.5](https://github.com/klerikdust/anniediscord/compare/v7.17.4...v7.17.5) (2021-05-29)
+
+
+### Bug Fixes
+
+* **message:** missing prefix length. ([a6dacbc](https://github.com/klerikdust/anniediscord/commit/a6dacbca8faaead82bd5398b274a9a931e8382e9))
+
 ## [7.17.4](https://github.com/klerikdust/anniediscord/compare/v7.17.3...v7.17.4) (2021-05-29)
 
 
