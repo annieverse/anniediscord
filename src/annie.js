@@ -186,7 +186,8 @@ class Annie extends Discord.Client {
                 let cfg = customConfig[x]
                 //  Register existing configs into guild's nodes if available
                 if (existingGuildConfigs.length > 0) {
-                    const matchConfigCode = existingGuildConfigs.find(node => node.config_code.toUpperCase() === cfg.name)
+                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                    console.debug(matchConfigCode)
                     if (matchConfigCode) {
                         cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
                         cfg.setByUserId = matchConfigCode.set_by_user_id
