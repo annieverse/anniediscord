@@ -23,11 +23,12 @@ class User {
     /**
      * Finds a user by id, or tag or plain name uses dynamic user searchstring algorithm.
      * @param {string} [target] A keyword to be used to do searchstring.
+     * @param {object} [localPool=null] Perform custom search inside given pool. Must be Array-typed.
      * @author klerikdust
      * @since v7.2.1
      * @returns {object}
      */
-	async lookFor(target) {
+	async lookFor(target, localPool=null) {
         const fn = `[User.lookFor()]`
         if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
         target = target.toLowerCase()
@@ -36,6 +37,17 @@ class User {
         //  Otherwise, trim non-number and non-alphabetic characters.
         target = target.match(/#.\d{3}/g) !== null ? target.replace(/#.\d{3}/g, ``) : target.replace(/[^0-9a-z-A-Z ]/g, ``)
 		this.args = target.split(` `)
+        //  Perform local pool search
+        if (localPool !== null) {
+            const res = localPool.find(u => {
+                //  by id
+                return u.id === target
+                //  by username (both w/ or w/o combination of tag)
+                || u.username.toLowerCase().startsWith(target)
+            })
+            //  Fallback to null if not found
+            return res ? {master:res, usedKeyword:target} : null
+        }
         const collection = this.message.guild.members
 		//  Lookup by full string nickname/username
 		try {

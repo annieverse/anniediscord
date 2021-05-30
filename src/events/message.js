@@ -16,7 +16,8 @@ module.exports = (client, message) => {
     //  Check if AR module is enabled.
     if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
     //  Check if message is identified as command.
-    if (message.content.startsWith(client.prefix) && message.content.length >= (client.prefix.length + 1)) return commandController(client, message)
+    const prefix = client.prefix
+    if (message.content.startsWith(prefix) && message.content.length >= prefix.length) return commandController(client, message)
     //  Automatically executing chat points when no other module requirements are met
     const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
     client.db.redis.get(gainingId)

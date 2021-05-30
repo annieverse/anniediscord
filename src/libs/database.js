@@ -208,7 +208,8 @@ class Database {
 				insert: await this._query(`
 					INSERT INTO user_inventories (item_id, user_id)
 					SELECT $itemId, $userId
-					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)`
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId)
+                    AND EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 					, `run`
 					, {itemId: itemId, userId: userId}
 				),
@@ -230,7 +231,8 @@ class Database {
 				insert: await this._query(`
 					INSERT INTO user_inventories (item_id, user_id, guild_id)
 					SELECT $itemId, $userId, $guildId
-					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)`
+					WHERE NOT EXISTS (SELECT 1 FROM user_inventories WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId)
+                    AND EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 					, `run`
 					, {itemId: itemId, userId: userId, guildId: guildId}
 				),
@@ -1031,7 +1033,7 @@ class Database {
 	 * @param {string} [userId=``] User's discord id.
 	 * @param {string} [guildId=``] the guild where user get registered.
 	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
-	 * @returns {QueryResult|boolean}
+	 * @returns {void}
 	 */
 	async validateUser(userId=``, guildId=``, userName=``) {
 		const fn = `[Database.validateUser()]`
@@ -1039,50 +1041,42 @@ class Database {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
 		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
         //  If user already validated, don't run.
-        const cacheId = `${userId}@${guildId}`
-        const validationCacheKey = `VALIDATED_USERS_POOL`
-        let validatedUsersPool = JSON.parse(await this.getCache(validationCacheKey) || `[]`)
-        if (JSON.parse(validatedUsersPool.includes(cacheId))) return false
-        validatedUsersPool[validatedUsersPool.length] = cacheId
-        const stringifiedPool = JSON.stringify(validatedUsersPool)
-        if (validatedUsersPool.length <= 0) {
-            //  Flush in 24 hours
-            this.redis.set(validationCacheKey, stringifiedPool, `EX`, (60 * 60) * 24)
-        }
-        else {
-            this.redis.set(validationCacheKey, stringifiedPool) 
-        }
+        const cacheId = `VALIDATEDUSER_${userId}@${guildId}`
+        if (await this.redis.exists(cacheId)) return
+        //  Flush in 12 hours
+        this.redis.set(cacheId, 1, `EX`, (60 * 5))
         //  Otherwise, perform insertion check query.
-		const res = await this._query(`
+		this._query(`
 			INSERT INTO users(user_id, name)
 			SELECT $userId, $userName
 			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
 			, `run`
 			, {userId: userId, userName: userName}
 		)
-		let secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		let test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_dailies`)
-			logger.info(`New USER_ID ${userId} has been registered in user_dailies table.`)
-		}
-		secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_exp`)
-			logger.info(`New USER_ID ${userId} has been registered in user_exp table.`)
-		}
-		secondaryRes = await this._query(`SELECT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`,`get`,{userId: userId,guildId:guildId})
-		test = secondaryRes[Object.keys(secondaryRes)[0]] == 0 ? true : false
-		if (test){
-			await this._registerUserSecondaryData(userId, guildId,`user_reputations`)
-			logger.info(`New USER_ID ${userId} has been registered in user_reputations table.`)
-		}
-		if (res.changes >= 1) {
-			logger.info(`New USER_ID ${userId} has been registered in users table.`)
-		}
-		return res
-	}
+        .then(() => {
+            this._query(`
+                INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
+                SELECT datetime('now','-1 day'), -1, $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )
+            this._query(`
+                INSERT INTO user_exp(user_id, guild_id)
+                SELECT $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )
+            this._query(`
+                INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
+                SELECT datetime('now','-1 day'), $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId: userId, guildId: guildId}
+            )	
+        })
+    }
 
 	/**
 	 * Delete a user from user table entries.
@@ -2425,6 +2419,102 @@ class Database {
 			, `all`
 			, [userId]
 		)
+    }
+
+    /**
+     * -------------------------------------------
+     * GENDER METHODS
+     * -------------------------------------------
+     */
+
+    /**
+     * Create genders table
+     * @return {QueryResult}
+     */
+    createGendersTable() {
+        return this._query(`CREATE TABLE IF NOT EXISTS genders (
+			'gender_id' PRIMARY KEY INTEGER AUTOINCREMENT,
+			'name' TEXT,
+			'alt' TEXT)`
+		   	, `run`
+		)
+    }
+
+    /**
+     * Registering new gender type to genders table.
+     * @param {string} [genderName=``]
+     * @param {string} [alternativeName=``]
+     * @return {QueryResult}
+     */
+    registerNewGender(genderName=``, alternativeName=``) {
+        return this._query(`
+            INSERT INTO genders(name, alt)
+            VALUES(?, ?)`
+            , [genderName, alternativeName]
+            , `[DB@REGISTER_NEW_GENDER] registered new  gender`
+        )
+    }
+
+    /**
+     * Create user_gender table
+     * @return {void}
+     */
+    createUserGenderTable() {
+		return this._query(`CREATE TABLE IF NOT EXISTS user_gender (
+			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			'user_id' TEXT,
+			'gender' TEXT
+			PRIMARY KEY(user_id),
+		    FOREIGN KEY(user_id)
+		    REFERENCES users(user_id) 
+			   ON DELETE CASCADE
+			   ON UPDATE CASCADE)`
+		   	, `run`
+		   	, []
+		)
+    }
+
+    /**
+     * Pull user's gender data
+     * @param {string} [userId=``] Target user id
+     * @return {object|null}
+     */
+    getUserGender(userId=``) {
+        return this._query(`
+            SELECT * FROM user_gender
+            WHERE user_id = ?`
+            , [userId]
+        )
+    }
+
+    /**
+     * Updating user's gender data
+     * @param {string} [userId=``] Target user id
+     * @param {string} gender New gender
+     * @return {void}
+     */
+    async updateUserGender(userId=``, gender) {
+        //	Insert if no data entry exists.
+        const res = {
+			insert: await this._query(`
+	            INSERT INTO user_gender (user_id, gender)
+				SELECT $userId, $gender
+				WHERE NOT EXISTS (SELECT 1 FROM user_gender WHERE user_id = $userId`
+				, `run`
+				, {userId:userId, gender:gender}	
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_gender
+				SET gender = ?
+				WHERE 
+					user_id = ?`
+				, `run`
+				, [gender, userId]
+			)
+        }
+		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`[DB@UPDATE_USER_GENDER] ${stmtType} (GENDER:${gender})(USER_ID:${userId}`) 
     }
 
 	/**

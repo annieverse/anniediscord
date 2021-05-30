@@ -40,7 +40,6 @@ class SetLevelupMessage extends Command {
         //  Handle if user doesn't specify any arg
         if (!this.fullArgs) return this.reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${this.user.master.username}!`,
-            thumbnail: this.thumbnail,
             socket: {
                 prefix: this.bot.prefix,
                 emoji: await this.bot.getEmoji(`692428660824604717`)
@@ -62,18 +61,6 @@ class SetLevelupMessage extends Command {
      * @return {void}
      */
     async enable() {
-        const fn = `[setLevelupMessage.enable()]`
-        //  Handle if module already enabled before the action.
-        if (this.primaryConfig.value) {
-            const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
-            return this.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_ENABLED, {
-                socket: {
-                    user: await this.bot.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
-                }
-            })
-        }
-        //  Update configs
         this.bot.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
@@ -92,12 +79,6 @@ class SetLevelupMessage extends Command {
      * @return {void}
      */
     async disable() {
-        const fn = `[setLevelupMessage.disable()]`
-        //  Handle if module already disabled before the action.
-        if (!this.primaryConfig.value) return this.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
-            socket:{prefix:this.bot.prefix}
-        })
-        //  Update configs
         this.bot.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,

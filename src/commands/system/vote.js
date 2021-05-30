@@ -18,7 +18,7 @@ class Vote extends Command {
 	 * @return {void}
 	 */
 	async execute() {
-        if (!this.bot.dbApi) return this.reply(this.locale.VOTE.UNAVAILABLE)
+        if (!this.bot.dblApi) return this.reply(this.locale.VOTE.UNAVAILABLE)
 		const voted = await this.bot.dblApi.hasVoted(this.message.author.id)
 		if (voted) return this.reply(this.locale.VOTE.IS_COOLDOWN, {
 			socket: {

@@ -1,3 +1,174 @@
+## [7.17.11](https://github.com/klerikdust/anniediscord/compare/v7.17.10...v7.17.11) (2021-05-30)
+
+
+### Bug Fixes
+
+* **customConfig:** missing getter type. ([6a1748d](https://github.com/klerikdust/anniediscord/commit/6a1748d22ad394831c4d2819293696c1f12abe86))
+
+## [7.17.10](https://github.com/klerikdust/anniediscord/compare/v7.17.9...v7.17.10) (2021-05-30)
+
+
+### Bug Fixes
+
+* **guildConfigurations:** overlapping values between servers. ([00f8edf](https://github.com/klerikdust/anniediscord/commit/00f8edfa7ba096a540655ee699ede07364cbac64))
+
+## [7.17.9](https://github.com/klerikdust/anniediscord/compare/v7.17.8...v7.17.9) (2021-05-30)
+
+
+### Bug Fixes
+
+* **eventController:** wrong ref for client var. ([c5131b6](https://github.com/klerikdust/anniediscord/commit/c5131b67e8ba0d555379acb6ce3ab8ec643999e3))
+* **message:** use standalone client property. ([2dcc904](https://github.com/klerikdust/anniediscord/commit/2dcc904dac6835828aa24b7d11a2f68f9bed758d))
+
+## [7.17.8](https://github.com/klerikdust/anniediscord/compare/v7.17.7...v7.17.8) (2021-05-30)
+
+
+### Bug Fixes
+
+* **client:** readjust guild conf register method. ([1d7e11d](https://github.com/klerikdust/anniediscord/commit/1d7e11dc7f83f6921b90ee9882cfe0f8813b0d08))
+
+## [7.17.7](https://github.com/klerikdust/anniediscord/compare/v7.17.6...v7.17.7) (2021-05-30)
+
+
+### Bug Fixes
+
+* **guildConfigurations:** merge method for single and multi configurations register. ([a726c85](https://github.com/klerikdust/anniediscord/commit/a726c85c0415c53f9877293e369e5d0dd1d903f2))
+* **guildConfigurations:** mising guild object. ([2740560](https://github.com/klerikdust/anniediscord/commit/27405607b36cd6703a5f9b5acb382a6d3333d7b9))
+* **log:** wrong property path for fallback. ([0ef6cec](https://github.com/klerikdust/anniediscord/commit/0ef6cec80eca946502ab35ae999fc6e3f0245a2d))
+
+## [7.17.6](https://github.com/klerikdust/anniediscord/compare/v7.17.5...v7.17.6) (2021-05-30)
+
+
+### Bug Fixes
+
+* **event:** removed autochange status. ([e4975d8](https://github.com/klerikdust/anniediscord/commit/e4975d83dadf6172ebcbd68bce49a04f5bc85144))
+* **updateRank:** asynchronous rnak update. ([93d0e6c](https://github.com/klerikdust/anniediscord/commit/93d0e6cbadfb30ad01eb6ab4059211c5f0acf5c6))
+
+
+### Performance Improvements
+
+* **guildConfigurations:** allows conf pooling on startup. ([7e8d760](https://github.com/klerikdust/anniediscord/commit/7e8d7608b53c6e4e576e0b57a183ed546b883631))
+
+## [7.17.5](https://github.com/klerikdust/anniediscord/compare/v7.17.4...v7.17.5) (2021-05-29)
+
+
+### Bug Fixes
+
+* **message:** missing prefix length. ([a6dacbc](https://github.com/klerikdust/anniediscord/commit/a6dacbca8faaead82bd5398b274a9a931e8382e9))
+
+## [7.17.4](https://github.com/klerikdust/anniediscord/compare/v7.17.3...v7.17.4) (2021-05-29)
+
+
+### Bug Fixes
+
+* **events:** ready event will fire once. ([169515f](https://github.com/klerikdust/anniediscord/commit/169515f0d673d7bbcbecc637383a0581d217babb))
+
+
+### Performance Improvements
+
+* optimize events and guild configuration loads. ([905c9c8](https://github.com/klerikdust/anniediscord/commit/905c9c8280515d12fb7e7620e4ebc43dbf040ebc))
+
+## [7.17.3](https://github.com/klerikdust/anniediscord/compare/v7.17.2...v7.17.3) (2021-05-25)
+
+
+### Bug Fixes
+
+* **setLevelupMessage:** direct apply on enable and disable action. ([07e518e](https://github.com/klerikdust/anniediscord/commit/07e518ede2f4d3d6642c1de49845c96fd22a200f))
+
+## [7.17.2](https://github.com/klerikdust/anniediscord/compare/v7.17.1...v7.17.2) (2021-05-23)
+
+
+### Bug Fixes
+
+* **updateRank:** removed finite condition to remove roles. ([0ae5067](https://github.com/klerikdust/anniediscord/commit/0ae5067d7f1e2d44e6e7efb430447ec4d0875cb5))
+
+## [7.17.1](https://github.com/klerikdust/anniediscord/compare/v7.17.0...v7.17.1) (2021-05-21)
+
+
+### Performance Improvements
+
+* **command:** reduce overhead. experimental. ([ddfc912](https://github.com/klerikdust/anniediscord/commit/ddfc9123a6f644f79b969ef7e5909824d1833ba3))
+
+# [7.17.0](https://github.com/klerikdust/anniediscord/compare/v7.16.7...v7.17.0) (2021-05-19)
+
+
+### Bug Fixes
+
+* **invite:** update server invite url. ([3e8659d](https://github.com/klerikdust/anniediscord/commit/3e8659df66559bebed967765bcc0520ae4632d21))
+* **pay:** wrong path ref. ([90bed94](https://github.com/klerikdust/anniediscord/commit/90bed94cc1b1182e85249665ba25e345ed87d373))
+
+
+### Features
+
+* **SetRelationship:** possible to remove relationship tree that is out of range. ([fb1708c](https://github.com/klerikdust/anniediscord/commit/fb1708c5dd8ee560036aabf45d289aeeef05ae8a))
+
+## [7.16.7](https://github.com/klerikdust/anniediscord/compare/v7.16.6...v7.16.7) (2021-05-19)
+
+
+### Bug Fixes
+
+* **loadAsset:** replace path parameter. ([0b71125](https://github.com/klerikdust/anniediscord/commit/0b7112547144bbcfad5c5b0e3fb1d694a55e53db))
+
+## [7.16.6](https://github.com/klerikdust/anniediscord/compare/v7.16.5...v7.16.6) (2021-05-19)
+
+
+### Bug Fixes
+
+* **loadAsset:** wrong path for default img. ([a46eed7](https://github.com/klerikdust/anniediscord/commit/a46eed71b566d2cf9406eb42574328816cee3b01))
+
+## [7.16.5](https://github.com/klerikdust/anniediscord/compare/v7.16.4...v7.16.5) (2021-05-18)
+
+
+### Bug Fixes
+
+* **setLevelupMessage:** remove thumbnail. ([5d205d0](https://github.com/klerikdust/anniediscord/commit/5d205d0cd013a24e67ab505ea0b8d091b9d993bc))
+
+## [7.16.4](https://github.com/klerikdust/anniediscord/compare/v7.16.3...v7.16.4) (2021-05-18)
+
+
+### Bug Fixes
+
+* **setCommand:** missing locale. ([06cbb57](https://github.com/klerikdust/anniediscord/commit/06cbb57186953225f424a65db532a65411f31a71))
+* **vote:** invalid path. ([b335d00](https://github.com/klerikdust/anniediscord/commit/b335d0050420df3a0dda6985ddd2de04d1145e1a))
+* **welcomer:** deprecated loadAsset path. ([e4be338](https://github.com/klerikdust/anniediscord/commit/e4be338f850d6d637844802c3dc55e7a77260123))
+
+## [7.16.3](https://github.com/klerikdust/anniediscord/compare/v7.16.2...v7.16.3) (2021-05-17)
+
+
+### Bug Fixes
+
+* **gacha:** asychronous storing. ([3cd80aa](https://github.com/klerikdust/anniediscord/commit/3cd80aa1dc4bd32a8d36e7c89b7ace8e7e7d5d5e))
+* **shop:** adapt to new architecture. ([ecc44fc](https://github.com/klerikdust/anniediscord/commit/ecc44fce75bd95d97de5de8025355112c773eb14))
+
+## [7.16.2](https://github.com/klerikdust/anniediscord/compare/v7.16.1...v7.16.2) (2021-05-17)
+
+
+### Bug Fixes
+
+* **database:** added additional clause for update inventory check. ([d588094](https://github.com/klerikdust/anniediscord/commit/d588094807b66adb41db8b464a648c20c3d9bb23))
+* **event:** make user validation to run asychronously. ([5852972](https://github.com/klerikdust/anniediscord/commit/5852972fe22e45001a6a4d6b9156bd3955e08b05))
+
+## [7.16.1](https://github.com/klerikdust/anniediscord/compare/v7.16.0...v7.16.1) (2021-05-17)
+
+
+### Bug Fixes
+
+* **db:** rework validateUser method. ([8c8cd19](https://github.com/klerikdust/anniediscord/commit/8c8cd19aef3f7c88cdca6d207ca58971005d685b))
+
+# [7.16.0](https://github.com/klerikdust/anniediscord/compare/v7.15.5...v7.16.0) (2021-05-17)
+
+
+### Bug Fixes
+
+* **commandController:** dev err on prod. ([0fa00e5](https://github.com/klerikdust/anniediscord/commit/0fa00e5f2cc264ace5a931a082b26d3292209036))
+* **ui:** oversize relationship card. ([80791e0](https://github.com/klerikdust/anniediscord/commit/80791e0275e3e972e87f7bdb6bf5d634e030966b))
+
+
+### Features
+
+* **logger:** swapping logger framework from winston to pino. ([a70fabc](https://github.com/klerikdust/anniediscord/commit/a70fabc48331602070a168387a991bb71339b151))
+* **setRelationship:** relationship tree now is global has shared connection. ([e4fcf0e](https://github.com/klerikdust/anniediscord/commit/e4fcf0e7d2edbcc6505389f99c5355db66cea336))
+
 ## [7.15.5](https://github.com/klerikdust/anniediscord/compare/v7.15.4...v7.15.5) (2021-05-14)
 
 

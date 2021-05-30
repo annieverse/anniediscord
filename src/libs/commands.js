@@ -154,10 +154,10 @@ class Commands {
 		return true
 	}
 
-	async requestUserMetadata(dataLevel=1) {
+	async requestUserMetadata(dataLevel=1, localPool=null) {
 		const fn = `[Commands.requestUserMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
-		const targetUser = await this._userSelector()
+		const targetUser = await this._userSelector(localPool)
 		if (!targetUser) {
 			this.user = null
 			return false
@@ -271,13 +271,14 @@ class Commands {
 
 	/**
 	 * Selecting user based on the condition of `this.fullArgs` and command's multiUser property.
+     * @param {object|null} [localPool=null] Perform custom search inside given pool. Must be Array/Map typed.
 	 * @returns {object}
 	 */
-	_userSelector() {
+	_userSelector(localPool=null) {
 		const userClass = new User(this.bot, this.message)
 		return this.commandProperties.multiUser && this.fullArgs 
-		? userClass.lookFor(this.fullArgs) 
-		: userClass.lookFor(this.message.author.id)
+		? userClass.lookFor(this.fullArgs, localPool) 
+		: userClass.lookFor(this.message.author.id, localPool)
 	}
 }
 

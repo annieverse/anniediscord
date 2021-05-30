@@ -116,7 +116,7 @@ class Gacha extends Command {
         //  Storing received loots into user's inventory
         for (let i=0; i<this.loots.length; i++) {
             const item = this.loots[i]
-            this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
+            await this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
         }
 
         //  Displaying result

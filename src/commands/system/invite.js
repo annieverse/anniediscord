@@ -12,7 +12,7 @@ class Invite extends Command {
 		super(Stacks)
 		this.permmissionInteger = 268823638
 		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
-        this.supportServerUrl = `https://discord.gg/7nDes9Pi` 
+        this.supportServerUrl = `https://discord.gg/7nDes9P` 
 	}
 
     /**

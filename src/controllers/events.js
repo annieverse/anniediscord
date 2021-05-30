@@ -1,6 +1,6 @@
 const reqEvent = (event) => require(`../events/${event}.js`)
 module.exports = annie => {
-	annie.on(`ready`, () => reqEvent(`ready`)(annie))
+	annie.once(`ready`, () => reqEvent(`ready`)(annie))
 	annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
 	annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
 	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
