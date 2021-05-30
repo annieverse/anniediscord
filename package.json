@@ -50,7 +50,7 @@
     "chartjs-node-canvas": "^3.0.6",
     "color": "^3.1.2",
     "cron-job-manager": "^2.1.4",
-    "cross-env": "^7.0.2",
+    "cross-env": "^7.0.3",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
