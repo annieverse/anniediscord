@@ -1,8 +1,8 @@
 const reqEvent = (event) => require(`../events/${event}.js`)
 module.exports = annie => {
-	annie.on(`ready`, () => reqEvent(`ready`)(annie))
+	annie.once(`ready`, () => reqEvent(`ready`)(annie))
 	annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
-	annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
+	annie.on(`message`, (message) => reqEvent(`message`)(message))
 	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
 	annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
 	if (!annie.dev) {

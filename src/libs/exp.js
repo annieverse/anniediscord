@@ -96,15 +96,23 @@ class Experience {
         const userRankRole = this.guild.roles.cache.get(expectedTargetRole.ROLE)
         if (!userRankRole) return
         //  Assign new rank role 
-        this.user.roles.add(userRankRole)
-        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`))
+        try {
+            await this.user.roles.add(userRankRole)
+        }
+        catch(e) {
+            this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`)
+        }
         if (this.guild.configs.get(`RANKS_STACK`).value) return
         //  Remove non-current rank roles if RANKS_STACK is disabled
         const nonCurrentRankRoles = registeredRanks
         .filter(r => r.ROLE !== userRankRole.id)
         .map(r => r.ROLE)
-        this.user.roles.remove(nonCurrentRankRoles)
-        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> role remove > ${e.message}`))
+        try {
+            this.user.roles.remove(nonCurrentRankRoles)
+        }
+        catch(e) {
+            this.client.logger.warn(`${this.instanceId} <FAIL> role remove > ${e.message}`)
+        }
 	}
 
     /**

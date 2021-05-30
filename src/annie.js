@@ -167,25 +167,26 @@ class Annie extends Discord.Client {
     }
 
     /**
-     * Registering configuration nodes for each guild
+     * Registering configuration nodes for each guild or single guild by specifying it in the parameter.
+     * @param {string} [guildId=null] Specify target guild id for single guild register.
      * @author klerikdust
-     * @returns {void}
+     * @return {void}
      */
-    async registerGuildConfigurations() {
+    async registerGuildConfigurations(guildId=null) {
         const initTime = process.hrtime()
-        const configClass = new customConfig(this)
         const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
-        const getGuilds = this.guilds.cache.map(guild => guild.id)
+        //  If prompted to register only single guild, then use single-element array.
+        const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
         for (let i=0; i<getGuilds.length; i++) {
             let guild = this.guilds.cache.get(getGuilds[i])
             let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
             guild.configs = new Map()
             //  Iterating over all the available configurations
-            for (let x=0; x<configClass.availableConfigurations.length; x++) {
-                let cfg = configClass.availableConfigurations[x]
+            for (let x=0; x<customConfig.length; x++) {
+                let cfg = customConfig[x]
                 //  Register existing configs into guild's nodes if available
                 if (existingGuildConfigs.length > 0) {
-                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                    const matchConfigCode = existingGuildConfigs.find(node => node.config_code.toUpperCase() === cfg.name)
                     if (matchConfigCode) {
                         cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
                         cfg.setByUserId = matchConfigCode.set_by_user_id
@@ -195,8 +196,8 @@ class Annie extends Discord.Client {
                 }
                 guild.configs.set(cfg.name, cfg)
             }
-        }
-        logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
+        } 
+        this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
 
     /**

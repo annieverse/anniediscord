@@ -1,3 +1,51 @@
+## [7.17.7](https://github.com/klerikdust/anniediscord/compare/v7.17.6...v7.17.7) (2021-05-30)
+
+
+### Bug Fixes
+
+* **guildConfigurations:** merge method for single and multi configurations register. ([a726c85](https://github.com/klerikdust/anniediscord/commit/a726c85c0415c53f9877293e369e5d0dd1d903f2))
+* **guildConfigurations:** mising guild object. ([2740560](https://github.com/klerikdust/anniediscord/commit/27405607b36cd6703a5f9b5acb382a6d3333d7b9))
+* **log:** wrong property path for fallback. ([0ef6cec](https://github.com/klerikdust/anniediscord/commit/0ef6cec80eca946502ab35ae999fc6e3f0245a2d))
+
+## [7.17.6](https://github.com/klerikdust/anniediscord/compare/v7.17.5...v7.17.6) (2021-05-30)
+
+
+### Bug Fixes
+
+* **event:** removed autochange status. ([e4975d8](https://github.com/klerikdust/anniediscord/commit/e4975d83dadf6172ebcbd68bce49a04f5bc85144))
+* **updateRank:** asynchronous rnak update. ([93d0e6c](https://github.com/klerikdust/anniediscord/commit/93d0e6cbadfb30ad01eb6ab4059211c5f0acf5c6))
+
+
+### Performance Improvements
+
+* **guildConfigurations:** allows conf pooling on startup. ([7e8d760](https://github.com/klerikdust/anniediscord/commit/7e8d7608b53c6e4e576e0b57a183ed546b883631))
+
+## [7.17.5](https://github.com/klerikdust/anniediscord/compare/v7.17.4...v7.17.5) (2021-05-29)
+
+
+### Bug Fixes
+
+* **message:** missing prefix length. ([a6dacbc](https://github.com/klerikdust/anniediscord/commit/a6dacbca8faaead82bd5398b274a9a931e8382e9))
+
+## [7.17.4](https://github.com/klerikdust/anniediscord/compare/v7.17.3...v7.17.4) (2021-05-29)
+
+
+### Bug Fixes
+
+* **events:** ready event will fire once. ([169515f](https://github.com/klerikdust/anniediscord/commit/169515f0d673d7bbcbecc637383a0581d217babb))
+
+
+### Performance Improvements
+
+* optimize events and guild configuration loads. ([905c9c8](https://github.com/klerikdust/anniediscord/commit/905c9c8280515d12fb7e7620e4ebc43dbf040ebc))
+
+## [7.17.3](https://github.com/klerikdust/anniediscord/compare/v7.17.2...v7.17.3) (2021-05-25)
+
+
+### Bug Fixes
+
+* **setLevelupMessage:** direct apply on enable and disable action. ([07e518e](https://github.com/klerikdust/anniediscord/commit/07e518ede2f4d3d6642c1de49845c96fd22a200f))
+
 ## [7.17.2](https://github.com/klerikdust/anniediscord/compare/v7.17.1...v7.17.2) (2021-05-23)
 
 
