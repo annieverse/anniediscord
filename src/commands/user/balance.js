@@ -26,7 +26,7 @@ class Balance extends Command {
 			socket: {
 				emoji: await this.bot.getEmoji(`758720612087627787`), 
 				amount: commanifier(this.user.inventory.artcoins || 0),
-				tips: this.user.id === this.message.author.id ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
+				tips: this.user.master.id === this.message.author.id ? `Use **\`${this.bot.prefix}pay\`** to share with friends!` : ` `
 			}
 		})
 	}
