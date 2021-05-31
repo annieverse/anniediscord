@@ -143,12 +143,6 @@ class Annie extends Discord.Client {
          * @type {collection}
          */
         this.cooldowns = new Discord.Collection()
-
-        /**
-         * State checker on startup.
-         * @type {boolean}
-         */
-        this.startupState = true
         this.prepareLogin()
     }
 
