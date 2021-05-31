@@ -1,7 +1,6 @@
 `use-strict`
 const User = require(`./user`)
 const Response = require(`./response`)
-const emoji = require(`../utils/emojiFetch`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
@@ -88,7 +87,7 @@ class Commands {
          * Current guild instance
          * @type {object}
          */	
-		this.guild = this.message.guild ? Stacks.bot.guilds.cache.get(Stacks.message.guild.id) : null
+		this.guild = this.message.guild 
 
         /**
          * Annie's role
@@ -215,7 +214,7 @@ class Commands {
 		if (!this.confirmationButtons) this.confirmationButtons = new Map()
 		const confirmationEmoji = `✅`
 		//  Recursively find the cancel emoji
-		const cancelEmoji = await emoji(`794593423575351307`, this.bot)
+		const cancelEmoji = await this.bot.getEmoji(`794593423575351307`)
 		targetMessage.react(confirmationEmoji)
 		targetMessage.react(cancelEmoji)
         const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji.name].includes(reaction.emoji.name) && user.id === targetUserId
@@ -255,18 +254,6 @@ class Commands {
 			}
 		}
 		return false
-	}
-
-	/**
-	 * Mainly generate ID as a multiple instance's identifier in
-	 * a method the generates multiple instance of the same type.
-	 * @returns {string}
-	 */
-	_generateUUID() {
-		return `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx`.replace(/[xy]/g, (c) => {
-			let r = Math.random() * 16 | 0, v = c == `x` ? r : (r & 0x3 | 0x8)
-			return v.toString(16)
-		})
 	}
 
 	/**
