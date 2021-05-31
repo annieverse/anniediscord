@@ -1,3 +1,24 @@
+# [7.18.0](https://github.com/klerikdust/anniediscord/compare/v7.17.12...v7.18.0) (2021-05-31)
+
+
+### Bug Fixes
+
+* **balance:** missing tips. ([4b3bee0](https://github.com/klerikdust/anniediscord/commit/4b3bee069303e6e2610f7f26f4a2cec0541fe87b))
+
+
+### Features
+
+* **privilege:** added server-owner type. ([86149dd](https://github.com/klerikdust/anniediscord/commit/86149dd3800efcbad85cf4f609e2037f99e5d1a5))
+
+
+### Performance Improvements
+
+* **AutoResponder:** switch to in-memory cd instead of redis. ([b8d58c2](https://github.com/klerikdust/anniediscord/commit/b8d58c200c21122b4496afdd825495fd35cf3b85))
+* **client:** removed unused property. ([b0a6ac6](https://github.com/klerikdust/anniediscord/commit/b0a6ac66d161be207ded092fa5dc26d54c1c363a))
+* **command:** elimiated unused functs and module. ([c193c11](https://github.com/klerikdust/anniediscord/commit/c193c1186c7b2a7c345a6107f4ba31a712dd0110))
+* **commandCooldown:** switch to in-memory instead of redis. ([5acb288](https://github.com/klerikdust/anniediscord/commit/5acb288a9beda68d7093f5a3871eba56dcc12a90))
+* **points:** switch to in-memory instead of readis. ([7902ca0](https://github.com/klerikdust/anniediscord/commit/7902ca0a4e2814e5884a3bc8a869133e31928d00))
+
 ## [7.17.12](https://github.com/klerikdust/anniediscord/compare/v7.17.11...v7.17.12) (2021-05-30)
 
 
