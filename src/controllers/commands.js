@@ -51,8 +51,6 @@ module.exports = async (client={}, message={}) => {
                 timeLeft: diff.toFixed(1)
             }
         })
-        //  In case of expired cooldown, refresh the key
-        client.cooldowns.delete(instanceId)
     }
     client.cooldowns.set(instanceId, Date.now())
     // Attempt on running target command

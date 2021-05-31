@@ -19,22 +19,21 @@ module.exports = (client, message) => {
     const prefix = client.prefix
     if (message.content.startsWith(prefix) && message.content.length >= prefix.length) return commandController(client, message)
     //  Automatically executing chat points when no other module requirements are met
+    const cooldown = 60 // in seconds
     const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
-    client.db.redis.get(gainingId)
-    .then(res => {
-        if (res) return
-        //  Expire cooldown state after 1 minute
-        client.db.redis.set(gainingId, 1, `EX`, 60)
-        client.db.updateInventory({
-            itemId: 52,
-            value: Math.floor(Math.random() * (5 - 1 + 1) + 1), 
-            userId: message.author.id,
-            guildId: message.guild.id
-        })
-        if (!message.guild.configs.get(`EXP_MODULE`).value) return
-        client.experienceLibs(message.member, message.guild, message.channel).execute()
+    if (client.cooldowns.has(gainingId)) {
+        const userCooldown = client.cooldowns.get(gainingId)
+        const diff = cooldown - ((Date.now() - userCooldown) / 1000)
+        //  Hold gaining if cooldown still has less than 60 seconds in difference
+        if (diff > 0) return
+    }
+    client.cooldowns.set(gainingId, Date.now())
+    client.db.updateInventory({
+        itemId: 52,
+        value: Math.floor(Math.random() * (5 - 1 + 1) + 1), 
+        userId: message.author.id,
+        guildId: message.guild.id
     })
-    .catch(e => {
-        client.logger.warn(`${gainingId} <FAIL> on message event > ${e.message}`)
-    })
+    if (!message.guild.configs.get(`EXP_MODULE`).value) return
+    client.experienceLibs(message.member, message.guild, message.channel).execute()
 }
