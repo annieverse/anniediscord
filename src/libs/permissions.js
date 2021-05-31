@@ -20,6 +20,12 @@ module.exports = (message={}, userId={}) => {
     // User without developer privileges in dm interface will be automatically assigned as a regular user.
     if (message.channel.type === `dm`) return fallbackPrivillege
     const member = message.member
+    //  Server owner
+    if (member.id === message.guild.ownerID) return {
+        level: 3,
+        name: `Server Owner`,
+        description: `The owner of current server.`
+    }
     //  Server admin
     if (member.hasPermission(`ADMINISTRATOR`)) return {
         level: 3,
