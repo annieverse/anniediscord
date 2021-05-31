@@ -139,6 +139,12 @@ class Annie extends Discord.Client {
         this.logSystem = LogSystem
 
         /**
+         * User cooldown pool.
+         * @type {collection}
+         */
+        this.cooldowns = new Discord.Collection()
+
+        /**
          * State checker on startup.
          * @type {boolean}
          */

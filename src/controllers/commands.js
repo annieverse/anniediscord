@@ -11,7 +11,6 @@ const getUserPermission = require(`../libs/permissions`)
  * @return {winston}
  */
 module.exports = async (client={}, message={}) => {
-    const instanceId = `CMD_${message.author.id}@${message.guild.id}`
     const targetCommand = message.content.split(` `)[0].slice(client.prefix.length).toLowerCase()
     const command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
@@ -41,15 +40,21 @@ module.exports = async (client={}, message={}) => {
         ]}
     )
     // Handle cooldowns
-    let userCooldown = await client.db.redis.get(instanceId)
-    if (userCooldown) return reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
-        socket: {
-            emoji: await client.getEmoji(`AnnieYandereAnim`),
-            user: message.author.username,
-            timeLeft: (cooldown - ((Date.now() - userCooldown) / 1000)).toFixed(1)
-        }
-    })
-    client.db.redis.set(instanceId, Date.now(), `EX`, cooldown)
+    const instanceId = `CMD_${command.name.toUpperCase()}_${message.author.id}@${message.guild.id}`
+    if (client.cooldowns.has(instanceId)) {
+        const userCooldown = client.cooldowns.get(instanceId)
+        const diff = cooldown - ((Date.now() - userCooldown) / 1000)
+        if (diff > 0) return reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieYandereAnim`),
+                user: message.author.username,
+                timeLeft: diff.toFixed(1)
+            }
+        })
+        //  In case of expired cooldown, refresh the key
+        client.cooldowns.delete(instanceId)
+    }
+    client.cooldowns.set(instanceId, Date.now())
     // Attempt on running target command
     try {
         const initTime = process.hrtime()
