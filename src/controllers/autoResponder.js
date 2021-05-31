@@ -20,7 +20,7 @@ module.exports = async (client, message) => {
         const diff = cooldown - ((Date.now() / recentCooldown) / 1000)
         if (diff > 0) return
     }
-    client.cooldowns.set(ARCooldownId, Datee.now())
+    client.cooldowns.set(ARCooldownId, Date.now())
     //  Send response and handle incase fail to send the response.
     return message.channel.send(response)
     .catch(e => e)
