@@ -17,7 +17,7 @@ module.exports = async (client, message) => {
     const ARCooldownId = `AR_${ar_id}@${message.guild.id}`
     if (client.cooldowns.has(ARCooldownId)) {
         const recentCooldown = client.cooldowns.get(ARCooldownId)
-        const diff = cooldown - ((Date.now() / recentCooldown) / 1000)
+        const diff = cooldown - ((Date.now() - recentCooldown) / 1000)
         if (diff > 0) return
     }
     client.cooldowns.set(ARCooldownId, Date.now())
