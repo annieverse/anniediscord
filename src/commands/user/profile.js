@@ -1,50 +1,35 @@
 const GUI = require(`../../ui/prebuild/profile`)
-const Command = require(`../../libs/commands`)
+const User = require(`../../libs/user`)
 /**
  * Displaying user's profile card!
  * @author klerikdust
  */
-class Profile extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-    constructor(Stacks) {
-        super(Stacks)
-    }
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-        await this.requestUserMetadata(2)
-        //  Handle if user doesn't exists
-        if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
-        const fetching = await this.reply(this.locale.PROFILECARD.FETCHING, {
-            socket: {emoji: await this.bot.getEmoji(`790994076257353779`)}
+module.exports = {
+    name: `profile`,
+	aliases: [`profile`, `p`, `prof`],
+	description: `Displaying user's profile card!`,
+	usage: `profile <User>(Optional)`,
+	permissionLevel: 0,
+    async execute(client, reply, message, arg, locale) {
+        const userLib = new User(client, message)
+        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        //  Normalize structure
+        targetUser = targetUser.master || targetUser
+        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
+            socket: {emoji: await client.getEmoji(`790994076257353779`)}
         })
-        await this.reply(this.locale.COMMAND.TITLE, {
+        const userData = await userLib.requestMetadata(targetUser, 2)
+        await reply.send(locale.COMMAND.TITLE, {
             socket: {
-                user: this.user.master.username,
-                emoji: await this.bot.getEmoji(`692428927620087850`),
+                user: targetUser.username,
+                emoji: await client.getEmoji(`692428927620087850`),
                 command: `Profile`
             },
-            image: (await new GUI(this.user, this.bot).build()).toBuffer(),
+            image: (await new GUI(userData, client).build()).toBuffer(),
             prebuffer: true,
             simplified: true 
         })
         return fetching.delete()
-	}
-}
-
-module.exports.help = {
-	start: Profile,
-	name: `profile`,
-	aliases: [`profile`, `p`, `prof`],
-	description: `Displaying user's profile card!`,
-	usage: `profile <User>(Optional)`,
-	group: `User`,
-	permissionLevel: 0,
-	multiUser: true
+    }
 }

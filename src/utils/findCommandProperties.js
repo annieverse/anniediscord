@@ -5,9 +5,10 @@
  * @param {string} [commandName=``] Target command name.
  * @returns {object|null}
  */
-module.exports = (client={}, commandName=``) => {
+module.exports = function findCommandProperties(client={}, commandName=``) {
  	const normalizedCommandName = commandName.toLowerCase()
-    const res = client.commands.names.get(normalizedCommandName) || client.commands.names.get(client.commands.aliases.get(normalizedCommandName))
+    const res = client.commands.get(normalizedCommandName) 
+    || client.commands.find(cmd => cmd.aliases.includes(normalizedCommandName))
     if (!res) return null
-    return res.help
+    return res
 }

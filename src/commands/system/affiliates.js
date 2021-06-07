@@ -3,57 +3,40 @@ const Command = require(`../../libs/commands`)
  * List of servers that supporting the development of Annie.
  * @author klerikdust
  */
-class Affiliates extends Command {
-	constructor(Stacks) {
-		super(Stacks)
-	}
-
-	/**
-	 * Running command workflow
-	 * @return {void}
-	 */
-	async execute() {
-		await this.requestUserMetadata(1)
-		const affiliateList = await this.bot.db.getAffiliates()
+module.exports = {
+    name: `affiliates`,
+	aliases: [`affiliate`, `affiliates`, `affil`],
+	description: `List of servers that supporting the development of Annie.`,
+	usage: `affiliate`,
+	permissionLevel: 0,
+    async execute(client, reply, message, arg, locale) {
+		const affiliateList = await client.db.getAffiliates()
 		//  Handle if there are no registered affiliates
-		if (!affiliateList.length) return this.reply(this.locale.AFFILIATES.EMPTY, {status: `warn`})
-		return this.reply(this.locale.AFFILIATES.DISPLAY, {
+		if (!affiliateList.length) return reply.send(locale.AFFILIATES.EMPTY)
+		return reply.send(locale.AFFILIATES.DISPLAY, {
 			header: `Annie's Affiliated Servers`,
-			thumbnail: this.bot.user.displayAvatarURL(),
+			thumbnail: client.user.displayAvatarURL(),
 			socket: {
-				list: await this._prettifyList(affiliateList),
-				user: this.user.master.username
+				list: await this._prettifyList(affiliateList, client),
+				user: message.author.username
 			},
-			color: `crimson`
 		})
-	}
-
+    },
     /**
      * Parse & prettify elements from given source.
      * @param {array} [source=[]] refer to guild configuration structure
+     * @param {Client} client Current client instance
      * @returns {string}
      */
-    async _prettifyList(source=[]) {
+    async _prettifyList(source=[], client) {
         let res = ``
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
-			let serverSnowflake = await this.bot.shard.broadcastEval(`this.guilds.cache.get('${server.guild_id}')`)
+			let serverSnowflake = await client.shard.broadcastEval(`this.guilds.cache.get('${server.guild_id}')`)
             res += `**• ${serverSnowflake[0] ? serverSnowflake[0].name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
         return res
     }
-}
-
-
-module.exports.help = {
-	start: Affiliates,
-	name: `affiliates`,
-	aliases: [`affiliate`, `affiliates`, `affil`],
-	description: `List of servers that supporting the development of Annie.`,
-	usage: `affiliate`,
-	group: `System`,
-	permissionLevel: 0,
-	multiUser: false
 }

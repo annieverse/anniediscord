@@ -1,48 +1,30 @@
 /* eslint-disable no-unused-vars*/
 /* eslint-disable no-useless-escape*/
-const Command = require(`../../libs/commands`)
 /**
  * 	Evaluate line of code on air
  * 	@author klerikdust
  */
-class DeveloperTool extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-	constructor(Stacks) {
-		super(Stacks)
-	}
-
-    /**
-     * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
-     */
-	async execute() {
-		const initTime = process.hrtime()
+module.exports = {
+    name: `eval`,
+	aliases: [`ev`, `evl`, `exec`],
+	description: `Evaluate line of code on air`,
+	usage: `eval <LineOfCode>`,
+	permissionLevel: 4,
+	multiUser: false,
+    async execute(client, reply, message, arg, locale) {
+        const initTime = process.hrtime()
 		try {
-			let evaled = await eval(this.args.join(` `))
+			let evaled = await eval(arg)
 			if (typeof evaled !== `string`) evaled = require(`util`).inspect(evaled)
-			return this.reply(this.locale.EXEC_CODE, {
+			return reply.send(locale.EXEC_CODE, {
 				socket: {
-					time: this.bot.getBenchmark(initTime),
+					time: client.getBenchmark(initTime),
 					result: evaled.slice(0, 2000)
 				}
 			})
 		} 
 		catch (err) {
-			return this.reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
+			return reply.send(locale.ERROR, {socket: {error: err}})
 		}
-	}
-}
-
-module.exports.help = {
-	start: DeveloperTool,
-	name: `eval`,
-	aliases: [`ev`, `evl`, `exec`],
-	description: `Evaluate line of code on air`,
-	usage: `eval <LineOfCode>`,
-	group: `Developer`,
-	permissionLevel: 4,
-	multiUser: false,
+    }
 }

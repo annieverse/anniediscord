@@ -1,6 +1,6 @@
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
-const logger = require(`./libs/logger`)
+const logger = require(`pino`)({name: `MASTER_SHARD`})
 const { Webhook } = require(`@top-gg/sdk`)
 
 /**
@@ -9,14 +9,23 @@ const { Webhook } = require(`@top-gg/sdk`)
  *  @return {string}
  */
 const getCustomShardId = (id) => {
-    return `[SHARD_ID:${id}|${shardName[id]}]`
+    return `[SHARD_ID:${id}/${shardName[id]}]`
 }
-module.exports = () => {
+module.exports = function masterShard() {
+    process.on(`unhandledRejection`, err => logger.warn(err.message))
     const { ShardingManager } = require(`discord.js`)
-    const manager = new ShardingManager(`./src/annie.js`, { token: process.env.TOKEN })
+    const manager = new ShardingManager(`./src/annie.js`, { 
+        respawn: process.env.NODE_ENV !== `production` ? false : true,
+        token: process.env.TOKEN
+    })
     const server = express()
     manager.on(`shardCreate`, shard => {
-        logger.info(`${getCustomShardId(shard.id)} spawned`) 
+        const id = getCustomShardId(shard.id)
+        shard.on(`spawn`, () => logger.info(`${id} <SPAWNED>`))
+        shard.on(`death`, () => logger.error(`${id} <DIED>`))
+        shard.on(`disconnect`, () => logger.warn(`${id} <DISCONNECTED>`))
+        shard.on(`ready`, () => logger.info(`${id} <READY>`))
+        shard.on(`reconnecting`, () => logger.warn(`${id} <RECONNECTING>`))
     })
     //  Spawn shard sequentially with 30 seconds interval. 
     //  Will send timeout warn in 2 minutes.
@@ -59,5 +68,6 @@ module.exports = () => {
         manager.broadcastEval(`(${rewardDistribution}).call(this, '${userId}')`)
         res.status(200).send({ message: `Vote data successfully received.` })
     })
-    server.listen(process.env.PORT, () => logger.info(`Server listening on PORT:${process.env.PORT || 3000}`))
+    const port = process.env.PORT || 3000
+    server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
 }

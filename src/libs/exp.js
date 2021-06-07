@@ -139,7 +139,7 @@ class Experience {
     async levelUpPerks(newLevel=0) {
         //  Parsing content for level-up message
         const img = await new GUI(await this._getMinimalUserMetadata(), newLevel).build()
-        const defaultText = this.client.locale.en.LEVELUP.DEFAULT_RESPONSES
+        const defaultText = this.client.locales.en.LEVELUP.DEFAULT_RESPONSES
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
         const messageComponents = [displayedText, new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]

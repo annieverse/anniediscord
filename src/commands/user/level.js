@@ -1,60 +1,46 @@
 const GUI = require(`../../ui/prebuild/level`)
-const Command = require(`../../libs/commands`)
+const User = require(`../../libs/user`)
 /**
  * Display your current exp, level and rank.
  * @author klerikdust
  */
-class Level extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-	constructor(Stacks) {
-		super(Stacks)
-	}
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-	async execute() {
+module.exports = {
+    name: `level`,
+	aliases: [`lvl`, `lv`],
+	description: `Display your current exp, level and rank.`,
+	usage: `level <User>(Optional)`,
+	permissionLevel: 0,
+    async execute(client, reply, message, arg, locale) {
 		//  Handle if the EXP module isn't enabled in current guild
-		if (!this.message.guild.configs.get(`EXP_MODULE`).value) return this.reply(this.locale.COMMAND.DISABLED, {
+		if (!message.guild.configs.get(`EXP_MODULE`).value) return reply.send(locale.COMMAND.DISABLED, {
 			socket: {command: `EXP Module`},
 		})
-		await this.requestUserMetadata(2)
-		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
-		this.reply(this.locale.COMMAND.FETCHING, {
+        const userLib = new User(client, message)
+        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        //  Normalize structure
+        targetUser = targetUser.master || targetUser
+        const userData = await userLib.requestMetadata(targetUser, 2)
+		reply.send(locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: await this.bot.getEmoji(`790994076257353779`), 
-				user: this.user.master.id,
+				emoji: await client.getEmoji(`790994076257353779`), 
+				user: targetUser.id,
 				command: `level`
 			}
 		})
 		.then(async loading => {
-			await this.reply(this.locale.COMMAND.TITLE, {
+			await reply.send(locale.COMMAND.TITLE, {
 				simplified: true,
 				prebuffer: true,
-				image: await new GUI(this.user).build(),
+				image: await new GUI(userData).build(),
 				socket: {
-					emoji: await this.bot.getEmoji(`692428597570306218`),
-					user: this.user.master.username,
+					emoji: await client.getEmoji(`692428597570306218`),
+					user: message.author.username,
 					command: `Level`
 				}
 			})
 			return loading.delete()
 		})
-	}
-}
-
-module.exports.help = {
-	start: Level,
-	name: `level`,
-	aliases: [`lvl`, `lv`],
-	description: `Display your current exp, level and rank.`,
-	usage: `level <User>(Optional)`,
-	group: `User`,
-	permissionLevel: 0,
-	multiUser: true
+    }
 }

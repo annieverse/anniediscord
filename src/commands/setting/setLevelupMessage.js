@@ -1,219 +1,203 @@
-const Command = require(`../../libs/commands`)
 const GUI = require(`../../ui/prebuild/levelUpMessage`)
+const Confirmator = require(`../../libs/confirmator`)
 const moment = require(`moment`)
+const User = require(`../../libs/user`)
 /**
  * Enable or disable level-up message module for this guild
  * @author klerikdust
  */
-class SetLevelupMessage extends Command {
+module.exports = {
+    name: `setLevelupMessage`,
+    aliases: [`setlevelupmsg`, `setlvlupmsg`, `setlvlupmessage`, `setlevelupmessage`],
+    description: `Enable or disable level-up message module for this guild`,
+    usage: `setlvlupmsg <Enable/Disable>`,
+    permissionLevel: 3,
+    /**
+     * An array of the available options for welcomer module
+     * @type {array}
+     */
+    actions: [`enable`, `disable`, `channel`, `text`],
 
     /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-    constructor(Stacks) {
-        super(Stacks)
-        /**
-         * An array of the available options for welcomer module
-         * @type {array}
-         */
-        this.actions = [`enable`, `disable`, `channel`, `text`]
-
-        /**
-         * Current instance's config code
-         * @type {string}
-         */  
-        this.primaryConfigID = `LEVEL_UP_MESSAGE`
-
-        /**
-         * Thumbnail's img source
-         * @type {string}
-         */
-         this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
-    }
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-        await this.requestUserMetadata(2)
+     * Current instance's config code
+     * @type {string}
+     */  
+    primaryConfigID: `LEVEL_UP_MESSAGE`,
+    async execute(client, reply, message, arg, locale) {
         //  Handle if user doesn't specify any arg
-        if (!this.fullArgs) return this.reply(this.locale.SETLEVELUPMESSAGE.GUIDE, {
-            header: `Hi, ${this.user.master.username}!`,
+        if (!arg) return reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
+            header: `Hi, ${message.author.username}!`,
             socket: {
-                prefix: this.bot.prefix,
-                emoji: await this.bot.getEmoji(`692428660824604717`)
+                prefix: client.prefix,
+                emoji: await client.getEmoji(`692428660824604717`)
             }
         })
+        this.args = arg.split(` `)
         //  Handle if the selected options doesn't exists
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.actions.includes(this.selectedAction)) return this.reply(this.locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
+        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
             socket: {actions: this.actions.join(`, `)},
         })   
         //  Run action
-        this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
+        this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
-        return this[this.selectedAction]()
-    }
+        return this[this.selectedAction](client, reply, message, arg, locale)
+    },
 
     /**
      * Enabling levelup-message module
      * @return {void}
      */
-    async enable() {
-        this.bot.db.updateGuildConfiguration({
+    async enable(client, reply, message, arg, locale) {
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        return this.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
-            socket: {prefix: this.bot.prefix},
+        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
+            socket: {prefix: client.prefix},
             status: `success`
         })
-    }
+    },
 
     /**
      * Disabling levelup-message module.
      * @return {void}
      */
-    async disable() {
-        this.bot.db.updateGuildConfiguration({
+    async disable(client, reply, message, arg, locale) {
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        return this.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, {status: `success`})
-    }
+        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, {status: `success`})
+    },
 
     /**
      * Registering custom channel for the level-up message.
      * @return {}
      */
-    async channel() {
+    async channel(client, reply, message, arg, locale) {
         const fn = `[setLevelupMessage.channel]`
         const subConfigId = `LEVEL_UP_MESSAGE_CHANNEL`
         //  Handle if module hasn't been enabled yet
-        if (!this.primaryConfig.value) return this.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
-            socket:{prefix:this.bot.prefix}
+        if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+            socket:{prefix:client.prefix}
         })
         //  Handle if the custom channel already present
         const customLevelUpMessageChannel = this.guildConfigurations.get(subConfigId).value
         if (customLevelUpMessageChannel) {
             //  Handle if no channel parameter has been inputted
-            const { isExists, res } = this._getChannel(customLevelUpMessageChannel)
+            const { isExists, res } = this._getChannel(customLevelUpMessageChannel, message)
             const displayingExistingData = isExists ? `DISPLAY_REGISTERED_CHANNEL` : `DISPLAY_UNREACHABLE_CHANNEL`
-            if (!this.args[1]) return this.reply(this.locale.SETLEVELUPMESSAGE[displayingExistingData], {
+            if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE[displayingExistingData], {
                 socket: {
-                    prefix: this.bot.prefix,
+                    prefix: client.prefix,
                     channel: res || customLevelUpMessageChannel
                 }
             })
             //  Handle if user has asked to reset the custom channel
             if (this.args[1] === `reset`) {
                 //  Update and finalize
-                this.bot.db.updateGuildConfiguration({
+                client.db.updateGuildConfiguration({
                     configCode: subConfigId,
                     customizedParameter: ``,
-                    guild: this.message.guild,
-                    setByUserId: this.user.master.id,
+                    guild: message.guild,
+                    setByUserId: message.author.id,
                     cacheTo: this.guildConfigurations
                 })
-                this.logger.info(`${fn} ${subConfigId} successfully reset channel for GUILD_ID:${this.message.guild.id}.`)
-                return this.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
+                return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
                     status: `success`,
-                    socket: {emoji: await this.bot.getEmoji(`789212493096026143`)}
+                    socket: {emoji: await client.getEmoji(`789212493096026143`)}
                 })
             }
         }
         else {
             //  Handle if no channel parameter has been inputted
-            if (!this.args[1]) return this.reply(this.locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
-                socket: {prefix: this.bot.prefix}
+            if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
+                socket: {prefix: client.prefix}
             })
         }
         //  Handle if target channel does not exist
-        const { isExists, res } = this._getChannel(this.args[1])
-        if (!isExists) return this.reply(this.locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
-            socket: {emoji: await this.bot.getEmoji(`692428578683617331`)}
+        const { isExists, res } = this._getChannel(this.args[1], message)
+        if (!isExists) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
+            socket: {emoji: await client.getEmoji(`692428578683617331`)}
         })
         //  Update and finalize
-        this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: subConfigId,
             customizedParameter: res.id,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} ${subConfigId} successfully set CHANNEL_ID:${res.id} for GUILD_ID:${this.message.guild.id}.`)
-        return this.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
+        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
             status: `success`,
             socket: {
                 channel: res,
-                emoji: await this.bot.getEmoji(`789212493096026143`)
+                emoji: await client.getEmoji(`789212493096026143`)
             }
         })
-    }
+    },
 
     /**
      * Customizing the content of level up message.
      * @return {void}
      */
-     async text() {
+     async text(client, reply, message, arg, locale) {
         const fn = `[setLevelupMessage.text]`
         const subConfigId = `LEVEL_UP_TEXT`
-        if (!this.primaryConfig.value) return this.reply(this.locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
-            socket:{prefix:this.bot.prefix}
+        if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+            socket:{prefix: client.prefix}
         })
-        if (!this.args[1]) return this.reply(this.locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
-            socket:{prefix:this.bot.prefix}
+        if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
+            socket:{prefix:client.prefix}
         })
         let newText = this.args.slice(1).join(` `)
         //  Dummy level-up message for the preview
-        await this.reply(newText, {
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        await reply.send(newText, {
             prebuffer: true,
             simplified: true,
-            image: await new GUI(this.user, 60).build(),
+            image: await new GUI(userData, 60).build(),
             socket: {
-                user: this.message.author
+                user: message.author
             }
         })
-        const confirmation = await this.reply(this.locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)		
-		await this.addConfirmationButton(`applyCustomLevelUpText`, confirmation)
-        return this.confirmationButtons.get(`applyCustomLevelUpText`).on(`collect`, async r => {
-            if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-            })
-            this.bot.db.updateGuildConfiguration({
+        const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)		
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(async () => {
+            client.db.updateGuildConfiguration({
                 configCode: subConfigId,
                 customizedParameter: newText,
-                guild: this.message.guild,
-                setByUserId: this.user.master.id,
+                guild: message.guild,
+                setByUserId: message.author.id,
                 cacheTo: this.guildConfigurations
             })
-            this.logger.debug(`${fn} ${this.subConfigId} for GUILD_ID:${this.message.guild.id} has been updated.`)
-            this.finalizeConfirmation(r)
- 			this.reply(this.locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
+ 			reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
                 status: `success`,
                 socket: {
-                    emoji: await this.bot.getEmoji(`789212493096026143`)
+                    emoji: await client.getEmoji(`789212493096026143`)
                 }
             })
         })
-     }
+     },
 
     /**
      * Fetching channel in the guild
      * @param {*} channelKeyword
+     * @param {Message} message Current message instance
      * @return {object}
      */
-    _getChannel(channelKeyword) {
+    _getChannel(channelKeyword, message) {
         //  Omit surrounded symbols if user using #mention method to be used as the searchstring keyword
         channelKeyword = channelKeyword.replace(/[^0-9a-z-A-Z ]/g, ``)
-        const channels = this.message.guild.channels.cache
+        const channels = message.guild.channels.cache
         const channel = channels.get(channelKeyword) || channels.find(node => node.name.toLowerCase() === channelKeyword.toLowerCase()) 
         return {
             isExists: channel ? true : false,
@@ -221,14 +205,3 @@ class SetLevelupMessage extends Command {
         }
     }
 }
-
-module.exports.help = {
-    start: SetLevelupMessage,
-    name: `setLevelupMessage`,
-    aliases: [`setlevelupmsg`, `setlvlupmsg`, `setlvlupmessage`, `setlevelupmessage`],
-    description: `Enable or disable level-up message module for this guild`,
-    usage: `setlvlupmsg <Enable/Disable>`,
-    group: `Setting`,
-    permissionLevel: 3
-}
-

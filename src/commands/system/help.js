@@ -1,99 +1,85 @@
-const Command = require(`../../libs/commands`)
 const category = require(`../../config/commandCategories`)
 /**
  * 	Displaying all the available commands. Complete with the usage.
  * 	@author klerikdust
  */
-class Help extends Command {
-
+module.exports = {
+    name: `help`,
+	aliases: [`help`, `help`, `cmdhelp`],
+	description: `Displaying all the available commands. Complete with the usage.`,
+	usage: `help <Category/CommandName>(Optional)`,
+	permissionLevel: 0,
+    commandpediaButton: `📖`,
+	ignoreGroups: [`Developer`, `modmail`, `Moderation`],
+	permmissionInteger: 268823638,
+    supportServerUrl: `https://discord.gg/7nDes9Pi`, 
     /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     * Client/Bot invite generator.
+     * @param {Client} client Current client instancee.
+     * @return {string}
      */
-	constructor(Stacks) {
-		super(Stacks)
-		this.defaultColor = `crimson`
-		this.commandpediaButton = `📖`
-		this.ignoreGroups = [`Developer`, `modmail`, `Moderation`]
-		this.commandpediaThumbnail = `https://i.ibb.co/kHfmDv0/book.png`
-		this.permmissionInteger = 268823638
-		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
-        this.supportServerUrl = `https://discord.gg/7nDes9Pi` 
-	}
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-	async execute() {
-		await this.requestUserMetadata(1)
-		const cmds = this.getCommandStructures()
-
+    getBotInviteUrl(client) {
+        return `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=${this.permmissionInteger}&scope=bot`
+    },
+    async execute(client, reply, message, arg, locale) {
+		const cmds = this.getCommandStructures(client)
 		//  Displaying the help center if user doesn't specify any arg
-		if (!this.fullArgs)	{
+		if (!arg)	{
 			// Display 5 most used commands suggestions
-			return this.reply(this.locale.HELP.LANDING, {
+			return reply.send(locale.HELP.LANDING, {
 				socket: {
-					emoji: await this.bot.getEmoji(`692428988177449070`),
-					prefix: this.bot.prefix
+					emoji: await client.getEmoji(`692428988177449070`),
+					prefix: client.prefix
 				},
-				color: this.defaultColor,
-				header: `Hi, ${this.user.master.username}!`,
-				thumbnail: this.bot.user.displayAvatarURL()
+				header: `Hi, ${message.author.username}!`,
+				thumbnail: client.user.displayAvatarURL()
 			})
-			
 			.then(response => {
 				response.react(this.commandpediaButton)
-				const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === this.user.master.id)
+				const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
 				const bookEmojiCollector = response.createReactionCollector(bookEmoji, {
 					time: 60000
 				})
-
 				//  Display Commandpedia layout once user pressed the :book: button
 				bookEmojiCollector.on(`collect`, () => {
 					response.delete()
-					this.reply(this.locale.HELP.COMMANDPEDIA.HEADER, {
+					reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
-							prefix: this.bot.prefix,
+							prefix: client.prefix,
 							serverLink: `[Join Support Server](${this.supportServerUrl})`,
-							botInviteLink: `[Invite Annie](${this.botInviteUrl})`,
+							botInviteLink: `[Invite Annie](${this.getBotInviteUrl(client)})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
 						image: `commandpedia`,
-						thumbnail: this.commandpediaThumbnail,
-						customHeader: [`Commandpedia`, this.bot.user.displayAvatarURL()],
-						color: this.defaultColor
+						customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
 					})
 				})
 			})
 		}
-
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
-		const res = await this.findCommandByKeyword(this.fullArgs, cmds)
-		if (!res) return this.reply(this.locale.HELP.UNABLE_TO_FIND_COMMAND, {
+		const res = await this.findCommandByKeyword(arg, cmds)
+		if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
 			socket: {
-				emoji: await this.bot.getEmoji(`692428969667985458`)
+				emoji: await client.getEmoji(`692428969667985458`)
 			}
 		})
 		//  Handle helpCategory display
 		if (this.helpCategory) {
+            console.debug(res)
 			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
-			return this.reply(category[res.toUpperCase()] + `\n**Here's the list!**\n${commands.join(`, `)}`, {
-				header: `The ${res} Commands!`,
-				thumbnail: this.bot.user.displayAvatarURL()
+			return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
+				header: `the ${res} commands!`,
+				thumbnail: client.user.displayAvatarURL()
 			})
 		}
-		const perm = this.getPermissionProperties(res.help.permissionLevel)
-		const cmdName = res.help.name.charAt(0).toUpperCase() + res.help.name.slice(1)
-		const cmdDesc = `"${res.help.description.charAt(0).toUpperCase() + res.help.description.slice(1)}"`
-		const footer = `\`\`\`javascript\nUSAGE: ${this.prefix}${res.help.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
+		const perm = this.getPermissionProperties(res.permissionLevel, client)
+		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
+		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
+		const footer = `\`\`\`javascript\nUSAGE: ${client.prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
+		return reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
+    },
 
-		return this.reply(`**${cmdName}**\n${cmdDesc}\n${footer}`, {
-			color: this.defaultColor
-		})
-
-	}
-
-	/**
+    /**
 	 * Finding command by a category, name or alias.
 	 * @param {String} [keyword=``] user input
 	 * @param {Map} [src={}] tree-structural commands list 
@@ -105,7 +91,7 @@ class Help extends Command {
 		keyword = keyword.endsWith(`s`) ? keyword.slice(0, keyword.length-1) : keyword
 		if (parents.includes(keyword)) {
 			this.helpCategory = true
-			return keyword.charAt(0).toUpperCase() + keyword.slice(1)
+			return keyword
 		}
 		//  Returns if keyword has matched with parent
 		if (src[keyword]) res = src[keyword]
@@ -113,40 +99,42 @@ class Help extends Command {
 		for (let group in src) {
 			src[group].filter(child => {
 				//  Returns result if keyword has matched with command's name
-				if (child.help.name === keyword) res = child
+				if (child.name === keyword) res = child
 				//  Returns result if keyword has matched with command's aliases
-				if (child.help.aliases.includes(keyword)) res = child
+				if (child.aliases.includes(keyword)) res = child
 			})	
 		}
 		return res
-	}
+	},
 
 	/**
 	 * Parsing registered commands into a tree-structured map collection.
+     * @param {Client} client Current client/bot instance
 	 * @returns {CommandsObject}
 	 */
-	getCommandStructures() {
+	getCommandStructures(client) {
 		let obj = {}
-		let groups = this.bot.commands.names.map(el => el.help.group)
+		let groups = client.commands.map(el => el.group)
 		let uniqueGroups = [...new Set(groups)].filter(el => !this.ignoreGroups.includes(el))
 		for (let groupName of uniqueGroups) {
-			const groupChilds = this.bot.commands.names.filter(el => el.help.group === groupName && !el.help.invisible)
+			const groupChilds = client.commands.filter(el => el.group === groupName && !el.invisible)
 			obj[groupName] = groupChilds
 		}
 		return obj
-	}
+	},
 
 	/**
 	 * Fetch complete properties of given permission level
 	 * @param {Number} [lvl=0] Permission level.
+     * @param {Client} client Current client/bot instance.
 	 * @returns {PermissionObject}
 	 */
-	getPermissionProperties(lvl=0) {
-		const src = this.bot.permission
+	getPermissionProperties(lvl=0, client) {
+		const src = client.permission
 		for (let key in src) {
 			if (src[key].level === lvl) return src[key]
 		}
-	}
+	},
 
 	/**
 	 * Prettifying commands collection into a readable list.
@@ -156,11 +144,11 @@ class Help extends Command {
 	prettifyCommandpedia(obj=[]) {
 		let str = ``
 		for (let group in obj) {
-			const cmdNames = obj[group].map(el => `\`${el.help.name.toLowerCase()}\``)
+			const cmdNames = obj[group].map(el => `\`${el.name.toLowerCase()}\``)
 			str += `**${group}**\n*${this._getCategoryDescription(group)}*\n${cmdNames.join(`, `)}\n\n`
 		}
 		return str
-	}
+	},
 
 	/**
 	 * Pull category's description
@@ -169,34 +157,12 @@ class Help extends Command {
 	 */
 	_getCategoryDescription(category=``) {
 		const descriptions = {
-			Artsy: `My artsy stuffs that will assist your creative process!`,
-			Fun: `Wanna have fun with your friends?!`,
-			Setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
-			System: `Miscellaneous commands to check the state of Annie.`,
-			User: `Everything you need are in here. Well-refined, just for you.`
+			artsy: `My artsy stuffs that will assist your creative process!`,
+			fun: `Wanna have fun with your friends?!`,
+			setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
+			system: `Miscellaneous commands to check the state of Annie.`,
+			user: `Everything you need are in here. Well-refined, just for you.`
 		}
 		return descriptions[category]
 	}
-
-	/**
-	 * Prettifying suggested commands array
-	 * @param {Array} [arr=[]] returned result from [Database.mostUsedCommands()]
-	 * @returns {String}
-	 */
-	prettifySuggestions(arr=[]) {
-		const cmdNames = arr.map(el => { return `**\`${this.bot.prefix}${el.command_alias}\`**`})
-		return cmdNames.join(`,`)
-	}
-
-}
-
-module.exports.help = {
-	start: Help,
-	name: `help`,
-	aliases: [`help`, `help`, `cmdhelp`],
-	description: `Displaying all the available commands. Complete with the usage.`,
-	usage: `help <Category/CommandName>(Optional)`,
-	group: `System`,
-	permissionLevel: 0,
-	multiUser: false
 }

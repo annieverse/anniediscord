@@ -1,30 +1,25 @@
 const commanifier = require(`../utils/commanifier`)
 const Topgg = require(`@top-gg/sdk`)
-
-module.exports = annie => {
-	//  Run configurations once
-    const instanceId = `[SHARD_ID:${annie.shard.ids[0]}@EVENT_READY]`
-    annie.registerReminders()
+const Reminder = require(`../libs/reminder`)
+/**
+ * Ready event.
+ * @param {Client} annie Current bot/worker instance.
+ * @return {void}
+ */
+module.exports = function ready(annie) {
+    annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()
     annie.registerGuildAutoResponders()
-	if (annie.dev) {
-		/**
-		 * 	--------------------------------------------------
-		 * 	Configuration for Development
-		 * 	--------------------------------------------------
-		 */
-        annie.logger.info(`${instanceId} has been deployed (${annie.getBenchmark(annie.startupInit)})`)
-        annie.user.setStatus(`dnd`)
-	} else {
-		/**
-		 * 	--------------------------------------------------
-		 * 	Configuration for Production
-		 * 	--------------------------------------------------
-		 */
-		annie.logger.info(`${instanceId} successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
-		annie.user.setStatus(`online`)
-		annie.user.setActivity(`${annie.prefix}help`, {type: `WATCHING`})
-		//  Registering vote api into client property.
-		annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)
-	}
+    annie.logger.info(`<DEPLOYED> (${annie.getBenchmark(annie.startupInit)})`)
+	if (annie.dev) return annie.user.setStatus(`dnd`)
+    /**
+     * 	--------------------------------------------------
+     * 	Configuration for Production
+     * 	--------------------------------------------------
+     */
+    annie.user.setStatus(`online`)
+    annie.user.setActivity(`${annie.prefix}help`, {type: `WATCHING`})
+    annie.logger.info(`successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
+    //  Registering vote api into client property.
+    annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)
 }

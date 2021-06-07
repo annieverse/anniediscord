@@ -1,4 +1,5 @@
-const Command = require(`../../libs/commands`)
+const User = require(`../../libs/user`)
+const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/gacha`)
 const closestBelow = require(`../../utils/closestBelow`)
 const commanifier = require(`../../utils/commanifier`)
@@ -8,40 +9,24 @@ const random = require(`../../utils/random`)
  * Opens a Lucky Ticket and wins various exclusive rewards!
  * @author klerikdust
  */
-class Gacha extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-    constructor(Stacks) {
-		super(Stacks)
-
-        /**
-         * The received loots will be stored in this array
-         * @type {array} 
-         */
-        this.loots = []
-
-        /**
-         * The maximum threeshold of opening gacha will be limited to range in this array.
-         * @type {array} 
-         */
-        this.amountToOpenRanges = [1, 10]
-    }
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-    	await this.requestUserMetadata(2)
+module.exports = {
+    name: `gacha`,
+	aliases: [`gch`,`gacha`, `reroll`],
+	description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
+	usage: `gacha <Amount>`,
+	permissionLevel: 0,
+    loots: [],
+    amountToOpenRanges: [1, 10],
+    async execute(client, reply, message, arg, locale) {
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        this.args = arg.split(` `)
     	this.amountToOpen = this.args[0] ? trueInt(this.args[0]) : 1
         //  Handle if amount to be opened is out of defined range.
-        if (!this.amountToOpenRanges.includes(this.amountToOpen)) return this.reply(this.locale.GACHA.AMOUNT_OUTOFRANGE, {
-            socket: {emoji: await this.bot.getEmoji(`781504248868634627`)}
+        if (!this.amountToOpenRanges.includes(this.amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
+            socket: {emoji: await client.getEmoji(`781504248868634627`)}
         })
         //  Direct roll if user already has the tickets.
-        if (this.user.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll()
+        if (userData.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll(client, reply, message, arg ,locale)
         /**
          * --------------------
          * STARTS PURCHASE CHAINING
@@ -55,19 +40,19 @@ class Gacha extends Command {
          * to play with our gacha with small effort (no need to get through the buy command first)
          * and enjoy the rest of the content.
          */
-        this.insufficientTicketWarning = await this.reply(this.locale.GACHA.INSUFFICIENT_TICKET, {
-		   socket: {emoji: await this.bot.getEmoji(`751020535865016420`), prefix: this.bot.prefix}
+        const insufficientTicketWarning = await reply.send(locale.GACHA.INSUFFICIENT_TICKET, {
+		   socket: {emoji: await client.getEmoji(`751020535865016420`), prefix: client.prefix}
         })
-        const gachaItem = await this.bot.db.getItem(71)
-        const payment = await this.bot.db.getPriceOf(71)
-        const paymentItem = await this.bot.db.getItem(payment.item_price_id)
-        const userCurrentCurrency = this.user.inventory[paymentItem.alias]
+        const gachaItem = await client.db.getItem(71)
+        const payment = await client.db.getPriceOf(71)
+        const paymentItem = await client.db.getItem(payment.item_price_id)
+        const userCurrentCurrency = userData.inventory[paymentItem.alias]
         const amountToPay = payment.price*this.amountToOpen
 
         //  Handle if user doesn't have enough artcoins to buy tickets
-        if (userCurrentCurrency < amountToPay) return this.reply(this.locale.GACHA.SUGGEST_TO_GRIND, {
+        if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
             simplified: true,
-            socket: {emoji: await this.bot.getEmoji(`692428927620087850`)}
+            socket: {emoji: await client.getEmoji(`692428927620087850`)}
         })
 
         /**
@@ -75,34 +60,35 @@ class Gacha extends Command {
          * 1.) GIVE PURCHASE OFFER TO USER
          * --------------------
          */
-        this.suggestToBuy = await this.reply(this.locale.GACHA.SUGGEST_TO_BUY, {
+        const suggestToBuy = await reply.send(locale.GACHA.SUGGEST_TO_BUY, {
             simplified: true,
-            socket: {emoji: await this.bot.getEmoji(`lucky_ticket`)}
+            socket: {emoji: await client.getEmoji(`lucky_ticket`)}
         })
-		await this.addConfirmationButton(`suggestToBuy`, this.suggestToBuy)
-        this.confirmationButtons.get(`suggestToBuy`).on(`collect`, async r => {
-			//  Handle cancellation
-			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-			})
-            this.suggestToBuy.delete()
-            this.insufficientTicketWarning.delete()
+        const c = new Confirmator(message, reply) 
+        await c.setup(message.author.id, suggestToBuy)
+        c.onAccept(async () => {
+            suggestToBuy.delete()
+            insufficientTicketWarning.delete()
             //  Deduct balance & deliver lucky tickets
-            await this.bot.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
-            await this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
-            this.startsRoll()
+            await client.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id})
+            await client.db.updateInventory({itemId: 71, value: this.amountToOpen, userId: message.author.id, guildId: message.guild.id})
+            this.startsRoll(client, reply, message, arg, locale)
         })
-    }
+    },
 
-    async startsRoll() {
-        const rewardsPool = await this.bot.db.getGachaRewardsPool()
+    /**
+     * Rolling loots
+     * @return {void}
+     */
+    async startsRoll(client, reply, message, arg, locale) {
+        const rewardsPool = await client.db.getGachaRewardsPool()
         //  Handle if no rewards are available to be pulled from gacha.
-        if (!rewardsPool.length) return this.reply(this.locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: this.bot.getEmoji(`AnnieCry`)} })
-        const fetching = await this.reply(random(this.locale.GACHA.OPENING_WORDS), {
+        if (!rewardsPool.length) return reply.send(locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: client.getEmoji(`AnnieCry`)} })
+        const fetching = await reply.send(random(locale.GACHA.OPENING_WORDS), {
             simplified: true,
             socket: {
-                user: this.user.master.username,
-                emoji: await this.bot.getEmoji(`781504248868634627`)
+                user: message.author.username,
+                emoji: await client.getEmoji(`781504248868634627`)
             }
         })
         //  Registering loot
@@ -110,35 +96,35 @@ class Gacha extends Command {
             const loot = this.getLoot(rewardsPool)
             this.loots.push(loot)
         }
-
         //  Subtract user's lucky tickets
-        this.bot.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
+        client.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: message.author.id, guildId: message.guild.id})
         //  Storing received loots into user's inventory
         for (let i=0; i<this.loots.length; i++) {
             const item = this.loots[i]
-            await this.bot.db.updateInventory({itemId: item.item_id, value: item.quantity, operation: `+`, userId: this.user.master.id, guildId: this.message.guild.id})
+            await client.db.updateInventory({itemId: item.item_id, value: item.quantity, userId: message.author.id, guildId: message.guild.id})
         }
 
         //  Displaying result
-        this.reply(this.locale.COMMAND.TITLE, {
+        reply.send(locale.COMMAND.TITLE, {
             prebuffer: true,
             image: await new GUI(this.loots, this.drawCounts).build(),
             simplified: true,
             socket: {
                 command: `has opened ${this.drawCounts} Lucky Tickets!`,
-                user: this.user.master.username,
-                emoji: await this.bot.getEmoji(`lucky_ticket`)
+                user: message.author.username,
+                emoji: await client.getEmoji(`lucky_ticket`)
             }
         })
         fetching.delete()
-        return this.reply(await this.displayDetailedLoots(), {simplified: true})   
-    }
+        return reply.send(await this.displayDetailedLoots(client), {simplified: true})   
+    },
 
     /**
      * Aggregate and prettify this.loots into a readable list.
+     * @param {Client} client Current bot/client instance.
      * @returns {string}
      */
-    async displayDetailedLoots() {
+    async displayDetailedLoots(client) {
         let str = ``
         let items = this.loots.map(item => item.name)
         let uniqueItems = [...new Set(items)]
@@ -146,10 +132,10 @@ class Gacha extends Command {
             const item = this.loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
-            str += `${await this.bot.getEmoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
+            str += `${await client.getEmoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
         }
         return str
-    }
+    },
 
     /**
      * Get possible item from given rewards pool (returned result from `Database.getGachaRewardsPool()`).
@@ -161,15 +147,15 @@ class Gacha extends Command {
         const totalProbability = rewardsPool.reduce((total, item) => total + item.weight, 0)
         const weightsPool = rewardsPool.map(item => item.weight)
         let rng = Math.random() * totalProbability
-        //  Handle if rng is hitting infinity
-        if (rng === `-infinity`) rng = 100
+        //  Handle if rng is hitting infinity, auto select fragments
+        if (rng === `-infinity`) rng = 50
         const fitInRanges = closestBelow(weightsPool, rng)
         const item = rewardsPool.filter(item => item.weight === fitInRanges)
         //  Variable 'result' will determine if there are multiple items in the same weight
         //  then randomize the array. Otherwise, returns the first index.
         const result = item.length > 1 ? item[Math.floor(Math.random () * item.length)] : item[0]
         return result
-    }
+    },
 
     /**
      * Determine user's gacha counts
@@ -178,16 +164,4 @@ class Gacha extends Command {
     get drawCounts() {
         return !this.args[0] || this.args[0] == 1 ? 1 : 10
     }
-
-}
-
-module.exports.help = {
-	start: Gacha,
-	name: `gacha`,
-	aliases: [`gch`,`gacha`, `reroll`],
-	description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
-	usage: `gacha <Amount>`,
-	group: `User`,
-	permissionLevel: 0,
-	multiUser: false
 }

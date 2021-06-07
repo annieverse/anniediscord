@@ -3,61 +3,50 @@ const Command = require(`../../libs/commands`)
  * Generates Server & Bot invitation link
  * @author klerikdust
  */
-class Invite extends Command {
-
+module.exports = {
+    name:`invite`,
+	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `invite`, `botinvite`, `invitebot`],
+	description: `Generates Support Server & Bot Invitation link`,
+	usage: `invite`,
+	permissionLevel: 0,
+    supportServerUrl: `https://discord.gg/7nDes9P`, 
+	permmissionInteger: 268823638,
     /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     * Client/Bot invite generator.
+     * @param {Client} client Current client instancee.
+     * @return {string}
      */
-	constructor(Stacks) {
-		super(Stacks)
-		this.permmissionInteger = 268823638
-		this.botInviteUrl = `https://discord.com/oauth2/authorize?client_id=${this.bot.user.id}&permissions=${this.permmissionInteger}&scope=bot`
-        this.supportServerUrl = `https://discord.gg/7nDes9P` 
-	}
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-	async execute() {
+    getBotInviteUrl(client) {
+        return `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=${this.permmissionInteger}&scope=bot`
+    },
+    async execute(client, reply, message, arg, locale) {
 		try {
 			//  Attempt to send through DM.
-			await this.sendInvites(this.message.author)
-			return this.reply(this.locale.INVITE_LINK_SENT, {status: `success`, socket:{ emoji:`:e_mail:` }})
+			await this.sendInvites(message.author)
+			return reply.send(locale.INVITE_LINK_SENT, {status: `success`, socket:{ emoji:`:e_mail:` }})
 		} catch (error) {
 			// Send to channel if failed send attempt to dm
-			return this.sendInvites(this.message.channel)
+			return this.sendInvites(message.channel, client, reply, locale)
 		}
-	}
+    },
 
     /**
      * Default template for sending invites.
      * @param {object} [targetChannel={}] target channel to be sent in..
      * @returns {void}
      */
-	async sendInvites(targetChannel={}) {
-		await this.reply(this.locale.GENERATE_BOT_INVITE, {
-			socket: {botInviteLink: `[Let's add me to your server!](${this.botInviteUrl})`},
+	async sendInvites(targetChannel={}, client, reply, locale) {
+		await reply.send(locale.GENERATE_BOT_INVITE, {
+			socket: {botInviteLink: `[Let's add me to your server!](${this.getBotInviteUrl(client)})`},
 			field: targetChannel
 		})
-		await this.reply(this.locale.GENERATE_SERVER_INVITE, {
+		return reply.send(locale.GENERATE_SERVER_INVITE, {
 			simplified: true,
 			socket: {
 				serverLink: this.supportServerUrl,
-				emoji: await this.bot.getEmoji(`692428927620087850`)
+				emoji: await client.getEmoji(`692428927620087850`)
 			},
 			field: targetChannel
 		})
 	}
-}
-
-module.exports.help={
-	start: Invite,
-	name:`invite`,
-	aliases: [`serverinvite`, `serverlink`, `linkserver`, `invitelink`, `invite`, `botinvite`, `invitebot`],
-	description: `Generates Support Server & Bot Invitation link`,
-	usage: `invite`,
-	group: `System`,
-	permissionLevel: 0,
-	multiUser: false
 }

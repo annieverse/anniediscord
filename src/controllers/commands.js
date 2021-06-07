@@ -12,7 +12,7 @@ const getUserPermission = require(`../libs/permissions`)
  */
 module.exports = async (client={}, message={}) => {
     const targetCommand = message.content.split(` `)[0].slice(client.prefix.length).toLowerCase()
-    const command = findCommandProperties(client, targetCommand)
+    let command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
     if (!command) return 
     const reply = new Response(message)
@@ -20,7 +20,7 @@ module.exports = async (client={}, message={}) => {
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
         if (!commandChannels.includes(message.channel.id)) {
-            await reply.send(client.locale.en.NON_COMMAND_CHANNEL, {
+            await reply.send(client.locales.en.NON_COMMAND_CHANNEL, {
                 deleteIn: 5,
                 socket: {
                     user: message.author.username,
@@ -44,7 +44,7 @@ module.exports = async (client={}, message={}) => {
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
         const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return reply.send(client.locale.en.COMMAND.STILL_COOLDOWN, {
+        if (diff > 0) return reply.send(client.locales.en.COMMAND.STILL_COOLDOWN, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`),
                 user: message.author.username,
@@ -54,15 +54,18 @@ module.exports = async (client={}, message={}) => {
     }
     client.cooldowns.set(instanceId, Date.now())
     // Attempt on running target command
+    const locale = client.locales.en
     try {
         const initTime = process.hrtime()
-        let cmdRan = await new command.start({
-            bot: client, 
-            message: message, 
-            commandProperties: command
-        }).execute()
+        await command.execute(
+            client, 
+            reply, 
+            message, 
+            message.content.split(` `).slice(1).join(` `),
+            locale
+        )
         //  Dispose
-        cmdRan = null
+        command = null
         return client.db.recordsCommandUsage({
             guild_id: message.guild.id,
             user_id: message.author.id,
@@ -71,15 +74,15 @@ module.exports = async (client={}, message={}) => {
         })
     }
     catch(e) {
-        if (client.dev) return reply.send(client.locale.en.ERROR_ON_DEV, {
+        if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
             socket: {
-                error: e,
+                error: e.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         })
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
-            reply.send(client.locale.en.ERROR_UNSUPPORTED_FILE_TYPE, {
+            reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
@@ -87,7 +90,7 @@ module.exports = async (client={}, message={}) => {
         }
         //  Missing-permission error
         else if (e.code === 50013) {
-            reply.send(client.locale.en.ERROR_MISSING_PERMISSION, {
+            reply.send(locale.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
@@ -95,7 +98,7 @@ module.exports = async (client={}, message={}) => {
             .catch(permErr => permErr)
         }
         else {
-            reply.send(client.locale.en.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
+            reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
         client.shard.broadcastEval(`

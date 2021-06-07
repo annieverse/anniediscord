@@ -1,41 +1,30 @@
 /* eslint-disable no-unused-vars*/
 /* eslint-disable no-useless-escape*/
-const Command = require(`../../libs/commands`)
 const cmd = require(`node-cmd`)
-
 /**
  * 	Running terminal command
  * 	@author klerikdust
  */
-class CommandLineInterface extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-	constructor(Stacks) {
-		super(Stacks)
-	}
-
-    /**
-     * Running command workflow
-     * @param {PistachioMethods} Object pull any pistachio's methods in here.
-     */
-	async execute() {
-		await this.requestUserMetadata(1)
-
+module.exports = {
+	name: `cli`,
+	aliases: [`cmd`, `cli`],
+	description: `Running terminal command`,
+	usage: `cli <[CommandStatement]> --flag`,
+	permissionLevel: 4,
+	multiUser: false,
+    async execute(client, reply, message, arg, locale) {
 		//	Return if user doesn't specify arguments.
-		if (!this.fullArgs) return this.reply(this.locale.CLI.GUIDE)
+		if (!arg) return reply.send(locale.CLI.GUIDE)
 		//	Parse statement
-		const stmt = this.fullArgs.match(/\[(.*?)\]/)[1]
+		const stmt = arg.match(/\[(.*?)\]/)[1]
 		//	Make sure the the stmt is valid
-		if (!stmt) return this.reply(this.locale.CLI.MISSING_STMT, {color: `red`})
-
-		this.reply(this.locale.COMMAND.FETCHING, {
+		if (!stmt) return reply.send(locale.CLI.MISSING_STMT)
+		reply.send(locale.COMMAND.FETCHING, {
 			simplified: true,
 			socket: {
-				emoji: await this.bot.getEmoji(`790994076257353779`),
+				emoji: await client.getEmoji(`790994076257353779`),
 				command: `cli`,
-				user: this.user.master.id
+				user: message.author.id
 			} 
 		})
 		.then(load => {
@@ -43,28 +32,17 @@ class CommandLineInterface extends Command {
 			return cmd.get(stmt, (err, data) => {
 				if (err) {
 					load.delete()
-					return this.reply(this.locale.ERROR, {socket: {error: err}, color: `red`})
+					return reply.send(locale.ERROR, {socket: {error: err}}) 
 				}
 				const parsedResult = JSON.stringify(data).replace(/\\n/g, ` \n`)
 				load.delete()
-				return this.reply(this.locale.EXEC_CODE, {
+				return reply.send(locale.EXEC_CODE, {
 					socket: {
-						time: this.bot.getBenchmark(initTime),
+						time: client.getBenchmark(initTime),
 						result: parsedResult.slice(0, 2000)
 					}
 				})
 			})
 		})
-	}
-}
-
-module.exports.help = {
-	start: CommandLineInterface,
-	name: `cli`,
-	aliases: [`cmd`, `cli`],
-	description: `Running terminal command`,
-	usage: `cli <[CommandStatement]> --flag`,
-	group: `Developer`,
-	permissionLevel: 4,
-	multiUser: false,
+    }
 }

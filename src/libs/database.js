@@ -1,6 +1,6 @@
 const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
-const logger = require(`./logger`)
+const logger = require(`pino`)({name: `DATABASE`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
@@ -86,7 +86,7 @@ class Database {
 	 */
 
 	/**
-	 * @param {object} client sql instance that is going to be used
+	 * @param {Client} client sql instance that is going to be used
 	 */
 	constructor(client={}) {
 		this.client = client
@@ -105,23 +105,23 @@ class Database {
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
 		this.client = new SqliteClient(path)
+        logger.info(`SQLITE <CONNECTED>`)
 		this.connectRedis()
 		return this
 	}
 
 	/**
 	 * Opening redis database connection
-	 * @returns {void}
+	 * @return {void}
 	 */
 	async connectRedis() {
-		const fn = `[DB@REDIS]`
 		const redisClient = await Redis.createClient()
 		redisClient.on(`error`, err => {
-			logger.error(`${fn} ${err}`)
+			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
 		})
 		redisClient.on(`connect`, () => {
-			logger.info(`${fn} connected`)
+			logger.info(`REDIS <CONNECTED>`)
 			this.redis = redisClient
 		})
 	}
@@ -1875,6 +1875,27 @@ class Database {
 			, [userId]
 		)
 	}
+
+    /**
+     * Fetch user's current artcoins/balance.
+     * @param {string} userId
+     * @param {string} guildId
+     * @return {number}
+     */
+    async getUserBalance(userId, guildId) {
+        const res = await this._query(`
+            SELECT * 
+            FROM user_inventories 
+            WHERE
+                user_id = ?
+                AND guild_id = ?
+                AND item_id = 52`
+            , `get`
+            , [userId, guildId]
+        )
+        //  Fallback to zero if entry not exists.
+        return res ? res.quantity : 0
+    }
 
 	/**
 	 * Pull user's inventories metadata

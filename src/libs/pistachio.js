@@ -1,6 +1,6 @@
 const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
 const GUI = require(`../ui/prebuild/cardCollection`)
-const logger = require(`./logger`)
+const logger = require(`pino`)(`PISTACHIO`)
 const fs = require(`fs`)
 const path = require(`path`)
 const fetch = require(`node-fetch`)

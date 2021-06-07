@@ -1,4 +1,4 @@
-const Command = require(`../../libs/commands`)
+const Confirmator = require(`../../libs/confirmator`)
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const GUI = require(`../../ui/prebuild/level`)
@@ -8,160 +8,148 @@ const commanifier = require(`../../utils/commanifier`)
  * Enable or disable EXP Leveling System for this guild
  * @author klerikdust
  */
-class SetExp extends Command {
+module.exports = {
+    name: `setExp`,
+    aliases: [`setexp`, `setexperience`, `setxp`],
+    description: `Configure the exp for your member and the server.`,
+    usage: `setexp`, 
+    permissionLevel: 3,
+    /**
+     * An array of the available options for EXP_MODULE module
+     * @type {array}
+     */
+    actions: [`enable`, `disable`, `add`, `minus`, `reset`],
 
     /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     * Thumbnail's img source
+     * @type {string}
      */
-    constructor(Stacks) {
-        super(Stacks)
-        /**
-         * An array of the available options for EXP_MODULE module
-         * @type {array}
-         */
-        this.actions = [`enable`, `disable`, `add`, `minus`, `reset`]
-
-        /**
-         * Thumbnail's img source
-         * @type {string}
-         */
-         this.thumbnail = `https://i.ibb.co/Kwdw0Pc/config.png`
-
-        /**
-         * Current instance's config code
-         * @type {string}
-         */  
-        this.primaryConfigID = `EXP_MODULE`
-
-		/**
-		 * Soft limit exp addition
-		 * type {number}
-		 */
-		this.softLimit = 1000000
-    }
+    thumbnail: `https://i.ibb.co/Kwdw0Pc/config.png`,
 
     /**
-     * Running command workflow
-     * @return {void}
+     * Current instance's config code
+     * @type {string}
+     */  
+    primaryConfigID: `EXP_MODULE`,
+
+    /**
+     * Soft limit exp addition
+     * type {number}
      */
-    async execute() {
-        await this.requestUserMetadata(1)
+    softLimit: 1000000,
+    async execute(client, reply, message, arg, locale) {
         //  Handle if user doesn't specify any arg
-        if (!this.fullArgs) return this.reply(this.locale.SETEXP.GUIDE, {
+        if (!arg) return reply.send(locale.SETEXP.GUIDE, {
             thumbnail: this.thumbnail,
-            header: `Hi, ${this.user.master.username}!`,
+            header: `Hi, ${message.author.username}!`,
 			image: `banner_setexp`,
             socket: {
-                prefix: this.bot.prefix,
-                emoji: await this.bot.getEmoji(`692428597570306218`)
+                prefix: client.prefix,
+                emoji: await client.getEmoji(`692428597570306218`)
             }
         })
+        this.args = arg.split(` `)
         //  Handle if the selected options doesn't exists
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.actions.includes(this.selectedAction)) return this.reply(this.locale.SETEXP.INVALID_ACTION, {
-            socket: {actions: this.actions.join(`, `)},
-            status: `fail`
+        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETEXP.INVALID_ACTION, {
+            socket: {actions: this.actions.join(`, `)}
         })   
         //  Run action
-        this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
+        this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
-        return this[this.selectedAction](...arguments)
-    }
+        return this[this.selectedAction](client, reply, message, arg, locale)
+    },
 
     /**
      * Enabling EXP Leveling Module
      * @returns {void}
      */
-    async enable() {
+    async enable(client, reply, message, arg, locale) {
         const fn = `[setExp.enable()]`
         //  Handle if module already enabled before the action.
         if (this.primaryConfig.value) {
             //  Handle if module used the default value.
-            if (!this.primaryConfig.setByUserId) return this.reply(this.locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
-                socket: {emoji: await this.bot.getEmoji(`692428843058724994`)},
-                color: `crimson`
+            if (!this.primaryConfig.setByUserId) return replys.send(locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
+                socket: {emoji: await client.getEmoji(`692428843058724994`)}
             })
-            const localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
-            return this.reply(this.locale.SETEXP.ALREADY_ENABLED, {
-                status: `warn`,
+            const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
+            return reply.send(locale.SETEXP.ALREADY_ENABLED, {
                 socket: {
-                    user: await this.bot.getUsername(this.primaryConfig.setByUserId),
+                    user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
                 }
             })
         }
         //  Update configs
-        await this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been enabled.`)
-        return this.reply(this.locale.SETEXP.SUCCESSFULLY_ENABLED, {
-            socket: {prefix: this.bot.prefix},
+        return reply.send(locale.SETEXP.SUCCESSFULLY_ENABLED, {
+            socket: {prefix: client.prefix},
             status: `success`
         })
-    }
+    },
 
     /**
      * Disabling EXP Leveling Module
      * @return {void}
      */
-    async disable() {
+    async disable(client, reply, message, arg, locale) {
         const fn = `[setExp.disable()]`
         //  Handle if module already disabled before the action.
-        if (!this.primaryConfig.value) return this.reply(this.locale.SETEXP.ALREADY_DISABLED, {
-            socket: {prefix:this.bot.prefix}
+        if (!this.primaryConfig.value) return reply.send(locale.SETEXP.ALREADY_DISABLED, {
+            socket: {prefix:client.prefix}
         })
         //  Update configs
-        this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        this.logger.info(`${fn} ${this.primaryConfigID} for GUILD_ID:${this.message.guild.id} has been disabled.`)
-        return this.reply(this.locale.SETEXP.SUCCESSFULLY_DISABLED, {status: `success`})
-    }
+        return reply.send(locale.SETEXP.SUCCESSFULLY_DISABLED, {status: `success`})
+    },
 
 	/**
 	 * Substraction exp action.
 	 * @return {void}
 	 */
-	async minus() {
-		if (!this.args[1]) return this.reply(this.locale.SETEXP.MISSING_USER_ON_MINUS, {
+	async minus(client, reply, message, arg, locale) {
+		if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_MINUS, {
 			socket: {
-				prefix: this.bot.prefix
+				prefix: client.prefix
 			}
 		})
-		const userClass = new User(this.bot, this.message)
+		const userClass = new User(client, message)
 		const targetUser = await userClass.lookFor(this.args[1])
-		if (!targetUser) return this.reply(this.locale.USER.IS_INVALID)
-		if (!this.args[2]) return this.reply(this.locale.SETEXP.MISSING_AMOUNT_ON_MINUS, {
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+		if (!this.args[2]) return reply.send(locale.SETEXP.MISSING_AMOUNT_ON_MINUS, {
 			socket: {
-				prefix: this.bot.prefix,
+				prefix: client.prefix,
 				user: targetUser.master.username
 			}
 		})
 		const amountToSubtract = trueInt(this.args[2])
-		if (!amountToSubtract) return this.reply(this.locale.SETEXP.INVALID_AMOUNT_TO_MINUS, {
+		if (!amountToSubtract) return reply.send(locale.SETEXP.INVALID_AMOUNT_TO_MINUS, {
 			socket: {
-				prefix: this.bot.prefix,
+				prefix: client.prefix,
 				user: targetUser.master.username
 			}
 		})
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
 		const combinedExp = baseData.exp.current_exp - amountToSubtract
-		if (combinedExp <= 0) return this.reply(this.locale.SETEXP.MINUS_OVERLIMIT, {
+		if (combinedExp <= 0) return reply.send(locale.SETEXP.MINUS_OVERLIMIT, {
 			socket: {
 				user: targetUser.master.username,
-				emoji: await this.bot.getEmoji(`692428748838010970`)
+				emoji: await client.getEmoji(`692428748838010970`)
 			}
 		})
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
 		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
@@ -170,63 +158,59 @@ class SetExp extends Command {
 			nextexpcurve: newData.nextexpcurve,
 			minexp: newData.minexp
 		} 
-		const confirmation = await this.reply(this.locale.SETEXP.MINUS_CONFIRMATION, {
+		const confirmation = await reply.send(locale.SETEXP.MINUS_CONFIRMATION, {
 			prebuffer: true,
 			image: await new GUI(baseData).build(),
 			socket: {
 				user: targetUser.master.username
 			}
 		}) 
-		await this.addConfirmationButton(`exp_subtraction`, confirmation)
- 		return this.confirmationButtons.get(`exp_subtraction`).on(`collect`, async r => {
-			//  Handle cancellation
-			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-			})
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(() => {
             expLib.updateRank(newData.level)
-    		this.bot.db.subtractUserExp(amountToSubtract, targetUser.master.id, this.message.guild.id)
- 			this.finalizeConfirmation(r)
- 			this.reply(``, {
+    		client.db.subtractUserExp(amountToSubtract, targetUser.master.id, message.guild.id)
+ 			reply.send(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
  			})
  		})
-	}
+	},
 
 	/**
 	 * Addition EXP action.
 	 * @return {void}
 	 */
-	async add() {
-		if (!this.args[1]) return this.reply(this.locale.SETEXP.MISSING_USER_ON_ADD, {
+	async add(client, reply, message, arg, locale) {
+		if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_ADD, {
 			socket: {
-				prefix: this.bot.prefix
+				prefix: client.prefix
 			}
 		})
-		const userClass = new User(this.bot, this.message)
+		const userClass = new User(client, message)
 		const targetUser = await userClass.lookFor(this.args[1])
-		if (!targetUser) return this.reply(this.locale.USER.IS_INVALID)
-		if (!this.args[2]) return this.reply(this.locale.SETEXP.MISSING_AMOUNT_ON_ADD, {
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+		if (!this.args[2]) return reply.send(locale.SETEXP.MISSING_AMOUNT_ON_ADD, {
 			socket: {
-				prefix: this.bot.prefix,
+				prefix: client.prefix,
 				user: targetUser.master.username
 			}
 		})
 		const amountToAdd = trueInt(this.args[2])
-		if (!amountToAdd) return this.reply(this.locale.SETEXP.INVALID_AMOUNT_TO_ADD, {
+		if (!amountToAdd) return reply.send(locale.SETEXP.INVALID_AMOUNT_TO_ADD, {
 			socket: {
-				prefix: this.bot.prefix,
+				prefix: client.prefix,
 				user: targetUser.master.username
 			}
 		})
-		if (amountToAdd > this.softLimit) return this.reply(this.locale.SETEXP.ADD_OVERLIMIT, {
+		if (amountToAdd > this.softLimit) return reply.send(locale.SETEXP.ADD_OVERLIMIT, {
 			socket: {
-				emoji: await this.bot.getEmoji(`692428578683617331`),
+				emoji: await client.getEmoji(`692428578683617331`),
 				amount: commanifier(this.softLimit)
 			}
 		})
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
 		const combinedExp = baseData.exp.current_exp + amountToAdd
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
 		let newData = expLib.xpFormula(combinedExp)
 		baseData.exp = {
 			current_exp: combinedExp,
@@ -235,43 +219,39 @@ class SetExp extends Command {
 			nextexpcurve: newData.nextexpcurve,
 			minexp: newData.minexp
 		} 
-		const confirmation = await this.reply(this.locale.SETEXP.ADD_CONFIRMATION, {
+		const confirmation = await reply.send(locale.SETEXP.ADD_CONFIRMATION, {
 			prebuffer: true,
 			image: await new GUI(baseData).build(),
 			socket: {
 				user: targetUser.master.username
 			}
 		}) 
-		await this.addConfirmationButton(`exp_addition`, confirmation)
- 		return this.confirmationButtons.get(`exp_addition`).on(`collect`, async r => {
-			//  Handle cancellation
-			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-			})
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(() => {
             expLib.execute(amountToAdd)
- 			this.finalizeConfirmation(r)
- 			this.reply(``, {
+ 			reply.send(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
  			})
  		})
-	}
+	},
 
 	/**
 	 * Reset user'e exp to zero.
 	 * @return {void}
 	 */
-	async reset() {
-		if (!this.args[1]) return this.reply(this.locale.SETEXP.MISSING_USER_ON_RESET, {
+	async reset(client, reply, message, arg, locale) {
+		if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_RESET, {
 			socket: {
-				prefix: this.bot.prefix,
-				emoji: await this.bot.getEmoji(`692428692999241771`)
+				prefix: client.prefix,
+				emoji: await client.getEmoji(`692428692999241771`)
 			}
 		})
-		const userClass = new User(this.bot, this.message)
+		const userClass = new User(client, message)
 		const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
-		if (!targetUser) return this.reply(this.locale.USER.IS_INVALID)
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
 		let baseData = await userClass.requestMetadata(targetUser.master, 2) 
-        const expLib = this.bot.experienceLibs(this.message.guild.members.cache.get(targetUser.master.id), this.message.guild, this.message.channel)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
 		let newData = expLib.xpFormula(0)
 		baseData.exp = {
 			current_exp: 0,
@@ -280,36 +260,21 @@ class SetExp extends Command {
 			nextexpcurve: newData.nextexpcurve,
 			minexp: newData.minexp
 		} 
-		const confirmation = await this.reply(this.locale.SETEXP.RESET_CONFIRMATION, {
+		const confirmation = await reply.send(locale.SETEXP.RESET_CONFIRMATION, {
 			prebuffer: true,
 			image: await new GUI(baseData).build(),
 			socket: {
 				user: targetUser.master.username
 			}
 		})
-		await this.addConfirmationButton(`exp_reset`, confirmation)
-		return this.confirmationButtons.get(`exp_reset`).on(`collect`, async r => {
-			//  Handle cancellation
-			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-			})
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(() => {
             expLib.updateRank(0)
-    		this.bot.db.resetUserExp(targetUser.master.id, this.message.guild.id)
- 			this.finalizeConfirmation(r)
- 			this.reply(``, {
+    		client.db.resetUserExp(targetUser.master.id, message.guild.id)
+ 			reply.send(``, {
  				customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()],
  			})
  		})
 	}
 }
-
-module.exports.help = {
-    start: SetExp,
-    name: `setExp`,
-    aliases: [`setexp`, `setexperience`, `setxp`],
-    description: `Configure the exp for your member and the server.`,
-    usage: `setexp`, 
-    group: `Setting`,
-    permissionLevel: 3
-}
-

@@ -1,48 +1,38 @@
-const Command = require(`../../libs/commands`)
 const superagent = require(`superagent`)
+const User = require(`../../libs/user`)
 /**
  * Displays a random gif of a pat.
  * @author klerikdust
  */
-class Pat extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-    constructor(Stacks) {
-        super(Stacks)
-    }
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-        await this.requestUserMetadata(2)
-        const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
-        //  Lonely pat
-        if (!this.user || !this.fullArgs) return this.reply(this.locale.PAT.THEMSELVES, {
-            socket: {
-                user: this.message.author.username,
-                emoji: await this.bot.getEmoji(`692428578683617331`)
-            },
-            imageGif: body.link
-        })
-        //  Patting other user
-        return this.reply(this.locale.PAT.OTHER_USER, {
-            socket: {user: this.message.author.username, targetUser: this.user.master.username},
-            imageGif: body.link
-        })
-    }
-}
-
-module.exports.help = {
-    start: Pat,
+module.exports = {
     name: `pat`,
     aliases: [],
     description: `Displays a random gif of a pat.`,
     usage: `pat <User>(Optional)`,
-    group: `Fun`,
     permissionLevel: 0,
-    multiUser: true
+    async execute(client, reply, message, arg, locale) {
+        const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
+        //  Multi-user hug
+        if (arg) {
+            const target = await (new User(client, message)).lookFor(arg)
+            if (!target) return reply.send(locale.PAT.INVALID_TARGET, {
+                socket: {
+                    emoji: await client.getEmoji(`AnnieCry`)
+                }
+            })
+            return reply.send(locale.PAT.OTHER_USER, {
+                socket: {
+                    user: message.author.username, 
+                    targetUser: target.master.username
+                },
+                imageGif: body.link
+            })
+        }
+        return reply.send(locale.PAT.THEMSELVES, {
+            socket: {
+                user: message.author.username
+            },
+            imageGif: body.link
+        })
+    }
 }

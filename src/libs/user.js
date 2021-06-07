@@ -17,7 +17,7 @@ class User {
         this.bot = bot
 		this.message = message
 		this.logger = bot.logger
-		this.guild = bot.guilds.cache.get(message.guild.id)
+		this.guild = message.guild
     }
 
     /**
@@ -35,15 +35,16 @@ class User {
         //  This line will normalize the keyword for searching user.
         //  So, if the keyword has '#' in it and followed up by 4 numbers (0 - 3 indexes), then only trim the rest (example: naph#7790 -> naph)
         //  Otherwise, trim non-number and non-alphabetic characters.
-        target = target.match(/#.\d{3}/g) !== null ? target.replace(/#.\d{3}/g, ``) : target.replace(/[^0-9a-z-A-Z ]/g, ``)
-		this.args = target.split(` `)
+        const normalizedTarget = target.match(/#.\d{3}/g) !== null ? target.replace(/#.\d{3}/g, ``) : target.replace(/[^0-9a-z-A-Z ]/g, ``)
+        this.args = target.split(` `)
+		this.normalizedArgs = normalizedTarget.split(` `)
         //  Perform local pool search
         if (localPool !== null) {
             const res = localPool.find(u => {
                 //  by id
-                return u.id === target
+                return u.id === normalizedTarget
                 //  by username (both w/ or w/o combination of tag)
-                || u.username.toLowerCase().startsWith(target)
+                || u.username.toLowerCase().startsWith(normalizedTarget)
             })
             //  Fallback to null if not found
             return res ? {master:res, usedKeyword:target} : null
@@ -51,7 +52,7 @@ class User {
         const collection = this.message.guild.members
 		//  Lookup by full string nickname/username
 		try {
-			let findByFullString = await collection.fetch({query:target, limit:1})
+			let findByFullString = await collection.fetch({query:normalizedTarget, limit:1})
 			findByFullString = findByFullString.values().next().value.user
 			if (findByFullString) {
 				return {
@@ -63,8 +64,8 @@ class User {
 		catch(e) {}
 		//  Lookup by full string user ID
 		try {
-			let findByFullStringID = await collection.fetch(target)
-			findByFullStringID = collection.cache.get(target).user
+			let findByFullStringID = await collection.fetch(normalizedTarget)
+			findByFullStringID = collection.cache.get(normalizedTarget).user
 			return {
 				master: findByFullStringID,
 				usedKeyword: target
@@ -75,8 +76,8 @@ class User {
 		let findByStringToken
 		let findByIDToken
 		let findByCombinedStringTokens
-		for (let i=0; i<this.args.length; i++) {
-			const token = this.args[i]
+		for (let i=0; i<this.normalizedArgs.length; i++) {
+			const token = this.normalizedArgs[i]
 			//  Check for string-type token
 			try {
 				findByStringToken = await collection.fetch({query:token, limit:1})
@@ -84,7 +85,7 @@ class User {
 				if (findByStringToken) {
 					return {
 						master: findByStringToken,
-						usedKeyword: token
+						usedKeyword: this.args[i]
 					}
 				}
 			}
@@ -96,14 +97,14 @@ class User {
 				if (findByIDToken) {
 					return {
 						master: findByIDToken,
-						usedKeyword: token
+						usedKeyword: this.args[i]
 					}
 				}
 			}
 			catch(e) {}
 			//  Combine tokens and find the closest correlation
 			let combinedTokens = token
-			const neighbors = this.args.filter((element, index) => index !== i)
+			const neighbors = this.normalizedArgs.filter((element, index) => index !== i)
 			for (let x=0; x<neighbors.length; x++) {
 				const neighborToken = neighbors[x]
 				combinedTokens += ` ` + neighborToken

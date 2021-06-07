@@ -1,11 +1,10 @@
 const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
-const CommandsLoader = require(`./commands/loader`)
+const commandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
-const logger = require(`./libs/logger`)
 const Express = require(`express`)
-const Localizer = require(`./libs/localizer`)
+const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
 const LogSystem = require(`./libs/logs`)
@@ -15,10 +14,12 @@ const Experience = require(`./libs/exp`)
 const emoji = require(`./utils/emojiFetch`)
 const loadAsset = require(`./utils/loadAsset`)
 const fetch = require(`node-fetch`)
+const shardName = require(`./config/shardName`)
 
 class Annie extends Discord.Client {
     constructor() {
         super()
+        this.startupInit = process.hrtime()
 
         /**
          * The default prop for accessing the global point configurations.
@@ -57,7 +58,6 @@ class Annie extends Discord.Client {
 
         /**
          * The default prop for accessing the available plugins.
-         * @since 6.0.0
          * @type {external:Array}
          */
         this.plugins = config.plugins
@@ -91,13 +91,6 @@ class Annie extends Discord.Client {
         this.currency = config.points.currency
 
         /**
-         * The default prop for accessing languages.
-         * @since 6.0.0
-         * @type {external:Locales}
-         */
-        this.locale = new Localizer().registerLocales()
-
-        /**
          * Points Manager.
          * @param {object} [message={}] Target message instance.
          * @return {external:PointManager}
@@ -121,10 +114,16 @@ class Annie extends Discord.Client {
         this.getBenchmark = getBenchmark
 
         /**
-         * The default function for handling logging tasks.
-         * @type {WinstonObject}
+         * Current shard id.
+         * @type {number}
          */
-        this.logger = logger
+        this.shardId = this.shard.ids[0]
+
+        /**
+         * The default function for handling logging tasks.
+         * @type {Pino}
+         */
+        this.logger = require(`pino`)({name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`})
 
         /**
          * Stores Annie's Support Server invite link.
@@ -153,15 +152,16 @@ class Annie extends Discord.Client {
      * @returns {void}
      */
     prepareLogin() {
-    process.on(`unhandledRejection`, err => logger.warn(`Catched rejection > ${err.stack}`))
+        process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
         try {
-            this._initializingDatabase()
-            this._initializingCommands()
-            this._listeningToEvents()
+            this.registerNode(new Database().connect(), `db`)
+            this.registerNode(commandsLoader(), `commands`)
+            this.registerNode(localizer(), `locales`)
+            require(`./controllers/events`)(this)
             this.login(process.env.TOKEN)
         }
         catch(e) {
-            logger.error(`Client has failed to start > ${e.stack}`)
+            this.logger.error(`Client has failed to start > ${e.stack}`)
             process.exit()
         }
     }
@@ -240,14 +240,6 @@ class Annie extends Discord.Client {
     }
 
     /**
-     * Registering saved reminders into cron
-     * @return {void}
-     */
-    registerReminders() {
-        this.reminders = new Reminder(this)
-    }
-
-    /**
      * Recommended method to use when trying to shutdown Annie.
      * @since 6.0.0
      * @returns {ProcessExit}
@@ -255,7 +247,7 @@ class Annie extends Discord.Client {
     terminate() {
         this.db.client.close()
         this.destroy()
-        logger.info(`Client.terminate() has successfully terminating the system.`)
+        this.logger.info(`Has successfully terminated the system`)
         process.exit()
     }
 
@@ -267,87 +259,11 @@ class Annie extends Discord.Client {
      * @returns {void}
      */
     registerNode(node, nodeName) {
-        const fn = `[Annie.registerNode()]`
+        const fn = `[CLIENT@REGISTER_NODE]`
         if (!nodeName || !node) throw new TypeError(`${fn} parameters (node, nodeName) cannot be blank.`)
         if (typeof nodeName != `string`) throw new TypeError(`${fn} parameter 'nodeName' only accepts string.`)
         this[nodeName] = node
-    }
-
-
-    /**
-     * Listening to predefined events.
-     * @since 6.0.0
-     * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
-     */
-    _listeningToEvents(log=true) {
-        const initTime = process.hrtime()
-        require(`./controllers/events`)(this)
-        if (log) logger.info(`[SHARD_ID:${this.shard.ids[0]}@EVENT_INIT] events loaded (${getBenchmark(initTime)})`)
-    }
-
-
-    /**
-     * Listening to defined port
-     * @since 6.0.0
-     * @param {Number} port The target port. Default 0.
-     * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
-     */
-    _listeningToPort(port=0, log=true) {
-        const initTime = process.hrtime()
-        const app = Express()
-        app.listen(3000)
-        app.get(`/`, (request, response) => response.sendStatus(200))
-        if (!log) return
-        logger.info(`[SHARD_ID:${this.shard.ids[0]}@PORT_INIT] using port ${port} (${getBenchmark(initTime)})`)
-    }
-
-    /**
-     * Initialize and connect the database
-     * @since 6.0.0
-     * @param {Boolean} [log=true] set false to disable the logging. Otherwise, true is the default.
-     * @returns {WinstonLogging}
-     */
-    _initializingDatabase(log=true) {
-        const initTime = process.hrtime()
-        this.db = new Database().connect()
-        if (!log) return
-        return logger.info(`[SHARD_ID:${this.shard.ids[0]}@DATABASE_INIT] db manager loaded (${getBenchmark(initTime)})`)
-    }
-
-
-    /**
-     * Initialize and register all the available commands
-     * @since 6.0.0
-     * @returns {WinstonLogging}
-     */
-    _initializingCommands() {
-        const initTime = process.hrtime()
-        const res = new CommandsLoader().execute()
-        this.commands = res
-        return logger.info(`[SHARD_ID:${this.shard.ids[0]}@COMMANDS_INIT] ${res.totalFiles} commands loaded (${getBenchmark(initTime)})`)
-    }
-
-
-    /**
-     *  Check if user's action still in cooling-down state.
-     *  @since 6.0.0
-     *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
-     *  @returns {boolean}
-     */
-    isCooldown(label=``) {
-        return this.db.redis.get(label)
-    }
-
-
-    /**
-     *  Set a cooldown for user
-     *  @since 6.0.0
-     *  @param {string} [label=``] Define label for the cooldown. (Example: MSG_{USER.ID})
-     *  @param {number} [time=0] timeout in seconds
-     *  @returns {void}
-     */
-    setCooldown(label=``, time=0) {
-        this.db.redis.set(label, moment().format(), `EX`, time)
+        this.logger.info(`${fn} '${nodeName}' has been registered as client's property.`)
     }
 
     /**

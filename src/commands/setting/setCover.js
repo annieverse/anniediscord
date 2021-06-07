@@ -1,90 +1,75 @@
-const Command = require(`../../libs/commands`)
+const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
 const stringSimilarity = require(`string-similarity`)
 const { v4: uuidv4 } = require(`uuid`)
 const commanifier = require(`../../utils/commanifier`)
+const User = require(`../../libs/user`)
 
 /**
  * Setting up your own custom background! upload or share the image link you want to use.
  * @author klerikdust
  */
-class SetCover extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-    constructor(Stacks) {
-        super(Stacks)
-
-        /**
-         * The cost deducted when uploading a new cover
-         * @type {number}
-         */
-        this.uploadCost = 1000
-    }
-
-    /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-        await this.requestUserMetadata(2)
+module.exports = {
+    name: `setCover`,
+    aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
+    description: `Setting up your own custom background! upload or share the image link you want to use.`,
+    usage: `setcover <Attachment/URL>`,
+    permissionLevel: 0,
+    uploadCost: 1000,
+    async execute(client, reply, message, arg, locale) {
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         //  Handle if user doesn't specify any arg
-        const ownedCovers = this.user.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = this.locale.SETCOVER.OWNED_COVERS+this.prettifyList(ownedCovers)
-        const { isValidUpload, url } = this.getUserSelfUploadCover()
-        if (!this.fullArgs && !isValidUpload) {
-            const FOOTER = this.user.usedCover.isDefault 
+        const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
+        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS+this.prettifyList(ownedCovers)
+        const { isValidUpload, url } = this.getUserSelfUploadCover(arg, message)
+        if (!arg && !isValidUpload) {
+            const FOOTER = userData.usedCover.isDefault 
             ? `SUGGEST_TO_UPLOAD`
-            : this.user.usedCover.isSelfUpload 
+            : userData.usedCover.isSelfUpload 
             ? `DISPLAY_USED_SELF_COVER`
             : `DISPLAY_USED_REGULAR_COVER`
-            return this.reply(`${this.locale.SETCOVER.GUIDE}\n${this.locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
-                header: `Hi, ${this.user.master.username}!`,
+            return reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+                header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
-                    prefix: this.bot.prefix,
-                    emoji: await this.bot.getEmoji(`781504248868634627`),
-                    cover: this.user.usedCover.name
+                    prefix: client.prefix,
+                    emoji: await client.getEmoji(`781504248868634627`),
+                    cover: userData.usedCover.name
                 }
             })
         }
+        this.args = arg.split(` `)
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            try {
-                const response = await fetch(url)
-                const buffer = await response.buffer()
-                await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
-                this.cover = {
-                    isSelfUpload: true,
-                    item_id: id,
-                    alias: id,
-                    name: `My Upload`
-                }
-            }
-            catch (e) {
-                return this.logger.error(`Fail to render self-upload cover. > ${e.stack}`)
+            const response = await fetch(url)
+            const buffer = await response.buffer()
+            await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
+            this.cover = {
+                isSelfUpload: true,
+                item_id: id,
+                alias: id,
+                name: `My Upload`
             }
             //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (this.user.inventory.artcoins < this.uploadCost) return this.reply(this.locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
+            if (userData.inventory.artcoins < this.uploadCost) return reply.send(locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
                 socket: {
-                    emoji: await this.bot.getEmoji(`758720612087627787`),
-                    requiredLeft: commanifier(this.uploadCost-this.user.inventory.artcoins)
+                    emoji: await client.getEmoji(`758720612087627787`),
+                    requiredLeft: commanifier(this.uploadCost-userData.inventory.artcoins)
                 }
             })
         }
         //  Handle if user asked to use default cover
-        else if (this.fullArgs === `default`) {
-            this.cover = await this.bot.db.getItem(`defaultcover1`)
+        else if (arg === `default`) {
+            this.cover = await client.db.getItem(`defaultcover1`)
         }
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
-            if (!ownedCovers.length) return this.reply(this.locale.SETCOVER.NO_EQUIPPABLE_COVER)
-            const searchStringResult = stringSimilarity.findBestMatch(this.fullArgs, ownedCovers.map(i => i.name))
+            if (!ownedCovers.length) return reply(locale.SETCOVER.NO_EQUIPPABLE_COVER)
+            const searchStringResult = stringSimilarity.findBestMatch(arg, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
             //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
             ? ownedCovers.filter(i => i.name === searchStringResult.bestMatch.target)[0] 
@@ -94,79 +79,76 @@ class SetCover extends Command {
             //  Finally if no item's name/ID are match, then return null
             : null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return this.reply(this.locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await this.bot.getEmoji(`692428969667985458`)} })
+            if (!this.cover) return reply.send(locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await client.getEmoji(`692428969667985458`)} })
             //  Handle if user tries to use cover that currently being used.
-            if (this.user.usedCover.item_id === this.cover.item_id) return this.reply(this.locale.SETCOVER.ALREADY_USED, {
+            if (userData.usedCover.item_id === this.cover.item_id) return reply.send(locale.SETCOVER.ALREADY_USED, {
                 socket: {
-                    emoji: await this.bot.getEmoji(`692428748838010970`),
+                    emoji: await client.getEmoji(`692428748838010970`),
                     cover: this.cover.name
                 }
             })
         }
-        this.user.usedCover = this.cover
-        this.fetching = await this.reply(this.locale.SETCOVER.FETCHING, {
+        userData.usedCover = this.cover 
+        const fetching = await reply.send(locale.SETCOVER.FETCHING, {
             socket: {
                 itemId: this.cover.item_id,
-                userId: this.user.master.id,
-                emoji: await this.bot.getEmoji(`790994076257353779`)
+                userId: message.author.id,
+                emoji: await client.getEmoji(`790994076257353779`)
             } 
         })
         //  Rendering preview for user to see
-        let img = await new GUI(this.user, this.bot, {width: 320, height: 310}).build()
-        const confirmationMessage = this.locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
-        this.confirmation = await this.reply(confirmationMessage, {
+        let img = await new GUI(userData, client, {width: 320, height: 310}).build()
+        const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
+        const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
             image: img.toBuffer(),
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
-                emoji: await this.bot.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
+                emoji: await client.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
             }
         })
-        this.fetching.delete()
-        await this.addConfirmationButton(`applyCover`, this.confirmation)
-        return this.confirmationButtons.get(`applyCover`).on(`collect`, async r => {
-			//  Handle cancellation
-			if (this.isCancelled(r)) return this.reply(this.locale.ACTION_CANCELLED, {
-				socket: {emoji: await this.bot.getEmoji(`781954016271138857`)}
-			})
-            await this.bot.db.detachCovers(this.user.master.id, this.message.guild.id)
+        fetching.delete()
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(async () => {
+            await client.db.detachCovers(message.author.id, message.guild.id)
             if (this.cover.isSelfUpload) {
-                this.bot.db.applySelfUploadCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
-                this.bot.db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: this.user.master.id, guildId: this.message.guild.id})
+                client.db.applySelfUploadCover(this.cover.item_id, message.author.id, message.guild.id)
+                client.db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id})
             }
             else {
-                this.bot.db.deleteSelfUploadCover(this.user.id, this.message.guild.id)
-                this.bot.db.applyCover(this.cover.item_id, this.user.master.id, this.message.guild.id)
+                client.db.deleteSelfUploadCover(message.author.id, message.guild.id)
+                client.db.applyCover(this.cover.item_id, message.author.id, message.guild.id)
             }
-            //  Finalize
-            this.finalizeConfirmation(r)
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            this.reply(this.locale.SETCOVER[successMessage], {
+            reply.send(locale.SETCOVER[successMessage], {
                 socket: {
                     cover: this.cover.name,
-                    emoji: await this.bot.getEmoji(this.cover.alias, this.bot)
+                    emoji: await client.getEmoji(this.cover.alias)
                 }
             })
         })
-    }
+    },
 
     /** 
      * Check if user has attempted to upload a new cover
+     * @param {string} arg
+     * @param {Message} message
      * @return {object}
      */
-    getUserSelfUploadCover() {
-        const hasAttachment = this.message.attachments.first() ? true : false
-        const hasImageURL = this.fullArgs.startsWith(`http`) && this.fullArgs.length >= 15 ? true : false 
+    getUserSelfUploadCover(arg, message) {
+        const hasAttachment = message.attachments.first() ? true : false
+        const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 ? true : false 
         return {
             isValidUpload: hasAttachment || hasImageURL ? true : false,
-            url: this.message.attachments.first() 
-            ? this.message.attachments.first().url
-            : this.fullArgs.startsWith(`http`) && this.fullArgs.length >= 15
-            ? this.fullArgs
+            url: message.attachments.first() 
+            ? message.attachments.first().url
+            : arg.startsWith(`http`) && arg.length >= 15
+            ? arg
             : null
         }
-    }
+    },
 
     /**
      * Properly arrange returned list from `user.inventory.raw`
@@ -182,15 +164,3 @@ class SetCover extends Command {
         return str
     }
 }
-
-module.exports.help = {
-    start: SetCover,
-    name: `setCover`,
-    aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
-    description: `Setting up your own custom background! upload or share the image link you want to use.`,
-    usage: `setcover <Attachment/URL>`,
-    group: `Setting`,
-    permissionLevel: 0,
-    multiUser: false
-}
-

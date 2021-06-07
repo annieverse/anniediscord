@@ -46,7 +46,7 @@
         "DISPLAY": "Currently there are total of **{{ars}}** registered ARs in **{{guild}}** where the latest one was added by {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
         "REGISTER_NO_PARAM": "**Don't forget to follow the format!♡**\ne.g **`{{prefix}}ar add I'm kawaii - no way, I'm more kawaii.`**",
         "REGISTER_MISSING_SEPARATOR": "**Oops, you were missing the separator.**\ne.g **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
-        "REGISTER_EMPTY_RESPONSE": "**What's my response supposed to be?** {{emoji}}\n╰─try type **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
+        "REGISTER_EMPTY_RESPONSE": "**What's my response supposed to be?** {{emoji}}\n╰─try type **`{{prefix}}ar add {{trigger}} <myResponseHere>`**",
         "REGISTER_CONFIRMATION": "So, are we going for this AR?\n╭*:;,．★ ～☆*──────────╮\n**What you just sent** → {{trigger}}\n**I'll respond with** → {{response}}\n╰──────────☆～*:;,．*╯\nIf this is what you wanted, kindly react to the green button to confirm it.",
         "REGISTER_SUCCESSFUL": "**Yay! I've learned new AR!♡** {{emoji}}\n╰─Keep in mind, there's 15s cooldown for each AR to avoid spam.",
         "REGISTER_FOOTER_TIP": "Now try type **`{{trigger}}`** {{emoji}}",
@@ -329,6 +329,7 @@
         "UNABLE_TO_FIND_COMMAND": "**Wait, what was that?**\n╰─ I don't remember if I ever have this type of command. {{emoji}}"
     },
     "HUG": {
+        "INVALID_TARGET": "Are you trying to hug a thin air? {{emoji}}",
         "THEMSELVES": "**{{user}}** is hugging a thin air. :<",
         "OTHER_USER": "**{{user}}** is hugging **{{targetUser}}** <3"
     },
@@ -427,7 +428,8 @@
         ]
     },
     "PAT": {
-        "THEMSELVES": "**{{user}}** is patting themselves... {{emoji}}",
+        "INVALID_TARGET": "Who's that? a ghost? {{emoji}}",
+        "THEMSELVES": "**{{user}}** is patting themselves... </3",
         "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
     "PAY": {
@@ -444,8 +446,8 @@
         "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction."
     },
     "PIXIV": {
-        "DISPLAY_RECOMMENDED_WORK": "`Showing the most recommended work for you ...`",
-        "DISPLAY_CUSTOM_SEARCH": "`Looking for '{{keyword}}' ...`",
+        "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Showing the most recommended work for you ...*",
+        "DISPLAY_CUSTOM_SEARCH": "{{emoji}} *Looking for '{{keyword}}' ...*",
         "NO_RESULT": "Sorry! i can't find anything with that keyword.",
         "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!"
     },

@@ -4,149 +4,130 @@ const moment = require(`moment`)
  * Customize Logging-System for your guild
  * @author klerikdust
  */
-class SetLogs extends Command {
-
+module.exports = {
+    name: `setLogs`, 
+    aliases: [`setlogs`, `setlog`, `setlogging`], 
+    description: `Customize Logging-System for your guild`,
+    usage: `setlog`,
+    permissionLevel: 3,
     /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
+     * List of available actions for the current command
+     * @type {array}
      */
-    constructor(Stacks) {
-        super(Stacks)
-        /**
-         * List of available actions for the current command
-         * @type {array}
-         */
-        this.actions = [`enable`, `disable`, `channel`]
-        /**
-         * Current instance's config code
-         * @type {string}
-         */  
-        this.primaryConfigID = `LOGS_MODULE`
-        /**
-         * Current instance's sub-config code
-         * @type {string}
-         */  
-        this.subConfigID = `LOGS_CHANNEL`
-    }
-
+    actions: [`enable`, `disable`, `channel`],
     /**
-     * Running command workflow
-     * @return {void}
-     */
-    async execute() {
-        await this.requestUserMetadata(1)
+     * Current instance's config code
+     * @type {string}
+     */  
+    primaryConfigID: `LOGS_MODULE`,
+    /**
+     * Current instance's sub-config code
+     * @type {string}
+     */  
+    subConfigID: `LOGS_CHANNEL`,
+    async execute(client, reply, message, arg, locale) {
         //  Handle if user doesn't specify any arg
-        if (!this.fullArgs) return this.reply(this.locale.SETLOGS.GUIDE, {
-            header: `Hi, ${this.user.master.username}!`,
+        if (!arg) return reply.send(locale.SETLOGS.GUIDE, {
+            header: `Hi, ${message.author.username}!`,
             image: `banner_setlogs`,
             socket: {
-                prefix: this.bot.prefix,
-                emoji: await this.bot.getEmoji(`692428927620087850`)
+                prefix: client.prefix,
+                emoji: await client.getEmoji(`692428927620087850`)
             }
         })
+        this.args = arg.split(` `)
         //  Handle if selected action doesn't exists
-        if (!this.actions.includes(this.args[0])) return this.reply(this.locale.SETLOGS.INVALID_ACTION, {
+        if (!this.actions.includes(this.args[0])) return reply.send(locale.SETLOGS.INVALID_ACTION, {
             socket: {actions: this.actions.join(`, `)},
         })
         //  This is the main configuration of setlogs, so everything dependant on this value
-        this.guildConfigurations = this.bot.guilds.cache.get(this.message.guild.id).configs
+        this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         this.subConfig = this.guildConfigurations.get(this.subConfigID)
-        return this[this.args[0]]()
-    }
+        return this[this.args[0]](client, reply, message, arg, locale)
+    },
 
     /**
      * Enable Action
      * @return {void}
      */
-    async enable() {
+    async enable(client, reply, message, arg, locale) {
         const fn = `[setLogs.enable()]`
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
-            let localizeTime = await this.bot.db.toLocaltime(this.primaryConfig.updatedAt)
-            return this.reply(this.locale.SETLOGS.ALREADY_ENABLED, {
-            status: `warn`,
+            let localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
+            return reply.send(locale.SETLOGS.ALREADY_ENABLED, {
                 socket: {
-                    user: await this.bot.getUsername(this.primaryConfig.setByUserId),
+                    user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
                 }
             })
         }
         //  Update configs
-        this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id, 
             cacheTo: this.guildConfigurations
         })
-        this.reply(this.locale.SETLOGS.SUCCESSFULLY_ENABLED, {status: `success`})
-    }
+        return reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, {status: `success`})
+    },
 
     /**
      * Disable Action
      * @return {void}
      */
-    async disable() {
+    async disable(client, reply, message, arg, locale) {
         const fn = `[setLogs.disable()]`
-        //  Handle if module is already enabled
         if (!this.primaryConfig.value) {
-            return this.reply(this.locale.SETLOGS.ALREADY_DISABLED, {
-                socket: {prefix:this.bot.prefix}
+            return reply.send(locale.SETLOGS.ALREADY_DISABLED, {
+                socket: {prefix:client.prefix}
             })
         }
         //  Update configs
-        this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        this.reply(this.locale.SETLOGS.SUCCESSFULLY_DISABLED, {status: `success`})
-    }
+        reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, {status: `success`})
+    },
 
     /**
      * Define target logs channel
      * @return {void}
      */
-    async channel() {
+    async channel(client, reply, message, arg, locale) {
         //  Handle if module is already enabled
-        if (!this.primaryConfig.value) return this.reply(this.locale.SETLOGS.SHOULD_BE_ENABLED, {
-            socket: {prefix: this.bot.prefix}
+        if (!this.primaryConfig.value) return reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
+            socket: {prefix: client.prefix}
         })
         //  Handle if user hasn't specified the target channel
-        if (!this.args[1]) return this.reply(this.locale.SETLOGS.MISSING_CHANNEL, {
-            socket: {prefix: this.bot.prefix, emoji: await this.bot.getEmoji(`692428927620087850`)}
+        if (!this.args[1]) return reply.send(locale.SETLOGS.MISSING_CHANNEL, {
+            socket: {prefix: client.prefix, emoji: await client.getEmoji(`692428927620087850`)}
         })
         //  Do channel searching by three possible conditions
-        const searchChannel = this.message.mentions.channels.first()
-        || this.message.guild.channels.cache.get(this.args[1])
-        || this.message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        const searchChannel = message.mentions.channels.first()
+        || message.guild.channels.cache.get(this.args[1])
+        || message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return this.reply(this.locale.SETLOGS.INVALID_CHANNEL, {
-            socket: {emoji: await this.bot.getEmoji(`692428969667985458`)}
+        if (!searchChannel) return reply.send(locale.SETLOGS.INVALID_CHANNEL, {
+            socket: {emoji: await client.getEmoji(`692428969667985458`)}
         })
         //  Update configs
-        this.bot.db.updateGuildConfiguration({
+        client.db.updateGuildConfiguration({
             configCode: this.subConfigID,
             customizedParameter: searchChannel.id,
-            guild: this.message.guild,
-            setByUserId: this.user.master.id,
+            guild: message.guild,
+            setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        this.reply(this.locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {
+        reply.send(locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {
             socket: {channel: searchChannel},
             status: `success`
         })
     }
-}
-
-module.exports.help = {
-    start: SetLogs,
-    name: `setLogs`, 
-    aliases: [`setlogs`, `setlog`, `setlogging`], 
-    description: `Customize Logging-System for your guild`,
-    usage: `setlog`,
-    group: `Setting`,
-    permissionLevel: 3
 }

@@ -1,31 +1,24 @@
-const Command = require(`../../libs/commands`)
+const User = require(`../../libs/user`)
 /**
  * Views all items in your inventory
  * @author klerikdust
  */
-class CardCollection extends Command {
-
-    /**
-     * @param {external:CommandComponents} Stacks refer to Commands Controller.
-     */
-	constructor(Stacks) {
-		super(Stacks)
-		/**
-		 * The display limit for each page
-		 * @type {number}
-		 */
-		this.upperLimit = 10
-	}
-
-	/**
-	 * Running command workflow
-	 * @return {void}
-	 */
-	async execute() {
-		await this.requestUserMetadata(2)
-		if (!this.user) return this.reply(this.locale.USER.IS_INVALID)
+module.exports = {
+    name: `collection`,
+	aliases: [`cardcollection`, `mycard`, `card`, `cards`, `cc`],
+	description: `View yours or someones collected cards`,
+	usage: `collection`,
+	permissionLevel: 0,
+    upperLimit: 10,
+    async execute(client, reply, message, arg, locale) {
+        const userLib = new User(client, message)
+        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        //  Normalize structure
+        targetUser = targetUser.master || targetUser
+        const userData  = await userLib.requestMetadata(targetUser, 2)
 		//  Fetch cards type in user's inventory and sort by rarity descendantly
-		let filteredInventory = this.user.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (b.rarity_level - a.rarity_level))
+		let filteredInventory = userData.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a,b) => (b.rarity_level - a.rarity_level))
 		this.shouldSplitResult = true
 		this.splittedInventory = []
 		let box = []
@@ -39,35 +32,36 @@ class CardCollection extends Command {
 				checkpoint = 0
 			}
 		}		
-		const INVALID_INVENTORY = this.user.isSelf ? this.locale.CARDCOLLECTION_AUTHOR_EMPTY : this.locale.CARDCOLLECTION_OTHERUSER_EMPTY
+        const isSelf = userLib.isSelf(targetUser.id) 
+		const INVALID_INVENTORY = isSelf ? locale.CARDCOLLECTION_AUTHOR_EMPTY : locale.CARDCOLLECTION_OTHERUSER_EMPTY
 		if (!filteredInventory.length) {
-			return this.reply(INVALID_INVENTORY, {
+			return reply.send(INVALID_INVENTORY, {
 				image: `banner_collection`,
 				socket: {
-					prefix: this.bot.prefix,
-					emoji: await this.bot.getEmoji(`692428578683617331`),
-					user: this.user.master.username
+					prefix: client.prefix,
+					emoji: await client.getEmoji(`692428578683617331`),
+					user: targetUser.username
 				},
-				footer: this.user.master.id === this.message.author.id ? this.locale.CARDCOLLECTION_EMPTY_TIPS : null
+				footer: isSelf ? locale.CARDCOLLECTION_EMPTY_TIPS : null
 			})
 		}
-		this.reply(this.locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: this.user.master.id, emoji: await this.bot.getEmoji(`790994076257353779`)}})
+		reply.send(locale.COMMAND.FETCHING, {simplified: true, socket:{command: `cards collection`, user: targetUser.id, emoji: await client.getEmoji(`790994076257353779`)}})
 		.then(async loading => {
-			await this.reply(this.prettifiedCardInventory(), {
+			await reply.send(this.prettifiedCardInventory(), {
 				paging: true,
 				cardPreviews: this.splittedInventory,
-				thumbnail: this.user.master.displayAvatarURL(),
-				header: `${this.user.master.username}'s Card Collections`
+				thumbnail: targetUser.displayAvatarURL(),
+				header: `${targetUser.username}'s Card Collections`
 			})
-			return loading.delete()
+			loading.delete()
 		})
-	}
+    },
 
-	prettifiedCardInventory() {
+    prettifiedCardInventory() {
 		let arr = []
 		for (let i=0; i<this.splittedInventory.length; i++) arr.push(this.displayDetailedCardCollection(this.splittedInventory[i]))
 		return arr
-	}
+	},
 
 	/**
 	 * 	Prettify result from `this.user.inventory.raw`
@@ -84,15 +78,4 @@ class CardCollection extends Command {
 		str += `\`\`\``
 		return str
 	}
-}
-
-module.exports.help = {
-	start: CardCollection,
-	name: `collection`,
-	aliases: [`cardcollection`, `mycard`, `card`, `cards`, `cc`],
-	description: `View yours or someones collected cards`,
-	usage: `collection`,
-	group: `User`,
-	permissionLevel: 0,
-	multiUser: true
 }
