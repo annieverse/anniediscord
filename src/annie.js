@@ -7,7 +7,6 @@ const Express = require(`express`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const moment = require(`moment`)
-const LogSystem = require(`./libs/logs`)
 const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
@@ -145,12 +144,6 @@ class Annie extends Discord.Client {
          * @type {string}
          */
         this.supportServerId = `577121315480272908`
-
-        /**
-         * Manages external logging system.
-         * @type {external:Object}
-         */ 
-        this.logSystem = LogSystem
 
         /**
          * User cooldown pool.
