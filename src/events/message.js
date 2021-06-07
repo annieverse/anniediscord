@@ -13,6 +13,19 @@ module.exports = (client, message) => {
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
     client.db.validateUser(message.author.id, message.guild.id, message.author.username)
+    //  Display quick prefix hint when mentioned.
+    //  Subtracted number at message.content.length is the whitespace made during mention.
+    if (message.mentions.users.has(client.user.id) && (message.content.length-1) <= `<@${client.user.id}>`.length) {
+        //  To avoid spam, cache the 15s cooldown per guild
+        const prefixHintId = `PREFIX_HINT@${message.guild.id}`
+        return client.db.redis.exists(prefixHintId).then(res => {
+            if (res) return
+            client.db.redis.set(prefixHintId, 1, `EX`, 15)
+            client.responseLibs(message).send(`Type **\`${client.prefix}help\`** to see my commands. ♡`, {
+                deleteIn: 5
+            })
+        })
+    }
     //  Check if AR module is enabled.
     if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
     //  Check if message is identified as command.
