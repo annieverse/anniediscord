@@ -1,9 +1,13 @@
-module.exports = async (bot, emoji) => {
-    let metadata = {
-        emoji: emoji,
-        guild: emoji.guild,
-        typeOfLog: `EMOJI_CREATE`,
-        bot: bot
-    }
-    if (bot.fetchGuildConfigs(emoji.guild.id).get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+module.exports = function emojiCreate(client, emoji) {
+    const logs = emoji.guild.configs.get(`LOGS_MODULE`).value 
+    if (!logs) return 
+    const logChannel = client.getGuildLogChannel(emoji.guild.id)
+    if (!logChannel) return 
+    //  Perform logging to target guild
+    client.responseLibs(logChannel, true)
+    .send(`No more boring chat, now we got this shiny emoji to brighten our day! ${emoji}`, {
+        header: `Look, a new emoji!♡`,
+        timestampAsFooter: true
+    }) 
+    .catch(e => e)
 }

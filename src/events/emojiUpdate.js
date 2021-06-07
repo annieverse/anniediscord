@@ -1,10 +1,13 @@
-module.exports = async (bot, oldEmoji, newEmoji) => {
-    let metadata = {
-        oldEmoji: oldEmoji,
-        newEmoji: newEmoji,
-        guild: oldEmoji.guild,
-        typeOfLog: `EMOJI_UPDATE`,
-        bot: bot
-    }
-    if (bot.fetchGuildConfigs(oldEmoji.guild.id).get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+module.exports = function emojiUpdate(client, oldEmoji, newEmoji) {
+    const logs = newEmoji.guild.configs.get(`LOGS_MODULE`).value 
+    if (!logs) return 
+    const logChannel = client.getGuildLogChannel(newEmoji.guild.id)
+    if (!logChannel) return 
+    //  Perform logging to target guild
+    client.responseLibs(logChannel, true)
+    .send(`Ooh, look here,. our ${newEmoji} emoji's name just got updated from **${oldEmoji.name}** to **${newEmoji.name}**! For what reason? no one knows..`, {
+        header: `Refreshed emoji!♡`,
+        timestampAsFooter: true
+    }) 
+    .catch(e => e)
 }

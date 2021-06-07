@@ -1,3 +1,3 @@
-module.exports = (bot, e) => {
-    bot.logger.error(`Ops, something went wrong. > ${e}`)
+module.exports = function DiscordError(client, e) {
+    return client.logger.warn(`Ops, something went wrong > ${e}`)
 }

@@ -1,10 +1,14 @@
-module.exports = async (bot, oldChannel, newChannel) => { 
-    let metadata = {
-        oldChannel: oldChannel,
-        newChannel : newChannel,
-        guild: oldChannel.guild,
-        typeOfLog: `CHANNEL_UPDATE`,
-        bot: bot
-    }
-    if (bot.fetchGuildConfigs(oldChannel.guild.id).get(`LOGS_MODULE`)) new bot.logSystem(metadata)
+module.exports = function channelUpdate(client, oldChannel, newChannel) { 
+    if (newChannel.type === `dm`) return
+    const logs = newChannel.guild.configs.get(`LOGS_MODULE`).value 
+    if (!logs) return 
+    const logChannel = client.getGuildLogChannel(newChannel.guild.id)
+    if (!logChannel) return 
+    //  Perform logging to target guild
+    client.responseLibs(logChannel, true)
+    .send(`Yay, our **${newChannel.name}** channel just got updated! I wonder how it looks now? hmmm..`, {
+        header: `Refreshed Channel!♡"`,
+        timestampAsFooter: true
+    }) 
+    .catch(e => e)
 }

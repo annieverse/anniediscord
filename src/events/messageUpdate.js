@@ -1,13 +1,16 @@
-module.exports = (bot, oldMessage, newMessage) => {
-    const configs = oldMessage.channel.type === `dm` ? null : bot.fetchGuildConfigs(oldMessage.guild.id)
-	//  Handle if configs is empty
-	if (configs === null) return
-    let metadata = {
-        oldMessage: oldMessage,
-        newMessage: newMessage,
-        guild: oldMessage.guild,
-        typeOfLog: `MESSAGE_UPDATE`,
-        bot: bot
-    }
-    if (configs.get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+module.exports = function messageUpdate(client, oldMessage, newMessage) {
+    //  Ignore DM interface
+    if (oldMessage.channel.type === `dm`) return 
+    const logs = newMessage.guild.configs.get(`LOGS_MODULE`).value 
+    if (!logs) return 
+    const logChannel = client.getGuildLogChannel(newMessage.guild.id)
+    if (!logChannel) return 
+    //  Perform logging to target guild
+    client.responseLibs(logChannel, true)
+    .send(`Your detective Annie is here. I saw someone named ${newMessage.author} just updated their message in ${newMessage.channel}.\n**From this →** ${oldMessage.content}\n**To this one →** ${newMessage.content}`, {
+        header: `A message just got updated!`,
+        thumbnail: newMessage.author.displayAvatarURL(),
+        timestampAsFooter: true
+    }) 
+    .catch(e => e)
 }

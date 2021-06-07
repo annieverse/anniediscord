@@ -15,6 +15,7 @@ const emoji = require(`./utils/emojiFetch`)
 const loadAsset = require(`./utils/loadAsset`)
 const fetch = require(`node-fetch`)
 const shardName = require(`./config/shardName`)
+const Response = require(`./libs/response`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -107,6 +108,14 @@ class Annie extends Discord.Client {
         this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
 
         /**
+         * Response/Message Wrapper.
+         * @param {Message} message Resolvable message instance
+         * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+         * @return {external:Response}
+         */
+        this.responseLibs = (message, channelAsInstance=false) => new Response(message, channelAsInstance)
+
+        /**
          * The default function for calculating task performance in milliseconds.
          * @since 6.0.0
          * @type {SecretKey}
@@ -130,6 +139,12 @@ class Annie extends Discord.Client {
          * @type {string}
          */ 
         this.supportServer = `https://discord.gg/7nDes9P`
+
+        /**
+         * The guild id for support server.
+         * @type {string}
+         */
+        this.supportServerId = `577121315480272908`
 
         /**
          * Manages external logging system.
@@ -266,6 +281,28 @@ class Annie extends Discord.Client {
         this.logger.info(`${fn} '${nodeName}' has been registered as client's property.`)
     }
 
+    /**
+     * Fetch target guild's log channel by using several assumptions.
+     * @param {string} guildId
+     * @return {object|null}
+     */
+    getGuildLogChannel(guildId) {
+        if (!guildId) throw new TypeError(`[GET_GUILD_LOG_CHANNEL] param 'guildId' must be a valid string`)
+        if (!this.guilds.cache.has(guildId)) throw new RangeError(`[GET_GUILD_LOG_CHANNEL] target guild '${guildId}' doesn't exists in cache`)
+        const guild = this.guilds.cache.get(guildId)
+        //  Check for saved custom log
+        const customLogChannel = guild.configs.get(`LOGS_CHANNEL`)
+        if (customLogChannel.value) {
+            if (guild.channels.cache.has(customLogChannel.value)) return guild.channels.cache.get(customLogChannel.value)
+        }
+        //  Check by assumptions
+        const assumptionLogChannel = guild.channels.cache.find(node => {
+            return (node.name.toLowerCase() === `logs`) || (node.name.toLowerCase() === `log`)
+        })
+        if (assumptionLogChannel) return assumptionLogChannel
+        //  Both assumption and saved custom channel don't work, fallback as null 
+        return null
+    }
     /**
      *  An Emoji finder. Fetch all the available emoji based on given emoji name
      *  @param {string} [keyword=``] emoji keyword to search

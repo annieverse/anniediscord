@@ -1,9 +1,7 @@
 const palette = require(`../ui/colors/default`)
-const Localization = require(`./localizer`)
 const { MessageEmbed, MessageAttachment } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
-const { LOCALIZATION_ERROR } = require(`../locales/en`)
 /**
  * @typedef {object} Plugins
  * @property {string} content as the message content
@@ -25,6 +23,7 @@ const { LOCALIZATION_ERROR } = require(`../locales/en`)
  * @property {boolean} [cardPreviews=false] Toggle true to allow the embed to display the card.
  * @property {string|null} [topNotch=null] Adds topnotch with custom message. Leave blank/null to ommit it.
  * @property {boolean} [raw=false] Toggle `true` to return the message's composition without sending it to the target field.
+ * @property {boolean} [timestampAsFooter=false] Toggle `true` to include the message timestamp in the footer of embed.
  */
 
 /** 
@@ -35,8 +34,10 @@ const { LOCALIZATION_ERROR } = require(`../locales/en`)
 class Response {
 	/**
 	 * @param {object} [message={}] Target message's instance.
+     * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+     * 'message' parameter is replaced with 'channel' object.
 	 */
-	constructor(message={}) {
+	constructor(message={}, channelAsInstance=false) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
@@ -47,7 +48,10 @@ class Response {
 		 * Default target channel
 		 * @type {object|null}
 		 */
-		this.targetField = message.channel ? message.channel : null
+		this.targetField = channelAsInstance 
+        ? message
+        : message.channel 
+        ? message.channel : null
 	}
 
 	/**
@@ -79,6 +83,7 @@ class Response {
 		let cardPreviews = plugins.cardPreviews || null
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
+        let timestampAsFooter = plugins.timestampAsFooter || false
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
@@ -135,7 +140,7 @@ class Response {
 	        })
 		}
 		//  Replace content with error message if content is a faulty value
-		if (!content && (typeof content != `string`)) content = LOCALIZATION_ERROR
+		if (!content && (typeof content != `string`)) content = null
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
 		if (sockets === null) sockets = []
@@ -163,6 +168,8 @@ class Response {
 		if (customHeader) embed.setAuthor(customHeader[0], customHeader[1])
 		//  Add footer
 		if (footer) embed.setFooter(footer)
+        //  Timestamp footer
+        if (timestampAsFooter) embed.setTimestamp()
 		//  Add timestamp on footer part
 		if (timestamp) embed.setTimestamp()
 		// Add url

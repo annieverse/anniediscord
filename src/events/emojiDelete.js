@@ -1,9 +1,13 @@
-module.exports = async (bot, emoji) => {
-    let metadata = {
-        emoji: emoji,
-        guild: emoji.guild,
-        typeOfLog: `EMOJI_DELETE`,
-        bot: bot
-    }
-    if (bot.fetchGuildConfigs(emoji.guild.id).get(`LOGS_MODULE`).value) new bot.logSystem(metadata)
+module.exports = function emojiDelete(client, emoji) {
+    const logs = emoji.guild.configs.get(`LOGS_MODULE`).value 
+    if (!logs) return 
+    const logChannel = client.getGuildLogChannel(emoji.guild.id)
+    if (!logChannel) return 
+    //  Perform logging to target guild
+    client.responseLibs(logChannel, true)
+    .send(`This precious ${emoji} emoji just got banished from our place. :(`, {
+        header: `Ops, baibai emoji...`,
+        timestampAsFooter: true
+    }) 
+    .catch(e => e)
 }
