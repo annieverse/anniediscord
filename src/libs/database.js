@@ -2449,42 +2449,14 @@ class Database {
      */
 
     /**
-     * Create genders table
-     * @return {QueryResult}
-     */
-    createGendersTable() {
-        return this._query(`CREATE TABLE IF NOT EXISTS genders (
-			'gender_id' PRIMARY KEY INTEGER AUTOINCREMENT,
-			'name' TEXT,
-			'alt' TEXT)`
-		   	, `run`
-		)
-    }
-
-    /**
-     * Registering new gender type to genders table.
-     * @param {string} [genderName=``]
-     * @param {string} [alternativeName=``]
-     * @return {QueryResult}
-     */
-    registerNewGender(genderName=``, alternativeName=``) {
-        return this._query(`
-            INSERT INTO genders(name, alt)
-            VALUES(?, ?)`
-            , [genderName, alternativeName]
-            , `[DB@REGISTER_NEW_GENDER] registered new  gender`
-        )
-    }
-
-    /**
      * Create user_gender table
      * @return {void}
      */
     createUserGenderTable() {
-		return this._query(`CREATE TABLE IF NOT EXISTS user_gender (
+		return this._query(`CREATE TABLE IF NOT EXISTS user_gender(
 			'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			'user_id' TEXT,
-			'gender' TEXT
+			'gender' TEXT,
 			PRIMARY KEY(user_id),
 		    FOREIGN KEY(user_id)
 		    REFERENCES users(user_id) 
@@ -2504,6 +2476,7 @@ class Database {
         return this._query(`
             SELECT * FROM user_gender
             WHERE user_id = ?`
+            , `get`
             , [userId]
         )
     }
@@ -2515,12 +2488,13 @@ class Database {
      * @return {void}
      */
     async updateUserGender(userId=``, gender) {
+        if (![`m`, `f`].includes(gender)) throw new TypeError(`Gender must be either 'm' or 'f'`)
         //	Insert if no data entry exists.
         const res = {
 			insert: await this._query(`
 	            INSERT INTO user_gender (user_id, gender)
 				SELECT $userId, $gender
-				WHERE NOT EXISTS (SELECT 1 FROM user_gender WHERE user_id = $userId`
+				WHERE NOT EXISTS (SELECT 1 FROM user_gender WHERE user_id = $userId)`
 				, `run`
 				, {userId:userId, gender:gender}	
 			),

@@ -54,6 +54,26 @@ class Response {
         ? message.channel : null
 	}
 
+    /**
+     * Plug variables into available socket in the target string.
+     * @param {string} [content=``] Target string.
+     * @param {object} [socket={}] List of sockets to attach in the string.
+     * return {string}
+     */
+    socketing(content=``, socket={}) {
+        //  Find all the available {{}} socket in the string.
+		let sockets = content.match(/\{{(.*?)\}}/g)
+		if (sockets === null) sockets = []
+		for (let i = 0; i < sockets.length; i++) {
+			const key = sockets[i].match(/\{{([^)]+)\}}/)
+			if (!key) continue
+			//  Index `0` has key with the double curly braces, index `1` only has the inside value.
+			const pieceToAttach = socket[key[1]]
+			if (pieceToAttach || pieceToAttach === 0) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
+		}
+        return content
+    }
+
 	/**
 	 *
 	 * Sending response

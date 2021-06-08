@@ -702,6 +702,13 @@
         "SUCCESSFUL": "**Feels like new!** {{emoji}}\n╰ My prefix has been set to **`{{prefix}}`**",
         "FOLLOW_UP": "Now try type **`{{prefix}}ping`**"
     },
+    "SETGENDER": {
+        "GUIDE": "╭*:;,．★ ～☆*──────────╮\nLets set your gender to unlock more features!\ne.g. **`{{prefix}}setgender <female/male>`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
+        "HASNT_SET": "You haven't set one yet since the first time we met.",
+        "ALREADY_SET": "You've set yourself as {{gender}}.",
+        "INVALID": "**Woops,** you can only set as female or male! {{emoji}}",
+        "SUCCESSFUL": "**Perfection!** {{emoji}}\n╰ Your gender status has been updated!"
+    },
     "SETRANK": {
         "GUIDE": "This is your control center for configuring custom role-ranking system in the guild! now use the following actions to begin the configuration. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setrank enable`**\n> If you are new to rank configuration, try use this action first and I'll guide you until the rest part.\n\n**`{{prefix}}setrank add <role> <requiredLevel>`**\n> This action registers the given role into the role-rank system and let you define the required level in order to get it.\ne.g. __{{prefix}}setrank add @Kawaii 15__\n\n**`{{prefix}}setrank delete <role>`**\n> This action deletes the specified role from the rank system of this guild and make sure to have at least two registered role-rank before deleting it.\ne.g. __{{prefix}}setrank delete @Kawaii__\n\n**`{{prefix}}setrank info`**\n> This action displays the current configurations of role-rank system in the guild.\n\n**`{{prefix}}setrank stack`**\n> Have you ever imagined keeping all your hard grinded roles? Now it is possible to stack them! just run this command once and it will be automatically toggled.\n\n**`{{prefix}}setrank reset`**\n> This action wipes out all the existing role-rank configuration in the guild and it'll use the default one. It's a good thing to-do if you want to start from scratch again.\n\n**`{{prefix}}setrank disable`**\n> This action disables the role-rank system in the guild. Although, your previous configuration won't be deleted and you can enable it again anytime.\n\n╰──────────☆～*:;,．*╯",
         "ADD_MISSING_ARG": "Don't forget to include the role name and the required level for it!\ne.g. __{{prefix}}setrank add @Kawaii 10__",
