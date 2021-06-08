@@ -35,12 +35,12 @@ module.exports = {
         "image": `WELCOMER_IMAGE`,
         "theme": `WELCOMER_THEME`
     },
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,
             header: `Hi, ${message.author.username}!`,
             socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 emoji: await client.getEmoji(`692428660824604717`)
             }
         })
@@ -58,14 +58,14 @@ module.exports = {
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
         //  This is the sub-part of main configuration such as welcomer's channel, text, etc
         this.subConfig = this.guildConfigurations.get(this.selectedModule) 
-        return this[this.args[0].toLowerCase()](client, reply, message, arg, locale)
+        return this[this.args[0].toLowerCase()](client, reply, message, arg, locale, prefix)
     },
     
     /**
      * Enabling welcomer module
      * @return {void}
      */
-    async enable(client, reply, message, arg, locale) {
+    async enable(client, reply, message, arg, locale, prefix) {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
@@ -85,7 +85,7 @@ module.exports = {
         })
         return reply.send(locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
             status: `success`,
-            socket: {prefix: client.prefix}
+            socket: {prefix: prefix}
         })
     },
 
@@ -93,8 +93,8 @@ module.exports = {
      * Disabling welcomer module
      * @return {void}
      */
-    async disable(client, reply, message, arg, locale) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:client.prefix}})
+    async disable(client, reply, message, arg, locale, prefix) {
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix: prefix}})
         client.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 0,
@@ -109,10 +109,10 @@ module.exports = {
      * Set new target channel for welcomer module
      * @return {void}
      */
-    async channel(client, reply, message, arg, locale) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:client.prefix}}) 
+    async channel(client, reply, message, arg, locale, prefix) {
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix: prefix}}) 
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {socket: {prefix:client.prefix}})
+        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {socket: {prefix: prefix}})
         //  Do channel searching by three possible conditions
         const searchChannel = message.mentions.channels.first()
         || message.guild.channels.cache.get(this.args[1])
@@ -136,12 +136,12 @@ module.exports = {
      * Set message to be attached in the welcomer.
      * @return {void}
      */
-    async text(client, reply, message, arg, locale) {
+    async text(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:client.prefix}}) 
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix: prefix}}) 
         //  Handle if text content isn't provided
         if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
-            socket: {prefix: client.prefix},
+            socket: {prefix: prefix},
         })
         //  Update configs
         const welcomerText = this.args.slice(1).join(` `)
@@ -156,16 +156,16 @@ module.exports = {
         const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, {simplified: true, socket: {emoji: await client.getEmoji(`692428927620087850`)} })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, arg, locale))
+        c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
     },
 
     /**
      * Preview this guild's welcomer message
      * @return {void}
      */
-    async preview(client, reply, message, arg, locale) {
+    async preview(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:client.prefix}}) 
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix: prefix}}) 
         const renderingMsg = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
@@ -187,12 +187,12 @@ module.exports = {
      * Adding role when user joined the guild 
      * @return {void}
      */
-    async role(client, reply, message, arg, locale) {
+    async role(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix:client.prefix}}) 
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {socket: {prefix: prefix}}) 
         //  Handle if search keyword isn't provided
         if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
-            socket: {prefix: client.prefix},
+            socket: {prefix: prefix},
             status: `warn`
         })
         let rolesContainer = []
@@ -230,16 +230,16 @@ module.exports = {
 	 * Managing welcomer's image. 
 	 * @return {void}
 	 */
-	async image(client, reply, message, arg, locale) {
+	async image(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-			socket: {prefix: client.prefix}
+			socket: {prefix: prefix}
 		}) 
 		const { isValidUpload, url } = this.getImage(message)
 		if (!url) return reply.send(locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
 			socket: {
 				emoji: await client.getEmoji(`692428692999241771`),
-				prefix: client.prefix
+				prefix: prefix
 			}
 		})	
 		if (!isValidUpload) return reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
@@ -296,14 +296,14 @@ module.exports = {
 	 * Theme management
 	 * @return {void}
 	 */
-	async theme(client, reply, message, arg, locale) {
+	async theme(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-			socket: {prefix: client.prefix}
+			socket: {prefix: prefix}
 		}) 
 		if (!this.args[1]) return reply.send(locale.SETWELCOMER.THEME_MISSING_NAME, {
 			socket: {
-				prefix: client.prefix,
+				prefix: prefix,
 				emoji: await client.getEmoji(`AnniePeek1`)
 			}
 		})

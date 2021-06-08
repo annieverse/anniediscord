@@ -1,4 +1,3 @@
-const Response = require(`../libs/response`)
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
 const { cooldown } = require(`../config/commands`)
@@ -11,11 +10,17 @@ const getUserPermission = require(`../libs/permissions`)
  * @return {winston}
  */
 module.exports = async (client={}, message={}) => {
-    const targetCommand = message.content.split(` `)[0].slice(client.prefix.length).toLowerCase()
+    const guildPrefix = message.guild.configs.get(`PREFIX`).value
+    const prefix = message.content.startsWith(guildPrefix) ? guildPrefix : client.prefix
+    const targetCommand = message.content.slice(prefix.length).split(` `)[0].toLowerCase()
     let command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
     if (!command) return 
-    const reply = new Response(message)
+    //  Plus one from whitespace
+    const arg = message.content.slice(prefix.length + targetCommand.length+1)
+    // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
+    if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
+    const reply = client.responseLibs(message)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
@@ -61,8 +66,9 @@ module.exports = async (client={}, message={}) => {
             client, 
             reply, 
             message, 
-            message.content.split(` `).slice(1).join(` `),
-            locale
+            arg,
+            locale,
+            prefix
         )
         //  Dispose
         command = null

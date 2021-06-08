@@ -12,11 +12,11 @@ module.exports = {
 	usage: `setbio <Message>`,
 	permissionLevel: 0,
 	charactersLimit: 156,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
 		//  Handle if user doesn't specify the new bio/description
 		if (!arg) return reply.send(locale.SETBIO.MISSING_ARG, {
 			image: `banner_setbio`,
-			socket:{prefix:client.prefix}
+			socket:{prefix:prefix}
 		})
 		//  Handle if user input is exceeding the character limit
 		if (arg.length > this.charactersLimit) return reply.send(locale.SETBIO.EXCEEDING_LIMIT, {

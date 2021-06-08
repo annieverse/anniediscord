@@ -242,7 +242,7 @@ class Annie extends Discord.Client {
         else if (typePool.includes(`float`) || typePool.includes(`real`)) return parseFloat(config)
         else if (typePool.includes(`string`)) return config
         else {
-            logger.warn(`[Annie._parseConfigsBasedOnType()] failed to parse the allowed types for "${config}" and now it will return as its original value.`)
+            this.logger.warn(`[Annie._parseConfigsBasedOnType()] failed to parse the allowed types for "${config}" and now it will return as its original value.`)
             return config
         }
     }

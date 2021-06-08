@@ -9,14 +9,14 @@ module.exports = {
 	description: `Switch your profile theme to Light or Dark.`,
 	usage: `theme <Light/Dark>`,
     permissionLevel: 0,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         //  Returns if user didn't specify any keyword
         if (!arg) return reply.send(locale.SWITCH_THEME.MISSING_KEYWORD, {
             image: `banner_settheme`,
-            socket: {prefix:client.prefix} 
+            socket: {prefix: prefix} 
         })
         /**
          * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it

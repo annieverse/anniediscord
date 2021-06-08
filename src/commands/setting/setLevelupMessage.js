@@ -23,12 +23,12 @@ module.exports = {
      * @type {string}
      */  
     primaryConfigID: `LEVEL_UP_MESSAGE`,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 emoji: await client.getEmoji(`692428660824604717`)
             }
         })
@@ -41,14 +41,14 @@ module.exports = {
         //  Run action
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
-        return this[this.selectedAction](client, reply, message, arg, locale)
+        return this[this.selectedAction](client, reply, message, arg, locale, prefix)
     },
 
     /**
      * Enabling levelup-message module
      * @return {void}
      */
-    async enable(client, reply, message, arg, locale) {
+    async enable(client, reply, message, arg, locale, prefix) {
         client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
@@ -57,7 +57,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
-            socket: {prefix: client.prefix},
+            socket: {prefix: prefix},
             status: `success`
         })
     },
@@ -81,12 +81,12 @@ module.exports = {
      * Registering custom channel for the level-up message.
      * @return {}
      */
-    async channel(client, reply, message, arg, locale) {
+    async channel(client, reply, message, arg, locale, prefix) {
         const fn = `[setLevelupMessage.channel]`
         const subConfigId = `LEVEL_UP_MESSAGE_CHANNEL`
         //  Handle if module hasn't been enabled yet
         if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
-            socket:{prefix:client.prefix}
+            socket:{prefix: prefix}
         })
         //  Handle if the custom channel already present
         const customLevelUpMessageChannel = this.guildConfigurations.get(subConfigId).value
@@ -96,7 +96,7 @@ module.exports = {
             const displayingExistingData = isExists ? `DISPLAY_REGISTERED_CHANNEL` : `DISPLAY_UNREACHABLE_CHANNEL`
             if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE[displayingExistingData], {
                 socket: {
-                    prefix: client.prefix,
+                    prefix: prefix,
                     channel: res || customLevelUpMessageChannel
                 }
             })
@@ -119,7 +119,7 @@ module.exports = {
         else {
             //  Handle if no channel parameter has been inputted
             if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
-                socket: {prefix: client.prefix}
+                socket: {prefix: prefix}
             })
         }
         //  Handle if target channel does not exist
@@ -148,14 +148,14 @@ module.exports = {
      * Customizing the content of level up message.
      * @return {void}
      */
-     async text(client, reply, message, arg, locale) {
+     async text(client, reply, message, arg, locale, prefix) {
         const fn = `[setLevelupMessage.text]`
         const subConfigId = `LEVEL_UP_TEXT`
         if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
-            socket:{prefix: client.prefix}
+            socket:{prefix: prefix}
         })
         if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
-            socket:{prefix:client.prefix}
+            socket:{prefix: prefix}
         })
         let newText = this.args.slice(1).join(` `)
         //  Dummy level-up message for the preview

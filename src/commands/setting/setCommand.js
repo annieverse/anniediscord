@@ -11,7 +11,7 @@ module.exports = {
 	group: `Setting`,
 	permissionLevel: 3,
     configId: `COMMAND_CHANNELS`,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
 		//  Handle if user doesn't specify the new bio/description
@@ -19,7 +19,7 @@ module.exports = {
             header: `Hi, ${message.author.username}!`,
 			image: `banner_setcommand`,
 			socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 channelStatus: currentCommandChannels.length > 0 
                 ? `currently there are total of ${currentCommandChannels.length} command channels in this server.`
                 : `but since there are no command channel has been set, I'm currently listening to all the visible channels.`
@@ -28,7 +28,7 @@ module.exports = {
         this.args = arg.split(` `)
         const targetAction = this.args[0].toLowerCase()
         if (!actions.includes(targetAction)) return reply.send(locale.SETCOMMAND.INVALID_ACTION, {
-            socket: {prefix: client.prefix}
+            socket: {prefix: prefix}
         })
         return this[targetAction](client, reply, message, arg, locale)
     },

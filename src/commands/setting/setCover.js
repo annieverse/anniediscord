@@ -18,7 +18,7 @@ module.exports = {
     usage: `setcover <Attachment/URL>`,
     permissionLevel: 0,
     uploadCost: 1000,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
@@ -34,7 +34,7 @@ module.exports = {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
-                    prefix: client.prefix,
+                    prefix: prefix,
                     emoji: await client.getEmoji(`781504248868634627`),
                     cover: userData.usedCover.name
                 }

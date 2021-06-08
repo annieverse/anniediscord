@@ -21,7 +21,7 @@ module.exports = {
     getBotInviteUrl(client) {
         return `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=${this.permmissionInteger}&scope=bot`
     },
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
 		const cmds = this.getCommandStructures(client)
 		//  Displaying the help center if user doesn't specify any arg
 		if (!arg)	{
@@ -29,7 +29,7 @@ module.exports = {
 			return reply.send(locale.HELP.LANDING, {
 				socket: {
 					emoji: await client.getEmoji(`692428988177449070`),
-					prefix: client.prefix
+					prefix: prefix
 				},
 				header: `Hi, ${message.author.username}!`,
 				thumbnail: client.user.displayAvatarURL()
@@ -45,7 +45,7 @@ module.exports = {
 					response.delete()
 					reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
-							prefix: client.prefix,
+							prefix: prefix,
 							serverLink: `[Join Support Server](${this.supportServerUrl})`,
 							botInviteLink: `[Invite Annie](${this.getBotInviteUrl(client)})`,
 							commandList: this.prettifyCommandpedia(cmds)
@@ -65,7 +65,6 @@ module.exports = {
 		})
 		//  Handle helpCategory display
 		if (this.helpCategory) {
-            console.debug(res)
 			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
 			return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
@@ -75,7 +74,7 @@ module.exports = {
 		const perm = this.getPermissionProperties(res.permissionLevel, client)
 		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
 		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
-		const footer = `\`\`\`javascript\nUSAGE: ${client.prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
+		const footer = `\`\`\`javascript\nUSAGE: ${prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
 		return reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
     },
 

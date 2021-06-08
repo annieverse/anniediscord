@@ -184,7 +184,7 @@ module.exports = {
                  *  @type {object}
                  */
                 name: `PREFIX`,
-                description: `A prefix that being used to call Annie's Command.`,
+                description: `A prefix that being used to invoke Annie's Command.`,
                 customizable: true,
                 allowedTypes: [`string`],
                 value: process.env.PREFIX || `>`

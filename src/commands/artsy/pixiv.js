@@ -116,7 +116,7 @@ module.exports = {
      */
     async getImageCache(id=``) {
         const res = await fs.readFileSync(`./${id}`)
-        if (!res) throw new Error(`Failed to fetch image with ID ${id} because of: ${err}`)
+        if (!res) throw new Error(`Failed to fetch image with ID ${id}`)
         return res
     },
 

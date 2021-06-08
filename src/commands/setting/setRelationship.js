@@ -13,7 +13,7 @@ module.exports = {
     usage: `setrelationship`,
     permissionLevel: 0,
     limit: 7,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const availableRelationships = await client.db.getAvailableRelationships()
         //  Handle if user doesn't provide any argument
         if (!arg) return reply.send(locale.RELATIONSHIP.GUIDE, {
@@ -21,7 +21,7 @@ module.exports = {
             image: `banner_setrelationship`,
             socket: {
                 list: this.prettifyList(availableRelationships),
-                prefix: client.prefix
+                prefix: prefix
             }
         })
         const isRemovalAction = arg.startsWith(`delete`) || arg.startsWith(`remove`)

@@ -25,13 +25,13 @@ module.exports = {
      * @type {string}
      */  
     subConfigID: `LOGS_CHANNEL`,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETLOGS.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             image: `banner_setlogs`,
             socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
@@ -44,7 +44,7 @@ module.exports = {
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         this.subConfig = this.guildConfigurations.get(this.subConfigID)
-        return this[this.args[0]](client, reply, message, arg, locale)
+        return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
 
     /**
@@ -78,11 +78,11 @@ module.exports = {
      * Disable Action
      * @return {void}
      */
-    async disable(client, reply, message, arg, locale) {
+    async disable(client, reply, message, arg, locale, prefix) {
         const fn = `[setLogs.disable()]`
         if (!this.primaryConfig.value) {
             return reply.send(locale.SETLOGS.ALREADY_DISABLED, {
-                socket: {prefix:client.prefix}
+                socket: {prefix: prefix}
             })
         }
         //  Update configs
@@ -100,14 +100,14 @@ module.exports = {
      * Define target logs channel
      * @return {void}
      */
-    async channel(client, reply, message, arg, locale) {
+    async channel(client, reply, message, arg, locale, prefix) {
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) return reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
-            socket: {prefix: client.prefix}
+            socket: {prefix: prefix}
         })
         //  Handle if user hasn't specified the target channel
         if (!this.args[1]) return reply.send(locale.SETLOGS.MISSING_CHANNEL, {
-            socket: {prefix: client.prefix, emoji: await client.getEmoji(`692428927620087850`)}
+            socket: {prefix: prefix, emoji: await client.getEmoji(`692428927620087850`)}
         })
         //  Do channel searching by three possible conditions
         const searchChannel = message.mentions.channels.first()

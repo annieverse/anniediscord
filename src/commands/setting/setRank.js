@@ -29,13 +29,13 @@ module.exports = {
      * @type {string}
      */  
     subConfigID: `RANKS_LIST`,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETRANK.GUIDE, {
             header: `Hi, ${message.author.usernam}!`,
             image: `banner_setranks`,
             socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 emoji: await client.getEmoji(`692428864021987418`)
             }
         })
@@ -50,14 +50,14 @@ module.exports = {
         //  This is the sub-part of main configuration such as welcomer's channel, text, etc
         this.subConfig = this.guildConfigurations.get(this.subConfigID) 
         this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
-        return this[this.args[0]](client, reply, message, arg, locale)
+        return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
     
     /**
      * Enable Action
      * @return {void}
      */
-    async enable(client, reply, message, arg, locale) {
+    async enable(client, reply, message, arg, locale, prefix) {
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) this.firstTimer = true
         //  Handle if custom ranks already enabled before the action.
         if (this.primaryConfig.value) {
@@ -81,7 +81,7 @@ module.exports = {
         //  Spawn tip if user is a first timer
         if (this.firstTimer) return reply.send(locale.SETRANK.FIRST_TIMER_TIP, {
             simplified: true,
-            socket: {prefix: client.prefix}
+            socket: {prefix: prefix}
         })
     }, 
 
@@ -89,9 +89,9 @@ module.exports = {
      * Registering new role-rank
      * @return {void}
      */
-    async add(client, reply, message, arg, locale) {
+    async add(client, reply, message, arg, locale, prefix) {
         if (!this.args[1]) return reply.send(locale.SETRANK.ADD_MISSING_TARGET_ROLE, {
-            socket: {prefix: client.prefix}
+            socket: {prefix: prefix}
         })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1], message.guild)
@@ -114,7 +114,7 @@ module.exports = {
                     level: getRegisteredRank[0].LEVEL,
                     user: await client.getUsername(this.subConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
-                    prefix: client.prefix,
+                    prefix: prefix,
                     role: getRole.name.toLowerCase()
                 },
             })
@@ -122,7 +122,7 @@ module.exports = {
         //  Handle if user doesn't specify the target required level
         if (!this.args[2]) return reply.send(locale.SETRANK.ADD_MISSING_REQUIRED_LEVEL, {
             socket: {
-                prefix: client.prefix,
+                prefix: prefix,
                 role: getRole.name.toLowerCase()
             },
         })
@@ -183,15 +183,15 @@ module.exports = {
      * Displaying the configuration status of current guild
      * @return {void}
      */
-    async info(client, reply, message, arg, locale) {
+    async info(client, reply, message, arg, locale, prefix) {
         //  Handle if the main module is disabled in the guild for the first time
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) {
             return reply.send(locale.SETRANK.INFO_DISABLED_FIRST_TIME, {
-                thumbnail: tmessage.guild.iconURL(),
+                thumbnail: message.guild.iconURL(),
                 header: locale.SETRANK.HEADER_INFO,
                 socket: {
                     emoj: await client.getEmoji(`751020535865016420`),
-                    prefix: client.prefix,
+                    prefix: prefix,
                     guild: message.guild.name
                 }
             })
@@ -204,7 +204,7 @@ module.exports = {
                 header: locale.SETRANK.HEADER_INFO,
                 socket: {
                     emoji: await client.getEmoji(`751020535865016420`),
-                    prefix: client.prefix,
+                    prefix: prefix,
                     user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow(),
                     guild: message.guild.name
@@ -218,7 +218,7 @@ module.exports = {
                 header: locale.SETRANK.HEADER_INFO,
                 socket: {
                     emoji: await client.getEmoji(`751016612248682546`),
-                    prefix: client.prefix,
+                    prefix: prefix,
                     guild: message.guild.name
                 }
             })
@@ -285,9 +285,9 @@ module.exports = {
      * Disables the module
      * @return {void}
      */
-    async disable(client, reply, message, arg, locale) {
+    async disable(client, reply, message, arg, locale, prefix) {
         //  Handle if the guild already has disabled the configuration
-        if (!this.primaryConfig.value) return reply.send(locale.SETRANK.ALREADY_DISABLED, {socket:{prefix:client.prefix}})
+        if (!this.primaryConfig.value) return reply.send(locale.SETRANK.ALREADY_DISABLED, {socket:{prefix: prefix}})
         //  Otherwise, update the configuration. Both in the cache and database.
         client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
