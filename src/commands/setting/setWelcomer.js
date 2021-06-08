@@ -195,6 +195,17 @@ module.exports = {
             socket: {prefix: prefix},
             status: `warn`
         })
+        //  Handle role reset
+        if (this.args[1].startsWith(`reset`)) {
+            client.db.updateGuildConfiguration({
+                configCode: this.selectedModule,
+                customizedParameter: [],
+                guild: message.guild,
+                setByUserId: message.author.id,
+                cacheTo: this.guildConfigurations
+            })
+            return reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_RESET)
+        }
         let rolesContainer = []
         let specifiedRoles = this.args.slice(1)
         for (let i=0; i<specifiedRoles.length; i++) {

@@ -749,6 +749,7 @@
         "INVALID_CHANNEL": "**Sorry- I'm unable to find that channel.** {{emoji}}",
         "INVALID_ROLE": "Sorry, I can't find any role with that name.",
         "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
+        "ROLE_SUCCESSFULLY_RESET": "**Alright, done!** assigned roles in welcomer have been removed♡",
         "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
