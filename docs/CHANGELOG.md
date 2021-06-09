@@ -1,3 +1,10 @@
+## [7.19.3](https://github.com/klerikdust/anniediscord/compare/v7.19.2...v7.19.3) (2021-06-09)
+
+
+### Bug Fixes
+
+* **emojiFetch:** failing cache. ([e3127cd](https://github.com/klerikdust/anniediscord/commit/e3127cd30aa778e44d52d721e6688904a0e88441))
+
 ## [7.19.2](https://github.com/klerikdust/anniediscord/compare/v7.19.1...v7.19.2) (2021-06-09)
 
 
