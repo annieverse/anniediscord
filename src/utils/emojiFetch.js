@@ -23,12 +23,21 @@ const broadcastScript = (keyword) => {
  *  @return {string|Discord.Emoji} 
  */
 const emojiFetch = async (emojiKeyword, client) => {
+    //  Check on own client first.
+    const onCache = client.emojis.cache.get(emojiKeyword) || client.emojis.cache.find(e => e.name === emojiKeyword)
+    if (onCache) {
+        //  Use cache for faster response
+        return onCache
+    }
     const runScript = await client.shard.broadcastEval(`(${broadcastScript}).call(this, '${emojiKeyword}')`)
     const findEmoji = runScript.find(e => e)
     if (!findEmoji) return `(???)`
     const raw = await client.api.guilds(findEmoji.guild).get()
     const guild = new Discord.Guild(client, raw)
-    return new Discord.GuildEmoji(client, findEmoji, guild)
+    const emoji = new Discord.GuildEmoji(client, findEmoji, guild)
+    //  Store on cache
+    client.emojis.cache.set(emoji.id, emoji)
+    return emoji
 }
 
 module.exports = emojiFetch
