@@ -1,3 +1,19 @@
+# [7.19.0](https://github.com/klerikdust/anniediscord/compare/v7.18.0...v7.19.0) (2021-06-09)
+
+
+### Bug Fixes
+
+* **autoResponder:** cooldown never expire. ([4aecfbd](https://github.com/klerikdust/anniediscord/commit/4aecfbdc55374db17fa2068b0ca5142ef7555b46))
+
+
+### Features
+
+* **prefixHint:** display prefix hint when intentionally mentioned. ([1df1016](https://github.com/klerikdust/anniediscord/commit/1df1016f0da1144984094b65c280ce67b75ba7e8))
+* **relationshipSynergy:** integrates user gender with relationship system ([2b9ae74](https://github.com/klerikdust/anniediscord/commit/2b9ae742928ee71a46f73cf5b1130ff5a8ac66e9))
+* **setGender:** added user gender. ([7d908f8](https://github.com/klerikdust/anniediscord/commit/7d908f83a90394fe58f388cc7219c475bb2f325b))
+* **setPrefix:** allows custom prefix per guild setting. ([ec1cbbe](https://github.com/klerikdust/anniediscord/commit/ec1cbbe74ce5bff71ed104e5fd3a8d57d7eb6505))
+* **setWelcomer:** added role reset option. ([e1ec2b3](https://github.com/klerikdust/anniediscord/commit/e1ec2b3f4af713cfed8c682c89c904424d27aa2d))
+
 # [7.18.0](https://github.com/klerikdust/anniediscord/compare/v7.17.12...v7.18.0) (2021-05-31)
 
 
