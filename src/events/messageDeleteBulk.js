@@ -1,7 +1,8 @@
 module.exports = function messageDeleteBulk(client, messages) {
+    const cfg = client.guilds.cache.get(messages.channel.guild.id).configs
+    if (!cfg) return
     //  Ignore DM interface
-    if (messages.channel.type === `dm`) return 
-    const logs = client.guilds.cache.get(messages.channel.guild.id).configs.get(`LOGS_MODULE`).value 
+    const logs = cfg.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(messages.channel.guild.id)
     if (!logChannel) return 

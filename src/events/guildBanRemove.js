@@ -1,4 +1,5 @@
 module.exports = function guildBanRemove(client, guild, user) {
+    if (!guild.configs) return
     const logs = guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(guild.id)

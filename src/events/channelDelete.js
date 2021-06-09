@@ -1,5 +1,6 @@
 module.exports = function channelDelete(client, channel) {
     if (channel.type === `dm`) return
+    if (!channel.guild.configs) return
     const logs = channel.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(channel.guild.id)

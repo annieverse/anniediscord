@@ -1,4 +1,5 @@
 module.exports = function emojiCreate(client, emoji) {
+    if (!emoji.guild.configs) return
     const logs = emoji.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(emoji.guild.id)

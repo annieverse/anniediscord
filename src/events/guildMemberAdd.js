@@ -1,5 +1,7 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 module.exports = async function guildMemberAdd(client, member) {   
+    if (!member.guild.configs) return 
+
     //  Import configs
     let instance = `[EVENTS@GUILD_MEMBER_ADD]`
     let guild = member.guild

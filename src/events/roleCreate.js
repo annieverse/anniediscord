@@ -1,4 +1,5 @@
 module.exports = function roleCreate(client, role) {
+    if (!role.guild.configs) return
     const logs = role.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(role.guild.id)

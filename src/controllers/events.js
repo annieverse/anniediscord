@@ -27,5 +27,4 @@ module.exports = function eventsController(annie) {
     annie.on(`guildBanAdd`, (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
     annie.on(`guildBanRemove`, (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
     annie.on(`guildMemberAdd`, (member) => reqEvent(`guildMemberAdd`)(annie, member))
-    annie.on(`guildMemberRemove`, (member) => reqEvent(`guildMemberRemove`)(annie, member))
 }

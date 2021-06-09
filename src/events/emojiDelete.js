@@ -1,5 +1,6 @@
 module.exports = function emojiDelete(client, emoji) {
-    const logs = emoji.guild.configs.get(`LOGS_MODULE`).value 
+       if (!emoji.guild.configs) return
+ const logs = emoji.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(emoji.guild.id)
     if (!logChannel) return 
