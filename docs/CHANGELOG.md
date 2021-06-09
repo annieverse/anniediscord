@@ -1,3 +1,10 @@
+## [7.19.2](https://github.com/klerikdust/anniediscord/compare/v7.19.1...v7.19.2) (2021-06-09)
+
+
+### Bug Fixes
+
+* **events:** handle unprepared guild configs. ([578900e](https://github.com/klerikdust/anniediscord/commit/578900e51578254155e330135ebe7ecf1626bfe1))
+
 ## [7.19.1](https://github.com/klerikdust/anniediscord/compare/v7.19.0...v7.19.1) (2021-06-09)
 
 
