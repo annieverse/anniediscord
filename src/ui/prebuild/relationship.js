@@ -1,4 +1,5 @@
 const Cards = require(`../components/cards`)
+const relationshipPairs = require(`../../config/relationshipPairs.json`)
 const loadAsset = require(`../../utils/loadAsset`)
 const {resolveImage} = require(`canvas-constructor`)
 
@@ -40,11 +41,14 @@ class UI {
             gradient: true
         })
         //  Main Content
-        for (let i=0; i<Math.min(this.relationships.length, 7); i++) {
+        for (let i=0; i<Math.min(this.relationships.length, this.limit); i++) {
             const rel = this.relationships[i]
             const user = await this.bot.users.fetch(rel.assigned_user_id)
             const relAvatar = user ? await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false})) : await resolveImage(await loadAsset(`error`))
             const relName = user ? user.username : rel.assigned_user_id
+            const relGender = await this.bot.db.getUserGender(rel.assigned_user_id)
+            const pairRole = relationshipPairs.MASTER_PAIR[rel.relationship_name]
+            const relRole = relGender ? relationshipPairs[relGender.gender][pairRole] : pairRole
             //  Add highlight and lighten the text if current row is the author
             if (user.id === this.author.id) {
                 this.currentRowIsAuthor = true
@@ -58,7 +62,7 @@ class UI {
                     width: 590
                 })
             }
-            this.listEntry(relName, relAvatar, rel.relationship_name, 30, 30 + i*50)
+            this.listEntry(relName, relAvatar, relRole, 30, 30 + i*50)
         }
         this.card.ready()
         return this.card.getBuffer()
@@ -73,7 +77,8 @@ class UI {
         .printText(username, x + 65, y + 30)
         .setColor(textColor)
         .setTextFont(`8pt roboto`)
-        .printText(relation, x + 65, y + 44)
+        //  Uppercase on each word
+        .printText(relation.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `), x + 65, y + 44)
         this.currentRowIsAuthor = false
     }
 }

@@ -1,0 +1,26 @@
+{
+    "MASTER_PAIR": {
+        "parent": "kid",
+        "kid": "parent",
+        "old sibling": "young sibling",
+        "young sibling": "old sibling",
+        "couple": "couple",
+        "bestfriend": "bestfriend"
+    },
+    "m": {
+        "parent": "daddy",
+        "kid": "son",
+        "old sibling": "big brother",
+        "young sibling": "little brother",
+        "couple": "husband",
+        "bestfriend": "bestfriend"
+    },
+    "f": {
+        "parent": "mommy",
+        "kid": "daughter",
+        "old sibling": "big sister",
+        "young sibling": "little sister",
+        "couple": "wife",
+        "bestfriend": "bestfriend"
+    }
+}

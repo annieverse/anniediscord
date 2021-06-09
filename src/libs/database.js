@@ -4,6 +4,7 @@ const logger = require(`pino`)({name: `DATABASE`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
+const relationshipPairs = require(`../config/relationshipPairs.json`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -181,6 +182,7 @@ class Database {
 		if (!stmt) return null
 		try {
 			let result = await this.client.prepare(stmt)[type](supplies)
+            if (label) logger.info(label)
 			if (!result) return null
 			if (!rowsOnly) result.stmt = stmt
 			return result
@@ -2414,7 +2416,29 @@ class Database {
 		)
 	}
 
-	/**
+	
+    /**
+     * -------------------------------------------
+     * RELATIONSHIP METHODS
+     * -------------------------------------------
+     */
+    
+    /**
+     * Fetch metadata of a relationship type.
+     * @param {string} name Target relationship name
+     * @return {object|null}
+     */
+    getRelationship(name) {
+        return this._query(`
+            SELECT *
+            FROM relationships
+            WHERE name = ?`
+            , `get`
+            , [name]
+        )
+    }
+
+    /**
 	 * Fetch user's relationship info
 	 * @param {string} [userId=``] target user id
 	 * @returns {QueryResult}
@@ -2441,6 +2465,96 @@ class Database {
 			, [userId]
 		)
     }
+
+    /**
+     * Migrate old relationship trees into v2 with gender-specific types
+     * @return {QueryResult}
+     */
+    async migrateRelationshipv2() {
+        //  Registering new relationship types
+        await this._query(`INSERT INTO relationships(name) VALUES('parent')`, `run`, [], `registered 'parent' rel type`) 
+        await this._query(`INSERT INTO relationships(name) VALUES('kid')`, `run`, [], `registered 'kid' rel type`) 
+        await this._query(`INSERT INTO relationships(name) VALUES('old sibling')`, `run`, [], `registered 'old sibling' rel type`) 
+        await this._query(`INSERT INTO relationships(name) VALUES('young sibling')`, `run`, [], `registered 'young sibling' rel type`) 
+        await this._query(`INSERT INTO relationships(name) VALUES('couple')`, `run`, [], `registered 'couple' rel type`) 
+        //  Deprecating selected old types
+        await this._query(`DELETE FROM relationships WHERE name IN ('kouhai', 'senpai', 'soulmate')`, `run`, [], `Dropping 'kouhai, 'senpai', 'soulmate' rel types.`)
+        //  Update old rel types into new generalized types
+        await this._query(`UPDATE user_relationships SET relationship_id = (SELECT r.relationship_id FROM relationships r WHERE r.name = 'parent') WHERE relationship_id IN (1.0, 2.0)`, `run`, [], `merged 'daddy' and 'mommy' rel type as 'parent'`)
+        await this._query(`UPDATE user_relationships SET relationship_id = (SELECT r.relationship_id FROM relationships r WHERE r.name = 'kid') WHERE relationship_id IN (3.0, 4.0)`, `run`, [], `merged 'son' and 'daughter' rel type as 'kid'`)
+        await this._query(`UPDATE user_relationships SET relationship_id = (SELECT r.relationship_id FROM relationships r WHERE r.name = 'old sibling') WHERE relationship_id IN (5.0, 6.0)`, `run`, [], `merged 'big sister' and 'big brother' rel type as 'old sibling'`)
+        await this._query(`UPDATE user_relationships SET relationship_id = (SELECT r.relationship_id FROM relationships r WHERE r.name = 'little sibling') WHERE relationship_id IN (7.0, 8.0)`, `run`, [], `merged 'little brother' and 'little sister' rel type as 'young sibling'`)
+        await this._query(`UPDATE user_relationships SET relationship_id = (SELECT r.relationship_id FROM relationships r WHERE r.name = 'couple') WHERE relationship_id IN (9.0, 10.0)`, `run`, [], `merged 'boyfriend' and 'girlfriend' rel type as 'couple'`)
+        //  Lowercasing 'bestfriend' rel type
+        await this._query(`UPDATE relationships SET name = 'bestfriend' WHERE name = 'Bestfriend'`, `run`, [], `Normalize 'bestfriend' rel type`)
+    }
+
+    /**
+	 * Pull available relationship types
+	 * @returns {QueryResult}
+	 */
+    getAvailableRelationships() {
+		return this._query(`
+			SELECT * FROM relationships
+			WHERE name IN ('parent', 'kid', 'old sibling', 'young sibling', 'couple', 'bestfriend') ORDER BY relationship_id ASC`
+			, `all`	
+		)
+    }
+
+	/**
+	 * Registering new user's relationship
+	 * @param {string} [userA=``] Author's user id
+	 * @param {string} [userB=``] Target user's id to be assigned
+	 * @param {number} [relationshipId=0] assigned relationship's role id
+	 * @param {string} [guildId=``] the guild id where the relationship is being registered in.
+	 * @returns {QueryResult}
+	 */
+    async setUserRelationship(userA=``, userB=``, relationshipId=0, guildId=``) {
+		const fn = `[Database.setUserRelationship()]`
+		let res = {
+			//	Insert if no data entry exists.
+			insert: await this._query(`
+	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id, guild_id)
+				SELECT $userA, $userB, $relationshipId, $guildId
+				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
+				, `run`
+				, {userA: userA, userB: userB, relationshipId: relationshipId, guildId: guildId}	
+				, `Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
+			),
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+				UPDATE user_relationships
+				SET relationship_id = ?
+				WHERE 
+					user_id_A = ?
+					AND user_id_B = ?`
+				, `run`
+				, [relationshipId, userA, userB]
+			)
+		}
+
+		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.info(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
+		return true
+    }
+
+	/**
+	 * Removing user's relationship
+	 * @param {string} [userA=``] Author's user id.
+	 * @param {string} [userB=``] Target user's id to be assigned.
+	 * @returns {QueryResult}
+	 */
+    removeUserRelationship(userA=``, userB=``) {
+		return this._query(`
+            DELETE FROM user_relationships
+            WHERE 
+            	user_id_A = ?
+				AND user_id_B = ?`
+			, `run`
+			, [userA, userB]
+			, `Removing ${userA} and ${userB} relationship.`
+		)
+	}
 
     /**
      * -------------------------------------------
@@ -2511,73 +2625,6 @@ class Database {
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.info(`[DB@UPDATE_USER_GENDER] ${stmtType} (GENDER:${gender})(USER_ID:${userId}`) 
     }
-
-	/**
-	 * Pull available relationship types
-	 * @returns {QueryResult}
-	 */
-    getAvailableRelationships() {
-		return this._query(`
-			SELECT * FROM relationships
-			ORDER BY relationship_id ASC`
-			, `all`	
-		)
-    }
-
-	/**
-	 * Registering new user's relationship
-	 * @param {string} [userA=``] Author's user id
-	 * @param {string} [userB=``] Target user's id to be assigned
-	 * @param {number} [relationshipId=0] assigned relationship's role id
-	 * @param {string} [guildId=``] the guild id where the relationship is being registered in.
-	 * @returns {QueryResult}
-	 */
-    async setUserRelationship(userA=``, userB=``, relationshipId=0, guildId=``) {
-		const fn = `[Database.setUserRelationship()]`
-		let res = {
-			//	Insert if no data entry exists.
-			insert: await this._query(`
-	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id, guild_id)
-				SELECT $userA, $userB, $relationshipId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
-				, `run`
-				, {userA: userA, userB: userB, relationshipId: relationshipId, guildId: guildId}	
-				, `Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
-			),
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
-				UPDATE user_relationships
-				SET relationship_id = ?
-				WHERE 
-					user_id_A = ?
-					AND user_id_B = ?`
-				, `run`
-				, [relationshipId, userA, userB]
-			)
-		}
-
-		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
-		return true
-    }
-
-	/**
-	 * Removing user's relationship
-	 * @param {string} [userA=``] Author's user id.
-	 * @param {string} [userB=``] Target user's id to be assigned.
-	 * @returns {QueryResult}
-	 */
-    removeUserRelationship(userA=``, userB=``) {
-		return this._query(`
-            DELETE FROM user_relationships
-            WHERE 
-            	user_id_A = ?
-				AND user_id_B = ?`
-			, `run`
-			, [userA, userB]
-			, `Removing ${userA} and ${userB} relationship.`
-		)
-	}
 	
 	setTheme(theme, userId, guildId){
 		let themeToSet, themeToUnset

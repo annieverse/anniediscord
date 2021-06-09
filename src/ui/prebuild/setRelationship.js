@@ -38,7 +38,7 @@ class UI {
 			justify: `center`
 		})
 		//  Balance Author
-		card.addTitle({main: `As ${this.relationship}?`, size: 18, marginTop: 50, fontWeight: `bold`})
+		card.addTitle({main: `As ${this.relationship.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}?`, size: 18, marginTop: 50, fontWeight: `bold`})
 		.addTitle({main: `Please wait until they accept it.`, size: 9, marginTop: 18})
 		return card.getBuffer()
 	}

@@ -10,7 +10,7 @@ module.exports = {
     description: `Display user's relationship trees`,
     usage: `relationship <user>(Optional)`,
     permissionLevel: 0,
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
 		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
@@ -29,7 +29,7 @@ module.exports = {
                 user: targetUser.id
             }
         })
-        const userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(message.author, 2)
+        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(message.author, 2)
         await reply.send(locale.COMMAND.TITLE, {
             simplified: true,
             prebuffer: true,

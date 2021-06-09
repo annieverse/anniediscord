@@ -1,5 +1,6 @@
 const User = require(`../../libs/user`)
 const Confirmator = require(`../../libs/confirmator`)
+const relationshipPairs = require(`../../config/relationshipPairs.json`)
 const GUI = require(`../../ui/prebuild/setRelationship`)
 const stringSimilarity = require(`string-similarity`)
 /**
@@ -17,7 +18,7 @@ module.exports = {
         const availableRelationships = await client.db.getAvailableRelationships()
         //  Handle if user doesn't provide any argument
         if (!arg) return reply.send(locale.RELATIONSHIP.GUIDE, {
-            header: `Hi, ${message.author.usernam}!`,
+            header: `Hi, ${message.author.username}!`,
             image: `banner_setrelationship`,
             socket: {
                 list: this.prettifyList(availableRelationships),
@@ -76,11 +77,13 @@ module.exports = {
             }
         })
         //  Trim user search from arg string
-        arg = arg.replace(targetUser.usedKeyword, ``)
+        arg = arg.replace(targetUser.usedKeyword+` `, ``)
         //  Handle if the specified relationship cannot be found
         let searchStringResult = stringSimilarity.findBestMatch(arg, availableRelationships.map(i => i.name))
         const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
         if (!relationship) return reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, {socket: {emoji: await client.getEmoji(`692428969667985458`)} })
+        const targetGender = await client.db.getUserGender(targetUser.master.id)
+        const relRole = targetGender ? relationshipPairs[targetGender.gender][relationship.name] : relationship.name
         //  Render confirmation
         const confirmation = await reply.send(locale.RELATIONSHIP.TARGET_CONFIRMATION, {
             prebuffer: true,
@@ -91,10 +94,12 @@ module.exports = {
                 relationship: relationship.name,
             }
         })
-        await c.setup(targetUser.master.id, confirmation)
-        c.onAccept(() => {
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(async () => {
             //  Update relationship data on both side
-            client.db.setUserRelationship(message.author.id, targetUser.master.id, parseInt(relationship.relationship_id))
+            const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
+            const authorRelationship = await client.db.getRelationship(authorRelationshipStatus)
+            client.db.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
             client.db.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
             return reply.send(``, {customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()]})
         })
@@ -109,7 +114,7 @@ module.exports = {
         let str = ``
         for (let i = 0; i<list.length; i++) {
             const rel = list[i]
-            str += `╰☆～(${rel.relationship_id}) **${rel.name}**\n`
+            str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
         }
         return str
     }
