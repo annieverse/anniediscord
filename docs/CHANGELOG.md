@@ -1,3 +1,10 @@
+## [7.19.1](https://github.com/klerikdust/anniediscord/compare/v7.19.0...v7.19.1) (2021-06-09)
+
+
+### Performance Improvements
+
+* **emojiFetch:** cache emoji from different shard. ([7b065de](https://github.com/klerikdust/anniediscord/commit/7b065de791f567710d0e2eb70b179c1b1e89f9bd))
+
 # [7.19.0](https://github.com/klerikdust/anniediscord/compare/v7.18.0...v7.19.0) (2021-06-09)
 
 
