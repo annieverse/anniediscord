@@ -94,7 +94,7 @@ module.exports = {
                 relationship: relationship.name,
             }
         })
-        await c.setup(message.author.id, confirmation)
+        await c.setup(targetUser.master.id, confirmation)
         c.onAccept(async () => {
             //  Update relationship data on both side
             const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
