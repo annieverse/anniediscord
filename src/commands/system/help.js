@@ -10,7 +10,7 @@ module.exports = {
 	usage: `help <Category/CommandName>(Optional)`,
 	permissionLevel: 0,
     commandpediaButton: `📖`,
-	ignoreGroups: [`developer`].map(groupName => groupName.toLowerCase()),
+	ignoreGroups: [`Developer`, `modmail`, `Moderation`],
 	permmissionInteger: 268823638,
     supportServerUrl: `https://discord.gg/7nDes9Pi`, 
     /**
@@ -114,7 +114,6 @@ module.exports = {
 	getCommandStructures(client) {
 		let obj = {}
 		let groups = client.commands.map(el => el.group)
-		console.log(groups)
 		let uniqueGroups = [...new Set(groups)].filter(el => !this.ignoreGroups.includes(el))
 		for (let groupName of uniqueGroups) {
 			const groupChilds = client.commands.filter(el => el.group === groupName && !el.invisible)
