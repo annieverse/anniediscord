@@ -50,7 +50,7 @@ module.exports = async function guildMemberAdd(client, member) {
         let welcomerText = configs.get(`WELCOMER_TEXT`)
         let getWelcomerText = parseWelcomerText(welcomerText.value)
         //  Attempt to DM the joined user if guild's owner hasn't setup the welcomer channel yet
-        if (getTargetWelcomerChannel) {
+        if (!getTargetWelcomerChannel) {
                 client.responseLibs(member, true)
                 .send(`__**A letter from ${guild.name}.**__\n` + getWelcomerText, {
                     simplified: true,
