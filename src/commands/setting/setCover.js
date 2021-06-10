@@ -68,7 +68,7 @@ module.exports = {
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
-            if (!ownedCovers.length) return reply(locale.SETCOVER.NO_EQUIPPABLE_COVER)
+            if (!ownedCovers.length) return reply.send(locale.SETCOVER.NO_EQUIPPABLE_COVER)
             const searchStringResult = stringSimilarity.findBestMatch(arg, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
             //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
