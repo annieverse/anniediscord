@@ -1,3 +1,10 @@
+## [7.19.8](https://github.com/klerikdust/anniediscord/compare/v7.19.7...v7.19.8) (2021-06-11)
+
+
+### Bug Fixes
+
+* **database:** false key register on redis caching init. ([effc248](https://github.com/klerikdust/anniediscord/commit/effc2480bcf04d13527022a07ac7dfddebd18c98))
+
 ## [7.19.7](https://github.com/klerikdust/anniediscord/compare/v7.19.6...v7.19.7) (2021-06-11)
 
 
