@@ -1,3 +1,11 @@
+## [7.19.7](https://github.com/klerikdust/anniediscord/compare/v7.19.6...v7.19.7) (2021-06-11)
+
+
+### Bug Fixes
+
+* **guildCreate:** guide not sent to server owner. ([edfd903](https://github.com/klerikdust/anniediscord/commit/edfd903823c529eefc8438fefa00e5db19bf5de1))
+* updated server invite url. ([4ae13ac](https://github.com/klerikdust/anniediscord/commit/4ae13ac1a467912f6ccfd854598ea25be47fee26))
+
 ## [7.19.6](https://github.com/klerikdust/anniediscord/compare/v7.19.5...v7.19.6) (2021-06-11)
 
 
