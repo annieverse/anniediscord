@@ -1,3 +1,22 @@
+## [7.19.5](https://github.com/klerikdust/anniediscord/compare/v7.19.4...v7.19.5) (2021-06-11)
+
+
+### Bug Fixes
+
+* **help:** search crash on category filter. ([c962112](https://github.com/klerikdust/anniediscord/commit/c962112c28a04f458010ecdbbd118ad70b953666))
+* **profile:** crash on fetching. ([78a91c0](https://github.com/klerikdust/anniediscord/commit/78a91c062c86d95f36dec853476f8481c29ad1b6))
+* **setCover:** unable to apply item-based cover. ([d1cdacd](https://github.com/klerikdust/anniediscord/commit/d1cdacd13b24fcc5f429d616f20f38127f9cb768))
+* **setRelationship:** allowing the author to confirm relationship request. ([9ef1dfa](https://github.com/klerikdust/anniediscord/commit/9ef1dfa12f388469612c08c09f2fc36460d152b8))
+* **setRelationship:** false confirmator target. ([461a7cd](https://github.com/klerikdust/anniediscord/commit/461a7cd767daad4b3c748f509803f704b801187c))
+* **setRelationship:** remove action doesn't check local pool. ([1228369](https://github.com/klerikdust/anniediscord/commit/1228369ec9eb44788320137a9fcc5bdbe8a359a8))
+* **user:** random crash when new user casting new command. ([68bd13b](https://github.com/klerikdust/anniediscord/commit/68bd13b3541847b060ec75a09a848f04ee513526))
+
+
+### Performance Improvements
+
+* **emojiFetch:** increase emoji's expire duration. ([006ecaf](https://github.com/klerikdust/anniediscord/commit/006ecaf2f86b5e01f947563380ed029406ad407a))
+* **stats:** cached server size. ([19aad29](https://github.com/klerikdust/anniediscord/commit/19aad2906981c96abb7e8cd654a0615de62417c2))
+
 ## [7.19.4](https://github.com/klerikdust/anniediscord/compare/v7.19.3...v7.19.4) (2021-06-10)
 
 
