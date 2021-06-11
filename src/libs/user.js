@@ -138,12 +138,6 @@ class User {
 		//  Handle if user object isn't valid
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
 		try {
-			//  Data checking
-			const userValidate = await this.bot.db.doesUserRegisteredInTheGuild(user.id, this.message.guild.id)
-			if (userValidate.is_registered === 0) {
-				this.logger.info(`${fn} registering new user's metadata for ${user.id}@${this.message.guild.id}`)
-				await this.bot.db.validateUser(user.id, this.message.guild.id, user.username)
-			}
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 1
 			 *  --------------------------------------------------------------------
@@ -158,7 +152,6 @@ class User {
 			 *  --------------------------------------------------------------------
 			 *  Consists of discord properties data + user's customized locale + extended metadata from own database.
 			 */
-			await db.registerGuild(this.guild)
 			//  Basic data such as saved username, language, user_id and registered date
 			const main = await db.getUser(user.id)
 			//  User's reputations data

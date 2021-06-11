@@ -114,7 +114,8 @@
         "ERROR": "Uhh, something went wrong."
     },
     "USER": {
-        "IS_INVALID": "**Sorry- I'm unable to find that user.**"
+        "IS_INVALID": "**Sorry- I'm unable to find that user.**",
+        "REGISTRATION_ON_PROCESS": "Try this command again in a few seconds!♡"
     },
     "COMMAND": {
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",

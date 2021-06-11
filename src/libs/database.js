@@ -121,9 +121,26 @@ class Database {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
 		})
-		redisClient.on(`connect`, () => {
+		redisClient.on(`connect`, async () => {
 			logger.info(`REDIS <CONNECTED>`)
 			this.redis = redisClient
+            const getKeyEntryOf = async (tableName) => {
+                const res = tableName === `users` 
+                    ? await this._query(`SELECT user_id FROM users`, `all`)
+                    : await this._query(`SELECT user_id, guild_id FROM ${tableName}`, `all`)
+                return tableName === `users`
+                    ? res.map(node => node.user_id)
+                    : res.map(node => node.user_id + `@` + node.guild_id)
+            }
+            //  Loading registered entries set as cache
+            const userCacheId = `REGISTERED_USERS_CACHE`
+            if ((await this.redis.exists(userCacheId)) === 0) this.redis.sadd(userCacheId, await getKeyEntryOf(`users`), logger.info(`${userCacheId} loaded`))
+            const dailyCacheId = `REGISTERED_USER_DAILIES_CACHE`
+            if ((await this.redis.exists(dailyCacheId)) === 0) this.redis.sadd(dailyCacheId, await getKeyEntryOf(`user_dailies`), logger.info(`${dailyCacheId} loaded`)) 
+            const expCacheId = `REGISTERED_USER_EXP_CACHE`
+            if ((await this.redis.exists(expCacheId)) === 0) this.redis.sadd(expCacheId, await getKeyEntryOf(`user_exp`), logger.info(`${expCacheId} loaded`)) 
+            const repCacheId = `REGISTERED_USER_REPUTATION_CACHE` 
+            if ((await this.redis.exists(repCacheId)) === 0) this.redis.sadd(repCacheId, await getKeyEntryOf(`user_reputations`), logger.info(`${repCacheId} loaded`)) 
 		})
 	}
 
@@ -1030,53 +1047,81 @@ class Database {
 		)
 	}
 
+    /**
+     * Verify whether the user data has completed or not.
+     * @param {string} userId Target user
+     * @param {string} guildId Target user guild
+     * @return {boolean|number}
+     */
+    async isUserDataCompleted(userId, guildId) {
+        const primary = await this.redis.sismember(`REGISTERED_USERS_CACHE`, userId) 
+        const key = userId + `@` + guildId
+        const dailies = await this.redis.sismember(`REGISTERED_USER_DAILIES_CACHE`, key) 
+        const exp = await this.redis.sismember(`REGISTERED_USER_EXP_CACHE`, key) 
+        const reps = await this.redis.sismember(`REGISTERED_USER_REPUTATIONS_CACHE`, key) 
+        return primary && dailies && exp && reps
+    }
+
 	/**
 	 * Register a user into user-tree tables if doesn't exist.
 	 * @param {string} [userId=``] User's discord id.
 	 * @param {string} [guildId=``] the guild where user get registered.
 	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
+     * @param {boolean} [forceCheck=false] Ignore 12 hours interval and force to check the user data.
 	 * @returns {void}
 	 */
-	async validateUser(userId=``, guildId=``, userName=``) {
+	async validateUser(userId=``, guildId=``, userName=``, forceCheck=false) {
 		const fn = `[Database.validateUser()]`
 		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
 		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
-        //  If user already validated, don't run.
-        const cacheId = `VALIDATEDUSER_${userId}@${guildId}`
-        if (await this.redis.exists(cacheId)) return
-        //  Flush in 12 hours
-        this.redis.set(cacheId, 1, `EX`, (60 * 5))
-        //  Otherwise, perform insertion check query.
-		this._query(`
-			INSERT INTO users(user_id, name)
-			SELECT $userId, $userName
-			WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
-			, `run`
-			, {userId: userId, userName: userName}
-		)
-        .then(() => {
+        const userCacheId = `REGISTERED_USERS_CACHE`
+        if ((await this.redis.sismember(userCacheId, userId)) === 0) {
+            this._query(`
+                INSERT INTO users(user_id, name)
+                SELECT $userId, $userName
+                WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
+                , `run`
+                , {userId: userId, userName: userName}
+            ).then(() => this.redis.sadd(userCacheId, userId))
+        } 
+        const params = {userId: userId, guildId: guildId}
+        const key = userId + `@` + guildId
+        const dailyCacheId = `REGISTERED_USER_DAILIES_CACHE`
+        this.redis.sismember(dailyCacheId, key).then(res => {
+            if (res) return
             this._query(`
                 INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
                 SELECT datetime('now','-1 day'), -1, $userId, $guildId
                 WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
                 , `run`
-                , {userId: userId, guildId: guildId}
+                , params
             )
+            this.redis.sadd(dailyCacheId, userId)
+        }) 
+        const expCacheId = `REGISTERED_USER_EXP_CACHE`
+        this.redis.sismember(expCacheId, key).then(res => {
+            if (res) return
             this._query(`
                 INSERT INTO user_exp(user_id, guild_id)
                 SELECT $userId, $guildId
                 WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
                 , `run`
-                , {userId: userId, guildId: guildId}
+                , params
             )
+            this.redis.sadd(expCacheId, key)
+        })
+        const repCacheId = `REGISTERED_USER_REPUTATIONS_CACHE`
+        this.redis.sismember(repCacheId, key).then(res => {
+            if (res) return
             this._query(`
                 INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
                 SELECT datetime('now','-1 day'), $userId, $guildId
                 WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
                 , `run`
-                , {userId: userId, guildId: guildId}
+                , params
             )	
+            this.redis.sadd(repCacheId, key)
         })
     }
 
