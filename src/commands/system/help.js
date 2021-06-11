@@ -10,9 +10,9 @@ module.exports = {
 	usage: `help <Category/CommandName>(Optional)`,
 	permissionLevel: 0,
     commandpediaButton: `📖`,
-	ignoreGroups: [`Developer`].map(groupName => groupName.toLowerCase()),
+	ignoreGroups: [`developer`],
 	permmissionInteger: 268823638,
-    supportServerUrl: `https://discord.gg/7nDes9Pi`, 
+    supportServerUrl : `https://discord.gg/7nDes9Pi`, 
     /**
      * Client/Bot invite generator.
      * @param {Client} client Current client instancee.
@@ -57,7 +57,7 @@ module.exports = {
 			})
 		}
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
-		const res = await this.findCommandByKeyword(arg, cmds)
+		const res = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
 		if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
 			socket: {
 				emoji: await client.getEmoji(`692428969667985458`)
@@ -65,7 +65,7 @@ module.exports = {
 		})
 		//  Handle helpCategory display
 		if (this.helpCategory) {
-			const commands = [...cmds[res].keys()].map(node => `\`${node}\``)
+			const commands = client.commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
 			return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
 				thumbnail: client.user.displayAvatarURL()
@@ -85,25 +85,18 @@ module.exports = {
 	 * @returns {CommandProperties}
 	 */
 	async findCommandByKeyword(keyword=``, src={}) {
-		let res = null
-		let parents = (Object.keys(src)).map(node => node.toLowerCase())
-		keyword = keyword.endsWith(`s`) ? keyword.slice(0, keyword.length-1) : keyword
+        //  Find group
+		let parents = src.map(node => node.group.toLowerCase())
 		if (parents.includes(keyword)) {
 			this.helpCategory = true
 			return keyword
 		}
-		//  Returns if keyword has matched with parent
-		if (src[keyword]) res = src[keyword]
-		//  Find on deep layer and recursively
-		for (let group in src) {
-			src[group].filter(child => {
-				//  Returns result if keyword has matched with command's name
-				if (child.name === keyword) res = child
-				//  Returns result if keyword has matched with command's aliases
-				if (child.aliases.includes(keyword)) res = child
-			})	
-		}
-		return res
+		//  Find by command master name
+		if (src.has(keyword)) return src.get(keyword)
+		//  Find by aliases
+        const aliasSearch = src.filter(node => node.aliases.includes(keyword))
+        if (aliasSearch.length > 0) return aliasSearch[0]
+		return null
 	},
 
 	/**

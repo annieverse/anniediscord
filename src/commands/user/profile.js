@@ -20,16 +20,17 @@ module.exports = {
             socket: {emoji: await client.getEmoji(`790994076257353779`)}
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        await reply.send(locale.COMMAND.TITLE, {
+        const image = (await new GUI(userData, client).build()).toBuffer()
+        fetching.delete()
+        return reply.send(locale.COMMAND.TITLE, {
             socket: {
                 user: targetUser.username,
                 emoji: await client.getEmoji(`692428927620087850`),
                 command: `Profile`
             },
-            image: (await new GUI(userData, client).build()).toBuffer(),
+            image: image,
             prebuffer: true,
             simplified: true 
         })
-        return fetching.delete()
     }
 }

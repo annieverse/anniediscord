@@ -58,8 +58,11 @@ module.exports = async (client={}, message={}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-    // Attempt on running target command
     const locale = client.locales.en
+    // Prevent user with uncomplete data to proceed the command.
+    if ((await client.db.isUserDataCompleted(message.author.id, message.guild.id)) === 0) {
+        return reply.send(locale.USER.REGISTRATION_ON_PROCESS)
+    }
     try {
         const initTime = process.hrtime()
         await command.execute(

@@ -34,16 +34,16 @@ module.exports = {
             useRemoveAction = true
             arg = arg.split(` `).slice(1).join(` `)
         }
-        const userLib = new User(client, message)
-        const targetUser = await userLib.lookFor(arg)
+        const userLib = new User(client, message) 
+        const userData = await userLib.requestMetadata(message.author, 2)
+        const userRels = userData.relationships.map(node => node.assigned_user_id)
+        const targetUser = await userLib.lookFor(arg, useRemoveAction ? await this.fetchLocalPool(userRels, client) : null)
         if (!targetUser) return reply.send(locale.USER.IS_INVALID)
         //  Handle if target is the author
         if (userLib.isSelf(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.SET_TO_SELF, {socket: {emoji: await client.getEmoji(`751016612248682546`)} })
-        const userData = await userLib.requestMetadata(message.author, 2)
         const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
 		//  Handle delete action	
         const c = new Confirmator(message, reply)
-        const userRels = userData.relationships.map(node => node.assigned_user_id)
 		if (useRemoveAction) {
 			if (!userRels.includes(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
 				socket: {
@@ -94,7 +94,7 @@ module.exports = {
                 relationship: relationship.name,
             }
         })
-        await c.setup(message.author.id, confirmation)
+        await c.setup(targetUser.master.id, confirmation)
         c.onAccept(async () => {
             //  Update relationship data on both side
             const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
@@ -103,6 +103,26 @@ module.exports = {
             client.db.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
             return reply.send(``, {customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()]})
         })
+    },
+
+    /**
+     * Fetching user's object for given list of ID.
+     * @param {object} ids
+     * @param {object} client Current client instance.
+     * @return {object}
+     */
+    async fetchLocalPool(ids, client) {
+        let res = []
+        for (let i=0; i<ids.length; i++) {
+            try {
+                res.push(await client.users.fetch(ids[i]))
+            }
+            catch(e) {
+                //  Fallback incase users aren't in range.
+                res.push({id: ids[i], name: `Unreachable`})
+            }
+        }
+        return res
     },
 
     /**
