@@ -86,7 +86,7 @@ module.exports = {
 	 */
 	async findCommandByKeyword(keyword=``, src={}) {
         //  Find group
-		let parents = src.map(node => node.group.toLowerCase())
+		let parents = src.filter(node => this.ignoreGroup(node.group)).map(node => node.group.toLowerCase())
 		if (parents.includes(keyword)) {
 			this.helpCategory = true
 			return keyword
