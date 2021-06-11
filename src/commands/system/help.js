@@ -10,7 +10,7 @@ module.exports = {
 	usage: `help <Category/CommandName>(Optional)`,
 	permissionLevel: 0,
     commandpediaButton: `📖`,
-	ignoreGroups: [`Developer`].map(groupName => groupName.toLowerCase()),
+	ignoreGroups: [`developer`],
 	permmissionInteger: 268823638,
     supportServerUrl : `https://discord.gg/7nDes9Pi`, 
     /**
@@ -57,7 +57,7 @@ module.exports = {
 			})
 		}
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
-		const res = await this.findCommandByKeyword(arg, client.commands)
+		const res = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
 		if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
 			socket: {
 				emoji: await client.getEmoji(`692428969667985458`)
@@ -86,7 +86,7 @@ module.exports = {
 	 */
 	async findCommandByKeyword(keyword=``, src={}) {
         //  Find group
-		let parents = src.filter(node => this.ignoreGroup(node.group)).map(node => node.group.toLowerCase())
+		let parents = src.map(node => node.group.toLowerCase())
 		if (parents.includes(keyword)) {
 			this.helpCategory = true
 			return keyword
