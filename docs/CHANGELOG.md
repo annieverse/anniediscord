@@ -1,3 +1,11 @@
+## [7.19.6](https://github.com/klerikdust/anniediscord/compare/v7.19.5...v7.19.6) (2021-06-11)
+
+
+### Bug Fixes
+
+* **help:** leaked private sections. ([e591b3e](https://github.com/klerikdust/anniediscord/commit/e591b3e7a68ef8611e60b4efea7a858487aa41c0))
+* **help:** wrong property. ([61f83c5](https://github.com/klerikdust/anniediscord/commit/61f83c53584a74e73a64039e0e219d2c3f8afe1e))
+
 ## [7.19.5](https://github.com/klerikdust/anniediscord/compare/v7.19.4...v7.19.5) (2021-06-11)
 
 
