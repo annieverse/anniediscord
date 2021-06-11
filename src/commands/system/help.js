@@ -10,7 +10,7 @@ module.exports = {
 	usage: `help <Category/CommandName>(Optional)`,
 	permissionLevel: 0,
     commandpediaButton: `📖`,
-	ignoreGroups: [`Developer`, `modmail`, `Moderation`],
+	ignoreGroups: [`Developer`].map(groupName => groupName.toLowerCase()),
 	permmissionInteger: 268823638,
     supportServerUrl : `https://discord.gg/7nDes9Pi`, 
     /**

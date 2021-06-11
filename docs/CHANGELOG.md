@@ -1,3 +1,11 @@
+## [7.19.4](https://github.com/klerikdust/anniediscord/compare/v7.19.3...v7.19.4) (2021-06-10)
+
+
+### Bug Fixes
+
+* **event:** property crash on messageDeleteBulk. ([196688a](https://github.com/klerikdust/anniediscord/commit/196688a3ecadeff6ea870e27d3b771c7d8ca22fb))
+* **welcomer:** forced dm channel. ([82ff9da](https://github.com/klerikdust/anniediscord/commit/82ff9da010b1d64777b116365d38aaee3bf7a907))
+
 ## [7.19.3](https://github.com/klerikdust/anniediscord/compare/v7.19.2...v7.19.3) (2021-06-09)
 
 
