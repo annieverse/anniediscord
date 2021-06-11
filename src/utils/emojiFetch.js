@@ -36,8 +36,8 @@ const emojiFetch = async (emojiKeyword, client) => {
     const raw = await client.api.guilds(findEmoji.guild).get()
     const guild = new Discord.Guild(client, raw)
     const emoji = (new Discord.GuildEmoji(client, findEmoji, guild)).toString()
-    //  Store on cache for 1 hour
-    await client.db.redis.set(cacheId, emoji, `EX`, 60*60)
+    //  Store on cache for 12 hour
+    await client.db.redis.set(cacheId, emoji, `EX`, (60*60)*12)
     return emoji
 }
 
