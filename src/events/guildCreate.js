@@ -1,17 +1,14 @@
-module.exports = function guildCreate(client, guild) {    
+module.exports = async function guildCreate(client, guild) {    
     client.db.registerGuild(guild)
     client.registerGuildConfigurations(guild.id)
     //  Limit logging utility to support server only
-    if (guild.id !== client.supportServerId) return
-    const logs = guild.configs.get(`LOGS_MODULE`).value 
-    if (!logs) return 
-    const logChannel = client.getGuildLogChannel(guild.id)
-    if (!logChannel) return 
-    //  Perform logging to target guild
-    client.responseLibs(logChannel, true)
-    .send(`Look! a new guild just invited me to their server! I'm so happy! Let's strive for the best!♡`, {
-        header: `${guild.name}@${guild.id}`,
-        thumbnail: guild.iconURL()
-    }) 
+    //  Perform logging to support server
+    client.shard.broadcastEval(`this.channels.cache.has('724732289572929728') ? this.channels.cache.get('724732289572929728').send('NEW_NODE:: ${guild.id}@${guild.name}') : null`)
+    //  Notify owner of the server.
+    const owner = await client.users.fetch(guild.ownerID)
+    client.responseLibs(owner, true)
+    .send(`**Hello!♡** thanks for inviting me to your server!\nTo get your started, type **\`${client.prefix}help\`** in the server to see all my available commands. \n\nBut for further informations, you can try ask it directly to the developers at link below. ${await client.getEmoji(`AnnieHeartHug`)}\n[Join my Support Server!](${client.supportServer})`, {
+        image: `banner_help`
+    })
     .catch(e => e)
 }
