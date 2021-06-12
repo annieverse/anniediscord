@@ -12,7 +12,6 @@ module.exports = {
     commandpediaButton: `📖`,
 	ignoreGroups: [`developer`],
 	permmissionInteger: 268823638,
-    supportServerUrl : `https://discord.gg/7nDes9Pi`, 
     /**
      * Client/Bot invite generator.
      * @param {Client} client Current client instancee.
@@ -46,7 +45,7 @@ module.exports = {
 					reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
 						socket: {
 							prefix: prefix,
-							serverLink: `[Join Support Server](${this.supportServerUrl})`,
+							serverLink: `[Join Support Server](${client.supportServer})`,
 							botInviteLink: `[Invite Annie](${this.getBotInviteUrl(client)})`,
 							commandList: this.prettifyCommandpedia(cmds)
 						},
@@ -95,7 +94,7 @@ module.exports = {
 		if (src.has(keyword)) return src.get(keyword)
 		//  Find by aliases
         const aliasSearch = src.filter(node => node.aliases.includes(keyword))
-        if (aliasSearch.length > 0) return aliasSearch[0]
+        if (aliasSearch.size > 0) return aliasSearch.first()
 		return null
 	},
 

@@ -1,3 +1,25 @@
+## [7.19.9](https://github.com/klerikdust/anniediscord/compare/v7.19.8...v7.19.9) (2021-06-12)
+
+
+### Bug Fixes
+
+* **help:** unable to search individual command. ([c0ab9ea](https://github.com/klerikdust/anniediscord/commit/c0ab9ea9d952c842daff607345d94c59ec48be07))
+
+## [7.19.8](https://github.com/klerikdust/anniediscord/compare/v7.19.7...v7.19.8) (2021-06-11)
+
+
+### Bug Fixes
+
+* **database:** false key register on redis caching init. ([effc248](https://github.com/klerikdust/anniediscord/commit/effc2480bcf04d13527022a07ac7dfddebd18c98))
+
+## [7.19.7](https://github.com/klerikdust/anniediscord/compare/v7.19.6...v7.19.7) (2021-06-11)
+
+
+### Bug Fixes
+
+* **guildCreate:** guide not sent to server owner. ([edfd903](https://github.com/klerikdust/anniediscord/commit/edfd903823c529eefc8438fefa00e5db19bf5de1))
+* updated server invite url. ([4ae13ac](https://github.com/klerikdust/anniediscord/commit/4ae13ac1a467912f6ccfd854598ea25be47fee26))
+
 ## [7.19.6](https://github.com/klerikdust/anniediscord/compare/v7.19.5...v7.19.6) (2021-06-11)
 
 
