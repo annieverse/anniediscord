@@ -70,7 +70,6 @@ module.exports = {
 				thumbnail: client.user.displayAvatarURL()
 			})
 		}
-        console.debug(res)
 		const perm = this.getPermissionProperties(res.permissionLevel, client)
 		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
 		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
