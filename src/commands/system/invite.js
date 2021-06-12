@@ -9,7 +9,6 @@ module.exports = {
 	description: `Generates Support Server & Bot Invitation link`,
 	usage: `invite`,
 	permissionLevel: 0,
-    supportServerUrl: `https://discord.gg/7nDes9P`, 
 	permmissionInteger: 268823638,
     /**
      * Client/Bot invite generator.
@@ -43,7 +42,7 @@ module.exports = {
 		return reply.send(locale.GENERATE_SERVER_INVITE, {
 			simplified: true,
 			socket: {
-				serverLink: this.supportServerUrl,
+				serverLink: client.supportServer,
 				emoji: await client.getEmoji(`692428927620087850`)
 			},
 			field: targetChannel

@@ -137,7 +137,7 @@ class Annie extends Discord.Client {
          * Stores Annie's Support Server invite link.
          * @type {string}
          */ 
-        this.supportServer = `https://discord.gg/7nDes9P`
+        this.supportServer = `https://discord.gg/HjPHCyG346`
 
         /**
          * The guild id for support server.

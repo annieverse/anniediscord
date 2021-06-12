@@ -1097,7 +1097,7 @@ class Database {
                 , `run`
                 , params
             )
-            this.redis.sadd(dailyCacheId, userId)
+            this.redis.sadd(dailyCacheId, key)
         }) 
         const expCacheId = `REGISTERED_USER_EXP_CACHE`
         this.redis.sismember(expCacheId, key).then(res => {
