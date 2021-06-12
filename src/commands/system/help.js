@@ -70,6 +70,7 @@ module.exports = {
 				thumbnail: client.user.displayAvatarURL()
 			})
 		}
+        console.debug(res)
 		const perm = this.getPermissionProperties(res.permissionLevel, client)
 		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
 		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
@@ -94,7 +95,7 @@ module.exports = {
 		if (src.has(keyword)) return src.get(keyword)
 		//  Find by aliases
         const aliasSearch = src.filter(node => node.aliases.includes(keyword))
-        if (aliasSearch.length > 0) return aliasSearch[0]
+        if (aliasSearch.size > 0) return aliasSearch.first()
 		return null
 	},
 
