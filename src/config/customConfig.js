@@ -101,6 +101,17 @@ module.exports = {
             },
             {
                 /**
+                 *  Choose if a image that will be displayed as welcomer's background or not.
+                 *  @type {object}
+                 */
+                name: `WELCOMER_NOIMAGE`,
+                description: `Choose if a image that will be displayed as welcomer's background or not.`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: true
+            },
+            {
+                /**
                  *  The default image that will be displayed as welcomer's background.
                  *  @type {object}
                  */

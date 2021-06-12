@@ -20,7 +20,7 @@ module.exports = {
      * An array of the available options for welcomer module
      * @type {array}
      */
-    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `defaultimage`, `theme`, `preview`],
+    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `defaultimage`, `noimage`, `theme`, `preview`],
 
     /**
      * Reference key to welcomer sub-modules config code.
@@ -34,6 +34,7 @@ module.exports = {
         "role": `WELCOMER_ROLES`,
         "image": `WELCOMER_IMAGE`,
         "defaultimage": `WELCOMER_DEFAULT`,
+        "noimage": `WELCOMER_NOIMAGE`,
         "theme": `WELCOMER_THEME`
     },
     async execute(client, reply, message, arg, locale, prefix) {
@@ -313,6 +314,31 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         await reply.send(locale.SETWELCOMER.DEFAULT_IMAGE_SUCCESSFULLY_REGISTERED, { status: `success` })
+        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, { simplified: true, socket: { emoji: await client.getEmoji(`692428927620087850`) } })
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, tipsToPreview)
+        c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
+    },
+    /**
+     * Set message to be attached in the welcomer.
+     * @return {void}
+     */
+    async noimage(client, reply, message, arg, locale, prefix) {
+        //  Handle if the user hasn't enabled the module yet
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
+
+        //  Update configs
+        let settingValue = this.guildConfigurations.get(this.selectedModule).value
+        settingValue == 1 ? settingValue = 0 : settingValue = 1
+
+        client.db.updateGuildConfiguration({
+            configCode: this.selectedModule,
+            customizedParameter: settingValue,
+            guild: message.guild,
+            setByUserId: message.author.id,
+            cacheTo: this.guildConfigurations
+        })
+        await reply.send(locale.SETWELCOMER.NOIMAGE_SUCCESSFULLY_REGISTERED, { status: `success` })
         const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, { simplified: true, socket: { emoji: await client.getEmoji(`692428927620087850`) } })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, tipsToPreview)

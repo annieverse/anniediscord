@@ -26,9 +26,11 @@ class UI {
             let start_x = 30
             let start_y = 30
             let welcomerBackgroundId = this.backgroundId || this.member.guild.configs.get(`WELCOMER_IMAGE`).value
+            const welcomerImage = this.member.guild.configs.get(`WELCOMER_NOIMAGE`).value
             const userPfpEnabled = this.member.guild.configs.get(`WELCOMER_DEFAULT`).value == `user pfp`
             const isDarkTheme = this.member.guild.configs.get(`WELCOMER_THEME`).value === `dark` ? true : false
             const background = await loadAsset(welcomerBackgroundId, `./src/assets/customWelcomer`)
+            if (!welcomerImage) return
             let canv = new Canvas(800, 250)
 
             const imageCanv = Buffer.from((new Canvas(avatar.width, avatar.height).printImage(avatar, 0, 0).toBuffer()).buffer)
@@ -44,7 +46,8 @@ class UI {
             canv.save()
             canv.save()
                 .createRoundedClip(start_x, start_y, canvas_x - 50, canvas_y - 50, 500)
-                .printImage(userPfpEnabled ? avatar : await resolveImage(background), 0, 0, dynamic.width, dynamic.height)
+
+            .printImage(userPfpEnabled ? avatar : await resolveImage(background), 0, 0, dynamic.width, dynamic.height)
             canv.context.globalAlpha = 0.7
             canv.setColor(isDarkTheme ? palette.nightmode : palette.white)
                 .printRectangle(start_x, start_y, canvas_x - 40, canvas_y - 40)
