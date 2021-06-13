@@ -1,3 +1,10 @@
+## [7.19.9](https://github.com/klerikdust/anniediscord/compare/v7.19.8...v7.19.9) (2021-06-12)
+
+
+### Bug Fixes
+
+* **help:** unable to search individual command. ([c0ab9ea](https://github.com/klerikdust/anniediscord/commit/c0ab9ea9d952c842daff607345d94c59ec48be07))
+
 ## [7.19.8](https://github.com/klerikdust/anniediscord/compare/v7.19.7...v7.19.8) (2021-06-11)
 
 
