@@ -15,18 +15,16 @@ module.exports = {
 	description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
 	usage: `gacha <Amount>`,
 	permissionLevel: 0,
-    loots: [],
     amountToOpenRanges: [1, 10],
     async execute(client, reply, message, arg, locale) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
-        this.args = arg.split(` `)
-    	this.amountToOpen = this.args[0] ? trueInt(this.args[0]) : 1
+        const amountToOpen = arg ? trueInt(arg) : 1
         //  Handle if amount to be opened is out of defined range.
-        if (!this.amountToOpenRanges.includes(this.amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
+        if (!this.amountToOpenRanges.includes(amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
             socket: {emoji: await client.getEmoji(`781504248868634627`)}
         })
         //  Direct roll if user already has the tickets.
-        if (userData.inventory.lucky_ticket >= this.amountToOpen) return this.startsRoll(client, reply, message, arg ,locale)
+        if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, message, arg, locale)
         /**
          * --------------------
          * STARTS PURCHASE CHAINING
@@ -47,7 +45,7 @@ module.exports = {
         const payment = await client.db.getPriceOf(71)
         const paymentItem = await client.db.getItem(payment.item_price_id)
         const userCurrentCurrency = userData.inventory[paymentItem.alias]
-        const amountToPay = payment.price*this.amountToOpen
+        const amountToPay = payment.price*amountToOpen
 
         //  Handle if user doesn't have enough artcoins to buy tickets
         if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
@@ -71,7 +69,7 @@ module.exports = {
             insufficientTicketWarning.delete()
             //  Deduct balance & deliver lucky tickets
             await client.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id})
-            await client.db.updateInventory({itemId: 71, value: this.amountToOpen, userId: message.author.id, guildId: message.guild.id})
+            await client.db.updateInventory({itemId: 71, value: amountToOpen, userId: message.author.id, guildId: message.guild.id})
             this.startsRoll(client, reply, message, arg, locale)
         })
     },
@@ -92,44 +90,47 @@ module.exports = {
             }
         })
         //  Registering loot
-        for (let i=0; i<this.amountToOpen; i++) {
+        let loots = []
+        const drawCount = this.drawCounts(arg)
+        for (let i=0; i<drawCount; i++) {
             const loot = this.getLoot(rewardsPool)
-            this.loots.push(loot)
+            loots.push(loot)
         }
         //  Subtract user's lucky tickets
-        client.db.updateInventory({itemId: 71, value: this.amountToOpen, operation: `-`, userId: message.author.id, guildId: message.guild.id})
+        client.db.updateInventory({itemId: 71, value: drawCount, operation: `-`, userId: message.author.id, guildId: message.guild.id})
         //  Storing received loots into user's inventory
-        for (let i=0; i<this.loots.length; i++) {
-            const item = this.loots[i]
+        for (let i=0; i<loots.length; i++) {
+            const item = loots[i]
             await client.db.updateInventory({itemId: item.item_id, value: item.quantity, userId: message.author.id, guildId: message.guild.id})
         }
 
         //  Displaying result
         reply.send(locale.COMMAND.TITLE, {
             prebuffer: true,
-            image: await new GUI(this.loots, this.drawCounts).build(),
+            image: await new GUI(loots, drawCount).build(),
             simplified: true,
             socket: {
-                command: `has opened ${this.drawCounts} Lucky Tickets!`,
+                command: `has opened ${drawCount} Lucky Tickets!`,
                 user: message.author.username,
                 emoji: await client.getEmoji(`lucky_ticket`)
             }
         })
         fetching.delete()
-        return reply.send(await this.displayDetailedLoots(client), {simplified: true})   
+        return reply.send(await this.displayDetailedLoots(client, loots), {simplified: true})   
     },
 
     /**
-     * Aggregate and prettify this.loots into a readable list.
+     * Aggregate and prettify loots into a readable list.
      * @param {Client} client Current bot/client instance.
+     * @param {object} loots Source loots
      * @returns {string}
      */
-    async displayDetailedLoots(client) {
+    async displayDetailedLoots(client, loots) {
         let str = ``
-        let items = this.loots.map(item => item.name)
+        let items = loots.map(item => item.name)
         let uniqueItems = [...new Set(items)]
         for (let i=0; i<uniqueItems.length; i++) {
-            const item = this.loots.filter(item => item.name === uniqueItems[i])
+            const item = loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
             str += `${await client.getEmoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
@@ -159,9 +160,10 @@ module.exports = {
 
     /**
      * Determine user's gacha counts
-     * type {number}
+     * @param {string} arg
+     * @return {number}
      */
-    get drawCounts() {
-        return !this.args[0] || this.args[0] == 1 ? 1 : 10
+    drawCounts(arg) {
+        return !arg || arg == 1 ? 1 : 10
     }
 }
