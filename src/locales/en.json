@@ -121,7 +121,7 @@
         "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
         "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
         "STILL_COOLDOWN": "**Can we relax for a bit, {{user}}?** {{emoji}}\n╰ You have {{timeLeft}}s left till your next command.",
-        "DISABLED":"I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
+        "DISABLED": "I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
     },
     "CARDCOLLECTION_AUTHOR_EMPTY": "**Aw, your card collection is empty and *full of dust*.** {{emoji}}",
     "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection. {{emoji}}",
@@ -533,8 +533,8 @@
         "HIT_LIMIT_OTHERS": "**So unfortunate.** {{user}} already hitting their max relationships. Go ask them to break one of their relationship first. </3",
         "MISSING_GENDER": "Don't forget to set your gender first!\ne.g. **`{{prefix}}setgender <male/female>`**",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
-		"TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
-		"DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
+        "TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
+        "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
     },
     "REMINDER": {
         "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
@@ -644,18 +644,18 @@
         "SUCCESSFULLY_ENABLED": "Yay! **EXP Leveling Module** has been enabled in this guild! your members will start gaining experience points soon.",
         "ALREADY_DISABLED": "**The EXP Module hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setexp enable`**",
         "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future.",
-		"MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
-		"MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**",
-		"ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?\nBelow is the preview of their updated level card.",
-		"INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
-		"ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",
-		"MISSING_USER_ON_MINUS": "Who's should I subtract the exp from?\ne.g. **`{{prefix}}setexp minus @napu 100`**",
-		"MISSING_AMOUNT_ON_MINUS": "Hey, don't forget to specify the exp!\ne.g. **`{{prefix}}setexp minus @{{user}} 100`**",
-		"INVALID_AMOUNT_TO_MINUS": "Hmm, what even is that. You have to specify a valid number for the subtraction!\ne.g. **`{{prefix}}setexp minus @{{user}} 50`**",
-		"MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?\nBelow is the preview of their updated level card.",
-		"MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
-		"MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
-		"RESET_CONFIRMATION": "Reset {{user}}'s exp account?"
+        "MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
+        "MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**",
+        "ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?\nBelow is the preview of their updated level card.",
+        "INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
+        "ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",
+        "MISSING_USER_ON_MINUS": "Who's should I subtract the exp from?\ne.g. **`{{prefix}}setexp minus @napu 100`**",
+        "MISSING_AMOUNT_ON_MINUS": "Hey, don't forget to specify the exp!\ne.g. **`{{prefix}}setexp minus @{{user}} 100`**",
+        "INVALID_AMOUNT_TO_MINUS": "Hmm, what even is that. You have to specify a valid number for the subtraction!\ne.g. **`{{prefix}}setexp minus @{{user}} 50`**",
+        "MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?\nBelow is the preview of their updated level card.",
+        "MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
+        "MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
+        "RESET_CONFIRMATION": "Reset {{user}}'s exp account?"
     },
     "SETGUILDBIO": {
         "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
@@ -725,7 +725,7 @@
         "INVALID_ACTION": "Sorry, but I don't recognize that action. :(",
         "ALREADY_ENABLED": "This module has been enabled by **{{user}}, {{date}}**",
         "ALREADY_DISABLED": "**The Custom Rank has not been enabled yet♡**\nTo enable, type **`{{prefix}}setrank enable`**",
-        "HEADER_INFO": "Custom Rank Module", 
+        "HEADER_INFO": "Custom Rank Module",
         "RESET_NULL_RANKS": "Sorry! It's not like I dont wanna do it ... but this guild doesn't have any registered ranks for me to reset-",
         "RESET_CONFIRMATION": "This will delete all custom ranks in the guild, are you sure you want to perform this action?",
         "RESET_CONFIRMATION_WARN": "The effect cannot be undone once you pressed the green button.",
@@ -764,13 +764,31 @@
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
         "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}",
         "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
-		"IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
-		"IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
-		"CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
-		"IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
-		"THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
-		"THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
-		"THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!"
+        "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
+        "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
+        "CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
+        "THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
+        "THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
+        "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!"
+    },
+    "SETSHOP": {
+        "GUIDE": "Use one of the following action to start setup shop module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setshop text <message>`**\n> You can make a unique customized shop message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setshop text Hi, cuttie {{user}}, Welcome to our very own item shop!__\n\n**`{{prefix}}setshop remove <item id>`**\n> Wanna remove a specific item?\ne.g. __{{prefix}}setshop remove 1__\n\n**`{{prefix}}setshop add <item name>;<item description>;<price>`**\n> Let's setup some sweet items that can be purchased!\ne.g. __{{prefix}}setshop add bread; a nice loaf of bread; 300__\n\n**`{{prefix}}setshop edit <item id>`**\n> Forgot to enable a option or want to add/remove an option!\ne.g. __{{prefix}}setshop edit 1__\n\n**`{{prefix}}setshop image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the shop. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setshop disable`**\n> Dont wanna utilize your own shop? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
+        "ALREADY_ENABLED": "The Shop already enabled by **{{user}}, {{date}}**",
+        "SUCCESSFULLY_ENABLED": "**Shop Module** has been successfully enabled in this guild!",
+        "ALREADY_DISABLED": "**Shop hasn't been enabled yet in this guild.**\nTo enable it, use **`{{prefix}}setshop enable`**",
+        "SUCCESSFULLY_DISABLED": "**Shop Module** has been successfully disabled in this guild!",
+        "EMPTY_ROLE_PARAMETER": "Need to update",
+        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
+        "ROLE_SUCCESSFULLY_REGISTERED": "Need to update",
+        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the shop!\neg. `{{prefix}}setshop text welcome to our item shop!`",
+        "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's shop message has been updated!",
+        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
+        "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the shop! {{emoji}}\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
+        "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
+        "CONFIRMATION_IMAGE": "Apply the following image as shop's background?",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for shop has been applied!"
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
@@ -794,7 +812,7 @@
         "NO_MATCHING_KEYWORD": "**Sorry- i can't find any theme with that name.** {{emoji}}",
         "NO_THEME_OWNED": "Sorry but it seems you dont own this item, you can visit the shop to buy it though.",
         "ALREADY_THAT_THEME": "You are currently using this theme, *baka.* {{emoji}}",
-        "NO_THEMES_OWNED":"Sorry but it seems you dont own any themes"
+        "NO_THEMES_OWNED": "Sorry but it seems you dont own any themes"
     },
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
