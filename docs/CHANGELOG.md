@@ -1,3 +1,10 @@
+## [7.19.10](https://github.com/klerikdust/anniediscord/compare/v7.19.9...v7.19.10) (2021-06-13)
+
+
+### Bug Fixes
+
+* **gacha:** infinite roll amount. ([f15400e](https://github.com/klerikdust/anniediscord/commit/f15400ea321a91a090afa5c8ae12ce4e9fb2141a))
+
 ## [7.19.9](https://github.com/klerikdust/anniediscord/compare/v7.19.8...v7.19.9) (2021-06-12)
 
 
