@@ -124,23 +124,6 @@ class Database {
 		redisClient.on(`connect`, async () => {
 			logger.info(`REDIS <CONNECTED>`)
 			this.redis = redisClient
-            const getKeyEntryOf = async (tableName) => {
-                const res = tableName === `users` 
-                    ? await this._query(`SELECT user_id FROM users`, `all`)
-                    : await this._query(`SELECT user_id, guild_id FROM ${tableName}`, `all`)
-                return tableName === `users`
-                    ? res.map(node => node.user_id)
-                    : res.map(node => node.user_id + `@` + node.guild_id)
-            }
-            //  Loading registered entries set as cache
-            const userCacheId = `REGISTERED_USERS_CACHE`
-            if ((await this.redis.exists(userCacheId)) === 0) this.redis.sadd(userCacheId, await getKeyEntryOf(`users`), logger.info(`${userCacheId} loaded`))
-            const dailyCacheId = `REGISTERED_USER_DAILIES_CACHE`
-            if ((await this.redis.exists(dailyCacheId)) === 0) this.redis.sadd(dailyCacheId, await getKeyEntryOf(`user_dailies`), logger.info(`${dailyCacheId} loaded`)) 
-            const expCacheId = `REGISTERED_USER_EXP_CACHE`
-            if ((await this.redis.exists(expCacheId)) === 0) this.redis.sadd(expCacheId, await getKeyEntryOf(`user_exp`), logger.info(`${expCacheId} loaded`)) 
-            const repCacheId = `REGISTERED_USER_REPUTATION_CACHE` 
-            if ((await this.redis.exists(repCacheId)) === 0) this.redis.sadd(repCacheId, await getKeyEntryOf(`user_reputations`), logger.info(`${repCacheId} loaded`)) 
 		})
 	}
 
@@ -1047,82 +1030,27 @@ class Database {
 		)
 	}
 
-    /**
-     * Verify whether the user data has completed or not.
-     * @param {string} userId Target user
-     * @param {string} guildId Target user guild
-     * @return {boolean|number}
-     */
-    async isUserDataCompleted(userId, guildId) {
-        const primary = await this.redis.sismember(`REGISTERED_USERS_CACHE`, userId) 
-        const key = userId + `@` + guildId
-        const dailies = await this.redis.sismember(`REGISTERED_USER_DAILIES_CACHE`, key) 
-        const exp = await this.redis.sismember(`REGISTERED_USER_EXP_CACHE`, key) 
-        const reps = await this.redis.sismember(`REGISTERED_USER_REPUTATIONS_CACHE`, key) 
-        return primary && dailies && exp && reps
-    }
-
 	/**
 	 * Register a user into user-tree tables if doesn't exist.
 	 * @param {string} [userId=``] User's discord id.
-	 * @param {string} [guildId=``] the guild where user get registered.
 	 * @param {string} [userName=``] User's username. Purposely used when fail to fetch user by id.
-     * @param {boolean} [forceCheck=false] Ignore 12 hours interval and force to check the user data.
 	 * @returns {void}
 	 */
-	async validateUser(userId=``, guildId=``, userName=``, forceCheck=false) {
-		const fn = `[Database.validateUser()]`
-		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
-		if (!userName) throw new TypeError(`${fn} parameter "userName" is not provided.`)
-        const userCacheId = `REGISTERED_USERS_CACHE`
-        if ((await this.redis.sismember(userCacheId, userId)) === 0) {
-            this._query(`
-                INSERT INTO users(user_id, name)
-                SELECT $userId, $userName
-                WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
-                , `run`
-                , {userId: userId, userName: userName}
-            ).then(() => this.redis.sadd(userCacheId, userId))
-        } 
-        const params = {userId: userId, guildId: guildId}
-        const key = userId + `@` + guildId
-        const dailyCacheId = `REGISTERED_USER_DAILIES_CACHE`
-        this.redis.sismember(dailyCacheId, key).then(res => {
-            if (res) return
-            this._query(`
-                INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
-                SELECT datetime('now','-1 day'), -1, $userId, $guildId
-                WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
-                , `run`
-                , params
-            )
-            this.redis.sadd(dailyCacheId, key)
-        }) 
-        const expCacheId = `REGISTERED_USER_EXP_CACHE`
-        this.redis.sismember(expCacheId, key).then(res => {
-            if (res) return
-            this._query(`
-                INSERT INTO user_exp(user_id, guild_id)
-                SELECT $userId, $guildId
-                WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
-                , `run`
-                , params
-            )
-            this.redis.sadd(expCacheId, key)
-        })
-        const repCacheId = `REGISTERED_USER_REPUTATIONS_CACHE`
-        this.redis.sismember(repCacheId, key).then(res => {
-            if (res) return
-            this._query(`
-                INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
-                SELECT datetime('now','-1 day'), $userId, $guildId
-                WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
-                , `run`
-                , params
-            )	
-            this.redis.sadd(repCacheId, key)
-        })
+	async validateUserEntry(userId=``, userName=``) {
+        //  Check on cache
+        const key = `VALIDATED_USERID`
+        const onCache = await this.redis.sismember(key, userId)
+        //  if true/registered, skip database hit.
+        if (onCache) return 
+        const res = await this._query(`
+            INSERT INTO users(user_id, name)
+            SELECT $userId, $userName
+            WHERE NOT EXISTS (SELECT 1 FROM users WHERE user_id = $userId)`
+            , `run`
+            , {userId: userId, userName: userName}
+        )
+        if (res.changes) logger.info(`USER_ID:${userId} registered`) 
+        this.redis.sadd(key, userId)
     }
 
 	/**
@@ -1141,65 +1069,6 @@ class Database {
 			, `Deleting USER_ID ${userId} from database`
 		)
 	}
-
-	/**
-	 * Registering user's secondary tables data.
-	 * @param {string} [userId=``] User's discord id.
-	 * @private
-	 * @returns {QueryResult}
-	 */
-	async _registerUserSecondaryData(userId=``, guildId=``, table) {
-		const fn = `[Database._registerNewUser()]`
-		if (!userId) throw new TypeError(`${fn} parameter "userId" is not provided.`)
-		if (!guildId) throw new TypeError(`${fn} parameter "guildId" is not provided.`)
-		if (table == `user_dailies`){
-			await this._query(`
-				INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
-				SELECT datetime('now','-1 day'), -1, $userId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
-				, `run`
-				, {userId: userId, guildId: guildId}
-				, `Registering USER_ID ${userId} into user_dailies table`
-			)
-		}
-		if (table == `user_exp`){
-			await this._query(`
-				INSERT INTO user_exp(user_id, guild_id)
-				SELECT $userId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
-				, `run`
-				, {userId: userId, guildId: guildId}
-				, `Registering USER_ID ${userId} into user_exp table`
-			)
-		}
-		
-		if (table == `user_reputations`){
-			await this._query(`
-				INSERT INTO user_reputations(last_giving_at, user_id, guild_id)
-				SELECT datetime('now','-1 day'), $userId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
-				, `run`
-				, {userId: userId, guildId: guildId}
-				, `Registering USER_ID ${userId} into user_reputations table`
-			)	
-		}
-		
-	}
-
-	/**
-	 * Updating user's last_login.
-	 * @param {string} [userId=``] User's discord id.
-	 * @returns {QueryResult}
-	 */
-	async updateLastLogin(userId=``) {
-		return this._query(`
-			UPDATE users
-			SET last_login_at = datetime('now')
-			WHERE user_id = ?`
-			, `run`
-			, [userId]
-		)
-	}	 
 
 	/**
 	 * Updating user's bio
@@ -1221,57 +1090,68 @@ class Database {
 		)
 	}
 
-	/**
-	 * Updating user's linked social media
-	 * @param {string} [type=``] User's social media type (EXAMPLE: "twitter", "facebook", "kitsu").
-	 * @param {string} [url=``] User's social media url.
-	 * @param {string} [userId=``] User's discord id.
+    /** -------------------------------------------------------------------------------
+	 *  User's Reputations Method
+	 *  -------------------------------------------------------------------------------
+	 */	
+    
+    /**
+	 * Pull user's reputations metadata
+	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async setUserSocialMedia(type=``, url=``, userId=``) {
-		const fn = `[Database.setUserSocialMedia()]`
-		let res = {
-			//	Insert if no data entry exists.
-			insert: await this._query(`
-				INSERT INTO user_socialmedias(user_id, account_type, url)
-				SELECT $userId, $type, $url
-				WHERE NOT EXISTS (SELECT 1 FROM user_socialmedias WHERE user_id = $userId AND account_type = $type)`
-				, `run`
-				, {userId: userId, type: type, url: url}
-			),
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
-				UPDATE user_socialmedias
-				SET url = ?, account_type = ?
-				WHERE user_id = ?`
-				, `run`
-				, [url, type, userId]
-			)
-		}
-
-		const stmtType = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
-		logger.info(`${fn} ${stmtType} (TYPE:${type})(URL:${url}) | USER_ID ${userId}`)
-		return true
+	async getUserReputation(userId=``, guildId=``) {
+		//  Otherwise fetch from db and store it to cache for later use.
+		const query = () => this._query(`
+            SELECT *
+            FROM user_reputations
+            WHERE user_id = ?
+            AND guild_id = ?`
+            , `get`
+            , [userId, guildId]
+        )
+        let reps = await query()
+        if (reps === null) {
+            //  Register new entry and refetch
+            await this.updateUserReputation(0, userId, null, guildId)
+            reps = await query() 
+        }
+		//  Store for 12 hours expire
+		return reps
 	}
 	
 	/**
-	 * Adding user's reputation points into `user_reputations` table
+	 * Updating user's reputation points into `user_reputations` table
 	 * @param {number} [amount=0] amount to be added
 	 * @param {string} [userId=``] target user's discord id
 	 * @param {string} [givenBy=null] giver user's discord id. Optional
-	 * @returns {QueryResult}
+     * @param {string} [guildId=``] Target user's guild id
+     * @param {string} [operation=`+`] Set `-` to subtract target reputation points.
+	 * @returns {void}
 	 */
-	addUserReputation(amount=0, userId=``, givenBy=null, guildId=``) {
-		return this._query(`
-			UPDATE user_reputations 
-			SET 
-				total_reps = total_reps + ?,
-				last_received_at = datetime('now'),
-				recently_received_by = ?
-			WHERE user_id = ? AND guild_id = ?`
-			, `run`
-			, [amount, givenBy, userId, guildId]
-		)
+	async updateUserReputation(amount=0, userId=``, givenBy=null, guildId=``, operation=`+`) {
+        const res = {
+            update: await this._query(`
+                UPDATE user_reputations 
+                SET 
+                    total_reps = total_reps + ?,
+                    last_received_at = datetime('now'),
+                    recently_received_by = ?
+                WHERE user_id = ? AND guild_id = ?`
+                , `run`
+                , [amount, givenBy, userId, guildId]
+            ),
+            insert: await this._query(`
+                INSERT INTO user_reputations(last_giving_at, user_id, guild_id, total_reps)
+                SELECT datetime('now','-1 day'), $userId, $guildId, $amount
+                WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId:userId, guildId:guildId, amount:amount}
+            )
+        }
+		//  Refresh cache 
+		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		logger.info(`[UPDATE_USER_REPS][${type}](${operation}) (REPS:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -1279,33 +1159,82 @@ class Database {
 	 * @param {string} [userId=``] target user's discord id
 	 * @returns {QueryResult}
 	 */
-	updateReputationGiver(userId=``,guildId=``) {
+	updateReputationGiver(userId=``, guildId=``) {
 		return this._query(`
 			UPDATE user_reputations 
-			SET 
-				last_giving_at = datetime('now')
-			WHERE user_id = ? AND guild_id = ?`
+			SET last_giving_at = datetime('now')
+			WHERE user_id = ? 
+            AND guild_id = ?`
 			, `run`
 			, [userId, guildId]
 		)
 	}
 
+    /** -------------------------------------------------------------------------------
+	 *  User's Dailies Method
+	 *  -------------------------------------------------------------------------------
+	 */	
+
+    /**
+	 * Pull user's dailies metadata. Will use cache in available.
+	 * @param {string} [userId=``] target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async getUserDailies(userId=``, guildId =``) {
+        //  Check for cache availability
+        const key = `DAILIES_${userId}@${guildId}`
+        const onCache = await this.redis.get(key)
+        if (onCache) return JSON.parse(onCache)
+        const stmt = `SELECT * FROM user_dailies WHERE user_id = ? AND guild_id = ?`
+        const query = () => this._query(`
+            SELECT *
+            FROM user_dailies
+            WHERE user_id = ?
+            AND guild_id =?`
+            , `get`
+            , [userId, guildId]
+        )
+		let res = await query()
+        if (res === null) {
+            //  Register new entry then refetch
+            await this.updateUserDailies(0, userId, guildId)
+            res = await query()
+        }
+        //  Cache for 12 hours
+        this.redis.set(key, JSON.stringify(res))
+        return res
+	}
+
 	/**
 	 * Adds new streak data and updating the timestamp for user dailies.
 	 * @param {number} [streak=0] the amount of dailies streak to be set to `user_dailies.total_streak`
-	 * @param {string} [user_id=``] target user's discord id
-	 * @returns {QueryResult}
+	 * @param {string} [userId=``] target user's discord id
+     * @param {string} [guildId=``] Target user's guild id
+	 * @returns {void}
 	 */
-	updateUserDailies(streak=0, userId=``, guildId=``) {
-		return this._query(`
-			UPDATE user_dailies 
-			SET 
-				updated_at = datetime('now'),
-				total_streak = ?
-			WHERE user_id = ? AND guild_id = ?`
-			, `run`
-			, [streak, userId, guildId]
-		)
+	async updateUserDailies(streak=0, userId=``, guildId=``) {
+        const res = {
+            update: await this._query(`
+                UPDATE user_dailies 
+                SET 
+                    updated_at = datetime('now'),
+                    total_streak = ?
+                WHERE user_id = ? AND guild_id = ?`
+                , `run`
+                , [streak, userId, guildId]
+            ),
+            insert: await this._query(`
+                INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
+                SELECT datetime('now','-1 day'), -1, $userId, $guildId
+                WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId:userId, guildId:guildId}
+            )
+        }
+        //  Refresh cache
+		this.redis.del(`DAILIES_${userId}@${guildId}`) 
+		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		logger.info(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -1644,12 +1573,6 @@ class Database {
 		)
 	}
 
-	/**
-	 * 
-	 * END OF MODMAIL PLUGIN
-	 * 
-	 */
-
 	/** -------------------------------------------------------------------------------
 	 *  User's Experience Points Method
 	 *  -------------------------------------------------------------------------------
@@ -1662,76 +1585,61 @@ class Database {
 	 * @returns {QueryResult}
 	 */
 	async getUserExp(userId=``, guildId=``) {
-		const initTime = process.hrtime()
-		const fn = `[DB@GET_USER_EXP]`
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
-		const cache = await this.getCache(key)
-		if (cache !== null) {
-			logger.debug(`${fn} retrieved ${key} from cache (${getBenchmark(initTime)})`)
-			return JSON.parse(cache)
-		}
+		const cache = await this.redis.get(key)
+		if (cache) return JSON.parse(cache)
 		//  Otherwise fetch from db and store it to cache for later use.
-		const exp = await this._query(`
-			SELECT * FROM user_exp 
-			WHERE user_id = ? AND guild_id = ?`
-			, `get`
-			, [userId, guildId]
-		)
+		const query = () => this._query(`
+            SELECT *
+            FROM user_exp
+            WHERE user_id = ?
+            AND guild_id = ?`
+            , `get`
+            , [userId, guildId]
+        )
+        let exp = await query()
+        if (exp === null) {
+            //  Register new entry and refetch
+            await this.updateUserExp(0, userId, guildId)
+            exp = await query() 
+        }
 		//  Store for 1 minute expire
-		await this.redis.set(key, JSON.stringify(exp), `EX`, 60)
-		logger.debug(`${fn} retrieved ${key} from database (${getBenchmark(initTime)})`)
+		this.redis.set(key, JSON.stringify(exp), `EX`, 60)
 		return exp
 	}
 
 	/**
-	 * Adding user's experience points.
+	 * Updating user's experience points.
 	 * @param {number} [amount=0] Amount to be added.
 	 * @param {string} [userId=``] Target user's discord id.
 	 * @param {string} [guildId=``] Target guild id.
+     * @param {string} [operation=`+`] Set as `-` to do exp substraction.
 	 * @returns {QueryResult}
 	 */
-	addUserExp(amount=0, userId=``, guildId=``) {
-		const fn = `[DB@ADD_USER_EXP]`
-		const key = `EXP_${userId}@${guildId}`
-		//  Update on database.
-		const dbTime = process.hrtime()
-		this._query(`
-			UPDATE user_exp 
-			SET current_exp = current_exp + ?
-			WHERE 
-				user_id = ?
-				AND guild_id = ?`
-			, `run`
-			, [amount, userId, guildId]
-		).then(() => logger.debug(`${fn} ${key} - ${amount}EXP (${getBenchmark(dbTime)})`))
-		//  Refresh cache by deleting it
-		this.redis.del(key) 
-	}
-
-	/**
-	 * Subtracting user's experience points.
-	 * @param {number} [amount=0] Amount to subtract.
-	 * @param {string} [userId=``] Target user's discord id.
-	 * @param {string} [guildId=``] Target guild id.
-	 * @returns {QueryResult}
-	 */
-	subtractUserExp(amount=0, userId=``, guildId=``) {
-		const fn = `[Database.subtractUserExp]`
-		const key = `EXP_${userId}@${guildId}`
-		//  Update on database.
-		const dbTime = process.hrtime()
-		this._query(`
-			UPDATE user_exp 
-			SET current_exp = current_exp - ?
-			WHERE 
-				user_id = ?
-				AND guild_id = ?`
-			, `run`
-			, [amount, userId, guildId]
-		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
-		//  Refresh cache by deleting it
-		this.redis.del(key) 
+	async updateUserExp(amount=0, userId=``, guildId=``, operation=`+`) {
+        const res = {
+            update: await this._query(`
+                UPDATE user_exp 
+                SET current_exp = current_exp ${operation} ?
+                WHERE 
+                    user_id = ?
+                    AND guild_id = ?`
+                , `run`
+                , [amount, userId, guildId]
+            ),
+            insert: await this._query(`
+                INSERT INTO user_exp(user_id, guild_id, current_exp)
+                SELECT $userId, $guildId, $amount
+                WHERE NOT EXISTS (SELECT 1 FROM user_exp WHERE user_id = $userId AND guild_id = $guildId)`
+                , `run`
+                , {userId:userId, guildId:guildId, amount:amount}
+            )
+        }
+		//  Refresh cache 
+		this.redis.del(`EXP_${userId}@${guildId}`) 
+		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		logger.info(`[UPDATE_USER_EXP][${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -1889,7 +1797,6 @@ class Database {
 			VALUES (datetime('now'), ?, ?, ?, ?)`
 			, `run`
 			, [user_id, guild_id, command_alias, resolved_in]
-			, `Recording command usage`
 		)
 	}
 
@@ -1989,36 +1896,8 @@ class Database {
 		)
 	}
 
-	/**
-	 * Pull user's dailies metadata
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getUserDailies(userId=``, guildId =``) {
-		return this._query(`
-			SELECT *
-			FROM user_dailies
-			WHERE user_id = ? AND guild_id = ?`
-			, `get`
-			, [userId, guildId]
-		)
-	}
-
-	/**
-	 * Pull user's reputations metadata
-	 * @param {string} [userId=``] target user's discord id
-	 * @returns {QueryResult}
-	 */
-	async getUserReputations(userId=``, guildId=``) {
-		return this._query(`
-			SELECT *
-			FROM user_reputations
-			WHERE user_id = ? AND guild_id = ?`
-			, `get`
-			, [userId, guildId]
-		)
-	}
-
+	
+	
 	/**
 	 * Pull user's social media metadata
 	 * @param {string} [userId=``] target user's discord id
@@ -2164,7 +2043,6 @@ class Database {
 			LIMIT 1`
 			, `get`
 			, {keyword: keyword}	
-			, `Looking up for an item with keyword "${keyword}"`
 		)
 	}
 

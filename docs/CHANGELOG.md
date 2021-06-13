@@ -1,3 +1,11 @@
+## [7.19.11](https://github.com/klerikdust/anniediscord/compare/v7.19.10...v7.19.11) (2021-06-13)
+
+
+### Bug Fixes
+
+* **stats:** update cache key. ([1a1462b](https://github.com/klerikdust/anniediscord/commit/1a1462b80d49d042961d230424aee30d55576918))
+* **user:** incomplete data registers for new user. ([e443d5b](https://github.com/klerikdust/anniediscord/commit/e443d5bfe85031a48549711fb915e5361b16666d))
+
 ## [7.19.10](https://github.com/klerikdust/anniediscord/compare/v7.19.9...v7.19.10) (2021-06-13)
 
 

@@ -169,7 +169,7 @@ module.exports = {
         await c.setup(message.author.id, confirmation)
         c.onAccept(() => {
             expLib.updateRank(newData.level)
-    		client.db.subtractUserExp(amountToSubtract, targetUser.master.id, message.guild.id)
+    		client.db.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
  			reply.send(``, {
  				customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
  			})
