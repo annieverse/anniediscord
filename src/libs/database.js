@@ -1,5 +1,6 @@
 const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
+const fs = require(`fs`)
 const logger = require(`pino`)({name: `DATABASE`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
@@ -105,8 +106,20 @@ class Database {
 		 * If file is not found, throw an error.
 		 */
 		accessSync(join(__dirname, fsPath), constants.F_OK)
-		this.client = new SqliteClient(path)
+		this.client = new SqliteClient(path, { timeout:10000 })
+        this.client.pragma(`journal_mode = WAL`)
+        this.client.pragma(`synchronous = FULL`)
         logger.info(`SQLITE <CONNECTED>`)
+        //  Refresh wal checkpoint if exceeds the threeshold once very 30 seconds.
+        setInterval(fs.stat.bind(null, path, (err, stat) => {
+            if (err) {
+                if (err.code !== `ENOENT`) throw err
+            // 1e+8 equals to 100 megabytes. 
+            }
+            if (stat.size > 2e+9) {
+                this.client.pragma(`wal_checkpoint(RESTART)`)
+            }
+        }), 30000).unref()
 		this.connectRedis()
 		return this
 	}
@@ -172,25 +185,17 @@ class Database {
 	 * 	@param {string} [type=`get`] `get` for single result, `all` for multiple result
 	 * 	and `run` to execute statement such as UPDATE/INSERT/CREATE.
 	 * 	@param {array} [supplies=[]] parameters to be supplied into sql statement.
-	 *  @param {boolean} [rowsOnly=false] set this to `true` to remove stmt property from returned result. Optional for debugging purposes.
-	 *  @param {boolean} [ignoreError=false] set this to `true` to keep the method running even when the error occurs. Optional
 	 *  @private
-	 *  @returns {QueryResult}
+	 *  @returns {QueryResult|null}
 	 */
-	async _query(stmt=``, type=`get`, supplies=[], label=``, rowsOnly=true, ignoreError=false) {
+	async _query(stmt=``, type=`get`, supplies=[]) {
 		//	Return if no statement has found
 		if (!stmt) return null
-		try {
-			let result = await this.client.prepare(stmt)[type](supplies)
-            if (label) logger.info(label)
-			if (!result) return null
-			if (!rowsOnly) result.stmt = stmt
-			return result
-		}
-		catch (e) {
-			if (ignoreError) return
-			throw e
-		}
+        const que = this.client.prepare(stmt)
+        const fn = this.client.transaction(params => que[type](params))
+        const result = await fn(supplies) 
+        if (!result) return null
+        return result
 	}
 
 	/**
