@@ -1,3 +1,15 @@
+# [7.20.0](https://github.com/klerikdust/anniediscord/compare/v7.19.12...v7.20.0) (2021-06-14)
+
+
+### Features
+
+* **setWelcomer:** added option for noimage and user profile picture as background. ([a34a86d](https://github.com/klerikdust/anniediscord/commit/a34a86d39633970333b364aae4dec0924cd3b517))
+
+
+### Performance Improvements
+
+* **setwelcomer:** added a second default option ([7b2a7d3](https://github.com/klerikdust/anniediscord/commit/7b2a7d3ff71881e31a72c13b45ebaa72e70cca05))
+
 ## [7.19.12](https://github.com/klerikdust/anniediscord/compare/v7.19.11...v7.19.12) (2021-06-14)
 
 
