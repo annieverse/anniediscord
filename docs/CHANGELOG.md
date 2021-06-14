@@ -1,3 +1,15 @@
+## [7.19.12](https://github.com/klerikdust/anniediscord/compare/v7.19.11...v7.19.12) (2021-06-14)
+
+
+### Bug Fixes
+
+* **user:** removed keyword typecheck to prevent command from breaking. ([5293808](https://github.com/klerikdust/anniediscord/commit/529380895b5fb8664963a8579edb395945a13221))
+
+
+### Performance Improvements
+
+* **database:** wrap query into transaction and enable WAL mode. ([b2adc57](https://github.com/klerikdust/anniediscord/commit/b2adc5712862fb902e3a2deb840eb839da79c2c3))
+
 ## [7.19.11](https://github.com/klerikdust/anniediscord/compare/v7.19.10...v7.19.11) (2021-06-13)
 
 
