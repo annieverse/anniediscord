@@ -29,8 +29,6 @@ class User {
      * @returns {object}
      */
 	async lookFor(target, localPool=null) {
-        const fn = `[User.lookFor()]`
-        if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
         target = target.toLowerCase()
         //  This line will normalize the keyword for searching user.
         //  So, if the keyword has '#' in it and followed up by 4 numbers (0 - 3 indexes), then only trim the rest (example: naph#7790 -> naph)
