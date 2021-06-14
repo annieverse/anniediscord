@@ -10,9 +10,8 @@ module.exports = {
      * @type {object}
      */
     get availableConfigurations() {
-        return [
-            {
-               /**
+        return [{
+                /**
                  *  A module that enables Logging System in the guild
                  *  @type {object}
                  */
@@ -56,7 +55,7 @@ module.exports = {
                 value: 0
             },
             {
-               /**
+                /**
                  *  The content of the message that going to be displayed when a user has joined guild
                  *  @type {object}
                  */
@@ -98,8 +97,31 @@ module.exports = {
                 description: `The image that will be displayed as welcomer's background`,
                 customizable: true,
                 allowedTypes: [`string`],
-                value: `welcomer` 
+                value: `welcomer`
             },
+            {
+                /**
+                 *  Toggle a welcomer without any image. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_NOIMAGE`,
+                description: `Toggle a welcomer without any image`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: false
+            },
+            {
+                /**
+                 *  Toggle a welcomer with user's profile picture as the background.
+                 *  @type {object}
+                 */
+                name: `WELCOMER_USERIMAGE`,
+                description: `Toggle a welcomer with user's profile picture as the background`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: false
+            },
+
             {
                 /**
                  *  Define light or dark overlay for the welcomer. 
@@ -109,7 +131,7 @@ module.exports = {
                 description: `Define light or dark overlay for the welcomer`,
                 customizable: true,
                 allowedTypes: [`string`],
-                value: `light` 
+                value: `light`
             },
             {
                 /**
@@ -202,257 +224,257 @@ module.exports = {
             },
             {
                 /**
-                  *  A module that enables Logging System in the guild for creation of channels
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_CREATE`,
-                 description: `A module that enables Logging System in the guild for creation of channels`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 1
-             },
-             {
+                 *  A module that enables Logging System in the guild for creation of channels
+                 *  @type {object}
+                 */
+                name: `CHANNEL_CREATE`,
+                description: `A module that enables Logging System in the guild for creation of channels`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 1
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for deletion of channels
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_DELETE`,
-                 description: `A module that enables Logging System in the guild for deletion of channels`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for deletion of channels
+                 *  @type {object}
+                 */
+                name: `CHANNEL_DELETE`,
+                description: `A module that enables Logging System in the guild for deletion of channels`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for updates to existing channels
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES`,
-                 description: `A module that enables Logging System in the guild for updates to existing channels`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for updates to existing channels
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES`,
+                description: `A module that enables Logging System in the guild for updates to existing channels`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when the channel name is changed
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES_NAME`,
-                 description: `A module that enables Logging System in the guild for when the channel name is changed`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when the channel name is changed
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES_NAME`,
+                description: `A module that enables Logging System in the guild for when the channel name is changed`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when the channel topic is changed
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES_TOPIC`,
-                 description: `A module that enables Logging System in the guild for when the channel topic is changed`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when the channel topic is changed
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES_TOPIC`,
+                description: `A module that enables Logging System in the guild for when the channel topic is changed`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when the channel explicient filter is changed
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES_NSFW`,
-                 description: `A module that enables Logging System in the guild for when the channel explicient filter is changed`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when the channel explicient filter is changed
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES_NSFW`,
+                description: `A module that enables Logging System in the guild for when the channel explicient filter is changed`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when the channel type is changed
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES_TYPE`,
-                 description: `A module that enables Logging System in the guild for when the channel type is changed`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when the channel type is changed
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES_TYPE`,
+                description: `A module that enables Logging System in the guild for when the channel type is changed`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when the channel postions is changed into or out of a category
-                  *  @type {object}
-                  */
-                 name: `CHANNEL_UPDATES_CATEGORY`,
-                 description: `A module that enables Logging System in the guild for when the channel postions is changed into or out of a category`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when the channel postions is changed into or out of a category
+                 *  @type {object}
+                 */
+                name: `CHANNEL_UPDATES_CATEGORY`,
+                description: `A module that enables Logging System in the guild for when the channel postions is changed into or out of a category`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for emoji creations
-                  *  @type {object}
-                  */
-                 name: `EMOJI_CREATE`,
-                 description: `A module that enables Logging System in the guild for emoji creations`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for emoji creations
+                 *  @type {object}
+                 */
+                name: `EMOJI_CREATE`,
+                description: `A module that enables Logging System in the guild for emoji creations`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for emoji deletions
-                  *  @type {object}
-                  */
-                 name: `EMOJI_DELETE`,
-                 description: `A module that enables Logging System in the guild for emoji deletions`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for emoji deletions
+                 *  @type {object}
+                 */
+                name: `EMOJI_DELETE`,
+                description: `A module that enables Logging System in the guild for emoji deletions`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for emoji name changes
-                  *  @type {object}
-                  */
-                 name: `EMOJI_UPDATE`,
-                 description: `A module that enables Logging System in the guild for emoji name changes`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for emoji name changes
+                 *  @type {object}
+                 */
+                name: `EMOJI_UPDATE`,
+                description: `A module that enables Logging System in the guild for emoji name changes`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for events like prune/purge of messages
-                  *  @type {object}
-                  */
-                 name: `MESSAGE_DELETE_BULK`,
-                 description: `A module that enables Logging System in the guild for events like prune/purge of messages`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for events like prune/purge of messages
+                 *  @type {object}
+                 */
+                name: `MESSAGE_DELETE_BULK`,
+                description: `A module that enables Logging System in the guild for events like prune/purge of messages`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a message is deleted
-                  *  @type {object}
-                  */
-                 name: `MESSAGE_DELETE`,
-                 description: `A module that enables Logging System in the guild for when a message is deleted`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when a message is deleted
+                 *  @type {object}
+                 */
+                name: `MESSAGE_DELETE`,
+                description: `A module that enables Logging System in the guild for when a message is deleted`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a message is edited
-                  *  @type {object}
-                  */
-                 name: `MESSAGE_UPDATE`,
-                 description: `A module that enables Logging System in the guild for when a message is edited`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when a message is edited
+                 *  @type {object}
+                 */
+                name: `MESSAGE_UPDATE`,
+                description: `A module that enables Logging System in the guild for when a message is edited`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for role creations
-                  *  @type {object}
-                  */
-                 name: `ROLE_CREATE`,
-                 description: `A module that enables Logging System in the guild for role creations`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for role creations
+                 *  @type {object}
+                 */
+                name: `ROLE_CREATE`,
+                description: `A module that enables Logging System in the guild for role creations`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for role deletions
-                  *  @type {object}
-                  */
-                 name: `ROLE_DELETE`,
-                 description: `A module that enables Logging System in the guild for role deletions`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for role deletions
+                 *  @type {object}
+                 */
+                name: `ROLE_DELETE`,
+                description: `A module that enables Logging System in the guild for role deletions`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for role name, color, or permission changes
-                  *  @type {object}
-                  */
-                 name: `ROLE_UPDATE`,
-                 description: `A module that enables Logging System in the guild for role name, color, or permission changes`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for role name, color, or permission changes
+                 *  @type {object}
+                 */
+                name: `ROLE_UPDATE`,
+                description: `A module that enables Logging System in the guild for role name, color, or permission changes`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for member bans
-                  *  @type {object}
-                  */
-                 name: `GUILD_BAN_ADD`,
-                 description: `A module that enables Logging System in the guild for member bans`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for member bans
+                 *  @type {object}
+                 */
+                name: `GUILD_BAN_ADD`,
+                description: `A module that enables Logging System in the guild for member bans`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for member unbans
-                  *  @type {object}
-                  */
-                 name: `GUILD_BAN_REMOVE`,
-                 description: `A module that enables Logging System in the guild for member unbans`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for member unbans
+                 *  @type {object}
+                 */
+                name: `GUILD_BAN_REMOVE`,
+                description: `A module that enables Logging System in the guild for member unbans`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a member joins a guild
-                  *  @type {object}
-                  */
-                 name: `GUILD_MEMBER_ADD`,
-                 description: `A module that enables Logging System in the guild for when a member joins a guild`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when a member joins a guild
+                 *  @type {object}
+                 */
+                name: `GUILD_MEMBER_ADD`,
+                description: `A module that enables Logging System in the guild for when a member joins a guild`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a member leaves a guild
-                  *  @type {object}
-                  */
-                 name: `GUILD_MEMBER_REMOVE`,
-                 description: `A module that enables Logging System in the guild for when a member leaves a guild`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when a member leaves a guild
+                 *  @type {object}
+                 */
+                name: `GUILD_MEMBER_REMOVE`,
+                description: `A module that enables Logging System in the guild for when a member leaves a guild`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a server has an outage
-                  *  @type {object}
-                  */
-                 name: `GUILD_UNAVAILABLE`,
-                 description: `A module that enables Logging System in the guild for when a server has an outage`,
-                 customizable: false,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
-             {
+                 *  A module that enables Logging System in the guild for when a server has an outage
+                 *  @type {object}
+                 */
+                name: `GUILD_UNAVAILABLE`,
+                description: `A module that enables Logging System in the guild for when a server has an outage`,
+                customizable: false,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
                 /**
-                  *  A module that enables Logging System in the guild for when a server has a name change
-                  *  @type {object}
-                  */
-                 name: `GUILD_UPDATED`,
-                 description: `A module that enables Logging System in the guild for when a server has a name change`,
-                 customizable: true,
-                 allowedTypes: [`boolean`],
-                 value: 0
-             },
+                 *  A module that enables Logging System in the guild for when a server has a name change
+                 *  @type {object}
+                 */
+                name: `GUILD_UPDATED`,
+                description: `A module that enables Logging System in the guild for when a server has a name change`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
             {
                 /**
                  *  The target channel where level-up message will be sent in
