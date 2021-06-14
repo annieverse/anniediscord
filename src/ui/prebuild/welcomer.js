@@ -26,13 +26,12 @@ class UI {
             let start_x = 30
             let start_y = 30
             let welcomerBackgroundId = this.backgroundId || this.member.guild.configs.get(`WELCOMER_IMAGE`).value
-            const welcomerImage = this.member.guild.configs.get(`WELCOMER_NOIMAGE`).value
-            const userPfpEnabled = this.member.guild.configs.get(`WELCOMER_DEFAULT`).value == `user pfp`
+            const noWelcomerImage = this.member.guild.configs.get(`WELCOMER_NOIMAGE`).value
+            const userPfpEnabled = this.member.guild.configs.get(`WELCOMER_USERIMAGE`).value
             const isDarkTheme = this.member.guild.configs.get(`WELCOMER_THEME`).value === `dark` ? true : false
             const background = await loadAsset(welcomerBackgroundId, `./src/assets/customWelcomer`)
-            if (!welcomerImage) return
+            if (noWelcomerImage) return
             let canv = new Canvas(800, 250)
-
             const imageCanv = Buffer.from((new Canvas(avatar.width, avatar.height).printImage(avatar, 0, 0).toBuffer()).buffer)
             const {
                 width: bgWidth,
