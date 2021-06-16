@@ -1,3 +1,13 @@
+## [7.20.2](https://github.com/klerikdust/anniediscord/compare/v7.20.1...v7.20.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* **affiliates:** always fallback even on reachable server. ([bb7f265](https://github.com/klerikdust/anniediscord/commit/bb7f2657425c37ff91259fa1eaf679b7930773c8))
+* **relationship:** missing highlight for author. ([886ceea](https://github.com/klerikdust/anniediscord/commit/886ceea2e29cec2437e2e76f2360c76f8a5e5bcb))
+* **setRelationship:** flow kept running even on removal action. ([8ed0d72](https://github.com/klerikdust/anniediscord/commit/8ed0d72a8f1e365dba3a16cc13f75bf2d7e215e0))
+* **user:** fail to parse external target due to incomplete data. ([4433432](https://github.com/klerikdust/anniediscord/commit/443343291232fa83a90586c5f8a8ce25775e2fd3))
+
 ## [7.20.1](https://github.com/klerikdust/anniediscord/compare/v7.20.0...v7.20.1) (2021-06-16)
 
 
