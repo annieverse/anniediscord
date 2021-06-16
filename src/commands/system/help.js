@@ -56,14 +56,14 @@ module.exports = {
 			})
 		}
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
-		const res = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
+		const {isCategory, res} = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
 		if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
 			socket: {
 				emoji: await client.getEmoji(`692428969667985458`)
 			}
 		})
 		//  Handle helpCategory display
-		if (this.helpCategory) {
+		if (isCategory) {
 			const commands = client.commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
 			return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
@@ -81,21 +81,18 @@ module.exports = {
 	 * Finding command by a category, name or alias.
 	 * @param {String} [keyword=``] user input
 	 * @param {Map} [src={}] tree-structural commands list 
-	 * @returns {CommandProperties}
+	 * @returns {object}
 	 */
 	async findCommandByKeyword(keyword=``, src={}) {
         //  Find group
 		let parents = src.map(node => node.group.toLowerCase())
-		if (parents.includes(keyword)) {
-			this.helpCategory = true
-			return keyword
-		}
+		if (parents.includes(keyword)) return {isCategory:true, res:keyword}
 		//  Find by command master name
-		if (src.has(keyword)) return src.get(keyword)
+		if (src.has(keyword)) return {isCategory:false, res:src.get(keyword)}
 		//  Find by aliases
         const aliasSearch = src.filter(node => node.aliases.includes(keyword))
-        if (aliasSearch.size > 0) return aliasSearch.first()
-		return null
+        if (aliasSearch.size > 0) return {isCategory:false, res:aliasSearch.first()}
+		return {isCategory:false, res:null}
 	},
 
 	/**
