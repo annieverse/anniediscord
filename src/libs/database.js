@@ -2168,6 +2168,39 @@ class Database {
 		)
 	}
 
+    /**
+     * ----------------------------------------------
+     * SHOP METHOD
+     * ----------------------------------------------
+     */  
+    
+    /**
+     * Initialize shop table
+     * @return {void}
+     */
+    createShopTable() {
+        //  When inserting to this table
+        //  null 'in_guild_id' column meaning that is a global shop which is hosted by Annie itself.
+        return this._query(`
+            CREATE TABLE IF NOT EXISTS shop(
+                item_id INTEGER,
+                in_guild_id TEXT DEFAULT NULL,
+                quantity INTEGER DEFAULT -1,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                registered_by_user_id TEXT,
+                updated_by_user_id TEXT,
+                
+                PRIMARY KEY(item_id),
+
+                FOREIGN KEY(item_id)
+                REFERENCES items(item_id) 
+                   ON DELETE CASCADE
+                   ON UPDATE CASCADE)`
+            , `run`
+        )
+    }
+
 	/**
 	 * Pull the available price of the item.
 	 * @param {number} [itemId] target item to search.
