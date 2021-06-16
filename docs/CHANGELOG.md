@@ -1,3 +1,11 @@
+## [7.20.1](https://github.com/klerikdust/anniediscord/compare/v7.20.0...v7.20.1) (2021-06-16)
+
+
+### Bug Fixes
+
+* **help:** mutated global property. ([bdc2399](https://github.com/klerikdust/anniediscord/commit/bdc2399551886f83cb12adb555b36d4918b26036))
+* **setWelcomer:** wrong locale target. ([0945ece](https://github.com/klerikdust/anniediscord/commit/0945ececdf6c46aedf3415e5da191bebefcaca10))
+
 # [7.20.0](https://github.com/klerikdust/anniediscord/compare/v7.19.12...v7.20.0) (2021-06-14)
 
 
