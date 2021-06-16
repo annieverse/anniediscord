@@ -37,7 +37,7 @@ module.exports = {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
 			let serverSnowflake = await client.shard.broadcastEval(`if (this.guilds.cache.has('${server.guild_id}')) this.guilds.cache.get('${server.guild_id}')`)
-            serverSnowFlake = serverSnowflake.filter(g => g !== null)
+            serverSnowflake = serverSnowflake.filter(g => g !== null)
             res += `**• ${serverSnowflake[0] ? serverSnowflake[0].name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
