@@ -50,7 +50,7 @@ class UI {
             const pairRole = relationshipPairs.MASTER_PAIR[rel.relationship_name]
             const relRole = relGender ? relationshipPairs[relGender.gender][pairRole] : pairRole
             //  Add highlight and lighten the text if current row is the author
-            if (user.id === this.author.id) {
+            if (user.id === this.author.master.id) {
                 this.currentRowIsAuthor = true
                 this.card.createDataBar({
                     barColor: `pink`, 
