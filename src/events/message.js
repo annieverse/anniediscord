@@ -20,8 +20,9 @@ module.exports = async (client, message) => {
                 attachments += `${element.url}\n`
             })
         }
-        if (message.content.length > 4) CHANNEL.send(`**${message.author.username}:** ${message.content.slice(4)}`)
-        if (attachments.length > 0) return CHANNEL.send(`**${message.author.username} attachments:**\n${attachments}`)
+        const AUTHOR = message.author
+        if (message.content.length > 4) CHANNEL.send(`**${AUTHOR.username}(${AUTHOR.id}):** ${message.content.slice(4)}`)
+        if (attachments.length > 0) return CHANNEL.send(`**${AUTHOR.username}(${AUTHOR.id}) attachments:**\n${attachments}`)
         return
     } 
     //  Ensure that guild configs have been properly loaded first
