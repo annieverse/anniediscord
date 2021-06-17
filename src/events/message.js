@@ -10,20 +10,18 @@ module.exports = async (client, message) => {
     if (message.author.bot) return 
     //  Reject further flow if message is dm-typed.
     if (message.channel.type === `dm`) {
-        //const getGuild = async (guildId) => await message.guild.fetch(guildId)
-        if (!message.content.startsWith(`dev`)) return
         const GUILD = await client.guilds.fetch(`577121315480272908`)
         const CHANNEL = GUILD.channels.cache.get(`854899920023584789`)
+        const AUTHOR = message.author
         let attachments = ``
         if (message.attachments.size > 0) {
             message.attachments.forEach(element => {
                 attachments += `${element.url}\n`
             })
         }
-        const AUTHOR = message.author
-        if (message.content.length > 4) CHANNEL.send(`**${AUTHOR.username}(${AUTHOR.id}):** ${message.content.slice(4)}`)
-        if (attachments.length > 0) return CHANNEL.send(`**${AUTHOR.username}(${AUTHOR.id}) attachments:**\n${attachments}`)
-        return
+        if (message.content.length > 0) CHANNEL.send(`**${AUTHOR.username} (${AUTHOR.id}):** ${message.content}`)
+        if (attachments.length > 0) return CHANNEL.send(`**${AUTHOR.username} (${AUTHOR.id}) attachments:**\n${attachments}`)
+        return message.reply(`Your message has been relayed to my developers.`)
     } 
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
