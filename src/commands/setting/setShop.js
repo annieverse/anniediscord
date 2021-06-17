@@ -20,7 +20,7 @@ module.exports = {
      * An array of the available options for welcomer module
      * @type {array}
      */
-    actions: [`enable`, `disable`, `text`, `add`, `image`, `remove`, `edit`],
+    actions: [`enable`, `disable`, `text`, `add`, `image`, `remove`, `edit`,`restock`],
 
     /**
      * Reference key to welcomer sub-modules config code.
@@ -129,10 +129,22 @@ module.exports = {
     },
 
     /**
-     * Adding role when user joined the guild 
+     * Adding item to shop
      * @return {void}
      */
     async add(client, reply, message, arg, locale, prefix) {
+        //  Handle if the user hasn't enabled the module yet
+        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
+        const activateModule = false
+        if (!activateModule) return reply.send(`This setting is diabled`)
+
+    },
+    
+    /**
+     * Restock an item in the shop 
+     * @return {void}
+     */
+     async restock(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
         const activateModule = false
