@@ -5,11 +5,25 @@ const commandController = require(`../controllers/commands`)
  * Mainly used to handle incoming message from user and calculate the possible actions
  * @since 4.0.1
  */
-module.exports = (client, message) => {
+module.exports = async (client, message) => {
     //  Ignore if its from a bot user
     if (message.author.bot) return 
     //  Reject further flow if message is dm-typed.
-    if (message.channel.type === `dm`) return 
+    if (message.channel.type === `dm`) {
+        //const getGuild = async (guildId) => await message.guild.fetch(guildId)
+        if (!message.content.startsWith(`dev`)) return
+        const GUILD = await client.guilds.fetch(`577121315480272908`)
+        const CHANNEL = GUILD.channels.cache.get(`854899920023584789`)
+        let attachments = ``
+        if (message.attachments.size > 0) {
+            message.attachments.forEach(element => {
+                attachments += `${element.url}\n`
+            })
+        }
+        if (message.content.length > 4) CHANNEL.send(`**${message.author.username}:** ${message.content.slice(4)}`)
+        if (attachments.length > 0) return CHANNEL.send(`**${message.author.username} attachments:**\n${attachments}`)
+        return
+    } 
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
     client.db.validateUserEntry(message.author.id, message.author.username)
