@@ -226,8 +226,26 @@ module.exports = {
             socket: { prefix: prefix }
         })
 
-        const activateModule = false
-        if (!activateModule) return reply.send(`This setting is diabled`)
+        const activateModule = true
+        if (!activateModule) return reply.send(`This setting is diabled **CHANGE STRING**`)
+        console.log(this.args[1])
+        let itemID = this.args[1]
+        const itemExists = client.db.isValidItem(itemId, message.guild.id) 
+        if (itemExists == 0) return reply.send(`Item doesnt exist please add first **CHANGE STRING**`)
+        const confirmation = await reply.send(`are u sure **CHANGE STRING**`/*locale.SETSHOP.CONFIRMATION_REMOVE*/, {
+            image: await new GUI(message.member, client, id).build(),
+            prebuffer: true
+        })
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(async() => {
+            client.db.removeItem(itemID)
+            reply.send(`removed success **CHANGE STRING**`/*locale.SETSHOP.ITEM_SUCCESSFULLY_REMOVED*/, {
+                socket: {
+                    emoji: await client.getEmoji(`789212493096026143`)
+                }
+            })
+        })
 
     },
 

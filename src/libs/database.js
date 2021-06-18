@@ -2265,6 +2265,64 @@ class Database {
 	}
 
 	/**
+	* Restock (add) to an item's quantity
+	* @param {number} [itemId] target item to search.
+	* @param {number} [quantity] amount to add to quantity
+	* @returns {QueryResult}
+	*/
+	restockItem(itemId, quantity=10) {
+		const fn = `[Database.restockItem]`
+		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+		if (typeof quantity !== `number`) throw new TypeError(`${fn} parameter 'quantity' must be number.`)
+		return this._query(`
+			UPDATE shop
+			SET quantity += $quantity
+			WHERE item_id = $itemId`
+			, `get`
+			, {quantity: quantity, itemId: itemId}	
+			, `Restocking ITEM_ID: ${itemId} (+${quantity})`
+		)
+	}
+
+	/**
+	* Remove an item from the items table
+	* @param {number} [itemId] target item to search.
+	* @returns {QueryResult}
+	*/
+	removeItem(itemId) {
+		const fn = `[Database.removeItem]`
+		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+		return this._query(`
+			DELETE FROM shop
+			WHERE item_id = $itemId`
+			, `run`
+			, {itemId: itemId}	
+			, `Removing ITEM_ID: ${itemId}`
+		)
+	}
+
+	/**
+	* return 1 or 0 if an item exists in records.
+	* @param {number} [itemId] target item to search.
+	* @param {number} [guildId] target item to search.
+	* @returns {QueryResult}
+	*/
+	isValidItem(itemId, guildId) {
+		const fn = `[Database.isValidItem]`
+		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+		if (typeof guildId !== `number`) throw new TypeError(`${fn} parameter 'guildId' must be number.`)
+		return this._query(`
+			SELECT EXISTS(SELECT * FROM items WHERE itemId = $itemId AND owned_by_guild_id = $guildId)`
+			, `get`
+			, {itemId: itemId, guildId: guildId}	
+			, `Checking if ITEM_ID: ${itemId} belongs to GUILD_ID: ${guildId}`
+		)
+	}
+	/**
+	 * End Of Shop methods
+	 */
+
+	/**
 	 * Fetch items from `item_gacha` table.
 	 * @returns {QueryResult}
 	 */
