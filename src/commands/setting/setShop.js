@@ -150,6 +150,30 @@ module.exports = {
         const activateModule = false
         if (!activateModule) return reply.send(`This setting is diabled`)
 
+        if (!this.args[1] && !this.args[2]) return reply.send(`missing args **CHANGE STRING**`)
+        const itemID = this.args[1]
+        const itemExists = client.db.isValidItem(itemId, message.guild.id) 
+        if (itemExists == 0) return reply.send(`Item doesnt exist please add first **CHANGE STRING**`)
+
+        const quantity = parseInt(this.args[2])
+        if (quantity < -1) quantity = -1
+
+        const confirmation = await reply.send(`are u sure **CHANGE STRING**`/*locale.SETSHOP.CONFIRMATION_REMOVE*/, {
+            image: await new GUI(message.member, client, id).build(),
+            prebuffer: true
+        })
+        const c = new Confirmator(message, reply)
+        await c.setup(message.author.id, confirmation)
+        c.onAccept(async() => {
+            client.db.restockItem(itemID, quantity)
+            reply.send(`restocked **CHANGE STRING**`/*locale.SETSHOP.ITEM_SUCCESSFULLY_REMOVED*/, {
+                socket: {
+                    emoji: await client.getEmoji(`789212493096026143`)
+                }
+            })
+        })
+
+
     },
 
     /**
@@ -228,8 +252,7 @@ module.exports = {
 
         const activateModule = true
         if (!activateModule) return reply.send(`This setting is diabled **CHANGE STRING**`)
-        console.log(this.args[1])
-        let itemID = this.args[1]
+        const itemID = this.args[1]
         const itemExists = client.db.isValidItem(itemId, message.guild.id) 
         if (itemExists == 0) return reply.send(`Item doesnt exist please add first **CHANGE STRING**`)
         const confirmation = await reply.send(`are u sure **CHANGE STRING**`/*locale.SETSHOP.CONFIRMATION_REMOVE*/, {

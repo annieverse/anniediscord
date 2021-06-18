@@ -2270,13 +2270,13 @@ class Database {
 	* @param {number} [quantity] amount to add to quantity
 	* @returns {QueryResult}
 	*/
-	restockItem(itemId, quantity=10) {
+	restockItem(itemId, quantity=-1) {
 		const fn = `[Database.restockItem]`
 		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
 		if (typeof quantity !== `number`) throw new TypeError(`${fn} parameter 'quantity' must be number.`)
 		return this._query(`
 			UPDATE shop
-			SET quantity += $quantity
+			SET quantity = $quantity
 			WHERE item_id = $itemId`
 			, `get`
 			, {quantity: quantity, itemId: itemId}	
