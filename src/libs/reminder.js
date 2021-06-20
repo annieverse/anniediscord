@@ -1,5 +1,4 @@
 const ms = require(`ms`)
-const CronManager = require(`cron-job-manager`)
 const { v4: uuidv4 } = require(`uuid`)
 const { MessageEmbed } = require(`discord.js`)
 /**
@@ -19,7 +18,7 @@ class Reminder {
          * Cron instance
          * @type {object}
          */
-        this.pool = new CronManager()
+        this.pool = client.cronManager
 
         /**
          * Instance iddentifier

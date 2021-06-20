@@ -2321,6 +2321,93 @@ class Database {
 	/**
 	 * End Of Shop methods
 	 */
+    
+    /**
+     * -------------------------------
+     * DURATIONAL BUFF METHOD
+     * -------------------------------
+     */
+    
+    /**
+     * Create 'user_durational_buffs' master table.
+     * @return {QueryResult}
+     */
+    createUserDurationalBuffsTable() {
+        this._query(`
+            CREATE TABLE IF NOT EXISTS user_durational_buffs(
+                buff_id INTEGER AUTO INCREMENT,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                type TEXT,
+                multiplier INTEGER,
+                duration INTEGER,
+                user_id TEXT,
+                guild_id TEXT,
+
+                PRIMARY KEY(buff_id),
+                FOREIGN KEY(user_id)
+                REFERENCES users(user_id) 
+                   ON DELETE CASCADE
+                   ON UPDATE CASCADE)`
+            , `run`
+        )
+    }
+
+    /**
+     * Fetch all the saved user's durational buffs.
+     * @return {object}
+     */
+    getSavedUserDurationalBuffs() {
+        return this._query(`
+            SELECT *
+            FROM user_durational_buffs`
+            , `all`
+        )
+    }
+
+    /**
+     * Registering new user's durational buff.
+     * @param {string} buffType
+     * @param {number} multiplier
+     * @param {string} expireDate
+     * @param {string} userId
+     * @param {string} guildId
+     * @return {QueryResult}
+     */
+    registerUserDurationalBuff(buffType, multiplier, expireDate, userId, guildId) {
+        return this._query(`
+            INSERT INTO user_durational_buffs(
+                expire_at,
+                type,
+                multiplier,
+                user_id,
+                guild_id
+            )
+            VALUES(?, ?, ?, ?, ?)`
+            , `run`
+            , [expireDate, buffType, multiplier, userId, guildId]
+        )
+    }
+
+    /**
+     * Deleting specific user's durational buff
+     * @param {string} buffType
+     * @param {number} multiplier
+     * @param {string} userId
+     * @param {string} guildId
+     * @return {QueryResult}
+     */ 
+    removeUserDurationalBuff(buffType, multiplier, userId, guildId) {
+        return this._query(`
+            DELETE FROM user_durational_buffs
+            WHERE
+                type = ?
+                AND multiplier = ?
+                AND user_id = ?
+                AND guild_id =?`
+            , `run`
+            , [buffType, multiplier, userId, guildId]
+        ) 
+    }
 
 	/**
 	 * Fetch items from `item_gacha` table.

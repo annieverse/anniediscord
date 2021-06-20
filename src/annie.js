@@ -15,6 +15,7 @@ const loadAsset = require(`./utils/loadAsset`)
 const fetch = require(`node-fetch`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
+const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -150,6 +151,12 @@ class Annie extends Discord.Client {
          * @type {collection}
          */
         this.cooldowns = new Discord.Collection()
+
+        /**
+         * Cron instance
+         * @type {object}
+         */
+        this.cronManager = new CronManager()
         this.prepareLogin()
     }
 
@@ -206,6 +213,48 @@ class Annie extends Discord.Client {
             }
         } 
         this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
+    }
+
+    /**
+     * Registering cache and cron for saved user durational buffs.
+     * @return {void}
+     */
+    registerUserDurationalBuffs() {
+        this.db.getSavedUserDurationalBuffs().then(async src => {
+            if (!src.length) return
+            let count = 0
+            for (let i=0; i<src.length; i++) {
+                const node = src[i]
+                //  Skip if guild isn't exists in current shard.
+                if (!this.guilds.cache.has(node.guild_id)) continue
+                const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
+                const field = node.multiplier + `_` + key
+                const localTime = await this.db.toLocaltime(node.registered_at)
+                const expireAt = new Date(new Date(localTime).getTime() + (node.duration * 1000))
+                //  Skip expired buff, and delete it from database as well.
+                if (Date.now() <= expireAt.getTime()) {
+                    this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
+                    continue
+                }
+                this.db.redis.hset(key, node.multiplier, node.duration)
+                this.cronManager.add(field, expireAt, () => {
+                    //  Flush from cache and sqlite
+                    this.db.redis.hdel(field)
+                    this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
+                    //  Send expiration notice
+                    this.users.fetch(node.user_id)
+                    .then(user => {
+                        this.responseLibs(user).send(`test`, {
+                            field: user
+                        })
+                        .catch(e => e)
+                    })
+                    .catch(e => e)
+                })
+                count++
+            }
+            this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@USER_DURATIONAL_BUFFS] ${count} buffs have been registered`)
+        })
     }
 
     /**

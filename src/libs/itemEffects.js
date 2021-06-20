@@ -23,25 +23,20 @@ class itemEffects {
          * @type {string}
          */
         this.instanceId = `ITEM_EFFECT_${message.guild.id}:${message.author.id}`
+        /**
+         * List of available buffs. Map by id.
+         * @type {object}
+         */
+        this.buffReferences = {
+            1: `addRole`,
+            2: `removeRole`,
+            3: `addItem`,
+            4: `removeItem`,
+            5: `durationalExpBuff`,
+            6: `durationalArtcoinsBuff`
+        }
     }
     
-    /**
-     * List of available buffs.
-     * @type {object}
-     */
-    get availableBuffs() {
-        return [
-            `ADD_ROLE`,
-            `REMOVE_ROLE`,
-            `ADD_ITEM`,
-            `REMOVE_ITEM`,
-            `ADD_EXP`,
-            `SUBTRACT_EXP`,
-            `EXP_BUFF`,
-            `ARTCOINS_BUFF`,
-        ]
-    }
-
     /**
      *  ----------------------------
      *  DEFINED FLOW FOR EACH BUFF EFFECT
@@ -74,6 +69,104 @@ class itemEffects {
 
     /**
      * Adding specific item to user's inventory.
+     * @param {number} itemId item to add.
+     * @param {number} [amount=1] Amount of item to add.
+     * @return {void}
      */
+    addItem(itemId, amount=1) {
+        this.client.db.updateInventory({
+            operation: `+`,
+            itemId: itemId,
+            userId: this.message.author.id,
+            guildId: this.message.guild.id,
+            value: amount
+        })
+    }
+
+    /**
+     * Removing item from user's inventory.
+     * @param {number} itemId item to add.
+     * @param {number} [amount=1] Amount of item to remove.
+     * @return {void}
+     */
+    removeItem(itemId, amount=1) {
+        this.client.db.updateInventory({
+            operation: `-`,
+            itemId: itemId,
+            userId: this.message.author.id,
+            guildId: this.message.guild.id,
+            value: amount
+        })
+    }
+
+    /**
+     * Adding a specified amount of exp.
+     * @param {number} exp
+     * @return {void}
+     */
+    addExp(exp) {
+        this.client.experienceLibs(this.message, this.message.guild, this.message.channel).execute()
+    }
+
+    /**
+     * Subtracting a specified amount of exp.
+     * @param {number} exp
+     * @return {void}
+     */
+    removeExp(exp) {
+        //  Directly subtract from DB since we don't need to update rank/level-up message.
+        this.client.db.subtractUserExp(exp, this.message.author.id, this.message.guild.id)
+    }
+
+    /**
+     * TODO:
+     * - Use localization when sending out notification to user.
+     *
+     * Base function for durational item.
+     * @param {string} buffType
+     * @param {number} multiplier
+     * @param {number} seconds
+     * @param {string} responseLocale
+     * @private
+     * @return {void}
+     */ 
+    _durationalBuff(buffType, multiplier, seconds, responseLocale) {
+        buffType = buffType.toUpperCase()
+        const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
+        const field = multiplier + `_` + key
+        const expireAt = new Date(new Date().getTime() + (seconds * 1000))
+        this.client.db.redis.hset(key, multiplier, seconds)
+        this.client.db.registerUserDurationalBuff(buffType, multiplier, expireAt.toISOString(), this.message.author.id, this.message.guild.id)
+        this.client.cronManager.add(field, expireAt, () => {
+            //  Flush from cache and sqlite
+            this.client.db.redis.hdel(field)
+            this.client.db.removeUserDurationalBuff(buffType, multiplier, this.message.author.id, this.message.guild.id)
+            //  Attempt to notice the user about expiration
+            this.client.responseLibs(this.message).send(responseLocale, {
+                field: this.message.author
+            })
+            .catch(e => e)
+        })
+    }
+    
+    /**
+     * Registering new exp buff for specific user.
+     * @param {number} [multiplier=1] Amount of multiplier. 
+     * @param {number} [seconds=1] Buff duration in second.
+     * @return {void}
+     */
+    durationalExpBuff(multiplier=1, seconds=1) {
+        this._durationalBuff(`EXP`, multiplier, seconds, `test`)
+    }
+
+    /**
+     * Registering new artcoins buff for specific user.
+     * @param {number} [multiplier=1] Amount of multiplier. 
+     * @param {number} [seconds=1] Buff duration in second.
+     * @return {void}
+     */
+    durationalArtcoinsBuff(multiplier=1, seconds=1) {
+        this._durationalBuff(`AC`, multiplier, seconds, `test`)
+    }
 }
 module.exports = itemEffects
