@@ -2387,6 +2387,7 @@ class Database {
             CREATE TABLE IF NOT EXISTS user_durational_buffs(
                 buff_id INTEGER AUTO INCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                name TEXT DEFAULT 'Mystery',
                 type TEXT,
                 multiplier INTEGER,
                 duration INTEGER,
@@ -2404,9 +2405,17 @@ class Database {
 
     /**
      * Fetch all the saved user's durational buffs.
+     * @param {string} userId If not provided, will fetch all the available buffs instead.
      * @return {object}
      */
-    getSavedUserDurationalBuffs() {
+    getSavedUserDurationalBuffs(userId) {
+        if (userId) return this._query(`
+            SELECT *
+            FROM user_durational_buffs
+            WHERE user_id = ?`
+            , `all`
+            , [userId]
+        )
         return this._query(`
             SELECT *
             FROM user_durational_buffs`
@@ -2417,24 +2426,26 @@ class Database {
     /**
      * Registering new user's durational buff.
      * @param {string} buffType
+     * @param {string} name
      * @param {number} multiplier
-     * @param {string} expireDate
+     * @param {string} duration
      * @param {string} userId
      * @param {string} guildId
      * @return {QueryResult}
      */
-    registerUserDurationalBuff(buffType, multiplier, expireDate, userId, guildId) {
+    registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
         return this._query(`
             INSERT INTO user_durational_buffs(
-                expire_at,
                 type,
+                name,
                 multiplier,
+                duration,
                 user_id,
                 guild_id
             )
-            VALUES(?, ?, ?, ?, ?)`
+            VALUES(?, ?, ?, ?, ?, ?)`
             , `run`
-            , [expireDate, buffType, multiplier, userId, guildId]
+            , [buffType, name, multiplier, duration, userId, guildId]
         )
     }
 

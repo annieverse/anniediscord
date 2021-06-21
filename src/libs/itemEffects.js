@@ -119,31 +119,30 @@ class itemEffects {
     }
 
     /**
-     * TODO:
-     * - Use localization when sending out notification to user.
-     *
      * Base function for durational item.
      * @param {string} buffType
+     * @param {string} name
      * @param {number} multiplier
-     * @param {number} seconds
+     * @param {number} duration
      * @param {string} responseLocale
      * @private
      * @return {void}
      */ 
-    _durationalBuff(buffType, multiplier, seconds, responseLocale) {
+    _durationalBuff(buffType, name, multiplier, duration, responseLocale) {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
         const field = multiplier + `_` + key
-        const expireAt = new Date(new Date().getTime() + (seconds * 1000))
-        this.client.db.redis.hset(key, multiplier, seconds)
-        this.client.db.registerUserDurationalBuff(buffType, multiplier, expireAt.toISOString(), this.message.author.id, this.message.guild.id)
-        this.client.cronManager.add(field, expireAt, () => {
+        const expireAt = new Date().getTime() + (duration * 1000)
+        this.client.db.redis.hset(key, multiplier, duration)
+        this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
+        this.client.cronManager.add(field, new Date(expireAt), async () => {
             //  Flush from cache and sqlite
-            this.client.db.redis.hdel(field)
+            this.client.db.redis.hdel(key, field)
             this.client.db.removeUserDurationalBuff(buffType, multiplier, this.message.author.id, this.message.guild.id)
             //  Attempt to notice the user about expiration
-            this.client.responseLibs(this.message).send(responseLocale, {
-                field: this.message.author
+            this.client.responseLibs(this.message).send(`Your **'${name}'** buff has expired! ${await this.client.getEmoji(`AnnieHeartPeek`)}`, {
+                field: this.message.author,
+                footer: `${this.message.guild.name}'s System Notification`
             })
             .catch(e => e)
         })

@@ -160,7 +160,7 @@ class Response {
 	        })
 		}
 		//  Replace content with error message if content is a faulty value
-		if (!content && (typeof content != `string`)) content = null
+		if (typeof content != `string`) content = ``
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
 		if (sockets === null) sockets = []

@@ -56,6 +56,10 @@
         "DELETE_TARGET_INVALID": "**Is that AR even exists??** {{emoji}}\n╰─Make sure to check the registered ARs first!",
         "SUCCESSFULLY_DELETED": "**Aye, successfully deleted!♡** {{emoji}}\n╰─I'm no longer listening to that AR."
     },
+    "BUFF": {
+        "NO_ACTIVE_BUFFS": "You don't have any active buffs at the moment! {{emoji}}",
+        "DISPLAY": "**Hey, {{user}}!♡** below is your currently active buffs. Go chit-chat while they last!\n{{list}}"
+    },
     "BADGECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",

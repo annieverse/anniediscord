@@ -230,27 +230,28 @@ class Annie extends Discord.Client {
                 const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
                 const field = node.multiplier + `_` + key
                 const localTime = await this.db.toLocaltime(node.registered_at)
-                const expireAt = new Date(new Date(localTime).getTime() + (node.duration * 1000))
+                const expireAt = new Date(localTime).getTime() + (node.duration * 1000)
                 //  Skip expired buff, and delete it from database as well.
-                if (Date.now() <= expireAt.getTime()) {
+                if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
                     this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
                     continue
                 }
                 this.db.redis.hset(key, node.multiplier, node.duration)
-                this.cronManager.add(field, expireAt, () => {
+                this.cronManager.add(field, new Date(expireAt), () => {
                     //  Flush from cache and sqlite
-                    this.db.redis.hdel(field)
+                    this.db.redis.hdel(key, field)
                     this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
                     //  Send expiration notice
                     this.users.fetch(node.user_id)
-                    .then(user => {
-                        this.responseLibs(user).send(`test`, {
-                            field: user
+                    .then(async user => {
+                        this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
+                            field: user,
+                            footer: `${this.guilds.cache.get(node.guild_id).name}'s System Notification`
                         })
                         .catch(e => e)
                     })
                     .catch(e => e)
-                })
+                }, { start:true })
                 count++
             }
             this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@USER_DURATIONAL_BUFFS] ${count} buffs have been registered`)
