@@ -58,25 +58,25 @@ class itemEffects {
     
     /**
      * Giving out role
-     * @param {string|object} roleIds Pool of role ids
+     * @param {string} roleId
      * return {void}
      */
-    addRole(roleIds) {
+    addRole(roleId) {
         //  Skip addition if user already has the role
         if (this.message.member.roles.cache.has(roleId)) return
-        this.message.member.roles.add(roleIds)
+        this.message.member.roles.add(roleId)
         .catch(e => this.client.logger.warn(`${this.instanceId} <ADD_ROLE_FAIL> ${e.stack}`))
     }
 
     /**
      * Extract/revoke out role
-     * @param {string|object} roleIds Pool of role ids
+     * @param {string} roleId
      * return {void}
      */
-    removeRole(roleIds) {
+    removeRole(roleId) {
         //  Skip addition if user already has the role
         if (this.message.member.roles.cache.has(roleId)) return
-        this.message.member.roles.remove(roleIds)
+        this.message.member.roles.remove(roleId)
         .catch(e => this.client.logger.warn(`${this.instanceId} <REMOVE_ROLE_FAIL> ${e.stack}`))
     }
 
