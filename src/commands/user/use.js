@@ -52,10 +52,11 @@ module.exports = {
                 const effectLib = new ItemEffects(client, message)
                 for (let i=0; i<itemEffects.length; i++) {
                     const e = itemEffects[i]
-                    await effectLib[effectLib.buffReferences[e.effect_red_id]](JSON.parse(e.param))
+                    effectLib.buffReferences[e.effect_ref_id](e.param)
                 }
             }
             //  Displaying custom message upon use (if there's any).
+            confirmation.delete().catch(e => e)
             const displayedMsg = targetItem.response_on_use || locale.USE.SUCCESSFUL
             return reply.send(displayedMsg, {
                 socket: {

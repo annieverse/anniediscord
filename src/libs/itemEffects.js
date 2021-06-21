@@ -1,4 +1,17 @@
 /**
+ * @typedef {object} ItemManipulation
+ * @property {string} itemId
+ * @property {string} [amount=0]
+ */
+
+/**
+ * @typedef {object} DurationalItem
+ * @property {string} name
+ * @property {number} multiplier
+ * @property {number} duration
+ */
+
+/**
  * Applying buff for selected item.
  * @abstract
  */
@@ -68,35 +81,41 @@ class itemEffects {
     }
 
     /**
-     * Adding specific item to user's inventory.
-     * @param {number} itemId item to add.
-     * @param {number} [amount=1] Amount of item to add.
+     * Base function for item manipulations.
+     * @param {number} itemId
+     * @param {number} amount
+     * @param {string} operation
+     * @private
      * @return {void}
      */
-    addItem(itemId, amount=1) {
+    _itemUpdate(itemId, amount, operation) {
         this.client.db.updateInventory({
-            operation: `+`,
+            operation: operation,
             itemId: itemId,
+            value: amount,
             userId: this.message.author.id,
-            guildId: this.message.guild.id,
-            value: amount
+            guildId: this.message.guild.id
         })
+    }
+    
+    /**
+     * Adding specific item to user's inventory.
+     * @param {ItemManipulation} data
+     * @return {void}
+     */
+    addItem(data) {
+        if (typeof data !== `object`) data = JSON.parse(data)
+        this._itemUpdate(data.itemId, data.amount, `+`)
     }
 
     /**
-     * Removing item from user's inventory.
-     * @param {number} itemId item to add.
-     * @param {number} [amount=1] Amount of item to remove.
+     * Removing specific item from user's inventory.
+     * @param {ItemManipulation} data
      * @return {void}
      */
-    removeItem(itemId, amount=1) {
-        this.client.db.updateInventory({
-            operation: `-`,
-            itemId: itemId,
-            userId: this.message.author.id,
-            guildId: this.message.guild.id,
-            value: amount
-        })
+    removeItem(data) {
+        if (typeof data !== `object`) data = JSON.parse(data)
+        this._itemUpdate(data.itemId, data.amount, `-`)
     }
 
     /**
@@ -105,6 +124,7 @@ class itemEffects {
      * @return {void}
      */
     addExp(exp) {
+        if (typeof exp !== `number`) exp = parseInt(exp)
         this.client.experienceLibs(this.message, this.message.guild, this.message.channel).execute()
     }
 
@@ -114,6 +134,7 @@ class itemEffects {
      * @return {void}
      */
     removeExp(exp) {
+        if (typeof exp !== `number`) exp = parseInt(exp)
         //  Directly subtract from DB since we don't need to update rank/level-up message.
         this.client.db.subtractUserExp(exp, this.message.author.id, this.message.guild.id)
     }
@@ -124,11 +145,10 @@ class itemEffects {
      * @param {string} name
      * @param {number} multiplier
      * @param {number} duration
-     * @param {string} responseLocale
      * @private
      * @return {void}
      */ 
-    _durationalBuff(buffType, name, multiplier, duration, responseLocale) {
+    _durationalBuff(buffType, name, multiplier, duration) {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
         const field = multiplier + `_` + key
@@ -150,22 +170,22 @@ class itemEffects {
     
     /**
      * Registering new exp buff for specific user.
-     * @param {number} [multiplier=1] Amount of multiplier. 
-     * @param {number} [seconds=1] Buff duration in second.
+     * @param {DurationalItem} data
      * @return {void}
      */
-    durationalExpBuff(multiplier=1, seconds=1) {
-        this._durationalBuff(`EXP`, multiplier, seconds, `test`)
+    durationalExpBuff(data) {
+        if (typeof data !== `object`) data = JSON.parse(data)
+        this._durationalBuff(`EXP`, data.name, data.multiplier, data.duration)
     }
 
     /**
      * Registering new artcoins buff for specific user.
-     * @param {number} [multiplier=1] Amount of multiplier. 
-     * @param {number} [seconds=1] Buff duration in second.
+     * @param {DurationalItem} data
      * @return {void}
      */
-    durationalArtcoinsBuff(multiplier=1, seconds=1) {
-        this._durationalBuff(`AC`, multiplier, seconds, `test`)
+    durationalArtcoinsBuff(data) {
+        if (typeof data !== `object`) data = JSON.parse(data)
+        this._durationalBuff(`ARTCOINS`, data.name, data.multiplier, data.duration)
     }
 }
 module.exports = itemEffects
