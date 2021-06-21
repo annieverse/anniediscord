@@ -2321,6 +2321,56 @@ class Database {
 	/**
 	 * End Of Shop methods
 	 */
+
+    /**
+     * -------------------------------
+     * ITEM EFFECTS METHOD
+     * -------------------------------
+     */
+    
+    /**
+     * Create 'item_effects' master table.
+     * This table has similar structure and functionalities as guild_configurations table
+     * But tailored for items only.
+     * @return {QueryrResult}
+     */
+    createItemEffectsTable() {
+        return this._query(`
+            CREATE TABLE IF NOT EXISTS item_effects(
+                effect_id INTEGER AUTO INCREMENT,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                item_id INTEGER,
+                guild_id TEXT,
+                effect_ref_id INTEGER,
+                parameter TEXT,
+
+                PRIMARY KEY(effect_id),
+                FOREIGN KEY(item_id)
+                REFERENCES items(item_id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY(guild_id)
+                REFERENCES guilds(guild_id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE)`
+            , `run` 
+        )
+    }
+
+    /**
+     * Fetch registered effects for specified item.
+     * @param {number} itemId
+     * @return {object}
+     */
+    getItemEffects(itemId) {
+        return this._query(`
+            SELECT *
+            FROM item_effects
+            WHERE item_id = ?`
+            , `all`
+            , [itemId]
+        )
+    }
     
     /**
      * -------------------------------

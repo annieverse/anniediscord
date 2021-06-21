@@ -846,6 +846,12 @@
         "MISSING_ARG": "Please don't forget to specify the amount of power capsules that you want to use."
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
+    "USE": {
+        "NO_ITEMS": "Ehh, you don't have any items to use! {{emoji}}",
+        "INVALID_ITEM": "Is that item even exists? *hmm..* {{emoji}}",
+        "CONFIRMATION": "You are going to use **1x {{item}}**?",
+        "SUCCESSFUL": "**{{user}}** has used **{{item}}**!♡"
+    },
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
         "NOTIFY_AVAILABLE_MODS": "Hey, hey! we got new verification request!\n{0}",
