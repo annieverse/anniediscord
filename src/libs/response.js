@@ -160,7 +160,7 @@ class Response {
 	        })
 		}
 		//  Replace content with error message if content is a faulty value
-		if (typeof content != `string`) content = ``
+		if (typeof content != `string`) content = this.message.client.locales.en.LOCALIZATION_ERROR
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
 		if (sockets === null) sockets = []

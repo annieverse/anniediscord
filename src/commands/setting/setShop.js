@@ -1,39 +1,42 @@
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)
+const ms = require(`ms`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
 const { v4: uuidv4 } = require(`uuid`)
 const findRole = require(`../../utils/findRole`)
+const commanifier = require(`../../utils/commanifier`)
+const trueInt = require(`../../utils/trueInt`)
 
 /**
- * Manage shop module for your guild.
+ * Create, restock & sell items for your server members!
  * @author klerikdust
  */
 module.exports = {
     name: `setShop`,
-    aliases: [`setshop`],
-    description: `Manage shop module for your guild.`,
+    aliases: [`setshop`, `setshops`],
+    description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,
     permissionLevel: 3,
     /**
      * An array of the available options for welcomer module
      * @type {array}
      */
-    actions: [`enable`, `disable`, `text`, `add`, `image`, `remove`, `edit`,`restock`],
+    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`, `restock`, `reset`],
 
     /**
      * Reference key to welcomer sub-modules config code.
      * @type {object}
      */
     actionReference: {
-        "enable": `SHOP_MODULE`,
-        "disable": `SHOP_MODULE`,
+        "open": `SHOP_MODULE`,
+        "close": `SHOP_MODULE`,
         "text": `SHOP_TEXT`,
-        "add": `SHOP_ITEM`,
         "image": `SHOP_IMAGE`,
-        "remove": `SHOP_ITEM`,
-        "edit": `SHOP_ITEM`
+        "add": `SHOP_ITEM`,
+        "delete": `SHOP_ITEM`,
+        "edit": `SHOP_ITEM`,
     },
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
@@ -44,44 +47,27 @@ module.exports = {
                 emoji: await client.getEmoji(`692428660824604717`)
             }
         })
-        this.args = arg.split(` `)
-            //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(this.args[0].toLowerCase())) return reply.send(locale.SETSHOP.INVALID_ACTION, {
+        const args = arg.split(` `)
+        //  Handle if the selected options doesn't exists
+        if (!this.actions.includes(args[0].toLowerCase())) return reply.send(locale.SETSHOP.INVALID_ACTION, {
                 socket: { availableActions: this.actions.join(`, `) }
             })
-            //  Run action
-        this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
-        this.guildConfigurations = message.guild.configs
-        this.action = this.args[0]
-        this.selectedModule = this.actionReference[this.action]
-            //  This is the main configuration of setshop, so everything dependant on this value
-        this.primaryConfig = this.guildConfigurations.get(`SHOP_MODULE`)
-            //  This is the sub-part of main configuration such as welcomer's channel, text, etc
-        this.subConfig = this.guildConfigurations.get(this.selectedModule)
-        return this[this.args[0].toLowerCase()](client, reply, message, arg, locale, prefix)
+        //  Run action
+        return this[args[0].toLowerCase()](client, reply, message, arg, locale, prefix, args)
     },
 
     /**
-     * Enabling welcomer module
+     * Enabling shop module
      * @return {void}
      */
-    async enable(client, reply, message, arg, locale, prefix) {
-        if (this.primaryConfig.value) {
-            const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
-            return reply.send(locale.SETSHOP.ALREADY_ENABLED, {
-                socket: {
-                    user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
-                }
-            })
-        }
-        //  Update configs
+    async open(client, reply, message, arg, locale, prefix) {
+        const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
         client.db.updateGuildConfiguration({
-            configCode: this.selectedModule,
+            configCode: `SHOP_MODULE`,
             customizedParameter: 1,
             guild: message.guild,
             setByUserId: message.author.id,
-            cacheTo: this.guildConfigurations
+            cacheTo: message.guild.configs
         })
         return reply.send(locale.SETSHOP.SUCCESSFULLY_ENABLED, {
             status: `success`,
@@ -93,53 +79,226 @@ module.exports = {
      * Disabling welcomer module
      * @return {void}
      */
-    async disable(client, reply, message, arg, locale, prefix) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
+    async close(client, reply, message, arg, locale, prefix) {
+        const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
         client.db.updateGuildConfiguration({
-            configCode: this.selectedModule,
+            configCode: `SHOP_MODULE`,
             customizedParameter: 0,
             guild: message.guild,
             setByUserId: message.author.id,
-            cacheTo: this.guildConfigurations
+            cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED, { status: `success` })
+        return reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED)
     },
 
     /**
      * Set message to be attached in the shop.
      * @return {void}
      */
-    async text(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
-            //  Handle if text content isn't provided
-        if (!this.args[1]) return reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
-                socket: { prefix: prefix },
-            })
-            //  Update configs
-        const shopText = this.args.slice(1).join(` `)
+    async text(client, reply, message, arg, locale, prefix, args) {
+        //  Handle if text content isn't provided
+        const param = args.slice(1).join(` `)
+        if (!param) return reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
+            socket: { prefix: prefix },
+        })
+        //  Update configs
         client.db.updateGuildConfiguration({
-            configCode: this.selectedModule,
-            customizedParameter: shopText,
+            configCode: `SHOP_TEXT`,
+            customizedParameter: param,
             guild: message.guild,
             setByUserId: message.author.id,
-            cacheTo: this.guildConfigurations
+            cacheTo: message.guild.configs
         })
-        await reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, { status: `success` })
+        return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, { status: `success` })
     },
 
     /**
      * Adding item to shop
      * @return {void}
      */
-    async add(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
-        const activateModule = false
-        if (!activateModule) return reply.send(`This setting is diabled`)
+    async add(client, reply, message, arg, locale, prefix, args) {
+        let buffs = []
+        let metadata = {
+            //  Common & custom type
+            rarityId: 1,
+            typeId: 13,
+            ownedByGuildId: message.guild.id,
+            usable: 1
+        }
+        const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
+        if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        client.db.redis.set(sessionId, 1, `EX`, 60*3)
+        let dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
+                raw: true
+            })
+        )
+        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
+        let phase = 0
+        let completed = false
+        pool.on(`collect`, async m => {
+            let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
+            if (input === `cancel`) return pool.stop()
+            m.delete()
+            const joinFunction = (newMessage) => {
+                return reply.send(dataDisplay.embeds[0].description + newMessage, {raw:true})
+            }
+            switch(phase) {
+                //  Name
+                case 0:
+                    const nameLimit = 20
+                    if (input.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {deleteIn: 5, socket: {limit:nameLimit}}) 
+                    metadata.name = input
+                    //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
+                    dataDisplay.edit(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${input}`, {raw:true}))
+                    phase++
+                    break
+                //  Description
+                case 1:
+                    const descLimit = 120
+                    if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {deleteIn: 5, socket: {limit:descLimit}})
+                    metadata.description = input
+                    dataDisplay.edit(locale.SETSHOP.ADD_PRICE, await joinFunction(`\n╰☆～**Description ::** ${input}`))
+                    phase++
+                    break
+                //  Price
+                case 2:
+                    if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, {deleteIn: 5})
+                    metadata.price = input
+                    dataDisplay.edit(locale.SETSHOP.ADD_STOCK, await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`))
+                    phase++
+                    break
+                //  Stocks
+                case 3:
+                    if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {deleteIn: 5})
+                    metadata.stocks = input
+                    dataDisplay.edit(locale.SETSHOP.ADD_TRADABILITY, await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`))
+                    phase++
+                    break
+                //  Tradability
+                case 4:
+                    if (!input.startsWith(`y`) && !input.startsWith(`n`)) return reply.send(locale.SETSHOP.ADD_TRADABILITY_INVALID, {deleteIn: 5})
+                    metadata.bind = input
+                    dataDisplay.edit(locale.SETSHOP.ADD_MESSAGE_UPON_USE, await joinFunction(`\n╰☆～**Can be traded ::** ${m.content.startsWith(`y`) ? `yes` : `no`}`))
+                    phase++
+                    break
+                //  Message upon use
+                case 5:
+                    const messageUponUseLimit = 120
+                    if (input.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.ADD_MESSAGE_UPON_USE_OVERLIMIT, {deleteIn: 5})
+                    metadata.responseOnUse = input
+                    dataDisplay.edit(locale.SETSHOP.ADD_BUFF,
+                        await joinFunction(`\n╰☆～**My response after the item is used ::** ${input === `~` ? `default` : input}`))
+                    phase++
+                    break
+                //  Buffs upon use
+                case 6:
+                    if (input.startsWith(`done`)) {
+                        phase = -1
+                    }
+                    else {
+                        const params = m.content.split(` `) 
+                        if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {deleteIn: 5})
+                        //  Role update buff
+                        const clientRole = message.guild.me.roles.highest
+                        if ([`addrole`, `removerole`].includes(params[0])) {
+                            let res = []
+                            let roleNames = ``
+                            const roles = params.slice(1)
+                            if (!roles.length) return reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {deleteIn: 5})
+                            for (let i=0; i<roles.length; i++) {
+                                const ref = roles[i]
+                                const role = findRole(ref, message.guild)
+                                if (!role) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {deleteIn: 5})
+                                if (role.position >= clientRole.position) return reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {deleteIn: 5})
+                                res.push(role.id)
+                                roleNames += role.name + ((i+1) >= roles.length ? ` ` : `, `)
+                            }
+                            const isRoleAddition = params[0] ===  `addrole`
+                            buffs.push({ 
+                                type: isRoleAddition ? 1 : 2,
+                                params: res
+                            })
+                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${isRoleAddition ? `receiving` : `removed`} ${roleNames} roles`))
+                        }
+                        //  Inventory update buff
+                        if ([`additem`, `removeitem`].includes(params[0]))  {
+                            const amount = trueInt(params[1])
+                            if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {deleteIn: 5})
+                            const targetItem  = await client.db.getItem(params.slice(2).join(` `))
+                            if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {deleteIn: 5})
+                            const isItemAddition = params[0] === `additem`
+                            buffs.push({
+                                type: isItemAddition ? 3 : 4,
+                                params: {
+                                    itemId: targetItem.item_id, 
+                                    amount: amount
+                                }
+                            })
+                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${isItemAddition ? `receiving` : `removed`} ${commanifier(amount)} pcs of '${targetItem.name}'`))
+                        }
+                        //  EXP/Artcoins boost buff
+                        if ([`expboost`, `acboost`].includes(params[0])) {
+                            const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
+                            if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {deleteIn: 5})
+                            const duration = ms(params.slice(2).join(` `))
+                            if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {deleteIn: 5})
+                            const isExpBuff= params[0] === `expboost`
+                            buffs.push({
+                                type: isExpBuff ? 5 : 6,
+                                params: {
+                                    name: isExpBuff ? `EXP` : `ARTCOINS`,
+                                    multiplier: multiplier/100,
+                                    duration: duration
+                                }
+                            })
+                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, {long:true})}`))
+                        }
+                        //  Limit allowed buffs per item
+                        if (buffs.length >= 3) {
+                            phase = -1
+                        }
+                        else {
+                            break
+                        }
+                    }
 
+                //  Finalization
+                case -1:
+                    const confirmation = await reply.send(dataDisplay.embeds[0].description, {
+                        header: locale.SETSHOP.ADD_CONFIRMATION,
+                        thumbnail: message.author.displayAvatarURL()
+                    })
+                    dataDisplay.delete()
+                    const c = new Confirmator(client, message)
+                    await c.setup(m.author.id, confirmation)
+                    c.onAccept(async () => {
+                        completed = true
+                        pool.stop()
+                        //  Register item
+                        await client.db.registerItem(metadata)
+                        const item = await client.db.getItem(metadata.name)
+                        //  Register to the shop
+                        client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                        return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
+                            status: `success`,
+                            socket: {
+                                prefix: prefix,
+                                emoji: await client.getEmoji(`789212493096026143`)
+                            }
+                        })      
+                    })
+                default:
+                    break
+            }
+        })
+        pool.on(`end`, () => {
+            client.db.redis.del(sessionId)
+            if (completed) return
+            dataDisplay.delete()
+            reply.send(`Shop register interface has been closed.`, {simplified:true})
+        })
     },
-    
+
     /**
      * Restock an item in the shop 
      * @return {void}

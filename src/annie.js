@@ -361,8 +361,13 @@ class Annie extends Discord.Client {
      * @return {string}
      */
     async getUsername(userId=``) {
-        const user = await this.users.fetch(userId)
-        return user ? user.username : userId
+        try {
+            const user = await this.users.fetch(userId)
+            return user ? user.username : userId
+        }
+        catch(e) {
+            return userId
+        }
     }
 
     /**

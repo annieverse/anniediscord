@@ -12,6 +12,20 @@ const relationshipPairs = require(`../config/relationshipPairs.json`)
  */
 class Database {
 
+    /**
+     * Options to be supplied to `registerItem()` parameters
+     * @typedef {object} item
+     * @property {string} name Name of the item
+     * @property {string} description Description of the item
+     * @property {string} alias Shorter-name of the item for referencing asset
+     * @property {number} typeId The type for current item
+     * @property {string} rarityId The rarity type for current item
+     * @property {number} bind Allows the item to be tradable or not
+     * @property {string} owned_by_guild_id Guild/server-specific item
+     * @property {string|null} response_on_use Custom response upon use
+     * @property {number} usable Allows the item to be used or not
+     */
+
 	/**
 	 * Options to be supplied to `this.updateInventory()` parameters
 	 * @typedef {Object} itemsMetadata
@@ -2125,12 +2139,77 @@ class Database {
 		return this.updateInventory({itemId: 81, value:10, operation:`+`, userId: userId, guildId: guildId})	
 	}
 
+    /**
+     * Registering new item into database
+     * @param {item} item
+     * @return {QueryResult}
+     */
+    registerItem(item) {
+        return this._query(`
+            INSERT INTO items(
+                name,
+                description,
+                alias,
+                type_id,
+                rarity_id,
+                bind,
+                owned_by_guild_id,
+                response_on_use,
+                usable
+            )
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            , `run`
+            , [
+                item.name,
+                item.description,
+                item.alias,
+                item.typeId,
+                item.rarityId,
+                item.bind,
+                item.ownedByGuildId,
+                item.responseOnUse,
+                item.usable
+            ]
+        )
+    }
+
+    /**
+     * Registering new item into guild's shop.
+     * @param {number} itemId
+     * @param {string} guildId
+     * @param {number} quantity
+     * @param {number} price
+     * @return {QueryResult}
+     */
+    registerGuildShopItem(itemId, guildId, quantity, price) {
+        return this._query(`
+            INSERT INTO shop(item_id, guild_id, quantity, price)
+            VALUES(?, ?, ?, ?)`
+            , `run`
+            , [itemId, guildId, quantity, price]
+        )
+    }
+
+    /**
+     * Registering new item type 'Custom'.
+     * @return {void}
+     */
+    registerCustomTypeItem() {
+        this._query(`
+            INSERT INTO item_types(name, alias)
+            VALUES(?, ?)`
+            , `run`
+            , [`Custom`, `ctm`]
+        )
+    }
+
 	/**
 	 * Pull any item metadata from `items` table. Supports dynamic search.
 	 * @param {ItemKeyword} keyword ref to item id, item name or item alias.
+     * @param {string} [guildId=null] Limit search to specific guild's owned items only. Optional. 
 	 * @returns {QueryResult}
 	 */
-	getItem(keyword=``) {
+	getItem(keyword=``, guildId=null) {
 		return this._query(`
 			SELECT 
 
@@ -2158,21 +2237,55 @@ class Database {
 				ON item_rarities.rarity_id = items.rarity_id
 
 			WHERE 
+                ${guildId ? `WHERE owned_by_guild_id = '${guildId}' AND` : ``}
 				items.item_id = $keyword
 				OR lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)
 			LIMIT 1`
 			, `get`
 			, {keyword: keyword}	
-			, `Looking up for an item with keyword "${keyword}"`
 		)
 	}
+
+    /**
+     * Migrate items table to new structure
+     * @return {void}
+     */
+    migrateItemsTable() {
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN usable INTEGER DEFAULT 0
+        `, `run`)
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN response_on_use TEXT
+        `, `run`)
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN owned_by_guild_id TEXT
+        `, `run`)
+    }
 
     /**
      * ----------------------------------------------
      * SHOP METHOD
      * ----------------------------------------------
      */  
+
+    /**
+     * Fetch all the registered purchasable items in target server.
+     * @param {string} guildId
+     * @return {object}
+     */
+    getGuildShop(guildId) {
+        return this._query(`
+            SELECT *
+            FROM shop
+            WHERE guild_id = ?`
+            , `all`
+            , [guildId]
+        )
+    } 
     
     /**
      * Initialize shop table
@@ -2184,13 +2297,12 @@ class Database {
         return this._query(`
             CREATE TABLE IF NOT EXISTS shop(
                 item_id INTEGER,
-                in_guild_id TEXT DEFAULT NULL,
+                guild_id TEXT DEFAULT NULL,
                 quantity INTEGER DEFAULT -1,
+                price INTEGER DEFAULT 0,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                registered_by_user_id TEXT,
-                updated_by_user_id TEXT,
-                
+        
                 PRIMARY KEY(item_id),
 
                 FOREIGN KEY(item_id)
