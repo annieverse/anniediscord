@@ -74,11 +74,12 @@
     },
     "BUY": {
         "SHORT_GUIDE": "Checkout what you can buy in our `{{prefix}}shop` !",
-        "INSUFFICIENT_BALANCE": "You need {{emoji}}**{{amount}}** more to finish this transaction.",
-        "INVALID_ITEM": "I can't find any item with that name..",
+        "INSUFFICIENT_BALANCE": "You need {{emoji}}**{{amount}}** more to complete the purchase.",
+        "INVALID_ITEM": "I cannot find any item by that name/ID...",
+        "INVALID_ITEM_TIPS": "Perhaps check the **`{{prefix}}shop`** first? {{emoji}}",
         "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
         "NO_DUPLICATE": "You are already own that {{itemType}}",
-        "SUCCESSFUL": "{{emoji}} **{{item}}** has been delivered to your inventory!",
+        "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰─ Now type **`{{prefix}}inventory`** to see the item.",
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
         "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
@@ -86,6 +87,7 @@
         "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** isn't available to purchase in this guild. Ask your administrator or guild owner to set it up.",
         "NON_PURCHASABLE_ITEM": "Sorry, you cannot buy this item.",
         "QUICKAPPLY_COVER": "Do you wish to apply it to your profile card as well?",
+        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nShall we buy\n**{{item}}** for {{emoji}}**{{price}}**?\n╰────────☆～*:;,．*╯\nComplete the purchase\nby reacting to the green button",
         "PAYMENT_UNSUPPORTED": "Currently the payment method for this item is not supported. Sorry for this inconvenience!"
     },
     "BOOSTER": {

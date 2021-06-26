@@ -2210,6 +2210,35 @@ class Database {
 	 * @returns {QueryResult}
 	 */
 	getItem(keyword=``, guildId=null) {
+        const str = `SELECT 
+
+				items.item_id AS item_id,
+				items.name AS name,
+				items.description AS description,
+				items.alias AS alias,
+				items.type_id AS type_id,
+				items.rarity_id AS rarity_id,
+				items.bind AS bind,
+
+				item_types.name AS type_name,
+				item_types.alias AS type_alias,
+				item_types.max_stacks AS type_max_stacks,
+				item_types.max_use AS type_max_use,
+
+				item_rarities.name AS rarity_name,
+				item_rarities.level AS rarity_level,
+				item_rarities.color AS rarity_color
+
+			FROM items
+			INNER JOIN item_types
+				ON item_types.type_id = items.type_id
+			INNER JOIN item_rarities
+				ON item_rarities.rarity_id = items.rarity_id`
+        //  Do local fetch/Specific guild items
+        if (keyword === null && typeof guildId === `string`) return this._query(str+` WHERE owned_by_guild_id = ?`
+            , `all`
+            , [guildId]
+        )
 		return this._query(`
 			SELECT 
 
