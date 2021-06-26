@@ -1,4 +1,5 @@
 const commanifier = require(`../../utils/commanifier`)
+const loadAsset = require(`../../utils/loadAsset`)
 /**
  * Buy purchasable items in server's shop!
  * @author klerikdust
@@ -33,7 +34,7 @@ module.exports = {
                 str += shopText+`\n\n` 
             }
             str += `╰☆～(ID:${item.item_id}) **${item.name}**\n> ${artcoinsEmoji}**${commanifier(shopMeta.price)}**\n> ${item.description}\n> Available Stock :: ${shopMeta.quantity === `~` ? `unlimited` : commanifier(shopMeta.quantity)}\n`
-            if (breakpoint >= 5 || i === (guildShop.length-1)) {
+            if (breakpoint >= 3 || i === (guildShop.length-1)) {
                 str += `\n╰──────────☆～*:;,．*╯`
                 breakpoint = 0
                 res.push(str)
@@ -43,12 +44,24 @@ module.exports = {
                 str += `\n⸻⸻⸻⸻\n`
             }
         }
-
         //  Displaying shop
-        return reply.send(res, {
+        const customBanner = message.guild.configs.get(`SHOP_IMAGE`).value
+        await reply.send(res, {
+            image: customBanner ? await loadAsset(customBanner, `./src/assets/customShop`) : `banner_setshop`,
+            prebuffer: customBanner ? true : false,
             paging: true,
             header: `${message.guild.name}'s Shop!`,
-            thumbnail: message.guild.iconURL()
+            thumbnail: message.guild.iconURL(),
+            socket: {
+                user: `**${message.author.username}**`
+            }
+        })
+        return reply.send(locale.SHOP.BUY_TIPS, {
+            simplified: true,
+            socket: {
+                emoji: await client.getEmoji(`AnnieHeartPeek`),
+                prefix: prefix
+            }
         })
     }
 }

@@ -107,7 +107,7 @@ class Response {
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
-			const embeddedPages = this._registerPages(content, plugins)
+			const embeddedPages = await this._registerPages(content, plugins)
 			return field.send(embeddedPages[0])
 	        .then(async msg => {
 	            //  Buttons
@@ -225,10 +225,14 @@ class Response {
      *  @param {object} [src=null] reply's options parameters for customized embed.
      *  @returns {array}
      */
-    _registerPages(pages=[], src=null) {
+    async _registerPages(pages=[], src=null) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
+            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
+            if (src.image) {
+			    res[i].attachFiles(new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`))
+			    res[i].setImage(`attachment://preview.jpg`)
+            }
             if (src.color) res[i].setColor(palette[src.color] || src.color || palette[`crimson`])
             if (src.header) res[i].setTitle(src.header)
            	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])

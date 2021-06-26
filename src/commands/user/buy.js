@@ -41,6 +41,14 @@ module.exports = {
             })
         }
         const shopMetadata = guildShop.find(i => i.item_id === item.item_id)
+        const unlimitedSupply = shopMetadata.quantity === `~`
+        //  Handle if item is out of stock
+        if (!unlimitedSupply && (shopMetadata.quantity <= 0)) return reply.send(locale.BUY.OUT_OF_STOCK, {
+            socket: {
+                item: item.name,
+                emoji: await client.getEmoji(`692428908540461137`)
+            }
+        })
         const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
             thumbnail: message.author.displayAvatarURL(),
             socket: {
@@ -76,6 +84,8 @@ module.exports = {
                 itemId: item.item_id,
                 value: 1
             })
+            //  Reduce available supply if supply wasn't set as unlimited.
+            if (shopMetadata.quantity !== `~`) client.db.subtractItemSupply(item.item_id, 1)
             return reply.send(locale.BUY.SUCCESSFUL, {
                 status: `success`,
                 socket: {

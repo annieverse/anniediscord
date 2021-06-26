@@ -79,6 +79,7 @@
         "INVALID_ITEM_TIPS": "Perhaps check the **`{{prefix}}shop`** first? {{emoji}}",
         "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
         "NO_DUPLICATE": "You are already own that {{itemType}}",
+        "OUT_OF_STOCK": "Oops, **'{{item}}'** is out of stock at the moment. Ask the server's owner/admin to restock the supply! {{emoji}}",
         "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰ Now type **`{{prefix}}inventory`** to see the item.",
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
@@ -779,23 +780,31 @@
         "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!"
     },
     "SETSHOP": {
-        "GUIDE": "Use one of the following action to start setup shop module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setshop text <message>`**\n> You can make a unique customized shop message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setshop text Hi, cuttie {{user}}, Welcome to our very own item shop!__\n\n**`{{prefix}}setshop remove <item id>`**\n> Wanna remove a specific item?\ne.g. __{{prefix}}setshop remove 1__\n\n**`{{prefix}}setshop add <item name>;<item description>;<price>`**\n> Let's setup some sweet items that can be purchased!\ne.g. __{{prefix}}setshop add bread; a nice loaf of bread; 300__\n\n**`{{prefix}}setshop edit <item id>`**\n> Forgot to enable a option or want to add/remove an option!\ne.g. __{{prefix}}setshop edit 1__\n\n**`{{prefix}}setshop image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the shop. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setshop disable`**\n> Dont wanna utilize your own shop? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Ready to create a customized virtual items that your member able to buy? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Don't forget to open up the shop first, before applying anything else!\n\n**`{{prefix}}setshop text <message>`**\n> Create a short, yet unique shop's header of your server! Use {{user}} to mention the user.\ne.g. __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Your registered item doesn't seem to attract that much? I guess its time to delete them.\n\n**`{{prefix}}setshop add <itemName>`**\n> Nothing as good as creating your own item for your server! Put a unique name, set price, add effects, and profit.\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Missing some details on your recently registered item?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> To enhance the personalization even further, try upload a unique banner for your server's shop!\n\n**`{{prefix}}setshop close`**\n> Got something in mind? wanna set a shopping day for your member? you can close the shop first and open it again whenever you are ready.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
         "ALREADY_ENABLED": "The shop already opened by **{{user}}, {{date}}**",
         "SUCCESSFULLY_ENABLED": "The shop now is opened!",
+        "EDIT_MISSING_PARAM": "Don't forget to include the required data!",
         "ALREADY_DISABLED": "The shop hasn't been opened yet in this server.**\nTo enable it, use **`{{prefix}}setshop enable`**",
         "SUCCESSFULLY_DISABLED": "Shop has been successfully closed.",
+        "EDIT_NAME_SUCCESSFUL": "**'{{oldItem}}'** item name has been changed to **'{{newItem}}'**!",
+        "EDIT_DESC_SUCCESSFUL": "{{item}}'s description has been updated!",
+        "EDIT_TIMEOUT": "Editing interface for **'{{item}}'** item has been closed due to inactivity.",
         "EMPTY_ROLE_PARAMETER": "Need to update",
         "ADD_MISSING_NAME": "Don't forget to specify the item's name, okay?",
         "ADD_OVERLIMIT_NAME": "You can't put item's name longer than **20 characters**! please type again with shorter name.",
         "INVALID_ROLE": "Sorry, I can't find any role with that name.",
         "ROLE_SUCCESSFULLY_REGISTERED": "Need to update",
-        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the shop!\neg. `{{prefix}}setshop text welcome to our item shop!`",
-        "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's shop message has been updated!",
+        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the shop!\ne.g. `{{prefix}}setshop text welcomer to our shop, {{user}}!`",
+        "TEXT_SUCCESSFULLY_REGISTERED": "**Text updated!** {{emoji}}\n╰ Type **`{{prefix}}shop`** to see how it looks like.",
+        "DELETE_MISSING_TARGET": "Don't forget to specify the item, okay? {{emoji}}",
+        "DELETE_CONFIRMATION": "Are you sure want to delete this '{{item}}' item? Keep in mind that you won't be able to use '{{item}}' as item name in the future as long as there still some members who own it.",
+        "DELETE_SUCCESSFUL": "**{{item}}** item has been removed from the shop!",
+        "ITEM_DOESNT_EXISTS": "I can't find any item called **'{{item}}'** in this server..",
         "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
-        "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the shop! {{emoji}}\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
+        "IMAGE_MISSING_ATTACHMENT": "Interested in using custom image for the shop banner?\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
         "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
-        "CONFIRMATION_IMAGE": "Apply the following image as shop's background?",
+        "CONFIRMATION_IMAGE": "**Apply the following image as shop's banner?**",
         "ADD_SESSION_STILL_ACTIVE": "Please wait for a moment before registering item again.",
         "ADD_NAME": "**What's the item name will be?**",
         "ADD_NAME_FOOTER": "The item's information will be gradually updated in this embed.",
@@ -822,7 +831,7 @@
         "ADD_BUFF_INVALID_DURATION": "Don't' forget to specify the duration, okay? It can be **`2 minutes`, `5 hours`, or even **`7 days`**!",
         "ADD_CONFIRMATION": "Shall we create this item?",
         "ADD_SUCCESSFUL": "**Yay! item has been created!** {{emoji}}\n╰─ Now you can check it in the **`{{prefix}}shop`** command.",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for shop has been applied!"
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result."
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
@@ -833,6 +842,7 @@
         "NO_ITEMS": "**Nothing to buy!** this server hasn't set their own shop yet.",
         "SETUP_TIPS": "Try ask the server owner/admin to setup one with **`{{prefix}}setshop`** command!♡",
         "CLOSED": "Aw, the shop still closed! please comeback next time!", 
+        "BUY_TIPS": "Type **`{{prefix}}buy <item>`** to purchase it! {{emoji}}",
         "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**"
     },
     "STATCARD": {
@@ -899,7 +909,7 @@
     },
     "VOTE": {
         "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details.",
-        "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰─While we at it, why not **{{page}}** about me first? {{emoji}}",
+        "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰ While we at it, why not **{{page}}** about me first? {{emoji}}",
         "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
     }
 }

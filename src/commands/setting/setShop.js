@@ -1,4 +1,6 @@
 const Confirmator = require(`../../libs/confirmator`)
+const loadAsset = require(`../../utils/loadAsset`)
+const stringSimilarity = require(`string-similarity`)
 const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)
 const ms = require(`ms`)
@@ -23,28 +25,14 @@ module.exports = {
      * An array of the available options for welcomer module
      * @type {array}
      */
-    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`, `restock`, `reset`],
-
-    /**
-     * Reference key to welcomer sub-modules config code.
-     * @type {object}
-     */
-    actionReference: {
-        "open": `SHOP_MODULE`,
-        "close": `SHOP_MODULE`,
-        "text": `SHOP_TEXT`,
-        "image": `SHOP_IMAGE`,
-        "add": `SHOP_ITEM`,
-        "delete": `SHOP_ITEM`,
-        "edit": `SHOP_ITEM`,
-    },
+    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
-            image: `banner_setwelcomer`,
+            image: `banner_setshop`,
             header: `Hi, ${message.author.username}!`,
             socket: {
                 prefix: prefix,
-                emoji: await client.getEmoji(`692428660824604717`)
+                emoji: await client.getEmoji(`AnnieHeartPeek`)
             }
         })
         const args = arg.split(` `)
@@ -109,7 +97,13 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, { status: `success` })
+        return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, { 
+            status: `success`,
+            socket: {
+                prefix: prefix,
+			    emoji: await client.getEmoji(`789212493096026143`)
+            }
+        })
     },
 
     /**
@@ -330,54 +324,13 @@ module.exports = {
     },
 
     /**
-     * Restock an item in the shop 
+     * Managing shop's image. 
      * @return {void}
      */
-     async restock(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, { socket: { prefix: prefix } })
-        const activateModule = false
-        if (!activateModule) return reply.send(`This setting is diabled`)
-
-        if (!this.args[1] && !this.args[2]) return reply.send(`missing args **CHANGE STRING**`)
-        const itemID = this.args[1]
-        const itemExists = client.db.isValidItem(itemId, message.guild.id) 
-        if (itemExists == 0) return reply.send(`Item doesnt exist please add first **CHANGE STRING**`)
-
-        const quantity = parseInt(this.args[2])
-        if (quantity < -1) quantity = -1
-
-        const confirmation = await reply.send(`are u sure **CHANGE STRING**`/*locale.SETSHOP.CONFIRMATION_REMOVE*/, {
-            image: await new GUI(message.member, client, id).build(),
-            prebuffer: true
-        })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
-        c.onAccept(async() => {
-            client.db.restockItem(itemID, quantity)
-            reply.send(`restocked **CHANGE STRING**`/*locale.SETSHOP.ITEM_SUCCESSFULLY_REMOVED*/, {
-                socket: {
-                    emoji: await client.getEmoji(`789212493096026143`)
-                }
-            })
-        })
-
-
-    },
-
-    /**
-     * Managing welcomer's image. 
-     * @return {void}
-     */
-    async image(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, {
-            socket: { prefix: prefix }
-        })
-        const { isValidUpload, url } = this.getImage(message)
+    async image(client, reply, message, arg, locale, prefix, args) {
+        const { isValidUpload, url } = this.getImage(message, args.slice(1).join(` `))
         if (!url) return reply.send(locale.SETSHOP.IMAGE_MISSING_ATTACHMENT, {
             socket: {
-                emoji: await client.getEmoji(`692428692999241771`),
                 prefix: prefix
             }
         })
@@ -391,21 +344,23 @@ module.exports = {
         const buffer = await response.buffer()
         await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
-            image: await new GUI(message.member, client, id).build(),
+            image: await loadAsset(id, `./src/assets/customShop`),
             prebuffer: true
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async() => {
             client.db.updateGuildConfiguration({
-                configCode: this.selectedModule,
+                configCode: `SHOP_IMAGE`,
                 customizedParameter: id,
                 guild: message.guild,
                 setByUserId: message.author.id,
-                cacheTo: this.guildConfigurations
+                cacheTo: message.guild.configs
             })
             reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
+                status: `success`,
                 socket: {
+                    prefix: prefix,
                     emoji: await client.getEmoji(`789212493096026143`)
                 }
             })
@@ -415,65 +370,119 @@ module.exports = {
     /** 
      * Check if user has attempted to upload a custom image
      * @param {Message} message Current message instance
+     * @param {string} src Source keyword for parsing image url/attachment
      * @return {object}
      */
-    getImage(message) {
+    getImage(message, src) {
         const hasAttachment = message.attachments.first() ? true : false
-        const imageArgs = this.args.slice(1).join(` `)
-        const hasImageURL = imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? true : false
+        const hasImageURL = src.startsWith(`http`) && src.length >= 15 ? true : false
         return {
             isValidUpload: hasAttachment || hasImageURL ? true : false,
             url: message.attachments.first() ?
-                message.attachments.first().url : imageArgs.startsWith(`http`) && imageArgs.length >= 15 ?
-                imageArgs : null
+                message.attachments.first().url : src.startsWith(`http`) && src.length >= 15 ?
+                src : null
         }
     },
 
     /**
-     * Remove an item
+     * Delete an item from shop and server.
      * @return {void}
      */
-    async remove(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, {
-            socket: { prefix: prefix }
+    async delete(client, reply, message, arg, locale, prefix, args) {
+        const guildItems = await client.db.getItem(null, message.guild.id)
+        if (!guildItems.length) return reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
+        const keyword = args.slice(1).join(` `)
+        if (!keyword) return reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieHeartPeek`)
+            }
         })
-
-        const activateModule = true
-        if (!activateModule) return reply.send(`This setting is diabled **CHANGE STRING**`)
-        const itemID = this.args[1]
-        const itemExists = client.db.isValidItem(itemId, message.guild.id) 
-        if (itemExists == 0) return reply.send(`Item doesnt exist please add first **CHANGE STRING**`)
-        const confirmation = await reply.send(`are u sure **CHANGE STRING**`/*locale.SETSHOP.CONFIRMATION_REMOVE*/, {
-            image: await new GUI(message.member, client, id).build(),
-            prebuffer: true
+        //  Find best match
+        const searchStringResult = stringSimilarity.findBestMatch(keyword, guildItems.map(i => i.name.toLowerCase()))
+		const item = searchStringResult.bestMatch.rating >= 0.5
+        //  By name
+        ? guildItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target) 
+        //  Fallback search by ID
+        : guildItems.find(i => parseInt(i.item_id) === parseInt(keyword))
+        if (!item) return reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {socket:{item: keyword}})
+        const confirmation = await reply.send(locale.SETSHOP.DELETE_CONFIRMATION, {
+            header: `Delete '${item.name}'?`,
+            thumbnail: message.author.displayAvatarURL(),
+            socket: {
+                item: item.name
+            }
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async() => {
-            client.db.removeItem(itemID)
-            reply.send(`removed success **CHANGE STRING**`/*locale.SETSHOP.ITEM_SUCCESSFULLY_REMOVED*/, {
+            client.db.removeGuildShopItem(item.item_id)
+            reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
                 socket: {
-                    emoji: await client.getEmoji(`789212493096026143`)
+                    item: item.name
                 }
             })
         })
-
     },
 
     /**
-     * Edit an item
+     * Edit item's metadata.
      * @return {void}
      */
-    async edit(client, reply, message, arg, locale, prefix) {
-        //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETSHOP.ALREADY_DISABLED, {
-            socket: { prefix: prefix }
+    async edit(client, reply, message, arg, locale, prefix, args) {
+        const guildItems = await client.db.getItem(null, message.guild.id)
+        if (!guildItems.length) return reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
+        const keyword = args.slice(1).join(` `)
+        if (!keyword) return reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieHeartPeek`)
+            }
         })
-
-        const activateModule = false
-        if (!activateModule) return reply.send(`This setting is diabled`)
-
+        //  Find best match
+        const searchStringResult = stringSimilarity.findBestMatch(keyword, guildItems.map(i => i.name.toLowerCase()))
+		const item = searchStringResult.bestMatch.rating >= 0.5
+        //  By name
+        ? guildItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target) 
+        //  Fallback search by ID
+        : guildItems.find(i => parseInt(i.item_id) === parseInt(keyword))
+        if (!item) return reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {socket:{item: keyword}})
+        const guide = await reply.send(locale.SETSHOP.EDIT_GUIDE, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieHeartPeek`),
+                prefix: prefix
+            }
+        })
+        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
+        let phase = phaseJump ? 1 : 0
+        let completed = false
+        pool.on(`collect`, async m => {
+            let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
+            if (input === `cancel`) return pool.stop()
+            const argsPool = input.split(` `)
+            const action = argsPool[0]
+            const params = argsPool.slice(1).join(` `) 
+            if (!params) return reply.send(locale.SETSHOP.EDIT_MISSING_PARAM)
+            const guildItems = await client.db.getItem(null, message.guild.id)
+            m.delete()
+            switch(action) {
+                //  Changing item name
+                case `name`:
+                    const nameLimit = 20
+                    if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {deleteIn: 5, socket: {limit:nameLimit}}) 
+                    if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                        deleteIn: 5,
+                        socket: {
+                            item: params 
+                        }
+                    })
+                    client.db.updateItemMetadata(item.item_id, `name`, params)
+                    break
+                //  Changing item's description
+                case `description`:
+                    const descLimit = 120
+                    if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {deleteIn: 5, socket: {limit:descLimit}})
+                    client.db.updateItemMetadata(item.item_id, `description`, params)
+            }
+        })
     },
 
     /**

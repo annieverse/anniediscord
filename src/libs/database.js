@@ -2386,6 +2386,56 @@ class Database {
 		)
 	}
 
+    /**
+     * Subtract item's supply from shop table.
+     * @param {number} itemId
+     * @param {number} [amount=1] Amount to subtract
+     * @return {void}
+     */
+    subtractItemSupply(itemId, amount=1) {
+        this._query(`
+            UPDATE shop
+            SET quantity = quantity - ?
+            WHERE item_id = ?`
+            , `run`
+            , [amount, itemId]
+        )
+    }
+
+    /**
+     * Updating item's metadata.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateItemMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE items
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+    
+    /**
+     * Updating item's metadata in shop table.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateShopItemMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE shop
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+
 	/**
 	* Restock (add) to an item's quantity
 	* @param {number} [itemId] target item to search.
@@ -2407,19 +2457,16 @@ class Database {
 	}
 
 	/**
-	* Remove an item from the items table
+	* Remove an item from the shops table
 	* @param {number} [itemId] target item to search.
 	* @returns {QueryResult}
 	*/
-	removeItem(itemId) {
-		const fn = `[Database.removeItem]`
-		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+	removeGuildShopItem(itemId) {
 		return this._query(`
 			DELETE FROM shop
 			WHERE item_id = $itemId`
 			, `run`
 			, {itemId: itemId}	
-			, `Removing ITEM_ID: ${itemId}`
 		)
 	}
 
