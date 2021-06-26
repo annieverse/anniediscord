@@ -128,25 +128,53 @@ module.exports = {
         const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
         if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.redis.set(sessionId, 1, `EX`, 60*3)
-        let dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
+        //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
+        let phaseJump = false
+        let dataDisplay = null
+        const secondArg = arg.split(` `)[1]
+        if (secondArg) {
+            phaseJump = true
+            const nameLimit = 20
+            if (secondArg.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {socket: {limit:nameLimit}}) 
+            const guildItems = await client.db.getItem(null, message.guild.id)
+            if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                socket: {
+                    item: secondArg 
+                }
+            })
+            metadata.name = secondArg
+            dataDisplay = await message.channel.send(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${secondArg}`, {raw:true}))
+        }
+        else {
+            dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
+                raw: true
+            }))
+        }
+        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
+        let phase = phaseJump ? 1 : 0
+        let completed = false
+        const joinFunction = (newMessage) => {
+            return reply.send(dataDisplay.embeds[0].description + newMessage, {
+                footer: `Type cancel to close this registration.`,
                 raw: true
             })
-        )
-        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
-        let phase = 0
-        let completed = false
+        }
         pool.on(`collect`, async m => {
             let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
             if (input === `cancel`) return pool.stop()
             m.delete()
-            const joinFunction = (newMessage) => {
-                return reply.send(dataDisplay.embeds[0].description + newMessage, {raw:true})
-            }
             switch(phase) {
                 //  Name
                 case 0:
                     const nameLimit = 20
                     if (input.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {deleteIn: 5, socket: {limit:nameLimit}}) 
+                    const guildItems = await client.db.getItem(null, message.guild.id)
+                    if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                        deleteIn: 5,
+                        socket: {
+                            item: input 
+                        }
+                    })
                     metadata.name = input
                     //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
                     dataDisplay.edit(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${input}`, {raw:true}))
@@ -242,11 +270,11 @@ module.exports = {
                             if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {deleteIn: 5})
                             const duration = ms(params.slice(2).join(` `))
                             if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {deleteIn: 5})
-                            const isExpBuff= params[0] === `expboost`
+                            const isExpBuff = params[0] === `expboost`
                             buffs.push({
                                 type: isExpBuff ? 5 : 6,
                                 params: {
-                                    name: isExpBuff ? `EXP` : `ARTCOINS`,
+                                    name: metadata.name,
                                     multiplier: multiplier/100,
                                     duration: duration
                                 }
@@ -276,9 +304,11 @@ module.exports = {
                         pool.stop()
                         //  Register item
                         await client.db.registerItem(metadata)
-                        const item = await client.db.getItem(metadata.name)
+                        const item = await client.db.getItem(metadata.name, message.guild.id)
                         //  Register to the shop
                         client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                        //  Register effect if there's any
+                        if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
                         return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
                             status: `success`,
                             socket: {

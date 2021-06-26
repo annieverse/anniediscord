@@ -3,13 +3,13 @@ const Confirmator = require(`../../libs/confirmator`)
 const ItemEffects = require(`../../libs/itemEffects`)
 const stringSimilarity = require(`string-similarity`)
 /**
- * Consume an item and gain pre-defined effect.
+ * Consume an item and gain certain effect.
  * @author klerikdust
  */
 module.exports = {
     name: `use`,
-	aliases: [`use`, `uses`],
-	description: `Consume an item and gain pre-defined effect`,
+	aliases: [`use`, `uses`, `eat`, `drink`, `open`, `consume`],
+	description: `Consume an item and gain certain effect`,
 	usage: `use <item>`,
 	permissionLevel: 0,
     async execute(client, reply, message, arg, locale) {
@@ -29,10 +29,20 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         })
+        if (targetItem.quantity <= 0) return reply.send(locale.USE.INSUFFICIENT)
+        //  Handle non-usable item
+        if (targetItem.usable === 0) return reply.send(locale.USE.UNUSABLE, {
+            socket: {
+                emoji: await client.getEmoji(`AnnieYandereAnim`)
+            }
+        })
+        const effectLib = new ItemEffects(client, message)
         //  Usage confirmation
         const confirmation = await reply.send(locale.USE.CONFIRMATION, {
+            thumbnail: message.author.displayAvatarURL(),
             socket: {
-                item: targetItem.name
+                item: targetItem.name,
+                footer: await effectLib.displayItemBuffs(targetItem.item_id) || locale.USE.CONFIRMATION_TIPS
             }
         })
         const c = new Confirmator(message, reply)
@@ -47,21 +57,14 @@ module.exports = {
                 value: 1
             })
             //  Applying effect if there's any.
-            const itemEffects = await client.db.getItemEffects(targetItem.item_id)
-            if (itemEffects.length > 0) {
-                const effectLib = new ItemEffects(client, message)
-                for (let i=0; i<itemEffects.length; i++) {
-                    const e = itemEffects[i]
-                    effectLib.buffReferences[e.effect_ref_id](e.param)
-                }
-            }
+            effectLib.applyItemEffects(targetItem.item_id)
             //  Displaying custom message upon use (if there's any).
-            confirmation.delete().catch(e => e)
-            const displayedMsg = targetItem.response_on_use || locale.USE.SUCCESSFUL
+            const displayedMsg = targetItem.response_on_use === `~` ? locale.USE.SUCCESSFUL : targetItem.response_on_use
             return reply.send(displayedMsg, {
+                status: `success`,
                 socket: {
-                    item: targetItem.name,
-                    user: message.author.username
+                    item: `**${targetItem.name}**`,
+                    user: `**${message.author.username}**`
                 }
             })
         })

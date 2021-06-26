@@ -70,6 +70,7 @@ module.exports = {
             })
             //  Send item
             client.db.updateInventory({
+                operation: `+`,
                 userId: message.author.id,
                 guildId: message.guild.id,
                 itemId: item.item_id,

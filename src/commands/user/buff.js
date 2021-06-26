@@ -21,7 +21,7 @@ module.exports = {
         for (let i=0; i<buffs.length; i++) {
             const buff = buffs[i]
             const localTime = await client.db.toLocaltime(buff.registered_at)
-            const expireAt = new Date(localTime).getTime() + (buff.duration*1000)
+            const expireAt = new Date(localTime).getTime() + buff.duration
             str += `╰☆～(${buff.multiplier*100}%)(${ms(new Date(expireAt).getTime() - Date.now(), {long:true})}) ${buff.type} boost from **'${buff.name}'** buff.\n`
         }
         return reply.send(str, {

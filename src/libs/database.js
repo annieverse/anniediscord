@@ -1980,6 +1980,9 @@ class Database {
 				items.type_id AS type_id,
 				items.rarity_id AS rarity_id,
 				items.bind AS bind,
+                items.owned_by_guild_id AS owned_by_guild_id,
+                items.usable AS usable,
+                items.response_on_use AS response_on_use,
 
 				item_types.name AS type_name,
 				item_types.alias AS type_alias,
@@ -2219,6 +2222,9 @@ class Database {
 				items.type_id AS type_id,
 				items.rarity_id AS rarity_id,
 				items.bind AS bind,
+                items.owned_by_guild_id AS owned_by_guild_id,
+                items.usable AS usable,
+                items.response_on_use AS response_on_use,
 
 				item_types.name AS type_name,
 				item_types.alias AS type_alias,
@@ -2239,34 +2245,9 @@ class Database {
             , `all`
             , [guildId]
         )
-		return this._query(`
-			SELECT 
-
-				items.item_id AS item_id,
-				items.name AS name,
-				items.description AS description,
-				items.alias AS alias,
-				items.type_id AS type_id,
-				items.rarity_id AS rarity_id,
-				items.bind AS bind,
-
-				item_types.name AS type_name,
-				item_types.alias AS type_alias,
-				item_types.max_stacks AS type_max_stacks,
-				item_types.max_use AS type_max_use,
-
-				item_rarities.name AS rarity_name,
-				item_rarities.level AS rarity_level,
-				item_rarities.color AS rarity_color
-
-			FROM items
-			INNER JOIN item_types
-				ON item_types.type_id = items.type_id
-			INNER JOIN item_rarities
-				ON item_rarities.rarity_id = items.rarity_id
-
+		return this._query(str+` 
 			WHERE 
-                ${guildId ? `WHERE owned_by_guild_id = '${guildId}' AND` : ``}
+                ${guildId ? ` owned_by_guild_id = '${guildId}' AND` : ``}
 				items.item_id = $keyword
 				OR lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)
@@ -2512,6 +2493,27 @@ class Database {
             , [itemId]
         )
     }
+
+    /**
+     * Registering new item effects
+     * @param {number} itemId
+     * @param {string} guildId
+     * @param {string} effectRefTId
+     * @param {*} parameters Custom parameter for the item effects.
+     * @return {QueryResult}
+     */
+    registerItemEffects(itemId, guildId, effectRefId, parameters) {
+        return this._query(`
+            INSERT INTO item_effects(
+                item_id,
+                guild_id,
+                effect_ref_id,
+                parameter)
+            VALUES(?, ?, ?, ?)`
+            , `run`
+            , [itemId, guildId, effectRefId, JSON.stringify(parameters)]
+        )
+    }
     
     /**
      * -------------------------------
@@ -2565,29 +2567,52 @@ class Database {
     }
 
     /**
-     * Registering new user's durational buff.
+     * Registering new user's durational buff. If there's a buff with same name and multiplier
+     * its metadata will be updated and the oldest one will be replaced.
      * @param {string} buffType
      * @param {string} name
      * @param {number} multiplier
      * @param {string} duration
      * @param {string} userId
      * @param {string} guildId
-     * @return {QueryResult}
+     * @return {void}
      */
-    registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
-        return this._query(`
-            INSERT INTO user_durational_buffs(
-                type,
-                name,
-                multiplier,
-                duration,
-                user_id,
-                guild_id
+    async registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
+        this._query(`
+            SELECT COUNT(*) AS instance
+            FROM user_durational_buffs
+            WHERE
+                type = ?
+                AND name = ?
+                AND multiplier = ?`
+            , `get`
+            , [buffType, name, multiplier]
+        ).then(res => {
+            //  Update duration
+            if (res.instance > 0) return this._query(`
+                UPDATE user_durational_buffs
+                SET registered_at = datetime('now')
+                WHERE
+                    type = ?
+                    AND name = ?
+                    AND multiplier = ?`
+                , `run`
+                , [buffType, name, multiplier]
             )
-            VALUES(?, ?, ?, ?, ?, ?)`
-            , `run`
-            , [buffType, name, multiplier, duration, userId, guildId]
-        )
+            this._query(`
+                INSERT INTO user_durational_buffs(
+                    type,
+                    name,
+                    multiplier,
+                    duration,
+                    user_id,
+                    guild_id
+                )
+                VALUES(?, ?, ?, ?, ?, ?)`
+                , `run`
+                , [buffType, name, multiplier, duration, userId, guildId]
+            )
+        })
     }
 
     /**

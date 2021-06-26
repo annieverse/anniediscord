@@ -79,7 +79,7 @@
         "INVALID_ITEM_TIPS": "Perhaps check the **`{{prefix}}shop`** first? {{emoji}}",
         "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
         "NO_DUPLICATE": "You are already own that {{itemType}}",
-        "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰─ Now type **`{{prefix}}inventory`** to see the item.",
+        "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰ Now type **`{{prefix}}inventory`** to see the item.",
         "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
         "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
         "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
@@ -796,9 +796,11 @@
         "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the shop! {{emoji}}\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
         "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
         "CONFIRMATION_IMAGE": "Apply the following image as shop's background?",
+        "ADD_SESSION_STILL_ACTIVE": "Please wait for a moment before registering item again.",
         "ADD_NAME": "**What's the item name will be?**",
         "ADD_NAME_FOOTER": "The item's information will be gradually updated in this embed.",
         "ADD_NAME_OVERLIMIT": "You can only write **{{limit}} characters** for the item's name!",
+        "ADD_NAME_DUPLICATE": "**'{{item}}'** already exists in this server. You can't use this name to create duplicate item!",
         "ADD_DESCRIPTION": "**What's the item description will be?**",
         "ADD_DESCRIPTION_OVERLIMIT": "Please keep the item's description as short as **{{limit}} characters**!",
         "ADD_PRICE": "**How much would it costs?**",
@@ -807,7 +809,7 @@
         "ADD_STOCK_INVALID": "**For the stock, please pick **`~`** or a number.",
         "ADD_TRADABILITY": "**Is this item tradable? (y/n)**",
         "ADD_TRADABILITY_INVALID": "Please only fill with either **`y`** or **`n`**.",
-        "ADD_MESSAGE_UPON_USE": "**What's the message that going to be displayed upon item use?**\nType **`~`** if you don't want to specify any custom message.",
+        "ADD_MESSAGE_UPON_USE": "**What's the message that going to be displayed upon item use?**\nAdd **`{{user}}`** socket to mention the user and **`{{item}}`** to mention the used item. Or type **`~`** if you don't want to specify any custom message.",
         "ADD_MESSAGE_UPON_USE_OVERLIMIT": "Keep the message as short as **{{limit}} characters**!",
         "ADD_BUFF": "**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Type **`done`** for finishing the registration.\n♡ Type **`addrole <roles>`** to get specified roles once used.\n♡ Type **`removerole <roles>`** to remove specified roles from user once used.\n♡ Type **`additem <amount> <itemName/itemId>`** to receive specified items once used.\n♡ Type **`removeitem <amount> <itemName/itemId>`** to remove specified items from user's inventory.\n♡ Type **`expboost <percentage> <duration>`** To give exp boost to the user for specified amount of time.\n♡ Type **`acboost <percentage> <duration>`** to give artcoins boost to the user for specified amount of time.",
         "ADD_BUFF_OUT_OF_RANGE": "Ehh,. I didn't recognize that type of buff. Please only use the ones that I've mentioned above.",
@@ -884,8 +886,11 @@
     "USE": {
         "NO_ITEMS": "Ehh, you don't have any items to use! {{emoji}}",
         "INVALID_ITEM": "Is that item even exists? *hmm..* {{emoji}}",
-        "CONFIRMATION": "You are going to use **1x {{item}}**?",
-        "SUCCESSFUL": "**{{user}}** has used **{{item}}**!♡"
+        "INSUFFICIENT": "Oops, it seems you don't have the item.",
+        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nDo you want to use **{{item}}**?\n╰────────☆～*:;,．*╯\n{{footer}}",
+        "CONFIRMATION_TIPS": "Please react to the\n green button to proceed.",
+        "UNUSABLE": "Stop right there, this item cannot be used! {{emoji}}",
+        "SUCCESSFUL": "{{user}} has used {{item}}!♡"
     },
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",

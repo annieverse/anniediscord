@@ -1,3 +1,4 @@
+const ms = require(`ms`)
 /**
  * @typedef {object} ItemManipulation
  * @property {string} itemId
@@ -49,6 +50,51 @@ class itemEffects {
             6: `durationalArtcoinsBuff`
         }
     }
+
+    /**
+     * Displaying the buffs for target item.
+     * @param {number} itemId
+     * @return {string|null}
+     */
+    async displayItemBuffs(itemId) {
+        const itemEffects = await this.client.db.getItemEffects(itemId)
+        let str = `The following buffs will be applied upon use::\n`
+        if (!itemEffects.length) return null
+        for (let i=0; i<itemEffects.length; i++) {
+            const effect = itemEffects[i]
+            const raw = JSON.parse(effect.parameter)
+            if ([1, 2].includes(effect.effect_ref_id)) {
+                const transaction = effect.effect_ref_id === 1 ? `Receiving` : `Removed`
+                let role = []
+                raw.map(r => role.push(this.message.guild.roles.cache.get(r)))
+                str += `╰☆～${transaction} **${role.join(` `)}** role\n`
+            }
+            if ([3, 4].includes(effect.effect_ref_id)) {
+                const transaction = effect.effect_ref_id === 3 ? `Receiving` : `Removed`
+                const item = await this.client.db.getItem(raw.itemId)
+                str += `╰☆～${transaction} ${raw.amount}pcs of **${item.name}**\n` 
+            }
+            if ([5, 6].includes(effect.effect_ref_id)) {
+                const boostType = effect.effect_ref_id === 5 ? `EXP` : `Artcoins` 
+                str += `╰☆～${raw.multiplier*100}% ${boostType} boost for ${ms(raw.duration, {long:true})}\n` 
+            }
+        }
+        return str
+    }
+
+    /**
+     * Applying item buffs if there's any.
+     * @param {number} itemId
+     * @return {void}
+     */
+    async applyItemEffects(itemId) {
+        const itemEffects = await this.client.db.getItemEffects(itemId)
+        if (!itemEffects.length) return
+        for (let i=0; i<itemEffects.length; i++) {
+            const effect = itemEffects[i]
+            this[this.buffReferences[effect.effect_ref_id]](effect.parameter)
+        }
+    }
     
     /**
      *  ----------------------------
@@ -58,25 +104,27 @@ class itemEffects {
     
     /**
      * Giving out role
-     * @param {string} roleId
+     * @param {object} roleIds
      * return {void}
      */
-    addRole(roleId) {
+    addRole(roleIds) {
+        roleIds = JSON.parse(roleIds)
         //  Skip addition if user already has the role
-        if (this.message.member.roles.cache.has(roleId)) return
-        this.message.member.roles.add(roleId)
+        if (this.message.member.roles.cache.has(roleIds)) return
+        this.message.member.roles.add(roleIds)
         .catch(e => this.client.logger.warn(`${this.instanceId} <ADD_ROLE_FAIL> ${e.stack}`))
     }
 
     /**
      * Extract/revoke out role
-     * @param {string} roleId
+     * @param {object} roleIds
      * return {void}
      */
-    removeRole(roleId) {
+    removeRole(roleIds) {
+        roleIds = JSON.parse(roleIds)
         //  Skip addition if user already has the role
-        if (this.message.member.roles.cache.has(roleId)) return
-        this.message.member.roles.remove(roleId)
+        if (this.message.member.roles.cache.has(roleIds)) return
+        this.message.member.roles.remove(roleIds)
         .catch(e => this.client.logger.warn(`${this.instanceId} <REMOVE_ROLE_FAIL> ${e.stack}`))
     }
 
@@ -148,14 +196,21 @@ class itemEffects {
      * @private
      * @return {void}
      */ 
-    _durationalBuff(buffType, name, multiplier, duration) {
+    async _durationalBuff(buffType, name, multiplier, duration) {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
         const field = multiplier + `_` + key
         const expireAt = new Date().getTime() + (duration * 1000)
         this.client.db.redis.hset(key, multiplier, duration)
+        //  If there are multiple buffs that has same ref_id, multiplier and item name
+        //  The oldest instance/entry will be updated with the newest duration.
+        let isMultiInstance = false
+        const userDurationalBuffs = await this.client.db.getSavedUserDurationalBuffs(this.message.author.id)
+        if (userDurationalBuffs.filter(b => (b.name.toLowerCase() === name.toLowerCase()) 
+            && (b.multiplier === multiplier)
+            && (b.type === buffType)).length > 0) isMultiInstance = true
         this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
-        this.client.cronManager.add(field, new Date(expireAt), async () => {
+        this.client.cronManager[isMultiInstance ? `update` : `add`](field, new Date(expireAt), async () => {
             //  Flush from cache and sqlite
             this.client.db.redis.hdel(key, field)
             this.client.db.removeUserDurationalBuff(buffType, multiplier, this.message.author.id, this.message.guild.id)

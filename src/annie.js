@@ -230,7 +230,7 @@ class Annie extends Discord.Client {
                 const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
                 const field = node.multiplier + `_` + key
                 const localTime = await this.db.toLocaltime(node.registered_at)
-                const expireAt = new Date(localTime).getTime() + (node.duration * 1000)
+                const expireAt = new Date(localTime).getTime() + node.duration
                 //  Skip expired buff, and delete it from database as well.
                 if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
                     this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
