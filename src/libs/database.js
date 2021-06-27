@@ -2123,14 +2123,21 @@ class Database {
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id`
-        //  Do local fetch/Specific guild items
+        //  Do whole fetch on specific guild
         if (keyword === null && typeof guildId === `string`) return this._query(str+` WHERE owned_by_guild_id = ?`
             , `all`
             , [guildId]
         )
+        //  Do single fetch on specific guild
+        if (keyword && typeof guildId === `string`) return this._query(str+`
+            WHERE 
+                owned_by_guild_id = $guildId
+                AND lower(items.name) = lower($keyword)`
+            , `get`
+            , {keyword: keyword, guildId: guildId}
+        )
 		return this._query(str+` 
 			WHERE 
-                ${guildId ? ` owned_by_guild_id = '${guildId}' AND` : ``}
 				items.item_id = $keyword
 				OR lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)
