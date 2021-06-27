@@ -343,6 +343,8 @@
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
+        "FETCHING": "{{emoji}} *Tidying up the inventory bag...*",
+        "AUTHOR_TIPS": "Use the item by typing **`{{prefix}}use <id/name>`** {{emoji}}",
         "AUTHOR_EMPTY": "You don't have any items in your bag.",
         "OTHER_USER_EMPTY": "**{{user}}** don't have any items in their bag."
     },

@@ -111,8 +111,10 @@ class Response {
 			return field.send(embeddedPages[0])
 	        .then(async msg => {
 	            //  Buttons
-	            await msg.react(`⏪`)
-	            await msg.react(`⏩`)
+                if (embeddedPages.length > 1) {
+                    await msg.react(`⏪`)
+	                await msg.react(`⏩`)
+                }
 	            // Filters - These make sure the varibles are correct before running a part of code
 	            const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
 	            const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
