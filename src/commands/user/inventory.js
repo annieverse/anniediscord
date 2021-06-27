@@ -51,7 +51,7 @@ module.exports = {
                 prebuffer: true,
                 image: await new GUI(targetUserData).build(),
                 paging: true,
-                customHeader: [`${message.author.username}'s Inventory!`, message.author.displayAvatarURL()],
+                customHeader: [`${targetUser.username}'s Inventory!`, targetUser.displayAvatarURL()],
 			})
             if (userLib.isSelf(targetUser.id)) reply.send(locale.INVENTORY.AUTHOR_TIPS, {
                 simplified: true,
