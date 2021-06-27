@@ -125,8 +125,8 @@ module.exports = {
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
         let phaseJump = false
         let dataDisplay = null
-        const secondArg = arg.split(` `)[1]
-        if (secondArg) {
+        if (args[1]) {
+            const secondArg = args.slice(1).join(` `)
             phaseJump = true
             const nameLimit = 20
             if (secondArg.length >= nameLimit) {
