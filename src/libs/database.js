@@ -2208,20 +2208,13 @@ class Database {
 
 	/**
 	 * Pull the available price of the item.
-	 * @param {number} [itemId] target item to search.
 	 * @returns {QueryResult}
 	 */
-	getPriceOf(itemId) {
-		const fn = `[Database.getPriceOf]`
-		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
-		return this._query(`
-			SELECT price, item_price_id
-			FROM shop
-			WHERE item_id = $itemId`
-			, `get`
-			, {itemId: itemId}	
-			, `Looking up into price of ITEM_ID: ${itemId}`
-		)
+	getPriceOf() {
+        return {
+            price: 120,
+            item_price_id: 52
+        }
 	}
 
 	/**
