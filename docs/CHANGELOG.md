@@ -1,3 +1,10 @@
+## [7.21.3](https://github.com/klerikdust/anniediscord/compare/v7.21.2...v7.21.3) (2021-06-27)
+
+
+### Bug Fixes
+
+* **inventory:** wrong header. ([10a17fe](https://github.com/klerikdust/anniediscord/commit/10a17fe899788f1a1bda5e648d0a6cacbd0b191b))
+
 ## [7.21.2](https://github.com/klerikdust/anniediscord/compare/v7.21.1...v7.21.2) (2021-06-27)
 
 
