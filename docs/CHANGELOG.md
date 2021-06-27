@@ -1,3 +1,21 @@
+# [7.21.0](https://github.com/klerikdust/anniediscord/compare/v7.20.2...v7.21.0) (2021-06-27)
+
+
+### Bug Fixes
+
+* merge conflits. ([4502898](https://github.com/klerikdust/anniediscord/commit/45028988c12e9c14ad297d04645a8076f33e5385))
+
+
+### Features
+
+* **buff:** allows user to check their current active buffs. ([0b28b0b](https://github.com/klerikdust/anniediscord/commit/0b28b0b5af9f33b7efabf806609e5ebcc573db36))
+* **buy:** allows guild member to purchase guild items. ([e67a987](https://github.com/klerikdust/anniediscord/commit/e67a9874932b30dee336dd6bcdfb1d759fd9ad73))
+* **expBoost:** integrated buff system with exp/currency gaining from chat activity. ([1bc6e44](https://github.com/klerikdust/anniediscord/commit/1bc6e441770efd2bfe09f14939bf65b416f2c0b8))
+* **setShop:** basic add action, crud buff, etc done. ([8a8085a](https://github.com/klerikdust/anniediscord/commit/8a8085a1b740918d101adab9801178f2d0e395ac))
+* **setShop:** finished shop management. ([24541c8](https://github.com/klerikdust/anniediscord/commit/24541c854eaac0af460bb7b270075296b3cb6a08))
+* **tableHandler:** prevent instance from crashing if table is not found. ([f41e37a](https://github.com/klerikdust/anniediscord/commit/f41e37a4dae243ed1989978ed5f3bfa243cc0dd3))
+* **use:** a command that allows item use. ([939a180](https://github.com/klerikdust/anniediscord/commit/939a180cc32441afe7208171e3c406797d6e17d4))
+
 ## [7.20.2](https://github.com/klerikdust/anniediscord/compare/v7.20.1...v7.20.2) (2021-06-16)
 
 
