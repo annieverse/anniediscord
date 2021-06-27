@@ -1,3 +1,10 @@
+## [7.21.9](https://github.com/klerikdust/anniediscord/compare/v7.21.8...v7.21.9) (2021-06-27)
+
+
+### Bug Fixes
+
+* **gacha:** fetch price. ([740939d](https://github.com/klerikdust/anniediscord/commit/740939d1baf02ec0a26e50fd987ca64f58271ab4))
+
 ## [7.21.8](https://github.com/klerikdust/anniediscord/compare/v7.21.7...v7.21.8) (2021-06-27)
 
 
