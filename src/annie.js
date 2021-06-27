@@ -219,7 +219,8 @@ class Annie extends Discord.Client {
      * Registering cache and cron for saved user durational buffs.
      * @return {void}
      */
-    registerUserDurationalBuffs() {
+    async registerUserDurationalBuffs() {
+        if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
         this.db.getSavedUserDurationalBuffs().then(async src => {
             if (!src.length) return
             let count = 0

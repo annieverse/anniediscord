@@ -2720,6 +2720,21 @@ class Database {
         })
     }
 
+    /**
+     * Determine whether the user_durational_buffs table is exists or not.
+     * @return {number}
+     */ 
+    async isUserDurationalBuffsTableExists() {
+        const res = await this._query(`
+            SELECT COUNT(*) AS has
+            FROM sqlite_master
+            WHERE
+                type = 'table'
+                AND name = 'user_durational_buffs'`
+        )
+        return res.has
+    }
+
 	/**
 	 * Fetch items from `item_gacha` table.
 	 * @returns {QueryResult}
