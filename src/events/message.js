@@ -29,39 +29,39 @@ module.exports = (client, message) => {
                 })
             })
         }
-    }
-    //  Check if AR module is enabled.
-    if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
-    //  Check if message is identified as command.
-    if ((message.content.startsWith(prefix) || message.content.startsWith(client.prefix)) 
-        && ((message.content.length >= prefix.length) || (message.content.length >= client.prefix.length))) return commandController(client, message)
-    //  Automatically executing chat points when no other module requirements are met
-    const cooldown = 60 // in seconds
-    const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
-    if (client.cooldowns.has(gainingId)) {
-        const userCooldown = client.cooldowns.get(gainingId)
-        const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        //  Hold gaining if cooldown still has less than 60 seconds in difference
-        if (diff > 0) return
-    }
-    client.cooldowns.set(gainingId, Date.now())
-    const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
-    client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
-    .then(list => {
-        const accumulatedCurrencyMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
-        client.db.updateInventory({
-            itemId: 52,
-            value: getNumberInRange(chatCurrencyBase) * accumulatedCurrencyMultiplier,
-            userId: message.author.id,
-            guildId: message.guild.id
+        //  Check if AR module is enabled.
+        if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
+        //  Check if message is identified as command.
+        if ((message.content.startsWith(prefix) || message.content.startsWith(client.prefix)) 
+            && ((message.content.length >= prefix.length) || (message.content.length >= client.prefix.length))) return commandController(client, message)
+        //  Automatically executing chat points when no other module requirements are met
+        const cooldown = 60 // in seconds
+        const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
+        if (client.cooldowns.has(gainingId)) {
+            const userCooldown = client.cooldowns.get(gainingId)
+            const diff = cooldown - ((Date.now() - userCooldown) / 1000)
+            //  Hold gaining if cooldown still has less than 60 seconds in difference
+            if (diff > 0) return
+        }
+        client.cooldowns.set(gainingId, Date.now())
+        const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
+        client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
+        .then(list => {
+            const accumulatedCurrencyMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
+            client.db.updateInventory({
+                itemId: 52,
+                value: getNumberInRange(chatCurrencyBase) * accumulatedCurrencyMultiplier,
+                userId: message.author.id,
+                guildId: message.guild.id
+            })
         })
-    })
-    if (!message.guild.configs.get(`EXP_MODULE`).value) return
-    const chatExpBase = message.guild.configs.get(`CHAT_EXP`).value
-    client.db.redis.smembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
-    .then(list => {
-        const accumulatedExpMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
-        client.experienceLibs(message.member, message.guild, message.channel)
-            .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
+        if (!message.guild.configs.get(`EXP_MODULE`).value) return
+        const chatExpBase = message.guild.configs.get(`CHAT_EXP`).value
+        client.db.redis.smembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
+        .then(list => {
+            const accumulatedExpMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
+            client.experienceLibs(message.member, message.guild, message.channel)
+                .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
+        })
     })
 }

@@ -2,7 +2,7 @@ const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
 const logger = require(`pino`)({name: `DATABASE`, level: `debug`})
 const getBenchmark = require(`../utils/getBenchmark`)
-const { accessSync, constants } = require(`fs`)
+const fs = require(`fs`)
 const { join } = require(`path`)
 const relationshipPairs = require(`../config/relationshipPairs.json`)
 
@@ -118,7 +118,7 @@ class Database {
 		 * This will check if the db file exists or not.
 		 * If file is not found, throw an error.
 		 */
-		accessSync(join(__dirname, fsPath), constants.F_OK)
+		fs.accessSync(join(__dirname, fsPath), fs.constants.F_OK)
 		this.client = new SqliteClient(path, { timeout:10000 })
         this.client.pragma(`journal_mode = WAL`)
         this.client.pragma(`synchronous = FULL`)
