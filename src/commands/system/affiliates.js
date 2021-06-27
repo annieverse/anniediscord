@@ -29,14 +29,21 @@ module.exports = {
      * @returns {string}
      */
     async _prettifyList(source=[], client) {
+        //  Pull from cache if available
+        const cacheId = `AFFILIATES_LIST`
+        if (await client.db.redis.exists(cacheId)) return client.db.redis.get(cacheId)
         let res = ``
         for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭───────────────────╮\n\n`
             let server = source[i]
-			let serverSnowflake = await client.shard.broadcastEval(`this.guilds.cache.get('${server.guild_id}')`)
+			let serverSnowflake = await client.shard.broadcastEval(`if (this.guilds.cache.has('${server.guild_id}')) this.guilds.cache.get('${server.guild_id}')`)
+            serverSnowflake = serverSnowflake.filter(g => g !== null)
             res += `**• ${serverSnowflake[0] ? serverSnowflake[0].name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
             if (i === (source.length-1)) res += `╰───────────────────╯\n`
         }
+        //  Cache the result to avoid broadcasting.
+        //  Expire until 12 hours
+        client.db.redis.set(cacheId, res)
         return res
     }
 }

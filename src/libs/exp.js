@@ -72,7 +72,7 @@ class Experience {
                 if (this.guild.configs.get(`LEVEL_UP_MESSAGE`).value) this.levelUpPerks(newExp.level)
             }
             //  Update user's exp data.
-            this.client.db.addUserExp(expToBeAdded, this.user.id, this.guild.id)
+            this.client.db.updateUserExp(expToBeAdded, this.user.id, this.guild.id)
         })
         .catch(e => {
             this.client.logger.warn(`${this.instanceId} <FAIL> to gain exp > ${e.message}`)

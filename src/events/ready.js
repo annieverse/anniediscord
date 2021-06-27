@@ -19,7 +19,7 @@ module.exports = function ready(annie) {
      * 	--------------------------------------------------
      */
     annie.user.setStatus(`online`)
-    annie.user.setActivity(`${annie.prefix}help`, {type: `WATCHING`})
+    annie.user.setActivity(`${annie.prefix}help | annie.gg`)
     annie.logger.info(`successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
     //  Registering vote api into client property.
     annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)

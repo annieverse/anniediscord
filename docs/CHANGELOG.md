@@ -1,3 +1,53 @@
+## [7.20.2](https://github.com/klerikdust/anniediscord/compare/v7.20.1...v7.20.2) (2021-06-16)
+
+
+### Bug Fixes
+
+* **affiliates:** always fallback even on reachable server. ([bb7f265](https://github.com/klerikdust/anniediscord/commit/bb7f2657425c37ff91259fa1eaf679b7930773c8))
+* **relationship:** missing highlight for author. ([886ceea](https://github.com/klerikdust/anniediscord/commit/886ceea2e29cec2437e2e76f2360c76f8a5e5bcb))
+* **setRelationship:** flow kept running even on removal action. ([8ed0d72](https://github.com/klerikdust/anniediscord/commit/8ed0d72a8f1e365dba3a16cc13f75bf2d7e215e0))
+* **user:** fail to parse external target due to incomplete data. ([4433432](https://github.com/klerikdust/anniediscord/commit/443343291232fa83a90586c5f8a8ce25775e2fd3))
+
+## [7.20.1](https://github.com/klerikdust/anniediscord/compare/v7.20.0...v7.20.1) (2021-06-16)
+
+
+### Bug Fixes
+
+* **help:** mutated global property. ([bdc2399](https://github.com/klerikdust/anniediscord/commit/bdc2399551886f83cb12adb555b36d4918b26036))
+* **setWelcomer:** wrong locale target. ([0945ece](https://github.com/klerikdust/anniediscord/commit/0945ececdf6c46aedf3415e5da191bebefcaca10))
+
+# [7.20.0](https://github.com/klerikdust/anniediscord/compare/v7.19.12...v7.20.0) (2021-06-14)
+
+
+### Features
+
+* **setWelcomer:** added option for noimage and user profile picture as background. ([a34a86d](https://github.com/klerikdust/anniediscord/commit/a34a86d39633970333b364aae4dec0924cd3b517))
+
+
+### Performance Improvements
+
+* **setwelcomer:** added a second default option ([7b2a7d3](https://github.com/klerikdust/anniediscord/commit/7b2a7d3ff71881e31a72c13b45ebaa72e70cca05))
+
+## [7.19.12](https://github.com/klerikdust/anniediscord/compare/v7.19.11...v7.19.12) (2021-06-14)
+
+
+### Bug Fixes
+
+* **user:** removed keyword typecheck to prevent command from breaking. ([5293808](https://github.com/klerikdust/anniediscord/commit/529380895b5fb8664963a8579edb395945a13221))
+
+
+### Performance Improvements
+
+* **database:** wrap query into transaction and enable WAL mode. ([b2adc57](https://github.com/klerikdust/anniediscord/commit/b2adc5712862fb902e3a2deb840eb839da79c2c3))
+
+## [7.19.11](https://github.com/klerikdust/anniediscord/compare/v7.19.10...v7.19.11) (2021-06-13)
+
+
+### Bug Fixes
+
+* **stats:** update cache key. ([1a1462b](https://github.com/klerikdust/anniediscord/commit/1a1462b80d49d042961d230424aee30d55576918))
+* **user:** incomplete data registers for new user. ([e443d5b](https://github.com/klerikdust/anniediscord/commit/e443d5bfe85031a48549711fb915e5361b16666d))
+
 ## [7.19.10](https://github.com/klerikdust/anniediscord/compare/v7.19.9...v7.19.10) (2021-06-13)
 
 

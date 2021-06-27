@@ -27,3 +27,5 @@ logs
 
 # VIM files
 *.swp
+
+*.DS_Store

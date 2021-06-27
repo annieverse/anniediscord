@@ -57,7 +57,7 @@ module.exports = {
 				socket: {emoji: await client.getEmoji(`692428578683617331`)}
 			}) 
             await c.setup(message.author.id, deleteConfirmation)
-            c.onAccept(() => {
+            return c.onAccept(() => {
 				//  Update relationship data on both side
 				client.db.removeUserRelationship(message.author.id, targetUser.master.id)
 				client.db.removeUserRelationship(targetUser.master.id, message.author.id)

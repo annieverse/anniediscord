@@ -101,6 +101,29 @@ module.exports = {
             },
             {
                 /**
+                 *  Toggle a welcomer without any image. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_NOIMAGE`,
+                description: `Toggle a welcomer without any image`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: false
+            },
+            {
+                /**
+                 *  Toggle a welcomer with user's profile picture as the background.
+                 *  @type {object}
+                 */
+                name: `WELCOMER_USERIMAGE`,
+                description: `Toggle a welcomer with user's profile picture as the background`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: false
+            },
+
+            {
+                /**
                  *  Define light or dark overlay for the welcomer. 
                  *  @type {object}
                  */

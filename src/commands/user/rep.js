@@ -30,7 +30,7 @@ module.exports = {
 		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
 		//	Handle if user is trying to rep themselves
 		if (userLib.isSelf(targetUser.master.id)) return reply.send(locale.GIVE_REPUTATION.SELF_TARGETING, {socket: {emoji: await client.getEmoji(`692428748838010970`)} })
-		client.db.addUserReputation(1, targetUser.master.id, message.author.id, message.guild.id)
+		client.db.updateUserReputation(1, targetUser.master.id, message.author.id, message.guild.id)
 		client.db.updateReputationGiver(message.author.id, message.guild.id)
 		return reply.send(locale.GIVE_REPUTATION.SUCCESSFUL, {
 			status: `success`,

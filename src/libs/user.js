@@ -29,8 +29,6 @@ class User {
      * @returns {object}
      */
 	async lookFor(target, localPool=null) {
-        const fn = `[User.lookFor()]`
-        if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target user id/tag/username/mention.`)
         target = target.toLowerCase()
         //  This line will normalize the keyword for searching user.
         //  So, if the keyword has '#' in it and followed up by 4 numbers (0 - 3 indexes), then only trim the rest (example: naph#7790 -> naph)
@@ -128,25 +126,17 @@ class User {
     /**
      * Requesting standard user metadata from Discord API and/or Database
      * @param {collection} [user] collection of user's metadata
-	 * @param {number} [dataLevel=1] set to `1` to return standard user's discord structure with custom locale. Set to `2` to have an additional
-	 * properties such as inventory, exp, level, reputations, etc/
      * @returns {UserMetadataObject}
      */
-    async requestMetadata(user, dataLevel=1) {
+    async requestMetadata(user) {
 		const fn = `[User.requestMetadata()]`
 		const db = this.bot.db
 		//  Handle if user object isn't valid
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
 		try {
-			/** --------------------------------------------------------------------
-			 *  DATA-BLOCK LEVEL 1
-			 *  --------------------------------------------------------------------
-			 *  Only consists of discord properties data + user's customized locale.
-			 */
-			let getUserLocale = await db.getUserLocale(user.id)
-			const lang = getUserLocale ? getUserLocale.lang : `en`
-			if (dataLevel <= 1) return {master:user, lang:lang}
-
+            //  Do userdata validation if the target is external/not the author of the message.
+            //  This to ensure that the target doesn't missing the required user entry.
+            if (user.id !== this.message.author.id) await db.validateUserEntry(user.id, user.username)
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 2
 			 *  --------------------------------------------------------------------
@@ -155,7 +145,7 @@ class User {
 			//  Basic data such as saved username, language, user_id and registered date
 			const main = await db.getUser(user.id)
 			//  User's reputations data
-			const reputations = await db.getUserReputations(user.id, this.message.guild.id)
+			const reputations = await db.getUserReputation(user.id, this.message.guild.id)
 			//  User's dailies, streak and stuff
 			const dailies = await db.getUserDailies(user.id, this.message.guild.id)
 			//  User's relationship trees.
@@ -254,7 +244,6 @@ class User {
 			return {
 				master:user,
 				main:main,
-				lang:lang,
 				reputations:reputations,
 				dailies:dailies,
 				relationships:relationships,

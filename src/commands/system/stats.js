@@ -17,10 +17,11 @@ module.exports = {
 		const { total } = await client.db.getTotalCommandUsage()
         //  Cache server size for every 12 hour
         const serverSize = async () => {
-            const onCache = await client.db.redis.get(`GUILDS_SIZE_CACHE`)
+            const key = `MASTER:GUILD_SIZE`
+            const onCache = await client.db.redis.get(key)
             if (onCache) return onCache
             const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
-            client.db.redis.set(`GUILD_SIZE_CACHE`, size, `EX`, (60 * 60) * 12)
+            client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
             return size
 
         }
