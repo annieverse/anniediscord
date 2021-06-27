@@ -1,3 +1,10 @@
+## [7.21.7](https://github.com/klerikdust/anniediscord/compare/v7.21.6...v7.21.7) (2021-06-27)
+
+
+### Bug Fixes
+
+* **points:** missing one int for the multiplier. ([47ab5be](https://github.com/klerikdust/anniediscord/commit/47ab5be8e34619d0b74ac88db84da53364537d26))
+
 ## [7.21.6](https://github.com/klerikdust/anniediscord/compare/v7.21.5...v7.21.6) (2021-06-27)
 
 
