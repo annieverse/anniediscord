@@ -1,3 +1,10 @@
+## [7.21.4](https://github.com/klerikdust/anniediscord/compare/v7.21.3...v7.21.4) (2021-06-27)
+
+
+### Bug Fixes
+
+* **shop:** fail retrieve emoji. ([e3e9bbf](https://github.com/klerikdust/anniediscord/commit/e3e9bbfcffc013fbe146a53085c330d221478cb2))
+
 ## [7.21.3](https://github.com/klerikdust/anniediscord/compare/v7.21.2...v7.21.3) (2021-06-27)
 
 
