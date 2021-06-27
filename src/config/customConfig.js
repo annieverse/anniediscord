@@ -454,6 +454,28 @@ module.exports = {
             },
             {
                 /**
+                 *  The arbritrary amount of exp gained from chat activity.
+                 *  @type {object}
+                 */
+                name: `CHAT_EXP`,
+                description: `The arbritrary amount of exp gained from chat activity`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: [1, 5]
+            },
+            {
+                /**
+                 *  The arbritrary amount of currency gained from chat activity.
+                 *  @type {object}
+                 */
+                name: `CHAT_CURRENCY`,
+                description: `The arbritrary amount of currency gained from chat activity`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: [10, 15]
+            },
+            {
+                /**
                  *  The target channel where level-up message will be sent in
                  *  @type {object}
                  */

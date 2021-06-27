@@ -228,7 +228,6 @@ class Annie extends Discord.Client {
                 //  Skip if guild isn't exists in current shard.
                 if (!this.guilds.cache.has(node.guild_id)) continue
                 const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
-                const field = node.multiplier + `_` + key
                 const localTime = await this.db.toLocaltime(node.registered_at)
                 const expireAt = new Date(localTime).getTime() + node.duration
                 //  Skip expired buff, and delete it from database as well.
@@ -239,10 +238,10 @@ class Annie extends Discord.Client {
                     })
                     continue
                 }
-                this.db.redis.hset(key, node.multiplier, node.duration)
-                this.cronManager.add(field, new Date(expireAt), () => {
+                this.db.redis.sadd(key, node.multiplier)
+                this.cronManager.add(node.multiplier+`_`+key, new Date(expireAt), () => {
                     //  Flush from cache and sqlite
-                    this.db.redis.hdel(key, field)
+                    this.db.redis.srem(key, node.multiplier)
                     this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
                     .then(id => {
                         this.db.removeUserDurationalBuff(id)

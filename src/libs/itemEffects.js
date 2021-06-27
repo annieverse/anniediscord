@@ -199,8 +199,7 @@ class itemEffects {
     async _durationalBuff(buffType, name, multiplier, duration) {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
-        const field = multiplier + `_` + key
-        this.client.db.redis.hset(key, multiplier, duration)
+        this.client.db.redis.sadd(key, multiplier)
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false
@@ -209,9 +208,9 @@ class itemEffects {
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true
         this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
-        this.client.cronManager[isMultiInstance ? `update` : `add`](field, new Date(Date.now() + duration), async () => {
+        this.client.cronManager[isMultiInstance ? `update` : `add`](multiplier+`_`+key, new Date(Date.now() + duration), async () => {
             //  Flush from cache and sqlite
-            this.client.db.redis.hdel(key, field)
+            this.client.db.redis.srem(key, multiplier)
             this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.author.id, this.message.guild.id)
             .then(id => {
                 this.client.db.removeUserDurationalBuff(id)
