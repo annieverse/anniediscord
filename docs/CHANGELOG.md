@@ -1,3 +1,10 @@
+## [7.21.8](https://github.com/klerikdust/anniediscord/compare/v7.21.7...v7.21.8) (2021-06-27)
+
+
+### Bug Fixes
+
+* **gacha:** rewards missing. ([38dc9c4](https://github.com/klerikdust/anniediscord/commit/38dc9c467bc197a8721a449759c3c995c4c483ad))
+
 ## [7.21.7](https://github.com/klerikdust/anniediscord/compare/v7.21.6...v7.21.7) (2021-06-27)
 
 
