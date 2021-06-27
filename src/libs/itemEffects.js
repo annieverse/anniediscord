@@ -208,7 +208,7 @@ class itemEffects {
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true
         this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
-        this.client.cronManager[isMultiInstance ? `update` : `add`](multiplier+`_`+key, new Date(Date.now() + duration), async () => {
+        const cronTask = async () => {
             //  Flush from cache and sqlite
             this.client.db.redis.srem(key, multiplier)
             this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.author.id, this.message.guild.id)
@@ -221,7 +221,9 @@ class itemEffects {
                 footer: `${this.message.guild.name}'s System Notification`
             })
             .catch(e => e)
-        }, { start:true })
+        }
+        if (isMultiInstance) return this.client.cronManager.update(multiplier+`_`+key, new Date(Date.now() + duration), cronTask)
+        return this.client.cronManager.add(multiplier+`_`+key, new Date(Date.now() + duration), cronTask, { start:true })
     }
     
     /**

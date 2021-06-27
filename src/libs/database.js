@@ -132,7 +132,7 @@ class Database {
             if (stat.size > 2e+9) {
                 this.client.pragma(`wal_checkpoint(RESTART)`)
             }
-        }), 30000).unref()
+        }), 5000).unref()
 		this.connectRedis()
 		return this
 	}
