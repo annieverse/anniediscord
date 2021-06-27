@@ -20,10 +20,12 @@ module.exports = {
             }
         })
         //  Finding the closest target item.
-		const searchStringResult = stringSimilarity.findBestMatch(arg, data.inventory.raw.map(i => i.name))
-		const targetItem = searchStringResult.bestMatch.rating >= 0.5 
-        ? data.inventory.raw.filter(i => i.name === searchStringResult.bestMatch.target)[0] 
-        : null
+		const searchStringResult = stringSimilarity.findBestMatch(arg.toLowerCase(), data.inventory.raw.map(i => i.name.toLowerCase()))
+        const targetItem = searchStringResult.bestMatch.rating >= 0.5
+        //  By name
+        ? data.inventory.raw.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target) 
+        //  Fallback search by ID
+        : data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!targetItem) return reply.send(locale.USE.INVALID_ITEM, {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)

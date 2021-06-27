@@ -1,6 +1,6 @@
 const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
-const logger = require(`pino`)({name: `DATABASE`})
+const logger = require(`pino`)({name: `DATABASE`, level: `debug`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
@@ -2403,6 +2403,23 @@ class Database {
     }
 
     /**
+     * Updating item's effect metadata.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateItemEffectsMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE item_effects
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+
+    /**
      * Updating item's metadata.
      * @param {number} itemId
      * @param {string} targetProperty Target column to edit
@@ -2506,7 +2523,7 @@ class Database {
     createItemEffectsTable() {
         return this._query(`
             CREATE TABLE IF NOT EXISTS item_effects(
-                effect_id INTEGER AUTO INCREMENT,
+                effect_id INTEGER AUTOINCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 item_id INTEGER,
                 guild_id TEXT,
@@ -2575,16 +2592,15 @@ class Database {
     createUserDurationalBuffsTable() {
         this._query(`
             CREATE TABLE IF NOT EXISTS user_durational_buffs(
-                buff_id INTEGER AUTO INCREMENT,
+                buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                name TEXT DEFAULT 'Mystery',
+                name TEXT,
                 type TEXT,
                 multiplier INTEGER,
                 duration INTEGER,
                 user_id TEXT,
                 guild_id TEXT,
 
-                PRIMARY KEY(buff_id),
                 FOREIGN KEY(user_id)
                 REFERENCES users(user_id) 
                    ON DELETE CASCADE
@@ -2624,7 +2640,7 @@ class Database {
      * @param {string} guildId
      * @return {void}
      */
-    async registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
+    registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
         this._query(`
             SELECT COUNT(*) AS instance
             FROM user_durational_buffs
@@ -2661,26 +2677,47 @@ class Database {
             )
         })
     }
-
+    
     /**
-     * Deleting specific user's durational buff
+     * Retrieve the ID of auser's specific durational buff.
      * @param {string} buffType
+     * @param {string} name
      * @param {number} multiplier
      * @param {string} userId
      * @param {string} guildId
-     * @return {QueryResult}
-     */ 
-    removeUserDurationalBuff(buffType, multiplier, userId, guildId) {
-        return this._query(`
-            DELETE FROM user_durational_buffs
+     * @return {number|null}
+     */
+    async getUserDurationalBuffId(buffType, name, multiplier, userId, guildId) {
+        const res = await this._query(`
+            SELECT buff_id
+            FROM user_durational_buffs
             WHERE
                 type = ?
+                AND name = ?
                 AND multiplier = ?
                 AND user_id = ?
                 AND guild_id =?`
-            , `run`
-            , [buffType, multiplier, userId, guildId]
+            , `get` 
+            , [buffType, name, multiplier, userId, guildId]
         ) 
+        return res.buff_id || null
+    }
+
+    /**
+     * Deleting specific user's durational buff.
+     * @param {number} buffId
+     * @return {void}
+     */ 
+    removeUserDurationalBuff(buffId) {
+        this._query(`
+            DELETE FROM user_durational_buffs
+            WHERE buff_id = ?` 
+            , `run`
+            , [buffId]
+        ) 
+        .then(res => {
+            if (res.changes > 0) logger.debug(`[REMOVE_USER_DURATION_BUFF] BUFF_ID:${buffId} has finished and omited.`)
+        })
     }
 
 	/**

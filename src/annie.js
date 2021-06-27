@@ -233,14 +233,20 @@ class Annie extends Discord.Client {
                 const expireAt = new Date(localTime).getTime() + node.duration
                 //  Skip expired buff, and delete it from database as well.
                 if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
-                    this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
+                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
                     continue
                 }
                 this.db.redis.hset(key, node.multiplier, node.duration)
                 this.cronManager.add(field, new Date(expireAt), () => {
                     //  Flush from cache and sqlite
                     this.db.redis.hdel(key, field)
-                    this.db.removeUserDurationalBuff(node.type, node.multiplier, node.user_id, node.guild_id)
+                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
                     //  Send expiration notice
                     this.users.fetch(node.user_id)
                     .then(async user => {

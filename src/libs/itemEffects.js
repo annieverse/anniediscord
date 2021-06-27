@@ -200,7 +200,6 @@ class itemEffects {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
         const field = multiplier + `_` + key
-        const expireAt = new Date().getTime() + (duration * 1000)
         this.client.db.redis.hset(key, multiplier, duration)
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
@@ -210,17 +209,20 @@ class itemEffects {
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true
         this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
-        this.client.cronManager[isMultiInstance ? `update` : `add`](field, new Date(expireAt), async () => {
+        this.client.cronManager[isMultiInstance ? `update` : `add`](field, new Date(Date.now() + duration), async () => {
             //  Flush from cache and sqlite
             this.client.db.redis.hdel(key, field)
-            this.client.db.removeUserDurationalBuff(buffType, multiplier, this.message.author.id, this.message.guild.id)
+            this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.author.id, this.message.guild.id)
+            .then(id => {
+                this.client.db.removeUserDurationalBuff(id)
+            })
             //  Attempt to notice the user about expiration
             this.client.responseLibs(this.message).send(`Your **'${name}'** buff has expired! ${await this.client.getEmoji(`AnnieHeartPeek`)}`, {
                 field: this.message.author,
                 footer: `${this.message.guild.name}'s System Notification`
             })
             .catch(e => e)
-        })
+        }, { start:true })
     }
     
     /**

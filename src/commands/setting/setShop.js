@@ -129,13 +129,19 @@ module.exports = {
         if (secondArg) {
             phaseJump = true
             const nameLimit = 20
-            if (secondArg.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {socket: {limit:nameLimit}}) 
+            if (secondArg.length >= nameLimit) {
+                client.db.redis.del(sessionId)
+                return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {socket: {limit:nameLimit}}) 
+            }
             const guildItems = await client.db.getItem(null, message.guild.id)
-            if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
-                socket: {
-                    item: secondArg 
-                }
-            })
+            if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
+                client.db.redis.del(sessionId)
+                return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                    socket: {
+                        item: secondArg 
+                    }
+                })
+            }
             metadata.name = secondArg
             dataDisplay = await message.channel.send(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${secondArg}`, {raw:true}))
         }
@@ -446,13 +452,14 @@ module.exports = {
         : guildItems.find(i => parseInt(i.item_id) === parseInt(keyword))
         if (!item) return reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {socket:{item: keyword}})
         const guide = await reply.send(locale.SETSHOP.EDIT_GUIDE, {
+            simplified: true,
             socket: {
+                item: item.name,
                 emoji: await client.getEmoji(`AnnieHeartPeek`),
                 prefix: prefix
             }
         })
         const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
-        let phase = phaseJump ? 1 : 0
         let completed = false
         pool.on(`collect`, async m => {
             let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
@@ -460,12 +467,11 @@ module.exports = {
             const argsPool = input.split(` `)
             const action = argsPool[0]
             const params = argsPool.slice(1).join(` `) 
-            if (!params) return reply.send(locale.SETSHOP.EDIT_MISSING_PARAM)
             const guildItems = await client.db.getItem(null, message.guild.id)
-            m.delete()
             switch(action) {
                 //  Changing item name
                 case `name`:
+                    m.delete()
                     const nameLimit = 20
                     if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {deleteIn: 5, socket: {limit:nameLimit}}) 
                     if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
@@ -475,13 +481,81 @@ module.exports = {
                         }
                     })
                     client.db.updateItemMetadata(item.item_id, `name`, params)
+                    reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
+                        socket: {
+                            oldItem: item.name,
+                            newItem: params
+                        }
+                    })
                     break
                 //  Changing item's description
                 case `description`:
+                    m.delete()
                     const descLimit = 120
                     if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {deleteIn: 5, socket: {limit:descLimit}})
                     client.db.updateItemMetadata(item.item_id, `description`, params)
+                    reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
+                        socket: {
+                           item: item.name
+                        }
+                    })
+                    break
+                //  Changing item's price
+                case `price`:
+                    m.delete()
+                    const priceLimit = 999999999999999
+                    if (parseInt(params) >= priceLimit) return reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {deleteIn: 5, socket: {limit:commanifier(priceLimit)}})
+                    if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {deleteIn: 5})
+                    client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
+                    reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
+                        socket: {
+                           item: item.name
+                        }
+                    })
+                    break
+                //  Updating item's stocks
+                case `stock`:
+                    m.delete()
+                    const stockLimit = 999999999999999
+                    const setAsUnlimited = params === `~`
+                    if (!setAsUnlimited) {
+                        if (parseInt(params) >= stockLimit) return reply.send(locale.SETSHOP.EDIT_STOCK_OVERLIMIT, {deleteIn: 5, socket: {limit:commanifier(stockLimit)}})
+                        if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {deleteIn: 5})
+                    }
+                    client.db.updateShopItemMetadata(item.item_id, `quantity`, params)
+                    reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
+                        socket: {
+                           item: item.name
+                        }
+                    })
+                    break
+                //  Updating Annie's response upon use of the item.
+                case `response`: 
+                    m.delete()
+                    const messageUponUseLimit = 120
+                    if (params.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {deleteIn: 5, socket: {limit:messageUponUseLimit}})
+                    client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
+                    reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
+                        socket: {
+                            item: item.name
+                        }
+                    })
+                    break
+                //  Finalize
+                case `done`: 
+                    m.delete()
+                    completed = true
+                    pool.stop()
             }
+        })
+        pool.on(`end`, () => {
+            guide.delete()
+            if (completed) return
+            return reply.send(locale.SETSHOP.EDIT_TIMEOUT, {
+                socket: {
+                    item: item.name
+                }
+            })
         })
     },
 
