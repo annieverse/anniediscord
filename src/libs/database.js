@@ -2651,7 +2651,8 @@ class Database {
 			INNER JOIN item_types
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
-				ON item_rarities.rarity_id = items.rarity_id`
+				ON item_rarities.rarity_id = items.rarity_id
+            WHERE owned_by_guild_id IS NULL`
 			, `all`
 			, []	
 			, `Fetching gacha's rewards pool`
