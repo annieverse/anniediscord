@@ -2406,14 +2406,13 @@ class Database {
     createItemEffectsTable() {
         return this._query(`
             CREATE TABLE IF NOT EXISTS item_effects(
-                effect_id INTEGER AUTOINCREMENT,
+                effect_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 item_id INTEGER,
                 guild_id TEXT,
                 effect_ref_id INTEGER,
                 parameter TEXT,
 
-                PRIMARY KEY(effect_id),
                 FOREIGN KEY(item_id)
                 REFERENCES items(item_id)
                     ON UPDATE CASCADE
