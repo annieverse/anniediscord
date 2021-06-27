@@ -1,3 +1,10 @@
+## [7.21.2](https://github.com/klerikdust/anniediscord/compare/v7.21.1...v7.21.2) (2021-06-27)
+
+
+### Bug Fixes
+
+* **shop:** socketing on server shop's text. ([7cc3313](https://github.com/klerikdust/anniediscord/commit/7cc33137310b1c8fc3462258b8547a3f6c25517a))
+
 ## [7.21.1](https://github.com/klerikdust/anniediscord/compare/v7.21.0...v7.21.1) (2021-06-27)
 
 
