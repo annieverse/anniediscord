@@ -1,3 +1,10 @@
+## [7.21.6](https://github.com/klerikdust/anniediscord/compare/v7.21.5...v7.21.6) (2021-06-27)
+
+
+### Bug Fixes
+
+* **logs:** temporarily removed 'update' audit. ([b7a29c2](https://github.com/klerikdust/anniediscord/commit/b7a29c210b905882329181c8e0fda942c06df4d4))
+
 ## [7.21.5](https://github.com/klerikdust/anniediscord/compare/v7.21.4...v7.21.5) (2021-06-27)
 
 
