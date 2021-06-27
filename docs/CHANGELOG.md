@@ -1,3 +1,10 @@
+## [7.21.1](https://github.com/klerikdust/anniediscord/compare/v7.21.0...v7.21.1) (2021-06-27)
+
+
+### Bug Fixes
+
+* **database:** statement typo on item_effects table creation. ([a3d6bed](https://github.com/klerikdust/anniediscord/commit/a3d6bed88ba9433e12d025d91eb30bb7ae98cf1f))
+
 # [7.21.0](https://github.com/klerikdust/anniediscord/compare/v7.20.2...v7.21.0) (2021-06-27)
 
 
