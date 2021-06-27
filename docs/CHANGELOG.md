@@ -1,3 +1,10 @@
+## [7.21.5](https://github.com/klerikdust/anniediscord/compare/v7.21.4...v7.21.5) (2021-06-27)
+
+
+### Bug Fixes
+
+* item effect cron update fail and decreased wall refresh interval. ([436560f](https://github.com/klerikdust/anniediscord/commit/436560f5198e971a12461188ccfee6389a7397d8))
+
 ## [7.21.4](https://github.com/klerikdust/anniediscord/compare/v7.21.3...v7.21.4) (2021-06-27)
 
 
