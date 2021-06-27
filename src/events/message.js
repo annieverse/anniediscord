@@ -47,7 +47,7 @@ module.exports = (client, message) => {
         const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
         client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
-            const accumulatedCurrencyMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
+            const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.db.updateInventory({
                 itemId: 52,
                 value: getNumberInRange(chatCurrencyBase) * accumulatedCurrencyMultiplier,
@@ -59,7 +59,7 @@ module.exports = (client, message) => {
         const chatExpBase = message.guild.configs.get(`CHAT_EXP`).value
         client.db.redis.smembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
-            const accumulatedExpMultiplier = list.length > 0 ? list.reduce((p, c) => p + parseFloat(c)) : 1
+            const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.experienceLibs(message.member, message.guild, message.channel)
                 .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
         })
