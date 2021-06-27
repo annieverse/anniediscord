@@ -107,12 +107,14 @@ class Response {
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
-			const embeddedPages = this._registerPages(content, plugins)
+			const embeddedPages = await this._registerPages(content, plugins)
 			return field.send(embeddedPages[0])
 	        .then(async msg => {
 	            //  Buttons
-	            await msg.react(`⏪`)
-	            await msg.react(`⏩`)
+                if (embeddedPages.length > 1) {
+                    await msg.react(`⏪`)
+	                await msg.react(`⏩`)
+                }
 	            // Filters - These make sure the varibles are correct before running a part of code
 	            const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
 	            const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
@@ -160,7 +162,7 @@ class Response {
 	        })
 		}
 		//  Replace content with error message if content is a faulty value
-		if (!content && (typeof content != `string`)) content = null
+		if (typeof content != `string`) content = this.message.client.locales.en.LOCALIZATION_ERROR
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
 		if (sockets === null) sockets = []
@@ -225,10 +227,14 @@ class Response {
      *  @param {object} [src=null] reply's options parameters for customized embed.
      *  @returns {array}
      */
-    _registerPages(pages=[], src=null) {
+    async _registerPages(pages=[], src=null) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
+            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
+            if (src.image) {
+			    res[i].attachFiles(new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`))
+			    res[i].setImage(`attachment://preview.jpg`)
+            }
             if (src.color) res[i].setColor(palette[src.color] || src.color || palette[`crimson`])
             if (src.header) res[i].setTitle(src.header)
            	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])

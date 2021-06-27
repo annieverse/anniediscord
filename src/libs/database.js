@@ -1,7 +1,6 @@
 const SqliteClient = require(`better-sqlite3`)
 const Redis = require(`async-redis`)
-const fs = require(`fs`)
-const logger = require(`pino`)({name: `DATABASE`})
+const logger = require(`pino`)({name: `DATABASE`, level: `debug`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const { accessSync, constants } = require(`fs`)
 const { join } = require(`path`)
@@ -12,6 +11,20 @@ const relationshipPairs = require(`../config/relationshipPairs.json`)
  * for Annie.
  */
 class Database {
+
+    /**
+     * Options to be supplied to `registerItem()` parameters
+     * @typedef {object} item
+     * @property {string} name Name of the item
+     * @property {string} description Description of the item
+     * @property {string} alias Shorter-name of the item for referencing asset
+     * @property {number} typeId The type for current item
+     * @property {string} rarityId The rarity type for current item
+     * @property {number} bind Allows the item to be tradable or not
+     * @property {string} owned_by_guild_id Guild/server-specific item
+     * @property {string|null} response_on_use Custom response upon use
+     * @property {number} usable Allows the item to be used or not
+     */
 
 	/**
 	 * Options to be supplied to `this.updateInventory()` parameters
@@ -1878,6 +1891,9 @@ class Database {
 				items.type_id AS type_id,
 				items.rarity_id AS rarity_id,
 				items.bind AS bind,
+                items.owned_by_guild_id AS owned_by_guild_id,
+                items.usable AS usable,
+                items.response_on_use AS response_on_use,
 
 				item_types.name AS type_name,
 				item_types.alias AS type_alias,
@@ -2009,14 +2025,78 @@ class Database {
 		return this.updateInventory({itemId: 81, value:10, operation:`+`, userId: userId, guildId: guildId})	
 	}
 
+    /**
+     * Registering new item into database
+     * @param {item} item
+     * @return {QueryResult}
+     */
+    registerItem(item) {
+        return this._query(`
+            INSERT INTO items(
+                name,
+                description,
+                alias,
+                type_id,
+                rarity_id,
+                bind,
+                owned_by_guild_id,
+                response_on_use,
+                usable
+            )
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            , `run`
+            , [
+                item.name,
+                item.description,
+                item.alias,
+                item.typeId,
+                item.rarityId,
+                item.bind,
+                item.ownedByGuildId,
+                item.responseOnUse,
+                item.usable
+            ]
+        )
+    }
+
+    /**
+     * Registering new item into guild's shop.
+     * @param {number} itemId
+     * @param {string} guildId
+     * @param {number} quantity
+     * @param {number} price
+     * @return {QueryResult}
+     */
+    registerGuildShopItem(itemId, guildId, quantity, price) {
+        return this._query(`
+            INSERT INTO shop(item_id, guild_id, quantity, price)
+            VALUES(?, ?, ?, ?)`
+            , `run`
+            , [itemId, guildId, quantity, price]
+        )
+    }
+
+    /**
+     * Registering new item type 'Custom'.
+     * @return {void}
+     */
+    registerCustomTypeItem() {
+        this._query(`
+            INSERT INTO item_types(name, alias)
+            VALUES(?, ?)`
+            , `run`
+            , [`Custom`, `ctm`]
+        )
+    }
+
 	/**
 	 * Pull any item metadata from `items` table. Supports dynamic search.
 	 * @param {ItemKeyword} keyword ref to item id, item name or item alias.
+     * @param {string} [guildId=null] Limit search to specific guild's owned items only. Optional. 
 	 * @returns {QueryResult}
 	 */
-	getItem(keyword=``) {
-		return this._query(`
-			SELECT 
+	getItem(keyword=``, guildId=null) {
+        const str = `SELECT 
 
 				items.item_id AS item_id,
 				items.name AS name,
@@ -2025,6 +2105,9 @@ class Database {
 				items.type_id AS type_id,
 				items.rarity_id AS rarity_id,
 				items.bind AS bind,
+                items.owned_by_guild_id AS owned_by_guild_id,
+                items.usable AS usable,
+                items.response_on_use AS response_on_use,
 
 				item_types.name AS type_name,
 				item_types.alias AS type_alias,
@@ -2039,9 +2122,15 @@ class Database {
 			INNER JOIN item_types
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
-				ON item_rarities.rarity_id = items.rarity_id
-
+				ON item_rarities.rarity_id = items.rarity_id`
+        //  Do local fetch/Specific guild items
+        if (keyword === null && typeof guildId === `string`) return this._query(str+` WHERE owned_by_guild_id = ?`
+            , `all`
+            , [guildId]
+        )
+		return this._query(str+` 
 			WHERE 
+                ${guildId ? ` owned_by_guild_id = '${guildId}' AND` : ``}
 				items.item_id = $keyword
 				OR lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)
@@ -2050,6 +2139,72 @@ class Database {
 			, {keyword: keyword}	
 		)
 	}
+
+    /**
+     * Migrate items table to new structure
+     * @return {void}
+     */
+    migrateItemsTable() {
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN usable INTEGER DEFAULT 0
+        `, `run`)
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN response_on_use TEXT
+        `, `run`)
+        this._query(`
+            ALTER TABLE items
+            ADD COLUMN owned_by_guild_id TEXT
+        `, `run`)
+    }
+
+    /**
+     * ----------------------------------------------
+     * SHOP METHOD
+     * ----------------------------------------------
+     */  
+
+    /**
+     * Fetch all the registered purchasable items in target server.
+     * @param {string} guildId
+     * @return {object}
+     */
+    getGuildShop(guildId) {
+        return this._query(`
+            SELECT *
+            FROM shop
+            WHERE guild_id = ?`
+            , `all`
+            , [guildId]
+        )
+    } 
+    
+    /**
+     * Initialize shop table
+     * @return {void}
+     */
+    createShopTable() {
+        //  When inserting to this table
+        //  null 'in_guild_id' column meaning that is a global shop which is hosted by Annie itself.
+        return this._query(`
+            CREATE TABLE IF NOT EXISTS shop(
+                item_id INTEGER,
+                guild_id TEXT DEFAULT NULL,
+                quantity INTEGER DEFAULT -1,
+                price INTEGER DEFAULT 0,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
+                PRIMARY KEY(item_id),
+
+                FOREIGN KEY(item_id)
+                REFERENCES items(item_id) 
+                   ON DELETE CASCADE
+                   ON UPDATE CASCADE)`
+            , `run`
+        )
+    }
 
 	/**
 	 * Pull the available price of the item.
@@ -2113,6 +2268,355 @@ class Database {
 			, `Looking up for purchasable items`
 		)
 	}
+
+    /**
+     * Subtract item's supply from shop table.
+     * @param {number} itemId
+     * @param {number} [amount=1] Amount to subtract
+     * @return {void}
+     */
+    subtractItemSupply(itemId, amount=1) {
+        this._query(`
+            UPDATE shop
+            SET quantity = quantity - ?
+            WHERE item_id = ?`
+            , `run`
+            , [amount, itemId]
+        )
+    }
+
+    /**
+     * Updating item's effect metadata.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateItemEffectsMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE item_effects
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+
+    /**
+     * Updating item's metadata.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateItemMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE items
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+    
+    /**
+     * Updating item's metadata in shop table.
+     * @param {number} itemId
+     * @param {string} targetProperty Target column to edit
+     * @param {*} param New value for target property 
+     * @return {void}
+     */
+    updateShopItemMetadata(itemId, targetProperty, param) {
+        this._query(`
+            UPDATE shop
+            SET ${targetProperty} = ?
+            WHERE item_id = ?`
+            , `run`
+            , [param, itemId]
+        )
+    }
+
+	/**
+	* Restock (add) to an item's quantity
+	* @param {number} [itemId] target item to search.
+	* @param {number} [quantity] amount to add to quantity
+	* @returns {QueryResult}
+	*/
+	restockItem(itemId, quantity=-1) {
+		const fn = `[Database.restockItem]`
+		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+		if (typeof quantity !== `number`) throw new TypeError(`${fn} parameter 'quantity' must be number.`)
+		return this._query(`
+			UPDATE shop
+			SET quantity = $quantity
+			WHERE item_id = $itemId`
+			, `get`
+			, {quantity: quantity, itemId: itemId}	
+			, `Restocking ITEM_ID: ${itemId} (+${quantity})`
+		)
+	}
+
+	/**
+	* Remove an item from the shops table
+	* @param {number} [itemId] target item to search.
+	* @returns {QueryResult}
+	*/
+	removeGuildShopItem(itemId) {
+		return this._query(`
+			DELETE FROM shop
+			WHERE item_id = $itemId`
+			, `run`
+			, {itemId: itemId}	
+		)
+	}
+
+	/**
+	* return 1 or 0 if an item exists in records.
+	* @param {number} [itemId] target item to search.
+	* @param {number} [guildId] target item to search.
+	* @returns {QueryResult}
+	*/
+	isValidItem(itemId, guildId) {
+		const fn = `[Database.isValidItem]`
+		if (typeof itemId !== `number`) throw new TypeError(`${fn} parameter 'itemId' must be number.`)
+		if (typeof guildId !== `number`) throw new TypeError(`${fn} parameter 'guildId' must be number.`)
+		return this._query(`
+			SELECT EXISTS(SELECT * FROM items WHERE itemId = $itemId AND owned_by_guild_id = $guildId)`
+			, `get`
+			, {itemId: itemId, guildId: guildId}	
+			, `Checking if ITEM_ID: ${itemId} belongs to GUILD_ID: ${guildId}`
+		)
+	}
+	/**
+	 * End Of Shop methods
+	 */
+
+    /**
+     * -------------------------------
+     * ITEM EFFECTS METHOD
+     * -------------------------------
+     */
+    
+    /**
+     * Create 'item_effects' master table.
+     * This table has similar structure and functionalities as guild_configurations table
+     * But tailored for items only.
+     * @return {QueryrResult}
+     */
+    createItemEffectsTable() {
+        return this._query(`
+            CREATE TABLE IF NOT EXISTS item_effects(
+                effect_id INTEGER AUTOINCREMENT,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                item_id INTEGER,
+                guild_id TEXT,
+                effect_ref_id INTEGER,
+                parameter TEXT,
+
+                PRIMARY KEY(effect_id),
+                FOREIGN KEY(item_id)
+                REFERENCES items(item_id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY(guild_id)
+                REFERENCES guilds(guild_id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE)`
+            , `run` 
+        )
+    }
+
+    /**
+     * Fetch registered effects for specified item.
+     * @param {number} itemId
+     * @return {object}
+     */
+    getItemEffects(itemId) {
+        return this._query(`
+            SELECT *
+            FROM item_effects
+            WHERE item_id = ?`
+            , `all`
+            , [itemId]
+        )
+    }
+
+    /**
+     * Registering new item effects
+     * @param {number} itemId
+     * @param {string} guildId
+     * @param {string} effectRefTId
+     * @param {*} parameters Custom parameter for the item effects.
+     * @return {QueryResult}
+     */
+    registerItemEffects(itemId, guildId, effectRefId, parameters) {
+        return this._query(`
+            INSERT INTO item_effects(
+                item_id,
+                guild_id,
+                effect_ref_id,
+                parameter)
+            VALUES(?, ?, ?, ?)`
+            , `run`
+            , [itemId, guildId, effectRefId, JSON.stringify(parameters)]
+        )
+    }
+    
+    /**
+     * -------------------------------
+     * DURATIONAL BUFF METHOD
+     * -------------------------------
+     */
+    
+    /**
+     * Create 'user_durational_buffs' master table.
+     * @return {QueryResult}
+     */
+    createUserDurationalBuffsTable() {
+        this._query(`
+            CREATE TABLE IF NOT EXISTS user_durational_buffs(
+                buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                name TEXT,
+                type TEXT,
+                multiplier INTEGER,
+                duration INTEGER,
+                user_id TEXT,
+                guild_id TEXT,
+
+                FOREIGN KEY(user_id)
+                REFERENCES users(user_id) 
+                   ON DELETE CASCADE
+                   ON UPDATE CASCADE)`
+            , `run`
+        )
+    }
+
+    /**
+     * Fetch all the saved user's durational buffs.
+     * @param {string} userId If not provided, will fetch all the available buffs instead.
+     * @return {object}
+     */
+    getSavedUserDurationalBuffs(userId) {
+        if (userId) return this._query(`
+            SELECT *
+            FROM user_durational_buffs
+            WHERE user_id = ?`
+            , `all`
+            , [userId]
+        )
+        return this._query(`
+            SELECT *
+            FROM user_durational_buffs`
+            , `all`
+        )
+    }
+
+    /**
+     * Registering new user's durational buff. If there's a buff with same name and multiplier
+     * its metadata will be updated and the oldest one will be replaced.
+     * @param {string} buffType
+     * @param {string} name
+     * @param {number} multiplier
+     * @param {string} duration
+     * @param {string} userId
+     * @param {string} guildId
+     * @return {void}
+     */
+    registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
+        this._query(`
+            SELECT COUNT(*) AS instance
+            FROM user_durational_buffs
+            WHERE
+                type = ?
+                AND name = ?
+                AND multiplier = ?`
+            , `get`
+            , [buffType, name, multiplier]
+        ).then(res => {
+            //  Update duration
+            if (res.instance > 0) return this._query(`
+                UPDATE user_durational_buffs
+                SET registered_at = datetime('now')
+                WHERE
+                    type = ?
+                    AND name = ?
+                    AND multiplier = ?`
+                , `run`
+                , [buffType, name, multiplier]
+            )
+            this._query(`
+                INSERT INTO user_durational_buffs(
+                    type,
+                    name,
+                    multiplier,
+                    duration,
+                    user_id,
+                    guild_id
+                )
+                VALUES(?, ?, ?, ?, ?, ?)`
+                , `run`
+                , [buffType, name, multiplier, duration, userId, guildId]
+            )
+        })
+    }
+    
+    /**
+     * Retrieve the ID of auser's specific durational buff.
+     * @param {string} buffType
+     * @param {string} name
+     * @param {number} multiplier
+     * @param {string} userId
+     * @param {string} guildId
+     * @return {number|null}
+     */
+    async getUserDurationalBuffId(buffType, name, multiplier, userId, guildId) {
+        const res = await this._query(`
+            SELECT buff_id
+            FROM user_durational_buffs
+            WHERE
+                type = ?
+                AND name = ?
+                AND multiplier = ?
+                AND user_id = ?
+                AND guild_id =?`
+            , `get` 
+            , [buffType, name, multiplier, userId, guildId]
+        ) 
+        return res.buff_id || null
+    }
+
+    /**
+     * Deleting specific user's durational buff.
+     * @param {number} buffId
+     * @return {void}
+     */ 
+    removeUserDurationalBuff(buffId) {
+        this._query(`
+            DELETE FROM user_durational_buffs
+            WHERE buff_id = ?` 
+            , `run`
+            , [buffId]
+        ) 
+        .then(res => {
+            if (res.changes > 0) logger.debug(`[REMOVE_USER_DURATION_BUFF] BUFF_ID:${buffId} has finished and omited.`)
+        })
+    }
+
+    /**
+     * Determine whether the user_durational_buffs table is exists or not.
+     * @return {number}
+     */ 
+    async isUserDurationalBuffsTableExists() {
+        const res = await this._query(`
+            SELECT COUNT(*) AS has
+            FROM sqlite_master
+            WHERE
+                type = 'table'
+                AND name = 'user_durational_buffs'`
+        )
+        return res.has
+    }
 
 	/**
 	 * Fetch items from `item_gacha` table.
