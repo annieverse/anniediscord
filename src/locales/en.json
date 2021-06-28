@@ -815,6 +815,7 @@
         "ROLE_SUCCESSFULLY_REGISTERED": "Need to update",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the shop!\ne.g. `{{prefix}}setshop text welcomer to our shop, {{user}}!`",
         "TEXT_SUCCESSFULLY_REGISTERED": "**Text updated!** {{emoji}}\n╰ Type **`{{prefix}}shop`** to see how it looks like.",
+        "DELETE_EMPTY_ITEMS": "Ehh, this server doesn't even have any custom items.",
         "DELETE_MISSING_TARGET": "Don't forget to specify the item, okay? {{emoji}}",
         "DELETE_CONFIRMATION": "Are you sure want to delete this '{{item}}' item? Keep in mind that you won't be able to use '{{item}}' as item name in the future as long as there still some members who own it.",
         "DELETE_SUCCESSFUL": "**{{item}}** item has been removed from the shop!",
