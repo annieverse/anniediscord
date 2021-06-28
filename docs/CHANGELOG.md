@@ -1,3 +1,11 @@
+## [7.21.10](https://github.com/klerikdust/anniediscord/compare/v7.21.9...v7.21.10) (2021-06-27)
+
+
+### Bug Fixes
+
+* **setShop:** item addition replaces global item with same name. ([b3e2d72](https://github.com/klerikdust/anniediscord/commit/b3e2d72a19b935afe934d0f1eda716ea494faa44))
+* **setShop:** wasn't able to type longer item name. ([624c50a](https://github.com/klerikdust/anniediscord/commit/624c50abc8ec43733bfcdfe89d66e5a828765905))
+
 ## [7.21.9](https://github.com/klerikdust/anniediscord/compare/v7.21.8...v7.21.9) (2021-06-27)
 
 
