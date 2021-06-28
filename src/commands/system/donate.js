@@ -36,7 +36,7 @@ permissionLevel: 0,
 */
 async execute(client, reply, message, arg, locale) {
     // ... Your command ran here.
-    reply.send(`Please go to this site: [Donate](https://upgrade.chat/annieverse)`,{simplified:false})
+    reply.send(locale.DONATE)
 }
 
 }

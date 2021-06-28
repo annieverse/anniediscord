@@ -216,6 +216,7 @@
         "ERROR": "Something went wrong ..",
         "COOLING_DOWN": "You can make changes again in 5 seconds."
     },
+    "DONATE": "Please go to this site: [Donate](https://upgrade.chat/annieverse)",
     "ERROR": "Ops, something went wrong.\n```diff\n- {{error}}\n```",
     "ERROR_ON_PRODUCTION": "**Oops, I just got hit by something ...** {{emoji}}\n╰ Sorry for this inconvenience; I'll forward it to my developers.",
     "ERROR_ON_DEV": "Hmm, does not working as expected. {{emoji}}\n```diff\n- {{error}}\n```",
