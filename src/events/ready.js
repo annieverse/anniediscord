@@ -10,6 +10,7 @@ module.exports = function ready(annie) {
     annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()
     annie.registerGuildAutoResponders()
+    annie.registerUserDurationalBuffs()
     annie.logger.info(`<DEPLOYED> (${annie.getBenchmark(annie.startupInit)})`)
 	if (annie.dev) return annie.user.setStatus(`dnd`)
     /**

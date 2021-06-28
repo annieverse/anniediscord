@@ -477,6 +477,28 @@ module.exports = {
             },
             {
                 /**
+                 *  The arbritrary amount of exp gained from chat activity.
+                 *  @type {object}
+                 */
+                name: `CHAT_EXP`,
+                description: `The arbritrary amount of exp gained from chat activity`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: [1, 5]
+            },
+            {
+                /**
+                 *  The arbritrary amount of currency gained from chat activity.
+                 *  @type {object}
+                 */
+                name: `CHAT_CURRENCY`,
+                description: `The arbritrary amount of currency gained from chat activity`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: [10, 15]
+            },
+            {
+                /**
                  *  The target channel where level-up message will be sent in
                  *  @type {object}
                  */
@@ -496,6 +518,50 @@ module.exports = {
                 customizable: true,
                 allowedTypes: [`boolean`],
                 value: 0
+            },
+            {
+                /**
+                 *  Toggle Annie's custom shop Module
+                 *  @type {object}
+                 */
+                name: `SHOP_MODULE`,
+                description: `Toggle Annie's custom shop Module`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
+                 *  The content of the message that going to be displayed in the shop
+                 *  @type {object}
+                 */
+                name: `SHOP_TEXT`,
+                description: `The content of the message that going to be displayed in the shop`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: `Welcome to {{guild}}'s shop`
+            },
+            {
+                /**
+                 *  Store items to be displayed in shop
+                 *  @type {object}
+                 */
+                name: `SHOP_ITEM`,
+                description: `Store items to be displayed in shop`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: []
+            },
+            {
+                /**
+                 *  The image that will be displayed as shop's background
+                 *  @type {object}
+                 */
+                name: `SHOP_IMAGE`,
+                description: `The image that will be displayed as shop's background`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
             }
         ]
     }
