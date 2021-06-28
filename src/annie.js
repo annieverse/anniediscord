@@ -15,6 +15,7 @@ const loadAsset = require(`./utils/loadAsset`)
 const fetch = require(`node-fetch`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
+const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
     constructor() {
@@ -150,6 +151,12 @@ class Annie extends Discord.Client {
          * @type {collection}
          */
         this.cooldowns = new Discord.Collection()
+
+        /**
+         * Cron instance
+         * @type {object}
+         */
+        this.cronManager = new CronManager()
         this.prepareLogin()
     }
 
@@ -206,6 +213,55 @@ class Annie extends Discord.Client {
             }
         } 
         this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
+    }
+
+    /**
+     * Registering cache and cron for saved user durational buffs.
+     * @return {void}
+     */
+    async registerUserDurationalBuffs() {
+        if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
+        this.db.getSavedUserDurationalBuffs().then(async src => {
+            if (!src.length) return
+            let count = 0
+            for (let i=0; i<src.length; i++) {
+                const node = src[i]
+                //  Skip if guild isn't exists in current shard.
+                if (!this.guilds.cache.has(node.guild_id)) continue
+                const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
+                const localTime = await this.db.toLocaltime(node.registered_at)
+                const expireAt = new Date(localTime).getTime() + node.duration
+                //  Skip expired buff, and delete it from database as well.
+                if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
+                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
+                    continue
+                }
+                this.db.redis.sadd(key, node.multiplier)
+                this.cronManager.add(node.multiplier+`_`+key, new Date(expireAt), () => {
+                    //  Flush from cache and sqlite
+                    this.db.redis.srem(key, node.multiplier)
+                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
+                    //  Send expiration notice
+                    this.users.fetch(node.user_id)
+                    .then(async user => {
+                        this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
+                            field: user,
+                            footer: `${this.guilds.cache.get(node.guild_id).name}'s System Notification`
+                        })
+                        .catch(e => e)
+                    })
+                    .catch(e => e)
+                }, { start:true })
+                count++
+            }
+            this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@USER_DURATIONAL_BUFFS] ${count} buffs have been registered`)
+        })
     }
 
     /**
@@ -311,8 +367,13 @@ class Annie extends Discord.Client {
      * @return {string}
      */
     async getUsername(userId=``) {
-        const user = await this.users.fetch(userId)
-        return user ? user.username : userId
+        try {
+            const user = await this.users.fetch(userId)
+            return user ? user.username : userId
+        }
+        catch(e) {
+            return userId
+        }
     }
 
     /**

@@ -1,3 +1,92 @@
+## [7.21.10](https://github.com/klerikdust/anniediscord/compare/v7.21.9...v7.21.10) (2021-06-27)
+
+
+### Bug Fixes
+
+* **setShop:** item addition replaces global item with same name. ([b3e2d72](https://github.com/klerikdust/anniediscord/commit/b3e2d72a19b935afe934d0f1eda716ea494faa44))
+* **setShop:** wasn't able to type longer item name. ([624c50a](https://github.com/klerikdust/anniediscord/commit/624c50abc8ec43733bfcdfe89d66e5a828765905))
+
+## [7.21.9](https://github.com/klerikdust/anniediscord/compare/v7.21.8...v7.21.9) (2021-06-27)
+
+
+### Bug Fixes
+
+* **gacha:** fetch price. ([740939d](https://github.com/klerikdust/anniediscord/commit/740939d1baf02ec0a26e50fd987ca64f58271ab4))
+
+## [7.21.8](https://github.com/klerikdust/anniediscord/compare/v7.21.7...v7.21.8) (2021-06-27)
+
+
+### Bug Fixes
+
+* **gacha:** rewards missing. ([38dc9c4](https://github.com/klerikdust/anniediscord/commit/38dc9c467bc197a8721a449759c3c995c4c483ad))
+
+## [7.21.7](https://github.com/klerikdust/anniediscord/compare/v7.21.6...v7.21.7) (2021-06-27)
+
+
+### Bug Fixes
+
+* **points:** missing one int for the multiplier. ([47ab5be](https://github.com/klerikdust/anniediscord/commit/47ab5be8e34619d0b74ac88db84da53364537d26))
+
+## [7.21.6](https://github.com/klerikdust/anniediscord/compare/v7.21.5...v7.21.6) (2021-06-27)
+
+
+### Bug Fixes
+
+* **logs:** temporarily removed 'update' audit. ([b7a29c2](https://github.com/klerikdust/anniediscord/commit/b7a29c210b905882329181c8e0fda942c06df4d4))
+
+## [7.21.5](https://github.com/klerikdust/anniediscord/compare/v7.21.4...v7.21.5) (2021-06-27)
+
+
+### Bug Fixes
+
+* item effect cron update fail and decreased wall refresh interval. ([436560f](https://github.com/klerikdust/anniediscord/commit/436560f5198e971a12461188ccfee6389a7397d8))
+
+## [7.21.4](https://github.com/klerikdust/anniediscord/compare/v7.21.3...v7.21.4) (2021-06-27)
+
+
+### Bug Fixes
+
+* **shop:** fail retrieve emoji. ([e3e9bbf](https://github.com/klerikdust/anniediscord/commit/e3e9bbfcffc013fbe146a53085c330d221478cb2))
+
+## [7.21.3](https://github.com/klerikdust/anniediscord/compare/v7.21.2...v7.21.3) (2021-06-27)
+
+
+### Bug Fixes
+
+* **inventory:** wrong header. ([10a17fe](https://github.com/klerikdust/anniediscord/commit/10a17fe899788f1a1bda5e648d0a6cacbd0b191b))
+
+## [7.21.2](https://github.com/klerikdust/anniediscord/compare/v7.21.1...v7.21.2) (2021-06-27)
+
+
+### Bug Fixes
+
+* **shop:** socketing on server shop's text. ([7cc3313](https://github.com/klerikdust/anniediscord/commit/7cc33137310b1c8fc3462258b8547a3f6c25517a))
+
+## [7.21.1](https://github.com/klerikdust/anniediscord/compare/v7.21.0...v7.21.1) (2021-06-27)
+
+
+### Bug Fixes
+
+* **database:** statement typo on item_effects table creation. ([a3d6bed](https://github.com/klerikdust/anniediscord/commit/a3d6bed88ba9433e12d025d91eb30bb7ae98cf1f))
+
+# [7.21.0](https://github.com/klerikdust/anniediscord/compare/v7.20.2...v7.21.0) (2021-06-27)
+
+
+### Bug Fixes
+
+* merge conflits. ([4502898](https://github.com/klerikdust/anniediscord/commit/45028988c12e9c14ad297d04645a8076f33e5385))
+
+
+### Features
+
+* **buff:** allows user to check their current active buffs. ([0b28b0b](https://github.com/klerikdust/anniediscord/commit/0b28b0b5af9f33b7efabf806609e5ebcc573db36))
+* **buy:** allows guild member to purchase guild items. ([e67a987](https://github.com/klerikdust/anniediscord/commit/e67a9874932b30dee336dd6bcdfb1d759fd9ad73))
+* **expBoost:** integrated buff system with exp/currency gaining from chat activity. ([1bc6e44](https://github.com/klerikdust/anniediscord/commit/1bc6e441770efd2bfe09f14939bf65b416f2c0b8))
+* **setShop:** basic add action, crud buff, etc done. ([8a8085a](https://github.com/klerikdust/anniediscord/commit/8a8085a1b740918d101adab9801178f2d0e395ac))
+* **setShop:** finished shop management. ([24541c8](https://github.com/klerikdust/anniediscord/commit/24541c854eaac0af460bb7b270075296b3cb6a08))
+* **tableHandler:** prevent instance from crashing if table is not found. ([f41e37a](https://github.com/klerikdust/anniediscord/commit/f41e37a4dae243ed1989978ed5f3bfa243cc0dd3))
+* **use:** a command that allows item use. ([939a180](https://github.com/klerikdust/anniediscord/commit/939a180cc32441afe7208171e3c406797d6e17d4))
+
 ## [7.20.2](https://github.com/klerikdust/anniediscord/compare/v7.20.1...v7.20.2) (2021-06-16)
 
 

@@ -15,6 +15,8 @@
     "rules": {
         "no-mixed-spaces-and-tabs": "off",
 		"no-irregular-whitespace" : "off",
+        "no-case-declarations": "off",
+        "no-fallthrough": "off",
         "no-empty": "off",
         "no-console": "error",
         "no-unused-vars": "off",
