@@ -22,7 +22,14 @@ module.exports = async (client, message) => {
         }
         if (message.content.length > 0) CHANNEL.send(`**${AUTHOR.username} (${AUTHOR.id}):** ${message.content}`)
         if (attachments.length > 0) return CHANNEL.send(`**${AUTHOR.username} (${AUTHOR.id}) attachments:**\n${attachments}`)
-        return message.reply(`Your message has been relayed to my developers.`)
+        message.channel.messages.fetch({limit: 2}).then(messages => {
+             var past = messages.last().createdAt.getTime()
+             var tenMin = 1000 * 60 * 10
+             var newDate = new Date().getTime()
+             var isPast = (newDate - past < tenMin) ? false: true
+             if ( isPast) return message.reply(`Your message has been relayed to my developers.`)
+             return
+        })
     } 
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
