@@ -1,3 +1,12 @@
+## [7.21.11](https://github.com/klerikdust/anniediscord/compare/v7.21.10...v7.21.11) (2021-06-28)
+
+
+### Bug Fixes
+
+* **command:** command failure on unregistered guild. ([1601362](https://github.com/klerikdust/anniediscord/commit/16013625ee64ef611106fe7220276e378f15224e))
+* **locale:** missing key in 'EN' locale. ([502cfdb](https://github.com/klerikdust/anniediscord/commit/502cfdbe9defaea2eb65f26577fda29db7ad0a69))
+* **reminder:** invalid shorthand duration. ([83820e9](https://github.com/klerikdust/anniediscord/commit/83820e98ec5824c42cb2e8c3b10e9cef29ffbb4d))
+
 ## [7.21.10](https://github.com/klerikdust/anniediscord/compare/v7.21.9...v7.21.10) (2021-06-27)
 
 
