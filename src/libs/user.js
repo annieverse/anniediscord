@@ -133,6 +133,8 @@ class User {
 		const db = this.bot.db
 		//  Handle if user object isn't valid
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
+        //  Perform pre-check for the guild
+        await db.registerGuild(this.message.guild)
 		try {
             //  Do userdata validation if the target is external/not the author of the message.
             //  This to ensure that the target doesn't missing the required user entry.
