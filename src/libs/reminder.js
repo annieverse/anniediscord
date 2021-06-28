@@ -178,9 +178,7 @@ class Reminder {
         context.userId = userId
         //  Handle if query is too short
         if (query.length <= 1) return context
-        //  Handle if there is only single token
-        let tokens = query.split(` `)
-        if (tokens.length <= 1) return context
+        const tokens = query.split(` `)
         //  Find date by combining tokens
         for (let i=0; i<tokens.length; i++) {
             const token = tokens[i]
