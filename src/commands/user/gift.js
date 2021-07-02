@@ -98,7 +98,7 @@ module.exports = {
                 }
             })
 			//  Adds reputation point to target user
-			client.db.addUserReputation(amount, targetUser.master.id, message.author.id, message.guild.id)
+			client.db.updateUserReputation(amount, targetUser.master.id, message.author.id, message.guild.id)
 			//  Deduct gifts from sender
 			client.db.updateInventory({itemId: gift.item_id, value: amount, operation: `-`, userId: message.author.id, guildId: message.guild.id})
  			return reply.send(``, {
