@@ -40,6 +40,13 @@ module.exports = {
             },
             image: await new GUI(targetUserData, client, userData).build()
         })
-        return fetching.delete()
+        fetching.delete()
+        if (userLib.isSelf(targetUser.id)) return reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
+            simplified: true,
+            socket: {
+                prefix: prefix,
+                emoji: await client.getEmoji(`848521456543203349`) 
+            }
+        })
     }
 }

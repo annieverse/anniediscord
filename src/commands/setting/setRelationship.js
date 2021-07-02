@@ -101,7 +101,14 @@ module.exports = {
             const authorRelationship = await client.db.getRelationship(authorRelationshipStatus)
             client.db.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
             client.db.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
-            return reply.send(``, {customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()]})
+            await reply.send(``, {customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()]})
+            return reply.send(locale.RELATIONSHIP.TIPS_AFTER_REGISTER, {
+                simplified: true,
+                socket: {
+                    prefix: prefix,
+                    emoji: await client.getEmoji(`848521358236319796`)
+                }
+            })
         })
     },
 
