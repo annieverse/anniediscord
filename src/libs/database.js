@@ -211,6 +211,21 @@ class Database {
         return result
 	}
 
+    /**
+     * Migrate lucky ticket's metadata into Annie's Pandora Box.
+     * @return {QueryResult}
+     */
+    migrateLuckyTicketMetadata() {
+        return this._query(`
+            UPDATE items
+            SET
+                name = 'Annie Pandora Box',
+                description = 'Mysterious box filled with strange powah'
+            WHERE item_id = 71`
+            , `run`
+        )
+    }
+
 	/**
 	 * Standardized method for making changes to the user_inventories
 	 * @param {itemsMetadata} meta item's metadata
@@ -2619,8 +2634,11 @@ class Database {
 	 * Fetch items from `item_gacha` table.
 	 * @returns {QueryResult}
 	 */
-	getGachaRewardsPool() {
-		return this._query(`
+	async getGachaRewardsPool() {
+        const cacheId = `GACHA_REWARDS_POOL`
+        const onCache = await this.redis.get(cacheId)
+        if (onCache) return JSON.parse(onCache)
+		const res = await this._query(`
 			SELECT 
 
 				item_gacha.item_id AS item_id,
@@ -2652,9 +2670,10 @@ class Database {
 				ON item_rarities.rarity_id = items.rarity_id
             WHERE owned_by_guild_id IS NULL`
 			, `all`
-			, []	
-			, `Fetching gacha's rewards pool`
 		)
+        //  Cache rewards pool for 1 hour
+        this.redis.set(cacheId, JSON.stringify(res), `EX`, 60*60)
+        return res
 	}
 
 	/**
