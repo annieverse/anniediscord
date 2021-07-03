@@ -289,7 +289,7 @@
         "UPON_PURCHASE_WARN": "The box will be automatically opened upon purchase",
         "HEADER": "And earned the following items::\n{{items}}",
         "SESSION_STILL_ACTIVE": "Heii, you can only open one gacha session at a time!",
-        "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `daily` first. {{emoji}}"
+        "SUGGEST_TO_GRIND": "You don't even have enough artcoins to purchase the box! But don't worry, you can do some **`{{prefix}}quest`**, **`{{prefix}}daily`** or **`{{prefix}}vote`** to gain more artcoins. {{emoji}}"
     },
     "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_AFFILIATE_INVITE": "Don't forget to check my affiliated server too! {{emoji}}\n{{affiliateLink}}",

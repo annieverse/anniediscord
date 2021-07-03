@@ -16,7 +16,7 @@ module.exports = {
 	usage: `gacha <Amount>`,
 	permissionLevel: 0,
     amountToOpenRanges: [1, 10],
-    async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale, prefix) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         const amountToOpen = arg ? trueInt(arg) : 1
         //  Handle if amount to be opened is out of defined range.
@@ -31,8 +31,10 @@ module.exports = {
         const amountToPay = 120*amountToOpen
         //  Handle if user doesn't have enough artcoins to buy tickets
         if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
-            simplified: true,
-            socket: {emoji: await client.getEmoji(`692428927620087850`)}
+            socket: {
+                prefix: prefix,
+                emoji: await client.getEmoji(`692428927620087850`)
+            }
         })
         if (await client.db.redis.exists(instanceId)) return reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
 
