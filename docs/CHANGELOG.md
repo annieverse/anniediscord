@@ -1,3 +1,10 @@
+## [7.22.1](https://github.com/klerikdust/anniediscord/compare/v7.22.0...v7.22.1) (2021-07-03)
+
+
+### Bug Fixes
+
+* **gacha:** malform payment. ([22e97a3](https://github.com/klerikdust/anniediscord/commit/22e97a39dcd22d79c7a27500e1541d99ef41219d))
+
 # [7.22.0](https://github.com/klerikdust/anniediscord/compare/v7.21.11...v7.22.0) (2021-07-03)
 
 
