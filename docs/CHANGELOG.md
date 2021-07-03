@@ -1,3 +1,15 @@
+# [7.22.0](https://github.com/klerikdust/anniediscord/compare/v7.21.11...v7.22.0) (2021-07-03)
+
+
+### Bug Fixes
+
+* **gift:** fail to complete. ([c525563](https://github.com/klerikdust/anniediscord/commit/c525563a865a875d39dc925148b7c7286898fbbc))
+
+
+### Features
+
+* **profile:** unlocked badge section. ([1074b14](https://github.com/klerikdust/anniediscord/commit/1074b146459c15dd6fa442a19cff0ba03f7ca980))
+
 ## [7.21.11](https://github.com/klerikdust/anniediscord/compare/v7.21.10...v7.21.11) (2021-06-28)
 
 
