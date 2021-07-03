@@ -28,7 +28,7 @@ module.exports = {
         if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, message, arg, locale, instanceId, userData)
         const gachaItem = await client.db.getItem(71)
         const userCurrentCurrency = userData.inventory.artcoins
-        const amountToPay = gachaItem.price*amountToOpen
+        const amountToPay = 120*amountToOpen
         //  Handle if user doesn't have enough artcoins to buy tickets
         if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
             simplified: true,
