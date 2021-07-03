@@ -1,3 +1,11 @@
+## [7.22.2](https://github.com/klerikdust/anniediscord/compare/v7.22.1...v7.22.2) (2021-07-03)
+
+
+### Bug Fixes
+
+* **locale:** 'EN' locale for insufficient balance in gacha command. ([ea44d3f](https://github.com/klerikdust/anniediscord/commit/ea44d3f0523ce8bbeec7ec5859e26432c3d159a0))
+* **permissions:** user title not properly selected. ([654e003](https://github.com/klerikdust/anniediscord/commit/654e003f6c33f25a123a399551c77462f2eb53d5))
+
 ## [7.22.1](https://github.com/klerikdust/anniediscord/compare/v7.22.0...v7.22.1) (2021-07-03)
 
 
