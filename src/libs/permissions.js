@@ -4,7 +4,7 @@
  * @param {string} [userId=``] Target user.
  * @return {object}
  */
-module.exports = (message={}, userId={}) => {
+module.exports = (message={}, userId=``) => {
     //  Developer privileges
     if ([`230034968515051520`, `277266191540551680`].includes(userId)) return {
         level: 4,
@@ -18,10 +18,12 @@ module.exports = (message={}, userId={}) => {
         description: `Regular user`,
     } 
     // User without developer privileges in dm interface will be automatically assigned as a regular user.
-    if (message.channel.type === `dm`) return fallbackPrivillege
-    const member = message.member
+    if (message.channel) { 
+        if (message.channel.type === `dm`) return fallbackPrivillege
+    }
+    const member = message.member || message
     //  Server owner
-    if (member.id === message.guild.ownerID) return {
+    if (userId === message.guild.ownerID) return {
         level: 3,
         name: `Server Owner`,
         description: `The owner of current server.`

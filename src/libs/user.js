@@ -242,7 +242,7 @@ class User {
 			const sticker = inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))
 			const usedSticker = sticker.length ? sticker[0] : null
 			const isSelf = this.isSelf(user.id)
-			const title = (await getUserPermission(this.message, user.id)).name
+			const title = getUserPermission(this.message.guild.members.cache.get(user.id), user.id).name
 			return {
 				master:user,
 				main:main,
