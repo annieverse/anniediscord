@@ -276,18 +276,20 @@
     },
     "GACHA": {
         "OPENING_WORDS": [
-            "{{emoji}} *{{user}} is opening their precious card!*",
+            "{{emoji}} *{{user}} is opening their fortune!*",
             "{{emoji}} *{{user}} is opening the gate to sea of despair*",
             "{{emoji}} *{{user}}, may the RNG bless you*",
-            "{{emoji}} *{{user}}, do you know what's lying behind this card?*"
+            "{{emoji}} *{{user}}, do you know what's lying behind this box?*"
         ],
         "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
-        "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** tickets at once.",
+        "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** boxes at once.",
         "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls, *baka*. {{emoji}}",
-        "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Lucky Ticket!**",
-        "SUGGEST_TO_BUY": "Wanna buy some {{emoji}} **Lucky Tickets** first?",
-        "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `dailies` first. {{emoji}}",
-        "ASK_TO_OPEN": "Wanna open them now?"
+        "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Annie's Pandora Box!**",
+        "SUGGEST_TO_BUY": "Interested in buying **{{amount}}pcs of Annie's Pandora Box**?",
+        "UPON_PURCHASE_WARN": "The box will be automatically opened upon purchase",
+        "HEADER": "And earned the following items::\n{{items}}",
+        "SESSION_STILL_ACTIVE": "Heii, you can only open one gacha session at a time!",
+        "SUGGEST_TO_GRIND": "And you don't even have enough artcoins to purchase them either. I suggest you to do some `quests` or `daily` first. {{emoji}}"
     },
     "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_AFFILIATE_INVITE": "Don't forget to check my affiliated server too! {{emoji}}\n{{affiliateLink}}",

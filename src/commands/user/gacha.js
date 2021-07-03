@@ -24,34 +24,17 @@ module.exports = {
             socket: {emoji: await client.getEmoji(`781504248868634627`)}
         })
         //  Direct roll if user already has the tickets.
-        if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, message, arg, locale)
-        /**
-         * --------------------
-         * STARTS PURCHASE CHAINING
-         * --------------------
-         * @author klerikdust
-         * Q: What's the reason of adding this?
-         * A: I've seen a lot of people, especially the newbie ones are often
-         * having trouble of how to purchase the stuff to participate in the gacha. Browsing through the shop
-         * usually kind of overwhelming them, which might intimidates them to look further.
-         * My hope after implementing this so-called-purchase-chaining model is, we'll able to gauge new user's interest
-         * to play with our gacha with small effort (no need to get through the buy command first)
-         * and enjoy the rest of the content.
-         */
-        const insufficientTicketWarning = await reply.send(locale.GACHA.INSUFFICIENT_TICKET, {
-		   socket: {emoji: await client.getEmoji(`751020535865016420`), prefix: client.prefix}
-        })
+        const instanceId = `GACHA_SESSION:${message.guild.id}@${message.author.id}` 
+        if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, message, arg, locale, instanceId, userData)
         const gachaItem = await client.db.getItem(71)
-        const payment = await client.db.getPriceOf(71)
-        const paymentItem = await client.db.getItem(payment.item_price_id)
-        const userCurrentCurrency = userData.inventory[paymentItem.alias]
-        const amountToPay = payment.price*amountToOpen
-
+        const userCurrentCurrency = userData.inventory.artcoins
+        const amountToPay = gachaItem.price*amountToOpen
         //  Handle if user doesn't have enough artcoins to buy tickets
         if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
             simplified: true,
             socket: {emoji: await client.getEmoji(`692428927620087850`)}
         })
+        if (await client.db.redis.exists(instanceId)) return reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
 
         /**
          * --------------------
@@ -59,18 +42,21 @@ module.exports = {
          * --------------------
          */
         const suggestToBuy = await reply.send(locale.GACHA.SUGGEST_TO_BUY, {
-            simplified: true,
-            socket: {emoji: await client.getEmoji(`lucky_ticket`)}
+            footer: locale.GACHA.UPON_PURCHASE_WARN,
+            socket: {
+                amount: amountToOpen
+            }
         })
         const c = new Confirmator(message, reply) 
         await c.setup(message.author.id, suggestToBuy)
+        //  Timeout in 30 seconds
+        client.db.redis.set(instanceId, `1`, `EX`, 30)
         c.onAccept(async () => {
             suggestToBuy.delete()
-            insufficientTicketWarning.delete()
             //  Deduct balance & deliver lucky tickets
-            await client.db.updateInventory({itemId: paymentItem.item_id, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id})
+            client.db.updateInventory({itemId: 52, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id})
             await client.db.updateInventory({itemId: 71, value: amountToOpen, userId: message.author.id, guildId: message.guild.id})
-            this.startsRoll(client, reply, message, arg, locale)
+            this.startsRoll(client, reply, message, arg, locale, instanceId, userData)
         })
     },
 
@@ -78,7 +64,7 @@ module.exports = {
      * Rolling loots
      * @return {void}
      */
-    async startsRoll(client, reply, message, arg, locale) {
+    async startsRoll(client, reply, message, arg, locale, instanceId, userData) {
         const rewardsPool = await client.db.getGachaRewardsPool()
         //  Handle if no rewards are available to be pulled from gacha.
         if (!rewardsPool.length) return reply.send(locale.GACHA.UNAVAILABLE_REWARDS, {socket: {emoji: client.getEmoji(`AnnieCry`)} })
@@ -96,27 +82,24 @@ module.exports = {
             const loot = this.getLoot(rewardsPool)
             loots.push(loot)
         }
-        //  Subtract user's lucky tickets
+        //  Subtract user's box
         client.db.updateInventory({itemId: 71, value: drawCount, operation: `-`, userId: message.author.id, guildId: message.guild.id})
         //  Storing received loots into user's inventory
         for (let i=0; i<loots.length; i++) {
             const item = loots[i]
             await client.db.updateInventory({itemId: item.item_id, value: item.quantity, userId: message.author.id, guildId: message.guild.id})
         }
-
+        client.db.redis.del(instanceId)
         //  Displaying result
-        reply.send(locale.COMMAND.TITLE, {
+        reply.send(locale.GACHA.HEADER, {
             prebuffer: true,
-            image: await new GUI(loots, drawCount).build(),
-            simplified: true,
+            customHeader:  [`${message.author.username} has opened Pandora Box!`, message.author.displayAvatarURL()],
+            image: await new GUI(loots, drawCount, userData).build(),
             socket: {
-                command: `has opened ${drawCount} Lucky Tickets!`,
-                user: message.author.username,
-                emoji: await client.getEmoji(`lucky_ticket`)
+                items: await this.displayDetailedLoots(client, loots)
             }
         })
-        fetching.delete()
-        return reply.send(await this.displayDetailedLoots(client, loots), {simplified: true})   
+        return fetching.delete()
     },
 
     /**
@@ -133,7 +116,7 @@ module.exports = {
             const item = loots.filter(item => item.name === uniqueItems[i])
             const amount = item.map(item => item.quantity)
             const receivedAmount = amount.reduce((acc, current) => acc + current)
-            str += `${await client.getEmoji(item[0].alias)} **[${item[0].type_name}] ${receivedAmount}x ${uniqueItems[i]}**\n`
+            str += `╰☆～(${item[0].rarity_name}/${item[0].type_name}) ${receivedAmount}x ${uniqueItems[i]}\n`
         }
         return str
     },

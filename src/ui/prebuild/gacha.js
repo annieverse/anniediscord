@@ -8,13 +8,9 @@ class UI {
 	/**
 	 * Gacha UI Builder.
 	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
-	 * @param {User} [user={}] parsed user object from `./src/libs/user`
-	 * @param {object} [lbData={}] returned result from `Database.indexRanking()`
-	 * @param {function} [nameParser] user_id parser tool. Ref to `Pistachio.name()`
-	 * @param {function} [avatarParser] user's avatar parser tool. Ref to `Pistachio.avatar()`
 	 * @return {Canvas}
 	 */
-	constructor(container, drawCount=1){
+	constructor(container, drawCount=1, user){
 		this.drawCount = drawCount
 		this.canvas_x = 210
 		this.canvas_y = 265
@@ -24,6 +20,7 @@ class UI {
 		this.baseHeight = this.canvas_y - 50
 		this.container = container
 		this.canv = null
+        this.user = user
 		this.indexrow = {
 			"top": [0, 1, 2, 3, 4],
 			"bottom": [5, 6, 7, 8, 9],
@@ -72,12 +69,10 @@ class UI {
 	async multiRoll() {
 		this.canvas_x = 940
 		this.canvas_y = 500
-        
 		//  Initialize new canvas
 		this.canv = new Canvas(this.canvas_x, this.canvas_y)
 		//  Init save points
 		this.setSavepoints(20)
-
 		//  Handling per row rendering (top/bottom)
 		const row = async (opt) => {
 			let card_dx = 170
@@ -143,7 +138,7 @@ class UI {
 	itemText(x, y, index = 0) {
 		const item = this.container[index]
 		//  Name
-		this.canv.setColor(palette.white)
+		this.canv.setColor(theme[this.user.usedTheme.alias].text)
 		this.canv.setTextAlign(`center`)
 		this.canv.setTextFont(`9pt Roboto`) 
 		this.canv.printText(`${item.quantity}x ${item.name}`, x, y)
@@ -192,7 +187,7 @@ class UI {
      */
 	drawCardBase(x, y, dx, dy) {
 		this.canv.createRoundedClip(x, y, dx, dy, 7)
-		this.canv.setColor(theme.dark.main)
+		this.canv.setColor(theme[this.user.usedTheme.alias].main)
 		this.canv.printRectangle(x, y, dx, dy)
 
 	}
