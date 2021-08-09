@@ -31,7 +31,7 @@ module.exports = {
 		})
 		.then(async loading => {
 			await reply.send(locale.COMMAND.TITLE, {
-				simplified: true,q
+				simplified: true,
 				prebuffer: true,
 				image: await new GUI(userData).build(),
 				socket: {
