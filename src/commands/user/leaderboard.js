@@ -94,12 +94,12 @@ module.exports = {
 				image: img.toBuffer(),
 				simplified: true
 			})
-			const author = lbData.filter(key => key.id === message.author.id)[0]
+			const author = validUsers.filter(key => key.id === message.author.id)[0]
 			const footer = author ? locale.LEADERBOARD.AUTHOR_RANK : locale.LEADERBOARD.UNRANKED
 			reply.send(footer, {
 				simplified: true,
 				socket: {
-					rank: lbData.indexOf(author) + 1,
+					rank: validUsers.indexOf(author) + 1,
 					points: author ? commanifier(author.points) : 0,
 					emoji: selectedGroupIdentifier,
 				}
