@@ -1,3 +1,11 @@
+## [7.22.4](https://github.com/klerikdust/anniediscord/compare/v7.22.3...v7.22.4) (2021-08-09)
+
+
+### Bug Fixes
+
+* **leaderboard:** invalid rank position. ([68f211f](https://github.com/klerikdust/anniediscord/commit/68f211fe4e508f00e721712ca4de3ac845c6b374))
+* **level:** invalid header name on diff target. ([5a94968](https://github.com/klerikdust/anniediscord/commit/5a949687eccfb79c84e066c0e49e3b8b666702bf))
+
 ## [7.22.3](https://github.com/klerikdust/anniediscord/compare/v7.22.2...v7.22.3) (2021-07-18)
 
 
