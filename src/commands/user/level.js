@@ -31,12 +31,12 @@ module.exports = {
 		})
 		.then(async loading => {
 			await reply.send(locale.COMMAND.TITLE, {
-				simplified: true,
+				simplified: true,q
 				prebuffer: true,
 				image: await new GUI(userData).build(),
 				socket: {
 					emoji: await client.getEmoji(`692428597570306218`),
-					user: message.author.username,
+					user: targetUser.username,
 					command: `Level`
 				}
 			})
