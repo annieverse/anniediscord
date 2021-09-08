@@ -76,7 +76,7 @@
     "eslint": "5.16.0",
     "http": "0.0.1-security",
     "nodemon": "^2.0.6",
-    "pino-pretty": "^4.8.0",
+    "pino-pretty": "^7.0.0",
     "semantic-release": "^17.4.2",
     "url": "^0.11.0"
   }
