@@ -63,7 +63,7 @@
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.0",
     "parse-ms": "^3.0.0",
-    "pino": "^6.11.3",
+    "pino": "^6.13.3",
     "pixiv-api-client": "^0.25.0",
     "pixiv-img": "^1.0.0",
     "pm2": "^5.1.0",
