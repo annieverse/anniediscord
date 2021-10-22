@@ -16,12 +16,8 @@
   "engines": {
     "node": "12.18.3"
   },
-  "author": {
-    "name": "klerikdust",
-    "email": "naphzbilly@gmail.com",
-    "url": "https://naphz.com"
-  },
   "contributors": [
+    "Naph (https://github.com/klerikdust)",
     "Pan (https://github.com/Moore2021)",
     "sunnyrainyworks (https://github.com/Sunny-Rainy-Works)",
     "hugonun (https://github.com/hugonun)",
@@ -40,7 +36,7 @@
     "@semantic-release/release-notes-generator": "^9.0.1",
     "@top-gg/sdk": "^3.1.1",
     "async-redis": "^2.0.0",
-    "axios": "^0.21.1",
+    "axios": "^0.23.0",
     "better-sqlite3": "^7.1.1",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.6.1",
