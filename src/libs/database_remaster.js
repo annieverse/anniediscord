@@ -1825,9 +1825,9 @@ class Database {
 	 * Verify each table exists and if it doesn't create the table
 	 */
 	async verifyTables() {
-		TABLES = [
-			autoresponders_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS autoresponders (
+		const TABLES = {
+			autoresponders_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS autoresponders (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'ar_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1837,10 +1837,10 @@ class Database {
 				'response' TEXT
 	 
 				)`,
-				tablename = `autoresponders`
+				tablename: `autoresponders`
 			},
-			item_effects_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS item_effects(
+			item_effects_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS item_effects(
                 effect_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 item_id INTEGER,
@@ -1856,10 +1856,10 @@ class Database {
                 REFERENCES guilds(guild_id)
                     ON UPDATE CASCADE
                     ON DELETE CASCADE)`,
-				tablename = `item_effects`
+				tablename: `item_effects`
 			},
-			user_durational_buffs_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_durational_buffs(
+			user_durational_buffs_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_durational_buffs(
                 buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 name TEXT,
@@ -1873,10 +1873,10 @@ class Database {
                 REFERENCES users(user_id) 
                    ON DELETE CASCADE
                    ON UPDATE CASCADE)`,
-				tablename = `user_durational_buffs`
+				tablename: `user_durational_buffs`
 			},
-			user_gender_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_gender(
+			user_gender_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_gender(
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'user_id' TEXT,
 				'gender' TEXT,
@@ -1885,20 +1885,20 @@ class Database {
 				REFERENCES users(user_id) 
 				   ON DELETE CASCADE
 				   ON UPDATE CASCADE)`,
-				tablename = `user_gender`
+				tablename: `user_gender`
 			},
-			affiliates_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS affiliates (
+			affiliates_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS affiliates (
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'guild_id' TEXT NOT NULL,
 				'description' TEXT DEFAULT 'Another awesome guild!',
 				'invite_link' TEXT,
 				'notes' TEXT)`,
-				tablename = `affiliates`
+				tablename: `affiliates`
 			},
-			command_log_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS commands_log (
+			command_log_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS commands_log (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1909,10 +1909,10 @@ class Database {
 				'resolved_in' TEXT
 	 
 				)`,
-				tablename = `commands_log`
+				tablename: `commands_log`
 			},
-			guilds_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS guilds (
+			guilds_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS guilds (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1921,10 +1921,10 @@ class Database {
 				'bio' TEXT
 	 
 				)`,
-				tablename = `guilds`
+				tablename: `guilds`
 			},
-			guilds_configurations_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS guild_configurations (
+			guilds_configurations_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS guild_configurations (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1945,10 +1945,10 @@ class Database {
 					ON DELETE SET NULL
 	
 				)`,
-				tablename = `guild_configurations`
+				tablename: `guild_configurations`
 			},
-			item_gacha_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS item_gacha (
+			item_gacha_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS item_gacha (
 
 				'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 				'item_id' INTEGER,
@@ -1961,10 +1961,10 @@ class Database {
 					 ON UPDATE CASCADE
 	 
 				)`,
-				tablename = `item_gacha`
+				tablename: `item_gacha`
 			},
-			item_rarities_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS item_rarities (
+			item_rarities_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS item_rarities (
 
 				'rarity_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 				'name' TEXT,
@@ -1972,10 +1972,10 @@ class Database {
 				'color' TEXT DEFAULT '#000000'
 	 
 				)`,
-				tablename = `item_rarities`
+				tablename: `item_rarities`
 			},
-			item_types_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS item_types (
+			item_types_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS item_types (
 
 				'type_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 				'name' TEXT,
@@ -1984,10 +1984,10 @@ class Database {
 				'max_use' INTEGER DEFAULT 9999
 	 
 				)`,
-				tablename = `item_types`
+				tablename: `item_types`
 			},
-			items_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS items (
+			items_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS items (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2010,19 +2010,19 @@ class Database {
 						ON DELETE SET NULL
 	 
 				)`,
-				tablename = `items`
+				tablename: `items`
 			},
-			quest_log_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS quest_log (
+			quest_log_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS quest_log (
 				registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				quest_id INTEGER,
 				user_id TEXT,
 				guild_id TEXT,
 				answer TEXT)`,
-				tablename = `quest_log`
+				tablename: `quest_log`
 			},
-			quests_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS quests (
+			quests_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS quests (
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'quest_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2030,10 +2030,10 @@ class Database {
 				'name' TEXT,
 				'description' TEXT,
 				'correct_answer' TEXT)`,
-				tablename = `quests`
+				tablename: `quests`
 			},
-			relationships_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS relationships (
+			relationships_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS relationships (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2041,10 +2041,10 @@ class Database {
 				'name' TEXT
 	 
 				)`,
-				tablename = `relationships`
+				tablename: `relationships`
 			},
-			resource_log_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS resource_log (
+			resource_log_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS resource_log (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2054,10 +2054,10 @@ class Database {
 				'memory' REAL
 	 
 				)`,
-				tablename = `resource_log`
+				tablename: `resource_log`
 			},
-			shop_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS shop (
+			shop_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS shop (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2077,14 +2077,14 @@ class Database {
 						ON DELETE CASCADE
 	 
 				)`,
-				tablename = `shop`
+				tablename: `shop`
 			},
-			sqlite_sequence_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS sqlite_sequence(name,seq)`,
-				tablename = `sqlite_sequence`
+			sqlite_sequence_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS sqlite_sequence(name,seq)`,
+				tablename: `sqlite_sequence`
 			},
-			user_dailies_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_dailies (
+			user_dailies_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_dailies (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2097,10 +2097,10 @@ class Database {
 					ON UPDATE CASCADE
 	 
 				)`,
-				tablename = `user_dailies`
+				tablename: `user_dailies`
 			},
-			user_exp_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_exp (
+			user_exp_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_exp (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2120,10 +2120,10 @@ class Database {
 					ON UPDATE CASCADE
 	 
 				)`,
-				tablename = `user_exp`
+				tablename: `user_exp`
 			},
-			user_inventories_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_inventories (
+			user_inventories_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_inventories (
 		   
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2145,10 +2145,10 @@ class Database {
 					ON UPDATE CASCADE
 	
 				)`,
-				tablename = `user_inventories`
+				tablename: `user_inventories`
 			},
-			user_quests_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_quests (
+			user_quests_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_quests (
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'user_id' TEXT,
@@ -2171,10 +2171,10 @@ class Database {
 				REFERENCES guilds(guild_id) 
 				   ON DELETE CASCADE
 				   ON UPDATE CASCADE)`,
-				tablename = `user_quests`
+				tablename: `user_quests`
 			},
-			user_relationships_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_relationships (
+			user_relationships_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_relationships (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2199,10 +2199,10 @@ class Database {
 						ON DELETE CASCADE
 						ON UPDATE CASCADE
 				)`,
-				tablename = `user_relationships`
+				tablename: `user_relationships`
 			},
-			user_reminders_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_reminders (
+			user_reminders_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_reminders (
 
 		'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		'reminder_id' TEXT PRIMARY KEY,
@@ -2216,10 +2216,10 @@ class Database {
 			ON UPDATE CASCADE
 
 		)`,
-				tablename = `user_reminders`
+				tablename: `user_reminders`
 			},
-			user_reputations_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_reputations (
+			user_reputations_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_reputations (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'last_giving_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2234,10 +2234,10 @@ class Database {
 					ON UPDATE CASCADE
 	 
 				)`,
-				tablename = `user_reputations`
+				tablename: `user_reputations`
 			},
-			user_self_covers_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_self_covers (
+			user_self_covers_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_self_covers (
 		'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		'cover_id' TEXT,
 		'user_id' TEXT,
@@ -2247,10 +2247,10 @@ class Database {
 		REFERENCES users(user_id) 
 		   ON DELETE CASCADE
 		   ON UPDATE CASCADE)`,
-				tablename = `user_self_covers`
+				tablename: `user_self_covers`
 			},
-			user_socialmedias = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_socialmedias (
+			user_socialmedias: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_socialmedias (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2265,10 +2265,10 @@ class Database {
 						ON UPDATE CASCADE
 	 
 				)`,
-				tablename = `user_socialmedias`
+				tablename: `user_socialmedias`
 			},
-			users_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS users (
+			users_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS users (
 
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2281,20 +2281,20 @@ class Database {
 				'receive_notification' INTEGER DEFAULT -1
 	 
 				)`,
-				tablename = `users`
+				tablename: `users`
 			},
-			trading_trades_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS trading_trades (
+			trading_trades_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS trading_trades (
 				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				'user_id' TEXT NOT NULL,
 				'guild_id' TEXT NOT NULL,
 				'trade_id' REAL UNIQUE NOT NULL,
 				'status' TEXT NOT NULL,
 				'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`,
-				tablename = `trading_trades`
+				tablename: `trading_trades`
 			},
-			trading_transaction_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS trading_transaction (
+			trading_transaction_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS trading_transaction (
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_one_id' TEXT NOT NULL,
 					'user_two_id' TEXT NOT NULL,
@@ -2302,18 +2302,18 @@ class Database {
 					'trade_id' TEXT NOT NULL,
 					'user_one_item' TEXT NOT NULL,
 					'user_two_item' TEXT NOT NULL)`,
-				tablename = `trading_transaction`
+				tablename: `trading_transaction`
 			},
-			trading_blocked_users_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS trading_blocked_users (
+			trading_blocked_users_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS trading_blocked_users (
 						'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						'user_id' TEXT NOT NULL UNIQUE,
 						'blocked' INTEGER DEFAULT 0,
 						'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`,
-				tablename = `trading_blocked_users`
+				tablename: `trading_blocked_users`
 			},
-			user_posts_table = {
-				stmt = `CREATE TABLE IF NOT EXISTS user_posts (
+			user_posts_table: {
+				stmt: `CREATE TABLE IF NOT EXISTS user_posts (
 
 							'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 							'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2332,12 +2332,13 @@ class Database {
 								 ON UPDATE CASCADE
 				 
 							)`,
-				tablename = `user_posts`
+				tablename: `user_posts`
 			}
-		]
+		}
 
 		logger.info(`Verifing all tables that are requirred are present. This may take a while...`)
-		for (table in TABLES) {
+		let TABLESTOARRAY = Object.keys(TABLES).map((key) => [Number(key), TABLES[key]])
+		for (let table in TABLESTOARRAY) {
 			await this._query(table.stmt, `run`, [], `Verifing ${table.tablename} table`)
 		}
 
