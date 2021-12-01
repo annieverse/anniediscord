@@ -10,9 +10,6 @@ const {
 	join
 } = require(`path`)
 const relationshipPairs = require(`../config/relationshipPairs.json`)
-const {
-	table
-} = require(`console`)
 
 /**
  * Centralized Class for handling various database tasks 
