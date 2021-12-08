@@ -1832,474 +1832,431 @@ class Database {
 	 */
 	async verifyTables() {
 		const TABLES = [{
-				stmt: `CREATE TABLE IF NOT EXISTS autoresponders (
+				stmt: `CREATE TABLE 'users'( 
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						'last_login_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+						'user_id'	TEXT,
+						'name'	REAL,
+						'bio'	TEXT DEFAULT 'Hi! I''m a new user!',
+						'verified'	INTEGER DEFAULT 0,
+						'lang'	TEXT DEFAULT 'en',
+						'receive_notification'	INTEGER DEFAULT -1,
+						PRIMARY KEY('user_id')
+						)`,
+				tablename: `users`
+			},
+			{
+				stmt: `CREATE TABLE item_rarities (
 
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'ar_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'guild_id' TEXT,
-				'user_id' TEXT,
-				'trigger' TEXT,
-				'response' TEXT
-	 
-				)`,
-				tablename: `autoresponders`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS item_effects(
-                effect_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                item_id INTEGER,
-                guild_id TEXT,
-                effect_ref_id INTEGER,
-                parameter TEXT,
-
-                FOREIGN KEY(item_id)
-                REFERENCES items(item_id)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE,
-                FOREIGN KEY(guild_id)
-                REFERENCES guilds(guild_id)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE)`,
-				tablename: `item_effects`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_durational_buffs(
-                buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                name TEXT,
-                type TEXT,
-                multiplier INTEGER,
-                duration INTEGER,
-                user_id TEXT,
-                guild_id TEXT,
-
-                FOREIGN KEY(user_id)
-                REFERENCES users(user_id) 
-                   ON DELETE CASCADE
-                   ON UPDATE CASCADE)`,
-				tablename: `user_durational_buffs`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_gender(
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT,
-				'gender' TEXT,
-				PRIMARY KEY(user_id),
-				FOREIGN KEY(user_id)
-				REFERENCES users(user_id) 
-				   ON DELETE CASCADE
-				   ON UPDATE CASCADE)`,
-				tablename: `user_gender`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS affiliates (
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'guild_id' TEXT NOT NULL,
-				'description' TEXT DEFAULT 'Another awesome guild!',
-				'invite_link' TEXT,
-				'notes' TEXT)`,
-				tablename: `affiliates`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS commands_log (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'user_id' TEXT,
-				'channel_id' TEXT,
-				'guild_id' TEXT,
-				'command_alias' TEXT,
-				'resolved_in' TEXT
-	 
-				)`,
-				tablename: `commands_log`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS guilds (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'guild_id' TEXT PRIMARY KEY,
-				'name' TEXT,
-				'bio' TEXT
-	 
-				)`,
-				tablename: `guilds`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS guild_configurations (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'config_code' TEXT,
-				'guild_id' TEXT,
-				'customized_parameter' TEXT,
-				'set_by_user_id' TEXT,
-	
-				FOREIGN KEY(guild_id)
-				REFERENCES guilds(guild_id)
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	
-				FOREIGN KEY(set_by_user_id)
-				REFERENCES users(user_id)
-					   ON UPDATE CASCADE
-					ON DELETE SET NULL
-	
-				)`,
-				tablename: `guild_configurations`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS item_gacha (
-
-				'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'item_id' INTEGER,
-				'quantity' INTEGER DEFAULT 1,
-				'weight' REAL,
-	 
-				 FOREIGN KEY(item_id)
-				 REFERENCES items(item_id)
-					 ON DELETE CASCADE
-					 ON UPDATE CASCADE
-	 
-				)`,
-				tablename: `item_gacha`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS item_rarities (
-
-				'rarity_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'name' TEXT,
-				'level' INTEGER UNIQUE,
-				'color' TEXT DEFAULT '#000000'
-	 
-				)`,
+					'rarity_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'name' TEXT,
+					'level' INTEGER UNIQUE,
+					'color' TEXT DEFAULT '#000000'
+		 
+					)`,
 				tablename: `item_rarities`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS item_types (
+				stmt: `CREATE TABLE item_types (
 
-				'type_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'name' TEXT,
-				'alias' TEXT,
-				'max_stacks' INTEGER DEFAULT 9999,
-				'max_use' INTEGER DEFAULT 9999
-	 
-				)`,
+					'type_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'name' TEXT,
+					'alias' TEXT,
+					'max_stacks' INTEGER DEFAULT 9999,
+					'max_use' INTEGER DEFAULT 9999
+		 
+					)`,
 				tablename: `item_types`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS items (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'item_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'name' TEXT,
-				'description' TEXT,
-				'alias' TEXT,
-				'type_id' INTEGER,
-				'rarity_id' INTEGER,
-				'bind' TEXT DEFAULT 0,
-	 
-				FOREIGN KEY (rarity_id) 
-				REFERENCES item_rarities(rarity_id)
-						ON UPDATE CASCADE
-						ON DELETE SET NULL,
-	 
-				FOREIGN KEY (type_id) 
-				REFERENCES item_types(type_id)
-						ON UPDATE CASCADE
-						ON DELETE SET NULL
-	 
+				stmt: `CREATE TABLE quests (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'quest_id'	INTEGER PRIMARY KEY AUTOINCREMENT,
+					'reward_amount'	INTEGER,
+					'name'	TEXT,
+					'description'	TEXT,
+					'correct_answer'	TEXT
 				)`,
-				tablename: `items`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS quest_log (
-				registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				quest_id INTEGER,
-				user_id TEXT,
-				guild_id TEXT,
-				answer TEXT)`,
-				tablename: `quest_log`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS quests (
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'quest_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'reward_amount' INTEGER DEFAULT 1,
-				'name' TEXT,
-				'description' TEXT,
-				'correct_answer' TEXT)`,
 				tablename: `quests`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS relationships (
+				stmt: `CREATE TABLE relationships (
 
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'relationship_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'name' TEXT
-	 
-				)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'relationship_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'name' TEXT
+		 
+					)`,
 				tablename: `relationships`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS resource_log (
+				stmt: `CREATE TABLE items (
 
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'uptime' INTEGER,
-				'ping' REAL,
-				'cpu' REAL,
-				'memory' REAL
-	 
-				)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'item_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'name' TEXT,
+					'description' TEXT,
+					'alias' TEXT,
+					'type_id' INTEGER,
+					'rarity_id' INTEGER,
+					'bind' TEXT DEFAULT 0,
+		 
+					FOREIGN KEY (rarity_id) 
+					REFERENCES item_rarities(rarity_id)
+							ON UPDATE CASCADE
+							ON DELETE SET NULL,
+		 
+					FOREIGN KEY (type_id) 
+					REFERENCES item_types(type_id)
+							ON UPDATE CASCADE
+							ON DELETE SET NULL
+		 
+					)`,
+				tablename: `items`
+			},
+			{
+				stmt: `CREATE TABLE guilds (
+
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'guild_id' TEXT PRIMARY KEY,
+					'name' TEXT,
+					'bio' TEXT
+		 
+					)`,
+				tablename: `guilds`
+			},
+			{
+				stmt: `CREATE TABLE autoresponders (
+
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'ar_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'guild_id' TEXT,
+					'user_id' TEXT,
+					'trigger' TEXT,
+					'response' TEXT
+		 
+					)`,
+				tablename: `autoresponders`
+			},
+			{
+				stmt: `CREATE TABLE item_effects(
+					effect_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					item_id INTEGER,
+					guild_id TEXT,
+					effect_ref_id INTEGER,
+					parameter TEXT,
+	
+					FOREIGN KEY(item_id)
+					REFERENCES items(item_id)
+						ON UPDATE CASCADE
+						ON DELETE CASCADE,
+					FOREIGN KEY(guild_id)
+					REFERENCES guilds(guild_id)
+						ON UPDATE CASCADE
+						ON DELETE CASCADE)`,
+				tablename: `item_effects`
+			},
+			{
+				stmt: `CREATE TABLE user_durational_buffs(
+					buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
+					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					name TEXT,
+					type TEXT,
+					multiplier INTEGER,
+					duration INTEGER,
+					user_id TEXT,
+					guild_id TEXT,
+	
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE)`,
+				tablename: `user_durational_buffs`
+			},
+			{
+				stmt: `CREATE TABLE user_gender(
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id' TEXT,
+					'gender' TEXT,
+					PRIMARY KEY(user_id),
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE)`,
+				tablename: `user_gender`
+			},
+			{
+				stmt: `CREATE TABLE affiliates (
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'guild_id' TEXT NOT NULL,
+					'description' TEXT DEFAULT 'Another awesome guild!',
+					'invite_link' TEXT,
+					'notes' TEXT)`,
+				tablename: `affiliates`
+			},
+			{
+				stmt: `CREATE TABLE commands_log (
+
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'user_id' TEXT,
+					'channel_id' TEXT,
+					'guild_id' TEXT,
+					'command_alias' TEXT,
+					'resolved_in' TEXT
+		 
+					)`,
+				tablename: `commands_log`
+			},
+			{
+				stmt: `CREATE TABLE guild_configurations (
+
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'config_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'config_code' TEXT,
+					'guild_id' TEXT,
+					'customized_parameter' TEXT,
+					'set_by_user_id' TEXT,
+		
+					FOREIGN KEY(guild_id)
+					REFERENCES guilds(guild_id)
+						ON DELETE CASCADE
+						ON UPDATE CASCADE
+		
+					FOREIGN KEY(set_by_user_id)
+					REFERENCES users(user_id)
+						   ON UPDATE CASCADE
+						ON DELETE SET NULL
+		
+					)`,
+				tablename: `guild_configurations`
+			},
+			{
+				stmt: `CREATE TABLE item_gacha (
+
+					'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'item_id' INTEGER,
+					'quantity' INTEGER DEFAULT 1,
+					'weight' REAL,
+		 
+					 FOREIGN KEY(item_id)
+					 REFERENCES items(item_id)
+						 ON DELETE CASCADE
+						 ON UPDATE CASCADE
+		 
+					)`,
+				tablename: `item_gacha`
+			},
+			{
+				stmt: `CREATE TABLE quest_log (
+					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					quest_id INTEGER,
+					user_id TEXT,
+					guild_id TEXT,
+					answer TEXT)`,
+				tablename: `quest_log`
+			},
+			{
+				stmt: `CREATE TABLE resource_log (
+
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'uptime' INTEGER,
+					'ping' REAL,
+					'cpu' REAL,
+					'memory' REAL
+		 
+					)`,
 				tablename: `resource_log`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS shop (
+				stmt: `CREATE TABLE shop (
 
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'shop_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'item_id' INTEGER,
-				'item_price_id' INTEGER,
-				'price' INTEGER DEFAULT 100,
-	 
-				FOREIGN KEY (item_id) 
-				REFERENCES items(item_id)
-						ON UPDATE CASCADE
-						ON DELETE CASCADE,
-	 
-				FOREIGN KEY (item_price_id) 
-				REFERENCES items(item_id)
-						ON UPDATE CASCADE
-						ON DELETE CASCADE
-	 
-				)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'shop_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'item_id' INTEGER,
+					'item_price_id' INTEGER,
+					'price' INTEGER DEFAULT 100,
+		 
+					FOREIGN KEY (item_id) 
+					REFERENCES items(item_id)
+							ON UPDATE CASCADE
+							ON DELETE CASCADE,
+		 
+					FOREIGN KEY (item_price_id) 
+					REFERENCES items(item_id)
+							ON UPDATE CASCADE
+							ON DELETE CASCADE
+		 
+					)`,
 				tablename: `shop`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS sqlite_sequence(name,seq)`,
-				tablename: `sqlite_sequence`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_dailies (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT PRIMARY KEY,
-				'total_streak' INTEGER DEFAULT 0,
-	 
-				FOREIGN KEY(user_id)
-				REFERENCES users(user_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	 
+				stmt: `CREATE TABLE user_dailies (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id'	TEXT,
+					'total_streak'	INTEGER DEFAULT 0,
+					'guild_id'	TEXT,
+					FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					PRIMARY KEY(user_id,guild_id)
 				)`,
 				tablename: `user_dailies`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_exp (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT PRIMARY KEY,
-				'current_exp' INTEGER DEFAULT 0,
-				'booster_id' INTEGER,
-				'booster_activated_at' TIMESTAMP,
-	 
-				FOREIGN KEY(user_id) 
-				REFERENCES users(user_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	 
-				FOREIGN KEY(booster_id) 
-				REFERENCES items(item_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	 
+				stmt: `CREATE TABLE user_exp (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id'	TEXT,
+					'current_exp'	INTEGER DEFAULT 0,
+					'booster_id'	INTEGER,
+					'booster_activated_at'	TIMESTAMP,
+					'guild_id'	TEXT,
+					FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(booster_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					PRIMARY KEY(user_id,guild_id)
 				)`,
 				tablename: `user_exp`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_inventories (
-		   
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT,
-				'item_id' INTEGER,
-				'quantity' INTEGER DEFAULT 0,
-				'in_use' INTEGER DEFAULT 0,
-	
-				PRIMARY KEY (user_id, item_id),
-	
-				FOREIGN KEY(user_id) 
-				REFERENCES users(user_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE,
-	
-				FOREIGN KEY(item_id) 
-				REFERENCES items(item_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	
+				stmt: `CREATE TABLE user_inventories (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id'	TEXT,
+					'item_id'	INTEGER,
+					'quantity'	INTEGER DEFAULT 0,
+					'in_use'	INTEGER DEFAULT 0,
+					'guild_id'	TEXT,
+					FOREIGN KEY(item_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					PRIMARY KEY(user_id,item_id,guild_id)
 				)`,
 				tablename: `user_inventories`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_quests (
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT,
-				'guild_id' TEXT,
-				'next_quest_id' INTEGER,
-	
-				PRIMARY KEY(user_id, guild_id)
-	
-				FOREIGN KEY(next_quest_id)
-				REFERENCES quests(quest_id) 
-				   ON DELETE CASCADE
-				   ON UPDATE CASCADE
-	
-				FOREIGN KEY(user_id)
-				REFERENCES users(user_id) 
-				   ON DELETE CASCADE
-				   ON UPDATE CASCADE
-	
-				FOREIGN KEY(guild_id)
-				REFERENCES guilds(guild_id) 
-				   ON DELETE CASCADE
-				   ON UPDATE CASCADE)`,
+				stmt: `CREATE TABLE user_quests (
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id' TEXT,
+					'guild_id' TEXT,
+					'next_quest_id' INTEGER,
+		
+					PRIMARY KEY(user_id, guild_id)
+		
+					FOREIGN KEY(next_quest_id)
+					REFERENCES quests(quest_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE
+		
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE
+		
+					FOREIGN KEY(guild_id)
+					REFERENCES guilds(guild_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE)`,
 				tablename: `user_quests`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_relationships (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id_A' TEXT,
-				'user_id_B' TEXT,
-				'relationship_id' TEXT,
-	 
-				PRIMARY KEY(user_id_A, user_id_B),
-	 
-				FOREIGN KEY(user_id_A)
-				REFERENCES users(user_id)
-						ON DELETE CASCADE
-						ON UPDATE CASCADE
-	 
-				FOREIGN KEY(user_id_B)
-				REFERENCES users(user_id)
-						ON DELETE CASCADE
-						ON UPDATE CASCADE
-	 
-				FOREIGN KEY(relationship_id)
-				REFERENCES relationships(relationship_id)
-						ON DELETE CASCADE
-						ON UPDATE CASCADE
+				stmt: `CREATE TABLE user_relationships (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id_A'	TEXT,
+					'user_id_B'	TEXT,
+					'relationship_id'	TEXT,
+					'guild_id'	TEXT,
+					FOREIGN KEY(user_id_A) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(user_id_B) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(relationship_id) REFERENCES relationships(relationship_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					PRIMARY KEY(user_id_A,user_id_B,guild_id)
 				)`,
 				tablename: `user_relationships`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_reminders (
+				stmt: `CREATE TABLE user_reminders (
 
-		'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		'reminder_id' TEXT PRIMARY KEY,
-		'user_id' TEXT,
-		'message' TEXT,
-		'remind_at' TEXT,
-
-		FOREIGN KEY(user_id)
-		REFERENCES users(user_id) 
-			ON DELETE CASCADE
-			ON UPDATE CASCADE
-
-		)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'reminder_id' TEXT PRIMARY KEY,
+					'user_id' TEXT,
+					'message' TEXT,
+					'remind_at' TEXT,
+		 
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id) 
+						ON DELETE CASCADE
+						ON UPDATE CASCADE
+		 
+					)`,
 				tablename: `user_reminders`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_reputations (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'last_giving_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'last_received_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT PRIMARY KEY,
-				'total_reps' INTEGER DEFAULT 0,
-				'recently_received_by' TEXT,
-	 
-				FOREIGN KEY(user_id) 
-				REFERENCES users(user_id) 
-					ON DELETE CASCADE
-					ON UPDATE CASCADE
-	 
+				stmt: `CREATE TABLE user_reputations (
+					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'last_giving_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'last_received_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id'	TEXT,
+					'total_reps' INTEGER DEFAULT 0,
+					'recently_received_by' TEXT,
+					'guild_id' TEXT,
+					PRIMARY KEY(user_id, guild_id),
+					FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 				)`,
 				tablename: `user_reputations`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_self_covers (
-		'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		'cover_id' TEXT,
-		'user_id' TEXT,
-		'guild_id' TEXT,
-		PRIMARY KEY(user_id, guild_id),
-		FOREIGN KEY(user_id)
-		REFERENCES users(user_id) 
-		   ON DELETE CASCADE
-		   ON UPDATE CASCADE)`,
+				stmt: `CREATE TABLE user_self_covers (
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'cover_id' TEXT,
+					'user_id' TEXT,
+					'guild_id' TEXT,
+					PRIMARY KEY(user_id, guild_id),
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE)`,
 				tablename: `user_self_covers`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_socialmedias (
+				stmt: `CREATE TABLE user_socialmedias (
 
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'socialmedia_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-				'user_id' TEXT,
-				'url' TEXT,
-				'account_type' TEXT,
-	 
-				FOREIGN KEY(user_id)
-				REFERENCES users(user_id)
-						ON DELETE CASCADE
-						ON UPDATE CASCADE
-	 
-				)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'socialmedia_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'user_id' TEXT,
+					'url' TEXT,
+					'account_type' TEXT,
+		 
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id)
+							ON DELETE CASCADE
+							ON UPDATE CASCADE
+		 
+					)`,
 				tablename: `user_socialmedias`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS users (
-
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'last_login_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT PRIMARY KEY,
-				'name' TEXT,
-				'bio' TEXT DEFAULT "Hi! I'm a new user!",
-				'verified' INTEGER DEFAULT 0,
-				'lang' TEXT DEFAULT 'en',
-				'receive_notification' INTEGER DEFAULT -1
-	 
-				)`,
-				tablename: `users`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS trading_trades (
-				'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-				'user_id' TEXT NOT NULL,
-				'guild_id' TEXT NOT NULL,
-				'trade_id' REAL UNIQUE NOT NULL,
-				'status' TEXT NOT NULL,
-				'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`,
+				stmt: `CREATE TABLE trading_trades (
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id' TEXT NOT NULL,
+					'guild_id' TEXT NOT NULL,
+					'trade_id' REAL UNIQUE NOT NULL,
+					'status' TEXT NOT NULL,
+					'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`,
 				tablename: `trading_trades`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS trading_transaction (
+				stmt: `CREATE TABLE trading_transaction (
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_one_id' TEXT NOT NULL,
 					'user_two_id' TEXT NOT NULL,
@@ -2318,25 +2275,25 @@ class Database {
 				tablename: `trading_blocked_users`
 			},
 			{
-				stmt: `CREATE TABLE IF NOT EXISTS user_posts (
+				stmt: `CREATE TABLE user_posts (
 
-							'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-							'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-							'post_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-							'user_id' TEXT,
-							'channel_id' TEXT,
-							'guild_id' TEXT,
-							'url' TEXT,
-							'caption' TEXT,
-							'total_likes' INTEGER DEFAULT 0,
-							'recently_liked_by' TEXT,
-				 
-							FOREIGN KEY(user_id)
-							REFERENCES users(user_id)
-								 ON DELETE CASCADE
-								 ON UPDATE CASCADE
-				 
-							)`,
+					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'post_id' INTEGER PRIMARY KEY AUTOINCREMENT,
+					'user_id' TEXT,
+					'channel_id' TEXT,
+					'guild_id' TEXT,
+					'url' TEXT,
+					'caption' TEXT,
+					'total_likes' INTEGER DEFAULT 0,
+					'recently_liked_by' TEXT,
+		 
+					FOREIGN KEY(user_id)
+					REFERENCES users(user_id)
+						 ON DELETE CASCADE
+						 ON UPDATE CASCADE
+		 
+					)`,
 				tablename: `user_posts`
 			}
 		]
