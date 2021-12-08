@@ -1831,8 +1831,11 @@ class Database {
 	 * Verify each table exists and if it doesn't create the table
 	 */
 	async verifyTables() {
+		/**
+		 * Need to order based on hierachy
+		 */
 		const TABLES = [{
-				stmt: `CREATE TABLE 'users'( 
+				stmt: `CREATE TABLE users( 
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						'last_login_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1842,7 +1845,7 @@ class Database {
 						'verified'	INTEGER DEFAULT 0,
 						'lang'	TEXT DEFAULT 'en',
 						'receive_notification'	INTEGER DEFAULT -1,
-						PRIMARY KEY('user_id')
+						PRIMARY KEY(user_id)
 						)`,
 				tablename: `users`
 			},
@@ -1903,7 +1906,7 @@ class Database {
 					'alias' TEXT,
 					'type_id' INTEGER,
 					'rarity_id' INTEGER,
-					'bind' TEXT DEFAULT 0,
+					'bind' TEXT DEFAULT 0, usable INTEGER DEFAULT 0, response_on_use TEXT, owned_by_guild_id TEXT,
 		 
 					FOREIGN KEY (rarity_id) 
 					REFERENCES item_rarities(rarity_id)
@@ -2078,26 +2081,20 @@ class Database {
 				tablename: `resource_log`
 			},
 			{
-				stmt: `CREATE TABLE shop (
-
-					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'shop_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-					'item_id' INTEGER,
-					'item_price_id' INTEGER,
-					'price' INTEGER DEFAULT 100,
-		 
-					FOREIGN KEY (item_id) 
-					REFERENCES items(item_id)
-							ON UPDATE CASCADE
-							ON DELETE CASCADE,
-		 
-					FOREIGN KEY (item_price_id) 
-					REFERENCES items(item_id)
-							ON UPDATE CASCADE
-							ON DELETE CASCADE
-		 
-					)`,
+				stmt: `CREATE TABLE shop(
+					item_id INTEGER,
+					guild_id TEXT DEFAULT NULL,
+					quantity INTEGER DEFAULT -1,
+					price INTEGER DEFAULT 0,
+					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			
+					PRIMARY KEY(item_id),
+	
+					FOREIGN KEY(item_id)
+					REFERENCES items(item_id) 
+					   ON DELETE CASCADE
+					   ON UPDATE CASCADE)`,
 				tablename: `shop`
 			},
 			{
@@ -2201,16 +2198,17 @@ class Database {
 				tablename: `user_reminders`
 			},
 			{
-				stmt: `CREATE TABLE user_reputations (
+				stmt: `CREATE TABLE user_relationships (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'last_giving_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'last_received_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'user_id'	TEXT,
-					'total_reps' INTEGER DEFAULT 0,
-					'recently_received_by' TEXT,
-					'guild_id' TEXT,
-					PRIMARY KEY(user_id, guild_id),
-					FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+					'user_id_A'	TEXT,
+					'user_id_B'	TEXT,
+					'relationship_id'	TEXT,
+					'guild_id'	TEXT,
+					FOREIGN KEY(user_id_A) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(user_id_B) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					FOREIGN KEY(relationship_id) REFERENCES relationships(relationship_id) ON DELETE CASCADE ON UPDATE CASCADE,
+					PRIMARY KEY(user_id_A,user_id_B,guild_id)
 				)`,
 				tablename: `user_reputations`
 			},
@@ -2226,75 +2224,6 @@ class Database {
 					   ON DELETE CASCADE
 					   ON UPDATE CASCADE)`,
 				tablename: `user_self_covers`
-			},
-			{
-				stmt: `CREATE TABLE user_socialmedias (
-
-					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'socialmedia_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-					'user_id' TEXT,
-					'url' TEXT,
-					'account_type' TEXT,
-		 
-					FOREIGN KEY(user_id)
-					REFERENCES users(user_id)
-							ON DELETE CASCADE
-							ON UPDATE CASCADE
-		 
-					)`,
-				tablename: `user_socialmedias`
-			},
-			{
-				stmt: `CREATE TABLE trading_trades (
-					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'user_id' TEXT NOT NULL,
-					'guild_id' TEXT NOT NULL,
-					'trade_id' REAL UNIQUE NOT NULL,
-					'status' TEXT NOT NULL,
-					'channel' TEXT NOT NULL UNIQUE DEFAULT 0)`,
-				tablename: `trading_trades`
-			},
-			{
-				stmt: `CREATE TABLE trading_transaction (
-					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'user_one_id' TEXT NOT NULL,
-					'user_two_id' TEXT NOT NULL,
-					'guild_id' TEXT NOT NULL,
-					'trade_id' TEXT NOT NULL,
-					'user_one_item' TEXT NOT NULL,
-					'user_two_item' TEXT NOT NULL)`,
-				tablename: `trading_transaction`
-			},
-			{
-				stmt: `CREATE TABLE IF NOT EXISTS trading_blocked_users (
-						'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-						'user_id' TEXT NOT NULL UNIQUE,
-						'blocked' INTEGER DEFAULT 0,
-						'reason' TEXT DEFAULT 'The Moderator didnt supply a reason, if you would like to appeal this block please address it to the mods on the server or owner.')`,
-				tablename: `trading_blocked_users`
-			},
-			{
-				stmt: `CREATE TABLE user_posts (
-
-					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-					'post_id' INTEGER PRIMARY KEY AUTOINCREMENT,
-					'user_id' TEXT,
-					'channel_id' TEXT,
-					'guild_id' TEXT,
-					'url' TEXT,
-					'caption' TEXT,
-					'total_likes' INTEGER DEFAULT 0,
-					'recently_liked_by' TEXT,
-		 
-					FOREIGN KEY(user_id)
-					REFERENCES users(user_id)
-						 ON DELETE CASCADE
-						 ON UPDATE CASCADE
-		 
-					)`,
-				tablename: `user_posts`
 			}
 		]
 
