@@ -41,8 +41,8 @@ class Points {
      *  @param {number} [max=5] the maximum returned number.
      *  @returns {Boolean}
      */
-    randomize(min = 1, max = 5) {
-        return Math.floor(Math.random() * (max - min + 1) + min)
+    randomize(min=1, max=5) {
+      return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
     /**
@@ -61,16 +61,14 @@ class Points {
         return this.bot.plugins.includes(`ACTIVE_ARTCOINS`)
     }
 
-    closestValue(needle, array) {
-        return Math.max.apply(null, array.filter(function (v) {
-            return v <= needle
-        }))
+    closestValue(needle, array){
+        return Math.max.apply(null,array.filter(function(v)
+        { return v <= needle }))
     }
 
-    closestPreviousValue(needle, array) {
-        return Math.max.apply(null, array.filter(function (v) {
-            return v < needle
-        }))
+    closestPreviousValue(needle, array){
+        return Math.max.apply(null,array.filter(function(v)
+			{ return v < needle }))
     }
 }
 

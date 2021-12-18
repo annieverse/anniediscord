@@ -3,12 +3,7 @@ const databaseManager = require(`../../libs/database`)
 
 // Supporting transaction workflow. Initialized on each different category.
 class Transaction {
-	constructor({
-		itemname,
-		type,
-		message,
-		author
-	}) {
+	constructor({itemname, type, message, author}) {
 		this.itemname = itemname
 		this.type = type
 		this.message = message

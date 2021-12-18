@@ -5,14 +5,12 @@ const Pistachio = require(`../../utils/Pistachio`)
  */
 class ClassroomManager {
     constructor(Components) {
-        this.components = {
-            user: Components.user,
-            reaction: Components.reaction,
-            bot: Components.bot,
-            message: Components.reaction.message,
-            meta: {
-                author: null
-            }
+		this.components = { 
+			user: Components.user, 
+			reaction: Components.reaction, 
+			bot:Components.bot, 
+            message:Components.reaction.message, 
+			meta: {author:null}
         }
         this.userGuild = Components.reaction.message.guild.members.cache.get(Components.user.id)
         this.logger = Components.bot.logger
@@ -81,10 +79,7 @@ class ClassroomManager {
      */
     classroomNotification(content = ``) {
         if (!content.length) return
-        return this.pistachio.reply(content, {
-            field: this.classroomChannel,
-            simplified: true
-        })
+        return this.pistachio.reply(content, {field: this.classroomChannel, simplified: true})
     }
 
 
@@ -121,7 +116,8 @@ class ClassroomManager {
             if (await this.classroomNotificationCurrentlyCoolingdown()) return
             this.classroomNotificationSetCooldown(3600000)
             return this.classroomNotification(`${this.components.user} has joined the classroom!`)
-        } catch (e) {
+        }
+        catch (e) {
             //  Incase there's an unexpected error
             return this.logger.error(`Failed to assign ${Apprenticeship.name} key to ${this.components.user.username}. > ${e.stack}`)
         }
@@ -141,7 +137,8 @@ class ClassroomManager {
         try {
             //  Remove role from the user
             this.revokeRole(Apprenticeship)
-        } catch (e) {
+        }
+        catch (e) {
             //  Incase there's an unexpected error
             return this.logger.error(`Failed to revoke ${Apprenticeship.name} key from ${this.components.user.username}. > ${e.stack}`)
         }

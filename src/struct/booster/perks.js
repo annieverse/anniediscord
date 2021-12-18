@@ -4,25 +4,21 @@
  */
 class BoosterPerks {
 
-
+    
     /**
      *  Wrapped parameters from guildMemberUpdate.js
      *  @param {Client} bot 
      *  @param {UserObject} oldUser 
      *  @param {UserObject} newUser
      */
-    constructor({
-        bot,
-        oldUser,
-        newUser
-    }) {
+    constructor({ bot, oldUser, newUser }) {
         this.logger = bot.logger
         this.db = bot.db.setUser(newUser.id)
         this.oldUser = oldUser
         this.newUser = newUser
     }
-
-
+    
+    
     /**
      *  Storing 50,000 Artcoins perk
      *  @artcoinsPack

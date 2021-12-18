@@ -19,10 +19,9 @@ class Data {
 	 * @param {Array} array 
 	 * @param {Number|Integer} val 
 	 */
-	closestBelow(array = Array, val = Number) {
-		return Math.max.apply(null, array.filter(function (v) {
-			return v <= val
-		}))
+	closestBelow(array=Array, val=Number) {
+		return Math.max.apply(null,array.filter(function(v)
+		{ return v <= val }))
 	}
 
 
@@ -48,20 +47,21 @@ class Data {
 				author: user,
 				data: res
 			}
-		} catch (e) {
+		}
+		catch(e) {
 			this.requestedData = {
 				author: null,
 				data: null
 			}
 		}
 	}
-
+    
 	//  Pull metadata
 	async pull() {
 		await this.request()
 		return this.requestedData
 	}
-
+    
 }
 
 module.exports = Data

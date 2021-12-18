@@ -12,10 +12,11 @@ const findRole = (target, guild) => {
         if (rolePattern.test(target)) target = target.replace(rolePattern, `$1`)
         const roles = guild.roles.cache
         const filter = role => role.id === target ||
-            role.name.toLowerCase() === target.toLowerCase() ||
-            role === target
+        role.name.toLowerCase() === target.toLowerCase() ||
+        role === target
         return roles.filter(filter).first()
-    } catch (e) {
+    }
+    catch(e) {
         return null
     }
 }

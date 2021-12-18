@@ -1,10 +1,5 @@
-const {
-	dev,
-	administrator_id
-} = require(`../../.data/environment`)
-const {
-	art_domain
-} = require(`../modules/config`)
+const { dev, administrator_id } = require(`../../.data/environment`)
+const { art_domain } = require(`../modules/config`)
 const database = require(`./databaseManager`)
 const Pistachio = require(`../../utils/Pistachio`)
 const RichNotification = require(`../notification/richNotification`)
@@ -15,14 +10,12 @@ const RichNotification = require(`../notification/richNotification`)
  */
 class HeartCollector {
 	constructor(Stacks) {
-		this.components = {
-			user: Stacks.user,
-			reaction: Stacks.reaction,
-			bot: Stacks.bot,
-			message: Stacks.reaction.message,
-			meta: {
-				author: null
-			}
+		this.components = { 
+			user: Stacks.user, 
+			reaction: Stacks.reaction, 
+			bot:Stacks.bot, 
+			message:Stacks.reaction.message, 
+			meta: {author:null}
 		}
 		this.keyv = Stacks.bot.keyv
 		this.logger = Stacks.bot.logger
@@ -35,15 +28,7 @@ class HeartCollector {
 			main_emoji: `❤`,
 			msg: Stacks.reaction.message,
 			get postComponents() {
-				const {
-					timestamp,
-					artwork,
-					msg: {
-						author,
-						channel
-					},
-					favs
-				} = this
+				const { timestamp, artwork, msg:{author, channel}, favs} = this
 				return {
 					timestamp: timestamp,
 					url: artwork,
@@ -96,40 +81,30 @@ class HeartCollector {
 		}
 		this.db = new database(this.metadata.msg.author.id)
 		this.reactid = `${this.metadata.artwork}:${this.components.user.id}`,
-			this.notificationTimeout = 3600000,
-			this.featuredPost = this.db.featuredPostMetadata(this.metadata.artwork)
+		this.notificationTimeout = 3600000,
+		this.featuredPost = this.db.featuredPostMetadata(this.metadata.artwork)
 	}
 
 
 	/**
-	 *  Send post notification to user's DM.
-	 */
+     *  Send post notification to user's DM.
+     */
 	async notification() {
 		//  Mutation pistachio
-		const {
-			reply,
-			isVIP,
-			code: {
-				FEATURED
-			},
-			bot,
-			user
-		} = this.stacks
-		const {
-			get_notification
-		} = await this.db.userMetadata(this.metadata.msg.author.id)
+		const { reply, isVIP, code:{FEATURED}, bot, user } = this.stacks
+		const { get_notification } = await this.db.userMetadata(this.metadata.msg.author.id)
 		const postmeta = await this.featuredPost
 
 		//  Returns if user react is a this.bot
 		if (bot.user.id === user.id) return
 		//  Returns if user has disabled their notification
-		if (get_notification == `-1`) return //-1 = explicit no
+		if (get_notification==`-1`) return //-1 = explicit no
 		var once = null
-		if (get_notification == `0`) { //0 = default
-			once = `**Do you want to continue receiving post notification, like this?** \n\n` +
-				`If no, you need to do nothing. I will stop sending you notifications. \n` +
-				`If yes, please reply with "**enable notifications**" below. \n\n` +
-				`You can disable notifications with "**disable notifications**" again.`
+		if (get_notification==`0`) {//0 = default
+			once = `**Do you want to continue receiving post notification, like this?** \n\n`+
+			`If no, you need to do nothing. I will stop sending you notifications. \n`+
+			`If yes, please reply with "**enable notifications**" below. \n\n`+
+			`You can disable notifications with "**disable notifications**" again.`
 		}
 
 
@@ -146,8 +121,8 @@ class HeartCollector {
 					field: this.metadata.msg.author,
 					notch: true
 				})
-
-
+				
+			
 			else if (this.metadata.favs <= 2) reply(
 				FEATURED.FIRST_LIKE + ` \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) `, {
 					socket: [user.username],
@@ -155,7 +130,7 @@ class HeartCollector {
 					field: this.metadata.msg.author,
 					notch: true
 				})
-
+			
 
 			//  Regular notification
 			else reply(FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id}) `, {
@@ -166,11 +141,9 @@ class HeartCollector {
 			})
 
 			if (once) {
-				reply(once, {
-					field: this.metadata.msg.author
-				})
+				reply(once, {field: this.metadata.msg.author})
 				return this.db.disableNotification(this.metadata.msg.author.id)
-			}
+			}	
 		}
 
 
@@ -184,75 +157,64 @@ class HeartCollector {
 				`[Go to Featured](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
 					field: this.metadata.msg.author,
 					prebuffer: true,
-					image: await new RichNotification({
-						user,
+					image: await new RichNotification({user,
 						postPreview: this.metadata.artwork,
-						channel: this.metadata.msg.channel.name,
+						channel: this.metadata.msg.channel.name, 
 						likerName: user.username,
 						featured: true
 					}).render(),
 				})
-
-
+				
+			
 			if (this.metadata.favs <= 2) reply(
 				`[Go to Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
 					field: this.metadata.msg.author,
 					prebuffer: true,
-					image: await new RichNotification({
-						user,
+					image: await new RichNotification({user,
 						postPreview: this.metadata.artwork,
-						channel: this.metadata.msg.channel.name,
-						likerName: user.username
-					}).render()
+						channel: this.metadata.msg.channel.name, 
+						likerName: user.username}).render()
 				})
-
+			
 
 			//  Regular notification
 			else reply(`[Go to Post](https://discordapp.com/channels/459891664182312980/${this.metadata.msg.channel.id}/${this.metadata.msg.id})`, {
 				field: this.metadata.msg.author,
 				prebuffer: true,
-				image: await new RichNotification({
-					user,
+				image: await new RichNotification({user,
 					postPreview: this.metadata.artwork,
-					channel: this.metadata.msg.channel.name,
-					likerName: `${user.username} and ${this.metadata.favs - 1} others`
-				}).render()
+					channel: this.metadata.msg.channel.name, 
+					likerName: `${user.username} and ${this.metadata.favs - 1} others`}).render()
 			})
 
 			if (once) {
-				reply(once, {
-					field: this.metadata.msg.author
-				})
+				reply(once, {field: this.metadata.msg.author})
 				return this.db.disableNotification(this.metadata.msg.author.id)
-			}
+			}	
 		}
 
 
 		try {
 			if (isVIP) return premiumNotification()
 			regularNotification()
-		} catch (e) {
-			return this.logger.info(`Fail to execute post notification. > ${e.stack}`)
+		}
+		catch(e) { 
+			return this.logger.info(`Fail to execute post notification. > ${e.stack}`) 
 		}
 	}
 
 
 	/**
-	 *  Register new heart and check for feature
-	 */
+     *  Register new heart and check for feature
+     */
 	async Add() {
 		//  Mutation pistachio
-		const {
-			reply,
-			avatar,
-			reaction,
-			user
-		} = this.stacks
+		const { reply, avatar, reaction, user } = this.stacks
 
 		//  Returns if the reaction is unmatch.
 		if (this.metadata.unmatchEmoji) return
 		//  Returns if no artwork url was found
-		if (!this.metadata.artwork) return
+		if (!this.metadata.artwork) return 
 		//  Returns if user is not authorized in development server
 		if (this.metadata.notAuthorizedSandboxUser) return
 		//  Returns if current channel is not listed in arts channels.
@@ -262,12 +224,12 @@ class HeartCollector {
 		//  Returns if user has recently liked the post
 		if (await this.keyv.get(this.reactid)) return
 
-
+		
 		//  Store recent reaction to avoid double notification spam. Restored in 1 hour.
 		this.keyv.set(this.reactid, `1`, this.notificationTimeout)
 		this.logger.info(`${this.metadata.msg.author.username}'s work has been liked by ${user.username} in #${this.metadata.msg.channel.name}`)
-
-
+		
+		
 		//  Store new heart
 		await this.db.addHeart()
 		//  Send notification to user based on heart counts

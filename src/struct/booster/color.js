@@ -5,21 +5,19 @@ const Pistachio = require(`./pistachio`)
  */
 class BoosterColorManager {
 
-
+    
     /**
      *  Wrapped parameters from messageReaction-related events.
      */
     constructor(Components) {
-        this.components = {
-                user: Components.user,
-                reaction: Components.reaction,
-                bot: Components.bot,
-                message: Components.reaction.message,
-                meta: {
-                    author: null
-                }
-            },
-            this.userGuild = Components.reaction.message.guild.members.cache.get(Components.user.id)
+		this.components = { 
+			user: Components.user, 
+			reaction: Components.reaction, 
+			bot:Components.bot, 
+            message:Components.reaction.message, 
+			meta: {author:null}
+        },
+        this.userGuild = Components.reaction.message.guild.members.cache.get(Components.user.id)
         this.logger = Components.bot.logger
         this.colorList = {
             "col_grape_soda": `Grape Soda ♡`,
@@ -47,8 +45,8 @@ class BoosterColorManager {
         }
         this.pistachio = new Pistachio(this.components).bag()
     }
-
-
+    
+    
     /**
      *  Check if user is a booster
      *  @userIsBooster
@@ -76,7 +74,7 @@ class BoosterColorManager {
     }
 
 
-    /**
+   /**
      *  Assigning color role to the user
      *  @param {Object|RoleData} colorData
      *  @assignColor
@@ -88,7 +86,7 @@ class BoosterColorManager {
         this.logger.info(`${this.components.user.username} has received ${colorData.name} from Booster Perks channel.`)
     }
 
-
+    
     /**
      *  Revoking/removing color from user
      *  @param {Object|RoleData} colorData
@@ -119,10 +117,9 @@ class BoosterColorManager {
     sendingDMNotification(content = ``) {
         if (!content.length) return
         try {
-            return this.pistachio.reply(content, {
-                field: this.components.user
-            })
-        } catch (e) {
+            return this.pistachio.reply(content, {field: this.components.user})
+        }
+        catch (e) {
             return this.logger.error(`Failed to send DM to ${this.components.user.username}. > ${e.stack}`)
         }
     }
@@ -146,7 +143,8 @@ class BoosterColorManager {
             //  Assign color and notify user.
             this.assignColor(colorData)
             return this.sendingDMNotification(`You've received **${colorData.name}** color! feel free to switch color whenever you like!`)
-        } catch (e) {
+        }
+        catch (e) {
             //  Incase there's an unexpected error
             this.logger.error(`Failed to assign ${colorData.name} color to ${this.components.user.username}(Server Booster). > ${e}`)
         }
@@ -166,7 +164,8 @@ class BoosterColorManager {
         try {
             //  Removing color from user
             this.revokeColor(colorData)
-        } catch (e) {
+        }
+        catch (e) {
             //  Incase there's an unexpected error
             this.logger.error(`Failed to revoke ${colorData.name} color from ${this.components.user.username}(Server Booster). > ${e}`)
         }

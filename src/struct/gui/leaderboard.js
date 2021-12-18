@@ -1,10 +1,5 @@
-const {
-	Canvas
-} = require(`canvas-constructor`)
-const {
-	resolve,
-	join
-} = require(`path`)
+const { Canvas } = require(`canvas-constructor`)
+const { resolve, join } = require(`path`)
 const animeManager = require(`../../utils/fetchAnimeSite`)
 const SqliteClient = require(`better-sqlite3`)
 const sql = new SqliteClient(`.data/database.sqlite`)
@@ -17,18 +12,7 @@ Canvas.registerFont(resolve(join(__dirname, `../../fonts/Whitney.otf`)), `Whitne
 
 //  Render the image
 const render = async (stacks, metadata) => {
-	const {
-		db,
-		palette,
-		bot,
-		emoji,
-		commanifier,
-		meta: {
-			data,
-			author
-		},
-		avatar
-	} = stacks
+	const { db, palette, bot, emoji, commanifier, meta: { data, author }, avatar } = stacks
 
 	let textleaderboard = ``
 
@@ -93,56 +77,51 @@ const render = async (stacks, metadata) => {
 			var array = []
 			var users = await sql.all(`SELECT * FROM userdata WHERE anime_link <> ""`)
 			var api = new animeManager()
-			for (var i = 0; i < users.length; i++) {
+			for(var i=0;i<users.length;i++) {
 				var num = await api.getNumOfAnime(users[i].anime_link)
-				if (num != 0) {
-					array.push({
-						id: users[i].userId,
-						anime: num
-					})
+				if (num!=0) {
+					array.push({id: users[i].userId, anime: num})
 				}
 			}
-			array.sort((a, b) => (a.anime > b.anime ? -1 : (b.anime > a.anime ? 1 : 0)))
+			array.sort((a, b) => (a.anime > b.anime? -1 :(b.anime > a.anime ? 1 : 0)))
 			this.group = array
 		},
 		async user(selected_group) {
-			var u = {
-				limit: this.limit
-			}
-			if (selected_group == `xp`) {
+			var u = {limit: this.limit}
+			if (selected_group==`xp`) {
 				await this.pullingXp()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `currentexp`)
 				return u
 			}
-			if (selected_group == `ac`) {
+			if (selected_group==`ac`) {
 				await this.pullingAc()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`)
 				return u
 			}
-			if (selected_group == `halloween`) {
+			if (selected_group==`halloween`) {
 				await this.pullingCandies()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRankingCandies(`item_inventory`, `quantity`)
 				return u
 			}
-			if (selected_group == `rep`) {
+			if (selected_group==`rep`) {
 				await this.pullingRep()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `reputations`)
 				return u
 			}
-			if (selected_group == `arts`) {
+			if (selected_group==`arts`) {
 				await this.pullingArt()
 				u.group = this.group
 				u.authorindex = await dbmanager.authorIndexRanking(`userdata`, `liked_counts`)
 				return u
 			}
-			if (selected_group == `weeb`) {
+			if (selected_group==`weeb`) {
 				await this.pullingAnime()
 				u.group = this.group
-				u.authorindex = this.group.findIndex((data) => data.id == metadata.user.userId)
+				u.authorindex = this.group.findIndex((data)=>data.id==metadata.user.userId)
 				return u
 			}
 
@@ -304,8 +283,8 @@ const render = async (stacks, metadata) => {
 
 		//  Adapt the text to match with the background
 		get text_check_top() {
-			if (this.highlight_user) {
-				if (this.index == user.limit) {
+			if (this.highlight_user){
+				if (this.index == user.limit){
 					return `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬`
 				} else {
 					return `▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n`
@@ -429,7 +408,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `group`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.level} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.exp}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.level} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.exp}${row.text_check_bottom}\n\n`
+				:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.level} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.exp}${row.text_check_bottom}`
 
 				canv.restore()
@@ -446,7 +426,7 @@ const render = async (stacks, metadata) => {
 		async removeMemberFromListACgroup(id) {
 			let index
 			for (let i = 0; i < user.group.length; i++) {
-				if (user.group[i].id === id) {
+				if(user.group[i].id === id) {
 					index = i
 				}
 			}
@@ -462,7 +442,7 @@ const render = async (stacks, metadata) => {
 		async ac() {
 			metadata.title = `${emoji(`artcoins`)} **| Artcoins Leaders**`
 			if ((await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`, `277266191540551680`)) < 10) this.removeMemberFromListACgroup(`277266191540551680`)
-			if (user.authorindex > (await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`, `277266191540551680`))) user.authorindex -= 1
+			if (user.authorindex > (await dbmanager.authorIndexRankingAC(`item_inventory`, `quantity`, `277266191540551680`))) user.authorindex-=1
 			metadata.footer_components = [user.authorindex + 1, commanifier(metadata.user.artcoins), emoji(`artcoins`)]
 
 			for (let i = 0; i < user.group.length; i++) {
@@ -478,7 +458,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `acgroup`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.artcoins}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.artcoins}${row.text_check_bottom}\n\n`
+					:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.artcoins}${row.text_check_bottom}`
 
 
@@ -506,7 +487,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `cdygroup`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.candies}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.candies}${row.text_check_bottom}\n\n`
+					:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.candies}${row.text_check_bottom}`
 
 				canv.restore()
@@ -532,7 +514,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `repgroup`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.reputation}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.reputation}${row.text_check_bottom}\n\n`
+					:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.reputation}${row.text_check_bottom}`
 
 				canv.restore()
@@ -558,7 +541,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `artgroup`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.liked}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.liked}${row.text_check_bottom}\n\n`
+					:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.liked}${row.text_check_bottom}`
 
 				canv.restore()
@@ -583,7 +567,8 @@ const render = async (stacks, metadata) => {
 
 				let row = await new TextOptRow(i, 65, `group`)
 				i < 9 ?
-					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.anime}${row.text_check_bottom}\n\n` :
+					textleaderboard += `${row.text_check_top}${row.position}  ${row.highlight}${row.nickname}${row.highlight}\n\t${row.anime}${row.text_check_bottom}\n\n`
+					:
 					textleaderboard += `${row.text_check_top}${row.position} ${row.highlight}${row.nickname}${row.highlight}\n\t${row.anime}${row.text_check_bottom}`
 
 				canv.restore()

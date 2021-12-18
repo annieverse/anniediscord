@@ -15,7 +15,7 @@ class nitroColorManager {
      * @param {String} [role = id] 
      * @returns {Boolean}
      */
-    userHasRole(role) {
+    userHasRole(role){
         return this.components.bot.guilds.get(this.guild).members.cache.get(this.components.user.id).has(role)
     }
 
@@ -23,14 +23,14 @@ class nitroColorManager {
      * tests if the user is a server booster based on the boost role
      * @returns {Boolean}
      */
-    userIsBooster() {
+    userIsBooster(){
         return this.components.bot.guilds.get(this.guild).members.cache.get(this.components.user.id).has(this.components.bot.nitro_role)
     }
 
     /**
      * Add's color to user based on selected color reaction
      */
-    add() {
+    add(){
         if (!this.components.bot.booster_colors) return
         if (!this.userIsBooster()) return this.components.reaction.users.remove(this.components.user)
         let result = this.components.bot.booster_colors.filter(obj => {
@@ -43,7 +43,7 @@ class nitroColorManager {
     /**
      * Remove's color to user based on selected color reaction
      */
-    remove() {
+    remove(){
         if (!this.components.bot.booster_colors) return
         let result = this.components.bot.booster_colors.filter(obj => {
             return obj.id === this.emoji.id

@@ -1,8 +1,6 @@
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
-const {
-    cooldown
-} = require(`../config/commands`)
+const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
 /**
  * Centralized Controller to handle incoming command request
@@ -11,15 +9,15 @@ const getUserPermission = require(`../libs/permissions`)
  * @param {object} [message={}] Target message's instance.
  * @return {winston}
  */
-module.exports = async (client = {}, message = {}) => {
+module.exports = async (client={}, message={}) => {
     const guildPrefix = message.guild.configs.get(`PREFIX`).value
     const prefix = message.content.startsWith(guildPrefix) ? guildPrefix : client.prefix
     const targetCommand = message.content.slice(prefix.length).split(` `)[0].toLowerCase()
     let command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
-    if (!command) return
+    if (!command) return 
     //  Plus one from whitespace
-    const arg = message.content.slice(prefix.length + targetCommand.length + 1)
+    const arg = message.content.slice(prefix.length + targetCommand.length+1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     const reply = client.responseLibs(message)
@@ -35,19 +33,17 @@ module.exports = async (client = {}, message = {}) => {
                 }
             })
             return message.delete()
-                .catch(e => e)
+            .catch(e => e)
         }
     }
     // Handle if user doesn't have enough permission level to use the command
     const userPermission = getUserPermission(message, message.author.id)
-    if (command.permissionLevel > userPermission.level) return reply.send(``, {
-        customHeader: [
+    if (command.permissionLevel > userPermission.level) return reply.send(``,
+        {customHeader: [
             `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-            message.author.displayAvatarURL({
-                dynamic: true
-            })
-        ]
-    })
+            message.author.displayAvatarURL({dynamic: true})
+        ]}
+    )
     // Handle cooldowns
     const instanceId = `CMD_${command.name.toUpperCase()}_${message.author.id}@${message.guild.id}`
     if (client.cooldowns.has(instanceId)) {
@@ -70,9 +66,9 @@ module.exports = async (client = {}, message = {}) => {
     try {
         const initTime = process.hrtime()
         await command.execute(
-            client,
-            reply,
-            message,
+            client, 
+            reply, 
+            message, 
             arg,
             locale,
             prefix
@@ -85,7 +81,8 @@ module.exports = async (client = {}, message = {}) => {
             command_alias: targetCommand,
             resolved_in: client.getBenchmark(initTime)
         })
-    } catch (e) {
+    }
+    catch(e) {
         if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
@@ -103,17 +100,14 @@ module.exports = async (client = {}, message = {}) => {
         //  Missing-permission error
         else if (e.code === 50013) {
             reply.send(locale.ERROR_MISSING_PERMISSION, {
-                    socket: {
-                        emoji: await client.getEmoji(`AnnieCry`)
-                    }
-                })
-                .catch(permErr => permErr)
-        } else {
-            reply.send(locale.ERROR_ON_PRODUCTION, {
                 socket: {
-                    emoji: await client.getEmoji(`AnniePout`)
+                    emoji: await client.getEmoji(`AnnieCry`)
                 }
             })
+            .catch(permErr => permErr)
+        }
+        else {
+            reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
         client.shard.broadcastEval(`
@@ -121,12 +115,12 @@ module.exports = async (client = {}, message = {}) => {
                 const channel = await this.channels.cache.get('797521371889532988')
                 if (channel) {
                     channel.send(\`─────────────────☆～:;
-                **GUILD_ID:** ${message.guild.id} - ${message.guild.name}
-                **AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
-                **AFFECTED_CMD:** ${targetCommand}
-                **TIMESTAMP:** ${new Date()}
-                **ISSUE_TRACE:** ${e.message}
-                ─────────────────☆～:;\`)
+**GUILD_ID:** ${message.guild.id} - ${message.guild.name}
+**AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
+**AFFECTED_CMD:** ${targetCommand}
+**TIMESTAMP:** ${new Date()}
+**ISSUE_TRACE:** ${e.message}
+─────────────────☆～:;\`)
                 }
             })()
         `)

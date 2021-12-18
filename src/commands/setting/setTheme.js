@@ -5,9 +5,9 @@ const User = require(`../../libs/user`)
  */
 module.exports = {
     name: `setTheme`,
-    aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
-    description: `Switch your profile theme to Light or Dark.`,
-    usage: `theme <Light/Dark>`,
+	aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
+	description: `Switch your profile theme to Light or Dark.`,
+	usage: `theme <Light/Dark>`,
     permissionLevel: 0,
     async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
@@ -16,9 +16,7 @@ module.exports = {
         //  Returns if user didn't specify any keyword
         if (!arg) return reply.send(locale.SWITCH_THEME.MISSING_KEYWORD, {
             image: `banner_settheme`,
-            socket: {
-                prefix: prefix
-            }
+            socket: {prefix: prefix} 
         })
         /**
          * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it
@@ -35,36 +33,20 @@ module.exports = {
         }
         let currentTheme = await client.db.findCurrentTheme(message.author.id, message.guild.id)
         if (darkThemeStrings.includes(arg)) {
-            if (currentTheme == `dark`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {
-                socket: {
-                    emoji: await client.getEmoji(`790338393015713812`)
-                }
-            })
+            if (currentTheme == `dark`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await client.getEmoji(`790338393015713812`)} })
             let hasTheme = await userHasTheme(`dark`)
             if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
             client.db.setTheme(`dark`, message.author.id, message.guild.id)
-            return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, {
-                status: `success`
-            })
+            return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, {status: `success`})
         }
         if (lightThemeStrings.includes(arg)) {
-            if (currentTheme == `light`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {
-                socket: {
-                    emoji: await client.getEmoji(`790338393015713812`)
-                }
-            })
+            if (currentTheme == `light`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await client.getEmoji(`790338393015713812`)} })
             let hasTheme = await userHasTheme(`light`)
             if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
             client.db.setTheme(`light`, message.author.id, message.guild.id)
-            return reply.send(locale.SWITCH_THEME.SET_LIGHTMODE, {
-                status: `success`
-            })
+            return reply.send(locale.SWITCH_THEME.SET_LIGHTMODE, {status: `success`})
         }
         //  Handle if no theme match with the keyword
-        return reply.send(locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {
-            socket: {
-                emoji: await client.getEmoji(`692428578683617331`)
-            }
-        })
+        return reply.send(locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {socket: {emoji: await client.getEmoji(`692428578683617331`)} })
     }
 }

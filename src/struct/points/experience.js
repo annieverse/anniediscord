@@ -41,7 +41,8 @@ class Experience extends Points {
 			const expDifference = `${this.data.commanifier(this.meta.data.currentexp)} --> ${this.data.commanifier(this.updated.currentexp)}`
 			this.logger.info(`[${guildInfo}] ${this.moduleID} received ${this.total_gained_exp} EXP (${expDifference})`)
 
-		} catch (e) {
+		}
+		catch (e) {
 			this.logger.error(`ExperienceFormula.js has failed to process. > ${e.stack}`)
 		}
 
@@ -51,7 +52,7 @@ class Experience extends Points {
 	 * Give user rank rewards based on level achieved
 	 * @rankRewards
 	 */
-	rankRewards() {
+	rankRewards(){
 		let level = this.meta.data.level
 		switch (level) {
 			case 85: // For level 85 milestone
@@ -73,7 +74,7 @@ class Experience extends Points {
 		this.message.guild.member(this.message.author.id).roles.add(this.message.guild.roles.find(r => r.name === this.ranks.ranksCheck(this.updated.level).title))
 	}
 
-
+	
 	/**
 	 * 	Removing duplicate rank
 	 * 	@removeRank
@@ -142,10 +143,7 @@ class Experience extends Points {
 	async ticketBuffs() {
 		try {
 			//  Extract required data
-			const {
-				expbooster,
-				expbooster_duration
-			} = this.meta.data
+			const { expbooster, expbooster_duration } = this.meta.data
 
 			//  skip if user doesn't have any booster that currently active.
 			if (!expbooster) return
@@ -164,11 +162,12 @@ class Experience extends Points {
 					]
 				})
 				return this.logger.info(`${this.meta.author.tag} ${expbooster} EXP booster has expired today.`)
-
+				
 			}
-
+			
 			this.exp_factor += booster[percentage].multiplier
-		} catch (e) {
+		}
+		catch (e) {
 			return this.logger.error(`Failed to check EXP booster on ${this.meta.author.tag}. > ${e}`)
 		}
 	}

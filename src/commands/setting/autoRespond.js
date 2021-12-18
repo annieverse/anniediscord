@@ -6,10 +6,10 @@ const Confirmator = require(`../../libs/confirmator`)
  */
 module.exports = {
     name: `autoRespond`,
-    aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
-    description: `Create a set of autoresponder!`,
-    usage: `ar`,
-    permissionLevel: 2,
+	aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
+	description: `Create a set of autoresponder!`,
+	usage: `ar`,
+	permissionLevel: 2,
     /**
      * Maximum characters for the trigger.
      * @type {number}
@@ -21,7 +21,7 @@ module.exports = {
      * @type {number}
      */
     responseCharLimit: 1900,
-
+    
     /**
      * List of available actions.
      * @type {array}
@@ -37,11 +37,11 @@ module.exports = {
         this.args = arg.split(` `)
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
-        //  Handle if user doesn't specify any parameter.
-        if (!arg) return reply.send(locale.AUTORESPONDER.GUIDE, {
+		//  Handle if user doesn't specify any parameter.
+		if (!arg) return reply.send(locale.AUTORESPONDER.GUIDE, {
             image: `banner_autoresponder`,
             header: `Hi, ${message.author.username}!`,
-            socket: {
+			socket:{
                 emoji: await client.getEmoji(`781504248868634627`),
                 guild: message.guild.name,
                 prefix: prefix,
@@ -73,7 +73,7 @@ module.exports = {
                 socket: {
                     emoji: await client.getEmoji(`692428969667985458`),
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    time: moment(localizeTime).fromNow()
+                    time:  moment(localizeTime).fromNow()
                 }
             })
         }
@@ -86,9 +86,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_ENABLED, {
-            socket: {
-                emoji: await client.getEmoji(`789212493096026143`)
-            },
+            socket: {emoji: await client.getEmoji(`789212493096026143`)},
             status: `success`
         })
     },
@@ -116,9 +114,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DISABLED, {
-            socket: {
-                emoji: await client.getEmoji(`692428927620087850`)
-            },
+            socket: {emoji: await client.getEmoji(`692428927620087850`)},
             status: `success`
         })
     },
@@ -160,9 +156,7 @@ module.exports = {
     async add(client, reply, message, arg, locale, prefix) {
         //  Handle if user didn't put any additional parameters
         if (!this.args[1]) return reply.send(locale.AUTORESPONDER.REGISTER_NO_PARAM, {
-            socket: {
-                prefix: prefix
-            }
+            socket: {prefix: prefix}
         })
         const msg = this.args.slice(1).join(` `)
         const splittedContext = msg.split(` - `)
@@ -203,9 +197,7 @@ module.exports = {
             })
             //  Finalize
             await reply.send(locale.AUTORESPONDER.REGISTER_SUCCESSFUL, {
-                socket: {
-                    emoji: await client.getEmoji(`789212493096026143`)
-                }
+                socket: {emoji: await client.getEmoji(`789212493096026143`)}
             })
             reply.send(locale.AUTORESPONDER.REGISTER_FOOTER_TIP, {
                 simplified: true,
@@ -242,17 +234,13 @@ module.exports = {
         //  Handle if target AR to be deleted does not exists.
         let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword.toLowerCase()))
         if (!targetAR.length) return reply.send(locale.AUTORESPONDER.DELETE_TARGET_INVALID, {
-            socket: {
-                emoji: await client.getEmoji(`692428807193493657`)
-            }
+            socket:{emoji: await client.getEmoji(`692428807193493657`)}
         })
         //  Performs deletion
         targetAR = targetAR[0]
-        client.db.deleteAutoResponder(targetAR.ar_id, message.guild.id)
+        client.db.deleteAutoResponder(targetAR.ar_id, message.guild.id)  
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
-            socket: {
-                emoji: await client.getEmoji(`789212493096026143`)
-            },
+            socket: {emoji: await client.getEmoji(`789212493096026143`)},
             status: `success`
         })
     },
@@ -274,7 +262,7 @@ module.exports = {
         const confirmation = await reply.send(locale.AUTORESPONDER.RESET_CONFIRMATION, {
             socket: {
                 totalArs: ars.length,
-                emoji: await client.getEmoji(`692428578683617331`, )
+                emoji: await client.getEmoji(`692428578683617331`,)
             }
         })
         const c = new Confirmator(message, reply)
@@ -283,9 +271,7 @@ module.exports = {
             //  Wipeout ARs
             client.db.clearAutoResponders(message.guild.id)
             reply.send(locale.AUTORESPONDER.SUCCESSFULLY_RESET, {
-                socket: {
-                    totalArs: ars.length
-                }
+                socket: {totalArs: ars.length}
             })
         })
     },
@@ -296,9 +282,9 @@ module.exports = {
      * @param {number} [breakpoint=70] The string breakpoint before gets trimmed. Optional.
      * @return {string}
      */
-    _trimAutoResponderString(str = ``, breakpoint = 70) {
+    _trimAutoResponderString(str=``, breakpoint=70) {
         if (str.length >= breakpoint) return str.substring(0, breakpoint) + `...`
-        return str
+         return str
     },
 
     /**
@@ -309,11 +295,11 @@ module.exports = {
      * @param {Message} message Current message instance.
      * @return {object|string}
      */
-    _parseRegisteredAutoResponders(src = [], simplified = false, header = {}, message) {
+    _parseRegisteredAutoResponders(src=[], simplified=false, header={}, message) {
         let res = []
         let str = ``
         let breakpoint = 0
-        for (let i = 0; i < src.length; i++) {
+        for (let i=0; i<src.length; i++) {
             const ar = src[i]
             if (simplified) {
                 str += `╰☆～(ID:${ar.ar_id}) **${ar.trigger}**\n`
@@ -324,12 +310,13 @@ module.exports = {
                 str += `Currently there are total of **${header.size}** registered ARs in **${message.guild.name}** where the latest one was added by ${header.user}, ${header.time}. ${header.emoji}\n╭*:;,．★ ～☆*────────╮\n`
             }
             str += `[ID:${ar.ar_id}]** "${this._trimAutoResponderString(ar.trigger)}"**\n> Annie's Response: ${this._trimAutoResponderString(ar.response)}`
-            if (breakpoint >= 5 || i === (src.length - 1)) {
+            if (breakpoint >= 5 || i === (src.length-1)) {
                 str += `\n╰──────────☆～*:;,．*╯`
                 breakpoint = 0
                 res.push(str)
                 str = ``
-            } else {
+            }
+            else {
                 str += `\n⸻⸻⸻⸻\n`
             }
         }
@@ -342,9 +329,9 @@ module.exports = {
      */
     _parseAvailableActions() {
         let str = ``
-        for (let i = 0; i < this.availableActions.length; i++) {
+        for (let i=0; i<this.availableActions.length; i++) {
             const action = this.availableActions[i]
-            if ((i + 1) === this.availableActions.length) {
+            if ((i+1) === this.availableActions.length) {
                 str += ` and **\`${action}\`**`
                 break
             }

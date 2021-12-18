@@ -1,10 +1,5 @@
-const {
-	Canvas
-} = require(`canvas-constructor`)
-const {
-	resolve,
-	join
-} = require(`path`)
+const { Canvas } = require(`canvas-constructor`) 
+const { resolve, join } = require(`path`)
 const palette = require(`../../ui/colors/default`)
 const RarityColor = require(`../../config/itemRarityColor`)
 const fs = require(`fs`)
@@ -57,9 +52,7 @@ const InventoryInterface = async (container, usertheme) => {
 	 *  @getAsset
 	 */
 	const getAsset = (id) => fs.readFileSync(`./src/assets/${id}.png`)
-		.catch(async () => {
-			return fs.readFileSync(`./src/assets/error.png`)
-		})
+	.catch(async ()=>{return fs.readFileSync(`./src/assets/error.png`)})
 	//const getAsset = (id) => fsn.readFile(`./core/images/${id}.png`)
 
 
@@ -72,7 +65,7 @@ const InventoryInterface = async (container, usertheme) => {
 	 * @param {Number|Diameter} dx vertical distance/diameter from start to end point.
 	 * @param {Number} colimit define max column size (horizontal grid)
 	 * @param {Number} rowlimit define max row size (vertical grid)
-	 * @grid 
+     * @grid 
 	 */
 	const grid = async (x, y, dx, dy, colimit, rowlimit) => {
 
@@ -91,7 +84,7 @@ const InventoryInterface = async (container, usertheme) => {
 
 
 		//	Render item rarity frame
-		const renderFrame = (rarity, pos = []) => {
+		const renderFrame = (rarity, pos=[]) => {
 			const mainColor = palette[RarityColor[rarity]]
 			const frameHole = () => {
 				pos[0] = pos[0] + 1
@@ -120,7 +113,7 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {Number} qty number to be checked with
 		 * @quantityLimitCheck
 		 */
-		const quantityLimitCheck = (qty = 0) => qty > 999999999 ? `+999999999` : qty
+		const quantityLimitCheck = (qty=0) => qty > 999999999 ? `+999999999` : qty
 
 
 		/**
@@ -129,7 +122,7 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {ArrayOfPosition} pos Preferably to use the same grid array across function
 		 * @renderQuantity
 		 */
-		const renderQuantity = (qty = 0, pos = []) => {
+		const renderQuantity = (qty=0, pos=[]) => {
 
 			const quantity = quantityLimitCheck(qty)
 
@@ -156,7 +149,7 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {ArrayOfPosition} pos Preferably to use the same grid array across function
 		 * @renderIcon
 		 */
-		const renderIcon = async (id, pos = []) => canv.printImage(await getAsset(id), ...pos, dx / 2)
+		const renderIcon = async (id, pos=[]) => canv.printImage(await getAsset(id), ...pos, dx / 2)
 
 
 		/**
@@ -165,11 +158,8 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {Number} rowNth current row position in the inventory. Index-ordering(0)
 		 * @aspectRatio
 		 */
-		const aspectRatio = ({
-			index = 0,
-			rowNth = 0
-		}) => {
-			const yAxis = rowNth < 1 ? y : y + ((dx + 5) * rowNth)
+		const aspectRatio = ({index=0,rowNth=0}) => {
+			const yAxis = rowNth < 1 ? y : y + ((dx+5) * rowNth)
 			const xAxis = x + (dx * index) + (5 * index)
 			return [xAxis, yAxis, dx, dy]
 		}
@@ -181,10 +171,7 @@ const InventoryInterface = async (container, usertheme) => {
 		 * @param {Number} rowNth current row position in the inventory. Index-ordering(0)
 		 * @aspectRatio
 		 */
-		const itemRenderable = ({
-			index = 0,
-			rowNth = 0
-		}) => container[index + columnBreak[rowNth]] ? true : false
+		const itemRenderable = ({index=0, rowNth=0}) => container[index + columnBreak[rowNth]] ? true : false
 
 
 		//	Default color for blank grid
@@ -193,15 +180,9 @@ const InventoryInterface = async (container, usertheme) => {
 		for (let i = 0; i < colimit; i++) {
 
 			//	Row 0 ( 0 - 7 grid )
-			const gridZero = aspectRatio({
-				index: i,
-				rowNth: 0
-			})
+			const gridZero = aspectRatio({index: i, rowNth: 0})
 			canv.printRectangle(...gridZero)
-			if (itemRenderable({
-					index: i,
-					rowNth: 0
-				})) {
+			if (itemRenderable({index: i, rowNth: 0})) {
 				renderFrame(container[i + columnBreak[0]].rarity, gridZero)
 				await renderIcon(container[i + columnBreak[0]].alias, gridZero)
 				renderQuantity(container[i + columnBreak[0]].quantity, gridZero)
@@ -209,79 +190,49 @@ const InventoryInterface = async (container, usertheme) => {
 			}
 
 			//	Row 1 ( 7 - 14 grid )
-			const gridOne = aspectRatio({
-				index: i,
-				rowNth: 1
-			})
+			const gridOne = aspectRatio({index: i, rowNth: 1})
 			canv.printRectangle(...gridOne)
-			if (itemRenderable({
-					index: i,
-					rowNth: 1
-				})) {
+			if (itemRenderable({index: i, rowNth: 1})) {
 				renderFrame(container[i + columnBreak[1]].rarity, gridOne)
 				await renderIcon(container[i + columnBreak[1]].alias, gridOne)
 				renderQuantity(container[i + columnBreak[1]].quantity, gridOne)
 			}
-
+			
 			//	Row 2 ( 14 - 21 grid )
-			const gridTwo = aspectRatio({
-				index: i,
-				rowNth: 2
-			})
+			const gridTwo = aspectRatio({index: i, rowNth: 2})
 			canv.printRectangle(...gridTwo)
-			if (itemRenderable({
-					index: i,
-					rowNth: 2
-				})) {
+			if (itemRenderable({index: i, rowNth: 2})) {
 				renderFrame(container[i + columnBreak[2]].rarity, gridTwo)
 				await renderIcon(container[i + columnBreak[2]].alias, gridTwo)
 				renderQuantity(container[i + columnBreak[2]].quantity, gridTwo)
-			}
+		   }
 
 			//	Row 3 ( 21 - 28 grid )
-			const gridThree = aspectRatio({
-				index: i,
-				rowNth: 3
-			})
+			const gridThree = aspectRatio({index: i, rowNth: 3})
 			canv.printRectangle(...gridThree)
-			if (itemRenderable({
-					index: i,
-					rowNth: 3
-				})) {
+			if (itemRenderable({index: i, rowNth: 3})) {
 				renderFrame(container[i + columnBreak[3]].rarity, gridThree)
 				await renderIcon(container[i + columnBreak[3]].alias, gridThree)
 				renderQuantity(container[i + columnBreak[3]].quantity, gridThree)
-			}
-
+		   }
+			
 			//	Row 4 ( 28 - 35 grid)
-			const gridFour = aspectRatio({
-				index: i,
-				rowNth: 4
-			})
+			const gridFour = aspectRatio({index: i, rowNth: 4})
 			canv.printRectangle(...gridFour)
-			if (itemRenderable({
-					index: i,
-					rowNth: 4
-				})) {
+			if (itemRenderable({index: i, rowNth: 4})) {
 				renderFrame(container[i + columnBreak[4]].rarity, gridFour)
 				await renderIcon(container[i + columnBreak[4]].alias, gridFour)
 				renderQuantity(container[i + columnBreak[4]].quantity, gridFour)
-			}
+		   }
 
 			//	Row 5 ( 35 - 42 grid )
-			const gridFive = aspectRatio({
-				index: i,
-				rowNth: 5
-			})
-			canv.printRectangle(...gridFive)
-			if (itemRenderable({
-					index: i,
-					rowNth: 5
-				})) {
+			const gridFive = aspectRatio({index: i, rowNth: 5})
+			canv.printRectangle(...gridFive)			
+			if (itemRenderable({index: i, rowNth: 5})) {
 				renderFrame(container[i + columnBreak[5]].rarity, gridFive)
 				await renderIcon(container[i + columnBreak[5]].alias, gridFive)
 				renderQuantity(container[i + columnBreak[5]].quantity, gridFive)
-			}
+		   }
 		}
 	}
 

@@ -33,7 +33,7 @@ class MessageController {
      * @param {boolean} [minimal=false] set this to true to make it only run command-type module.
      * @returns {class}
      */
-    async run(minimal = false) {
+    async run(minimal=false) {
         /** -----------------------------------------------------------------
          *  Exceptor
          *  -----------------------------------------------------------------
@@ -54,19 +54,13 @@ class MessageController {
          *  -----------------------------------------------------------------
          */
         //  Check if AR module is enabled.
-        if (this.guild.configs.get(`AR_MODULE`).value) new AutoResponder(this.bot, this.message, this.guild)
+        if (this.guild.configs.get(`AR_MODULE`).value) new AutoResponder(this.bot, this.message,this.guild)
         //  Check if message is identified as command.
-        if (this.message.content.startsWith(this.bot.prefix) && this.message.content.length >= (this.bot.prefix.length + 1)) return new Command({
-            bot: this.bot,
-            message: this.message
-        }).run()
+        if (this.message.content.startsWith(this.bot.prefix) && this.message.content.length >= (this.bot.prefix.length + 1)) return new Command({bot:this.bot, message:this.message}).run()
         //  Limit modules in minimal state.
         if (minimal) return
         //  Automatically executing [Points Controller] when no other module requirements are met
-        return new Points({
-            bot: this.bot,
-            message: this.message
-        })
+        return new Points({bot:this.bot, message:this.message})
     }
 
     /**
@@ -99,7 +93,7 @@ class MessageController {
     _registerPermission() {
         const userPerm = new Permission(this.message).getUserPermission(this.message.author.id)
         this.message.author.permissions = userPerm
-    }
+     }
 }
 
 

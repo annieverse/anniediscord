@@ -4,19 +4,17 @@
  * 	@author klerikdust
  */
 module.exports = {
-	name: `dbkits`,
+    name: `dbkits`,
 	aliases: [`db`],
 	description: `Running database queries on air`,
 	usage: `db <[SqlStatement]> --flag`,
 	permissionLevel: 4,
 	multiUser: false,
-	async execute(client, reply, message, arg, locale) {
+    async execute(client, reply, message, arg, locale) {
 		//	Return if user doesn't specify arguments.
 		if (!arg) return reply.send(locale.DBKITS.AUTHORIZED, {
-			socket: {
-				user: message.author.username
-			}
-		})
+            socket: {user: message.author.username}
+        })
 		try {
 			//	Parse statement
 			const stmt = arg.match(/\[(.*?)\]/)[1]
@@ -35,13 +33,10 @@ module.exports = {
 					result: parsedResult.slice(0, 2000)
 				}
 			})
-		} catch (e) {
-			//	Catching failed query
-			return reply.send(locale.ERROR, {
-				socket: {
-					error: e
-				}
-			})
 		}
-	}
+		catch (e) {
+			//	Catching failed query
+			return reply.send(locale.ERROR, {socket: {error: e}}) 
+		}
+    }
 }

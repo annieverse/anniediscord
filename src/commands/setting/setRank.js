@@ -9,8 +9,8 @@ const commanifier = require(`../../utils/commanifier`)
  * @revised by klerikdust
  */
 module.exports = {
-    name: `setRank`,
-    aliases: [`setranks`, `setrank`, `setRanks`, `setrnk`],
+    name: `setRank`, 
+    aliases: [`setranks`, `setrank`, `setRanks`, `setrnk`], 
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
     permissionLevel: 3,
@@ -22,12 +22,12 @@ module.exports = {
     /**
      * Current instance's config code
      * @type {string}
-     */
+     */  
     primaryConfigID: `CUSTOM_RANK_MODULE`,
     /**
      * Current instance's sub config code
      * @type {string}
-     */
+     */  
     subConfigID: `RANKS_LIST`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
@@ -48,11 +48,11 @@ module.exports = {
         //  This is the main configuration of setwelcomer, so everything dependant on this value
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         //  This is the sub-part of main configuration such as welcomer's channel, text, etc
-        this.subConfig = this.guildConfigurations.get(this.subConfigID)
+        this.subConfig = this.guildConfigurations.get(this.subConfigID) 
         this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
-
+    
     /**
      * Enable Action
      * @return {void}
@@ -77,17 +77,13 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        reply.send(locale.SETRANK.SUCCESSFULLY_ENABLED, {
-            status: `success`
-        })
+        reply.send(locale.SETRANK.SUCCESSFULLY_ENABLED, {status: `success`})
         //  Spawn tip if user is a first timer
         if (this.firstTimer) return reply.send(locale.SETRANK.FIRST_TIMER_TIP, {
             simplified: true,
-            socket: {
-                prefix: prefix
-            }
+            socket: {prefix: prefix}
         })
-    },
+    }, 
 
     /**
      * Registering new role-rank
@@ -95,17 +91,11 @@ module.exports = {
      */
     async add(client, reply, message, arg, locale, prefix) {
         if (!this.args[1]) return reply.send(locale.SETRANK.ADD_MISSING_TARGET_ROLE, {
-            socket: {
-                prefix: prefix
-            }
+            socket: {prefix: prefix}
         })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1], message.guild)
-        if (!getRole) return reply.send(locale.SETRANK.INVALID_ROLE, {
-            socket: {
-                emoji: await client.getEmoji(`692428578683617331`)
-            }
-        })
+        if (!getRole) return reply.send(locale.SETRANK.INVALID_ROLE, {socket:{emoji: await client.getEmoji(`692428578683617331`)} })
         //  Handle if target role is too high
         if (getRole.position > this.annieRole.position) return reply.send(locale.SETRANK.ROLE_TOO_HIGH, {
             socket: {
@@ -128,7 +118,7 @@ module.exports = {
                     role: getRole.name.toLowerCase()
                 },
             })
-        }
+        }       
         //  Handle if user doesn't specify the target required level
         if (!this.args[2]) return reply.send(locale.SETRANK.ADD_MISSING_REQUIRED_LEVEL, {
             socket: {
@@ -166,25 +156,13 @@ module.exports = {
      * @return {void}
      */
     async delete(client, reply, message, arg, locale) {
-        if (!this.args[1]) return reply.send(locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {
-            socket: {
-                emoji: await client.getEmoji(`790338393015713812`)
-            }
-        })
+        if (!this.args[1]) return reply.send(locale.SETRANK.DELETE_MISSING_TARGET_ROLE, {socket: {emoji: await client.getEmoji(`790338393015713812`)}})
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1], message.guild)
-        if (!getRole) return reply.send(locale.SETRANK.INVALID_ROLE, {
-            socket: {
-                emoji: await client.getEmoji(`692428578683617331`)
-            }
-        })
+        if (!getRole) return reply.send(locale.SETRANK.INVALID_ROLE, {socket: {emoji: await client.getEmoji(`692428578683617331`)}})
         //  Handle if the role hasn't been registered in the first place
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
-        if (getRegisteredRank.length <= 0) return reply.send(locale.SETRANK.DELETE_UNREGISTERED_ROLE, {
-            socket: {
-                emoji: await client.getEmoji(`692428748838010970`)
-            }
-        })
+        if (getRegisteredRank.length <= 0) return reply.send(locale.SETRANK.DELETE_UNREGISTERED_ROLE, {socket: {emoji: await client.getEmoji(`692428748838010970`)}})
         //  Delete rank from the guild's configurations entry
         this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
         client.db.updateGuildConfiguration({
@@ -197,11 +175,9 @@ module.exports = {
         return reply.send(locale.SETRANK.SUCCESSFULLY_DELETED, {
             header: locale.SETRANK.SUCCESSFULLY_DELETED_HEADER,
             status: `success`,
-            socket: {
-                role: getRole.name
-            }
+            socket: {role: getRole.name}
         })
-    },
+    },       
 
     /**
      * Displaying the configuration status of current guild
@@ -261,14 +237,14 @@ module.exports = {
             },
             footer: `Updated by ${await client.getUsername(this.subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
         })
-    },
+    },   
 
     /**
      * Toggle RANKS_STACK support
      * @return {void}
      */
     stack(client, reply, message, arg, locale) {
-        const wasEnabled = message.guild.configs.get(`RANKS_STACK`).value ? 1 : 0
+        const wasEnabled = message.guild.configs.get(`RANKS_STACK`).value ? 1 : 0 
         client.db.updateGuildConfiguration({
             configCode: `RANKS_STACK`,
             //  Act as toggle (enable -> disable or disable -> enable)
@@ -277,9 +253,7 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETRANK[wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`], {
-            status: `success`
-        })
+        return reply.send(locale.SETRANK[wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`], {status: `success`})
     },
 
     /**
@@ -289,11 +263,9 @@ module.exports = {
     async reset(client, reply, message, arg, locale) {
         let timestamp = await client.db.getCurrentTimestamp()
         //  Handle if guild doesn't have any registered rank.
-        if (this.subConfig.value.length <= 0) return reply.send(locale.SETRANK.RESET_NULL_RANKS)
+        if (this.subConfig.value.length <= 0) return reply.send(locale.SETRANK.RESET_NULL_RANKS) 
         //  Confirmation before performing the action
-        const confirmation = await reply.send(``, {
-            header: locale.SETRANK.RESET_CONFIRMATION
-        })
+        const confirmation = await reply.send(``, {header: locale.SETRANK.RESET_CONFIRMATION})
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(() => {
@@ -303,13 +275,11 @@ module.exports = {
             this.primaryConfig.setByUserId = message.author.id
             this.subConfig.setByUserId = message.author.id
             this.subConfig.updatedAt = timestamp
-            this.subConfig.value = []
+            this.subConfig.value = [] 
             client.db.deleteGuildConfiguration(this.subConfigID, message.guild.id)
-            return reply.send(locale.SETRANK.SUCCESSFULLY_RESET, {
-                status: `success`
-            })
+            return reply.send(locale.SETRANK.SUCCESSFULLY_RESET, {status: `success`})
         })
-    },
+    },   
 
     /**
      * Disables the module
@@ -317,11 +287,7 @@ module.exports = {
      */
     async disable(client, reply, message, arg, locale, prefix) {
         //  Handle if the guild already has disabled the configuration
-        if (!this.primaryConfig.value) return reply.send(locale.SETRANK.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
+        if (!this.primaryConfig.value) return reply.send(locale.SETRANK.ALREADY_DISABLED, {socket:{prefix: prefix}})
         //  Otherwise, update the configuration. Both in the cache and database.
         client.db.updateGuildConfiguration({
             configCode: this.primaryConfigID,
@@ -330,10 +296,8 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETRANK.SUCCESSFULLY_DISABLED, {
-            status: `success`
-        })
-    },
+        return reply.send(locale.SETRANK.SUCCESSFULLY_DISABLED, {status: `success`})
+    }, 
 
     /**
      * Parse & prettify elements from given source.
@@ -342,14 +306,14 @@ module.exports = {
      * @param {Message} message Current message instance
      * @returns {string}
      */
-    async _prettifyList(source = [], client, message) {
+    async _prettifyList(source=[], client, message) {
         let res = ``
-        for (let i = 0; i < source.length; i++) {
+        for (let i=0; i<source.length; i++) {
             if (i <= 0) res += `\n╭*:;,．★ ～☆*──────────╮\n\n`
             const rank = source[i]
             const expMeta = await client.experienceLibs(message.member, message.guild).xpReverseFormula(rank.LEVEL)
             res += `**• LV${rank.LEVEL} - ${this._getRoleName(rank.ROLE, message)}**\n> Required EXP: ${commanifier(expMeta.minexp)}\n\n`
-            if (i === (source.length - 1)) res += `╰──────────☆～*:;,．*╯\n`
+            if (i === (source.length-1)) res += `╰──────────☆～*:;,．*╯\n`
         }
         return res
     },
@@ -360,7 +324,7 @@ module.exports = {
      * @param {Message} message Current message instance
      * @returns {string}
      */
-    _getRoleName(roleId = ``, message) {
+    _getRoleName(roleId=``, message) {
         const res = message.guild.roles.cache.get(roleId)
         return res ? res.name : roleId
     }

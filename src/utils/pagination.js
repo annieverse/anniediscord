@@ -1,6 +1,4 @@
-const {
-    MessageEmbed
-} = require(`discord.js`)
+const { MessageEmbed } = require(`discord.js`)
 const palette = require(`../ui/colors/default`)
 
 
@@ -46,56 +44,56 @@ class Paging {
         let embeddedPages = this.registerPages()
 
         this.message.channel.send(`\`Preparing paging system . .\``)
-            .then(async loading => {
-                this.message.channel.send(embeddedPages[0])
-                    .then(async msg => {
+        .then(async loading => {
+            this.message.channel.send(embeddedPages[0])
+                .then(async msg => {
 
-                        loading.delete()
+                    loading.delete()
 
-                        //  Buttons
-                        await msg.react(`⏪`)
-                        await msg.react(`⏩`)
-
-
-                        // Filters - These make sure the varibles are correct before running a part of code
-                        const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
-                        const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+                    //  Buttons
+                    await msg.react(`⏪`)
+                    await msg.react(`⏩`)
 
 
-                        //  Timeout limit for page buttons
-                        const backwards = msg.createReactionCollector(backwardsFilter, {
-                            time: 120000
-                        })
-                        const forwards = msg.createReactionCollector(forwardsFilter, {
-                            time: 120000
-                        })
+                    // Filters - These make sure the varibles are correct before running a part of code
+                    const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+                    const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
 
 
-                        //	Left navigation
-                        backwards.on(`collect`, r => {
-                            r.remove(this.message.author.id)
-                            page--
-                            if (embeddedPages[page]) {
-                                msg.edit(embeddedPages[page])
-                            } else {
-                                page++
-                            }
-                        })
-
-
-                        //	Right navigation
-                        forwards.on(`collect`, r => {
-                            r.remove(this.message.author.id)
-                            page++
-                            if (embeddedPages[page]) {
-                                msg.edit(embeddedPages[page])
-                            } else {
-                                page--
-                            }
-                        })
+                    //  Timeout limit for page buttons
+                    const backwards = msg.createReactionCollector(backwardsFilter, {
+                        time: 120000
                     })
+                    const forwards = msg.createReactionCollector(forwardsFilter, {
+                        time: 120000
+                    })
+ 
+
+                    //	Left navigation
+                    backwards.on(`collect`, r => {
+                        r.remove(this.message.author.id)
+                        page--
+                        if (embeddedPages[page]) {
+                            msg.edit(embeddedPages[page])
+                        } else {
+                            page++
+                        }
+                    })
+
+
+                    //	Right navigation
+                    forwards.on(`collect`, r => {
+                        r.remove(this.message.author.id)
+                        page++
+                        if (embeddedPages[page]) {
+                            msg.edit(embeddedPages[page])
+                        } else {
+                            page--
+                        }
+                    })
+                })
             })
-    }
+        }
 
 }
 

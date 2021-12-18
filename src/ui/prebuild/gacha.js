@@ -2,9 +2,7 @@ const Canvas = require(`../setup`)
 const palette = require(`../colors/default`)
 const theme = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)
-const {
-	resolveImage
-} = require(`canvas-constructor`)
+const {resolveImage} = require(`canvas-constructor`)
 
 class UI {
 	/**
@@ -12,7 +10,7 @@ class UI {
 	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
 	 * @return {Canvas}
 	 */
-	constructor(container, drawCount = 1, user) {
+	constructor(container, drawCount=1, user){
 		this.drawCount = drawCount
 		this.canvas_x = 210
 		this.canvas_y = 265
@@ -22,7 +20,7 @@ class UI {
 		this.baseHeight = this.canvas_y - 50
 		this.container = container
 		this.canv = null
-		this.user = user
+        this.user = user
 		this.indexrow = {
 			"top": [0, 1, 2, 3, 4],
 			"bottom": [5, 6, 7, 8, 9],
@@ -35,8 +33,8 @@ class UI {
 	}
 
 	/**
-	 *  Handling single-roll type of interface
-	 */
+     *  Handling single-roll type of interface
+     */
 	async singleRoll() {
 		this.canvas_x = 200
 		this.canvas_y = 240
@@ -58,7 +56,7 @@ class UI {
 			//  Load item assets
 			await this.itemVisual(55, 50, 100, 100)
 			await this.itemText(100, 170)
-		}
+		}      
 
 		//  Add flare overlay for item with rarity above 3
 		if (item.rarity_level > 3) this.canv.printImage(await resolveImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`)), 0, 0, this.canvas_x, this.canvas_y)
@@ -66,8 +64,8 @@ class UI {
 	}
 
 	/**
-	 *  Handling multi-roll type of interface
-	 */
+     *  Handling multi-roll type of interface
+     */
 	async multiRoll() {
 		this.canvas_x = 940
 		this.canvas_y = 500
@@ -93,7 +91,7 @@ class UI {
 				if (i > 0) this.canv.setColor(palette.darkmatte)
 				//  Render without base if its a card item
 				if (item(`type_name`) === `Cards`) {
-					this.canv.printImage(await resolveImage(await loadAsset(item(`alias`))), dynamicX - 2, set_y - 4, card_dx + 5, card_dy + 10)
+					this.canv.printImage(await resolveImage(await loadAsset(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10)
 					continue
 				}
 				//  Draw card base
@@ -117,32 +115,32 @@ class UI {
 	}
 
 	/**
-	 * 
-	 * Render item's graphic
-	 *  @param {Integer|Float} x horizontal coordinates
-	 *  @param {Integer|Float} y vertical coordinates
-	 *  @param {Integer|Float} dx second horizontal coordinates point after x
-	 *  @param {Integer|Float} dy second vertical coordinates point after x
-	 *  @param {Integer|Float} dm overall diameter/size
-	 *  @param {Integer} index current index position of item's object
-	 */
+     * 
+     * Render item's graphic
+     *  @param {Integer|Float} x horizontal coordinates
+     *  @param {Integer|Float} y vertical coordinates
+     *  @param {Integer|Float} dx second horizontal coordinates point after x
+     *  @param {Integer|Float} dy second vertical coordinates point after x
+     *  @param {Integer|Float} dm overall diameter/size
+     *  @param {Integer} index current index position of item's object
+     */
 	async itemVisual(x, y, dx, dy, index = 0) {
 		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
 	}
 
 	/**
-	 * Handles item's descriptive text
-	 * @param {number} x horizontal coordinates
-	 * @param {number} y vertical coordinates
-	 * @param {number} [index=0] current index position of item's object
-	 * @returns {void}
-	 */
+     * Handles item's descriptive text
+     * @param {number} x horizontal coordinates
+     * @param {number} y vertical coordinates
+     * @param {number} [index=0] current index position of item's object
+     * @returns {void}
+     */
 	itemText(x, y, index = 0) {
 		const item = this.container[index]
 		//  Name
 		this.canv.setColor(theme[this.user.usedTheme.alias].text)
 		this.canv.setTextAlign(`center`)
-		this.canv.setTextFont(`9pt Roboto`)
+		this.canv.setTextFont(`9pt Roboto`) 
 		this.canv.printText(`${item.quantity}x ${item.name}`, x, y)
 		//  Rarity
 		this.canv.setTextFont(`9pt Sans`)
@@ -150,9 +148,9 @@ class UI {
 	}
 
 	/**
-	 *  Render drop shadow
-	 *  @param {HexColor} color defining shadow color. Default is recommended.
-	 */
+     *  Render drop shadow
+     *  @param {HexColor} color defining shadow color. Default is recommended.
+     */
 	dropShadow(color = palette.darkmatte) {
 		this.canv.setShadowColor(`rgba(28, 28, 28, 1)`)
 		this.canv.setShadowOffsetY(3)
@@ -161,32 +159,32 @@ class UI {
 	}
 
 	/**
-	 *  Remove existing drop shadow to avoid unwanted visual.
-	 */
+     *  Remove existing drop shadow to avoid unwanted visual.
+     */
 	removeShadowLayer() {
 		this.canv.setShadowBlur(0)
 		this.canv.setShadowOffsetY(0)
 	}
 
 	/**
-	 *  Add dead shape as a shadow's placeholder.
-	 *  @param {Integer|Float} x horizontal coordinates
-	 *  @param {Integer|Float} y vertical coordinates
-	 *  @param {Integer|Float} dx second horizontal coordinates point after x
-	 *  @param {Integer|Float} dy second vertical coordinates point after x
-	 */
-	shadowGround(x = this.startPos_x + 4, y = this.startPos_y + 4, dx = this.baseWidth - 8, dy = this.baseHeight - 8) {
+     *  Add dead shape as a shadow's placeholder.
+     *  @param {Integer|Float} x horizontal coordinates
+     *  @param {Integer|Float} y vertical coordinates
+     *  @param {Integer|Float} dx second horizontal coordinates point after x
+     *  @param {Integer|Float} dy second vertical coordinates point after x
+     */
+	shadowGround(x = this.startPos_x+4, y = this.startPos_y+4, dx = this.baseWidth-8, dy = this.baseHeight-8) {
 		this.dropShadow()
 		this.canv.printRectangle(x, y, dx, dy) // (x, y, x2, y2)   
 	}
 
 	/**
-	 *  Default card base
-	 *  @param {Integer|Float} x horizontal coordinates
-	 *  @param {Integer|Float} y vertical coordinates
-	 *  @param {Integer|Float} dx second horizontal coordinates point after x
-	 *  @param {Integer|Float} dy second vertical coordinates point after x
-	 */
+     *  Default card base
+     *  @param {Integer|Float} x horizontal coordinates
+     *  @param {Integer|Float} y vertical coordinates
+     *  @param {Integer|Float} dx second horizontal coordinates point after x
+     *  @param {Integer|Float} dy second vertical coordinates point after x
+     */
 	drawCardBase(x, y, dx, dy) {
 		this.canv.createRoundedClip(x, y, dx, dy, 7)
 		this.canv.setColor(theme[this.user.usedTheme.alias].main)
@@ -199,11 +197,11 @@ class UI {
 	 * param {number} [times=0] amount of savepoints
 	 * returns {void}
 	 */
-	setSavepoints(times = 0) {
-		for (let i = 0; i < times; i++) {
+	setSavepoints (times = 0) {
+		for(let i = 0; i < times; i++) {
 			this.canv.save()
 		}
-	}
+	}  
 }
 
 module.exports = UI

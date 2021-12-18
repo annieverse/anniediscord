@@ -1,3 +1,3 @@
-module.exports = async ( /* bot, oldPresence, newPresence */ ) => {
+module.exports = async (/* bot, oldPresence, newPresence */) => {
     return
 }

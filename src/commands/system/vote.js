@@ -3,14 +3,14 @@
  * @author klerikdust
  */
 module.exports = {
-	name: `vote`,
+    name: `vote`,
 	aliases: [`vote`, `vt`, `vot`, `votes`, `upvote`],
 	description: `Upvote Annie and get the reward!`,
 	usage: `vote`,
 	permissionLevel: 0,
 	page: `https://top.gg/bot/501461775821176832`,
-	async execute(client, reply, message, arg, locale) {
-		if (!client.dblApi) return reply.send(locale.VOTE.UNAVAILABLE)
+    async execute(client, reply, message, arg, locale) {
+        if (!client.dblApi) return reply.send(locale.VOTE.UNAVAILABLE)
 		const voted = await client.dblApi.hasVoted(message.author.id)
 		if (voted) return reply.send(locale.VOTE.IS_COOLDOWN, {
 			socket: {
@@ -26,5 +26,5 @@ module.exports = {
 				url: `[Discord Bot List](${this.page}/vote)`
 			}
 		})
-	}
+    }
 }

@@ -1,6 +1,4 @@
-const {
-    event_lobby
-} = require(`../modules/config`)
+const { event_lobby } = require(`../modules/config`)
 let Controller = require(`./MessageController`)
 
 /**
@@ -52,7 +50,7 @@ class SubmissionManager extends Controller {
         this.message.guild.member(this.message.author.id).roles.remove(this.eventTicket)
     }
 
-
+    
     /**
      *  Send special package to user who has foxie card
      *  @foxieEnvelope
@@ -60,7 +58,7 @@ class SubmissionManager extends Controller {
     foxieEnvelope() {
         //  Sending message
         this.reply(this.code.FOXIE_ENVELOPE, {
-            socket: [
+            socket:[
                 this.meta.author.username,
                 this.emoji(`bongofoxy`)
             ],

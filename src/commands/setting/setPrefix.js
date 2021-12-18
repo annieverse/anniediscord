@@ -19,7 +19,7 @@ module.exports = {
         })
         client.db.updateGuildConfiguration({
             configCode: `PREFIX`,
-            customizedParameter: arg,
+            customizedParameter: arg, 
             guild: message.guild,
             setByUserId: message.author.id,
             cacheTo: message.guild.configs

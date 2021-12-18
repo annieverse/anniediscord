@@ -4,7 +4,7 @@
  * @param {string} [userId=``] Target user.
  * @return {object}
  */
-module.exports = (message = {}, userId = ``) => {
+module.exports = (message={}, userId=``) => {
     //  Developer privileges
     if ([`230034968515051520`, `277266191540551680`].includes(userId)) return {
         level: 4,
@@ -16,9 +16,9 @@ module.exports = (message = {}, userId = ``) => {
         level: 0,
         name: `User`,
         description: `Regular user`,
-    }
+    } 
     // User without developer privileges in dm interface will be automatically assigned as a regular user.
-    if (message.channel) {
+    if (message.channel) { 
         if (message.channel.type === `dm`) return fallbackPrivillege
     }
     const member = message.member || message
@@ -35,7 +35,7 @@ module.exports = (message = {}, userId = ``) => {
         description: `Server's super user`
     }
     //  Moderator
-    if (member.hasPermission(`MANAGE_ROLES`)) return {
+    if (member.hasPermission(`MANAGE_ROLES`)) return { 
         level: 2,
         name: `Moderator`,
         description: `Server's manager with moderation capabilities`

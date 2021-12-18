@@ -1,10 +1,5 @@
-const {
-    Canvas
-} = require(`canvas-constructor`)
-const {
-    resolve,
-    join
-} = require(`path`)
+const { Canvas } = require(`canvas-constructor`)
+const { resolve, join } = require(`path`)
 const Theme = require(`../../ui/colors/themes`)
 const canvas = require(`canvas`)
 
@@ -13,14 +8,7 @@ canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `R
 canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function relation(stacks, member) {
-    const {
-        meta: {
-            data
-        },
-        bot: {
-            db
-        }
-    } = stacks
+    const { meta: {data}, bot: {db} } = stacks
     const rank = stacks.meta.data.rank
 
     /**
@@ -57,8 +45,8 @@ async function relation(stacks, member) {
         return true
     })
 
-    let canvas_x = 320 //300
-    let canvas_y = 420 //400
+    let canvas_x = 320//300
+    let canvas_y = 420//400
     let startPos_x = 10
     let startPos_y = 10
     let baseWidth = canvas_x - 20
@@ -89,9 +77,9 @@ async function relation(stacks, member) {
      */
     canv.printCircularImage(avatar, 15, 15, 30, 30, 15)
 
-        /**
-         *    TITLE BAR
-         */
+    /**
+     *    TITLE BAR
+     */
         .setColor(user.theme.text)
         .setTextAlign(`left`)
         .setTextFont(`11pt RobotoBold`)
@@ -115,15 +103,15 @@ async function relation(stacks, member) {
             .printText(relation, x + 50, y + 34)
     }
 
-    for (var i = 0; i < Math.min(familyrelations.length, 9); i++) {
+    for (var i=0;i<Math.min(familyrelations.length, 9); i++) {
         var relUser = await stacks.bot.users.fetch(familyrelations[i].theirUserId)
         var userAvatar = await stacks.avatar(relUser.id, true)
-        listEntry(relUser.username, userAvatar, familyrelations[i].theirRelation, 30, 70 + i * 33)
+        listEntry(relUser.username, userAvatar, familyrelations[i].theirRelation, 30, 70 + i*33)
     }
 
     canv.setTextAlign(`left`)
         .setTextFont(`10pt RobotoBold`)
-        .printText(`I have a total of ` + familyrelations.length + ` family members ❤`, 30, 390)
+        .printText(`I have a total of `+familyrelations.length+` family members ❤`, 30, 390)
 
 
     return canv.toBuffer()

@@ -96,10 +96,7 @@ class Annie extends Discord.Client {
          * @param {object} [message={}] Target message instance.
          * @return {external:PointManager}
          */
-        this.pointsController = (message = {}) => new PointsController({
-            bot: this,
-            message: message
-        })
+        this.pointsController = (message={}) => new PointsController({bot:this, message:message})
 
         /**
          * Experience Framework
@@ -116,7 +113,7 @@ class Annie extends Discord.Client {
          * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
          * @return {external:Response}
          */
-        this.responseLibs = (message, channelAsInstance = false) => new Response(message, channelAsInstance)
+        this.responseLibs = (message, channelAsInstance=false) => new Response(message, channelAsInstance)
 
         /**
          * The default function for calculating task performance in milliseconds.
@@ -135,14 +132,12 @@ class Annie extends Discord.Client {
          * The default function for handling logging tasks.
          * @type {Pino}
          */
-        this.logger = require(`pino`)({
-            name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`
-        })
+        this.logger = require(`pino`)({name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`})
 
         /**
          * Stores Annie's Support Server invite link.
          * @type {string}
-         */
+         */ 
         this.supportServer = `https://discord.gg/HjPHCyG346`
 
         /**
@@ -179,7 +174,8 @@ class Annie extends Discord.Client {
             this.registerNode(localizer(), `locales`)
             require(`./controllers/events`)(this)
             this.login(process.env.TOKEN)
-        } catch (e) {
+        }
+        catch(e) {
             this.logger.error(`Client has failed to start > ${e.stack}`)
             process.exit()
         }
@@ -191,17 +187,17 @@ class Annie extends Discord.Client {
      * @author klerikdust
      * @return {void}
      */
-    async registerGuildConfigurations(guildId = null) {
+    async registerGuildConfigurations(guildId=null) {
         const initTime = process.hrtime()
         const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
         //  If prompted to register only single guild, then use single-element array.
         const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
-        for (let i = 0; i < getGuilds.length; i++) {
+        for (let i=0; i<getGuilds.length; i++) {
             let guild = this.guilds.cache.get(getGuilds[i])
             let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
             guild.configs = new Map()
             //  Iterating over all the available configurations
-            for (let x = 0; x < customConfig.availableConfigurations.length; x++) {
+            for (let x=0; x<customConfig.availableConfigurations.length; x++) {
                 let cfg = customConfig.availableConfigurations[x]
                 //  Register existing configs into guild's nodes if available
                 if (existingGuildConfigs.length > 0) {
@@ -215,7 +211,7 @@ class Annie extends Discord.Client {
                 }
                 guild.configs.set(cfg.name, cfg)
             }
-        }
+        } 
         this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
 
@@ -228,7 +224,7 @@ class Annie extends Discord.Client {
         this.db.getSavedUserDurationalBuffs().then(async src => {
             if (!src.length) return
             let count = 0
-            for (let i = 0; i < src.length; i++) {
+            for (let i=0; i<src.length; i++) {
                 const node = src[i]
                 //  Skip if guild isn't exists in current shard.
                 if (!this.guilds.cache.has(node.guild_id)) continue
@@ -238,32 +234,30 @@ class Annie extends Discord.Client {
                 //  Skip expired buff, and delete it from database as well.
                 if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
                     this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
-                        .then(id => {
-                            this.db.removeUserDurationalBuff(id)
-                        })
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
                     continue
                 }
                 this.db.redis.sadd(key, node.multiplier)
-                this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
+                this.cronManager.add(node.multiplier+`_`+key, new Date(expireAt), () => {
                     //  Flush from cache and sqlite
                     this.db.redis.srem(key, node.multiplier)
                     this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
-                        .then(id => {
-                            this.db.removeUserDurationalBuff(id)
-                        })
+                    .then(id => {
+                        this.db.removeUserDurationalBuff(id)
+                    })
                     //  Send expiration notice
                     this.users.fetch(node.user_id)
-                        .then(async user => {
-                            this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
-                                    field: user,
-                                    footer: `${this.guilds.cache.get(node.guild_id).name}'s System Notification`
-                                })
-                                .catch(e => e)
+                    .then(async user => {
+                        this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
+                            field: user,
+                            footer: `${this.guilds.cache.get(node.guild_id).name}'s System Notification`
                         })
                         .catch(e => e)
-                }, {
-                    start: true
-                })
+                    })
+                    .catch(e => e)
+                }, { start:true })
                 count++
             }
             this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@USER_DURATIONAL_BUFFS] ${count} buffs have been registered`)
@@ -278,7 +272,7 @@ class Annie extends Discord.Client {
         const fn = `[SHARD_ID:${this.shard.ids[0]}@AUTO_RESPONDER]`
         const ars = await this.db.getGuildsWithAutoResponders()
         let totalArs = 0
-        for (let i = 0; i < ars.length; i++) {
+        for (let i=0; i<ars.length; i++) {
             const guildId = ars[i].guild_id
             //  Skip if guild is not present in the current shard 
             if (!this.guilds.cache.has(guildId)) continue
@@ -298,7 +292,7 @@ class Annie extends Discord.Client {
      * @private
      * @returns {*}
      */
-    _parseConfigurationBasedOnType(config = ``, typePool = []) {
+    _parseConfigurationBasedOnType(config=``, typePool=[]) {
         if (typePool.includes(`array`) || typePool.includes(`object`)) return JSON.parse(config)
         else if (typePool.includes(`number`) || typePool.includes(`boolean`)) return parseInt(config)
         else if (typePool.includes(`float`) || typePool.includes(`real`)) return parseFloat(config)
@@ -363,7 +357,7 @@ class Annie extends Discord.Client {
      *  @param {string} [keyword=``] emoji keyword to search
      *  @return {Emoji|null}
      */
-    getEmoji(keyword = ``) {
+    getEmoji(keyword=``) {
         return emoji(keyword, this)
     }
 
@@ -372,35 +366,31 @@ class Annie extends Discord.Client {
      * @param {string} [userId=``] Target user id
      * @return {string}
      */
-    async getUsername(userId = ``) {
+    async getUsername(userId=``) {
         try {
             const user = await this.users.fetch(userId)
             return user ? user.username : userId
-        } catch (e) {
+        }
+        catch(e) {
             return userId
         }
     }
 
     /**
-     *	Handles user's avatar fetching process. Set `true` on
-     *   second param to return as compressed buffer. (which is needed by canvas)
-     *	@param {String|ID} id id of user to be fetched from.
-     *	@param {Boolean} compress set true to return as compressed buffer.
-     *	@param {string} [size=`?size=512`] Custom size.
-     *   @param {boolean} [dynamic=false]
-     *   @return {buffer}
-     */
-    async getUserAvatar(id, compress = false, size = `?size=512`, dynamic = false) {
-        const user = await this.users.fetch(id)
+	*	Handles user's avatar fetching process. Set `true` on
+	*   second param to return as compressed buffer. (which is needed by canvas)
+	*	@param {String|ID} id id of user to be fetched from.
+	*	@param {Boolean} compress set true to return as compressed buffer.
+    *	@param {string} [size=`?size=512`] Custom size.
+	*   @param {boolean} [dynamic=false]
+	*   @return {buffer}
+	*/
+    async getUserAvatar(id, compress = false, size = `?size=512`, dynamic=false) {
+        const user = await this.users.fetch(id) 
         if (!user) return loadAsset(`error`)
-        let url = user.displayAvatarURL({
-            format: `png`,
-            dynamic: dynamic
-        })
+		let url = user.displayAvatarURL({format: `png`, dynamic: dynamic})
         if (compress) {
-            return fetch(url.replace(/\?size=2048$/g, size), {
-                    method: `GET`
-                })
+            return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
                 .then(data => data.buffer())
         }
         return url + size
@@ -412,18 +402,19 @@ class Annie extends Discord.Client {
      * @param {object} [messageInstance={}] Target message instance to be parsed from.
      * @return {object}
      */
-    getUserPermission(messageInstance = {}) {
+    getUserPermission(messageInstance={}) {
         return this.permissionManager.getUserPermission(messageInstance)
-    }
+     }
 
     /**
      *  Fetching guild's configurations.
      *  @param {string} [id=``] Target guild id.
      *  @return {map|null}
      */
-    fetchGuildConfigs(id = ``) {
+    fetchGuildConfigs(id=``) {
         return this.guilds.cache.get(id).configs
     }
 }
 
 module.exports = new Annie()
+

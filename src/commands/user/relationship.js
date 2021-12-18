@@ -13,15 +13,13 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
         //  Normalize structure
         targetUser = targetUser.master || targetUser
         const targetUserData = await userLib.requestMetadata(targetUser, 2)
         //  Handle if user doesn't have any relationships
         if (!targetUserData.relationships.length) return reply.send(locale.RELATIONSHIP.IS_EMPTY, {
-            socket: {
-                prefix: client.prefix
-            }
+            socket: {prefix: client.prefix}
         })
         const fetching = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,
@@ -47,7 +45,7 @@ module.exports = {
             simplified: true,
             socket: {
                 prefix: prefix,
-                emoji: await client.getEmoji(`848521456543203349`)
+                emoji: await client.getEmoji(`848521456543203349`) 
             }
         })
     }

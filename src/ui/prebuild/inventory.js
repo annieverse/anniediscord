@@ -2,9 +2,7 @@ const Color = require(`color`)
 const Cards = require(`../components/cards`)
 const ThemePresets = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)
-const {
-	resolveImage
-} = require(`canvas-constructor`)
+const {resolveImage} = require(`canvas-constructor`)
 
 class UI {
 	/**
@@ -14,7 +12,7 @@ class UI {
 	 * @param {Client} [bot={}] current bot instance
 	 * @return {Canvas}
 	 */
-	constructor(user = {}, bot) {
+	constructor(user={}, bot) {
 		this.user = user
 		this.bot = bot
 		this.width = 550
@@ -25,14 +23,14 @@ class UI {
 	async build() {
 		this.scaleYBasedOnContainerSize()
 		this.card = await new Cards({
-				width: this.width,
-				height: this.height,
-				theme: this.user.usedTheme.alias,
-				primaryColor: this.adjustedPrimaryColorContrast(),
-				align: `center`
-			})
-			//	Base card
-			.createBase({})
+			 width: this.width, 
+			 height: this.height,
+			 theme: this.user.usedTheme.alias,
+			 primaryColor: this.adjustedPrimaryColorContrast(),
+			 align: `center` 
+		})
+		//	Base card
+		.createBase({})
 		//  Render each items grid
 		await this.grid()
 		return this.card.ready()
@@ -41,9 +39,9 @@ class UI {
 	/**
 	 * Allows each item to be stored into its own grid.
 	 * @param {number} [itemDiameter=70] asset's dimension for each item.
-	 * @returns {void}
+     * @returns {void}
 	 */
-	async grid(itemDiameter = 70) {
+	async grid(itemDiameter=70) {
 
 		let x = 15
 		let y = 15
@@ -67,7 +65,7 @@ class UI {
 		 * @param {array} [pos=[]] frame container
 		 * @returns {void}
 		 */
-		const renderFrame = (frameColor = `#000`, pos = []) => {
+		const renderFrame = (frameColor=`#000`, pos=[]) => {
 			const frameHole = () => {
 				pos[0] = pos[0] + 1
 				pos[1] = pos[1] + 1
@@ -94,7 +92,7 @@ class UI {
 		 * @param {number} [qty=0] number to be checked from.
 		 * @returns {string|number}
 		 */
-		const quantityLimitCheck = (qty = 0) => qty > 999999999 ? `+999999999` : qty
+		const quantityLimitCheck = (qty=0) => qty > 999999999 ? `+999999999` : qty
 
 		/**
 		 * Rendering item quantity
@@ -102,7 +100,7 @@ class UI {
 		 * @param {array} [pos=[]] item container
 		 * @returns {void}
 		 */
-		const renderQuantity = (qty = 0, pos = []) => {
+		const renderQuantity = (qty=0, pos=[]) => {
 
 			const quantity = quantityLimitCheck(qty)
 			//	Mutating default grid dimension for item quantity (bottomright)
@@ -126,7 +124,7 @@ class UI {
 		 * @param {ArrayOfPosition} pos Preferably to use the same grid array across function
 		 * @renderIcon
 		 */
-		const renderIcon = async (id, pos = []) => this.card.canv.printImage(await resolveImage(await loadAsset(id)), ...pos)
+		const renderIcon = async (id, pos=[]) => this.card.canv.printImage(await resolveImage(await loadAsset(id)), ...pos)
 
 		/**
 		 * Get absolute dimension for each item grid. Returns an array
@@ -134,11 +132,8 @@ class UI {
 		 * @param {number} [rowNth=0] current row position in the inventory. Index-ordering(0)
 		 * @returns {array}
 		 */
-		const aspectRatio = ({
-			index = 0,
-			rowNth = 0
-		}) => {
-			const yAxis = rowNth < 1 ? y : y + ((itemDiameter + 5) * rowNth)
+		const aspectRatio = ({index=0,rowNth=0}) => {
+			const yAxis = rowNth < 1 ? y : y + ((itemDiameter+5) * rowNth)
 			const xAxis = x + (itemDiameter * index) + (5 * index)
 			return [xAxis, yAxis, itemDiameter, itemDiameter]
 		}
@@ -149,10 +144,7 @@ class UI {
 		 * @param {number} [rowNth=0] current row position in the inventory. Index-ordering(0)
 		 * @returns {boolean}
 		 */
-		const itemRenderable = ({
-			index = 0,
-			rowNth = 0
-		}) => container[index + columnBreak[rowNth]] ? true : false
+		const itemRenderable = ({index=0, rowNth=0}) => container[index + columnBreak[rowNth]] ? true : false
 
 		const container = this.user.inventory.raw
 		//	Default color for blank grid
@@ -161,15 +153,9 @@ class UI {
 		for (let i = 0; i < colimit; i++) {
 
 			//	Row 0 ( 0 - 7 grid )
-			const gridZero = aspectRatio({
-				index: i,
-				rowNth: 0
-			})
+			const gridZero = aspectRatio({index: i, rowNth: 0})
 			this.card.canv.printRectangle(...gridZero)
-			if (itemRenderable({
-					index: i,
-					rowNth: 0
-				})) {
+			if (itemRenderable({index: i, rowNth: 0})) {
 				renderFrame(container[i + columnBreak[0]].rarity_color, gridZero)
 				await renderIcon(container[i + columnBreak[0]].alias, gridZero)
 				renderQuantity(container[i + columnBreak[0]].quantity, gridZero)
@@ -177,79 +163,49 @@ class UI {
 			}
 
 			//	Row 1 ( 7 - 14 grid )
-			const gridOne = aspectRatio({
-				index: i,
-				rowNth: 1
-			})
+			const gridOne = aspectRatio({index: i, rowNth: 1})
 			this.card.canv.printRectangle(...gridOne)
-			if (itemRenderable({
-					index: i,
-					rowNth: 1
-				})) {
+			if (itemRenderable({index: i, rowNth: 1})) {
 				renderFrame(container[i + columnBreak[1]].rarity_color, gridOne)
 				await renderIcon(container[i + columnBreak[1]].alias, gridOne)
 				renderQuantity(container[i + columnBreak[1]].quantity, gridOne)
 			}
-
+			
 			//	Row 2 ( 14 - 21 grid )
-			const gridTwo = aspectRatio({
-				index: i,
-				rowNth: 2
-			})
+			const gridTwo = aspectRatio({index: i, rowNth: 2})
 			this.card.canv.printRectangle(...gridTwo)
-			if (itemRenderable({
-					index: i,
-					rowNth: 2
-				})) {
+			if (itemRenderable({index: i, rowNth: 2})) {
 				renderFrame(container[i + columnBreak[2]].rarity_color, gridTwo)
 				await renderIcon(container[i + columnBreak[2]].alias, gridTwo)
 				renderQuantity(container[i + columnBreak[2]].quantity, gridTwo)
-			}
+		    }
 
 			//	Row 3 ( 21 - 28 grid )
-			const gridThree = aspectRatio({
-				index: i,
-				rowNth: 3
-			})
+			const gridThree = aspectRatio({index: i, rowNth: 3})
 			this.card.canv.printRectangle(...gridThree)
-			if (itemRenderable({
-					index: i,
-					rowNth: 3
-				})) {
+			if (itemRenderable({index: i, rowNth: 3})) {
 				renderFrame(container[i + columnBreak[3]].rarity_color, gridThree)
 				await renderIcon(container[i + columnBreak[3]].alias, gridThree)
 				renderQuantity(container[i + columnBreak[3]].quantity, gridThree)
-			}
-
+		    }
+			
 			//	Row 4 ( 28 - 35 grid)
-			const gridFour = aspectRatio({
-				index: i,
-				rowNth: 4
-			})
+			const gridFour = aspectRatio({index: i, rowNth: 4})
 			this.card.canv.printRectangle(...gridFour)
-			if (itemRenderable({
-					index: i,
-					rowNth: 4
-				})) {
+			if (itemRenderable({index: i, rowNth: 4})) {
 				renderFrame(container[i + columnBreak[4]].rarity_color, gridFour)
 				await renderIcon(container[i + columnBreak[4]].alias, gridFour)
 				renderQuantity(container[i + columnBreak[4]].quantity, gridFour)
-			}
+		    }
 
 			//	Row 5 ( 35 - 42 grid )
-			const gridFive = aspectRatio({
-				index: i,
-				rowNth: 5
-			})
-			this.card.canv.printRectangle(...gridFive)
-			if (itemRenderable({
-					index: i,
-					rowNth: 5
-				})) {
+			const gridFive = aspectRatio({index: i, rowNth: 5})
+			this.card.canv.printRectangle(...gridFive)			
+			if (itemRenderable({index: i, rowNth: 5})) {
 				renderFrame(container[i + columnBreak[5]].rarity_color, gridFive)
 				await renderIcon(container[i + columnBreak[5]].alias, gridFive)
 				renderQuantity(container[i + columnBreak[5]].quantity, gridFive)
-			}
+		    }
 		}
 	}
 

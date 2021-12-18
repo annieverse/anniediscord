@@ -1,13 +1,6 @@
-const {
-	Canvas
-} = require(`canvas-constructor`)
-const {
-	resolve,
-	join
-} = require(`path`)
-const {
-	get
-} = require(`node-fetch`)
+const { Canvas } = require(`canvas-constructor`) 
+const { resolve, join } = require(`path`)
+const { get } = require(`node-fetch`)
 const moment = require(`moment`)
 const probe = require(`probe-image-size`)
 const Theme = require(`../../ui/colors/themes`)
@@ -17,16 +10,7 @@ Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `R
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function portfolio(stacks, member) {
-	const {
-		loadAsset,
-		formatString,
-		meta: {
-			data
-		},
-		bot: {
-			db
-		}
-	} = stacks
+	const { loadAsset, formatString, meta: {data}, bot:{db} } = stacks
 
 	const userdata = data
 	const user = {
@@ -47,8 +31,8 @@ async function portfolio(stacks, member) {
 		theme: Theme[userdata.interfacemode]
 	}
 
-	let canvas_x = 320 //300
-	let canvas_y = 420 //400
+	let canvas_x = 320//300
+	let canvas_y = 420//400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -78,9 +62,9 @@ async function portfolio(stacks, member) {
 	 */
 	canv.printCircularImage(avatar, 15, 15, 30, 30, 15)
 
-		/**
-		 *    TITLE BAR
-		 */
+	/**
+	 *    TITLE BAR
+	 */
 		.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
@@ -101,9 +85,9 @@ async function portfolio(stacks, member) {
 					body: photo
 				} = await get(src)
 				if (width > height) {
-					canv.printImage(photo, posx - ((width * dy / height) - dx) / 2, posy, width * dy / height, dy, 1)
+					canv.printImage(photo, posx - ((width * dy / height) - dx)/2, posy, width * dy / height, dy,1)
 				} else {
-					canv.printImage(photo, posx, posy - ((height * dx / width) - dy) / 2, dx, height * dx / width, 1)
+					canv.printImage(photo, posx, posy - ((height * dx / width) - dy)/2, dx, height * dx / width,1)
 				}
 			} catch (e) {
 				db._query(`DELETE FROM userartworks WHERE url = ?`, `run`, [src])
@@ -127,10 +111,10 @@ async function portfolio(stacks, member) {
 		if (!res) {
 			await nullCollection()
 		} else {
-			var description = `My newest artwork!`
-			if (res.description) {
-				description = res.description.replace(/<[^>]*>?/gm, ``)
-			}
+            var description = `My newest artwork!`
+				if (res.description) {
+					description = res.description.replace(/<[^>]*>?/gm, ``)
+				}
 
 			if (description.length > 0 && description.length <= 50) {
 				if (formatString(description, 1).second) {
@@ -152,10 +136,10 @@ async function portfolio(stacks, member) {
 			} else if (description.length > 100) {
 				canv.printText(formatString(description, 3).first, (baseWidth / 2) + 10, 70)
 					.printText(formatString(description, 3).second, (baseWidth / 2) + 10, 85)
-					.printText(formatString(description, 3).third + `...`, (baseWidth / 2) + 10, 100)
+					.printText(formatString(description, 3).third+`...`, (baseWidth / 2) + 10, 100)
 			}
 
-			canv.createRoundedClip(startPos_x, 110, baseWidth, baseWidth, 25)
+            canv.createRoundedClip(startPos_x, 110, baseWidth, baseWidth, 25)
 				.setColor(user.theme.separator)
 				.printRectangle(posx, posy, dx, dy)
 			await aspectRatio(res.url)

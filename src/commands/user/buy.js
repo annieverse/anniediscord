@@ -7,10 +7,10 @@ const commanifier = require(`../../utils/commanifier`)
  */
 module.exports = {
     name: `buy`,
-    aliases: [`purchase`, `buyy`],
-    description: `Buy any purchasable items from server shop!`,
-    usage: `buy <ItemID/ItemName>`,
-    permissionLevel: 0,
+	aliases: [`purchase`, `buyy`],
+	description: `Buy any purchasable items from server shop!`,
+	usage: `buy <ItemID/ItemName>`,
+	permissionLevel: 0,
     async execute(client, reply, message, arg, locale, prefix) {
         const guildShop = await client.db.getGuildShop(message.guild.id)
         const availableItems = await client.db.getItem(null, message.guild.id)
@@ -18,22 +18,18 @@ module.exports = {
             await reply.send(locale.SHOP.NO_ITEMS)
             return reply.send(locale.SHOP.SETUP_TIPS, {
                 simplified: true,
-                socket: {
-                    prefix: prefix
-                }
+                socket: {prefix: prefix}
             })
         }
         //  Handle shop closure
         if (!message.guild.configs.get(`SHOP_MODULE`).value) return reply.send(locale.SHOP.CLOSED)
         //  Find best match
         const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
-        const item = searchStringResult.bestMatch.rating >= 0.5
-            //  By name
-            ?
-            availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
-            //  Fallback search by ID
-            :
-            availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
+		const item = searchStringResult.bestMatch.rating >= 0.5
+        //  By name
+        ? availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target) 
+        //  Fallback search by ID
+        : availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!item) {
             await reply.send(locale.BUY.INVALID_ITEM)
             return reply.send(locale.BUY.INVALID_ITEM_TIPS, {
@@ -56,7 +52,7 @@ module.exports = {
         const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
             thumbnail: message.author.displayAvatarURL(),
             socket: {
-                emoji: await client.getEmoji(`758720612087627787`),
+				emoji: await client.getEmoji(`758720612087627787`), 
                 price: commanifier(shopMetadata.price),
                 item: item.name
             }
@@ -64,12 +60,12 @@ module.exports = {
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
-            const balance = await client.db.getUserBalance(message.author.id, message.guild.id)
+            const balance = await client.db.getUserBalance(message.author.id,  message.guild.id)
             //  Handle if user does not have sufficient artcoins
             if (shopMetadata.price > balance) return reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
                 socket: {
                     amount: commanifier(shopMetadata.price - balance),
-                    emoji: await client.getEmoji(`758720612087627787`)
+				    emoji: await client.getEmoji(`758720612087627787`)
                 }
             })
             //  Deduct artcoins

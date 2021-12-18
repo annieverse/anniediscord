@@ -4,7 +4,7 @@ const Discord = require(`discord.js`)
  * @param {string} keyword
  * @return {object}
  */
-const broadcastScript = (keyword) => {
+const broadcastScript = (keyword) => {	
     const temp = this.emojis.cache.get(keyword) || this.emojis.cache.find(e => e.name === keyword)
     if (!temp) return null
     // Clone the object because it is modified right after, so as to not affect the cache in client.emojis
@@ -37,8 +37,11 @@ const emojiFetch = async (emojiKeyword, client) => {
     const guild = new Discord.Guild(client, raw)
     const emoji = (new Discord.GuildEmoji(client, findEmoji, guild)).toString()
     //  Store on cache for 12 hour
-    await client.db.redis.set(cacheId, emoji, `EX`, (60 * 60) * 12)
+    await client.db.redis.set(cacheId, emoji, `EX`, (60*60)*12)
     return emoji
 }
 
 module.exports = emojiFetch
+
+
+

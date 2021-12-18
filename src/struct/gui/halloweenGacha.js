@@ -30,6 +30,7 @@ class halloweenGachaGUI {
 	}
 
 	/**
+     * 
      * Render item's graphic
      *  @param {Integer|Float} x horizontal coordinates
      *  @param {Integer|Float} y vertical coordinates

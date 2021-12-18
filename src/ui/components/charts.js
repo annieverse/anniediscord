@@ -1,6 +1,4 @@
-const {
-    CanvasRenderService
-} = require(`chartjs-node-canvas`)
+const { CanvasRenderService } = require(`chartjs-node-canvas`)
 const Color = require(`color`)
 const themePresets = require(`../colors/themes`)
 const palette = require(`../colors/default`)
@@ -9,17 +7,17 @@ class Chart {
 
 
     /**
-     * Global presets for current chart instance.
-     * @param {*} Object
-     */
+	 * Global presets for current chart instance.
+	 * @param {*} Object
+	 */
     constructor({
-        width = 700,
-        height = 400,
-        labels = [],
-        datasets = [],
-        primaryColor = themePresets[`dark`].text,
-        theme = `dark`
-    }) {
+        width=700, 
+        height=400, 
+        labels=[], 
+        datasets=[], 
+        primaryColor=themePresets[`dark`].text, 
+        theme=`dark`
+        }) {
         this.width = width
         this.height = height
         this.chart = new CanvasRenderService(width, height)
@@ -31,24 +29,24 @@ class Chart {
 
 
     /**
-     * 	Fallback handler for component's color property.
-     * 	@param {String} prop color's name reference.
-     *	@param {String} defaultOpt fallback color when given prop is not exists in the available palette pool.
-     * 	@private	
-     * 	@_resolveColor
-     */
-    _resolveColor(prop, defaultOpt) {
-        //	Check for color availability in standard colorset
-        if (palette[prop]) return palette[prop]
+	 * 	Fallback handler for component's color property.
+	 * 	@param {String} prop color's name reference.
+	 *	@param {String} defaultOpt fallback color when given prop is not exists in the available palette pool.
+	 * 	@private	
+	 * 	@_resolveColor
+	 */
+	_resolveColor(prop, defaultOpt) {
+		//	Check for color availability in standard colorset
+		if (palette[prop]) return palette[prop]
 
-        //	If color is inherited, this will use the defined primary color in the global preset.
-        if (palette[this.primaryColor]) return palette[this.primaryColor]
-        if (this.color[this.primaryColor]) return this.color[this.primaryColor]
-        if (prop === `inherit`) return this.primaryColor
+		//	If color is inherited, this will use the defined primary color in the global preset.
+		if (palette[this.primaryColor]) return palette[this.primaryColor] 
+		if (this.color[this.primaryColor]) return this.color[this.primaryColor] 
+		if (prop === `inherit`) return this.primaryColor
 
-        return defaultOpt
+		return defaultOpt
     }
-
+    
 
     /**
      *  For configuration consistency.

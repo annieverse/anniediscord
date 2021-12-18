@@ -4,8 +4,9 @@
  * @param {String} str target string
  * @returns {Number/NaN}
  */
-const trueInt = (str = ``) => {
-    return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) ?
-        Math.round(Number(str)) : NaN
+const trueInt = (str=``) => {
+    return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
+        ? Math.round(Number(str)) : NaN
 }
 module.exports = trueInt
+

@@ -5,10 +5,10 @@ const moment = require(`moment`)
  */
 module.exports = {
     name: `remind`,
-    aliases: [`remind`, `rmd`, `reminds`, `reminder`, `remindme`],
-    description: `Never forget things. Ask Annie to reminds you anytime!`,
-    usage: `remind <message> <time>`,
-    permissionLevel: 0,
+	aliases: [`remind`, `rmd`, `reminds`, `reminder`, `remindme`],
+	description: `Never forget things. Ask Annie to reminds you anytime!`,
+	usage: `remind <message> <time>`,
+	permissionLevel: 0,
     async execute(client, reply, message, arg, locale) {
         //  Displays guide and user's active reminders
         if (!arg) {

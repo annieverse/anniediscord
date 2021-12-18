@@ -5,8 +5,8 @@ const moment = require(`moment`)
  * @author klerikdust
  */
 module.exports = {
-    name: `setLogs`,
-    aliases: [`setlogs`, `setlog`, `setlogging`],
+    name: `setLogs`, 
+    aliases: [`setlogs`, `setlog`, `setlogging`], 
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,
     permissionLevel: 3,
@@ -18,12 +18,12 @@ module.exports = {
     /**
      * Current instance's config code
      * @type {string}
-     */
+     */  
     primaryConfigID: `LOGS_MODULE`,
     /**
      * Current instance's sub-config code
      * @type {string}
-     */
+     */  
     subConfigID: `LOGS_CHANNEL`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
@@ -38,9 +38,7 @@ module.exports = {
         this.args = arg.split(` `)
         //  Handle if selected action doesn't exists
         if (!this.actions.includes(this.args[0])) return reply.send(locale.SETLOGS.INVALID_ACTION, {
-            socket: {
-                actions: this.actions.join(`, `)
-            },
+            socket: {actions: this.actions.join(`, `)},
         })
         //  This is the main configuration of setlogs, so everything dependant on this value
         this.guildConfigurations = message.guild.configs
@@ -70,12 +68,10 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.author.id, 
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, {
-            status: `success`
-        })
+        return reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, {status: `success`})
     },
 
     /**
@@ -86,9 +82,7 @@ module.exports = {
         const fn = `[setLogs.disable()]`
         if (!this.primaryConfig.value) {
             return reply.send(locale.SETLOGS.ALREADY_DISABLED, {
-                socket: {
-                    prefix: prefix
-                }
+                socket: {prefix: prefix}
             })
         }
         //  Update configs
@@ -99,9 +93,7 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, {
-            status: `success`
-        })
+        reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, {status: `success`})
     },
 
     /**
@@ -111,26 +103,19 @@ module.exports = {
     async channel(client, reply, message, arg, locale, prefix) {
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) return reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
-            socket: {
-                prefix: prefix
-            }
+            socket: {prefix: prefix}
         })
         //  Handle if user hasn't specified the target channel
         if (!this.args[1]) return reply.send(locale.SETLOGS.MISSING_CHANNEL, {
-            socket: {
-                prefix: prefix,
-                emoji: await client.getEmoji(`692428927620087850`)
-            }
+            socket: {prefix: prefix, emoji: await client.getEmoji(`692428927620087850`)}
         })
         //  Do channel searching by three possible conditions
-        const searchChannel = message.mentions.channels.first() ||
-            message.guild.channels.cache.get(this.args[1]) ||
-            message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        const searchChannel = message.mentions.channels.first()
+        || message.guild.channels.cache.get(this.args[1])
+        || message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         //  Handle if target channel couldn't be found
         if (!searchChannel) return reply.send(locale.SETLOGS.INVALID_CHANNEL, {
-            socket: {
-                emoji: await client.getEmoji(`692428969667985458`)
-            }
+            socket: {emoji: await client.getEmoji(`692428969667985458`)}
         })
         //  Update configs
         client.db.updateGuildConfiguration({
@@ -141,9 +126,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         reply.send(locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {
-            socket: {
-                channel: searchChannel
-            },
+            socket: {channel: searchChannel},
             status: `success`
         })
     }

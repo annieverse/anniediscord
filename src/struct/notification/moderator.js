@@ -1,3 +1,4 @@
+
 /**
  *  Handles verification message. 
  *  This class is purposely to help user's verification done quicker by notifying the moderators.
@@ -25,7 +26,7 @@ class ModNotification {
         this.isModerator = Components.isModerator
         this.setCooldown = Components.setCooldown
         this.isCooldown = Components.isCooldown
-        this.modRoleId = `551603523070984222`
+        this.modRoleId = `551603523070984222` 
         this.verificationChId = `538843763544555528`
         this.moderatorChannelId = `588438012787163146`
         this.moduleID = `${Components.message.author.id}-REQUESTING_VERIFICATION-${Components.message.guild.id}`

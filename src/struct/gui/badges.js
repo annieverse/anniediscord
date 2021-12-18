@@ -1,35 +1,24 @@
-const {
-	Canvas,
-	resolveImage
-} = require(`canvas-constructor`)
-const {
-	resolve,
-	join
-} = require(`path`)
+const { Canvas, resolveImage } = require(`canvas-constructor`) 
+const { resolve, join } = require(`path`)
 const fetch = require(`node-fetch`)
 const imageUrlRegex = /\?size=2048$/g
 const Theme = require(`../../ui/colors/themes`)
-const canvas = require(`canvas`)
+const canvas = require(`canvas`) 
 
 canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-medium.ttf`)), `RobotoMedium`)
 canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `RobotoBold`)
 canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function badge(stacks, member) {
-	const {
-		loadAsset,
-		meta: {
-			data
-		}
-	} = stacks
+	const { loadAsset, meta: {data} } = stacks
 
 
 	/**
-	 * id = userid, cur = currentexp, max = maxexp,
-	 * crv = expcurve, lvl = userlevel, ac = userartcoins,
-	 * rep = userreputation, des = userdescription, ui = userinterfacemode
-	 * clr = hex code of user's rank color.
-	 */
+     * id = userid, cur = currentexp, max = maxexp,
+     * crv = expcurve, lvl = userlevel, ac = userartcoins,
+     * rep = userreputation, des = userdescription, ui = userinterfacemode
+     * clr = hex code of user's rank color.
+     */
 	const userdata = data
 	const user = {
 		id: userdata.userId,
@@ -49,8 +38,8 @@ async function badge(stacks, member) {
 		theme: Theme[userdata.interfacemode]
 	}
 
-	let canvas_x = 320 //300
-	let canvas_y = 420 //400
+	let canvas_x = 320//300
+	let canvas_y = 420//400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -58,9 +47,7 @@ async function badge(stacks, member) {
 
 	const {
 		body: avatar
-	} = await fetch(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`), {
-		method: `GET`
-	}).then(data => data.buffer())
+	} = await fetch(member.user.displayAvatarURL().replace(imageUrlRegex, `?size=512`),{method: `GET`}).then(data => data.buffer())
 	const badgesdata = data.badges
 
 	delete badgesdata.userId
@@ -88,9 +75,9 @@ async function badge(stacks, member) {
 	 */
 	canv.printCircularImage(await resolveImage(avatar), 15, 15, 30, 30, 15)
 
-		/**
-		 *    TITLE BAR
-		 */
+	/**
+	 *    TITLE BAR
+	 */
 		.setColor(user.theme.text)
 		.setTextAlign(`left`)
 		.setTextFont(`11pt RobotoBold`)
@@ -105,14 +92,14 @@ async function badge(stacks, member) {
 
 	//we can fit 20 badges; if user has more display a plus or something
 	async function setBadge(xy, diameter, pos_y) {
-		for (var i = 0; i <= Math.min(key.length, 18); i++) {
-			var j = Math.floor(i / 4)
-			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + i % 4 * 57, pos_y + j * 57, xy, xy, diameter)
+		for (var i=0; i<=Math.min(key.length, 18); i++) {
+			var j = Math.floor(i/4)
+			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + i % 4 *57, pos_y + j*57, xy, xy, diameter)
 		}
 		if (key.length == 19) {
-			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + 3 * 57, pos_y + 4 * 57, xy, xy, diameter)
+			canv.printImage(await resolveImage(await loadAsset(key[i])), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		} else if (key.length > 19) {
-			canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 40 + 3 * 57, pos_y + 4 * 57, xy, xy, diameter)
+			canv.printImage(await resolveImage(await loadAsset(`plus`)), startPos_x + 40 + 3*57, pos_y + 4*57, xy, xy, diameter)
 		}
 	}
 

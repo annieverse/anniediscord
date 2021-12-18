@@ -3,9 +3,7 @@ const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
-const {
-    v4: uuidv4
-} = require(`uuid`)
+const { v4: uuidv4 } = require(`uuid`)
 const findRole = require(`../../utils/findRole`)
 
 /**
@@ -49,20 +47,18 @@ module.exports = {
             }
         })
         this.args = arg.split(` `)
-        //  Handle if the selected options doesn't exists
+            //  Handle if the selected options doesn't exists
         if (!this.actions.includes(this.args[0].toLowerCase())) return reply.send(locale.SETWELCOMER.INVALID_ACTION, {
-            socket: {
-                availableActions: this.actions.join(`, `)
-            }
-        })
-        //  Run action
+                socket: { availableActions: this.actions.join(`, `) }
+            })
+            //  Run action
         this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
         this.guildConfigurations = message.guild.configs
         this.action = this.args[0]
         this.selectedModule = this.actionReference[this.action]
-        //  This is the main configuration of setwelcomer, so everything dependant on this value
+            //  This is the main configuration of setwelcomer, so everything dependant on this value
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
-        //  This is the sub-part of main configuration such as welcomer's channel, text, etc
+            //  This is the sub-part of main configuration such as welcomer's channel, text, etc
         this.subConfig = this.guildConfigurations.get(this.selectedModule)
         return this[this.args[0].toLowerCase()](client, reply, message, arg, locale, prefix)
     },
@@ -91,9 +87,7 @@ module.exports = {
         })
         return reply.send(locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
             status: `success`,
-            socket: {
-                prefix: prefix
-            }
+            socket: { prefix: prefix }
         })
     },
 
@@ -102,11 +96,7 @@ module.exports = {
      * @return {void}
      */
     async disable(client, reply, message, arg, locale, prefix) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
         client.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 0,
@@ -114,9 +104,7 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.SUCCESSFULLY_DISABLED, {
-            status: `success`
-        })
+        return reply.send(locale.SETWELCOMER.SUCCESSFULLY_DISABLED, { status: `success` })
     },
 
     /**
@@ -124,27 +112,15 @@ module.exports = {
      * @return {void}
      */
     async channel(client, reply, message, arg, locale, prefix) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
-        //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {
-            socket: {
-                prefix: prefix
-            }
-        })
-        //  Do channel searching by three possible conditions
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
+            //  Handle if search keyword isn't provided
+        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, { socket: { prefix: prefix } })
+            //  Do channel searching by three possible conditions
         const searchChannel = message.mentions.channels.first() ||
             message.guild.channels.cache.get(this.args[1]) ||
             message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
-        //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
-            socket: {
-                emoji: await client.getEmoji(`692428578683617331`)
-            }
-        })
+            //  Handle if target channel couldn't be found
+        if (!searchChannel) return reply.send(locale.SETWELCOMER.INVALID_CHANNEL, { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
         client.db.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: searchChannel.id,
@@ -154,9 +130,7 @@ module.exports = {
         })
         return reply.send(locale.SETWELCOMER.CHANNEL_SUCCESSFULLY_REGISTERED, {
             status: `success`,
-            socket: {
-                channel: `<#${searchChannel.id}>`
-            }
+            socket: { channel: `<#${searchChannel.id}>` }
         })
     },
 
@@ -166,18 +140,12 @@ module.exports = {
      */
     async text(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
-        //  Handle if text content isn't provided
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
+            //  Handle if text content isn't provided
         if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
-            socket: {
-                prefix: prefix
-            },
-        })
-        //  Update configs
+                socket: { prefix: prefix },
+            })
+            //  Update configs
         const welcomerText = this.args.slice(1).join(` `)
         client.db.updateGuildConfiguration({
             configCode: this.selectedModule,
@@ -186,15 +154,8 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        await reply.send(locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {
-            status: `success`
-        })
-        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, {
-            simplified: true,
-            socket: {
-                emoji: await client.getEmoji(`692428927620087850`)
-            }
-        })
+        await reply.send(locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, { status: `success` })
+        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, { simplified: true, socket: { emoji: await client.getEmoji(`692428927620087850`) } })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
@@ -206,11 +167,7 @@ module.exports = {
      */
     async preview(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
         const renderingMsg = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
@@ -234,19 +191,13 @@ module.exports = {
      */
     async role(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
-        //  Handle if search keyword isn't provided
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
+            //  Handle if search keyword isn't provided
         if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
-            socket: {
-                prefix: prefix
-            },
-            status: `warn`
-        })
-        //  Handle role reset
+                socket: { prefix: prefix },
+                status: `warn`
+            })
+            //  Handle role reset
         if (this.args[1].startsWith(`reset`)) {
             client.db.updateGuildConfiguration({
                 configCode: this.selectedModule,
@@ -262,11 +213,9 @@ module.exports = {
         for (let i = 0; i < specifiedRoles.length; i++) {
             //  Do role searching
             const searchRole = findRole(specifiedRoles[i], message.guild)
-            //  Handle if target role couldn't be found
-            if (!searchRole) return reply.send(locale.SETWELCOMER.INVALID_ROLE, {
-                status: `fail`
-            })
-            //  Handle if role is higher than annie
+                //  Handle if target role couldn't be found
+            if (!searchRole) return reply.send(locale.SETWELCOMER.INVALID_ROLE, { status: `fail` })
+                //  Handle if role is higher than annie
             if (searchRole.position > this.annieRole.position) return reply.send(locale.SETWELCOMER.ROLE_TOO_HIGH, {
                 socket: {
                     role: searchRole,
@@ -285,9 +234,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
-            socket: {
-                role: rolesContainer.join(` `)
-            },
+            socket: { role: rolesContainer.join(` `) },
             status: `success`
         })
     },
@@ -299,14 +246,9 @@ module.exports = {
     async image(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
+            socket: { prefix: prefix }
         })
-        const {
-            isValidUpload,
-            url
-        } = this.getImage(message)
+        const { isValidUpload, url } = this.getImage(message)
         if (!url) return reply.send(locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
             socket: {
                 emoji: await client.getEmoji(`692428692999241771`),
@@ -346,7 +288,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(async () => {
+        c.onAccept(async() => {
             client.db.updateGuildConfiguration({
                 configCode: this.selectedModule,
                 customizedParameter: id,
@@ -367,11 +309,7 @@ module.exports = {
      */
     async userimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
         //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
@@ -391,15 +329,8 @@ module.exports = {
                 cacheTo: this.guildConfigurations
             })
         }
-        await reply.send(locale.SETWELCOMER[settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`], {
-            status: `success`
-        })
-        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, {
-            simplified: true,
-            socket: {
-                emoji: await client.getEmoji(`692428927620087850`)
-            }
-        })
+        await reply.send(locale.SETWELCOMER[settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`], { status: `success` })
+        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, { simplified: true, socket: { emoji: await client.getEmoji(`692428927620087850`) } })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
@@ -411,11 +342,7 @@ module.exports = {
      */
     async noimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
-        })
+        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
         //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
@@ -426,15 +353,8 @@ module.exports = {
             setByUserId: message.author.id,
             cacheTo: this.guildConfigurations
         })
-        await reply.send(locale.SETWELCOMER[settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`], {
-            status: `success`
-        })
-        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, {
-            simplified: true,
-            socket: {
-                emoji: await client.getEmoji(`692428927620087850`)
-            }
-        })
+        await reply.send(locale.SETWELCOMER[settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`], { status: `success` })
+        const tipsToPreview = await reply.send(locale.SETWELCOMER.TIPS_TO_PREVIEW, { simplified: true, socket: { emoji: await client.getEmoji(`692428927620087850`) } })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
@@ -464,9 +384,7 @@ module.exports = {
     async theme(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
-            socket: {
-                prefix: prefix
-            }
+            socket: { prefix: prefix }
         })
         if (!this.args[1]) return reply.send(locale.SETWELCOMER.THEME_MISSING_NAME, {
             socket: {

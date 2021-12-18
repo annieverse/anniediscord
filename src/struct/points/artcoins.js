@@ -12,25 +12,25 @@ const Points = require(`../../libs/points`)
  *  @Artcoins
  */
 class Artcoins extends Points {
-	constructor(data) {
+    constructor(data) {
 		super(data)
-		this.data = data
-		this.bot = data.bot
+        this.data = data
+        this.bot = data.bot
 		this.updated = data.updated
 		this.meta = data.meta
 		this.commanifier = data.commanifier
 		this.moduleID = `AC_GAIN_${data.message.author.id}_${data.message.guild.id}`
 		this.totalGain = data.bot.config.currency.totalGain
-	}
+    }
 
 
 	onLevelUp() {
 		//	The rewards will be choosen by the difference between previous level and new level.
-		return (this.updated.level - this.meta.data.level) > 1 ? this._multiLevelUpReward() : this._singleLevelUpReward()
+		return (this.updated.level - this.meta.data.level) > 1  ? this._multiLevelUpReward() : this._singleLevelUpReward()
 	}
 
 
-	runAndUpdate() {
+    runAndUpdate() {
 		//	Multiply the exp gained by ten times if the message is an art post.
 		if (super.isArtPost) this.totalGain = this.totalGain * 10
 
@@ -41,9 +41,9 @@ class Artcoins extends Points {
 		const guildInfo = `${this.message.guild.name} | ${this.message.channel.name}`
 		const acDifference = `${this.commanifier(this.meta.data.artcoins)} --> ${this.commanifier(this.meta.data.artcoins + gainedAc)}`
 		this.logger.info(`[${guildInfo}] ${this.moduleID} received ${gainedAc} AC (${acDifference})`)
-	}
+    }
 
-
+	
 	_singleLevelUpReward() {
 		for (let i = this.meta.data.level + 1; i <= this.updated.level; i++) {
 			const updatedlevel = i
@@ -63,11 +63,11 @@ class Artcoins extends Points {
 		}
 	}
 
-
+	
 	_multiLevelUpReward() {
 		const threeshold = this.updated.level - this.meta.data.level
 		let bonusac = 0
-		for (let i = 0; i < threeshold; i++) {
+		for (let i = 0; i<threeshold; i++) {
 			bonusac += 35 * (this.meta.data.level + i)
 			this.db.storeArtcoins(bonusac)
 			return this.reply(this.code.LEVELUP_JUMP, {

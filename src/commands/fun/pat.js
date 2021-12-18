@@ -11,9 +11,7 @@ module.exports = {
     usage: `pat <User>(Optional)`,
     permissionLevel: 0,
     async execute(client, reply, message, arg, locale) {
-        const {
-            body
-        } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
+        const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
         //  Multi-user hug
         if (arg) {
             const target = await (new User(client, message)).lookFor(arg)
@@ -24,7 +22,7 @@ module.exports = {
             })
             return reply.send(locale.PAT.OTHER_USER, {
                 socket: {
-                    user: message.author.username,
+                    user: message.author.username, 
                     targetUser: target.master.username
                 },
                 imageGif: body.link

@@ -4,52 +4,52 @@ const Response = require(`./response`)
 /**
  * Master/Parent module of Command Cluster
  * Not callable unless extended from a sub-command.
- */
+ */ 
 class Commands {
 	constructor(Stacks) {
 		this.bot = Stacks.bot
 		this.message = Stacks.message
-		this.responseClass = new Response(Stacks.message)
+        this.responseClass = new Response(Stacks.message)
 
-		/**
-		 * The default prop for accessing command's prefix.
-		 * @since 1.0.0
-		 * @type {String}
-		 */
+        /**
+         * The default prop for accessing command's prefix.
+         * @since 1.0.0
+         * @type {String}
+         */
 		this.prefix = Stacks.bot.prefix
 
-		/**
-		 * Tokenized message into an array.
-		 * @since 1.0.0
-		 * @type {Array}
-		 */
+        /**
+         * Tokenized message into an array.
+         * @since 1.0.0
+         * @type {Array}
+         */
 		this.messageArray = Stacks.message.content.split(` `)
 
 		/**
-		 * Tokenized arguments. Except, no command name included.
-		 * @since 1.0.0
-		 * @type {String}
-		 */
+         * Tokenized arguments. Except, no command name included.
+         * @since 1.0.0
+         * @type {String}
+         */	
 		this.args = this.messageArray.slice(1)
 
-		/**
-		 * Untokenized arguments. Except, no command name included.
-		 * @since 1.0.0
-		 * @type {String}
-		 */
+        /**
+         * Untokenized arguments. Except, no command name included.
+         * @since 1.0.0
+         * @type {String}
+         */	
 		this.fullArgs = this.args.join(` `)
 
 		/**
-		 * The used command name.
-		 * @since 1.0.0
-		 * @type {String}
-		 */
+         * The used command name.
+         * @since 1.0.0
+         * @type {String}
+         */	
 		this.commandName = this.messageArray[0].slice(this.prefix.length).toLowerCase()
 
 		/**
-		 * The accepted alias to cancel command flow.
-		 * @type {array}
-		 */
+         * The accepted alias to cancel command flow.
+         * @type {array}
+         */	
 		this.cancelParameters = [
 			`n`,
 			`no`,
@@ -63,7 +63,7 @@ class Commands {
 		 * @type {Object}
 		 */
 		this.commandProperties = Stacks.commandProperties
-
+		
 		/**
 		 * Define the current instance identifier
 		 * @since 6.0.0
@@ -72,41 +72,41 @@ class Commands {
 		this.instanceId = `${this.commandProperties.name.toUpperCase()}_${this.message.author.id}`
 
 		/**
-		 * The default locale for current command instance
-		 * @type {string}
-		 */
-		this.locale = Stacks.bot.locale[`en`]
+         * The default locale for current command instance
+         * @type {string}
+         */	
+		this.locale = Stacks.bot.locale[`en`]	
 
 		/**
-		 * Logger libs
-		 * @type {object}
-		 */
+         * Logger libs
+         * @type {object}
+         */	
 		this.logger = Stacks.bot.logger
-
+	
 		/**
-		 * Current guild instance
-		 * @type {object}
-		 */
-		this.guild = this.message.guild
+         * Current guild instance
+         * @type {object}
+         */	
+		this.guild = this.message.guild 
 
-		/**
-		 * Annie's role
-		 * @type {snowflake}
-		 */
-		this.annieRole = this.message.guild ?
-			this.message.guild.members.fetch(Stacks.bot.user.id).then(m => m.roles.highest) :
-			null
+        /**
+         * Annie's role
+         * @type {snowflake}
+         */
+        this.annieRole = this.message.guild 
+        ? this.message.guild.members.fetch(Stacks.bot.user.id).then(m => m.roles.highest)
+        : null
 	}
 
-	/**
-	 * Response's send wrapper
-	 * @param {string} content
-	 * @param {object} plugins
-	 * @return {*}
-	 */
-	reply(content, plugins) {
-		return this.responseClass.send(content, plugins)
-	}
+    /**
+     * Response's send wrapper
+     * @param {string} content
+     * @param {object} plugins
+     * @return {*}
+     */
+    reply(content, plugins) {
+        return this.responseClass.send(content, plugins)
+    }
 
 	/**
 	 *  first-level collector handler. Inherited from `Pistachio.collector()`
@@ -114,15 +114,15 @@ class Commands {
 	 *  @param {number} [timeout=120000] 120 seconds timeout
 	 *  @returns {MessageCollector}
 	 */
-	setSequence(max = 2, timeout = 120000) {
+	setSequence(max=2, timeout=120000) {
 		const fn = `[Commands.setSequence()]`
 		this.logger.debug(`${fn} ${this.instanceId} initializing new sequence flow`)
 		this.onSequence = 1
 		this.sequence = this.message.channel.createMessageCollector(
-			m => m.author.id === this.message.author.id, {
-				max: max,
-				time: timeout,
-			})
+		m => m.author.id === this.message.author.id, {
+			max: max,
+			time: timeout,
+		})
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Commands {
 		return true
 	}
 
-	async requestUserMetadata(dataLevel = 1, localPool = null) {
+	async requestUserMetadata(dataLevel=1, localPool=null) {
 		const fn = `[Commands.requestUserMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
 		const targetUser = await this._userSelector(localPool)
@@ -170,7 +170,7 @@ class Commands {
 		//  Remove user searchstring keyword from arg pool
 		if (targetUser.usedKeyword) {
 			let tokenizedKeywords = targetUser.usedKeyword.split(` `)
-			for (let i = 0; i < tokenizedKeywords.length; i++) {
+			for (let i=0; i<tokenizedKeywords.length; i++) {
 				this.fullArgs = this.fullArgs.replace(tokenizedKeywords[i], ``)
 			}
 			//  Ommit leftover symbols from collection parsing
@@ -185,7 +185,7 @@ class Commands {
 		return true
 	}
 
-	async requestAuthorMetadata(dataLevel = 1) {
+	async requestAuthorMetadata(dataLevel=1) { 
 		const fn = `[Commands.requestAuthorMetadata()]`
 		if (!dataLevel) throw new TypeError(`${fn} parameter 'dataLevel' cannot be blank or zero.`)
 		const result = await new User(this.bot, this.message).requestMetadata(this.message.author, dataLevel)
@@ -209,7 +209,7 @@ class Commands {
 	 * @author klerikdust
 	 * @returns {object}
 	 */
-	async addConfirmationButton(id = this._generateUUID(), targetMessage = this.message, targetUserId = this.message.author.id) {
+	async addConfirmationButton(id=this._generateUUID(), targetMessage=this.message, targetUserId=this.message.author.id) {
 		//  Initialize the container first, if not present
 		if (!this.confirmationButtons) this.confirmationButtons = new Map()
 		const confirmationEmoji = `✅`
@@ -217,11 +217,8 @@ class Commands {
 		const cancelEmoji = await this.bot.getEmoji(`794593423575351307`)
 		targetMessage.react(confirmationEmoji)
 		targetMessage.react(cancelEmoji)
-		const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji.name].includes(reaction.emoji.name) && user.id === targetUserId
-		const confirmationButton = targetMessage.createReactionCollector(confirmationButtonFilter, {
-			time: 300000,
-			max: 1
-		})
+        const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji.name].includes(reaction.emoji.name) && user.id === targetUserId
+        const confirmationButton = targetMessage.createReactionCollector(confirmationButtonFilter, { time: 300000, max: 1 })
 		this.confirmationButtons.set(id, confirmationButton)
 		//  Optional metadata for debugging purpose
 		return {
@@ -238,9 +235,9 @@ class Commands {
 	 * @param {object} [response={}] target confirmation response to finalize with.
 	 * @returns {void}
 	 */
-	finalizeConfirmation(response = {}) {
+	finalizeConfirmation(response={}) {
 		response.message.reactions.removeAll()
-			.catch(e => this.logger.warn(`Failed to finalize transaction > ${e.message}`))
+        .catch(e => this.logger.warn(`Failed to finalize transaction > ${e.message}`))
 	}
 
 	/**
@@ -248,7 +245,7 @@ class Commands {
 	 * @param {object} [response={}] target confirmation response to cancel with.
 	 * @return {boolean}
 	 */
-	isCancelled(response = {}) {
+	isCancelled(response={}) {
 		const r = response.message.reactions.cache
 		if (r.has(`794593423575351307`)) {
 			if (r.get(`794593423575351307`).count >= 2) {
@@ -261,14 +258,14 @@ class Commands {
 
 	/**
 	 * Selecting user based on the condition of `this.fullArgs` and command's multiUser property.
-	 * @param {object|null} [localPool=null] Perform custom search inside given pool. Must be Array/Map typed.
+     * @param {object|null} [localPool=null] Perform custom search inside given pool. Must be Array/Map typed.
 	 * @returns {object}
 	 */
-	_userSelector(localPool = null) {
+	_userSelector(localPool=null) {
 		const userClass = new User(this.bot, this.message)
-		return this.commandProperties.multiUser && this.fullArgs ?
-			userClass.lookFor(this.fullArgs, localPool) :
-			userClass.lookFor(this.message.author.id, localPool)
+		return this.commandProperties.multiUser && this.fullArgs 
+		? userClass.lookFor(this.fullArgs, localPool) 
+		: userClass.lookFor(this.message.author.id, localPool)
 	}
 }
 

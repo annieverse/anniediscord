@@ -1,1 +1,1 @@
-module.exports = (bot, member) => {}
+module.exports = (bot,member) => {}

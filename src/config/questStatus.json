@@ -1,6 +1,6 @@
 {
-  "0": "ongoing",
-  "1": "completed",
-  "2": "completed well",
-  "3": "completed exceptionally well"
+  "0" : "ongoing",
+  "1" : "completed",
+  "2" : "completed well",
+  "3" : "completed exceptionally well"
 }
