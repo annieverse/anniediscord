@@ -9,33 +9,42 @@ class UI {
 	 * @param {number} [level=0] new level to be displayed in the card
 	 * @return {Canvas}
 	 */
-	constructor(user={}, level=0) {
+	constructor(user = {}, level = 0) {
 		this.user = user
 		this.level = level
 	}
 
 	async build() {
-		let card = await new Cards({width: 250, height: 80, theme: this.user.usedTheme.alias})
+		let card = await new Cards({
+			width: 250,
+			height: 80,
+			theme: this.user.usedTheme.alias
+		})
 		//  Base
-		card.createBase({cornerRadius: 100})
+		card.createBase({
+			cornerRadius: 100
+		})
 		//  Add top cover
-		await card.addBackgroundLayer(this.user.usedCover.alias,{
-			isSelfUpload: this.user.usedCover.isSelfUpload, 
+		await card.addBackgroundLayer(this.user.usedCover.alias, {
+			isSelfUpload: this.user.usedCover.isSelfUpload,
 			gradient: true,
 			gradientHeight: 160
 		})
 		//  User's avatar on left
-		await card.addContent({ 
-			avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})),
+		await card.addContent({
+			avatar: await urlToBuffer(this.user.master.displayAvatarURL({
+				format: `png`,
+				dynamic: false
+			})),
 			avatarRadius: 10,
 			marginLeft: 42,
 			marginTop: 43,
 			inline: true
 		})
 		//  Main text content
-		card.addTitle({ 
+		card.addTitle({
 			main: `Level up to ${this.level}!`,
-			size: 13, 
+			size: 13,
 			fontWeight: `bold`,
 			marginLeft: 25,
 			marginTop: 46,

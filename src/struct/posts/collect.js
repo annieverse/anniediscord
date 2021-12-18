@@ -10,7 +10,7 @@ class collectPost extends MessageController {
         this.communityNotificationLabel = `comnotif:${this.data.message.author.id}`
 
     }
-    
+
 
     /**
      *  Notify community for Booster user.

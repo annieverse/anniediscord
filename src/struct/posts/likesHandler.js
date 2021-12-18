@@ -4,7 +4,7 @@ const Pistachio = require(`../../libs/pistachio`)
  *  @heartReactionHandler
  *  @author Pan
  */
-class heartReactionHandler { 
+class heartReactionHandler {
     constructor(data) {
         this.defaultEmoji = `❤️`
         this.data = data
@@ -14,7 +14,10 @@ class heartReactionHandler {
         this.reaction = data.reaction
         this.bot = data.annie
         this.notificationTimeout = 3600000
-        this.pistachio = new Pistachio({bot: this.bot, message: this.message})
+        this.pistachio = new Pistachio({
+            bot: this.bot,
+            message: this.message
+        })
         this.configs = data.configs
     }
 
@@ -22,15 +25,15 @@ class heartReactionHandler {
      * remove a like to a post when a heart is removed
      * @remove
      */
-    async remove(){
+    async remove() {
         // Returns if the heart module is disbled
         if (!this.bot.post_heart_module) return
 
         //  Returns if the reaction is unmatch.
         if (this.unmatchEmoji) return
-		//  Returns if no artwork url was found
-        if (!this.artwork) return 
-		//  Returns if current channel is not listed in arts channels.
+        //  Returns if no artwork url was found
+        if (!this.artwork) return
+        //  Returns if current channel is not listed in arts channels.
         if (this.nonArtChannels) return
         //  Returns if user react is a this.bot
         if (this.isBot) return
@@ -40,9 +43,11 @@ class heartReactionHandler {
         if (await this.bot.isCooldown(this.moduleID)) return
         // Set new cooldown for liking post
         this.bot.setCooldown(this.moduleID, this.notificationTimeout)
-        
-        let postmeta = await this.data.annie.db.getpostData({url: this.artwork})
-        
+
+        let postmeta = await this.data.annie.db.getpostData({
+            url: this.artwork
+        })
+
         if (!postmeta) return
 
         //  Get attachment metadata
@@ -57,30 +62,32 @@ class heartReactionHandler {
      * Add a like to a post when a heart is added
      * @add
      */
-    async add(){
+    async add() {
 
         // Returns if the heart module is disbled
         if (!this.bot.post_heart_module) return
 
         //  Returns if the reaction is unmatch.
         if (this.unmatchEmoji) return
-		//  Returns if no artwork url was found
-        if (!this.artwork) return 
-		//  Returns if current channel is not listed in arts channels.
+        //  Returns if no artwork url was found
+        if (!this.artwork) return
+        //  Returns if current channel is not listed in arts channels.
         if (this.nonArtChannels) return
         //  Returns if user trying to heart their own post
         if (this.selfLiking) this.reaction.users.remove(this.reactor)
         //  Returns if user react is a this.bot
         if (this.isBot) return
-        
+
         this.moduleID = `ADDINGLIKE_${this.reactor.id}_${this.message.id}_${this.message.guild.id}`
         //  Returns if user has recently liked the post
         if (await this.bot.isCooldown(this.moduleID)) return
         // Set new cooldown for liking post
         this.bot.setCooldown(this.moduleID, this.notificationTimeout)
 
-        let postmeta = await this.data.annie.db.getpostData({url: this.artwork})
-        
+        let postmeta = await this.data.annie.db.getpostData({
+            url: this.artwork
+        })
+
         if (!postmeta) {
             this.data.annie.db.registerPost({
                 userId: this.message.author.id,
@@ -89,7 +96,7 @@ class heartReactionHandler {
                 channelId: this.message.channel.name,
                 guildId: this.message.guild.id
             })
-            
+
             this.message.react(this.defaultEmoji)
         }
 
@@ -100,74 +107,87 @@ class heartReactionHandler {
         }
         // Update the record
         this.data.annie.db.addHeart(metadata)
-		//  Send notification to user based on heart counts
+        //  Send notification to user based on heart counts
         await this.notification()
-        
+
     }
 
     /**
      *  Send post notification to user's DM.
      */
-	async notification() {
+    async notification() {
 
-		const postmeta = await this.data.annie.db.getpostData({url: this.artwork})
-        const {receive_notification} = await this.data.annie.db.getNotificationStatus(this.message.author.id)
-        
-		//  Returns if user has disabled their notification
+        const postmeta = await this.data.annie.db.getpostData({
+            url: this.artwork
+        })
+        const {
+            receive_notification
+        } = await this.data.annie.db.getNotificationStatus(this.message.author.id)
+
+        //  Returns if user has disabled their notification
         //if (receive_notification==`-1`) return //-1 = explicit no
         var once = null
-		if (receive_notification==`0`) {//0 = default
-			once = `**Do you want to continue receiving post notification, like this?** \n\n`+
-			`If no, you need to do nothing. I will stop sending you notifications. \n`+
-			`If yes, please reply with "**enable notifications**" below. \n\n`+
-			`You can disable notifications with "**disable notifications**" again.`
-		}
+        if (receive_notification == `0`) { //0 = default
+            once = `**Do you want to continue receiving post notification, like this?** \n\n` +
+                `If no, you need to do nothing. I will stop sending you notifications. \n` +
+                `If yes, please reply with "**enable notifications**" below. \n\n` +
+                `You can disable notifications with "**disable notifications**" again.`
+        }
 
 
-		/**
-		 * 	Handling regular notification (Non-booster user)
-		 * 	@regularNotification
-		 */
-		const regularNotification = async () => {
-			this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
-				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes == 1 ? postmeta.total_likes: postmeta.total_likes - 1},
-				thumbnail: this.artwork,
-				field: this.message.author,
-				notch: true
-			})
+        /**
+         * 	Handling regular notification (Non-booster user)
+         * 	@regularNotification
+         */
+        const regularNotification = async () => {
+            this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
+                socket: {
+                    "reactor": this.reactor.username,
+                    "amount": postmeta.total_likes == 1 ? postmeta.total_likes : postmeta.total_likes - 1
+                },
+                thumbnail: this.artwork,
+                field: this.message.author,
+                notch: true
+            })
 
-			if (once) {
-				this.pistachio.reply(once, {field: this.message.author})
-				return this.data.annie.db.disableNotification(this.message.author.id)
-			}	
-		}
+            if (once) {
+                this.pistachio.reply(once, {
+                    field: this.message.author
+                })
+                return this.data.annie.db.disableNotification(this.message.author.id)
+            }
+        }
 
 
-		/**
-		 * 	Handling premium notification (Bbooster user)
-		 * 	@premiumNotification
-		 */
-		const premiumNotification = async () => {
-			this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
-				socket: {"reactor":this.reactor.username, "amount":postmeta.total_likes == 1 ? postmeta.total_likes: postmeta.total_likes - 1},
-				thumbnail: this.artwork,
-				field: this.message.author,
-				notch: true
-			})
+        /**
+         * 	Handling premium notification (Bbooster user)
+         * 	@premiumNotification
+         */
+        const premiumNotification = async () => {
+            this.pistachio.reply(this.bot.locale.en.FEATURED.LIKED + ` \n [Original Post](https://discordapp.com/channels/${this.message.guild.id}/${this.message.channel.id}/${this.message.id}) `, {
+                socket: {
+                    "reactor": this.reactor.username,
+                    "amount": postmeta.total_likes == 1 ? postmeta.total_likes : postmeta.total_likes - 1
+                },
+                thumbnail: this.artwork,
+                field: this.message.author,
+                notch: true
+            })
 
-			if (once) {
-				this.pistachio.reply(once, {field: this.message.author})
-				return this.db.disableNotification(this.message.author.id)
-			}	
-		}
+            if (once) {
+                this.pistachio.reply(once, {
+                    field: this.message.author
+                })
+                return this.db.disableNotification(this.message.author.id)
+            }
+        }
 
-		try {
-			if (this.pistachio.isVip()) return premiumNotification()
-			regularNotification()
-		}
-		catch(e) { 
-			return this.logger.info(`Fail to execute post notification. > ${e.stack}`) 
-		}
+        try {
+            if (this.pistachio.isVip()) return premiumNotification()
+            regularNotification()
+        } catch (e) {
+            return this.logger.info(`Fail to execute post notification. > ${e.stack}`)
+        }
     }
     get caption() {
         //  Return blank caption
@@ -191,10 +211,10 @@ class heartReactionHandler {
     }
 
     get selfLiking() {
-        return this.message.author.id ===  this.reactor.id
+        return this.message.author.id === this.reactor.id
     }
 
-    get isBot(){
+    get isBot() {
         return this.reactor.bot
     }
 }
@@ -206,7 +226,7 @@ class heartReactionHandler {
  */
 class heartHandler {
 
-    constructor(data){
+    constructor(data) {
         this.data = data
         this.bot = data.bot
         this.defaultEmoji = `❤️`
@@ -214,7 +234,10 @@ class heartHandler {
         this.message = this.data.message
         this.notificationTimeout = 3600
         this.moduleID = `HEARTHANDLER_${this.message.author.id}_${this.message.guild.id}`
-        this.pistachio = new Pistachio({bot: this.bot, message: this.message})
+        this.pistachio = new Pistachio({
+            bot: this.bot,
+            message: this.message
+        })
     }
 
     /**
@@ -249,21 +272,25 @@ class heartHandler {
      * Record post to db and send a vip message if enabled
      * @intialPost
      */
-    async intialPost(){
+    async intialPost() {
 
         // Returns if the heart module is disbled
         if (!this.bot.post_heart_module) return
 
         //  Returns if no artwork url was found
-        if (!this.artwork) return 
+        if (!this.artwork) return
         //  Returns if current channel is not listed in arts channels.
         if (this.nonArtChannels) return
         //  Returns if user react is a this.bot
         if (this.isBot) return
 
-        const postmeta = await this.bot.db.getpostData({url: this.artwork})
+        const postmeta = await this.bot.db.getpostData({
+            url: this.artwork
+        })
         if (postmeta) return
-        const {receive_notification} = await this.bot.db.getNotificationStatus(this.message.author.id)
+        const {
+            receive_notification
+        } = await this.bot.db.getNotificationStatus(this.message.author.id)
         //  If user is a VIP user and notification enabled, sent community notification.
         if (this.pistachio.isVip() && receive_notification && this.bot.post_vip_notification_module) this.communityNotification()
         //  React the message
@@ -296,8 +323,11 @@ class heartHandler {
         return !this.bot.post_collect_channels.includes(this.message.channel.id)
     }
 
-    get isBot(){
+    get isBot() {
         return this.message.author.bot
     }
 }
-module.exports = {heartReactionHandler, heartHandler}
+module.exports = {
+    heartReactionHandler,
+    heartHandler
+}

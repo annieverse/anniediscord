@@ -5,14 +5,14 @@ const commanifier = require(`../../utils/commanifier`)
  * @author klerikdust
  */
 module.exports = {
-    name:`serverInfo`,
+	name: `serverInfo`,
 	aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
 	description: `Displays info about the server`,
 	usage: `serverinfo`,
 	permissionLevel: 0,
-    async execute(client, reply, message, arg, locale) {
+	async execute(client, reply, message, arg, locale) {
 		let members = message.guild.memberCount
-		let botSize =  message.guild.members.cache.filter(a => a.user.bot).size
+		let botSize = message.guild.members.cache.filter(a => a.user.bot).size
 		let userSize = members - botSize
 
 		return reply.send(`
@@ -37,5 +37,5 @@ module.exports = {
 			header: message.guild.name,
 			thumbnail: message.guild.iconURL()
 		})
-    }
+	}
 }

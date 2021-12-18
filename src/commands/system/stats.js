@@ -8,40 +8,44 @@ const commanifier = require(`../../utils/commanifier`)
  * @author klerikdust
  */
 module.exports = {
-    name: `stats`,
+	name: `stats`,
 	aliases: [`stats`, `botinfo`, `annieinfo`, `info`, `anniestatus`],
 	description: `Gives info about the current Annie's Statistic.`,
 	usage: `stats`,
 	permissionLevel: 0,
-    async execute(client, reply, message, arg, locale) {
-		const { total } = await client.db.getTotalCommandUsage()
-        //  Cache server size for every 12 hour
-        const serverSize = async () => {
-            const key = `MASTER:GUILD_SIZE`
-            const onCache = await client.db.redis.get(key)
-            if (onCache) return onCache
-            const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
-            client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
-            return size
+	async execute(client, reply, message, arg, locale) {
+		const {
+			total
+		} = await client.db.getTotalCommandUsage()
+		//  Cache server size for every 12 hour
+		const serverSize = async () => {
+			const key = `MASTER:GUILD_SIZE`
+			const onCache = await client.db.redis.get(key)
+			if (onCache) return onCache
+			const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
+			client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
+			return size
 
-        }
+		}
 		return reply.send(locale.SYSTEM_STATS.DISPLAY, {
 			header: `The State of Annie`,
 			thumbnail: client.user.displayAvatarURL(),
 			socket: {
-                shard: shardName[message.guild.shard.id],
-                ping: commanifier(client.ws.ping),
-                uptime: ms(client.uptime, {long:true}),
-                memory: this.formatBytes(memUsage()),
-                totalCommands: commanifier(total),
-                version: pkg.version,
-                servers: commanifier(await serverSize()),
-                emoji: await client.getEmoji(`AnnieNyaa`)
+				shard: shardName[message.guild.shard.id],
+				ping: commanifier(client.ws.ping),
+				uptime: ms(client.uptime, {
+					long: true
+				}),
+				memory: this.formatBytes(memUsage()),
+				totalCommands: commanifier(total),
+				version: pkg.version,
+				servers: commanifier(await serverSize()),
+				emoji: await client.getEmoji(`AnnieNyaa`)
 			}
 		})
-    },
+	},
 
-    /**
+	/**
 	 * Used to format returned bytes value into more human-readable data.
 	 * @param {Bytes/Number} bytes 
 	 * @param {*} decimals 

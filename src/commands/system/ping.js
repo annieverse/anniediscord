@@ -9,13 +9,13 @@ module.exports = {
 	description: `Output bot's latency`,
 	usage: `ping`,
 	permissionLevel: 0,
-    async execute(client, reply, message, arg, locale) {
-        return reply.send(locale.REQUEST_PING, {
+	async execute(client, reply, message, arg, locale) {
+		return reply.send(locale.REQUEST_PING, {
 			status: `success`,
 			socket: {
 				ping: commanifier(Math.floor(client.ws.ping)),
 				emoji: await client.getEmoji(`789212493096026143`)
 			}
 		})
-    }
+	}
 }

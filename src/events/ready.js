@@ -12,7 +12,7 @@ module.exports = function ready(annie) {
     annie.registerGuildAutoResponders()
     annie.registerUserDurationalBuffs()
     annie.logger.info(`<DEPLOYED> (${annie.getBenchmark(annie.startupInit)})`)
-	if (annie.dev) return annie.user.setStatus(`dnd`)
+    if (annie.dev) return annie.user.setStatus(`dnd`)
     /**
      * 	--------------------------------------------------
      * 	Configuration for Production

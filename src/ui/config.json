@@ -55,7 +55,7 @@
                 "MICRO": "8pt roboto-bold",
                 "SMALL": "10pt roboto-bold",
                 "SMALL-MED": "12pt roboto-bold",
-                "MEDIUM": "15pt roboto-bold", 
+                "MEDIUM": "15pt roboto-bold",
                 "LARGE": "20pt roboto-bold",
                 "EXTRA-LARGE": "30pt roboto-bold"
             }
@@ -65,7 +65,7 @@
                 "MICRO": "2pt roboto-bold",
                 "SMALL": "2pt roboto-bold",
                 "SMALL-MED": "4pt roboto-bold",
-                "MEDIUM": "6pt roboto-bold", 
+                "MEDIUM": "6pt roboto-bold",
                 "LARGE": "8pt roboto-bold"
             }
         },
@@ -74,8 +74,8 @@
                 "MICRO": "8pt roboto-light",
                 "SMALL": "9pt roboto-light",
                 "SMALL-MED": "9pt roboto-light",
-                "MEDIUM": "11pt roboto-light", 
-                "LARGE": "13pt roboto-light"      
+                "MEDIUM": "11pt roboto-light",
+                "LARGE": "13pt roboto-light"
             }
         }
     },

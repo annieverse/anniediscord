@@ -1,7 +1,7 @@
 {
-    "help_js":"./core/modules/commands/",
+    "help_js": "./core/modules/commands/",
     "Adminhelp_js": "./core/modules/commands/",
-    "env":"../../.data/environment.json",
-    "experienceFormula":"../../utils/ExperienceFormula",
-    "databaseFormula":"../../utils/databaseManager.js"
+    "env": "../../.data/environment.json",
+    "experienceFormula": "../../utils/ExperienceFormula",
+    "databaseFormula": "../../utils/databaseManager.js"
 }

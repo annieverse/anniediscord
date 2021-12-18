@@ -1,6 +1,13 @@
-const { Canvas } = require(`canvas-constructor`)
-const { resolve, join } = require(`path`)
-const { get } = require(`node-fetch`)
+const {
+	Canvas
+} = require(`canvas-constructor`)
+const {
+	resolve,
+	join
+} = require(`path`)
+const {
+	get
+} = require(`node-fetch`)
 const imageUrlRegex = /\?size=2048$/g
 const moment = require(`moment`)
 const Theme = require(`../../ui/colors/themes`)
@@ -10,37 +17,43 @@ Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `R
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function stat(stacks, member) {
-	const { bot, commanifier, meta: {data} } = stacks
+	const {
+		bot,
+		commanifier,
+		meta: {
+			data
+		}
+	} = stacks
 	const rank = stacks.meta.data.rank
 
 
 	/**
-     * id = userid, cur = currentexp, max = maxexp,
-     * crv = expcurve, lvl = userlevel, ac = userartcoins,
-     * rep = userreputation, des = userdescription, ui = userinterfacemode
-     * clr = hex code of user`s rank color.
-     */
+	 * id = userid, cur = currentexp, max = maxexp,
+	 * crv = expcurve, lvl = userlevel, ac = userartcoins,
+	 * rep = userreputation, des = userdescription, ui = userinterfacemode
+	 * clr = hex code of user`s rank color.
+	 */
 	const userdata = data
-    const user = {
-        id: userdata.userId,
-        cur: userdata.currentexp,
-        max: userdata.maxexp,
-        crv: userdata.nextexpcurve,
-        lvl: userdata.level,
-        ac: userdata.artcoins,
-        rep: userdata.reputations,
-        des: userdata.description,
-        ui: userdata.interfacemode,
-        prt: userdata.partner,
-        rtg: userdata.rating,
-        likecount: userdata.liked_counts,
-        cov: userdata.cover,
-        log: userdata.last_login,
-        theme: Theme[userdata.interfacemode]
-    }
+	const user = {
+		id: userdata.userId,
+		cur: userdata.currentexp,
+		max: userdata.maxexp,
+		crv: userdata.nextexpcurve,
+		lvl: userdata.level,
+		ac: userdata.artcoins,
+		rep: userdata.reputations,
+		des: userdata.description,
+		ui: userdata.interfacemode,
+		prt: userdata.partner,
+		rtg: userdata.rating,
+		likecount: userdata.liked_counts,
+		cov: userdata.cover,
+		log: userdata.last_login,
+		theme: Theme[userdata.interfacemode]
+	}
 
-	let canvas_x = 320//300
-	let canvas_y = 420//400
+	let canvas_x = 320 //300
+	let canvas_y = 420 //400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -69,19 +82,19 @@ async function stat(stacks, member) {
 		.setShadowOffsetY(0)
 		.save()
 
-	var gradient = canv.createLinearGradient(baseWidth/2, 350, baseWidth/2-10, 0)
+	var gradient = canv.createLinearGradient(baseWidth / 2, 350, baseWidth / 2 - 10, 0)
 	gradient.addColorStop(0, rank.color)
 	gradient.addColorStop(1, `transparent`)
 	/**
 	 *    USER
 	 *    AVATAR
 	 */
-	canv.createRoundedClip(startPos_x, startPos_y-100, baseWidth+100, 360, 100, 1)
+	canv.createRoundedClip(startPos_x, startPos_y - 100, baseWidth + 100, 360, 100, 1)
 		.setColor(rank.color)
 		.setGlobalAlpha(0.5)
 		.printRectangle(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
 		.setGlobalAlpha(0.25)
-		.printImage(avatar, startPos_x, startPos_y-10, baseWidth, baseWidth)
+		.printImage(avatar, startPos_x, startPos_y - 10, baseWidth, baseWidth)
 		.setGlobalAlpha(1)
 		.setColor(gradient)
 		.printRectangle(startPos_x, startPos_y, baseWidth, 260) // (x, y, x2, y2)
@@ -113,7 +126,7 @@ async function stat(stacks, member) {
 
 		.setColor(user.theme.text)
 		.setTextFont(`9pt RobotoBold`)
-		.printText(`from a total of `+commanifier(bot.users.size)+` members`, startPos_x + 38, 366)
+		.printText(`from a total of ` + commanifier(bot.users.size) + ` members`, startPos_x + 38, 366)
 
 
 	return canv.toBuffer()

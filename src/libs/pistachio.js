@@ -1,4 +1,8 @@
-const { MessageEmbed, MessageAttachment, MessageCollector } = require(`discord.js`)
+const {
+	MessageEmbed,
+	MessageAttachment,
+	MessageCollector
+} = require(`discord.js`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const logger = require(`pino`)(`PISTACHIO`)
 const fs = require(`fs`)
@@ -20,7 +24,7 @@ class Pistachio {
 	/**
 	 * @param {Object} [Components={}] must atleast include <Message> Object and Annie's <Client> instance.
 	 */
-	constructor(Components={}) {
+	constructor(Components = {}) {
 
 		/**
 		 * <AnnieClient> instance
@@ -46,7 +50,7 @@ class Pistachio {
 		 * Bind Methods
 		 * @since 1.0.0
 		 * @type {AnyComponents}
-		 */	
+		 */
 		this.palette = require(`../ui/colors/default`)
 
 		/**
@@ -62,13 +66,13 @@ class Pistachio {
 		 * @type {Boolean}
 		 */
 		this._isUserMetaLayerAvailable = this.components.user || null
-	
+
 		/**
 		 * Check if <Member> and <Guild> property is available in the message components
 		 * @since 6.0.0
 		 * @type {Boolean}
 		 */
-		if (this.message){
+		if (this.message) {
 			this._isGuildLayerAvailable = this.message.member && this.message.guild ? true : false
 		}
 		this.messageGuildInvite = this.messageGuildInvite.bind(this)
@@ -96,7 +100,7 @@ class Pistachio {
 		this.socketing = this.socketing.bind(this)
 		this._registerPages = this._registerPages.bind(this)
 		this.reply = this.reply.bind(this)
-		this.fetchGuildConfigs = this.fetchGuildConfigs.bind(this) 
+		this.fetchGuildConfigs = this.fetchGuildConfigs.bind(this)
 	}
 
 
@@ -109,11 +113,11 @@ class Pistachio {
 	 * Generates a invite link if one is not set
 	 * @returns Link
 	 */
-	messageGuildInvite(){
+	messageGuildInvite() {
 		return !this.bot.messageGuildInvite ? this.message.channel.createInvite() : this.bot.messageGuildInvite
 	}
 
-	fetchGuildConfigs(parameter){
+	fetchGuildConfigs(parameter) {
 		if (!this._isGuildLayerAvailable) return
 		return this.bot.guilds.cache.get(this.message.guild.id).configs.get(parameter).value
 	}
@@ -126,43 +130,43 @@ class Pistachio {
 		if (!this._isGuildLayerAvailable) return
 		return this.message.channel.bulkDelete(amount)
 	}
-	
+
 	/**
 	 *  Instant message collector
 	 *  @param {MessageInstance} msg
 	 *  @param {Default} [max=2] only catch 1 response
 	 *  @param {Default} [timeout=60000] 60 seconds timeout
 	 */
-	collector(msg, max=2, timeout=60000) {
+	collector(msg, max = 2, timeout = 60000) {
 		if (!this._isGuildLayerAvailable) return
 		return new MessageCollector(this.message.channel,
-		m => m.author.id === this.message.author.id, {
-			max: max,
-			time: timeout,
-		})
-	}
-	
-	/**
-	*  (Multi-layering)Instant message collector
-	*  @param {Object} msg current message instance
-	*  @param {Default} max only catch 1 response
-	*  @param {Default} time 60 seconds timeout
-	*/
-	multiCollector(msg) {
-		if (!this._isGuildLayerAvailable) return
-		return new MessageCollector(msg.channel,
-		m => m.author.id === msg.author.id, {
-			max: 2,
-			time: 60000,
-		})
+			m => m.author.id === this.message.author.id, {
+				max: max,
+				time: timeout,
+			})
 	}
 
 	/**
-	* Adding role to a user
-	* @param {String} targetRole searchString keyword for the role
-	* @param {String} userId user's discord id
-	* @returns {RoleObject}
-	*/
+	 *  (Multi-layering)Instant message collector
+	 *  @param {Object} msg current message instance
+	 *  @param {Default} max only catch 1 response
+	 *  @param {Default} time 60 seconds timeout
+	 */
+	multiCollector(msg) {
+		if (!this._isGuildLayerAvailable) return
+		return new MessageCollector(msg.channel,
+			m => m.author.id === msg.author.id, {
+				max: 2,
+				time: 60000,
+			})
+	}
+
+	/**
+	 * Adding role to a user
+	 * @param {String} targetRole searchString keyword for the role
+	 * @param {String} userId user's discord id
+	 * @returns {RoleObject}
+	 */
 	addRole(targetRole, userId) {
 		const fn = `[Pistachio.addRole()]`
 		if (!this._isGuildLayerAvailable) return
@@ -180,11 +184,11 @@ class Pistachio {
 	}
 
 	/**
-	* Removing role from user
-	* @param {String} targetRole searchString keyword for the role
-	* @param {String} userId user's discord id
-	* @returns {RoleObject}
-	*/
+	 * Removing role from user
+	 * @param {String} targetRole searchString keyword for the role
+	 * @param {String} userId user's discord id
+	 * @returns {RoleObject}
+	 */
 	removeRole(targetRole, userId) {
 		const fn = `[Pistachio.removeRole()]`
 		if (!this._isGuildLayerAvailable) return
@@ -201,31 +205,30 @@ class Pistachio {
 		return this.message.guild.members.cache.get(userId).roles.remove(targetRole)
 	}
 
-    /**
-     * Finds a role by id, tag or plain name
-     * @param {UserResolvable} target the keyword for the role (id, name, mention)
-     * @returns {GuildMemberObject}
-     */
+	/**
+	 * Finds a role by id, tag or plain name
+	 * @param {UserResolvable} target the keyword for the role (id, name, mention)
+	 * @returns {GuildMemberObject}
+	 */
 	findRole(target) {
-        const fn = `[Pistachio.findRole()]`
-        if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target role id/name/mention.`)
+		const fn = `[Pistachio.findRole()]`
+		if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target role id/name/mention.`)
 		try {
 			const rolePattern = /^(?:<@&?)?([0-9]+)>?$/
 			if (rolePattern.test(target)) target = target.replace(rolePattern, `$1`)
 			const roles = this.message.guild.roles.cache
 			const filter = role => role.id === target ||
-			role.name.toLowerCase() === target.toLowerCase() ||
-			role === target
+				role.name.toLowerCase() === target.toLowerCase() ||
+				role === target
 
 			return roles.filter(filter).first()
-		}
-		catch(e) {
+		} catch (e) {
 			return {
 				name: null,
 				id: null
 			}
 		}
-    }
+	}
 
 
 	/**
@@ -234,11 +237,11 @@ class Pistachio {
 	 *  ------------------------------------------
 	 */
 
-	 /**
-	  * If there is a nitro role set up on server, it will be used to determine if a user is a vip
-	  * @returns {Boolean}
-	  */
-	isVip(){
+	/**
+	 * If there is a nitro role set up on server, it will be used to determine if a user is a vip
+	 * @returns {Boolean}
+	 */
+	isVip() {
 		//return this.message.member.roles.has(`654254766016299038`)
 		return this.bot.nitro_role ? this.message.member.roles.cache.has(this.bot.nitro_role) : false
 	}
@@ -249,9 +252,9 @@ class Pistachio {
 	 * @param {String} str target string
 	 * @returns {Number/NaN}
 	 */
-	trueInt(str=``) {
-		return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) 
-			? Math.round(Number(str)) : NaN
+	trueInt(str = ``) {
+		return (!Number.isNaN(Number(str)) && !(Math.round(Number(str)) <= 0) && Number.isFinite(Number(str))) ?
+			Math.round(Number(str)) : NaN
 	}
 
 	/**
@@ -259,8 +262,8 @@ class Pistachio {
 	 *  @param {String} userId target user
 	 *  @returns {String}
 	 */
-	name(userId=``) {
-		const user = this.bot.users.cache.get(userId) 
+	name(userId = ``) {
+		const user = this.bot.users.cache.get(userId)
 		return user ? user.username : userId
 	}
 
@@ -269,7 +272,7 @@ class Pistachio {
 	 *  @param {Number|Integer} number target number to be parsed from
 	 *  @returns {Number|Integer}
 	 */
-	commanifier(number=0) {
+	commanifier(number = 0) {
 		return number ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `,`) : 0
 	}
 
@@ -279,7 +282,7 @@ class Pistachio {
 	 *  @param {Number|Integer} val value to be looked on
 	 *  @returns {ElementOfArray}
 	 */
-	closestUpper(array=[], val=1) {
+	closestUpper(array = [], val = 1) {
 		return Math.min.apply(null, array.filter(function (v) {
 			return v > val
 		}))
@@ -291,9 +294,10 @@ class Pistachio {
 	 *  @param {Number|Integer} val value to be looked on
 	 *  @returns {ElementOfArray}
 	 */
-	closestBelow(array=[], val=1) {
-		return Math.max.apply(null,array.filter(function(v)
-		{ return v <= val }))
+	closestBelow(array = [], val = 1) {
+		return Math.max.apply(null, array.filter(function (v) {
+			return v <= val
+		}))
 	}
 
 	/**
@@ -301,7 +305,7 @@ class Pistachio {
 	 * @param {String} str target string
 	 * @returns {String}
 	 */
-	relabel(str=``) {
+	relabel(str = ``) {
 		let res = str.replace(/[^A-Za-z]+/, ``)
 		return res
 	}
@@ -311,7 +315,7 @@ class Pistachio {
 	 * @param {Array} arr target array to be choose from
 	 * @returns {ElementOfArray}
 	 */
-	choice(arr=[]) {
+	choice(arr = []) {
 		return arr[Math.floor(Math.random() * arr.length)]
 	}
 
@@ -320,7 +324,7 @@ class Pistachio {
 	 * until prompted to run the next task.
 	 * @param {Integer/Number}
 	 */
-	pause(ms=0) {
+	pause(ms = 0) {
 		return new Promise(resolve => setTimeout(resolve, ms))
 	}
 
@@ -330,7 +334,7 @@ class Pistachio {
 	 * @param {String} string target string
 	 * @returns {String}
 	 */
-	normalizeString(string=``) {
+	normalizeString(string = ``) {
 		string = string.charAt(0).toLowerCase() + string.slice(1)
 		if (string.endsWith(`s`)) {
 			string = string.slice(0, -1)
@@ -343,20 +347,20 @@ class Pistachio {
 	 *  @param {String} id filename 
 	 *  @returns {Buffer}
 	 */
-	async loadAsset(id=``) {
+	async loadAsset(id = ``) {
 		// List all files in a directory in Node.js recursively in a synchronous fashion
 		const walkSync = (dir, filelist = []) => {
 			fs.readdirSync(dir).forEach(file => {
-				filelist = fs.statSync(path.join(dir, file)).isDirectory()
-					? walkSync(path.join(dir, file), filelist)
-					: filelist.concat(path.join(dir, file))
+				filelist = fs.statSync(path.join(dir, file)).isDirectory() ?
+					walkSync(path.join(dir, file), filelist) :
+					filelist.concat(path.join(dir, file))
 			})
 			return filelist
 		}
 		let allFiles = walkSync(`./src/assets`) // Starts with the main directory and includes all files in the sub directories
 		let ultimateFile
 		allFiles.forEach((file) => {
-			if (file.includes(id)){ 
+			if (file.includes(id)) {
 				let filePath = `./${file.replace(/\\/g, `/`)}`
 				return ultimateFile = filePath
 			}
@@ -373,30 +377,36 @@ class Pistachio {
 	}
 
 	/**
-	*	Handles user's avatar fetching process. Set `true` on
-	*   second param to return as compressed buffer. (which is needed by canvas)
-	*	@param {String|ID} id id of user to be fetched from.
-	*	@param {Boolean} compress set true to return as compressed buffer.
-	*   @param {boolean} [dynamic=false]
-	*   @return {buffer}
-	*/
-	avatar(id, compress = false, size = `?size=512`, dynamic=false) {
+	 *	Handles user's avatar fetching process. Set `true` on
+	 *   second param to return as compressed buffer. (which is needed by canvas)
+	 *	@param {String|ID} id id of user to be fetched from.
+	 *	@param {Boolean} compress set true to return as compressed buffer.
+	 *   @param {boolean} [dynamic=false]
+	 *   @return {buffer}
+	 */
+	avatar(id, compress = false, size = `?size=512`, dynamic = false) {
 		try {
-			let url = this.bot.users.cache.get(id).displayAvatarURL({format: `png`, dynamic: dynamic})
+			let url = this.bot.users.cache.get(id).displayAvatarURL({
+				format: `png`,
+				dynamic: dynamic
+			})
 			if (compress) {
-				return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
+				return fetch(url.replace(/\?size=2048$/g, size), {
+						method: `GET`
+					})
 					.then(data => data.buffer())
 			}
 			return url + size
+		} catch (e) {
+			return this.loadAsset(`error`)
 		}
-		catch(e) {return this.loadAsset(`error`) }
 	}
 
 	/**
 	 * 	Get the min/max or the calculated curve on given currentexp.
 	 *  @param {Number/Integer} currentExp
 	 */
-	getExpMetadata(currentExp=0) {
+	getExpMetadata(currentExp = 0) {
 		const formula = (exp) => {
 			if (exp < 100) {
 				return {
@@ -429,7 +439,12 @@ class Pistachio {
 		let maxexp = main.maxexp
 		let nextexpcurve = main.nextexpcurve
 		let minexp = main.minexp
-		return {level,maxexp,nextexpcurve,minexp}
+		return {
+			level,
+			maxexp,
+			nextexpcurve,
+			minexp
+		}
 	}
 
 	/**
@@ -437,7 +452,7 @@ class Pistachio {
 	 * @param {String} string of user description.
 	 * @param {Number|Integer} numlines of paragraph.
 	 */
-	formatString(string=``, numlines=0) {
+	formatString(string = ``, numlines = 0) {
 		var paraLength = Math.round((string.length) / numlines)
 		var paragraphs = []
 		var marker = paraLength
@@ -449,9 +464,9 @@ class Pistachio {
 
 			//if marker is in middle of word, try moving to the back of the word
 			//but at most 5 characters
-			for (var j=0; j<5;j++) {
+			for (var j = 0; j < 5; j++) {
 				if (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
-					marker = marker+j
+					marker = marker + j
 				}
 			}
 
@@ -469,9 +484,9 @@ class Pistachio {
 		}
 		return {
 			first: paragraphs[0],
-			second: paragraphs[1]?paragraphs[1]:``,
-			third: paragraphs[2]?paragraphs[2]:``,
-			fourth: paragraphs[3]?paragraphs[3]:``
+			second: paragraphs[1] ? paragraphs[1] : ``,
+			third: paragraphs[2] ? paragraphs[2] : ``,
+			fourth: paragraphs[3] ? paragraphs[3] : ``
 		}
 	}
 
@@ -497,8 +512,8 @@ class Pistachio {
 	 * @param {Array} socket an array of sockets to be applied from.
 	 * @returns {String}
 	 */
-	socketing(content=``,socket=[]) {
-		for(let i = 0; i < socket.length; i++) {
+	socketing(content = ``, socket = []) {
+		for (let i = 0; i < socket.length; i++) {
 			if (content.indexOf(`{${i+1}}`) != -1) content = content.replace(`{${i}}`, socket[i])
 		}
 		return content
@@ -509,58 +524,58 @@ class Pistachio {
 	 * @param {String} userId target user
 	 * @returns {AvatarMessage}
 	 */
-	displayAvatar(userId=``) {
+	displayAvatar(userId = ``) {
 		this.message.react(`📸`)
 		const [avatar, name] = [this.avatar(userId, false, `?size=512`, true), this.name(userId)]
 		const embed = new MessageEmbed()
-		.setImage(avatar)
-		.setAuthor(name, avatar)
-		.setColor(this.palette.crimson)
+			.setImage(avatar)
+			.setAuthor(name, avatar)
+			.setColor(this.palette.crimson)
 		this.message.channel.send(embed)
 	}
 
-    /**
-     *  Registering each element of array into its own embed.
-     *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
-     *  @param {object} [src=null] reply's options parameters for customized embed.
-     *  @returns {array}
-     */
-    _registerPages(pages=[], src=null) {
-        let res = []
-        for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
-            if (src.color) res[i].setColor(this.palette[src.color] || src.color)
-            if (src.header) res[i].setTitle(src.header)
-           	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
-            if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
-           	if (src.cardPreviews) res[i].setFooter(`Press the eyes emoji to preview. (${i+1}/${pages.length})`)
-        }
-        return res
-	}
-	
 	/**
-     *  Registering each element of array into its own embed. Does not have a description, just allows for paging fields because of 25 max per embed
-     *  @param {array} [pages=2] source Integer to be registered. Element must be `num`.
-     *  @param {array} [columns=[]] source array to be registered. Element must be `object with keys name and value`.
-     *  @returns {array}
+	 *  Registering each element of array into its own embed.
+	 *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
+	 *  @param {object} [src=null] reply's options parameters for customized embed.
+	 *  @returns {array}
 	 */
-	_registerPagesTwo(pages=2, columns=[], text) {
+	_registerPages(pages = [], src = null) {
+		let res = []
+		for (let i = 0; i < pages.length; i++) {
+			res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${pages[i]}`)
+			if (src.color) res[i].setColor(this.palette[src.color] || src.color)
+			if (src.header) res[i].setTitle(src.header)
+			if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
+			if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
+			if (src.cardPreviews) res[i].setFooter(`Press the eyes emoji to preview. (${i+1}/${pages.length})`)
+		}
+		return res
+	}
+
+	/**
+	 *  Registering each element of array into its own embed. Does not have a description, just allows for paging fields because of 25 max per embed
+	 *  @param {array} [pages=2] source Integer to be registered. Element must be `num`.
+	 *  @param {array} [columns=[]] source array to be registered. Element must be `object with keys name and value`.
+	 *  @returns {array}
+	 */
+	_registerPagesTwo(pages = 2, columns = [], text) {
 		let res = []
 		pages = pages++
-        for (let i = 0; i < pages; i++) {
-			if (columns[i]){
+		for (let i = 0; i < pages; i++) {
+			if (columns[i]) {
 				let embed = new MessageEmbed().setFooter(`(${i+1}/${pages})`).setColor(this.palette.crimson)
-				if (text){
+				if (text) {
 					embed.setDescription(text)
 				}
 				for (let j = 0; j < columns[i].length; j++) {
-					embed.addField(columns[i][j].name,columns[i][j].value,true)
+					embed.addField(columns[i][j].name, columns[i][j].value, true)
 				}
 				res[i] = embed
 			}
 		}
-        return res
-    }
+		return res
+	}
 
 	/** Annie's custom message system.
 	 *  @param {String} content as the message content
@@ -577,7 +592,7 @@ class Pistachio {
 	 *  @param {String} header use header in an embed.
 	 *  @param {Array} customHeader First index as header text and second index as header icon.
 	 */
-	async reply (content, options = {
+	async reply(content, options = {
 		socket: [],
 		color: ``,
 		url: null,
@@ -628,55 +643,61 @@ class Pistachio {
 			let page = 0
 			const embeddedPages = this._registerPages(content, options)
 			return options.field.send(embeddedPages[0])
-            .then(async msg => {
-                //  Buttons
-                await msg.react(`⏪`)
-                await msg.react(`⏩`)
-                // Filters - These make sure the varibles are correct before running a part of code
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
-                //  Timeout limit for page buttons
-                const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
-                const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
-                //  Add preview button if cardPreviews is enabled
-                if (options.cardPreviews) {
-                	await msg.react(`👀`)
-                	let previewFilter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
-                	let preview = msg.createReactionCollector(previewFilter, { time: 300000 })
-                	let previewedPages = []
-                	preview.on(`collect`, async r => {
-                	    r.users.remove(this.message.author.id)
-                	    if (previewedPages.includes(page)) return
-                	    previewedPages.push(page)
-                		let loading = await options.field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
-                		let img = await new GUI(options.cardPreviews[page]).create()
-                		options.field.send(``, new MessageAttachment(img))
-                		loading.delete()
-                	})
-                }
-                //	Left navigation
-                backwards.on(`collect`, r => {
-                    r.users.remove(this.message.author.id)
-                    page--
-                    if (embeddedPages[page]) {
-                        msg.edit(embeddedPages[page])
-                    } else {
-						page = embeddedPages.length-1
-						msg.edit(embeddedPages[page])
-                    }
-                })
-                //	Right navigation
-                forwards.on(`collect`, r => {
-                    r.users.remove(this.message.author.id)
-                    page++
-                    if (embeddedPages[page]) {
-                        msg.edit(embeddedPages[page])
-                    } else {
-						page = 0
-						msg.edit(embeddedPages[page])
-                    }
-                })
-            })
+				.then(async msg => {
+					//  Buttons
+					await msg.react(`⏪`)
+					await msg.react(`⏩`)
+					// Filters - These make sure the varibles are correct before running a part of code
+					const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+					const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+					//  Timeout limit for page buttons
+					const backwards = msg.createReactionCollector(backwardsFilter, {
+						time: 300000
+					})
+					const forwards = msg.createReactionCollector(forwardsFilter, {
+						time: 300000
+					})
+					//  Add preview button if cardPreviews is enabled
+					if (options.cardPreviews) {
+						await msg.react(`👀`)
+						let previewFilter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
+						let preview = msg.createReactionCollector(previewFilter, {
+							time: 300000
+						})
+						let previewedPages = []
+						preview.on(`collect`, async r => {
+							r.users.remove(this.message.author.id)
+							if (previewedPages.includes(page)) return
+							previewedPages.push(page)
+							let loading = await options.field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
+							let img = await new GUI(options.cardPreviews[page]).create()
+							options.field.send(``, new MessageAttachment(img))
+							loading.delete()
+						})
+					}
+					//	Left navigation
+					backwards.on(`collect`, r => {
+						r.users.remove(this.message.author.id)
+						page--
+						if (embeddedPages[page]) {
+							msg.edit(embeddedPages[page])
+						} else {
+							page = embeddedPages.length - 1
+							msg.edit(embeddedPages[page])
+						}
+					})
+					//	Right navigation
+					forwards.on(`collect`, r => {
+						r.users.remove(this.message.author.id)
+						page++
+						if (embeddedPages[page]) {
+							msg.edit(embeddedPages[page])
+						} else {
+							page = 0
+							msg.edit(embeddedPages[page])
+						}
+					})
+				})
 		}
 		//  Replace content with error message if content is a faulty value
 		if (!content && (typeof content != `string`)) {
@@ -703,7 +724,7 @@ class Pistachio {
 		if (statuses.has(options.status)) {
 			options.color = statuses.get(options.status)
 		}
-	
+
 		//  Returns simple message w/o embed
 		if (options.simplified) return options.field.send(content, options.image ? new MessageAttachment(options.prebuffer ? options.image : await this.loadAsset(options.image)) : null)
 		//  Add notch/chin
@@ -713,7 +734,7 @@ class Pistachio {
 			.setDescription(content)
 			.setThumbnail(options.thumbnail)
 		//  Add header
-		if(options.header) embed.setTitle(options.header)
+		if (options.header) embed.setTitle(options.header)
 		//  Custom header
 		if (options.customHeader) embed.setAuthor(options.customHeader[0], options.customHeader[1])
 		//  Add footer
@@ -739,47 +760,51 @@ class Pistachio {
 		}
 
 		// Adds column fields if any
-		if (options.columns){
-			if (options.columns.length > 25){
+		if (options.columns) {
+			if (options.columns.length > 25) {
 				const array_chunks = (array, chunk_size) => Array(Math.ceil(array.length / chunk_size)).fill().map((_, index) => index * chunk_size).map(begin => array.slice(begin, begin + chunk_size))
 				let chunks = array_chunks(options.columns, 15)
 				let page = 0
 				const embeddedPages = this._registerPagesTwo(chunks.length, chunks, content)
 				return options.field.send(embeddedPages[0])
-				.then(async msg => {
-					//  Buttons
-					await msg.react(`⏪`)
-					await msg.react(`⏩`)
-					// Filters - These make sure the varibles are correct before running a part of code
-					const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
-					const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
-					//  Timeout limit for page buttons
-					const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
-					const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
-					//	Left navigation
-					backwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
-						page--
-						if (embeddedPages[page]) {
-							msg.edit(embeddedPages[page])
-						} else {
-							page = embeddedPages.length-1
-							msg.edit(embeddedPages[page])
-						}
+					.then(async msg => {
+						//  Buttons
+						await msg.react(`⏪`)
+						await msg.react(`⏩`)
+						// Filters - These make sure the varibles are correct before running a part of code
+						const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+						const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+						//  Timeout limit for page buttons
+						const backwards = msg.createReactionCollector(backwardsFilter, {
+							time: 300000
+						})
+						const forwards = msg.createReactionCollector(forwardsFilter, {
+							time: 300000
+						})
+						//	Left navigation
+						backwards.on(`collect`, r => {
+							r.users.remove(this.message.author.id)
+							page--
+							if (embeddedPages[page]) {
+								msg.edit(embeddedPages[page])
+							} else {
+								page = embeddedPages.length - 1
+								msg.edit(embeddedPages[page])
+							}
+						})
+						//	Right navigation
+						forwards.on(`collect`, r => {
+							r.users.remove(this.message.author.id)
+							page++
+							if (embeddedPages[page]) {
+								msg.edit(embeddedPages[page])
+							} else {
+								page = 0
+								msg.edit(embeddedPages[page])
+							}
+						})
 					})
-					//	Right navigation
-					forwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
-						page++
-						if (embeddedPages[page]) {
-							msg.edit(embeddedPages[page])
-						} else {
-							page = 0
-							msg.edit(embeddedPages[page])
-						}
-					})
-				})
-			}else{
+			} else {
 				for (let index = 0; index < options.columns.length; index++) {
 					const element = options.columns[index]
 					embed.addField(element.name, element.value, true)
@@ -790,10 +815,12 @@ class Pistachio {
 		let sent = options.field.send(options.topNotch, embed)
 		if (!options.deleteIn) return sent
 		return sent
-		.then(msg => {
-			//  Convert deleteIn parameter into milliseconds.
-			msg.delete({timeout: options.deleteIn * 1000})
-		})
+			.then(msg => {
+				//  Convert deleteIn parameter into milliseconds.
+				msg.delete({
+					timeout: options.deleteIn * 1000
+				})
+			})
 	}
 }
 

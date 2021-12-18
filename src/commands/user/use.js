@@ -8,10 +8,10 @@ const stringSimilarity = require(`string-similarity`)
  */
 module.exports = {
     name: `use`,
-	aliases: [`use`, `uses`, `eat`, `drink`, `open`, `consume`],
-	description: `Consume an item and gain certain effect`,
-	usage: `use <item>`,
-	permissionLevel: 0,
+    aliases: [`use`, `uses`, `eat`, `drink`, `open`, `consume`],
+    description: `Consume an item and gain certain effect`,
+    usage: `use <item>`,
+    permissionLevel: 0,
     async execute(client, reply, message, arg, locale) {
         const data = await (new User(client, message)).requestMetadata(message.author, 2)
         if (!data.inventory.raw.length) return reply.send(locale.USE.NO_ITEMS, {
@@ -20,12 +20,14 @@ module.exports = {
             }
         })
         //  Finding the closest target item.
-		const searchStringResult = stringSimilarity.findBestMatch(arg.toLowerCase(), data.inventory.raw.map(i => i.name.toLowerCase()))
+        const searchStringResult = stringSimilarity.findBestMatch(arg.toLowerCase(), data.inventory.raw.map(i => i.name.toLowerCase()))
         const targetItem = searchStringResult.bestMatch.rating >= 0.5
-        //  By name
-        ? data.inventory.raw.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target) 
-        //  Fallback search by ID
-        : data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
+            //  By name
+            ?
+            data.inventory.raw.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
+            //  Fallback search by ID
+            :
+            data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!targetItem) return reply.send(locale.USE.INVALID_ITEM, {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)

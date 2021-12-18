@@ -3,7 +3,9 @@ const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
 const stringSimilarity = require(`string-similarity`)
-const { v4: uuidv4 } = require(`uuid`)
+const {
+    v4: uuidv4
+} = require(`uuid`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
 
@@ -22,14 +24,17 @@ module.exports = {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS+this.prettifyList(ownedCovers)
-        const { isValidUpload, url } = this.getUserSelfUploadCover(arg, message)
+        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
+        const {
+            isValidUpload,
+            url
+        } = this.getUserSelfUploadCover(arg, message)
         if (!arg && !isValidUpload) {
-            const FOOTER = userData.usedCover.isDefault 
-            ? `SUGGEST_TO_UPLOAD`
-            : userData.usedCover.isSelfUpload 
-            ? `DISPLAY_USED_SELF_COVER`
-            : `DISPLAY_USED_REGULAR_COVER`
+            const FOOTER = userData.usedCover.isDefault ?
+                `SUGGEST_TO_UPLOAD` :
+                userData.usedCover.isSelfUpload ?
+                `DISPLAY_USED_SELF_COVER` :
+                `DISPLAY_USED_REGULAR_COVER`
             return reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
@@ -57,7 +62,7 @@ module.exports = {
             if (userData.inventory.artcoins < this.uploadCost) return reply.send(locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
                 socket: {
                     emoji: await client.getEmoji(`758720612087627787`),
-                    requiredLeft: commanifier(this.uploadCost-userData.inventory.artcoins)
+                    requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
                 }
             })
         }
@@ -71,15 +76,22 @@ module.exports = {
             if (!ownedCovers.length) return reply.send(locale.SETCOVER.NO_EQUIPPABLE_COVER)
             const searchStringResult = stringSimilarity.findBestMatch(arg, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
-            //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
-            ? ownedCovers.filter(i => i.name === searchStringResult.bestMatch.target)[0] 
-            //  If doesn't work, try searching based on item_id
-            : ownedCovers.filter(i => i.item_id === parseInt(this.args[0])).length > 0
-            ? ownedCovers.filter(i => i.item_id === parseInt(this.args[0]))[0]
-            //  Finally if no item's name/ID are match, then return null
-            : null
+                //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
+                ?
+                ownedCovers.filter(i => i.name === searchStringResult.bestMatch.target)[0]
+                //  If doesn't work, try searching based on item_id
+                :
+                ownedCovers.filter(i => i.item_id === parseInt(this.args[0])).length > 0 ?
+                ownedCovers.filter(i => i.item_id === parseInt(this.args[0]))[0]
+                //  Finally if no item's name/ID are match, then return null
+                :
+                null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return reply.send(locale.SETCOVER.ITEM_DOESNT_EXISTS, {socket: {emoji: await client.getEmoji(`692428969667985458`)} })
+            if (!this.cover) return reply.send(locale.SETCOVER.ITEM_DOESNT_EXISTS, {
+                socket: {
+                    emoji: await client.getEmoji(`692428969667985458`)
+                }
+            })
             //  Handle if user tries to use cover that currently being used.
             if (userData.usedCover.item_id === this.cover.item_id) return reply.send(locale.SETCOVER.ALREADY_USED, {
                 socket: {
@@ -88,16 +100,19 @@ module.exports = {
                 }
             })
         }
-        userData.usedCover = this.cover 
+        userData.usedCover = this.cover
         const fetching = await reply.send(locale.SETCOVER.FETCHING, {
             socket: {
                 itemId: this.cover.item_id,
                 userId: message.author.id,
                 emoji: await client.getEmoji(`790994076257353779`)
-            } 
+            }
         })
         //  Rendering preview for user to see
-        let img = await new GUI(userData, client, {width: 320, height: 310}).build()
+        let img = await new GUI(userData, client, {
+            width: 320,
+            height: 310
+        }).build()
         const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
@@ -115,9 +130,14 @@ module.exports = {
             await client.db.detachCovers(message.author.id, message.guild.id)
             if (this.cover.isSelfUpload) {
                 client.db.applySelfUploadCover(this.cover.item_id, message.author.id, message.guild.id)
-                client.db.updateInventory({itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id})
-            }
-            else {
+                client.db.updateInventory({
+                    itemId: 52,
+                    value: this.uploadCost,
+                    operation: `-`,
+                    userId: message.author.id,
+                    guildId: message.guild.id
+                })
+            } else {
                 client.db.deleteSelfUploadCover(message.author.id, message.guild.id)
                 client.db.applyCover(this.cover.item_id, message.author.id, message.guild.id)
             }
@@ -139,14 +159,14 @@ module.exports = {
      */
     getUserSelfUploadCover(arg, message) {
         const hasAttachment = message.attachments.first() ? true : false
-        const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 ? true : false 
+        const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 ? true : false
         return {
             isValidUpload: hasAttachment || hasImageURL ? true : false,
-            url: message.attachments.first() 
-            ? message.attachments.first().url
-            : arg.startsWith(`http`) && arg.length >= 15
-            ? arg
-            : null
+            url: message.attachments.first() ?
+                message.attachments.first().url :
+                arg.startsWith(`http`) && arg.length >= 15 ?
+                arg :
+                null
         }
     },
 
@@ -157,7 +177,7 @@ module.exports = {
      */
     prettifyList(list) {
         let str = ``
-        for (let i = 0; i<list.length; i++) {
+        for (let i = 0; i < list.length; i++) {
             const item = list[i]
             str += `╰☆～(${item.item_id}) **${item.name}**${list.length === (list.length-1) ? `` : `\n`}`
         }

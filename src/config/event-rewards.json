@@ -6,15 +6,47 @@
         ["Runner Up", "runner up", "runnerup", "4", "5", "6", "7", "8", "9", "10"]
     ],
     "packages": {
-        "Golden Winner": {"artcoins": 3000, "lucky_ticket": 10, "role": "Weekly Gold Winner"},
-        "Silver Winner": {"artcoins": 1500, "lucky_ticket": 5, "role": "Weekly Silver Winner"},
-        "Bronze Winner": {"artcoins": 1000, "lucky_ticket": 3, "role": "Weekly Bronze Winner"},
-        "Runner Up": {"artcoins": 500, "lucky_ticket": 1, "role": null}
+        "Golden Winner": {
+            "artcoins": 3000,
+            "lucky_ticket": 10,
+            "role": "Weekly Gold Winner"
+        },
+        "Silver Winner": {
+            "artcoins": 1500,
+            "lucky_ticket": 5,
+            "role": "Weekly Silver Winner"
+        },
+        "Bronze Winner": {
+            "artcoins": 1000,
+            "lucky_ticket": 3,
+            "role": "Weekly Bronze Winner"
+        },
+        "Runner Up": {
+            "artcoins": 500,
+            "lucky_ticket": 1,
+            "role": null
+        }
     },
     "halloween_packages": {
-        "Golden Winner": {"candies": 60, "lucky_ticket": 10, "role": "Weekly Gold Winner"},
-        "Silver Winner": {"candies": 30, "lucky_ticket": 5, "role": "Weekly Silver Winner"},
-        "Bronze Winner": {"candies": 20, "lucky_ticket": 3, "role": "Weekly Bronze Winner"},
-        "Runner Up": {"candies": 10,"lucky_ticket": 1,"role": null}
+        "Golden Winner": {
+            "candies": 60,
+            "lucky_ticket": 10,
+            "role": "Weekly Gold Winner"
+        },
+        "Silver Winner": {
+            "candies": 30,
+            "lucky_ticket": 5,
+            "role": "Weekly Silver Winner"
+        },
+        "Bronze Winner": {
+            "candies": 20,
+            "lucky_ticket": 3,
+            "role": "Weekly Bronze Winner"
+        },
+        "Runner Up": {
+            "candies": 10,
+            "lucky_ticket": 1,
+            "role": null
+        }
     }
 }

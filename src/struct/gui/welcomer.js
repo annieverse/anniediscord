@@ -1,7 +1,16 @@
-const {MessageAttachment} = require(`discord.js`)
-const {get} = require(`node-fetch`)
-const {Canvas} = require(`canvas-constructor`)
-const {resolve,join} = require(`path`)
+const {
+	MessageAttachment
+} = require(`discord.js`)
+const {
+	get
+} = require(`node-fetch`)
+const {
+	Canvas
+} = require(`canvas-constructor`)
+const {
+	resolve,
+	join
+} = require(`path`)
 const palette = require(`./colorset.json`)
 const imageUrlRegex = /\?size=2048$/g
 const profileManager = require(`../../utils/profileManager`)
@@ -20,14 +29,18 @@ class Banner {
 	}
 
 	updateCounter() {
-		const { threeDigitsComa } = new formatterManager()
+		const {
+			threeDigitsComa
+		} = new formatterManager()
 		this.counter.setName(`˗ˏˋ ${threeDigitsComa(this.member.guild.memberCount)} Artists!! ˎˊ˗`)
 	}
 
 
 	async render() {
 		const user = this.bot.users.cache.get(this.member.id)
-		const { body: avatar } = await get(user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
+		const {
+			body: avatar
+		} = await get(user.displayAvatarURL().replace(imageUrlRegex, `?size=512`))
 		const configProfile = new profileManager()
 
 		this.ch.send(`Welcome to **AAU** ${user} ! Please get your roles in <#538843763544555528> for full access to the server. Last but not least enjoy your stay here! :tada:`,
@@ -57,7 +70,7 @@ class Banner {
 				.setTextFont(`41pt RobotoBold`)
 				.setColor(palette.lightgray)
 				.printText(`${user.username.length >= 10 ? user.username.substring(0, 10)+`.` : user.username}.`, 390, 150) //102
-			
+
 				.setTextFont(`42pt Whitney`)
 				.setColor(palette.white)
 				.printText(`Hello,`, 240, 150)

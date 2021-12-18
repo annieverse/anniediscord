@@ -3,7 +3,9 @@ const Color = require(`color`)
 const loadAsset = require(`../../utils/loadAsset`)
 const formatK = require(`../../utils/formatK`)
 const symbolParser = require(`../../utils/symbolParser`)
-const {resolveImage} = require(`canvas-constructor`)
+const {
+	resolveImage
+} = require(`canvas-constructor`)
 
 class UI {
 	/**
@@ -15,7 +17,7 @@ class UI {
 	 * @legacy
 	 * @return {Canvas}
 	 */
-	constructor(user={}, bot={}, testResolution={}) {
+	constructor(user = {}, bot = {}, testResolution = {}) {
 		/**
 		 * User's meta
 		 * @type {user}
@@ -51,11 +53,13 @@ class UI {
 		let baseWidth = this.width - 20
 		const adjustedPrimaryColorContrast = this.user.usedTheme.alias === `light` ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
 		let card = new Cards({
-			width: this.width,
-			height: this.height,
-			theme: this.user.usedTheme.alias
-		})
-		.createBase({cornerRadius: 25})
+				width: this.width,
+				height: this.height,
+				theme: this.user.usedTheme.alias
+			})
+			.createBase({
+				cornerRadius: 25
+			})
 		//  Sticker
 		if (this.user.usedSticker) card.canv.printImage(await resolveImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
 		//  Cover
@@ -64,18 +68,21 @@ class UI {
 			minHeight: 197
 		})
 		card.canv.setColor(card.color.base)
-		.printRectangle(0, 197, this.width, this.height)
+			.printRectangle(0, 197, this.width, this.height)
 		//  Avatar
 		card.canv.setColor(card.color.base)
-			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.user.master.displayAvatarURL({format: `png`, dynamic: false})), startPos_x + 70, 200, 50, 50, 25)
+			.printCircle(startPos_x + 70, 200, 52)
+			.printCircularImage(await resolveImage(this.user.master.displayAvatarURL({
+				format: `png`,
+				dynamic: false
+			})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const badges = this.user.inventory.raw.filter(key => key.type_id === 2)
-        for (let i=0; i<badges.length; i++) {
-            //  Limit displayed badges to specified amount
-            if (i > 4) break
-            card.canv.printImage(await resolveImage(await loadAsset(badges[i].alias)), this.width - 55 - i*32, 215, 26, 26)
-        }
+		for (let i = 0; i < badges.length; i++) {
+			//  Limit displayed badges to specified amount
+			if (i > 4) break
+			card.canv.printImage(await resolveImage(await loadAsset(badges[i].alias)), this.width - 55 - i * 32, 215, 26, 26)
+		}
 		//  Username
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`center`)
@@ -111,18 +118,18 @@ class UI {
 			.setTextFont(`8pt roboto`)
 		if (bio.length > 0 && bio.length <= 51) {
 			card.canv.printText(this.formatString(bio, 1).first, descriptionMarginLeft, descriptionMarginTop)
-				.printText(this.formatString(bio, 1).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+				.printText(this.formatString(bio, 1).second, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 1))
 
 		} else if (bio.length > 51 && bio.length <= 102) {
 			card.canv.printText(this.formatString(bio, 2).first, descriptionMarginLeft, descriptionMarginTop)
-				.printText(this.formatString(bio, 2).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
-				.printText(this.formatString(bio, 2).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
+				.printText(this.formatString(bio, 2).second, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 1))
+				.printText(this.formatString(bio, 2).third, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 2))
 
 		} else if (bio.length > 102 && bio.length <= 154) {
 			card.canv.printText(this.formatString(bio, 3).first, descriptionMarginLeft, descriptionMarginTop)
-				.printText(this.formatString(bio, 3).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
-				.printText(this.formatString(bio, 3).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
-				.printText(this.formatString(bio, 3).fourth, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*3))
+				.printText(this.formatString(bio, 3).second, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 1))
+				.printText(this.formatString(bio, 3).third, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 2))
+				.printText(this.formatString(bio, 3).fourth, descriptionMarginLeft, descriptionMarginTop + (descriptionMarginBetweenParagraph * 3))
 		}
 
 		//  Footer Components [Heart, Level, Fame/Reputation Points]
@@ -136,8 +143,8 @@ class UI {
 			.setColor(card.color.text)
 			.setTextFont(`7pt roboto`)
 			.printText(`ARTCOINS`, 70, 390)
-			.printText(`LEVEL`, 160, 390) 
-			.printText(`FAME`, 250, 390) 
+			.printText(`LEVEL`, 160, 390)
+			.printText(`FAME`, 250, 390)
 
 		return card.ready()
 	}
@@ -169,9 +176,9 @@ class UI {
 
 			//if marker is in middle of word, try moving to the back of the word
 			//but at most 5 characters
-			for (var j=0; j<5;j++) {
+			for (var j = 0; j < 5; j++) {
 				if (string.charAt(marker) != ` ` && string.charAt(marker) != ``) {
-					marker = marker+j
+					marker = marker + j
 				}
 			}
 
@@ -189,9 +196,9 @@ class UI {
 		}
 		return {
 			first: paragraphs[0],
-			second: paragraphs[1]?paragraphs[1]:``,
-			third: paragraphs[2]?paragraphs[2]:``,
-			fourth: paragraphs[3]?paragraphs[3]:``
+			second: paragraphs[1] ? paragraphs[1] : ``,
+			third: paragraphs[2] ? paragraphs[2] : ``,
+			fourth: paragraphs[3] ? paragraphs[3] : ``
 		}
 	}
 }

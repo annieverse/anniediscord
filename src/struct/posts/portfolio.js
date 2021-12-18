@@ -32,4 +32,4 @@ class Portfolio extends Controller {
     }
 }
 
-module.exports =Portfolio
+module.exports = Portfolio

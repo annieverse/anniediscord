@@ -4,15 +4,15 @@ const Command = require(`../../libs/commands`)
  * @author klerikdust
  */
 module.exports = {
-    name: `ask`,
+	name: `ask`,
 	aliases: [`8ball`],
 	description: `You can ask any question and Annie will answer you.`,
 	usage: `ask <Message>`,
 	permissionLevel: 0,
 	multiUser: false,
-    async execute(client, reply, message, arg, locale) {
-        if (!arg) return reply.send(locale.ASK.SHORT_GUIDE)
-        const pool = locale.ASK.ANSWERS
+	async execute(client, reply, message, arg, locale) {
+		if (!arg) return reply.send(locale.ASK.SHORT_GUIDE)
+		const pool = locale.ASK.ANSWERS
 		return reply.send(pool[Math.floor(Math.random() * pool.length)])
-    }
+	}
 }

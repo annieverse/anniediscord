@@ -1,456 +1,455 @@
 {
-    "annie_card": {
-      "fullname": "Little Annie",
-      "alias": "annie_card",
-      "rarity": "5",
-      "url": "https://i.ibb.co/HpJT5dW/annie-card.png",
-      "description": "I'm not small! you are just too high.",
-      "req_materials": {
-        "blue_crayon": 1,
-        "rubies": 100,
-        "annie_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Charming Talks",
-          "description": "Gain 5% EXP boost in every channel",
-          "type": "exp_booster",
-          "channel": ["all"],
-          "effect": {
-            "exp": 0.05,
-            "ac": null,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
+  "annie_card": {
+    "fullname": "Little Annie",
+    "alias": "annie_card",
+    "rarity": "5",
+    "url": "https://i.ibb.co/HpJT5dW/annie-card.png",
+    "description": "I'm not small! you are just too high.",
+    "req_materials": {
+      "blue_crayon": 1,
+      "rubies": 100,
+      "annie_shards": 20
+    },
+    "skills": {
+      "main": {
+        "name": "Charming Talks",
+        "description": "Gain 5% EXP boost in every channel",
+        "type": "exp_booster",
+        "channel": ["all"],
+        "effect": {
+          "exp": 0.05,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "kitomi_card": {
+    "fullname": "Lazy Princess, Kitomi",
+    "alias": "kitomi_card",
+    "rarity": "5",
+    "url": "https://i.ibb.co/9GvNd9c/kitomi-card.png",
+    "description": "Spoil me, protect me, worship me, you slave",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "kitomi_shards": 20
     },
-    "kitomi_card": {
-      "fullname": "Lazy Princess, Kitomi",
-      "alias": "kitomi_card",
-      "rarity": "5",
-      "url": "https://i.ibb.co/9GvNd9c/kitomi-card.png",
-      "description": "Spoil me, protect me, worship me, you slave",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "kitomi_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Princess Prosperity",
-          "description": "+50% EXP & AC boost in #general",
-          "type": "exp_ac_booster",
-          "channel": [
-            "459891664182312982"
-          ],
-          "effect": {
-            "exp": 0.5,
-            "ac": 0.5,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
+    "skills": {
+      "main": {
+        "name": "Princess Prosperity",
+        "description": "+50% EXP & AC boost in #general",
+        "type": "exp_ac_booster",
+        "channel": [
+          "459891664182312982"
+        ],
+        "effect": {
+          "exp": 0.5,
+          "ac": 0.5,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "naph_card": {
+    "fullname": "The White Cat, Naph",
+    "alias": "naph_card",
+    "rarity": "5",
+    "description": "Miaw",
+    "url": "https://i.ibb.co/W5r0kBj/naph-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "naph_shards": 20
     },
-    "naph_card": {
-      "fullname": "The White Cat, Naph",
-      "alias": "naph_card",
-      "rarity": "5",
-      "description": "Miaw",
-      "url": "https://i.ibb.co/W5r0kBj/naph-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "naph_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "White's Cat Paradise",
-          "description": "+50 passive exp per message sent by Naph in #general",
-          "type": "exp_booster",
-          "channel": [
-            "459891664182312982"
-          ],
-          "effect": {
-            "exp": 15,
-            "ac": null,
-            "status": "passive",
-            "type": "flat",
-            "attachment_only": false
-          }
+    "skills": {
+      "main": {
+        "name": "White's Cat Paradise",
+        "description": "+50 passive exp per message sent by Naph in #general",
+        "type": "exp_booster",
+        "channel": [
+          "459891664182312982"
+        ],
+        "effect": {
+          "exp": 15,
+          "ac": null,
+          "status": "passive",
+          "type": "flat",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "ralu_card": {
+    "fullname": "Art Wizard, Ralu",
+    "alias": "ralu_card",
+    "rarity": "5",
+    "description": "things I like, my pri-... Ah, Pink clothing of course!",
+    "url": "https://i.ibb.co/gzYNtTr/ralu-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "ralu_shards": 20
     },
-    "ralu_card": {
-      "fullname": "Art Wizard, Ralu",
-      "alias": "ralu_card",
-      "rarity": "5",
-      "description": "things I like, my pri-... Ah, Pink clothing of course!",
-      "url": "https://i.ibb.co/gzYNtTr/ralu-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "ralu_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Blessing of Mentor",
-          "description": "gain +15% EXP boost for an hour after Ralu sends a message in #criticism or #art talk",
-          "type": "exp_booster",
-          "channel": [
-            "520716400097099777",
-            "574353861800755244"
-          ],
-          "effect": {
-            "exp": 0,
-            "ac": null,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
+    "skills": {
+      "main": {
+        "name": "Blessing of Mentor",
+        "description": "gain +15% EXP boost for an hour after Ralu sends a message in #criticism or #art talk",
+        "type": "exp_booster",
+        "channel": [
+          "520716400097099777",
+          "574353861800755244"
+        ],
+        "effect": {
+          "exp": 0,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "poppy_card": {
+    "fullname": "Poppy Panda",
+    "alias": "poppy_card",
+    "rarity": "5",
+    "description": "Sleep tight and have a sweet dreams. ",
+    "url": "https://i.ibb.co/hDc4sYg/poppy-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "poppy_shards": 20
     },
-    "poppy_card": {
-      "fullname": "Poppy Panda",
-      "alias": "poppy_card",
-      "rarity": "5",
-      "description": "Sleep tight and have a sweet dreams. ",
-      "url": "https://i.ibb.co/hDc4sYg/poppy-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "poppy_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Dreamer's Desire",
-          "description": "Daily never expires",
-          "type": "dailies_manipulate",
-          "channel": [
-            "485922866689474571"
-          ],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": "active",
-            "type": null,
-            "attachment_only": false
-          }
-        }
-      }
-    },
-    "foxie_card": {
-      "fullname": "The Floofiest, Foxie",
-      "alias": "foxie_card",
-      "rarity": "5",
-      "description": "Who can beat my fluffehness?",
-      "url": "https://i.ibb.co/6WkNm6Z/foxie-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "foxie_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Event Fever",
-          "description": "Free event participant ticket & 10 chocolate boxes per event submission",
-          "type": "ticket_pass",
-          "channel": [
-            "460615157056405505"
-          ],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": "active",
-            "type": null,
-            "attachment_only": true
-          }
-        }
-      }
-    },
-    "vezeko_card": {
-      "fullname": "The Lewdism's Prince, Vezeko",
-      "alias": "vezeko_card",
-      "rarity": "5",
-      "description": "Hehehe.. one is never enough.",
-      "url": "https://i.ibb.co/59J3c7m/vezeko-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "vezeko_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "One Night Pleasure",
-          "type": "exp_booster",
-          "description": "+250% AC bonus in nsfw channels.",
-          "channel": [
-            "459929521957634048",
-            "524076299980111872",
-            "460484229990711306",
-            "600041262023835672"
-          ],
-          "effect": {
-            "exp": null,
-            "ac": 2.5,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
-        }
-      }
-    },
-    "pan_card": {
-      "fullname": "The Mighty Pan",
-      "alias": "pan_card",
-      "rarity": "5",
-      "description": "y know drink is fun. R8?",
-      "url": "https://i.ibb.co/dkpJdMh/pan-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "pan_shards": 30
-      },
-      "skills": {
-        "main": {
-          "name": "Party Time",
-          "description": "+50% exp in #vc-off-topic & #music",
-          "type": "exp_booster",
-          "channel": [
-            "463536514887057436",
-            "459938699606491147",
-            "459891664182312984",
-            "469708618913153026",
-            "634371067242348574"
-          ],
-          "effect": {
-            "exp": 0.5,
-            "ac": null,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
-        }
-      }
-    },
-    "rany_card": {
-      "fullname": "The Weeb Queen, Rany",
-      "alias": "rany_card",
-      "rarity": "5",
-      "description": "Ara, Ara... it's time for Onee-san to treat you!",
-      "url": "https://i.ibb.co/PjY07dP/rany-card.png",
-      "req_materials": {
-        "lucky_ticket": 500,
-        "rany_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Collector's Fortune",
-          "description": "Get double bonus when redeeming lucky tickets",
-          "type": "luckyticket_bonus",
-          "channel": [
-            "485922866689474571",
-            "578518964439744512"
-          ],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": "active",
-            "type": null,
-            "attachment_only": false
-          }
-        }
-      }
-    },
-    "snowy_card": {
-      "fullname": "Ghosty Snowee",
-      "alias": "snowy_card",
-      "rarity": "5",
-      "description": ". . .",
-      "url": "https://i.ibb.co/pRnw1QK/snowy-card.png",
-      "req_materials": {
-        "fragments": 30000,
-        "rubies": 100,
-        "snowy_shards": 20
-      },
-      "skills": {
-        "main": {
-          "name": "Silent Ghosty",
-          "description": null,
-          "type": "exp_booster",
-          "channel": [
-            "459891664182312982"
-          ],
-          "effects": {
-            "exp": 0.5,
-            "ac": null,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          },
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": "active",
-            "type": "multiplier",
-            "attachment_only": false
-          }
-        }
-      }
-    },
-    "raluver_shiro_card": {
-      "fullname": "Shiro",
-      "alias": "shiro_card",
-      "rarity": "4",
-      "description": "No game no life",
-      "url": "https://i.ibb.co/n6kYXZt/raluver-shiro-card.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
+    "skills": {
+      "main": {
+        "name": "Dreamer's Desire",
+        "description": "Daily never expires",
+        "type": "dailies_manipulate",
+        "channel": [
+          "485922866689474571"
+        ],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": "active",
           "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+          "attachment_only": false
         }
       }
+    }
+  },
+  "foxie_card": {
+    "fullname": "The Floofiest, Foxie",
+    "alias": "foxie_card",
+    "rarity": "5",
+    "description": "Who can beat my fluffehness?",
+    "url": "https://i.ibb.co/6WkNm6Z/foxie-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "foxie_shards": 20
     },
-    "raluver_nezuko_card": {
-      "fullname": "Nezuko",
-      "alias": "nezuko_card",
-      "rarity": "4",
-      "description": "rawr!",
-      "url": "https://i.ibb.co/mzfGVzg/raluver-nezuko-card.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
+    "skills": {
+      "main": {
+        "name": "Event Fever",
+        "description": "Free event participant ticket & 10 chocolate boxes per event submission",
+        "type": "ticket_pass",
+        "channel": [
+          "460615157056405505"
+        ],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": "active",
           "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+          "attachment_only": true
         }
       }
+    }
+  },
+  "vezeko_card": {
+    "fullname": "The Lewdism's Prince, Vezeko",
+    "alias": "vezeko_card",
+    "rarity": "5",
+    "description": "Hehehe.. one is never enough.",
+    "url": "https://i.ibb.co/59J3c7m/vezeko-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "vezeko_shards": 20
     },
-    "poppyver_shiro_card": {
-      "fullname": "Shiro",
-      "alias": "shiro_card",
-      "rarity": "4",
-      "description": "No game no life",
-      "url": "https://i.ibb.co/yWH5Hv9/poppyver-shiro-card.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
-          "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+    "skills": {
+      "main": {
+        "name": "One Night Pleasure",
+        "type": "exp_booster",
+        "description": "+250% AC bonus in nsfw channels.",
+        "channel": [
+          "459929521957634048",
+          "524076299980111872",
+          "460484229990711306",
+          "600041262023835672"
+        ],
+        "effect": {
+          "exp": null,
+          "ac": 2.5,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "pan_card": {
+    "fullname": "The Mighty Pan",
+    "alias": "pan_card",
+    "rarity": "5",
+    "description": "y know drink is fun. R8?",
+    "url": "https://i.ibb.co/dkpJdMh/pan-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "pan_shards": 30
     },
-    "poppyver_nezuko_card": {
-      "fullname": "Nezuko",
-      "alias": "nezuko_card",
-      "rarity": "4",
-      "description": "rawr!",
-      "url": "https://i.ibb.co/Wp5HC8P/poppyver-nezuko-card.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
-          "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+    "skills": {
+      "main": {
+        "name": "Party Time",
+        "description": "+50% exp in #vc-off-topic & #music",
+        "type": "exp_booster",
+        "channel": [
+          "463536514887057436",
+          "459938699606491147",
+          "459891664182312984",
+          "469708618913153026",
+          "634371067242348574"
+        ],
+        "effect": {
+          "exp": 0.5,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
         }
       }
+    }
+  },
+  "rany_card": {
+    "fullname": "The Weeb Queen, Rany",
+    "alias": "rany_card",
+    "rarity": "5",
+    "description": "Ara, Ara... it's time for Onee-san to treat you!",
+    "url": "https://i.ibb.co/PjY07dP/rany-card.png",
+    "req_materials": {
+      "lucky_ticket": 500,
+      "rany_shards": 20
     },
-    "halloween_annie_card": {
-      "fullname": "Hallowenn Annie",
-      "alias": "halloween_annie_card",
-      "rarity": "5",
-      "description": "Halloween exclusive 5-star card.",
-      "url": "https://i.ibb.co/2c7tnGZ/halloween-annie.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
+    "skills": {
+      "main": {
+        "name": "Collector's Fortune",
+        "description": "Get double bonus when redeeming lucky tickets",
+        "type": "luckyticket_bonus",
+        "channel": [
+          "485922866689474571",
+          "578518964439744512"
+        ],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": "active",
           "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+          "attachment_only": false
         }
       }
+    }
+  },
+  "snowy_card": {
+    "fullname": "Ghosty Snowee",
+    "alias": "snowy_card",
+    "rarity": "5",
+    "description": ". . .",
+    "url": "https://i.ibb.co/pRnw1QK/snowy-card.png",
+    "req_materials": {
+      "fragments": 30000,
+      "rubies": 100,
+      "snowy_shards": 20
     },
-    "rin_kagamine_card": {
-      "fullname": "Rin Kagamine",
-      "alias": "rin_kagamine_card",
-      "rarity": "4",
-      "description": "Halloween exclusive 4-star card.",
-      "url": "https://i.ibb.co/kXZnHVr/rin-kagamine.png",
-      "req_materials": {
-        "rubies": 10000000
-      },
-      "skills": {
-        "main": {
-          "name": null,
-          "description": null,
+    "skills": {
+      "main": {
+        "name": "Silent Ghosty",
+        "description": null,
+        "type": "exp_booster",
+        "channel": [
+          "459891664182312982"
+        ],
+        "effects": {
+          "exp": 0.5,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
+        },
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": "active",
+          "type": "multiplier",
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "raluver_shiro_card": {
+    "fullname": "Shiro",
+    "alias": "shiro_card",
+    "rarity": "4",
+    "description": "No game no life",
+    "url": "https://i.ibb.co/n6kYXZt/raluver-shiro-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
           "type": null,
-          "channel": [],
-          "effect": {
-            "exp": null,
-            "ac": null,
-            "status": null,
-            "type": null,
-            "attachment_only": false
-          }
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "raluver_nezuko_card": {
+    "fullname": "Nezuko",
+    "alias": "nezuko_card",
+    "rarity": "4",
+    "description": "rawr!",
+    "url": "https://i.ibb.co/mzfGVzg/raluver-nezuko-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "poppyver_shiro_card": {
+    "fullname": "Shiro",
+    "alias": "shiro_card",
+    "rarity": "4",
+    "description": "No game no life",
+    "url": "https://i.ibb.co/yWH5Hv9/poppyver-shiro-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "poppyver_nezuko_card": {
+    "fullname": "Nezuko",
+    "alias": "nezuko_card",
+    "rarity": "4",
+    "description": "rawr!",
+    "url": "https://i.ibb.co/Wp5HC8P/poppyver-nezuko-card.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "halloween_annie_card": {
+    "fullname": "Hallowenn Annie",
+    "alias": "halloween_annie_card",
+    "rarity": "5",
+    "description": "Halloween exclusive 5-star card.",
+    "url": "https://i.ibb.co/2c7tnGZ/halloween-annie.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
+        }
+      }
+    }
+  },
+  "rin_kagamine_card": {
+    "fullname": "Rin Kagamine",
+    "alias": "rin_kagamine_card",
+    "rarity": "4",
+    "description": "Halloween exclusive 4-star card.",
+    "url": "https://i.ibb.co/kXZnHVr/rin-kagamine.png",
+    "req_materials": {
+      "rubies": 10000000
+    },
+    "skills": {
+      "main": {
+        "name": null,
+        "description": null,
+        "type": null,
+        "channel": [],
+        "effect": {
+          "exp": null,
+          "ac": null,
+          "status": null,
+          "type": null,
+          "attachment_only": false
         }
       }
     }
   }
-  
+}

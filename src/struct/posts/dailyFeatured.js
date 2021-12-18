@@ -1,4 +1,7 @@
-const { MessageEmbed, MessageAttachment} = require(`discord.js`)
+const {
+    MessageEmbed,
+    MessageAttachment
+} = require(`discord.js`)
 class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
@@ -10,19 +13,19 @@ class DailyFeaturedPost {
     }
 
     async loop() {
-        while(this.active) {
+        while (this.active) {
             try {
-                await this.delay(1 * 60 * 60 * 1000)  
+                await this.delay(1 * 60 * 60 * 1000)
                 await this.run()
                 this.messageIds = []
-            } catch(e) {
+            } catch (e) {
                 this.logger.error(`Daily Feature Post - Loop broke.`)
                 this.logger.error(e.stack)
             }
         }
     }
 
-    async queries(date){
+    async queries(date) {
         return await this.bot.db.getRemoveBy(date)
     }
 
@@ -30,16 +33,18 @@ class DailyFeaturedPost {
         return await this.bot.db.deleteRecord(date)
     }
 
-    async getMessageArray(){
+    async getMessageArray() {
         var testDay = 1 * 12 * 60 * 60 * 1000 // amount of days * amount of hours * hours * minutes * miliseconds
         var dateNow = Date.now()
-        await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch({limit:100}).then(async messages => {
+        await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch({
+            limit: 100
+        }).then(async messages => {
             let messageArray = messages.keyArray()
-            if (messageArray){
+            if (messageArray) {
                 messageArray.forEach(async element => {
-                    await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch(element).then(msg =>{
+                    await this.bot.channels.get(this.dailyFeaturedChannel).messages.fetch(element).then(msg => {
                         let messageDate = (new Date(msg.createdAt)).getTime()
-                        let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
+                        let isMsgReadyToBeDeleted = (dateNow - messageDate) > testDay
                         if (isMsgReadyToBeDeleted) {
                             this.messageIds.push(msg.id)
                             const embed = new MessageEmbed()
@@ -58,11 +63,13 @@ class DailyFeaturedPost {
 
     async run() {
         await this.getMessageArray()
-        if (this.messageIds) this.bot.channels.get(this.dailyFeaturedChannel).bulkDelete(this.messageIds).catch(error=>this.bot.logger.error(`[DailyFeaturedPost.js] Error on bulk delete: ${error}`))
+        if (this.messageIds) this.bot.channels.get(this.dailyFeaturedChannel).bulkDelete(this.messageIds).catch(error => this.bot.logger.error(`[DailyFeaturedPost.js] Error on bulk delete: ${error}`))
     }
 
     async delay(ms) {
-        return new Promise(function (resolve) { return setTimeout(resolve, ms) })
+        return new Promise(function (resolve) {
+            return setTimeout(resolve, ms)
+        })
     }
 }
 

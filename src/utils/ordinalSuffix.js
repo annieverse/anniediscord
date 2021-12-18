@@ -2,7 +2,7 @@
  * Adding ordinx behind the given number.
  * @param {number} [i=0] target number
  */
-const ordinalSuffix = (i=0) =>  {
+const ordinalSuffix = (i = 0) => {
 	var j = i % 10,
 		k = i % 100
 	if (j == 1 && k != 11) {

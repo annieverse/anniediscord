@@ -5,30 +5,32 @@ const Confirmator = require(`../../libs/confirmator`)
  */
 module.exports = {
     name: `setCommand`,
-	aliases: [`setcommand`, `setcommands`, `setcmd`],
-	description: `Set a specific channel for Annie's command usage.`,
-	usage: `setcommand <channel/info/reset>`,
-	group: `Setting`,
-	permissionLevel: 3,
+    aliases: [`setcommand`, `setcommands`, `setcmd`],
+    description: `Set a specific channel for Annie's command usage.`,
+    usage: `setcommand <channel/info/reset>`,
+    group: `Setting`,
+    permissionLevel: 3,
     configId: `COMMAND_CHANNELS`,
     async execute(client, reply, message, arg, locale, prefix) {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
-		//  Handle if user doesn't specify the new bio/description
-		if (!arg) return reply.send(locale.SETCOMMAND.GUIDE, {
+        //  Handle if user doesn't specify the new bio/description
+        if (!arg) return reply.send(locale.SETCOMMAND.GUIDE, {
             header: `Hi, ${message.author.username}!`,
-			image: `banner_setcommand`,
-			socket: {
+            image: `banner_setcommand`,
+            socket: {
                 prefix: prefix,
-                channelStatus: currentCommandChannels.length > 0 
-                ? `currently there are total of ${currentCommandChannels.length} command channels in this server.`
-                : `but since there are no command channel has been set, I'm currently listening to all the visible channels.`
+                channelStatus: currentCommandChannels.length > 0 ?
+                    `currently there are total of ${currentCommandChannels.length} command channels in this server.` :
+                    `but since there are no command channel has been set, I'm currently listening to all the visible channels.`
             }
-		})
+        })
         this.args = arg.split(` `)
         const targetAction = this.args[0].toLowerCase()
         if (!actions.includes(targetAction)) return reply.send(locale.SETCOMMAND.INVALID_ACTION, {
-            socket: {prefix: prefix}
+            socket: {
+                prefix: prefix
+            }
         })
         return this[targetAction](client, reply, message, arg, locale)
     },
@@ -48,10 +50,10 @@ module.exports = {
         const thinkingEmoji = await client.getEmoji(`692428969667985458`)
         const madEmoji = await client.getEmoji(`692428748838010970`)
         //  Iterate over multi channel registering
-        for (let i=0; i<specifiedChannels.length; i++) {
+        for (let i = 0; i < specifiedChannels.length; i++) {
             const ch = specifiedChannels[i].toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
-            const targetNewChannel = message.guild.channels.cache.get(ch)
-            || message.guild.channels.cache.find(channel => channel.name.toLowerCase() === ch)
+            const targetNewChannel = message.guild.channels.cache.get(ch) ||
+                message.guild.channels.cache.find(channel => channel.name.toLowerCase() === ch)
             if (!targetNewChannel) return reply.send(locale.SETCOMMAND.INVALID_NEW_CHANNEL, {
                 socket: {
                     channel: ch,
@@ -80,7 +82,7 @@ module.exports = {
                 emoji: await client.getEmoji(`789212493096026143`)
             }
         })
-    }, 
+    },
 
     /**
      * Perform channel reset action.

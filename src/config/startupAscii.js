@@ -1,4 +1,7 @@
-const { version, engines } = require(`../../package`)
+const {
+    version,
+    engines
+} = require(`../../package`)
 let ascii = {}
 
 ascii.default = `

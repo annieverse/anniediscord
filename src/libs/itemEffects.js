@@ -92,6 +92,7 @@ class itemEffects {
         if (!itemEffects.length) return
         for (let i=0; i<itemEffects.length; i++) {
             const effect = itemEffects[i]
+            console.log(effect.parameter)
             this[this.buffReferences[effect.effect_ref_id]](effect.parameter)
         }
     }
@@ -204,6 +205,7 @@ class itemEffects {
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false
         const userDurationalBuffs = await this.client.db.getSavedUserDurationalBuffs(this.message.author.id)
+        console.log(`\n\n\n${userDurationalBuffs}`)
         if (userDurationalBuffs.filter(b => (b.name.toLowerCase() === name.toLowerCase()) 
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true

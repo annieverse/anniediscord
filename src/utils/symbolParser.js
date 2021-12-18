@@ -3,7 +3,7 @@
  * @param {string} [str=``] Target string to be parsed. 
  * @return {string}
  */
-const symbolParser = (str=``) => {
+const symbolParser = (str = ``) => {
     str = str.replace(/[^\w\d\s*]/g, ``)
     return str
 }

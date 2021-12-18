@@ -1,7 +1,7 @@
 //const {heartReactionHandler} = require(`../struct/posts/likesHandler.js`)
 //const BoosterColor = require(`../libs/nitroColorManager`)
 
-module.exports = async(/*Components, configs*/) => {
+module.exports = async ( /*Components, configs*/ ) => {
     /**
      * Update once configs are updated
      

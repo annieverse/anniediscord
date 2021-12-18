@@ -1,4 +1,3 @@
-
 # Here is the default template for creating a new command. (7th June, 2020)
 
 ## Simply copy paste this code

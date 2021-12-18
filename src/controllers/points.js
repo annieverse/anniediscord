@@ -7,7 +7,7 @@ const Currency = require(`../libs/currency`)
  * @param {object} [data={}] supplied data from <MessageController>.
  */
 class PointController {
-	constructor(data={}) {
+    constructor(data = {}) {
         this.client = data
         this.bot = data.bot
         this.message = data.message
@@ -17,19 +17,19 @@ class PointController {
          * @type {string}
          */
         this.moduleID = `POINTS_${data.message.author.id}_${data.message.guild.id}`
-		this.run()
-	}
+        this.run()
+    }
 
     /**
      * Running Point Controller. Preparing exceptor on several cases before executing the EXP and CURRENCY module.
      * @returns {void}
      */
-	async run() {
+    async run() {
         if (await this.bot.isCooldown(this.moduleID)) return
-		if (this.isExpActive) new Experience(this.client).execute()
+        if (this.isExpActive) new Experience(this.client).execute()
         if (this.isCurrencyActive) new Currency(this.client).execute()
         this.bot.setCooldown(this.moduleID, this.bot.points.cooldown)
-	}
+    }
 
     /**
      * 	Check if EXP plugin is enabled.

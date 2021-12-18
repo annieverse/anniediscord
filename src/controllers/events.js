@@ -5,13 +5,13 @@ const reqEvent = (event) => require(`../events/${event}.js`)
  * @return {void}
  */
 module.exports = function eventsController(annie) {
-	annie.once(`ready`, () => reqEvent(`ready`)(annie))
-	annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
-	annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
-	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
-	annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
+    annie.once(`ready`, () => reqEvent(`ready`)(annie))
+    annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
+    annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
+    annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
+    annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
     //  Events below this point is only available in the production
-	if (annie.dev) return 
+    if (annie.dev) return
     annie.on(`messageDelete`, (message) => reqEvent(`messageDelete`)(annie, message))
     annie.on(`messageDeleteBulk`, (messages) => reqEvent(`messageDeleteBulk`)(annie, messages))
     annie.on(`roleCreate`, (role) => reqEvent(`roleCreate`)(annie, role))

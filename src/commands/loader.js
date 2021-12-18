@@ -1,11 +1,13 @@
-const { Collection } = require(`discord.js`)
+const {
+    Collection
+} = require(`discord.js`)
 const fs = require(`fs`)
 /**
  * Agreggate all the available commands into unified object.
  * @param {string} [path=`./src/commands`] Target commands directory path.
  * @return {void}
  */
-module.exports = function commandsLoader(path=`./src/commands/`) {
+module.exports = function commandsLoader(path = `./src/commands/`) {
     const commands = new Collection()
     /**
      * Recursively pull available categories in command's root directory
@@ -21,7 +23,7 @@ module.exports = function commandsLoader(path=`./src/commands/`) {
          */
         const files = fs.readdirSync(path + dir)
         const jsfile = files.filter(f => f.split(`.`).pop() === `js`)
-        for (let i=0; i<jsfile.length; i++) {
+        for (let i = 0; i < jsfile.length; i++) {
             const file = jsfile[i]
             const src = require(`./${dir}/${file}`)
             const metadata = Object.keys(src)

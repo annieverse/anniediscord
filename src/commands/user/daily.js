@@ -6,30 +6,30 @@ const commanifier = require(`../../utils/commanifier`)
  * @author klerikdust
  */
 module.exports = {
-    name: `daily`,
+	name: `daily`,
 	aliases: [`dly`, `daili`, `dail`, `dayly`, `attendance`, `dliy`],
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
 	permissionLevel: 0,
-    rewardAmount: 250,
-    bonusAmount: 10,
-    cooldown: [23, `hours`],
-    async execute(client, reply, message, arg, locale) {
-        const userLib = new User(client, message)
-        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+	rewardAmount: 250,
+	bonusAmount: 10,
+	cooldown: [23, `hours`],
+	async execute(client, reply, message, arg, locale) {
+		const userLib = new User(client, message)
+		let targetUser = arg ? await userLib.lookFor(arg) : message.author
 		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
-        //  Normalize structure
-        targetUser = targetUser.master || targetUser
-        const targetUserData  = await userLib.requestMetadata(targetUser, 2)
-        const isSelf = userLib.isSelf(targetUser.id)
+		//  Normalize structure
+		targetUser = targetUser.master || targetUser
+		const targetUserData = await userLib.requestMetadata(targetUser, 2)
+		const isSelf = userLib.isSelf(targetUser.id)
 		const now = moment()
 		const lastClaimAt = await client.db.toLocaltime(targetUserData.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: targetUser.displayAvatarURL(),
-			topNotch: isSelf
-				? `**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` 
-				: `**${targetUser.username} already claimed their dailies!** ${await client.getEmoji(`692428748838010970`)}`,
+			topNotch: isSelf ?
+				`**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` :
+				`**${targetUser.username} already claimed their dailies!** ${await client.getEmoji(`692428748838010970`)}`,
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
 				user: targetUser.username,
@@ -41,9 +41,14 @@ module.exports = {
 		//  If user has a poppy card, ignore streak expiring check.
 		const hasPoppy = targetUserData.inventory.poppy_card
 		if (hasPoppy) totalStreak = targetUserData.dailies.total_streak + 1
-		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0 
+		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0
 		client.db.updateUserDailies(totalStreak, targetUser.id, message.guild.id)
-		client.db.updateInventory({itemId: 52, value: this.rewardAmount + bonus, userId: message.author.id, guildId: message.guild.id})
+		client.db.updateInventory({
+			itemId: 52,
+			value: this.rewardAmount + bonus,
+			userId: message.author.id,
+			guildId: message.guild.id
+		})
 		reply.send(locale.DAILIES.CLAIMED, {
 			status: `success`,
 			thumbnail: targetUser.displayAvatarURL(),
@@ -56,7 +61,9 @@ module.exports = {
 		})
 		return reply.send(locale.DAILIES.TO_REMIND, {
 			simplified: true,
-			socket: {prefix:client.prefix}
+			socket: {
+				prefix: client.prefix
+			}
 		})
-    }
+	}
 }

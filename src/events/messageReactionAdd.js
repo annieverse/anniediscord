@@ -3,7 +3,7 @@
 
 //const ClassroomManager = require(`../utils/ClassroomManager`)
 
-module.exports = async(/*Components, configs*/) => {
+module.exports = async ( /*Components, configs*/ ) => {
     /**
      * Update once configs are updated
      

@@ -21,11 +21,17 @@ class Currency extends Points {
      *  @returns {boolean}
      */
     execute() {
-    	//  Calculate
+        //  Calculate
         this.totalGainedCurrency = this.baseGainedCurrency * this.currencyMultiplier
-    	//  Update user's currency data.
-    	this.db.updateInventory({itemId: 52, value: this.totalGainedCurrency, operation: `+`, userId: this.message.author.id, guildId: this.message.guild.id})
-    	this.logger.info(`[Currency.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedCurrency}AC(${this.currencyMultiplier * 100}%)`)
+        //  Update user's currency data.
+        this.db.updateInventory({
+            itemId: 52,
+            value: this.totalGainedCurrency,
+            operation: `+`,
+            userId: this.message.author.id,
+            guildId: this.message.guild.id
+        })
+        this.logger.info(`[Currency.execute()] [${this.message.guild.id}@${this.message.author.id}] has gained ${this.totalGainedCurrency}AC(${this.currencyMultiplier * 100}%)`)
     }
 
     /**
@@ -33,8 +39,8 @@ class Currency extends Points {
      *  @type {number}
      */
     get baseGainedCurrency() {
-    	const [min, max] = this.currencyConfig.baseAmount
-    	return this.randomize(min, max)
+        const [min, max] = this.currencyConfig.baseAmount
+        return this.randomize(min, max)
     }
 
 }

@@ -1,142 +1,382 @@
 {
-    "MONSTER": [
-      {"name": "MONSTER"},
-      {"sub": "Vampire"},
-      {"sub": "Werewolf"},
-      {"sub": "Loch Ness"},
-      {"sub": "Godzilla"},
-      {"sub": "Zombie"},
-      {"sub": "Mummy"},
-      {"sub": "Demon"},
-      {"sub": "Succubus"},
-      {"sub": "Dragon"},
-      {"sub": "Kraken"},
-      {"sub": "Goblin"},
-      {"sub": "Orc"},
-      {"sub": "Dullahan"},
-      {"sub": "Alien"},
-      {"sub": "Cerberus"},
-      {"sub": "Chimera"},
-      {"sub": "Ghost"},
-      {"sub": "Yeti"},
-      {"sub": "Golem"},
-      {"sub": "Siren"},
-      {"sub": "Cyclop"},
-      {"sub": "Frankenstein"}
-    ],
-    "CHALLENGES": [
-      {"name": "CHALLENGES"},
-      {"sub": "1 line challenge"},
-      {"sub": "left hand challenge"},
-      {"sub": "3 color challenge"},
-      {"sub": "Dot challenge"},
-      {"sub": "10 min, 1 min, 10 sec challenge"},
-      {"sub": "Art style challenge"},
-      {"sub": "Symmetry challenge"}
-    ],
-    "ENVIRONMENT": [
-      {"name": "ENVIRONMENT"},
-      {"sub":"Ocean"},
-      {"sub":"Mountain"}, 
-      {"sub":"Swamp"}, 
-      {"sub":"Forest"}, 
-      {"sub":"Sky"}, 
-      {"sub":"City"}, 
-      {"sub":"Volcano"}, 
-      {"sub":"Island"}, 
-      {"sub":"Forest"}, 
-      {"sub":"Cave"}, 
-      {"sub":"Snowfield"}, 
-      {"sub":"Village"}, 
-      {"sub":"Farm"}, 
-      {"sub":"Waterfall"}, 
-      {"sub":"jungle"}, 
-      {"sub":"Atlantic"}, 
-      {"sub":"Desert"}, 
-      {"sub":"Egypt"}, 
-      {"sub":"Europe"}, 
-      {"sub":"Australia"}, 
-      {"sub":"China"}, 
-      {"sub":"Japan"}, 
-      {"sub":"America"}, 
-      {"sub":"India"}
-    ],
-    "THEMES": [
-      {"name": "THEMES"},
-      {"sub": "Cyberpunk"},
-      {"sub": "Fantasy"},
-      {"sub": "Magical"},
-      {"sub": "Horror"},
-      {"sub": "Monarchy"},
-      {"sub": "Adventure"},
-      {"sub": "Mystery"},
-      {"sub": "Fairy Tale"}
-    ],
-    "PERSONIFICATION": [
-      {"name": "PERSONIFICATION"},
-      {"sub": "Pokemon"},
-      {"sub": "Plant"},
-      {"sub": "Food"},
-      {"sub": "Animal"},
-      {"sub": "Zodiac"},
-      {"sub": "7 deadly sins"},
-      {"sub": "Insects"},
-      {"sub": "Mythical creatures"},
-      {"sub": "Country"},
-      {"sub": "Social media"},
-      {"sub": "drink, Celebrity"},
-      {"sub": "Art Tool"}
-    ],
-    "ANIME": [
-      {"name": "ANIME"},
-      {"sub": "Mafia"},
-      {"sub": "Sport"},
-      {"sub": "Villain"},
-      {"sub": "Hero"},
-      {"sub": "Childhood friend"},
-      {"sub": "game"},
-      {"sub": "Isekai"},
-      {"sub": "Plot"},
-      {"sub": "inspirational scene"},
-      {"sub": "make your own screenshot"},
-      {"sub": "gender swap"},
-      {"sub": "Age transgression"},
-      {"sub": "trap"},
-      {"sub": "reverse trap"},
-      {"sub": "baka, action scene"},
-      {"sub": "action scene"},
-      {"sub": "time travel"},
-      {"sub": "Tsundere"},
-      {"sub": "Yandere"},
-      {"sub": "Neet"},
-      {"sub": "cringe"},
-      {"sub": "8th grade syndrome"}
-    ],
-    "EMOTION_MOOD": [
-      {"name": "EMOTION/MOOD"},
-      {"sub": "Depressive"},
-      {"sub": "romantic"},
-      {"sub": "expectation"},
-      {"sub": "creepy"},
-      {"sub": "wrath"},
-      {"sub": "Jealousy"},
-      {"sub": "Disgust"},
-      {"sub": "disturbing"},
-      {"sub": "Enchanted"},
-      {"sub": "warm"},
-      {"sub": "Happy"},
-      {"sub": "Comfy"},
-      {"sub": "Precious"}
-    ],
-    "TIME_PERIOD": [
-      {"name": "TIME PERIOD"},
-      {"sub": "Prehistory"},
-      {"sub": "Stone age"},
-      {"sub": "Ancient history"},
-      {"sub": "Dark age"},
-      {"sub": "Middle age"},
-      {"sub": "Modern history"},
-      {"sub": "Contemporary history"},
-      {"sub": "cold war"}
-    ]
+  "MONSTER": [{
+      "name": "MONSTER"
+    },
+    {
+      "sub": "Vampire"
+    },
+    {
+      "sub": "Werewolf"
+    },
+    {
+      "sub": "Loch Ness"
+    },
+    {
+      "sub": "Godzilla"
+    },
+    {
+      "sub": "Zombie"
+    },
+    {
+      "sub": "Mummy"
+    },
+    {
+      "sub": "Demon"
+    },
+    {
+      "sub": "Succubus"
+    },
+    {
+      "sub": "Dragon"
+    },
+    {
+      "sub": "Kraken"
+    },
+    {
+      "sub": "Goblin"
+    },
+    {
+      "sub": "Orc"
+    },
+    {
+      "sub": "Dullahan"
+    },
+    {
+      "sub": "Alien"
+    },
+    {
+      "sub": "Cerberus"
+    },
+    {
+      "sub": "Chimera"
+    },
+    {
+      "sub": "Ghost"
+    },
+    {
+      "sub": "Yeti"
+    },
+    {
+      "sub": "Golem"
+    },
+    {
+      "sub": "Siren"
+    },
+    {
+      "sub": "Cyclop"
+    },
+    {
+      "sub": "Frankenstein"
+    }
+  ],
+  "CHALLENGES": [{
+      "name": "CHALLENGES"
+    },
+    {
+      "sub": "1 line challenge"
+    },
+    {
+      "sub": "left hand challenge"
+    },
+    {
+      "sub": "3 color challenge"
+    },
+    {
+      "sub": "Dot challenge"
+    },
+    {
+      "sub": "10 min, 1 min, 10 sec challenge"
+    },
+    {
+      "sub": "Art style challenge"
+    },
+    {
+      "sub": "Symmetry challenge"
+    }
+  ],
+  "ENVIRONMENT": [{
+      "name": "ENVIRONMENT"
+    },
+    {
+      "sub": "Ocean"
+    },
+    {
+      "sub": "Mountain"
+    },
+    {
+      "sub": "Swamp"
+    },
+    {
+      "sub": "Forest"
+    },
+    {
+      "sub": "Sky"
+    },
+    {
+      "sub": "City"
+    },
+    {
+      "sub": "Volcano"
+    },
+    {
+      "sub": "Island"
+    },
+    {
+      "sub": "Forest"
+    },
+    {
+      "sub": "Cave"
+    },
+    {
+      "sub": "Snowfield"
+    },
+    {
+      "sub": "Village"
+    },
+    {
+      "sub": "Farm"
+    },
+    {
+      "sub": "Waterfall"
+    },
+    {
+      "sub": "jungle"
+    },
+    {
+      "sub": "Atlantic"
+    },
+    {
+      "sub": "Desert"
+    },
+    {
+      "sub": "Egypt"
+    },
+    {
+      "sub": "Europe"
+    },
+    {
+      "sub": "Australia"
+    },
+    {
+      "sub": "China"
+    },
+    {
+      "sub": "Japan"
+    },
+    {
+      "sub": "America"
+    },
+    {
+      "sub": "India"
+    }
+  ],
+  "THEMES": [{
+      "name": "THEMES"
+    },
+    {
+      "sub": "Cyberpunk"
+    },
+    {
+      "sub": "Fantasy"
+    },
+    {
+      "sub": "Magical"
+    },
+    {
+      "sub": "Horror"
+    },
+    {
+      "sub": "Monarchy"
+    },
+    {
+      "sub": "Adventure"
+    },
+    {
+      "sub": "Mystery"
+    },
+    {
+      "sub": "Fairy Tale"
+    }
+  ],
+  "PERSONIFICATION": [{
+      "name": "PERSONIFICATION"
+    },
+    {
+      "sub": "Pokemon"
+    },
+    {
+      "sub": "Plant"
+    },
+    {
+      "sub": "Food"
+    },
+    {
+      "sub": "Animal"
+    },
+    {
+      "sub": "Zodiac"
+    },
+    {
+      "sub": "7 deadly sins"
+    },
+    {
+      "sub": "Insects"
+    },
+    {
+      "sub": "Mythical creatures"
+    },
+    {
+      "sub": "Country"
+    },
+    {
+      "sub": "Social media"
+    },
+    {
+      "sub": "drink, Celebrity"
+    },
+    {
+      "sub": "Art Tool"
+    }
+  ],
+  "ANIME": [{
+      "name": "ANIME"
+    },
+    {
+      "sub": "Mafia"
+    },
+    {
+      "sub": "Sport"
+    },
+    {
+      "sub": "Villain"
+    },
+    {
+      "sub": "Hero"
+    },
+    {
+      "sub": "Childhood friend"
+    },
+    {
+      "sub": "game"
+    },
+    {
+      "sub": "Isekai"
+    },
+    {
+      "sub": "Plot"
+    },
+    {
+      "sub": "inspirational scene"
+    },
+    {
+      "sub": "make your own screenshot"
+    },
+    {
+      "sub": "gender swap"
+    },
+    {
+      "sub": "Age transgression"
+    },
+    {
+      "sub": "trap"
+    },
+    {
+      "sub": "reverse trap"
+    },
+    {
+      "sub": "baka, action scene"
+    },
+    {
+      "sub": "action scene"
+    },
+    {
+      "sub": "time travel"
+    },
+    {
+      "sub": "Tsundere"
+    },
+    {
+      "sub": "Yandere"
+    },
+    {
+      "sub": "Neet"
+    },
+    {
+      "sub": "cringe"
+    },
+    {
+      "sub": "8th grade syndrome"
+    }
+  ],
+  "EMOTION_MOOD": [{
+      "name": "EMOTION/MOOD"
+    },
+    {
+      "sub": "Depressive"
+    },
+    {
+      "sub": "romantic"
+    },
+    {
+      "sub": "expectation"
+    },
+    {
+      "sub": "creepy"
+    },
+    {
+      "sub": "wrath"
+    },
+    {
+      "sub": "Jealousy"
+    },
+    {
+      "sub": "Disgust"
+    },
+    {
+      "sub": "disturbing"
+    },
+    {
+      "sub": "Enchanted"
+    },
+    {
+      "sub": "warm"
+    },
+    {
+      "sub": "Happy"
+    },
+    {
+      "sub": "Comfy"
+    },
+    {
+      "sub": "Precious"
+    }
+  ],
+  "TIME_PERIOD": [{
+      "name": "TIME PERIOD"
+    },
+    {
+      "sub": "Prehistory"
+    },
+    {
+      "sub": "Stone age"
+    },
+    {
+      "sub": "Ancient history"
+    },
+    {
+      "sub": "Dark age"
+    },
+    {
+      "sub": "Middle age"
+    },
+    {
+      "sub": "Modern history"
+    },
+    {
+      "sub": "Contemporary history"
+    },
+    {
+      "sub": "cold war"
+    }
+  ]
 }

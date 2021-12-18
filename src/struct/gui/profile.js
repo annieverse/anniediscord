@@ -1,5 +1,10 @@
-const { Canvas } = require(`canvas-constructor`)
-const { resolve, join } = require(`path`)
+const {
+	Canvas
+} = require(`canvas-constructor`)
+const {
+	resolve,
+	join
+} = require(`path`)
 const palette = require(`../../ui/colors/default`)
 const Theme = require(`../../ui/colors/themes`)
 
@@ -8,7 +13,15 @@ Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-black.ttf`)), `R
 Canvas.registerFont(resolve(join(__dirname, `../../fonts/roboto-thin.ttf`)), `RobotoThin`)
 
 async function profile(stacks, member, cover = null, sticker = null) {
-	const { commanifier, formatString, loadAsset, meta: {data, author} } = stacks
+	const {
+		commanifier,
+		formatString,
+		loadAsset,
+		meta: {
+			data,
+			author
+		}
+	} = stacks
 	const rank = stacks.meta.data.rank
 
 	const user = {
@@ -30,8 +43,8 @@ async function profile(stacks, member, cover = null, sticker = null) {
 		theme: Theme[data.interfacemode]
 	}
 
-	let canvas_x = 320//300
-	let canvas_y = 420//400
+	let canvas_x = 320 //300
+	let canvas_y = 420 //400
 	let startPos_x = 10
 	let startPos_y = 10
 	let baseWidth = canvas_x - 20
@@ -85,13 +98,13 @@ async function profile(stacks, member, cover = null, sticker = null) {
 
 	canv.setColor(rank.color)
 		.printRectangle(startPos_x, startPos_y, baseWidth, 194)
-		.printImage(await loadAsset(user.cov?user.cov:`defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
+		.printImage(await loadAsset(user.cov ? user.cov : `defaultcover1`), startPos_x, startPos_y, baseWidth, 194) // COVER HEADER
 
 	/**
 	 *    USER AVATAR
 	 */
 	canv.setColor(isVIP ? palette.yellow : user.theme.main)
-		.addCircle(startPos_x + 70, 200, 52) 
+		.addCircle(startPos_x + 70, 200, 52)
 		.printCircularImage(avatar, startPos_x + 20, 150, 100, 100, 50)
 
 	/**
@@ -104,8 +117,8 @@ async function profile(stacks, member, cover = null, sticker = null) {
 
 	//we can fit 8 badges; if user has more display a plus or something
 	async function setBadge(xy, diameter, pos_y) {
-		for (var i=0; i<=Math.min(key.length, 6); i++) {
-			canv.printImage(await loadAsset(key[i]), startPos_x + 128 + i*20, pos_y, xy, xy, diameter)
+		for (var i = 0; i <= Math.min(key.length, 6); i++) {
+			canv.printImage(await loadAsset(key[i]), startPos_x + 128 + i * 20, pos_y, xy, xy, diameter)
 		}
 		if (key.length == 7) {
 			canv.printImage(await loadAsset(key[i]), startPos_x + 128 + 140, pos_y, xy, xy, diameter)
@@ -122,11 +135,11 @@ async function profile(stacks, member, cover = null, sticker = null) {
 
 	const titlePicker = (memberObject = {}) => {
 		return memberObject.roles.find(r => r.name === `༶•  Grand Master`) ? `G R A N D  M A S T E R` :
-		memberObject.roles.find(r => r.name === `༶•  Art Mentor`) ? `A R T  M E N T O R` :
-		memberObject.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
-		memberObject.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
-		memberObject.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
-				`A R T  A P P R E C I A T O R`
+			memberObject.roles.find(r => r.name === `༶•  Art Mentor`) ? `A R T  M E N T O R` :
+			memberObject.roles.find(r => r.name === `Digital ☆`) ? `D I G I T A L   A R T I S T` :
+			memberObject.roles.find(r => r.name === `Traditional ☆`) ? `T R A D I T I O N A L  A R T I S T` :
+			memberObject.roles.find(r => r.name === `Mixed ☆`) ? `G E N E R A L  A R T I S T` :
+			`A R T  A P P R E C I A T O R`
 	}
 
 

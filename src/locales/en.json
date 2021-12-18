@@ -864,7 +864,7 @@
         "TEMPORARILY_CLOSED": "**H-hi! the shop gets temporarily closed until further notice.**\n╰─Sorry for this inconvenience! {{emoji}}",
         "NO_ITEMS": "**Nothing to buy!** this server hasn't set their own shop yet.",
         "SETUP_TIPS": "Try ask the server owner/admin to setup one with **`{{prefix}}setshop`** command!♡",
-        "CLOSED": "Aw, the shop still closed! please comeback next time!", 
+        "CLOSED": "Aw, the shop still closed! please comeback next time!",
         "BUY_TIPS": "Type **`{{prefix}}buy <item>`** to purchase it! {{emoji}}",
         "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**"
     },

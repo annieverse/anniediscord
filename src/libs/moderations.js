@@ -5,32 +5,32 @@ class Moderations {
      * @param {Object} message <Message> instance is required. 
      * @param {*} userId target user id.
      */
-    constructor(message={}, userId=``) {
+    constructor(message = {}, userId = ``) {
         this.message = message
         this.user = message.guild.members.cache.get(userId)
         this.author = `[${message.guild.name}] ${message.author.tag} -`
     }
 
-    
+
     /**
      * @param {*} point required parameter (1 ~ 4) in order to give the correct action
      */
     byPoints(points = 0) {
-      const actionByPoints = {
-          1: `mute@3`,
-          2: `mute@24`,
-          3: `kick`,
-          4: `ban`
-      } 
+        const actionByPoints = {
+            1: `mute@3`,
+            2: `mute@24`,
+            3: `kick`,
+            4: `ban`
+        }
 
-      // Cancel action if the given point is negative.
-      if (!points) return logger.debug(`no actions given for ${this.user.id}`)
+        // Cancel action if the given point is negative.
+        if (!points) return logger.debug(`no actions given for ${this.user.id}`)
 
-      if (points > 4) points = 4
+        if (points > 4) points = 4
 
-      const selectedAction = actionByPoints[points]
-      this[selectedAction]()
-      return logger.info(`${this.author} has requested "${selectedAction}" action for ${this.user.id}`)
+        const selectedAction = actionByPoints[points]
+        this[selectedAction]()
+        return logger.info(`${this.author} has requested "${selectedAction}" action for ${this.user.id}`)
     }
 
 
@@ -53,7 +53,9 @@ class Moderations {
         /**
          *  Else, create a new one.
          */
-        const newMuteRole = this.message.guild.roles.create({ name: `muted` })
+        const newMuteRole = this.message.guild.roles.create({
+            name: `muted`
+        })
         this.user.roles.add(newMuteRole.id)
         return logger.info(`${this.user.id} has been muted`)
     }

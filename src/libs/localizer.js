@@ -1,10 +1,12 @@
-const { readdirSync } = require(`fs`)
+const {
+    readdirSync
+} = require(`fs`)
 /**
  * Retrieve available locales in the target directory
  * @param {string} [path=`./src/locales`] the target locale directory path
  * @return {object}
  */
-module.exports = function localizer(client, path=`./src/locales/`) {
+module.exports = function localizer(client, path = `./src/locales/`) {
     const fn = `[LOCALIZER]`
     const src = readdirSync(path)
     const locales = src.filter(loc => loc.endsWith(`json`))
