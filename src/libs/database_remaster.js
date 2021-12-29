@@ -2228,8 +2228,6 @@ class Database {
 		]
 
 		logger.info(`Verifing all tables that are requirred are present. This may take a while...`)
-		//let TABLESTOARRAY = Object.keys(TABLES).map((key) => [Number(key), TABLES[key]])
-		console.log(`starting loop`)
 		TABLES.forEach(async (table) => await this._query(table.stmt, `run`, [], `Verifing ${table.tablename} table`)).then()
 		logger.info(`All Table that are requirred have been verified`)
 	}
