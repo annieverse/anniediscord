@@ -109,6 +109,7 @@ class Database {
 			}
 		}), 5000).unref()
 		this.connectRedis()
+		this.verifyTables()
 		return this
 	}
 
@@ -1835,7 +1836,7 @@ class Database {
 		 * Need to order based on hierachy
 		 */
 		const TABLES = [{
-				stmt: `CREATE TABLE users( 
+				stmt: `CREATE TABLE IF NOT EXISTS users( 
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 						'last_login_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1850,7 +1851,7 @@ class Database {
 				tablename: `users`
 			},
 			{
-				stmt: `CREATE TABLE item_rarities (
+				stmt: `CREATE TABLE IF NOT EXISTS item_rarities (
 
 					'rarity_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 					'name' TEXT,
@@ -1861,7 +1862,7 @@ class Database {
 				tablename: `item_rarities`
 			},
 			{
-				stmt: `CREATE TABLE item_types (
+				stmt: `CREATE TABLE IF NOT EXISTS item_types (
 
 					'type_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 					'name' TEXT,
@@ -1873,7 +1874,7 @@ class Database {
 				tablename: `item_types`
 			},
 			{
-				stmt: `CREATE TABLE quests (
+				stmt: `CREATE TABLE IF NOT EXISTS quests (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'quest_id'	INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1885,7 +1886,7 @@ class Database {
 				tablename: `quests`
 			},
 			{
-				stmt: `CREATE TABLE relationships (
+				stmt: `CREATE TABLE IF NOT EXISTS relationships (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1896,7 +1897,7 @@ class Database {
 				tablename: `relationships`
 			},
 			{
-				stmt: `CREATE TABLE items (
+				stmt: `CREATE TABLE IF NOT EXISTS items (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1922,7 +1923,7 @@ class Database {
 				tablename: `items`
 			},
 			{
-				stmt: `CREATE TABLE guilds (
+				stmt: `CREATE TABLE IF NOT EXISTS guilds (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1934,7 +1935,7 @@ class Database {
 				tablename: `guilds`
 			},
 			{
-				stmt: `CREATE TABLE autoresponders (
+				stmt: `CREATE TABLE IF NOT EXISTS autoresponders (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'ar_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1947,7 +1948,7 @@ class Database {
 				tablename: `autoresponders`
 			},
 			{
-				stmt: `CREATE TABLE item_effects(
+				stmt: `CREATE TABLE IF NOT EXISTS item_effects(
 					effect_id INTEGER PRIMARY KEY AUTOINCREMENT,
 					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					item_id INTEGER,
@@ -1966,7 +1967,7 @@ class Database {
 				tablename: `item_effects`
 			},
 			{
-				stmt: `CREATE TABLE user_durational_buffs(
+				stmt: `CREATE TABLE IF NOT EXISTS user_durational_buffs(
 					buff_id INTEGER PRIMARY KEY AUTOINCREMENT,
 					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					name TEXT,
@@ -1983,7 +1984,7 @@ class Database {
 				tablename: `user_durational_buffs`
 			},
 			{
-				stmt: `CREATE TABLE user_gender(
+				stmt: `CREATE TABLE IF NOT EXISTS user_gender(
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id' TEXT,
 					'gender' TEXT,
@@ -1995,7 +1996,7 @@ class Database {
 				tablename: `user_gender`
 			},
 			{
-				stmt: `CREATE TABLE affiliates (
+				stmt: `CREATE TABLE IF NOT EXISTS affiliates (
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'guild_id' TEXT NOT NULL,
@@ -2005,7 +2006,7 @@ class Database {
 				tablename: `affiliates`
 			},
 			{
-				stmt: `CREATE TABLE commands_log (
+				stmt: `CREATE TABLE IF NOT EXISTS commands_log (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2019,7 +2020,7 @@ class Database {
 				tablename: `commands_log`
 			},
 			{
-				stmt: `CREATE TABLE guild_configurations (
+				stmt: `CREATE TABLE IF NOT EXISTS guild_configurations (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -2043,7 +2044,7 @@ class Database {
 				tablename: `guild_configurations`
 			},
 			{
-				stmt: `CREATE TABLE item_gacha (
+				stmt: `CREATE TABLE IF NOT EXISTS item_gacha (
 
 					'gacha_id' INTEGER PRIMARY KEY AUTOINCREMENT,
 					'item_id' INTEGER,
@@ -2059,7 +2060,7 @@ class Database {
 				tablename: `item_gacha`
 			},
 			{
-				stmt: `CREATE TABLE quest_log (
+				stmt: `CREATE TABLE IF NOT EXISTS quest_log (
 					registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					quest_id INTEGER,
 					user_id TEXT,
@@ -2068,7 +2069,7 @@ class Database {
 				tablename: `quest_log`
 			},
 			{
-				stmt: `CREATE TABLE resource_log (
+				stmt: `CREATE TABLE IF NOT EXISTS resource_log (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'log_id' INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2081,7 +2082,7 @@ class Database {
 				tablename: `resource_log`
 			},
 			{
-				stmt: `CREATE TABLE shop(
+				stmt: `CREATE TABLE IF NOT EXISTS shop(
 					item_id INTEGER,
 					guild_id TEXT DEFAULT NULL,
 					quantity INTEGER DEFAULT -1,
@@ -2098,7 +2099,7 @@ class Database {
 				tablename: `shop`
 			},
 			{
-				stmt: `CREATE TABLE user_dailies (
+				stmt: `CREATE TABLE IF NOT EXISTS user_dailies (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id'	TEXT,
@@ -2110,7 +2111,7 @@ class Database {
 				tablename: `user_dailies`
 			},
 			{
-				stmt: `CREATE TABLE user_exp (
+				stmt: `CREATE TABLE IF NOT EXISTS user_exp (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id'	TEXT,
@@ -2125,7 +2126,7 @@ class Database {
 				tablename: `user_exp`
 			},
 			{
-				stmt: `CREATE TABLE user_inventories (
+				stmt: `CREATE TABLE IF NOT EXISTS user_inventories (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id'	TEXT,
@@ -2140,7 +2141,7 @@ class Database {
 				tablename: `user_inventories`
 			},
 			{
-				stmt: `CREATE TABLE user_quests (
+				stmt: `CREATE TABLE IF NOT EXISTS user_quests (
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id' TEXT,
@@ -2166,7 +2167,7 @@ class Database {
 				tablename: `user_quests`
 			},
 			{
-				stmt: `CREATE TABLE user_relationships (
+				stmt: `CREATE TABLE IF NOT EXISTS user_relationships (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id_A'	TEXT,
@@ -2181,7 +2182,7 @@ class Database {
 				tablename: `user_relationships`
 			},
 			{
-				stmt: `CREATE TABLE user_reminders (
+				stmt: `CREATE TABLE IF NOT EXISTS user_reminders (
 
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'reminder_id' TEXT PRIMARY KEY,
@@ -2198,7 +2199,7 @@ class Database {
 				tablename: `user_reminders`
 			},
 			{
-				stmt: `CREATE TABLE user_relationships (
+				stmt: `CREATE TABLE IF NOT EXISTS user_relationships (
 					'registered_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'updated_at'	TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'user_id_A'	TEXT,
@@ -2213,7 +2214,7 @@ class Database {
 				tablename: `user_reputations`
 			},
 			{
-				stmt: `CREATE TABLE user_self_covers (
+				stmt: `CREATE TABLE IF NOT EXISTS user_self_covers (
 					'registered_at' TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					'cover_id' TEXT,
 					'user_id' TEXT,
@@ -2228,7 +2229,9 @@ class Database {
 		]
 
 		logger.info(`Verifing all tables that are requirred are present. This may take a while...`)
-		TABLES.forEach(async (table) => await this._query(table.stmt, `run`, [], `Verifing ${table.tablename} table`)).then()
+		for (const table of TABLES) {
+			await this._query(table.stmt, `run`, [], `Verifing ${table.tablename} table`)
+		}
 		logger.info(`All Table that are requirred have been verified`)
 	}
 }

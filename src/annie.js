@@ -2,7 +2,8 @@ const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
-const Database = require(`./libs/database`)
+//const Database = require(`./libs/database`)
+const Database = require(`./libs/database_remaster`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
@@ -217,7 +218,7 @@ class Annie extends Discord.Client {
      * @return {void}
      */
     async registerUserDurationalBuffs() {
-        if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
+        //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
         this.db.getSavedUserDurationalBuffs().then(async src => {
             if (!src.length) return
             let count = 0
