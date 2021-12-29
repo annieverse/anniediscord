@@ -3,11 +3,8 @@ const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
-const Express = require(`express`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
-const moment = require(`moment`)
-const Reminder = require(`./libs/reminder`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
 const emoji = require(`./utils/emojiFetch`)
@@ -18,8 +15,8 @@ const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
-    constructor() {
-        super()
+    constructor(intents) {
+        super({intents: intents})
         this.startupInit = process.hrtime()
 
         /**
@@ -416,5 +413,5 @@ class Annie extends Discord.Client {
     }
 }
 
-module.exports = new Annie()
+module.exports = new Annie([Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES,Discord.Intents.FLAGS.GUILD_MEMBERS,Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS])
 

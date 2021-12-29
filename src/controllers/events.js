@@ -7,7 +7,7 @@ const reqEvent = (event) => require(`../events/${event}.js`)
 module.exports = function eventsController(annie) {
 	annie.once(`ready`, () => reqEvent(`ready`)(annie))
 	annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
-	annie.on(`message`, (message) => reqEvent(`message`)(annie, message))
+	annie.on(`messageCreate`, (message) => reqEvent(`messageCreate`)(annie, message))
 	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
 	annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
     //  Events below this point is only available in the production
