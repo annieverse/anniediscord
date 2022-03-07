@@ -2,7 +2,8 @@ const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
-//const Database = require(`./libs/database`)
+const applicationCommandLoader = require(`./controllers/applicationCommands`)
+    //const Database = require(`./libs/database`)
 const Database = require(`./libs/database_remaster`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
@@ -16,239 +17,239 @@ const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
-    constructor(intents) {
-        super({intents: intents})
-        this.startupInit = process.hrtime()
+        constructor(intents) {
+            super({ intents: intents })
+            this.startupInit = process.hrtime()
 
-        /**
-         * The default prop for accessing the global point configurations.
-         * @since 6.0.0
-         * @type {external:Object}
-         */
-        this.configs = config
+            /**
+             * The default prop for accessing the global point configurations.
+             * @since 6.0.0
+             * @type {external:Object}
+             */
+            this.configs = config
 
-        /**
-         * The default prop for accessing current Annie's version.
-         * @since 6.0.0
-         * @type {external:String}
-         */
-        this.version = config.version
+            /**
+             * The default prop for accessing current Annie's version.
+             * @since 6.0.0
+             * @type {external:String}
+             */
+            this.version = config.version
 
-        /**
-         * The default prop for determining if current instance is development environment.
-         * @since 6.0.0
-         * @type {external:Boolean}
-         */
-        this.dev = config.dev
+            /**
+             * The default prop for determining if current instance is development environment.
+             * @since 6.0.0
+             * @type {external:Boolean}
+             */
+            this.dev = config.dev
 
-        /**
-         * The default prop for accessing command prefix.
-         * @since 6.0.0
-         * @type {external:String}
-         */
-        this.prefix = config.prefix
+            /**
+             * The default prop for accessing command prefix.
+             * @since 6.0.0
+             * @type {external:String}
+             */
+            this.prefix = config.prefix
 
-        /**
-         * The default prop for accessing current port.
-         * @since 6.0.0
-         * @type {external:Number}
-         */
-        this.port = config.port
+            /**
+             * The default prop for accessing current port.
+             * @since 6.0.0
+             * @type {external:Number}
+             */
+            this.port = config.port
 
-        /**
-         * The default prop for accessing the available plugins.
-         * @type {external:Array}
-         */
-        this.plugins = config.plugins
+            /**
+             * The default prop for accessing the available plugins.
+             * @type {external:Array}
+             */
+            this.plugins = config.plugins
 
-        /**
-         * The default prop for accessing permissions level.
-         * @since 6.0.0
-         * @type {external:Object}
-         */
-        this.permission = config.permissions
+            /**
+             * The default prop for accessing permissions level.
+             * @since 6.0.0
+             * @type {external:Object}
+             */
+            this.permission = config.permissions
 
-        /**
-         * The default prop for accessing the global point configurations.
-         * @since 6.0.0
-         * @type {external:Object}
-         */
-        this.points = config.points
+            /**
+             * The default prop for accessing the global point configurations.
+             * @since 6.0.0
+             * @type {external:Object}
+             */
+            this.points = config.points
 
-        /**
-         * The default prop for accessing the default EXP configurations.
-         * @since 6.0.0
-         * @type {external:Object}
-         */
-        this.exp = config.points.exp
+            /**
+             * The default prop for accessing the default EXP configurations.
+             * @since 6.0.0
+             * @type {external:Object}
+             */
+            this.exp = config.points.exp
 
-        /**
-         * The default prop for accessing the default Currency configurations.
-         * @since 6.0.0
-         * @type {external:Object}
-         */
-        this.currency = config.points.currency
+            /**
+             * The default prop for accessing the default Currency configurations.
+             * @since 6.0.0
+             * @type {external:Object}
+             */
+            this.currency = config.points.currency
 
-        /**
-         * Points Manager.
-         * @param {object} [message={}] Target message instance.
-         * @return {external:PointManager}
-         */
-        this.pointsController = (message={}) => new PointsController({bot:this, message:message})
+            /**
+             * Points Manager.
+             * @param {object} [message={}] Target message instance.
+             * @return {external:PointManager}
+             */
+            this.pointsController = (message = {}) => new PointsController({ bot: this, message: message })
 
-        /**
-         * Experience Framework
-         * @param {GuildMember} user Target member.
-         * @param {Guild} guild Target guild for the member.
-         * @param {TextChannel} channel Target level-up message channel.
-         * @return {external:Experience}
-         */
-        this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
+            /**
+             * Experience Framework
+             * @param {GuildMember} user Target member.
+             * @param {Guild} guild Target guild for the member.
+             * @param {TextChannel} channel Target level-up message channel.
+             * @return {external:Experience}
+             */
+            this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
 
-        /**
-         * Response/Message Wrapper.
-         * @param {Message} message Resolvable message instance
-         * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
-         * @return {external:Response}
-         */
-        this.responseLibs = (message, channelAsInstance=false) => new Response(message, channelAsInstance)
+            /**
+             * Response/Message Wrapper.
+             * @param {Message} message Resolvable message instance
+             * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+             * @return {external:Response}
+             */
+            this.responseLibs = (message, channelAsInstance = false) => new Response(message, channelAsInstance)
 
-        /**
-         * The default function for calculating task performance in milliseconds.
-         * @since 6.0.0
-         * @type {SecretKey}
-         */
-        this.getBenchmark = getBenchmark
+            /**
+             * The default function for calculating task performance in milliseconds.
+             * @since 6.0.0
+             * @type {SecretKey}
+             */
+            this.getBenchmark = getBenchmark
 
-        /**
-         * Current shard id.
-         * @type {number}
-         */
-        this.shardId = this.shard.ids[0]
+            /**
+             * Current shard id.
+             * @type {number}
+             */
+            this.shardId = this.shard.ids[0]
 
-        /**
-         * The default function for handling logging tasks.
-         * @type {Pino}
-         */
-        this.logger = require(`pino`)({name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`})
+            /**
+             * The default function for handling logging tasks.
+             * @type {Pino}
+             */
+            this.logger = require(`pino`)({ name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}` })
 
-        /**
-         * Stores Annie's Support Server invite link.
-         * @type {string}
-         */ 
-        this.supportServer = `https://discord.gg/HjPHCyG346`
+            /**
+             * Stores Annie's Support Server invite link.
+             * @type {string}
+             */
+            this.supportServer = `https://discord.gg/HjPHCyG346`
 
-        /**
-         * The guild id for support server.
-         * @type {string}
-         */
-        this.supportServerId = `577121315480272908`
+            /**
+             * The guild id for support server.
+             * @type {string}
+             */
+            this.supportServerId = `577121315480272908`
 
-        /**
-         * User cooldown pool.
-         * @type {collection}
-         */
-        this.cooldowns = new Discord.Collection()
+            /**
+             * User cooldown pool.
+             * @type {collection}
+             */
+            this.cooldowns = new Discord.Collection()
 
-        /**
-         * Cron instance
-         * @type {object}
-         */
-        this.cronManager = new CronManager()
-        this.prepareLogin()
-    }
-
-
-    /**
-     * Initialize Annie and login to discord
-     * @since 6.0.0
-     * @returns {void}
-     */
-    prepareLogin() {
-        process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
-        try {
-            this.registerNode(new Database().connect(), `db`)
-            this.registerNode(commandsLoader(), `commands`)
-            this.registerNode(localizer(), `locales`)
-            require(`./controllers/events`)(this)
-            this.login(process.env.TOKEN)
+            /**
+             * Cron instance
+             * @type {object}
+             */
+            this.cronManager = new CronManager()
+            this.prepareLogin()
         }
-        catch(e) {
-            this.logger.error(`Client has failed to start > ${e.stack}`)
-            process.exit()
-        }
-    }
 
-    /**
-     * Registering configuration nodes for each guild or single guild by specifying it in the parameter.
-     * @param {string} [guildId=null] Specify target guild id for single guild register.
-     * @author klerikdust
-     * @return {void}
-     */
-    async registerGuildConfigurations(guildId=null) {
-        const initTime = process.hrtime()
-        const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
-        //  If prompted to register only single guild, then use single-element array.
-        const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
-        for (let i=0; i<getGuilds.length; i++) {
-            let guild = this.guilds.cache.get(getGuilds[i])
-            let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
-            guild.configs = new Map()
-            //  Iterating over all the available configurations
-            for (let x=0; x<customConfig.availableConfigurations.length; x++) {
-                let cfg = customConfig.availableConfigurations[x]
-                //  Register existing configs into guild's nodes if available
-                if (existingGuildConfigs.length > 0) {
-                    const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
-                    if (matchConfigCode) {
-                        cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
-                        cfg.setByUserId = matchConfigCode.set_by_user_id
-                        cfg.registeredAt = matchConfigCode.registered_at
-                        cfg.updatedAt = matchConfigCode.updated_at
-                    }
-                }
-                guild.configs.set(cfg.name, cfg)
+
+        /**
+         * Initialize Annie and login to discord
+         * @since 6.0.0
+         * @returns {void}
+         */
+        prepareLogin() {
+            process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
+            try {
+                this.registerNode(new Database().connect(), `db`)
+                this.registerNode(commandsLoader({ logger: this.logger }), `commands`)
+                require(`./controllers/applicationCommands`)({ logger: this.logger, commands: this.commands })
+                this.registerNode(localizer(), `locales`)
+                require(`./controllers/events`)(this)
+                this.login(process.env.TOKEN)
+            } catch (e) {
+                this.logger.error(`Client has failed to start > ${e.stack}`)
+                process.exit()
             }
-        } 
-        this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
-    }
+        }
 
-    /**
-     * Registering cache and cron for saved user durational buffs.
-     * @return {void}
-     */
-    async registerUserDurationalBuffs() {
-        //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
-        this.db.getSavedUserDurationalBuffs().then(async src => {
-            if (!src.length) return
-            let count = 0
-            for (let i=0; i<src.length; i++) {
-                const node = src[i]
-                //  Skip if guild isn't exists in current shard.
-                if (!this.guilds.cache.has(node.guild_id)) continue
-                const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
-                const localTime = await this.db.toLocaltime(node.registered_at)
-                const expireAt = new Date(localTime).getTime() + node.duration
-                //  Skip expired buff, and delete it from database as well.
-                if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
-                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
-                    .then(id => {
-                        this.db.removeUserDurationalBuff(id)
-                    })
-                    continue
+        /**
+         * Registering configuration nodes for each guild or single guild by specifying it in the parameter.
+         * @param {string} [guildId=null] Specify target guild id for single guild register.
+         * @author klerikdust
+         * @return {void}
+         */
+        async registerGuildConfigurations(guildId = null) {
+            const initTime = process.hrtime()
+            const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
+                //  If prompted to register only single guild, then use single-element array.
+            const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
+            for (let i = 0; i < getGuilds.length; i++) {
+                let guild = this.guilds.cache.get(getGuilds[i])
+                let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)
+                guild.configs = new Map()
+                    //  Iterating over all the available configurations
+                for (let x = 0; x < customConfig.availableConfigurations.length; x++) {
+                    let cfg = customConfig.availableConfigurations[x]
+                        //  Register existing configs into guild's nodes if available
+                    if (existingGuildConfigs.length > 0) {
+                        const matchConfigCode = existingGuildConfigs.filter(node => node.config_code.toUpperCase() === cfg.name)[0]
+                        if (matchConfigCode) {
+                            cfg.value = this._parseConfigurationBasedOnType(matchConfigCode.customized_parameter, cfg.allowedTypes)
+                            cfg.setByUserId = matchConfigCode.set_by_user_id
+                            cfg.registeredAt = matchConfigCode.registered_at
+                            cfg.updatedAt = matchConfigCode.updated_at
+                        }
+                    }
+                    guild.configs.set(cfg.name, cfg)
                 }
-                this.db.redis.sadd(key, node.multiplier)
-                this.cronManager.add(node.multiplier+`_`+key, new Date(expireAt), () => {
-                    //  Flush from cache and sqlite
-                    this.db.redis.srem(key, node.multiplier)
-                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
-                    .then(id => {
-                        this.db.removeUserDurationalBuff(id)
-                    })
-                    //  Send expiration notice
-                    this.users.fetch(node.user_id)
-                    .then(async user => {
-                        this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
+            }
+            this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
+        }
+
+        /**
+         * Registering cache and cron for saved user durational buffs.
+         * @return {void}
+         */
+        async registerUserDurationalBuffs() {
+                //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
+                this.db.getSavedUserDurationalBuffs().then(async src => {
+                            if (!src.length) return
+                            let count = 0
+                            for (let i = 0; i < src.length; i++) {
+                                const node = src[i]
+                                    //  Skip if guild isn't exists in current shard.
+                                if (!this.guilds.cache.has(node.guild_id)) continue
+                                const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
+                                const localTime = await this.db.toLocaltime(node.registered_at)
+                                const expireAt = new Date(localTime).getTime() + node.duration
+                                    //  Skip expired buff, and delete it from database as well.
+                                if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
+                                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                                        .then(id => {
+                                            this.db.removeUserDurationalBuff(id)
+                                        })
+                                    continue
+                                }
+                                this.db.redis.sadd(key, node.multiplier)
+                                this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
+                                            //  Flush from cache and sqlite
+                                            this.db.redis.srem(key, node.multiplier)
+                                            this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                                                .then(id => {
+                                                    this.db.removeUserDurationalBuff(id)
+                                                })
+                                                //  Send expiration notice
+                                            this.users.fetch(node.user_id)
+                                                .then(async user => {
+                                                        this.responseLibs(user).send(`Your **'${node.name}'** buff has expired! ${await this.getEmoji(`AnnieHeartPeek`)}`, {
                             field: user,
                             footer: `${this.guilds.cache.get(node.guild_id).name}'s System Notification`
                         })
@@ -415,4 +416,3 @@ class Annie extends Discord.Client {
 }
 
 module.exports = new Annie([Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES,Discord.Intents.FLAGS.GUILD_MEMBERS,Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS])
-

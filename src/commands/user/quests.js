@@ -1,28 +1,29 @@
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
-/**
- * Displaying list of quests that you can accomplish and wins artcoins! 
- * You can take quest every 2 hours.
- * @author klerikdust
- */
+    /**
+     * Displaying list of quests that you can accomplish and wins artcoins! 
+     * You can take quest every 2 hours.
+     * @author klerikdust
+     */
 module.exports = {
-    name: `quests`,
-	aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`, `q`],
-	description: `Displaying quest that you can complete and wins artcoins! the quest will be available once every 2 hours`,
-	usage: `quest`,
-	permissionLevel: 0,
-    cooldown: [2, `hours`],
-    async execute(client, reply, message, arg, locale) {
-		const quests = await client.db.getAllQuests()
-		if (!quests.length) return reply.send(locale.QUEST.EMPTY)
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
-        const questIdsPool = quests.map(q => q.quest_id)
-		const now = moment()
-		const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
-		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.QUEST.COOLDOWN, {
-			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
+        name: `quests`,
+        aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`, `q`],
+        description: `Displaying quest that you can complete and wins artcoins! the quest will be available once every 2 hours`,
+        usage: `quest`,
+        permissionLevel: 0,
+        applicationCommand: false,
+        cooldown: [2, `hours`],
+        async execute(client, reply, message, arg, locale) {
+            const quests = await client.db.getAllQuests()
+            if (!quests.length) return reply.send(locale.QUEST.EMPTY)
+            const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+            const questIdsPool = quests.map(q => q.quest_id)
+            const now = moment()
+            const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
+                //  Handle if user's quest queue still in cooldown
+            if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.QUEST.COOLDOWN, {
+                            topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
 			thumbnail: message.author.displayAvatarURL(),
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),

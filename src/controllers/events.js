@@ -1,17 +1,18 @@
 const reqEvent = (event) => require(`../events/${event}.js`)
-/**
- * Handles events in the current node
- * @param {client} Annie Current bot instance.
- * @return {void}
- */
+    /**
+     * Handles events in the current node
+     * @param {client} Annie Current bot instance.
+     * @return {void}
+     */
 module.exports = function eventsController(annie) {
-	annie.once(`ready`, () => reqEvent(`ready`)(annie))
-	annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
-	annie.on(`messageCreate`, (message) => reqEvent(`messageCreate`)(annie, message))
-	annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
-	annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
-    //  Events below this point is only available in the production
-	if (annie.dev) return 
+    annie.once(`ready`, () => reqEvent(`ready`)(annie))
+    annie.on(`error`, (e) => reqEvent(`error`)(annie, e))
+    annie.on(`messageCreate`, (message) => reqEvent(`messageCreate`)(annie, message))
+    annie.on(`guildCreate`, (guild) => reqEvent(`guildCreate`)(annie, guild))
+    annie.on(`guildDelete`, (guild) => reqEvent(`guildDelete`)(annie, guild))
+    annie.on(`interactionCreate`, (interaction) => reqEvent(`interactionCreate`)(annie, interaction))
+        //  Events below this point is only available in the production
+    if (annie.dev) return
     annie.on(`messageDelete`, (message) => reqEvent(`messageDelete`)(annie, message))
     annie.on(`messageDeleteBulk`, (messages) => reqEvent(`messageDeleteBulk`)(annie, messages))
     annie.on(`roleCreate`, (role) => reqEvent(`roleCreate`)(annie, role))
