@@ -7,10 +7,9 @@
   "scripts": {
     "lint:check": "eslint src",
     "lint:fix": "eslint src --fix",
-    "unit-test": "cross-env NODE_ENV=test node ./node_modules/mocha/bin/mocha \"test/*.js\"",
-    "start": "cross-env NODE_ENV=production pm2 start index.js --name \"production\"",
-    "staging": "cross-env NODE_ENV=staging pm2 start index.js --name \"staging\"",
-    "dev": "cross-env NODE_ENV=development nodemon index.js | pino-pretty",
+    "unit-test": "node ./node_modules/mocha/bin/mocha \"test/*.js\"",
+    "start": "pm2 start index.js --name \"production\" && echo \"Started production\"",
+    "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check"
   },
   "contributors": [
