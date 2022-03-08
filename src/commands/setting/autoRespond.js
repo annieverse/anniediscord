@@ -1,15 +1,16 @@
 const moment = require(`moment`)
 const Confirmator = require(`../../libs/confirmator`)
-/**
- * Create a set of autoresponder!
- * @author klerikdust
- */
+    /**
+     * Create a set of autoresponder!
+     * @author klerikdust
+     */
 module.exports = {
     name: `autoRespond`,
-	aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
-	description: `Create a set of autoresponder!`,
-	usage: `ar`,
-	permissionLevel: 2,
+    aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
+    description: `Create a set of autoresponder!`,
+    usage: `ar`,
+    applicationCommand: false,
+    permissionLevel: 2,
     /**
      * Maximum characters for the trigger.
      * @type {number}
@@ -21,7 +22,7 @@ module.exports = {
      * @type {number}
      */
     responseCharLimit: 1900,
-    
+
     /**
      * List of available actions.
      * @type {array}
@@ -37,27 +38,27 @@ module.exports = {
         this.args = arg.split(` `)
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
-		//  Handle if user doesn't specify any parameter.
-		if (!arg) return reply.send(locale.AUTORESPONDER.GUIDE, {
-            image: `banner_autoresponder`,
-            header: `Hi, ${message.author.username}!`,
-			socket:{
-                emoji: await client.getEmoji(`781504248868634627`),
-                guild: message.guild.name,
-                prefix: prefix,
-                statusEmoji: await client.getEmoji(this.primaryConfig.value ? `751016612248682546` : `751020535865016420`),
-                status: this.primaryConfig.value ? `enabled` : `disabled`
-            }
-        })
-        //  Handle if the used action is invalid
+            //  Handle if user doesn't specify any parameter.
+        if (!arg) return reply.send(locale.AUTORESPONDER.GUIDE, {
+                image: `banner_autoresponder`,
+                header: `Hi, ${message.author.username}!`,
+                socket: {
+                    emoji: await client.getEmoji(`781504248868634627`),
+                    guild: message.guild.name,
+                    prefix: prefix,
+                    statusEmoji: await client.getEmoji(this.primaryConfig.value ? `751016612248682546` : `751020535865016420`),
+                    status: this.primaryConfig.value ? `enabled` : `disabled`
+                }
+            })
+            //  Handle if the used action is invalid
         this.selectedAction = this.args[0].toLowerCase()
         if (!this.availableActions.includes(this.selectedAction)) return reply.send(locale.AUTORESPONDER.INVALID_ACTION, {
-            socket: {
-                actions: this._parseAvailableActions(),
-                emoji: await client.getEmoji(`692428969667985458`)
-            }
-        })
-        //  Run action
+                socket: {
+                    actions: this._parseAvailableActions(),
+                    emoji: await client.getEmoji(`692428969667985458`)
+                }
+            })
+            //  Run action
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
 
@@ -73,7 +74,7 @@ module.exports = {
                 socket: {
                     emoji: await client.getEmoji(`692428969667985458`),
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    time:  moment(localizeTime).fromNow()
+                    time: moment(localizeTime).fromNow()
                 }
             })
         }
@@ -86,7 +87,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_ENABLED, {
-            socket: {emoji: await client.getEmoji(`789212493096026143`)},
+            socket: { emoji: await client.getEmoji(`789212493096026143`) },
             status: `success`
         })
     },
@@ -114,7 +115,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DISABLED, {
-            socket: {emoji: await client.getEmoji(`692428927620087850`)},
+            socket: { emoji: await client.getEmoji(`692428927620087850`) },
             status: `success`
         })
     },
@@ -127,7 +128,7 @@ module.exports = {
     async info(client, reply, message, arg, locale, prefix) {
         //  Fetch registered ARs.
         const ars = await client.db.getAutoResponders(message.guild.id)
-        //  Handle if there are no registered ARs.
+            //  Handle if there are no registered ARs.
         if (ars.length <= 0) return reply.send(locale.AUTORESPONDER.EMPTY, {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
@@ -156,28 +157,28 @@ module.exports = {
     async add(client, reply, message, arg, locale, prefix) {
         //  Handle if user didn't put any additional parameters
         if (!this.args[1]) return reply.send(locale.AUTORESPONDER.REGISTER_NO_PARAM, {
-            socket: {prefix: prefix}
+            socket: { prefix: prefix }
         })
         const msg = this.args.slice(1).join(` `)
         const splittedContext = msg.split(` - `)
         const trigger = splittedContext[0]
-        //  Handle if user hasn't included separator for trigger and separator
+            //  Handle if user hasn't included separator for trigger and separator
         if (!msg.includes(`-`)) return reply.send(locale.AUTORESPONDER.REGISTER_MISSING_SEPARATOR, {
-            socket: {
-                prefix: prefix,
-                trigger: trigger
-            }
-        })
-        //  Handle if response is empty
+                socket: {
+                    prefix: prefix,
+                    trigger: trigger
+                }
+            })
+            //  Handle if response is empty
         const response = splittedContext[1]
         if (!response) return reply.send(locale.AUTORESPONDER.REGISTER_EMPTY_RESPONSE, {
-            socket: {
-                prefix: prefix,
-                emoji: await client.getEmoji(`692428969667985458`),
-                trigger: trigger
-            }
-        })
-        //  Display AR confirmation
+                socket: {
+                    prefix: prefix,
+                    emoji: await client.getEmoji(`692428969667985458`),
+                    trigger: trigger
+                }
+            })
+            //  Display AR confirmation
         const confirmation = await reply.send(locale.AUTORESPONDER.REGISTER_CONFIRMATION, {
             thumbnail: message.author.displayAvatarURL(),
             socket: {
@@ -187,17 +188,17 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(async () => {
+        c.onAccept(async() => {
             //  Register
             client.db.registerAutoResponder({
-                guildId: message.guild.id,
-                userId: message.author.id,
-                trigger: trigger,
-                response: response
-            })
-            //  Finalize
+                    guildId: message.guild.id,
+                    userId: message.author.id,
+                    trigger: trigger,
+                    response: response
+                })
+                //  Finalize
             await reply.send(locale.AUTORESPONDER.REGISTER_SUCCESSFUL, {
-                socket: {emoji: await client.getEmoji(`789212493096026143`)}
+                socket: { emoji: await client.getEmoji(`789212493096026143`) }
             })
             reply.send(locale.AUTORESPONDER.REGISTER_FOOTER_TIP, {
                 simplified: true,
@@ -217,30 +218,30 @@ module.exports = {
         //  Handle if guild does not have any ARs to be deleted
         const ars = await client.db.getAutoResponders(message.guild.id)
         if (ars.length <= 0) return reply.send(locale.AUTORESPONDER.EMPTY, {
-            socket: {
-                emoji: await client.getEmoji(`692428969667985458`),
-                prefix: prefix
-            }
-        })
-        //  Handle if user doesn't provide the keyword.
+                socket: {
+                    emoji: await client.getEmoji(`692428969667985458`),
+                    prefix: prefix
+                }
+            })
+            //  Handle if user doesn't provide the keyword.
         const keyword = this.args.slice(1).join(` `)
         if (!keyword.length) return reply.send(locale.AUTORESPONDER.DELETE_MISSING_KEYWORD, {
-            socket: {
-                guild: message.guild.name,
-                prefix: prefix,
-                list: this._parseRegisteredAutoResponders(ars, true)
-            }
-        })
-        //  Handle if target AR to be deleted does not exists.
+                socket: {
+                    guild: message.guild.name,
+                    prefix: prefix,
+                    list: this._parseRegisteredAutoResponders(ars, true)
+                }
+            })
+            //  Handle if target AR to be deleted does not exists.
         let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword.toLowerCase()))
         if (!targetAR.length) return reply.send(locale.AUTORESPONDER.DELETE_TARGET_INVALID, {
-            socket:{emoji: await client.getEmoji(`692428807193493657`)}
-        })
-        //  Performs deletion
+                socket: { emoji: await client.getEmoji(`692428807193493657`) }
+            })
+            //  Performs deletion
         targetAR = targetAR[0]
-        client.db.deleteAutoResponder(targetAR.ar_id, message.guild.id)  
+        client.db.deleteAutoResponder(targetAR.ar_id, message.guild.id)
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
-            socket: {emoji: await client.getEmoji(`789212493096026143`)},
+            socket: { emoji: await client.getEmoji(`789212493096026143`) },
             status: `success`
         })
     },
@@ -253,16 +254,16 @@ module.exports = {
         //  Handle if guild does not have any ARs to be deleted
         const ars = await client.db.getAutoResponders(message.guild.id)
         if (ars.length <= 0) return reply.send(locale.AUTORESPONDER.EMPTY, {
-            socket: {
-                emoji: await client.getEmoji(`692428969667985458`),
-                prefix: prefix
-            }
-        })
-        //  Reset confirmation
+                socket: {
+                    emoji: await client.getEmoji(`692428969667985458`),
+                    prefix: prefix
+                }
+            })
+            //  Reset confirmation
         const confirmation = await reply.send(locale.AUTORESPONDER.RESET_CONFIRMATION, {
             socket: {
                 totalArs: ars.length,
-                emoji: await client.getEmoji(`692428578683617331`,)
+                emoji: await client.getEmoji(`692428578683617331`, )
             }
         })
         const c = new Confirmator(message, reply)
@@ -271,7 +272,7 @@ module.exports = {
             //  Wipeout ARs
             client.db.clearAutoResponders(message.guild.id)
             reply.send(locale.AUTORESPONDER.SUCCESSFULLY_RESET, {
-                socket: {totalArs: ars.length}
+                socket: { totalArs: ars.length }
             })
         })
     },
@@ -282,9 +283,9 @@ module.exports = {
      * @param {number} [breakpoint=70] The string breakpoint before gets trimmed. Optional.
      * @return {string}
      */
-    _trimAutoResponderString(str=``, breakpoint=70) {
+    _trimAutoResponderString(str = ``, breakpoint = 70) {
         if (str.length >= breakpoint) return str.substring(0, breakpoint) + `...`
-         return str
+        return str
     },
 
     /**
@@ -295,11 +296,11 @@ module.exports = {
      * @param {Message} message Current message instance.
      * @return {object|string}
      */
-    _parseRegisteredAutoResponders(src=[], simplified=false, header={}, message) {
+    _parseRegisteredAutoResponders(src = [], simplified = false, header = {}, message) {
         let res = []
         let str = ``
         let breakpoint = 0
-        for (let i=0; i<src.length; i++) {
+        for (let i = 0; i < src.length; i++) {
             const ar = src[i]
             if (simplified) {
                 str += `╰☆～(ID:${ar.ar_id}) **${ar.trigger}**\n`
@@ -310,13 +311,12 @@ module.exports = {
                 str += `Currently there are total of **${header.size}** registered ARs in **${message.guild.name}** where the latest one was added by ${header.user}, ${header.time}. ${header.emoji}\n╭*:;,．★ ～☆*────────╮\n`
             }
             str += `[ID:${ar.ar_id}]** "${this._trimAutoResponderString(ar.trigger)}"**\n> Annie's Response: ${this._trimAutoResponderString(ar.response)}`
-            if (breakpoint >= 5 || i === (src.length-1)) {
+            if (breakpoint >= 5 || i === (src.length - 1)) {
                 str += `\n╰──────────☆～*:;,．*╯`
                 breakpoint = 0
                 res.push(str)
                 str = ``
-            }
-            else {
+            } else {
                 str += `\n⸻⸻⸻⸻\n`
             }
         }
@@ -329,9 +329,9 @@ module.exports = {
      */
     _parseAvailableActions() {
         let str = ``
-        for (let i=0; i<this.availableActions.length; i++) {
+        for (let i = 0; i < this.availableActions.length; i++) {
             const action = this.availableActions[i]
-            if ((i+1) === this.availableActions.length) {
+            if ((i + 1) === this.availableActions.length) {
                 str += ` and **\`${action}\`**`
                 break
             }
