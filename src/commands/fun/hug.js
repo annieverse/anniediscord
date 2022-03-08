@@ -1,18 +1,19 @@
 const superagent = require(`superagent`)
 const User = require(`../../libs/user`)
-/**
- * Displays a random gif of a hug.
- * @author klerikdust
- */
+    /**
+     * Displays a random gif of a hug.
+     * @author klerikdust
+     */
 module.exports = {
     name: `hug`,
     aliases: [`hugs`, `hug`],
     description: `Displays a random gif of a hug.`,
     usage: `hug <User>(Optional)`,
     permissionLevel: 0,
+    applicationCommand: false,
     async execute(client, reply, message, arg, locale) {
         const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
-        //  Multi-user hug
+            //  Multi-user hug
         if (arg) {
             const target = await (new User(client, message)).lookFor(arg)
             if (!target) return reply.send(locale.HUG.INVALID_TARGET, {
@@ -22,7 +23,7 @@ module.exports = {
             })
             return reply.send(locale.HUG.OTHER_USER, {
                 socket: {
-                    user: message.author.username, 
+                    user: message.author.username,
                     targetUser: target.master.username
                 },
                 imageGif: body.link

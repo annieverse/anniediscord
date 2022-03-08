@@ -9,6 +9,7 @@ module.exports = {
     usage: `setprefix <NewPrefix>`,
     permissionLevel: 3,
     prefixImmune: true,
+    applicationCommand: false,
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETPREFIX.CURRENT_SET, {
             image: `banner_setprefix`,
@@ -19,7 +20,7 @@ module.exports = {
         })
         client.db.updateGuildConfiguration({
             configCode: `PREFIX`,
-            customizedParameter: arg, 
+            customizedParameter: arg,
             guild: message.guild,
             setByUserId: message.author.id,
             cacheTo: message.guild.configs
