@@ -1,21 +1,22 @@
 const moment = require(`moment`)
 const commanifier = require(`../../utils/commanifier`)
-/**
- * Displays info about the server
- * @author klerikdust
- */
+    /**
+     * Displays info about the server
+     * @author klerikdust
+     */
 module.exports = {
-    name:`serverInfo`,
-	aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
-	description: `Displays info about the server`,
-	usage: `serverinfo`,
-	permissionLevel: 0,
+    name: `serverInfo`,
+    aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
+    description: `Displays info about the server`,
+    usage: `serverinfo`,
+    permissionLevel: 0,
+    applicationCommand: false,
     async execute(client, reply, message, arg, locale) {
-		let members = message.guild.memberCount
-		let botSize =  message.guild.members.cache.filter(a => a.user.bot).size
-		let userSize = members - botSize
+        let members = message.guild.memberCount
+        let botSize = message.guild.members.cache.filter(a => a.user.bot).size
+        let userSize = members - botSize
 
-		return reply.send(`
+        return reply.send(`
 			${message.guild.region.charAt(0).toUpperCase() + message.guild.region.slice(1)}-based Guild
 			Owned by **${await client.getUsername(message.guild.ownerID)}**
 
@@ -34,8 +35,8 @@ module.exports = {
 			Okay, that's all I know! 
 
 		`, {
-			header: message.guild.name,
-			thumbnail: message.guild.iconURL()
-		})
+            header: message.guild.name,
+            thumbnail: message.guild.iconURL()
+        })
     }
 }

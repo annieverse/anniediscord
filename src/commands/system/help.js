@@ -1,71 +1,72 @@
 const category = require(`../../config/commandCategories`)
-/**
- * 	Displaying all the available commands. Complete with the usage.
- * 	@author klerikdust
- */
-module.exports = {
-    name: `help`,
-	aliases: [`help`, `help`, `cmdhelp`],
-	description: `Displaying all the available commands. Complete with the usage.`,
-	usage: `help <Category/CommandName>(Optional)`,
-	permissionLevel: 0,
-    commandpediaButton: `📖`,
-	ignoreGroups: [`developer`],
-	permmissionInteger: 268823638,
     /**
-     * Client/Bot invite generator.
-     * @param {Client} client Current client instancee.
-     * @return {string}
+     * 	Displaying all the available commands. Complete with the usage.
+     * 	@author klerikdust
      */
-    getBotInviteUrl(client) {
-        return `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=${this.permmissionInteger}&scope=bot`
-    },
-    async execute(client, reply, message, arg, locale, prefix) {
-		const cmds = this.getCommandStructures(client)
-		//  Displaying the help center if user doesn't specify any arg
-		if (!arg)	{
-			// Display 5 most used commands suggestions
-			return reply.send(locale.HELP.LANDING, {
-				socket: {
-					emoji: await client.getEmoji(`692428988177449070`),
-					prefix: prefix
-				},
-				header: `Hi, ${message.author.username}!`,
-				thumbnail: client.user.displayAvatarURL()
-			})
-			.then(response => {
-				response.react(this.commandpediaButton)
-				const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
-				const bookEmojiCollector = response.createReactionCollector(bookEmoji, {
-					time: 60000
-				})
-				//  Display Commandpedia layout once user pressed the :book: button
-				bookEmojiCollector.on(`collect`, () => {
-					response.delete()
-					reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
-						socket: {
-							prefix: prefix,
-							serverLink: `[Join Support Server](${client.supportServer})`,
-							botInviteLink: `[Invite Annie](${this.getBotInviteUrl(client)})`,
-							commandList: this.prettifyCommandpedia(cmds)
-						},
-						image: `commandpedia`,
-						customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
-					})
-				})
-			})
-		}
-		//  Display command's properties based on given keyword (if match. Otherwise, return)
-		const {isCategory, res} = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
-		if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
-			socket: {
-				emoji: await client.getEmoji(`692428969667985458`)
-			}
-		})
-		//  Handle helpCategory display
-		if (isCategory) {
-			const commands = client.commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
-			return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
+module.exports = {
+        name: `help`,
+        aliases: [`help`, `help`, `cmdhelp`],
+        description: `Displaying all the available commands. Complete with the usage.`,
+        usage: `help <Category/CommandName>(Optional)`,
+        permissionLevel: 0,
+        applicationCommand: false,
+        commandpediaButton: `📖`,
+        ignoreGroups: [`developer`],
+        permmissionInteger: 268823638,
+        /**
+         * Client/Bot invite generator.
+         * @param {Client} client Current client instancee.
+         * @return {string}
+         */
+        getBotInviteUrl(client) {
+            return `https://discord.com/oauth2/authorize?client_id=${client.user.id}&permissions=${this.permmissionInteger}&scope=bot`
+        },
+        async execute(client, reply, message, arg, locale, prefix) {
+            const cmds = this.getCommandStructures(client)
+                //  Displaying the help center if user doesn't specify any arg
+            if (!arg) {
+                // Display 5 most used commands suggestions
+                return reply.send(locale.HELP.LANDING, {
+                        socket: {
+                            emoji: await client.getEmoji(`692428988177449070`),
+                            prefix: prefix
+                        },
+                        header: `Hi, ${message.author.username}!`,
+                        thumbnail: client.user.displayAvatarURL()
+                    })
+                    .then(response => {
+                        response.react(this.commandpediaButton)
+                        const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
+                        const bookEmojiCollector = response.createReactionCollector(bookEmoji, {
+                                time: 60000
+                            })
+                            //  Display Commandpedia layout once user pressed the :book: button
+                        bookEmojiCollector.on(`collect`, () => {
+                            response.delete()
+                            reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
+                                socket: {
+                                    prefix: prefix,
+                                    serverLink: `[Join Support Server](${client.supportServer})`,
+                                    botInviteLink: `[Invite Annie](${this.getBotInviteUrl(client)})`,
+                                    commandList: this.prettifyCommandpedia(cmds)
+                                },
+                                image: `commandpedia`,
+                                customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
+                            })
+                        })
+                    })
+            }
+            //  Display command's properties based on given keyword (if match. Otherwise, return)
+            const { isCategory, res } = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
+            if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
+                    socket: {
+                        emoji: await client.getEmoji(`692428969667985458`)
+                    }
+                })
+                //  Handle helpCategory display
+            if (isCategory) {
+                const commands = client.commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
+                return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
 				thumbnail: client.user.displayAvatarURL()
 			})

@@ -16,6 +16,7 @@ module.exports = {
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer`,
     permissionLevel: 3,
+    applicationCommand: false,
     /**
      * An array of the available options for welcomer module
      * @type {array}
@@ -310,7 +311,7 @@ module.exports = {
     async userimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
-        //  Update configs
+            //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
         client.db.updateGuildConfiguration({
@@ -343,7 +344,7 @@ module.exports = {
     async noimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, { socket: { prefix: prefix } })
-        //  Update configs
+            //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
         client.db.updateGuildConfiguration({

@@ -16,183 +16,183 @@ const trueInt = require(`../../utils/trueInt`)
  * @author klerikdust
  */
 module.exports = {
-    name: `setShop`,
-    aliases: [`setshop`, `setshops`],
-    description: `Create, restock & sell items for your server members!`,
-    usage: `setShop`,
-    permissionLevel: 3,
-    /**
-     * An array of the available options for welcomer module
-     * @type {array}
-     */
-    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
-    async execute(client, reply, message, arg, locale, prefix) {
-        if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
-            image: `banner_setshop`,
-            header: `Hi, ${message.author.username}!`,
-            socket: {
-                prefix: prefix,
-                emoji: await client.getEmoji(`AnnieHeartPeek`)
-            }
-        })
-        const args = arg.split(` `)
-        //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(args[0].toLowerCase())) return reply.send(locale.SETSHOP.INVALID_ACTION, {
-                socket: { availableActions: this.actions.join(`, `) }
+        name: `setShop`,
+        aliases: [`setshop`, `setshops`],
+        description: `Create, restock & sell items for your server members!`,
+        usage: `setShop`,
+        permissionLevel: 3,
+        applicationCommand: false,
+        /**
+         * An array of the available options for welcomer module
+         * @type {array}
+         */
+        actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
+        async execute(client, reply, message, arg, locale, prefix) {
+            if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
+                image: `banner_setshop`,
+                header: `Hi, ${message.author.username}!`,
+                socket: {
+                    prefix: prefix,
+                    emoji: await client.getEmoji(`AnnieHeartPeek`)
+                }
             })
-        //  Run action
-        return this[args[0].toLowerCase()](client, reply, message, arg, locale, prefix, args)
-    },
-
-    /**
-     * Enabling shop module
-     * @return {void}
-     */
-    async open(client, reply, message, arg, locale, prefix) {
-        const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.updateGuildConfiguration({
-            configCode: `SHOP_MODULE`,
-            customizedParameter: 1,
-            guild: message.guild,
-            setByUserId: message.author.id,
-            cacheTo: message.guild.configs
-        })
-        return reply.send(locale.SETSHOP.SUCCESSFULLY_ENABLED, {
-            status: `success`,
-            socket: { prefix: prefix }
-        })
-    },
-
-    /**
-     * Disabling welcomer module
-     * @return {void}
-     */
-    async close(client, reply, message, arg, locale, prefix) {
-        const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.updateGuildConfiguration({
-            configCode: `SHOP_MODULE`,
-            customizedParameter: 0,
-            guild: message.guild,
-            setByUserId: message.author.id,
-            cacheTo: message.guild.configs
-        })
-        return reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED)
-    },
-
-    /**
-     * Set message to be attached in the shop.
-     * @return {void}
-     */
-    async text(client, reply, message, arg, locale, prefix, args) {
-        //  Handle if text content isn't provided
-        const param = args.slice(1).join(` `)
-        if (!param) return reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
-            socket: { prefix: prefix },
-        })
-        //  Update configs
-        client.db.updateGuildConfiguration({
-            configCode: `SHOP_TEXT`,
-            customizedParameter: param,
-            guild: message.guild,
-            setByUserId: message.author.id,
-            cacheTo: message.guild.configs
-        })
-        return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, { 
-            status: `success`,
-            socket: {
-                prefix: prefix,
-			    emoji: await client.getEmoji(`789212493096026143`)
-            }
-        })
-    },
-
-    /**
-     * Adding item to shop
-     * @return {void}
-     */
-    async add(client, reply, message, arg, locale, prefix, args) {
-        let buffs = []
-        let metadata = {
-            //  Common & custom type
-            rarityId: 1,
-            typeId: 13,
-            ownedByGuildId: message.guild.id,
-            usable: 1
-        }
-        const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
-        if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.redis.set(sessionId, 1, `EX`, 60*3)
-        //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
-        let phaseJump = false
-        let dataDisplay = null
-        if (args[1]) {
-            const secondArg = args.slice(1).join(` `)
-            phaseJump = true
-            const nameLimit = 20
-            if (secondArg.length >= nameLimit) {
-                client.db.redis.del(sessionId)
-                return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {socket: {limit:nameLimit}}) 
-            }
-            const guildItems = await client.db.getItem(null, message.guild.id)
-            if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
-                client.db.redis.del(sessionId)
-                return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
-                    socket: {
-                        item: secondArg 
-                    }
+            const args = arg.split(` `)
+                //  Handle if the selected options doesn't exists
+            if (!this.actions.includes(args[0].toLowerCase())) return reply.send(locale.SETSHOP.INVALID_ACTION, {
+                    socket: { availableActions: this.actions.join(`, `) }
                 })
-            }
-            metadata.name = secondArg
-            dataDisplay = await message.channel.send(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${secondArg}`, {raw:true}))
-        }
-        else {
-            dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
-                raw: true
-            }))
-        }
-        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
-        let phase = phaseJump ? 1 : 0
-        let completed = false
-        const joinFunction = (newMessage) => {
-            return reply.send(dataDisplay.embeds[0].description + newMessage, {
-                footer: `Type cancel to close this registration.`,
-                raw: true
+                //  Run action
+            return this[args[0].toLowerCase()](client, reply, message, arg, locale, prefix, args)
+        },
+
+        /**
+         * Enabling shop module
+         * @return {void}
+         */
+        async open(client, reply, message, arg, locale, prefix) {
+            const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
+            client.db.updateGuildConfiguration({
+                configCode: `SHOP_MODULE`,
+                customizedParameter: 1,
+                guild: message.guild,
+                setByUserId: message.author.id,
+                cacheTo: message.guild.configs
             })
-        }
-        pool.on(`collect`, async m => {
-            let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
-            if (input === `cancel`) return pool.stop()
-            m.delete()
-            switch(phase) {
-                //  Name
-                case 0:
-                    const nameLimit = 20
-                    if (input.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {deleteIn: 5, socket: {limit:nameLimit}}) 
-                    const guildItems = await client.db.getItem(null, message.guild.id)
-                    if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
-                        deleteIn: 5,
+            return reply.send(locale.SETSHOP.SUCCESSFULLY_ENABLED, {
+                status: `success`,
+                socket: { prefix: prefix }
+            })
+        },
+
+        /**
+         * Disabling welcomer module
+         * @return {void}
+         */
+        async close(client, reply, message, arg, locale, prefix) {
+            const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
+            client.db.updateGuildConfiguration({
+                configCode: `SHOP_MODULE`,
+                customizedParameter: 0,
+                guild: message.guild,
+                setByUserId: message.author.id,
+                cacheTo: message.guild.configs
+            })
+            return reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED)
+        },
+
+        /**
+         * Set message to be attached in the shop.
+         * @return {void}
+         */
+        async text(client, reply, message, arg, locale, prefix, args) {
+            //  Handle if text content isn't provided
+            const param = args.slice(1).join(` `)
+            if (!param) return reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
+                    socket: { prefix: prefix },
+                })
+                //  Update configs
+            client.db.updateGuildConfiguration({
+                configCode: `SHOP_TEXT`,
+                customizedParameter: param,
+                guild: message.guild,
+                setByUserId: message.author.id,
+                cacheTo: message.guild.configs
+            })
+            return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, {
+                status: `success`,
+                socket: {
+                    prefix: prefix,
+                    emoji: await client.getEmoji(`789212493096026143`)
+                }
+            })
+        },
+
+        /**
+         * Adding item to shop
+         * @return {void}
+         */
+        async add(client, reply, message, arg, locale, prefix, args) {
+            let buffs = []
+            let metadata = {
+                //  Common & custom type
+                rarityId: 1,
+                typeId: 13,
+                ownedByGuildId: message.guild.id,
+                usable: 1
+            }
+            const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
+            if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+            client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+                //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
+            let phaseJump = false
+            let dataDisplay = null
+            if (args[1]) {
+                const secondArg = args.slice(1).join(` `)
+                phaseJump = true
+                const nameLimit = 20
+                if (secondArg.length >= nameLimit) {
+                    client.db.redis.del(sessionId)
+                    return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, { socket: { limit: nameLimit } })
+                }
+                const guildItems = await client.db.getItem(null, message.guild.id)
+                if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
+                    client.db.redis.del(sessionId)
+                    return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                         socket: {
-                            item: input 
+                            item: secondArg
                         }
                     })
-                    metadata.name = input
-                    //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
-                    dataDisplay.edit(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${input}`, {raw:true}))
-                    phase++
-                    break
-                //  Description
-                case 1:
-                    const descLimit = 120
-                    if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {deleteIn: 5, socket: {limit:descLimit}})
-                    metadata.description = input
-                    dataDisplay.edit(locale.SETSHOP.ADD_PRICE, await joinFunction(`\n╰☆～**Description ::** ${input}`))
-                    phase++
-                    break
-                //  Price
-                case 2:
-                    if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, {deleteIn: 5})
-                    metadata.price = input
-                    dataDisplay.edit(locale.SETSHOP.ADD_STOCK, await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`))
+                }
+                metadata.name = secondArg
+                dataDisplay = await message.channel.send(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${secondArg}`, { raw: true }))
+            } else {
+                dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
+                    raw: true
+                }))
+            }
+            const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time: 60000 * 3 }) // 3 minutes timeout
+            let phase = phaseJump ? 1 : 0
+            let completed = false
+            const joinFunction = (newMessage) => {
+                return reply.send(dataDisplay.embeds[0].description + newMessage, {
+                    footer: `Type cancel to close this registration.`,
+                    raw: true
+                })
+            }
+            pool.on(`collect`, async m => {
+                        let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
+                        if (input === `cancel`) return pool.stop()
+                        m.delete()
+                        switch (phase) {
+                            //  Name
+                            case 0:
+                                const nameLimit = 20
+                                if (input.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, { deleteIn: 5, socket: { limit: nameLimit } })
+                                const guildItems = await client.db.getItem(null, message.guild.id)
+                                if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                                    deleteIn: 5,
+                                    socket: {
+                                        item: input
+                                    }
+                                })
+                                metadata.name = input
+                                    //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
+                                dataDisplay.edit(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${input}`, { raw: true }))
+                                phase++
+                                break
+                                //  Description
+                            case 1:
+                                const descLimit = 120
+                                if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, { deleteIn: 5, socket: { limit: descLimit } })
+                                metadata.description = input
+                                dataDisplay.edit(locale.SETSHOP.ADD_PRICE, await joinFunction(`\n╰☆～**Description ::** ${input}`))
+                                phase++
+                                break
+                                //  Price
+                            case 2:
+                                if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, { deleteIn: 5 })
+                                metadata.price = input
+                                dataDisplay.edit(locale.SETSHOP.ADD_STOCK, await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`))
                     phase++
                     break
                 //  Stocks
