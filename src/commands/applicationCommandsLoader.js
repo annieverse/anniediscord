@@ -4,7 +4,12 @@ const {
 const {
     Routes
 } = require(`discord-api-types/v9`)
-
+    /**
+     * Agreggate all the available commands into unified object.
+     * @param {object} logger object
+     * @param {array} array of commands from commands loader
+     * @return {void}
+     */
 module.exports = function applicationCommandLoader({
     logger,
     commands
@@ -25,7 +30,7 @@ module.exports = function applicationCommandLoader({
 
     const rest = new REST({
         version: `9`
-    }).setToken(process.env.TOKEN);
+    }).setToken(process.env.BOT_TOKEN);
 
     (async() => {
         try {
