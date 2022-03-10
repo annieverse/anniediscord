@@ -16,7 +16,7 @@ module.exports = function masterShard() {
     const { ShardingManager } = require(`discord.js`)
     const manager = new ShardingManager(`./src/annie.js`, { 
         respawn: process.env.NODE_ENV !== `production` ? false : true,
-        token: process.env.TOKEN
+        token: process.env.BOT_TOKEN
     })
     const server = express()
     manager.on(`shardCreate`, shard => {
