@@ -10,7 +10,7 @@ const {
     join
 } = require(`path`)
 const relationshipPairs = require(`../config/relationshipPairs.json`)
-const { use } = require("chai")
+const { use } = require(`chai`)
 
 /**
  * Centralized Class for handling various database tasks 
