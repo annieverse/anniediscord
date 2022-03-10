@@ -47,7 +47,7 @@
     "cross-env": "^7.0.2",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fs-nextra": "^0.5.1",
     "glob": "^7.1.6",
     "image-size": "^1.0.0",
