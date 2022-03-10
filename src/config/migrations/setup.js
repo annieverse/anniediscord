@@ -16,11 +16,33 @@
       if (!users) await knex.schema.createTable(`users`, table => {
         table.string(`id`).primary().notNullable()
         table.string(`name`, 32).notNullable()
-        table.text(`bio`, `longtext`)
-        table.integer(`lang_id`).defaultTo(0)
+        table.integer(`locale_id`).defaultTo(0)
         table.integer(`gender_id`).defaultTo(0)
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
+        table.foreign(`locale_id`)
+          .references(`locales.id`)
+          .onDelete(`SET NULL`)
+        table.foreign(`gender_id`)
+          .references(`genders.id`)
+          .onDelete(`SET NULL`)
+      })
+      const userAbouts = await knex.schema.hasTable(`user_abouts`)
+      if (!userAbouts) await knex.schema.createTable(`user_abouts`, table => {
+        table.string(`user_id`).notNullable()
+        table.string(`guild_id`).notNullable()
+        table.string(`content`, 250)
+        table.timestamp(`created_at`).defaultTo(knex.fn.now())
+        table.timestamp(`updated_at`).defaultTo(knex.fn.now())
+        table.primary([`user_id`, `guild_id`])
+        table.foreign(`user_id`)
+          .references(`users.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
+        table.foreign(`guild_id`)
+          .references(`guilds.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
       })
       const userReputations = await knex.schema.hasTable(`user_reputations`)
       if (!userReputations) await knex.schema.createTable(`user_reputations`, table => {
@@ -79,6 +101,7 @@
         table.string(`user_id`).notNullable()
         table.string(`guild_id`).notNullable()
         table.integer(`recent_quest_id`)
+        table.integer(`accumulated_quest_taken`).defaultTo(0)
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
         table.primary([`user_id`, `guild_id`])
@@ -95,7 +118,7 @@
       if (!userInventories) await knex.schema.createTable(`user_inventories`, table => {
         table.string(`user_id`).notNullable()
         table.string(`guild_id`).notNullable()
-        table.integer(`item_id`)
+        table.integer(`item_id`).notNullable()
         table.integer(`quantity`).defaultTo(0)
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
@@ -108,12 +131,16 @@
           .references(`guilds.id`)
           .onDelete(`CASCADE`)
           .onUpdate(`CASCADE`)
+        table.foreign(`item_id`)
+          .references(`items.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
       })
       const userExp = await knex.schema.hasTable(`user_exp`)
       if (!userExp) await knex.schema.createTable(`user_exp`, table => {
         table.string(`user_id`).notNullable()
         table.string(`guild_id`).notNullable()
-        table.integer(`total`).defaultTo(0)
+        table.float(`total`).defaultTo(0)       
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
         table.primary([`user_id`, `guild_id`])
@@ -147,6 +174,40 @@
 
       /**
        * -------------------------
+       * RELATIONSHIPS BRANCH
+       * -------------------------
+       */
+      const relationships = await knex.schema.hasTable(`relationships`)
+      if (!relationships) await knex.schema.createTable(`relationships`, table => {
+        table.increments(`id`).primary().notNullable()
+        table.string(`name`)
+        table.string(`gender_id`)
+        table.string
+      })
+        
+      /**
+       * -------------------------
+       * LOCALE BRANCH
+       * -------------------------
+       */
+      const locale = await knex.schema.hasTable('locales')
+      if (!locale) {
+        await knex.schema.createTable('locales', table => {
+          table.increments('id').primary().notNullable()
+          table.string('name')
+          table.string('alias', 5)
+          table.timestamp('created_at').defaultTo(knex.fn.now())
+          table.timestamp('updated_at').defaultTo(knex.fn.now())
+        })
+        knex(`locales`).insert([
+          { name: 'English', alias: 'en' },
+          { name: 'French', alias: 'fr' },
+          { name: 'Indonesia', alias: 'id' }
+        ])
+      }
+      
+      /**
+       * -------------------------
        * GUILDS BRANCH
        * -------------------------
        */
@@ -154,7 +215,7 @@
       if (!guilds) await knex.schema.createTable(`guilds`, table => {
         table.string(`id`).primary().notNullable()
         table.string(`name`).notNullable()
-        table.text(`bio`, `longtext`)
+        table.text(`about`, `longtext`)
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
       })
@@ -188,11 +249,6 @@
       const quests = await knex.schema.hasTable(`quests`)
       if (!quests) await knex.schema.createTable(`quests`, table => {
         table.increments(`id`).primary().notNullable()
-        table.string(`name`).notNullable()
-        table.text(`description`, `longtext`)
-        table.integer(`reward_item_id`)
-        table.integer(`reward_quantity`).defaultTo(1)
-        table.specificType(`answer`, `string[]`)
         table.string(`author_id`).notNullable()
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.timestamp(`updated_at`).defaultTo(knex.fn.now())
@@ -201,11 +257,44 @@
           .onDelete(`CASCADE`)
           .onUpdate(`CASCADE`)
       })
+      const questLocales = await knex.schema.hasTable(`quest_locales`)
+      if (!questLocales) await knex.schema.createTable(`quest_locales`, table => {
+        table.increments(`id`).primary().notNullable()
+        table.integer(`quest_id`).notNullable()
+        table.string(`name`).notNullable()
+        table.text(`description`, `longtext`).notNullable()
+        table.specificType(`answer`, `string[]`).notNullable()
+        table.string(`locale`, 5).notNullable()
+        table.timestamp(`created_at`).defaultTo(knex.fn.now())
+        table.timestamp(`updated_at`).defaultTo(knex.fn.now())
+        table.foreign(`quest_id`)
+          .references(`quests.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
+      })
+      const questRewards = await knex.schema.hasTable(`quest_rewards`)
+      if (!questRewards) await knex.schema.createTable(`quest_rewards`, table => {
+        table.increments(`id`).primary().notNullable()
+        table.integer(`quest_id`).notNullable()
+        table.integer(`item_id`).notNullable().defaultTo(52)
+        table.integer(`quantity`).defaultTo(1)
+        table.timestamp(`created_at`).defaultTo(knex.fn.now())
+        table.timestamp(`updated_at`).defaultTo(knex.fn.now())
+        table.foreign(`quest_id`)
+          .references(`quests.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
+        table.foreign(`item_id`)
+          .references(`items.id`)
+          .onDelete(`CASCADE`)
+          .onUpdate(`CASCADE`)
+      })
       const questLog = await knex.schema.hasTable(`quest_log`)
       if (!questLog) await knex.schema.createTable(`quest_log`, table => {
+        table.increments(`id`).primary().notNullable()
         table.integer(`quest_id`).notNullable()
         table.string(`user_id`).notNullable()
-        table.string(`guild_id`).notNullable() 
+        table.string(`guild_id`).notNullable()
         table.string(`answer`)
         table.timestamp(`created_at`).defaultTo(knex.fn.now())
         table.foreign(`quest_id`)
@@ -308,7 +397,6 @@
        */
       const affiliates = await knex.schema.hasTable(`affiliates`)
       if (!affiliates) await knex.schema.createTable(`affiliates`, table => {
-        table.increments(`id`)
         table.string(`guild_id`).primary().notNullable()
         table.text(`description`, `longtext`)
         table.text(`notes`, `longtext`)
@@ -327,12 +415,13 @@
        * -------------------------
        */
       const buffs = await knex.schema.hasTable(`buffs`)
-      if (!buffs) await knex.schema.createTable(`buffs`, table => {
-        table.increments(`id`).primary().notNullable()
-        table.string(`region`).notNullable()
-        table.integer(`buff_id`)
-        table.timestamp(`created_at`).defaultTo(knex.fn.now())
-
+      if (!buffs) {
+        await knex.schema.createTable(`buffs`, table => {
+          table.increments(`id`).primary().notNullable()
+          table.integer(`buff_id`)
+          table.timestamp(`created_at`).defaultTo(knex.fn.now())
+        })
+      }
 
 
       resolve()
