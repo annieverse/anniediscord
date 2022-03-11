@@ -62,13 +62,13 @@ module.exports = async(client = {}, message = {}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-    const userLanguage = await client.db.getUserLocale(message.author.id)
-    let locale = null
-    try {
-        locale = client.locales[userLanguage]
-    } catch (error) {
-        locale = client.locales.en
-    }
+
+    const langConstant = `LANG_${message.author.id}`
+        //  If none of the source has user's saved locale, will fallback to locales.en
+    const localeSource = await client.db.redis.exists(langConstant) ? await client.db.redis.get(langConstant) : await client.db.getUserLocale(message.author.id)
+
+    const locale = client.locales[localeSource || `en`]
+
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {
         return reply.send(locale.USER.REGISTRATION_ON_PROCESS)

@@ -887,6 +887,7 @@ class Database {
 	async getUserLocale(userId){
 		const res = await this._query(`
 		SELECT lang FROM users WHERE user_id = ?`, `get`, [userId])
+		this.redis.set(`LANG_${userId}`,res.lang)
 		return res.lang
 	}
 
