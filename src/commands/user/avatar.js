@@ -21,8 +21,8 @@ module.exports = {
         const [avatar, name] = [targetUser.displayAvatarURL({ type: `png`, size: 512 }), targetUser.username]
         const embed = new MessageEmbed()
             .setImage(avatar)
-            .setAuthor(name, avatar)
+            .setAuthor({ name: name, iconURL: avatar })
             .setColor(crimson)
-        return message.channel.send(embed)
+        return message.channel.send({ embeds: [embed] })
     }
 }

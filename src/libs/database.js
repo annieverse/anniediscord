@@ -178,18 +178,12 @@ class Database {
          *  @returns {QueryResult|null}
          */
     async _query(stmt = ``, type = `get`, supplies = [], log = null) {
-            // console.log(stmt)
-            // console.log(type)
-            // console.log(supplies)
-            // console.log(log)
             //	Return if no statement has found
             if (!stmt) return null
             const que = this.client.prepare(stmt)
             const fn = this.client.transaction(params => que[type](params))
             const result = await fn(supplies)
             if (log) logger.info(log)
-                // console.log(`\nHI`)
-                // console.log(log)
             if (!result) return null
             return result
         }
