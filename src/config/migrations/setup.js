@@ -277,7 +277,8 @@
         })
         knex(`locales`).insert([
           { name: 'English', alias: 'en' },
-          { name: 'French', alias: 'fr' }
+          { name: 'French', alias: 'fr' },
+          { name: 'Indonesia', alias: 'id' },
         ])
       }
       
