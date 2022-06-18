@@ -59,7 +59,7 @@ module.exports = function masterShard() {
     }
 
     const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
-    server.post(`/dblwebhook`, wh.middleware(), (req, res) => {
+    server.post(`/dblwebhook`, wh.listener(), (req, res) => {
         if (!req.vote) {
             res.status(200).send({ message: `Endpoint successfully tested` })
         }

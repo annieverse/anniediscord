@@ -16,8 +16,12 @@
   "engines": {
     "node": "12.18.3"
   },
+  "author": {
+    "name": "klerikdust",
+    "email": "naphzbilly@gmail.com",
+    "url": "https://naphz.com"
+  },
   "contributors": [
-    "Naph (https://github.com/klerikdust)",
     "Pan (https://github.com/Moore2021)",
     "sunnyrainyworks (https://github.com/Sunny-Rainy-Works)",
     "hugonun (https://github.com/hugonun)",
