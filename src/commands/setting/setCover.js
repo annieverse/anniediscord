@@ -12,25 +12,26 @@ const User = require(`../../libs/user`)
  * @author klerikdust
  */
 module.exports = {
-    name: `setCover`,
-    aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
-    description: `Setting up your own custom background! upload or share the image link you want to use.`,
-    usage: `setcover <Attachment/URL>`,
-    permissionLevel: 0,
-    uploadCost: 1000,
-    async execute(client, reply, message, arg, locale, prefix) {
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
-        //  Handle if user doesn't specify any arg
-        const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS+this.prettifyList(ownedCovers)
-        const { isValidUpload, url } = this.getUserSelfUploadCover(arg, message)
-        if (!arg && !isValidUpload) {
-            const FOOTER = userData.usedCover.isDefault 
-            ? `SUGGEST_TO_UPLOAD`
-            : userData.usedCover.isSelfUpload 
-            ? `DISPLAY_USED_SELF_COVER`
-            : `DISPLAY_USED_REGULAR_COVER`
-            return reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+        name: `setCover`,
+        aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
+        description: `Setting up your own custom background! upload or share the image link you want to use.`,
+        usage: `setcover <Attachment/URL>`,
+        permissionLevel: 0,
+        uploadCost: 1000,
+        applicationCommand: false,
+        async execute(client, reply, message, arg, locale, prefix) {
+            const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+                //  Handle if user doesn't specify any arg
+            const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
+            const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
+            const { isValidUpload, url } = this.getUserSelfUploadCover(arg, message)
+            if (!arg && !isValidUpload) {
+                const FOOTER = userData.usedCover.isDefault ?
+                    `SUGGEST_TO_UPLOAD` :
+                    userData.usedCover.isSelfUpload ?
+                    `DISPLAY_USED_SELF_COVER` :
+                    `DISPLAY_USED_REGULAR_COVER`
+                return reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {

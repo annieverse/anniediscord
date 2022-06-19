@@ -15,65 +15,66 @@ const pixiv = new PixivApi()
  * @author klerikdust
  */
 module.exports = {
-	name: `pixiv`,
-	aliases: [`pix`, `pxv`, `pixiv`],
-	description: `Fetching image from pixiv.`,
-	usage: `pixiv <SearchKeyword>(Optional)`,
+    name: `pixiv`,
+    aliases: [`pix`, `pxv`, `pixiv`],
+    description: `Fetching image from pixiv.`,
+    usage: `pixiv <SearchKeyword>(Optional)`,
     permissionLevel: 0,
-	multiUser: false,
+    multiUser: false,
+    applicationCommand: false,
     async execute(client, reply, message, arg, locale) {
         const cachePath = `./.pixivcaches/`
         const forbiddenKeywords = [
-            `lewd`,
-            `r18`,
-            `porn`,
-            `dick`,
-            `ass`,
-            `vagina`,
-            `anal`,
-            `blowjob`,
-            `bdsm`,
-            `furry`,
-            `anus`,
-            `porno`,
-            `boobs`,
-            `boob`,
-            `nipple`,
-            `handjob`,
-            `sex`
-        ]
-        //  Logging in to get access to the Pixiv API
+                `lewd`,
+                `r18`,
+                `porn`,
+                `dick`,
+                `ass`,
+                `vagina`,
+                `anal`,
+                `blowjob`,
+                `bdsm`,
+                `furry`,
+                `anus`,
+                `porno`,
+                `boobs`,
+                `boob`,
+                `nipple`,
+                `handjob`,
+                `sex`
+            ]
+            //  Logging in to get access to the Pixiv API
         await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
         reply.send(locale.PIXIV[arg ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
-            socket: {
-                keyword: arg,
-                emoji: await client.getEmoji(`790994076257353779`)
-            }
-        })
-        .then(async loadmsg => {
-            //  Dynamically choose recommended/custom search based on input
-            let data = arg ? await this.fetchCustomSearch(arg) : await this.fetchRecommendedWork()
-            //  Prevent forbidden search
-            const usedForbiddenKeyword = forbiddenKeywords.filter(k => arg.includes(k))
-            if (usedForbiddenKeyword.length > 0) data = null
-            //  Handle if no returned result from the query
-            if (!data)  {
-                loadmsg.delete()
-                return reply.send(locale.PIXIV.NO_RESULT)
-            }
-            const img = await this.getImage(data.image_urls.medium, data.id)
-            //  Handle if no returned result from given img path
-            if (!img) {
-                loadmsg.delete()
-                return reply.send(locale.PIXIV.FAIL_TO_LOAD)
-            }
-            loadmsg.delete()
-            return reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
-                customHeader: [`by ${data.user.name}`, client.user.displayAvatarURL()],
-                image: img,
-                prebuffer: true
+                socket: {
+                    keyword: arg,
+                    emoji: await client.getEmoji(`790994076257353779`)
+                }
             })
-        })
+            .then(async loadmsg => {
+                //  Dynamically choose recommended/custom search based on input
+                let data = arg ? await this.fetchCustomSearch(arg) : await this.fetchRecommendedWork()
+                    //  Prevent forbidden search
+                const usedForbiddenKeyword = forbiddenKeywords.filter(k => arg.includes(k))
+                if (usedForbiddenKeyword.length > 0) data = null
+                    //  Handle if no returned result from the query
+                if (!data) {
+                    loadmsg.delete()
+                    return reply.send(locale.PIXIV.NO_RESULT)
+                }
+                const img = await this.getImage(data.image_urls.medium, data.id)
+                    //  Handle if no returned result from given img path
+                if (!img) {
+                    loadmsg.delete()
+                    return reply.send(locale.PIXIV.FAIL_TO_LOAD)
+                }
+                loadmsg.delete()
+                return reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
+                    customHeader: [`by ${data.user.name}`, client.user.displayAvatarURL()],
+                    image: img,
+                    prebuffer: true
+                })
+            })
     },
 
     /**
@@ -96,7 +97,7 @@ module.exports = {
         const postData = res.illusts[Math.floor(Math.random() * res.illusts.length)]
         return postData
     },
-    
+
     /**
      * Loading image from pixiv cache directory. (downloaded pixiv's image)
      * @param {string} url 
@@ -104,7 +105,7 @@ module.exports = {
      * @param {function} loaderMethod supply with Pistachio's loadCache.
      * @returns {buffer}
      */
-    async getImage(url=``, filename=``) {
+    async getImage(url = ``, filename = ``) {
         const id = await PixImg(url, `${this.cachePath + filename}.jpg`)
         return this.getImageCache(id)
     },
@@ -114,7 +115,7 @@ module.exports = {
      * @param {string} id image filename 
      * @returns {buffer}
      */
-    async getImageCache(id=``) {
+    async getImageCache(id = ``) {
         const res = await fs.readFileSync(`./${id}`)
         if (!res) throw new Error(`Failed to fetch image with ID ${id}`)
         return res
@@ -129,18 +130,18 @@ module.exports = {
         let arr = tags.map(key => `#${key.name}`)
         let str = ``
         for (let el of arr) {
-           str += `${el} `
+            str += `${el} `
         }
         return str
-    }, 
+    },
 
     /**
      * Parse "tools" property from Pixiv's Post Data. Omitted if no tools are found.
      * @param {object} [tools=[]]
      * @returns {string}
      */
-    getTools(tools=[]) {
+    getTools(tools = []) {
         if (tools.length < 1) return ``
         return `**Made with ${tools[0]}**`
-    } 
+    }
 }

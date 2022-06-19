@@ -1,52 +1,53 @@
 const User = require(`../../libs/user`)
-/**
- * Switch your profile theme to Light or Dark.
- * @author Andrew
- */
+    /**
+     * Switch your profile theme to Light or Dark.
+     * @author Andrew
+     */
 module.exports = {
     name: `setTheme`,
-	aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
-	description: `Switch your profile theme to Light or Dark.`,
-	usage: `theme <Light/Dark>`,
+    aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
+    description: `Switch your profile theme to Light or Dark.`,
+    usage: `theme <Light/Dark>`,
     permissionLevel: 0,
+    applicationCommand: false,
     async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
-        //  Returns if user didn't specify any keyword
+            //  Returns if user didn't specify any keyword
         if (!arg) return reply.send(locale.SWITCH_THEME.MISSING_KEYWORD, {
-            image: `banner_settheme`,
-            socket: {prefix: prefix} 
-        })
-        /**
-         * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it
-         * @param {string} theme 
-         * @returns {boolean} boolean
-         */
+                image: `banner_settheme`,
+                socket: { prefix: prefix }
+            })
+            /**
+             * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it
+             * @param {string} theme 
+             * @returns {boolean} boolean
+             */
         const userHasTheme = async theme => {
             let res = await client.db.checkIfThemeOwned(theme, message.author.id, message.guild.id)
             let resAnswer = Object.values(res)[0] == 1 ? true : false
             if (resAnswer) return true
-            // Give item to user
+                // Give item to user
             await client.db.GiveThemeToUser(theme, message.author.id, message.guild.id)
             return true
         }
         let currentTheme = await client.db.findCurrentTheme(message.author.id, message.guild.id)
         if (darkThemeStrings.includes(arg)) {
-            if (currentTheme == `dark`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await client.getEmoji(`790338393015713812`)} })
+            if (currentTheme == `dark`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
             let hasTheme = await userHasTheme(`dark`)
             if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
             client.db.setTheme(`dark`, message.author.id, message.guild.id)
-            return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, {status: `success`})
+            return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
         }
         if (lightThemeStrings.includes(arg)) {
-            if (currentTheme == `light`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, {socket:{emoji: await client.getEmoji(`790338393015713812`)} })
+            if (currentTheme == `light`) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
             let hasTheme = await userHasTheme(`light`)
             if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
             client.db.setTheme(`light`, message.author.id, message.guild.id)
-            return reply.send(locale.SWITCH_THEME.SET_LIGHTMODE, {status: `success`})
+            return reply.send(locale.SWITCH_THEME.SET_LIGHTMODE, { status: `success` })
         }
         //  Handle if no theme match with the keyword
-        return reply.send(locale.SWITCH_THEME.NO_MATCHING_KEYWORD, {socket: {emoji: await client.getEmoji(`692428578683617331`)} })
+        return reply.send(locale.SWITCH_THEME.NO_MATCHING_KEYWORD, { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
     }
 }
