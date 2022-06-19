@@ -187,7 +187,7 @@ class Response {
 		//  Add header
 		if (header) embed.setTitle(header)
 		//  Custom header
-		if (customHeader) embed.setAuthor(customHeader[0], customHeader[1])
+		if (customHeader) embed.setAuthor({name:customHeader[0], iconURL:customHeader[1]})
 		//  Add footer
 		if (footer) embed.setFooter(footer)
         //  Timestamp footer
@@ -205,14 +205,16 @@ class Response {
 		}
 		//  Add image preview
 		if (image) {
-			embed.attachFiles(new MessageAttachment(prebuffer ? image : await loadAsset(image), `preview.jpg`))
-			embed.setImage(`attachment://preview.jpg`)
+			//embed.attachFiles(new MessageAttachment(prebuffer ? image : await loadAsset(image), `preview.jpg`))
+			//embed.setImage(`attachment://preview.jpg`)
+			embed.setImage(new MessageAttachment(prebuffer ? image : await loadAsset(image), `preview.jpg`).url)
 		} else if (embed.file) {
 			embed.image.url = null
 			embed.file = null
 		}
 		if (raw) return embed
-		let sent = field.send(topNotch, embed)
+		let sent
+		topNotch ? sent = await field.send({content:topNotch , embeds:[embed] }) : sent = await field.send({embeds:[embed] })
 		if (!deleteIn) return sent
 		return sent
 		.then(msg => {
@@ -230,16 +232,17 @@ class Response {
     async _registerPages(pages=[], src=null) {
         let res = []
         for (let i = 0; i < pages.length; i++) {
-            res[i] = new MessageEmbed().setFooter(`(${i+1}/${pages.length})`).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
+            res[i] = new MessageEmbed().setFooter({text:`(${i+1}/${pages.length})`}).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
             if (src.image) {
-			    res[i].attachFiles(new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`))
-			    res[i].setImage(`attachment://preview.jpg`)
+			    //res[i].attachFiles(new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`))
+			    //res[i].setImage(`attachment://preview.jpg`)
+				res[i].setImage(new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`).url)
             }
             if (src.color) res[i].setColor(palette[src.color] || src.color || palette[`crimson`])
             if (src.header) res[i].setTitle(src.header)
-           	if (src.customHeader) res[i].setAuthor(src.customHeader[0], src.customHeader[1])
+           	if (src.customHeader) res[i].setAuthor({name:src.customHeader[0], iconURL: src.customHeader[1]})
             if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
-           	if (src.cardPreviews) res[i].setFooter(`Press the eyes emoji to preview. (${i+1}/${pages.length})`)
+           	if (src.cardPreviews) res[i].setFooter({text:`Press the eyes emoji to preview. (${i+1}/${pages.length})`})
         }
         return res
 	}

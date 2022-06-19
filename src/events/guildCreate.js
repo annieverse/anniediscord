@@ -3,7 +3,7 @@ module.exports = async function guildCreate(client, guild) {
     client.registerGuildConfigurations(guild.id)
     //  Limit logging utility to support server only
     //  Perform logging to support server
-    client.shard.broadcastEval(`this.channels.cache.has('724732289572929728') ? this.channels.cache.get('724732289572929728').send('NEW_NODE:: ${guild.id}@${guild.name}') : null`)
+    client.shard.broadcastEval(c => {c.channels.cache.has(`797521371889532988`) ? c.channels.cache.get(`797521371889532988`).send(`NEW_NODE:: ${guild.id}@${guild.name}`) : null})
     //  Notify owner of the server.
     const owner = await client.users.fetch(guild.ownerID)
     client.responseLibs(owner, true)

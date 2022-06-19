@@ -34,8 +34,10 @@ module.exports = class Confirmator {
 		const cancelEmoji = await this.message.client.getEmoji(`794593423575351307`)
 		targetMessage.react(confirmationEmoji)
 		targetMessage.react(cancelEmoji)
+
+        console.log(`<CONFIRMATOR_SETUP> ${targetUserId}`)
         const confirmationButtonFilter = (reaction, user) => [confirmationEmoji, cancelEmoji].includes(reaction.emoji.toString()) && user.id === targetUserId
-		this.activeInstance = targetMessage.createReactionCollector(confirmationButtonFilter, { time: 300000, max: 1 })
+		this.activeInstance = targetMessage.createReactionCollector({confirmationButtonFilter,time: 300000, max: 1 })
     }
 
     /**

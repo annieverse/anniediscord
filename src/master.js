@@ -65,7 +65,32 @@ module.exports = function masterShard() {
         }
         const userId = req.vote.user
         logger.info(`USER_ID:${userId} just voted!`)
-        manager.broadcastEval(`(${rewardDistribution}).call(this, '${userId}')`)
+        manager.broadcastEval((c, userId) => {
+            c.users.fetch(userId)
+		.then(async user => {
+			//  Only perform on SHARD_ID:0
+			if (c.shard.ids[0] === 0) {
+				c.dblApi.postStats({
+					serverCount: c.guilds.cache.size,
+					shardId: c.shard.ids[0],
+					shardCount: c.options.shardCount
+				})
+				c.db.updateInventory({
+					itemId: 52, 
+					userId: userId, 
+					value: 5000, 
+					distributeMultiAccounts: true
+				})
+				const artcoinsEmoji = await c.getEmoji(`artcoins`)
+				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
+				.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
+				c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
+			}
+		})
+		.catch(e => {
+			c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
+		})
+        	})
         res.status(200).send({ message: `Vote data successfully received.` })
     })
     const port = process.env.PORT || 3000
