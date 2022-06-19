@@ -108,7 +108,7 @@ class Response {
 		if (paging) {
 			let page = 0
 			const embeddedPages = await this._registerPages(content, plugins)
-			return field.send(embeddedPages[0])
+			return field.send({embeds:[embeddedPages[0]]})
 	        .then(async msg => {
 	            //  Buttons
                 if (embeddedPages.length > 1) {
@@ -116,24 +116,24 @@ class Response {
 	                await msg.react(`⏩`)
                 }
 	            // Filters - These make sure the varibles are correct before running a part of code
-	            const backwardsFilter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
-	            const forwardsFilter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+	            let filter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
 	            //  Timeout limit for page buttons
-	            const backwards = msg.createReactionCollector(backwardsFilter, { time: 300000 })
-	            const forwards = msg.createReactionCollector(forwardsFilter, { time: 300000 })
+	            const backwards = msg.createReactionCollector({filter, time: 300000 })
+				filter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+	            const forwards = msg.createReactionCollector({filter, time: 300000 })
 	            //  Add preview button if cardPreviews is enabled
 	            if (cardPreviews) {
 	            	await msg.react(`👀`)
-	            	let previewFilter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
-	            	let preview = msg.createReactionCollector(previewFilter, { time: 300000 })
+	            	let filter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
+	            	let preview = msg.createReactionCollector(filter, { time: 300000 })
 	            	let previewedPages = []
 	            	preview.on(`collect`, async r => {
 	            	    r.users.remove(this.message.author.id)
 	            	    if (previewedPages.includes(page)) return
 	            	    previewedPages.push(page)
-	            		let loading = await field.send(`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``)
+	            		let loading = await field.send({content:`\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``})
 	            		let img = await new GUI(plugins.cardPreviews[page]).create()
-	            	    field.send(``, new MessageAttachment(img))
+	            	    field.send({files:new MessageAttachment(img)})
 	            		loading.delete()
 	            	})
 	            }
@@ -142,10 +142,10 @@ class Response {
 	                r.users.remove(this.message.author.id)
 	                page--
 	                if (embeddedPages[page]) {
-	                    msg.edit(embeddedPages[page])
+	                    msg.edit({embeds:[embeddedPages[page]]})
 	                } else {
 						page = embeddedPages.length-1
-						msg.edit(embeddedPages[page])
+						msg.edit({embeds:[embeddedPages[page]]})
 	                }
 	            })
 	            //	Right navigation
@@ -153,10 +153,10 @@ class Response {
 	                r.users.remove(this.message.author.id)
 	                page++
 	                if (embeddedPages[page]) {
-	                    msg.edit(embeddedPages[page])
+	                    msg.edit({embeds:[embeddedPages[page]]})
 	                } else {
 						page = 0
-						msg.edit(embeddedPages[page])
+						msg.edit({embeds:[embeddedPages[page]]})
 	                }
 	            })
 	        })
@@ -189,7 +189,7 @@ class Response {
 		//  Custom header
 		if (customHeader) embed.setAuthor({name:customHeader[0], iconURL:customHeader[1]})
 		//  Add footer
-		if (footer) embed.setFooter(footer)
+		if (footer) embed.setFooter({text:footer})
         //  Timestamp footer
         if (timestampAsFooter) embed.setTimestamp()
 		//  Add timestamp on footer part

@@ -55,7 +55,6 @@ module.exports = {
                             amount: `${await client.getEmoji(`758720612087627787`)} ${commanifier(total)}`
 			}
 		})
-        console.log(confirmation)
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(() => {
