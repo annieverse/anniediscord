@@ -65,7 +65,10 @@ module.exports = function masterShard() {
         }
         const userId = req.vote.user
         logger.info(`USER_ID:${userId} just voted!`)
-        manager.broadcastEval((c, userId) => {
+		function getUser(userId) {
+			return this.users.fetch(userId)
+		}
+        manager.broadcastEval( c => {
             c.users.fetch(userId)
 		.then(async user => {
 			//  Only perform on SHARD_ID:0
