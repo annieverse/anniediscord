@@ -23,8 +23,9 @@ const emojiFetch = async (emojiKeyword, client) => {
         return foundEmoji
     })
     const FoundEmoji = await findingEmoji
-    await client.guilds.fetch(FoundEmoji.guildId)
-    const emoji = FoundEmoji === `(???)` ? `(???)` : client.guilds.cache.get(FoundEmoji.guildId).emojis.resolve(FoundEmoji.id) 
+    if (FoundEmoji === `(???)`) return `(???)`
+    const guild = await client.guilds.fetch(FoundEmoji.guildId)
+    const emoji = guild.emojis.resolve(FoundEmoji.id) 
     //await client.db.redis.set(cacheId, emoji.toString(), `EX`, 60*60*12)
     return emoji
                 
