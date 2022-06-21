@@ -30,7 +30,7 @@ module.exports = function applicationCommandLoader({
     (async() => {
         try {
             logger.info(`Started refreshing application (/) commands.`)
-            if (process.env.ENV === `production`) {
+            if (process.env.NODE_ENV === `production`) {
                 await rest.put(
                     Routes.applicationCommands(`501461775821176832`), {
                         body: applicationCommands
