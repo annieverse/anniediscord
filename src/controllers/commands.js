@@ -110,19 +110,17 @@ module.exports = async (client={}, message={}) => {
             reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
-        client.shard.broadcastEval(`
-            (async () => {
-                const channel = await this.channels.cache.get('797521371889532988')
-                if (channel) {
-                    channel.send(\`─────────────────☆～:;
-**GUILD_ID:** ${message.guild.id} - ${message.guild.name}
-**AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
-**AFFECTED_CMD:** ${targetCommand}
-**TIMESTAMP:** ${new Date()}
-**ISSUE_TRACE:** ${e.message}
-─────────────────☆～:;\`)
-                }
-            })()
-        `)
+        client.shard.broadcastEval(async (c) => {
+            const channel = await c.channels.cache.get(`797521371889532988`)
+            if (channel){
+                channel.send(`─────────────────☆～:;
+                **GUILD_ID:** ${message.guild.id} - ${message.guild.name}
+                **AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
+                **AFFECTED_CMD:** ${targetCommand}
+                **TIMESTAMP:** ${new Date()}
+                **ISSUE_TRACE:** ${e.message}
+                ─────────────────☆～:;`)
+            }
+        })
     }
 }

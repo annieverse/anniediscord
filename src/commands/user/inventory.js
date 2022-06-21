@@ -1,44 +1,45 @@
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
-/**
- * Views all items in your inventory
- * @author klerikdust
- */
+    /**
+     * Views all items in your inventory
+     * @author klerikdust
+     */
 module.exports = {
-    name: `inventory`,
-	aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`],
-	description: `Views all items in user's inventory`,
-	usage: `inventory <User>(Optional)`,
-	permissionLevel: 0,
-    ignoreItems: [`Cards`, `Themes`],
-    async execute(client, reply, message, arg, locale, prefix) {
-		const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
-        const userLib = new User(client, message)
-        let targetUser = arg ? await userLib.lookFor(arg) : message.author
-		if (!targetUser) return reply.send(locale.USER.IS_INVALID)
-        //  Normalize structure
-        targetUser = targetUser.master || targetUser
-        let targetUserData = await userLib.requestMetadata(targetUser, 2)
-		//  Handle if couldn't fetch the inventory
-		const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
-		if (targetUserData.inventory.raw.length <= 0) return reply.send(INVALID_INVENTORY, {socket: {user: targetUser.username} })
-		reply.send(locale.INVENTORY.FETCHING, {socket: {emoji: await client.getEmoji(`AAUloading`)}})
-		.then(async loading => {
-			//  Remove faulty values and sort order by rarity
-			const filteredInventory = targetUserData.inventory.raw.filter(itemsFilter).sort((a,b) => a.rarity_id - b.rarity_id).reverse()
-			targetUserData.inventory.raw = filteredInventory
-            let res = []
-            let str = ``
-            let breakpoint = 0
-            const limitPerPage = 3
-            for (let i=0; i<filteredInventory.length; i++) {
-                const item = filteredInventory[i]
-                if (breakpoint < 1) {
-                    str += `╭*:;,．★ ～☆*───────╮\n` 
-                }
-                breakpoint++
-                str += `╰☆～(ID:${item.item_id}) ${commanifier(item.quantity)}x **${item.name}**\n> Rarity/type:: ${item.rarity_name}, ${item.type_name}\n> Description:: ${item.description}\n> ${item.usable ? `__Consumable__` : `__Cannot be used__`}\n\n`
+        name: `inventory`,
+        aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`],
+        description: `Views all items in user's inventory`,
+        usage: `inventory <User>(Optional)`,
+        permissionLevel: 0,
+        applicationCommand: false,
+        ignoreItems: [`Cards`, `Themes`],
+        async execute(client, reply, message, arg, locale, prefix) {
+            const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
+            const userLib = new User(client, message)
+            let targetUser = arg ? await userLib.lookFor(arg) : message.author
+            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+                //  Normalize structure
+            targetUser = targetUser.master || targetUser
+            let targetUserData = await userLib.requestMetadata(targetUser, 2)
+                //  Handle if couldn't fetch the inventory
+            const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
+            if (targetUserData.inventory.raw.length <= 0) return reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
+            reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
+                .then(async loading => {
+                        //  Remove faulty values and sort order by rarity
+                        const filteredInventory = targetUserData.inventory.raw.filter(itemsFilter).sort((a, b) => a.rarity_id - b.rarity_id).reverse()
+                        targetUserData.inventory.raw = filteredInventory
+                        let res = []
+                        let str = ``
+                        let breakpoint = 0
+                        const limitPerPage = 3
+                        for (let i = 0; i < filteredInventory.length; i++) {
+                            const item = filteredInventory[i]
+                            if (breakpoint < 1) {
+                                str += `╭*:;,．★ ～☆*───────╮\n`
+                            }
+                            breakpoint++
+                            str += `╰☆～(ID:${item.item_id}) ${commanifier(item.quantity)}x **${item.name}**\n> Rarity/type:: ${item.rarity_name}, ${item.type_name}\n> Description:: ${item.description}\n> ${item.usable ? `__Consumable__` : `__Cannot be used__`}\n\n`
                 if (breakpoint >= limitPerPage || i === (filteredInventory.length-1)) {
                     str = str.substring(0, str.length - 1)
                     str += `╰────────☆～*:;,．*╯`
