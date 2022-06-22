@@ -150,7 +150,7 @@ module.exports = {
                     raw: true
                 }))
             }
-            const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time: 60000 * 3 }) // 3 minutes timeout
+            const pool = message.channel.createMessageCollector({filter: m => m.author.id === message.author.id, time: 60000 * 3 }) // 3 minutes timeout
             let phase = phaseJump ? 1 : 0
             let completed = false
             const joinFunction = (newMessage) => {
@@ -459,7 +459,7 @@ module.exports = {
                 prefix: prefix
             }
         })
-        const pool = message.channel.createMessageCollector(m => m.author.id === message.author.id, { time:60000*3 }) // 3 minutes timeout
+        const pool = message.channel.createMessageCollector({filter: m => m.author.id === message.author.id, time:60000*3 }) // 3 minutes timeout
         let completed = false
         pool.on(`collect`, async m => {
             let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
