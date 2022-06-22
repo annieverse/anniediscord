@@ -29,13 +29,13 @@ module.exports = (message={}, userId=``) => {
         description: `The owner of current server.`
     }
     //  Server admin
-    if (member.hasPermission(`ADMINISTRATOR`)) return {
+    if (member.permissions.has(`ADMINISTRATOR`)) return {
         level: 3,
         name: `Administrator`,
         description: `Server's super user`
     }
     //  Moderator
-    if (member.hasPermission(`MANAGE_ROLES`)) return { 
+    if (member.permissions.has(`MANAGE_ROLES`)) return { 
         level: 2,
         name: `Moderator`,
         description: `Server's manager with moderation capabilities`

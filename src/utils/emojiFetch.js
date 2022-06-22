@@ -1,20 +1,4 @@
 const Discord = require(`discord.js`)
-/**
- * Fetch global emojis through shard broadcast eval
- * @param {string} keyword
- * @return {object}
- */
-const broadcastScript = (keyword) => {	
-    const temp = this.emojis.cache.get(keyword) || this.emojis.cache.find(e => e.name === keyword)
-    if (!temp) return null
-    // Clone the object because it is modified right after, so as to not affect the cache in client.emojis
-    const emoji = Object.assign({}, temp)
-    // Circular references can't be returned outside of eval, so change it to the id
-    if (emoji.guild) emoji.guild = emoji.guild.id
-    // A new object will be constructed, so simulate raw data by adding this property back
-    emoji.require_colons = emoji.requiresColons
-    return emoji
-}
 
 /**
  *  Fetching emojis across all shards.
@@ -30,15 +14,21 @@ const emojiFetch = async (emojiKeyword, client) => {
         //  Use cache for faster response
         return onCache
     }
-    const runScript = await client.shard.broadcastEval(`(${broadcastScript}).call(this, '${emojiKeyword}')`)
-    const findEmoji = runScript.find(e => e)
-    if (!findEmoji) return `(???)`
-    const raw = await client.api.guilds(findEmoji.guild).get()
-    const guild = new Discord.Guild(client, raw)
-    const emoji = (new Discord.GuildEmoji(client, findEmoji, guild)).toString()
-    //  Store on cache for 12 hour
-    await client.db.redis.set(cacheId, emoji, `EX`, (60*60)*12)
+    function findEmoji(c, { nameOrId }) {
+        return c.emojis.cache.get(nameOrId) || c.emojis.cache.find(e => e.name.toLowerCase() === nameOrId.toLowerCase())
+    }
+    const findingEmoji = client.shard.broadcastEval(findEmoji, { context: { nameOrId: emojiKeyword } }).then(emojiArray => {
+        const foundEmoji = emojiArray.find(emoji => emoji)
+        if (!foundEmoji) return `(???)`
+        return foundEmoji
+    })
+    const FoundEmoji = await findingEmoji
+    if (FoundEmoji === `(???)`) return `(???)`
+    const guild = await client.guilds.fetch(FoundEmoji.guildId)
+    const emoji = guild.emojis.resolve(FoundEmoji.id) 
+    //await client.db.redis.set(cacheId, emoji.toString(), `EX`, 60*60*12)
     return emoji
+                
 }
 
 module.exports = emojiFetch

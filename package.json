@@ -12,6 +12,9 @@
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check"
   },
+  "engines": {
+    "node": "12.18.3"
+  },
   "contributors": [
     "Naph (https://github.com/klerikdust)",
     "Pan (https://github.com/Moore2021)",

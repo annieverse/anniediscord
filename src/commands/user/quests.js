@@ -55,8 +55,8 @@ module.exports = {
 		})
 		fetching.delete()
         //  Prepare answer collectors
-        const collector = message.channel.createMessageCollector(
-        m => m.author.id === message.author.id, {
+        const collector = message.channel.createMessageCollector({
+        filter: m => m.author.id === message.author.id,
             max: 10,
             time: 120000
         })

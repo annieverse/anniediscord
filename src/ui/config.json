@@ -1,0 +1,89 @@
+{
+    "DEFAULT": {
+        "WIDTH": 300,
+        "HEIGHT": 500,
+        "THEME": "light",
+        "CORNER_RADIUS": 30,
+        "DATABAR": {
+            "CORNER_RADIUS": 300,
+            "SIZE": "medium"
+        },
+        "HEADER": {
+            "TITLE": {
+                "HEIGHT": 70,
+                "FONT": "15pt roboto-bold"
+            },
+            "CAPTION": {
+                "HEIGHT": 90,
+                "FONT": "8pt roboto-light"
+            }
+        },
+        "CONTENT": {
+            "MAIN_TEXT": {
+                "SIZE": "medium"
+            },
+            "CAPTION": {
+                "SIZE": "medium"
+            }
+        }
+    },
+    "DATABAR": {
+        "MICRO": {
+            "WIDTH": 30,
+            "HEIGHT": 15
+        },
+        "SMALL": {
+            "WIDTH": 100,
+            "HEIGHT": 45
+        },
+        "SMALL-MED": {
+            "WIDTH": 125,
+            "HEIGHT": 55
+        },
+        "MEDIUM": {
+            "WIDTH": 200,
+            "HEIGHT": 65
+        },
+        "LARGE": {
+            "WIDTH": 300,
+            "HEIGHT": 75
+        }
+    },
+    "CONTENT": {
+        "MAIN_TEXT": {
+            "SIZE": {
+                "MICRO": "8pt roboto-bold",
+                "SMALL": "10pt roboto-bold",
+                "SMALL-MED": "12pt roboto-bold",
+                "MEDIUM": "15pt roboto-bold", 
+                "LARGE": "20pt roboto-bold",
+                "EXTRA-LARGE": "30pt roboto-bold"
+            }
+        },
+        "CAPTION": {
+            "SIZE": {
+                "MICRO": "2pt roboto-bold",
+                "SMALL": "2pt roboto-bold",
+                "SMALL-MED": "4pt roboto-bold",
+                "MEDIUM": "6pt roboto-bold", 
+                "LARGE": "8pt roboto-bold"
+            }
+        },
+        "LABEL": {
+            "SIZE": {
+                "MICRO": "8pt roboto-light",
+                "SMALL": "9pt roboto-light",
+                "SMALL-MED": "9pt roboto-light",
+                "MEDIUM": "11pt roboto-light", 
+                "LARGE": "13pt roboto-light"      
+            }
+        }
+    },
+    "ITEM_RARITY_COLOR": {
+        "1": "blankgray",
+        "2": "blankgray",
+        "3": "blue",
+        "4": "purple",
+        "5": "red"
+    }
+}
