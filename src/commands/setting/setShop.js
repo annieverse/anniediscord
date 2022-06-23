@@ -144,11 +144,23 @@ module.exports = {
                     })
                 }
                 metadata.name = secondArg
-                dataDisplay = await message.channel.send(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${secondArg}`, { raw: true }))
+                
+                dataDisplay = await message.channel.send({
+                    content:locale.SETSHOP.ADD_DESCRIPTION,
+                    embeds:[
+                        await reply.send(`\n╰☆～**Name ::** ${secondArg}`, { raw: true })
+                    ]
+                })
+
             } else {
-                dataDisplay = await message.channel.send(locale.SETSHOP.ADD_NAME, await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
-                    raw: true
-                }))
+                dataDisplay = await message.channel.send({
+                    content:locale.SETSHOP.ADD_NAME,
+                    embeds:[
+                        await reply.send(locale.SETSHOP.ADD_NAME_FOOTER, {
+                            raw: true
+                        })
+                    ]
+                })
             }
             const pool = message.channel.createMessageCollector({filter: m => m.author.id === message.author.id, time: 60000 * 3 }) // 3 minutes timeout
             let phase = phaseJump ? 1 : 0
@@ -177,7 +189,7 @@ module.exports = {
                                 })
                                 metadata.name = input
                                     //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
-                                dataDisplay.edit(locale.SETSHOP.ADD_DESCRIPTION, await reply.send(`\n╰☆～**Name ::** ${input}`, { raw: true }))
+                                dataDisplay.edit({content:locale.SETSHOP.ADD_DESCRIPTION, embeds: [await reply.send(`\n╰☆～**Name ::** ${input}`, { raw: true })]})
                                 phase++
                                 break
                                 //  Description
@@ -185,28 +197,28 @@ module.exports = {
                                 const descLimit = 120
                                 if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, { deleteIn: 5, socket: { limit: descLimit } })
                                 metadata.description = input
-                                dataDisplay.edit(locale.SETSHOP.ADD_PRICE, await joinFunction(`\n╰☆～**Description ::** ${input}`))
+                                dataDisplay.edit({content:locale.SETSHOP.ADD_PRICE, embeds: [await joinFunction(`\n╰☆～**Description ::** ${input}`)]})
                                 phase++
                                 break
                                 //  Price
                             case 2:
                                 if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, { deleteIn: 5 })
                                 metadata.price = input
-                                dataDisplay.edit(locale.SETSHOP.ADD_STOCK, await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`))
+                                dataDisplay.edit({content:locale.SETSHOP.ADD_STOCK, embeds: [await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`)]})
                     phase++
                     break
                 //  Stocks
                 case 3:
                     if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {deleteIn: 5})
                     metadata.stocks = input
-                    dataDisplay.edit(locale.SETSHOP.ADD_TRADABILITY, await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`))
+                    dataDisplay.edit({content:locale.SETSHOP.ADD_TRADABILITY, embeds:[await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`)]})
                     phase++
                     break
                 //  Tradability
                 case 4:
                     if (!input.startsWith(`y`) && !input.startsWith(`n`)) return reply.send(locale.SETSHOP.ADD_TRADABILITY_INVALID, {deleteIn: 5})
                     metadata.bind = input
-                    dataDisplay.edit(locale.SETSHOP.ADD_MESSAGE_UPON_USE, await joinFunction(`\n╰☆～**Can be traded ::** ${m.content.startsWith(`y`) ? `yes` : `no`}`))
+                    dataDisplay.edit({content:locale.SETSHOP.ADD_MESSAGE_UPON_USE, embeds:[await joinFunction(`\n╰☆～**Can be traded ::** ${m.content.startsWith(`y`) ? `yes` : `no`}`)]})
                     phase++
                     break
                 //  Message upon use
@@ -214,8 +226,8 @@ module.exports = {
                     const messageUponUseLimit = 120
                     if (input.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.ADD_MESSAGE_UPON_USE_OVERLIMIT, {deleteIn: 5})
                     metadata.responseOnUse = input
-                    dataDisplay.edit(locale.SETSHOP.ADD_BUFF,
-                        await joinFunction(`\n╰☆～**My response after the item is used ::** ${input === `~` ? `default` : input}`))
+                    dataDisplay.edit({content:locale.SETSHOP.ADD_BUFF, embeds:[
+                        await joinFunction(`\n╰☆～**My response after the item is used ::** ${input === `~` ? `default` : input}`)]})
                     phase++
                     break
                 //  Buffs upon use
@@ -246,7 +258,7 @@ module.exports = {
                                 type: isRoleAddition ? 1 : 2,
                                 params: res
                             })
-                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${isRoleAddition ? `receiving` : `removed`} ${roleNames} roles`))
+                            await dataDisplay.edit({content:locale.SETSHOP.ADD_BUFF, embeds:[await joinFunction(`\n╰☆～**Bonus Effect ::** ${isRoleAddition ? `receiving` : `removed`} ${roleNames} roles`)]})
                         }
                         //  Inventory update buff
                         if ([`additem`, `removeitem`].includes(params[0]))  {
@@ -262,7 +274,7 @@ module.exports = {
                                     amount: amount
                                 }
                             })
-                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${isItemAddition ? `receiving` : `removed`} ${commanifier(amount)} pcs of '${targetItem.name}'`))
+                            await dataDisplay.edit({content: locale.SETSHOP.ADD_BUFF, embeds:[await joinFunction(`\n╰☆～**Bonus Effect ::** ${isItemAddition ? `receiving` : `removed`} ${commanifier(amount)} pcs of '${targetItem.name}'`)]})
                         }
                         //  EXP/Artcoins boost buff
                         if ([`expboost`, `acboost`].includes(params[0])) {
@@ -279,7 +291,7 @@ module.exports = {
                                     duration: duration
                                 }
                             })
-                            await dataDisplay.edit(locale.SETSHOP.ADD_BUFF, await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, {long:true})}`))
+                            await dataDisplay.edit({content:locale.SETSHOP.ADD_BUFF, embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, {long:true})}`)]})
                         }
                         //  Limit allowed buffs per item
                         if (buffs.length >= 3) {
