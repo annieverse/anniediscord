@@ -284,13 +284,8 @@ class Response {
 		}
 
 		if (!deleteIn) return sent
-		return sent
-			.then(msg => {
-				//  Convert deleteIn parameter into milliseconds.
-				msg.delete({
-					timeout: deleteIn * 1000
-				})
-			})
+		sent
+		return setTimeout(()=>{sent.delete()}, deleteIn * 1000)
 	}
 
 	/**
