@@ -12,14 +12,12 @@ module.exports = function ready(annie) {
     annie.registerGuildAutoResponders()
     annie.registerUserDurationalBuffs()
     annie.logger.info(`<DEPLOYED> (${annie.getBenchmark(annie.startupInit)})`)
-    if (annie.dev) return annie.user.setStatus(`dnd`)
+    if (annie.dev) return annie.user.setPresence({status: `dnd` })
     /**
      * 	--------------------------------------------------
      * 	Configuration for Production
      * 	--------------------------------------------------
      */
-    annie.user.setStatus(`idle`)
-    annie.user.setActivity(`Shard preparing ...`,{ type: `WATCHING` })
     annie.logger.info(`successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
     //  Registering vote api into client property.
     annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)

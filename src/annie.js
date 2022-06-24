@@ -18,7 +18,7 @@ const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
-            super({ intents: intents })
+            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: `WATCHING`}] } })
             this.startupInit = process.hrtime()
 
             /**
