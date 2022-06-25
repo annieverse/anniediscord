@@ -39,7 +39,7 @@ module.exports = async(client, interaction) => {
     const userLanguage = await client.db.getUserLocale(interaction.user.id)
     let locale = null
     try {
-        locale = client.locales[userLanguage]
+        locale = client.locales[userLanguage.lang]
     } catch (error) {
         locale = client.locales.en
     }
@@ -63,7 +63,7 @@ module.exports = async(client, interaction) => {
         if (err) client.logger.error(err)
 
         await interaction.reply({
-            content: `An error occured while trying to process that command - \nNEED TO UPDATE ERROR HANDLER INTERACTIONCREATE.JS`,
+            content: `An error occured while trying to process that command`,
             ephemeral: true
         })
     }

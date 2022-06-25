@@ -40,7 +40,7 @@ module.exports = {
         reply.send(locale.DONATE)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        interaction.reply(locale.DONATE)
+        interaction.reply({content:locale.DONATE})
     }
 
 }
