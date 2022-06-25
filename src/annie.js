@@ -2,8 +2,9 @@ const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
-const applicationCommandLoader = require(`./commands/applicationCommandsLoader`)
+const applicationCommandLoader = require(`./controllers/applicationCommands`)
 const Database = require(`./libs/database`)
+//const Database = require(`./libs/database_remaster`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
@@ -17,7 +18,7 @@ const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
-            super({ intents: intents })
+            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: `WATCHING`}] } })
             this.startupInit = process.hrtime()
 
             /**
@@ -169,10 +170,10 @@ class Annie extends Discord.Client {
             try {
                 this.registerNode(new Database().connect(), `db`)
                 this.registerNode(commandsLoader({ logger: this.logger }), `commands`)
-                applicationCommandLoader({ logger: this.logger, commands: this.commands })
+                require(`./controllers/applicationCommands`)({ logger: this.logger, commands: this.commands })
                 this.registerNode(localizer(), `locales`)
                 require(`./controllers/events`)(this)
-                this.login(process.env.TOKEN)
+                this.login(process.env.BOT_TOKEN)
             } catch (e) {
                 this.logger.error(`Client has failed to start > ${e.stack}`)
                 process.exit()

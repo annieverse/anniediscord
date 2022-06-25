@@ -1,29 +1,27 @@
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
-const {
-    cooldown
-} = require(`../config/commands`)
+const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
-    /**
-     * Centralized Controller to handle incoming command request
-     * @since 6.0.0
-     * @param {object} [client={}] Current client's instance.
-     * @param {object} [message={}] Target message's instance.
-     * @return {winston}
-     */
-module.exports = async(client = {}, message = {}) => {
+/**
+ * Centralized Controller to handle incoming command request
+ * @since 6.0.0
+ * @param {object} [client={}] Current client's instance.
+ * @param {object} [message={}] Target message's instance.
+ * @return {winston}
+ */
+module.exports = async (client={}, message={}) => {
     const guildPrefix = message.guild.configs.get(`PREFIX`).value
     const prefix = message.content.startsWith(guildPrefix) ? guildPrefix : client.prefix
     const targetCommand = message.content.slice(prefix.length).split(` `)[0].toLowerCase()
     let command = findCommandProperties(client, targetCommand)
-        // Ignore non-registered commands
-    if (!command) return
-        //  Plus one from whitespace
-    const arg = message.content.slice(prefix.length + targetCommand.length + 1)
-        // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
+    // Ignore non-registered commands
+    if (!command) return 
+    //  Plus one from whitespace
+    const arg = message.content.slice(prefix.length + targetCommand.length+1)
+    // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     const reply = client.responseLibs(message)
-        // Handle non-command-allowed channels
+    // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
         if (!commandChannels.includes(message.channel.id)) {
@@ -35,20 +33,18 @@ module.exports = async(client = {}, message = {}) => {
                 }
             })
             return message.delete()
-                .catch(e => e)
+            .catch(e => e)
         }
     }
     // Handle if user doesn't have enough permission level to use the command
     const userPermission = getUserPermission(message, message.author.id)
-    if (command.permissionLevel > userPermission.level) return reply.send(``, {
-            customHeader: [
-                `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-                message.author.displayAvatarURL({
-                    dynamic: true
-                })
-            ]
-        })
-        // Handle cooldowns
+    if (command.permissionLevel > userPermission.level) return reply.send(``,
+        {customHeader: [
+            `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
+            message.author.displayAvatarURL({dynamic: true})
+        ]}
+    )
+    // Handle cooldowns
     const instanceId = `CMD_${command.name.toUpperCase()}_${message.author.id}@${message.guild.id}`
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
@@ -62,13 +58,7 @@ module.exports = async(client = {}, message = {}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-
-    const langConstant = `LANG_${message.author.id}`
-        //  If none of the source has user's saved locale, will fallback to locales.en
-    const localeSource = await client.db.redis.exists(langConstant) ? await client.db.redis.get(langConstant) : await client.db.getUserLocale(message.author.id)
-
-    const locale = client.locales[localeSource || `en`]
-
+    const locale = client.locales.en
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {
         return reply.send(locale.USER.REGISTRATION_ON_PROCESS)
@@ -76,14 +66,14 @@ module.exports = async(client = {}, message = {}) => {
     try {
         const initTime = process.hrtime()
         await command.execute(
-                client,
-                reply,
-                message,
-                arg,
-                locale,
-                prefix
-            )
-            //  Dispose
+            client, 
+            reply, 
+            message, 
+            arg,
+            locale,
+            prefix
+        )
+        //  Dispose
         command = null
         return client.db.recordsCommandUsage({
             guild_id: message.guild.id,
@@ -91,14 +81,15 @@ module.exports = async(client = {}, message = {}) => {
             command_alias: targetCommand,
             resolved_in: client.getBenchmark(initTime)
         })
-    } catch (e) {
+    }
+    catch(e) {
         if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
-                socket: {
-                    error: e.stack,
-                    emoji: await client.getEmoji(`AnnieThinking`)
-                }
-            })
-            //  Unsupported image type from buffer-image-size package
+            socket: {
+                error: e.stack,
+                emoji: await client.getEmoji(`AnnieThinking`)
+            }
+        })
+        //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                 socket: {
@@ -109,29 +100,26 @@ module.exports = async(client = {}, message = {}) => {
         //  Missing-permission error
         else if (e.code === 50013) {
             reply.send(locale.ERROR_MISSING_PERMISSION, {
-                    socket: {
-                        emoji: await client.getEmoji(`AnnieCry`)
-                    }
-                })
-                .catch(permErr => permErr)
-        } else {
-            reply.send(locale.ERROR_ON_PRODUCTION, {
                 socket: {
-                    emoji: await client.getEmoji(`AnniePout`)
+                    emoji: await client.getEmoji(`AnnieCry`)
                 }
             })
+            .catch(permErr => permErr)
+        }
+        else {
+            reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
-        client.shard.broadcastEval(async() => {
-            const channel = await this.channels.cache.get(`797521371889532988`)
-            if (channel) {
+        client.shard.broadcastEval(async (c) => {
+            const channel = await c.channels.cache.get(`797521371889532988`)
+            if (channel){
                 channel.send(`─────────────────☆～:;
-                        **GUILD_ID:** ${message.guild.id} - ${message.guild.name}
-                        **AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
-                        **AFFECTED_CMD:** ${targetCommand}
-                        **TIMESTAMP:** ${new Date()}
-                        **ISSUE_TRACE:** ${e.message}
-                        ─────────────────☆～:;`)
+                **GUILD_ID:** ${message.guild.id} - ${message.guild.name}
+                **AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
+                **AFFECTED_CMD:** ${targetCommand}
+                **TIMESTAMP:** ${new Date()}
+                **ISSUE_TRACE:** ${e.message}
+                ─────────────────☆～:;`)
             }
         })
     }
