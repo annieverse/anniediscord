@@ -32,6 +32,3 @@ const emojiFetch = async (emojiKeyword, client) => {
 }
 
 module.exports = emojiFetch
-
-
-

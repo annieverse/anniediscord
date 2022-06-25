@@ -111,11 +111,13 @@ class Response {
 		if (paging) {
 			let page = 0
 			const embeddedPages = await this._registerPages(content, plugins)
-			return field.send({
-					embeds: [embeddedPages[0]],
-					files:[embeddedPages[0].file]
-				})
-				.then(async msg => {
+			return field.send(embeddedPages[0].file ? {
+				embeds: [embeddedPages[0]],
+				files : [embeddedPages[0].file]
+			}:{
+				embeds: [embeddedPages[0]],
+				files : []
+			}).then(async msg => {
 					//  Buttons
 					if (embeddedPages.length > 1) {
 						await msg.react(`⏪`)
@@ -150,7 +152,7 @@ class Response {
 							})
 							let img = await new GUI(plugins.cardPreviews[page]).create()
 							field.send({
-								files: new MessageAttachment(img)
+								files: [new MessageAttachment(img)]
 							})
 							loading.delete()
 						})

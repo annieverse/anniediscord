@@ -28,7 +28,7 @@ module.exports = {
      * @type {number}
      */
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
     /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
@@ -38,6 +38,9 @@ module.exports = {
     async execute(client, reply, message, arg, locale) {
         // ... Your command ran here.
         reply.send(locale.DONATE)
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        interaction.reply(locale.DONATE)
     }
 
 }
