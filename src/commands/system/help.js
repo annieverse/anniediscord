@@ -36,10 +36,8 @@ module.exports = {
                     })
                     .then(response => {
                         response.react(this.commandpediaButton)
-                        const bookEmoji = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
-                        const bookEmojiCollector = response.createReactionCollector(bookEmoji, {
-                                time: 60000
-                            })
+                        const filter = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
+                        const bookEmojiCollector = response.createReactionCollector({filter, time: 300000, max: 1})
                             //  Display Commandpedia layout once user pressed the :book: button
                         bookEmojiCollector.on(`collect`, () => {
                             response.delete()

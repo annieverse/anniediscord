@@ -25,23 +25,44 @@ module.exports = function applicationCommandLoader({
 
     const rest = new REST({
         version: `9`
-    }).setToken(process.env.TOKEN);
+    }).setToken(process.env.BOT_TOKEN);
 
     (async() => {
         try {
             logger.info(`Started refreshing application (/) commands.`)
-            if (process.env.ENV === `production`) {
+            if (process.env.NODE_ENV === `production`) {
                 await rest.put(
                     Routes.applicationCommands(`501461775821176832`), {
                         body: applicationCommands
                     },
                 )
             } else {
+                /**
+                 * For Pan's local bot use only
+                 */
                 await rest.put(
                     Routes.applicationGuildCommands(`514688969355821077`, `577121315480272908`), {
                         body: applicationCommands
                     },
-                )
+                ) 
+                
+                /**
+                 * For Annie's local bot use only
+                 */
+                /* await rest.put(
+                    Routes.applicationGuildCommands(`501461775821176832`, `577121315480272908`), {
+                        body: applicationCommands
+                    },
+                ) */
+                
+                /**
+                 * For Naph's local bot use only
+                 */
+                /* await rest.put(
+                    Routes.applicationGuildCommands(`**NAPH PUT BOT CLIENT ID HERE**`, `577121315480272908`), {
+                        body: applicationCommands
+                    },
+                )  */
             }
             logger.info(`Successfully reloaded application (/) commands. ${applicationCommands.size} Commands`)
         } catch (error) {
