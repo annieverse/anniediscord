@@ -32,11 +32,12 @@ module.exports = function masterShard() {
     manager.spawn(`auto`, 30000, 60000*2)
     const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
     //  Send shard count to DBL webhook.
-	server.post(`/dblwebhook`, wh.listener((vote, req, res) => {
-		if (!req.vote) {
-            res.status(200).send({ message: `Endpoint successfully tested` })
+	server.post(`/dblwebhook`, wh.listener((vote) => {
+		logger.info(`Received DBL webhook vote: ${vote}`)
+		if (!vote) {
+            //res.status(200).send({ message: `Endpoint successfully tested` })
         }
-        const userId = req.vote.user
+        const userId = vote.user
         logger.info(`USER_ID:${userId} just voted!`)
         manager.broadcastEval( c => {
             c.users.fetch(userId)
@@ -64,7 +65,7 @@ module.exports = function masterShard() {
 			c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
 		})
         	})
-        res.status(200).send({ message: `Vote data successfully received.` })
+        //res.status(200).send({ message: `Vote data successfully received.` })
     }))
     const port = process.env.PORT || 3000
     server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
