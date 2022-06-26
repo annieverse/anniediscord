@@ -33,43 +33,36 @@ module.exports = function masterShard() {
     const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
     //  Send shard count to DBL webhook.
 	server.post(`/dblwebhook`, wh.listener((vote) => {
-		logger.info(`Received DBL webhook vote: ${vote}`)
-		logger.info(vote)
-		if (!vote) {
-            //res.status(200).send({ message: `Endpoint successfully tested` })
-			logger.info(`No Vote Object`)
-        }
-        const userId = vote.user
+		const userId = vote.user
         logger.info(`USER_ID:${userId} just voted!`)
-        manager.broadcastEval( c => {
-            c.users.fetch(userId)
-		.then(async user => {
-			logger.info(user)
-			logger.info(user.id)
-			//  Only perform on SHARD_ID:0
-			if (c.shard.ids[0] === 0) {
-				c.dblApi.postStats({
-					serverCount: c.guilds.cache.size,
-					shardId: c.shard.ids[0],
-					shardCount: c.options.shardCount
-				})
-				c.db.updateInventory({
-					itemId: 52, 
-					userId: userId, 
-					value: 5000, 
-					distributeMultiAccounts: true
-				})
-				const artcoinsEmoji = await c.getEmoji(`artcoins`)
-				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
-				.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
-				c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
-			}
-		})
-		.catch(e => {
-			c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
-		})
-        	})
-        //res.status(200).send({ message: `Vote data successfully received.` })
+		function sendReward(c, {userId}) {
+			return c.users.fetch(userId).then(async user => {
+				logger.info(user)
+				logger.info(user.id)
+				//  Only perform on SHARD_ID:0
+				if (c.shard.ids[0] === 0) {
+					c.dblApi.postStats({
+						serverCount: c.guilds.cache.size,
+						shardId: c.shard.ids[0],
+						shardCount: c.options.shardCount
+					})
+					c.db.updateInventory({
+						itemId: 52, 
+						userId: userId, 
+						value: 5000, 
+						distributeMultiAccounts: true
+					})
+					const artcoinsEmoji = await c.getEmoji(`artcoins`)
+					user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
+					.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
+					c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
+				}
+			})
+			.catch(e => {
+				c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
+			})
+		}
+        manager.broadcastEval( sendReward, {context: {userId:userId}})
     }))
     const port = process.env.PORT || 3000
     server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
