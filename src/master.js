@@ -36,9 +36,9 @@ module.exports = function masterShard() {
 		const userId = vote.user
         logger.info(`USER_ID:${userId} just voted!`)
 		function sendReward(c, {userId}) {
-			return c.users.fetch(userId).then(async user => {
-				logger.info(user)
-				logger.info(user.id)
+			c.users.fetch(userId).then(async user => {
+				c.logger.info(user)
+				c.logger.info(user.id)
 				//  Only perform on SHARD_ID:0
 				if (c.shard.ids[0] === 0) {
 					c.dblApi.postStats({
