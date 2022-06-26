@@ -44,6 +44,8 @@ module.exports = function masterShard() {
         manager.broadcastEval( c => {
             c.users.fetch(userId)
 		.then(async user => {
+			logger.info(user)
+			logger.info(user.id)
 			//  Only perform on SHARD_ID:0
 			if (c.shard.ids[0] === 0) {
 				c.dblApi.postStats({
