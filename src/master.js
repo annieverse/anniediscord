@@ -34,8 +34,10 @@ module.exports = function masterShard() {
     //  Send shard count to DBL webhook.
 	server.post(`/dblwebhook`, wh.listener((vote) => {
 		logger.info(`Received DBL webhook vote: ${vote}`)
+		logger.info(vote)
 		if (!vote) {
             //res.status(200).send({ message: `Endpoint successfully tested` })
+			logger.info(`No Vote Object`)
         }
         const userId = vote.user
         logger.info(`USER_ID:${userId} just voted!`)
