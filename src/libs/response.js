@@ -162,15 +162,21 @@ class Response {
 						r.users.remove(this.message.author.id)
 						page--
 						if (embeddedPages[page]) {
-							msg.edit({
+							msg.edit(embeddedPages[page].file ? {
 								embeds: [embeddedPages[page]],
-								files:[embeddedPages[page].file]
+								files : [embeddedPages[page].file]
+							}:{
+								embeds: [embeddedPages[page]],
+								files : []
 							})
 						} else {
 							page = embeddedPages.length - 1
-							msg.edit({
+							msg.edit(embeddedPages[page].file ? {
 								embeds: [embeddedPages[page]],
-								files:[embeddedPages[page].file]
+								files : [embeddedPages[page].file]
+							}:{
+								embeds: [embeddedPages[page]],
+								files : []
 							})
 						}
 					})
@@ -179,15 +185,21 @@ class Response {
 						r.users.remove(this.message.author.id)
 						page++
 						if (embeddedPages[page]) {
-							msg.edit({
+							msg.edit(embeddedPages[page].file ? {
 								embeds: [embeddedPages[page]],
-								files:[embeddedPages[page].file]
+								files : [embeddedPages[page].file]
+							}:{
+								embeds: [embeddedPages[page]],
+								files : []
 							})
 						} else {
 							page = 0
-							msg.edit({
+							msg.edit(embeddedPages[page].file ? {
 								embeds: [embeddedPages[page]],
-								files:[embeddedPages[page].file]
+								files : [embeddedPages[page].file]
+							}:{
+								embeds: [embeddedPages[page]],
+								files : []
 							})
 						}
 					})
