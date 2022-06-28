@@ -88,7 +88,7 @@ module.exports = async (client={}, message={}) => {
                 error: e.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
-        })
+        }).catch(err => client.logger.error(err))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
@@ -105,22 +105,25 @@ module.exports = async (client={}, message={}) => {
                 }
             })
             .catch(permErr => permErr)
-        }
-        else {
+        } else {
             reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
-        client.shard.broadcastEval(async (c) => {
-            const channel = await c.channels.cache.get(`797521371889532988`)
-            if (channel){
-                channel.send(`─────────────────☆～:;
-                **GUILD_ID:** ${message.guild.id} - ${message.guild.name}
-                **AFFECTED_USER:** ${message.author.id} - @${message.author.username}#${message.author.discriminator}
-                **AFFECTED_CMD:** ${targetCommand}
-                **TIMESTAMP:** ${new Date()}
-                **ISSUE_TRACE:** ${e.message}
-                ─────────────────☆～:;`)
-            }
-        })
+        client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, e:e, targetCommand: targetCommand}}}).catch(e => client.logger.error(e))
+    }
+    async function formatedErrorLog(c,{options}) {
+        const guild = await c.fetchGuildPreview(options.msg.guildId)
+        const user = await c.users.fetch(options.msg.authorId)
+        const date = new Date()
+        const levelZeroErrors = [
+            `Missing Permissions`,
+            `Unsupported image type`,
+            `unsupported file type: undefined`
+        ]
+        const channel = levelZeroErrors.includes(options.e.message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
+        if (channel){
+            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.e.message}\n─────────────────☆～:;`})
+        }
+        return
     }
 }
