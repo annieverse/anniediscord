@@ -37,14 +37,20 @@ module.exports = {
             for (let i = 0; i < source.length; i++) {
                 if (i <= 0) res += `\n╭───────────────────╮\n\n`
                 let server = source[i]
-                let serverSnowflake = await client.shard.broadcastEval(c => {if (c.guilds.cache.has(server.guild_id)) return c.guilds.cache.get(server.guild_id).name})
-                serverSnowflake = serverSnowflake.filter(g => g !== null)
-                res += `**• ${serverSnowflake[0] ? serverSnowflake[0].name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
-            if (i === (source.length-1)) res += `╰───────────────────╯\n`
+                let serverPreview = null
+                try {
+                    serverPreview = await client.fetchGuildPreview(server.guild_id)
+                } catch (error) {
+                    client.logger.error(error)
+                    serverPreview = null
+                }
+                if (!serverPreview) break
+                res += `**• ${serverPreview ? serverPreview.name : `???`}**\n"*${server.description}*"\n[Click here to join!](${server.invite_link})\n\n`
+                if (i === (source.length-1)) res += `╰───────────────────╯\n`
+            }
+            //  Cache the result to avoid broadcasting.
+            //  Expire until 12 hours
+            client.db.redis.set(cacheId, res)
+            return res
         }
-        //  Cache the result to avoid broadcasting.
-        //  Expire until 12 hours
-        client.db.redis.set(cacheId, res)
-        return res
-    }
 }

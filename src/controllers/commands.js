@@ -83,12 +83,12 @@ module.exports = async (client={}, message={}) => {
         })
     }
     catch(e) {
-        if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
-            socket: {
-                error: e.stack,
-                emoji: await client.getEmoji(`AnnieThinking`)
-            }
-        }).catch(err => client.logger.error(err))
+        // if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
+        //     socket: {
+        //         error: e.stack,
+        //         emoji: await client.getEmoji(`AnnieThinking`)
+        //     }
+        // }).catch(err => client.logger.error(err))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
@@ -109,7 +109,8 @@ module.exports = async (client={}, message={}) => {
             reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
-        client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, e:e, targetCommand: targetCommand}}}).catch(e => client.logger.error(e))
+        client.logger.error(e)
+        client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand}}}).catch(error => client.logger.error(error))
     }
     async function formatedErrorLog(c,{options}) {
         const guild = await c.fetchGuildPreview(options.msg.guildId)
@@ -120,9 +121,10 @@ module.exports = async (client={}, message={}) => {
             `Unsupported image type`,
             `unsupported file type: undefined`
         ]
-        const channel = levelZeroErrors.includes(options.e.message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
+        const providedArguments = options.providedArguments.length > 0 ? `\`${options.providedArguments}\`` : `No arguments provided`
+        const channel = levelZeroErrors.includes(options.error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){
-            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.e.message}\n─────────────────☆～:;`})
+            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**ARGUMENTS:** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.error_message}\n─────────────────☆～:;`})
         }
         return
     }
