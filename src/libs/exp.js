@@ -142,17 +142,17 @@ class Experience {
         const defaultText = this.client.locales.en.LEVELUP.DEFAULT_RESPONSES
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
-        const messageComponents = [displayedText, new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]
+        const messageComponents = {content: displayedText, files:[new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]}
         //  Send to custom channel if provided
         const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {
             const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
             if (!targetChannel) return this.client.logger.warn(`${this.instanceId} <FAIL> invalid level up message channel`)
-            return targetChannel.send(...messageComponents)
+            return targetChannel.send(messageComponents)
             .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
         }
         //  Otherwise, send message to the channel where user got leveled-up.
-        return this.targetLevelUpChannel.send(...messageComponents)
+        return this.targetLevelUpChannel.send(messageComponents)
         .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
     }
 
