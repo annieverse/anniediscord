@@ -11,14 +11,14 @@ module.exports = {
     usage: `serverinfo`,
     permissionLevel: 0,
     applicationCommand: false,
-    async execute(client, reply, message, arg, locale) {
-        let members = message.guild.memberCount
-        let botSize = message.guild.members.cache.filter(a => a.user.bot).size
-        let userSize = members - botSize
-
+    async execute(client, reply, message, arg, locale) {        
+        if (!message.guild.available) message.guild.fetch()
+        await message.guild.members.fetch()
+        let userSize = message.guild.members.cache.filter(member => !member.user.bot).size
+        let botSize = message.guild.members.cache.filter(member => member.user.bot).size
         return reply.send(`
-			${message.guild.region.charAt(0).toUpperCase() + message.guild.region.slice(1)}-based Guild
-			Owned by **${await client.getUsername(message.guild.ownerID)}**
+			A guild with their preferred language as \`${message.guild.preferredLocale}\`
+			Owned by **${(await message.guild.fetchOwner()).user.username}**
 
 			**• When the guild was found?**
 			It's exactly ${moment(message.guild.createdAt).fromNow()}.
@@ -30,7 +30,7 @@ module.exports = {
 			**• Hmm, what about the channels and roles?**
 			Hah! they have ${message.guild.channels.cache.size} channels and ${message.guild.roles.cache.size} roles!
 			Is that what you are looking for?
-			Wait, they also have ${message.guild.channels.cache.get(message.guild.systemChannelID)} as their main channel.
+			Wait, they also have ${message.guild.systemChannel} as their main channel.
 
 			Okay, that's all I know! 
 
