@@ -106,7 +106,7 @@ class Reminder {
                 const embed = new MessageEmbed()
                     .setColor(`#ffc9e2`)
                     .setDescription(`**Here is your reminder!♡**\n╰ ` + context.message)
-                targetUser.send(embed)
+                targetUser.send({embeds:[embed]})
             }
             //  Handle if user's DM is locked
             catch (e) {
