@@ -1,3 +1,15 @@
+# [7.23.0](https://github.com/klerikdust/anniediscord/compare/v7.22.4...v7.23.0) (2022-07-03)
+
+
+### Bug Fixes
+
+* **emojiFetch:** added guild handler ([724d01b](https://github.com/klerikdust/anniediscord/commit/724d01ba2e90d3ffc0dce073a27b861473f92c5c))
+
+
+### Features
+
+* **presence:** informative shard info upon starting. ([328978c](https://github.com/klerikdust/anniediscord/commit/328978c57c8892084fc25ebd10043094c514d454))
+
 ## [7.22.4](https://github.com/klerikdust/anniediscord/compare/v7.22.3...v7.22.4) (2021-08-09)
 
 
