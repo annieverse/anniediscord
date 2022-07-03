@@ -181,6 +181,8 @@ class Reminder {
         const tokens = query.split(` `)
         //  Find date by combining tokens
         for (let i=0; i<tokens.length; i++) {
+            // Handle if token is only a whitespace
+            if (!/\S/.test(tokens[i])) continue
             const token = tokens[i]
             for (let s=0; s<(tokens.length-1); s++) {
                 const nextToken = tokens[s+1]
