@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 12
+          node-version: 16
       # Installing dependencies
       - name: Installing Dependencies
         run: npm install
@@ -42,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
         with:
-          node-version: 12
+          node-version: 16
       # Installing dependencies
       - name: Installing Dependencies
         run: npm install
