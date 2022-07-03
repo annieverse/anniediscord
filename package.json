@@ -54,7 +54,7 @@
     "pino": "^6.11.3",
     "pixiv-api-client": "^0.25.0",
     "pixiv-img": "^1.0.0",
-    "sqlite3": "^4.2.0",
+    "sqlite3": "^5.0.8",
     "string-similarity": "^4.0.2",
     "superagent": "^6.1.0",
     "uuid": "^8.3.2"
