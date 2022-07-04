@@ -1,3 +1,20 @@
+# [8.1.4](https://github.com/klerikdust/anniediscord/compare/v7.22.4...v7.23.0) (2022-07-03)
+
+
+### Bug Fixes
+
+* **setshop:** item addition ([83ceb0d](https://github.com/klerikdust/anniediscord/commit/83ceb0df9128d5e386cff2bf4eeab17379959f5e))
+* **responseLib:** paging incorrect for images ([3b874ab](https://github.com/klerikdust/anniediscord/commit/3b874ab0e895d4c34b2df6c6bc452e865e09ef6f))
+* **slashCommands:** improper error message ([527272d](https://github.com/klerikdust/anniediscord/commit/527272dfae5dce4d3f0d3bb842f8751fe463a425))
+* **voteWebhook:** improper error message ([a79f995](https://github.com/klerikdust/anniediscord/commit/71b8a23a77ab58e791f1eac25773c853fc58d674))
+* **responseLib:** paging error ([71b8a23](https://github.com/klerikdust/anniediscord/commit/71b8a23a77ab58e791f1eac25773c853fc58d674))
+* **autoResponder:** ar info not responding ([f16e16a](https://github.com/klerikdust/anniediscord/commit/f16e16a461fdb8b4327f4bf66abfb9df16b04d8d))
+* **shardNames:** ar info not responding ([dda48a0](https://github.com/klerikdust/anniediscord/commit/dda48a076e401bcd95b3054fc07a07ef86295883))
+* **afflilate:** invalid guilds ([90d1bb2](https://github.com/klerikdust/anniediscord/commit/90d1bb20c0879ca1bbf3d1e2b5f4250f630515cc))
+* **levelUp:** no attachments ([8cf1422](https://github.com/klerikdust/anniediscord/commit/8cf1422743e4697683431cd1dac8a5b047b95cf8))
+* **serverinfo:** varible reference error ([7ef94db](https://github.com/klerikdust/anniediscord/commit/7ef94db2d2adfe2ab1200b8ab4582a461b8addf8))
+* **reminder:** sending empty message ([886f99c](https://github.com/klerikdust/anniediscord/commit/886f99c4eabd568ae2847197a435fa5911abdaff))
+
 # [7.23.0](https://github.com/klerikdust/anniediscord/compare/v7.22.4...v7.23.0) (2022-07-03)
 
 
