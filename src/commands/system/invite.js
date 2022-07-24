@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Generates Server & Bot invitation link
      * @author klerikdust
@@ -9,8 +10,9 @@ module.exports = {
     description: `Generates Support Server & Bot Invitation link`,
     usage: `invite`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
     permmissionInteger: 268823638,
+    type: ApplicationCommandType.ChatInput,
     /**
      * Client/Bot invite generator.
      * @param {Client} client Current client instancee.
@@ -27,6 +29,16 @@ module.exports = {
         } catch (error) {
             // Send to channel if failed send attempt to dm
             return this.sendInvites(message.channel, client, reply, locale)
+        }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        try {
+            //  Attempt to send through DM.
+            await this.sendInvites(interaction.member)
+            return reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
+        } catch (error) {
+            // Send to channel if failed send attempt to dm
+            return this.sendInvites(interaction.channel, client, reply, locale)
         }
     },
 

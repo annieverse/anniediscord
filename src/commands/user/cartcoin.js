@@ -1,6 +1,7 @@
 const commanifier = require(`../../utils/commanifier`)
 const Confirmator = require(`../../libs/confirmator`)
 const trueInt = require(`../../utils/trueInt`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Converts Artcoins into EXP at the rate of 2:1
      * @author klerikdust
@@ -13,6 +14,7 @@ module.exports = {
         permissionLevel: 0,
         applicationCommand: false,
         artcoinsRatio: 8,
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             //  Returns as guide if user doesn't specify any parameters
             if (!arg) return reply.send(locale.CARTCOIN.SHORT_GUIDE, {
@@ -68,5 +70,6 @@ module.exports = {
 				}
 			})
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

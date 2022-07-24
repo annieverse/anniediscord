@@ -1,5 +1,6 @@
 const GUI = require(`../../ui/prebuild/level`)
 const User = require(`../../libs/user`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Display your current exp, level and rank.
      * @author klerikdust
@@ -11,6 +12,7 @@ module.exports = {
     usage: `level <User>(Optional)`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Handle if the EXP module isn't enabled in current guild
         if (!message.guild.configs.get(`EXP_MODULE`).value) return reply.send(locale.COMMAND.DISABLED, {
@@ -43,5 +45,6 @@ module.exports = {
                 })
                 return loading.delete()
             })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

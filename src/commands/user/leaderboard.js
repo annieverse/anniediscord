@@ -1,6 +1,7 @@
 const GUI = require(`../../ui/prebuild/leaderboard`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Displays your server leaderboard!
      * @author klerikdust
@@ -12,6 +13,7 @@ module.exports = {
     usage: `leaderboard`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     /**
      * First element of the child array determines the leaderboard category name.
      * @type {array}
@@ -105,5 +107,6 @@ module.exports = {
                     }
                 })
             })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

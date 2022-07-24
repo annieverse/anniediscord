@@ -1,5 +1,6 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const User = require(`../../libs/user`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Displaying user's profile card!
      * @author klerikdust
@@ -11,6 +12,7 @@ module.exports = {
     usage: `profile <User>(Optional)`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
@@ -33,5 +35,6 @@ module.exports = {
             prebuffer: true,
             simplified: true
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

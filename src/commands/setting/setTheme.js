@@ -4,7 +4,7 @@ const User = require(`../../libs/user`)
      * @author Andrew
      */
 module.exports = {
-    name: `setTheme`,
+    name: `settheme`,
     aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
     description: `Switch your profile theme to Light or Dark.`,
     usage: `theme <Light/Dark>`,

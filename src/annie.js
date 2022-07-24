@@ -2,9 +2,7 @@ const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
-const applicationCommandLoader = require(`./controllers/applicationCommands`)
 const Database = require(`./libs/database`)
-//const Database = require(`./libs/database_remaster`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
@@ -415,4 +413,4 @@ class Annie extends Discord.Client {
     }
 }
 
-module.exports = new Annie([Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES,Discord.Intents.FLAGS.GUILD_MEMBERS,Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS])
+module.exports = new Annie([Discord.GatewayIntentBits.Guilds,Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.MessageContent,Discord.GatewayIntentBits.GuildMembers,Discord.GatewayIntentBits.GuildMessageReactions])

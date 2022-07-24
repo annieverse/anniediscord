@@ -11,7 +11,7 @@ const findRole = require(`../../utils/findRole`)
  * @author klerikdust
  */
 module.exports = {
-    name: `setWelcomer`,
+    name: `setwelcomer`,
     aliases: [`setwelcomer`, `setwelcome`, `setwlcm`],
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer`,

@@ -4,7 +4,7 @@ const Confirmator = require(`../../libs/confirmator`)
      * @author klerikdust
      */
 module.exports = {
-    name: `setCommand`,
+    name: `setcommand`,
     aliases: [`setcommand`, `setcommands`, `setcmd`],
     description: `Set a specific channel for Annie's command usage.`,
     usage: `setcommand <channel/info/reset>`,

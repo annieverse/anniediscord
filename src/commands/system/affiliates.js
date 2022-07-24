@@ -1,4 +1,5 @@
 const Command = require(`../../libs/commands`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * List of servers that supporting the development of Annie.
      * @author klerikdust
@@ -9,7 +10,8 @@ module.exports = {
         description: `List of servers that supporting the development of Annie.`,
         usage: `affiliate`,
         permissionLevel: 0,
-        applicationCommand: false,
+        applicationCommand: true,
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const affiliateList = await client.db.getAffiliates()
                 //  Handle if there are no registered affiliates
@@ -20,6 +22,19 @@ module.exports = {
                 socket: {
                     list: await this._prettifyList(affiliateList, client),
                     user: message.author.username
+                },
+            })
+        },
+        async Iexecute(client, reply, interaction, options, locale) {
+            const affiliateList = await client.db.getAffiliates()
+            //  Handle if there are no registered affiliates
+            if (!affiliateList.length) return reply.send(locale.AFFILIATES.EMPTY)
+            return reply.send(locale.AFFILIATES.DISPLAY, {
+                header: `Annie's Affiliated Servers`,
+                thumbnail: client.user.displayAvatarURL(),
+                socket: {
+                    list: await this._prettifyList(affiliateList, client),
+                    user: interaction.user.username
                 },
             })
         },

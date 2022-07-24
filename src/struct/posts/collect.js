@@ -46,7 +46,7 @@ class collectPost extends MessageController {
      *  @run
      */
     async run() {
-        //  Get MessageAttachment metadata
+        //  Get AttachmentBuilder metadata
         let img = this.data.message.attachments.first()
         //  React the message
         this.data.message.react(this.defaultEmoji)

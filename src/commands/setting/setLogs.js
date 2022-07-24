@@ -5,7 +5,7 @@ const moment = require(`moment`)
      * @author klerikdust
      */
 module.exports = {
-    name: `setLogs`,
+    name: `setlogs`,
     aliases: [`setlogs`, `setlog`, `setlogging`],
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,

@@ -2,6 +2,7 @@ const User = require(`../../libs/user`)
 const Confirmator = require(`../../libs/confirmator`)
 const ItemEffects = require(`../../libs/itemEffects`)
 const stringSimilarity = require(`string-similarity`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Consume an item and gain certain effect.
      * @author klerikdust
@@ -13,6 +14,7 @@ module.exports = {
     usage: `use <item>`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const data = await (new User(client, message)).requestMetadata(message.author, 2)
         if (!data.inventory.raw.length) return reply.send(locale.USE.NO_ITEMS, {
@@ -73,5 +75,6 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

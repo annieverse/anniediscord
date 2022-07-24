@@ -9,7 +9,7 @@ const commanifier = require(`../../utils/commanifier`)
      * @revised by klerikdust
      */
 module.exports = {
-    name: `setRank`,
+    name: `setrank`,
     aliases: [`setranks`, `setrank`, `setRanks`, `setrnk`],
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,

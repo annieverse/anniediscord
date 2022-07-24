@@ -1,4 +1,4 @@
-const { MessageEmbed, MessageAttachment} = require(`discord.js`)
+const { EmbedBuilder, AttachmentBuilder} = require(`discord.js`)
 class DailyFeaturedPost {
     constructor(bot) {
         this.bot = bot
@@ -42,11 +42,11 @@ class DailyFeaturedPost {
                         let isMsgReadyToBeDeleted = (dateNow-messageDate)>testDay
                         if (isMsgReadyToBeDeleted) {
                             this.messageIds.push(msg.id)
-                            const embed = new MessageEmbed()
+                            const embed = new EmbedBuilder()
                                 .setColor(msg.embeds[0].color)
                                 .setDescription(msg.embeds[0].description)
-                                .attachFiles(new MessageAttachment(msg.embeds[0].image.url, `preview.jpg`))
-                                .setImage(`MessageAttachment://preview.jpg`)
+                                .attachFiles(new AttachmentBuilder(msg.embeds[0].image.url, `preview.jpg`))
+                                .setImage(`AttachmentBuilder://preview.jpg`)
                                 .setAuthor(msg.embeds[0].author.name, msg.embeds[0].author.iconURL())
                             this.bot.channels.get(this.featuredChannel).send(embed)
                         }

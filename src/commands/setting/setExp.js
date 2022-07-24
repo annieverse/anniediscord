@@ -9,7 +9,7 @@ const commanifier = require(`../../utils/commanifier`)
      * @author klerikdust
      */
 module.exports = {
-    name: `setExp`,
+    name: `setexp`,
     aliases: [`setexp`, `setexperience`, `setxp`],
     description: `Configure the exp for your member and the server.`,
     usage: `setexp`,

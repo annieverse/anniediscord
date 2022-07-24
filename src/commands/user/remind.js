@@ -1,4 +1,5 @@
 const moment = require(`moment`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Never forget things. Ask Annie to reminds you anytime!
      * @author klerikdust
@@ -10,6 +11,7 @@ module.exports = {
     usage: `remind <message> <time>`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Displays guide and user's active reminders
         if (!arg) {
@@ -38,5 +40,6 @@ module.exports = {
                 time: moment(context.remindAt.timestamp).fromNow()
             }
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

@@ -3,8 +3,9 @@ const getUserPermission = require(`../libs/permissions`)
 const {
     cooldown
 } = require(`../config/commands`)
+const {InteractionType} = require(`discord.js`)
 module.exports = async(client, interaction) => {
-    if (!interaction.isCommand()) return
+    if (!interaction.type === InteractionType.ApplicationCommand) return
     let command = client.commands.get(interaction.commandName)
         // Ignore non-registered commands
     if (!command) return

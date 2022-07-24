@@ -1,6 +1,7 @@
 const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 const commanifier = require(`../../utils/commanifier`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Buy any purchasable items from server shop!
      * @author klerikdust
@@ -12,6 +13,7 @@ module.exports = {
     usage: `buy <ItemID/ItemName>`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const guildShop = await client.db.getGuildShop(message.guild.id)
         const availableItems = await client.db.getItem(null, message.guild.id)
@@ -98,5 +100,6 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

@@ -1,6 +1,7 @@
-const { MessageEmbed } = require(`discord.js`)
+const { EmbedBuilder } = require(`discord.js`)
 const User = require(`../../libs/user`)
 const { crimson } = require(`../../ui/colors/default`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Display user's avatar
      * @author klerikdust
@@ -11,7 +12,16 @@ module.exports = {
     description: `Display user's avatar`,
     usage: `avatar <user>`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
+    options: [
+        {
+            name: `user`,
+            description: `User you wish to display avatar of`,
+            required: false,
+            type: ApplicationCommandOptionType.User
+        }
+    ],
     async execute(client, reply, message, arg, locale) {
         let targetUser = arg ? await (new User(client, message)).lookFor(arg) : message.author
         if (!targetUser) return reply.send(locale.USER.IS_INVALID)
@@ -19,10 +29,19 @@ module.exports = {
         targetUser = targetUser.master || targetUser
         await message.react(`📸`)
         const [avatar, name] = [targetUser.displayAvatarURL({ type: `png`, size: 512 }), targetUser.username]
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setImage(avatar)
             .setAuthor({name:name, iconURL:avatar})
             .setColor(crimson)
         return message.channel.send({embeds:[embed]})
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        const target = interaction.options.getUser(`user`) || interaction.member.user
+        const [avatar, name] = [target.displayAvatarURL({ type: `png`, size: 512 }), target.username]
+        const embed = new EmbedBuilder()
+            .setImage(avatar)
+            .setAuthor({name:name, iconURL:avatar})
+            .setColor(crimson)
+        return interaction.reply({embeds:[embed]})
     }
 }

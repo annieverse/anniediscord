@@ -3,6 +3,7 @@ const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/pay`)
 const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Share artcoins with your friends!
      * @author klerikdust
@@ -17,6 +18,7 @@ module.exports = {
         requirementLevel: 3,
         tax: 0.02,
         maxAllowed: 999999,
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             const userData = await userLib.requestMetadata(message.author, 2)
@@ -69,5 +71,6 @@ module.exports = {
  				socket:{target: targetUser.username} 
  			})
  		})
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

@@ -6,7 +6,7 @@ const User = require(`../../libs/user`)
      * @author klerikdust
      */
 module.exports = {
-    name: `setBio`,
+    name: `setbio`,
     aliases: [`setdescrip`, `sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
     description: `Set your profile bio/description`,
     usage: `setbio <Message>`,

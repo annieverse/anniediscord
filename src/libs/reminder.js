@@ -1,6 +1,6 @@
 const ms = require(`ms`)
 const { v4: uuidv4 } = require(`uuid`)
-const { MessageEmbed } = require(`discord.js`)
+const { EmbedBuilder } = require(`discord.js`)
 /**
  * Manages Annie's reminder API
  * @constructor
@@ -103,7 +103,7 @@ class Reminder {
             //  Handle if user cannot be found
             if (!targetUser) this.logger.warn(`${fn} user was unreachable. `)
             try {
-                const embed = new MessageEmbed()
+                const embed = new EmbedBuilder()
                     .setColor(`#ffc9e2`)
                     .setDescription(`**Here is your reminder!♡**\n╰ ` + context.message)
                 targetUser.send({embeds:[embed]})

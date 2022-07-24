@@ -5,6 +5,7 @@ const closestBelow = require(`../../utils/closestBelow`)
 const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
 const random = require(`../../utils/random`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Opens a Lucky Ticket and wins various exclusive rewards!
      * @author klerikdust
@@ -17,6 +18,7 @@ module.exports = {
     permissionLevel: 0,
     applicationCommand: false,
     amountToOpenRanges: [1, 10],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         const amountToOpen = arg ? trueInt(arg) : 1
@@ -151,5 +153,6 @@ module.exports = {
      */
     drawCounts(arg) {
         return !arg || arg == 1 ? 1 : 10
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

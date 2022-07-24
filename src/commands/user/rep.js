@@ -1,5 +1,6 @@
 const User = require(`../../libs/user`)
 const moment = require(`moment`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Gives a reputation point to a user. Once a day.
      * @author klerikdust
@@ -12,6 +13,7 @@ module.exports = {
     permissionLevel: 0,
     applicationCommand: false,
     cooldown: [23, `hours`],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         const userData = await userLib.requestMetadata(message.author, 2)
@@ -38,5 +40,6 @@ module.exports = {
             thumbnail: targetUser.master.displayAvatarURL(),
             socket: { user: targetUser.master.username }
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

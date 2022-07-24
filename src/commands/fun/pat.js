@@ -1,3 +1,4 @@
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 const superagent = require(`superagent`)
 const User = require(`../../libs/user`)
     /**
@@ -10,7 +11,14 @@ module.exports = {
     description: `Displays a random gif of a pat.`,
     usage: `pat <User>(Optional)`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `user`,
+        description: `Any user you would like to give a pat?`,
+        required: false,
+        type: ApplicationCommandOptionType.User
+    }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const { body } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
             //  Multi-user hug
@@ -32,6 +40,24 @@ module.exports = {
         return reply.send(locale.PAT.THEMSELVES, {
             socket: {
                 user: message.author.username
+            },
+            imageGif: body.link
+        })
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        const {
+            body
+        } = await superagent.get(`https://purrbot.site/api/img/sfw/pat/gif`)
+        const target = interaction.options.getUser(`user`) 
+        !target ? reply.send(locale.PAT.THEMSELVES, {
+            socket: {
+                user: interaction.member.user.username
+            },
+            imageGif: body.link
+        }) : reply.send(locale.PAT.OTHER_USER, {
+            socket: {
+                user: interaction.member.user.username,
+                targetUser: target.username
             },
             imageGif: body.link
         })

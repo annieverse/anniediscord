@@ -1,5 +1,6 @@
 const User = require(`../../libs/user`)
 const GUI = require((`../../ui/prebuild/relationship`))
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Display user's relationship trees
      * @author klerikdust
@@ -11,6 +12,7 @@ module.exports = {
     usage: `relationship <user>(Optional)`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
@@ -49,5 +51,6 @@ module.exports = {
                 emoji: await client.getEmoji(`848521456543203349`)
             }
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

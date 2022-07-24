@@ -3,7 +3,7 @@ const {
 } = require(`@discordjs/rest`)
 const {
     Routes
-} = require(`discord-api-types/v9`)
+} = require(`discord.js`)
 
 module.exports = function applicationCommandLoader({
     logger,
@@ -24,7 +24,7 @@ module.exports = function applicationCommandLoader({
     })
 
     const rest = new REST({
-        version: `9`
+        version: `10`
     }).setToken(process.env.BOT_TOKEN);
 
     (async() => {

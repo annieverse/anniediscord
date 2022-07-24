@@ -1,6 +1,7 @@
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Views all items in your inventory
      * @author klerikdust
@@ -13,6 +14,7 @@ module.exports = {
         permissionLevel: 0,
         applicationCommand: false,
         ignoreItems: [`Cards`, `Themes`],
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale, prefix) {
             const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
             const userLib = new User(client, message)
@@ -63,5 +65,6 @@ module.exports = {
             })
 			return loading.delete()
 		})
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

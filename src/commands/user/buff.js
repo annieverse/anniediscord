@@ -1,4 +1,5 @@
 const User = require(`../../libs/user`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 const ms = require(`ms`)
     /**
      * Displaying your currently active buffs.
@@ -11,6 +12,7 @@ module.exports = {
     usage: `buff`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const buffs = await client.db.getSavedUserDurationalBuffs(message.author.id)
         if (!buffs.length) return reply.send(locale.BUFF.NO_ACTIVE_BUFFS, {
@@ -28,5 +30,6 @@ module.exports = {
         return reply.send(str, {
             customHeader: [`${message.author.username}'s Active Buffs`, message.author.displayAvatarURL()]
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

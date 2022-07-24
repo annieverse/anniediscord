@@ -7,7 +7,7 @@ const User = require(`../../libs/user`)
      * @author klerikdust
      */
 module.exports = {
-    name: `setLevelupMessage`,
+    name: `setlevelupmessage`,
     aliases: [`setlevelupmsg`, `setlvlupmsg`, `setlvlupmessage`, `setlevelupmessage`],
     description: `Enable or disable level-up message module for this guild`,
     usage: `setlvlupmsg <Enable/Disable>`,

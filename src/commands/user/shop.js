@@ -1,5 +1,6 @@
 const commanifier = require(`../../utils/commanifier`)
 const loadAsset = require(`../../utils/loadAsset`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Buy purchasable items in server's shop!
      * @author klerikdust
@@ -11,6 +12,7 @@ module.exports = {
         usage: `shop`,
         permissionLevel: 0,
         applicationCommand: false,
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale, prefix) {
             const guildShop = await client.db.getGuildShop(message.guild.id)
             if (!guildShop.length) {
@@ -64,5 +66,6 @@ module.exports = {
                 prefix: prefix
             }
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

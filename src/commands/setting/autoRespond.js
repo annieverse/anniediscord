@@ -5,7 +5,7 @@ const Confirmator = require(`../../libs/confirmator`)
      * @author klerikdust
      */
 module.exports = {
-    name: `autoRespond`,
+    name: `autorespond`,
     aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
     description: `Create a set of autoresponder!`,
     usage: `ar`,

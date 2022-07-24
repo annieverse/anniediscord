@@ -3,7 +3,7 @@
  * @author klerikdust
  */
 module.exports = {
-    name: `setGender`,
+    name: `setgender`,
     aliases: [`setgender`, `setgenders`, `setgndr`],
     description: `Define your gender`,
     usage: `setgender <F/M>`,

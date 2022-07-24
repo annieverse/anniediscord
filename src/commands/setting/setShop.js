@@ -16,7 +16,7 @@ const trueInt = require(`../../utils/trueInt`)
  * @author klerikdust
  */
 module.exports = {
-        name: `setShop`,
+        name: `setshop`,
         aliases: [`setshop`, `setshops`],
         description: `Create, restock & sell items for your server members!`,
         usage: `setShop`,

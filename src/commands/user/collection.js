@@ -1,4 +1,5 @@
 const User = require(`../../libs/user`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Views all items in your inventory
      * @author klerikdust
@@ -11,6 +12,7 @@ module.exports = {
         permissionLevel: 0,
         upperLimit: 10,
         applicationCommand: false,
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             let targetUser = arg ? await userLib.lookFor(arg) : message.author
@@ -78,5 +80,6 @@ module.exports = {
 		}
 		str += `\`\`\``
 		return str
-	}
+	},
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

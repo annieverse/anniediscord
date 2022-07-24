@@ -4,6 +4,7 @@ const inventoryGUI = require(`../../ui/prebuild/inventory`)
 const giftGUI = require(`../../ui/prebuild/gift`)
 const stringSimilarity = require(`string-similarity`)
 const commanifier = require(`../../utils/commanifier`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Send gifts to your friends! They will receive 1 reputation point for each gift you send.
      * @author klerikdust
@@ -15,6 +16,7 @@ module.exports = {
     usage: `gift <User>`,
     permissionLevel: 0,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     /**
      *  Prettify result from `this.author.inventory.row` into a readable list.
      *  @param {array} [inventory=[]] returned result from filtered `this.author.inventory.raw`
@@ -110,5 +112,6 @@ module.exports = {
                 }
             })
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

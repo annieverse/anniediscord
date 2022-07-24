@@ -1,6 +1,7 @@
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Claims free artcoins everyday. You can also help claiming your friend's dailies.
      * @author klerikdust
@@ -15,6 +16,7 @@ module.exports = {
         bonusAmount: 10,
         applicationCommand: false,
         cooldown: [23, `hours`],
+        type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             let targetUser = arg ? await userLib.lookFor(arg) : message.author
@@ -59,5 +61,6 @@ module.exports = {
 			simplified: true,
 			socket: {prefix:client.prefix}
 		})
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

@@ -3,18 +3,20 @@ const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/sellFragment`)
 const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Exchange all your unused fragments into artcoins!
      * @author klerikdust
      */
 module.exports = {
-    name: `sellFragments`,
+    name: `sellfragments`,
     aliases: [`sellfrag`, `sellfragments`, `sellfrags`, `sellfragment`],
     description: `Exchange all your unused fragments into artcoins!`,
     usage: `sellfragments <amount/all>`,
     permissionLevel: 0,
     applicationCommand: false,
     minimumToSell: 5,
+    type: ApplicationCommandType.ChatInput,
     rate: 5,
     async execute(client, reply, message, arg, locale) {
         //  Display guild if user doesn't specify any arg
@@ -68,5 +70,6 @@ module.exports = {
             client.db.updateInventory({ itemId: 51, userId: message.author.id, guildId: message.guild.id, value: amountToSell, operation: `-` })
             return reply.send(``, { customHeader: [`Fragments has been sold!`, message.author.displayAvatarURL()] })
         })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {}
 }

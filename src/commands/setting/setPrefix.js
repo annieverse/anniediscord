@@ -3,7 +3,7 @@
  * @author klerikdust
  */
 module.exports = {
-    name: `setPrefix`,
+    name: `setprefix`,
     aliases: [`setprefix`, `setpr`, `setpref`, `setprfx`, `setprefixs`],
     description: `Customize prefix per guild setting`,
     usage: `setprefix <NewPrefix>`,

@@ -1,7 +1,7 @@
 const palette = require(`../ui/colors/default`)
 const {
-	MessageEmbed,
-	MessageAttachment
+	EmbedBuilder,
+	AttachmentBuilder
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -55,6 +55,11 @@ class Response {
 			message :
 			message.channel ?
 			message.channel : null
+
+		/**
+		 * Determine if the message is a Slash command.
+		 */
+		this.isSlash = message.type != 0 ? true : false
 	}
 
 	/**
@@ -107,11 +112,13 @@ class Response {
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
 		let timestampAsFooter = plugins.timestampAsFooter || false
+		const RESPONSE_REF = this.isSlash ? this.message : field
+		const RESPONSE_TYPE = this.isSlash ? `reply` : `send`
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
 			const embeddedPages = await this._registerPages(content, plugins)
-			return field.send(embeddedPages[0].file ? {
+			return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? {
 				embeds: [embeddedPages[0]],
 				files : [embeddedPages[0].file]
 			}:{
@@ -147,12 +154,12 @@ class Response {
 							r.users.remove(this.message.author.id)
 							if (previewedPages.includes(page)) return
 							previewedPages.push(page)
-							let loading = await field.send({
+							let loading = await RESPONSE_REF[RESPONSE_TYPE]({
 								content: `\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``
 							})
 							let img = await new GUI(plugins.cardPreviews[page]).create()
-							field.send({
-								files: [new MessageAttachment(img)]
+							RESPONSE_REF[RESPONSE_TYPE]({
+								files: [new AttachmentBuilder(img)]
 							})
 							loading.delete()
 						})
@@ -221,16 +228,16 @@ class Response {
 		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 		//  Returns simple message w/o embed
 		if (simplified) {
-			return image ? field.send({
+			return image ? RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
-				files: [new MessageAttachment(prebuffer ? image : await loadAsset(image))]
-			}) : field.send({
+				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))]
+			}) : RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
 			})
 		}
 		//  Add notch/chin
 		if (notch) content = `\u200C\n${content}\n\u200C`
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setColor(palette[color] || color)
 			.setDescription(content)
 			.setThumbnail(thumbnail)
@@ -261,7 +268,7 @@ class Response {
 		}
 		//  Add image preview
 		if (image) {
-			embed.file = new MessageAttachment(prebuffer ? image : await loadAsset(image), `preview.jpg`)
+			embed.file = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), `preview.jpg`)
 			embed.setImage(`attachment://${embed.file.name}`)
 		} else if (embed.file) {
 			embed.image.url = null
@@ -272,26 +279,27 @@ class Response {
 		
 		if (topNotch) {
 			if (embed.file){
-				sent = await field.send({
+				sent = await field[`send`]({
 					content: topNotch,
 					embeds: [embed],
 					files: [embed.file]
 				})
 			}else{
-				sent = await field.send({
+				sent = await field[`send`]({
 					content: topNotch,
 					embeds: [embed]
 				})
 			}
 		}else{
+			
 			if (embed.file){
-				sent = await field.send({
+				sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
 					embeds: [embed],
 					files: [embed.file]
 				})
 			}else{
-				sent = await field.send({
+				sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					embeds: [embed]
 				})
 			}
@@ -311,11 +319,11 @@ class Response {
 	async _registerPages(pages = [], src = null) {
 		let res = []
 		for (let i = 0; i < pages.length; i++) {
-			res[i] = new MessageEmbed().setFooter({
+			res[i] = new EmbedBuilder().setFooter({
 				text: `(${i+1}/${pages.length})`
 			}).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
 			if (src.image) {
-				let attachment = new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`)
+				let attachment = new AttachmentBuilder(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`)
 				res[i].setImage(`attachment://${attachment.name}`)
 				res[i].file = attachment
 			}

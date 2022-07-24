@@ -1,4 +1,4 @@
-const { MessageEmbed } = require(`discord.js`)
+const { EmbedBuilder } = require(`discord.js`)
 const palette = require(`../ui/colors/default`)
 
 
@@ -28,7 +28,7 @@ class Paging {
     registerPages() {
         let res = []
         for (let i = 0; i < this.chunkOfData.length; i++) {
-            res[i] = new MessageEmbed().setImage(this.chunkOfData[i]).setColor(palette.darkmatte)
+            res[i] = new EmbedBuilder().setImage(this.chunkOfData[i]).setColor(palette.darkmatte)
         }
         return res
     }
