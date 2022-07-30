@@ -30,7 +30,7 @@ class UI {
 			gradientHeight: 180
 		})
 		//	Avatar representative
-		await card.addContent({ avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 65, avatarRadius: 12 })
+		await card.addContent({ avatar: await urlToBuffer(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})), justify: `center`, marginTop: 65, avatarRadius: 12 })
 		//	Author and rank name
 		card.addTitle({ main: this.user.master.username, caption: symbolParser(this.user.rank.name), captionColor: `inherit`, size: 15, marginTop: 40 })
 		//	Add experience bar

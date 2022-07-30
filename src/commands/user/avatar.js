@@ -28,7 +28,7 @@ module.exports = {
             //  Normalize structure
         targetUser = targetUser.master || targetUser
         await message.react(`📸`)
-        const [avatar, name] = [targetUser.displayAvatarURL({ type: `png`, size: 512 }), targetUser.username]
+        const [avatar, name] = [targetUser.displayAvatarURL({ extension: `png`, size: 512 }), targetUser.username]
         const embed = new EmbedBuilder()
             .setImage(avatar)
             .setAuthor({name:name, iconURL:avatar})
@@ -37,7 +37,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const target = interaction.options.getUser(`user`) || interaction.member.user
-        const [avatar, name] = [target.displayAvatarURL({ type: `png`, size: 512 }), target.username]
+        const [avatar, name] = [target.displayAvatarURL({ extension: `png`, size: 512 }), target.username]
         const embed = new EmbedBuilder()
             .setImage(avatar)
             .setAuthor({name:name, iconURL:avatar})

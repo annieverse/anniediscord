@@ -27,7 +27,7 @@ class UI {
 			gradientHeight: 160
 		})
 		//	Avatar representative
-		await card.addContent({ avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})), justify: `center`, marginTop: 80, avatarRadius: 24 })
+		await card.addContent({ avatar: await urlToBuffer(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})), justify: `center`, marginTop: 80, avatarRadius: 24 })
 		//	Finalize
 		card.ready()
 		return card.getBuffer()

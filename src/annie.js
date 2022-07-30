@@ -382,10 +382,10 @@ class Annie extends Discord.Client {
 	*   @param {boolean} [dynamic=false]
 	*   @return {buffer}
 	*/
-    async getUserAvatar(id, compress = false, size = `?size=512`, dynamic=false) {
+    async getUserAvatar(id, compress = false, size = `?size=512`, forceStatic=true) {
         const user = await this.users.fetch(id) 
         if (!user) return loadAsset(`error`)
-		let url = user.displayAvatarURL({format: `png`, dynamic: dynamic})
+		let url = user.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
         if (compress) {
             return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
                 .then(data => data.buffer())

@@ -41,7 +41,7 @@ module.exports = async (client={}, message={}) => {
     if (command.permissionLevel > userPermission.level) return reply.send(``,
         {customHeader: [
             `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-            message.author.displayAvatarURL({dynamic: true})
+            message.author.displayAvatarURL()
         ]}
     )
     // Handle cooldowns

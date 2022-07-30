@@ -62,6 +62,13 @@ class Response {
 		this.isSlash = message.type != 0 ? true : false
 	}
 
+	setMessage(message, channelAsInstance = false) {
+		this.message = message
+		return this.targetField = channelAsInstance ?
+		message :
+		message.channel ?
+		message.channel : null
+	}
 	/**
 	 * Plug variables into available socket in the target string.
 	 * @param {string} [content=``] Target string.
@@ -112,8 +119,11 @@ class Response {
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
 		let timestampAsFooter = plugins.timestampAsFooter || false
+		let components = plugins.components || null
+		let fetchReply = plugins.fetchReply || true
+		let followUp = plugins.followUp || false
 		const RESPONSE_REF = this.isSlash ? this.message : field
-		const RESPONSE_TYPE = this.isSlash ? `reply` : `send`
+		const RESPONSE_TYPE = this.isSlash ? followUp ? `followUp`: `reply` : `send`
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
@@ -293,15 +303,29 @@ class Response {
 		}else{
 			
 			if (embed.file){
-				sent = await RESPONSE_REF[RESPONSE_TYPE]({
-					content: topNotch,
-					embeds: [embed],
-					files: [embed.file]
-				})
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
+						content: topNotch,
+						embeds: [embed],
+						files: [embed.file],
+						components: [components],
+						fetchReply : fetchReply,
+						followUp: followUp
+					}) :
+					sent = await RESPONSE_REF[RESPONSE_TYPE]({
+						content: topNotch,
+						embeds: [embed],
+						files: [embed.file]
+					})
 			}else{
+				components ?
 				sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					embeds: [embed],
+					components: [components],
+					fetchReply : fetchReply,
+					followUp: followUp
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					embeds: [embed]
-				})
+				}) 
 			}
 		}
 

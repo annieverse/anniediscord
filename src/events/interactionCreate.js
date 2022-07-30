@@ -17,9 +17,7 @@ module.exports = async(client, interaction) => {
     if (command.permissionLevel > userPermission.level) return reply.send(``, {
             customHeader: [
                 `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-                interaction.user.displayAvatarURL({
-                    dynamic: true
-                })
+                interaction.user.displayAvatarURL()
             ]
         })
         // Handle cooldowns
