@@ -11,7 +11,13 @@ module.exports = {
     description: `Gives a reputation point to a user. Once a day.`,
     usage: `rep <User>`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `user`,
+        description: `Give a reputation point to the specified user`,
+        required: true,
+        type: ApplicationCommandOptionType.User
+    }],
     cooldown: [23, `hours`],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
@@ -41,5 +47,26 @@ module.exports = {
             socket: { user: targetUser.master.username }
         })
     },
-    async Iexecute(client, reply, interaction, options, locale) {}
+    async Iexecute(client, reply, interaction, options, locale) {
+        const userLib = new User(client, interaction)
+        const userData = await userLib.requestMetadata(interaction.member.id, 2)
+        const now = moment()
+        const lastGiveAt = await client.db.toLocaltime(userData.reputations.last_giving_at)
+            //  Returns if user's last reps give still under 23 hours.
+        if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.GIVE_REPUTATION.IN_COOLDOWN, {
+                thumbnail: userData.master.displayAvatarURL(),
+                socket: { time: moment(lastGiveAt).add(...this.cooldown).fromNow() },
+            })
+            
+        const targetUser = interaction.options.getUser(`user`)
+            //	Handle if user is trying to rep themselves
+        if (userLib.isSelf(targetUser.id)) return reply.send(locale.GIVE_REPUTATION.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+        client.db.updateUserReputation(1, targetUser.id, interaction.member.id, interaction.guild.id)
+        client.db.updateReputationGiver(interaction.member.id, interaction.guild.id)
+        return reply.send(locale.GIVE_REPUTATION.SUCCESSFUL, {
+            status: `success`,
+            thumbnail: targetUser.displayAvatarURL(),
+            socket: { user: targetUser.username }
+        })
+    }
 }

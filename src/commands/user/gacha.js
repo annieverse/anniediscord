@@ -16,8 +16,15 @@ module.exports = {
     description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
     usage: `gacha <Amount>`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
     amountToOpenRanges: [1, 10],
+    options: [{
+        name: `amount`,
+        description: `Amount of tickets to open`,
+        required: true,
+        type: ApplicationCommandOptionType.Integer,
+        choices: [{name: `one`, value: 1}, {name: `ten`, value: 10},{name: `1`, value: 1}, {name: `10`, value: 10}]
+    }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
@@ -65,6 +72,51 @@ module.exports = {
         })
     },
 
+    async Iexecute(client, reply, interaction, options, locale) {
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+        const amountToOpen = interaction.options.getInteger(`amount`)
+        
+            //  Handle if amount to be opened is out of defined range.
+        if (!this.amountToOpenRanges.includes(amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
+                socket: { emoji: await client.getEmoji(`781504248868634627`) }
+            })
+            //  Direct roll if user already has the tickets.
+        const instanceId = `GACHA_SESSION:${interaction.guild.id}@${interaction.member.id}`
+        if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, interaction, amountToOpen, locale, instanceId, userData)
+        const userCurrentCurrency = userData.inventory.artcoins
+        const amountToPay = 120 * amountToOpen
+            //  Handle if user doesn't have enough artcoins to buy tickets
+        if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
+            socket: {
+                prefix: `/`,
+                emoji: await client.getEmoji(`692428927620087850`)
+            }
+        })
+        if (await client.db.redis.exists(instanceId)) return reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
+        /**
+         * --------------------
+         * 1.) GIVE PURCHASE OFFER TO USER
+         * --------------------
+         */
+         const suggestToBuy = await reply.send(locale.GACHA.SUGGEST_TO_BUY, {
+            footer: locale.GACHA.UPON_PURCHASE_WARN,
+            socket: {
+                amount: amountToOpen
+            }
+        })
+        //console.log(suggestToBuy)
+        const c = new Confirmator(interaction, reply, true)
+        await c.setup(interaction.member.id, suggestToBuy)
+            //  Timeout in 30 seconds
+        client.db.redis.set(instanceId, `1`, `EX`, 30)
+        c.onAccept(async() => {
+            //  Deduct balance & deliver lucky tickets
+            client.db.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
+            await client.db.updateInventory({ itemId: 71, value: amountToOpen, userId: interaction.member.id, guildId: interaction.guild.id })
+            this.startsRoll(client, reply, interaction, amountToOpen, locale, instanceId, userData)
+        })
+    },
+
     /**
      * Rolling loots
      * @return {void}
@@ -76,9 +128,10 @@ module.exports = {
         const fetching = await reply.send(random(locale.GACHA.OPENING_WORDS), {
                 simplified: true,
                 socket: {
-                    user: message.author.username,
+                    user: message.member.user.username,
                     emoji: await client.getEmoji(`781504248868634627`)
-                }
+                },
+                followUp: !reply.message.replied && !reply.message.deferred ? false : true
             })
             //  Registering loot
         let loots = []
@@ -88,23 +141,24 @@ module.exports = {
             loots.push(loot)
         }
         //  Subtract user's box
-        client.db.updateInventory({ itemId: 71, value: drawCount, operation: `-`, userId: message.author.id, guildId: message.guild.id })
+        client.db.updateInventory({ itemId: 71, value: drawCount, operation: `-`, userId: message.member.user.id, guildId: message.guild.id })
             //  Storing received loots into user's inventory
         for (let i = 0; i < loots.length; i++) {
             const item = loots[i]
-            await client.db.updateInventory({ itemId: item.item_id, value: item.quantity, userId: message.author.id, guildId: message.guild.id })
+            await client.db.updateInventory({ itemId: item.item_id, value: item.quantity, userId: message.member.user.id, guildId: message.guild.id })
         }
         client.db.redis.del(instanceId)
             //  Displaying result
         reply.send(locale.GACHA.HEADER, {
             prebuffer: true,
-            customHeader: [`${message.author.username} has opened Pandora Box!`, message.author.displayAvatarURL()],
+            customHeader: [`${message.member.user.username} has opened Pandora Box!`, message.member.displayAvatarURL()],
             image: await new GUI(loots, drawCount, userData).build(),
             socket: {
                 items: await this.displayDetailedLoots(client, loots)
-            }
+            },
+            followUp: true
         })
-        return fetching.delete()
+        return message.type == 0 ? fetching.delete() : null
     },
 
     /**
@@ -153,6 +207,5 @@ module.exports = {
      */
     drawCounts(arg) {
         return !arg || arg == 1 ? 1 : 10
-    },
-    async Iexecute(client, reply, interaction, options, locale) {}
+    }
 }

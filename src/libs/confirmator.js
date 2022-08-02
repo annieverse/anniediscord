@@ -1,4 +1,4 @@
-const { ComponentType } = require(`Discord.js`)
+const { ComponentType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require(`Discord.js`)
 /**
  * Manages transaction confirmation thru reaction.
  * @class
@@ -40,6 +40,20 @@ module.exports = class Confirmator {
 		const cancelEmoji = await this.message.client.getEmoji(`794593423575351307`)
         
         if (this.slashCommand) {
+            let row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                .setCustomId(`confirm`)
+                .setLabel(`Confirm`)
+                .setStyle(ButtonStyle.Success),
+            )
+            .addComponents(
+                new ButtonBuilder()
+                .setCustomId(`cancel`)
+                .setLabel(`Cancel`)
+                .setStyle(ButtonStyle.Danger)
+            )
+            targetMessage.edit({components: [row]})
             const filter = i => (i.customId === `confirm`|| i.customId === `cancel`) && i.user.id === targetUserId
             this.activeInstance = targetMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 15000 })
         }else{
@@ -81,8 +95,8 @@ module.exports = class Confirmator {
                 
                 await fn(interact)
                 // Slightly complete the interaction to avoid errors
-                interact.deferUpdate()
                 return this.end()
+                
             })
         }else{
             return this.activeInstance.on(`collect`, async r => {
@@ -128,10 +142,12 @@ module.exports = class Confirmator {
 	 */
 	end() {
         if (this.slashCommand) {
+            this.message.edit({components: []})
             this.activeInstance = null
+        }else{            
+            this.message.reactions.removeAll()
+            .catch(e => this.message.client.logger.warn(`<FAIL_CONFIRMATOR_END> ${e.message}`))
         }
-		this.message.reactions.removeAll()
-        .catch(e => this.message.client.logger.warn(`<FAIL_CONFIRMATOR_END> ${e.message}`))
         this.activeInstance = null
 	}
 }

@@ -36,7 +36,7 @@ class itemEffects {
          * Instance identifier
          * @type {string}
          */
-        this.instanceId = `ITEM_EFFECT_${message.guild.id}:${message.author.id}`
+        this.instanceId = `ITEM_EFFECT_${message.guild.id}:${message.member.id}`
         /**
          * List of available buffs. Map by id.
          * @type {object}
@@ -141,7 +141,7 @@ class itemEffects {
             operation: operation,
             itemId: itemId,
             value: amount,
-            userId: this.message.author.id,
+            userId: this.message.member.id,
             guildId: this.message.guild.id
         })
     }
@@ -198,26 +198,26 @@ class itemEffects {
      */ 
     async _durationalBuff(buffType, name, multiplier, duration) {
         buffType = buffType.toUpperCase()
-        const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.author.id}`
+        const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.member.id}`
         this.client.db.redis.sadd(key, multiplier)
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false
-        const userDurationalBuffs = await this.client.db.getSavedUserDurationalBuffs(this.message.author.id)
+        const userDurationalBuffs = await this.client.db.getSavedUserDurationalBuffs(this.message.member.id)
         if (userDurationalBuffs.filter(b => (b.name.toLowerCase() === name.toLowerCase()) 
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true
-        this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.author.id, this.message.guild.id)
+        this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.member.id, this.message.guild.id)
         const cronTask = async () => {
             //  Flush from cache and sqlite
             this.client.db.redis.srem(key, multiplier)
-            this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.author.id, this.message.guild.id)
+            this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.member.id, this.message.guild.id)
             .then(id => {
                 this.client.db.removeUserDurationalBuff(id)
             })
             //  Attempt to notice the user about expiration
             this.client.responseLibs(this.message).send(`Your **'${name}'** buff has expired! ${await this.client.getEmoji(`AnnieHeartPeek`)}`, {
-                field: this.message.author,
+                field: this.message.member,
                 footer: `${this.message.guild.name}'s System Notification`
             })
             .catch(e => e)

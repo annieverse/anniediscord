@@ -11,7 +11,13 @@ module.exports = {
     description: `Display user's relationship trees`,
     usage: `relationship <user>(Optional)`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `user`,
+        description: `Display the relationship of the specified user`,
+        required: false,
+        type: ApplicationCommandOptionType.User
+    }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
@@ -52,5 +58,43 @@ module.exports = {
             }
         })
     },
-    async Iexecute(client, reply, interaction, options, locale) {}
+    async Iexecute(client, reply, interaction, options, locale) {
+        const userLib = new User(client, interaction)
+        let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        
+        const targetUserData = await userLib.requestMetadata(targetUser, 2)
+            //  Handle if user doesn't have any relationships
+        if (!targetUserData.relationships.length) return reply.send(locale.RELATIONSHIP.IS_EMPTY, {
+            socket: { prefix: client.prefix }
+        })
+        const fetching = await reply.send(locale.COMMAND.FETCHING, {
+            simplified: true,
+            socket: {
+                command: `relationship`,
+                emoji: await client.getEmoji(`790994076257353779`),
+                user: targetUser.id
+            }
+        })
+        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(interaction.member.user, 2)
+        await reply.send(locale.COMMAND.TITLE, {
+            simplified: true,
+            prebuffer: true,
+            socket: {
+                command: `Relationship`,
+                emoji: await client.getEmoji(`692429004417794058`),
+                user: targetUser.username
+            },
+            image: await new GUI(targetUserData, client, userData).build(),
+            followUp: true
+        })
+        fetching.delete()
+        if (userLib.isSelf(targetUser.id)) return reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
+            simplified: true,
+            socket: {
+                prefix: `/`,
+                emoji: await client.getEmoji(`848521456543203349`)
+            },
+            followUp: true
+        })
+    }
 }

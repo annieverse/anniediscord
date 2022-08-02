@@ -3,7 +3,7 @@ const Confirmator = require(`../../libs/confirmator`)
 const commanifier = require(`../../utils/commanifier`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType 
+    ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle 
 } = require(`discord.js`)
 /**
  * Buy any purchasable items from server shop!
@@ -92,28 +92,13 @@ module.exports = {
     async confirmOrDeny(slashCommand, message, client, locale, reply, shopMetadata, item, user, guild, prefix) {
         
         if (slashCommand) {
-            let row = new ActionRowBuilder()
-            .addComponents(
-                new ButtonBuilder()
-                .setCustomId(`confirm`)
-                .setLabel(`Confirm`)
-                .setStyle(ButtonStyle.Success),
-            )
-            .addComponents(
-                new ButtonBuilder()
-                .setCustomId(`cancel`)
-                .setLabel(`Cancel`)
-                .setStyle(ButtonStyle.Danger)
-            )
             const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
                 thumbnail: user.displayAvatarURL(),
                 socket: {
                     emoji: await client.getEmoji(`758720612087627787`),
                     price: commanifier(shopMetadata.price),
                     item: item.name
-                },
-                components: row,
-                fetchReply: true
+                }
             })
             const c = new Confirmator(message, reply, true)
             await c.setup(user.id, confirmation)

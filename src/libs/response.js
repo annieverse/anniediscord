@@ -124,30 +124,53 @@ class Response {
 		let followUp = plugins.followUp || false
 		const RESPONSE_REF = this.isSlash ? this.message : field
 		const RESPONSE_TYPE = this.isSlash ? followUp ? `followUp`: `reply` : `send`
+		
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
 			const embeddedPages = await this._registerPages(content, plugins)
-			return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? {
+			return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? components ? {
 				embeds: [embeddedPages[0]],
-				files : [embeddedPages[0].file]
+				files : [embeddedPages[0].file],
+				components: [components],
+				fetchReply : fetchReply,
+				
 			}:{
 				embeds: [embeddedPages[0]],
-				files : []
+				files : [embeddedPages[0].file],
+				fetchReply : fetchReply,
+				
+			}:components ? {
+				embeds: [embeddedPages[0]],
+				files : [],
+				components: [components],
+				fetchReply : fetchReply,
+				
+			}:{
+				embeds: [embeddedPages[0]],
+				files : [],
+				fetchReply : fetchReply,
+				
 			}).then(async msg => {
+				try {
+					this.ref = await msg.fetchReference()
+					this.ref = this.ref.interaction.user
+				} catch (error) {
+					this.ref = this.message.user
+				}
 					//  Buttons
 					if (embeddedPages.length > 1) {
 						await msg.react(`⏪`)
 						await msg.react(`⏩`)
 					}
 					// Filters - These make sure the varibles are correct before running a part of code
-					let filter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+					let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 					//  Timeout limit for page buttons
 					const backwards = msg.createReactionCollector({
 						filter,
 						time: 300000
 					})
-					filter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+					filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 					const forwards = msg.createReactionCollector({
 						filter,
 						time: 300000
@@ -155,13 +178,13 @@ class Response {
 					//  Add preview button if cardPreviews is enabled
 					if (cardPreviews) {
 						await msg.react(`👀`)
-						let filter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
+						let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
 						let preview = msg.createReactionCollector(filter, {
 							time: 300000
 						})
 						let previewedPages = []
 						preview.on(`collect`, async r => {
-							r.users.remove(this.message.author.id)
+							r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 							if (previewedPages.includes(page)) return
 							previewedPages.push(page)
 							let loading = await RESPONSE_REF[RESPONSE_TYPE]({
@@ -176,7 +199,7 @@ class Response {
 					}
 					//	Left navigation
 					backwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
+						r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 						page--
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page].file ? {
@@ -199,7 +222,7 @@ class Response {
 					})
 					//	Right navigation
 					forwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
+						r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 						page++
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page].file ? {
@@ -238,15 +261,32 @@ class Response {
 		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 		//  Returns simple message w/o embed
 		if (simplified) {
-			return image ? RESPONSE_REF[RESPONSE_TYPE]({
+			return image ? 
+			components ? RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
-				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))]
+				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
+				components: [components],
+				fetchReply : fetchReply,
+				
 			}) : RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
+				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
+				fetchReply : fetchReply,
+				
+			}) : components ? RESPONSE_REF[RESPONSE_TYPE]({
+				content: content,
+				components: [components],
+				fetchReply : fetchReply,
+				
+			}) : RESPONSE_REF[RESPONSE_TYPE]({
+				content: content,
+				fetchReply : fetchReply,
 			})
 		}
 		//  Add notch/chin
 		if (notch) content = `\u200C\n${content}\n\u200C`
+		
+		if (content === ``) content = null
 		const embed = new EmbedBuilder()
 			.setColor(palette[color] || color)
 			.setDescription(content)
@@ -289,15 +329,32 @@ class Response {
 		
 		if (topNotch) {
 			if (embed.file){
-				sent = await field[`send`]({
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
 					embeds: [embed],
-					files: [embed.file]
+					files: [embed.file],
+					components: [components],
+					fetchReply : fetchReply,
+					
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					content: topNotch,
+					embeds: [embed],
+					files: [embed.file],
+					fetchReply : fetchReply,
+					
 				})
 			}else{
-				sent = await field[`send`]({
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
-					embeds: [embed]
+					embeds: [embed],
+					components: [components],
+					fetchReply : fetchReply,
+					
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					content: topNotch,
+					embeds: [embed],
+					fetchReply : fetchReply,
+					
 				})
 			}
 		}else{
@@ -309,12 +366,14 @@ class Response {
 						files: [embed.file],
 						components: [components],
 						fetchReply : fetchReply,
-						followUp: followUp
+						
 					}) :
 					sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						content: topNotch,
 						embeds: [embed],
-						files: [embed.file]
+						files: [embed.file],
+						fetchReply : fetchReply,
+						
 					})
 			}else{
 				components ?
@@ -322,9 +381,11 @@ class Response {
 					embeds: [embed],
 					components: [components],
 					fetchReply : fetchReply,
-					followUp: followUp
+					
 				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
-					embeds: [embed]
+					embeds: [embed],
+					fetchReply : fetchReply,
+					
 				}) 
 			}
 		}

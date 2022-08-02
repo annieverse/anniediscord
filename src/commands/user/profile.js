@@ -11,7 +11,13 @@ module.exports = {
     description: `Displaying user's profile card!`,
     usage: `profile <User>(Optional)`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `user`,
+        description: `Display the profile of the specified user`,
+        required: false,
+        type: ApplicationCommandOptionType.User
+    }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
@@ -36,5 +42,25 @@ module.exports = {
             simplified: true
         })
     },
-    async Iexecute(client, reply, interaction, options, locale) {}
+    async Iexecute(client, reply, interaction, options, locale) {
+        const userLib = new User(client, interaction)
+        let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
+            socket: { emoji: await client.getEmoji(`790994076257353779`) }
+        })
+        const userData = await userLib.requestMetadata(targetUser, 2)
+        const image = (await new GUI(userData, client).build()).toBuffer()
+        fetching.delete()
+        return reply.send(locale.COMMAND.TITLE, {
+            socket: {
+                user: targetUser.username,
+                emoji: await client.getEmoji(`692428927620087850`),
+                command: `Profile`
+            },
+            image: image,
+            prebuffer: true,
+            simplified: true,
+            followUp: true
+        })
+    }
 }

@@ -138,7 +138,7 @@ class User {
 		try {
             //  Do userdata validation if the target is external/not the author of the message.
             //  This to ensure that the target doesn't missing the required user entry.
-            if (user.id !== this.message.author.id) await db.validateUserEntry(user.id, user.username)
+            if (user.id !== this.message.member.id) await db.validateUserEntry(user.id, user.username)
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 2
 			 *  --------------------------------------------------------------------
@@ -302,7 +302,7 @@ class User {
 	 * @type {boolean}
 	 */
 	isSelf(id) {
-		return this.message.author.id === id
+		return this.message.member.id === id
 	}
 
 }

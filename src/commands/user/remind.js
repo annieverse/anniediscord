@@ -10,7 +10,32 @@ module.exports = {
     description: `Never forget things. Ask Annie to reminds you anytime!`,
     usage: `remind <message> <time>`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `message`,
+        description: `The message to be reminded`,
+        required: true,
+        type: ApplicationCommandOptionType.String
+    },
+    {
+        name: `in_how_long`,
+        description: `when to remind`,
+        required: true,
+        type: ApplicationCommandOptionType.Integer
+    },
+    {
+        name: `time_unit`,
+        description: `the time unit to be used`,
+        required: true,
+        choices: [
+            { name: `seconds`, value: `seconds` },
+            { name: `minutes`, value: `minutes` },
+            { name: `hours`, value: `hours` },
+            { name: `days`, value: `days` }
+        ],
+        type: ApplicationCommandOptionType.String
+    }
+],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Displays guide and user's active reminders
@@ -41,5 +66,23 @@ module.exports = {
             }
         })
     },
-    async Iexecute(client, reply, interaction, options, locale) {}
+    async Iexecute(client, reply, interaction, options, locale) {
+        //  Handle if the date is not valid
+        let arg = `${interaction.options.getString(`message`)} in ${interaction.options.getInteger(`in_how_long`)} ${interaction.options.getString(`time_unit`)}`
+        const context = client.reminders.getContextFrom(arg, interaction.member.id)
+        if (!context.isValidReminder) return reply.send(locale.REMINDER.INVALID_DATE, {
+            socket: {
+                emoji: await client.getEmoji(`790338393015713812`),
+                prefix: client.prefix
+            }
+        })
+        client.reminders.register(context)
+        return reply.send(locale.REMINDER.SUCCESSFUL, {
+            status: `success`,
+            socket: {
+                emoji: await client.getEmoji(`789212493096026143`),
+                time: moment(context.remindAt.timestamp).fromNow()
+            }
+        })
+    }
 }

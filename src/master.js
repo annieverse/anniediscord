@@ -12,7 +12,10 @@ const getCustomShardId = (id) => {
     return `[SHARD_ID:${id}/${shardName[id]}]`
 }
 module.exports = function masterShard() {
-    process.on(`unhandledRejection`, err => logger.warn(err.message))
+    process.on(`unhandledRejection`, err => {
+		logger.info(`Unhandled rejection: ${err.message}`, err)
+		logger.warn(err.message)
+	})
     const { ShardingManager } = require(`discord.js`)
     const manager = new ShardingManager(`./src/annie.js`, { 
         respawn: process.env.NODE_ENV !== `production` ? false : true,
