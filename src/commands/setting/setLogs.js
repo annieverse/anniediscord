@@ -1,5 +1,9 @@
 const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Customize Logging-System for your guild
      * @author klerikdust
@@ -10,7 +14,8 @@ module.exports = {
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,
     permissionLevel: 3,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
     /**
      * List of available actions for the current command
      * @type {array}
@@ -26,6 +31,25 @@ module.exports = {
      * @type {string}
      */
     subConfigID: `LOGS_CHANNEL`,
+    options: [{
+        name: `enable`,
+        description: `Enable this module.`,
+        type: ApplicationCommandOptionType.Subcommand
+    },{
+        name: `disable`,
+        description: `Disable this module.`,
+        type: ApplicationCommandOptionType.Subcommand
+    },{
+        name: `channel`,
+        description: `Set a specific channel for Annie's logs.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `set`,
+            description: `Set a specific channel for Annie's logs.`,
+            required: true,
+            type: ApplicationCommandOptionType.Channel
+        }]
+    }],
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETLOGS.GUIDE, {
@@ -47,7 +71,21 @@ module.exports = {
         this.subConfig = this.guildConfigurations.get(this.subConfigID)
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
-
+    async Iexecute(client, reply, interaction, options, locale) {
+        if (options.getSubcommand() === `enable`) {
+            this.args = [`enable`]
+        }
+        if (options.getSubcommand() === `disable`) {
+            this.args = [`disable`]
+        }
+        if (options.getSubcommand() === `channel`) {
+            this.args = [`channel`, options.getChannel(`set`).id]
+        }
+        this.guildConfigurations = interaction.guild.configs
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+        this.subConfig = this.guildConfigurations.get(this.subConfigID)
+        return this[this.args[0]](client, reply, interaction, null, locale, `/`)
+    },
     /**
      * Enable Action
      * @return {void}
@@ -69,7 +107,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, { status: `success` })
@@ -91,7 +129,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, { status: `success` })
@@ -123,7 +161,7 @@ module.exports = {
             configCode: this.subConfigID,
             customizedParameter: searchChannel.id,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         reply.send(locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {

@@ -70,7 +70,7 @@ module.exports = {
 
         async Iexecute(client, reply, interaction, options, locale) {
             const userLib = new User(client, interaction)
-            let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+            let targetUser = options.getUser(`user`) || interaction.member.user
             const userData = await userLib.requestMetadata(targetUser, 2)
             //  Fetch cards type in user's inventory and sort by rarity descendantly
             let filteredInventory = userData.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a, b) => (b.rarity_level - a.rarity_level))

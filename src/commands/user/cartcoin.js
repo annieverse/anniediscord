@@ -92,7 +92,7 @@ module.exports = {
         },
         async Iexecute(client, reply, interaction, options, locale) {
             const userBalance = await client.db.getUserBalance(interaction.user.id, interaction.guild.id)
-            const amountToUse = interaction.options.getSubcommand() == `all` ? userBalance : interaction.options.getInteger(`how_many`)
+            const amountToUse = options.getSubcommand() == `all` ? userBalance : options.getInteger(`how_many`)
             
                 //  Returns if user amount input is below the acceptable threeshold
             if (!amountToUse || amountToUse < this.artcoinsRatio) return reply.send(locale.CARTCOIN.INVALID_AMOUNT, {

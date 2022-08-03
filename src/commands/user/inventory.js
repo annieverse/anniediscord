@@ -75,7 +75,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
             const userLib = new User(client, interaction)
-            let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+            let targetUser = options.getUser(`user`) || interaction.member.user
             if (!targetUser) return reply.send(locale.USER.IS_INVALID)
             let targetUserData = await userLib.requestMetadata(targetUser, 2)
                 //  Handle if couldn't fetch the inventory

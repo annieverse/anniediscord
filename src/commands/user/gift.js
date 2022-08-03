@@ -154,7 +154,7 @@ module.exports = {
         })
         userData.inventory.raw = availableGifts
         // Handle if user doesn't specify anything
-        if (interaction.options.getSubcommand() === `how`) {
+        if (options.getSubcommand() === `how`) {
             const loading = await reply.send(locale.GIFT.RENDERING_AVAILABLE_GIFTS, { 
                 simplified: true, 
                 socket: { emoji: await client.getEmoji(`790994076257353779`) }
@@ -171,13 +171,13 @@ module.exports = {
             })
             return loading.delete()
         }
-        const targetUser = interaction.options.getUser(`user`)
+        const targetUser = options.getUser(`user`)
             // Invalid target
         if (!targetUser) return reply.send(locale.USER.IS_INVALID)
             // Returns if user trying to gift themselves.
         if (userLib.isSelf(targetUser.id)) return reply.send(locale.GIFT.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
             //  Handle if the specified gift cannot be found
-        let arg = interaction.options.getString(`item`)
+        let arg = options.getString(`item`)
         arg = arg.replace(` `, ``) // Trim additional whitespace
         let searchStringResult = stringSimilarity.findBestMatch(arg, availableGifts.map(i => i.name))
         const gift = searchStringResult.bestMatch.rating >= 0.2 ? availableGifts.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
@@ -185,7 +185,7 @@ module.exports = {
                 socket: { example: `e.g. **\`\\gift ${targetUser.username} 10 ${availableGifts[0].name.toLowerCase()}\`**` }
             })
             //  Handle if can't parse the desired user's gift amount
-        const amount = interaction.options.getInteger(`amount`)
+        const amount = options.getInteger(`amount`)
         if (!amount) return reply.send(locale.GIFT.INVALID_AMOUNT, {
                 socket: {
                     gift: gift.name,

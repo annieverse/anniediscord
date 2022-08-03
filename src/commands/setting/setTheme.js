@@ -1,4 +1,8 @@
 const User = require(`../../libs/user`)
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Switch your profile theme to Light or Dark.
      * @author Andrew
@@ -9,7 +13,15 @@ module.exports = {
     description: `Switch your profile theme to Light or Dark.`,
     usage: `theme <Light/Dark>`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
+    options: [{
+        name: `theme`,
+        description: `choose your theme`,
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [{name: `light`, value: `light`}, {name: `dark`, value: `dark`}]
+    }],
     async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
@@ -49,5 +61,29 @@ module.exports = {
         }
         //  Handle if no theme match with the keyword
         return reply.send(locale.SWITCH_THEME.NO_MATCHING_KEYWORD, { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
-    }
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        /**
+         * Returns a boolean for if the user has the choosen theme and gives theme to user if they dont have it
+         * @param {string} theme 
+         * @returns {boolean} boolean
+         */
+        const userHasTheme = async theme => {
+            let res = await client.db.checkIfThemeOwned(theme, interaction.member.id, interaction.member.id)
+            let resAnswer = Object.values(res)[0] == 1 ? true : false
+            if (resAnswer) return true
+                // Give item to user
+            await client.db.GiveThemeToUser(theme, interaction.member.id, interaction.guild.id)
+            return true
+        }
+        let theme = options.getString(`theme`)
+        let currentTheme = await client.db.findCurrentTheme(interaction.member.id, interaction.guild.id)
+        if ((theme == `dark` && currentTheme == `dark`) || (theme == `light` && currentTheme == `light`)) return reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
+        let hasTheme = null
+        if (theme == `dark`) hasTheme = await userHasTheme(`dark`)
+        if (theme == `light`) hasTheme = await userHasTheme(`light`)
+        if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
+        client.db.setTheme(theme, interaction.member.id, interaction.guild.id)
+        return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
+    },
 }

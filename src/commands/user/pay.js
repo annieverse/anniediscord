@@ -101,17 +101,17 @@ module.exports = {
                 //  Returns if user level is below the requirement
             if (userData.exp.level < this.requirementLevel) return reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
                 //  Displays as guide if user doesn't specify any parameter
-            if (interaction.options.getSubcommand()==`how`) return reply.send(locale.PAY.SHORT_GUIDE, {
+            if (options.getSubcommand()==`how`) return reply.send(locale.PAY.SHORT_GUIDE, {
                 header: `Hi, ${interaction.member.user.username}`,
                 image: `banner_pay`,
                 socket: { prefix: `/` }
             })
-            let targetUser = interaction.options.getUser(`user`)
+            let targetUser = options.getUser(`user`)
             if (!targetUser) return reply.send(locale.USER.IS_INVALID)
                 //  Handle if user is trying to pay themselves
             if (userLib.isSelf(targetUser.id)) return reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
                 //  Parse amount of artcoins to be send
-            const amountToSend = interaction.options.getInteger(`amount`)
+            const amountToSend = options.getInteger(`amount`)
                 //  Parse amount of tax to be deducted from the transaction
             const amountOfTax = amountToSend * this.tax
             const total = Math.round(amountToSend - amountOfTax)

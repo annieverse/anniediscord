@@ -53,7 +53,7 @@ module.exports = {
         const {
             body
         } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
-        const target = interaction.options.getUser(`user`) 
+        const target = options.getUser(`user`) 
         !target ? reply.send(locale.HUG.THEMSELVES, {
             socket: {
                 user: interaction.member.user.username

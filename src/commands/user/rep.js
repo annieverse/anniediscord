@@ -58,7 +58,7 @@ module.exports = {
                 socket: { time: moment(lastGiveAt).add(...this.cooldown).fromNow() },
             })
             
-        const targetUser = interaction.options.getUser(`user`)
+        const targetUser = options.getUser(`user`)
             //	Handle if user is trying to rep themselves
         if (userLib.isSelf(targetUser.id)) return reply.send(locale.GIVE_REPUTATION.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
         client.db.updateUserReputation(1, targetUser.id, interaction.member.id, interaction.guild.id)

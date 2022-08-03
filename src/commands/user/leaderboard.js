@@ -122,7 +122,7 @@ module.exports = {
             })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        let arg = interaction.options.getString(`leaderboard`)
+        let arg = options.getString(`leaderboard`)
         //  Returns if parameter is invalid.
     if (!this.wholeKeywords().includes(arg.toLowerCase())) return reply.send(locale.LEADERBOARD.INVALID_CATEGORY, {
             socket: { emoji: await client.getEmoji(`692428969667985458`) }

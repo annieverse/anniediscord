@@ -68,7 +68,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         //  Handle if the date is not valid
-        let arg = `${interaction.options.getString(`message`)} in ${interaction.options.getInteger(`in_how_long`)} ${interaction.options.getString(`time_unit`)}`
+        let arg = `${options.getString(`message`)} in ${options.getInteger(`in_how_long`)} ${options.getString(`time_unit`)}`
         const context = client.reminders.getContextFrom(arg, interaction.member.id)
         if (!context.isValidReminder) return reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {

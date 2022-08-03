@@ -2,6 +2,11 @@ const GUI = require(`../../ui/prebuild/levelUpMessage`)
 const Confirmator = require(`../../libs/confirmator`)
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
+
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Enable or disable level-up message module for this guild
      * @author klerikdust
@@ -12,12 +17,44 @@ module.exports = {
     description: `Enable or disable level-up message module for this guild`,
     usage: `setlvlupmsg <Enable/Disable>`,
     permissionLevel: 3,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
     /**
      * An array of the available options for welcomer module
      * @type {array}
      */
     actions: [`enable`, `disable`, `channel`, `text`],
+    options: [{
+        name: `enable`,
+        description: `Enable this module.`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `disable`,
+        description: `Disable this module.`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `channel`,
+        description: `Set a specific channel for level-up message.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{name: `set`, description: `Set a specific channel for level-up message.`, required: true, type: ApplicationCommandOptionType.Channel}]
+    },{
+        name: `channel_reset`,
+        description: `Reset the channel for level-up message.`,
+        type: ApplicationCommandOptionType.Subcommand
+    },{
+        name: `text`,
+        description: `Set a specific text for level-up message.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `set`, 
+            description: `Set a specific text for level-up message.`, 
+            required: true, type: ApplicationCommandOptionType.String
+        }]
+    },{
+        name: `help`,
+        description: `Show help dialoge for this command.`,
+        type: ApplicationCommandOptionType.Subcommand
+    }],
 
     /**
      * Current instance's config code
@@ -44,7 +81,40 @@ module.exports = {
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         return this[this.selectedAction](client, reply, message, arg, locale, prefix)
     },
-
+    async Iexecute(client, reply, interaction, options, locale) {
+        
+        if (options.getSubcommand() === `enable`) {
+            this.args = [`enable`]
+        }
+        if (options.getSubcommand() === `disable`) {
+            this.args = [`disable`]
+        }
+        if (options.getSubcommand() === `channel`) {
+            this.args = [`channel`, options.getChannel(`set`).id]
+        }
+        if (options.getSubcommand() === `channel_reset`) {
+            this.args = [`channel`, `reset`]
+        }
+        if (options.getSubcommand() === `text`) {
+            this.args = [`text`, options.getString(`set`)]
+        }
+        if (options.getSubcommand() === `help`) return reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
+                header: `Hi, ${interaction.member.username}!`,
+                socket: {
+                    prefix: `/`,
+                    emoji: await client.getEmoji(`692428660824604717`)
+                }
+            })
+        //  Handle if the selected options doesn't exists
+        this.selectedAction = this.args[0].toLowerCase()
+        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
+                socket: { actions: this.actions.join(`, `) },
+            })
+            //  Run action
+        this.guildConfigurations = interaction.guild.configs
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+        return this[this.selectedAction](client, reply, interaction, null, locale, `/`)
+    },
     /**
      * Enabling levelup-message module
      * @return {void}
@@ -54,7 +124,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
@@ -72,7 +142,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, { status: `success` })
@@ -108,7 +178,7 @@ module.exports = {
                     configCode: subConfigId,
                     customizedParameter: ``,
                     guild: message.guild,
-                    setByUserId: message.author.id,
+                    setByUserId: message.member.id,
                     cacheTo: this.guildConfigurations
                 })
                 return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
@@ -132,7 +202,7 @@ module.exports = {
             configCode: subConfigId,
             customizedParameter: res.id,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
@@ -159,31 +229,32 @@ module.exports = {
         })
         let newText = this.args.slice(1).join(` `)
             //  Dummy level-up message for the preview
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.member, 2)
         await reply.send(newText, {
             prebuffer: true,
             simplified: true,
             image: await new GUI(userData, 60).build(),
             socket: {
-                user: message.author
+                user: message.member
             }
         })
-        const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION,{followUp: true})
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             client.db.updateGuildConfiguration({
                 configCode: subConfigId,
                 customizedParameter: newText,
                 guild: message.guild,
-                setByUserId: message.author.id,
+                setByUserId: message.member.id,
                 cacheTo: this.guildConfigurations
             })
             reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                }
+                },
+                followUp: true
             })
         })
     },

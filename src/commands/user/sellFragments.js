@@ -97,8 +97,8 @@ module.exports = {
                 socket: { emoji: await client.getEmoji(`692428748838010970`) },
             })
             //  Handle if user specified an invalid amount
-        let arg = interaction.options.getInteger(`amount`)
-        if (interaction.options.getSubcommand() == `all`) arg = userData.inventory.fragments
+        let arg = options.getInteger(`amount`)
+        if (options.getSubcommand() == `all`) arg = userData.inventory.fragments
         if (!arg) return reply.send(locale.SELLFRAGMENTS.GUIDE, {
             header: `Hi, ${interaction.member.user.username}!`,
             image: `banner_sellfragments`,
@@ -110,7 +110,7 @@ module.exports = {
                 min: this.minimumToSell
             }
         })
-        const amountToSell = interaction.options.getSubcommand() === `all` ? userData.inventory.fragments : interaction.options.getInteger(`amount`)
+        const amountToSell = options.getSubcommand() === `all` ? userData.inventory.fragments : options.getInteger(`amount`)
         if (!amountToSell) return reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Handle if user's specified amount is lower than the minimum sell 
         if (amountToSell < this.minimumToSell) return reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {

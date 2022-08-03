@@ -58,7 +58,7 @@ module.exports = {
             socket: { command: `EXP Module` },
         })
         const userLib = new User(client, interaction)
-        let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        let targetUser = options.getUser(`user`) || interaction.member.user
         
         const userData = await userLib.requestMetadata(targetUser, 2)
         reply.send(locale.COMMAND.FETCHING, {

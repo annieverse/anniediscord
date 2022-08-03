@@ -4,6 +4,11 @@ const User = require(`../../libs/user`)
 const GUI = require(`../../ui/prebuild/level`)
 const trueInt = require(`../../utils/trueInt`)
 const commanifier = require(`../../utils/commanifier`)
+
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Enable or disable EXP Leveling System for this guild
      * @author klerikdust
@@ -14,13 +19,63 @@ module.exports = {
     description: `Configure the exp for your member and the server.`,
     usage: `setexp`,
     permissionLevel: 3,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
     /**
      * An array of the available options for EXP_MODULE module
      * @type {array}
      */
     actions: [`enable`, `disable`, `add`, `minus`, `reset`],
 
+    options: [{
+        name: `enable`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `disable`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `add`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `user`,
+            description: `User to adjust.`,
+            required: true,
+            type: ApplicationCommandOptionType.User
+        },{
+            name: `amount`,
+            description: `Amount to adjust by.`,
+            required: true,
+            type: ApplicationCommandOptionType.Integer
+        }]
+    },{
+        name: `minus`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `user`,
+            description: `User to adjust.`,
+            required: true,
+            type: ApplicationCommandOptionType.User
+        },{
+            name: `amount`,
+            description: `Amount to adjust by.`,
+            required: true,
+            type: ApplicationCommandOptionType.Integer
+        }]
+    },{
+        name: `reset`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `user`,
+            description: `User to adjust.`,
+            required: true,
+            type: ApplicationCommandOptionType.User
+        }]
+    }],
     /**
      * Thumbnail's img source
      * @type {string}
@@ -60,7 +115,33 @@ module.exports = {
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         return this[this.selectedAction](client, reply, message, arg, locale, prefix)
     },
+    async Iexecute(client, reply, interaction, options, locale) {
+        
+        //  Handle if the selected options doesn't exists
+        if (options.getSubcommand() == `enable`) {
+            this.selectedAction = `enable`
+        }
+        if (options.getSubcommand() == `disable`) {
+            this.selectedAction = `disable`
+        }
+        if (options.getSubcommand() == `add`) {
+            this.selectedAction = `add`            
+            this.args = [`add`, options.getUser(`user`).id, options.getInteger(`amount`)]
+        }
+        if (options.getSubcommand() == `minus`) {
+            this.selectedAction = `minus`
+            this.args = [`minus`,options.getUser(`user`).id, options.getInteger(`amount`)]
+        }
+        if (options.getSubcommand() == `reset`) {
+            this.selectedAction = `reset`
+            this.args = [`reset`,options.getUser(`user`).id]
+        }
 
+        //  Run action
+        this.guildConfigurations = interaction.guild.configs
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+        return this[this.selectedAction](client, reply, interaction, null, locale, `/`)
+    },
     /**
      * Enabling EXP Leveling Module
      * @returns {void}
@@ -86,7 +167,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETEXP.SUCCESSFULLY_ENABLED, {
@@ -110,7 +191,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETEXP.SUCCESSFULLY_DISABLED, { status: `success` })
@@ -166,13 +247,14 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             expLib.updateRank(newData.level)
             client.db.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
             reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
+                followUp: true
             })
         })
     },
@@ -227,12 +309,13 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             expLib.execute(amountToAdd)
             reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
+                followUp: true
             })
         })
     },
@@ -268,13 +351,14 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             expLib.updateRank(0)
             client.db.resetUserExp(targetUser.master.id, message.guild.id)
             reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()],
+                followUp: true
             })
         })
     }

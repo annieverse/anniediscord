@@ -38,7 +38,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        const targetUser = options.getUser(`user`) || interaction.member.user
         const targetUserBalance = await client.db.getUserBalance(targetUser.id, interaction.guild.id)
         return reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),

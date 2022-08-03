@@ -36,7 +36,7 @@ module.exports = {
         return message.channel.send({embeds:[embed]})
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const target = interaction.options.getUser(`user`) || interaction.member.user
+        const target = options.getUser(`user`) || interaction.member.user
         const [avatar, name] = [target.displayAvatarURL({ extension: `png`, forceStatic: true, size: 512 }), target.username]
         const embed = new EmbedBuilder()
             .setImage(avatar)

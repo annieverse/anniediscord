@@ -1,5 +1,10 @@
 const moment = require(`moment`)
 const Confirmator = require(`../../libs/confirmator`)
+
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Create a set of autoresponder!
      * @author klerikdust
@@ -9,7 +14,7 @@ module.exports = {
     aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
     description: `Create a set of autoresponder!`,
     usage: `ar`,
-    applicationCommand: false,
+    applicationCommand: true,
     permissionLevel: 2,
     /**
      * Maximum characters for the trigger.
@@ -29,6 +34,21 @@ module.exports = {
      */
     availableActions: [`enable`, `add`, `delete`, `info`, `reset`, `disable`],
 
+    options: [{
+        name: `action`,
+        description: `Action to perform.`,
+        required: true,
+        type: ApplicationCommandOptionType.String,
+        choices: [
+            {name:`enable`, value:`enable`}, 
+            {name:`add`, value:`add`}, 
+            {name:`delete`, value:`delete`}, 
+            {name:`info`, value:`info`}, 
+            {name:`reset`, value:`reset`}, 
+            {name:`disable`, value:`disable`}
+        ]
+    }],
+    type: ApplicationCommandType.ChatInput,
     /**
      * Primary ID for current module
      * @type {string}
@@ -61,6 +81,33 @@ module.exports = {
             //  Run action
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
+    async Iexecute(client, reply, interaction, options, locale) {
+        let arg = options.getString(`action`)
+        this.guildConfigurations = interaction.guild.configs
+        this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
+            //  Handle if user doesn't specify any parameter.
+        if (!arg) return reply.send(locale.AUTORESPONDER.GUIDE, {
+                image: `banner_autoresponder`,
+                header: `Hi, ${interaction.member.user.username}!`,
+                socket: {
+                    emoji: await client.getEmoji(`781504248868634627`),
+                    guild: interaction.guild.name,
+                    prefix: `/`,
+                    statusEmoji: await client.getEmoji(this.primaryConfig.value ? `751016612248682546` : `751020535865016420`),
+                    status: this.primaryConfig.value ? `enabled` : `disabled`
+                }
+            })
+            //  Handle if the used action is invalid
+        this.selectedAction = this.args[0].toLowerCase()
+        if (!this.availableActions.includes(this.selectedAction)) return reply.send(locale.AUTORESPONDER.INVALID_ACTION, {
+                socket: {
+                    actions: this._parseAvailableActions(),
+                    emoji: await client.getEmoji(`692428969667985458`)
+                }
+            })
+            //  Run action
+        return this[this.args[0]](client, reply, interaction, arg, locale, `/`)
+    },
 
     /**
      * Enabling AR module.
@@ -83,7 +130,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_ENABLED, {
@@ -111,7 +158,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DISABLED, {
@@ -180,19 +227,19 @@ module.exports = {
             })
             //  Display AR confirmation
         const confirmation = await reply.send(locale.AUTORESPONDER.REGISTER_CONFIRMATION, {
-            thumbnail: message.author.displayAvatarURL(),
+            thumbnail: message.member.displayAvatarURL(),
             socket: {
                 trigger: trigger,
                 response: response
             }
         })
         const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             //  Register
             client.db.registerAutoResponder({
                     guildId: message.guild.id,
-                    userId: message.author.id,
+                    userId: message.member.id,
                     trigger: trigger,
                     response: response
                 })
@@ -267,7 +314,7 @@ module.exports = {
             }
         })
         const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             //  Wipeout ARs
             client.db.clearAutoResponders(message.guild.id)

@@ -44,7 +44,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
-        let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        let targetUser = options.getUser(`user`) || interaction.member.user
         const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })

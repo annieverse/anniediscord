@@ -74,7 +74,7 @@ module.exports = {
 
     async Iexecute(client, reply, interaction, options, locale) {
         const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
-        const amountToOpen = interaction.options.getInteger(`amount`)
+        const amountToOpen = options.getInteger(`amount`)
         
             //  Handle if amount to be opened is out of defined range.
         if (!this.amountToOpenRanges.includes(amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
@@ -104,7 +104,7 @@ module.exports = {
                 amount: amountToOpen
             }
         })
-        //console.log(suggestToBuy)
+        
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, suggestToBuy)
             //  Timeout in 30 seconds

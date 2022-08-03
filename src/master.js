@@ -14,7 +14,7 @@ const getCustomShardId = (id) => {
 module.exports = function masterShard() {
     process.on(`unhandledRejection`, err => {
 		logger.info(`Unhandled rejection: ${err.message}`, err)
-		logger.warn(err.message)
+		logger.warn(err)
 	})
     const { ShardingManager } = require(`discord.js`)
     const manager = new ShardingManager(`./src/annie.js`, { 

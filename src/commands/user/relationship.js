@@ -60,12 +60,12 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
-        let targetUser = interaction.options.getUser(`user`) || interaction.member.user
+        let targetUser = options.getUser(`user`) || interaction.member.user
         
         const targetUserData = await userLib.requestMetadata(targetUser, 2)
             //  Handle if user doesn't have any relationships
         if (!targetUserData.relationships.length) return reply.send(locale.RELATIONSHIP.IS_EMPTY, {
-            socket: { prefix: client.prefix }
+            socket: { prefix: `/` }
         })
         const fetching = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,

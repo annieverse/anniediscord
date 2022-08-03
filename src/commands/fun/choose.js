@@ -28,7 +28,7 @@ module.exports = {
         return reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const opts = this._tokenizedOptions(interaction.options.getString(`choices`))
+        const opts = this._tokenizedOptions(options.getString(`choices`))
         if (!opts) return reply.send(locale.CHOOSE.INVALID_OPTIONS)
         return reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
     },

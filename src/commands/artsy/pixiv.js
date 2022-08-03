@@ -2,7 +2,7 @@ const fs = require(`fs`)
 const PixivApi = require(`pixiv-api-client`)
 const PixImg = require(`pixiv-img`)
 const pixiv = new PixivApi()
-
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Note:
  * This module requires pixiv account (verified username and pw) in order to get acccess to the API.
@@ -21,8 +21,71 @@ module.exports = {
     usage: `pixiv <SearchKeyword>(Optional)`,
     permissionLevel: 0,
     multiUser: false,
-    applicationCommand: false,
+    applicationCommand: true,
+    options: [{
+        name: `tag`,
+        description: `Search by tag`,
+        required: true,
+        type: ApplicationCommandOptionType.String
+    }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
+        const cachePath = `./.pixivcaches/`
+        const forbiddenKeywords = [
+                `lewd`,
+                `r18`,
+                `porn`,
+                `dick`,
+                `ass`,
+                `vagina`,
+                `anal`,
+                `blowjob`,
+                `bdsm`,
+                `furry`,
+                `anus`,
+                `porno`,
+                `boobs`,
+                `boob`,
+                `nipple`,
+                `handjob`,
+                `sex`
+            ]
+            //  Logging in to get access to the Pixiv API
+        await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
+        reply.send(locale.PIXIV[arg ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+                socket: {
+                    keyword: arg,
+                    emoji: await client.getEmoji(`790994076257353779`)
+                }
+            })
+            .then(async loadmsg => {
+                //  Dynamically choose recommended/custom search based on input
+                let data = arg ? await this.fetchCustomSearch(arg) : await this.fetchRecommendedWork()
+                    //  Prevent forbidden search
+                const usedForbiddenKeyword = forbiddenKeywords.filter(k => arg.includes(k))
+                if (usedForbiddenKeyword.length > 0) data = null
+                    //  Handle if no returned result from the query
+                if (!data) {
+                    loadmsg.delete()
+                    return reply.send(locale.PIXIV.NO_RESULT)
+                }
+                const img = await this.getImage(data.image_urls.medium, data.id)
+                    //  Handle if no returned result from given img path
+                if (!img) {
+                    loadmsg.delete()
+                    return reply.send(locale.PIXIV.FAIL_TO_LOAD)
+                }
+                loadmsg.delete()
+                return reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
+                    customHeader: [`by ${data.user.name}`, client.user.displayAvatarURL()],
+                    image: img,
+                    prebuffer: true
+                })
+            })
+    },
+    
+    async Iexecute(client, reply, interaction, options, locale) {
+        let arg = options.getString(`tag`)
         const cachePath = `./.pixivcaches/`
         const forbiddenKeywords = [
                 `lewd`,

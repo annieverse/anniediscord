@@ -55,7 +55,7 @@ module.exports = class Confirmator {
             )
             targetMessage.edit({components: [row]})
             const filter = i => (i.customId === `confirm`|| i.customId === `cancel`) && i.user.id === targetUserId
-            this.activeInstance = targetMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 15000 })
+            this.activeInstance = targetMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 60*1000 })
         }else{
             targetMessage.react(confirmationEmoji)
             targetMessage.react(cancelEmoji)
@@ -74,6 +74,7 @@ module.exports = class Confirmator {
     onAccept(fn=null) {
         if (!fn) throw new TypeError(`parameter 'fn' must be a valid callback function`)
         if (!this.activeInstance) throw new Error(`there are no active instance to listen to`)
+        this.onEnd()
         if (this.slashCommand) {
             this.activeInstance.on(`collect`, async interact => {
                 this.responseCollected = interact.customId
@@ -84,6 +85,7 @@ module.exports = class Confirmator {
                       })
                     // Fetch the original message in order respond to it again
                     await interact.fetchReply()
+
                     // send the final response
                     return this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
                         socket: {
@@ -94,7 +96,6 @@ module.exports = class Confirmator {
                 }
                 
                 await fn(interact)
-                // Slightly complete the interaction to avoid errors
                 return this.end()
                 
             })
@@ -150,4 +151,13 @@ module.exports = class Confirmator {
         }
         this.activeInstance = null
 	}
+
+    onEnd(){
+        this.activeInstance.on(`end`, ()=>{
+            return this.end()
+        })
+        this.activeInstance.on(`end`, ()=>{
+            return this.end()
+        })
+    }
 }

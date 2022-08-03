@@ -33,7 +33,7 @@ module.exports = {
 
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        let arg = interaction.options.getString(`item`)
+        let arg = options.getString(`item`)
         let prefix = `/`
         let guild = interaction.guild
         let {

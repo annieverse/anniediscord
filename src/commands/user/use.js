@@ -90,7 +90,7 @@ module.exports = {
                 }
             })
             //  Finding the closest target item.
-            let arg = interaction.options.getString(`item`)
+            let arg = options.getString(`item`)
         const searchStringResult = stringSimilarity.findBestMatch(arg.toLowerCase(), data.inventory.raw.map(i => i.name.toLowerCase()))
         const targetItem = searchStringResult.bestMatch.rating >= 0.5
             //  By name

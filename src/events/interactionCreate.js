@@ -5,7 +5,8 @@ const {
 } = require(`../config/commands`)
 const {InteractionType} = require(`discord.js`)
 module.exports = async(client, interaction) => {
-    if (!interaction.type === InteractionType.ApplicationCommand) return
+   
+    if (!interaction.type === (InteractionType.ApplicationCommand || InteractionType.ModalSubmit)) return
     let command = client.commands.get(interaction.commandName)
         // Ignore non-registered commands
     if (!command) return
@@ -48,7 +49,8 @@ module.exports = async(client, interaction) => {
     }
     try {
         const initTime = process.hrtime()
-        await command.Iexecute(client, reply, interaction, options, locale)
+        if (interaction.type === InteractionType.ModalSubmit) await command.modalResponse(client, reply, interaction, options, locale)
+        if (interaction.type === InteractionType.ApplicationCommand) await command.Iexecute(client, reply, interaction, options, locale)
 
         //  Dispose
         command = null

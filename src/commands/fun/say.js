@@ -24,6 +24,6 @@ module.exports = {
         return reply.send(arg)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        return reply.send(interaction.options.getString(`message`))
+        return reply.send(options.getString(`message`))
     }
 }

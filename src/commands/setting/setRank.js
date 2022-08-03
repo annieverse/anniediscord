@@ -3,6 +3,10 @@ const Confirmator = require(`../../libs/confirmator`)
 const trueInt = require(`../../utils/trueInt`)
 const findRole = require(`../../utils/findRole`)
 const commanifier = require(`../../utils/commanifier`)
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`)
     /**
      * Customize role-rank system in the guild.
      * @author Pan
@@ -15,6 +19,7 @@ module.exports = {
     usage: `setranks`,
     permissionLevel: 3,
     applicationCommand: false,
+    type: ApplicationCommandType.ChatInput,
     /**
      * List of available actions for the current command
      * @type {array}
@@ -53,7 +58,7 @@ module.exports = {
         this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
-
+    async Iexecute(client, reply, interaction, options, locale) {},
     /**
      * Enable Action
      * @return {void}
