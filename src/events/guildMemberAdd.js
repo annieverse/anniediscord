@@ -77,13 +77,12 @@ module.exports = async function guildMemberAdd(client, member) {
         //  Skip role assignment if no roles are registered
         const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
         if (welcomerRolesList.value.length <= 0) return
-        let successfulRoleAdded = 0
         for (let i=0; i<welcomerRolesList.value.length; i++) {
             const roleId = welcomerRolesList.value[i]
             //  Handle if role cannot be found due to deleted/invalid
             if (!guild.roles.cache.has(roleId)) continue
+            if (member.pending) return
             member.roles.add(roleId)
-            successfulRoleAdded++
         }
     }
 }

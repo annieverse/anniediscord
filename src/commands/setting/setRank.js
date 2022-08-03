@@ -18,7 +18,7 @@ module.exports = {
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
     permissionLevel: 3,
-    applicationCommand: false,
+    applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
      * List of available actions for the current command
@@ -35,6 +35,52 @@ module.exports = {
      * @type {string}
      */
     subConfigID: `RANKS_LIST`,
+    options: [{
+        name: `enable`,
+        description: `Enable the role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `disable`,
+        description: `Disable the role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `reset`,
+        description: `Reset the role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `stack`,
+        description: `Stack the roles for role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `info`,
+        description: `Show the current role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+    },{
+        name: `delete`,
+        description: `Delete a role from the role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `role`,
+            description: `The role to delete`,
+            type: ApplicationCommandOptionType.Role,
+            required: true,
+        }]
+    },{
+        name: `add`,
+        description: `Add a role from the role-rank system`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `role`,
+            description: `The role to add`,
+            type: ApplicationCommandOptionType.Role,
+            required: true,
+        },{
+            name: `level`,
+            description: `The level of the role`,
+            type: ApplicationCommandOptionType.Integer,
+            required: true,
+        }]
+    }],
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETRANK.GUIDE, {
@@ -58,7 +104,38 @@ module.exports = {
         this.annieRole = (await message.guild.members.fetch(client.user.id)).roles.highest
         return this[this.args[0]](client, reply, message, arg, locale, prefix)
     },
-    async Iexecute(client, reply, interaction, options, locale) {},
+    async Iexecute(client, reply, interaction, options, locale) {
+        if (options.getSubcommand() === `enable`) {
+            this.args = [`enable`]
+        }
+        if (options.getSubcommand() === `disable`) {
+            this.args = [`disable`]
+        }
+        if (options.getSubcommand() === `reset`) {
+            this.args = [`reset`]
+        }
+        if (options.getSubcommand() === `stack`){
+            this.args = [`stack`]
+        }
+        if (options.getSubcommand() === `info`){
+            this.args = [`info`]
+        }
+        if (options.getSubcommand() === `delete`){
+            this.args = [`delete`, options.getRole(`role`).id]
+        }
+        if (options.getSubcommand() === `add`){
+            this.args = [`add`, options.getRole(`role`).id, options.getInteger(`level`)]
+        }
+        //  Otherwise, run the action.
+        this.guildConfigurations = interaction.guild.configs
+        this.action = this.args[0]
+            //  This is the main configuration of setwelcomer, so everything dependant on this value
+        this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
+            //  This is the sub-part of main configuration such as welcomer's channel, text, etc
+        this.subConfig = this.guildConfigurations.get(this.subConfigID)
+        this.annieRole = (await interaction.guild.members.fetch(client.user.id)).roles.highest
+        return this[this.args[0]](client, reply, interaction, null, locale, `/`)
+    },
     /**
      * Enable Action
      * @return {void}
@@ -80,14 +157,15 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         reply.send(locale.SETRANK.SUCCESSFULLY_ENABLED, { status: `success` })
             //  Spawn tip if user is a first timer
         if (this.firstTimer) return reply.send(locale.SETRANK.FIRST_TIMER_TIP, {
             simplified: true,
-            socket: { prefix: prefix }
+            socket: { prefix: prefix },
+            followUp: true
         })
     },
 
@@ -144,7 +222,7 @@ module.exports = {
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETRANK.SUCCESSFULLY_ADDED, {
@@ -175,7 +253,7 @@ module.exports = {
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETRANK.SUCCESSFULLY_DELETED, {
@@ -256,7 +334,7 @@ module.exports = {
             //  Act as toggle (enable -> disable or disable -> enable)
             customizedParameter: wasEnabled ? 0 : 1,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETRANK[wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`], { status: `success` })
@@ -272,14 +350,14 @@ module.exports = {
         if (this.subConfig.value.length <= 0) return reply.send(locale.SETRANK.RESET_NULL_RANKS)
             //  Confirmation before performing the action
         const confirmation = await reply.send(``, { header: locale.SETRANK.RESET_CONFIRMATION })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             //  Reset values
             this.primaryConfig.updatedAt = timestamp
             this.primaryConfig.value = 0
-            this.primaryConfig.setByUserId = message.author.id
-            this.subConfig.setByUserId = message.author.id
+            this.primaryConfig.setByUserId = message.member.id
+            this.subConfig.setByUserId = message.member.id
             this.subConfig.updatedAt = timestamp
             this.subConfig.value = []
             client.db.deleteGuildConfiguration(this.subConfigID, message.guild.id)
@@ -299,7 +377,7 @@ module.exports = {
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETRANK.SUCCESSFULLY_DISABLED, { status: `success` })
