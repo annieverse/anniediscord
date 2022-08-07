@@ -1,4 +1,4 @@
-const { ComponentType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require(`Discord.js`)
+const { ComponentType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require(`discord.js`)
 /**
  * Manages transaction confirmation thru reaction.
  * @class
