@@ -123,19 +123,20 @@ module.exports = {
                     //  Handle if no returned result from the query
                 if (!data) {
                     loadmsg.delete()
-                    return reply.send(locale.PIXIV.NO_RESULT)
+                    return reply.send(locale.PIXIV.NO_RESULT,{followUp:true})
                 }
                 const img = await this.getImage(data.image_urls.medium, data.id)
                     //  Handle if no returned result from given img path
                 if (!img) {
                     loadmsg.delete()
-                    return reply.send(locale.PIXIV.FAIL_TO_LOAD)
+                    return reply.send(locale.PIXIV.FAIL_TO_LOAD,{followUp:true})
                 }
                 loadmsg.delete()
                 return reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
                     customHeader: [`by ${data.user.name}`, client.user.displayAvatarURL()],
                     image: img,
-                    prebuffer: true
+                    prebuffer: true,
+                    followUp:true
                 })
             })
     },
