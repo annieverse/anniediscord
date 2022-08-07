@@ -166,9 +166,11 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `enable`) {
             this.action = `enable`
+            this.args = [this.action]
         }
         if (options.getSubcommand() === `disable`) {
             this.action = `disable`
+            this.args = [this.action]
         }
         if (options.getSubcommand() === `channel`) {
             this.action = `channel`
@@ -198,9 +200,11 @@ module.exports = {
         }
         if (options.getSubcommand() === `userimage`) {
             this.action = `userimage`
+            this.args = [this.action]
         }
         if (options.getSubcommand() === `noimage`) {
             this.action = `noimage`
+            this.args = [this.action]
         }
         if (options.getSubcommand() === `theme`) {
             this.action = `theme`
