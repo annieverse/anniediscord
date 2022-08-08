@@ -16,7 +16,7 @@ const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
-            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: `WATCHING`}] } })
+            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: Discord.ActivityType.Watching}] } })
             this.startupInit = process.hrtime()
 
             /**
@@ -414,4 +414,9 @@ class Annie extends Discord.Client {
     }
 }
 
-module.exports = new Annie([Discord.GatewayIntentBits.Guilds,Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.MessageContent,Discord.GatewayIntentBits.GuildMembers,Discord.GatewayIntentBits.GuildMessageReactions])
+module.exports = new Annie([Discord.GatewayIntentBits.Guilds,
+    Discord.GatewayIntentBits.GuildMessages, 
+    Discord.GatewayIntentBits.MessageContent,
+    Discord.GatewayIntentBits.GuildMembers,
+    Discord.GatewayIntentBits.GuildMessageReactions,
+    Discord.GatewayIntentBits.GuildPresences])
