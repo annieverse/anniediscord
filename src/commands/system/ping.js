@@ -1,5 +1,5 @@
 const commanifier = require(`../../utils/commanifier`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Output bot's latency
      * @author klerikdust
