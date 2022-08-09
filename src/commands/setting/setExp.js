@@ -7,7 +7,8 @@ const commanifier = require(`../../utils/commanifier`)
 
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Enable or disable EXP Leveling System for this guild
@@ -19,6 +20,7 @@ module.exports = {
     description: `Configure the exp for your member and the server.`,
     usage: `setexp`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**

@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * Talk through bot.
  * @author klerikdust
@@ -10,6 +10,7 @@ module.exports = {
     usage: `say <Message>`,
     permissionLevel: 3,
     applicationCommand: true,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [
         {name: `message`, description: `Message to be said`, required: true, type: ApplicationCommandOptionType.String}
     ],

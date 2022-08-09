@@ -16,10 +16,7 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    ModalBuilder,
-    TextInputStyle,
-    ActionRowBuilder,
-    TextInputBuilder
+    PermissionFlagsBits
 } = require(`discord.js`)
 /**
  * Create, restock & sell items for your server members!
@@ -31,6 +28,7 @@ module.exports = {
     description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**

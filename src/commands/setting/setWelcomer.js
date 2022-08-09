@@ -11,10 +11,7 @@ const findRole = require(`../../utils/findRole`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    ModalBuilder,
-    ActionRowBuilder,
-    TextInputStyle,
-    TextInputBuilder
+    PermissionFlagsBits
 } = require(`discord.js`)
 /**
  * Manage welcomer module for your guild.
@@ -26,6 +23,7 @@ module.exports = {
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**

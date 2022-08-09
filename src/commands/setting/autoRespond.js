@@ -3,7 +3,8 @@ const Confirmator = require(`../../libs/confirmator`)
 
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Create a set of autoresponder!
@@ -16,6 +17,7 @@ module.exports = {
     usage: `ar`,
     applicationCommand: true,
     permissionLevel: 2,
+    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     /**
      * Maximum characters for the trigger.
      * @type {number}

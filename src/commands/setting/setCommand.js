@@ -2,7 +2,8 @@ const Confirmator = require(`../../libs/confirmator`)
 
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Set a specific channel for Annie's command usage..
@@ -15,6 +16,7 @@ module.exports = {
     usage: `setcommand <channel/info/reset>`,
     group: `Setting`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     configId: `COMMAND_CHANNELS`,
     options: [{
         name: `channel`,

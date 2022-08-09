@@ -5,7 +5,8 @@ const findRole = require(`../../utils/findRole`)
 const commanifier = require(`../../utils/commanifier`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Customize role-rank system in the guild.
@@ -18,6 +19,7 @@ module.exports = {
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**

@@ -2,7 +2,8 @@ const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Customize Logging-System for your guild
@@ -14,6 +15,7 @@ module.exports = {
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**

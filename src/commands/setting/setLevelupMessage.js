@@ -5,7 +5,8 @@ const User = require(`../../libs/user`)
 
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
 } = require(`discord.js`)
     /**
      * Enable or disable level-up message module for this guild
@@ -17,6 +18,7 @@ module.exports = {
     description: `Enable or disable level-up message module for this guild`,
     usage: `setlvlupmsg <Enable/Disable>`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
