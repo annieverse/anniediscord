@@ -2,6 +2,7 @@ module.exports = function messageUpdate(client, oldMessage, newMessage) {
     //  Ignore DM interface
     if (oldMessage.channel.type === `dm`) return 
     if (!oldMessage.guild.configs) return
+    if (newMessage.author.bot || newMessage.author.id === newMessage.client.user.id) return
     const logs = newMessage.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(newMessage.guild.id)

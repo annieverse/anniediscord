@@ -2,6 +2,7 @@ module.exports = function messageDelete(client, message) {
     //  Ignore DM interface
     if (message.channel.type === `dm`) return 
     if (!message.guild.configs) return
+    if (message.author.bot || message.author.id === message.client.user.id) return    
     const logs = message.guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 
     const logChannel = client.getGuildLogChannel(message.guild.id)
