@@ -1,6 +1,6 @@
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
-const { MessageAttachment } = require(`discord.js`) 
+const { AttachmentBuilder } = require(`discord.js`) 
 
 /**
  * @typedef {object} MemberExperience
@@ -142,7 +142,7 @@ class Experience {
         const defaultText = this.client.locales.en.LEVELUP.DEFAULT_RESPONSES
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
-        const messageComponents = {content: displayedText, files:[new MessageAttachment(img, `LEVELUP_${this.user.id}.jpg`)]}
+        const messageComponents = {content: displayedText, files:[new AttachmentBuilder(img, `LEVELUP_${this.user.id}.jpg`)]}
         //  Send to custom channel if provided
         const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {

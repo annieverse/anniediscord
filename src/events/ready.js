@@ -1,4 +1,3 @@
-const commanifier = require(`../utils/commanifier`)
 const Topgg = require(`@top-gg/sdk`)
 const Reminder = require(`../libs/reminder`)
 /**

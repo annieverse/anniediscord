@@ -26,7 +26,7 @@ class UI {
 		})
 		//  User's avatar on left
 		await card.addContent({ 
-			avatar: await urlToBuffer(this.user.master.displayAvatarURL({format: `png`, dynamic: false})),
+			avatar: await urlToBuffer(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})),
 			avatarRadius: 10,
 			marginLeft: 42,
 			marginTop: 43,

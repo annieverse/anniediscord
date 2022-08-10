@@ -5,7 +5,7 @@ const Confirmator = require(`../../libs/confirmator`)
      * @author klerikdust
      */
 module.exports = {
-    name: `registerQuest`,
+    name: `registerquest`,
     aliases: [`registerquest`, `rq`],
     description: `Registering new quest into the database`,
     usage: `<name> | <rewardAmount> | <description> | <correctAnswer>`,

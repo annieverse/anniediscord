@@ -10,7 +10,7 @@ module.exports = (message={}, userId=``) => {
         level: 4,
         name: `Developer`,
         description: `System developer privileges`,
-        permissionString: `ADMINISTRATOR`
+        permissionString: `Administrator`
     }
     const fallbackPrivillege = {
         level: 0,
@@ -29,13 +29,13 @@ module.exports = (message={}, userId=``) => {
         description: `The owner of current server.`
     }
     //  Server admin
-    if (member.permissions.has(`ADMINISTRATOR`)) return {
+    if (member.permissions.has(`Administrator`)) return {
         level: 3,
         name: `Administrator`,
         description: `Server's super user`
     }
     //  Moderator
-    if (member.permissions.has(`MANAGE_ROLES`)) return { 
+    if (member.permissions.has(`ManageRoles`)) return { 
         level: 2,
         name: `Moderator`,
         description: `Server's manager with moderation capabilities`

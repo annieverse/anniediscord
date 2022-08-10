@@ -44,7 +44,7 @@ class UI {
         for (let i=0; i<Math.min(this.relationships.length, this.limit); i++) {
             const rel = this.relationships[i]
             const user = await this.bot.users.fetch(rel.assigned_user_id)
-            const relAvatar = user ? await resolveImage(user.displayAvatarURL({format: `png`, dynamic: false})) : await resolveImage(await loadAsset(`error`))
+            const relAvatar = user ? await resolveImage(user.displayAvatarURL({extension: `png`, forceStatic: true})) : await resolveImage(await loadAsset(`error`))
             const relName = user ? user.username : rel.assigned_user_id
             const relGender = await this.bot.db.getUserGender(rel.assigned_user_id)
             const pairRole = relationshipPairs.MASTER_PAIR[rel.relationship_name]

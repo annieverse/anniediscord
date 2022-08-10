@@ -41,7 +41,7 @@ module.exports = async (client={}, message={}) => {
     if (command.permissionLevel > userPermission.level) return reply.send(``,
         {customHeader: [
             `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-            message.author.displayAvatarURL({dynamic: true})
+            message.author.displayAvatarURL()
         ]}
     )
     // Handle cooldowns
@@ -83,12 +83,12 @@ module.exports = async (client={}, message={}) => {
         })
     }
     catch(e) {
-        // if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
-        //     socket: {
-        //         error: e.stack,
-        //         emoji: await client.getEmoji(`AnnieThinking`)
-        //     }
-        // }).catch(err => client.logger.error(err))
+        if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
+            socket: {
+                error: e.stack,
+                emoji: await client.getEmoji(`AnnieThinking`)
+            }
+        }).catch(err => client.logger.error(err))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {

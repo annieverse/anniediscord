@@ -1,17 +1,65 @@
 const Confirmator = require(`../../libs/confirmator`)
+
+const {
+    ApplicationCommandType,
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
+} = require(`discord.js`)
     /**
      * Set a specific channel for Annie's command usage..
      * @author klerikdust
      */
 module.exports = {
-    name: `setCommand`,
+    name: `setcommand`,
     aliases: [`setcommand`, `setcommands`, `setcmd`],
     description: `Set a specific channel for Annie's command usage.`,
     usage: `setcommand <channel/info/reset>`,
     group: `Setting`,
     permissionLevel: 3,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     configId: `COMMAND_CHANNELS`,
-    applicationCommand: false,
+    options: [{
+        name: `channel`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `set`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: true,
+            type: ApplicationCommandOptionType.Channel
+        },{
+            name: `additional_channel_1`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: false,
+            type: ApplicationCommandOptionType.Channel
+        },{
+            name: `additional_channel_2`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: false,
+            type: ApplicationCommandOptionType.Channel
+        },{
+            name: `additional_channel_3`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: false,
+            type: ApplicationCommandOptionType.Channel
+        },{
+            name: `additional_channel_4`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: false,
+            type: ApplicationCommandOptionType.Channel
+        },{
+            name: `additional_channel_5`,
+            description: `Set a specific channel for Annie's command usage.`,
+            required: false,
+            type: ApplicationCommandOptionType.Channel
+        }]
+    },{
+        name: `reset`,
+        description: `Action to perform.`,
+        type: ApplicationCommandOptionType.Subcommand
+    }],
+    type: ApplicationCommandType.ChatInput,
+    applicationCommand: true,
     async execute(client, reply, message, arg, locale, prefix) {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
@@ -33,19 +81,29 @@ module.exports = {
         })
         return this[targetAction](client, reply, message, arg, locale)
     },
-
+    async Iexecute(client, reply, interaction, options, locale) {
+        this.args = options.getSubcommand() == `channel` ? [options.getChannel(`set`).id] : options.getSubcommand() == `reset` ? `reset` : null
+        if (options.getSubcommand() == `channel` && options.getChannel(`additional_channel_1`)) this.args.push(options.getChannel(`additional_channel_1`).id)
+        if (options.getSubcommand() == `channel` && options.getChannel(`additional_channel_2`)) this.args.push(options.getChannel(`additional_channel_2`).id)
+        if (options.getSubcommand() == `channel` && options.getChannel(`additional_channel_3`)) this.args.push(options.getChannel(`additional_channel_3`).id)
+        if (options.getSubcommand() == `channel` && options.getChannel(`additional_channel_4`)) this.args.push(options.getChannel(`additional_channel_4`).id)
+        if (options.getSubcommand() == `channel` && options.getChannel(`additional_channel_5`)) this.args.push(options.getChannel(`additional_channel_5`).id)
+        const targetAction = options.getSubcommand() == `channel` ? `channel` : options.getSubcommand() == `reset` ? `reset` : null
+        return this[targetAction](client, reply, interaction, this.args, locale)
+    },
     /**
      * Perform channel add action.
      * @return {void}
      */
     async channel(client, reply, message, arg, locale) {
         let channelsContainer = message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!this.args[1]) return reply.send(locale.SETCOMMAND.MISSING_TARGET_CHANNEL, {
+        if (!this.args) return reply.send(locale.SETCOMMAND.MISSING_TARGET_CHANNEL, {
             socket: {
                 emoji: await client.getEmoji(`AnnieMad2`)
             }
         })
-        const specifiedChannels = this.args.slice(1)
+        
+        const specifiedChannels = message.type == 0 ? this.args.slice(1) : this.args
         const thinkingEmoji = await client.getEmoji(`692428969667985458`)
         const madEmoji = await client.getEmoji(`692428748838010970`)
             //  Iterate over multi channel registering
@@ -71,7 +129,7 @@ module.exports = {
             configCode: this.configId,
             customizedParameter: channelsContainer,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: message.guild.configs
         })
         return reply.send(locale.SETCOMMAND.UPDATE_CHANNEL_SUCCESSFUL, {
@@ -101,22 +159,23 @@ module.exports = {
                 emoji: await client.getEmoji(`692428785571856404`)
             }
         })
-        const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, confirmation)
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             //  Reset configuration
             client.db.updateGuildConfiguration({
                 configCode: this.configId,
                 customizedParameter: [],
                 guild: message.guild,
-                setByUserId: message.author.id,
+                setByUserId: message.member.id,
                 cacheTo: message.guild.configs
             })
             return reply.send(locale.SETCOMMAND.RESET_SUCCESSFUL, {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                }
+                },
+                followUp: true
             })
         })
     }

@@ -1,4 +1,4 @@
-const {MessageAttachment} = require(`discord.js`)
+const {AttachmentBuilder} = require(`discord.js`)
 const {get} = require(`node-fetch`)
 const {Canvas} = require(`canvas-constructor`)
 const {resolve,join} = require(`path`)
@@ -31,7 +31,7 @@ class Banner {
 		const configProfile = new profileManager()
 
 		this.ch.send(`Welcome to **AAU** ${user} ! Please get your roles in <#538843763544555528> for full access to the server. Last but not least enjoy your stay here! :tada:`,
-			new MessageAttachment(await welcomeCard(), `welcome!-${user.tag}.jpg`))
+			new AttachmentBuilder(await welcomeCard(), `welcome!-${user.tag}.jpg`))
 
 
 		async function welcomeCard() {

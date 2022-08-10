@@ -20,7 +20,7 @@ class UI {
     }
 
     async build() {
-            const avatar = await resolveImage(this.member.user.displayAvatarURL({ format: `png`, dynamic: false }))
+            const avatar = await resolveImage(this.member.user.displayAvatarURL({ extension: `png`, forceStatic: true }))
             let canvas_x = 800
             let canvas_y = 250
             let start_x = 30

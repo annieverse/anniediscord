@@ -1,7 +1,7 @@
 const palette = require(`../ui/colors/default`)
 const {
-	MessageEmbed,
-	MessageAttachment
+	EmbedBuilder,
+	AttachmentBuilder
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -55,8 +55,20 @@ class Response {
 			message :
 			message.channel ?
 			message.channel : null
+
+		/**
+		 * Determine if the message is a Slash command.
+		 */
+		this.isSlash = message.type != 0 ? true : false
 	}
 
+	setMessage(message, channelAsInstance = false) {
+		this.message = message
+		return this.targetField = channelAsInstance ?
+		message :
+		message.channel ?
+		message.channel : null
+	}
 	/**
 	 * Plug variables into available socket in the target string.
 	 * @param {string} [content=``] Target string.
@@ -107,30 +119,58 @@ class Response {
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
 		let timestampAsFooter = plugins.timestampAsFooter || false
+		let components = plugins.components || null
+		let fetchReply = plugins.fetchReply || true
+		let followUp = plugins.followUp || false
+		const RESPONSE_REF = this.isSlash ? this.message : field
+		const RESPONSE_TYPE = this.isSlash ? followUp ? `followUp`: `reply` : `send`
+		
 		//  Handle message with paging property enabled
 		if (paging) {
 			let page = 0
 			const embeddedPages = await this._registerPages(content, plugins)
-			return field.send(embeddedPages[0].file ? {
+			return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? components ? {
 				embeds: [embeddedPages[0]],
-				files : [embeddedPages[0].file]
+				files : [embeddedPages[0].file],
+				components: [components],
+				fetchReply : fetchReply,
+				
 			}:{
 				embeds: [embeddedPages[0]],
-				files : []
+				files : [embeddedPages[0].file],
+				fetchReply : fetchReply,
+				
+			}:components ? {
+				embeds: [embeddedPages[0]],
+				files : [],
+				components: [components],
+				fetchReply : fetchReply,
+				
+			}:{
+				embeds: [embeddedPages[0]],
+				files : [],
+				fetchReply : fetchReply,
+				
 			}).then(async msg => {
+				try {
+					this.ref = await msg.fetchReference()
+					this.ref = this.ref.interaction.user
+				} catch (error) {
+					this.ref = this.message.user
+				}
 					//  Buttons
 					if (embeddedPages.length > 1) {
 						await msg.react(`⏪`)
 						await msg.react(`⏩`)
 					}
 					// Filters - These make sure the varibles are correct before running a part of code
-					let filter = (reaction, user) => reaction.emoji.name === `⏪` && user.id === this.message.author.id
+					let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 					//  Timeout limit for page buttons
 					const backwards = msg.createReactionCollector({
 						filter,
 						time: 300000
 					})
-					filter = (reaction, user) => reaction.emoji.name === `⏩` && user.id === this.message.author.id
+					filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 					const forwards = msg.createReactionCollector({
 						filter,
 						time: 300000
@@ -138,28 +178,28 @@ class Response {
 					//  Add preview button if cardPreviews is enabled
 					if (cardPreviews) {
 						await msg.react(`👀`)
-						let filter = (reaction, user) => reaction.emoji.name === `👀` && user.id === this.message.author.id
+						let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
 						let preview = msg.createReactionCollector(filter, {
 							time: 300000
 						})
 						let previewedPages = []
 						preview.on(`collect`, async r => {
-							r.users.remove(this.message.author.id)
+							r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 							if (previewedPages.includes(page)) return
 							previewedPages.push(page)
-							let loading = await field.send({
+							let loading = await RESPONSE_REF[RESPONSE_TYPE]({
 								content: `\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``
 							})
 							let img = await new GUI(plugins.cardPreviews[page]).create()
-							field.send({
-								files: [new MessageAttachment(img)]
+							RESPONSE_REF[RESPONSE_TYPE]({
+								files: [new AttachmentBuilder(img)]
 							})
 							loading.delete()
 						})
 					}
 					//	Left navigation
 					backwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
+						r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 						page--
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page].file ? {
@@ -182,7 +222,7 @@ class Response {
 					})
 					//	Right navigation
 					forwards.on(`collect`, r => {
-						r.users.remove(this.message.author.id)
+						r.users.remove(this.isSlash ? this.ref.id : this.message.author.id)
 						page++
 						if (embeddedPages[page]) {
 							msg.edit(embeddedPages[page].file ? {
@@ -207,6 +247,7 @@ class Response {
 		}
 		//  Replace content with error message if content is a faulty value
 		if (typeof content != `string`) content = this.message.client.locales.en.LOCALIZATION_ERROR
+		
 		//  Find all the available {{}} socket in the string.
 		let sockets = content.match(/\{{(.*?)\}}/g)
 		if (sockets === null) sockets = []
@@ -221,16 +262,33 @@ class Response {
 		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 		//  Returns simple message w/o embed
 		if (simplified) {
-			return image ? field.send({
+			return image ? 
+			components ? RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
-				files: [new MessageAttachment(prebuffer ? image : await loadAsset(image))]
-			}) : field.send({
+				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
+				components: [components],
+				fetchReply : fetchReply,
+				
+			}) : RESPONSE_REF[RESPONSE_TYPE]({
 				content: content,
+				files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
+				fetchReply : fetchReply,
+				
+			}) : components ? RESPONSE_REF[RESPONSE_TYPE]({
+				content: content,
+				components: [components],
+				fetchReply : fetchReply,
+				
+			}) : RESPONSE_REF[RESPONSE_TYPE]({
+				content: content,
+				fetchReply : fetchReply,
 			})
 		}
 		//  Add notch/chin
 		if (notch) content = `\u200C\n${content}\n\u200C`
-		const embed = new MessageEmbed()
+		
+		if (content === ``) content = null
+		const embed = new EmbedBuilder()
 			.setColor(palette[color] || color)
 			.setDescription(content)
 			.setThumbnail(thumbnail)
@@ -261,7 +319,7 @@ class Response {
 		}
 		//  Add image preview
 		if (image) {
-			embed.file = new MessageAttachment(prebuffer ? image : await loadAsset(image), `preview.jpg`)
+			embed.file = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), `preview.jpg`)
 			embed.setImage(`attachment://${embed.file.name}`)
 		} else if (embed.file) {
 			embed.image.url = null
@@ -272,28 +330,64 @@ class Response {
 		
 		if (topNotch) {
 			if (embed.file){
-				sent = await field.send({
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
 					embeds: [embed],
-					files: [embed.file]
+					files: [embed.file],
+					components: [components],
+					fetchReply : fetchReply,
+					
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					content: topNotch,
+					embeds: [embed],
+					files: [embed.file],
+					fetchReply : fetchReply,
+					
 				})
 			}else{
-				sent = await field.send({
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
-					embeds: [embed]
+					embeds: [embed],
+					components: [components],
+					fetchReply : fetchReply,
+					
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					content: topNotch,
+					embeds: [embed],
+					fetchReply : fetchReply,
+					
 				})
 			}
 		}else{
+			
 			if (embed.file){
-				sent = await field.send({
-					content: topNotch,
-					embeds: [embed],
-					files: [embed.file]
-				})
+				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
+						content: topNotch,
+						embeds: [embed],
+						files: [embed.file],
+						components: [components],
+						fetchReply : fetchReply,
+						
+					}) :
+					sent = await RESPONSE_REF[RESPONSE_TYPE]({
+						content: topNotch,
+						embeds: [embed],
+						files: [embed.file],
+						fetchReply : fetchReply,
+						
+					})
 			}else{
-				sent = await field.send({
-					embeds: [embed]
-				})
+				components ?
+				sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					embeds: [embed],
+					components: [components],
+					fetchReply : fetchReply,
+					
+				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
+					embeds: [embed],
+					fetchReply : fetchReply,
+					
+				}) 
 			}
 		}
 
@@ -311,11 +405,11 @@ class Response {
 	async _registerPages(pages = [], src = null) {
 		let res = []
 		for (let i = 0; i < pages.length; i++) {
-			res[i] = new MessageEmbed().setFooter({
+			res[i] = new EmbedBuilder().setFooter({
 				text: `(${i+1}/${pages.length})`
 			}).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
 			if (src.image) {
-				let attachment = new MessageAttachment(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`)
+				let attachment = new AttachmentBuilder(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`)
 				res[i].setImage(`attachment://${attachment.name}`)
 				res[i].file = attachment
 			}

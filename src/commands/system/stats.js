@@ -3,6 +3,8 @@ const pkg = require(`../../../package`)
 const shardName = require(`../../config/shardName`)
 const ms = require(`ms`)
 const commanifier = require(`../../utils/commanifier`)
+
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Gives info about the current bot performance.
      * @author klerikdust
@@ -13,7 +15,8 @@ module.exports = {
     description: `Gives info about the current Annie's Statistic.`,
     usage: `stats`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const { total } = await client.db.getTotalCommandUsage()
             //  Cache server size for every 12 hour
@@ -31,6 +34,33 @@ module.exports = {
             thumbnail: client.user.displayAvatarURL(),
             socket: {
                 shard: shardName[message.guild.shard.id],
+                ping: commanifier(client.ws.ping),
+                uptime: ms(client.uptime, { long: true }),
+                memory: this.formatBytes(memUsage()),
+                totalCommands: commanifier(total),
+                version: pkg.version,
+                servers: commanifier(await serverSize()),
+                emoji: await client.getEmoji(`AnnieNyaa`)
+            }
+        })
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        const { total } = await client.db.getTotalCommandUsage()
+            //  Cache server size for every 12 hour
+        const serverSize = async() => {
+            const key = `MASTER:GUILD_SIZE`
+            const onCache = await client.db.redis.get(key)
+            if (onCache) return onCache
+            const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
+            client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
+            return size
+
+        }
+        return reply.send(locale.SYSTEM_STATS.DISPLAY, {
+            header: `The State of Annie`,
+            thumbnail: client.user.displayAvatarURL(),
+            socket: {
+                shard: shardName[interaction.guild.shard.id],
                 ping: commanifier(client.ws.ping),
                 uptime: ms(client.uptime, { long: true }),
                 memory: this.formatBytes(memUsage()),

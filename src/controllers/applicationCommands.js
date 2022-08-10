@@ -3,7 +3,7 @@ const {
 } = require(`@discordjs/rest`)
 const {
     Routes
-} = require(`discord-api-types/v9`)
+} = require(`discord.js`)
 
 module.exports = function applicationCommandLoader({
     logger,
@@ -11,7 +11,7 @@ module.exports = function applicationCommandLoader({
 }) {
 
     function formatDescriptions(command) {
-        command.description.length > 100 ? `${command.description.substring(0, 95)}...` : command.description
+        command.description.length >= 100 ? command.description = `${command.description.substring(0, 90)}...` : command.description
     }
 
     function isApplicationCommand(command) {
@@ -24,7 +24,7 @@ module.exports = function applicationCommandLoader({
     })
 
     const rest = new REST({
-        version: `9`
+        version: `10`
     }).setToken(process.env.BOT_TOKEN);
 
     (async() => {
@@ -32,7 +32,7 @@ module.exports = function applicationCommandLoader({
             logger.info(`Started refreshing application (/) commands.`)
             if (process.env.NODE_ENV === `production`) {
                 await rest.put(
-                    Routes.applicationCommands(`501461775821176832`), {
+                    Routes.applicationCommands(`788001359349547039`), {
                         body: applicationCommands
                     },
                 )

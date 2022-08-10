@@ -2,9 +2,7 @@ const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
-const applicationCommandLoader = require(`./controllers/applicationCommands`)
 const Database = require(`./libs/database`)
-//const Database = require(`./libs/database_remaster`)
 const localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
@@ -18,7 +16,7 @@ const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
-            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: `WATCHING`}] } })
+            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: Discord.ActivityType.Watching}] } })
             this.startupInit = process.hrtime()
 
             /**
@@ -166,7 +164,8 @@ class Annie extends Discord.Client {
          * @returns {void}
          */
         prepareLogin() {
-            process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
+            process.on(`unhandledRejection`, err => this.logger.warn(err))
+            //process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
             try {
                 this.registerNode(new Database().connect(), `db`)
                 this.registerNode(commandsLoader({ logger: this.logger }), `commands`)
@@ -384,10 +383,10 @@ class Annie extends Discord.Client {
 	*   @param {boolean} [dynamic=false]
 	*   @return {buffer}
 	*/
-    async getUserAvatar(id, compress = false, size = `?size=512`, dynamic=false) {
+    async getUserAvatar(id, compress = false, size = `?size=512`, forceStatic=true) {
         const user = await this.users.fetch(id) 
         if (!user) return loadAsset(`error`)
-		let url = user.displayAvatarURL({format: `png`, dynamic: dynamic})
+		let url = user.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
         if (compress) {
             return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
                 .then(data => data.buffer())
@@ -415,4 +414,9 @@ class Annie extends Discord.Client {
     }
 }
 
-module.exports = new Annie([Discord.Intents.FLAGS.GUILDS,Discord.Intents.FLAGS.GUILD_MESSAGES,Discord.Intents.FLAGS.GUILD_MEMBERS,Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS])
+module.exports = new Annie([Discord.GatewayIntentBits.Guilds,
+    Discord.GatewayIntentBits.GuildMessages, 
+    Discord.GatewayIntentBits.MessageContent,
+    Discord.GatewayIntentBits.GuildMembers,
+    Discord.GatewayIntentBits.GuildMessageReactions,
+    Discord.GatewayIntentBits.GuildPresences])

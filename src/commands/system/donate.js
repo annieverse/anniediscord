@@ -1,3 +1,5 @@
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+
 /*
  * Command's Class description
  * @author Pan
@@ -29,6 +31,7 @@ module.exports = {
      */
     permissionLevel: 0,
     applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
     /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
@@ -40,7 +43,7 @@ module.exports = {
         reply.send(locale.DONATE)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        interaction.reply({content:locale.DONATE})
+        reply.send(locale.DONATE)
     }
 
 }

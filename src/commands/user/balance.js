@@ -1,5 +1,6 @@
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
      * Displaying user's current balance
      * @author klerikdust
@@ -10,7 +11,16 @@ module.exports = {
     description: `Displaying user's current balance`,
     usage: `balance`,
     permissionLevel: 0,
-    applicationCommand: false,
+    applicationCommand: true,
+    type: ApplicationCommandType.ChatInput,
+    options: [
+        {
+            name: `user`,
+            description: `User you wish to display balance of`,
+            required: false,
+            type: ApplicationCommandOptionType.User
+        }
+    ],
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
@@ -24,6 +34,18 @@ module.exports = {
                 emoji: await client.getEmoji(`758720612087627787`),
                 amount: commanifier(targetUserBalance),
                 tips: targetUser.id === message.author.id ? `Use **\`${client.prefix}pay\`** to share with friends!` : ` `
+            }
+        })
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        const targetUser = options.getUser(`user`) || interaction.member.user
+        const targetUserBalance = await client.db.getUserBalance(targetUser.id, interaction.guild.id)
+        return reply.send(locale.DISPLAY_BALANCE, {
+            thumbnail: targetUser.displayAvatarURL(),
+            socket: {
+                emoji: await client.getEmoji(`758720612087627787`),
+                amount: commanifier(targetUserBalance),
+                tips: targetUser.id === interaction.member.id ? `Use **\`${client.prefix}pay\`** to share with friends!` : ` `
             }
         })
     }
