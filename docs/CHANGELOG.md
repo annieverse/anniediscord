@@ -1,3 +1,14 @@
+## [7.23.1](https://github.com/klerikdust/anniediscord/compare/v7.23.0...v7.23.1) (2022-08-10)
+
+
+### Bug Fixes
+
+* **applicationCommand:** use prod id ([204fdbd](https://github.com/klerikdust/anniediscord/commit/204fdbd221162f6edb67e31c69901fe1ed872b36))
+* **events:** guildMemberAdd ([d1167d8](https://github.com/klerikdust/anniediscord/commit/d1167d8de7490dd29b5784b5dd269f00ab3f1202))
+* **pixiv:** messages unable to send ([558e713](https://github.com/klerikdust/anniediscord/commit/558e713d4e0092d0bd458b918fab5e57d2b58bbc))
+* **presence:** wrong reference used ([616d11d](https://github.com/klerikdust/anniediscord/commit/616d11df55aa288d7df1b9d5f2b1bd245f99cd27))
+* **setwelcomer:** not able to update setting ([319352e](https://github.com/klerikdust/anniediscord/commit/319352e31b495df02beb219e65f6dba55943f15b))
+
 # [8.1.4](https://github.com/klerikdust/anniediscord/compare/v7.22.4...v7.23.0) (2022-07-03)
 
 
