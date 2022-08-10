@@ -16,6 +16,7 @@ module.exports = {
     usage: `buy <ItemID/ItemName>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `item`,
         description: `Item id or name you wish to buy`,

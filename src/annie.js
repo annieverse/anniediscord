@@ -168,8 +168,10 @@ class Annie extends Discord.Client {
             //process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
             try {
                 this.registerNode(new Database().connect(), `db`)
-                this.registerNode(commandsLoader({ logger: this.logger }), `commands`)
-                require(`./controllers/applicationCommands`)({ logger: this.logger, commands: this.commands })
+                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
+                this.registerNode(MESSAGE_COMMANDS, `message_commands`)
+                require(`./controllers/applicationCommands`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
+                this.registerNode(APPLICATION_COMMANDS, `application_commands`)
                 this.registerNode(localizer(), `locales`)
                 require(`./controllers/events`)(this)
                 this.login(process.env.BOT_TOKEN)

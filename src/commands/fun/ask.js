@@ -12,6 +12,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     options: [
         {name: `question`, description: `You can ask any question and Annie will answer you.`, required: true, type: ApplicationCommandOptionType.String}

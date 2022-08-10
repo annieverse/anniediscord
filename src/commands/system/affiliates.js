@@ -11,6 +11,7 @@ module.exports = {
         usage: `affiliate`,
         permissionLevel: 0,
         applicationCommand: true,
+        messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const affiliateList = await client.db.getAffiliates()

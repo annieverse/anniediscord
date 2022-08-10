@@ -21,6 +21,7 @@ module.exports = {
     permissionLevel: 3,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
      * List of available actions for the current command

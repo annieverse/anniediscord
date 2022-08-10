@@ -10,6 +10,7 @@ module.exports = {
     usage: `vote`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     page: `https://top.gg/bot/501461775821176832`,
     async execute(client, reply, message, arg, locale) {

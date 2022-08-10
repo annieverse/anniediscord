@@ -16,6 +16,7 @@ module.exports = {
     description: `Create a set of autoresponder!`,
     usage: `ar`,
     applicationCommand: true,
+    messageCommand: true,
     permissionLevel: 2,
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     /**

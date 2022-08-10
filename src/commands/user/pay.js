@@ -16,6 +16,7 @@ module.exports = {
         permissionLevel: 0,
         applicationCommand: true,
         requirementLevel: 3,
+        messageCommand: true,
         tax: 0.02,
         maxAllowed: 999999,
         options:[

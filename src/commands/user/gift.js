@@ -16,6 +16,7 @@ module.exports = {
     usage: `gift <User>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `send`,
         description: `Send a gift to a user`,

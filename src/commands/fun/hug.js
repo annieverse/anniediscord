@@ -15,6 +15,7 @@ module.exports = {
     usage: `hug <User>(Optional)`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     options: [{
         name: `user`,

@@ -31,6 +31,7 @@ module.exports = {
      */
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
      * The executed function upon command invocation.

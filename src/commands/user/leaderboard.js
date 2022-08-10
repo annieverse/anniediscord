@@ -12,6 +12,7 @@ module.exports = {
     description: `Displaying your server leaderboard!`,
     usage: `leaderboard`,
     permissionLevel: 0,
+    messageCommand: true,
     options: [{
         name: `leaderboard`,
         description: `Displays the leaderboard of the selected option`,

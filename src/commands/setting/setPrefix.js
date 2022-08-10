@@ -10,6 +10,7 @@ module.exports = {
     permissionLevel: 3,
     prefixImmune: true,
     applicationCommand: false,
+    messageCommand: true,
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETPREFIX.CURRENT_SET, {
             image: `banner_setprefix`,

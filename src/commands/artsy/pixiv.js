@@ -22,6 +22,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `tag`,
         description: `Search by tag`,

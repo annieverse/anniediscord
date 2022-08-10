@@ -16,6 +16,7 @@ module.exports = {
     usage: `gacha <Amount>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     amountToOpenRanges: [1, 10],
     options: [{
         name: `amount`,

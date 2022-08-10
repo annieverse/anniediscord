@@ -12,6 +12,7 @@ module.exports = {
         usage: `shop`,
         permissionLevel: 0,
         applicationCommand: true,
+        messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale, prefix) {
             const guildShop = await client.db.getGuildShop(message.guild.id)

@@ -11,6 +11,7 @@ module.exports = {
     usage: `buff`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const buffs = await client.db.getSavedUserDurationalBuffs(message.author.id)

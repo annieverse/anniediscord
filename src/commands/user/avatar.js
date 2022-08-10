@@ -13,6 +13,7 @@ module.exports = {
     usage: `avatar <user>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     options: [
         {

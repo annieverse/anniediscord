@@ -28,6 +28,7 @@ module.exports = {
     description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,
     permissionLevel: 3,
+    messageCommand: true,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,

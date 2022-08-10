@@ -11,6 +11,7 @@ module.exports = {
     usage: `invite`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     permmissionInteger: 268823638,
     type: ApplicationCommandType.ChatInput,
     /**

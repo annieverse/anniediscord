@@ -13,6 +13,7 @@ module.exports = {
         usage: `inventory <User>(Optional)`,
         permissionLevel: 0,
         applicationCommand: true,
+        messageCommand: true,
         options: [{
             name: `user`,
             description: `User you wish to view inventory of`,

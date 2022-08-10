@@ -7,8 +7,8 @@
  */
 module.exports = function findCommandProperties(client={}, commandName=``) {
  	const normalizedCommandName = commandName.toLowerCase()
-    const res = client.commands.get(normalizedCommandName) 
-    || client.commands.find(cmd => cmd.aliases.includes(normalizedCommandName))
+    const res = client.message_commands.get(normalizedCommandName) 
+    || client.message_commands.find(cmd => cmd.aliases.includes(normalizedCommandName))
     if (!res) return null
     return res
 }

@@ -10,6 +10,7 @@ module.exports = {
     usage: `facegen`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const source = `https://www.thiswaifudoesnotexist.net/`

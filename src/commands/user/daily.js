@@ -18,6 +18,7 @@ module.exports = {
 	rewardAmount: 250,
 	bonusAmount: 10,
 	applicationCommand: true,
+    messageCommand: true,
 	cooldown: [23, `hours`],
 	options: [{
 		name: `user`,

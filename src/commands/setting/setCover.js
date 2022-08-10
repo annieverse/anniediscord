@@ -23,6 +23,7 @@ module.exports = {
         permissionLevel: 0,
         uploadCost: 1000,
         applicationCommand: true,
+        messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         options: [{
             name: `attachment`,

@@ -17,6 +17,7 @@ module.exports = {
     permissionLevel: 0,
     charactersLimit: 156,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `bio`,
         description: `Set your profile bio/description`,

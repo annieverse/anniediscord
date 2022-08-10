@@ -12,6 +12,7 @@ module.exports = {
     usage: `pat <User>(Optional)`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Any user you would like to give a pat?`,

@@ -12,6 +12,7 @@ module.exports = {
     usage: `relationship <user>(Optional)`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Display the relationship of the specified user`,

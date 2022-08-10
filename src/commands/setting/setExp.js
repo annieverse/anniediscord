@@ -22,6 +22,7 @@ module.exports = {
     permissionLevel: 3,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
      * An array of the available options for EXP_MODULE module

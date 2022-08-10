@@ -11,6 +11,7 @@ module.exports = {
         usage: `collection`,
         permissionLevel: 0,
         upperLimit: 10,
+        messageCommand: true,
         applicationCommand: true,
         type: ApplicationCommandType.ChatInput,
         options: [

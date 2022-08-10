@@ -10,7 +10,8 @@ module.exports = {
     description: `Output bot's latency`,
     usage: `ping`,
     permissionLevel: 0,
-    applicationCommand: true,
+    applicationCommand: false,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         return reply.send(locale.REQUEST_PING, {

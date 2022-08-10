@@ -13,6 +13,7 @@ module.exports = {
     usage: `serverinfo`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {        
         if (!message.guild.available) message.guild.fetch()

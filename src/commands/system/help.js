@@ -10,6 +10,7 @@ module.exports = {
         usage: `help <Category/CommandName>(Optional)`,
         permissionLevel: 0,
         applicationCommand: false,
+		messageCommand: true,
         commandpediaButton: `📖`,
         ignoreGroups: [`developer`],
         permmissionInteger: 268823638,
@@ -55,7 +56,7 @@ module.exports = {
                     })
             }
             //  Display command's properties based on given keyword (if match. Otherwise, return)
-            const { isCategory, res } = await this.findCommandByKeyword(arg, client.commands.filter(node => !this.ignoreGroups.includes(node.group)))
+            const { isCategory, res } = await this.findCommandByKeyword(arg, client.message_commands.filter(node => !this.ignoreGroups.includes(node.group)))
             if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
                     socket: {
                         emoji: await client.getEmoji(`692428969667985458`)
@@ -63,7 +64,7 @@ module.exports = {
                 })
                 //  Handle helpCategory display
             if (isCategory) {
-                const commands = client.commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
+                const commands = client.message_commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
                 return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
 				thumbnail: client.user.displayAvatarURL()
@@ -101,10 +102,10 @@ module.exports = {
 	 */
 	getCommandStructures(client) {
 		let obj = {}
-		let groups = client.commands.map(el => el.group)
+		let groups = client.message_commands.map(el => el.group)
 		let uniqueGroups = [...new Set(groups)].filter(el => !this.ignoreGroups.includes(el))
 		for (let groupName of uniqueGroups) {
-			const groupChilds = client.commands.filter(el => el.group === groupName && !el.invisible)
+			const groupChilds = client.message_commands.filter(el => el.group === groupName && !el.invisible)
 			obj[groupName] = groupChilds
 		}
 		return obj

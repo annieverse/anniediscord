@@ -17,6 +17,7 @@ module.exports = {
     group: `Setting`,
     permissionLevel: 3,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    messageCommand: true,
     configId: `COMMAND_CHANNELS`,
     options: [{
         name: `channel`,

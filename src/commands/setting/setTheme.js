@@ -15,6 +15,7 @@ module.exports = {
     permissionLevel: 0,
     applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
+    messageCommand: true,
     options: [{
         name: `theme`,
         description: `choose your theme`,

@@ -15,6 +15,7 @@ module.exports = {
     usage: `sellfragments <amount/all>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     minimumToSell: 5,
     options: [
         {

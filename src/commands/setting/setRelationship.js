@@ -19,6 +19,7 @@ module.exports = {
         usage: `setrelationship`,
         permissionLevel: 0,
         applicationCommand: true,
+        messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         options: [{
             name: `remove`,

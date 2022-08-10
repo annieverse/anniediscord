@@ -11,6 +11,7 @@ module.exports = {
     usage: `remind <message> <time>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `message`,
         description: `The message to be reminded`,

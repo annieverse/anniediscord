@@ -12,6 +12,7 @@ module.exports = {
     usage: `rep <User>`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Give a reputation point to the specified user`,

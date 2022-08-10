@@ -14,6 +14,7 @@ module.exports = {
         usage: `quest`,
         permissionLevel: 0,
         applicationCommand: true,
+		messageCommand: true,
         cooldown: [2, `hours`],
 		type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {

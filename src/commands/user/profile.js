@@ -12,6 +12,7 @@ module.exports = {
     usage: `profile <User>(Optional)`,
     permissionLevel: 0,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Display the profile of the specified user`,

@@ -15,6 +15,7 @@ module.exports = {
         permissionLevel: 0,
         applicationCommand: true,
         artcoinsRatio: 8,
+        messageCommand: true,
         options: [
             {
                 name: `all`,
