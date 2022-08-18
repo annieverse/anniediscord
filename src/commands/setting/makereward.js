@@ -87,6 +87,7 @@ module.exports = {
         /**
          * TODO
          * Check if package name exists already
+         * Check if there is 25 packages made already ***25 is a hard number for max as the other command that pairs with this cannot go above 25***
          */
 
 

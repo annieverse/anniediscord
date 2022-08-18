@@ -4,12 +4,12 @@
 ## Simply copy paste this code
 
 ```javascript
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * Command's Class description
  * @author yourname
  */
-module.exports {
+module.exports = {
     /**
      * Define the file name (without the extension!)
      * @required
@@ -70,7 +70,7 @@ module.exports {
      * @Optional Only if applicationCommand is true and you need specific permissions
      * @type {PermissionFlagsBits}
      */
-    default_member_permissions: PermissionFlagsBits.Administrator.toString()
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     /**
      * Define the command's options. This is what is used as an argument for the command (Application commands only).
      * @required for ONLY ApplicationCommands
