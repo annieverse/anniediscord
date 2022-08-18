@@ -14,15 +14,16 @@ module.exports = {
     description: `Displays a random gif of a hug.`,
     usage: `hug <User>(Optional)`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
     options: [{
         name: `user`,
         description: `Any user you would like to hug?`,
         required: false,
         type: ApplicationCommandOptionType.User
     }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const {
             body

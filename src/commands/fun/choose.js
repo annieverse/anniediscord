@@ -1,4 +1,3 @@
-const Command = require(`../../libs/commands`)
 const random = require(`../../utils/random`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**

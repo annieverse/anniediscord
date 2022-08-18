@@ -21,10 +21,9 @@ module.exports = {
         description: `Setting up your own custom background! upload or share the image link you want to use.`,
         usage: `setcover <Attachment/URL>`,
         permissionLevel: 0,
-        uploadCost: 1000,
+        multiUser: false,
         applicationCommand: true,
         messageCommand: true,
-        type: ApplicationCommandType.ChatInput,
         options: [{
             name: `attachment`,
             description: `upload a custom image via attachment.`,
@@ -60,6 +59,8 @@ module.exports = {
             description: `reset the background to the default one.`,
             type: ApplicationCommandOptionType.Subcommand
         }],
+        type: ApplicationCommandType.ChatInput,        
+        uploadCost: 1000,
         async execute(client, reply, message, arg, locale, prefix) {
             const userData = await (new User(client, message)).requestMetadata(message.author, 2)
                 //  Handle if user doesn't specify any arg

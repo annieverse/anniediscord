@@ -11,6 +11,7 @@ module.exports = {
     description: `Display user's relationship trees`,
     usage: `relationship <user>(Optional)`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     options: [{

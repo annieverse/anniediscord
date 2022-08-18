@@ -1,8 +1,6 @@
 const Confirmator = require(`../../libs/confirmator`)
 const loadAsset = require(`../../utils/loadAsset`)
 const stringSimilarity = require(`string-similarity`)
-const GUI = require(`../../ui/prebuild/welcomer`)
-const moment = require(`moment`)
 const ms = require(`ms`)
 const fs = require(`fs`)
 const fetch = require(`node-fetch`)
@@ -28,15 +26,10 @@ module.exports = {
     description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,
     permissionLevel: 3,
+    multiUser: false,
+    applicationCommand: true,
     messageCommand: true,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
-    applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * An array of the available options for welcomer module
-     * @type {array}
-     */
-    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     options: [{
             name: `open`,
             description: `Open the shop`,
@@ -135,6 +128,12 @@ module.exports = {
                 max_length: 20
             }]
         }],
+        type: ApplicationCommandType.ChatInput,
+        /**
+         * An array of the available options for welcomer module
+         * @type {array}
+         */
+        actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,

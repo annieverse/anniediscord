@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
 /**
  * Upvote Annie and get the reward!
  * @author klerikdust
@@ -9,6 +9,7 @@ module.exports = {
     description: `Upvote Annie and get the reward!`,
     usage: `vote`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,

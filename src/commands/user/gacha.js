@@ -15,6 +15,7 @@ module.exports = {
     description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
     usage: `gacha <Amount>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     amountToOpenRanges: [1, 10],

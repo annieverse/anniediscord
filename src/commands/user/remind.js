@@ -10,6 +10,7 @@ module.exports = {
     description: `Never forget things. Ask Annie to reminds you anytime!`,
     usage: `remind <message> <time>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     options: [{

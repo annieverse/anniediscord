@@ -23,31 +23,10 @@ module.exports = {
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * An array of the available options for welcomer module
-     * @type {array}
-     */
-    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `userimage`, `noimage`, `theme`, `preview`],
-
-    /**
-     * Reference key to welcomer sub-modules config code.
-     * @type {object}
-     */
-    actionReference: {
-        "enable": `WELCOMER_MODULE`,
-        "disable": `WELCOMER_MODULE`,
-        "channel": `WELCOMER_CHANNEL`,
-        "text": `WELCOMER_TEXT`,
-        "role": `WELCOMER_ROLES`,
-        "image": `WELCOMER_IMAGE`,
-        "userimage": `WELCOMER_USERIMAGE`,
-        "noimage": `WELCOMER_NOIMAGE`,
-        "theme": `WELCOMER_THEME`
-    },
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
         description: `Enable this module.`,
@@ -135,6 +114,28 @@ module.exports = {
             choices: [{name:`light`, value:`light`}, {name:`dark`, value:`dark`}]
         }]
     }],
+    type: ApplicationCommandType.ChatInput,
+    /**
+     * An array of the available options for welcomer module
+     * @type {array}
+     */
+    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `userimage`, `noimage`, `theme`, `preview`],
+
+    /**
+     * Reference key to welcomer sub-modules config code.
+     * @type {object}
+     */
+    actionReference: {
+        "enable": `WELCOMER_MODULE`,
+        "disable": `WELCOMER_MODULE`,
+        "channel": `WELCOMER_CHANNEL`,
+        "text": `WELCOMER_TEXT`,
+        "role": `WELCOMER_ROLES`,
+        "image": `WELCOMER_IMAGE`,
+        "userimage": `WELCOMER_USERIMAGE`,
+        "noimage": `WELCOMER_NOIMAGE`,
+        "theme": `WELCOMER_THEME`
+    },
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,

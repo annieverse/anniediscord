@@ -10,7 +10,8 @@ module.exports = {
     description: `Output bot's latency`,
     usage: `ping`,
     permissionLevel: 0,
-    applicationCommand: false,
+    multiUser: false,
+    applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {

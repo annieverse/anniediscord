@@ -12,6 +12,7 @@ module.exports = {
         description: `Views all items in user's inventory`,
         usage: `inventory <User>(Optional)`,
         permissionLevel: 0,
+        multiUser: false,
         applicationCommand: true,
         messageCommand: true,
         options: [{
@@ -20,8 +21,8 @@ module.exports = {
             required: false,
             type: ApplicationCommandOptionType.User
         }],
-        ignoreItems: [`Cards`, `Themes`],
         type: ApplicationCommandType.ChatInput,
+        ignoreItems: [`Cards`, `Themes`],
         async execute(client, reply, message, arg, locale, prefix) {
             const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
             const userLib = new User(client, message)

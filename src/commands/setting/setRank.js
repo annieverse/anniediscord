@@ -19,25 +19,10 @@ module.exports = {
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * List of available actions for the current command
-     * @type {array}
-     */
-    actions: [`enable`, `add`, `delete`, `info`, `stack`, `reset`, `disable`],
-    /**
-     * Current instance's config code
-     * @type {string}
-     */
-    primaryConfigID: `CUSTOM_RANK_MODULE`,
-    /**
-     * Current instance's sub config code
-     * @type {string}
-     */
-    subConfigID: `RANKS_LIST`,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
         description: `Enable the role-rank system`,
@@ -84,6 +69,22 @@ module.exports = {
             required: true,
         }]
     }],
+    type: ApplicationCommandType.ChatInput,
+    /**
+     * List of available actions for the current command
+     * @type {array}
+     */
+    actions: [`enable`, `add`, `delete`, `info`, `stack`, `reset`, `disable`],
+    /**
+     * Current instance's config code
+     * @type {string}
+     */
+    primaryConfigID: `CUSTOM_RANK_MODULE`,
+    /**
+     * Current instance's sub config code
+     * @type {string}
+     */
+    subConfigID: `RANKS_LIST`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETRANK.GUIDE, {

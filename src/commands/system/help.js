@@ -9,6 +9,7 @@ module.exports = {
         description: `Displaying all the available commands. Complete with the usage.`,
         usage: `help <Category/CommandName>(Optional)`,
         permissionLevel: 0,
+		multiUser: false,
         applicationCommand: false,
 		messageCommand: true,
         commandpediaButton: `📖`,

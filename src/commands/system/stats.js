@@ -4,7 +4,7 @@ const shardName = require(`../../config/shardName`)
 const ms = require(`ms`)
 const commanifier = require(`../../utils/commanifier`)
 
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Gives info about the current bot performance.
      * @author klerikdust
@@ -15,6 +15,7 @@ module.exports = {
     description: `Gives info about the current Annie's Statistic.`,
     usage: `stats`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,

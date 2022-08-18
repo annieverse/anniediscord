@@ -1,6 +1,5 @@
 const GUI = require(`../../ui/prebuild/levelUpMessage`)
 const Confirmator = require(`../../libs/confirmator`)
-const moment = require(`moment`)
 const User = require(`../../libs/user`)
 
 const {
@@ -18,15 +17,10 @@ module.exports = {
     description: `Enable or disable level-up message module for this guild`,
     usage: `setlvlupmsg <Enable/Disable>`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * An array of the available options for welcomer module
-     * @type {array}
-     */
-    actions: [`enable`, `disable`, `channel`, `text`],
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
         description: `Enable this module.`,
@@ -58,7 +52,12 @@ module.exports = {
         description: `Show help dialoge for this command.`,
         type: ApplicationCommandOptionType.Subcommand
     }],
-
+    type: ApplicationCommandType.ChatInput,
+    /**
+     * An array of the available options for welcomer module
+     * @type {array}
+     */
+     actions: [`enable`, `disable`, `channel`, `text`],
     /**
      * Current instance's config code
      * @type {string}

@@ -5,8 +5,7 @@ const GUI = require(`../../ui/prebuild/setRelationship`)
 const stringSimilarity = require(`string-similarity`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType,
-    SlashCommandStringOption
+    ApplicationCommandOptionType
 } = require(`discord.js`)
     /**
      * Assign your friend into your relationship trees!
@@ -18,9 +17,9 @@ module.exports = {
         description: `Assign your friend into your relationship trees!`,
         usage: `setrelationship`,
         permissionLevel: 0,
+        multiUser: false,
         applicationCommand: true,
         messageCommand: true,
-        type: ApplicationCommandType.ChatInput,
         options: [{
             name: `remove`,
             description: `Action to perform.`,
@@ -54,6 +53,7 @@ module.exports = {
                 ]
             }]
         }],
+        type: ApplicationCommandType.ChatInput,
         limit: 7,
         async execute(client, reply, message, arg, locale, prefix) {
             const availableRelationships = await client.db.getAvailableRelationships()

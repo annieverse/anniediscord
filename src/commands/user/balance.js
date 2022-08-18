@@ -11,9 +11,9 @@ module.exports = {
     description: `Displaying user's current balance`,
     usage: `balance`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: `user`,
@@ -22,6 +22,7 @@ module.exports = {
             type: ApplicationCommandOptionType.User
         }
     ],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author

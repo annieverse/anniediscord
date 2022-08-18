@@ -20,16 +20,10 @@ module.exports = {
     description: `Configure the exp for your member and the server.`,
     usage: `setexp`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * An array of the available options for EXP_MODULE module
-     * @type {array}
-     */
-    actions: [`enable`, `disable`, `add`, `minus`, `reset`],
-
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
         description: `Action to perform.`,
@@ -79,6 +73,12 @@ module.exports = {
             type: ApplicationCommandOptionType.User
         }]
     }],
+    /**
+     * An array of the available options for EXP_MODULE module
+     * @type {array}
+     */
+    actions: [`enable`, `disable`, `add`, `minus`, `reset`],
+    type: ApplicationCommandType.ChatInput,
     /**
      * Thumbnail's img source
      * @type {string}

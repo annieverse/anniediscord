@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType} = require(`discord.js`)
 /**
  * AI-Generated Anime Face provided by Gwern@TWDNE
  * @author klerikdust
@@ -9,6 +9,7 @@ module.exports = {
     description: `AI-Generated Anime Face provided by Gwern@TWDNE`,
     usage: `facegen`,
     permissionLevel: 0,
+    multiUser:false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,

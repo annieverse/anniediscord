@@ -14,11 +14,11 @@ module.exports = {
     aliases: [`setcommand`, `setcommands`, `setcmd`],
     description: `Set a specific channel for Annie's command usage.`,
     usage: `setcommand <channel/info/reset>`,
-    group: `Setting`,
     permissionLevel: 3,
+    multiUser: false,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    applicationCommand: true,
     messageCommand: true,
-    configId: `COMMAND_CHANNELS`,
     options: [{
         name: `channel`,
         description: `Action to perform.`,
@@ -60,7 +60,7 @@ module.exports = {
         type: ApplicationCommandOptionType.Subcommand
     }],
     type: ApplicationCommandType.ChatInput,
-    applicationCommand: true,
+    configId: `COMMAND_CHANNELS`,
     async execute(client, reply, message, arg, locale, prefix) {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value

@@ -1,4 +1,4 @@
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
 const ms = require(`ms`)
     /**
      * Displaying your currently active buffs.
@@ -10,6 +10,7 @@ module.exports = {
     description: `Displaying your currently active buffs`,
     usage: `buff`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,

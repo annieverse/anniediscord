@@ -15,7 +15,7 @@ module.exports = {
     description: `Set your profile bio/description`,
     usage: `setbio <Message>`,
     permissionLevel: 0,
-    charactersLimit: 156,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     options: [{
@@ -26,6 +26,7 @@ module.exports = {
         max_length: 156
     }],
     type: ApplicationCommandType.ChatInput,
+    charactersLimit: 156,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify the new bio/description
         if (!arg) return reply.send(locale.SETBIO.MISSING_ARG, {

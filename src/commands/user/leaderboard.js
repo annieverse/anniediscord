@@ -12,6 +12,8 @@ module.exports = {
     description: `Displaying your server leaderboard!`,
     usage: `leaderboard`,
     permissionLevel: 0,
+    multiUser: false,
+    applicationCommand: true,
     messageCommand: true,
     options: [{
         name: `leaderboard`,
@@ -26,7 +28,6 @@ module.exports = {
             {name: `halloween`, value: `halloween`}
         ]
     }],
-    applicationCommand: true,
     type: ApplicationCommandType.ChatInput,
     /**
      * First element of the child array determines the leaderboard category name.

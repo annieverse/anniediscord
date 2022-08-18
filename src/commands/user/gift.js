@@ -15,6 +15,7 @@ module.exports = {
     description: `Send gifts to your friends! They will receive 1 reputation point for each gift you send.`,
     usage: `gift <User>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     options: [{
