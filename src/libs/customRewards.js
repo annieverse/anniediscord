@@ -3,7 +3,7 @@ const {
     ActionRowBuilder,
     SelectMenuBuilder
 } = require(`discord.js`)
-const _ = require(`./struct/struct`)
+const _ = require(`c-struct`)
 
 class rewardPackageStruct {
 

@@ -9,7 +9,7 @@ const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
 const emoji = require(`./utils/emojiFetch`)
 const loadAsset = require(`./utils/loadAsset`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
@@ -390,8 +390,8 @@ class Annie extends Discord.Client {
         if (!user) return loadAsset(`error`)
 		let url = user.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
         if (compress) {
-            return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
-                .then(data => data.buffer())
+            return superagent.get(url.replace(/\?size=2048$/g, size))
+                .then(res => res.body)
         }
         return url + size
     }

@@ -2,7 +2,7 @@ const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)
 const fs = require(`fs`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const {
     v4: uuidv4
 } = require(`uuid`)
@@ -475,8 +475,8 @@ module.exports = {
             }
         })
         const id = uuidv4()
-        const response = await fetch(url)
-        const buffer = await response.buffer()
+        const response = await superagent.get(url)
+        const buffer = response.body
         await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
         if (this.guildConfigurations.get(`WELCOMER_NOIMAGE`).value) {
             await client.db.updateGuildConfiguration({

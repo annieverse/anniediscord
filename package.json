@@ -39,6 +39,7 @@
     "axios": "^0.21.1",
     "better-sqlite3": "^7.4.5",
     "buffer-image-size": "^0.6.4",
+    "c-struct": "^0.0.5",
     "canvas": "^2.8.0",
     "canvas-constructor": "^4.1.0",
     "color": "^4.1.0",
@@ -49,14 +50,13 @@
     "fs-nextra": "^0.5.1",
     "knex": "^0.95.15",
     "node-cmd": "^5.0.0",
-    "node-fetch": "^2.6.0",
     "pg": "^8.7.1",
     "pino": "^6.11.3",
     "pixiv-api-client": "^0.25.0",
     "pixiv-img": "^1.0.0",
     "sqlite3": "^4.2.0",
     "string-similarity": "^4.0.2",
-    "superagent": "^6.1.0",
+    "superagent": "^8.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

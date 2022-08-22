@@ -3,7 +3,7 @@ const loadAsset = require(`../../utils/loadAsset`)
 const stringSimilarity = require(`string-similarity`)
 const ms = require(`ms`)
 const fs = require(`fs`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const {
     v4: uuidv4
 } = require(`uuid`)
@@ -799,8 +799,8 @@ module.exports = {
             }
         })
         const id = uuidv4()
-        const response = await fetch(url)
-        const buffer = await response.buffer()
+        const response = await superagent.get(url)
+        const buffer = response.body
         await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
             image: await loadAsset(id, `./src/assets/customShop`),

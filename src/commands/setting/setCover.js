@@ -1,7 +1,7 @@
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const stringSimilarity = require(`string-similarity`)
 const { v4: uuidv4 } = require(`uuid`)
 const commanifier = require(`../../utils/commanifier`)
@@ -87,8 +87,8 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await fetch(url)
-            const buffer = await response.buffer()
+            const response = await superagent.get(url)
+            const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,
@@ -212,8 +212,8 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await fetch(url)
-            const buffer = await response.buffer()
+            const response = await superagent.get(url)
+            const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,
