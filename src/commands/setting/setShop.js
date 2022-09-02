@@ -1,11 +1,9 @@
 const Confirmator = require(`../../libs/confirmator`)
 const loadAsset = require(`../../utils/loadAsset`)
 const stringSimilarity = require(`string-similarity`)
-const GUI = require(`../../ui/prebuild/welcomer`)
-const moment = require(`moment`)
 const ms = require(`ms`)
 const fs = require(`fs`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const {
     v4: uuidv4
 } = require(`uuid`)
@@ -28,14 +26,10 @@ module.exports = {
     description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * An array of the available options for welcomer module
-     * @type {array}
-     */
-    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
+    messageCommand: true,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
             name: `open`,
             description: `Open the shop`,
@@ -134,6 +128,12 @@ module.exports = {
                 max_length: 20
             }]
         }],
+        type: ApplicationCommandType.ChatInput,
+        /**
+         * An array of the available options for welcomer module
+         * @type {array}
+         */
+        actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,
@@ -799,8 +799,8 @@ module.exports = {
             }
         })
         const id = uuidv4()
-        const response = await fetch(url)
-        const buffer = await response.buffer()
+        const response = await superagent.get(url)
+        const buffer = response.body
         await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
             image: await loadAsset(id, `./src/assets/customShop`),

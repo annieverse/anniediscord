@@ -12,8 +12,9 @@ module.exports = {
     description: `Display user's avatar`,
     usage: `avatar <user>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
+    messageCommand: true,
     options: [
         {
             name: `user`,
@@ -22,6 +23,7 @@ module.exports = {
             type: ApplicationCommandOptionType.User
         }
     ],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         let targetUser = arg ? await (new User(client, message)).lookFor(arg) : message.author
         if (!targetUser) return reply.send(locale.USER.IS_INVALID)

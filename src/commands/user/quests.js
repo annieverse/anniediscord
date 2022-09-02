@@ -1,7 +1,7 @@
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Displaying list of quests that you can accomplish and wins artcoins! 
      * You can take quest every 2 hours.
@@ -13,9 +13,11 @@ module.exports = {
         description: `Displaying quest that you can complete and wins artcoins! the quest will be available once every 2 hours`,
         usage: `quest`,
         permissionLevel: 0,
+		multiUser: false,
         applicationCommand: true,
-        cooldown: [2, `hours`],
+		messageCommand: true,
 		type: ApplicationCommandType.ChatInput,
+        cooldown: [2, `hours`],
         async execute(client, reply, message, arg, locale) {
             const quests = await client.db.getAllQuests()
             if (!quests.length) return reply.send(locale.QUEST.EMPTY)

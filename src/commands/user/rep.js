@@ -11,15 +11,17 @@ module.exports = {
     description: `Gives a reputation point to a user. Once a day.`,
     usage: `rep <User>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Give a reputation point to the specified user`,
         required: true,
         type: ApplicationCommandOptionType.User
     }],
-    cooldown: [23, `hours`],
     type: ApplicationCommandType.ChatInput,
+    cooldown: [23, `hours`],
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         const userData = await userLib.requestMetadata(message.author, 2)

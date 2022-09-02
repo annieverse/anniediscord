@@ -9,7 +9,7 @@ const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
 const emoji = require(`./utils/emojiFetch`)
 const loadAsset = require(`./utils/loadAsset`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
@@ -168,8 +168,10 @@ class Annie extends Discord.Client {
             //process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
             try {
                 this.registerNode(new Database().connect(), `db`)
-                this.registerNode(commandsLoader({ logger: this.logger }), `commands`)
-                require(`./controllers/applicationCommands`)({ logger: this.logger, commands: this.commands })
+                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
+                this.registerNode(MESSAGE_COMMANDS, `message_commands`)
+                require(`./commands/applicationCommandsLoader`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
+                this.registerNode(APPLICATION_COMMANDS, `application_commands`)
                 this.registerNode(localizer(), `locales`)
                 require(`./controllers/events`)(this)
                 this.login(process.env.BOT_TOKEN)
@@ -388,8 +390,8 @@ class Annie extends Discord.Client {
         if (!user) return loadAsset(`error`)
 		let url = user.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
         if (compress) {
-            return fetch(url.replace(/\?size=2048$/g, size),{method:`GET`})
-                .then(data => data.buffer())
+            return superagent.get(url.replace(/\?size=2048$/g, size))
+                .then(res => res.body)
         }
         return url + size
     }

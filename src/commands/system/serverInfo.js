@@ -1,7 +1,7 @@
 const moment = require(`moment`)
 const commanifier = require(`../../utils/commanifier`)
 
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Displays info about the server
      * @author klerikdust
@@ -12,7 +12,9 @@ module.exports = {
     description: `Displays info about the server`,
     usage: `serverinfo`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {        
         if (!message.guild.available) message.guild.fetch()

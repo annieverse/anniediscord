@@ -10,9 +10,9 @@ module.exports = {
         description: `View yours or someones collected cards`,
         usage: `collection`,
         permissionLevel: 0,
-        upperLimit: 10,
+        multiUser: false,
+        messageCommand: true,
         applicationCommand: true,
-        type: ApplicationCommandType.ChatInput,
         options: [
             { 
                 name: `user`,
@@ -21,6 +21,8 @@ module.exports = {
                 type: ApplicationCommandOptionType.User
             }
         ],
+        type: ApplicationCommandType.ChatInput,
+        upperLimit: 10,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             let targetUser = arg ? await userLib.lookFor(arg) : message.author

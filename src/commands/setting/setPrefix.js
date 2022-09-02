@@ -8,8 +8,10 @@ module.exports = {
     description: `Customize prefix per guild setting`,
     usage: `setprefix <NewPrefix>`,
     permissionLevel: 3,
-    prefixImmune: true,
+    multiUser: false,
     applicationCommand: false,
+    messageCommand: true,
+    prefixImmune: true,
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETPREFIX.CURRENT_SET, {
             image: `banner_setprefix`,

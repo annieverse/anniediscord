@@ -12,6 +12,7 @@ module.exports = {
     permissionLevel: 4,
     multiUser: false,
     applicationCommand: false,
+    messageCommand: true,
     async execute(client, reply, message, arg, locale) {
         const initTime = process.hrtime()
         try {

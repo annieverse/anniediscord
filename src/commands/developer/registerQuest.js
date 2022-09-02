@@ -11,6 +11,7 @@ module.exports = {
     usage: `<name> | <rewardAmount> | <description> | <correctAnswer>`,
     permissionLevel: 4,
     applicationCommand: false,
+    messageCommand: true,
     async execute(client, reply, message, arg, locale) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(`Any quest you want me to register?`)

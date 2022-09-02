@@ -13,14 +13,16 @@ module.exports = {
     description: `Define your gender`,
     usage: `setgender <F/M>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
+    messageCommand: true,
     options: [{
         name: `gender`,
         description: `Choose between our availbe options`,
         type: ApplicationCommandOptionType.String,
         choices: [{name:`male`, value: `male`},{name:`female`, value:`female`}, {name:`neutral`, value:`neutral`}]
     }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userGender = await client.db.getUserGender(message.author.id)
         if (!arg) return reply.send(locale.SETGENDER.GUIDE, {

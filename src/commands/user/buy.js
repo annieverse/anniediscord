@@ -3,7 +3,7 @@ const Confirmator = require(`../../libs/confirmator`)
 const commanifier = require(`../../utils/commanifier`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle 
+    ApplicationCommandOptionType 
 } = require(`discord.js`)
 /**
  * Buy any purchasable items from server shop!
@@ -15,7 +15,9 @@ module.exports = {
     description: `Buy any purchasable items from server shop!`,
     usage: `buy <ItemID/ItemName>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `item`,
         description: `Item id or name you wish to buy`,

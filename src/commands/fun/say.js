@@ -9,7 +9,9 @@ module.exports = {
     description: `Talk through Annie!`,
     usage: `say <Message>`,
     permissionLevel: 3,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [
         {name: `message`, description: `Message to be said`, required: true, type: ApplicationCommandOptionType.String}

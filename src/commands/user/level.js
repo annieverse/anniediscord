@@ -11,14 +11,16 @@ module.exports = {
     description: `Display your current exp, level and rank.`,
     usage: `level <User>(Optional)`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Display the level of the specified user`,
         required: false,
         type: ApplicationCommandOptionType.User
     }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Handle if the EXP module isn't enabled in current guild
         if (!message.guild.configs.get(`EXP_MODULE`).value) return reply.send(locale.COMMAND.DISABLED, {

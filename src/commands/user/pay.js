@@ -14,10 +14,9 @@ module.exports = {
         description: `Share artcoins with your friends!`,
         usage: `pay <User>`,
         permissionLevel: 0,
+        multiUser: false,
         applicationCommand: true,
-        requirementLevel: 3,
-        tax: 0.02,
-        maxAllowed: 999999,
+        messageCommand: true,
         options:[
             {
                 name: `pay`,
@@ -42,6 +41,9 @@ module.exports = {
             type: ApplicationCommandOptionType.Subcommand
         }],
         type: ApplicationCommandType.ChatInput,
+        tax: 0.02,
+        requirementLevel: 3,
+        maxAllowed: 999999,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             const userData = await userLib.requestMetadata(message.author, 2)

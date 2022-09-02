@@ -1,4 +1,4 @@
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 
 /**
  * Parse image from url to buffer.
@@ -8,7 +8,7 @@ const fetch = require(`node-fetch`)
  */
 const urlToBuffer = (url=``, size=`512`) => {
 	if (!url) return null
-	return fetch(url.replace(/\?size=2048$/g, `?size=${size}`),{method: `GET`}).then(data => data.buffer())
+	return superagent.get(url.replace(/\?size=2048$/g, `?size=${size}`)).then(res => res.body)
 }
 
 module.exports = urlToBuffer

@@ -17,7 +17,7 @@ module.exports = function eventsController(annie) {
         //  Events below this point is only available in the production
     if (annie.dev) return
     annie.on(`messageDelete`, (message) => reqEvent(`messageDelete`)(annie, message))
-    annie.on(`messageDeleteBulk`, (messages) => reqEvent(`messageDeleteBulk`)(annie, messages))
+    annie.on(`messageDeleteBulk`, (messages, channel) => reqEvent(`messageDeleteBulk`)(annie, messages, channel))
     annie.on(`roleCreate`, (role) => reqEvent(`roleCreate`)(annie, role))
     annie.on(`roleDelete`, (role) => reqEvent(`roleDelete`)(annie, role))
     annie.on(`emojiCreate`, (emoji) => reqEvent(`emojiCreate`)(annie, emoji))

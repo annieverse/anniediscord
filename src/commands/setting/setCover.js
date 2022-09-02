@@ -1,7 +1,7 @@
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)
-const fetch = require(`node-fetch`)
+const superagent = require(`superagent`)
 const stringSimilarity = require(`string-similarity`)
 const { v4: uuidv4 } = require(`uuid`)
 const commanifier = require(`../../utils/commanifier`)
@@ -21,9 +21,9 @@ module.exports = {
         description: `Setting up your own custom background! upload or share the image link you want to use.`,
         usage: `setcover <Attachment/URL>`,
         permissionLevel: 0,
-        uploadCost: 1000,
+        multiUser: false,
         applicationCommand: true,
-        type: ApplicationCommandType.ChatInput,
+        messageCommand: true,
         options: [{
             name: `attachment`,
             description: `upload a custom image via attachment.`,
@@ -59,6 +59,8 @@ module.exports = {
             description: `reset the background to the default one.`,
             type: ApplicationCommandOptionType.Subcommand
         }],
+        type: ApplicationCommandType.ChatInput,        
+        uploadCost: 1000,
         async execute(client, reply, message, arg, locale, prefix) {
             const userData = await (new User(client, message)).requestMetadata(message.author, 2)
                 //  Handle if user doesn't specify any arg
@@ -85,8 +87,8 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await fetch(url)
-            const buffer = await response.buffer()
+            const response = await superagent.get(url)
+            const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,
@@ -210,8 +212,8 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await fetch(url)
-            const buffer = await response.buffer()
+            const response = await superagent.get(url)
+            const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,

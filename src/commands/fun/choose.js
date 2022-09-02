@@ -1,4 +1,3 @@
-const Command = require(`../../libs/commands`)
 const random = require(`../../utils/random`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
     /**
@@ -13,6 +12,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `choices`,
         description: `Please give me some options to pick from, seperated by , or "or".`,

@@ -7,13 +7,19 @@ const fs = require(`fs`)
  * @return {void}
  */
 module.exports = function commandsLoader({ path = `./src/commands/` }) {
-    const commands = new Collection()
+    const MESSAGE_COMMANDS = new Collection()
+    const APPLICATION_COMMANDS = new Collection()
         /**
          * Recursively pull available categories in command's root directory
          * @example user/system/social/shop/etc
          */
-    let totalFiles = 0
     let directories = fs.readdirSync(path).filter(file => !file.includes(`.`))
+    function isApplicationCommand(command) {
+        return command.applicationCommand
+    }
+    function isMessageCommand(command) {
+        return command.messageCommand
+    }
     for (const index in directories) {
         const dir = directories[index]
             /**
@@ -29,11 +35,11 @@ module.exports = function commandsLoader({ path = `./src/commands/` }) {
                 //  Skip command with deprecated structure
             if (metadata.includes(`help`)) continue
                 //  Group labeling
-            src.group = dir
-            commands.set(src.name, src)
-            totalFiles++
+                src.group = dir
+            if (isApplicationCommand(src)) APPLICATION_COMMANDS.set(src.name, src)
+            if (isMessageCommand(src)) MESSAGE_COMMANDS.set(src.name, src)
         }
     }
 
-    return commands
+    return {MESSAGE_COMMANDS, APPLICATION_COMMANDS}
 }

@@ -15,10 +15,9 @@ module.exports = {
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
 	permissionLevel: 0,
-	rewardAmount: 250,
-	bonusAmount: 10,
+    multiUser: false,
 	applicationCommand: true,
-	cooldown: [23, `hours`],
+    messageCommand: true,
 	options: [{
 		name: `user`,
 		description: `User you wish to claim daily of`,
@@ -26,6 +25,9 @@ module.exports = {
 		type: ApplicationCommandOptionType.User
 	}],
 	type: ApplicationCommandType.ChatInput,
+	cooldown: [23, `hours`],
+	rewardAmount: 250,
+	bonusAmount: 10,
 	async execute(client, reply, message, arg, locale) {
 		await this.claimDaily(client, message, reply, locale, {
 			arg: arg

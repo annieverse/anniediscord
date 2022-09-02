@@ -2,7 +2,6 @@ const User = require(`../../libs/user`)
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/gacha`)
 const closestBelow = require(`../../utils/closestBelow`)
-const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
 const random = require(`../../utils/random`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
@@ -16,7 +15,9 @@ module.exports = {
     description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
     usage: `gacha <Amount>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     amountToOpenRanges: [1, 10],
     options: [{
         name: `amount`,

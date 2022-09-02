@@ -11,6 +11,7 @@ module.exports = {
     permissionLevel: 4,
     multiUser: false,
     applicationCommand: false,
+    messageCommand: true,
     async execute(client, reply, message, arg, locale) {
         //	Return if user doesn't specify arguments.
         if (!arg) return reply.send(locale.DBKITS.AUTHORIZED, {

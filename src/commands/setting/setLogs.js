@@ -1,4 +1,3 @@
-const Command = require(`../../libs/commands`)
 const moment = require(`moment`)
 const {
     ApplicationCommandType,
@@ -15,24 +14,10 @@ module.exports = {
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,
     permissionLevel: 3,
-    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
-    /**
-     * List of available actions for the current command
-     * @type {array}
-     */
-    actions: [`enable`, `disable`, `channel`],
-    /**
-     * Current instance's config code
-     * @type {string}
-     */
-    primaryConfigID: `LOGS_MODULE`,
-    /**
-     * Current instance's sub-config code
-     * @type {string}
-     */
-    subConfigID: `LOGS_CHANNEL`,
+    messageCommand: true,
+    default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
         description: `Enable this module.`,
@@ -52,6 +37,22 @@ module.exports = {
             type: ApplicationCommandOptionType.Channel
         }]
     }],
+    type: ApplicationCommandType.ChatInput,
+    /**
+     * List of available actions for the current command
+     * @type {array}
+     */
+    actions: [`enable`, `disable`, `channel`],
+    /**
+     * Current instance's config code
+     * @type {string}
+     */
+    primaryConfigID: `LOGS_MODULE`,
+    /**
+     * Current instance's sub-config code
+     * @type {string}
+     */
+    subConfigID: `LOGS_CHANNEL`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return reply.send(locale.SETLOGS.GUIDE, {

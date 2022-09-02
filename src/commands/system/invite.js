@@ -1,5 +1,4 @@
-const Command = require(`../../libs/commands`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Generates Server & Bot invitation link
      * @author klerikdust
@@ -10,9 +9,11 @@ module.exports = {
     description: `Generates Support Server & Bot Invitation link`,
     usage: `invite`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
-    permmissionInteger: 268823638,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
+    permmissionInteger: 268823638,
     /**
      * Client/Bot invite generator.
      * @param {Client} client Current client instancee.

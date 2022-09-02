@@ -11,7 +11,9 @@ module.exports = {
     description: `Displaying user's profile card!`,
     usage: `profile <User>(Optional)`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Display the profile of the specified user`,

@@ -1,5 +1,4 @@
-const Command = require(`../../libs/commands`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * List of servers that supporting the development of Annie.
      * @author klerikdust
@@ -10,7 +9,9 @@ module.exports = {
         description: `List of servers that supporting the development of Annie.`,
         usage: `affiliate`,
         permissionLevel: 0,
+        multiUser: false,
         applicationCommand: true,
+        messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
             const affiliateList = await client.db.getAffiliates()

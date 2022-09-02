@@ -11,7 +11,9 @@ module.exports = {
     description: `Displays a random gif of a pat.`,
     usage: `pat <User>(Optional)`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     options: [{
         name: `user`,
         description: `Any user you would like to give a pat?`,

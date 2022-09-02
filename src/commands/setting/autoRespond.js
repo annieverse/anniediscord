@@ -15,9 +15,26 @@ module.exports = {
     aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
     description: `Create a set of autoresponder!`,
     usage: `ar`,
-    applicationCommand: true,
     permissionLevel: 2,
+    multiUser: false,
+    applicationCommand: true,
+    messageCommand: true,
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
+    options: [{
+        name: `action`,
+        description: `Action to perform.`,
+        required: true,
+        type: ApplicationCommandOptionType.String,
+        choices: [
+            {name:`enable`, value:`enable`}, 
+            {name:`add`, value:`add`}, 
+            {name:`delete`, value:`delete`}, 
+            {name:`info`, value:`info`}, 
+            {name:`reset`, value:`reset`}, 
+            {name:`disable`, value:`disable`}
+        ]
+    }],
+    type: ApplicationCommandType.ChatInput,
     /**
      * Maximum characters for the trigger.
      * @type {number}
@@ -35,22 +52,6 @@ module.exports = {
      * @type {array}
      */
     availableActions: [`enable`, `add`, `delete`, `info`, `reset`, `disable`],
-
-    options: [{
-        name: `action`,
-        description: `Action to perform.`,
-        required: true,
-        type: ApplicationCommandOptionType.String,
-        choices: [
-            {name:`enable`, value:`enable`}, 
-            {name:`add`, value:`add`}, 
-            {name:`delete`, value:`delete`}, 
-            {name:`info`, value:`info`}, 
-            {name:`reset`, value:`reset`}, 
-            {name:`disable`, value:`disable`}
-        ]
-    }],
-    type: ApplicationCommandType.ChatInput,
     /**
      * Primary ID for current module
      * @type {string}

@@ -1,5 +1,5 @@
 const commanifier = require(`../../utils/commanifier`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
     /**
      * Output bot's latency
      * @author klerikdust
@@ -10,7 +10,9 @@ module.exports = {
     description: `Output bot's latency`,
     usage: `ping`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         return reply.send(locale.REQUEST_PING, {

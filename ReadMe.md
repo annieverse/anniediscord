@@ -1,7 +1,6 @@
 # Say hello to **Annie.**
 
-![UptimeRobot](https://img.shields.io/uptimerobot/ratio/7/m785358077-5e5319e608b670ed94da36d6?style=flat-square)
-![Codacy](https://img.shields.io/codacy/grade/d60d5579018348af8fc310a9e5dffe36.svg?logo=Codacy&style=flat-square)
+![UptimeRobot](https://img.shields.io/uptimerobot/ratio/m792603658-7e50ae6bb7f048a0435792d8)
 
 ![annie](https://i.ibb.co/YpzBxS5/anniebanner.png)
 

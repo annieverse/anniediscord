@@ -13,8 +13,9 @@ module.exports = {
     description: `Switch your profile theme to Light or Dark.`,
     usage: `theme <Light/Dark>`,
     permissionLevel: 0,
+    multiUser: false,
     applicationCommand: true,
-    type: ApplicationCommandType.ChatInput,
+    messageCommand: true,
     options: [{
         name: `theme`,
         description: `choose your theme`,
@@ -22,6 +23,7 @@ module.exports = {
         required: true,
         choices: [{name: `light`, value: `light`}, {name: `dark`, value: `dark`}]
     }],
+    type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
