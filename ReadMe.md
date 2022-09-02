@@ -33,7 +33,7 @@ Say no more mainstream quest system. Annie provided you with her art-centric que
 * **Constantly Developed.**  
 We have lot of things in our roadmap that we want to implement in the future version of Annie. We've been constantly updating it to enhance your *annie-experience* as great as possible!
 
-Wants to get in touch or sharing feedback to improve Annie? have a visit to her [Support Server](https://discord.gg/7nDes9P)!
+Wants to get in touch or sharing feedback to improve Annie? have a visit to her [Support Server](https://discord.gg/HjPHCyG346)!
 
 ## Useful Links
 
