@@ -420,5 +420,4 @@ module.exports = new Annie([Discord.GatewayIntentBits.Guilds,
     Discord.GatewayIntentBits.GuildMessages, 
     Discord.GatewayIntentBits.MessageContent,
     Discord.GatewayIntentBits.GuildMembers,
-    Discord.GatewayIntentBits.GuildMessageReactions,
-    Discord.GatewayIntentBits.GuildPresences])
+    Discord.GatewayIntentBits.GuildMessageReactions])
