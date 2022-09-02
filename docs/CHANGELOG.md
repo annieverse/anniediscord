@@ -1,3 +1,10 @@
+## [7.23.2](https://github.com/klerikdust/anniediscord/compare/v7.23.1...v7.23.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* **events:** deletion events record own bot ([9dc5339](https://github.com/klerikdust/anniediscord/commit/9dc5339513c78c3364a343ef9fb93d8748f9c5fe))
+
 ## [7.23.1](https://github.com/klerikdust/anniediscord/compare/v7.23.0...v7.23.1) (2022-08-10)
 
 
