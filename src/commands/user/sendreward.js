@@ -11,7 +11,7 @@ module.exports = {
     usage: `sendreward <user>`,
     permissionLevel: 0,
     multiUser: false,
-    applicationCommand: true,
+    applicationCommand: false,
     messageCommand: false,
     default_member_permissions: PermissionFlagsBits.ManageEvents.toString(),
     options: [{
