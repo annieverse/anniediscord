@@ -39,4 +39,3 @@ Wants to get in touch or sharing feedback to improve Annie? have a visit to her 
 
 * [Invite Annie to your server](https://discord.com/api/oauth2/authorize?client_id=501461775821176832&permissions=140056587334&scope=bot%20applications.commands)
 * [Website](https://www.annie.gg)
-
