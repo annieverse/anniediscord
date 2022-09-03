@@ -15,10 +15,12 @@ module.exports = {
     messageCommand: false,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        reply.send(locale.DONATE)
+        // reply.send(locale.DONATE)
+        reply.send(`Please ask in our support server how you can support us.`)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        reply.send(locale.DONATE)
+        // reply.send(locale.DONATE)
+        reply.send(`Please ask in our support server how you can support us.`)
     }
 
 }

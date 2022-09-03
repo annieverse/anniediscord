@@ -1,3 +1,55 @@
+# [9.0.0](https://github.com/klerikdust/anniediscord/compare/v8.0.0...v9.0.0) (2022-09-03)
+
+
+* Merge pull request #717 from klerikdust/Moore2021-patch-1 ([5bd5af7](https://github.com/klerikdust/anniediscord/commit/5bd5af792beec31ddf099001f82d3d244686ae0c)), closes [#717](https://github.com/klerikdust/anniediscord/issues/717)
+
+
+### BREAKING CHANGES
+
+* Discord.js build v13 to v14
+
+# [8.0.0](https://github.com/klerikdust/anniediscord/compare/v7.23.4...v8.0.0) (2022-09-03)
+
+
+* Merge pull request #715 from klerikdust/Moore2021-patch-1 ([14404fa](https://github.com/klerikdust/anniediscord/commit/14404fa346a045864873f3ea8239cb371cd7266f)), closes [#715](https://github.com/klerikdust/anniediscord/issues/715)
+
+
+### BREAKING CHANGES
+
+* version update fix
+
+## [7.23.4](https://github.com/klerikdust/anniediscord/compare/v7.23.3...v7.23.4) (2022-09-03)
+
+
+### Bug Fixes
+
+* **cache:** user unable to use commands ([6bb28e9](https://github.com/klerikdust/anniediscord/commit/6bb28e9575f5535e29008d479cf0b10f55133723))
+
+## [7.23.3](https://github.com/klerikdust/anniediscord/compare/v7.23.2...v7.23.3) (2022-09-03)
+
+
+### Bug Fixes
+
+* **client id:** command loader ([3066587](https://github.com/klerikdust/anniediscord/commit/3066587f7c96e659a716aba28ec6a63f503287f8))
+
+## [7.23.2](https://github.com/klerikdust/anniediscord/compare/v7.23.1...v7.23.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* **events:** deletion events record own bot ([9dc5339](https://github.com/klerikdust/anniediscord/commit/9dc5339513c78c3364a343ef9fb93d8748f9c5fe))
+
+## [7.23.1](https://github.com/klerikdust/anniediscord/compare/v7.23.0...v7.23.1) (2022-08-10)
+
+
+### Bug Fixes
+
+* **applicationCommand:** use prod id ([204fdbd](https://github.com/klerikdust/anniediscord/commit/204fdbd221162f6edb67e31c69901fe1ed872b36))
+* **events:** guildMemberAdd ([d1167d8](https://github.com/klerikdust/anniediscord/commit/d1167d8de7490dd29b5784b5dd269f00ab3f1202))
+* **pixiv:** messages unable to send ([558e713](https://github.com/klerikdust/anniediscord/commit/558e713d4e0092d0bd458b918fab5e57d2b58bbc))
+* **presence:** wrong reference used ([616d11d](https://github.com/klerikdust/anniediscord/commit/616d11df55aa288d7df1b9d5f2b1bd245f99cd27))
+* **setwelcomer:** not able to update setting ([319352e](https://github.com/klerikdust/anniediscord/commit/319352e31b495df02beb219e65f6dba55943f15b))
+
 # [8.1.4](https://github.com/klerikdust/anniediscord/compare/v7.22.4...v7.23.0) (2022-07-03)
 
 
