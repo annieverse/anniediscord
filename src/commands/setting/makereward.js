@@ -21,7 +21,7 @@ module.exports = {
     usage: `makereward`,
     permissionLevel: 0,
     multiUser: false,
-    applicationCommand: true,
+    applicationCommand: false,
     messageCommand: false,
     options: [{
         name: `create`,
