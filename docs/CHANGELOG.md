@@ -1,3 +1,13 @@
+# [8.0.0](https://github.com/klerikdust/anniediscord/compare/v7.23.4...v8.0.0) (2022-09-03)
+
+
+* Merge pull request #715 from klerikdust/Moore2021-patch-1 ([14404fa](https://github.com/klerikdust/anniediscord/commit/14404fa346a045864873f3ea8239cb371cd7266f)), closes [#715](https://github.com/klerikdust/anniediscord/issues/715)
+
+
+### BREAKING CHANGES
+
+* version update fix
+
 ## [7.23.4](https://github.com/klerikdust/anniediscord/compare/v7.23.3...v7.23.4) (2022-09-03)
 
 
