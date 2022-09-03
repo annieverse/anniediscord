@@ -1,3 +1,10 @@
+## [7.23.4](https://github.com/klerikdust/anniediscord/compare/v7.23.3...v7.23.4) (2022-09-03)
+
+
+### Bug Fixes
+
+* **cache:** user unable to use commands ([6bb28e9](https://github.com/klerikdust/anniediscord/commit/6bb28e9575f5535e29008d479cf0b10f55133723))
+
 ## [7.23.3](https://github.com/klerikdust/anniediscord/compare/v7.23.2...v7.23.3) (2022-09-03)
 
 
