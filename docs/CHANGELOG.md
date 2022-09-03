@@ -1,3 +1,10 @@
+## [7.23.3](https://github.com/klerikdust/anniediscord/compare/v7.23.2...v7.23.3) (2022-09-03)
+
+
+### Bug Fixes
+
+* **client id:** command loader ([3066587](https://github.com/klerikdust/anniediscord/commit/3066587f7c96e659a716aba28ec6a63f503287f8))
+
 ## [7.23.2](https://github.com/klerikdust/anniediscord/compare/v7.23.1...v7.23.2) (2022-09-02)
 
 
