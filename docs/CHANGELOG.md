@@ -1,3 +1,13 @@
+# [9.0.0](https://github.com/klerikdust/anniediscord/compare/v8.0.0...v9.0.0) (2022-09-03)
+
+
+* Merge pull request #717 from klerikdust/Moore2021-patch-1 ([5bd5af7](https://github.com/klerikdust/anniediscord/commit/5bd5af792beec31ddf099001f82d3d244686ae0c)), closes [#717](https://github.com/klerikdust/anniediscord/issues/717)
+
+
+### BREAKING CHANGES
+
+* Discord.js build v13 to v14
+
 # [8.0.0](https://github.com/klerikdust/anniediscord/compare/v7.23.4...v8.0.0) (2022-09-03)
 
 
