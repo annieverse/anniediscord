@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/klerikdust/anniediscord/compare/v9.0.0...v9.0.1) (2022-09-04)
+
+
+### Bug Fixes
+
+* **rep:** user identifying error ([8c3a024](https://github.com/klerikdust/anniediscord/commit/8c3a0248f6bb6c8ecbcdea3cc2d22330b1ea9511))
+
 # [9.0.0](https://github.com/klerikdust/anniediscord/compare/v8.0.0...v9.0.0) (2022-09-03)
 
 
