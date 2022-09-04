@@ -1,3 +1,10 @@
+## [9.0.3](https://github.com/klerikdust/anniediscord/compare/v9.0.2...v9.0.3) (2022-09-04)
+
+
+### Bug Fixes
+
+* **quests:** answer not being recognized due to sentence case ([076902f](https://github.com/klerikdust/anniediscord/commit/076902f299e0374696d0cf2aa08c4c05f2fe62b2))
+
 ## [9.0.2](https://github.com/klerikdust/anniediscord/compare/v9.0.1...v9.0.2) (2022-09-04)
 
 
