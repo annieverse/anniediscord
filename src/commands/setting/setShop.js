@@ -14,7 +14,7 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle
 } = require(`discord.js`)
 /**
  * Create, restock & sell items for your server members!
@@ -31,109 +31,109 @@ module.exports = {
     messageCommand: true,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
-            name: `open`,
-            description: `Open the shop`,
-            type: ApplicationCommandOptionType.Subcommand,
-        }, {
-            name: `close`,
-            description: `Close the shop`,
-            type: ApplicationCommandOptionType.Subcommand,
-        }, {
-            name: `text`,
+        name: `open`,
+        description: `Open the shop`,
+        type: ApplicationCommandOptionType.Subcommand,
+    }, {
+        name: `close`,
+        description: `Close the shop`,
+        type: ApplicationCommandOptionType.Subcommand,
+    }, {
+        name: `text`,
+        description: `Set the shop's text`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `set`,
             description: `Set the shop's text`,
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }]
+    }, {
+        name: `image`,
+        description: `Set the shop's image`,
+        type: ApplicationCommandOptionType.SubcommandGroup,
+        options: [{
+            name: `attachment`,
+            description: `Set the shop's image`,
             type: ApplicationCommandOptionType.Subcommand,
             options: [{
                 name: `set`,
-                description: `Set the shop's text`,
+                description: `Set the shop's image`,
                 required: true,
-                type: ApplicationCommandOptionType.String
+                type: ApplicationCommandOptionType.Attachment
             }]
         }, {
-            name: `image`,
+            name: `url`,
             description: `Set the shop's image`,
-            type: ApplicationCommandOptionType.SubcommandGroup,
-            options: [{
-                name: `attachment`,
-                description: `Set the shop's image`,
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [{
-                    name: `set`,
-                    description: `Set the shop's image`,
-                    required: true,
-                    type: ApplicationCommandOptionType.Attachment
-                }]
-            }, {
-                name: `url`,
-                description: `Set the shop's image`,
-                type: ApplicationCommandOptionType.Subcommand,
-                options: [{
-                    name: `set`,
-                    description: `Set the shop's image`,
-                    required: true,
-                    type: ApplicationCommandOptionType.String
-                }]
-            }]
-        }, {
-            name: `delete`,
-            description: `Delete an item`,
             type: ApplicationCommandOptionType.Subcommand,
             options: [{
-                name: `item`,
-                description: `Delete an item`,
+                name: `set`,
+                description: `Set the shop's image`,
                 required: true,
                 type: ApplicationCommandOptionType.String
             }]
-        }, {
-            name: `add`,
+        }]
+    }, {
+        name: `delete`,
+        description: `Delete an item`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `item`,
+            description: `Delete an item`,
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }]
+    }, {
+        name: `add`,
+        description: `Add an item`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `item_name`,
             description: `Add an item`,
-            type: ApplicationCommandOptionType.Subcommand,
-            options: [{
-                name: `item_name`,
-                description: `Add an item`,
-                required: true,
-                type: ApplicationCommandOptionType.String,
-                max_length: 20
-            }, {
-                name: `item_price`,
-                description: `Add an item`,
-                required: true,
-                type: ApplicationCommandOptionType.Integer
-            }, {
-                name: `item_description`,
-                description: `Add an item`,
-                required: true,
-                type: ApplicationCommandOptionType.String,
-                max_length: 120
-            }, {
-                name: `tradeable`,
-                description: `Add an item`,
-                required: true,
-                type: ApplicationCommandOptionType.Boolean
-            }, {
-                name: `item_use_message`,
-                description: `Add an item`,
-                required: true,
-                type: ApplicationCommandOptionType.String,
-                max_length: 120
-            }]
-        },{
-            name: `edit`,
+            required: true,
+            type: ApplicationCommandOptionType.String,
+            max_length: 20
+        }, {
+            name: `item_price`,
+            description: `Add an item`,
+            required: true,
+            type: ApplicationCommandOptionType.Integer
+        }, {
+            name: `item_description`,
+            description: `Add an item`,
+            required: true,
+            type: ApplicationCommandOptionType.String,
+            max_length: 120
+        }, {
+            name: `tradeable`,
+            description: `Add an item`,
+            required: true,
+            type: ApplicationCommandOptionType.Boolean
+        }, {
+            name: `item_use_message`,
+            description: `{{user}} to mention a user & {{item}} to mention the item or type ~ to specify any custom message.`,
+            required: true,
+            type: ApplicationCommandOptionType.String,
+            max_length: 120
+        }]
+    }, {
+        name: `edit`,
+        description: `Edit an item`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `item`,
             description: `Edit an item`,
-            type: ApplicationCommandOptionType.Subcommand,
-            options: [{
-                name: `item`,
-                description: `Edit an item`,
-                required: true,
-                type: ApplicationCommandOptionType.String,
-                max_length: 20
-            }]
-        }],
-        type: ApplicationCommandType.ChatInput,
-        /**
-         * An array of the available options for welcomer module
-         * @type {array}
-         */
-        actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
+            required: true,
+            type: ApplicationCommandOptionType.String,
+            max_length: 20
+        }]
+    }],
+    type: ApplicationCommandType.ChatInput,
+    /**
+     * An array of the available options for welcomer module
+     * @type {array}
+     */
+    actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,
@@ -190,20 +190,20 @@ module.exports = {
         //  Run action
         return this[args[0].toLowerCase()](client, reply, interaction, null, locale, `/`, args)
     },
-    async addprefill(client, reply, message, arg, locale, prefix, args) {
+    async addprefill(client, reply, interaction, arg, locale, prefix, args) {
         let buffs = []
         let metadata = {
             //  Common & custom type
             rarityId: 1,
             typeId: 13,
-            ownedByGuildId: message.guild.id,
+            ownedByGuildId: interaction.guild.id,
             usable: 1
         }
-        const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.member.id}`
-        if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
+        // if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
-        
+
         let item_name = args[1]
         let item_price = args[2]
         let item_description = args[3]
@@ -222,187 +222,246 @@ module.exports = {
             }
             return name
         }
-        if (!await checkItemName(client, message, item_name)) return
-        metadata.name = await checkItemName(client, message, item_name)
+        if (!await checkItemName(client, interaction, item_name)) return
+        metadata.name = await checkItemName(client, interaction, item_name)
         metadata.description = item_description
         metadata.price = item_price
         metadata.tradeable = tradeable
         metadata.useMessage = item_use_message
-        let response = await reply.send(`\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.useMessage === `~` ? `default` : metadata.useMessage}`,{
-            topNotch: locale.SETSHOP.ADD_STOCK,
-            fetchReply: true,
-            footer: `Type cancel to close this registration.`
-        })
-        
-        const pool = message.channel.createMessageCollector({
-            filter: m => m.author.id === message.member.id,
-            time: 60000 * 3
-        }) // 3 minutes timeout
-        let phase = 0
+
+        const stockButtonId = sessionId + `addprefillstockbutton`
+        const cancelButtonId = sessionId + `addprefillbuffsbutton`
+        const buffsButtonId = sessionId + `cancelitembutton`
+        const finishedButtonId = sessionId + `finisheditembutton`
+        const stockModalId = `shopaddpreefillstockmodal`
+        const buffsModalId = `shopaddpreefillbuffs`
         let completed = false
-        const joinFunction = (newMessage) => {
-            return reply.send(response.embeds[0].description + newMessage, {
-                footer: `Type cancel to close this registration.`,
-                raw: true
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new ButtonBuilder()
+                    .setCustomId(stockButtonId)
+                    .setLabel(`Stock`)
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                    .setCustomId(buffsButtonId)
+                    .setLabel(`Buffs?`)
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                    .setCustomId(finishedButtonId)
+                    .setLabel(`Finished`)
+                    .setStyle(ButtonStyle.Primary),
+                new ButtonBuilder()
+                    .setCustomId(cancelButtonId)
+                    .setLabel(`Cancel`)
+                    .setStyle(ButtonStyle.Danger)
+            )
+        let responseMessageContent = {
+            instructions: `Please click the button of the value you would like to enter`,
+            buffs: `**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Once in the popup after hitting the \`buffs?\` button do one of the following\n♡ Type **\`addrole <roles>\`** to get specified roles once used.\n♡ Type **\`removerole <roles>\`** to remove specified roles from user once used.\n♡ Type **\`additem <amount> <itemName/itemId>\`** to receive specified items once used.\n♡ Type **\`removeitem <amount> <itemName/itemId>\`** to remove specified items from user's inventory.\n♡ Type **\`expboost <percentage> <duration>\`** To give exp boost to the user for specified amount of time.\n♡ Type **\`acboost <percentage> <duration>\`** to give artcoins boost to the user for specified amount of time.`,
+            start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.useMessage === `~` ? `default` : metadata.useMessage}`,
+        }
+        
+        let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`)+Object.values(responseMessageContent).slice(-1), {
+            fetchReply: true,
+            footer: `Hitting finish before entering stock will defualt stock to unlimited, if not set already and buffs to no buffs added, if not set already.`,
+            components: row
+        })
+        const messageComponentFilter = i => (i.customId === stockButtonId || i.customId === buffsButtonId || i.customId === cancelButtonId || i.customId === finishedButtonId) && i.user.id === interaction.member.user.id
+        const buttonCollector = response.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
+        let buffOptions = []
+
+        /**
+         * Update message as choice are made
+         * @returns {Promise}
+         */
+        async function joinFunction() {
+            let finalizedResponseMessageContent = Object.values(responseMessageContent).join(`\n`)
+            let message = await interaction.fetchReply()
+            return await message.edit({
+                embeds: [await reply.send(finalizedResponseMessageContent, { raw: true })]
             })
         }
-        pool.on(`collect`, async m => {
-            let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
-            if (input === `cancel`) return pool.stop()
-            m.delete()
-            switch (phase) {
-                //  Stocks
-                case 0:
-                    if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
-                        deleteIn: 5, followUp: true
-                    })
-                    metadata.stocks = input
-                    response.edit({
-                        content: locale.SETSHOP.ADD_BUFF,
-                        embeds: [await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`)]
-                    })
-                    phase++
-                    break
 
-                    //  Buffs upon use
-                case 1:
-                    if (input.startsWith(`done`)) {
-                        phase = -1
-                    } else {
-                        const params = m.content.split(` `)
-                        if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
-                            deleteIn: 5,
-                            followUp: true
-                        })
-                        //  Role update buff
-                        const clientRole = message.guild.me.roles.highest
-                        if ([`addrole`, `removerole`].includes(params[0])) {
-                            let res = []
-                            let roleNames = ``
-                            const roles = params.slice(1)
-                            if (!roles.length) return reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
-                                deleteIn: 5,
-                                followUp: true
-                            })
-                            for (let i = 0; i < roles.length; i++) {
-                                const ref = roles[i]
-                                const role = findRole(ref, message.guild)
-                                if (!role) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
-                                    deleteIn: 5, followUp: true
-                                })
-                                if (role.position >= clientRole.position) return reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
-                                    deleteIn: 5, followUp: true
-                                })
-                                res.push(role.id)
-                                roleNames += role.name + ((i + 1) >= roles.length ? ` ` : `, `)
-                            }
-                            const isRoleAddition = params[0] === `addrole`
-                            buffs.push({
-                                type: isRoleAddition ? 1 : 2,
-                                params: res
-                            })
-                            await response.edit({
-                                content: locale.SETSHOP.ADD_BUFF,
-                                embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${isRoleAddition ? `receiving` : `removed`} ${roleNames} roles`)]
-                            })
-                        }
-                        //  Inventory update buff
-                        if ([`additem`, `removeitem`].includes(params[0])) {
-                            const amount = trueInt(params[1])
-                            if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
-                                deleteIn: 5
-                            })
-                            const targetItem = await client.db.getItem(params.slice(2).join(` `))
-                            if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
-                                deleteIn: 5
-                            })
-                            const isItemAddition = params[0] === `additem`
-                            buffs.push({
-                                type: isItemAddition ? 3 : 4,
-                                params: {
-                                    itemId: targetItem.item_id,
-                                    amount: amount
-                                }
-                            })
-                            await response.edit({
-                                content: locale.SETSHOP.ADD_BUFF,
-                                embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${isItemAddition ? `receiving` : `removed`} ${commanifier(amount)} pcs of '${targetItem.name}'`)]
-                            })
-                        }
-                        //  EXP/Artcoins boost buff
-                        if ([`expboost`, `acboost`].includes(params[0])) {
-                            const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
-                            if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
-                                deleteIn: 5
-                            })
-                            const duration = ms(params.slice(2).join(` `))
-                            if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
-                                deleteIn: 5
-                            })
-                            const isExpBuff = params[0] === `expboost`
-                            buffs.push({
-                                type: isExpBuff ? 5 : 6,
-                                params: {
-                                    name: metadata.name,
-                                    multiplier: multiplier / 100,
-                                    duration: duration
-                                }
-                            })
-                            await response.edit({
-                                content: locale.SETSHOP.ADD_BUFF,
-                                embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, {long:true})}`)]
-                            })
-                        }
-                        //  Limit allowed buffs per item
-                        if (buffs.length >= 3) {
-                            phase = -1
-                        } else {
-                            break
-                        }
-                    }
-
-                    //  Finalization
-                    case -1:
-                        const confirmation = await reply.send(response.embeds[0].description, {
-                            header: locale.SETSHOP.ADD_CONFIRMATION,
-                            thumbnail: message.member.displayAvatarURL(),
-                            followUp: true
-                        })
-                        response.delete()
-                        
-                        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
-                        await c.setup(m.member.id, confirmation)
-                        c.onAccept(async () => {
-                            completed = true
-                            pool.stop()
-                            //  Register item
-                            await client.db.registerItem(metadata)
-                            const item = await client.db.getItem(metadata.name, message.guild.id)
-                            //  Register to the shop
-                            client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
-                            //  Register effect if there's any
-                            if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
-                            return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
-                                status: `success`,
-                                socket: {
-                                    prefix: prefix,
-                                    emoji: await client.getEmoji(`789212493096026143`)
-                                },
-                                followUp: true
-                            })
-                        })
-                    default:
-                        break
-            }
-        })
-        pool.on(`end`, () => {
+        buttonCollector.on(`end`, async (collected, reason) => {
             client.db.redis.del(sessionId)
             if (completed) return
-            response.delete()
-            reply.send(`Shop register interface has been closed.`, {
-                simplified: true,
-                followUp: true
-            })
+            if (reason != `shop adding item has been cancelled` && reason != `time`) return
+            const message = await interaction.fetchReply()
+            try {
+                message.edit({
+                    content: `Shop register interface has been closed.`, components: [], embeds: []
+                })
+            } catch (error) {
+                client.logger.error(`[setShop.js] ${error.stack}`)
+            }
+        })
+        buttonCollector.on(`collect`, async i => {
+            // Handle if user asked to cancel the quest
+            if (i.customId === cancelButtonId) {
+                i.deferUpdate()
+                return buttonCollector.stop(`shop adding item has been cancelled`)
+            }
+            if (i.customId === finishedButtonId) {
+                completed = true
+                if (!Object.prototype.hasOwnProperty.call(metadata, `stocks`)) metadata[`stocks`] = `~`
+                //  Register item
+                await client.db.registerItem(metadata)
+                const item = await client.db.getItem(metadata.name, interaction.guild.id)
+                //  Register to the shop
+                client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                //  Register effect if there's any
+                if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
+                const message = await interaction.fetchReply()
+                message.edit({
+                    embeds: [await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
+                        raw: true,
+                        status: `success`,
+                        socket: {
+                            prefix: prefix,
+                            emoji: await client.getEmoji(`789212493096026143`)
+                        }
+                    })],
+                    components: []
+                })
+
+                return buttonCollector.stop()
+            }
+            const modalStock = new ModalBuilder()
+                .setCustomId(stockModalId)
+                .setTitle(`Stock`)
+            const stockAnswerInput = new TextInputBuilder()
+                .setCustomId(`stockAnswerInput`)
+                // The label is the prompt the user sees for this input
+                .setLabel(`**How many stocks will it be available?**`)
+                // Short means only a single line of text
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+                .setPlaceholder(`Type **\`~\`** for unlimited stocks.`)
+            const modalBuffs = new ModalBuilder()
+                .setCustomId(buffsModalId)
+                .setTitle(`Stock`)
+            const buffsAnswerInput = new TextInputBuilder()
+                .setCustomId(`buffsAnswerInput`)
+                // The label is the prompt the user sees for this input
+                .setLabel(`What buff would you like to add`)
+                // Short means only a single line of text
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+
+            const stockActionRow = new ActionRowBuilder().addComponents(stockAnswerInput)
+            modalStock.addComponents(stockActionRow)
+
+            const buffsActionRow = new ActionRowBuilder().addComponents(buffsAnswerInput)
+            modalBuffs.addComponents(buffsActionRow)
+
+            buttonCollector.resetTimer({ time: 30000 })
+            if (i.customId === stockButtonId) {
+                await i.showModal(modalStock)
+                const filter = (interaction) => interaction.customId === stockModalId
+                const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                rawAnswer.deferUpdate()
+                const input = rawAnswer.fields.getTextInputValue(`stockAnswerInput`).toLowerCase()
+                if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
+                    deleteIn: 5, followUp: true
+                })
+                metadata.stocks = input
+                responseMessageContent[`stock`] = `\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`
+                await joinFunction()
+            } else if (i.customId === buffsButtonId) {
+                if (buffOptions.length >= 3) return reply.send(`Sorry no more buffs can be added`, {
+                    deleteIn: 5,
+                    followUp: true
+                })
+                await i.showModal(modalBuffs)
+                const filter = (interaction) => interaction.customId === buffsModalId
+                const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                rawAnswer.deferUpdate()
+                const answer = rawAnswer.fields.getTextInputValue(`buffsAnswerInput`).toLowerCase()
+                const message = await i.fetchReply()
+                const params = answer.split(` `)
+                if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
+                    deleteIn: 5,
+                    followUp: true
+                })
+                //  Role update buff
+                const clientRole = message.guild.me.roles.highest
+                if ([`addrole`, `removerole`].includes(params[0])) {
+                    let res = []
+                    let roleNames = ``
+                    const roles = params.slice(1)
+                    if (!roles.length) return reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
+                        deleteIn: 5,
+                        followUp: true
+                    })
+                    for (let i = 0; i < roles.length; i++) {
+                        const ref = roles[i]
+                        const role = findRole(ref, message.guild)
+                        if (!role) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
+                            deleteIn: 5, followUp: true
+                        })
+                        if (role.position >= clientRole.position) return reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
+                            deleteIn: 5, followUp: true
+                        })
+                        res.push(role.id)
+                        roleNames += role.name + ((i + 1) >= roles.length ? ` ` : `, `)
+                    }
+                    const isRoleAddition = params[0] === `addrole`
+                    buffs.push({
+                        type: isRoleAddition ? 1 : 2,
+                        params: res
+                    })
+                    buffOptions.push(`\n╰☆～**Bonus Effect ::** ${isRoleAddition ? `receiving` : `removed`} ${roleNames} roles`)
+                    responseMessageContent[`buffs`] = buffOptions.join()
+                    await joinFunction()
+                }
+                //  Inventory update buff
+                if ([`additem`, `removeitem`].includes(params[0])) {
+                    const amount = trueInt(params[1])
+                    if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
+                        deleteIn: 5
+                    })
+                    const targetItem = await client.db.getItem(params.slice(2).join(` `))
+                    if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
+                        deleteIn: 5
+                    })
+                    const isItemAddition = params[0] === `additem`
+                    buffs.push({
+                        type: isItemAddition ? 3 : 4,
+                        params: {
+                            itemId: targetItem.item_id,
+                            amount: amount
+                        }
+                    })
+                    buffOptions.push(`\n╰☆～**Bonus Effect ::** ${isItemAddition ? `receiving` : `removed`} ${commanifier(amount)} pcs of '${targetItem.name}'`)
+                    responseMessageContent[`buffs`] = buffOptions.join()
+                    await joinFunction()
+                }
+                //  EXP/Artcoins boost buff
+                if ([`expboost`, `acboost`].includes(params[0])) {
+                    const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
+                    if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
+                        deleteIn: 5
+                    })
+                    const duration = ms(params.slice(2).join(` `))
+                    if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
+                        deleteIn: 5
+                    })
+                    const isExpBuff = params[0] === `expboost`
+                    buffs.push({
+                        type: isExpBuff ? 5 : 6,
+                        params: {
+                            name: metadata.name,
+                            multiplier: multiplier / 100,
+                            duration: duration
+                        }
+                    })
+
+                    buffOptions.push(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, { long: true })}`)
+                    responseMessageContent[`buffs`] = buffOptions.join()
+                    await joinFunction()
+                }
+
+            }
         })
     },
 
@@ -576,7 +635,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Description
+                //  Description
                 case 1:
                     const descLimit = 120
                     if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
@@ -592,7 +651,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Price
+                //  Price
                 case 2:
                     if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, {
                         deleteIn: 5
@@ -604,7 +663,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Stocks
+                //  Stocks
                 case 3:
                     if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                         deleteIn: 5
@@ -616,7 +675,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Tradability
+                //  Tradability
                 case 4:
                     if (!input.startsWith(`y`) && !input.startsWith(`n`)) return reply.send(locale.SETSHOP.ADD_TRADABILITY_INVALID, {
                         deleteIn: 5
@@ -628,7 +687,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Message upon use
+                //  Message upon use
                 case 5:
                     const messageUponUseLimit = 120
                     if (input.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.ADD_MESSAGE_UPON_USE_OVERLIMIT, {
@@ -643,7 +702,7 @@ module.exports = {
                     })
                     phase++
                     break
-                    //  Buffs upon use
+                //  Buffs upon use
                 case 6:
                     if (input.startsWith(`done`)) {
                         phase = -1
@@ -727,7 +786,7 @@ module.exports = {
                             })
                             await dataDisplay.edit({
                                 content: locale.SETSHOP.ADD_BUFF,
-                                embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, {long:true})}`)]
+                                embeds: [await joinFunction(`\n╰☆～**Bonus Effect ::** ${multiplier}% ${isExpBuff ? `EXP` : `Artcoins`} buff for ${ms(duration, { long: true })}`)]
                             })
                         }
                         //  Limit allowed buffs per item
@@ -738,35 +797,35 @@ module.exports = {
                         }
                     }
 
-                    //  Finalization
-                    case -1:
-                        const confirmation = await reply.send(dataDisplay.embeds[0].description, {
-                            header: locale.SETSHOP.ADD_CONFIRMATION,
-                            thumbnail: message.author.displayAvatarURL()
+                //  Finalization
+                case -1:
+                    const confirmation = await reply.send(dataDisplay.embeds[0].description, {
+                        header: locale.SETSHOP.ADD_CONFIRMATION,
+                        thumbnail: message.author.displayAvatarURL()
+                    })
+                    dataDisplay.delete()
+                    const c = new Confirmator(message, reply)
+                    await c.setup(m.author.id, confirmation)
+                    c.onAccept(async () => {
+                        completed = true
+                        pool.stop()
+                        //  Register item
+                        await client.db.registerItem(metadata)
+                        const item = await client.db.getItem(metadata.name, message.guild.id)
+                        //  Register to the shop
+                        client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                        //  Register effect if there's any
+                        if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
+                        return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
+                            status: `success`,
+                            socket: {
+                                prefix: prefix,
+                                emoji: await client.getEmoji(`789212493096026143`)
+                            }
                         })
-                        dataDisplay.delete()
-                        const c = new Confirmator(message, reply)
-                        await c.setup(m.author.id, confirmation)
-                        c.onAccept(async () => {
-                            completed = true
-                            pool.stop()
-                            //  Register item
-                            await client.db.registerItem(metadata)
-                            const item = await client.db.getItem(metadata.name, message.guild.id)
-                            //  Register to the shop
-                            client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
-                            //  Register effect if there's any
-                            if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
-                            return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
-                                status: `success`,
-                                socket: {
-                                    prefix: prefix,
-                                    emoji: await client.getEmoji(`789212493096026143`)
-                                }
-                            })
-                        })
-                    default:
-                        break
+                    })
+                default:
+                    break
             }
         })
         pool.on(`end`, () => {
@@ -849,7 +908,7 @@ module.exports = {
             isValidUpload: hasAttachment || hasImageURL ? true : false,
             url: message.attachments.first() ?
                 message.attachments.first().url : src.startsWith(`http`) && src.length >= 15 ?
-                src : null
+                    src : null
         }
     },
 
@@ -969,11 +1028,11 @@ module.exports = {
                         socket: {
                             oldItem: item.name,
                             newItem: params
-                        }, 
+                        },
                         followUp: true
                     })
                     break
-                    //  Changing item's description
+                //  Changing item's description
                 case `description`:
                     m.delete()
                     const descLimit = 120
@@ -981,18 +1040,18 @@ module.exports = {
                         deleteIn: 5,
                         socket: {
                             limit: descLimit
-                        }, 
+                        },
                         followUp: true
                     })
                     client.db.updateItemMetadata(item.item_id, `description`, params)
                     reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
                         socket: {
                             item: item.name
-                        }, 
+                        },
                         followUp: true
                     })
                     break
-                    //  Changing item's price
+                //  Changing item's price
                 case `price`:
                     m.delete()
                     const priceLimit = 999999999999999
@@ -1000,22 +1059,22 @@ module.exports = {
                         deleteIn: 5,
                         socket: {
                             limit: commanifier(priceLimit)
-                        }, 
+                        },
                         followUp: true
                     })
                     if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                        deleteIn: 5, 
+                        deleteIn: 5,
                         followUp: true
                     })
                     client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
                     reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
                         socket: {
                             item: item.name
-                        }, 
+                        },
                         followUp: true
                     })
                     break
-                    //  Updating item's stocks
+                //  Updating item's stocks
                 case `stock`:
                     m.delete()
                     const stockLimit = 999999999999999
@@ -1025,11 +1084,11 @@ module.exports = {
                             deleteIn: 5,
                             socket: {
                                 limit: commanifier(stockLimit)
-                            }, 
+                            },
                             followUp: true
                         })
                         if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                            deleteIn: 5, 
+                            deleteIn: 5,
                             followUp: true
                         })
                     }
@@ -1041,7 +1100,7 @@ module.exports = {
                         followUp: true
                     })
                     break
-                    //  Updating Annie's response upon use of the item.
+                //  Updating Annie's response upon use of the item.
                 case `response`:
                     m.delete()
                     const messageUponUseLimit = 120
@@ -1049,18 +1108,18 @@ module.exports = {
                         deleteIn: 5,
                         socket: {
                             limit: messageUponUseLimit
-                        }, 
+                        },
                         followUp: true
                     })
                     client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
                     reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
                         socket: {
                             item: item.name
-                        }, 
+                        },
                         followUp: true
                     })
                     break
-                    //  Finalize
+                //  Finalize
                 case `done`:
                     m.delete()
                     completed = true
@@ -1073,7 +1132,7 @@ module.exports = {
             return reply.send(locale.SETSHOP.EDIT_TIMEOUT, {
                 socket: {
                     item: item.name
-                }, 
+                },
                 followUp: true
             })
         })
