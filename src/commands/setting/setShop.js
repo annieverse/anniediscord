@@ -176,7 +176,7 @@ module.exports = {
             args = [`delete`, options.getString(`item`)]
         }
         if (options.getSubcommand() === `add`) {
-            args = [`addPreFill`,
+            args = [`addprefill`,
                 options.getString(`item_name`),
                 options.getInteger(`item_price`),
                 options.getString(`item_description`),
