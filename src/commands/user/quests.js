@@ -152,6 +152,15 @@ module.exports = {
 		const messageComponentFilter = i => (i.customId === buttonCustomId || i.customId === `cancelQuest`) && i.user.id === interaction.member.user.id
 		const buttonCollector = quest.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
 		let answerAttempt = 0
+		buttonCollector.on(`end`, async (collected, reason)=>{
+			if (collected.size>0) return
+			const message = await interaction.fetchReply()
+			try {
+				message.edit({ components: [] })
+			} catch (error) {
+				client.logger.error(`[Quests.js]`,error)
+			}
+		})
 		buttonCollector.on(`collect`, async i => {
 			// Handle if user asked to cancel the quest
 			if (i.customId === `cancelQuest`) {
@@ -174,13 +183,12 @@ module.exports = {
 			const firstActionRow = new ActionRowBuilder().addComponents(questAnswerInput)
 			modal.addComponents(firstActionRow)
 
-
-
+			buttonCollector.resetTimer({ time: 30000 })
 			await i.showModal(modal)
 			const filter = (interaction) => interaction.customId === sessionID
 			const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
 			rawAnswer.deferUpdate()
-			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`)
+			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
 			const message = await i.fetchReply()
 			//  Handle if the answer is incorrect
 			if (answer !== activeQuest.correct_answer) {
@@ -189,7 +197,7 @@ module.exports = {
 					message.edit({ components: [] })
 					return buttonCollector.stop()
 				}
-				buttonCollector.resetTimer({ time: 15000 })
+				buttonCollector.resetTimer({ time: 30000 })
 				return reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
 			}
 			buttonCollector.stop()
