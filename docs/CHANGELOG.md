@@ -1,3 +1,10 @@
+## [9.0.4](https://github.com/klerikdust/anniediscord/compare/v9.0.3...v9.0.4) (2022-09-05)
+
+
+### Bug Fixes
+
+* **shop:** add item fails halfway through ([41f5775](https://github.com/klerikdust/anniediscord/commit/41f57757515660a8251f1a4b891eaa4d6b362a05))
+
 ## [9.0.3](https://github.com/klerikdust/anniediscord/compare/v9.0.2...v9.0.3) (2022-09-04)
 
 
