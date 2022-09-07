@@ -1,3 +1,10 @@
+## [9.0.5](https://github.com/klerikdust/anniediscord/compare/v9.0.4...v9.0.5) (2022-09-07)
+
+
+### Bug Fixes
+
+* **quests:** multiple entries ([716f8e1](https://github.com/klerikdust/anniediscord/commit/716f8e12e8f2af62a1de2e872fad58092470d7df))
+
 ## [9.0.4](https://github.com/klerikdust/anniediscord/compare/v9.0.3...v9.0.4) (2022-09-05)
 
 
