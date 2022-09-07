@@ -148,17 +148,20 @@ module.exports = {
 			},
 			components: row
 		})
-
-		const messageComponentFilter = i => (i.customId === buttonCustomId || i.customId === `cancelQuest`) && i.user.id === interaction.member.user.id
-		const buttonCollector = quest.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
+		const member = interaction.user.id
+		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === member
+		const buttonCollector = quest.createMessageComponentCollector({ filter , time: 30000 })
 		let answerAttempt = 0
+		buttonCollector.on(`ignore`, async (i) =>{
+			i.reply({content:`I'm sorry but only the user who sent this message may interact with it.`,ephemeral: true})
+		})
 		buttonCollector.on(`end`, async (collected, reason)=>{
-			if (collected.size>0) return
+			if (reason != `time`) return
 			const message = await interaction.fetchReply()
 			try {
 				message.edit({ components: [] })
 			} catch (error) {
-				client.logger.error(`[Quests.js]`,error)
+				client.logger.error(`[Quests.js]\n${error}`)
 			}
 		})
 		buttonCollector.on(`collect`, async i => {
@@ -168,8 +171,9 @@ module.exports = {
 				client.db.redis.del(sessionID)
 				return buttonCollector.stop()
 			}
+			const modalId = sessionID+`-`+i.id
 			const modal = new ModalBuilder()
-				.setCustomId(sessionID)
+				.setCustomId(modalId)
 				.setTitle(activeQuest.name)
 
 			const questAnswerInput = new TextInputBuilder()
@@ -184,9 +188,18 @@ module.exports = {
 			modal.addComponents(firstActionRow)
 
 			buttonCollector.resetTimer({ time: 30000 })
+			
 			await i.showModal(modal)
-			const filter = (interaction) => interaction.customId === sessionID
-			const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+			// const filter = (interaction, collection) =>	interaction.customId === sessionID && collection.last()
+			const filter = (interaction) =>	interaction.customId === modalId
+			let rawAnswer
+			try {
+				rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+			} catch (error) {
+				client.logger.error(`Error has been handled\n${error}`)
+			}
+			// const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 }).catch(err=>console.log(`handle the error`))
+			if (!rawAnswer) return
 			rawAnswer.deferUpdate()
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
 			const message = await i.fetchReply()
