@@ -951,7 +951,7 @@ module.exports = {
             }
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
-        await c.setup(message.author.id, confirmation)
+        await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.removeGuildShopItem(item.item_id)
             reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
