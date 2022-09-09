@@ -14,8 +14,9 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle
+    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, SelectMenuBuilder
 } = require(`discord.js`)
+
 /**
  * Create, restock & sell items for your server members!
  * @author klerikdust
@@ -112,7 +113,7 @@ module.exports = {
         }, {
             name: `item_use_message`,
             description: `{{user}} to mention a user & {{item}} to mention the item or type ~ to specify any custom message.`,
-            required: true,
+            required: false,
             type: ApplicationCommandOptionType.String,
             max_length: 120
         }]
@@ -181,7 +182,7 @@ module.exports = {
                 options.getInteger(`item_price`),
                 options.getString(`item_description`),
                 options.getBoolean(`tradeable`),
-                options.getString(`item_use_message`)
+                options.getString(`item_use_message`) ? options.getString(`item_use_message`) : `~`
             ]
         }
         if (options.getSubcommand() === `edit`) {
@@ -260,13 +261,15 @@ module.exports = {
             buffsoptions: `**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Once in the popup after hitting the \`buffs?\` button do one of the following\n♡ Type **\`addrole <roles>\`** to get specified roles once used.\n♡ Type **\`removerole <roles>\`** to remove specified roles from user once used.\n♡ Type **\`additem <amount> <itemName/itemId>\`** to receive specified items once used.\n♡ Type **\`removeitem <amount> <itemName/itemId>\`** to remove specified items from user's inventory.\n♡ Type **\`expboost <percentage> <duration>\`** To give exp boost to the user for specified amount of time.\n♡ Type **\`acboost <percentage> <duration>\`** to give artcoins boost to the user for specified amount of time.`,
             start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.useMessage === `~` ? `default` : metadata.useMessage}`,
         }
-        
-        let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`)+Object.values(responseMessageContent).slice(-1), {
+
+        let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`) + Object.values(responseMessageContent).slice(-1), {
             fetchReply: true,
             footer: `Hitting finish before entering stock will defualt stock to unlimited, if not set already and buffs to no buffs added, if not set already.`,
             components: row
         })
-        const messageComponentFilter = i => (i.customId === stockButtonId || i.customId === buffsButtonId || i.customId === cancelButtonId || i.customId === finishedButtonId) && i.user.id === interaction.member.user.id
+
+        const member = interaction.user.id
+        const messageComponentFilter = i => (i.customId === stockButtonId || i.customId === buffsButtonId || i.customId === cancelButtonId || i.customId === finishedButtonId) && i.user.id === member
         const buttonCollector = response.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
         let buffOptions = []
 
@@ -281,7 +284,9 @@ module.exports = {
                 embeds: [await reply.send(finalizedResponseMessageContent, { raw: true })]
             })
         }
-
+        buttonCollector.on(`ignore`, async (i) => {
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+        })
         buttonCollector.on(`end`, async (collected, reason) => {
             client.db.redis.del(sessionId)
             if (completed) return
@@ -357,8 +362,14 @@ module.exports = {
             buttonCollector.resetTimer({ time: 30000 })
             if (i.customId === stockButtonId) {
                 await i.showModal(modalStock)
-                const filter = (interaction) => interaction.customId === stockModalId
-                const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                const filter = (filter_interaction) => filter_interaction.customId === stockModalId && filter_interaction.user.id === interaction.member.user.id
+                let rawAnswer
+                try {
+                    rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                } catch (error) {
+                    client.logger.error(`Error has been handled\n${error}`)
+                }
+                if (!rawAnswer) return
                 rawAnswer.deferUpdate()
                 const input = rawAnswer.fields.getTextInputValue(`stockAnswerInput`).toLowerCase()
                 if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
@@ -373,8 +384,14 @@ module.exports = {
                     followUp: true
                 })
                 await i.showModal(modalBuffs)
-                const filter = (interaction) => interaction.customId === buffsModalId
-                const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                const filter = (filter_interaction) => filter_interaction.customId === buffsModalId && filter_interaction.user.id === interaction.member.user.id
+                let rawAnswer
+                try {
+                    rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                } catch (error) {
+                    client.logger.error(`Error has been handled\n${error}`)
+                }
+                if (!rawAnswer) return
                 rawAnswer.deferUpdate()
                 const answer = rawAnswer.fields.getTextInputValue(`buffsAnswerInput`).toLowerCase()
                 const message = await i.fetchReply()
@@ -419,12 +436,12 @@ module.exports = {
                     const amount = trueInt(params[1])
                     if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
                         deleteIn: 5,
-                        followUp:true
+                        followUp: true
                     })
                     const targetItem = await client.db.getItem(params.slice(2).join(` `))
                     if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
                         deleteIn: 5,
-                        followUp:true
+                        followUp: true
                     })
                     const isItemAddition = params[0] === `additem`
                     buffs.push({
@@ -443,12 +460,12 @@ module.exports = {
                     const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
                     if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
                         deleteIn: 5,
-                        followUp:true
+                        followUp: true
                     })
                     const duration = ms(params.slice(2).join(` `))
                     if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
                         deleteIn: 5,
-                        followUp:true
+                        followUp: true
                     })
                     const isExpBuff = params[0] === `expboost`
                     buffs.push({
@@ -990,156 +1007,321 @@ module.exports = {
                 item: keyword
             }
         })
+
+        let selectMenuOptions = [{
+            "label": `Name`,
+            "value": `name`,
+            "description": `set the name of the item`,
+            "emoji": undefined,
+        }, {
+            "label": `Description`,
+            "value": `description`,
+            "description": `set the decription of the item`,
+            "emoji": undefined,
+        }, {
+            "label": `Price`,
+            "value": `price`,
+            "description": `set the price of the item`,
+            "emoji": undefined,
+        }, {
+            "label": `Stock`,
+            "value": `stock`,
+            "description": `set the stock of the item`,
+            "emoji": undefined,
+        }, {
+            "label": `Response`,
+            "value": `response`,
+            "description": `set the response the item will give when used`,
+            "emoji": undefined,
+        }]
+        const selectMenuId = `setshopEditSelectMenu_${message.id}`
+        const doneCancelButtonId = `setshopEditDoneCancelButton_${message.id}`
+
+        const doneCancelButton = new ButtonBuilder().setCustomId(doneCancelButtonId).setLabel(`Done/Cancel`).setStyle(ButtonStyle.Secondary)
+        let selectMenu = new SelectMenuBuilder()
+            .setCustomId(selectMenuId)
+            .setMinValues(1)
+            .setMaxValues(1)
+            .setOptions(selectMenuOptions)
+        const selectMenuActionRow = new ActionRowBuilder().addComponents(selectMenu)
+        const buttonActionRow = new ActionRowBuilder().addComponents(doneCancelButton)
+
         const guide = await reply.send(locale.SETSHOP.EDIT_GUIDE, {
             simplified: true,
             socket: {
                 item: item.name,
                 emoji: await client.getEmoji(`AnnieHeartPeek`),
                 prefix: prefix
+            },
+            components: [selectMenuActionRow, buttonActionRow]
+        })
+
+        const member = message.user.id
+        const filter = (i) => (i.customId === selectMenuId || i.customId === doneCancelButtonId) && i.user.id === member
+        const editItemListenerTimer = 30000
+        const editItemListener = guide.createMessageComponentCollector({
+            filter,
+            time: editItemListenerTimer
+        })
+        editItemListener.on(`ignore`, async (i) => {
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+        })
+        editItemListener.on(`end`, async (collected, reason) => {
+            const msg = await message.fetchReply()
+            try {
+                msg.edit({
+                    content: `Shop editor interface has been closed.`, components: [], embeds: []
+                })
+            } catch (error) {
+                client.logger.error(`[setShop.js] ${error.stack}`)
             }
         })
-        const pool = message.channel.createMessageCollector({
-            filter: m => m.author.id === message.member.id,
-            time: 60000 * 3
-        }) // 3 minutes timeout
-        let completed = false
-        pool.on(`collect`, async m => {
-            let input = m.content.startsWith(prefix) ? m.content.slice(prefix.length) : m.content
-            if (input === `cancel`) return pool.stop()
-            const argsPool = input.split(` `)
-            const action = argsPool[0]
-            const params = argsPool.slice(1).join(` `)
-            const guildItems = await client.db.getItem(null, message.guild.id)
-            switch (action) {
-                //  Changing item name
+        editItemListener.on(`collect`, async (i) => {
+            if (i.customId === doneCancelButtonId) {
+                return editItemListener.stop()
+            }
+            editItemListener.resetTimer(editItemListenerTimer)
+            let selection = i.values[0]
+            const modalEditId = `${selection}_${i.id}`
+            const modalEdit = new ModalBuilder().setCustomId(modalEditId).setTitle(`You are editing the item's ${selection}`)
+            message.editReply({ components: [selectMenuActionRow, buttonActionRow] })
+            switch (selection) {
                 case `name`:
-                    m.delete()
-                    const nameLimit = 20
-                    if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
-                        deleteIn: 5,
-                        socket: {
-                            limit: nameLimit
-                        }
-                    })
-                    if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
-                        deleteIn: 5,
-                        socket: {
-                            item: params
-                        }
-                    })
-                    client.db.updateItemMetadata(item.item_id, `name`, params)
-                    reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
-                        socket: {
-                            oldItem: item.name,
-                            newItem: params
-                        },
-                        followUp: true
-                    })
+                    const nameAnswerInput = new TextInputBuilder()
+                        .setCustomId(`answerInput`)
+                        // The label is the prompt the user sees for this input
+                        .setLabel(`**What is the new name?**`)
+                        // Short means only a single line of text
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true)
+                        .setMinLength(1)
+                        .setMaxLength(20)
+                    const nameActionRow = new ActionRowBuilder().addComponents(nameAnswerInput)
+                    modalEdit.addComponents(nameActionRow)
+                    name(modalEdit, i)
                     break
-                //  Changing item's description
                 case `description`:
-                    m.delete()
-                    const descLimit = 120
-                    if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
-                        deleteIn: 5,
-                        socket: {
-                            limit: descLimit
-                        },
-                        followUp: true
-                    })
-                    client.db.updateItemMetadata(item.item_id, `description`, params)
-                    reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
-                        socket: {
-                            item: item.name
-                        },
-                        followUp: true
-                    })
+                    const descriptionAnswerInput = new TextInputBuilder()
+                        .setCustomId(`answerInput`)
+                        // The label is the prompt the user sees for this input
+                        .setLabel(`**What is the new description?**`)
+                        // Short means only a single line of text
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true)
+                        .setMinLength(1)
+                        .setMaxLength(120)
+                    const descriptionActionRow = new ActionRowBuilder().addComponents(descriptionAnswerInput)
+                    modalEdit.addComponents(descriptionActionRow)
+                    description(modalEdit, i)
                     break
-                //  Changing item's price
                 case `price`:
-                    m.delete()
-                    const priceLimit = 999999999999999
-                    if (parseInt(params) >= priceLimit) return reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {
-                        deleteIn: 5,
-                        socket: {
-                            limit: commanifier(priceLimit)
-                        },
-                        followUp: true
-                    })
-                    if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                        deleteIn: 5,
-                        followUp: true
-                    })
-                    client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
-                    reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
-                        socket: {
-                            item: item.name
-                        },
-                        followUp: true
-                    })
+                    const priceAnswerInput = new TextInputBuilder()
+                        .setCustomId(`answerInput`)
+                        // The label is the prompt the user sees for this input
+                        .setLabel(`**What is the new price?**`)
+                        // Short means only a single line of text
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true)
+                        .setMinLength(1)
+                        .setMaxLength(15)
+                    const priceActionRow = new ActionRowBuilder().addComponents(priceAnswerInput)
+                    modalEdit.addComponents(priceActionRow)
+                    price(modalEdit, i)
                     break
-                //  Updating item's stocks
                 case `stock`:
-                    m.delete()
-                    const stockLimit = 999999999999999
-                    const setAsUnlimited = params === `~`
-                    if (!setAsUnlimited) {
-                        if (parseInt(params) >= stockLimit) return reply.send(locale.SETSHOP.EDIT_STOCK_OVERLIMIT, {
-                            deleteIn: 5,
-                            socket: {
-                                limit: commanifier(stockLimit)
-                            },
-                            followUp: true
-                        })
-                        if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                            deleteIn: 5,
-                            followUp: true
-                        })
-                    }
-                    client.db.updateShopItemMetadata(item.item_id, `quantity`, params)
-                    reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
-                        socket: {
-                            item: item.name
-                        },
-                        followUp: true
-                    })
+                    const stockAnswerInput = new TextInputBuilder()
+                        .setCustomId(`answerInput`)
+                        // The label is the prompt the user sees for this input
+                        .setLabel(`**What is the new amount of stock?**`)
+                        // Short means only a single line of text
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true)
+                        .setMinLength(1)
+                        .setMaxLength(15)
+                    const stockActionRow = new ActionRowBuilder().addComponents(stockAnswerInput)
+                    modalEdit.addComponents(stockActionRow)
+                    stock(modalEdit, i)
                     break
-                //  Updating Annie's response upon use of the item.
                 case `response`:
-                    m.delete()
-                    const messageUponUseLimit = 120
-                    if (params.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {
-                        deleteIn: 5,
-                        socket: {
-                            limit: messageUponUseLimit
-                        },
-                        followUp: true
-                    })
-                    client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
-                    reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
-                        socket: {
-                            item: item.name
-                        },
-                        followUp: true
-                    })
+                    const responseAnswerInput = new TextInputBuilder()
+                        .setCustomId(`answerInput`)
+                        // The label is the prompt the user sees for this input
+                        .setLabel(`**What is the new response?**`)
+                        // Short means only a single line of text
+                        .setStyle(TextInputStyle.Short)
+                        .setRequired(true)
+                        .setMinLength(1)
+                        .setMaxLength(120)
+                    const responseActionRow = new ActionRowBuilder().addComponents(responseAnswerInput)
+                    modalEdit.addComponents(responseActionRow)
+                    response(modalEdit, i)
                     break
-                //  Finalize
-                case `done`:
-                    m.delete()
-                    completed = true
-                    pool.stop()
+                default:
+                    break
             }
         })
-        pool.on(`end`, () => {
-            guide.delete()
-            if (completed) return
-            return reply.send(locale.SETSHOP.EDIT_TIMEOUT, {
+        async function name(modal, interaction) {
+            interaction.showModal(modal)
+            const filter = (interaction) => interaction.customId === modal.data.custom_id
+            let rawAnswer
+            try {
+                await message.awaitModalSubmit({ filter, time: 30000 })
+            } catch (error) {
+                client.logger.error(`Error has been handled\n${error}`)
+            }
+            if (!rawAnswer) return
+            rawAnswer.deferUpdate()
+            const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const nameLimit = 20
+            if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
+                deleteIn: 5,
+                socket: {
+                    limit: nameLimit
+                },
+                followUp: true
+            })
+            if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                deleteIn: 5,
+                socket: {
+                    item: params
+                },
+                followUp: true
+            })
+            client.db.updateItemMetadata(item.item_id, `name`, params)
+            reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
+                socket: {
+                    oldItem: item.name,
+                    newItem: params
+                },
+                followUp: true
+            })
+        }
+
+        async function description(modal, interaction) {
+            interaction.showModal(modal)
+            const filter = (interaction) => interaction.customId === modal.data.custom_id
+            let rawAnswer
+            try {
+                await message.awaitModalSubmit({ filter, time: 30000 })
+            } catch (error) {
+                client.logger.error(`Error has been handled\n${error}`)
+            }
+            if (!rawAnswer) return
+            rawAnswer.deferUpdate()
+            const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const descLimit = 120
+            if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
+                deleteIn: 5,
+                socket: {
+                    limit: descLimit
+                },
+                followUp: true
+            })
+            client.db.updateItemMetadata(item.item_id, `description`, params)
+            reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },
                 followUp: true
             })
-        })
+        }
+
+        async function price(modal, interaction) {
+            interaction.showModal(modal)
+            const filter = (interaction) => interaction.customId === modal.data.custom_id
+            let rawAnswer
+            try {
+                await message.awaitModalSubmit({ filter, time: 30000 })
+            } catch (error) {
+                client.logger.error(`Error has been handled\n${error}`)
+            }
+            if (!rawAnswer) return
+            rawAnswer.deferUpdate()
+            const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const priceLimit = 999999999999999
+            if (parseInt(params) >= priceLimit) return reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {
+                deleteIn: 5,
+                socket: {
+                    limit: commanifier(priceLimit)
+                },
+                followUp: true
+            })
+            if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
+                deleteIn: 5,
+                followUp: true
+            })
+            client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
+            reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
+                socket: {
+                    item: item.name
+                },
+                followUp: true
+            })
+        }
+
+        async function stock(modal, interaction) {
+            interaction.showModal(modal)
+            const filter = (interaction) => interaction.customId === modal.data.custom_id
+            let rawAnswer
+            try {
+                await message.awaitModalSubmit({ filter, time: 30000 })
+            } catch (error) {
+                client.logger.error(`Error has been handled\n${error}`)
+            }
+            if (!rawAnswer) return
+            const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const stockLimit = 999999999999999
+            const setAsUnlimited = params === `~`
+            if (!setAsUnlimited) {
+                if (parseInt(params) >= stockLimit) return reply.send(locale.SETSHOP.EDIT_STOCK_OVERLIMIT, {
+                    deleteIn: 5,
+                    socket: {
+                        limit: commanifier(stockLimit)
+                    },
+                    followUp: true
+                })
+                if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
+                    deleteIn: 5,
+                    followUp: true
+                })
+            }
+            client.db.updateShopItemMetadata(item.item_id, `quantity`, params)
+            reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
+                socket: {
+                    item: item.name
+                },
+                followUp: true
+            })
+        }
+
+        async function response(modal, interaction) {
+            interaction.showModal(modal)
+            const filter = (interaction) => interaction.customId === modal.data.custom_id
+            let rawAnswer
+            try {
+                await message.awaitModalSubmit({ filter, time: 30000 })
+            } catch (error) {
+                client.logger.error(`Error has been handled\n${error}`)
+            }
+            if (!rawAnswer) return
+            rawAnswer.deferUpdate()
+            const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const messageUponUseLimit = 120
+            if (params.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {
+                deleteIn: 5,
+                socket: {
+                    limit: messageUponUseLimit
+                },
+                followUp: true
+            })
+            client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
+            reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
+                socket: {
+                    item: item.name
+                },
+                followUp: true
+            })
+        }
     },
 
     /**

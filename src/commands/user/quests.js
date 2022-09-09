@@ -198,7 +198,6 @@ module.exports = {
 			} catch (error) {
 				client.logger.error(`Error has been handled\n${error}`)
 			}
-			// const rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 }).catch(err=>console.log(`handle the error`))
 			if (!rawAnswer) return
 			rawAnswer.deferUpdate()
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
