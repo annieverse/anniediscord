@@ -122,6 +122,7 @@ class Response {
 		let components = plugins.components || null
 		let fetchReply = plugins.fetchReply || true
 		let followUp = plugins.followUp || false
+		let ephemeral = plugins.ephemeral || false
 		const RESPONSE_REF = this.isSlash ? this.message : field
 		const RESPONSE_TYPE = this.isSlash ? followUp ? `followUp` : `reply` : `send`
 		const isComponentArray = Array.isArray(components)
@@ -135,22 +136,26 @@ class Response {
 				files: [embeddedPages[0].file],
 				components: components,
 				fetchReply: fetchReply,
+				ephemeral: ephemeral
 
 			} : {
 				embeds: [embeddedPages[0]],
 				files: [embeddedPages[0].file],
 				fetchReply: fetchReply,
+				ephemeral: ephemeral
 
 			} : components ? {
 				embeds: [embeddedPages[0]],
 				files: [],
 				components: components,
 				fetchReply: fetchReply,
+				ephemeral: ephemeral
 
 			} : {
 				embeds: [embeddedPages[0]],
 				files: [],
 				fetchReply: fetchReply,
+				ephemeral: ephemeral
 
 			}).then(async msg => {
 				try {
@@ -269,20 +274,24 @@ class Response {
 					files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
 					components: components,
 					fetchReply: fetchReply,
+					ephemeral: ephemeral
 
 				}) : RESPONSE_REF[RESPONSE_TYPE]({
 					content: content,
 					files: [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))],
 					fetchReply: fetchReply,
+					ephemeral: ephemeral
 
 				}) : components ? RESPONSE_REF[RESPONSE_TYPE]({
 					content: content,
 					components: components,
 					fetchReply: fetchReply,
+					ephemeral: ephemeral
 
 				}) : RESPONSE_REF[RESPONSE_TYPE]({
 					content: content,
 					fetchReply: fetchReply,
+					ephemeral: ephemeral
 				})
 		}
 		//  Add notch/chin
@@ -338,13 +347,13 @@ class Response {
 					files: [embed.file],
 					components: components,
 					fetchReply: fetchReply,
-
+					ephemeral: ephemeral
 				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
 					embeds: [embed],
 					files: [embed.file],
 					fetchReply: fetchReply,
-
+					ephemeral: ephemeral
 				})
 			} else {
 				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
@@ -352,12 +361,12 @@ class Response {
 					embeds: [embed],
 					components: components,
 					fetchReply: fetchReply,
-
+					ephemeral: ephemeral
 				}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
 					content: topNotch,
 					embeds: [embed],
 					fetchReply: fetchReply,
-
+					ephemeral: ephemeral
 				})
 			}
 		} else {
@@ -369,14 +378,14 @@ class Response {
 						files: [embed.file],
 						components: components,
 						fetchReply: fetchReply,
-
+						ephemeral: ephemeral
 					}) :
 					sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						content: topNotch,
 						embeds: [embed],
 						files: [embed.file],
 						fetchReply: fetchReply,
-
+						ephemeral: ephemeral
 					})
 			} else {
 
@@ -384,17 +393,17 @@ class Response {
 					sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						components: components,
 						fetchReply: fetchReply,
-
+						ephemeral: ephemeral
 					}) :
 					sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						embeds: [embed],
 						components: components,
 						fetchReply: fetchReply,
-
+						ephemeral: ephemeral
 					}) : sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						embeds: [embed],
 						fetchReply: fetchReply,
-
+						ephemeral: ephemeral
 					})
 			}
 		}
