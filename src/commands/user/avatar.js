@@ -39,7 +39,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const target = options.getUser(`user`) || interaction.member.user
-        const [avatar, name] = [target.displayAvatarURL({ extension: `png`, forceStatic: true, size: 512 }), target.username]
+        const [avatar, name] = [target.displayAvatarURL({ forceStatic: false, size: 512 }), target.username]
         const embed = new EmbedBuilder()
             .setImage(avatar)
             .setAuthor({name:name, iconURL:avatar})
