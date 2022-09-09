@@ -10,7 +10,8 @@ module.exports = function applicationCommandLoader({
     commands
 }) {
     function formatDescriptions(command) {
-        command.description.length >= 100 ? command.description = `${command.description.substring(0, 90)}...` : command.description
+        if (command.type === 3) return command.description = null
+        return command.description.length >= 100 ? command.description = `${command.description.substring(0, 90)}...` : command.description
     }
 
     function isApplicationCommand(command) {
