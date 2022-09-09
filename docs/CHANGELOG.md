@@ -1,3 +1,17 @@
+# [9.1.0](https://github.com/klerikdust/anniediscord/compare/v9.0.5...v9.1.0) (2022-09-09)
+
+
+### Bug Fixes
+
+* **setshop:** unable to confirm deletion ([39eed1b](https://github.com/klerikdust/anniediscord/commit/39eed1bcaf2136e65b6112ea4c40281a02c31a3b))
+* **setshop:** unable to properly edit an item ([f4cf46d](https://github.com/klerikdust/anniediscord/commit/f4cf46d81e35936562c53de9ac6fd52065d29025))
+* **setwelcomer:** unable to set channel ([7a63b5c](https://github.com/klerikdust/anniediscord/commit/7a63b5c79707db348f62c7b01c227a652ec3b273))
+
+
+### Features
+
+* **remove reactions:** user command ([3451916](https://github.com/klerikdust/anniediscord/commit/34519161eef336cc0e96e6b9a3b47873f0f10c0c))
+
 ## [9.0.5](https://github.com/klerikdust/anniediscord/compare/v9.0.4...v9.0.5) (2022-09-07)
 
 
