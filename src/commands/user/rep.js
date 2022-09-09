@@ -51,7 +51,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
-        const userData = await userLib.requestMetadata(interaction.member.id, 2)
+        const userData = await userLib.requestMetadata(interaction.member, 2)
         const now = moment()
         const lastGiveAt = await client.db.toLocaltime(userData.reputations.last_giving_at)
             //  Returns if user's last reps give still under 23 hours.

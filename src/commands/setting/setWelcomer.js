@@ -94,15 +94,15 @@ module.exports = {
                 type: ApplicationCommandOptionType.String
             }]
         }]
-    },{
+    }, {
         name: `userimage`,
         description: `Allow user set image for welcome message.`,
         type: ApplicationCommandOptionType.Subcommand,
-    },{
+    }, {
         name: `noimage`,
         description: `Allow user set image for welcome message.`,
         type: ApplicationCommandOptionType.Subcommand,
-    },{
+    }, {
         name: `theme`,
         description: `Set a theme for the welcome message.`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -111,7 +111,7 @@ module.exports = {
             description: `The theme to set for the welcome message.`,
             required: true,
             type: ApplicationCommandOptionType.String,
-            choices: [{name:`light`, value:`light`}, {name:`dark`, value:`dark`}]
+            choices: [{ name: `light`, value: `light` }, { name: `dark`, value: `dark` }]
         }]
     }],
     type: ApplicationCommandType.ChatInput,
@@ -288,10 +288,17 @@ module.exports = {
                 prefix: prefix
             }
         })
-        //  Do channel searching by three possible conditions
-        const searchChannel = message.mentions.channels.first() ||
-            message.guild.channels.cache.get(this.args[1]) ||
+        let testCondition = false
+        if (message.mentions) {
+            testCondition = message.mentions.channels.first() || message.guild.channels.cache.get(this.args[1]) ||
             message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        } else {
+            testCondition = message.guild.channels.cache.get(this.args[1]) ||
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        }
+
+        //  Do channel searching by three possible conditions
+        const searchChannel = testCondition
         //  Handle if target channel couldn't be found
         if (!searchChannel) return reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
             socket: {
@@ -621,7 +628,7 @@ module.exports = {
             isValidUpload: hasAttachment || hasImageURL ? true : false,
             url: message.attachments.first() ?
                 message.attachments.first().url : imageArgs.startsWith(`http`) && imageArgs.length >= 15 ?
-                imageArgs : null
+                    imageArgs : null
         }
     },
 

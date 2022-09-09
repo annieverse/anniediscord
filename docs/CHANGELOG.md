@@ -1,3 +1,52 @@
+# [9.1.0](https://github.com/klerikdust/anniediscord/compare/v9.0.5...v9.1.0) (2022-09-09)
+
+
+### Bug Fixes
+
+* **setshop:** unable to confirm deletion ([39eed1b](https://github.com/klerikdust/anniediscord/commit/39eed1bcaf2136e65b6112ea4c40281a02c31a3b))
+* **setshop:** unable to properly edit an item ([f4cf46d](https://github.com/klerikdust/anniediscord/commit/f4cf46d81e35936562c53de9ac6fd52065d29025))
+* **setwelcomer:** unable to set channel ([7a63b5c](https://github.com/klerikdust/anniediscord/commit/7a63b5c79707db348f62c7b01c227a652ec3b273))
+
+
+### Features
+
+* **remove reactions:** user command ([3451916](https://github.com/klerikdust/anniediscord/commit/34519161eef336cc0e96e6b9a3b47873f0f10c0c))
+
+## [9.0.5](https://github.com/klerikdust/anniediscord/compare/v9.0.4...v9.0.5) (2022-09-07)
+
+
+### Bug Fixes
+
+* **quests:** multiple entries ([716f8e1](https://github.com/klerikdust/anniediscord/commit/716f8e12e8f2af62a1de2e872fad58092470d7df))
+
+## [9.0.4](https://github.com/klerikdust/anniediscord/compare/v9.0.3...v9.0.4) (2022-09-05)
+
+
+### Bug Fixes
+
+* **shop:** add item fails halfway through ([41f5775](https://github.com/klerikdust/anniediscord/commit/41f57757515660a8251f1a4b891eaa4d6b362a05))
+
+## [9.0.3](https://github.com/klerikdust/anniediscord/compare/v9.0.2...v9.0.3) (2022-09-04)
+
+
+### Bug Fixes
+
+* **quests:** answer not being recognized due to sentence case ([076902f](https://github.com/klerikdust/anniediscord/commit/076902f299e0374696d0cf2aa08c4c05f2fe62b2))
+
+## [9.0.2](https://github.com/klerikdust/anniediscord/compare/v9.0.1...v9.0.2) (2022-09-04)
+
+
+### Bug Fixes
+
+* **quests:** null content ([ee4f05d](https://github.com/klerikdust/anniediscord/commit/ee4f05deca5233926aec20aeac8ee46122ff7c1e))
+
+## [9.0.1](https://github.com/klerikdust/anniediscord/compare/v9.0.0...v9.0.1) (2022-09-04)
+
+
+### Bug Fixes
+
+* **rep:** user identifying error ([8c3a024](https://github.com/klerikdust/anniediscord/commit/8c3a0248f6bb6c8ecbcdea3cc2d22330b1ea9511))
+
 # [9.0.0](https://github.com/klerikdust/anniediscord/compare/v8.0.0...v9.0.0) (2022-09-03)
 
 
