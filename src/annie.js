@@ -385,10 +385,14 @@ class Annie extends Discord.Client {
 	*   @param {boolean} [dynamic=false]
 	*   @return {buffer}
 	*/
-    async getUserAvatar(id, compress = false, size = `?size=512`, forceStatic=true) {
-        const user = await this.users.fetch(id) 
-        if (!user) return loadAsset(`error`)
-		let url = user.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
+    async getUserAvatar(id, guildId, compress = false, size = `?size=512`, forceStatic=true) {
+        let guild, guildMember
+        !this.guilds.cache.has(guildId) ? guild = await this.guilds.fetch(guildId) : guild = await this.guilds.cache.get(guildId)
+        !guild.members.cache.has(this.users.cache.get(id)) ? guildMember = await guild.members.fetch(id) : await guild.members.cache.get(id)
+        
+        // const user = await this.guilds.cache.get(id).members.get(id)
+        if (!guildMember) return loadAsset(`error`)
+		let url = guildMember.displayAvatarURL({extension: `png`, forceStatic: forceStatic})
         if (compress) {
             return superagent.get(url.replace(/\?size=2048$/g, size))
                 .then(res => res.body)
