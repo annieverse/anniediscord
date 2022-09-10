@@ -1,3 +1,12 @@
+## [9.1.1](https://github.com/klerikdust/anniediscord/compare/v9.1.0...v9.1.1) (2022-09-10)
+
+
+### Bug Fixes
+
+* **avatar:** animated pfp ([d318133](https://github.com/klerikdust/anniediscord/commit/d3181333fb0016e3d1930b4b5d0d3172aa0d8f0b))
+* **setcover:** unable to set cover ([8817639](https://github.com/klerikdust/anniediscord/commit/88176390dbdea53a10c4bf35be47a474fc677515))
+* **setgender:** unable to set gender ([a9b1fd5](https://github.com/klerikdust/anniediscord/commit/a9b1fd51c92b13409f7ec0639fdcd878a81a246f))
+
 # [9.1.0](https://github.com/klerikdust/anniediscord/compare/v9.0.5...v9.1.0) (2022-09-09)
 
 
