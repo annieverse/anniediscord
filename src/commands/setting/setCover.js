@@ -61,6 +61,7 @@ module.exports = {
         }],
         type: ApplicationCommandType.ChatInput,        
         uploadCost: 1000,
+        FileTypesNotAllowed: [`.apng`,`.avif`,`.gif`,`.webp`],
         async execute(client, reply, message, arg, locale, prefix) {
             const userData = await (new User(client, message)).requestMetadata(message.author, 2)
                 //  Handle if user doesn't specify any arg
@@ -174,9 +175,10 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        
         let arg = null
-        if (options.getSubcommand() == `attachment` && options.getAttachment()) {
-            arg = options.getAttachment().url
+        if (options.getSubcommand() == `attachment` && options.getAttachment(`set`)) {
+            arg = options.getAttachment(`set`).url
         }
         if (options.getSubcommand() == `url` && options.getString(`set`)) {
             arg = options.getString(`set`)
@@ -212,6 +214,7 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
+            if (!url) return await reply.send(`Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: ${this.FileTypesNotAllowed.join(`, `)}`)
             const response = await superagent.get(url)
             const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
@@ -320,7 +323,7 @@ module.exports = {
             }
         } else {
             const hasAttachment = arg ? true : false
-            const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 && (arg.endsWith(`.jpeg`) || arg.endsWith(`.png`)) ? true : false 
+            const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 && !this.FileTypesNotAllowed.some(v=>arg.endsWith(v)) ? true : false 
             return {
                 isValidUpload: hasAttachment || hasImageURL ? true : false,
                 url: hasImageURL ? arg : null
