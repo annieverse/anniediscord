@@ -3074,7 +3074,24 @@ class Database {
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.info(`[DB@UPDATE_USER_GENDER] ${stmtType} (GENDER:${gender})(USER_ID:${userId}`) 
     }
-	
+
+	/**
+     * Updating user's gender data
+     * @param {string} [userId=``] Target user id
+     * @param {string} gender New gender
+     * @return {void}
+     */
+	 async updateUserGenderToneutral(userId=``) {
+        //	Insert if no data entry exists.
+        await this._query(`
+	            DELETE FROM user_gender 
+				WHERE user_id = $userId`
+				, `run`
+				, {userId:userId}	
+			)
+		logger.info(`[DB@UPDATE_USER_GENDER] UPDATE (GENDER: neutral)(USER_ID:${userId}`) 
+    }
+
 	setTheme(theme, userId, guildId){
 		let themeToSet, themeToUnset
 		if (theme == `dark`) {

@@ -96,7 +96,8 @@ module.exports = {
                 prefix: `/`,
                 emoji: await client.getEmoji(`848521456543203349`)
             },
-            followUp: true
+            followUp: true,
+            ephemeral:true
         })
     }
 }

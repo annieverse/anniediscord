@@ -546,7 +546,7 @@
         "MISSING_GENDER": "Don't forget to set your gender first!\ne.g. **`{{prefix}}setgender <male/female>`**",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
         "TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
-        "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}",
+        "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}\nIf you dont idenify as male/female, disregard this message, as we will use the neutral terminology",
         "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
     },
     "REMINDER": {

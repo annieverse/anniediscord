@@ -57,13 +57,14 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         //  Handle out of range options
-        const targetGender = options.getString(`male`) ? options.getString(`male`) : options.getString(`female`) ?  options.getString(`female`) : options.getString(`neutral`) ?
-        options.getString(`neutral`) : null
-        if (!targetGender) return reply.send(locale.SETGENDER.INVALID, {
-                socket: {
-                    emoji: await client.getEmoji(`AnnieYandereAnim`)
-                }
-            })
+        const key = options.getString(`gender`).toLowerCase()
+        
+        const malePool = [`male`, `ml`, `m`, `boy`, `man`]
+        const femalePool = [`female`, `fl`, `f`, `girl`, `woman`]
+        const targetGender =malePool.includes(key) ? `m` :
+        femalePool.includes(key) ? `f` :
+        null
+        !targetGender ? client.db.updateUserGenderToneutral(interaction.member.id) :
             //  Update/register gender
         client.db.updateUserGender(interaction.member.id, targetGender)
         return reply.send(locale.SETGENDER.SUCCESSFUL, {
