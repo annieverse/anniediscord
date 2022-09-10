@@ -228,7 +228,7 @@ module.exports = {
         metadata.description = item_description
         metadata.price = item_price
         metadata.tradeable = tradeable
-        metadata.useMessage = item_use_message
+        metadata.responseOnUse = item_use_message
 
         const stockButtonId = sessionId + `addprefillstockbutton`
         const cancelButtonId = sessionId + `addprefillbuffsbutton`
@@ -259,7 +259,7 @@ module.exports = {
         let responseMessageContent = {
             instructions: `Please click the button of the value you would like to enter`,
             buffsoptions: `**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Once in the popup after hitting the \`buffs?\` button do one of the following\n♡ Type **\`addrole <roles>\`** to get specified roles once used.\n♡ Type **\`removerole <roles>\`** to remove specified roles from user once used.\n♡ Type **\`additem <amount> <itemName/itemId>\`** to receive specified items once used.\n♡ Type **\`removeitem <amount> <itemName/itemId>\`** to remove specified items from user's inventory.\n♡ Type **\`expboost <percentage> <duration>\`** To give exp boost to the user for specified amount of time.\n♡ Type **\`acboost <percentage> <duration>\`** to give artcoins boost to the user for specified amount of time.`,
-            start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.useMessage === `~` ? `default` : metadata.useMessage}`,
+            start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.responseOnUse === `~` ? `default` : metadata.responseOnUse}`,
         }
 
         let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`) + Object.values(responseMessageContent).slice(-1), {
@@ -1160,17 +1160,23 @@ module.exports = {
                     break
             }
         })
-        async function name(modal, interaction) {
-            interaction.showModal(modal)
+        async function getModalResponse(modal){
             const filter = (interaction) => interaction.customId === modal.data.custom_id
+
             let rawAnswer
             try {
-                await message.awaitModalSubmit({ filter, time: 30000 })
+                rawAnswer = await message.awaitModalSubmit({ filter, time: 30000 })
             } catch (error) {
                 client.logger.error(`Error has been handled\n${error}`)
             }
-            if (!rawAnswer) return
+            if (!rawAnswer) return false
             rawAnswer.deferUpdate()
+            return rawAnswer
+        }
+        async function name(modal, interaction) {
+            interaction.showModal(modal)
+            const rawAnswer = await getModalResponse(modal)
+            if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const nameLimit = 20
             if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
@@ -1199,15 +1205,8 @@ module.exports = {
 
         async function description(modal, interaction) {
             interaction.showModal(modal)
-            const filter = (interaction) => interaction.customId === modal.data.custom_id
-            let rawAnswer
-            try {
-                await message.awaitModalSubmit({ filter, time: 30000 })
-            } catch (error) {
-                client.logger.error(`Error has been handled\n${error}`)
-            }
+            const rawAnswer = await getModalResponse(modal)
             if (!rawAnswer) return
-            rawAnswer.deferUpdate()
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const descLimit = 120
             if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
@@ -1228,15 +1227,8 @@ module.exports = {
 
         async function price(modal, interaction) {
             interaction.showModal(modal)
-            const filter = (interaction) => interaction.customId === modal.data.custom_id
-            let rawAnswer
-            try {
-                await message.awaitModalSubmit({ filter, time: 30000 })
-            } catch (error) {
-                client.logger.error(`Error has been handled\n${error}`)
-            }
+            const rawAnswer = await getModalResponse(modal)
             if (!rawAnswer) return
-            rawAnswer.deferUpdate()
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const priceLimit = 999999999999999
             if (parseInt(params) >= priceLimit) return reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {
@@ -1261,13 +1253,7 @@ module.exports = {
 
         async function stock(modal, interaction) {
             interaction.showModal(modal)
-            const filter = (interaction) => interaction.customId === modal.data.custom_id
-            let rawAnswer
-            try {
-                await message.awaitModalSubmit({ filter, time: 30000 })
-            } catch (error) {
-                client.logger.error(`Error has been handled\n${error}`)
-            }
+            const rawAnswer = await getModalResponse(modal)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const stockLimit = 999999999999999
@@ -1296,15 +1282,8 @@ module.exports = {
 
         async function response(modal, interaction) {
             interaction.showModal(modal)
-            const filter = (interaction) => interaction.customId === modal.data.custom_id
-            let rawAnswer
-            try {
-                await message.awaitModalSubmit({ filter, time: 30000 })
-            } catch (error) {
-                client.logger.error(`Error has been handled\n${error}`)
-            }
+            const rawAnswer = await getModalResponse(modal)
             if (!rawAnswer) return
-            rawAnswer.deferUpdate()
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const messageUponUseLimit = 120
             if (params.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {
