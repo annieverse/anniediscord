@@ -150,7 +150,7 @@ module.exports = {
             //  Handle if user don't have any gifts to send
         if (!availableGifts.length) return reply.send(locale.GIFT.UNAVAILABLE, {
             socket: {
-                prefix: client.prefix,
+                prefix: `/`,
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
@@ -165,7 +165,7 @@ module.exports = {
                 prebuffer: true,
                 image: (await new inventoryGUI(userData, client).build()).toBuffer(),
                 socket: {
-                    prefix: client.prefix,
+                    prefix: `/`,
                     referenceItem: availableGifts[0].name.toLowerCase(),
                     items: await this.displayGifts(availableGifts, client)
                 }, 
