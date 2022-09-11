@@ -160,6 +160,8 @@ module.exports = {
 			const message = await interaction.fetchReply()
 			try {
 				message.edit({ components: [] })
+				client.db.redis.del(sessionID)
+				reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`,{ephemeral: true, followUp:true})
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}

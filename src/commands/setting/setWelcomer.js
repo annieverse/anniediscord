@@ -139,7 +139,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,
-            header: `Hi, ${message.author.username}!`,
+            header: `Hi, ${message.member.user.username}!`,
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`692428660824604717`)
@@ -343,7 +343,7 @@ module.exports = {
             configCode: this.selectedModule,
             customizedParameter: welcomerText,
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         await reply.send(locale.SETWELCOMER.TEXT_SUCCESSFULLY_REGISTERED, {
@@ -353,7 +353,8 @@ module.exports = {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`692428927620087850`)
-            }
+            },
+            followUp: true
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, tipsToPreview)
@@ -375,7 +376,7 @@ module.exports = {
         const renderingMsg = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,
             socket: {
-                user: message.author.id,
+                user: message.member.id,
                 command: `WELCOMER_PREVIEW`,
                 emoji: await client.getEmoji(`790994076257353779`)
             },
@@ -514,7 +515,7 @@ module.exports = {
                 configCode: this.selectedModule,
                 customizedParameter: id,
                 guild: message.guild,
-                setByUserId: message.author.id,
+                setByUserId: message.member.id,
                 cacheTo: this.guildConfigurations
             })
             reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
@@ -566,7 +567,7 @@ module.exports = {
             followUp: true
         })
         const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, tipsToPreview)
+        await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
     },
 
@@ -602,7 +603,7 @@ module.exports = {
             followUp: true
         })
         const c = new Confirmator(message, reply)
-        await c.setup(message.author.id, tipsToPreview)
+        await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
     },
 
@@ -659,14 +660,14 @@ module.exports = {
             configCode: this.selectedModule,
             customizedParameter: this.args[1],
             guild: message.guild,
-            setByUserId: message.author.id,
+            setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
         return reply.send(locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
             status: `success`,
             socket: {
                 theme: this.args[1],
-                user: message.author.username,
+                user: message.member.user.username,
                 emoji: await client.getEmoji(`789212493096026143`)
             }
         })

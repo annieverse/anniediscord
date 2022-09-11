@@ -1,3 +1,10 @@
+## [9.1.2](https://github.com/klerikdust/anniediscord/compare/v9.1.1...v9.1.2) (2022-09-10)
+
+
+### Bug Fixes
+
+* **leaderboards:** use server specific icon ([68a093f](https://github.com/klerikdust/anniediscord/commit/68a093f4960ef8fba0ca4b82aada4a168e3ca6f5))
+
 ## [9.1.1](https://github.com/klerikdust/anniediscord/compare/v9.1.0...v9.1.1) (2022-09-10)
 
 
