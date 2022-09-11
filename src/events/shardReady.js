@@ -6,7 +6,7 @@ module.exports = function shardReady(annie, id, unavailableGuilds) {
     setTimeout(()=>{
         annie.logger.info(`status changing for Shard ${id}`)
         if (annie.dev) return annie.user.setPresence({ activities: []})
-        annie.user.setPresence({ activities: [{ name: `${annie.prefix}help | annie.gg`, type: ActivityType.Playing}], status: `online` })
+        annie.user.setPresence({ activities: [{ name: `annie.gg`, type: ActivityType.Playing}], status: `online` })
     }, 60*1*1000)
     
 }
