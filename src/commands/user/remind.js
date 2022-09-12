@@ -1,9 +1,9 @@
 const moment = require(`moment`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-    /**
-     * Never forget things. Ask Annie to reminds you anytime!
-     * @author klerikdust
-     */
+/**
+ * Never forget things. Ask Annie to reminds you anytime!
+ * @author klerikdust
+ */
 module.exports = {
     name: `remind`,
     aliases: [`remind`, `rmd`, `reminds`, `reminder`, `remindme`],
@@ -37,7 +37,7 @@ module.exports = {
         ],
         type: ApplicationCommandOptionType.String
     }
-],
+    ],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Displays guide and user's active reminders
@@ -71,7 +71,10 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         //  Handle if the date is not valid
         let arg = `${options.getString(`message`)} in ${options.getInteger(`in_how_long`)} ${options.getString(`time_unit`)}`
-        const context = client.reminders.getContextFrom(arg, interaction.member.id)
+        const reminderMessage = await options.getString(`message`)
+        const reminderTimeAmount = await options.getInteger(`in_how_long`)
+        const reminderTimeUnit = await options.getString(`time_unit`)
+        const context = client.reminders.getContext(reminderMessage, reminderTimeAmount, reminderTimeUnit, interaction.member.id)
         if (!context.isValidReminder) return reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),
