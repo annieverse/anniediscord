@@ -1,6 +1,5 @@
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!newMember.guild.configs) return 
-    if (oldMember.pending != newMember.pending) return
     //  Import configs
     let guild = newMember.guild
     let configs = guild.configs
@@ -10,7 +9,8 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
      *  -------------------------------------------------------
      */
      if (configs.get(`WELCOMER_MODULE`).value) {
-        if (!newMember.pending) return
+        // If the user still needs to complete the discord membership gate for this guild
+        if (newMember.pending) return
         /**
          *  -------------------------------------------------------
          *  WELCOMER'S AUTOROLE MODULE
@@ -23,7 +23,6 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
             const roleId = welcomerRolesList.value[i]
             //  Handle if role cannot be found due to deleted/invalid
             if (!guild.roles.cache.has(roleId)) continue
-            if (newMember.pending) return
             newMember.roles.add(roleId)
         }
     }

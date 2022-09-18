@@ -40,12 +40,18 @@ module.exports = function applicationCommandLoader({
                 /**
                  * For Pan's local bot use only
                  */
+                // Annie support server
                 await rest.put(
                     Routes.applicationGuildCommands(`514688969355821077`, `577121315480272908`), {
                         body: applicationCommands
                     },
                 ) 
-                
+                // Pan's test server
+                await rest.put(
+                    Routes.applicationGuildCommands(`514688969355821077`, `597171669550759936`), {
+                        body: applicationCommands
+                    },
+                ) 
                 /**
                  * For Annie's local bot use only
                  */

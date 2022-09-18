@@ -1,3 +1,20 @@
+## [9.1.4](https://github.com/klerikdust/anniediscord/compare/v9.1.3...v9.1.4) (2022-09-18)
+
+
+### Bug Fixes
+
+* **autorole:** adds role after screening ([b05365c](https://github.com/klerikdust/anniediscord/commit/b05365cfaf5ade21ea33b8e5ae9e58d7826205c6))
+* **reminder:** uses first number as time unit ([b1693d7](https://github.com/klerikdust/anniediscord/commit/b1693d7ab77ff3728dc2522d6e74113e0ce011b5))
+
+## [9.1.3](https://github.com/klerikdust/anniediscord/compare/v9.1.2...v9.1.3) (2022-09-11)
+
+
+### Bug Fixes
+
+* **quests:** timed out restriction ([1b8422d](https://github.com/klerikdust/anniediscord/commit/1b8422d0595f0150987c0f36e16b6ccf95a2da26))
+* **setshop:** unable to set response message ([6dbe169](https://github.com/klerikdust/anniediscord/commit/6dbe169c11da747d6b237d508e896b05cfb448d0))
+* **setwelcomer:** unable to set text ([4b8c7dd](https://github.com/klerikdust/anniediscord/commit/4b8c7dd446276d2c78a45b5a89f91a7dbdd2e5b7))
+
 ## [9.1.2](https://github.com/klerikdust/anniediscord/compare/v9.1.1...v9.1.2) (2022-09-10)
 
 
