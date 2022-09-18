@@ -6,7 +6,7 @@ const { EmbedBuilder } = require(`discord.js`)
  * @constructor
  */
 class Reminder {
-    constructor(client={}) {
+    constructor(client = {}) {
 
         /**
          * Bot/client instance
@@ -27,7 +27,7 @@ class Reminder {
         this.instanceId = `[SHARD_ID:${this.client.shard.ids[0]}@REMINDER]`
         this.initialize()
     }
-    
+
     /**
      * Initializing reminders and populating them into cron manager
      * @return {class}
@@ -44,7 +44,7 @@ class Reminder {
         if (!localReminders) return this.logger.warn(`${this.instanceId} empty container`)
         //  Iterate over the reminders and register them to cron
         let activeReminders = 0
-        for (let i=0; i<localReminders.length; i++) {
+        for (let i = 0; i < localReminders.length; i++) {
             const context = localReminders[i]
             let normalizedContext = {
                 registeredAt: context.registered_at,
@@ -67,7 +67,7 @@ class Reminder {
      * @param {object} context the context of reminder
      * @return {boolean}
      */
-    async register(context={}) {
+    async register(context = {}) {
         const cacheId = `REMINDERS@${context.userId}`
         //  Registering into cron
         this.logger.info(`[Reminder.register] registering a new reminder for USER_ID:${context.userId} with UUID:${context.id}`)
@@ -106,7 +106,7 @@ class Reminder {
                 const embed = new EmbedBuilder()
                     .setColor(`#ffc9e2`)
                     .setDescription(`**Here is your reminder!♡**\n╰ ` + context.message)
-                targetUser.send({embeds:[embed]})
+                targetUser.send({ embeds: [embed] })
             }
             //  Handle if user's DM is locked
             catch (e) {
@@ -132,7 +132,7 @@ class Reminder {
                 this.logger.debug(`deleted ${context.id} from database`)
                 this.logger.info(`[Reminder.finish][${context.id}] reminder has completed and omitted.`)
             }
-        }, {start: true})
+        }, { start: true })
     }
 
     /**
@@ -140,7 +140,7 @@ class Reminder {
      * @param {string} userId
      * @return {array|null}
      */
-    async getReminders(userId=``) {
+    async getReminders(userId = ``) {
         const fn = `[Reminder.getReminders]`
         const id = `REMINDERS@${userId}`
         let source = null
@@ -165,14 +165,39 @@ class Reminder {
         }
         return source
     }
-    
     /**
      * Parsing reminder's context from user message
      * @param {string} query
      * @param {string} userId
      * @return {object}
      */
-    getContextFrom(query=``, userId=``) {
+    getContext(message = ``, time_amount = 1, time_unit = `h`, userId = ``) {
+        let context = this.baseReminderContext
+        context.id = uuidv4()
+        context.userId = userId
+        //  Handle if query is too short
+        if (message.length <= 1) return context
+        const composedToken = `${time_amount} ${time_unit}`
+        const composedResult = ms(composedToken)
+        //  Assign if found valid date
+        if (composedResult !== undefined) {
+            context.isValidReminder = true
+            context.remindAt = this.getDate(composedResult)
+        } 
+        //  Handle if no reminder date has been found during previous iterations
+        if (!context.isValidReminder) return context
+        
+        //  Use default message if custom message is not provided
+        context.message = message.length > 0 ? message : `Custom message wasn't provided.`
+        return context
+    }
+    /**
+     * Parsing reminder's context from user message
+     * @param {string} query
+     * @param {string} userId
+     * @return {object}
+     */
+    getContextFrom(query = ``, userId = ``) {
         let context = this.baseReminderContext
         context.id = uuidv4()
         context.userId = userId
@@ -180,12 +205,12 @@ class Reminder {
         if (query.length <= 1) return context
         const tokens = query.split(` `)
         //  Find date by combining tokens
-        for (let i=0; i<tokens.length; i++) {
+        for (let i = 0; i < tokens.length; i++) {
             // Handle if token is only a whitespace
             if (!/\S/.test(tokens[i])) continue
             const token = tokens[i]
-            for (let s=0; s<(tokens.length-1); s++) {
-                const nextToken = tokens[s+1]
+            for (let s = 0; s < (tokens.length - 1); s++) {
+                const nextToken = tokens[s + 1]
                 const composedToken = `${token} ${nextToken}`
                 const composedResult = ms(composedToken)
                 //  Assign if found valid date
@@ -210,11 +235,11 @@ class Reminder {
         //  Handle if no reminder date has been found during previous iterations
         if (!context.isValidReminder) return context
         //  Ommit date prefix if there's any in the last index
-        if (tokens[tokens.length-1]) {
-			if (tokens[tokens.length-1].includes(`in`)) tokens.pop()
-		}
-		//  Use default message if custom message is not provided
-        context.message = tokens.length > 0 ? tokens.join(` `) : `Custom message wasn't provided.` 
+        if (tokens[tokens.length - 1]) {
+            if (tokens[tokens.length - 1].includes(`in`)) tokens.pop()
+        }
+        //  Use default message if custom message is not provided
+        context.message = tokens.length > 0 ? tokens.join(` `) : `Custom message wasn't provided.`
         return context
     }
 
@@ -224,7 +249,7 @@ class Reminder {
      * @param {number} ms
      * @return {object}
      */
-    getDate(ms=0) {
+    getDate(ms = 0) {
         const currentDate = new Date()
         return {
             timestamp: new Date(currentDate.getTime() + ms),

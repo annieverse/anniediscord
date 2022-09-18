@@ -81,6 +81,7 @@ module.exports = async function guildMemberAdd(client, member) {
             const roleId = welcomerRolesList.value[i]
             //  Handle if role cannot be found due to deleted/invalid
             if (!guild.roles.cache.has(roleId)) continue
+            // If the user still needs to complete the discord membership gate for this guild
             if (member.pending) return
             member.roles.add(roleId)
         }
