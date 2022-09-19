@@ -36,6 +36,10 @@ module.exports = {
         description: `Disable this module.`,
         type: ApplicationCommandOptionType.Subcommand
     }, {
+        name: `preview`,
+        description: `Preview this module.`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
         name: `channel`,
         description: `Set a specific channel for Annie's logs.`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -210,6 +214,10 @@ module.exports = {
             this.action = `theme`
             this.args = [this.action, options.getString(`set`)]
         }
+        if (options.getSubcommand() === `preview`) {
+            this.action = `preview`
+            this.args = [this.action]
+        }
         //  Run action
         this.annieRole = (await interaction.guild.members.fetch(client.user.id)).roles.highest
         this.guildConfigurations = interaction.guild.configs
@@ -380,7 +388,7 @@ module.exports = {
                 command: `WELCOMER_PREVIEW`,
                 emoji: await client.getEmoji(`790994076257353779`)
             },
-            followUp: true
+            followUp: message.deferred || message.replied ? true : false
         })
         const img = await new GUI(message.member, client).build()
         renderingMsg.delete()
@@ -681,6 +689,8 @@ module.exports = {
      */
     _parseWelcomeText(message) {
         let text = this.guildConfigurations.get(`WELCOMER_TEXT`).value
+        // Replace new line character in case it doesnt make the new line
+        text = text.replace(/\\n/g, `\n`)
         text = text.replace(/{{guild}}/gi, `**${message.guild.name}**`)
         text = text.replace(/{{user}}/gi, message.member)
         return text

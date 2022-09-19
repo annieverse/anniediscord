@@ -12,6 +12,8 @@ module.exports = async function guildMemberAdd(client, member) {
      * @returns {string}
      */
     const parseWelcomerText = (text=``) => {
+        // Replace new line character in case it doesnt make the new line
+        text = text.replace(/\\n/g, `\n`)
         text = text.replace(/{{guild}}/gi, `**${guild.name}**`)
         text = text.replace(/{{user}}/gi, member)
         return text
