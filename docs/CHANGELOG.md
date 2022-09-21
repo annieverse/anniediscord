@@ -1,3 +1,11 @@
+## [9.1.4](https://github.com/klerikdust/anniediscord/compare/v9.1.3...v9.1.4) (2022-09-18)
+
+
+### Bug Fixes
+
+* **autorole:** adds role after screening ([b05365c](https://github.com/klerikdust/anniediscord/commit/b05365cfaf5ade21ea33b8e5ae9e58d7826205c6))
+* **reminder:** uses first number as time unit ([b1693d7](https://github.com/klerikdust/anniediscord/commit/b1693d7ab77ff3728dc2522d6e74113e0ce011b5))
+
 ## [9.1.3](https://github.com/klerikdust/anniediscord/compare/v9.1.2...v9.1.3) (2022-09-11)
 
 
