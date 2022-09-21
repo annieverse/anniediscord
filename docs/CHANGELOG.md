@@ -1,3 +1,10 @@
+## [9.1.5](https://github.com/klerikdust/anniediscord/compare/v9.1.4...v9.1.5) (2022-09-21)
+
+
+### Performance Improvements
+
+* **client:** editing caches ([d077dc2](https://github.com/klerikdust/anniediscord/commit/d077dc2b2a866505b08bdc926a54629aec37d8db))
+
 ## [9.1.4](https://github.com/klerikdust/anniediscord/compare/v9.1.3...v9.1.4) (2022-09-18)
 
 
