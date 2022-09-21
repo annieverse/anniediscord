@@ -25,14 +25,18 @@ module.exports = function applicationCommandLoader({
 
     const rest = new REST({
         version: `10`
-    }).setToken(process.env.BOT_TOKEN);
+    }).setToken(process.env.BOT_TOKEN)
+
+    const NODE_ENVIRONMENT_CLIENT_ID = process.env.NODE_ENV === `production` ? `501461775821176832` : process.env.NODE_ENV === `production_beta` ? `788001359349547039` : null
+
+    if (!NODE_ENVIRONMENT_CLIENT_ID && process.env.NODE_ENV !== `development`) {return process.exit(9)}
 
     (async() => {
         try {
             logger.info(`Started refreshing application (/) commands.`)
-            if (process.env.NODE_ENV === `production`) {
+            if (process.env.NODE_ENV === `production` || process.env.NODE_ENV === `production_beta`) {
                 await rest.put(
-                    Routes.applicationCommands(`788001359349547039`), {
+                    Routes.applicationCommands(NODE_ENVIRONMENT_CLIENT_ID), {
                         body: applicationCommands
                     },
                 )
