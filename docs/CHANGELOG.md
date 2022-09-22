@@ -1,3 +1,17 @@
+# [9.2.0](https://github.com/klerikdust/anniediscord/compare/v9.1.5...v9.2.0) (2022-09-22)
+
+
+### Bug Fixes
+
+* **setcover:** reset cover ([9c31ab6](https://github.com/klerikdust/anniediscord/commit/9c31ab6dd368393f6ad7d6f45b5491bcb1a4cf97))
+* **setshop:** setting shop image ([9fe9665](https://github.com/klerikdust/anniediscord/commit/9fe96657726b9cd59d75623f95bc8786320001a9))
+* **setwelcomer text:** allow for new line ([733b8d2](https://github.com/klerikdust/anniediscord/commit/733b8d2dcd648ea628eb130b830735574cb1c3bc))
+
+
+### Features
+
+* **setwelcomer:** reset welcome banner to default ([9562deb](https://github.com/klerikdust/anniediscord/commit/9562deb388d27ba95550d3076ee5dad02fe0248d))
+
 ## [9.1.5](https://github.com/klerikdust/anniediscord/compare/v9.1.4...v9.1.5) (2022-09-21)
 
 
