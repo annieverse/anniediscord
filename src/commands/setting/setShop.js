@@ -73,6 +73,10 @@ module.exports = {
                 required: true,
                 type: ApplicationCommandOptionType.String
             }]
+        },{
+            name: `reset`,
+            description: `Set the shop's image`,
+            type: ApplicationCommandOptionType.Subcommand
         }]
     }, {
         name: `delete`,
@@ -167,10 +171,11 @@ module.exports = {
         }
         if (options.getSubcommandGroup() === `image`) {
             if (options.getSubcommand() === `attachment`) {
-                args = [`image`, options.getAttachment(`set`)]
-            }
-            if (options.getSubcommand() === `url`) {
+                args = [`image`, options.getAttachment(`set`).url]
+            }else if (options.getSubcommand() === `url`) {
                 args = [`image`, options.getString(`set`)]
+            } else if (options.getSubcommand() === `reset`) {
+                args = [`imagereset`]
             }
         }
         if (options.getSubcommand() === `delete`) {
@@ -860,6 +865,35 @@ module.exports = {
     },
 
     /**
+     * Managing shop's image reset. 
+     * @return {void}
+     */
+    async imagereset(client, reply, message, arg, locale, prefix, args) {
+        const customBanner = message.guild.configs.get(`SHOP_IMAGE`).value
+        if (!customBanner) return reply.send(locale.SETSHOP.IMAGE_NOT_RESETABLE)
+        const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
+            image: `banner_setshop`,
+            prebuffer: false
+        })
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
+        c.onAccept(async () => {
+            client.db.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
+            fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error)=>{
+                if (error) client.logger.warn(`[setShop.js][Removing Image from filetree] ${error.stack}`)
+            })
+            reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
+                status: `success`,
+                socket: {
+                    prefix: prefix,
+                    emoji: await client.getEmoji(`789212493096026143`)
+                },
+                followUp: true
+            })
+        })
+    },
+
+    /**
      * Managing shop's image. 
      * @return {void}
      */
@@ -881,9 +915,9 @@ module.exports = {
         const id = uuidv4()
         const response = await superagent.get(url)
         const buffer = response.body
-        await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
+        
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
-            image: await loadAsset(id, `./src/assets/customShop`),
+            image: buffer,
             prebuffer: true
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
@@ -896,6 +930,7 @@ module.exports = {
                 setByUserId: message.member.id,
                 cacheTo: message.guild.configs
             })
+            await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
             reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
                 status: `success`,
                 socket: {
@@ -1160,7 +1195,7 @@ module.exports = {
                     break
             }
         })
-        async function getModalResponse(modal){
+        async function getModalResponse(modal) {
             const filter = (interaction) => interaction.customId === modal.data.custom_id
 
             let rawAnswer

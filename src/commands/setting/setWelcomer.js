@@ -36,6 +36,10 @@ module.exports = {
         description: `Disable this module.`,
         type: ApplicationCommandOptionType.Subcommand
     }, {
+        name: `preview`,
+        description: `Preview this module.`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
         name: `channel`,
         description: `Set a specific channel for Annie's logs.`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -93,6 +97,10 @@ module.exports = {
                 required: true,
                 type: ApplicationCommandOptionType.String
             }]
+        }, {
+            name: `reset`,
+            description: `Resets the welcomer image back to default.`,
+            type: ApplicationCommandOptionType.Subcommand
         }]
     }, {
         name: `userimage`,
@@ -192,10 +200,12 @@ module.exports = {
             if (options.getSubcommand() === `attachment`) {
                 this.action = `image`
                 this.args = [this.action, options.getAttachment(`set`).url]
-            }
-            if (options.getSubcommand() === `url`) {
+            } else if (options.getSubcommand() === `url`) {
                 this.action = `image`
                 this.args = [this.action, options.getString(`set`)]
+            } else if (options.getSubcommand() === `reset`) {
+                this.action = `imagereset`
+                this.args = [this.action]
             }
         }
         if (options.getSubcommand() === `userimage`) {
@@ -209,6 +219,10 @@ module.exports = {
         if (options.getSubcommand() === `theme`) {
             this.action = `theme`
             this.args = [this.action, options.getString(`set`)]
+        }
+        if (options.getSubcommand() === `preview`) {
+            this.action = `preview`
+            this.args = [this.action]
         }
         //  Run action
         this.annieRole = (await interaction.guild.members.fetch(client.user.id)).roles.highest
@@ -291,7 +305,7 @@ module.exports = {
         let testCondition = false
         if (message.mentions) {
             testCondition = message.mentions.channels.first() || message.guild.channels.cache.get(this.args[1]) ||
-            message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
         } else {
             testCondition = message.guild.channels.cache.get(this.args[1]) ||
                 message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
@@ -380,7 +394,7 @@ module.exports = {
                 command: `WELCOMER_PREVIEW`,
                 emoji: await client.getEmoji(`790994076257353779`)
             },
-            followUp: true
+            followUp: message.deferred || message.replied ? true : false
         })
         const img = await new GUI(message.member, client).build()
         renderingMsg.delete()
@@ -454,6 +468,33 @@ module.exports = {
             },
             status: `success`
         })
+    },
+    /**
+     * Managing welcomer's image. 
+     * @return {void}
+     */
+    async imagereset(client, reply, message, arg, locale, prefix) {
+        const welcomerImage = message.guild.configs.get(`WELCOMER_IMAGE`).value
+        if (welcomerImage === `welcomer` || !welcomerImage) return reply.send(`You use the default configuration already.`)
+        const confirmation = await reply.send(locale.SETWELCOMER.CONFIRMATION_IMAGE, {
+            image: await new GUI(message.member, client, `welcomer`).build(),
+            prebuffer: true
+        })
+        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        await c.setup(message.member.id, confirmation)
+        c.onAccept(async () => {
+            client.db.deleteGuildConfiguration(`WELCOMER_IMAGE`, message.guild.id)
+            fs.unlink(`./src/assets/customWelcomer/${welcomerImage}.png`, (error) => {
+                if (error) client.logger.warn(`[setWelcomer.js][Removing Image from filetree] ${error.stack}`)
+            })
+            reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
+                socket: {
+                    emoji: await client.getEmoji(`789212493096026143`)
+                },
+                followUp: true
+            })
+        })
+
     },
 
     /**
@@ -681,6 +722,8 @@ module.exports = {
      */
     _parseWelcomeText(message) {
         let text = this.guildConfigurations.get(`WELCOMER_TEXT`).value
+        // Replace new line character in case it doesnt make the new line
+        text = text.replace(/\\n/g, `\n`)
         text = text.replace(/{{guild}}/gi, `**${message.guild.name}**`)
         text = text.replace(/{{user}}/gi, message.member)
         return text

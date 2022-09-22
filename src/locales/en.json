@@ -647,7 +647,8 @@
         "DISPLAY_USED_REGULAR_COVER": "You are currently using **{{cover}}** as your profile cover.",
         "OWNED_COVERS": "If you wish to switch- checkout your owned covers below.\n",
         "SUGGEST_TO_UPLOAD": "Let's upload/buy one to make your profile more unique!♡ {{emoji}}",
-        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover."
+        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover.",
+        "DEFAULT_ALREADY": "Sorry, you use the default cover already."
     },
     "SETEXP": {
         "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Migrated from other bots? tired of grinding the exp? or probably just wanna have fun with a quick level jump? worry not, you can add some exp to yourself or other member.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> I know that some people are probably annoying and we want punish them for that behavior. With this action, you'll be able to decrease someone's exp or even yourself!\n\n**`{{prefix}}setexp reset <user>`**\n> Tired of being a high-leveled user? oh well, it can't be helped. This action allows you to turn yours or someone's exp account into a fresh slate.\n\n╰──────────☆～*:;,．*╯",
@@ -854,7 +855,8 @@
         "ADD_BUFF_INVALID_DURATION": "Don't' forget to specify the duration, okay? It can be **`2 minutes`, `5 hours`, or even **`7 days`**!",
         "ADD_CONFIRMATION": "Shall we create this item?",
         "ADD_SUCCESSFUL": "**Yay! item has been created!** {{emoji}}\n╰─ Now you can check it in the **`{{prefix}}shop`** command.",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result."
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result.",
+        "IMAGE_NOT_RESETABLE": "Your shop uses the default banner already."
     },
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
