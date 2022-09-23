@@ -183,7 +183,7 @@ class Annie extends Discord.Client {
          */
         prepareLogin() {
             process.on(`unhandledRejection`, err => this.logger.warn(err))
-            //process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
+            
             try {
                 this.registerNode(new Database().connect(), `db`)
                 const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })

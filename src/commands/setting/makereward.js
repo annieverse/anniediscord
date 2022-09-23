@@ -7,8 +7,13 @@ const {
     ActionRowBuilder,
     ComponentType,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle,
+    PermissionFlagsBits
 } = require(`discord.js`)
+const {Blob} = require(`buffer`)
 
 /**
  * Output bot's latency
@@ -21,7 +26,7 @@ module.exports = {
     usage: `makereward`,
     permissionLevel: 0,
     multiUser: false,
-    applicationCommand: false,
+    applicationCommand: true,
     messageCommand: false,
     options: [{
         name: `create`,
@@ -68,9 +73,15 @@ module.exports = {
         name: `list`,
         description: `delete a package`,
         type: ApplicationCommandOptionType.Subcommand
+    },{
+        name: `maketable`,
+        description: `make the database table`,
+        type: ApplicationCommandOptionType.Subcommand,
+        default_member_permissions: PermissionFlagsBits.Administrator.toString()
     }],
     type: ApplicationCommandType.ChatInput,
     async Iexecute(client, reply, interaction, options, locale) {
+        if (options.getSubcommand() === `maketable`) return client.db.registerCustomRewardTable()
 
         // Test if the delete sub command was executed
         if (options.getSubcommand() === `delete`) return this.deletePackage(client, reply, interaction, options, locale)
@@ -89,7 +100,9 @@ module.exports = {
          * Check if package name exists already
          * Check if there is 25 packages made already ***25 is a hard number for max as the other command that pairs with this cannot go above 25***
          */
-
+        const packages = await client.db.getRewardAmount(interaction.guild.id)
+        if (packages.length >= 25) return reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
+        console.log(packages)
 
         let rewardSchema = new customReward(packageName)
         rewardSchema.setup()
@@ -113,7 +126,7 @@ module.exports = {
 
 
         // Create the cooldown for the command so a user cant start two instances of the command
-        // const sessionId = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
+        const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
         // if (await client.db.redis.exists(sessionId)) return reply.send(`create_SESSION_STILL_ACTIVE`)
         // client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
 
@@ -150,7 +163,9 @@ module.exports = {
             phaseTwo()
         }
 
-
+        /**
+         * Allow the user to pick from the available roles the bot has access to then move onto phase two to add items if chosen to or go right to confirming the package.
+         */
         async function phaseOne() {
             // Set up the roles
             const roleOptions = await setRoleOptions(interaction) // get available roles to select from
@@ -174,6 +189,7 @@ module.exports = {
             rewardSchema.on(async (r) => {
                 await r.deferUpdate()
                 roles[r.customId] = [...r.values]
+                // Combine both arrays into one array for easier checking
                 finializedSelection = Object.values(roles).flat()
 
                 trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
@@ -182,15 +198,15 @@ module.exports = {
                     let roleConfirmationRow = new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
-                            .setCustomId(`confirm`)
-                            .setLabel(`Confirm`)
-                            .setStyle(ButtonStyle.Success),
+                                .setCustomId(`confirm`)
+                                .setLabel(`Confirm`)
+                                .setStyle(ButtonStyle.Success),
                         )
                         .addComponents(
                             new ButtonBuilder()
-                            .setCustomId(`cancel`)
-                            .setLabel(`Cancel and set the number of roles to 0`)
-                            .setStyle(ButtonStyle.Danger)
+                                .setCustomId(`cancel`)
+                                .setLabel(`Cancel and set the number of roles to 0`)
+                                .setStyle(ButtonStyle.Danger)
                         )
                     await trackingMessage.edit({
                         components: [roleConfirmationRow]
@@ -239,161 +255,208 @@ module.exports = {
 
             })
         }
-
+        /**
+         * Allow the user to find an item and then go to confirming the package.
+         */
         async function phaseTwo() {
-            let itemPriceToggle = true
-            let amounttry = 1
             let itemTry = 1
             let currentItem = undefined
-            let wasItemConfirmed = false
-            let manualEndOrAutomatic = false
             const itemNames = []
             const availableItems = await client.db.getItem(null, interaction.guild.id)
-
             if (!availableItems.length) {
                 trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
                 items = []
-                return pool.stop()
+                return reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true })
             }
-            trackingMessageContent[`footer`] = `Type cancel if you would like to stop making a package | Type done if you wish to stop the amount of items at however many you made so far.`
-            trackingMessageContent[`footer`] = `Please Type the name or id of the item you wish to add`
-            updateTrackerMessage()
+            const buttonCustomId = sessionID + `item`
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(buttonCustomId)
+                        .setLabel(`Item`)
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId(`finished`)
+                        .setLabel(`Finished`)
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId(`cancel`)
+                        .setLabel(`Cancel`)
+                        .setStyle(ButtonStyle.Danger)
+                )
+            const item_adding = await reply.send(`Time to add any items if you wish.`, { followUp: true, components: row })
+            const member = interaction.user.id
+            const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
+            const buttonCollector = item_adding.createMessageComponentCollector({ filter, time: 30000 })
+            buttonCollector.on(`ignore`, async (i) => {
+                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            })
+            buttonCollector.on(`end`, async (collected, reason) => {
+                if (reason != `time`) return confirmOrCancel()
+                const message = await interaction.fetchReply()
+                try {
+                    message.edit({ components: [] })
+                    item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                    client.db.redis.del(sessionID)
+                    reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                } catch (error) {
+                    client.logger.error(`[makereward.js]\n${error}`)
+                }
+            })
+            buttonCollector.on(`collect`, async i => {
+                if (i.customId === `cancel`) {
+                    i.update({ embeds: [await reply.send(`the makereward creation has been cancelled`, { raw: true })], components: [] })
+                    client.db.redis.del(sessionID)
+                    return buttonCollector.stop()
+                }
+                if (i.customId === `finished`) {
+                    return buttonCollector.stop()
+                }
+                const modalId = sessionID + `-` + i.id
+                const modal = new ModalBuilder()
+                    .setCustomId(modalId)
+                    .setTitle(`Item creation`)
+                const itemNameInput = new TextInputBuilder()
+                    .setCustomId(`itemNameInput`)
+                    // The label is the prompt the user sees for this input
+                    .setLabel(`What is the item's name?`)
+                    // Short means only a single line of text
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                const itemQuantityInput = new TextInputBuilder()
+                    .setCustomId(`itemQuantityInput`)
+                    // The label is the prompt the user sees for this input
+                    .setLabel(`What quantity should be given?`)
+                    // Short means only a single line of text
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                const firstActionRow = new ActionRowBuilder().addComponents(itemNameInput)
+                modal.addComponents(firstActionRow)
+                const secondActionRow = new ActionRowBuilder().addComponents(itemQuantityInput)
+                modal.addComponents(secondActionRow)
 
-            const pool = interaction.channel.createMessageCollector({
-                filter: m => m.author.id === interaction.member.id,
-                time: 60000 * 3
-            }) // 3 minutes timeout
+                // reset the timer for the listener so the user has more time
+                buttonCollector.resetTimer({ time: 30000 })
 
-            pool.on(`collect`, async m => {
-                let input = m.content.toLowerCase()
-                await m.delete()
-                if (input === `done`) {
-                    trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
-                    return pool.stop()
-                } else if (input === `cancel`) {
-                    manualEndOrAutomatic = true
-                    trackingMessageContent[`items`] = `(0/0) items selected`
-                    items = []
-                    return pool.stop()
-                } else if (items.length < itemAmount) {
-                    if (itemPriceToggle) {
-                        //  Find best match
-                        const searchStringResult = stringSimilarity.findBestMatch(input, availableItems.map(i => i.name.toLowerCase()))
-                        const item = searchStringResult.bestMatch.rating >= 0.5
-                            //  By name
-                            ?
-                            availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
-                            //  Fallback search by ID
-                            :
-                            availableItems.find(i => parseInt(i.item_id) === parseInt(input))
-                        if (!item || itemNames.includes(item.name)) {
-                            itemTry++
-                            trackingMessageContent[`footer`] = `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`
+                await i.showModal(modal)
+                const filter = (interaction) => interaction.customId === modalId
+                let rawAnswer
+                try {
+                    rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                } catch (error) {
+                    client.logger.error(`Error has been handled\n${error}`)
+                }
 
-                            if (itemTry > 3) {
-                                trackingMessageContent[`items`] = `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`
-                                pool.stop()
+                // ignore if the modal wasn't submited
+                if (!rawAnswer) return
+                rawAnswer.deferUpdate()
+                const answerName = rawAnswer.fields.getTextInputValue(`itemNameInput`).toLowerCase()
+                const answerQuantity = rawAnswer.fields.getTextInputValue(`itemQuantityInput`).toLowerCase()
+                //  Find best match
+                const searchStringResult = stringSimilarity.findBestMatch(answerName, availableItems.map(i => i.name.toLowerCase()))
+                const item = searchStringResult.bestMatch.rating >= 0.5
+                    //  By name
+                    ?
+                    availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
+                    //  Fallback search by ID
+                    :
+                    availableItems.find(i => parseInt(i.item_id) === parseInt(answerName))
+                if (!item) {
+                    itemTry++
+                    trackingMessageContent[`footer`] = `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`
+
+                    if (itemTry > 3) {
+                        trackingMessageContent[`items`] = `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`
+                        buttonCollector.stop()
+                    }
+                } else {
+                    // Confirm the item and then assign the quantity
+                    let itemConfirmationRow = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId(`confirm`)
+                                .setLabel(`Yes thats it`)
+                                .setStyle(ButtonStyle.Success),
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId(`cancel`)
+                                .setLabel(`No thats not the item`)
+                                .setStyle(ButtonStyle.Danger)
+                        )
+                    const confirmationItem = await reply.send(`The item i found was: ${item.name}, is this correct`, {
+                        followUp: true,
+                        components: [itemConfirmationRow]
+                    })
+                    const itemfilter = iteminteraction => (iteminteraction.customId === `confirm` || iteminteraction.customId === `cancel`) && iteminteraction.user.id === member
+                    let itemListener = confirmationItem.createMessageComponentCollector({
+                        itemfilter,
+                        componentType: ComponentType.Button,
+                        time: 60 * 1000
+                    })
+                    itemListener.on(`collect`, async xyx => {
+                        await xyx.deferUpdate()
+                        await confirmationItem.delete()
+                        let whatButtonWasPressed = xyx.customId
+                        if (whatButtonWasPressed === `confirm`) {
+                            if (items.length === itemAmount) {
+                                return buttonCollector.stop()
                             }
-                            updateTrackerMessage()
-                        } else {
+                            currentItem = item
+                            let quantity = 1
+                            let testQuantity = parseInt(answerQuantity)
+                            if (Number.isInteger(testQuantity) && testQuantity > 0) {
+                                quantity = testQuantity
 
-                            let itemConfirmationRow = new ActionRowBuilder()
-                                .addComponents(
-                                    new ButtonBuilder()
-                                    .setCustomId(`confirm`)
-                                    .setLabel(`Yes thats it`)
-                                    .setStyle(ButtonStyle.Success),
-                                )
-                                .addComponents(
-                                    new ButtonBuilder()
-                                    .setCustomId(`cancel`)
-                                    .setLabel(`No thats not the item`)
-                                    .setStyle(ButtonStyle.Danger)
-                                )
-                            const confirmationItem = await reply.send(`The item i found was: ${item.name}, is this correct`, {
-                                followUp: true,
-                                components: [itemConfirmationRow]
-                            })
-                            itemPriceToggle = false
-                            const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === interaction.member.id
-                            let itemListener = confirmationItem.createMessageComponentCollector({
-                                filter,
-                                componentType: ComponentType.Button,
-                                time: 60 * 1000
-                            })
-                            itemListener.on(`collect`, async xyx => {
-                                await xyx.deferUpdate()
-                                let whatButtonWasPressed = xyx.customId
-                                if (whatButtonWasPressed === `confirm`) {
-                                    currentItem = item
-                                    trackingMessageContent[`footer`] = `Please Type the quantity of the item`
-                                    itemListener.stop()
-                                    wasItemConfirmed = true
-                                    updateTrackerMessage()
-                                } else {
-                                    itemPriceToggle = true
-                                    trackingMessageContent[`footer`] = `Please Try a different name for the item`
-                                    updateTrackerMessage()
-                                    itemListener.stop()
-                                }
-                            })
-
-                            itemListener.on(`end`, async () => {
-                                return await confirmationItem.delete()
-                            })
-                        }
-                    } else if (wasItemConfirmed){
-                        let quantity = 1
-                        let testQuantity = parseInt(input)
-                        if (Number.isInteger(testQuantity) && testQuantity > 0) {
-                            quantity = testQuantity
-                            itemPriceToggle = true
+                            } else {
+                                // Assign the quantity as 1 if the quantity entered wasnt an integer or is a negative integer
+                                await reply.send(`I'm sorry the quantity you typed in was not a number I will default the amount to 1`, {
+                                    followUp: true,
+                                    deleteIn: 5000,
+                                    ephemeral: true
+                                })
+                            }
                             items.push([JSON.stringify(currentItem), quantity])
                             itemNames.push(currentItem.name)
                             trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
-                            trackingMessageContent[`footer`] = `Please Type the name or id of the item you wish to add`
-                            if (items.length === itemAmount) pool.stop()
                             updateTrackerMessage()
-                        } else {
-                            if (amounttry === 0) await reply.send(`I'm sorry that was not a number please try again, After the third try it will default to 1`, {
-                                followUp: true,
-                                deleteIn: 5000
-                            })
-                            amounttry++
-                            trackingMessageContent[`footer`] = `This is your ${amounttry} attempt for setting the quantity`
-                            if (amounttry >= 3) {
-                                itemPriceToggle = true
-                                items.push([JSON.stringify(currentItem), 1])
-                                itemNames.push(currentItem.name)
-                                trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
-                                trackingMessageContent[`footer`] = itemPriceToggle ? `Please Type the quantity of the item` : `Please Type the name or id of the item you wish to add`
+                            if (items.length === itemAmount) {
+                                await item_adding.delete()
+                                return buttonCollector.stop()
                             }
+                            trackingMessageContent[`footer`] = `Please Hit the Item button to add another item`
+                            updateTrackerMessage()
+                            itemListener.stop()
+                        } else {
+                            trackingMessageContent[`footer`] = `Please Hit the Item button to try again`
                             updateTrackerMessage()
                         }
-                    }
+                    })
+                    itemListener.on(`ignore`, async (i) => {
+                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                    })
+                    itemListener.on(`end`, async () => {
+                        return confirmationItem.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                    })
+
                 }
             })
-            pool.on(`end`, () => {
-                
-            manualEndOrAutomatic ? trackingMessageContent[`footer`] = `The transaction has been cancelled` : trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
-                updateTrackerMessage()
-                return !manualEndOrAutomatic ? confirmOrCancel() : null
-            })
+
         }
 
         async function confirmOrCancel() {
             let confirmationRow = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                    .setCustomId(`confirm`)
-                    .setLabel(`Confirm`)
-                    .setStyle(ButtonStyle.Success),
+                        .setCustomId(`confirm`)
+                        .setLabel(`Confirm`)
+                        .setStyle(ButtonStyle.Success),
                 )
                 .addComponents(
                     new ButtonBuilder()
-                    .setCustomId(`cancel`)
-                    .setLabel(`Cancel`)
-                    .setStyle(ButtonStyle.Danger)
+                        .setCustomId(`cancel`)
+                        .setLabel(`Cancel`)
+                        .setStyle(ButtonStyle.Danger)
                 )
             await trackingMessage.edit({
                 components: [confirmationRow]
@@ -426,14 +489,12 @@ module.exports = {
                         roles: dataRole,
                         item: dataItem
                     }
-                    let buffer = rewardSchema.pack(data)
+                    const BUFFER = rewardSchema.pack(data) // The package is saved as a buffer that will be read when getting unpacked.
+                    const BLOB = new Blob(BUFFER)
                     trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
 
-                    /**
-                     * TODO
-                     * Add DB call
-                     */
-
+                    client.db.recordReward(interaction.guild.id, interaction.user.id, BLOB, packageName)
+                    
                     confirmOrCancelListener.stop()
                 } else {
                     trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
@@ -548,24 +609,24 @@ module.exports = {
          */
 
         async function formatPackage(packageName, package) {
-                let acReward = package.acAmount
-                const items = []
-                package.item.forEach(element=>{
-                    let rawItem = JSON.parse(element.object)
-                    let item = `Item: ${rawItem.name} Quantity: ${element.amount}`
-                    items.push(item)
-                })
-                const roles = []
-                package.roles.forEach(async element=>{
-                    let rawRole = await interaction.guild.roles.fetch(element.id)
-                    let role = `Role: ${rawRole.name}`
-                    roles.push(role)
-                })
-                
-                let formated = `Package: ${packageName}\nAC: ${acReward}\nRoles:\n${roles.join(`\n`)}Items:\n${items.join(`\n`)}`
-                return formated
+            let acReward = package.acAmount
+            const items = []
+            package.item.forEach(element => {
+                let rawItem = JSON.parse(element.object)
+                let item = `Item: ${rawItem.name} Quantity: ${element.amount}`
+                items.push(item)
+            })
+            const roles = []
+            package.roles.forEach(async element => {
+                let rawRole = await interaction.guild.roles.fetch(element.id)
+                let role = `Role: ${rawRole.name}`
+                roles.push(role)
+            })
+
+            let formated = `Package: ${packageName}\nAC: ${acReward}\nRoles:\n${roles.join(`\n`)}Items:\n${items.join(`\n`)}`
+            return formated
         }
-        
+
         //await reply.send(packages,{paging:true})
         interaction.reply(`Not yet implemented.`)
     },
@@ -577,23 +638,18 @@ module.exports = {
          * Check if a package exists
          */
 
-        /**
-         * TODO
-         * DB call to remove
-         */
-
         let confirmationRow = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                .setCustomId(`confirm`)
-                .setLabel(`Confirm`)
-                .setStyle(ButtonStyle.Success),
+                    .setCustomId(`confirm`)
+                    .setLabel(`Confirm`)
+                    .setStyle(ButtonStyle.Success),
             )
             .addComponents(
                 new ButtonBuilder()
-                .setCustomId(`cancel`)
-                .setLabel(`Cancel`)
-                .setStyle(ButtonStyle.Danger)
+                    .setCustomId(`cancel`)
+                    .setLabel(`Cancel`)
+                    .setStyle(ButtonStyle.Danger)
             )
         let confirmationMessage = await reply.send(`Please confirm the deletion of package: ${packageName}`)
         let confirmationMessageContent = `_ _`
@@ -611,6 +667,7 @@ module.exports = {
             let whatButtonWasPressed = xyx.customId
             if (whatButtonWasPressed === `confirm`) {
                 confirmationMessageContent = `Your package has been deleted`
+                client.db.deleteReward(interaction.guild.id,packageName)
                 confirmOrCancelListener.stop()
             } else {
                 confirmationMessageContent = `Your package has not been deleted`
