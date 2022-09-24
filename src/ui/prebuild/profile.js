@@ -79,8 +79,8 @@ class UI {
 		//  Username
 		card.canv.setColor(card.color.text)
 			.setTextAlign(`center`)
-			.setTextFont(`${this.resizeLongNickname(this.user.master.username)} roboto-bold`)
-			.printText(this.user.master.username, startPos_x + 70, 272)
+			.setTextFont(`${this.resizeLongNickname(this.user.master.username || this.user.master.user.username)} roboto-bold`)
+			.printText(this.user.master.username || this.user.master.user.username, startPos_x + 70, 272)
 
 		//  User's Title
 		card.canv.setColor(adjustedPrimaryColorContrast)
