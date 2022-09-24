@@ -1,3 +1,10 @@
+## [9.2.1](https://github.com/klerikdust/anniediscord/compare/v9.2.0...v9.2.1) (2022-09-24)
+
+
+### Bug Fixes
+
+* **cache:** unable to cache emoji ([c247606](https://github.com/klerikdust/anniediscord/commit/c24760616e76353e823989589e5ca09e9a9200c1))
+
 # [9.2.0](https://github.com/klerikdust/anniediscord/compare/v9.1.5...v9.2.0) (2022-09-22)
 
 
