@@ -16,8 +16,7 @@ const CronManager = require(`cron-job-manager`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
-            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: Discord.ActivityType.Watching}] }, makeCache: Discord.Options.cacheWithLimits({
-                MessageManager:0, // This is default
+            super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: Discord.ActivityType.Watching}] },  makeCache: Discord.Options.cacheWithLimits({
                 PresenceManager: 0,
                 GuildBanManager:0,
                 GuildInviteManager:0,
@@ -25,6 +24,7 @@ class Annie extends Discord.Client {
                 GuildStickerManager:0,
                 VoiceStateManager:0,
                 StageInstanceManager:0, 
+                MessageManager:Discord.Options.createDefault(),
                 BaseGuildEmojiManager: Discord.Options.createDefault(),
                 GuildEmojiManager: Discord.Options.createDefault(),
                 ReactionManager:Discord.Options.createDefault(),
@@ -37,7 +37,7 @@ class Annie extends Discord.Client {
                 /**
                  * The following managers are not supported
                  * GuildManager, ChannelManager, GuildChannelManager, RoleManager, and PermissionOverwriteManager
-                 */             
+                 */            
             }) })
             this.startupInit = process.hrtime()
 
@@ -187,7 +187,7 @@ class Annie extends Discord.Client {
          */
         prepareLogin() {
             process.on(`unhandledRejection`, err => this.logger.warn(err))
-            //process.on(`unhandledRejection`, err => this.logger.warn(err.stack))
+            
             try {
                 this.registerNode(new Database().connect(), `db`)
                 const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
