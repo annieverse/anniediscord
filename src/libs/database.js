@@ -433,7 +433,7 @@ class Database {
 			'reward_id'	INTEGER NOT NULL UNIQUE,
 			'guild_id'	TEXT NOT NULL,
 			'set_by_user_id'	TEXT NOT NULL,
-			'reward'	BLOB NOT NULL,
+			'reward'	TEXT NOT NULL,
 			'reward_name'	TEXT NOT NULL,
 			PRIMARY KEY("reward_id" AUTOINCREMENT)
 		)`
@@ -451,21 +451,21 @@ class Database {
 	}
 
 	deleteReward(guildId, rewardName){
-		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guild_id, rewardName = $rewardName)`
+		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guild_id AND reward_name = $rewardName`
 		, `run`
 		, {guild_id:guildId, rewardName:rewardName}
 		)
 	}
 
 	getRewardByName(guildId, rewardName){
-		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id && reward_name = $reward_name`
+		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id AND reward_name = $reward_name`
 		, `all`
 		, {guild_id:guildId, reward_name:rewardName}
 		)
 	}
 
 	getRewardById(guildId, reward_id){
-		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id && reward_id = $reward_id`
+		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id AND reward_id = $reward_id`
 		, `all`
 		, {guild_id:guildId, reward_id:reward_id}
 		)

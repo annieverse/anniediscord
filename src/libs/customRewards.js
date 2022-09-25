@@ -3,16 +3,10 @@ const {
     ActionRowBuilder,
     SelectMenuBuilder
 } = require(`discord.js`)
-const _ = require(`c-struct`)
 
 class rewardPackageStruct {
 
     constructor(name) {
-        this.schema = new _.Schema({
-            acReward: _.type.uint16,
-            roles: [{id:_.type.string()}],
-            item: [{object:_.type.string(), amount:_.type.uint8}]
-        })
         this.name = `default` || name
     }
 
@@ -33,30 +27,21 @@ class rewardPackageStruct {
     }
 
     /**
-     * Register schema to the cache
-     */
-    setup() {
-        // register to cache
-        return _.register(this.name, this.schema)
-    }
-
-    /**
-     * object to buffer
+     * object to string
      * @param {Object} data 
-     * @returns {Buffer}
+     * @returns {string}
      */
     pack(data) {
-        if (!this.schema) return `Please Build the schema`
-        return _.packSync(this.name, data)
+        return JSON.stringify(data)
     }
 
     /**
-     * buffer to object
-     * @param {Buffer} buffer 
+     * string to object
+     * @param {string} data 
      * @returns {Object}
      */
-    unpack(buffer) {
-        return _.unpackSync(this.name, buffer)
+    unpack(data) {
+        return JSON.parse(data)
     }
 
     /**

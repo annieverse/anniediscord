@@ -13,7 +13,6 @@ const {
     TextInputStyle,
     PermissionFlagsBits
 } = require(`discord.js`)
-const {Blob} = require(`buffer`)
 
 /**
  * Output bot's latency
@@ -28,6 +27,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: false,
+    default_member_permissions: PermissionFlagsBits.ManageEvents.toString(),
     options: [{
         name: `create`,
         description: `make a new reward package`,
@@ -67,13 +67,14 @@ module.exports = {
             name: `package_name`,
             description: `the name of the package name`,
             type: ApplicationCommandOptionType.String,
-            required: true
+            required: true,
+            autocomplete: true
         }]
     }, {
         name: `list`,
         description: `delete a package`,
         type: ApplicationCommandOptionType.Subcommand
-    },{
+    }, {
         name: `maketable`,
         description: `make the database table`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -95,17 +96,16 @@ module.exports = {
         // Set up the schema userd to store the data
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
-        /**
-         * TODO
-         * Check if package name exists already
-         * Check if there is 25 packages made already ***25 is a hard number for max as the other command that pairs with this cannot go above 25***
-         */
         const packages = await client.db.getRewardAmount(interaction.guild.id)
         if (packages.length >= 25) return reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
-        console.log(packages)
-
-        let rewardSchema = new customReward(packageName)
-        rewardSchema.setup()
+        
+        const packages_collection = new Collection()
+        
+        const rewardSchema = new customReward(packageName)
+        packages.forEach(element => {
+            packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
+        })
+        if (packages_collection.has(packageName)) return reply.send(`I'm sorry but you have a package with that name already`)
 
         // Set up varibles to hold the values we want to add to the schema
         let fin_roles = []
@@ -127,8 +127,8 @@ module.exports = {
 
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        // if (await client.db.redis.exists(sessionId)) return reply.send(`create_SESSION_STILL_ACTIVE`)
-        // client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+        if (await client.db.redis.exists(sessionID)) return reply.send(`create_SESSION_STILL_ACTIVE`)
+        client.db.redis.set(sessionID, 1, `EX`, 60 * 3)
 
 
         let trackingMessage = await reply.send(Object.values(trackingMessageContent).join(`\n`), {
@@ -255,6 +255,7 @@ module.exports = {
 
             })
         }
+
         /**
          * Allow the user to find an item and then go to confirming the package.
          */
@@ -421,6 +422,8 @@ module.exports = {
                             trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
                             updateTrackerMessage()
                             if (items.length === itemAmount) {
+                                trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
+                                updateTrackerMessage()
                                 await item_adding.delete()
                                 return buttonCollector.stop()
                             }
@@ -444,6 +447,9 @@ module.exports = {
 
         }
 
+        /**
+         * Commit the package to the database or ignore database call
+         */
         async function confirmOrCancel() {
             let confirmationRow = new ActionRowBuilder()
                 .addComponents(
@@ -489,12 +495,11 @@ module.exports = {
                         roles: dataRole,
                         item: dataItem
                     }
-                    const BUFFER = rewardSchema.pack(data) // The package is saved as a buffer that will be read when getting unpacked.
-                    const BLOB = new Blob(BUFFER)
+                    const pack = rewardSchema.pack(data) // The package is saved as a string that will be read when getting unpacked and turned back into an object.
                     trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
 
-                    client.db.recordReward(interaction.guild.id, interaction.user.id, BLOB, packageName)
-                    
+                    client.db.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
+
                     confirmOrCancelListener.stop()
                 } else {
                     trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
@@ -513,7 +518,7 @@ module.exports = {
 
         /**
          * Update message as choice are made
-         * @returns {Promise}
+         * @returns {void}
          */
         async function updateTrackerMessage() {
             let finalizedTrackingMessageContent = Object.values(trackingMessageContent).join(`\n`)
@@ -598,45 +603,79 @@ module.exports = {
 
     },
     async listPackages(client, reply, interaction, options, locale) {
-        /**
-         * TODO
-         * DB call for all available packages
-         */
-
-        /**
-         * TODO
-         * Unpack the packages
-         */
+        const packages_raw = await client.db.getRewardAmount(interaction.guild.id)
+        if (packages_raw.length < 1) return reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
+        const packages_collection = new Collection()
+        packages_raw.forEach(element => {
+            let rewardSchema = new customReward(element.reward_name)
+            packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
+            rewardSchema = null
+        })
+        const packages = []
+        for (const raw_package of packages_collection) {
+            packages.push(await formatPackage(raw_package[0], raw_package[1]))
+        }
 
         async function formatPackage(packageName, package) {
-            let acReward = package.acAmount
-            const items = []
-            package.item.forEach(element => {
-                let rawItem = JSON.parse(element.object)
-                let item = `Item: ${rawItem.name} Quantity: ${element.amount}`
-                items.push(item)
-            })
+            const acReward = package.acReward
             const roles = []
-            package.roles.forEach(async element => {
-                let rawRole = await interaction.guild.roles.fetch(element.id)
-                let role = `Role: ${rawRole.name}`
-                roles.push(role)
-            })
+            const items = []
+            if (package.roles.length > 0) {
+                const rawRoleIds = package.roles.map(a => JSON.parse(a.id))
+                for (const roleId of rawRoleIds) {
+                    await interaction.guild.roles.fetch(roleId)
+                    let rawRole = interaction.guild.roles.cache.get(roleId)
+                    let role = `Role: ${rawRole.name}`
+                    roles.push(role)
+                }
+            }
+            if (package.item.length > 0) {
+                const rawItems = package.item
+                for (const i of rawItems) {
+                    let item_raw = JSON.parse(i.object)
+                    let item = `Item: ${item_raw.name} Quantity: ${i.amount}`
+                    items.push(item)
+                }
+            }
 
-            let formated = `Package: ${packageName}\nAC: ${acReward}\nRoles:\n${roles.join(`\n`)}Items:\n${items.join(`\n`)}`
+            let formated_acReward = ``
+            let formated_roles = ``
+            let formated_items = ``
+
+            if (acReward > 0) formated_acReward = `\n**AC:** ${acReward}`
+            if (roles.length > 0) formated_roles = `\n**Roles:**\n${roles.join(`\n`)}`
+            if (items.length > 0) formated_items = `\n**Items:**\n${items.join(`\n`)}`
+            let formated = `**Package: ${packageName}**\n` + formated_acReward + formated_roles + formated_items
             return formated
         }
 
-        //await reply.send(packages,{paging:true})
-        interaction.reply(`Not yet implemented.`)
+        return await reply.send(packages, {
+            paging: true,
+            header: `Custom reward packages for ${interaction.guild.name}`
+        })
+    },
+    async autocomplete(client, interaction){
+        /**
+         * Fill choices with the available packages found in DB
+         */
+        if (interaction.options.getSubcommand() !== `delete`) return
+        const focusedValue = interaction.options.getFocused()
+        const packages_raw = await client.db.getRewardAmount(interaction.guild.id)
+        if (packages_raw.length < 1) return await interaction.respond(`I'm sorry you dont have any packages made currently`)
+        const packages_collection = new Collection()
+        packages_raw.forEach(element => {
+            let rewardSchema = new customReward(element.reward_name)
+            packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
+            rewardSchema = null
+        })
+		const choices = Array.from(packages_collection.keys())
+        const filtered = choices.filter(choice => choice.startsWith(focusedValue))
+		await interaction.respond(
+			filtered.map(choice => ({ name: choice, value: choice })),
+		)
     },
     async deletePackage(client, reply, interaction, options, locale) {
         const packageName = (options.getString(`package_name`)).toLowerCase()
-
-        /**
-         * TODO
-         * Check if a package exists
-         */
 
         let confirmationRow = new ActionRowBuilder()
             .addComponents(
@@ -667,7 +706,7 @@ module.exports = {
             let whatButtonWasPressed = xyx.customId
             if (whatButtonWasPressed === `confirm`) {
                 confirmationMessageContent = `Your package has been deleted`
-                client.db.deleteReward(interaction.guild.id,packageName)
+                client.db.deleteReward(interaction.guild.id, packageName)
                 confirmOrCancelListener.stop()
             } else {
                 confirmationMessageContent = `Your package has not been deleted`
@@ -679,7 +718,8 @@ module.exports = {
         confirmOrCancelListener.on(`end`, async () => {
             return await confirmationMessage.edit({
                 content: confirmationMessageContent,
-                components: []
+                components: [],
+                embeds:[]
             })
         })
     }
