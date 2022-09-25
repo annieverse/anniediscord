@@ -19,21 +19,25 @@ class Annie extends Discord.Client {
             super({ intents: intents, presence: { status: `idle`, activities: [{name: `Shard preparing ...`, type: Discord.ActivityType.Watching}] }, makeCache: Discord.Options.cacheWithLimits({
                 MessageManager:0, // This is default
                 PresenceManager: 0,
-                BaseGuildEmojiManager: 0,
-                // GuildMemberManager: 0,
                 GuildBanManager:0,
                 GuildInviteManager:0,
-                GuildEmojiManager:0,
                 GuildScheduledEventManager:0,
                 GuildStickerManager:0,
-                // UserManager:0
-                ThreadManager:0,
-                ReactionManager:0,
                 VoiceStateManager:0,
-                ThreadMemberManager:0,
-                ReactionUserManager:0,
-                StageInstanceManager:0,
-                // ApplicationCommandManager:0,                
+                StageInstanceManager:0, 
+                BaseGuildEmojiManager: Discord.Options.createDefault(),
+                GuildEmojiManager: Discord.Options.createDefault(),
+                ReactionManager:Discord.Options.createDefault(),
+                ReactionUserManager:Discord.Options.createDefault(),
+                ApplicationCommandManager:Discord.Options.createDefault(), 
+                ThreadMemberManager:Discord.Options.createDefault(),
+                GuildMemberManager: Discord.Options.createDefault(),
+                UserManager: Discord.Options.createDefault(),
+                ThreadManager:Discord.Options.createDefault(),
+                /**
+                 * The following managers are not supported
+                 * GuildManager, ChannelManager, GuildChannelManager, RoleManager, and PermissionOverwriteManager
+                 */             
             }) })
             this.startupInit = process.hrtime()
 
