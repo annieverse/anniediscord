@@ -163,10 +163,180 @@ module.exports = {
             phaseTwo()
         }
 
+        async function phaseOne() {
+            const roleOptions = await setRoleOptions(interaction) // get available roles to select from
+            
+            // End phase if there are no roles available
+            if (!roleOptions.size) {
+                trackingMessageContent[`roles`] = `(0/0) roles selected, There are no roles available to add`
+                items = []
+                return reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true })
+            }
+
+            const buttonCustomId = sessionID + `role`
+            const row = new ActionRowBuilder()
+                .addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(buttonCustomId)
+                        .setLabel(`Role`)
+                        .setStyle(ButtonStyle.Primary),
+                    new ButtonBuilder()
+                        .setCustomId(`finished`)
+                        .setLabel(`Finished`)
+                        .setStyle(ButtonStyle.Secondary),
+                    new ButtonBuilder()
+                        .setCustomId(`cancel`)
+                        .setLabel(`Cancel`)
+                        .setStyle(ButtonStyle.Danger)
+                )
+            const role_adding = await reply.send(`Time to add any roles if you wish.`, { followUp: true, components: row })
+            const member = interaction.user.id
+            const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
+            const buttonCollector = role_adding.createMessageComponentCollector({ filter, time: 30000 })
+            buttonCollector.on(`ignore`, async (i) => {
+                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            })
+            buttonCollector.on(`end`, async (collected, reason) => {
+                if (reason != `time`) return confirmOrCancel()
+                const message = await interaction.fetchReply()
+                try {
+                    message.edit({ components: [] })
+                    role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                    client.db.redis.del(sessionID)
+                    reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                } catch (error) {
+                    client.logger.error(`[makereward.js]\n${error}`)
+                }
+            })
+            buttonCollector.on(`collect`, async i => {
+                if (i.customId === `cancel`) {
+                    trackingMessageContent[`footer`] = `No roles have been added`
+                    updateTrackerMessage()
+                    fin_roles = []
+                    role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                    return buttonCollector.stop()
+                }
+                if (i.customId === `finished`) {
+                    return buttonCollector.stop()
+                }
+                const finializedSelection = []
+                const modalId = sessionID + `-` + i.id
+                const modal = new ModalBuilder()
+                    .setCustomId(modalId)
+                    .setTitle(`Role creation`)
+                const roleInput = new TextInputBuilder()
+                    .setCustomId(`roleInput`)
+                    // The label is the prompt the user sees for this input
+                    .setLabel(`What is the role's name or id?`)
+                    // Short means only a single line of text
+                    .setStyle(TextInputStyle.Short)
+                    .setRequired(true)
+                const firstActionRow = new ActionRowBuilder().addComponents(roleInput)
+                modal.addComponents(firstActionRow)
+
+                // reset the timer for the listener so the user has more time
+                buttonCollector.resetTimer({ time: 30000 })
+
+                await i.showModal(modal)
+                const filter = (interaction) => interaction.customId === modalId
+                // Create local vars
+                let rawAnswer
+                let roleTry = 1
+                try {
+                    rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+                } catch (error) {
+                    client.logger.error(`Error has been handled\n${error}`)
+                }
+
+                // ignore if the modal wasn't submited
+                if (!rawAnswer) return
+                rawAnswer.deferUpdate()
+                const answerRole = rawAnswer.fields.getTextInputValue(`roleInput`).toLowerCase()
+                //  Find best match
+                let roleID = answerRole
+                let has_role = roleOptions.has(answerRole)
+                if (!has_role) {
+                    for (const [key,value] of roleOptions) {
+                        if (value.name.toLowerCase() === answerRole) {
+                            has_role = true
+                            roleID = key
+                            break
+                          }
+                    }
+                }
+                if (!has_role) {
+                    roleTry++
+                    trackingMessageContent[`footer`] = `No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your ${roleTry} attempt.`
+                    updateTrackerMessage()
+                    if (roleTry > 3) {
+                        trackingMessageContent[`items`] = `(${finializedSelection.length}/${roleAmount}) items selected ${formatSelectedItem(items)}`
+                        buttonCollector.stop()
+                    }
+                } else {
+                    let role = roleOptions.get(roleID)
+                    // Confirm the item and then assign the quantity
+                    const roleConfirmationRow = new ActionRowBuilder()
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId(`confirm`)
+                                .setLabel(`Yes thats it`)
+                                .setStyle(ButtonStyle.Success),
+                        )
+                        .addComponents(
+                            new ButtonBuilder()
+                                .setCustomId(`cancel`)
+                                .setLabel(`No thats not the role`)
+                                .setStyle(ButtonStyle.Danger)
+                        )
+                    const confirmationItem = await reply.send(`The role i found was: ${role.name}, is this correct`, {
+                        followUp: true,
+                        components: [roleConfirmationRow]
+                    })
+                    const itemfilter = iteminteraction => (iteminteraction.customId === `confirm` || iteminteraction.customId === `cancel`) && iteminteraction.user.id === member
+                    let roleListener = confirmationItem.createMessageComponentCollector({
+                        itemfilter,
+                        componentType: ComponentType.Button,
+                        time: 60 * 1000
+                    })
+                    roleListener.on(`collect`, async xyx => {
+                        await xyx.deferUpdate()
+                        await confirmationItem.delete()
+                        let whatButtonWasPressed = xyx.customId
+                        if (whatButtonWasPressed === `confirm`) {
+                            if (finializedSelection.length === roleAmount) {
+                                fin_roles = finializedSelection
+                                role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                                roleListener.stop()
+                                return buttonCollector.stop()
+                            }
+                            finializedSelection.push(role.id)
+                            trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
+                            updateTrackerMessage()
+                            if (finializedSelection.length === roleAmount) {
+                                fin_roles = finializedSelection
+                                role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                                roleListener.stop()
+                                return buttonCollector.stop()
+                            }
+                        } else {
+                            trackingMessageContent[`footer`] = `Please Hit the role button to try again`
+                            updateTrackerMessage()
+                        }
+                    })
+                    roleListener.on(`ignore`, async (i) => {
+                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                    })
+                    roleListener.on(`end`, async () => {
+                        return confirmationItem.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                    })
+
+                }
+            })
+        }
         /**
          * Allow the user to pick from the available roles the bot has access to then move onto phase two to add items if chosen to or go right to confirming the package.
          */
-        async function phaseOne() {
+        async function phaseOne1() {
             // Set up the roles
             const roleOptions = await setRoleOptions(interaction) // get available roles to select from
             const optionArray = formatRoleOptions(roleOptions) // format for selection menu
@@ -264,6 +434,7 @@ module.exports = {
             let currentItem = undefined
             const itemNames = []
             const availableItems = await client.db.getItem(null, interaction.guild.id)
+            // End phase if there are no items available
             if (!availableItems.length) {
                 trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
                 items = []
@@ -499,7 +670,7 @@ module.exports = {
                     trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
 
                     client.db.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
-
+                    client.db.redis.del(sessionID)
                     confirmOrCancelListener.stop()
                 } else {
                     trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
