@@ -327,7 +327,15 @@ module.exports = {
                         i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
                     })
                     roleListener.on(`end`, async () => {
-                        return confirmationItem.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                        await trackingMessage.edit({
+                            content: Object.values(trackingMessageContent).join(`\n`),
+                            components: []
+                        })
+                        phase++
+                        if (endPhase === phase) return phaseTwo()
+                        trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
+                        updateTrackerMessage()
+                        return confirmOrCancel()
                     })
 
                 }
