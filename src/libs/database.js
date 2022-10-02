@@ -4,7 +4,6 @@ const logger = require(`pino`)({name: `DATABASE`, level: `debug`})
 const getBenchmark = require(`../utils/getBenchmark`)
 const fs = require(`fs`)
 const { join } = require(`path`)
-const relationshipPairs = require(`../config/relationshipPairs.json`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -423,7 +422,61 @@ class Database {
 			, `Verifying table user_reminders`
 		)
 	}
+	
+	/**
+	 * Custom Rewards
+	 */
 
+	registerCustomRewardTable(){
+		return this._query(`CREATE TABLE IF NOT EXISTS custom_rewards (
+			'registered_at'	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			'reward_id'	INTEGER NOT NULL UNIQUE,
+			'guild_id'	TEXT NOT NULL,
+			'set_by_user_id'	TEXT NOT NULL,
+			'reward'	TEXT NOT NULL,
+			'reward_name'	TEXT NOT NULL,
+			PRIMARY KEY("reward_id" AUTOINCREMENT)
+		)`
+		, `run`
+		, []
+		, `Verifying table custom_rewards`)
+	}
+	
+	recordReward(guildId, userId, rewardBlob, rewardName){
+		return this._query(` INSERT INTO custom_rewards (registered_at, guild_id, set_by_user_id, reward, reward_name)
+		VALUES (datetime('now'), $guild_id, $user_id, $reward, $rewardName)`
+		, `run`
+		, {guild_id:guildId, user_id:userId, reward:rewardBlob, rewardName:rewardName}
+		)
+	}
+
+	deleteReward(guildId, rewardName){
+		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guild_id AND reward_name = $rewardName`
+		, `run`
+		, {guild_id:guildId, rewardName:rewardName}
+		)
+	}
+
+	getRewardByName(guildId, rewardName){
+		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id AND reward_name = $reward_name`
+		, `all`
+		, {guild_id:guildId, reward_name:rewardName}
+		)
+	}
+
+	getRewardById(guildId, reward_id){
+		return this._query(`SELECT reward FROM custom_rewards WHERE guild_id = $guild_id AND reward_id = $reward_id`
+		, `all`
+		, {guild_id:guildId, reward_id:reward_id}
+		)
+	}
+
+	getRewardAmount(guildId){
+		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guild_id`
+		, `all`
+		, {guild_id:guildId}
+		)
+	}
 	/**
 	 *  --------------------------------
 	 *  #GUILD AUTORESPONDER MANAGEMENT
