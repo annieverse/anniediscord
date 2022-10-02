@@ -11,22 +11,6 @@ class rewardPackageStruct {
     }
 
     /**
-     * Set the name of the schema
-     * @param {string} name 
-     */
-    setName(name) {
-        if (typeof name != `string`) return new TypeError(`parameter 'name' must be an string`)
-        return this.name = name
-    }
-    /**
-     * Set the name of the schema
-     * @param {String} name 
-     */
-    getName() {
-        return this.name
-    }
-
-    /**
      * object to string
      * @param {Object} data 
      * @returns {string}

@@ -90,6 +90,7 @@ module.exports = class Confirmator {
         if (!fn) throw new TypeError(`parameter 'fn' must be a valid callback function`)
         if (!this.activeInstance) throw new Error(`there are no active instance to listen to`)
         this.onEnd()
+        this.onIgnore()
         if (this.slashCommand) {
             this.activeInstance.on(`collect`, async interact => {
                 this.responseCollected = interact.customId
@@ -171,6 +172,12 @@ module.exports = class Confirmator {
     onEnd() {
         this.activeInstance.on(`end`, () => {
             return this.end()
+        })
+    }
+
+    onIgnore() {
+        this.activeInstance.on(`ignore`, (obj) => {
+            this.slashCommand ? obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, ephemeral: true }) : obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.` })
         })
     }
 }
