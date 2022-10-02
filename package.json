@@ -43,7 +43,7 @@
     "buffer-image-size": "^0.6.4",
     "c-struct": "^0.0.5",
     "canvas": "^2.8.0",
-    "canvas-constructor": "^4.1.0",
+    "canvas-constructor": "^7.0.0",
     "color": "^4.1.0",
     "cron-job-manager": "^2.1.4",
     "cross-env": "^7.0.3",
