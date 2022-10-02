@@ -93,14 +93,15 @@ module.exports = {
         // Test if any other parameter was entered and if it wasn't exit the commands and let the user know
         if (!options.getInteger(`roles`) && !options.getInteger(`items`) && !options.getInteger(`ac`)) return reply.send(`Sorry must pick one of the other options`)
 
-        // Set up the schema userd to store the data
+        // Set the name for the package
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
+        // Get all currently available packages for the guild to test against, so there are none with duplicate names.
         const packages = await client.db.getRewardAmount(interaction.guild.id)
         if (packages.length >= 25) return reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
-        
+
         const packages_collection = new Collection()
-        
+
         const rewardSchema = new customReward(packageName)
         packages.forEach(element => {
             packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
@@ -108,7 +109,7 @@ module.exports = {
         if (packages_collection.has(packageName)) return reply.send(`I'm sorry but you have a package with that name already`)
 
         // Set up varibles to hold the values we want to add to the schema
-        let fin_roles = []
+        let roles = []
         let items = []
         let acAmount = 0
 
@@ -124,13 +125,13 @@ module.exports = {
             start: `The package you are creating is named ${packageName}`
         }
 
-
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        if (await client.db.redis.exists(sessionID)) return reply.send(`create_SESSION_STILL_ACTIVE`)
+        if (await client.db.redis.exists(sessionID)) return reply.send(`I'm sorry but you have a create package session still active please wait a few before trying again`,{ephemeral:true})
         client.db.redis.set(sessionID, 1, `EX`, 60 * 3)
 
 
+        // Set up and send the message that will be updated as choices are made.
         let trackingMessage = await reply.send(Object.values(trackingMessageContent).join(`\n`), {
             simplified: true
         })
@@ -138,64 +139,79 @@ module.exports = {
         // Check if the input for amount of ac was given and if yes set the amount and update the tracking message
         if (options.getInteger(`ac`)) {
             acAmount = options.getInteger(`ac`)
-            trackingMessageContent[`ac`] = `AC amount set to ${acAmount}`
-            updateTrackerMessage()
+            // trackingMessageContent[`ac`] = `AC amount set to ${acAmount}`
+            updateTrackerMessage(`ac`, `AC amount set to ${acAmount}`)
+            // Check that no other options were inputed and send to completion method
             if (!options.getInteger(`roles`) && !options.getInteger(`items`)) return confirmOrCancel()
         }
 
         // Test if the option for amount of roles was entered otherwise test if the option for amount of items was entered
         if (options.getInteger(`roles`)) {
             roleAmount = options.getInteger(`roles`) // how many roles maximum should there be
-            trackingMessageContent[`roles`] = `(0/${roleAmount}) roles selected`
+            // trackingMessageContent[`roles`] = `(0/${roleAmount}) roles selected`
+            updateTrackerMessage(`roles`, `(0/${roleAmount}) roles selected`)
             if (options.getInteger(`items`)) {
                 endPhase = 1
                 itemAmount = options.getInteger(`items`)
-                trackingMessageContent[`items`] = `(0/${itemAmount}) items selected`
+                // trackingMessageContent[`items`] = `(0/${itemAmount}) items selected`
+                updateTrackerMessage(`items`, `(0/${itemAmount}) items selected`)
             }
-            updateTrackerMessage()
             phaseOne()
         } else if (options.getInteger(`items`)) {
+            phase = 1 // Set the starting phase to skip the role method.
             endPhase = 1
             itemAmount = options.getInteger(`items`) // how many items maximum should there be
-            trackingMessageContent[`items`] = `(0/${itemAmount}) items selected`
-            phase = 1
-            updateTrackerMessage()
+            // trackingMessageContent[`items`] = `(0/${itemAmount}) items selected`
+            updateTrackerMessage(`items`, `(0/${itemAmount}) items selected`)
             phaseTwo()
         }
 
         async function phaseOne() {
             const roleOptions = await setRoleOptions(interaction) // get available roles to select from
-            
             // End phase if there are no roles available
-            if (!roleOptions.size) {
-                trackingMessageContent[`roles`] = `(0/0) roles selected, There are no roles available to add`
-                items = []
-                return reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true })
+            if (!roleOptions.size || roleOptions.size === 0) {
+                // trackingMessageContent[`roles`] = `(0/0) roles selected, There are no roles available to add`
+                roles = []
+                updateTrackerMessage(`roles`, `(0/0) roles selected, There are no roles available to add`)
+                await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true, ephemeral:true })
+                phase++
+                // Test to see if we need to go to item select, if not go to the confirmation method
+                if (endPhase === phase) return phaseTwo()
+                // trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
+                updateTrackerMessage(`footer`, `Please hit the button to confirm the transaction or cancel to stop the transaction`)
+                return confirmOrCancel()
             }
 
-            const buttonCustomId = sessionID + `role`
+            const roleButtonCustomId = `${sessionID}_role_${interaction.id}`
+            const cancelButtonCustomId = `${sessionID}_cancel_${interaction.id}`
+            const finishedButtonCustomId = `${sessionID}_finished_${interaction.id}`
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId(buttonCustomId)
+                        .setCustomId(roleButtonCustomId)
                         .setLabel(`Role`)
                         .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
-                        .setCustomId(`finished`)
+                        .setCustomId(finishedButtonCustomId)
                         .setLabel(`Finished`)
                         .setStyle(ButtonStyle.Secondary),
                     new ButtonBuilder()
-                        .setCustomId(`cancel`)
+                        .setCustomId(cancelButtonCustomId)
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
             const role_adding = await reply.send(`Time to add any roles if you wish.`, { followUp: true, components: row })
             const member = interaction.user.id
-            const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
+            const filter = interaction => [roleButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
+            // const filter = interaction => (interaction.customId === roleButtonCustomId || interaction.customId === cancelButtonCustomId || interaction.customId === finishedButtonCustomId) && interaction.user.id === member
             const buttonCollector = role_adding.createMessageComponentCollector({ filter, time: 30000 })
+
+            // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
                 i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
             })
+
+            // What to do when the collector times out or gets called by .stop()
             buttonCollector.on(`end`, async (collected, reason) => {
                 if (reason != `time`) return confirmOrCancel()
                 const message = await interaction.fetchReply()
@@ -208,19 +224,23 @@ module.exports = {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
             })
+
+
             buttonCollector.on(`collect`, async i => {
-                if (i.customId === `cancel`) {
-                    trackingMessageContent[`footer`] = `No roles have been added`
-                    updateTrackerMessage()
-                    fin_roles = []
+                if (i.customId === cancelButtonCustomId) {
+                    // trackingMessageContent[`footer`] = `No roles have been added`
+                    updateTrackerMessage(`footer`, `No roles have been added`)
+                    roles = []
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     return buttonCollector.stop()
                 }
-                if (i.customId === `finished`) {
+
+                if (i.customId === finishedButtonCustomId) {
                     return buttonCollector.stop()
                 }
+
                 const finializedSelection = []
-                const modalId = sessionID + `-` + i.id
+                const modalId = `${sessionID}_${i.id}_${interaction.member.id}`
                 const modal = new ModalBuilder()
                     .setCustomId(modalId)
                     .setTitle(`Role creation`)
@@ -231,6 +251,8 @@ module.exports = {
                     // Short means only a single line of text
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
+
+                // Have to add to a action row to add component to the modal
                 const firstActionRow = new ActionRowBuilder().addComponents(roleInput)
                 modal.addComponents(firstActionRow)
 
@@ -238,8 +260,9 @@ module.exports = {
                 buttonCollector.resetTimer({ time: 30000 })
 
                 await i.showModal(modal)
-                const filter = (interaction) => interaction.customId === modalId
-                // Create local vars
+                const filter = (interaction) => interaction.customId === modalId && interaction.member.id === member
+
+                // Create local vars; these will be updated later with values
                 let rawAnswer
                 let roleTry = 1
                 try {
@@ -251,28 +274,33 @@ module.exports = {
                 // ignore if the modal wasn't submited
                 if (!rawAnswer) return
                 rawAnswer.deferUpdate()
+
                 const answerRole = rawAnswer.fields.getTextInputValue(`roleInput`).toLowerCase()
+
                 //  Find best match
                 let roleID = answerRole
                 let has_role = roleOptions.has(answerRole)
                 if (!has_role) {
-                    for (const [key,value] of roleOptions) {
+                    for (const [key, value] of roleOptions) {
                         if (value.name.toLowerCase() === answerRole) {
                             has_role = true
                             roleID = key
                             break
-                          }
+                        }
                     }
                 }
                 if (!has_role) {
                     roleTry++
-                    trackingMessageContent[`footer`] = `No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your ${roleTry} attempt.`
-                    updateTrackerMessage()
+                    // trackingMessageContent[`footer`] = `No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your ${roleTry} attempt.`
+                    updateTrackerMessage(`footer`, `No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your ${roleTry} attempt.`)
                     if (roleTry > 3) {
-                        trackingMessageContent[`items`] = `(${finializedSelection.length}/${roleAmount}) items selected ${formatSelectedItem(items)}`
+                        // trackingMessageContent[`items`] = `(${finializedSelection.length}/${roleAmount}) items selected ${formatSelectedItem(items)}`
+                        updateTrackerMessage(`items`, `(${finializedSelection.length}/${roleAmount}) items selected ${formatSelectedItem(items)}`)
                         buttonCollector.stop()
                     }
                 } else {
+                    // The role has been confirmed and now can continue
+
                     let role = roleOptions.get(roleID)
                     // Confirm the item and then assign the quantity
                     const roleConfirmationRow = new ActionRowBuilder()
@@ -288,149 +316,62 @@ module.exports = {
                                 .setLabel(`No thats not the role`)
                                 .setStyle(ButtonStyle.Danger)
                         )
-                    const confirmationItem = await reply.send(`The role i found was: ${role.name}, is this correct`, {
+                    const confirmationRole = await reply.send(`The role i found was: ${role.name}, is this correct`, {
                         followUp: true,
                         components: [roleConfirmationRow]
                     })
-                    const itemfilter = iteminteraction => (iteminteraction.customId === `confirm` || iteminteraction.customId === `cancel`) && iteminteraction.user.id === member
-                    let roleListener = confirmationItem.createMessageComponentCollector({
-                        itemfilter,
+                    const rolefilter = roleInteraction => [`confirm`, `cancel`].some(id => id === roleInteraction.customId) && roleInteraction.user.id === member
+                    const roleListener = confirmationRole.createMessageComponentCollector({
+                        rolefilter,
                         componentType: ComponentType.Button,
                         time: 60 * 1000
                     })
-                    roleListener.on(`collect`, async xyx => {
-                        await xyx.deferUpdate()
-                        await confirmationItem.delete()
-                        let whatButtonWasPressed = xyx.customId
-                        if (whatButtonWasPressed === `confirm`) {
-                            if (finializedSelection.length === roleAmount) {
-                                fin_roles = finializedSelection
-                                role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
-                                roleListener.stop()
-                                return buttonCollector.stop()
-                            }
+
+                    roleListener.on(`collect`, async button => {
+                        function rolesHitMax() {
+                            roles = finializedSelection
+                            role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                            roleListener.stop()
+                            return buttonCollector.stop()
+                        }
+
+                        await button.deferUpdate()
+                        await confirmationRole.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                        if (button.customId === `confirm`) {
+                            if (finializedSelection.length === roleAmount) return rolesHitMax() // Check before to avoid possibly duplicating record
                             finializedSelection.push(role.id)
-                            trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
-                            updateTrackerMessage()
-                            if (finializedSelection.length === roleAmount) {
-                                fin_roles = finializedSelection
-                                role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
-                                roleListener.stop()
-                                return buttonCollector.stop()
-                            }
+                            // trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
+                            updateTrackerMessage(`roles`, `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`)
+                            if (finializedSelection.length === roleAmount) return rolesHitMax() // Check again to end the phase
                         } else {
-                            trackingMessageContent[`footer`] = `Please Hit the role button to try again`
-                            updateTrackerMessage()
+                            // trackingMessageContent[`footer`] = `Please Hit the role button to try again`
+                            updateTrackerMessage(`footer`, `Please Hit the role button to try again`)
                         }
                     })
+
+                    // Send a message to the users if they try to use the command when they didn't iniate it
                     roleListener.on(`ignore`, async (i) => {
                         i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
                     })
+
+                    // What to do when the collector for the role confirmation ends.
                     roleListener.on(`end`, async () => {
-                        await trackingMessage.edit({
-                            content: Object.values(trackingMessageContent).join(`\n`),
-                            components: []
-                        })
-                        phase++
-                        if (endPhase === phase) return phaseTwo()
-                        trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
-                        updateTrackerMessage()
-                        return confirmOrCancel()
+                        return confirmationRole.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+
+                        // // Clear any components left on the message.
+                        // await confirmationRole.edit({
+                        //     components: []
+                        // })
+
+                        // // Increase the phase and then test to see if it need to continue on or go to the confirmation method.
+                        // phase++
+                        // if (endPhase === phase) return phaseTwo()
+                        // // trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
+                        // updateTrackerMessage(`footer`, `Please hit the button to confirm the transaction or cancel to stop the transaction`)
+                        // return confirmOrCancel()
                     })
 
                 }
-            })
-        }
-        /**
-         * Allow the user to pick from the available roles the bot has access to then move onto phase two to add items if chosen to or go right to confirming the package.
-         */
-        async function phaseOne1() {
-            // Set up the roles
-            const roleOptions = await setRoleOptions(interaction) // get available roles to select from
-            const optionArray = formatRoleOptions(roleOptions) // format for selection menu
-            let rows = rewardSchema.createSelectMenus(optionArray, 5) // create select menus and return as ActionRowBuilder
-
-            // Send the select menus
-            let interactionResponse_message = await reply.send(`Please select a total of ${roleAmount} roles.`, {
-                followUp: true,
-                components: rows,
-                simplified: true
-            })
-
-            let buttonCreationOnlyOnce = true
-            let roleListener
-            let roles = {}
-            let finializedSelection = []
-            trackingMessageContent[`footer`] = `Please confirm or cancel the role selection\nCancel will set the number of role to 0`
-            // Create and start the listener for the select menus
-            rewardSchema.createlistener(interaction.member.id, interactionResponse_message)
-            rewardSchema.on(async (r) => {
-                await r.deferUpdate()
-                roles[r.customId] = [...r.values]
-                // Combine both arrays into one array for easier checking
-                finializedSelection = Object.values(roles).flat()
-
-                trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
-                updateTrackerMessage()
-                if (buttonCreationOnlyOnce) {
-                    let roleConfirmationRow = new ActionRowBuilder()
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId(`confirm`)
-                                .setLabel(`Confirm`)
-                                .setStyle(ButtonStyle.Success),
-                        )
-                        .addComponents(
-                            new ButtonBuilder()
-                                .setCustomId(`cancel`)
-                                .setLabel(`Cancel and set the number of roles to 0`)
-                                .setStyle(ButtonStyle.Danger)
-                        )
-                    await trackingMessage.edit({
-                        components: [roleConfirmationRow]
-                    })
-                    const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === interaction.member.id
-                    roleListener = trackingMessage.createMessageComponentCollector({
-                        filter,
-                        componentType: ComponentType.Button,
-                        time: 60 * 1000
-                    })
-                    roleListener.on(`collect`, async xyx => {
-                        await xyx.deferUpdate()
-                        let whatButtonWasPressed = xyx.customId
-                        if (whatButtonWasPressed === `confirm`) {
-                            if (finializedSelection.length > roleAmount) {
-                                trackingMessageContent[`roles`] = `(${finializedSelection.length}/${roleAmount}) roles selected, **Please unselect ${finializedSelection.length - roleAmount} as you have selected to many** ${formatSelectedRoles(roleOptions)}`
-                                updateTrackerMessage()
-                            } else {
-                                fin_roles = finializedSelection
-                                trackingMessageContent[`roles`] = `(${fin_roles.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`
-                                trackingMessageContent[`footer`] = ``
-                                roleListener.stop()
-                            }
-                        } else {
-                            fin_roles = []
-                            trackingMessageContent[`roles`] = `(${fin_roles.length}/${fin_roles.length}) roles selected ${formatSelectedRoles(roleOptions)}`
-                            trackingMessageContent[`footer`] = ``
-                            roleListener.stop()
-                        }
-                    })
-
-                    roleListener.on(`end`, async () => {
-                        await trackingMessage.edit({
-                            content: Object.values(trackingMessageContent).join(`\n`),
-                            components: []
-                        })
-                        rewardSchema.confirmationEnd()
-                        phase++
-                        if (endPhase === phase) return phaseTwo()
-                        trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
-                        updateTrackerMessage()
-                        return confirmOrCancel()
-                    })
-                    buttonCreationOnlyOnce = false
-                }
-
             })
         }
 
@@ -438,39 +379,52 @@ module.exports = {
          * Allow the user to find an item and then go to confirming the package.
          */
         async function phaseTwo() {
+            // Setup the local values that will be updated later
             let itemTry = 1
-            let currentItem = undefined
+
+            // Setup the constant values that wont be changed then test to make sure that there are items available and if not, end the phase and move to the confirmation method.
             const itemNames = []
             const availableItems = await client.db.getItem(null, interaction.guild.id)
             // End phase if there are no items available
             if (!availableItems.length) {
-                trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
                 items = []
-                return reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true })
+                // trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
+                updateTrackerMessage(`items`, `(0/0) items selected, There are no items available to add`)
+                return reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true, ephemeral: true })
             }
-            const buttonCustomId = sessionID + `item`
+
+            // Create the buttons and collector for adding an item
+            const itemButtonCustomId = `${sessionID}_item_${interaction.id}`
+            const cancelButtonCustomId = `${sessionID}_cancel_${interaction.id}`
+            const finishedButtonCustomId = `${sessionID}_finished_${interaction.id}`
+
             const row = new ActionRowBuilder()
                 .addComponents(
                     new ButtonBuilder()
-                        .setCustomId(buttonCustomId)
+                        .setCustomId(itemButtonCustomId)
                         .setLabel(`Item`)
                         .setStyle(ButtonStyle.Primary),
                     new ButtonBuilder()
-                        .setCustomId(`finished`)
+                        .setCustomId(finishedButtonCustomId)
                         .setLabel(`Finished`)
                         .setStyle(ButtonStyle.Secondary),
                     new ButtonBuilder()
-                        .setCustomId(`cancel`)
+                        .setCustomId(cancelButtonCustomId)
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
             const item_adding = await reply.send(`Time to add any items if you wish.`, { followUp: true, components: row })
             const member = interaction.user.id
-            const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
+            const filter = interaction => [itemButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
+            // const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
             const buttonCollector = item_adding.createMessageComponentCollector({ filter, time: 30000 })
+
+            // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
                 i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
             })
+
+            // What to do when the collector for adding an item ends
             buttonCollector.on(`end`, async (collected, reason) => {
                 if (reason != `time`) return confirmOrCancel()
                 const message = await interaction.fetchReply()
@@ -483,16 +437,19 @@ module.exports = {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
             })
+
+
             buttonCollector.on(`collect`, async i => {
-                if (i.customId === `cancel`) {
-                    i.update({ embeds: [await reply.send(`the makereward creation has been cancelled`, { raw: true })], components: [] })
-                    client.db.redis.del(sessionID)
+                if (i.customId === cancelButtonCustomId) {
+                    updateTrackerMessage(`footer`, `No items have been added`)
+                    items = []
+                    item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     return buttonCollector.stop()
                 }
-                if (i.customId === `finished`) {
+                if (i.customId === finishedButtonCustomId) {
                     return buttonCollector.stop()
                 }
-                const modalId = sessionID + `-` + i.id
+                const modalId = `${sessionID}_${i.id}_${interaction.member.id}`
                 const modal = new ModalBuilder()
                     .setCustomId(modalId)
                     .setTitle(`Item creation`)
@@ -510,6 +467,8 @@ module.exports = {
                     // Short means only a single line of text
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
+
+                // Add to action rows before adding to modal
                 const firstActionRow = new ActionRowBuilder().addComponents(itemNameInput)
                 modal.addComponents(firstActionRow)
                 const secondActionRow = new ActionRowBuilder().addComponents(itemQuantityInput)
@@ -519,7 +478,7 @@ module.exports = {
                 buttonCollector.resetTimer({ time: 30000 })
 
                 await i.showModal(modal)
-                const filter = (interaction) => interaction.customId === modalId
+                const filter = (interaction) => interaction.customId === modalId && interaction.member.id === member
                 let rawAnswer
                 try {
                     rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
@@ -530,6 +489,8 @@ module.exports = {
                 // ignore if the modal wasn't submited
                 if (!rawAnswer) return
                 rawAnswer.deferUpdate()
+
+                // Grab the user inputs from the modal once submited.
                 const answerName = rawAnswer.fields.getTextInputValue(`itemNameInput`).toLowerCase()
                 const answerQuantity = rawAnswer.fields.getTextInputValue(`itemQuantityInput`).toLowerCase()
                 //  Find best match
@@ -543,15 +504,17 @@ module.exports = {
                     availableItems.find(i => parseInt(i.item_id) === parseInt(answerName))
                 if (!item) {
                     itemTry++
-                    trackingMessageContent[`footer`] = `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`
+                    // trackingMessageContent[`footer`] = `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`
+                    updateTrackerMessage(`footer`, `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`)
 
                     if (itemTry > 3) {
-                        trackingMessageContent[`items`] = `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`
+                        updateTrackerMessage(`items`, `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`)
+                        // trackingMessageContent[`items`] = `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`
                         buttonCollector.stop()
                     }
                 } else {
                     // Confirm the item and then assign the quantity
-                    let itemConfirmationRow = new ActionRowBuilder()
+                    const itemConfirmationRow = new ActionRowBuilder()
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId(`confirm`)
@@ -568,26 +531,31 @@ module.exports = {
                         followUp: true,
                         components: [itemConfirmationRow]
                     })
-                    const itemfilter = iteminteraction => (iteminteraction.customId === `confirm` || iteminteraction.customId === `cancel`) && iteminteraction.user.id === member
-                    let itemListener = confirmationItem.createMessageComponentCollector({
+                    const itemfilter = iteminteraction => [`confirm`,`cancel`].some(id=>id===iteminteraction.customId) && iteminteraction.user.id === member
+                    const itemListener = confirmationItem.createMessageComponentCollector({
                         itemfilter,
                         componentType: ComponentType.Button,
                         time: 60 * 1000
                     })
-                    itemListener.on(`collect`, async xyx => {
-                        await xyx.deferUpdate()
-                        await confirmationItem.delete()
-                        let whatButtonWasPressed = xyx.customId
-                        if (whatButtonWasPressed === `confirm`) {
-                            if (items.length === itemAmount) {
-                                return buttonCollector.stop()
-                            }
-                            currentItem = item
+
+                    itemListener.on(`collect`, async button => {
+                        function itemsHitMax() {
+                            // trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
+                            updateTrackerMessage(`footer`,`Please hit the button to confirm the transaction or cancel to stop the transaction`)
+                            item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                            itemListener.stop()
+                            return buttonCollector.stop()
+                        }
+                        await button.deferUpdate()
+                        await confirmationItem.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
+                        
+                        if (button.customId === `confirm`) {
+                            if (items.length === itemAmount) return itemsHitMax() // Check before to avoid possibly duplicating record
                             let quantity = 1
                             let testQuantity = parseInt(answerQuantity)
+                            // Test to make sure the quantity is a number and if yes set to that value, if not set to 1.
                             if (Number.isInteger(testQuantity) && testQuantity > 0) {
                                 quantity = testQuantity
-
                             } else {
                                 // Assign the quantity as 1 if the quantity entered wasnt an integer or is a negative integer
                                 await reply.send(`I'm sorry the quantity you typed in was not a number I will default the amount to 1`, {
@@ -596,27 +564,27 @@ module.exports = {
                                     ephemeral: true
                                 })
                             }
-                            items.push([JSON.stringify(currentItem), quantity])
-                            itemNames.push(currentItem.name)
-                            trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
-                            updateTrackerMessage()
-                            if (items.length === itemAmount) {
-                                trackingMessageContent[`footer`] = `Please hit the button to confirm the transaction or cancel to stop the transaction`
-                                updateTrackerMessage()
-                                await item_adding.delete()
-                                return buttonCollector.stop()
-                            }
-                            trackingMessageContent[`footer`] = `Please Hit the Item button to add another item`
-                            updateTrackerMessage()
+
+                            items.push([JSON.stringify(item), quantity])
+                            itemNames.push(item.name)
+                            // trackingMessageContent[`items`] = `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`
+                            updateTrackerMessage(`items`,`(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`)
+                            if (items.length === itemAmount) return itemsHitMax() // Check again to end the phase 
+                            // trackingMessageContent[`footer`] = `Please Hit the Item button to add another item`
+                            updateTrackerMessage(`footer`,`Please Hit the Item button to add another item`)
                             itemListener.stop()
                         } else {
-                            trackingMessageContent[`footer`] = `Please Hit the Item button to try again`
-                            updateTrackerMessage()
+                            // trackingMessageContent[`footer`] = `Please Hit the Item button to try again`
+                            updateTrackerMessage(`footer`,`Please Hit the Item button to try again`)
                         }
                     })
+
+                    // Send a message to the users if they try to use the command when they didn't iniate it
                     itemListener.on(`ignore`, async (i) => {
                         i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
                     })
+
+                    // What to do when the item collector ends
                     itemListener.on(`end`, async () => {
                         return confirmationItem.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     })
@@ -646,18 +614,18 @@ module.exports = {
             await trackingMessage.edit({
                 components: [confirmationRow]
             })
-            const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === interaction.member.id
+            const filter = i =>[`confirm`,`cancel`].some(id=>id===i.customId) && i.user.id === interaction.member.id
             const confirmOrCancelListener = trackingMessage.createMessageComponentCollector({
                 filter,
                 componentType: ComponentType.Button,
                 time: 60 * 1000
             })
-            confirmOrCancelListener.on(`collect`, async xyx => {
-                await xyx.deferUpdate()
-                let whatButtonWasPressed = xyx.customId
-                if (whatButtonWasPressed === `confirm`) {
+
+            confirmOrCancelListener.on(`collect`, async button => {
+                await button.deferUpdate()
+                if (button.customId === `confirm`) {
                     let dataRole = []
-                    fin_roles.forEach(element => {
+                    roles.forEach(element => {
                         dataRole.push({
                             id: JSON.stringify(element)
                         })
@@ -675,21 +643,21 @@ module.exports = {
                         item: dataItem
                     }
                     const pack = rewardSchema.pack(data) // The package is saved as a string that will be read when getting unpacked and turned back into an object.
-                    trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
-
+                    // trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
+                    updateTrackerMessage(`footer`,`Your package has been added, you can view the packages with '/makereward list'`)
                     client.db.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
-                    client.db.redis.del(sessionID)
                     confirmOrCancelListener.stop()
                 } else {
-                    trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
+                    // trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
+                    updateTrackerMessage(`footer`,`The package has not been added, please run the command again if you wish to add a package.`)
                     confirmOrCancelListener.stop()
                 }
 
             })
 
             confirmOrCancelListener.on(`end`, async () => {
+                client.db.redis.del(sessionID)
                 return await trackingMessage.edit({
-                    content: Object.values(trackingMessageContent).join(`\n`),
                     components: []
                 })
             })
@@ -699,30 +667,14 @@ module.exports = {
          * Update message as choice are made
          * @returns {void}
          */
-        async function updateTrackerMessage() {
+        async function updateTrackerMessage(section, content) {
+            if (!section) return new TypeError(`Parameter 'section' is missing in function 'updateTrackerMessage' in makereward.js`)
+            if (!content) return new TypeError(`Parameter 'content' is missing in function 'updateTrackerMessage' in makereward.js`)
+            trackingMessageContent[section] = content
             let finalizedTrackingMessageContent = Object.values(trackingMessageContent).join(`\n`)
             return await trackingMessage.edit({
                 content: finalizedTrackingMessageContent
             })
-        }
-
-        /**
-         * 
-         * @param {Collection} rawOptions   
-         * @return {Array}
-         */
-        function formatRoleOptions(rawOptions) {
-            let output = []
-            rawOptions.forEach((value, key, map) => {
-                let object = {
-                    "label": value.name,
-                    "value": key,
-                    "description": value.name,
-                    "emoji": undefined,
-                }
-                output.push(object)
-            })
-            return output
         }
 
         /**
@@ -770,9 +722,9 @@ module.exports = {
          * @returns {string}
          */
         function formatSelectedRoles(r) {
-            if (fin_roles.length < 1) return ``
+            if (roles.length < 1) return ``
             let formated = ``
-            fin_roles.forEach(element => {
+            roles.forEach(element => {
                 let tempObj = r.get(element)
                 formated += `\n**Role:** ${tempObj.name}`
                 tempObj = null
@@ -833,7 +785,7 @@ module.exports = {
             header: `Custom reward packages for ${interaction.guild.name}`
         })
     },
-    async autocomplete(client, interaction){
+    async autocomplete(client, interaction) {
         /**
          * Fill choices with the available packages found in DB
          */
@@ -847,11 +799,11 @@ module.exports = {
             packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
             rewardSchema = null
         })
-		const choices = Array.from(packages_collection.keys())
+        const choices = Array.from(packages_collection.keys())
         const filtered = choices.filter(choice => choice.startsWith(focusedValue))
-		await interaction.respond(
-			filtered.map(choice => ({ name: choice, value: choice })),
-		)
+        await interaction.respond(
+            filtered.map(choice => ({ name: choice, value: choice })),
+        )
     },
     async deletePackage(client, reply, interaction, options, locale) {
         const packageName = (options.getString(`package_name`)).toLowerCase()
@@ -898,7 +850,7 @@ module.exports = {
             return await confirmationMessage.edit({
                 content: confirmationMessageContent,
                 components: [],
-                embeds:[]
+                embeds: []
             })
         })
     }
