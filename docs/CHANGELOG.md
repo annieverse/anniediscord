@@ -1,3 +1,15 @@
+# [9.3.0](https://github.com/klerikdust/anniediscord/compare/v9.2.2...v9.3.0) (2022-10-02)
+
+
+### Bug Fixes
+
+* **setrelationship:** show error message ([79b8a1b](https://github.com/klerikdust/anniediscord/commit/79b8a1bc263e3186ab718a990e78d03248c09d0a))
+
+
+### Features
+
+* **Custom Rewards:** Able to make and send rewards ([de72ee1](https://github.com/klerikdust/anniediscord/commit/de72ee1a68baaa00bc741298da7a7922e13d5419))
+
 ## [9.2.2](https://github.com/klerikdust/anniediscord/compare/v9.2.1...v9.2.2) (2022-10-02)
 
 
