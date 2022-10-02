@@ -1,3 +1,11 @@
+## [9.2.2](https://github.com/klerikdust/anniediscord/compare/v9.2.1...v9.2.2) (2022-10-02)
+
+
+### Bug Fixes
+
+* **bulkdelete:** crashing bug ([36a8369](https://github.com/klerikdust/anniediscord/commit/36a836975134cb32da4fd734916aaee3370df93e))
+* **shop:** unable to add and respond to reactions ([14084b6](https://github.com/klerikdust/anniediscord/commit/14084b6eae75781a2cea0b4ca0f91af0cea2f586))
+
 ## [9.2.1](https://github.com/klerikdust/anniediscord/compare/v9.2.0...v9.2.1) (2022-09-24)
 
 
