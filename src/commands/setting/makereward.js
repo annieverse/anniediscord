@@ -74,12 +74,12 @@ module.exports = {
         name: `list`,
         description: `delete a package`,
         type: ApplicationCommandOptionType.Subcommand
-    }, {
+    }, /* {
         name: `maketable`,
         description: `make the database table`,
         type: ApplicationCommandOptionType.Subcommand,
         default_member_permissions: PermissionFlagsBits.Administrator.toString()
-    }],
+    } */],
     type: ApplicationCommandType.ChatInput,
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `maketable`) return client.db.registerCustomRewardTable()
