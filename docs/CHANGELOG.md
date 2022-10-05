@@ -1,3 +1,10 @@
+## [9.3.1](https://github.com/klerikdust/anniediscord/compare/v9.3.0...v9.3.1) (2022-10-05)
+
+
+### Bug Fixes
+
+* **buff:** buff only applies to first user. ([3b593c8](https://github.com/klerikdust/anniediscord/commit/3b593c8e857f4ab114e707018f7a0079f5dd1a0b))
+
 # [9.3.0](https://github.com/klerikdust/anniediscord/compare/v9.2.2...v9.3.0) (2022-10-02)
 
 
