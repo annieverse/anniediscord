@@ -44,6 +44,7 @@ module.exports = function applicationCommandLoader({
                 /**
                  * For Pan's local bot use only
                  */
+                /*
                 // Annie support server
                 await rest.put(
                     Routes.applicationGuildCommands(`514688969355821077`, `577121315480272908`), {
@@ -68,11 +69,11 @@ module.exports = function applicationCommandLoader({
                 /**
                  * For Naph's local bot use only
                  */
-                /* await rest.put(
-                    Routes.applicationGuildCommands(`**NAPH PUT BOT CLIENT ID HERE**`, `577121315480272908`), {
+                await rest.put(
+                    Routes.applicationGuildCommands(`581546189925646350`, `577121315480272908`), {
                         body: applicationCommands
                     },
-                )  */
+                ) 
             }
             logger.info(`Successfully reloaded application (/) commands. ${applicationCommands.size} Commands`)
         } catch (error) {
