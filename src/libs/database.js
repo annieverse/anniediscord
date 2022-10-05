@@ -2595,9 +2595,11 @@ class Database {
             WHERE
                 type = ?
                 AND name = ?
-                AND multiplier = ?`
+                AND multiplier = ?
+                AND user_id = ?
+                AND guild_id = ?`
             , `get`
-            , [buffType, name, multiplier]
+            , [buffType, name, multiplier, userId, guildId]
         ).then(res => {
             //  Update duration
             if (res.instance > 0) return this._query(`
@@ -2606,9 +2608,11 @@ class Database {
                 WHERE
                     type = ?
                     AND name = ?
-                    AND multiplier = ?`
+                    AND multiplier = ?
+                    AND user_id = ?
+                    AND guild_id = ?`
                 , `run`
-                , [buffType, name, multiplier]
+                , [buffType, name, multiplier, userId, guildId]
             )
             this._query(`
                 INSERT INTO user_durational_buffs(
