@@ -42,7 +42,7 @@
     "better-sqlite3": "^7.4.5",
     "buffer-image-size": "^0.6.4",
     "c-struct": "^0.0.5",
-    "canvas": "^2.8.0",
+    "canvas": "^2.10.2",
     "canvas-constructor": "^4.1.0",
     "color": "^4.1.0",
     "cron-job-manager": "^2.1.4",
