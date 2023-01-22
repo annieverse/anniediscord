@@ -86,6 +86,6 @@ module.exports = {
         if (theme == `light`) hasTheme = await userHasTheme(`light`)
         if (!hasTheme) return reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
         client.db.setTheme(theme, interaction.member.id, interaction.guild.id)
-        return reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
+        return reply.send(theme == `light`? locale.SWITCH_THEME.SET_LIGHTMODE : locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
     },
 }
