@@ -1,3 +1,15 @@
+# [9.4.0](https://github.com/klerikdust/anniediscord/compare/v9.3.1...v9.4.0) (2023-01-22)
+
+
+### Bug Fixes
+
+* **setTheme:** wrong change message ([deea496](https://github.com/klerikdust/anniediscord/commit/deea49648356822fc2ef3e49ef96cfd2816e0251))
+
+
+### Features
+
+* **Text commands:** enabled ([4582867](https://github.com/klerikdust/anniediscord/commit/45828679d3fcecfe192b59c08b4015e93f8b5229))
+
 ## [9.3.1](https://github.com/klerikdust/anniediscord/compare/v9.3.0...v9.3.1) (2022-10-05)
 
 
