@@ -445,4 +445,5 @@ class Annie extends Discord.Client {
 module.exports = new Annie([Discord.GatewayIntentBits.Guilds,
     Discord.GatewayIntentBits.GuildMessages,
     Discord.GatewayIntentBits.GuildMembers,
-    Discord.GatewayIntentBits.GuildMessageReactions])
+    Discord.GatewayIntentBits.GuildMessageReactions,
+    Discord.GatewayIntentBits.MessageContent])
