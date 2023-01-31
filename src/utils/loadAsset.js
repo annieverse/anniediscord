@@ -5,9 +5,12 @@ const path = require(`path`)
  *  Load image based on given id from default ./src/images/ directory.
  *  @param {String} id filename
  *  @param {string} assetsPath 
+ *  @param {boolean} filepathReturn whether to return the filepath or not | Default is to not return
  *  @returns {Buffer}
  */
-const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
+const loadAsset = async (id=``, options = {assetsPath:`./src/assets`, filepathReturn:false}) => {
+	let assetsPath = options.assetsPath || `./src/assets`
+	let filepathReturn = options.filepathReturn || false
 	let allFiles = fs.readdirSync(assetsPath)
 	let ultimateFile
 	allFiles.forEach(file => {
@@ -21,12 +24,15 @@ const loadAsset = async (id=``, assetsPath=`./src/assets`) => {
 	    allFiles = fs.readdirSync(assetsPath)
 		allFiles.forEach((f) => {
 			if (f.includes(`defaultcover1`)) {
-				let filePath = `./${f.replace(/\\/g, `/`)}`
+				let filePath = `${f.replace(/\\/g, `/`)}`
 				return ultimateFile = filePath
 			}
 		})
 	}
-	return fs.readFileSync(assetsPath + `/` + ultimateFile)
+	
+	return filepathReturn ? assetsPath + `/` + ultimateFile : fs.readFileSync(assetsPath + `/` + ultimateFile)
 }
+
+
 
 module.exports = loadAsset
