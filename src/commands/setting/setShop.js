@@ -14,7 +14,7 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, SelectMenuBuilder
+    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder
 } = require(`discord.js`)
 
 /**
@@ -1073,7 +1073,7 @@ module.exports = {
         const doneCancelButtonId = `setshopEditDoneCancelButton_${message.id}`
 
         const doneCancelButton = new ButtonBuilder().setCustomId(doneCancelButtonId).setLabel(`Done/Cancel`).setStyle(ButtonStyle.Secondary)
-        let selectMenu = new SelectMenuBuilder()
+        let selectMenu = new StringSelectMenuBuilder()
             .setCustomId(selectMenuId)
             .setMinValues(1)
             .setMaxValues(1)

@@ -31,27 +31,8 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        const image = (await new GUI(userData, client).build()).toBuffer()
-        fetching.delete()
-        return reply.send(locale.COMMAND.TITLE, {
-            socket: {
-                user: targetUser.username,
-                emoji: await client.getEmoji(`692428927620087850`),
-                command: `Profile`
-            },
-            image: image,
-            prebuffer: true,
-            simplified: true
-        })
-    },
-    async Iexecute(client, reply, interaction, options, locale) {
-        const userLib = new User(client, interaction)
-        let targetUser = options.getUser(`user`) || interaction.member.user
-        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
-            socket: { emoji: await client.getEmoji(`790994076257353779`) }
-        })
-        const userData = await userLib.requestMetadata(targetUser, 2)
-        const image = (await new GUI(userData, client).build()).toBuffer()
+        const betaFeature = Math.floor(Math.random()*100) > 50
+        const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
         fetching.delete()
         return reply.send(locale.COMMAND.TITLE, {
             socket: {
@@ -62,7 +43,30 @@ module.exports = {
             image: image,
             prebuffer: true,
             simplified: true,
-            followUp: true
+            feedback: betaFeature
+        })
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        const userLib = new User(client, interaction)
+        let targetUser = options.getUser(`user`) || interaction.member.user
+        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
+            socket: { emoji: await client.getEmoji(`790994076257353779`) }
+        })
+        const userData = await userLib.requestMetadata(targetUser, 2)
+        const betaFeature = Math.floor(Math.random()*100) > 50
+        const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
+        fetching.delete()
+        return reply.send(locale.COMMAND.TITLE, {
+            socket: {
+                user: targetUser.username,
+                emoji: await client.getEmoji(`692428927620087850`),
+                command: `Profile`
+            },
+            image: image,
+            prebuffer: true,
+            simplified: true,
+            followUp: true,
+            feedback: betaFeature
         })
     }
 }

@@ -177,7 +177,9 @@ module.exports = class Confirmator {
 
     onIgnore() {
         this.activeInstance.on(`ignore`, (obj) => {
-            this.slashCommand ? obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, ephemeral: true }) : obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.` })
+            if (obj.me) return
+            
+            this.slashCommand ? obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, ephemeral: true }) : this.reply.send(`I'm sorry but you are not the intended user that may interact with this button.`)
         })
     }
 }

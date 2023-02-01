@@ -122,6 +122,10 @@ module.exports = async (client={}, message={}) => {
             `unsupported file type: undefined`
         ]
         const providedArguments = options.providedArguments.length > 0 ? `\`${options.providedArguments}\`` : `No arguments provided`
+        // Make sure channels are in the cache
+        if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
+        if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
+
         const channel = levelZeroErrors.includes(options.error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){
             return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**ARGUMENTS:** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.error_message}\n─────────────────☆～:;`})

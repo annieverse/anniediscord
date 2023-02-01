@@ -1,7 +1,10 @@
 const palette = require(`../ui/colors/default`)
 const {
 	EmbedBuilder,
-	AttachmentBuilder
+	AttachmentBuilder,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -119,7 +122,26 @@ class Response {
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
 		let timestampAsFooter = plugins.timestampAsFooter || false
+		let feedback = plugins.feedback || false
 		let components = plugins.components || null
+		/**
+		 * Add feedback button to message if enabled
+		 */
+		const row = new ActionRowBuilder() 
+                .addComponents(
+                    new ButtonBuilder()
+                    .setCustomId(`betaFeedback`)
+                    .setLabel(`Beta Feature Feedback`)
+                    .setStyle(ButtonStyle.Secondary)
+                )
+		if (feedback){
+			if (!components){
+				components = [row]
+			}else{
+				components.push(row)
+			}
+		}		
+		
 		let fetchReply = plugins.fetchReply || true
 		let followUp = plugins.followUp || false
 		let ephemeral = plugins.ephemeral || false
