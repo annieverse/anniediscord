@@ -1,3 +1,10 @@
+# [9.5.0](https://github.com/klerikdust/anniediscord/compare/v9.4.0...v9.5.0) (2023-02-11)
+
+
+### Features
+
+* **feedback:** provide feedback on beta features ([42f3008](https://github.com/klerikdust/anniediscord/commit/42f3008d4308d7b251959bb7385f27832290fe6f))
+
 # [9.4.0](https://github.com/klerikdust/anniediscord/compare/v9.3.1...v9.4.0) (2023-01-22)
 
 
