@@ -93,6 +93,6 @@ module.exports = {
             })
         }
 
-        reply.send(`${user} has recieved the package ${packageName}`,{ephemeral:true})
+        reply.send({content:`${user} has recieved the package ${packageName}`,ephemeral:true})
     }
 }

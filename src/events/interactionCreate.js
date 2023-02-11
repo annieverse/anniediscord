@@ -19,6 +19,14 @@ module.exports = async (client, interaction) => {
         } catch (error) {
             client.logger.error(error)
         }
+    } else if (interaction.type === InteractionType.MessageComponent){
+        const modal = client.modals.get(interaction.customId)
+        if (!modal) return new Error(`There is no code for this modal yet`)
+        try {
+            await modal.execute(interaction, client)
+        } catch (error) {
+            client.logger.error(error)
+        }
     }
 
 

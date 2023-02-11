@@ -38,6 +38,7 @@ class Card {
 		this.reservedSpace = 0
 		this.primaryColor = primaryColor
 		this.avatar = {width: 50, height: 50}
+		
 	}
 
 	getBuffer(){
@@ -176,8 +177,19 @@ class Card {
 		.setColor(this._resolveColor(color, this.color.main))
 		.createRoundedClip(10, 10, this.width - 20, this.height - 20, cornerRadius)
 		.printRectangle(0, 0, this.width, this.height)
-
+		
 		return this
+	}
+
+	/**
+	 * Return the chosen color palette
+	 * @param {String}	theme light or dark 
+	 * @returns {Object} preset colors for specified theme
+	 */
+	getColorPalette(theme=`light`){
+		if (theme === `light`) return themePresets[`light`]
+		if (theme === `dark`) return themePresets[`dark`]
+		return themePresets[`light`]
 	}
 
 	/**

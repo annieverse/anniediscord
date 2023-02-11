@@ -127,7 +127,7 @@ module.exports = {
 
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        if (await client.db.redis.exists(sessionID)) return reply.send(`I'm sorry but you have a create package session still active please wait a few before trying again`,{ephemeral:true})
+        if (await client.db.redis.exists(sessionID)) return reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
         client.db.redis.set(sessionID, 1, `EX`, 60 * 3)
 
 

@@ -42,10 +42,10 @@ class UI {
 	}
 
 	/**
-	 * Rendering card
+	 * Rendering card original verison
 	 * @return {canvas}
 	 */
-	async build() {
+	async buildAlpha(){
 		let startPos_x = 10
 		let startPos_y = 10
 		let baseWidth = this.width - 20
@@ -140,6 +140,218 @@ class UI {
 			.printText(`FAME`, 250, 390) 
 
 		return card.ready()
+	}
+	/**
+	 * Rendering card new verison
+	 * @return {canvas}
+	 */
+	async buildBeta() {
+		let startPos_x = 10
+		let startPos_y = 10
+		let baseWidth = this.width - 20 
+		const usingLightMode = this.user.usedTheme.alias === `light`
+		const adjustedPrimaryColorContrast = usingLightMode ? Color(this.user.rank.color).saturate(0.8).darken(0.4).hex() : this.user.rank.color
+		let card = new Cards({
+			width: this.width,
+			height: this.height,
+			theme: this.user.usedTheme.alias
+		})
+		.createBase({cornerRadius: 25})
+		
+		const darkColorTheme = card.getColorPalette(`dark`)
+
+		//  Sticker
+		if (this.user.usedSticker) card.canv.printImage(await resolveImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
+		//  Cover
+		await card.addBackgroundLayer(this.user.usedCover.alias, {
+			isSelfUpload: this.user.usedCover.isSelfUpload,
+			minHeight: 197
+		})
+		card.canv.setColor(card.color.main)
+		.printRectangle(0, 197, this.width, this.height)
+		//  Avatar
+		card.canv.setColor(card.color.main)
+			.printCircle(startPos_x + 70, 200, 52) 
+			.printCircularImage(await resolveImage(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})), startPos_x + 70, 200, 50, 50, 25)
+		//  Badges
+		const badges = this.user.inventory.raw.filter(key => key.type_id === 2)
+		const availableBadges = []
+
+        for (let i=0; i<badges.length; i++) {
+			if (availableBadges.length > 4) break
+            // filter out the badges that dont have assets
+			let imageFile = await loadAsset(badges[i].alias, {filepathReturn:true})
+			if (imageFile.includes(`defaultcover1`)) continue
+			availableBadges.push(badges[i].alias)
+        }
+		
+		for (let i = 0; i < availableBadges.length; i++) {
+			//  Limit displayed badges to specified amount
+            if (i > 4) break
+            card.canv.printImage(await resolveImage(await loadAsset(availableBadges[i])), this.width - 55 - i*32, 215, 26, 26)
+		}
+
+		//  Username
+		card.canv.setColor(card.color.text)
+			.setTextAlign(`center`)
+			.setTextFont(`${this.resizeLongNickname(this.user.master.username || this.user.master.user.username)} roboto-bold`)
+			.printText(this.user.master.username || this.user.master.user.username, startPos_x + 70, 272)
+
+		//  User's Title
+
+		// For the background bubble around the title
+		card.canv.save()
+			.setColor(usingLightMode? adjustedPrimaryColorContrast : darkColorTheme.main)
+			.createRoundedClip(startPos_x + 17, startPos_y + 266, 110, 20, 20)
+			.printRectangle(startPos_x + 17, startPos_y + 266, 110, 20)
+			.restore()
+
+		// For the actual title
+		card.canv.setTextFont(`7pt roboto`)
+			.setStroke(usingLightMode ? card._resolveColor(`white`) : darkColorTheme.text)
+			// .setStroke(usingLightMode ? card._resolveColor(`black`) : darkColorTheme.text)
+			.setStrokeWidth(1)
+			.printStrokeText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
+			.setColor(usingLightMode? card._resolveColor(`black`) : adjustedPrimaryColorContrast)			
+			// .setColor(usingLightMode? card._resolveColor(`white`) : adjustedPrimaryColorContrast)			
+			.printText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
+
+		//  Verified/Blue Badge if any
+		/**
+		 * We can add back in once the api updates for verification connections
+		 * 1/27/23
+		 */
+		// const verifiedStartingPoint = card.canv.measureText(this.user.master.username).width * 1.3 + 2
+		// if (this.user.main.verified) card.canv.printImage(await resolveImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
+
+		// Rank Bar
+		card.canv.save()
+			.setColor(adjustedPrimaryColorContrast)
+			.createRoundedClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
+			.printRectangle(startPos_x + 150, startPos_y + 250, 130, 20)
+			.setTextFont(`10pt roboto-bold`)
+			.setStroke(card._resolveColor(`white`))
+			// .setStroke(card._resolveColor(`black`))
+			.setStrokeWidth(1)
+			.printStrokeText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
+			.setColor(card._resolveColor(`black`))
+			// .setColor(card._resolveColor(`white`))
+			.printText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
+			.restore()
+
+		//  Description
+		const bio = this.user.main.bio
+		const descriptionMarginLeft = 50
+		const descriptionMarginTop = 310
+		const descriptionMarginBetweenParagraph = 13
+		card.canv.setColor(card.color.text)
+			.setTextAlign(`left`)
+			.setTextFont(`8pt roboto`)
+		if (bio.length > 0 && bio.length <= 51) {
+			card.canv.printText(this.formatString(bio, 1).first, descriptionMarginLeft, descriptionMarginTop)
+				.printText(this.formatString(bio, 1).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+
+		} else if (bio.length > 51 && bio.length <= 102) {
+			card.canv.printText(this.formatString(bio, 2).first, descriptionMarginLeft, descriptionMarginTop)
+				.printText(this.formatString(bio, 2).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+				.printText(this.formatString(bio, 2).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
+
+		} else if (bio.length > 102 && bio.length <= 154) {
+			card.canv.printText(this.formatString(bio, 3).first, descriptionMarginLeft, descriptionMarginTop)
+				.printText(this.formatString(bio, 3).second, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*1))
+				.printText(this.formatString(bio, 3).third, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*2))
+				.printText(this.formatString(bio, 3).fourth, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*3))
+		}
+
+		
+		//  Footer Components [Heart, Level, Fame/Reputation Points]
+		/**
+		 * All the commented out code controls the different layouts and can be removed once finialized
+		 */
+		if (usingLightMode) {
+			/* Use dark mode color as background
+			// AC
+			card.canv.save()
+			.setColor(darkColorTheme.main)
+			.createRoundedClip(  28, 345, 84, 60, 20)
+			.printRectangle(28, 345, 84, 60)
+			.restore()
+			// LEVEL
+			card.canv.save()
+			.setColor(darkColorTheme.main)
+			.createRoundedClip(  142, 345, 35, 60, 20)
+			.printRectangle(142, 345, 35, 60)
+			.restore()
+			// FAME
+			card.canv.save()
+			.setColor(darkColorTheme.main)
+			.createRoundedClip(232, 345, 37, 60, 20)
+			.printRectangle(232, 345, 37, 60)
+			.restore() */
+			
+			/* Use role color as background 3 separate boxes
+			// AC
+			card.canv.save()
+			.setColor(adjustedPrimaryColorContrast)
+			.createRoundedClip(  28, 345, 84, 60, 20)
+			.printRectangle(28, 345, 84, 60)
+			.restore()
+			// LEVEL
+			card.canv.save()
+			.setColor(adjustedPrimaryColorContrast)
+			.createRoundedClip(  142, 345, 35, 60, 20)
+			.printRectangle(142, 345, 35, 60)
+			.restore()
+			// FAME
+			card.canv.save()
+			.setColor(adjustedPrimaryColorContrast)
+			.createRoundedClip(232, 345, 37, 60, 20)
+			.printRectangle(232, 345, 37, 60)
+			.restore()
+			*/
+			
+			// use dark theme as one bubble 
+			/* card.canv.save()
+			.setColor(darkColorTheme.main)
+			.createRoundedClip(  18, 343, card.width - 38, 62, 20)
+			.printRectangle(18, 343, card.width - 38, 62)
+			.restore() */
+			
+			// use role color as one bubble
+			card.canv.save()
+			.setColor(adjustedPrimaryColorContrast)
+			.createRoundedClip(  18, 343, card.width - 38, 62, 20)
+			.printRectangle(18, 343, card.width - 38, 62)
+			.restore()
+		}
+				
+		card.canv.setTextAlign(`center`)
+			.setTextFont(`17pt roboto`)
+			.setStroke(usingLightMode ? card._resolveColor(`white`) : darkColorTheme.text)
+			// .setStroke(usingLightMode ? card._resolveColor(`black`) : darkColorTheme.text)
+			.setStrokeWidth(1)
+			.printStrokeText(formatK(this.user.inventory.artcoins), 70, 370)
+			.printStrokeText(this.user.exp.level, 160, 370)
+			.printStrokeText(formatK(this.user.reputations.total_reps), 250, 370)
+			.setColor(usingLightMode ? card._resolveColor(`black`) : adjustedPrimaryColorContrast)
+			// .setColor(usingLightMode ? card._resolveColor(`white`) : adjustedPrimaryColorContrast)
+			.printText(formatK(this.user.inventory.artcoins), 70, 370)
+			.printText(this.user.exp.level, 160, 370)
+			.printText(formatK(this.user.reputations.total_reps), 250, 370)
+			.setColor(usingLightMode ? card._resolveColor(`black`) : darkColorTheme.text)
+			.setTextFont(`7pt roboto`)
+			.printText(`ARTCOINS`, 70, 390)
+			.printText(`LEVEL`, 160, 390) 
+			.printText(`FAME`, 250, 390) 
+
+		return card.ready()
+	}
+	/**
+	 * Rendering card
+	 * @return {canvas}
+	 */
+	async build(betaFeature){
+		return betaFeature ? await this.buildBeta() : await this.buildAlpha()
 	}
 
 	/**
