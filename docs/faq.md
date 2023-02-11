@@ -4,7 +4,7 @@
 **A:** This can be done through **`/rep`** and **`/gift`** commands. More ways will be added in the future.
 
 **Q: Where I can see all Annie's commands?**  
-**A:** Simply type **`>help`**. ***This is currently unavailable for now**.
+**A:** Simply type **`>help`**.
 
 **Q: What should I do with the ![:fragments:](https://cdn.discordapp.com/emojis/577121735917174785.webp?size=16&quality=lossless) fragments I got from gacha?**  
 **A:** Fragments are merely a garbage item. You can sell them for couple of artcoins through **`/sellfrag`** command.
@@ -61,4 +61,14 @@
 **A:** Annie uses JavaScript as her primary program language.
 
 **Q: What permissions does annie actually need?**  
-**A:** _Updating_.
+**A:**
+- View Channels
+- Manage Roles
+- Send Messages and create posts
+- Send Messages in threads and posts
+- Embed Links
+- Attach Files
+- Add Reactions
+- Use External Emoji
+- Use external stickers
+- Manage messages
