@@ -95,8 +95,8 @@ class Response {
 	/**
 	 *
 	 * Sending response
-	 * @param {string} [content=``] Main content of the message to be displayed.
-	 * @param {plugins} [plugins={}] List of plugins to be applied into the message.
+	 * @param {String} [content=``] Main content of the message to be displayed.
+	 * @param {Object} [plugins={}] List of plugins to be applied into the message.
 	 * @return {void}
 	 */
 	async send(content = ``, plugins = {}) {
@@ -122,6 +122,7 @@ class Response {
 		let topNotch = plugins.topNotch || null
 		let raw = plugins.raw || false
 		let timestampAsFooter = plugins.timestampAsFooter || false
+		let directMessage = plugins.dm || false
 		let feedback = plugins.feedback || false
 		let components = plugins.components || null
 		/**
@@ -145,8 +146,8 @@ class Response {
 		let fetchReply = plugins.fetchReply || true
 		let followUp = plugins.followUp || false
 		let ephemeral = plugins.ephemeral || false
-		const RESPONSE_REF = this.isSlash ? this.message : field
-		const RESPONSE_TYPE = this.isSlash ? followUp ? `followUp` : `reply` : `send`
+		const RESPONSE_REF = !directMessage ? this.isSlash ? this.message : field : field
+		const RESPONSE_TYPE = !directMessage ?this.isSlash ? followUp ? `followUp` : `reply` : `send` : `send`
 		const isComponentArray = Array.isArray(components)
 		isComponentArray ? null : components ? components = [components] : null
 		//  Handle message with paging property enabled
