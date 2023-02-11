@@ -193,7 +193,7 @@ class Response {
 					await msg.react(`⏩`)
 				}
 				// Filters - These make sure the varibles are correct before running a part of code
-				let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
+				let filter = (reaction, user) => this.isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
 				//  Timeout limit for page buttons
 				const backwards = msg.createReactionCollector({
 					filter,
