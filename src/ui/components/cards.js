@@ -472,7 +472,7 @@ class Card {
 		gradient=false,
 		gradientHeight=Math.floor(this.height/2)
 	}) {
-		let bg = typeof img === `string` ? await loadAsset(img, isSelfUpload ? `./src/assets/selfupload` : `./src/assets`) : img
+		let bg = typeof img === `string` ? await loadAsset(img, {assetsPath:isSelfUpload ? `./src/assets/selfupload` : `./src/assets`}) : img
 		const {
 			width: bgWidth, 
 			height: bgHeight
