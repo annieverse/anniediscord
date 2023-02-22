@@ -1,3 +1,11 @@
+## [9.5.3](https://github.com/klerikdust/anniediscord/compare/v9.5.2...v9.5.3) (2023-02-22)
+
+
+### Bug Fixes
+
+* **autoresponder:** unable to add item ([2b2592d](https://github.com/klerikdust/anniediscord/commit/2b2592d02d341de0ffa39b9faab0238caa25bd42))
+* **daily:** message not sending ([8a50530](https://github.com/klerikdust/anniediscord/commit/8a505306cd18c7f8eca7d47c1804939fa621a859))
+
 ## [9.5.2](https://github.com/klerikdust/anniediscord/compare/v9.5.1...v9.5.2) (2023-02-22)
 
 
