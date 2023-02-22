@@ -1,3 +1,12 @@
+## [9.5.1](https://github.com/klerikdust/anniediscord/compare/v9.5.0...v9.5.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* **autorespond:** commands not recognized ([fdba8db](https://github.com/klerikdust/anniediscord/commit/fdba8dbd031e7a8cf1ace3f6c81c19f835d44b3d))
+* **invite:** send to user DM ([3bee463](https://github.com/klerikdust/anniediscord/commit/3bee46310459aed7a187da87a8348b5a0f63b65c))
+* **setcover:** wrong preview being shown ([a579b51](https://github.com/klerikdust/anniediscord/commit/a579b51f24364b68bf35f1c98732f65f4cc07dcc))
+
 # [9.5.0](https://github.com/klerikdust/anniediscord/compare/v9.4.0...v9.5.0) (2023-02-11)
 
 
