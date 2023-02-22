@@ -102,7 +102,7 @@ module.exports = {
                     })
                 }
                 const userData = await (new User(client, message)).requestMetadata(message.author, 2)
-                const img = await new GUI(userData, validUsers, client).build()
+                const img = await new GUI(userData, validUsers, client,message.guild).build()
                 load.delete()
                 await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${message.guild.name}'s Ranking`, {
                     prebuffer: true,
