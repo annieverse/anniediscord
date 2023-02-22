@@ -1,3 +1,46 @@
+## [9.5.3](https://github.com/klerikdust/anniediscord/compare/v9.5.2...v9.5.3) (2023-02-22)
+
+
+### Bug Fixes
+
+* **autoresponder:** unable to add item ([2b2592d](https://github.com/klerikdust/anniediscord/commit/2b2592d02d341de0ffa39b9faab0238caa25bd42))
+* **daily:** message not sending ([8a50530](https://github.com/klerikdust/anniediscord/commit/8a505306cd18c7f8eca7d47c1804939fa621a859))
+
+## [9.5.2](https://github.com/klerikdust/anniediscord/compare/v9.5.1...v9.5.2) (2023-02-22)
+
+
+### Bug Fixes
+
+* **leaderboard:** unable to view ([299e9f3](https://github.com/klerikdust/anniediscord/commit/299e9f3705156c91a051b58652ba69d526f069de))
+
+## [9.5.1](https://github.com/klerikdust/anniediscord/compare/v9.5.0...v9.5.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* **autorespond:** commands not recognized ([fdba8db](https://github.com/klerikdust/anniediscord/commit/fdba8dbd031e7a8cf1ace3f6c81c19f835d44b3d))
+* **invite:** send to user DM ([3bee463](https://github.com/klerikdust/anniediscord/commit/3bee46310459aed7a187da87a8348b5a0f63b65c))
+* **setcover:** wrong preview being shown ([a579b51](https://github.com/klerikdust/anniediscord/commit/a579b51f24364b68bf35f1c98732f65f4cc07dcc))
+
+# [9.5.0](https://github.com/klerikdust/anniediscord/compare/v9.4.0...v9.5.0) (2023-02-11)
+
+
+### Features
+
+* **feedback:** provide feedback on beta features ([42f3008](https://github.com/klerikdust/anniediscord/commit/42f3008d4308d7b251959bb7385f27832290fe6f))
+
+# [9.4.0](https://github.com/klerikdust/anniediscord/compare/v9.3.1...v9.4.0) (2023-01-22)
+
+
+### Bug Fixes
+
+* **setTheme:** wrong change message ([deea496](https://github.com/klerikdust/anniediscord/commit/deea49648356822fc2ef3e49ef96cfd2816e0251))
+
+
+### Features
+
+* **Text commands:** enabled ([4582867](https://github.com/klerikdust/anniediscord/commit/45828679d3fcecfe192b59c08b4015e93f8b5229))
+
 ## [9.3.1](https://github.com/klerikdust/anniediscord/compare/v9.3.0...v9.3.1) (2022-10-05)
 
 
