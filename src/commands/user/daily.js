@@ -82,7 +82,7 @@ module.exports = {
 			userId: messageObject.member.id,
 			guildId: messageObject.guild.id
 		})
-		reply.send(locale.DAILIES.CLAIMED, {
+		await reply.send(locale.DAILIES.CLAIMED, {
 			status: `success`,
 			thumbnail: targetUser.displayAvatarURL(),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
@@ -92,7 +92,7 @@ module.exports = {
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
 		})
-		return reply.send(locale.DAILIES.TO_REMIND, {
+		return await reply.send(locale.DAILIES.TO_REMIND, {
 			simplified: true,
 			socket: {
 				prefix: client.prefix
