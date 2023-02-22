@@ -1,3 +1,10 @@
+## [9.5.2](https://github.com/klerikdust/anniediscord/compare/v9.5.1...v9.5.2) (2023-02-22)
+
+
+### Bug Fixes
+
+* **leaderboard:** unable to view ([299e9f3](https://github.com/klerikdust/anniediscord/commit/299e9f3705156c91a051b58652ba69d526f069de))
+
 ## [9.5.1](https://github.com/klerikdust/anniediscord/compare/v9.5.0...v9.5.1) (2023-02-22)
 
 
