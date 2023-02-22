@@ -110,11 +110,12 @@ module.exports = async (client={}, message={}) => {
         }
         //  Report to support server
         client.logger.error(e)
-        client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand}}}).catch(error => client.logger.error(error))
+        formatedErrorLog(client,{msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand})
+        // client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand}}}).catch(error => client.logger.error(error))
     }
-    async function formatedErrorLog(c,{options}) {
+    async function formatedErrorLog(c,options={}) {
         const guild = await c.fetchGuildPreview(options.msg.guildId)
-        const user = await c.users.fetch(options.msg.authorId)
+        const user = await c.users.fetch(options.msg.author.id)
         const date = new Date()
         const levelZeroErrors = [
             `Missing Permissions`,
