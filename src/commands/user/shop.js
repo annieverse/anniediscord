@@ -55,7 +55,7 @@ module.exports = {
         //  Displaying shop
         const customBanner = message.guild.configs.get(`SHOP_IMAGE`).value
         await reply.send(res, {
-            image: customBanner ? await loadAsset(customBanner, `./src/assets/customShop`) : `banner_setshop`,
+            image: customBanner ? await loadAsset(customBanner, {assetsPath:`./src/assets/customShop`}) : `banner_setshop`,
             prebuffer: customBanner ? true : false,
             paging: true,
             header: `${message.guild.name}'s Shop!`,
@@ -110,7 +110,7 @@ module.exports = {
         //  Displaying shop
         const customBanner = interaction.guild.configs.get(`SHOP_IMAGE`).value
         await reply.send(res, {
-            image: customBanner ? await loadAsset(customBanner, `./src/assets/customShop`) : `banner_setshop`,
+            image: customBanner ? await loadAsset(customBanner, {assetsPath:`./src/assets/customShop`}) : `banner_setshop`,
             prebuffer: customBanner ? true : false,
             paging: true,
             header: `${interaction.guild.name}'s Shop!`,

@@ -101,7 +101,7 @@ module.exports = {
                 }
             })
             //  Handle if the used action is invalid
-        this.selectedAction = this.args[0].toLowerCase()
+        this.selectedAction = this.arg.toLowerCase()
         if (!this.availableActions.includes(this.selectedAction)) return reply.send(locale.AUTORESPONDER.INVALID_ACTION, {
                 socket: {
                     actions: this._parseAvailableActions(),
@@ -109,7 +109,7 @@ module.exports = {
                 }
             })
             //  Run action
-        return this[this.args[0]](client, reply, interaction, arg, locale, `/`)
+        return this[this.arg](client, reply, interaction, arg, locale, `/`)
     },
 
     /**

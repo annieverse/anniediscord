@@ -1,5 +1,4 @@
 const Confirmator = require(`../../libs/confirmator`)
-const loadAsset = require(`../../utils/loadAsset`)
 const stringSimilarity = require(`string-similarity`)
 const ms = require(`ms`)
 const fs = require(`fs`)
