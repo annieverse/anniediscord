@@ -31,8 +31,8 @@ module.exports = {
             item,
             shopMetadata
         } = await this.getItem(client, guild, reply, locale, prefix, arg)
+        if (!item) return
         await this.confirmOrDeny(false, message, client, locale, reply, shopMetadata, item, message.author, guild, prefix)
-
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let arg = options.getString(`item`)
@@ -42,6 +42,7 @@ module.exports = {
             item,
             shopMetadata
         } = await this.getItem(client, guild, reply, locale, prefix, arg)
+        if (!item) return
         await this.confirmOrDeny(true, interaction, client, locale, reply, shopMetadata, item, interaction.member.user, guild, `/`)
     },
     async getItem(client, guild, reply, locale, prefix, arg) {
@@ -114,7 +115,8 @@ module.exports = {
                     socket: {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
-                    }
+                    },
+                    followUp:true
                 })
                 //  Deduct artcoins
                 client.db.updateInventory({
