@@ -1,3 +1,10 @@
+## [9.5.4](https://github.com/klerikdust/anniediscord/compare/v9.5.3...v9.5.4) (2023-02-26)
+
+
+### Bug Fixes
+
+* **setgender:** allow neutral option and enable help ([1afd57c](https://github.com/klerikdust/anniediscord/commit/1afd57cbeecda6fb44448cedceaa42643e358be1))
+
 ## [9.5.3](https://github.com/klerikdust/anniediscord/compare/v9.5.2...v9.5.3) (2023-02-22)
 
 
