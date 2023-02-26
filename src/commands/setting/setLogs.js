@@ -2,12 +2,13 @@ const moment = require(`moment`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    InteractionType
 } = require(`discord.js`)
-    /**
-     * Customize Logging-System for your guild
-     * @author klerikdust
-     */
+/**
+ * Customize Logging-System for your guild
+ * @author klerikdust
+ */
 module.exports = {
     name: `setlogs`,
     aliases: [`setlogs`, `setlog`, `setlogging`],
@@ -22,11 +23,11 @@ module.exports = {
         name: `enable`,
         description: `Enable this module.`,
         type: ApplicationCommandOptionType.Subcommand
-    },{
+    }, {
         name: `disable`,
         description: `Disable this module.`,
         type: ApplicationCommandOptionType.Subcommand
-    },{
+    }, {
         name: `channel`,
         description: `Set a specific channel for Annie's logs.`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -64,11 +65,11 @@ module.exports = {
             }
         })
         this.args = arg.split(` `)
-            //  Handle if selected action doesn't exists
+        //  Handle if selected action doesn't exists
         if (!this.actions.includes(this.args[0])) return reply.send(locale.SETLOGS.INVALID_ACTION, {
-                socket: { actions: this.actions.join(`, `) },
-            })
-            //  This is the main configuration of setlogs, so everything dependant on this value
+            socket: { actions: this.actions.join(`, `) },
+        })
+        //  This is the main configuration of setlogs, so everything dependant on this value
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
         this.subConfig = this.guildConfigurations.get(this.subConfigID)
@@ -82,7 +83,7 @@ module.exports = {
             this.args = [`disable`]
         }
         if (options.getSubcommand() === `channel`) {
-            this.args = [`channel`, options.getChannel(`set`).id]
+            this.args = [`channel`, options.getChannel(`set`)]
         }
         this.guildConfigurations = interaction.guild.configs
         this.primaryConfig = this.guildConfigurations.get(this.primaryConfigID)
@@ -95,7 +96,7 @@ module.exports = {
      */
     async enable(client, reply, message, arg, locale) {
         const fn = `[setLogs.enable()]`
-            //  Handle if module is already enabled
+        //  Handle if module is already enabled
         if (this.primaryConfig.value) {
             let localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
             return reply.send(locale.SETLOGS.ALREADY_ENABLED, {
@@ -145,21 +146,21 @@ module.exports = {
     async channel(client, reply, message, arg, locale, prefix) {
         //  Handle if module is already enabled
         if (!this.primaryConfig.value) return reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
-                socket: { prefix: prefix }
-            })
-            //  Handle if user hasn't specified the target channel
+            socket: { prefix: prefix }
+        })
+        //  Handle if user hasn't specified the target channel
         if (!this.args[1]) return reply.send(locale.SETLOGS.MISSING_CHANNEL, {
-                socket: { prefix: prefix, emoji: await client.getEmoji(`692428927620087850`) }
-            })
-            //  Do channel searching by three possible conditions
-        const searchChannel = message.mentions.channels.first() ||
+            socket: { prefix: prefix, emoji: await client.getEmoji(`692428927620087850`) }
+        })
+        //  Do channel searching by three possible conditions
+        const searchChannel = message.type != InteractionType.ApplicationCommand ? message.mentions.channels.first() || 
             message.guild.channels.cache.get(this.args[1]) ||
-            message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
-            //  Handle if target channel couldn't be found
+            message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase()) : this.args[1]
+        //  Handle if target channel couldn't be found
         if (!searchChannel) return reply.send(locale.SETLOGS.INVALID_CHANNEL, {
-                socket: { emoji: await client.getEmoji(`692428969667985458`) }
-            })
-            //  Update configs
+            socket: { emoji: await client.getEmoji(`692428969667985458`) }
+        })
+        //  Update configs
         client.db.updateGuildConfiguration({
             configCode: this.subConfigID,
             customizedParameter: searchChannel.id,

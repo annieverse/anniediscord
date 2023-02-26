@@ -543,10 +543,10 @@
         "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
         "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
         "HIT_LIMIT_OTHERS": "**So unfortunate.** {{user}} already hitting their max relationships. Go ask them to break one of their relationship first. </3",
-        "MISSING_GENDER": "Don't forget to set your gender first!\ne.g. **`{{prefix}}setgender <male/female>`**",
+        "MISSING_GENDER": "Don't forget to set your gender first!\ne.g. **`{{prefix}}setgender <male/female/neutral>`**",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
         "TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
-        "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}\nIf you dont idenify as male/female, disregard this message, as we will use the neutral terminology",
+        "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}\nIf you dont idenify as male/female/neutral, disregard this message, as we will use the neutral terminology",
         "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
     },
     "REMINDER": {
@@ -719,10 +719,10 @@
         "FOLLOW_UP": "Now try type **`{{prefix}}ping`**"
     },
     "SETGENDER": {
-        "GUIDE": "╭*:;,．★ ～☆*──────────╮\nLets set your gender to unlock more features!\ne.g. **`{{prefix}}setgender <female/male>`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
-        "HASNT_SET": "You haven't set one yet since the first time we met.",
+        "GUIDE": "╭*:;,．★ ～☆*──────────╮\nLets set your gender to unlock more features!\ne.g. **`{{prefix}}setgender <male/female/neutral >`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
+        "HASNT_SET": "You haven't set one yet since the first time we met; Or you wished to be refered to with neutral genders.",
         "ALREADY_SET": "You've set yourself as {{gender}}.",
-        "INVALID": "**Woops,** you can only set as female or male! {{emoji}}",
+        "INVALID": "**Woops,** you can only set as neutral, female, or male! {{emoji}}",
         "SUCCESSFUL": "**Perfection!** {{emoji}}\n╰ Your gender status has been updated!"
     },
     "SETRANK": {

@@ -31,8 +31,8 @@ module.exports = {
             item,
             shopMetadata
         } = await this.getItem(client, guild, reply, locale, prefix, arg)
+        if (!item) return
         await this.confirmOrDeny(false, message, client, locale, reply, shopMetadata, item, message.author, guild, prefix)
-
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let arg = options.getString(`item`)
@@ -42,6 +42,7 @@ module.exports = {
             item,
             shopMetadata
         } = await this.getItem(client, guild, reply, locale, prefix, arg)
+        if (!item) return
         await this.confirmOrDeny(true, interaction, client, locale, reply, shopMetadata, item, interaction.member.user, guild, `/`)
     },
     async getItem(client, guild, reply, locale, prefix, arg) {
@@ -49,15 +50,16 @@ module.exports = {
         const availableItems = await client.db.getItem(null, guild.id)
         if (!guildShop.length || !availableItems.length) {
             await reply.send(locale.SHOP.NO_ITEMS)
-            return reply.send(locale.SHOP.SETUP_TIPS, {
+            return await reply.send(locale.SHOP.SETUP_TIPS, {
                 simplified: true,
                 socket: {
                     prefix: prefix
-                }
+                },
+                followUp:true
             })
         }
         //  Handle shop closure
-        if (!guild.configs.get(`SHOP_MODULE`).value) return reply.send(locale.SHOP.CLOSED)
+        if (!guild.configs.get(`SHOP_MODULE`).value) return await reply.send(locale.SHOP.CLOSED)
         //  Find best match
         const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
         const item = searchStringResult.bestMatch.rating >= 0.5
@@ -69,18 +71,19 @@ module.exports = {
             availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!item) {
             await reply.send(locale.BUY.INVALID_ITEM)
-            return reply.send(locale.BUY.INVALID_ITEM_TIPS, {
+            return await reply.send(locale.BUY.INVALID_ITEM_TIPS, {
                 simplified: true,
                 socket: {
                     prefix: prefix,
                     emoji: await client.getEmoji(`AnnieHeartPeek`)
-                }
+                },
+                followUp:true
             })
         }
         const shopMetadata = guildShop.find(i => i.item_id === item.item_id)
         const unlimitedSupply = shopMetadata.quantity === `~`
         //  Handle if item is out of stock
-        if (!unlimitedSupply && (shopMetadata.quantity <= 0)) return reply.send(locale.BUY.OUT_OF_STOCK, {
+        if (!unlimitedSupply && (shopMetadata.quantity <= 0)) return await reply.send(locale.BUY.OUT_OF_STOCK, {
             socket: {
                 item: item.name,
                 emoji: await client.getEmoji(`692428908540461137`)
@@ -112,7 +115,8 @@ module.exports = {
                     socket: {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
-                    }
+                    },
+                    followUp:true
                 })
                 //  Deduct artcoins
                 client.db.updateInventory({
