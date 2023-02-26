@@ -33,15 +33,15 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        if (!client.dblApi) return reply.send(locale.VOTE.UNAVAILABLE)
+        if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE)
         const voted = await client.dblApi.hasVoted(interaction.member.id)
-        if (voted) return reply.send(locale.VOTE.IS_COOLDOWN, {
+        if (voted) return await reply.send(locale.VOTE.IS_COOLDOWN, {
             socket: {
                 page: `[write a review](${this.page})`,
                 emoji: await client.getEmoji(`692428785571856404`)
             }
         })
-        return reply.send(locale.VOTE.READY, {
+        return await reply.send(locale.VOTE.READY, {
             header: `Hi, ${interaction.member.user.username}`,
             image: `banner_votes`,
             socket: {

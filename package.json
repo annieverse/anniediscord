@@ -8,8 +8,8 @@
     "lint:check": "eslint src",
     "lint:fix": "eslint src --fix",
     "unit-test": "node ./node_modules/mocha/bin/mocha \"test/*.js\"",
-    "start": "pm2 start index.js --name \"production\" && echo \"Started production\"",
-    "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
+    "start": "pm2 start index.js --time --name \"production\" && echo \"Started production\"",
+    "start-beta": "pm2 start index.js --time --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check"
   },
