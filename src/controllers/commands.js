@@ -83,7 +83,6 @@ module.exports = async (client={}, message={}) => {
         })
     }
     catch(e) {
-        if (!e) return
         if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
@@ -111,7 +110,7 @@ module.exports = async (client={}, message={}) => {
         }
         //  Report to support server
         client.logger.error(e)
-        formatedErrorLog(client,{msg:message, providedArguments:arg, error_message:e.message,targetCommand: targetCommand})
+        formatedErrorLog(client,{msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand})
         // client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand}}}).catch(error => client.logger.error(error))
     }
     async function formatedErrorLog(c,options={}) {

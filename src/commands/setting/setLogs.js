@@ -2,7 +2,8 @@ const moment = require(`moment`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    InteractionType
 } = require(`discord.js`)
 /**
  * Customize Logging-System for your guild
@@ -152,7 +153,7 @@ module.exports = {
             socket: { prefix: prefix, emoji: await client.getEmoji(`692428927620087850`) }
         })
         //  Do channel searching by three possible conditions
-        const searchChannel = message.type != 2 ? message.mentions.channels.first() ||
+        const searchChannel = message.type != InteractionType.ApplicationCommand ? message.mentions.channels.first() || 
             message.guild.channels.cache.get(this.args[1]) ||
             message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase()) : this.args[1]
         //  Handle if target channel couldn't be found
