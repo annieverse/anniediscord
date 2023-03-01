@@ -65,7 +65,7 @@ module.exports = {
     primaryConfigID: `LEVEL_UP_MESSAGE`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
-        if (!arg) return reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
+        if (!arg) return await reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             socket: {
                 prefix: prefix,
@@ -75,7 +75,7 @@ module.exports = {
         this.args = arg.split(` `)
             //  Handle if the selected options doesn't exists
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
+        if (!this.actions.includes(this.selectedAction)) return await reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
                 socket: { actions: this.actions.join(`, `) },
             })
             //  Run action
@@ -100,7 +100,7 @@ module.exports = {
         if (options.getSubcommand() === `text`) {
             this.args = [`text`, options.getString(`set`)]
         }
-        if (options.getSubcommand() === `help`) return reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
+        if (options.getSubcommand() === `help`) return await reply.send(locale.SETLEVELUPMESSAGE.GUIDE, {
                 header: `Hi, ${interaction.member.username}!`,
                 socket: {
                     prefix: `/`,
@@ -109,7 +109,7 @@ module.exports = {
             })
         //  Handle if the selected options doesn't exists
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
+        if (!this.actions.includes(this.selectedAction)) return await reply.send(locale.SETLEVELUPMESSAGE.INVALID_ACTION, {
                 socket: { actions: this.actions.join(`, `) },
             })
             //  Run action
@@ -129,7 +129,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
+        return await reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_ENABLED, {
             socket: { prefix: prefix },
             status: `success`
         })
@@ -147,7 +147,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, { status: `success` })
+        return await reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_DISABLED, { status: `success` })
     },
 
     /**
@@ -158,7 +158,7 @@ module.exports = {
         const fn = `[setLevelupMessage.channel]`
         const subConfigId = `LEVEL_UP_MESSAGE_CHANNEL`
             //  Handle if module hasn't been enabled yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
                 socket: { prefix: prefix }
             })
             //  Handle if the custom channel already present
@@ -167,7 +167,7 @@ module.exports = {
             //  Handle if no channel parameter has been inputted
             const { isExists, res } = this._getChannel(customLevelUpMessageChannel, message)
             const displayingExistingData = isExists ? `DISPLAY_REGISTERED_CHANNEL` : `DISPLAY_UNREACHABLE_CHANNEL`
-            if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE[displayingExistingData], {
+            if (!this.args[1]) return await reply.send(locale.SETLEVELUPMESSAGE[displayingExistingData], {
                     socket: {
                         prefix: prefix,
                         channel: res || customLevelUpMessageChannel
@@ -183,20 +183,20 @@ module.exports = {
                     setByUserId: message.member.id,
                     cacheTo: this.guildConfigurations
                 })
-                return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
+                return await reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_RESET_CHANNEL, {
                     status: `success`,
                     socket: { emoji: await client.getEmoji(`789212493096026143`) }
                 })
             }
         } else {
             //  Handle if no channel parameter has been inputted
-            if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
+            if (!this.args[1]) return await reply.send(locale.SETLEVELUPMESSAGE.MISSING_CHANNEL_PARAMETER, {
                 socket: { prefix: prefix }
             })
         }
         //  Handle if target channel does not exist
         const { isExists, res } = this._getChannel(this.args[1], message)
-        if (!isExists) return reply.send(locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
+        if (!isExists) return await reply.send(locale.SETLEVELUPMESSAGE.INVALID_CHANNEL, {
                 socket: { emoji: await client.getEmoji(`692428578683617331`) }
             })
             //  Update and finalize
@@ -207,7 +207,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
+        return await reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_SET_CHANNEL, {
             status: `success`,
             socket: {
                 channel: res,
@@ -223,10 +223,10 @@ module.exports = {
     async text(client, reply, message, arg, locale, prefix) {
         const fn = `[setLevelupMessage.text]`
         const subConfigId = `LEVEL_UP_TEXT`
-        if (!this.primaryConfig.value) return reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETLEVELUPMESSAGE.ALREADY_DISABLED, {
             socket: { prefix: prefix }
         })
-        if (!this.args[1]) return reply.send(locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
+        if (!this.args[1]) return await reply.send(locale.SETLEVELUPMESSAGE.MISSING_TEXT_PARAMETER, {
             socket: { prefix: prefix }
         })
         let newText = this.args.slice(1).join(` `)
@@ -251,7 +251,7 @@ module.exports = {
                 setByUserId: message.member.id,
                 cacheTo: this.guildConfigurations
             })
-            reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
+            await reply.send(locale.SETLEVELUPMESSAGE.SUCCESSFULLY_UPDATE_TEXT, {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)

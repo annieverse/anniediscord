@@ -38,7 +38,7 @@ module.exports = async (client={}, message={}) => {
     }
     // Handle if user doesn't have enough permission level to use the command
     const userPermission = getUserPermission(message, message.author.id)
-    if (command.permissionLevel > userPermission.level) return reply.send(``,
+    if (command.permissionLevel > userPermission.level) return await reply.send(``,
         {customHeader: [
             `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
             message.author.displayAvatarURL()
@@ -49,7 +49,7 @@ module.exports = async (client={}, message={}) => {
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
         const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return reply.send(client.locales.en.COMMAND.STILL_COOLDOWN, {
+        if (diff > 0) return await reply.send(client.locales.en.COMMAND.STILL_COOLDOWN, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`),
                 user: message.author.username,
@@ -61,7 +61,7 @@ module.exports = async (client={}, message={}) => {
     const locale = client.locales.en
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {
-        return reply.send(locale.USER.REGISTRATION_ON_PROCESS)
+        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)
     }
     try {
         const initTime = process.hrtime()
@@ -83,7 +83,7 @@ module.exports = async (client={}, message={}) => {
         })
     }
     catch(e) {
-        if (client.dev) return reply.send(locale.ERROR_ON_DEV, {
+        if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
@@ -91,7 +91,7 @@ module.exports = async (client={}, message={}) => {
         }).catch(err => client.logger.error(err))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
-            reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+            await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
@@ -99,14 +99,14 @@ module.exports = async (client={}, message={}) => {
         }
         //  Missing-permission error
         else if (e.code === 50013) {
-            reply.send(locale.ERROR_MISSING_PERMISSION, {
+            await reply.send(locale.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
             })
             .catch(permErr => permErr)
         } else {
-            reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
+            await reply.send(locale.ERROR_ON_PRODUCTION, {socket: {emoji: await client.getEmoji(`AnniePout`)}})
         }
         //  Report to support server
         client.logger.error(e)

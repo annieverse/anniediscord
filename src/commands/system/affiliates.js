@@ -16,8 +16,8 @@ module.exports = {
         async execute(client, reply, message, arg, locale) {
             const affiliateList = await client.db.getAffiliates()
                 //  Handle if there are no registered affiliates
-            if (!affiliateList.length) return reply.send(locale.AFFILIATES.EMPTY)
-            return reply.send(locale.AFFILIATES.DISPLAY, {
+            if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
+            return await reply.send(locale.AFFILIATES.DISPLAY, {
                 header: `Annie's Affiliated Servers`,
                 thumbnail: client.user.displayAvatarURL(),
                 socket: {
@@ -29,8 +29,8 @@ module.exports = {
         async Iexecute(client, reply, interaction, options, locale) {
             const affiliateList = await client.db.getAffiliates()
             //  Handle if there are no registered affiliates
-            if (!affiliateList.length) return reply.send(locale.AFFILIATES.EMPTY)
-            return reply.send(locale.AFFILIATES.DISPLAY, {
+            if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
+            return await reply.send(locale.AFFILIATES.DISPLAY, {
                 header: `Annie's Affiliated Servers`,
                 thumbnail: client.user.displayAvatarURL(),
                 socket: {

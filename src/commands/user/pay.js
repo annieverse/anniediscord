@@ -48,27 +48,27 @@ module.exports = {
             const userLib = new User(client, message)
             const userData = await userLib.requestMetadata(message.author, 2)
                 //  Returns if user level is below the requirement
-            if (userData.exp.level < this.requirementLevel) return reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
+            if (userData.exp.level < this.requirementLevel) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
                 //  Displays as guide if user doesn't specify any parameter
-            if (!arg) return reply.send(locale.PAY.SHORT_GUIDE, {
+            if (!arg) return await reply.send(locale.PAY.SHORT_GUIDE, {
                 header: `Hi, ${message.author.username}`,
                 image: `banner_pay`,
                 socket: { prefix: client.prefix }
             })
             let targetUser = await userLib.lookFor(arg)
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             arg = arg.replace(targetUser.usedKeyword + ` `, ``)
             targetUser = targetUser.master || targetUser
                 //  Handle if user is trying to pay themselves
-            if (userLib.isSelf(targetUser.id)) return reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+            if (userLib.isSelf(targetUser.id)) return await reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
                 //  Parse amount of artcoins to be send
             const amountToSend = arg.replace(/\D/g, ``)
                 //  Handle if user not specifying the amount to send
-            if (!amountToSend) return reply.send(locale.PAY.INVALID_AMOUNT)
+            if (!amountToSend) return await reply.send(locale.PAY.INVALID_AMOUNT)
                 //  Handle if user isn't inputting valid amount to send
-            if (!trueInt(amountToSend)) return reply.send(locale.PAY.INVALID_NUMBER)
+            if (!trueInt(amountToSend)) return await reply.send(locale.PAY.INVALID_NUMBER)
                 //  Handle if user inputted amount to send way above limit.
-            if (amountToSend > this.maxAllowed) return reply.send(locale.PAY.EXCEEDING_LIMIT, { socket: { limit: commanifier(this.maxAllowed) } })
+            if (amountToSend > this.maxAllowed) return await reply.send(locale.PAY.EXCEEDING_LIMIT, { socket: { limit: commanifier(this.maxAllowed) } })
                 //  Parse amount of tax to be deducted from the transaction
             const amountOfTax = amountToSend * this.tax
             const total = Math.round(amountToSend - amountOfTax)
@@ -84,14 +84,14 @@ module.exports = {
 		})
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
-            if (userData.inventory.artcoins < amountToSend) return reply.send(locale.PAY.INSUFFICIENT_BALANCE)
+            if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE)
  			//  Send artcoins to target user
 			client.db.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: message.guild.id})
 			//  Deduct artcoins from sender's balance
 			client.db.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: message.author.id, guildId: message.guild.id})
- 			reply.send(``, {
+ 			await reply.send(``, {
  				customHeader: [`${targetUser.username} has received your artcoins!♡`, targetUser.displayAvatarURL()],
  				socket:{target: targetUser.username} 
  			})
@@ -101,17 +101,17 @@ module.exports = {
         const userLib = new User(client, interaction)
             const userData = await userLib.requestMetadata(interaction.member.user, 2)
                 //  Returns if user level is below the requirement
-            if (userData.exp.level < this.requirementLevel) return reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
+            if (userData.exp.level < this.requirementLevel) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
                 //  Displays as guide if user doesn't specify any parameter
-            if (options.getSubcommand()==`how`) return reply.send(locale.PAY.SHORT_GUIDE, {
+            if (options.getSubcommand()==`how`) return await reply.send(locale.PAY.SHORT_GUIDE, {
                 header: `Hi, ${interaction.member.user.username}`,
                 image: `banner_pay`,
                 socket: { prefix: `/` }
             })
             let targetUser = options.getUser(`user`)
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Handle if user is trying to pay themselves
-            if (userLib.isSelf(targetUser.id)) return reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+            if (userLib.isSelf(targetUser.id)) return await reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
                 //  Parse amount of artcoins to be send
             const amountToSend = options.getInteger(`amount`)
                 //  Parse amount of tax to be deducted from the transaction
@@ -129,14 +129,14 @@ module.exports = {
 		})
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
-            if (userData.inventory.artcoins < amountToSend) return reply.send(locale.PAY.INSUFFICIENT_BALANCE,{followUp:true})
+            if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE,{followUp:true})
  			//  Send artcoins to target user
 			client.db.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: interaction.guild.id})
 			//  Deduct artcoins from sender's balance
 			client.db.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id})
- 			reply.send(``, {
+ 			await reply.send(``, {
  				customHeader: [`${targetUser.username} has received your artcoins!♡`, targetUser.displayAvatarURL()],
  				socket:{target: targetUser.username},
                 followUp: true

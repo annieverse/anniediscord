@@ -21,16 +21,16 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return reply.send(locale.CHOOSE.GUIDE)
+        if (!arg) return await reply.send(locale.CHOOSE.GUIDE)
             //  Handle if Annie can't parse options from user's input.
         const opts = this._tokenizedOptions(arg)
-        if (!opts) return reply.send(locale.CHOOSE.INVALID_OPTIONS)
-        return reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
+        if (!opts) return await reply.send(locale.CHOOSE.INVALID_OPTIONS)
+        return await reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const opts = this._tokenizedOptions(options.getString(`choices`))
-        if (!opts) return reply.send(locale.CHOOSE.INVALID_OPTIONS)
-        return reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
+        if (!opts) return await reply.send(locale.CHOOSE.INVALID_OPTIONS)
+        return await reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
     },
 
     /**

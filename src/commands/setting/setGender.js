@@ -25,7 +25,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
         const userGender = await client.db.getUserGender(message.author.id)
-        if (!arg) return reply.send(locale.SETGENDER.GUIDE, {
+        if (!arg) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,
             socket: {
                 prefix: prefix,
@@ -43,7 +43,7 @@ module.exports = {
         //  Update/register gender
         !targetGender ? client.db.updateUserGenderToneutral(message.author.id) :
             client.db.updateUserGender(message.author.id, targetGender)
-        return reply.send(locale.SETGENDER.SUCCESSFUL, {
+        return await reply.send(locale.SETGENDER.SUCCESSFUL, {
             status: `success`,
             socket: {
                 emoji: await client.getEmoji(`789212493096026143`)
@@ -53,7 +53,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const userGender = await client.db.getUserGender(interaction.member.id)    
         const key = options.getString(`gender`)
-        if (!key) return reply.send(locale.SETGENDER.GUIDE, {
+        if (!key) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,
             socket: {
                 prefix: `/`,
@@ -71,7 +71,7 @@ module.exports = {
         !targetGender ? client.db.updateUserGenderToneutral(interaction.member.id) :
             //  Update/register gender
             client.db.updateUserGender(interaction.member.id, targetGender)
-        return reply.send(locale.SETGENDER.SUCCESSFUL, {
+        return await reply.send(locale.SETGENDER.SUCCESSFUL, {
             status: `success`,
             socket: {
                 emoji: await client.getEmoji(`789212493096026143`)

@@ -58,7 +58,7 @@ module.exports = {
         async execute(client, reply, message, arg, locale, prefix) {
             const availableRelationships = await client.db.getAvailableRelationships()
                 //  Handle if user doesn't provide any argument
-            if (!arg) return reply.send(locale.RELATIONSHIP.GUIDE, {
+            if (!arg) return await reply.send(locale.RELATIONSHIP.GUIDE, {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setrelationship`,
                 socket: {
@@ -79,14 +79,14 @@ module.exports = {
             const userData = await userLib.requestMetadata(message.author, 2)
             const userRels = userData.relationships.map(node => node.assigned_user_id)
             const targetUser = await userLib.lookFor(arg, useRemoveAction ? await this.fetchLocalPool(userRels, client) : null)
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Handle if target is the author
-            if (userLib.isSelf(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
+            if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
             const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
                 //  Handle delete action	
             const c = new Confirmator(message, reply)
             if (useRemoveAction) {
-                if (!userRels.includes(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
+                if (!userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
                     socket: {
                         user: targetUser.master.username,
                         emoji: await client.getEmoji(`790338393015713812`)
@@ -98,22 +98,22 @@ module.exports = {
                     socket: { emoji: await client.getEmoji(`692428578683617331`) }
                 })
                 await c.setup(message.author.id, deleteConfirmation)
-                return c.onAccept(() => {
+                return c.onAccept(async () => {
                     //  Update relationship data on both side
                     client.db.removeUserRelationship(message.author.id, targetUser.master.id)
                     client.db.removeUserRelationship(targetUser.master.id, message.author.id)
-                    return reply.send(``, {
+                    return await reply.send(``, {
                         customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()]
                     })
                 })
             }
             //  Handle if user already reached the maximum relationship members and attempted to add new member
             const relLimit = 7
-            if ((userRels.length >= relLimit) && !userRels.includes(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.HIT_LIMIT, {
+            if ((userRels.length >= relLimit) && !userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.HIT_LIMIT, {
                     socket: { emoji: await client.getEmoji(`781956690337202206`) }
                 })
                 //  Handle if target already reached their maximum relationship
-            if (targetUserData.relationships.length >= relLimit) return reply.send(locale.RELATIONSHIP.HIT_LIMIT_OTHERS, {
+            if (targetUserData.relationships.length >= relLimit) return await reply.send(locale.RELATIONSHIP.HIT_LIMIT_OTHERS, {
                     socket: {
                         user: targetUser.master.username
                     }
@@ -123,7 +123,7 @@ module.exports = {
                 //  Handle if the specified relationship cannot be found
             let searchStringResult = stringSimilarity.findBestMatch(arg, availableRelationships.map(i => i.name))
             const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
-            if (!relationship) return reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
+            if (!relationship) return await reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
             const targetGender = await client.db.getUserGender(targetUser.master.id)
             const relRole = targetGender ? relationshipPairs[targetGender.gender][relationship.name] : relationship.name
                 //  Render confirmation
@@ -144,7 +144,7 @@ module.exports = {
                 client.db.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
                 client.db.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
-                return reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
+                return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
                     socket: {
                         prefix: prefix,
@@ -175,14 +175,14 @@ module.exports = {
             const userData = await userLib.requestMetadata(interaction.member, 2)
             const userRels = userData.relationships.map(node => node.assigned_user_id)
             const targetUser = await userLib.lookFor(arg[0], useRemoveAction ? await this.fetchLocalPool(userRels, client) : null)
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Handle if target is the author
-            if (userLib.isSelf(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
+            if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
             const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
                 //  Handle delete action	
             const c = new Confirmator(interaction, reply, true)
             if (useRemoveAction) {
-                if (!userRels.includes(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
+                if (!userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
                     socket: {
                         user: targetUser.master.username,
                         emoji: await client.getEmoji(`790338393015713812`)
@@ -194,11 +194,11 @@ module.exports = {
                     socket: { emoji: await client.getEmoji(`692428578683617331`) }
                 })
                 await c.setup(interaction.member.id, deleteConfirmation)
-                return c.onAccept(() => {
+                return c.onAccept(async () => {
                     //  Update relationship data on both side
                     client.db.removeUserRelationship(interaction.member.id, targetUser.master.id)
                     client.db.removeUserRelationship(targetUser.master.id, interaction.member.id)
-                    return reply.send(``, {
+                    return await reply.send(``, {
                         customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()],
                         followUp: true
                     })
@@ -206,11 +206,11 @@ module.exports = {
             }
             //  Handle if user already reached the maximum relationship members and attempted to add new member
             const relLimit = 7
-            if ((userRels.length >= relLimit) && !userRels.includes(targetUser.master.id)) return reply.send(locale.RELATIONSHIP.HIT_LIMIT, {
+            if ((userRels.length >= relLimit) && !userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.HIT_LIMIT, {
                     socket: { emoji: await client.getEmoji(`781956690337202206`) }
                 })
                 //  Handle if target already reached their maximum relationship
-            if (targetUserData.relationships.length >= relLimit) return reply.send(locale.RELATIONSHIP.HIT_LIMIT_OTHERS, {
+            if (targetUserData.relationships.length >= relLimit) return await reply.send(locale.RELATIONSHIP.HIT_LIMIT_OTHERS, {
                     socket: {
                         user: targetUser.master.username
                     }
@@ -220,7 +220,7 @@ module.exports = {
                 //  Handle if the specified relationship cannot be found
             let searchStringResult = stringSimilarity.findBestMatch(arg, availableRelationships.map(i => i.name))
             const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
-            if (!relationship) return reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
+            if (!relationship) return await reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
             //  Render confirmation
             const confirmation = await reply.send(locale.RELATIONSHIP.TARGET_CONFIRMATION, {
                 prebuffer: true,
@@ -239,7 +239,7 @@ module.exports = {
                 client.db.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
                 client.db.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id))
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()], followUp: true })
-                return reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
+                return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
                     socket: {
                         prefix: `/`,

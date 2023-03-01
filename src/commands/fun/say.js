@@ -18,15 +18,15 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return reply.send(locale.SAY.SHORT_GUIDE, {
+        if (!arg) return await reply.send(locale.SAY.SHORT_GUIDE, {
             socket: {
                 emoji: await client.getEmoji(`AnnieNyaa`)
             }
         })
         message.delete()
-        return reply.send(arg)
+        return await reply.send(arg)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        return reply.send(options.getString(`message`))
+        return await reply.send(options.getString(`message`))
     }
 }

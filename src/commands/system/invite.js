@@ -41,7 +41,7 @@ module.exports = {
         try {
             //  Attempt to send through DM.
             await this.sendInvites(message.author)
-            return reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
+            return await reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
         } catch (error) {
             // Send to channel if failed send attempt to dm
             return this.sendInvites(message.channel, client, reply, locale)
@@ -51,7 +51,7 @@ module.exports = {
         try {
             //  Attempt to send through DM.
             await this.sendInvites(interaction.member, client, reply, locale, true)
-            return reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
+            return await reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
         } catch (error) {
             // Send to channel if failed send attempt to dm
             return this.sendInvites(interaction.channel, client, reply, locale)

@@ -48,7 +48,7 @@ module.exports = {
 			targetUser = messageObject.options.getUser(`user`) || messageObject.member.user
 		} else {
 			targetUser = arg ? await userLib.lookFor(arg) : messageObject.author
-			if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+			if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
 			//  Normalize structure
 			targetUser = targetUser.master || targetUser
 		}
@@ -58,7 +58,7 @@ module.exports = {
 		const now = moment()
 		const lastClaimAt = await client.db.toLocaltime(targetUserData.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: targetUser.displayAvatarURL(),
 			topNotch: isSelf ?
 				`**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` :

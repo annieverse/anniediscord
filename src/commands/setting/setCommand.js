@@ -65,7 +65,7 @@ module.exports = {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
             //  Handle if user doesn't specify the new bio/description
-        if (!arg) return reply.send(locale.SETCOMMAND.GUIDE, {
+        if (!arg) return await reply.send(locale.SETCOMMAND.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             image: `banner_setcommand`,
             socket: {
@@ -77,7 +77,7 @@ module.exports = {
         })
         this.args = arg.split(` `)
         const targetAction = this.args[0].toLowerCase()
-        if (!actions.includes(targetAction)) return reply.send(locale.SETCOMMAND.INVALID_ACTION, {
+        if (!actions.includes(targetAction)) return await reply.send(locale.SETCOMMAND.INVALID_ACTION, {
             socket: { prefix: prefix }
         })
         return this[targetAction](client, reply, message, arg, locale)
@@ -98,7 +98,7 @@ module.exports = {
      */
     async channel(client, reply, message, arg, locale) {
         let channelsContainer = message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!this.args) return reply.send(locale.SETCOMMAND.MISSING_TARGET_CHANNEL, {
+        if (!this.args) return await reply.send(locale.SETCOMMAND.MISSING_TARGET_CHANNEL, {
             socket: {
                 emoji: await client.getEmoji(`AnnieMad2`)
             }
@@ -112,13 +112,13 @@ module.exports = {
             const ch = specifiedChannels[i].toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
             const targetNewChannel = message.guild.channels.cache.get(ch) ||
                 message.guild.channels.cache.find(channel => channel.name.toLowerCase() === ch)
-            if (!targetNewChannel) return reply.send(locale.SETCOMMAND.INVALID_NEW_CHANNEL, {
+            if (!targetNewChannel) return await reply.send(locale.SETCOMMAND.INVALID_NEW_CHANNEL, {
                 socket: {
                     channel: ch,
                     emoji: thinkingEmoji
                 }
             })
-            if (channelsContainer.includes(targetNewChannel.id)) return reply.send(locale.SETCOMMAND.CHANNEL_ALREADY_REGISTERED, {
+            if (channelsContainer.includes(targetNewChannel.id)) return await reply.send(locale.SETCOMMAND.CHANNEL_ALREADY_REGISTERED, {
                 socket: {
                     emoji: madEmoji
                 }
@@ -133,7 +133,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETCOMMAND.UPDATE_CHANNEL_SUCCESSFUL, {
+        return await reply.send(locale.SETCOMMAND.UPDATE_CHANNEL_SUCCESSFUL, {
             status: `success`,
             socket: {
                 channel: specifiedChannels.length,
@@ -148,7 +148,7 @@ module.exports = {
      */
     async reset(client, reply, message, arg, locale) {
         const currentChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
-        if (!currentChannels.length) return reply.send(locale.SETCOMMAND.CHANNEL_POOL_ALREADY_EMPTY, {
+        if (!currentChannels.length) return await reply.send(locale.SETCOMMAND.CHANNEL_POOL_ALREADY_EMPTY, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
@@ -171,7 +171,7 @@ module.exports = {
                 setByUserId: message.member.id,
                 cacheTo: message.guild.configs
             })
-            return reply.send(locale.SETCOMMAND.RESET_SUCCESSFUL, {
+            return await reply.send(locale.SETCOMMAND.RESET_SUCCESSFUL, {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)

@@ -13,7 +13,7 @@ module.exports = {
     messageCommand: true,
     prefixImmune: true,
     async execute(client, reply, message, arg, locale, prefix) {
-        if (!arg) return reply.send(locale.SETPREFIX.CURRENT_SET, {
+        if (!arg) return await reply.send(locale.SETPREFIX.CURRENT_SET, {
             image: `banner_setprefix`,
             socket: {
                 guild: message.guild.name,
@@ -34,7 +34,7 @@ module.exports = {
                 emoji: await client.getEmoji(`789212493096026143`)
             }
         })
-        return reply.send(locale.SETPREFIX.FOLLOW_UP, {
+        return await reply.send(locale.SETPREFIX.FOLLOW_UP, {
             simplified: true,
             socket: {
                 prefix: arg

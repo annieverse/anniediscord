@@ -23,16 +23,16 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Handle if the EXP module isn't enabled in current guild
-        if (!message.guild.configs.get(`EXP_MODULE`).value) return reply.send(locale.COMMAND.DISABLED, {
+        if (!message.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale.COMMAND.DISABLED, {
             socket: { command: `EXP Module` },
         })
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
         const userData = await userLib.requestMetadata(targetUser, 2)
-        reply.send(locale.COMMAND.FETCHING, {
+        await reply.send(locale.COMMAND.FETCHING, {
                 simplified: true,
                 socket: {
                     emoji: await client.getEmoji(`790994076257353779`),
@@ -56,14 +56,14 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         //  Handle if the EXP module isn't enabled in current guild
-        if (!interaction.guild.configs.get(`EXP_MODULE`).value) return reply.send(locale.COMMAND.DISABLED, {
+        if (!interaction.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale.COMMAND.DISABLED, {
             socket: { command: `EXP Module` },
         })
         const userLib = new User(client, interaction)
         let targetUser = options.getUser(`user`) || interaction.member.user
         
         const userData = await userLib.requestMetadata(targetUser, 2)
-        reply.send(locale.COMMAND.FETCHING, {
+        await reply.send(locale.COMMAND.FETCHING, {
                 simplified: true,
                 socket: {
                     emoji: await client.getEmoji(`790994076257353779`),

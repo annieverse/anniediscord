@@ -28,7 +28,7 @@ module.exports = {
                 //  Displaying the help center if user doesn't specify any arg
             if (!arg) {
                 // Display 5 most used commands suggestions
-                return reply.send(locale.HELP.LANDING, {
+                return await reply.send(locale.HELP.LANDING, {
                         socket: {
                             emoji: await client.getEmoji(`692428988177449070`),
                             prefix: prefix
@@ -41,9 +41,9 @@ module.exports = {
                         const filter = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
                         const bookEmojiCollector = response.createReactionCollector({filter, time: 300000, max: 1})
                             //  Display Commandpedia layout once user pressed the :book: button
-                        bookEmojiCollector.on(`collect`, () => {
+                        bookEmojiCollector.on(`collect`, async () => {
                             response.delete()
-                            reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
+                            await reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
                                 socket: {
                                     prefix: prefix,
                                     serverLink: `[Join Support Server](${client.supportServer})`,
@@ -58,7 +58,7 @@ module.exports = {
             }
             //  Display command's properties based on given keyword (if match. Otherwise, return)
             const { isCategory, res } = await this.findCommandByKeyword(arg, client.message_commands.filter(node => !this.ignoreGroups.includes(node.group)))
-            if (!res) return reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
+            if (!res) return await reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
                     socket: {
                         emoji: await client.getEmoji(`692428969667985458`)
                     }
@@ -66,7 +66,7 @@ module.exports = {
                 //  Handle helpCategory display
             if (isCategory) {
                 const commands = client.message_commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
-                return reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
+                return await reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
 				header: `the ${res} commands!`,
 				thumbnail: client.user.displayAvatarURL()
 			})
@@ -75,7 +75,7 @@ module.exports = {
 		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
 		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
 		const footer = `\`\`\`javascript\nUSAGE: ${prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
-		return reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
+		return await reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
     },
 
     /**

@@ -26,11 +26,11 @@ module.exports = {
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
         const targetUserBalance = await client.db.getUserBalance(targetUser.id, message.guild.id)
-        return reply.send(locale.DISPLAY_BALANCE, {
+        return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),
             socket: {
                 emoji: await client.getEmoji(`758720612087627787`),
@@ -42,7 +42,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const targetUser = options.getUser(`user`) || interaction.member.user
         const targetUserBalance = await client.db.getUserBalance(targetUser.id, interaction.guild.id)
-        return reply.send(locale.DISPLAY_BALANCE, {
+        return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),
             socket: {
                 emoji: await client.getEmoji(`758720612087627787`),

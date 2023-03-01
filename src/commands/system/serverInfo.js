@@ -21,7 +21,7 @@ module.exports = {
         await message.guild.members.fetch()
         let userSize = message.guild.members.cache.filter(member => !member.user.bot).size
         let botSize = message.guild.members.cache.filter(member => member.user.bot).size
-        return reply.send(`
+        return await reply.send(`
 			A guild with their preferred language as \`${message.guild.preferredLocale}\`
 			Owned by **${(await message.guild.fetchOwner()).user.username}**
 
@@ -49,7 +49,7 @@ module.exports = {
         await interaction.guild.members.fetch()
         let userSize = interaction.guild.members.cache.filter(member => !member.user.bot).size
         let botSize = interaction.guild.members.cache.filter(member => member.user.bot).size
-        return reply.send(`
+        return await reply.send(`
 			A guild with their preferred language as \`${interaction.guild.preferredLocale}\`
 			Owned by **${(await interaction.guild.fetchOwner()).user.username}**
 

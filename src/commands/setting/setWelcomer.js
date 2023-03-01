@@ -145,7 +145,7 @@ module.exports = {
         "theme": `WELCOMER_THEME`
     },
     async execute(client, reply, message, arg, locale, prefix) {
-        if (!arg) return reply.send(locale.SETWELCOMER.GUIDE, {
+        if (!arg) return await reply.send(locale.SETWELCOMER.GUIDE, {
             image: `banner_setwelcomer`,
             header: `Hi, ${message.member.user.username}!`,
             socket: {
@@ -155,7 +155,7 @@ module.exports = {
         })
         this.args = arg.split(` `)
         //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(this.args[0].toLowerCase())) return reply.send(locale.SETWELCOMER.INVALID_ACTION, {
+        if (!this.actions.includes(this.args[0].toLowerCase())) return await reply.send(locale.SETWELCOMER.INVALID_ACTION, {
             socket: {
                 availableActions: this.actions.join(`, `)
             }
@@ -241,7 +241,7 @@ module.exports = {
     async enable(client, reply, message, arg, locale, prefix) {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
-            return reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
+            return await reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
@@ -256,7 +256,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
+        return await reply.send(locale.SETWELCOMER.SUCCESSFULLY_ENABLED, {
             status: `success`,
             socket: {
                 prefix: prefix
@@ -269,7 +269,7 @@ module.exports = {
      * @return {void}
      */
     async disable(client, reply, message, arg, locale, prefix) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
@@ -281,7 +281,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.SUCCESSFULLY_DISABLED, {
+        return await reply.send(locale.SETWELCOMER.SUCCESSFULLY_DISABLED, {
             status: `success`
         })
     },
@@ -291,13 +291,13 @@ module.exports = {
      * @return {void}
      */
     async channel(client, reply, message, arg, locale, prefix) {
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
         })
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {
             socket: {
                 prefix: prefix
             }
@@ -314,7 +314,7 @@ module.exports = {
         //  Do channel searching by three possible conditions
         const searchChannel = testCondition
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
+        if (!searchChannel) return await reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
             socket: {
                 emoji: await client.getEmoji(`692428578683617331`)
             }
@@ -326,7 +326,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.CHANNEL_SUCCESSFULLY_REGISTERED, {
+        return await reply.send(locale.SETWELCOMER.CHANNEL_SUCCESSFULLY_REGISTERED, {
             status: `success`,
             socket: {
                 channel: `<#${searchChannel.id}>`
@@ -340,13 +340,13 @@ module.exports = {
      */
     async text(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
         })
         //  Handle if text content isn't provided
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.EMPTY_TEXT_PARAMETER, {
             socket: {
                 prefix: prefix
             },
@@ -381,7 +381,7 @@ module.exports = {
      */
     async preview(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             },
@@ -398,7 +398,7 @@ module.exports = {
         })
         const img = await new GUI(message.member, client).build()
         renderingMsg.delete()
-        return reply.send(this._parseWelcomeText(message), {
+        return await reply.send(this._parseWelcomeText(message), {
             simplified: true,
             prebuffer: true,
             image: img,
@@ -412,13 +412,13 @@ module.exports = {
      */
     async role(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
         })
         //  Handle if search keyword isn't provided
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.EMPTY_ROLE_PARAMETER, {
             socket: {
                 prefix: prefix
             },
@@ -433,7 +433,7 @@ module.exports = {
                 setByUserId: message.member.id,
                 cacheTo: this.guildConfigurations
             })
-            return reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_RESET)
+            return await reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_RESET)
         }
         let rolesContainer = []
         let specifiedRoles = this.args.slice(1)
@@ -441,11 +441,11 @@ module.exports = {
             //  Do role searching
             const searchRole = findRole(specifiedRoles[i], message.guild)
             //  Handle if target role couldn't be found
-            if (!searchRole) return reply.send(locale.SETWELCOMER.INVALID_ROLE, {
+            if (!searchRole) return await reply.send(locale.SETWELCOMER.INVALID_ROLE, {
                 status: `fail`
             })
             //  Handle if role is higher than annie
-            if (searchRole.position > this.annieRole.position) return reply.send(locale.SETWELCOMER.ROLE_TOO_HIGH, {
+            if (searchRole.position > this.annieRole.position) return await reply.send(locale.SETWELCOMER.ROLE_TOO_HIGH, {
                 socket: {
                     role: searchRole,
                     annieRole: this.annieRole.name,
@@ -462,7 +462,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
+        return await reply.send(locale.SETWELCOMER.ROLE_SUCCESSFULLY_REGISTERED, {
             socket: {
                 role: rolesContainer.join(` `)
             },
@@ -475,7 +475,7 @@ module.exports = {
      */
     async imagereset(client, reply, message, arg, locale, prefix) {
         const welcomerImage = message.guild.configs.get(`WELCOMER_IMAGE`).value
-        if (welcomerImage === `welcomer` || !welcomerImage) return reply.send(`You use the default configuration already.`)
+        if (welcomerImage === `welcomer` || !welcomerImage) return await reply.send(`You use the default configuration already.`)
         const confirmation = await reply.send(locale.SETWELCOMER.CONFIRMATION_IMAGE, {
             image: await new GUI(message.member, client, `welcomer`).build(),
             prebuffer: true
@@ -487,7 +487,7 @@ module.exports = {
             fs.unlink(`./src/assets/customWelcomer/${welcomerImage}.png`, (error) => {
                 if (error) client.logger.warn(`[setWelcomer.js][Removing Image from filetree] ${error.stack}`)
             })
-            reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
+            await reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
                 },
@@ -503,7 +503,7 @@ module.exports = {
      */
     async image(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
@@ -512,13 +512,13 @@ module.exports = {
             isValidUpload,
             url
         } = this.getImage(message)
-        if (!url) return reply.send(locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
+        if (!url) return await reply.send(locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
             socket: {
                 emoji: await client.getEmoji(`692428692999241771`),
                 prefix: prefix
             }
         })
-        if (!isValidUpload) return reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+        if (!isValidUpload) return await reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`)
             }
@@ -559,7 +559,7 @@ module.exports = {
                 setByUserId: message.member.id,
                 cacheTo: this.guildConfigurations
             })
-            reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
+            await reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
                 },
@@ -573,7 +573,7 @@ module.exports = {
      */
     async userimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
@@ -618,7 +618,7 @@ module.exports = {
      */
     async noimage(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
@@ -680,19 +680,19 @@ module.exports = {
      */
     async theme(client, reply, message, arg, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
-        if (!this.primaryConfig.value) return reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
             }
         })
-        if (!this.args[1]) return reply.send(locale.SETWELCOMER.THEME_MISSING_NAME, {
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.THEME_MISSING_NAME, {
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`AnniePeek1`)
             }
         })
         const availableThemes = [`light`, `dark`]
-        if (!availableThemes.includes(this.args[1])) return reply.send(locale.SETWELCOMER.THEME_INVALID, {
+        if (!availableThemes.includes(this.args[1])) return await reply.send(locale.SETWELCOMER.THEME_INVALID, {
             socket: {
                 emoji: await client.getEmoji(`AnnieMad`)
             }
@@ -704,7 +704,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
+        return await reply.send(locale.SETWELCOMER.THEME_SUCCESSFULLY_UPDATED, {
             status: `success`,
             socket: {
                 theme: this.args[1],

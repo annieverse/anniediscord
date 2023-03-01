@@ -51,7 +51,7 @@ module.exports = {
         const packageName = options.getString(`package_name`)
         
         // handle if no packages are availble
-        if (packageName === `none`) return reply.send(`I'm sorry but you dont have any packages made, you can make one with \`/makereward create\``)
+        if (packageName === `none`) return await reply.send(`I'm sorry but you dont have any packages made, you can make one with \`/makereward create\``)
 
         let rewardSchema = new customReward(packageName)
         let rewardraw = await client.db.getRewardByName(interaction.guild.id, packageName)
@@ -93,6 +93,6 @@ module.exports = {
             })
         }
 
-        reply.send({content:`${user} has recieved the package ${packageName}`,ephemeral:true})
+        await reply.send({content:`${user} has recieved the package ${packageName}`,ephemeral:true})
     }
 }

@@ -20,13 +20,13 @@ module.exports = {
 	cooldown: [2, `hours`],
 	async execute(client, reply, message, arg, locale) {
 		const quests = await client.db.getAllQuests()
-		if (!quests.length) return reply.send(locale.QUEST.EMPTY)
+		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
 		const userData = await (new User(client, message)).requestMetadata(message.author, 2)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
 		const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.QUEST.COOLDOWN, {
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
 			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
 			thumbnail: message.author.displayAvatarURL(),
 			socket: {
@@ -36,7 +36,7 @@ module.exports = {
 		})
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION_${message.author.id}@${message.guild.id}`
-		if (await client.db.redis.exists(sessionID)) return reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+		if (await client.db.redis.exists(sessionID)) return await reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
 		//  Session up for 2 minutes
 		client.db.redis.set(sessionID, 1, `EX`, 60 * 2)
 		const fetching = await reply.send(locale.QUEST.FETCHING, { simplified: true, socket: { emoji: await client.getEmoji(`790994076257353779`) } })
@@ -69,14 +69,14 @@ module.exports = {
 			if (answer.startsWith((client.prefix))) answer = answer.slice(1)
 			// Handle if user asked to cancel the quest
 			if ([`cancel`].includes(answer)) {
-				reply.send(locale.QUEST.CANCEL)
+				await reply.send(locale.QUEST.CANCEL)
 				msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 				quest.delete()
 				client.db.redis.del(sessionID)
 				return collector.stop()
 			}
 			//  Handle if the answer is incorrect
-			if (answer !== activeQuest.correct_answer) return reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
+			if (answer !== activeQuest.correct_answer) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
@@ -85,7 +85,7 @@ module.exports = {
 			client.db.recordQuestActivity(nextQuestId, message.author.id, message.guild.id, answer)
 			//  Successful
 			client.db.redis.del(sessionID)
-			return reply.send(locale.QUEST.SUCCESSFUL, {
+			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
 					user: message.author.username,
@@ -96,13 +96,13 @@ module.exports = {
 	},
 	async Iexecute(client, reply, interaction, options, locale) {
 		const quests = await client.db.getAllQuests()
-		if (!quests.length) return reply.send(locale.QUEST.EMPTY)
+		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
 		const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
 		const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return reply.send(locale.QUEST.COOLDOWN, {
+		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
 			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
 			thumbnail: interaction.member.displayAvatarURL(),
 			socket: {
@@ -113,7 +113,7 @@ module.exports = {
 		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
 		const sessionID = `QUEST_SESSION_${interaction.member.id}@${interaction.guild.id}`
 
-		if (await client.db.redis.exists(sessionID)) return reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+		if (await client.db.redis.exists(sessionID)) return await reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
 		//  Session up for 2 minutes
 		client.db.redis.set(sessionID, 1, `EX`, 60 * 2)
 
@@ -161,7 +161,7 @@ module.exports = {
 			try {
 				message.edit({ components: [] })
 				client.db.redis.del(sessionID)
-				reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`,{ephemeral: true, followUp:true})
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`,{ephemeral: true, followUp:true})
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
@@ -212,7 +212,7 @@ module.exports = {
 					return buttonCollector.stop()
 				}
 				buttonCollector.resetTimer({ time: 30000 })
-				return reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
+				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
 			}
 			buttonCollector.stop()
 			//  Update reward, user quest data and store activity to quest_log activity
@@ -222,7 +222,7 @@ module.exports = {
 			//  Successful
 			client.db.redis.del(sessionID)
 			message.edit({ components: [] })
-			return reply.send(locale.QUEST.SUCCESSFUL, {
+			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
 					user: interaction.member.user.username,

@@ -29,14 +29,14 @@ module.exports = {
     charactersLimit: 156,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify the new bio/description
-        if (!arg) return reply.send(locale.SETBIO.MISSING_ARG, {
+        if (!arg) return await reply.send(locale.SETBIO.MISSING_ARG, {
             image: `banner_setbio`,
             socket: {
                 prefix: prefix
             }
         })
         //  Handle if user input is exceeding the character limit
-        if (arg.length > this.charactersLimit) return reply.send(locale.SETBIO.EXCEEDING_LIMIT, {
+        if (arg.length > this.charactersLimit) return await reply.send(locale.SETBIO.EXCEEDING_LIMIT, {
             socket: {
                 emoji: await client.getEmoji(`692428578683617331`),
                 chars: arg.length - this.charactersLimit
@@ -61,9 +61,9 @@ module.exports = {
         rendering.delete()
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             client.db.setUserBio(arg, message.author.id)
-            return reply.send(``, {
+            return await reply.send(``, {
                 customHeader: [`Yay! your new profile's bio has been set!♡`, message.author.displayAvatarURL()]
             })
         })
@@ -90,9 +90,9 @@ module.exports = {
         rendering.delete()
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             client.db.setUserBio(newBio, interaction.member.id)
-            return reply.send(``, {
+            return await reply.send(``, {
                 customHeader: [`Yay! your new profile's bio has been set!♡`, interaction.member.displayAvatarURL()],
                 followUp: true
             })

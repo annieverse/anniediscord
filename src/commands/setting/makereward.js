@@ -91,14 +91,14 @@ module.exports = {
         if (options.getSubcommand() === `list`) return this.listPackages(client, reply, interaction, options, locale)
 
         // Test if any other parameter was entered and if it wasn't exit the commands and let the user know
-        if (!options.getInteger(`roles`) && !options.getInteger(`items`) && !options.getInteger(`ac`)) return reply.send(`Sorry must pick one of the other options`)
+        if (!options.getInteger(`roles`) && !options.getInteger(`items`) && !options.getInteger(`ac`)) return await reply.send(`Sorry must pick one of the other options`)
 
         // Set the name for the package
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
         // Get all currently available packages for the guild to test against, so there are none with duplicate names.
         const packages = await client.db.getRewardAmount(interaction.guild.id)
-        if (packages.length >= 25) return reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
+        if (packages.length >= 25) return await reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
 
         const packages_collection = new Collection()
 
@@ -106,7 +106,7 @@ module.exports = {
         packages.forEach(element => {
             packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
         })
-        if (packages_collection.has(packageName)) return reply.send(`I'm sorry but you have a package with that name already`)
+        if (packages_collection.has(packageName)) return await reply.send(`I'm sorry but you have a package with that name already`)
 
         // Set up varibles to hold the values we want to add to the schema
         let roles = []
@@ -127,7 +127,7 @@ module.exports = {
 
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        if (await client.db.redis.exists(sessionID)) return reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
+        if (await client.db.redis.exists(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
         client.db.redis.set(sessionID, 1, `EX`, 60 * 3)
 
 
@@ -173,7 +173,7 @@ module.exports = {
                 // trackingMessageContent[`roles`] = `(0/0) roles selected, There are no roles available to add`
                 roles = []
                 updateTrackerMessage(`roles`, `(0/0) roles selected, There are no roles available to add`)
-                await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true, ephemeral:true })
+                await await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true, ephemeral:true })
                 phase++
                 // Test to see if we need to go to item select, if not go to the confirmation method
                 if (endPhase === phase) return phaseTwo()
@@ -219,7 +219,7 @@ module.exports = {
                     message.edit({ components: [] })
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     client.db.redis.del(sessionID)
-                    reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -390,7 +390,7 @@ module.exports = {
                 items = []
                 // trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
                 updateTrackerMessage(`items`, `(0/0) items selected, There are no items available to add`)
-                return reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true, ephemeral: true })
+                return await reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true, ephemeral: true })
             }
 
             // Create the buttons and collector for adding an item
@@ -432,7 +432,7 @@ module.exports = {
                     message.edit({ components: [] })
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     client.db.redis.del(sessionID)
-                    reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -735,7 +735,7 @@ module.exports = {
     },
     async listPackages(client, reply, interaction, options, locale) {
         const packages_raw = await client.db.getRewardAmount(interaction.guild.id)
-        if (packages_raw.length < 1) return reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
+        if (packages_raw.length < 1) return await reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
             let rewardSchema = new customReward(element.reward_name)

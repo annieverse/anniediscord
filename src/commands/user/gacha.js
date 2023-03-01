@@ -31,7 +31,7 @@ module.exports = {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         const amountToOpen = arg ? trueInt(arg) : 1
             //  Handle if amount to be opened is out of defined range.
-        if (!this.amountToOpenRanges.includes(amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
+        if (!this.amountToOpenRanges.includes(amountToOpen)) return await reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
                 socket: { emoji: await client.getEmoji(`781504248868634627`) }
             })
             //  Direct roll if user already has the tickets.
@@ -41,13 +41,13 @@ module.exports = {
         const userCurrentCurrency = userData.inventory.artcoins
         const amountToPay = 120 * amountToOpen
             //  Handle if user doesn't have enough artcoins to buy tickets
-        if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
+        if (userCurrentCurrency < amountToPay) return await reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        if (await client.db.redis.exists(instanceId)) return reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
+        if (await client.db.redis.exists(instanceId)) return await reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
 
         /**
          * --------------------
@@ -78,7 +78,7 @@ module.exports = {
         const amountToOpen = options.getInteger(`amount`)
         
             //  Handle if amount to be opened is out of defined range.
-        if (!this.amountToOpenRanges.includes(amountToOpen)) return reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
+        if (!this.amountToOpenRanges.includes(amountToOpen)) return await reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
                 socket: { emoji: await client.getEmoji(`781504248868634627`) }
             })
             //  Direct roll if user already has the tickets.
@@ -87,13 +87,13 @@ module.exports = {
         const userCurrentCurrency = userData.inventory.artcoins
         const amountToPay = 120 * amountToOpen
             //  Handle if user doesn't have enough artcoins to buy tickets
-        if (userCurrentCurrency < amountToPay) return reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
+        if (userCurrentCurrency < amountToPay) return await reply.send(locale.GACHA.SUGGEST_TO_GRIND, {
             socket: {
                 prefix: `/`,
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        if (await client.db.redis.exists(instanceId)) return reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
+        if (await client.db.redis.exists(instanceId)) return await reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
         /**
          * --------------------
          * 1.) GIVE PURCHASE OFFER TO USER
@@ -125,7 +125,7 @@ module.exports = {
     async startsRoll(client, reply, message, arg, locale, instanceId, userData) {
         const rewardsPool = await client.db.getGachaRewardsPool()
             //  Handle if no rewards are available to be pulled from gacha.
-        if (!rewardsPool.length) return reply.send(locale.GACHA.UNAVAILABLE_REWARDS, { socket: { emoji: client.getEmoji(`AnnieCry`) } })
+        if (!rewardsPool.length) return await reply.send(locale.GACHA.UNAVAILABLE_REWARDS, { socket: { emoji: client.getEmoji(`AnnieCry`) } })
         const fetching = await reply.send(random(locale.GACHA.OPENING_WORDS), {
                 simplified: true,
                 socket: {
@@ -150,7 +150,7 @@ module.exports = {
         }
         client.db.redis.del(instanceId)
             //  Displaying result
-        reply.send(locale.GACHA.HEADER, {
+        await reply.send(locale.GACHA.HEADER, {
             prebuffer: true,
             customHeader: [`${message.member.user.username} has opened Pandora Box!`, message.member.displayAvatarURL()],
             image: await new GUI(loots, drawCount, userData).build(),

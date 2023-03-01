@@ -43,7 +43,7 @@ module.exports = {
         //  Displays guide and user's active reminders
         if (!arg) {
             const userReminders = await client.reminders.getReminders(message.author.id)
-            return reply.send(locale.REMINDER.HOME, {
+            return await reply.send(locale.REMINDER.HOME, {
                 image: `banner_reminder`,
                 socket: {
                     prefix: client.prefix,
@@ -53,14 +53,14 @@ module.exports = {
         }
         //  Handle if the date is not valid
         const context = client.reminders.getContextFrom(arg, message.author.id)
-        if (!context.isValidReminder) return reply.send(locale.REMINDER.INVALID_DATE, {
+        if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),
                 prefix: client.prefix
             }
         })
         client.reminders.register(context)
-        return reply.send(locale.REMINDER.SUCCESSFUL, {
+        return await reply.send(locale.REMINDER.SUCCESSFUL, {
             status: `success`,
             socket: {
                 emoji: await client.getEmoji(`789212493096026143`),
@@ -75,14 +75,14 @@ module.exports = {
         const reminderTimeAmount = await options.getInteger(`in_how_long`)
         const reminderTimeUnit = await options.getString(`time_unit`)
         const context = client.reminders.getContext(reminderMessage, reminderTimeAmount, reminderTimeUnit, interaction.member.id)
-        if (!context.isValidReminder) return reply.send(locale.REMINDER.INVALID_DATE, {
+        if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),
                 prefix: client.prefix
             }
         })
         client.reminders.register(context)
-        return reply.send(locale.REMINDER.SUCCESSFUL, {
+        return await reply.send(locale.REMINDER.SUCCESSFUL, {
             status: `success`,
             socket: {
                 emoji: await client.getEmoji(`789212493096026143`),

@@ -26,7 +26,7 @@ module.exports = {
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
             let targetUser = arg ? await userLib.lookFor(arg) : message.author
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Normalize structure
             targetUser = targetUser.master || targetUser
             const userData = await userLib.requestMetadata(targetUser, 2)
@@ -48,7 +48,7 @@ module.exports = {
             const isSelf = userLib.isSelf(targetUser.id)
             const INVALID_INVENTORY = isSelf ? locale.CARDCOLLECTION_AUTHOR_EMPTY : locale.CARDCOLLECTION_OTHERUSER_EMPTY
             if (!filteredInventory.length) {
-                return reply.send(INVALID_INVENTORY, {
+                return await reply.send(INVALID_INVENTORY, {
                     image: `banner_collection`,
                     socket: {
                         prefix: client.prefix,
@@ -58,7 +58,7 @@ module.exports = {
                     footer: isSelf ? locale.CARDCOLLECTION_EMPTY_TIPS : null
                 })
             }
-            reply.send(locale.COMMAND.FETCHING, { simplified: true, socket: { command: `cards collection`, user: targetUser.id, emoji: await client.getEmoji(`790994076257353779`) } })
+            await reply.send(locale.COMMAND.FETCHING, { simplified: true, socket: { command: `cards collection`, user: targetUser.id, emoji: await client.getEmoji(`790994076257353779`) } })
                 .then(async loading => {
                     await reply.send(this.prettifiedCardInventory(), {
                         paging: true,
@@ -92,7 +92,7 @@ module.exports = {
             const isSelf = userLib.isSelf(targetUser.id)
             const INVALID_INVENTORY = isSelf ? locale.CARDCOLLECTION_AUTHOR_EMPTY : locale.CARDCOLLECTION_OTHERUSER_EMPTY
             if (!filteredInventory.length) {
-                return reply.send(INVALID_INVENTORY, {
+                return await reply.send(INVALID_INVENTORY, {
                     image: `banner_collection`,
                     socket: {
                         prefix: client.prefix,
@@ -102,7 +102,7 @@ module.exports = {
                     footer: isSelf ? locale.CARDCOLLECTION_EMPTY_TIPS : null
                 })
             }
-            reply.send(locale.COMMAND.FETCHING, { simplified: true, socket: { command: `cards collection`, user: targetUser.id, emoji: await client.getEmoji(`790994076257353779`) } })
+            await reply.send(locale.COMMAND.FETCHING, { simplified: true, socket: { command: `cards collection`, user: targetUser.id, emoji: await client.getEmoji(`790994076257353779`) } })
                 .then(async loading => {
                     await reply.send(this.prettifiedCardInventory(), {
                         paging: true,
