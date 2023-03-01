@@ -86,7 +86,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Prevent user from selling over the amount of their owned fragments
             if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
@@ -155,7 +155,7 @@ module.exports = {
         })
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Prevent user from selling over the amount of their owned fragments
             if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
