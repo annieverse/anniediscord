@@ -623,7 +623,7 @@ module.exports = {
         }) // 3 minutes timeout
         let phase = phaseJump ? 1 : 0
         let completed = false
-        const joinFunction = (newMessage) => {
+        const joinFunction = async (newMessage) => {
             return await reply.send(dataDisplay.embeds[0].description + newMessage, {
                 footer: `Type cancel to close this registration.`,
                 raw: true
@@ -853,7 +853,7 @@ module.exports = {
                     break
             }
         })
-        pool.on(`end`, () => {
+        pool.on(`end`, async () => {
             client.db.redis.del(sessionId)
             if (completed) return
             dataDisplay.delete()

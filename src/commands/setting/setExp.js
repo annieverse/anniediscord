@@ -252,7 +252,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             expLib.updateRank(newData.level)
             client.db.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
             await reply.send(``, {
@@ -314,7 +314,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             expLib.execute(amountToAdd)
             await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
@@ -356,7 +356,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             expLib.updateRank(0)
             client.db.resetUserExp(targetUser.master.id, message.guild.id)
             await reply.send(``, {

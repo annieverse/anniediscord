@@ -80,7 +80,8 @@ module.exports = {
                 simplified: true,
                 socket: {
                     prefix: `/`
-                }
+                },
+                followUp:true
             })
         }
         //  Handle shop closure

@@ -372,7 +372,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Wipeout ARs
             client.db.clearAutoResponders(message.guild.id)
             await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_RESET, {

@@ -84,7 +84,7 @@ module.exports = {
 		})
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
             if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE)
  			//  Send artcoins to target user
@@ -129,7 +129,7 @@ module.exports = {
 		})
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
             if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE,{followUp:true})
  			//  Send artcoins to target user

@@ -331,7 +331,7 @@ module.exports = {
      * Toggle RANKS_STACK support
      * @return {void}
      */
-    stack(client, reply, message, arg, locale) {
+    async stack(client, reply, message, arg, locale) {
         const wasEnabled = message.guild.configs.get(`RANKS_STACK`).value ? 1 : 0
         client.db.updateGuildConfiguration({
             configCode: `RANKS_STACK`,
@@ -356,7 +356,7 @@ module.exports = {
         const confirmation = await reply.send(``, { header: locale.SETRANK.RESET_CONFIRMATION })
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(() => {
+        c.onAccept(async () => {
             //  Reset values
             this.primaryConfig.updatedAt = timestamp
             this.primaryConfig.value = 0
