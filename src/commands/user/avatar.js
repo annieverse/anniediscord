@@ -26,7 +26,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         let targetUser = arg ? await (new User(client, message)).lookFor(arg) : message.author
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
         await message.react(`📸`)

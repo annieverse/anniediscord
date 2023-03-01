@@ -27,14 +27,14 @@ module.exports = {
             const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
             const userLib = new User(client, message)
             let targetUser = arg ? await userLib.lookFor(arg) : message.author
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Normalize structure
             targetUser = targetUser.master || targetUser
             let targetUserData = await userLib.requestMetadata(targetUser, 2)
                 //  Handle if couldn't fetch the inventory
             const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
-            if (targetUserData.inventory.raw.length <= 0) return reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
-            reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
+            if (targetUserData.inventory.raw.length <= 0) return await reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
+            await reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
                 .then(async loading => {
                         //  Remove faulty values and sort order by rarity
                         const filteredInventory = targetUserData.inventory.raw.filter(itemsFilter).sort((a, b) => a.rarity_id - b.rarity_id).reverse()
@@ -64,7 +64,7 @@ module.exports = {
                 paging: true,
                 customHeader: [`${targetUser.username}'s Inventory!`, targetUser.displayAvatarURL()],
 			})
-            if (userLib.isSelf(targetUser.id)) reply.send(locale.INVENTORY.AUTHOR_TIPS, {
+            if (userLib.isSelf(targetUser.id)) await reply.send(locale.INVENTORY.AUTHOR_TIPS, {
                 simplified: true,
                 socket: {
                     prefix: prefix,
@@ -78,12 +78,12 @@ module.exports = {
         const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
             const userLib = new User(client, interaction)
             let targetUser = options.getUser(`user`) || interaction.member.user
-            if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+            if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             let targetUserData = await userLib.requestMetadata(targetUser, 2)
                 //  Handle if couldn't fetch the inventory
             const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
-            if (targetUserData.inventory.raw.length <= 0) return reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
-            reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
+            if (targetUserData.inventory.raw.length <= 0) return await reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
+            await reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
                 .then(async loading => {
                         //  Remove faulty values and sort order by rarity
                         const filteredInventory = targetUserData.inventory.raw.filter(itemsFilter).sort((a, b) => a.rarity_id - b.rarity_id).reverse()
@@ -114,7 +114,7 @@ module.exports = {
                 customHeader: [`${targetUser.username}'s Inventory!`, targetUser.displayAvatarURL()],
                 followUp: true
 			})
-            if (userLib.isSelf(targetUser.id)) reply.send(locale.INVENTORY.AUTHOR_TIPS, {
+            if (userLib.isSelf(targetUser.id)) await reply.send(locale.INVENTORY.AUTHOR_TIPS, {
                 simplified: true,
                 socket: {
                     prefix: `/`,

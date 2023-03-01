@@ -38,7 +38,7 @@ module.exports = {
         artcoinsRatio: 8,
         async execute(client, reply, message, arg, locale) {
             //  Returns as guide if user doesn't specify any parameters
-            if (!arg) return reply.send(locale.CARTCOIN.SHORT_GUIDE, {
+            if (!arg) return await reply.send(locale.CARTCOIN.SHORT_GUIDE, {
                 image: `banner_cartcoins`,
                 socket: {
                     emoji: await client.getEmoji(`692428692999241771`),
@@ -49,7 +49,7 @@ module.exports = {
             const userBalance = await client.db.getUserBalance(message.author.id, message.guild.id)
             const amountToUse = arg.startsWith(`all`) ? userBalance : trueInt(arg)
                 //  Returns if user amount input is below the acceptable threeshold
-            if (!amountToUse || amountToUse < this.artcoinsRatio) return reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
+            if (!amountToUse || amountToUse < this.artcoinsRatio) return await reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
                 socket: {
                     emoji: await client.getEmoji(`692428748838010970`)
                 }
@@ -68,7 +68,7 @@ module.exports = {
             await c.setup(message.author.id, confirmation)
             c.onAccept(async() => {
                         //  Returns if user's artcoins is below the amount of going to be used
-                        if (userBalance < amountToUse) return reply.send(locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
+                        if (userBalance < amountToUse) return await reply.send(locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
                                         socket: {
                                             amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(userBalance)}`,
                     emoji: await client.getEmoji(`790338393015713812`)
@@ -83,7 +83,7 @@ module.exports = {
                 guildId: message.guild.id
             })
 			client.experienceLibs(message.member, message.guild, message.channel).execute(totalGainedExp)
-			return reply.send(locale.CARTCOIN.SUCCESSFUL, {
+			return await reply.send(locale.CARTCOIN.SUCCESSFUL, {
 				status: `success`,
 				socket: {
 					artcoins: `${await client.getEmoji(`758720612087627787`)} ${commanifier(amountToUse)}`,
@@ -97,7 +97,7 @@ module.exports = {
             const amountToUse = options.getSubcommand() == `all` ? userBalance : options.getInteger(`how_many`)
             
                 //  Returns if user amount input is below the acceptable threeshold
-            if (!amountToUse || amountToUse < this.artcoinsRatio) return reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
+            if (!amountToUse || amountToUse < this.artcoinsRatio) return await reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
                 socket: {
                     emoji: await client.getEmoji(`692428748838010970`)
                 }
@@ -117,7 +117,7 @@ module.exports = {
             c.onAccept(async() => {
                 await interaction.fetchReply()
                         //  Returns if user's artcoins is below the amount of going to be used
-                        if (userBalance < amountToUse) return reply.send(locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
+                        if (userBalance < amountToUse) return await reply.send(locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
                                         socket: {
                                             amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(userBalance)}`,
                     emoji: await client.getEmoji(`790338393015713812`)
@@ -132,7 +132,7 @@ module.exports = {
                 guildId: interaction.guild.id
             })
             client.experienceLibs(interaction.member, interaction.guild, interaction.channel).execute(totalGainedExp)
-            return reply.send(locale.CARTCOIN.SUCCESSFUL, {
+            return await reply.send(locale.CARTCOIN.SUCCESSFUL, {
                 status: `success`,
                 socket: {
                     artcoins: `${await client.getEmoji(`758720612087627787`)} ${commanifier(amountToUse)}`,

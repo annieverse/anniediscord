@@ -98,7 +98,7 @@ module.exports = {
     softLimit: 1000000,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
-        if (!arg) return reply.send(locale.SETEXP.GUIDE, {
+        if (!arg) return await reply.send(locale.SETEXP.GUIDE, {
             thumbnail: this.thumbnail,
             header: `Hi, ${message.author.username}!`,
             image: `banner_setexp`,
@@ -110,7 +110,7 @@ module.exports = {
         this.args = arg.split(` `)
             //  Handle if the selected options doesn't exists
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.actions.includes(this.selectedAction)) return reply.send(locale.SETEXP.INVALID_ACTION, {
+        if (!this.actions.includes(this.selectedAction)) return await reply.send(locale.SETEXP.INVALID_ACTION, {
                 socket: { actions: this.actions.join(`, `) }
             })
             //  Run action
@@ -154,11 +154,11 @@ module.exports = {
             //  Handle if module already enabled before the action.
         if (this.primaryConfig.value) {
             //  Handle if module used the default value.
-            if (!this.primaryConfig.setByUserId) return reply.send(locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
+            if (!this.primaryConfig.setByUserId) return await reply.send(locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
                 socket: { emoji: await client.getEmoji(`692428843058724994`) }
             })
             const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
-            return reply.send(locale.SETEXP.ALREADY_ENABLED, {
+            return await reply.send(locale.SETEXP.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
@@ -173,7 +173,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETEXP.SUCCESSFULLY_ENABLED, {
+        return await reply.send(locale.SETEXP.SUCCESSFULLY_ENABLED, {
             socket: { prefix: prefix },
             status: `success`
         })
@@ -186,7 +186,7 @@ module.exports = {
     async disable(client, reply, message, arg, locale, prefix) {
         const fn = `[setExp.disable()]`
             //  Handle if module already disabled before the action.
-        if (!this.primaryConfig.value) return reply.send(locale.SETEXP.ALREADY_DISABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETEXP.ALREADY_DISABLED, {
                 socket: { prefix: prefix }
             })
             //  Update configs
@@ -197,7 +197,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETEXP.SUCCESSFULLY_DISABLED, { status: `success` })
+        return await reply.send(locale.SETEXP.SUCCESSFULLY_DISABLED, { status: `success` })
     },
 
     /**
@@ -205,22 +205,22 @@ module.exports = {
      * @return {void}
      */
     async minus(client, reply, message, arg, locale, prefix) {
-        if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_MINUS, {
+        if (!this.args[1]) return await reply.send(locale.SETEXP.MISSING_USER_ON_MINUS, {
             socket: {
                 prefix: prefix
             }
         })
         const userClass = new User(client, message)
         const targetUser = await userClass.lookFor(this.args[1])
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
-        if (!this.args[2]) return reply.send(locale.SETEXP.MISSING_AMOUNT_ON_MINUS, {
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!this.args[2]) return await reply.send(locale.SETEXP.MISSING_AMOUNT_ON_MINUS, {
             socket: {
                 prefix: prefix,
                 user: targetUser.master.username
             }
         })
         const amountToSubtract = trueInt(this.args[2])
-        if (!amountToSubtract) return reply.send(locale.SETEXP.INVALID_AMOUNT_TO_MINUS, {
+        if (!amountToSubtract) return await reply.send(locale.SETEXP.INVALID_AMOUNT_TO_MINUS, {
             socket: {
                 prefix: prefix,
                 user: targetUser.master.username
@@ -228,7 +228,7 @@ module.exports = {
         })
         let baseData = await userClass.requestMetadata(targetUser.master, 2)
         const combinedExp = baseData.exp.current_exp - amountToSubtract
-        if (combinedExp <= 0) return reply.send(locale.SETEXP.MINUS_OVERLIMIT, {
+        if (combinedExp <= 0) return await reply.send(locale.SETEXP.MINUS_OVERLIMIT, {
             socket: {
                 user: targetUser.master.username,
                 emoji: await client.getEmoji(`692428748838010970`)
@@ -255,7 +255,7 @@ module.exports = {
         c.onAccept(() => {
             expLib.updateRank(newData.level)
             client.db.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
-            reply.send(``, {
+            await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
                 followUp: true
             })
@@ -267,28 +267,28 @@ module.exports = {
      * @return {void}
      */
     async add(client, reply, message, arg, locale, prefix) {
-        if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_ADD, {
+        if (!this.args[1]) return await reply.send(locale.SETEXP.MISSING_USER_ON_ADD, {
             socket: {
                 prefix: prefix
             }
         })
         const userClass = new User(client, message)
         const targetUser = await userClass.lookFor(this.args[1])
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
-        if (!this.args[2]) return reply.send(locale.SETEXP.MISSING_AMOUNT_ON_ADD, {
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!this.args[2]) return await reply.send(locale.SETEXP.MISSING_AMOUNT_ON_ADD, {
             socket: {
                 prefix: prefix,
                 user: targetUser.master.username
             }
         })
         const amountToAdd = trueInt(this.args[2])
-        if (!amountToAdd) return reply.send(locale.SETEXP.INVALID_AMOUNT_TO_ADD, {
+        if (!amountToAdd) return await reply.send(locale.SETEXP.INVALID_AMOUNT_TO_ADD, {
             socket: {
                 prefix: prefix,
                 user: targetUser.master.username
             }
         })
-        if (amountToAdd > this.softLimit) return reply.send(locale.SETEXP.ADD_OVERLIMIT, {
+        if (amountToAdd > this.softLimit) return await reply.send(locale.SETEXP.ADD_OVERLIMIT, {
             socket: {
                 emoji: await client.getEmoji(`692428578683617331`),
                 amount: commanifier(this.softLimit)
@@ -316,7 +316,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(() => {
             expLib.execute(amountToAdd)
-            reply.send(``, {
+            await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
                 followUp: true
             })
@@ -328,7 +328,7 @@ module.exports = {
      * @return {void}
      */
     async reset(client, reply, message, arg, locale, prefix) {
-        if (!this.args[1]) return reply.send(locale.SETEXP.MISSING_USER_ON_RESET, {
+        if (!this.args[1]) return await reply.send(locale.SETEXP.MISSING_USER_ON_RESET, {
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`692428692999241771`)
@@ -336,7 +336,7 @@ module.exports = {
         })
         const userClass = new User(client, message)
         const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
         let baseData = await userClass.requestMetadata(targetUser.master, 2)
         const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
         let newData = expLib.xpFormula(0)
@@ -359,7 +359,7 @@ module.exports = {
         c.onAccept(() => {
             expLib.updateRank(0)
             client.db.resetUserExp(targetUser.master.id, message.guild.id)
-            reply.send(``, {
+            await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()],
                 followUp: true
             })

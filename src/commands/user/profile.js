@@ -24,7 +24,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
         const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
@@ -34,7 +34,7 @@ module.exports = {
         const betaFeature = Math.floor(Math.random()*100) > 50
         const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
         fetching.delete()
-        return reply.send(locale.COMMAND.TITLE, {
+        return await reply.send(locale.COMMAND.TITLE, {
             socket: {
                 user: targetUser.username,
                 emoji: await client.getEmoji(`692428927620087850`),
@@ -56,7 +56,7 @@ module.exports = {
         const betaFeature = Math.floor(Math.random()*100) > 50
         const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
         fetching.delete()
-        return reply.send(locale.COMMAND.TITLE, {
+        return await reply.send(locale.COMMAND.TITLE, {
             socket: {
                 user: targetUser.username,
                 emoji: await client.getEmoji(`692428927620087850`),

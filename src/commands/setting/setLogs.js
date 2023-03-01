@@ -56,7 +56,7 @@ module.exports = {
     subConfigID: `LOGS_CHANNEL`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
-        if (!arg) return reply.send(locale.SETLOGS.GUIDE, {
+        if (!arg) return await reply.send(locale.SETLOGS.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             image: `banner_setlogs`,
             socket: {
@@ -66,7 +66,7 @@ module.exports = {
         })
         this.args = arg.split(` `)
         //  Handle if selected action doesn't exists
-        if (!this.actions.includes(this.args[0])) return reply.send(locale.SETLOGS.INVALID_ACTION, {
+        if (!this.actions.includes(this.args[0])) return await reply.send(locale.SETLOGS.INVALID_ACTION, {
             socket: { actions: this.actions.join(`, `) },
         })
         //  This is the main configuration of setlogs, so everything dependant on this value
@@ -99,7 +99,7 @@ module.exports = {
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
             let localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
-            return reply.send(locale.SETLOGS.ALREADY_ENABLED, {
+            return await reply.send(locale.SETLOGS.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localizeTime).fromNow()
@@ -114,7 +114,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, { status: `success` })
+        return await reply.send(locale.SETLOGS.SUCCESSFULLY_ENABLED, { status: `success` })
     },
 
     /**
@@ -124,7 +124,7 @@ module.exports = {
     async disable(client, reply, message, arg, locale, prefix) {
         const fn = `[setLogs.disable()]`
         if (!this.primaryConfig.value) {
-            return reply.send(locale.SETLOGS.ALREADY_DISABLED, {
+            return await reply.send(locale.SETLOGS.ALREADY_DISABLED, {
                 socket: { prefix: prefix }
             })
         }
@@ -136,7 +136,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, { status: `success` })
+        await reply.send(locale.SETLOGS.SUCCESSFULLY_DISABLED, { status: `success` })
     },
 
     /**
@@ -145,11 +145,11 @@ module.exports = {
      */
     async channel(client, reply, message, arg, locale, prefix) {
         //  Handle if module is already enabled
-        if (!this.primaryConfig.value) return reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETLOGS.SHOULD_BE_ENABLED, {
             socket: { prefix: prefix }
         })
         //  Handle if user hasn't specified the target channel
-        if (!this.args[1]) return reply.send(locale.SETLOGS.MISSING_CHANNEL, {
+        if (!this.args[1]) return await reply.send(locale.SETLOGS.MISSING_CHANNEL, {
             socket: { prefix: prefix, emoji: await client.getEmoji(`692428927620087850`) }
         })
         //  Do channel searching by three possible conditions
@@ -157,7 +157,7 @@ module.exports = {
             message.guild.channels.cache.get(this.args[1]) ||
             message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase()) : this.args[1]
         //  Handle if target channel couldn't be found
-        if (!searchChannel) return reply.send(locale.SETLOGS.INVALID_CHANNEL, {
+        if (!searchChannel) return await reply.send(locale.SETLOGS.INVALID_CHANNEL, {
             socket: { emoji: await client.getEmoji(`692428969667985458`) }
         })
         //  Update configs
@@ -168,7 +168,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        reply.send(locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {
+        await reply.send(locale.SETLOGS.SUCCESSFULLY_UPDATING_CHANNEL, {
             socket: { channel: searchChannel },
             status: `success`
         })

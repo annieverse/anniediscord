@@ -15,7 +15,7 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        return reply.send(locale.REQUEST_PING, {
+        return await reply.send(locale.REQUEST_PING, {
             status: `success`,
             socket: {
                 ping: commanifier(Math.floor(client.ws.ping)),
@@ -24,7 +24,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        return reply.send(locale.REQUEST_PING, {
+        return await reply.send(locale.REQUEST_PING, {
             status: `success`,
             socket: {
                 ping: commanifier(Math.floor(client.ws.ping)),

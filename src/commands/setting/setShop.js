@@ -139,7 +139,7 @@ module.exports = {
      */
     actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
-        if (!arg) return reply.send(locale.SETSHOP.GUIDE, {
+        if (!arg) return await reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,
             header: `Hi, ${message.author.username}!`,
             socket: {
@@ -149,7 +149,7 @@ module.exports = {
         })
         const args = arg.split(` `)
         //  Handle if the selected options doesn't exists
-        if (!this.actions.includes(args[0].toLowerCase())) return reply.send(locale.SETSHOP.INVALID_ACTION, {
+        if (!this.actions.includes(args[0].toLowerCase())) return await reply.send(locale.SETSHOP.INVALID_ACTION, {
             socket: {
                 availableActions: this.actions.join(`, `)
             }
@@ -205,7 +205,7 @@ module.exports = {
             usable: 1
         }
         const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        // if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
@@ -218,7 +218,7 @@ module.exports = {
             const guildItems = await client.db.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === name.toLowerCase()).length > 0) {
                 client.db.redis.del(sessionId)
-                reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: name
                     }
@@ -376,14 +376,14 @@ module.exports = {
                 if (!rawAnswer) return
                 rawAnswer.deferUpdate()
                 const input = rawAnswer.fields.getTextInputValue(`stockAnswerInput`).toLowerCase()
-                if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
+                if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                     deleteIn: 5, followUp: true
                 })
                 metadata.stocks = input
                 responseMessageContent[`stock`] = `\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`
                 await joinFunction()
             } else if (i.customId === buffsButtonId) {
-                if (buffOptions.length >= 3) return reply.send(`Sorry no more buffs can be added`, {
+                if (buffOptions.length >= 3) return await reply.send(`Sorry no more buffs can be added`, {
                     deleteIn: 5,
                     followUp: true
                 })
@@ -400,7 +400,7 @@ module.exports = {
                 const answer = rawAnswer.fields.getTextInputValue(`buffsAnswerInput`).toLowerCase()
                 const message = await i.fetchReply()
                 const params = answer.split(` `)
-                if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
+                if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return await reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
                     deleteIn: 5,
                     followUp: true
                 })
@@ -410,17 +410,17 @@ module.exports = {
                     let res = []
                     let roleNames = ``
                     const roles = params.slice(1)
-                    if (!roles.length) return reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
+                    if (!roles.length) return await reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
                         deleteIn: 5,
                         followUp: true
                     })
                     for (let i = 0; i < roles.length; i++) {
                         const ref = roles[i]
                         const role = findRole(ref, message.guild)
-                        if (!role) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
+                        if (!role) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
                             deleteIn: 5, followUp: true
                         })
-                        if (role.position >= clientRole.position) return reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
+                        if (role.position >= clientRole.position) return await reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
                             deleteIn: 5, followUp: true
                         })
                         res.push(role.id)
@@ -438,12 +438,12 @@ module.exports = {
                 //  Inventory update buff
                 if ([`additem`, `removeitem`].includes(params[0])) {
                     const amount = trueInt(params[1])
-                    if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
+                    if (!amount) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
                         deleteIn: 5,
                         followUp: true
                     })
                     const targetItem = await client.db.getItem(params.slice(2).join(` `))
-                    if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
+                    if (!targetItem) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
                         deleteIn: 5,
                         followUp: true
                     })
@@ -462,12 +462,12 @@ module.exports = {
                 //  EXP/Artcoins boost buff
                 if ([`expboost`, `acboost`].includes(params[0])) {
                     const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
-                    if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
+                    if (!multiplier) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
                         deleteIn: 5,
                         followUp: true
                     })
                     const duration = ms(params.slice(2).join(` `))
-                    if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
+                    if (!duration) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
                         deleteIn: 5,
                         followUp: true
                     })
@@ -503,7 +503,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETSHOP.SUCCESSFULLY_ENABLED, {
+        return await reply.send(locale.SETSHOP.SUCCESSFULLY_ENABLED, {
             status: `success`,
             socket: {
                 prefix: prefix
@@ -524,7 +524,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED)
+        return await reply.send(locale.SETSHOP.SUCCESSFULLY_DISABLED)
     },
 
     /**
@@ -534,7 +534,7 @@ module.exports = {
     async text(client, reply, message, arg, locale, prefix, args) {
         //  Handle if text content isn't provided
         const param = args.slice(1).join(` `)
-        if (!param) return reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
+        if (!param) return await reply.send(locale.SETSHOP.EMPTY_TEXT_PARAMETER, {
             socket: {
                 prefix: prefix
             },
@@ -547,7 +547,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: message.guild.configs
         })
-        return reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, {
+        return await reply.send(locale.SETSHOP.TEXT_SUCCESSFULLY_REGISTERED, {
             status: `success`,
             socket: {
                 prefix: prefix,
@@ -570,7 +570,7 @@ module.exports = {
             usable: 1
         }
         const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
-        if (await client.db.redis.exists(sessionId)) return reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
         let phaseJump = false
@@ -581,7 +581,7 @@ module.exports = {
             const nameLimit = 20
             if (secondArg.length >= nameLimit) {
                 client.db.redis.del(sessionId)
-                return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
+                return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                     socket: {
                         limit: nameLimit
                     }
@@ -590,7 +590,7 @@ module.exports = {
             const guildItems = await client.db.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
                 client.db.redis.del(sessionId)
-                return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: secondArg
                     }
@@ -624,7 +624,7 @@ module.exports = {
         let phase = phaseJump ? 1 : 0
         let completed = false
         const joinFunction = (newMessage) => {
-            return reply.send(dataDisplay.embeds[0].description + newMessage, {
+            return await reply.send(dataDisplay.embeds[0].description + newMessage, {
                 footer: `Type cancel to close this registration.`,
                 raw: true
             })
@@ -637,14 +637,14 @@ module.exports = {
                 //  Name
                 case 0:
                     const nameLimit = 20
-                    if (input.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
+                    if (input.length >= nameLimit) return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                         deleteIn: 5,
                         socket: {
                             limit: nameLimit
                         }
                     })
                     const guildItems = await client.db.getItem(null, message.guild.id)
-                    if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+                    if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                         deleteIn: 5,
                         socket: {
                             item: input
@@ -663,7 +663,7 @@ module.exports = {
                 //  Description
                 case 1:
                     const descLimit = 120
-                    if (input.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
+                    if (input.length >= descLimit) return await reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
                         deleteIn: 5,
                         socket: {
                             limit: descLimit
@@ -678,7 +678,7 @@ module.exports = {
                     break
                 //  Price
                 case 2:
-                    if (!trueInt(input)) return reply.send(locale.SETSHOP.ADD_PRICE_INVALID, {
+                    if (!trueInt(input)) return await reply.send(locale.SETSHOP.ADD_PRICE_INVALID, {
                         deleteIn: 5
                     })
                     metadata.price = input
@@ -690,7 +690,7 @@ module.exports = {
                     break
                 //  Stocks
                 case 3:
-                    if (!trueInt(input) && (input !== `~`)) return reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
+                    if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                         deleteIn: 5
                     })
                     metadata.stocks = input
@@ -702,7 +702,7 @@ module.exports = {
                     break
                 //  Tradability
                 case 4:
-                    if (!input.startsWith(`y`) && !input.startsWith(`n`)) return reply.send(locale.SETSHOP.ADD_TRADABILITY_INVALID, {
+                    if (!input.startsWith(`y`) && !input.startsWith(`n`)) return await reply.send(locale.SETSHOP.ADD_TRADABILITY_INVALID, {
                         deleteIn: 5
                     })
                     metadata.bind = input
@@ -715,7 +715,7 @@ module.exports = {
                 //  Message upon use
                 case 5:
                     const messageUponUseLimit = 120
-                    if (input.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.ADD_MESSAGE_UPON_USE_OVERLIMIT, {
+                    if (input.length >= messageUponUseLimit) return await reply.send(locale.SETSHOP.ADD_MESSAGE_UPON_USE_OVERLIMIT, {
                         deleteIn: 5
                     })
                     metadata.responseOnUse = input
@@ -733,7 +733,7 @@ module.exports = {
                         phase = -1
                     } else {
                         const params = m.content.split(` `)
-                        if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
+                        if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return await reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
                             deleteIn: 5
                         })
                         //  Role update buff
@@ -742,16 +742,16 @@ module.exports = {
                             let res = []
                             let roleNames = ``
                             const roles = params.slice(1)
-                            if (!roles.length) return reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
+                            if (!roles.length) return await reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
                                 deleteIn: 5
                             })
                             for (let i = 0; i < roles.length; i++) {
                                 const ref = roles[i]
                                 const role = findRole(ref, message.guild)
-                                if (!role) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
+                                if (!role) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
                                     deleteIn: 5
                                 })
-                                if (role.position >= clientRole.position) return reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
+                                if (role.position >= clientRole.position) return await reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
                                     deleteIn: 5
                                 })
                                 res.push(role.id)
@@ -770,11 +770,11 @@ module.exports = {
                         //  Inventory update buff
                         if ([`additem`, `removeitem`].includes(params[0])) {
                             const amount = trueInt(params[1])
-                            if (!amount) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
+                            if (!amount) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
                                 deleteIn: 5
                             })
                             const targetItem = await client.db.getItem(params.slice(2).join(` `))
-                            if (!targetItem) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
+                            if (!targetItem) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
                                 deleteIn: 5
                             })
                             const isItemAddition = params[0] === `additem`
@@ -793,11 +793,11 @@ module.exports = {
                         //  EXP/Artcoins boost buff
                         if ([`expboost`, `acboost`].includes(params[0])) {
                             const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
-                            if (!multiplier) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
+                            if (!multiplier) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
                                 deleteIn: 5
                             })
                             const duration = ms(params.slice(2).join(` `))
-                            if (!duration) return reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
+                            if (!duration) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
                                 deleteIn: 5
                             })
                             const isExpBuff = params[0] === `expboost`
@@ -841,7 +841,7 @@ module.exports = {
                         client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
                         //  Register effect if there's any
                         if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
-                        return reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
+                        return await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
                             status: `success`,
                             socket: {
                                 prefix: prefix,
@@ -857,7 +857,7 @@ module.exports = {
             client.db.redis.del(sessionId)
             if (completed) return
             dataDisplay.delete()
-            reply.send(`Shop register interface has been closed.`, {
+            await reply.send(`Shop register interface has been closed.`, {
                 simplified: true
             })
         })
@@ -869,7 +869,7 @@ module.exports = {
      */
     async imagereset(client, reply, message, arg, locale, prefix, args) {
         const customBanner = message.guild.configs.get(`SHOP_IMAGE`).value
-        if (!customBanner) return reply.send(locale.SETSHOP.IMAGE_NOT_RESETABLE)
+        if (!customBanner) return await reply.send(locale.SETSHOP.IMAGE_NOT_RESETABLE)
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
             image: `banner_setshop`,
             prebuffer: false
@@ -881,7 +881,7 @@ module.exports = {
             fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error)=>{
                 if (error) client.logger.warn(`[setShop.js][Removing Image from filetree] ${error.stack}`)
             })
-            reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
+            await reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
                 status: `success`,
                 socket: {
                     prefix: prefix,
@@ -901,12 +901,12 @@ module.exports = {
             isValidUpload,
             url
         } = this.getImage(message, args.slice(1).join(` `))
-        if (!url) return reply.send(locale.SETSHOP.IMAGE_MISSING_ATTACHMENT, {
+        if (!url) return await reply.send(locale.SETSHOP.IMAGE_MISSING_ATTACHMENT, {
             socket: {
                 prefix: prefix
             }
         })
-        if (!isValidUpload) return reply.send(locale.SETSHOP.IMAGE_INVALID_UPLOAD, {
+        if (!isValidUpload) return await reply.send(locale.SETSHOP.IMAGE_INVALID_UPLOAD, {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`)
             }
@@ -930,7 +930,7 @@ module.exports = {
                 cacheTo: message.guild.configs
             })
             await fs.writeFileSync(`./src/assets/customShop/${id}.png`, buffer)
-            reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
+            await reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
                 status: `success`,
                 socket: {
                     prefix: prefix,
@@ -973,9 +973,9 @@ module.exports = {
      */
     async delete(client, reply, message, arg, locale, prefix, args) {
         const guildItems = await client.db.getItem(null, message.guild.id)
-        if (!guildItems.length) return reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
+        if (!guildItems.length) return await reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
         const keyword = args.slice(1).join(` `)
-        if (!keyword) return reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
+        if (!keyword) return await reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)
             }
@@ -989,7 +989,7 @@ module.exports = {
             //  Fallback search by ID
             :
             guildItems.find(i => parseInt(i.item_id) === parseInt(keyword))
-        if (!item) return reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {
+        if (!item) return await reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {
             socket: {
                 item: keyword
             }
@@ -1005,7 +1005,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.removeGuildShopItem(item.item_id)
-            reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },
@@ -1020,9 +1020,9 @@ module.exports = {
      */
     async edit(client, reply, message, arg, locale, prefix, args) {
         const guildItems = await client.db.getItem(null, message.guild.id)
-        if (!guildItems.length) return reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
+        if (!guildItems.length) return await reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
         const keyword = args.slice(1).join(` `)
-        if (!keyword) return reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
+        if (!keyword) return await reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)
             }
@@ -1036,7 +1036,7 @@ module.exports = {
             //  Fallback search by ID
             :
             guildItems.find(i => parseInt(i.item_id) === parseInt(keyword))
-        if (!item) return reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {
+        if (!item) return await reply.send(locale.SETSHOP.ITEM_DOESNT_EXISTS, {
             socket: {
                 item: keyword
             }
@@ -1213,14 +1213,14 @@ module.exports = {
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const nameLimit = 20
-            if (params.length >= nameLimit) return reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
+            if (params.length >= nameLimit) return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                 deleteIn: 5,
                 socket: {
                     limit: nameLimit
                 },
                 followUp: true
             })
-            if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
+            if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                 deleteIn: 5,
                 socket: {
                     item: params
@@ -1228,7 +1228,7 @@ module.exports = {
                 followUp: true
             })
             client.db.updateItemMetadata(item.item_id, `name`, params)
-            reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
                 socket: {
                     oldItem: item.name,
                     newItem: params
@@ -1243,7 +1243,7 @@ module.exports = {
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const descLimit = 120
-            if (params.length >= descLimit) return reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
+            if (params.length >= descLimit) return await reply.send(locale.SETSHOP.ADD_DESCRIPTION_OVERLIMIT, {
                 deleteIn: 5,
                 socket: {
                     limit: descLimit
@@ -1251,7 +1251,7 @@ module.exports = {
                 followUp: true
             })
             client.db.updateItemMetadata(item.item_id, `description`, params)
-            reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },
@@ -1265,19 +1265,19 @@ module.exports = {
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const priceLimit = 999999999999999
-            if (parseInt(params) >= priceLimit) return reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {
+            if (parseInt(params) >= priceLimit) return await reply.send(locale.SETSHOP.EDIT_PRICE_OVERLIMIT, {
                 deleteIn: 5,
                 socket: {
                     limit: commanifier(priceLimit)
                 },
                 followUp: true
             })
-            if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
+            if (!trueInt(params)) return await reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
                 deleteIn: 5,
                 followUp: true
             })
             client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
-            reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },
@@ -1293,20 +1293,20 @@ module.exports = {
             const stockLimit = 999999999999999
             const setAsUnlimited = params === `~`
             if (!setAsUnlimited) {
-                if (parseInt(params) >= stockLimit) return reply.send(locale.SETSHOP.EDIT_STOCK_OVERLIMIT, {
+                if (parseInt(params) >= stockLimit) return await reply.send(locale.SETSHOP.EDIT_STOCK_OVERLIMIT, {
                     deleteIn: 5,
                     socket: {
                         limit: commanifier(stockLimit)
                     },
                     followUp: true
                 })
-                if (!trueInt(params)) return reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
+                if (!trueInt(params)) return await reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
                     deleteIn: 5,
                     followUp: true
                 })
             }
             client.db.updateShopItemMetadata(item.item_id, `quantity`, params)
-            reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },
@@ -1320,7 +1320,7 @@ module.exports = {
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const messageUponUseLimit = 120
-            if (params.length >= messageUponUseLimit) return reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {
+            if (params.length >= messageUponUseLimit) return await reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_OVERLIMIT, {
                 deleteIn: 5,
                 socket: {
                     limit: messageUponUseLimit
@@ -1328,7 +1328,7 @@ module.exports = {
                 followUp: true
             })
             client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
-            reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
+            await reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
                 socket: {
                     item: item.name
                 },

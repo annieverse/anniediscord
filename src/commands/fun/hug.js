@@ -31,12 +31,12 @@ module.exports = {
         //  Multi-user hug
         if (arg) {
             const target = await (new User(client, message)).lookFor(arg)
-            if (!target) return reply.send(locale.HUG.INVALID_TARGET, {
+            if (!target) return await reply.send(locale.HUG.INVALID_TARGET, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
             })
-            return reply.send(locale.HUG.OTHER_USER, {
+            return await reply.send(locale.HUG.OTHER_USER, {
                 socket: {
                     user: message.author.username,
                     targetUser: target.master.username
@@ -44,7 +44,7 @@ module.exports = {
                 imageGif: body.link
             })
         }
-        return reply.send(locale.HUG.THEMSELVES, {
+        return await reply.send(locale.HUG.THEMSELVES, {
             socket: {
                 user: message.author.username
             },
@@ -56,12 +56,12 @@ module.exports = {
             body
         } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
         const target = options.getUser(`user`) 
-        !target ? reply.send(locale.HUG.THEMSELVES, {
+        !target ? await reply.send(locale.HUG.THEMSELVES, {
             socket: {
                 user: interaction.member.user.username
             },
             imageGif: body.link
-        }) : reply.send(locale.HUG.OTHER_USER, {
+        }) : await reply.send(locale.HUG.OTHER_USER, {
             socket: {
                 user: interaction.member.user.username,
                 targetUser: target.username

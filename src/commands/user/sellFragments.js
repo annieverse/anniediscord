@@ -43,7 +43,7 @@ module.exports = {
     minimumToSell: 5,
     async execute(client, reply, message, arg, locale) {
         //  Display guild if user doesn't specify any arg
-        if (!arg) return reply.send(locale.SELLFRAGMENTS.GUIDE, {
+        if (!arg) return await reply.send(locale.SELLFRAGMENTS.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             image: `banner_sellfragments`,
             socket: {
@@ -56,16 +56,16 @@ module.exports = {
         })
         const userData = await (new User(client, message)).requestMetadata(message.author, 2)
         //  Handle if user doesn't have any fragments in their inventory
-        if (!userData.inventory.fragments) return reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
+        if (!userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
             socket: {
                 emoji: await client.getEmoji(`692428748838010970`)
             },
         })
         //  Handle if user specified an invalid amount
         const amountToSell = arg.startsWith(`all`) ? userData.inventory.fragments : trueInt(arg)
-        if (!amountToSell) return reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
+        if (!amountToSell) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         //  Handle if user's specified amount is lower than the minimum sell 
-        if (amountToSell < this.minimumToSell) return reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
+        if (amountToSell < this.minimumToSell) return await reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
             socket: {
                 amount: this.minimumToSell,
                 emoji: await client.getEmoji(`692428748838010970`)
@@ -88,7 +88,7 @@ module.exports = {
         await c.setup(message.author.id, confirmation)
         c.onAccept(() => {
             //  Prevent user from selling over the amount of their owned fragments
-            if (amountToSell > userData.inventory.fragments) return reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
+            if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
             client.db.updateInventory({
                 itemId: 52,
@@ -104,7 +104,7 @@ module.exports = {
                 value: amountToSell,
                 operation: `-`
             })
-            return reply.send(``, {
+            return await reply.send(``, {
                 customHeader: [`Fragments has been sold!`, message.author.displayAvatarURL()]
             })
         })
@@ -112,7 +112,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
         //  Handle if user doesn't have any fragments in their inventory
-        if (!userData.inventory.fragments) return reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
+        if (!userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
             socket: {
                 emoji: await client.getEmoji(`692428748838010970`)
             },
@@ -120,7 +120,7 @@ module.exports = {
         //  Handle if user specified an invalid amount
         let arg = options.getInteger(`amount`)
         if (options.getSubcommand() == `all`) arg = userData.inventory.fragments
-        if (!arg) return reply.send(locale.SELLFRAGMENTS.GUIDE, {
+        if (!arg) return await reply.send(locale.SELLFRAGMENTS.GUIDE, {
             header: `Hi, ${interaction.member.user.username}!`,
             image: `banner_sellfragments`,
             socket: {
@@ -132,9 +132,9 @@ module.exports = {
             }
         })
         const amountToSell = options.getSubcommand() === `all` ? userData.inventory.fragments : options.getInteger(`amount`)
-        if (!amountToSell) return reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
+        if (!amountToSell) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         //  Handle if user's specified amount is lower than the minimum sell 
-        if (amountToSell < this.minimumToSell) return reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
+        if (amountToSell < this.minimumToSell) return await reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {
             socket: {
                 amount: this.minimumToSell,
                 emoji: await client.getEmoji(`692428748838010970`)
@@ -157,7 +157,7 @@ module.exports = {
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(() => {
             //  Prevent user from selling over the amount of their owned fragments
-            if (amountToSell > userData.inventory.fragments) return reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
+            if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
             client.db.updateInventory({
                 itemId: 52,
@@ -173,7 +173,7 @@ module.exports = {
                 value: amountToSell,
                 operation: `-`
             })
-            return reply.send(``, {
+            return await reply.send(``, {
                 customHeader: [`Fragments has been sold!`, interaction.member.displayAvatarURL()],
                 followUp: true
             })

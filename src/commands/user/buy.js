@@ -111,7 +111,7 @@ module.exports = {
                 await message.fetchReply()
                 const balance = await client.db.getUserBalance(user.id, guild.id)
                 //  Handle if user does not have sufficient artcoins
-                if (shopMetadata.price > balance) return reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
+                if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
                     socket: {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
@@ -137,7 +137,7 @@ module.exports = {
                 //  Reduce available supply if supply wasn't set as unlimited.
                 if (shopMetadata.quantity !== `~`) client.db.subtractItemSupply(item.item_id, 1)
                 
-                return reply.send(locale.BUY.SUCCESSFUL, {
+                return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {
                         user: user.username,
@@ -161,7 +161,7 @@ module.exports = {
             c.onAccept(async () => {
                 const balance = await client.db.getUserBalance(user.id, guild.id)
                 //  Handle if user does not have sufficient artcoins
-                if (shopMetadata.price > balance) return reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
+                if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
                     socket: {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
@@ -185,7 +185,7 @@ module.exports = {
                 })
                 //  Reduce available supply if supply wasn't set as unlimited.
                 if (shopMetadata.quantity !== `~`) client.db.subtractItemSupply(item.item_id, 1)
-                return reply.send(locale.BUY.SUCCESSFUL, {
+                return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {
                         user: user.username,

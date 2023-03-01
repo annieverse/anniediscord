@@ -31,7 +31,7 @@ module.exports = {
             return size
 
         }
-        return reply.send(locale.SYSTEM_STATS.DISPLAY, {
+        return await reply.send(locale.SYSTEM_STATS.DISPLAY, {
             header: `The State of Annie`,
             thumbnail: client.user.displayAvatarURL(),
             socket: {
@@ -58,7 +58,7 @@ module.exports = {
             return size
 
         }
-        return reply.send(locale.SYSTEM_STATS.DISPLAY, {
+        return await reply.send(locale.SYSTEM_STATS.DISPLAY, {
             header: `The State of Annie`,
             thumbnail: client.user.displayAvatarURL(),
             socket: {

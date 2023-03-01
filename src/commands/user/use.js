@@ -28,7 +28,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         const data = await (new User(client, message)).requestMetadata(message.author, 2)
-        if (!data.inventory.raw.length) return reply.send(locale.USE.NO_ITEMS, {
+        if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
@@ -42,14 +42,14 @@ module.exports = {
             //  Fallback search by ID
             :
             data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
-        if (!targetItem) return reply.send(locale.USE.INVALID_ITEM, {
+        if (!targetItem) return await reply.send(locale.USE.INVALID_ITEM, {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         })
-        if (targetItem.quantity <= 0) return reply.send(locale.USE.INSUFFICIENT)
+        if (targetItem.quantity <= 0) return await reply.send(locale.USE.INSUFFICIENT)
         //  Handle non-usable item
-        if (targetItem.usable === 0) return reply.send(locale.USE.UNUSABLE, {
+        if (targetItem.usable === 0) return await reply.send(locale.USE.UNUSABLE, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
@@ -78,7 +78,7 @@ module.exports = {
             effectLib.applyItemEffects(targetItem.item_id)
             //  Displaying custom message upon use (if there's any).
             const displayedMsg = targetItem.response_on_use === `~` ? locale.USE.SUCCESSFUL : targetItem.response_on_use
-            return reply.send(displayedMsg, {
+            return await reply.send(displayedMsg, {
                 status: `success`,
                 socket: {
                     item: `**${targetItem.name}**`,
@@ -89,7 +89,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const data = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
-        if (!data.inventory.raw.length) return reply.send(locale.USE.NO_ITEMS, {
+        if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
@@ -104,14 +104,14 @@ module.exports = {
             //  Fallback search by ID
             :
             data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
-        if (!targetItem) return reply.send(locale.USE.INVALID_ITEM, {
+        if (!targetItem) return await reply.send(locale.USE.INVALID_ITEM, {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         })
-        if (targetItem.quantity <= 0) return reply.send(locale.USE.INSUFFICIENT)
+        if (targetItem.quantity <= 0) return await reply.send(locale.USE.INSUFFICIENT)
         //  Handle non-usable item
-        if (targetItem.usable === 0) return reply.send(locale.USE.UNUSABLE, {
+        if (targetItem.usable === 0) return await reply.send(locale.USE.UNUSABLE, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
@@ -140,7 +140,7 @@ module.exports = {
             effectLib.applyItemEffects(targetItem.item_id)
             //  Displaying custom message upon use (if there's any).
             const displayedMsg = targetItem.response_on_use === `~` ? locale.USE.SUCCESSFUL : targetItem.response_on_use
-            return reply.send(displayedMsg, {
+            return await reply.send(displayedMsg, {
                 status: `success`,
                 socket: {
                     item: `**${targetItem.name}**`,

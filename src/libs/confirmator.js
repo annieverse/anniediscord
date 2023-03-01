@@ -103,7 +103,7 @@ module.exports = class Confirmator {
                     await interact.fetchReply()
 
                     // send the final response
-                    return this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
+                    return await this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
                         socket: {
                             emoji: await this.message.client.getEmoji(`781954016271138857`)
                         },
@@ -118,7 +118,7 @@ module.exports = class Confirmator {
         } else {
             return this.activeInstance.on(`collect`, async r => {
                 if (this.isRejected(r)) {
-                    return this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
+                    return await this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
                         socket: {
                             emoji: await this.message.client.getEmoji(`781954016271138857`)
                         }
