@@ -50,10 +50,11 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         })
+        const betaFeature = Math.floor(Math.random()*100) > 50
         let img = await new GUI(userData, client, {
             width: 320,
             height: 360
-        }).build()
+        }).build(betaFeature)
         const confirmation = await reply.send(locale.SETBIO.PREVIEW_CONFIRMATION, {
             prebuffer: true,
             image: img.toBuffer()
@@ -78,10 +79,11 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         })
+        const betaFeature = Math.floor(Math.random()*100) > 50
         let img = await new GUI(userData, client, {
             width: 320,
             height: 360
-        }).build()
+        }).build(betaFeature)
         const confirmation = await reply.send(locale.SETBIO.PREVIEW_CONFIRMATION, {
             prebuffer: true,
             image: img.toBuffer(),
