@@ -511,7 +511,7 @@ module.exports = {
         const {
             isValidUpload,
             url
-        } = this.getImage(message)
+        } = await this.getImage(message)
         if (!url) return await reply.send(locale.SETWELCOMER.IMAGE_MISSING_ATTACHMENT, {
             socket: {
                 emoji: await client.getEmoji(`692428692999241771`),
@@ -526,7 +526,12 @@ module.exports = {
         const id = uuidv4()
         const response = await superagent.get(url)
         const buffer = response.body
-        await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
+        try {
+            await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
+        } catch (error) {
+            client.logger.error(error)
+            return reply.send(`im sorry but that link/attachment is not supported. Please try again with a link/attachment of the image itself.`)
+        }
         if (this.guildConfigurations.get(`WELCOMER_NOIMAGE`).value) {
             await client.db.updateGuildConfiguration({
                 configCode: `WELCOMER_NOIMAGE`,
