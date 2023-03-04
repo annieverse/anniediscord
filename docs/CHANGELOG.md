@@ -1,3 +1,10 @@
+## [9.5.5](https://github.com/klerikdust/anniediscord/compare/v9.5.4...v9.5.5) (2023-03-04)
+
+
+### Bug Fixes
+
+* **setwelcomer:** wrong error messages on bad links ([b2fcbb9](https://github.com/klerikdust/anniediscord/commit/b2fcbb95732d4757b180ef23aa75cc11cc4d804f))
+
 ## [9.5.4](https://github.com/klerikdust/anniediscord/compare/v9.5.3...v9.5.4) (2023-02-26)
 
 
