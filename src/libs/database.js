@@ -3325,12 +3325,12 @@ class Database {
  	 * @param {string} [answer=``] the answer used to clear the quest
  	 * @return {QueryResult}
  	 */
-	recordQuestActivity(userId=``, guildId=``, questId=``, answer=``) {
+	recordQuestActivity(questId=``, userId=``, guildId=``, answer=``) {
 		return this._query(`
 			INSERT INTO quest_log(
+				guild_id,
 				quest_id,
 				user_id,
-				guild_id,
 				answer
 			)
 			VALUES(?, ?, ?, ?)`
