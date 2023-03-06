@@ -5,7 +5,6 @@
 class Points {
     constructor(client) {
         this.bot = client.bot
-        this.db = client.bot.db
         this.message = client.message
 
         /**

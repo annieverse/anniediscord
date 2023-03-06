@@ -13,7 +13,7 @@ module.exports = (client, message) => {
     if (message.channel.type === `dm`) return 
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
-    client.db.validateUserEntry(message.author.id, message.author.username)
+    client.db.databaseUtility.validateUserEntry(message.author.id, message.author.username)
     .then(() => {
         //  Display quick prefix hint when mentioned.
         //  Subtracted number at message.content.length is the whitespace made during mention.
@@ -48,7 +48,7 @@ module.exports = (client, message) => {
         client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
-            client.db.updateInventory({
+            client.db.databaseUtility.updateInventory({
                 itemId: 52,
                 value: getNumberInRange(chatCurrencyBase) * accumulatedCurrencyMultiplier,
                 userId: message.author.id,

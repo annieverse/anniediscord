@@ -18,7 +18,7 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
-        const guildShop = await client.db.getGuildShop(message.guild.id)
+        const guildShop = await client.db.shop.getGuildShop(message.guild.id)
         if (!guildShop.length) {
             await reply.send(locale.SHOP.NO_ITEMS)
             return await reply.send(locale.SHOP.SETUP_TIPS, {
@@ -37,7 +37,7 @@ module.exports = {
         const shopText = (message.guild.configs.get(`SHOP_TEXT`).value).replace(`{{guild}}`, `**${message.guild.name}**`)
         for (let i = 0; i < guildShop.length; i++) {
             const shopMeta = guildShop[i]
-            const item = await client.db.getItem(shopMeta.item_id)
+            const item = await client.db.shop.getItem(shopMeta.item_id)
             breakpoint++
             if (breakpoint <= 1) {
                 str += shopText + `\n\n`
@@ -73,7 +73,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const guildShop = await client.db.getGuildShop(interaction.guild.id)
+        const guildShop = await client.db.shop.getGuildShop(interaction.guild.id)
         if (!guildShop.length) {
             await reply.send(locale.SHOP.NO_ITEMS)
             return await reply.send(locale.SHOP.SETUP_TIPS, {
@@ -93,7 +93,7 @@ module.exports = {
         const shopText = (interaction.guild.configs.get(`SHOP_TEXT`).value).replace(`{{guild}}`, `**${interaction.guild.name}**`)
         for (let i = 0; i < guildShop.length; i++) {
             const shopMeta = guildShop[i]
-            const item = await client.db.getItem(shopMeta.item_id)
+            const item = await client.db.shop.getItem(shopMeta.item_id)
             breakpoint++
             if (breakpoint <= 1) {
                 str += shopText + `\n\n`

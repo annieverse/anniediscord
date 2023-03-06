@@ -46,7 +46,7 @@ module.exports = {
                 },
                 footer: `Keep in mind the conversion rate is 1:${this.artcoinsRatio}`
             })
-            const userBalance = await client.db.getUserBalance(message.author.id, message.guild.id)
+            const userBalance = await client.db.userUtility.getUserBalance(message.author.id, message.guild.id)
             const amountToUse = arg.startsWith(`all`) ? userBalance : trueInt(arg)
                 //  Returns if user amount input is below the acceptable threeshold
             if (!amountToUse || amountToUse < this.artcoinsRatio) return await reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
@@ -75,7 +75,7 @@ module.exports = {
                 }
             })
 			//	Deduct balance & add new exp
-			client.db.updateInventory({
+			client.db.databaseUtility.updateInventory({
                 itemId: 52,
                 value: amountToUse, 
                 operation: `-`, 
@@ -93,7 +93,7 @@ module.exports = {
         })
         },
         async Iexecute(client, reply, interaction, options, locale) {
-            const userBalance = await client.db.getUserBalance(interaction.user.id, interaction.guild.id)
+            const userBalance = await client.db.userUtility.getUserBalance(interaction.user.id, interaction.guild.id)
             const amountToUse = options.getSubcommand() == `all` ? userBalance : options.getInteger(`how_many`)
             
                 //  Returns if user amount input is below the acceptable threeshold
@@ -124,7 +124,7 @@ module.exports = {
                 }
             })
             //	Deduct balance & add new exp
-            client.db.updateInventory({
+            client.db.databaseUtility.updateInventory({
                 itemId: 52,
                 value: amountToUse, 
                 operation: `-`, 

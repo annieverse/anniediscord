@@ -34,7 +34,7 @@ class Reminder {
      */
     async initialize() {
         //  Handle if there are no registered reminders in the database
-        const savedReminders = await this.db.getAllReminders()
+        const savedReminders = await this.db.reminders.getAllReminders()
         if (savedReminders.length <= 0) return this.logger.warn(`${this.instanceId} no saved reminders.`)
         //  Takes a chunk of reminders for current shard.
         //  This is to ensure that reminders are equally distributed across shard.
@@ -85,7 +85,7 @@ class Reminder {
         })
         this.cache.set(context.id, cachedReminders.toString())
         //  Registering into database
-        this.db.registerUserReminder(context)
+        this.db.reminders.registerUserReminder(context)
         return true
     }
 
@@ -128,7 +128,7 @@ class Reminder {
                     this.logger.debug(`deleted cache for ${cacheId}`)
                 }
                 //  Delete from database
-                await this.db.deleteUserReminder(context.id)
+                await this.db.reminders.deleteUserReminder(context.id)
                 this.logger.debug(`deleted ${context.id} from database`)
                 this.logger.info(`[Reminder.finish][${context.id}] reminder has completed and omitted.`)
             }
@@ -152,7 +152,7 @@ class Reminder {
         }
         //  Otherwise, try find in database
         else {
-            const remindersInDatabase = await this.db.getUserReminders(userId)
+            const remindersInDatabase = await this.db.reminders.getUserReminders(userId)
             if (remindersInDatabase.length > 0) {
                 this.logger.debug(`${fn} found ${id} on database.`)
                 source = remindersInDatabase

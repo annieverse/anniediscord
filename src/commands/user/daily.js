@@ -56,7 +56,7 @@ module.exports = {
 		const targetUserData = await userLib.requestMetadata(targetUser, 2)
 		const isSelf = userLib.isSelf(targetUser.id)
 		const now = moment()
-		const lastClaimAt = await client.db.toLocaltime(targetUserData.dailies.updated_at)
+		const lastClaimAt = await client.db.systemUtility.toLocaltime(targetUserData.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: targetUser.displayAvatarURL(),
@@ -75,8 +75,8 @@ module.exports = {
 		const hasPoppy = targetUserData.inventory.poppy_card
 		if (hasPoppy) totalStreak = targetUserData.dailies.total_streak + 1
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0
-		client.db.updateUserDailies(totalStreak, targetUser.id, messageObject.guild.id)
-		client.db.updateInventory({
+		client.db.userUtility.updateUserDailies(totalStreak, targetUser.id, messageObject.guild.id)
+		client.db.databaseUtility.updateInventory({
 			itemId: 52,
 			value: this.rewardAmount + bonus,
 			userId: messageObject.member.id,

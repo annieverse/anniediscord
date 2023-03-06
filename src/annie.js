@@ -189,6 +189,7 @@ class Annie extends Discord.Client {
             process.on(`unhandledRejection`, err => this.logger.warn(err))
             
             try {
+                // const databaseConnection = await new Database().connect()
                 this.registerNode(new Database().connect(), `db`)
                 const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
                 this.registerNode(MESSAGE_COMMANDS, `message_commands`)
@@ -212,7 +213,7 @@ class Annie extends Discord.Client {
          */
         async registerGuildConfigurations(guildId = null) {
             const initTime = process.hrtime()
-            const registeredGuildConfigurations = await this.db.getAllGuildsConfigurations()
+            const registeredGuildConfigurations = await this.db.guildUtility.getAllGuildsConfigurations()
                 //  If prompted to register only single guild, then use single-element array.
             const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
             for (let i = 0; i < getGuilds.length; i++) {
@@ -244,7 +245,7 @@ class Annie extends Discord.Client {
          */
         async registerUserDurationalBuffs() {
                 //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
-                this.db.getSavedUserDurationalBuffs().then(async src => {
+                this.db.durationalBuffs.getSavedUserDurationalBuffs().then(async src => {
                             if (!src.length) return
                             let count = 0
                             for (let i = 0; i < src.length; i++) {
@@ -252,13 +253,13 @@ class Annie extends Discord.Client {
                                     //  Skip if guild isn't exists in current shard.
                                 if (!this.guilds.cache.has(node.guild_id)) continue
                                 const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
-                                const localTime = await this.db.toLocaltime(node.registered_at)
+                                const localTime = await this.db.systemUtility.toLocaltime(node.registered_at)
                                 const expireAt = new Date(localTime).getTime() + node.duration
                                     //  Skip expired buff, and delete it from database as well.
                                 if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
-                                    this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                                    this.db.durationalBuffs.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
                                         .then(id => {
-                                            this.db.removeUserDurationalBuff(id)
+                                            this.db.durationalBuffs.removeUserDurationalBuff(id)
                                         })
                                     continue
                                 }
@@ -266,9 +267,9 @@ class Annie extends Discord.Client {
                                 this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
                                             //  Flush from cache and sqlite
                                             this.db.redis.srem(key, node.multiplier)
-                                            this.db.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
+                                            this.db.durationalBuffs.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
                                                 .then(id => {
-                                                    this.db.removeUserDurationalBuff(id)
+                                                    this.db.durationalBuffs.removeUserDurationalBuff(id)
                                                 })
                                                 //  Send expiration notice
                                             this.users.fetch(node.user_id)
@@ -293,15 +294,15 @@ class Annie extends Discord.Client {
      */
     async registerGuildAutoResponders() {
         const fn = `[SHARD_ID:${this.shard.ids[0]}@AUTO_RESPONDER]`
-        const ars = await this.db.getGuildsWithAutoResponders()
+        const ars = await this.db.autoResponder.getGuildsWithAutoResponders()
         let totalArs = 0
         for (let i=0; i<ars.length; i++) {
             const guildId = ars[i].guild_id
             //  Skip if guild is not present in the current shard 
             if (!this.guilds.cache.has(guildId)) continue
-            const registeredArs = await this.db.getAutoResponders(guildId, false)
+            const registeredArs = await this.db.autoResponder.getAutoResponders(guildId, false)
             totalArs += registeredArs.length
-            this.db.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
+            this.db.databaseUtility.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
         }
         this.logger.info(`${fn} ${totalArs} ARs have been registered`)
     }

@@ -107,7 +107,7 @@ module.exports = {
         }
         //  Handle if user asked to use default cover
         else if (arg === `default`) {
-            this.cover = await client.db.getItem(`defaultcover1`)
+            this.cover = await client.db.shop.getItem(`defaultcover1`)
         }
         //  Otherwise, handle like the usual way
         else {
@@ -157,14 +157,14 @@ module.exports = {
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
-            await client.db.detachCovers(message.author.id, message.guild.id)
+            await client.db.covers.detachCovers(message.author.id, message.guild.id)
             if (this.cover.isSelfUpload) {
-                client.db.applySelfUploadCover(this.cover.item_id, message.author.id, message.guild.id)
-                client.db.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id })
+                client.db.covers.applySelfUploadCover(this.cover.item_id, message.author.id, message.guild.id)
+                client.db.databaseUtility.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id })
             }
             else {
-                client.db.deleteSelfUploadCover(message.author.id, message.guild.id)
-                client.db.applyCover(this.cover.item_id, message.author.id, message.guild.id)
+                client.db.covers.deleteSelfUploadCover(message.author.id, message.guild.id)
+                client.db.covers.applyCover(this.cover.item_id, message.author.id, message.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
             await reply.send(locale.SETCOVER[successMessage], {
@@ -236,7 +236,7 @@ module.exports = {
         }
         //  Handle if user asked to use default cover
         else if (arg === `default`) {
-            this.cover = await client.db.getItem(`defaultcover1`)
+            this.cover = await client.db.shop.getItem(`defaultcover1`)
         }
         //  Otherwise, handle like the usual way
         else {
@@ -287,19 +287,19 @@ module.exports = {
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
-            await client.db.detachCovers(interaction.member.id, interaction.guild.id)
+            await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)
             if (OLD_COVER.isSelfUpload){
                 fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error)=>{
                     if (error) client.logger.warn(`[setCover.js][Removing Image from filetree] ${error.stack}`)
                 })
             }            
             if (this.cover.isSelfUpload) {
-                client.db.applySelfUploadCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
-                client.db.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
+                client.db.covers.applySelfUploadCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
+                client.db.databaseUtility.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
             }
             else {
-                client.db.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)
-                client.db.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
+                client.db.covers.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)
+                client.db.covers.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
             await reply.send(locale.SETCOVER[successMessage], {
@@ -312,7 +312,7 @@ module.exports = {
         })
     },
     async reset(client, reply, interaction, options, locale) {
-        this.cover = await client.db.getItem(`defaultcover1`)
+        this.cover = await client.db.shop.getItem(`defaultcover1`)
         // if (this.cover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
         const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2)
         if (userData.usedCover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
@@ -342,9 +342,9 @@ module.exports = {
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
-            await client.db.detachCovers(interaction.member.id, interaction.guild.id)
-            client.db.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)
-            client.db.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
+            await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)
+            client.db.covers.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)
+            client.db.covers.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
             fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error)=>{
                 if (error) client.logger.warn(`[setCover.js][Removing Image from filetree] ${error.stack}`)
             })

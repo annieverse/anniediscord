@@ -6,7 +6,7 @@
  */
 module.exports = async (client, message) => {
     //  Reject if guild does not have any registered AR.
-    const ars = await client.db.getAutoResponders(message.guild.id)
+    const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
     if (ars.length <= 0) return 
     //  Reject if context doesn't match with guild's any registered ARs.
     const foundArs = ars.filter(ar => ar.trigger === message.content)

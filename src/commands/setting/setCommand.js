@@ -126,7 +126,7 @@ module.exports = {
             channelsContainer.push(targetNewChannel.id)
         }
         // Update existing pool
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: this.configId,
             customizedParameter: channelsContainer,
             guild: message.guild,
@@ -164,7 +164,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             //  Reset configuration
-            client.db.updateGuildConfiguration({
+            client.db.guildUtility.updateGuildConfiguration({
                 configCode: this.configId,
                 customizedParameter: [],
                 guild: message.guild,

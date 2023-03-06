@@ -66,7 +66,7 @@ module.exports = function masterShard() {
 						shardId: c.shard.ids[0],
 						shardCount: c.options.shardCount
 					})
-					c.db.updateInventory({
+					c.db.databaseUtility.updateInventory({
 						itemId: 52,
 						userId: userId,
 						value: 5000,

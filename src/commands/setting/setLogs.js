@@ -98,7 +98,7 @@ module.exports = {
         const fn = `[setLogs.enable()]`
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
-            let localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
+            let localizeTime = await client.db.systemUtility.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.SETLOGS.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
@@ -107,7 +107,7 @@ module.exports = {
             })
         }
         //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -129,7 +129,7 @@ module.exports = {
             })
         }
         //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
@@ -161,7 +161,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`692428969667985458`) }
         })
         //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: this.subConfigID,
             customizedParameter: searchChannel.id,
             guild: message.guild,

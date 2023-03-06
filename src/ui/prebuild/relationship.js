@@ -46,7 +46,7 @@ class UI {
             const user = await this.bot.users.fetch(rel.assigned_user_id)
             const relAvatar = user ? await resolveImage(user.displayAvatarURL({extension: `png`, forceStatic: true})) : await resolveImage(await loadAsset(`error`))
             const relName = user ? user.username : rel.assigned_user_id
-            const relGender = await this.bot.db.getUserGender(rel.assigned_user_id)
+            const relGender = await this.bot.db.userUtility.getUserGender(rel.assigned_user_id)
             const pairRole = relationshipPairs.MASTER_PAIR[rel.relationship_name]
             const relRole = relGender ? relationshipPairs[relGender.gender][pairRole] : pairRole
             //  Add highlight and lighten the text if current row is the author

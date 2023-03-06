@@ -14,7 +14,7 @@ module.exports = {
         messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
-            const affiliateList = await client.db.getAffiliates()
+            const affiliateList = await client.db.guildUtility.getAffiliates()
                 //  Handle if there are no registered affiliates
             if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
             return await reply.send(locale.AFFILIATES.DISPLAY, {
@@ -27,7 +27,7 @@ module.exports = {
             })
         },
         async Iexecute(client, reply, interaction, options, locale) {
-            const affiliateList = await client.db.getAffiliates()
+            const affiliateList = await client.db.guildUtility.getAffiliates()
             //  Handle if there are no registered affiliates
             if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
             return await reply.send(locale.AFFILIATES.DISPLAY, {

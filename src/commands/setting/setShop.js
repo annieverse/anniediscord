@@ -215,7 +215,7 @@ module.exports = {
         let tradeable = args[4] ? `y` : `n`
         let item_use_message = args[5]
         async function checkItemName(client, message, name) {
-            const guildItems = await client.db.getItem(null, message.guild.id)
+            const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === name.toLowerCase()).length > 0) {
                 client.db.redis.del(sessionId)
                 await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
@@ -314,12 +314,12 @@ module.exports = {
                 completed = true
                 if (!Object.prototype.hasOwnProperty.call(metadata, `stocks`)) metadata[`stocks`] = `~`
                 //  Register item
-                await client.db.registerItem(metadata)
-                const item = await client.db.getItem(metadata.name, interaction.guild.id)
+                await client.db.shop.registerItem(metadata)
+                const item = await client.db.shop.getItem(metadata.name, interaction.guild.id)
                 //  Register to the shop
-                client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                client.db.shop.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
                 //  Register effect if there's any
-                if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
+                if (buffs.length > 0) buffs.map(b => client.db.shop.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
                 const message = await interaction.fetchReply()
                 message.edit({
                     embeds: [await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
@@ -442,7 +442,7 @@ module.exports = {
                         deleteIn: 5,
                         followUp: true
                     })
-                    const targetItem = await client.db.getItem(params.slice(2).join(` `))
+                    const targetItem = await client.db.shop.getItem(params.slice(2).join(` `))
                     if (!targetItem) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
                         deleteIn: 5,
                         followUp: true
@@ -496,7 +496,7 @@ module.exports = {
      */
     async open(client, reply, message, arg, locale, prefix) {
         const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: `SHOP_MODULE`,
             customizedParameter: 1,
             guild: message.guild,
@@ -517,7 +517,7 @@ module.exports = {
      */
     async close(client, reply, message, arg, locale, prefix) {
         const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: `SHOP_MODULE`,
             customizedParameter: 0,
             guild: message.guild,
@@ -540,7 +540,7 @@ module.exports = {
             },
         })
         //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtility.updateGuildConfiguration({
             configCode: `SHOP_TEXT`,
             customizedParameter: param,
             guild: message.guild,
@@ -587,7 +587,7 @@ module.exports = {
                     }
                 })
             }
-            const guildItems = await client.db.getItem(null, message.guild.id)
+            const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
                 client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
@@ -643,7 +643,7 @@ module.exports = {
                             limit: nameLimit
                         }
                     })
-                    const guildItems = await client.db.getItem(null, message.guild.id)
+                    const guildItems = await client.db.shop.getItem(null, message.guild.id)
                     if (guildItems.filter(i => i.name.toLowerCase() === input.toLowerCase()).length > 0) return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                         deleteIn: 5,
                         socket: {
@@ -773,7 +773,7 @@ module.exports = {
                             if (!amount) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
                                 deleteIn: 5
                             })
-                            const targetItem = await client.db.getItem(params.slice(2).join(` `))
+                            const targetItem = await client.db.shop.getItem(params.slice(2).join(` `))
                             if (!targetItem) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
                                 deleteIn: 5
                             })
@@ -835,12 +835,12 @@ module.exports = {
                         completed = true
                         pool.stop()
                         //  Register item
-                        await client.db.registerItem(metadata)
-                        const item = await client.db.getItem(metadata.name, message.guild.id)
+                        await client.db.shop.registerItem(metadata)
+                        const item = await client.db.shop.getItem(metadata.name, message.guild.id)
                         //  Register to the shop
-                        client.db.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
+                        client.db.shop.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
                         //  Register effect if there's any
-                        if (buffs.length > 0) buffs.map(b => client.db.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
+                        if (buffs.length > 0) buffs.map(b => client.db.shop.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
                         return await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
                             status: `success`,
                             socket: {
@@ -877,7 +877,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
+            client.db.guildUtility.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
             fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error)=>{
                 if (error) client.logger.warn(`[setShop.js][Removing Image from filetree] ${error.stack}`)
             })
@@ -922,7 +922,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.updateGuildConfiguration({
+            client.db.guildUtility.updateGuildConfiguration({
                 configCode: `SHOP_IMAGE`,
                 customizedParameter: id,
                 guild: message.guild,
@@ -972,7 +972,7 @@ module.exports = {
      * @return {void}
      */
     async delete(client, reply, message, arg, locale, prefix, args) {
-        const guildItems = await client.db.getItem(null, message.guild.id)
+        const guildItems = await client.db.shop.getItem(null, message.guild.id)
         if (!guildItems.length) return await reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
         const keyword = args.slice(1).join(` `)
         if (!keyword) return await reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
@@ -1004,7 +1004,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.removeGuildShopItem(item.item_id)
+            client.db.shop.removeGuildShopItem(item.item_id)
             await reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
                 socket: {
                     item: item.name
@@ -1019,7 +1019,7 @@ module.exports = {
      * @return {void}
      */
     async edit(client, reply, message, arg, locale, prefix, args) {
-        const guildItems = await client.db.getItem(null, message.guild.id)
+        const guildItems = await client.db.shop.getItem(null, message.guild.id)
         if (!guildItems.length) return await reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
         const keyword = args.slice(1).join(` `)
         if (!keyword) return await reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
@@ -1227,7 +1227,7 @@ module.exports = {
                 },
                 followUp: true
             })
-            client.db.updateItemMetadata(item.item_id, `name`, params)
+            client.db.shop.updateItemMetadata(item.item_id, `name`, params)
             await reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
                 socket: {
                     oldItem: item.name,
@@ -1250,7 +1250,7 @@ module.exports = {
                 },
                 followUp: true
             })
-            client.db.updateItemMetadata(item.item_id, `description`, params)
+            client.db.shop.updateItemMetadata(item.item_id, `description`, params)
             await reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
                 socket: {
                     item: item.name
@@ -1276,7 +1276,7 @@ module.exports = {
                 deleteIn: 5,
                 followUp: true
             })
-            client.db.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
+            client.db.shop.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
             await reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
                 socket: {
                     item: item.name
@@ -1305,7 +1305,7 @@ module.exports = {
                     followUp: true
                 })
             }
-            client.db.updateShopItemMetadata(item.item_id, `quantity`, params)
+            client.db.shop.updateShopItemMetadata(item.item_id, `quantity`, params)
             await reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
                 socket: {
                     item: item.name
@@ -1327,7 +1327,7 @@ module.exports = {
                 },
                 followUp: true
             })
-            client.db.updateItemMetadata(item.item_id, `response_on_use`, params)
+            client.db.shop.updateItemMetadata(item.item_id, `response_on_use`, params)
             await reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
                 socket: {
                     item: item.name

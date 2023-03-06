@@ -26,7 +26,7 @@ module.exports = {
         const userLib = new User(client, message)
         const userData = await userLib.requestMetadata(message.author, 2)
         const now = moment()
-        const lastGiveAt = await client.db.toLocaltime(userData.reputations.last_giving_at)
+        const lastGiveAt = await client.db.systemUtility.toLocaltime(userData.reputations.last_giving_at)
             //  Returns if user's last reps give still under 23 hours.
         if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.GIVE_REPUTATION.IN_COOLDOWN, {
                 thumbnail: userData.master.displayAvatarURL(),
@@ -41,8 +41,8 @@ module.exports = {
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //	Handle if user is trying to rep themselves
         if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.GIVE_REPUTATION.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
-        client.db.updateUserReputation(1, targetUser.master.id, message.author.id, message.guild.id)
-        client.db.updateReputationGiver(message.author.id, message.guild.id)
+        client.db.userUtility.updateUserReputation(1, targetUser.master.id, message.author.id, message.guild.id)
+        client.db.userUtility.updateReputationGiver(message.author.id, message.guild.id)
         return await reply.send(locale.GIVE_REPUTATION.SUCCESSFUL, {
             status: `success`,
             thumbnail: targetUser.master.displayAvatarURL(),
@@ -53,7 +53,7 @@ module.exports = {
         const userLib = new User(client, interaction)
         const userData = await userLib.requestMetadata(interaction.member, 2)
         const now = moment()
-        const lastGiveAt = await client.db.toLocaltime(userData.reputations.last_giving_at)
+        const lastGiveAt = await client.db.systemUtility.toLocaltime(userData.reputations.last_giving_at)
             //  Returns if user's last reps give still under 23 hours.
         if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.GIVE_REPUTATION.IN_COOLDOWN, {
                 thumbnail: userData.master.displayAvatarURL(),
@@ -63,8 +63,8 @@ module.exports = {
         const targetUser = options.getUser(`user`)
             //	Handle if user is trying to rep themselves
         if (userLib.isSelf(targetUser.id)) return await reply.send(locale.GIVE_REPUTATION.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
-        client.db.updateUserReputation(1, targetUser.id, interaction.member.id, interaction.guild.id)
-        client.db.updateReputationGiver(interaction.member.id, interaction.guild.id)
+        client.db.userUtility.updateUserReputation(1, targetUser.id, interaction.member.id, interaction.guild.id)
+        client.db.userUtility.updateReputationGiver(interaction.member.id, interaction.guild.id)
         return await reply.send(locale.GIVE_REPUTATION.SUCCESSFUL, {
             status: `success`,
             thumbnail: targetUser.displayAvatarURL(),
