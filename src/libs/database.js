@@ -303,6 +303,13 @@ class DatabaseUtility {
 				break
 		}
 	}
+
+	arrayEquals(a, b) {
+		return Array.isArray(a) &&
+			Array.isArray(b) &&
+			a.length === b.length &&
+			a.every((val, index) => val === b[index])
+	}
 }
 
 class Reminders extends DatabaseUtility {
@@ -332,12 +339,7 @@ class Reminders extends DatabaseUtility {
 	 * @return {QueryResult}
 	 */
 	registerUserReminder(context) {
-		function arrayEquals(a, b) {
-			return Array.isArray(a) &&
-				Array.isArray(b) &&
-				a.length === b.length &&
-				a.every((val, index) => val === b[index])
-		}
+
 		const validKeys = [
 			`registeredAt`,
 			`id`,
@@ -345,9 +347,9 @@ class Reminders extends DatabaseUtility {
 			`message`,
 			`remindAt`,
 			`isValidReminder`
-		  ]
+		]
 		if (!context) new TypeError(`${fn} parameter "context" cannot be blank.`)
-		if (typeof(context) === `object` && arrayEquals(Object.keys(context),validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: registeredAt, id, userId, message, and remindAt.`)
+		if (typeof (context) === `object` && this.arrayEquals(Object.keys(context), validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: registeredAt, id, userId, message, and remindAt.`)
 		const fn = this.formatFunctionLog(`registerUserReminder`)
 		return this._query(`
 			INSERT INTO user_reminders(
@@ -359,7 +361,7 @@ class Reminders extends DatabaseUtility {
 			)
 			VALUES($registeredAt, $reminderId, $userId, $message, $remindAt)`
 			, `run`
-			, {registeredAt:context.registeredAt.toString(),reminderId:context.id,userId:context.userId,message:context.message,remindAt:JSON.stringify(context.remindAt)}
+			, { registeredAt: context.registeredAt.toString(), reminderId: context.id, userId: context.userId, message: context.message, remindAt: JSON.stringify(context.remindAt) }
 			, `${fn} Inserting new reminder for user (${context.userId})`
 		)
 	}
@@ -377,7 +379,7 @@ class Reminders extends DatabaseUtility {
 			FROM user_reminders
 			WHERE user_id = $userId`
 			, `all`
-			, {userId:userId}
+			, { userId: userId }
 			, `${fn} fetching reminders for user (${userId})`
 		)
 	}
@@ -393,7 +395,7 @@ class Reminders extends DatabaseUtility {
 			DELETE FROM user_reminders
 			WHERE reminder_id = $reminderId`
 			, `run`
-			, {reminderId: reminderId}
+			, { reminderId: reminderId }
 			, `${fn} Deleting reminder with id ${reminderId}`
 		)
 	}
@@ -409,7 +411,7 @@ class UserUtility extends DatabaseUtility {
 	/**
 	 * Updating user's experience points.
 	 * @param {number} [amount=0] Amount to be added.
-	 * @param {string} [userId] Target user's discord id.
+	 * @param {string} { userId: userId } Target user's discord id.
 	 * @param {string} [guildId] Target guild id.
 	 * @param {string} [operation=`+`] Set as `-` to do exp substraction.
 	 * @returns {QueryResult}
@@ -417,7 +419,7 @@ class UserUtility extends DatabaseUtility {
 	async updateUserExp(amount = 0, userId = ``, guildId = ``, operation = `+`) {
 		const fn = this.formatFunctionLog(`updateUserExp`)
 		if (!amount) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
-		if (typeof(amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
+		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
@@ -429,7 +431,7 @@ class UserUtility extends DatabaseUtility {
                     user_id = $userId
                     AND guild_id = $guildId`
 				, `run`
-				, {value:amount, userId:userId, guildId:guildId}
+				, { value: amount, userId: userId, guildId: guildId }
 				, `${fn} updating user's exp`
 			),
 			insert: await this._query(`
@@ -449,7 +451,7 @@ class UserUtility extends DatabaseUtility {
 
 	/**
 	 * Pull user's main metadata
-	 * @param {string} [userId] target user's discord id
+	 * @param {string} { userId: userId } target user's discord id
 	 * @returns {QueryResult}
 	 */
 	async getUser(userId) {
@@ -460,14 +462,14 @@ class UserUtility extends DatabaseUtility {
 			FROM users
 			WHERE user_id = $userId`
 			, `get`
-			, {userId:userId}
+			, { userId: userId }
 			, `${fn} fetch user main data`
 		)
 	}
 
 	/**
 	 * Pull user's experience points metadata.
-	 * @param {string} [userId] Target user's discord id.
+	 * @param {string} { userId: userId } Target user's discord id.
 	 * @param {string} [guildId] Target guild.
 	 * @returns {QueryResult}
 	 */
@@ -486,7 +488,7 @@ class UserUtility extends DatabaseUtility {
             WHERE user_id = $userId
             AND guild_id = $guildId`
 			, `get`
-			, {userId:userId, guildId:guildId}
+			, { userId: userId, guildId: guildId }
 			, `${fn} fetching user exp metadata`
 		)
 		let exp = await query()
@@ -502,7 +504,7 @@ class UserUtility extends DatabaseUtility {
 
 	/**
 	 * Reset user's exp to zero. 
-	 * @param {string} [userId] Target user's discord id.
+	 * @param {string} { userId: userId } Target user's discord id.
 	 * @param {string} [guildId] Target guild id.
 	 * @return {void}
 	 */
@@ -520,7 +522,7 @@ class UserUtility extends DatabaseUtility {
 				user_id = $userId
 				AND guild_id = $guildId`
 			, `run`
-			, {userId:userId, guildId:guildId}
+			, { userId: userId, guildId: guildId }
 		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
 		this.redis.del(key)
@@ -544,7 +546,7 @@ class UserUtility extends DatabaseUtility {
                 AND guild_id = $guildId
                 AND item_id = 52`
 			, `get`
-			, {userId:userId, guildId:guildId}
+			, { userId: userId, guildId: guildId }
 			, `${fn} fetching user's balance`
 		)
 		//  Fallback to zero if entry not exists.
@@ -553,7 +555,7 @@ class UserUtility extends DatabaseUtility {
 
 	/**
 	 * Pull user's reputations metadata
-	 * @param {string} [userId] target user's discord id
+	 * @param {string} { userId: userId } target user's discord id
 	 * @returns {QueryResult}
 	 */
 	async getUserReputation(userId, guildId) {
@@ -567,7 +569,7 @@ class UserUtility extends DatabaseUtility {
             WHERE user_id = $userId
             AND guild_id = $guildId`
 			, `get`
-			, {userId:userId, guildId:guildId}
+			, { userId: userId, guildId: guildId }
 			, `${fn} get all reputations for user (${userId})`
 		)
 		let reps = await query()
@@ -592,7 +594,7 @@ class UserUtility extends DatabaseUtility {
 	async updateUserReputation(amount = 0, userId = ``, givenBy = null, guildId = ``, operation = `+`) {
 		const fn = this.formatFunctionLog(`updateUserReputation`)
 		if (!amount) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
-		if (typeof(amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
+		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
@@ -605,7 +607,8 @@ class UserUtility extends DatabaseUtility {
                     recently_received_by = $receivedBy
                 WHERE user_id = $userId AND guild_id = $guildId`
 				, `run`
-				, {value:amount, receivedBy:givenBy, userId:userId, guildId:guildId}
+				, { value: amount, receivedBy: givenBy, userId: userId, guildId: guildId }
+				, `${fn} update reputations for user (${userId})`
 			),
 			insert: await this._query(`
                 INSERT INTO user_reputations(last_giving_at, user_id, guild_id, total_reps)
@@ -613,6 +616,7 @@ class UserUtility extends DatabaseUtility {
                 WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, { userId: userId, guildId: guildId, amount: amount }
+				, `${fn} inserting reputations record if not exists for user (${userId})`
 			)
 		}
 		//  Refresh cache 
@@ -621,29 +625,27 @@ class UserUtility extends DatabaseUtility {
 	}
 
 	/**
-	 * TODO
-	 * The rest of file
-	 */
-
-	
-	/**
 	 * Pull user's dailies metadata. Will use cache in available.
-	 * @param {string} [userId=``] target user's discord id
+	 * @param {string} userId target user's discord id
+	 * @param {string} guildId target guild's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserDailies(userId = ``, guildId = ``) {
+	async getUserDailies(userId, guildId) {
+		const fn = this.formatFunctionLog(`getUserDailies`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Check for cache availability
 		const key = `DAILIES_${userId}@${guildId}`
 		const onCache = await this.redis.get(key)
 		if (onCache) return JSON.parse(onCache)
-		const stmt = `SELECT * FROM user_dailies WHERE user_id = ? AND guild_id = ?`
 		const query = () => this._query(`
             SELECT *
             FROM user_dailies
-            WHERE user_id = ?
-            AND guild_id =?`
+            WHERE user_id = $userId
+            AND guild_id = $guildId`
 			, `get`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetching user daily metadata`
 		)
 		let res = await query()
 		if (res === null) {
@@ -664,15 +666,20 @@ class UserUtility extends DatabaseUtility {
 	 * @returns {void}
 	 */
 	async updateUserDailies(streak = 0, userId = ``, guildId = ``) {
+		const fn = this.formatFunctionLog(`updateUserDailies`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (typeof (streak) != `number`) throw new TypeError(`${fn} parameter "streak" must be a number.`)
 		const res = {
 			update: await this._query(`
                 UPDATE user_dailies 
                 SET 
                     updated_at = datetime('now'),
-                    total_streak = ?
-                WHERE user_id = ? AND guild_id = ?`
+                    total_streak = $totalStreak
+                WHERE user_id = $userId AND guild_id = $guildId`
 				, `run`
-				, [streak, userId, guildId]
+				, { totalStreak: streak, userId: userId, guildId: guildId }
+				, `${fn} updating user's daily streak`
 			),
 			insert: await this._query(`
                 INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
@@ -680,6 +687,7 @@ class UserUtility extends DatabaseUtility {
                 WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, { userId: userId, guildId: guildId }
+				, `${fn} inserting record for user daily streak`
 			)
 		}
 		//  Refresh cache
@@ -690,10 +698,12 @@ class UserUtility extends DatabaseUtility {
 
 	/**
 	 * Fetch user's relationship info
-	 * @param {string} [userId=``] target user id
+	 * @param {string} userId target user id
 	 * @returns {QueryResult}
 	 */
-	getUserRelations(userId = ``) {
+	getUserRelations(userId) {
+		const fn = this.formatFunctionLog(`getUserRelations`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		return this._query(`
 			SELECT 
 				relationships.relationship_id AS "relationship_id",
@@ -707,22 +717,26 @@ class UserUtility extends DatabaseUtility {
 			ON relationships.relationship_id = user_relationships.relationship_id
 
 			WHERE 
-				user_relationships.user_id_A = ?
+				user_relationships.user_id_A = $userId
 				AND user_relationships.relationship_id > 0
 				AND user_relationships.relationship_id IS NOT NULL
 			ORDER BY user_relationships.registered_at DESC`
 			, `all`
-			, [userId]
+			, { userId: userId }
+			, `${fn} fetching all user relationships for user (${userId})`
 		)
 	}
 
 	/**
 	   * Pull user's quest data. It will create a new entry first if user is first-timer.
-	   * @param {string} [userId=``] target user's data to be pulled
-	   * @param {string} [guildId=``] target guild where user's data going to be pulled
+	   * @param {string} userId target user's data to be pulled
+	   * @param {string} guildId target guild where user's data going to be pulled
 	   * @return {QueryResult}
 	   */
-	async getUserQuests(userId = ``, guildId = ``) {
+	async getUserQuests(userId, guildId) {
+		const fn = this.formatFunctionLog(`getUserQuests`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Register user's quest data if not present
 		await this._query(`
 			INSERT INTO user_quests (updated_at, user_id, guild_id)
@@ -730,24 +744,30 @@ class UserUtility extends DatabaseUtility {
 			WHERE NOT EXISTS (SELECT 1 FROM user_quests WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
 			, { userId: userId, guildId: guildId }
+			, `${fn} insert new quest in not exists, for user (${userId})`
 		)
 		return this._query(`
 			SELECT *
 			FROM user_quests
 			WHERE 
-				user_id = ?
-				AND guild_id = ?`
+				user_id = $userId
+				AND guild_id = $guildId`
 			, `get`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetch all user quests for user (${userId})`
 		)
 	}
 
 	/**
 	 * Pull user's inventories metadata
-	 * @param {string} [userId=``] target user's discord id
+	 * @param {string} userId target user's discord id
+	 * @param {string} guildId target guild's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserInventory(userId = ``, guildId = ``) {
+	async getUserInventory(userId, guildId) {
+		const fn = this.formatFunctionLog(`getUserInventory`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`
 			SELECT 
 
@@ -784,9 +804,10 @@ class UserUtility extends DatabaseUtility {
 			ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 			ON item_rarities.rarity_id = items.rarity_id
-			WHERE user_inventories.user_id = ? AND user_inventories.guild_id = ?`
+			WHERE user_inventories.user_id = $userId AND user_inventories.guild_id = $guildId`
 			, `all`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetch user inventory metadata for user (${userId}) in guild (${guildId})`
 		)
 	}
 
@@ -796,7 +817,10 @@ class UserUtility extends DatabaseUtility {
 	 & @param {string} guildId
 	 * @return {QueryResult}
 	 */
-	async getUserCover(userId = ``, guildId = ``) {
+	async getUserCover(userId, guildId) {
+		const fn = this.formatFunctionLog(`getUserCover`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		let onSelfCover = await this._query(`
 			SELECT 
 				registered_at,
@@ -805,10 +829,11 @@ class UserUtility extends DatabaseUtility {
 				guild_id
 			FROM user_self_covers
 			WHERE
-				user_id = ?
-				AND guild_id = ?`
+				user_id = $userId
+				AND guild_id = $guildId`
 			, `all`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetch cover for user (${userId})`
 		)
 		//  If self-upload is available, then return
 		if (onSelfCover.length > 0) {
@@ -822,63 +847,74 @@ class UserUtility extends DatabaseUtility {
 
 	/**
 	 * Updating user's bio
-	 * @param {string} [bio=``] User's input. Limit 156 character.
-	 * @param {string} [userId=``] User's discord id.
+	 * @param {string} bio User's input. Limit 156 character.
+	 * @param {string} userId User's discord id.
 	 * @returns {QueryResult}
 	 */
-	setUserBio(bio = ``, userId = ``) {
-		const fn = `[Database.setUserBio()]`
+	setUserBio(bio, userId) {
+		const fn = this.formatFunctionLog(`setUserBio`)
+		if (!bio) throw new TypeError(`${fn} parameter "bio" cannot be blank.`)
 		if (typeof bio !== `string`) throw new TypeError(`${fn} parameter "bio" should be string.`)
 		if (bio.length > 156) throw new RangeError(`${fn} parameter "bio" cannot exceed 156 characters!`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		return this._query(`
 			UPDATE users
-			SET bio = ?
-			WHERE user_id = ?`
+			SET bio = $bio
+			WHERE user_id = $userId`
 			, `run`
-			, [bio, userId]
-			, `Updating bio for USER_ID:${userId}`
+			, { bio: bio, userId: userId }
+			, `${fn} Updating bio for USER_ID:${userId}`
 		)
 	}
 
 	/**
 	 * Pull user's gender data
-	 * @param {string} [userId=``] Target user id
+	 * @param {string} userId Target user id
 	 * @return {object|null}
 	 */
-	getUserGender(userId = ``) {
+	getUserGender(userId) {
+		const fn = this.formatFunctionLog(`getUserGender`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		return this._query(`
             SELECT * FROM user_gender
-            WHERE user_id = ?`
+            WHERE user_id = $userId`
 			, `get`
-			, [userId]
+			, { userId: userId }
+			, `${fn} fetching gender preference for USER_ID:${userId}`
 		)
 	}
 
 	/**
 	 * Updating user's gender data
-	 * @param {string} [userId=``] Target user id
+	 * @param {string} userId Target user id
 	 * @param {string} gender New gender
 	 * @return {void}
 	 */
-	async updateUserGenderToneutral(userId = ``) {
+	async updateUserGenderToneutral(userId) {
+		const fn = this.formatFunctionLog(`updateUserGenderToneutral`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		//	Insert if no data entry exists.
 		await this._query(`
 	            DELETE FROM user_gender 
 				WHERE user_id = $userId`
 			, `run`
 			, { userId: userId }
+			, `${fn} resetting gender preference for USER_ID:${userId}`
 		)
-		logger.info(`[DB@UPDATE_USER_GENDER] UPDATE (GENDER: neutral)(USER_ID:${userId}`)
+		logger.info(`${fn} UPDATE (GENDER: neutral)(USER_ID:${userId}`)
 	}
 
 	/**
 	 * Updating user's gender data
-	 * @param {string} [userId=``] Target user id
+	 * @param {string} userId Target user id
 	 * @param {string} gender New gender
 	 * @return {void}
 	 */
-	async updateUserGender(userId = ``, gender) {
-		if (![`m`, `f`].includes(gender)) throw new TypeError(`Gender must be either 'm' or 'f'`)
+	async updateUserGender(userId, gender) {
+		const fn = this.formatFunctionLog(`updateUserGender`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!gender) throw new TypeError(`${fn} parameter "gender" cannot be blank.`)
+		if (![`m`, `f`].includes(gender)) throw new TypeError(`${fn} Gender must be either 'm' or 'f'`)
 		//	Insert if no data entry exists.
 		const res = {
 			insert: await this._query(`
@@ -887,19 +923,21 @@ class UserUtility extends DatabaseUtility {
 				WHERE NOT EXISTS (SELECT 1 FROM user_gender WHERE user_id = $userId)`
 				, `run`
 				, { userId: userId, gender: gender }
+				, `${fn} creating record for gender preference for USER_ID:${userId}`
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
 				UPDATE user_gender
-				SET gender = ?
+				SET gender = $gender
 				WHERE 
-					user_id = ?`
+					user_id = $userId`
 				, `run`
-				, [gender, userId]
+				, { gender: gender, userId: userId }
+				, `${fn} updating gender preference for USER_ID:${userId}`
 			)
 		}
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`[DB@UPDATE_USER_GENDER] ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
+		logger.info(`${fn} ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
 	}
 
 	/**
@@ -910,6 +948,11 @@ class UserUtility extends DatabaseUtility {
 	 * @returns {QueryResult} query
 	 */
 	checkIfThemeOwned(theme, userId, guildId) {
+		const fn = this.formatFunctionLog(`checkIfThemeOwned`)
+		if (!theme) throw new TypeError(`${fn} parameter "theme" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (![`dark`, `light`].includes(theme)) throw new TypeError(`${fn} Theme must be either "dark" or "light"`)
 		if (theme == `dark`) {
 			theme = `3`
 		} else if (theme == `light`) {
@@ -918,7 +961,9 @@ class UserUtility extends DatabaseUtility {
 		return this._query(`SELECT EXISTS 
 		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme)`
 			, `get`
-			, { theme: theme, userId: userId, guildId: guildId })
+			, { theme: theme, userId: userId, guildId: guildId }
+			, `${fn} fetch theme preference for USER_ID:${userId} in GUILD_ID:${guildId}`
+		)
 	}
 
 	/**
@@ -929,6 +974,11 @@ class UserUtility extends DatabaseUtility {
 	 * @returns {QueryResult} query
 	 */
 	GiveThemeToUser(theme, userId, guildId) {
+		const fn = this.formatFunctionLog(`GiveThemeToUser`)
+		if (!theme) throw new TypeError(`${fn} parameter "theme" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (![`dark`, `light`].includes(theme)) throw new TypeError(`${fn} Theme must be either "dark" or "light"`)
 		if (theme == `dark`) {
 			theme = `3`
 		} else if (theme == `light`) {
@@ -938,22 +988,34 @@ class UserUtility extends DatabaseUtility {
 	}
 
 	async findCurrentTheme(userId, guildId) {
+		const fn = this.formatFunctionLog(`findCurrentTheme`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		// first see if light theme is equiped
 		let res = await this._query(`SELECT EXISTS 
-		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
+		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = 4 AND in_use = 1)`
 			, `get`
-			, { theme: `4`, userId: userId, guildId: guildId })
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetch if light theme is used for USER_ID:${userId} in GUILD_ID:${guildId}`
+		)
 		if (Object.values(res)[0] == 1) return `light`
 		// second see if dark theme is equiped
 		res = await this._query(`SELECT EXISTS 
-		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme AND in_use = 1)`
+		(SELECT 1 FROM user_inventories WHERE user_id = $userId AND guild_id = $guildId AND item_id = 3 AND in_use = 1)`
 			, `get`
-			, { theme: `3`, userId: userId, guildId: guildId })
+			, { userId: userId, guildId: guildId }
+			, `${fn} fetch if dark theme is used for USER_ID:${userId} in GUILD_ID:${guildId}`
+		)
 		if (Object.values(res)[0] == 1) return `dark`
 		return `none`
 	}
 
 	setTheme(theme, userId, guildId) {
+		const fn = this.formatFunctionLog(`setTheme`)
+		if (!theme) throw new TypeError(`${fn} parameter "theme" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (![`dark`, `light`].includes(theme)) throw new TypeError(`${fn} Theme must be either "dark" or "light"`)
 		let themeToSet, themeToUnset
 		if (theme == `dark`) {
 			themeToSet = `3`
@@ -964,41 +1026,53 @@ class UserUtility extends DatabaseUtility {
 		}
 		this._query(`UPDATE user_inventories SET in_use = 1 WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme`
 			, `run`
-			, { theme: themeToSet, userId: userId, guildId: guildId })
+			, { theme: themeToSet, userId: userId, guildId: guildId }
+			, `${fn} Set in use theme for USER_ID:${userId} in GUILD_ID:${guildId}`
+		)
 		this._query(`UPDATE user_inventories SET in_use = 0 WHERE user_id = $userId AND guild_id = $guildId AND item_id = $theme`
 			, `run`
-			, { theme: themeToUnset, userId: userId, guildId: guildId })
+			, { theme: themeToUnset, userId: userId, guildId: guildId }
+			, `${fn} Unset in use for old theme for USER_ID:${userId} in GUILD_ID:${guildId}`
+		)
 		return
 	}
 
 	/**
 	 * Pull user's language/locale data
-	 * @param {string} [userId=``] target user's discord id
+	 * @param {string} userId target user's discord id
 	 * @returns {QueryResult}
 	 */
-	async getUserLocale(userId = ``) {
+	async getUserLocale(userId) {
+		const fn = this.formatFunctionLog(`getUserLocale`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		return this._query(`
 			SELECT lang
 			FROM users
-			WHERE user_id = ?`
+			WHERE user_id = $userId`
 			, `get`
-			, [userId]
+			, { userId: userId }
+			, `${fn} fetch locale for USER_ID:${userId}`
 		)
 	}
 
 	/**
 	 * Updating the timestamp for reputation giver.
-	 * @param {string} [userId=``] target user's discord id
+	 * @param {string} userId target user's discord id
+	 * @param {string} guildId target user's discord id
 	 * @returns {QueryResult}
 	 */
-	updateReputationGiver(userId = ``, guildId = ``) {
+	updateReputationGiver(userId, guildId) {
+		const fn = this.formatFunctionLog(`updateReputationGiver`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`
 			UPDATE user_reputations 
 			SET last_giving_at = datetime('now')
-			WHERE user_id = ? 
-            AND guild_id = ?`
+			WHERE user_id = $userId 
+            AND guild_id = $guildId`
 			, `run`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
+			, `${fn} update last reputation give for USER_ID:${userId} in GUILD_ID:${guildId}`
 		)
 	}
 }
@@ -1012,10 +1086,18 @@ class SystemUtility extends DatabaseUtility {
 
 	/**
 	 * Records command query/usage everytime user uses it.
-	 * @param {CommandUsage} meta required parameters
+	 * @param {Object} @requires [guild_id] The discord guild's id
+	 * @param {Object} @requires [user_id] The discord user's id
+	 * @param {Object} @requires [command_alias] The command name
+	 * @param {Object} @requires [resolved_in=`0ms`] Time took to complete command run
 	 * @returns {QueryResult}
 	 */
-	recordsCommandUsage({ guild_id = ``, user_id = ``, command_alias = ``, resolved_in = `0ms` }) {
+	recordsCommandUsage({ guild_id, user_id, command_alias, resolved_in = `0ms` }) {
+		const fn = this.formatFunctionLog(`recordsCommandUsage`)
+		if (!guild_id) throw new TypeError(`${fn} parameter "guild_id" cannot be blank.`)
+		if (!user_id) throw new TypeError(`${fn} parameter "user_id" cannot be blank.`)
+		if (!command_alias) throw new TypeError(`${fn} parameter "command_alias" cannot be blank.`)
+		if (!resolved_in) throw new TypeError(`${fn} parameter "resolved_in" cannot be blank.`)
 		return this._query(`
 			INSERT INTO commands_log (
 				registered_at, 
@@ -1024,9 +1106,10 @@ class SystemUtility extends DatabaseUtility {
 				command_alias, 
 				resolved_in
 			)
-			VALUES (datetime('now'), ?, ?, ?, ?)`
+			VALUES (datetime('now'), $userId, $guildId, $commandAlias, $resolvedIn)`
 			, `run`
-			, [user_id, guild_id, command_alias, resolved_in]
+			, { userId: user_id, guildId: guild_id, commandAlias: command_alias, resolvedIn: resolved_in }
+			, `${fn} Log command usage`
 		)
 	}
 
@@ -1035,6 +1118,7 @@ class SystemUtility extends DatabaseUtility {
 	 * @return {object}
 	 */
 	async getTotalCommandUsage() {
+		const fn = this.formatFunctionLog(`getTotalCommandUsage`)
 		const key = `TOTAL_CMD_USAGE`
 		//  Retrieve from cache if available
 		const cache = await this.getCache(key)
@@ -1042,7 +1126,7 @@ class SystemUtility extends DatabaseUtility {
 		//  Else, hit db
 		const res = await this._query(`
 			SELECT COUNT(command_alias) AS 'total'
-			FROM commands_log`
+			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
 		this.redis.set(key, JSON.stringify(res), `EX`, (60 * 60) * 12)
@@ -1055,10 +1139,13 @@ class SystemUtility extends DatabaseUtility {
 	 * @returns {string}
 	 */
 	async toLocaltime(timestamp = `now`) {
+		const fn = this.formatFunctionLog(`getTotalCommandUsage`)
+		if (!timestamp) throw new TypeError(`${fn} parameter "guild_id" cannot be blank.`)
 		const res = await this._query(`
-			SELECT datetime(?, 'localtime') AS timestamp`
+			SELECT datetime($timestamp, 'localtime') AS timestamp`
 			, `get`
-			, [timestamp]
+			, { timestamp: timestamp }
+			, `${fn} fetch machine's time`
 		)
 		return res.timestamp
 	}
@@ -1075,10 +1162,11 @@ class GuildUtility extends DatabaseUtility {
 	 * @returns {QueryResult}
 	 */
 	async getAllGuildsConfigurations() {
+		const fn = this.formatFunctionLog(`getAllGuildsConfigurations`)
 		return this._query(`
 			SELECT * 
 			FROM guild_configurations`
-			, `all`
+			, `all`, [], `${fn} fetch all guild configs`
 		)
 	}
 
@@ -1087,27 +1175,32 @@ class GuildUtility extends DatabaseUtility {
 	 * @return {QueryResult} 
 	 */
 	async getAffiliates() {
+		const fn = this.formatFunctionLog(`getAffiliates`)
 		return this._query(`
 			SELECT *
 			FROM affiliates`
 			, `all`
 			, []
-			, `Fetching affiliates list`
+			, `${fn} Fetching affiliates list`
 		)
 	}
 
 	/**
 	 * Registering guild to the list of guilds 
-	 * @param {object} [guild={}] to be registered from.
+	 * @param {Object} [guild.id] to be registered from.
+	 * @param {Object} [guild.name] to be registered from.
 	 * @returns {QueryResult}
 	 */
 	registerGuild(guild = {}) {
+		const fn = this.formatFunctionLog(`registerGuild`)
+		if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
 		return this._query(`
 			INSERT INTO guilds (guild_id, name)
 			SELECT $guildId, $guildName
 			WHERE NOT EXISTS (SELECT 1 FROM guilds WHERE guild_id = $guildId)`
 			, `run`
 			, { guildId: guild.id, guildName: guild.name }
+			, `${fn} Create record for new guild`
 		)
 	}
 
@@ -1117,9 +1210,10 @@ class GuildUtility extends DatabaseUtility {
 	 * @returns {QueryResult}
 	 */
 	async updateGuildConfiguration({ configCode = null, guild = null, customizedParameter = null, setByUserId = null, cacheTo = {} }) {
-		const fn = `[Database.updateGuildConfiguration()]`
+		const fn = this.formatFunctionLog(`updateGuildConfiguration`)
 		if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be string and non-faulty value.`)
 		if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
+		if (!customizedParameter) throw new TypeError(`${fn} parameter "customizedParameter" cannot be blank.`)
 		if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
 		//  Register guild incase they aren't registered yet
 		this.registerGuild(guild)
@@ -1149,19 +1243,21 @@ class GuildUtility extends DatabaseUtility {
 					guildId: guild.id,
 					setByUserId: setByUserId
 				}
+				, `${fn} insert new guild config`
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
 			   UPDATE guild_configurations
 			   SET 
-				   customized_parameter = ?,
-				   set_by_user_id = ?,
+				   customized_parameter = $parameter,
+				   set_by_user_id = $userId,
 				   updated_at = datetime('now')
 			   WHERE 
-				   config_code = ?
-				   AND guild_id = ?`
+				   config_code = $configCode
+				   AND guild_id = $guildId`
 				, `run`
-				, [parsedValueParameter, setByUserId, configCode, guild.id]
+				, { parameter: parsedValueParameter, userId: setByUserId, configCode: configCode, guildId: guild.id }
+				, `${fn} update guild config`
 			)
 		}
 
@@ -1183,29 +1279,30 @@ class GuildUtility extends DatabaseUtility {
 	  * @returns {string}
 	  */
 	async getCurrentTimestamp() {
-		const res = await this._query(`SELECT CURRENT_TIMESTAMP`)
+		const fn = this.formatFunctionLog(`getCurrentTimestamp`)
+		const res = await this._query(`SELECT CURRENT_TIMESTAMP`, `get`, [], `${fn} get timestamp in SQL format`)
 		return res.CURRENT_TIMESTAMP
 	}
 
 	/**
 	 * Delete a guild's config from guild_configurations table
-	 * @param {string} [configCode=``] the identifier code for a configuration/module
-	 * @parma {string} [guildId=``] target guild 
+	 * @param {string} [configCode] the identifier code for a configuration/module
+	 * @param {string} [guildId] target guild 
 	 * @returns {boolean}
 	 */
-	async deleteGuildConfiguration(configCode = ``, guildId = ``) {
-		const fn = `[Database.deleteGuildConfiguration()]`
+	async deleteGuildConfiguration(configCode, guildId) {
+		const fn = this.formatFunctionLog(`deleteGuildConfiguration`)
 		if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be a string-typed ID`)
 		if (!guildId || typeof guildId !== `string`) throw new TypeError(`${fn} property "guildId" must be a string-typed ID`)
 		//  Run entry
 		const res = await this._query(`
 			DELETE FROM guild_configurations
 			WHERE
-				config_code = ?
-				AND guild_id = ?`
+				config_code = $configCode
+				AND guild_id = $guildId`
 			, `run`
-			, [configCode, guildId]
-			, `Performing config(${configCode}) deletion for GUILD_ID:${guildId}`
+			, { configCode: configCode, guildId: guildId }
+			, `${fn}Performing config(${configCode}) deletion for GUILD_ID:${guildId}`
 		)
 		const type = res.changes ? `DELETED` : `NO_CHANGES`
 		logger.info(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
@@ -1224,20 +1321,24 @@ class Relationships extends DatabaseUtility {
 	 * @returns {QueryResult}
 	 */
 	getAvailableRelationships() {
+		const fn = this.formatFunctionLog(`getAvailableRelationships`)
 		return this._query(`
 			SELECT * FROM relationships
 			WHERE name IN ('parent', 'kid', 'old sibling', 'young sibling', 'couple', 'bestfriend') ORDER BY relationship_id ASC`
-			, `all`
+			, `all`, [], `${fn} fetch all ralationship options`
 		)
 	}
 
 	/**
 	 * Removing user's relationship
-	 * @param {string} [userA=``] Author's user id.
-	 * @param {string} [userB=``] Target user's id to be assigned.
+	 * @param {string} [userA] Author's user id.
+	 * @param {string} [userB] Target user's id to be assigned.
 	 * @returns {QueryResult}
 	 */
-	removeUserRelationship(userA = ``, userB = ``) {
+	removeUserRelationship(userA, userB) {
+		const fn = this.formatFunctionLog(`removeUserRelationship`)
+		if (!userA) throw new TypeError(`${fn} parameter "userA" cannot be blank.`)
+		if (!userB) throw new TypeError(`${fn} parameter "userB" cannot be blank.`)
 		return this._query(`
             DELETE FROM user_relationships
             WHERE 
@@ -1245,7 +1346,7 @@ class Relationships extends DatabaseUtility {
 				AND user_id_B = ?`
 			, `run`
 			, [userA, userB]
-			, `Removing ${userA} and ${userB} relationship.`
+			, `${fn} Removing ${userA} and ${userB} relationship.`
 		)
 	}
 
@@ -1255,12 +1356,14 @@ class Relationships extends DatabaseUtility {
 	 * @return {object|null}
 	 */
 	getRelationship(name) {
+		const fn = this.formatFunctionLog(`getRelationship`)
+		if (!name) throw new TypeError(`${fn} parameter "name" cannot be blank.`)
 		return this._query(`
             SELECT *
             FROM relationships
-            WHERE name = ?`
+            WHERE name = $name`
 			, `get`
-			, [name]
+			, { name: name }
 		)
 	}
 
@@ -1272,8 +1375,12 @@ class Relationships extends DatabaseUtility {
 	 * @param {string} [guildId=``] the guild id where the relationship is being registered in.
 	 * @returns {QueryResult}
 	 */
-	async setUserRelationship(userA = ``, userB = ``, relationshipId = 0, guildId = ``) {
-		const fn = `[Database.setUserRelationship()]`
+	async setUserRelationship(userA, userB, relationshipId, guildId) {
+		const fn = this.formatFunctionLog(`setUserRelationship`)
+		if (!userA) throw new TypeError(`${fn} parameter "userA" cannot be blank.`)
+		if (!userB) throw new TypeError(`${fn} parameter "userB" cannot be blank.`)
+		if (!relationshipId) throw new TypeError(`${fn} parameter "relationshipId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
@@ -1282,17 +1389,18 @@ class Relationships extends DatabaseUtility {
 				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
 				, `run`
 				, { userA: userA, userB: userB, relationshipId: relationshipId, guildId: guildId }
-				, `Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
+				, `${fn} Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
 				UPDATE user_relationships
-				SET relationship_id = ?
+				SET relationship_id = $relationshipId
 				WHERE 
-					user_id_A = ?
-					AND user_id_B = ?`
+					user_id_A = $userA
+					AND user_id_B = $userB`
 				, `run`
-				, [relationshipId, userA, userB]
+				, { relationshipId: relationshipId, userA: userA, userB: userB }
+				, `${fn} updating relationship for USER_ID:${userA} and USER_ID:${userB} in GUILD_ID:${guildId}`
 			)
 		}
 
@@ -1314,30 +1422,37 @@ class AutoResponder extends DatabaseUtility {
 	 * @return {QueryResult}
 	 */
 	getGuildsWithAutoResponders() {
+		const fn = this.formatFunctionLog(`getGuildsWithAutoResponders`)
 		return this._query(`
 			SELECT DISTINCT guild_id
 			FROM autoresponders`
 			, `all`
 			, []
+			, `${fn} fetch all autoresponders`
 		)
 	}
 
 	/**
 	 * Retrieving all the registered ARs from specific guild.
-	 * @param {string} [guildId=``] Target guild.
+	 * @param {string} [guildId] Target guild.
 	 * @param {boolean} [fetchCache=true] Toggle false to make it always fetching from database.
 	 * @return {QueryResult}
 	 */
-	async getAutoResponders(guildId = ``, fetchCache = true) {
+	async getAutoResponders(guildId, fetchCache = true) {
+		const fn = this.formatFunctionLog(`getAutoResponders`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!fetchCache) throw new TypeError(`${fn} parameter "fetchCache" cannot be blank.`)
+		if (typeof (fetchCache) !== `boolean`) throw new TypeError(`${fn} parameter "fetchCache" must be a boolean.`)
 		//  Check in cache
 		const cacheID = `REGISTERED_AR@${guildId}`
 		if (fetchCache && await this.isCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
 		return this._query(`
 			SELECT *
 			FROM autoresponders
-			WHERE guild_id = ?`
+			WHERE guild_id = $guildId`
 			, `all`
-			, [guildId]
+			, { guildId: guildId }
+			, `${fn} fetch autoresponders for GUILD_ID:${guildId}`
 		)
 	}
 
@@ -1347,6 +1462,11 @@ class AutoResponder extends DatabaseUtility {
 	 * @return {QueryResult}
 	 */
 	async registerAutoResponder({ guildId = ``, userId = ``, trigger = ``, response = `` }) {
+		const fn = this.formatFunctionLog(`registerAutoResponder`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!trigger) throw new TypeError(`${fn} parameter "trigger" cannot be blank.`)
+		if (!response) throw new TypeError(`${fn} parameter "response" cannot be blank.`)
 		//  Insert into cache
 		let cache = []
 		const cacheID = `REGISTERED_AR@${guildId}`
@@ -1358,18 +1478,19 @@ class AutoResponder extends DatabaseUtility {
 				trigger,
 				response
 			)
-			VALUES(?, ?, ?, ?)`
+			VALUES($guildId, $userId, $trigger, $response)`
 			, `run`
-			, [guildId, userId, trigger, response]
-			, `Inserting new AR for GUILD_ID:${guildId}`
+			, { guildId: guildId, userId: userId, trigger: trigger, response: response }
+			, `${fn} Inserting new AR for GUILD_ID:${guildId}`
 		)
 		const ARmeta = (await this._query(`
 			SELECT *
 			FROM autoresponders
-			WHERE guild_id = ?
+			WHERE guild_id = $guildId
 			ORDER BY ar_id DESC`
 			, `all`
-			, [guildId]
+			, { guildId: guildId }
+			, `${fn} fetch AR metadata`
 		))[0]
 		cache.push({
 			registered_at: ARmeta.registered_at,
@@ -1385,10 +1506,13 @@ class AutoResponder extends DatabaseUtility {
 	/**
 	 * Deleting an autoresponder from specific guild.
 	 * @param {number} id Target AR id.
-	 * @param {string} [guildId=``] Target guild.
+	 * @param {string} [guildId] Target guild.
 	 * @return {QueryResult}
 	 */
-	async deleteAutoResponder(id, guildId = ``) {
+	async deleteAutoResponder(id, guildId) {
+		const fn = this.formatFunctionLog(`deleteAutoResponder`)
+		if (!id) throw new TypeError(`${fn} parameter "id" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Delete element from cache if available
 		const cacheID = `REGISTERED_AR@${guildId}`
 		if (await this.isCacheExist(cacheID)) {
@@ -1406,11 +1530,11 @@ class AutoResponder extends DatabaseUtility {
 		return this._query(`
 			DELETE FROM autoresponders
 			WHERE 
-				ar_id = ?
-				AND guild_id = ?`
+				ar_id = $arId
+				AND guild_id = $guildId`
 			, `run`
-			, [id, guildId]
-			, `Deleting AR with ID:${id} from GUILD_ID:${guildId}`
+			, { arId: id, guildId: guildId }
+			, `${fn} Deleting AR with ID:${id} from GUILD_ID:${guildId}`
 		)
 	}
 
@@ -1419,15 +1543,17 @@ class AutoResponder extends DatabaseUtility {
 	 * @param {string} [guildId=``] Target guild.
 	 * @return {QueryResult}
 	 */
-	clearAutoResponders(guildId = ``) {
+	clearAutoResponders(guildId) {
+		const fn = this.formatFunctionLog(`clearAutoResponders`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Clear ARs in cache
 		this.clearCache(`REGISTERED_AR@${guildId}`)
 		return this._query(`
 			DELETE FROM autoresponders
-			WHERE guild_id = ?`
+			WHERE guild_id = $guildId`
 			, `run`
 			, [guildId]
-			, `Deleting all ARs from GUILD_ID:${guildId}`
+			, `${fn} Deleting all ARs from GUILD_ID:${guildId}`
 		)
 	}
 }
@@ -1444,17 +1570,20 @@ class DurationalBuffs extends DatabaseUtility {
 	 * @return {object}
 	 */
 	getSavedUserDurationalBuffs(userId) {
+		const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (userId) return this._query(`
             SELECT *
             FROM user_durational_buffs
-            WHERE user_id = ?`
+            WHERE user_id = $userId`
 			, `all`
-			, [userId]
+			, { userId: userId }
+			, `${fn} fetch durantional buffs for USER_ID:${userId}`
 		)
 		return this._query(`
             SELECT *
             FROM user_durational_buffs`
-			, `all`
+			, `all`, [], `${fn} fetch all durantional buffs`
 		)
 	}
 
@@ -1470,31 +1599,42 @@ class DurationalBuffs extends DatabaseUtility {
 	 * @return {void}
 	 */
 	registerUserDurationalBuff(buffType, name, multiplier, duration, userId, guildId) {
+		const fn = this.formatFunctionLog(`registerUserDurationalBuff`)
+		if (!buffType) throw new TypeError(`${fn} parameter "buffType" cannot be blank.`)
+		if (!name) throw new TypeError(`${fn} parameter "name" cannot be blank.`)
+		if (!multiplier) throw new TypeError(`${fn} parameter "multiplier" cannot be blank.`)
+		if (!duration) throw new TypeError(`${fn} parameter "duration" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		this._query(`
             SELECT COUNT(*) AS instance
             FROM user_durational_buffs
             WHERE
-                type = ?
-                AND name = ?
-                AND multiplier = ?
-                AND user_id = ?
-                AND guild_id = ?`
+                type = $buffType
+                AND name = $name
+                AND multiplier = $multiplier
+                AND user_id = $userId
+                AND guild_id = $guildId`
 			, `get`
-			, [buffType, name, multiplier, userId, guildId]
+			, { buffType: buffType, name: name, multiplier: multiplier, userId: userId, guildId: guildId }
+			, `${fn} Fetch how many durantional buffs there are for USER_ID:${userId} in GUILD_ID:${guildId}`
 		).then(res => {
 			//  Update duration
 			if (res.instance > 0) return this._query(`
                 UPDATE user_durational_buffs
                 SET registered_at = datetime('now')
                 WHERE
-                    type = ?
-                    AND name = ?
-                    AND multiplier = ?
-                    AND user_id = ?
-                    AND guild_id = ?`
+                    type = $buffType
+					AND name = $name
+					AND multiplier = $multiplier
+					AND user_id = $userId
+					AND guild_id = $guildId`
 				, `run`
-				, [buffType, name, multiplier, userId, guildId]
+				, { buffType: buffType, name: name, multiplier: multiplier, userId: userId, guildId: guildId }
+				, `${fn} Update durantional buff for USER_ID:${userId} in GUILD_ID:${guildId}`
 			)
+
+
 			this._query(`
                 INSERT INTO user_durational_buffs(
                     type,
@@ -1504,9 +1644,10 @@ class DurationalBuffs extends DatabaseUtility {
                     user_id,
                     guild_id
                 )
-                VALUES(?, ?, ?, ?, ?, ?)`
+                VALUES($buffType, $name, $multiplier, $duration, $userId, $guildId)`
 				, `run`
-				, [buffType, name, multiplier, duration, userId, guildId]
+				, { buffType: buffType, name: name, multiplier: multiplier, duration: duration, userId: userId, guildId: guildId }
+				, `${fn} Insert durantional buff for USER_ID:${userId} in GUILD_ID:${guildId}`
 			)
 		})
 	}
@@ -1517,14 +1658,17 @@ class DurationalBuffs extends DatabaseUtility {
 	 * @return {void}
 	 */
 	removeUserDurationalBuff(buffId) {
+		const fn = this.formatFunctionLog(`removeUserDurationalBuff`)
+		if (!buffId) throw new TypeError(`${fn} parameter "buffId" cannot be blank.`)
 		this._query(`
             DELETE FROM user_durational_buffs
-            WHERE buff_id = ?`
+            WHERE buff_id = $buffId`
 			, `run`
-			, [buffId]
+			, { buffId: buffId }
+			, `${fn} Delete durational buff`
 		)
 			.then(res => {
-				if (res.changes > 0) logger.debug(`[REMOVE_USER_DURATION_BUFF] BUFF_ID:${buffId} has finished and omited.`)
+				if (res.changes > 0) logger.debug(`${fn} BUFF_ID:${buffId} has finished and omited.`)
 			})
 	}
 
@@ -1538,17 +1682,24 @@ class DurationalBuffs extends DatabaseUtility {
 	 * @return {number|null}
 	 */
 	async getUserDurationalBuffId(buffType, name, multiplier, userId, guildId) {
+		const fn = this.formatFunctionLog(`getUserDurationalBuffId`)
+		if (!buffType) throw new TypeError(`${fn} parameter "buffType" cannot be blank.`)
+		if (!name) throw new TypeError(`${fn} parameter "name" cannot be blank.`)
+		if (!multiplier) throw new TypeError(`${fn} parameter "multiplier" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		const res = await this._query(`
             SELECT buff_id
             FROM user_durational_buffs
             WHERE
-                type = ?
-                AND name = ?
-                AND multiplier = ?
-                AND user_id = ?
-                AND guild_id =?`
+                type = $buffType
+                AND name = $name
+                AND multiplier = $multiplier
+                AND user_id = $userId
+                AND guild_id = $guildId`
 			, `get`
-			, [buffType, name, multiplier, userId, guildId]
+			, { buffType: buffType, name: name, multiplier: multiplier, userId: userId, guildId: guildId }
+			, `${fn} fetch durational buff id`
 		)
 		return res.buff_id || null
 	}
@@ -1561,7 +1712,7 @@ class CustomRewards extends DatabaseUtility {
 	}
 
 	getRewardAmount(guildId) {
-		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guild_id`
+		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId`
 			, `all`
 			, { guild_id: guildId }
 		)
@@ -1569,14 +1720,14 @@ class CustomRewards extends DatabaseUtility {
 
 	recordReward(guildId, userId, rewardBlob, rewardName) {
 		return this._query(` INSERT INTO custom_rewards (registered_at, guild_id, set_by_user_id, reward, reward_name)
-		VALUES (datetime('now'), $guild_id, $user_id, $reward, $rewardName)`
+		VALUES (datetime('now'), $guildId, $user_id, $reward, $rewardName)`
 			, `run`
 			, { guild_id: guildId, user_id: userId, reward: rewardBlob, rewardName: rewardName }
 		)
 	}
 
 	deleteReward(guildId, rewardName) {
-		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guild_id AND reward_name = $rewardName`
+		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guildId AND reward_name = $rewardName`
 			, `run`
 			, { guild_id: guildId, rewardName: rewardName }
 		)
@@ -1591,25 +1742,27 @@ class Covers extends DatabaseUtility {
 
 	/**
 	 * Detach user's covers. Aftewards, combined with `this.useItem()`
-	 * @param {string} [userId=``] target user's id.
-	 * @param {string} [guidId=``] target guild
+	 * @param {string} [userId] target user's id.
+	 * @param {string} [guidId] target guild
 	 * @returns {QueryResult}
 	 */
-	async detachCovers(userId = ``, guildId = ``) {
-		const fn = `[Database.detachCovers()]`
+	async detachCovers(userId, guildId) {
+		const fn = this.formatFunctionLog(`detachCovers`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		const res = await this._query(`
     		UPDATE user_inventories
     		SET in_use = 0
     		WHERE 
-    			user_id = ?
-    			AND guild_id = ?
+    			user_id = $userId
+    			AND guild_id = $guildId
     			AND item_id IN (
     				SELECT item_id
     				FROM items
     				WHERE type_id = 1 
     			)`
 			, `run`
-			, [userId, guildId]
+			, { userId: userId, guildId: guildId }
 			, `${fn} Detaching covers from USER_ID:${userId} in GUILD_ID:${guildId}`
 		)
 		return res
@@ -1618,12 +1771,13 @@ class Covers extends DatabaseUtility {
 	/**
 	 * Applying new cover to user's profile.
 	 * @param {number} [coverId] target cover to be applied.
-	 * @param {string} [userId=``] target user's id.
-	 * @param {string} [guidId=``] target guild
+	 * @param {string} [userId] target user's id.
+	 * @param {string} [guidId] target guild
 	 * @returns {QueryResult}
 	 */
-	async applySelfUploadCover(coverId, userId = ``, guildId = ``) {
-		const fn = `[Database.appleSelfCover()]`
+	async applySelfUploadCover(coverId, userId, guildId) {
+		const fn = this.formatFunctionLog(`applySelfUploadCover`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!coverId) throw new TypeError(`${fn} parameter 'coverId' cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)
 		const res = {
@@ -1634,18 +1788,20 @@ class Covers extends DatabaseUtility {
 				WHERE NOT EXISTS (SELECT 1 FROM user_self_covers WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, { coverId: coverId, userId: userId, guildId: guildId }
+				, `${fn} Insert self upload cover record`
 			),
 			//	Try to update available row. It won't crash if no row is found.
 			update: await this._query(`
 				UPDATE user_self_covers
 				SET 
-					cover_id = ?,
+					cover_id = $coverId,
 					registered_at = datetime('now')
 				WHERE 
-					user_id = ? 
-					AND guild_id = ?`
+					user_id = $userId 
+					AND guild_id = $guildId`
 				, `run`
-				, [coverId, userId, guildId]
+				, { coverId: coverId, userId: userId, guildId: guildId }
+				, `${fn} update self upload cover record`
 			)
 		}
 		return res
@@ -1657,38 +1813,42 @@ class Covers extends DatabaseUtility {
 	 * @param {string} guildId
 	 * @return {QueryResult}
 	 */
-	deleteSelfUploadCover(userId = ``, guildId = ``) {
+	deleteSelfUploadCover(userId, guildId) {
+		const fn = this.formatFunctionLog(`deleteSelfUploadCover`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)
 		return this._query(`
 			DELETE FROM user_self_covers
 			WHERE
-				user_id = ?
-				AND guild_id = ?`
+				user_id = $userId
+				AND guild_id = $guildId`
 			, `run`
-			, [userId, guildId]
-			, `Performing self-upload cover deletion on USER_ID:${userId} on GUILD_ID:${guildId}`
+			, { userId: userId, guildId: guildId }
+			, `${fn} Performing self-upload cover deletion on USER_ID:${userId} on GUILD_ID:${guildId}`
 		)
 	}
 
 	/**
 	 * Applying new cover to user's profile.
 	 * @param {number} [coverId] target cover to be applied.
-	 * @param {string} [userId=``] target user's id.
-	 * @param {string} [guidId=``] target guild
+	 * @param {string} [userId] target user's id.
+	 * @param {string} [guidId] target guild
 	 * @returns {QueryResult}
 	 */
-	async applyCover(coverId, userId = ``, guildId = ``) {
-		const fn = `[Database.applyCover()]`
+	async applyCover(coverId, userId, guildId) {
+		const fn = this.formatFunctionLog(`applyCover`)
 		if (!coverId) throw new TypeError(`${fn} parameter 'coverId' cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter 'userId' cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter 'guildId' cannot be blank.`)
 		const res = await this._query(`
     		UPDATE user_inventories
     		SET in_use = 1
     		WHERE 
-    			item_id = ?
-    			AND user_id = ?
-    			AND guild_id = ?`
+    			item_id = $coverId
+    			AND user_id = $userId
+    			AND guild_id = $guildId`
 			, `run`
-			, [coverId, userId, guildId]
+			, { coverId: coverId, userId: userId, guildId: guildId }
 			, `${fn} Applying cover[${coverId}] for USER_ID${userId} in GUILD_ID:${guildId}`
 		)
 		return res
@@ -1706,6 +1866,7 @@ class Shop extends DatabaseUtility {
 	 * @returns {QueryResult}
 	 */
 	async getGachaRewardsPool() {
+		const fn = this.formatFunctionLog(`getGachaRewardsPool`)
 		const cacheId = `GACHA_REWARDS_POOL`
 		const onCache = await this.redis.get(cacheId)
 		if (onCache) return JSON.parse(onCache)
@@ -1740,7 +1901,7 @@ class Shop extends DatabaseUtility {
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id
             WHERE owned_by_guild_id IS NULL`
-			, `all`
+			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
 		this.redis.set(cacheId, JSON.stringify(res), `EX`, 60 * 60)
@@ -1749,10 +1910,16 @@ class Shop extends DatabaseUtility {
 
 	/**
 	 * Registering new item into database
-	 * @param {item} item
+	 * @param {Object} item
 	 * @return {QueryResult}
 	 */
 	registerItem(item) {
+		const fn = this.formatFunctionLog(`registerItem`)
+		const validKeys = [
+			`name`, `description`, `alias`, `typeId`, `rarityId`, `bind`, `ownedByGuildId`, `responseOnUse`, `usable`
+		]
+		if (!item) throw new TypeError(`${fn} parameter "item" cannot be blank.`)
+		if (typeof (item) === `object` && this.arrayEquals(Object.keys(item), validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: name, description, alias, typeId, rarityId, bind, ownedByGuildId, responseOnUse, usable.`)
 		return this._query(`
             INSERT INTO items(
                 name,
@@ -1765,19 +1932,20 @@ class Shop extends DatabaseUtility {
                 response_on_use,
                 usable
             )
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            VALUES($name, $description, $alias, $typeId, $rarityId, $bind, $ownedByGuildId, $responseOnUse, $usable)`
 			, `run`
-			, [
-				item.name,
-				item.description,
-				item.alias,
-				item.typeId,
-				item.rarityId,
-				item.bind,
-				item.ownedByGuildId,
-				item.responseOnUse,
-				item.usable
-			]
+			, {
+				name: item.name,
+				description: item.description,
+				alias: item.alias,
+				typeId: item.typeId,
+				rarityId: item.rarityId,
+				bind: item.bind,
+				ownedByGuildId: item.ownedByGuildId,
+				responseOnUse: item.responseOnUse,
+				usable: item.usable
+			}
+			, `${fn} Create record for new item`
 		)
 	}
 
@@ -1790,11 +1958,17 @@ class Shop extends DatabaseUtility {
 	 * @return {QueryResult}
 	 */
 	registerGuildShopItem(itemId, guildId, quantity, price) {
+		const fn = this.formatFunctionLog(`registerGuildShopItem`)
+		if (!itemId) new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!quantity) new TypeError(`${fn} parameter "quantity" cannot be blank.`)
+		if (!price) new TypeError(`${fn} parameter "price" cannot be blank.`)
 		return this._query(`
             INSERT INTO shop(item_id, guild_id, quantity, price)
-            VALUES(?, ?, ?, ?)`
+            VALUES($itemId, $guildId, $quantity, $price)`
 			, `run`
-			, [itemId, guildId, quantity, price]
+			, {itemId:itemId, guildId:guildId, quantity:quantity, price:price}
+			, `${fn} register item with a GUILD_ID:${guildId}`
 		)
 	}
 
@@ -1807,15 +1981,21 @@ class Shop extends DatabaseUtility {
 	 * @return {QueryResult}
 	 */
 	registerItemEffects(itemId, guildId, effectRefId, parameters) {
+		const fn = this.formatFunctionLog(`registerItemEffects`)
+		if (!itemId) new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!effectRefId) new TypeError(`${fn} parameter "effectRefId" cannot be blank.`)
+		if (!parameters) new TypeError(`${fn} parameter "parameters" cannot be blank.`)
 		return this._query(`
             INSERT INTO item_effects(
                 item_id,
                 guild_id,
                 effect_ref_id,
                 parameter)
-            VALUES(?, ?, ?, ?)`
+            VALUES($itemId, $guildId, $effectRefId, $parameters)`
 			, `run`
-			, [itemId, guildId, effectRefId, JSON.stringify(parameters)]
+			, {itemId:itemId, guildId:guildId, effectRefId:effectRefId, parameters:JSON.stringify(parameters)}
+			, `${fn} register new effect for item`
 		)
 	}
 
@@ -1827,12 +2007,19 @@ class Shop extends DatabaseUtility {
 	 * @return {void}
 	 */
 	updateItemMetadata(itemId, targetProperty, param) {
+		const fn = this.formatFunctionLog(`updateItemMetadata`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!targetProperty) throw new TypeError(`${fn} parameter "targetProperty" cannot be blank.`)
+		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
+		const validColumns = [`item_id`,`name`,`description`,`alias`,`type_id`,`rarity_id`,`bind`,`usable`,`response_on_use`, `owned_by_guild_id`]
+		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
 		this._query(`
             UPDATE items
-            SET ${targetProperty} = ?
-            WHERE item_id = ?`
+            SET ${targetProperty} = $param
+            WHERE item_id = $itemId`
 			, `run`
-			, [param, itemId]
+			, {param:param, itemId:itemId}
+			, `${fn} Update item details`
 		)
 	}
 
@@ -1844,12 +2031,20 @@ class Shop extends DatabaseUtility {
 	 * @return {void}
 	 */
 	updateShopItemMetadata(itemId, targetProperty, param) {
+		const fn = this.formatFunctionLog(`updateShopItemMetadata`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!targetProperty) throw new TypeError(`${fn} parameter "targetProperty" cannot be blank.`)
+		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
+		const validColumns = [`item_id`,`guild_id`,`quantity`,`price`]
+		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
+		
 		this._query(`
             UPDATE shop
-            SET ${targetProperty} = ?
-            WHERE item_id = ?`
+            SET ${targetProperty} = $param
+            WHERE item_id = $itemId`
 			, `run`
-			, [param, itemId]
+			, {param:param, itemId:itemId}
+			, `${fn} update item details in shop`
 		)
 	}
 
@@ -1859,11 +2054,14 @@ class Shop extends DatabaseUtility {
 	* @returns {QueryResult}
 	*/
 	removeGuildShopItem(itemId) {
+		const fn = this.formatFunctionLog(`removeGuildShopItem`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		return this._query(`
 			DELETE FROM shop
 			WHERE item_id = $itemId`
 			, `run`
 			, { itemId: itemId }
+			, `${fn} Delete item from guild shop`
 		)
 	}
 
@@ -1873,7 +2071,10 @@ class Shop extends DatabaseUtility {
 	 * @param {string} [guildId=null] Limit search to specific guild's owned items only. Optional. 
 	 * @returns {QueryResult}
 	 */
-	getItem(keyword = ``, guildId = null) {
+	getItem(keyword, guildId) {
+		const fn = this.formatFunctionLog(`getItem`)
+		if (!keyword) throw new TypeError(`${fn} parameter "keyword" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		const str = `SELECT 
 
 				items.item_id AS item_id,
@@ -1902,9 +2103,10 @@ class Shop extends DatabaseUtility {
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id`
 		//  Do whole fetch on specific guild
-		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = ?`
+		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = $guildId`
 			, `all`
-			, [guildId]
+			, {guildId:guildId}
+			, `${fn} fetch all items for GUILD_ID:${guildId}`
 		)
 		//  Do single fetch on specific guild
 		if (keyword && typeof guildId === `string`) return this._query(str + `
@@ -1913,6 +2115,7 @@ class Shop extends DatabaseUtility {
                 AND lower(items.name) = lower($keyword)`
 			, `get`
 			, { keyword: keyword, guildId: guildId }
+			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
 		return this._query(str + ` 
 			WHERE 
@@ -1922,6 +2125,7 @@ class Shop extends DatabaseUtility {
 			LIMIT 1`
 			, `get`
 			, { keyword: keyword }
+			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
 	}
 
@@ -1931,12 +2135,15 @@ class Shop extends DatabaseUtility {
 	 * @return {object}
 	 */
 	getGuildShop(guildId) {
+		const fn = this.formatFunctionLog(`getGuildShop`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`
             SELECT *
             FROM shop
-            WHERE guild_id = ?`
+            WHERE guild_id = $guildId`
 			, `all`
-			, [guildId]
+			, {guiildId:guildId}
+			, `${fn} fetch shop for GUILD_ID:${guildId}`
 		)
 	}
 
@@ -1947,12 +2154,15 @@ class Shop extends DatabaseUtility {
 	 * @return {void}
 	 */
 	subtractItemSupply(itemId, amount = 1) {
+		const fn = this.formatFunctionLog(`subtractItemSupply`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		this._query(`
             UPDATE shop
-            SET quantity = quantity - ?
-            WHERE item_id = ?`
+            SET quantity = quantity - $amount
+            WHERE item_id = $itemId`
 			, `run`
-			, [amount, itemId]
+			, {amount:amount, itemId:itemId}
+			, `${fn} update item amount in shop`
 		)
 	}
 
@@ -1962,12 +2172,15 @@ class Shop extends DatabaseUtility {
 	 * @return {object}
 	 */
 	getItemEffects(itemId) {
+		const fn = this.formatFunctionLog(`getItemEffects`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		return this._query(`
             SELECT *
             FROM item_effects
-            WHERE item_id = ?`
+            WHERE item_id = $itemId`
 			, `all`
-			, [itemId]
+			, {itemId:itemId}
+			, `${fn} fetch item effects for ITEM_ID:${itemId}`
 		)
 	}
 
@@ -1980,14 +2193,15 @@ class Quests extends DatabaseUtility {
 	}
 
 	async registerQuest(reward_amount, name, description, correct_answer) {
-		if (!reward_amount) return new Error(`The parameter 'reward_amount' is missing, it must be an Integer`)
-		if (!name) return new Error(`The parameter 'name' is missing, it must be an String`)
-		if (!description) return new Error(`The parameter 'description' is missing, it must be an String`)
-		if (!correct_answer) return new Error(`The parameter 'correct_answer' is missing, it must be an String`)
-		if (typeof (reward_amount) != Number) return new TypeError(`The parameter 'reward_amount' is missing, it must be an Integer`)
-		if (typeof (name) != String) return new TypeError(`The parameter 'name' is missing, it must be an String`)
-		if (typeof (description) != String) return new TypeError(`The parameter 'description' is missing, it must be an String`)
-		if (typeof (correct_answer) != String) return new TypeError(`The parameter 'correct_answer' is missing, it must be an String`)
+		const fn = this.formatFunctionLog(`registerQuest`)
+		if (!reward_amount) return new Error(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
+		if (!name) return new Error(`${fn} The parameter 'name' is missing, it must be an String`)
+		if (!description) return new Error(`${fn} The parameter 'description' is missing, it must be an String`)
+		if (!correct_answer) return new Error(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
+		if (typeof (reward_amount) != Number) return new TypeError(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
+		if (typeof (name) != String) return new TypeError(`${fn} The parameter 'name' is missing, it must be an String`)
+		if (typeof (description) != String) return new TypeError(`${fn} The parameter 'description' is missing, it must be an String`)
+		if (typeof (correct_answer) != String) return new TypeError(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
 		return await this._query(`
 		INSERT INTO quests(
 			reward_amount,
@@ -1995,7 +2209,7 @@ class Quests extends DatabaseUtility {
 			description,
 			correct_answer
 		)
-		VALUES($reward_amount, $name, $description,	$correct_answer)`, `run`, { reward_amount: reward_amount, name: name, description: description, correct_answer: correct_answer }, `Registered new quest`)
+		VALUES($reward_amount, $name, $description,	$correct_answer)`, `run`, { reward_amount: reward_amount, name: name, description: description, correct_answer: correct_answer }, `${fn} Registered new quest`)
 	}
 
 	/**
@@ -2003,6 +2217,7 @@ class Quests extends DatabaseUtility {
 	   * @return {QueryResult}
 	   */
 	async getAllQuests() {
+		const fn = this.formatFunctionLog(`getAllQuests`)
 		const cacheId = `CACHED_QUESTS_POOL`
 		const cache = await this.redis.get(cacheId)
 		if (cache !== null) return JSON.parse(cache)
@@ -2011,7 +2226,7 @@ class Quests extends DatabaseUtility {
 			FROM quests`
 			, `all`
 			, []
-			, `Fetching all the available quests in master quests table`
+			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
 		this.redis.set(cacheId, JSON.stringify(res), `EX`, (60 * 60) * 3)
@@ -2025,38 +2240,46 @@ class Quests extends DatabaseUtility {
 	   * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserNextActiveQuest(userId = ``, guildId = ``, nextQuestId = ``) {
+	updateUserNextActiveQuest(userId, guildId, nextQuestId) {
+		const fn = this.formatFunctionLog(`updateUserNextActiveQuest`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
-			SET next_quest_id = ?
+			SET next_quest_id = $nextQuestId
 			WHERE
-				user_id = ?
-				AND guild_id = ?`
+				user_id = $userId
+				AND guild_id = $guildId`
 			, `run`
-			, [nextQuestId, userId, guildId]
-			, `Updating next active quest ID for ${userId}@${guildId}`
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, `${fn} Updating next active quest ID for ${userId}@${guildId}`
 		)
 	}
 
 	/**
 	   * Update user's quest data after completing a quest
-	   * @param {string} [userId=``] target user's data to be updated
-	   * @param {string} [guildId=``] target guild where user's data going to be updated
-	   * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
+	   * @param {string} [userId] target user's data to be updated
+	   * @param {string} [guildId] target guild where user's data going to be updated
+	   * @param {string} [nextQuestId] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserQuest(userId = ``, guildId = ``, nextQuestId = ``) {
+	updateUserQuest(userId, guildId, nextQuestId) {
+		const fn = this.formatFunctionLog(`updateUserQuest`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
 			SET 
 				updated_at = datetime('now'),
-				next_quest_id = ?
+				next_quest_id = $nextQuestId
 			WHERE
-				user_id = ?
-				AND guild_id = ?`
+				user_id = $userId
+				AND guild_id = $guildId`
 			, `run`
-			, [nextQuestId, userId, guildId]
-			, `Updating ${userId}@${guildId} quest data`
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, `${fn} Updating ${userId}@${guildId} quest data`
 		)
 	}
 
@@ -2068,7 +2291,12 @@ class Quests extends DatabaseUtility {
 	   * @param {string} [answer=``] the answer used to clear the quest
 	   * @return {QueryResult}
 	   */
-	recordQuestActivity(questId = ``, userId = ``, guildId = ``, answer = ``) {
+	recordQuestActivity(questId, userId, guildId, answer) {
+		const fn = this.formatFunctionLog(`updateUserQuest`)
+		if (!questId) throw new TypeError(`${fn} parameter "questId" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!answer) throw new TypeError(`${fn} parameter "answer" cannot be blank.`)
 		return this._query(`
 			INSERT INTO quest_log(
 				guild_id,
@@ -2076,10 +2304,10 @@ class Quests extends DatabaseUtility {
 				user_id,
 				answer
 			)
-			VALUES(?, ?, ?, ?)`
+			VALUES($questId, $userId, $guildId, $answer)`
 			, `run`
-			, [questId, userId, guildId, answer]
-			, `Storing ${userId}@${guildId} quest's activity to quest_log table`
+			, { questId: questId, userId: userId, guildId: guildId, answer: answer }
+			, `${fn} Storing ${userId}@${guildId} quest's activity to quest_log table`
 		)
 	}
 }
