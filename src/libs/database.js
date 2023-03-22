@@ -1441,7 +1441,6 @@ class AutoResponder extends DatabaseUtility {
 	async getAutoResponders(guildId, fetchCache = true) {
 		const fn = this.formatFunctionLog(`getAutoResponders`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
-		if (!fetchCache) throw new TypeError(`${fn} parameter "fetchCache" cannot be blank.`)
 		if (typeof (fetchCache) !== `boolean`) throw new TypeError(`${fn} parameter "fetchCache" must be a boolean.`)
 		//  Check in cache
 		const cacheID = `REGISTERED_AR@${guildId}`
@@ -1572,7 +1571,7 @@ class DurationalBuffs extends DatabaseUtility {
 	getSavedUserDurationalBuffs(userId) {
 		const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
-		if (userId) return this._query(`
+		return this._query(`
             SELECT *
             FROM user_durational_buffs
             WHERE user_id = $userId`
@@ -1580,6 +1579,14 @@ class DurationalBuffs extends DatabaseUtility {
 			, { userId: userId }
 			, `${fn} fetch durantional buffs for USER_ID:${userId}`
 		)
+	}
+
+	/**
+	 * Fetch all the saved durational buffs.
+	 * @return {object}
+	 */
+	getSavedDurationalBuffs() {
+		const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
 		return this._query(`
             SELECT *
             FROM user_durational_buffs`
