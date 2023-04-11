@@ -24,7 +24,7 @@ module.exports = {
         let str = ``
         for (let i = 0; i < buffs.length; i++) {
             const buff = buffs[i]
-            const localTime = await client.db.systemUtility.toLocaltime(buff.registered_at)
+            const localTime = await client.db.systemUtils.toLocaltime(buff.registered_at)
             const expireAt = new Date(localTime).getTime() + buff.duration
             str += `╰☆～(${buff.multiplier*100}%)(${ms(new Date(expireAt).getTime() - Date.now(), {long:true})}) ${buff.type} boost from **'${buff.name}'** buff.\n`
         }
@@ -42,7 +42,7 @@ module.exports = {
         let str = ``
         for (let i = 0; i < buffs.length; i++) {
             const buff = buffs[i]
-            const localTime = await client.db.systemUtility.toLocaltime(buff.registered_at)
+            const localTime = await client.db.systemUtils.toLocaltime(buff.registered_at)
             const expireAt = new Date(localTime).getTime() + buff.duration
             str += `╰☆～(${buff.multiplier*100}%)(${ms(new Date(expireAt).getTime() - Date.now(), {long:true})}) ${buff.type} boost from **'${buff.name}'** buff.\n`
         }

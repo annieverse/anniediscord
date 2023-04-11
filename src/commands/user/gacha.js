@@ -66,8 +66,8 @@ module.exports = {
         c.onAccept(async() => {
             suggestToBuy.delete()
                 //  Deduct balance & deliver lucky tickets
-            client.db.databaseUtility.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id })
-            await client.db.databaseUtility.updateInventory({ itemId: 71, value: amountToOpen, userId: message.author.id, guildId: message.guild.id })
+            client.db.databaseUtils.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: message.author.id, guildId: message.guild.id })
+            await client.db.databaseUtils.updateInventory({ itemId: 71, value: amountToOpen, userId: message.author.id, guildId: message.guild.id })
             this.startsRoll(client, reply, message, arg, locale, instanceId, userData)
         })
     },
@@ -111,8 +111,8 @@ module.exports = {
         client.db.redis.set(instanceId, `1`, `EX`, 30)
         c.onAccept(async() => {
             //  Deduct balance & deliver lucky tickets
-            client.db.databaseUtility.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
-            await client.db.databaseUtility.updateInventory({ itemId: 71, value: amountToOpen, userId: interaction.member.id, guildId: interaction.guild.id })
+            client.db.databaseUtils.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
+            await client.db.databaseUtils.updateInventory({ itemId: 71, value: amountToOpen, userId: interaction.member.id, guildId: interaction.guild.id })
             this.startsRoll(client, reply, interaction, amountToOpen, locale, instanceId, userData)
         })
     },
@@ -141,11 +141,11 @@ module.exports = {
             loots.push(loot)
         }
         //  Subtract user's box
-        client.db.databaseUtility.updateInventory({ itemId: 71, value: drawCount, operation: `-`, userId: message.member.user.id, guildId: message.guild.id })
+        client.db.databaseUtils.updateInventory({ itemId: 71, value: drawCount, operation: `-`, userId: message.member.user.id, guildId: message.guild.id })
             //  Storing received loots into user's inventory
         for (let i = 0; i < loots.length; i++) {
             const item = loots[i]
-            await client.db.databaseUtility.updateInventory({ itemId: item.item_id, value: item.quantity, userId: message.member.user.id, guildId: message.guild.id })
+            await client.db.databaseUtils.updateInventory({ itemId: item.item_id, value: item.quantity, userId: message.member.user.id, guildId: message.guild.id })
         }
         client.db.redis.del(instanceId)
             //  Displaying result

@@ -240,7 +240,7 @@ module.exports = {
      */
     async enable(client, reply, message, arg, locale, prefix) {
         if (this.primaryConfig.value) {
-            const localizeTime = await client.db.systemUtility.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
@@ -249,7 +249,7 @@ module.exports = {
             })
         }
         //  Update configs
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 1,
             guild: message.guild,
@@ -274,7 +274,7 @@ module.exports = {
                 prefix: prefix
             }
         })
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: 0,
             guild: message.guild,
@@ -319,7 +319,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428578683617331`)
             }
         })
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: searchChannel.id,
             guild: message.guild,
@@ -353,7 +353,7 @@ module.exports = {
         })
         //  Update configs
         const welcomerText = this.args.slice(1).join(` `)
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: welcomerText,
             guild: message.guild,
@@ -426,7 +426,7 @@ module.exports = {
         })
         //  Handle role reset
         if (this.args[1].startsWith(`reset`)) {
-            client.db.guildUtility.updateGuildConfiguration({
+            client.db.guildUtils.updateGuildConfiguration({
                 configCode: this.selectedModule,
                 customizedParameter: [],
                 guild: message.guild,
@@ -455,7 +455,7 @@ module.exports = {
             rolesContainer.push(searchRole)
         }
         //  Update configs
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: rolesContainer.map(role => role.id),
             guild: message.guild,
@@ -483,7 +483,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.guildUtility.deleteGuildConfiguration(`WELCOMER_IMAGE`, message.guild.id)
+            client.db.guildUtils.deleteGuildConfiguration(`WELCOMER_IMAGE`, message.guild.id)
             fs.unlink(`./src/assets/customWelcomer/${welcomerImage}.png`, (error) => {
                 if (error) client.logger.warn(`[setWelcomer.js][Removing Image from filetree] ${error.stack}`)
             })
@@ -533,7 +533,7 @@ module.exports = {
             return reply.send(`im sorry but that link/attachment is not supported. Please try again with a link/attachment of the image itself.`)
         }
         if (this.guildConfigurations.get(`WELCOMER_NOIMAGE`).value) {
-            await client.db.guildUtility.updateGuildConfiguration({
+            await client.db.guildUtils.updateGuildConfiguration({
                 configCode: `WELCOMER_NOIMAGE`,
                 customizedParameter: 0,
                 guild: message.guild,
@@ -542,7 +542,7 @@ module.exports = {
             })
         }
         if (this.guildConfigurations.get(`WELCOMER_USERIMAGE`).value) {
-            await client.db.guildUtility.updateGuildConfiguration({
+            await client.db.guildUtils.updateGuildConfiguration({
                 configCode: `WELCOMER_USERIMAGE`,
                 customizedParameter: 0,
                 guild: message.guild,
@@ -557,7 +557,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.guildUtility.updateGuildConfiguration({
+            client.db.guildUtils.updateGuildConfiguration({
                 configCode: this.selectedModule,
                 customizedParameter: id,
                 guild: message.guild,
@@ -586,7 +586,7 @@ module.exports = {
         //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: settingValue,
             guild: message.guild,
@@ -594,7 +594,7 @@ module.exports = {
             cacheTo: this.guildConfigurations
         })
         if (this.guildConfigurations.get(`WELCOMER_NOIMAGE`).value) {
-            await client.db.guildUtility.updateGuildConfiguration({
+            await client.db.guildUtils.updateGuildConfiguration({
                 configCode: `WELCOMER_NOIMAGE`,
                 customizedParameter: 0,
                 guild: message.guild,
@@ -631,7 +631,7 @@ module.exports = {
         //  Update configs
         let settingValue = this.guildConfigurations.get(this.selectedModule).value
         settingValue = settingValue == 1 ? 0 : 1
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: settingValue,
             guild: message.guild,
@@ -702,7 +702,7 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieMad`)
             }
         })
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
             customizedParameter: this.args[1],
             guild: message.guild,

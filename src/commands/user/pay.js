@@ -88,9 +88,9 @@ module.exports = {
             //  Handle if user trying to send artcoins above the amount they had
             if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE)
  			//  Send artcoins to target user
-			client.db.databaseUtility.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: message.guild.id})
+			client.db.databaseUtils.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: message.guild.id})
 			//  Deduct artcoins from sender's balance
-			client.db.databaseUtility.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: message.author.id, guildId: message.guild.id})
+			client.db.databaseUtils.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: message.author.id, guildId: message.guild.id})
  			await reply.send(``, {
  				customHeader: [`${targetUser.username} has received your artcoins!♡`, targetUser.displayAvatarURL()],
  				socket:{target: targetUser.username} 
@@ -133,9 +133,9 @@ module.exports = {
             //  Handle if user trying to send artcoins above the amount they had
             if (userData.inventory.artcoins < amountToSend) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE,{followUp:true})
  			//  Send artcoins to target user
-			client.db.databaseUtility.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: interaction.guild.id})
+			client.db.databaseUtils.updateInventory({itemId: 52, value: total, userId: targetUser.id, guildId: interaction.guild.id})
 			//  Deduct artcoins from sender's balance
-			client.db.databaseUtility.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id})
+			client.db.databaseUtils.updateInventory({itemId: 52, value: amountToSend, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id})
  			await reply.send(``, {
  				customHeader: [`${targetUser.username} has received your artcoins!♡`, targetUser.displayAvatarURL()],
  				socket:{target: targetUser.username},

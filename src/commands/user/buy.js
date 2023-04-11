@@ -109,7 +109,7 @@ module.exports = {
             await c.setup(user.id, confirmation)
             c.onAccept(async () => {
                 await message.fetchReply()
-                const balance = await client.db.userUtility.getUserBalance(user.id, guild.id)
+                const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
                 //  Handle if user does not have sufficient artcoins
                 if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
                     socket: {
@@ -119,7 +119,7 @@ module.exports = {
                     followUp:true
                 })
                 //  Deduct artcoins
-                client.db.databaseUtility.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     operation: `-`,
                     userId: user.id,
                     guildId: guild.id,
@@ -127,7 +127,7 @@ module.exports = {
                     value: shopMetadata.price
                 })
                 //  Send item
-                client.db.databaseUtility.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     operation: `+`,
                     userId: user.id,
                     guildId: guild.id,
@@ -159,7 +159,7 @@ module.exports = {
             const c = new Confirmator(message, reply, false)
             await c.setup(user.id, confirmation)
             c.onAccept(async () => {
-                const balance = await client.db.userUtility.getUserBalance(user.id, guild.id)
+                const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
                 //  Handle if user does not have sufficient artcoins
                 if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
                     socket: {
@@ -168,7 +168,7 @@ module.exports = {
                     }
                 })
                 //  Deduct artcoins
-                client.db.databaseUtility.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     operation: `-`,
                     userId: user.id,
                     guildId: guild.id,
@@ -176,7 +176,7 @@ module.exports = {
                     value: shopMetadata.price
                 })
                 //  Send item
-                client.db.databaseUtility.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     operation: `+`,
                     userId: user.id,
                     guildId: guild.id,

@@ -124,7 +124,7 @@ module.exports = {
             let searchStringResult = stringSimilarity.findBestMatch(arg, availableRelationships.map(i => i.name))
             const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
             if (!relationship) return await reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
-            const targetGender = await client.db.userUtility.getUserGender(targetUser.master.id)
+            const targetGender = await client.db.userUtils.getUserGender(targetUser.master.id)
             const relRole = targetGender ? relationshipPairs[targetGender.gender][relationship.name] : relationship.name
                 //  Render confirmation
             const confirmation = await reply.send(locale.RELATIONSHIP.TARGET_CONFIRMATION, {

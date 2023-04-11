@@ -67,7 +67,7 @@ module.exports = {
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
             //  Deduct item from user's inventory.
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: targetItem.item_id,
                 userId: message.author.id,
                 guildId: message.guild.id,
@@ -129,7 +129,7 @@ module.exports = {
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
             //  Deduct item from user's inventory.
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: targetItem.item_id,
                 userId: interaction.member.id,
                 guildId: interaction.guild.id,

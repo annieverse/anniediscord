@@ -3,7 +3,7 @@ const {
 } = require(`discord.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 module.exports = async (client, interaction) => {
-    await client.db.databaseUtility.validateUserEntry(interaction.user.id, interaction.user.username)
+    await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     if (interaction.type === InteractionType.ApplicationCommand) {
         let command = client.application_commands.get(interaction.commandName)
         // Ignore non-registered commands

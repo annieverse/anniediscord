@@ -122,7 +122,7 @@ module.exports = {
      * @return {void}
      */
     async enable(client, reply, message, arg, locale, prefix) {
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -140,7 +140,7 @@ module.exports = {
      * @return {void}
      */
     async disable(client, reply, message, arg, locale) {
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
@@ -176,7 +176,7 @@ module.exports = {
                 //  Handle if user has asked to reset the custom channel
             if (this.args[1] === `reset`) {
                 //  Update and finalize
-                client.db.guildUtility.updateGuildConfiguration({
+                client.db.guildUtils.updateGuildConfiguration({
                     configCode: subConfigId,
                     customizedParameter: ``,
                     guild: message.guild,
@@ -200,7 +200,7 @@ module.exports = {
                 socket: { emoji: await client.getEmoji(`692428578683617331`) }
             })
             //  Update and finalize
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: subConfigId,
             customizedParameter: res.id,
             guild: message.guild,
@@ -244,7 +244,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
-            client.db.guildUtility.updateGuildConfiguration({
+            client.db.guildUtils.updateGuildConfiguration({
                 configCode: subConfigId,
                 customizedParameter: newText,
                 guild: message.guild,

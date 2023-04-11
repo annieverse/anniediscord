@@ -31,7 +31,7 @@ module.exports = async (client, interaction, command) =>{
     }
     client.cooldowns.set(instanceId, Date.now())
         // Handle user locale
-    const userLanguage = await client.db.userUtility.getUserLocale(interaction.user.id)
+    const userLanguage = await client.db.userUtils.getUserLocale(interaction.user.id)
     let locale = null
     try {
         locale = client.locales[userLanguage.lang]
@@ -47,7 +47,7 @@ module.exports = async (client, interaction, command) =>{
         if (interaction.type === InteractionType.ApplicationCommand) await command.Iexecute(client, reply, interaction, options, locale)
         //  Dispose
         command = null
-        return client.db.systemUtility.recordsCommandUsage({
+        return client.db.systemUtils.recordsCommandUsage({
             guild_id: interaction.guildId,
             user_id: interaction.user.id,
             command_alias: targetCommand,

@@ -77,7 +77,7 @@ module.exports = {
             })
             .then(async load => {
                 //  Fetch points data and eliminates zero values if present.
-                let lbData = (await client.db.databaseUtility.indexRanking(selectedGroup, message.guild.id)).filter(node => node.points > 0)
+                let lbData = (await client.db.databaseUtils.indexRanking(selectedGroup, message.guild.id)).filter(node => node.points > 0)
                 let validUsers = []
                     //  Fetching uncached users
                 for (let i = 0; i < lbData.length; i++) {
@@ -141,7 +141,7 @@ module.exports = {
         })
         .then(async load => {
             //  Fetch points data and eliminates zero values if present.
-            let lbData = (await client.db.databaseUtility.indexRanking(selectedGroup, interaction.guild.id)).filter(node => node.points > 0)
+            let lbData = (await client.db.databaseUtils.indexRanking(selectedGroup, interaction.guild.id)).filter(node => node.points > 0)
             let validUsers = []
                 //  Fetching uncached users
             for (let i = 0; i < lbData.length; i++) {

@@ -213,7 +213,7 @@ class Annie extends Discord.Client {
          */
         async registerGuildConfigurations(guildId = null) {
             const initTime = process.hrtime()
-            const registeredGuildConfigurations = await this.db.guildUtility.getAllGuildsConfigurations()
+            const registeredGuildConfigurations = await this.db.guildUtils.getAllGuildsConfigurations()
                 //  If prompted to register only single guild, then use single-element array.
             const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
             for (let i = 0; i < getGuilds.length; i++) {
@@ -253,7 +253,7 @@ class Annie extends Discord.Client {
                                     //  Skip if guild isn't exists in current shard.
                                 if (!this.guilds.cache.has(node.guild_id)) continue
                                 const key = `${node.type}_BUFF:${node.guild_id}@${node.user_id}`
-                                const localTime = await this.db.systemUtility.toLocaltime(node.registered_at)
+                                const localTime = await this.db.systemUtils.toLocaltime(node.registered_at)
                                 const expireAt = new Date(localTime).getTime() + node.duration
                                     //  Skip expired buff, and delete it from database as well.
                                 if ((new Date(expireAt).getTime() - Date.now()) <= 0) {
@@ -302,7 +302,7 @@ class Annie extends Discord.Client {
             if (!this.guilds.cache.has(guildId)) continue
             const registeredArs = await this.db.autoResponder.getAutoResponders(guildId, false)
             totalArs += registeredArs.length
-            this.db.databaseUtility.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
+            this.db.databaseUtils.setCache(`REGISTERED_AR@${guildId}`, JSON.stringify(registeredArs))
         }
         this.logger.info(`${fn} ${totalArs} ARs have been registered`)
     }

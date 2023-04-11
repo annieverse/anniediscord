@@ -61,7 +61,7 @@ class Experience {
      *  @return {void}
      */
     execute(expToBeAdded=this.defaultGain) {
-    	this.client.db.userUtility.getUserExp(this.user.id, this.guild.id)
+    	this.client.db.userUtils.getUserExp(this.user.id, this.guild.id)
         .then(exp => {
             if (!exp) return
             const prevExp = this.xpFormula(exp.current_exp)
@@ -72,7 +72,7 @@ class Experience {
                 if (this.guild.configs.get(`LEVEL_UP_MESSAGE`).value) this.levelUpPerks(newExp.level)
             }
             //  Update user's exp data.
-            this.client.db.userUtility.updateUserExp(expToBeAdded, this.user.id, this.guild.id)
+            this.client.db.userUtils.updateUserExp(expToBeAdded, this.user.id, this.guild.id)
         })
         .catch(e => {
             this.client.logger.warn(`${this.instanceId} <FAIL> to gain exp > ${e.message}`)
@@ -231,10 +231,10 @@ class Experience {
      *  @return {object}
      */
     async _getMinimalUserMetadata() {
-        const inventoryData = await this.client.db.userUtility.getUserInventory(this.user.id, this.guild.id)
+        const inventoryData = await this.client.db.userUtils.getUserInventory(this.user.id, this.guild.id)
         const theme = inventoryData.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
         const usedTheme = theme.length ? theme[0] : await this.client.db.shop.getItem(`light`)
-		const cover = await this.client.db.userUtility.getUserCover(this.user.id, this.guild.id)
+		const cover = await this.client.db.userUtils.getUserCover(this.user.id, this.guild.id)
 		let usedCover = {}
 		if (cover) {
 			usedCover = cover

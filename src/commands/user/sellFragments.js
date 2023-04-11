@@ -90,14 +90,14 @@ module.exports = {
             //  Prevent user from selling over the amount of their owned fragments
             if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 userId: message.author.id,
                 guildId: message.guild.id,
                 value: receivedAmount
             })
             //  Deduct fragments from user's inventory
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 51,
                 userId: message.author.id,
                 guildId: message.guild.id,
@@ -159,14 +159,14 @@ module.exports = {
             //  Prevent user from selling over the amount of their owned fragments
             if (amountToSell > userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
             //  Deliver artcoins to user's inventory
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 userId: interaction.member.id,
                 guildId: interaction.guild.id,
                 value: receivedAmount
             })
             //  Deduct fragments from user's inventory
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 51,
                 userId: interaction.member.id,
                 guildId: interaction.guild.id,

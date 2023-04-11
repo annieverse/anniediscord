@@ -171,7 +171,7 @@ module.exports = {
     async enable(client, reply, message, arg, locale) {
         //  Handle if module already enabled
         if (this.primaryConfig.value) {
-            const localizeTime = await client.db.systemUtility.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.AUTORESPONDER.ALREADY_ENABLED, {
                 socket: {
                     emoji: await client.getEmoji(`692428969667985458`),
@@ -181,7 +181,7 @@ module.exports = {
             })
         }
         //  Update configurations
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -209,7 +209,7 @@ module.exports = {
             })
         }
         //  Update configurations
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
@@ -237,7 +237,7 @@ module.exports = {
                 prefix: prefix
             }
         })
-        const localizedTime = await client.db.systemUtility.toLocaltime(ars[0].registered_at)
+        const localizedTime = await client.db.systemUtils.toLocaltime(ars[0].registered_at)
         const author = await client.users.fetch(ars[0].user_id)
         return await reply.send(this._parseRegisteredAutoResponders(ars, false, {
             size: ars.length,

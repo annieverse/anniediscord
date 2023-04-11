@@ -160,7 +160,7 @@ module.exports = {
             await client.db.covers.detachCovers(message.author.id, message.guild.id)
             if (this.cover.isSelfUpload) {
                 client.db.covers.applySelfUploadCover(this.cover.item_id, message.author.id, message.guild.id)
-                client.db.databaseUtility.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id })
+                client.db.databaseUtils.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: message.author.id, guildId: message.guild.id })
             }
             else {
                 client.db.covers.deleteSelfUploadCover(message.author.id, message.guild.id)
@@ -295,7 +295,7 @@ module.exports = {
             }            
             if (this.cover.isSelfUpload) {
                 client.db.covers.applySelfUploadCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
-                client.db.databaseUtility.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
+                client.db.databaseUtils.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
             }
             else {
                 client.db.covers.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)

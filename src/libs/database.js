@@ -47,14 +47,14 @@ class Database {
 	}
 
 	initializeDb() {
-		this.databaseUtility = new DatabaseUtility(this)
+		this.databaseUtils = new DatabaseUtils(this)
 		this.quests = new Quests(this)
 		this.reminders = new Reminders(this)
-		this.guildUtility = new GuildUtility(this)
+		this.guildUtils = new GuildUtils(this)
 		this.autoResponder = new AutoResponder(this)
 		this.durationalBuffs = new DurationalBuffs(this)
-		this.userUtility = new UserUtility(this)
-		this.systemUtility = new SystemUtility(this)
+		this.userUtils = new UserUtils(this)
+		this.systemUtils = new SystemUtils(this)
 		this.customRewards = new CustomRewards(this)
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
@@ -78,11 +78,11 @@ class Database {
 	}
 }
 
-class DatabaseUtility {
+class DatabaseUtils {
 	constructor(obj) {
 		this.client = obj.client
 		this.redis = obj.redis
-		this.fnClass = `DatabaseUtility`
+		this.fnClass = `DatabaseUtils`
 	}
 
 	/**
@@ -312,7 +312,7 @@ class DatabaseUtility {
 	}
 }
 
-class Reminders extends DatabaseUtility {
+class Reminders extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `Reminders`
@@ -401,11 +401,11 @@ class Reminders extends DatabaseUtility {
 	}
 }
 
-class UserUtility extends DatabaseUtility {
+class UserUtils extends DatabaseUtils {
 
 	constructor(client) {
 		super(client)
-		this.fnClass = `UserUtility`
+		this.fnClass = `UserUtils`
 	}
 
 	/**
@@ -1077,11 +1077,11 @@ class UserUtility extends DatabaseUtility {
 	}
 }
 
-class SystemUtility extends DatabaseUtility {
+class SystemUtils extends DatabaseUtils {
 
 	constructor(client) {
 		super(client)
-		this.fnClass = `SystemUtility`
+		this.fnClass = `SystemUtils`
 	}
 
 	/**
@@ -1151,10 +1151,10 @@ class SystemUtility extends DatabaseUtility {
 	}
 }
 
-class GuildUtility extends DatabaseUtility {
+class GuildUtils extends DatabaseUtils {
 	constructor(client) {
 		super(client)
-		this.fnClass = `GuildUtility`
+		this.fnClass = `GuildUtils`
 	}
 
 	/**
@@ -1310,7 +1310,7 @@ class GuildUtility extends DatabaseUtility {
 	}
 }
 
-class Relationships extends DatabaseUtility {
+class Relationships extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `Relationships`
@@ -1411,7 +1411,7 @@ class Relationships extends DatabaseUtility {
 }
 
 
-class AutoResponder extends DatabaseUtility {
+class AutoResponder extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `AutoResponder`
@@ -1557,7 +1557,7 @@ class AutoResponder extends DatabaseUtility {
 	}
 }
 
-class DurationalBuffs extends DatabaseUtility {
+class DurationalBuffs extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `DurationalBuffs`
@@ -1712,36 +1712,61 @@ class DurationalBuffs extends DatabaseUtility {
 	}
 }
 
-class CustomRewards extends DatabaseUtility {
+class CustomRewards extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `CustomRewards`
 	}
 
+	/**
+	 * Retrieve all reward packages for specific Discord guild
+	 * @param {string} guildId 
+	 * @returns {Promise}
+	 */
 	getRewardAmount(guildId) {
+		const fn = this.formatFunctionLog(`getRewardAmount`)
 		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId`
 			, `all`
 			, { guild_id: guildId }
+			, `${fn} Retrieving all packages for guild: ${guildId}`
 		)
 	}
 
+	/**
+	 * Write the package data to the DB
+	 * @param {string} guildId target guild
+	 * @param {string} userId target user's id
+	 * @param {string} rewardBlob the package as a stringified JSON
+	 * @param {string} rewardName the package name
+	 * @returns {Promise}
+	 */
 	recordReward(guildId, userId, rewardBlob, rewardName) {
+		const fn = this.formatFunctionLog(`recordReward`)
 		return this._query(` INSERT INTO custom_rewards (registered_at, guild_id, set_by_user_id, reward, reward_name)
 		VALUES (datetime('now'), $guildId, $user_id, $reward, $rewardName)`
 			, `run`
 			, { guild_id: guildId, user_id: userId, reward: rewardBlob, rewardName: rewardName }
+			, `${fn} Inserting record for new package for guild: ${guildId}`
 		)
 	}
 
+	/**
+	 * Delete package from DB
+	 * @param {string} guildId target guild
+	 * @param {string} rewardName package name
+	 * @returns {Promise}
+	 */
 	deleteReward(guildId, rewardName) {
+		const fn = this.formatFunctionLog(`deleteReward`)
 		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guildId AND reward_name = $rewardName`
 			, `run`
 			, { guild_id: guildId, rewardName: rewardName }
+			, `${fn} deleting package with name: ${rewardName} from guild: ${guildId}`
 		)
 	}
 }
 
-class Covers extends DatabaseUtility {
+class Covers extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `Covers`
@@ -1862,7 +1887,7 @@ class Covers extends DatabaseUtility {
 	}
 }
 
-class Shop extends DatabaseUtility {
+class Shop extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `Shop`
@@ -2191,7 +2216,7 @@ class Shop extends DatabaseUtility {
 
 }
 
-class Quests extends DatabaseUtility {
+class Quests extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 		this.fnClass = `Quests`
@@ -2199,14 +2224,14 @@ class Quests extends DatabaseUtility {
 
 	async registerQuest(reward_amount, name, description, correct_answer) {
 		const fn = this.formatFunctionLog(`registerQuest`)
-		if (!reward_amount) return new Error(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
-		if (!name) return new Error(`${fn} The parameter 'name' is missing, it must be an String`)
-		if (!description) return new Error(`${fn} The parameter 'description' is missing, it must be an String`)
-		if (!correct_answer) return new Error(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
-		if (typeof (reward_amount) != Number) return new TypeError(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
-		if (typeof (name) != String) return new TypeError(`${fn} The parameter 'name' is missing, it must be an String`)
-		if (typeof (description) != String) return new TypeError(`${fn} The parameter 'description' is missing, it must be an String`)
-		if (typeof (correct_answer) != String) return new TypeError(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
+		if (!reward_amount) new Error(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
+		if (!name) new Error(`${fn} The parameter 'name' is missing, it must be an String`)
+		if (!description) new Error(`${fn} The parameter 'description' is missing, it must be an String`)
+		if (!correct_answer) new Error(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
+		if (typeof (reward_amount) != Number) new TypeError(`${fn} The parameter 'reward_amount' is missing, it must be an Integer`)
+		if (typeof (name) != String) new TypeError(`${fn} The parameter 'name' is missing, it must be an String`)
+		if (typeof (description) != String) new TypeError(`${fn} The parameter 'description' is missing, it must be an String`)
+		if (typeof (correct_answer) != String) new TypeError(`${fn} The parameter 'correct_answer' is missing, it must be an String`)
 		return await this._query(`
 		INSERT INTO quests(
 			reward_amount,
@@ -2317,7 +2342,7 @@ class Quests extends DatabaseUtility {
 	}
 }
 
-/* class Template extends DatabaseUtility{
+/* class Template extends DatabaseUtils{
 	constructor(client){
 		super(client)
 	}

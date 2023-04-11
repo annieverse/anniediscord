@@ -29,7 +29,7 @@ module.exports = {
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
-        const targetUserBalance = await client.db.userUtility.getUserBalance(targetUser.id, message.guild.id)
+        const targetUserBalance = await client.db.userUtils.getUserBalance(targetUser.id, message.guild.id)
         return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),
             socket: {
@@ -41,7 +41,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const targetUser = options.getUser(`user`) || interaction.member.user
-        const targetUserBalance = await client.db.userUtility.getUserBalance(targetUser.id, interaction.guild.id)
+        const targetUserBalance = await client.db.userUtils.getUserBalance(targetUser.id, interaction.guild.id)
         return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),
             socket: {

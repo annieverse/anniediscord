@@ -1,5 +1,5 @@
 module.exports = async function guildCreate(client, guild) {   
-    client.db.guildUtility.registerGuild(guild)
+    client.db.guildUtils.registerGuild(guild)
     client.registerGuildConfigurations(guild.id)
     //  Limit logging utility to support server only
     //  Perform logging to support server

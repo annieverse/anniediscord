@@ -78,7 +78,7 @@ module.exports = function masterShard() {
 			c.users.fetch(userId).then(async user => {
 				//  Only perform on SHARD_ID:0
 				if (c.shard.ids[0] === 0) {
-					c.db.databaseUtility.updateInventory({
+					c.db.databaseUtils.updateInventory({
 						itemId: 52,
 						userId: userId,
 						value: 5000,

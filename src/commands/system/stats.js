@@ -20,7 +20,7 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        const { total } = await client.db.systemUtility.getTotalCommandUsage()
+        const { total } = await client.db.systemUtils.getTotalCommandUsage()
             //  Cache server size for every 12 hour
         const serverSize = async() => {
             const key = `MASTER:GUILD_SIZE`
@@ -47,7 +47,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const { total } = await client.db.systemUtility.getTotalCommandUsage()
+        const { total } = await client.db.systemUtils.getTotalCommandUsage()
             //  Cache server size for every 12 hour
         const serverSize = async() => {
             const key = `MASTER:GUILD_SIZE`

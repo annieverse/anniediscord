@@ -496,7 +496,7 @@ module.exports = {
      */
     async open(client, reply, message, arg, locale, prefix) {
         const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: `SHOP_MODULE`,
             customizedParameter: 1,
             guild: message.guild,
@@ -517,7 +517,7 @@ module.exports = {
      */
     async close(client, reply, message, arg, locale, prefix) {
         const targetConfig = message.guild.configs.get(`SHOP_MODULE`)
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: `SHOP_MODULE`,
             customizedParameter: 0,
             guild: message.guild,
@@ -540,7 +540,7 @@ module.exports = {
             },
         })
         //  Update configs
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: `SHOP_TEXT`,
             customizedParameter: param,
             guild: message.guild,
@@ -877,7 +877,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.guildUtility.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
+            client.db.guildUtils.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
             fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error)=>{
                 if (error) client.logger.warn(`[setShop.js][Removing Image from filetree] ${error.stack}`)
             })
@@ -922,7 +922,7 @@ module.exports = {
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.guildUtility.updateGuildConfiguration({
+            client.db.guildUtils.updateGuildConfiguration({
                 configCode: `SHOP_IMAGE`,
                 customizedParameter: id,
                 guild: message.guild,

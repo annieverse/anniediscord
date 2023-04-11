@@ -148,7 +148,7 @@ module.exports = {
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) this.firstTimer = true
             //  Handle if custom ranks already enabled before the action.
         if (this.primaryConfig.value) {
-            let localizeTime = await client.db.systemUtility.toLocaltime(this.primaryConfig.updatedAt)
+            let localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.SETRANK.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
@@ -157,7 +157,7 @@ module.exports = {
             })
         }
         //  Update configs
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -195,7 +195,7 @@ module.exports = {
             //  Handle if the role is already registered
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
         if (getRegisteredRank.length >= 1) {
-            const localizeTime = await client.db.systemUtility.toLocaltime(this.subConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
             return await reply.send(locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED, {
                 header: locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED_HEADER,
                 socket: {
@@ -222,7 +222,7 @@ module.exports = {
             "ROLE": getRole.id,
             "LEVEL": getRequiredLevel
         })
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: message.guild,
@@ -253,7 +253,7 @@ module.exports = {
         if (getRegisteredRank.length <= 0) return await reply.send(locale.SETRANK.DELETE_UNREGISTERED_ROLE, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
             //  Delete rank from the guild's configurations entry
         this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.subConfigID,
             customizedParameter: this.subConfig.value,
             guild: message.guild,
@@ -285,7 +285,7 @@ module.exports = {
             })
         }
         //  Handle if the main module is disabled for the few times
-        const localizeTime = await client.db.systemUtility.toLocaltime(this.primaryConfig.updatedAt)
+        const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
         if (!this.primaryConfig.value && this.primaryConfig.setByUserId) {
             return await reply.send(locale.SETRANK.INFO_DISABLED_BY_USER, {
                 thumbnail: message.guild.iconURL(),
@@ -312,7 +312,7 @@ module.exports = {
             })
         }
         //  Otherwise, display info like usual
-        const localizeSubConfigTime = await client.db.systemUtility.toLocaltime(this.subConfig.updatedAt)
+        const localizeSubConfigTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
         return await reply.send(locale.SETRANK.INFO_ENABLED, {
             status: `success`,
             thumbnail: message.guild.iconURL(),
@@ -333,7 +333,7 @@ module.exports = {
      */
     async stack(client, reply, message, arg, locale) {
         const wasEnabled = message.guild.configs.get(`RANKS_STACK`).value ? 1 : 0
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: `RANKS_STACK`,
             //  Act as toggle (enable -> disable or disable -> enable)
             customizedParameter: wasEnabled ? 0 : 1,
@@ -349,7 +349,7 @@ module.exports = {
      * @return {void}
      */
     async reset(client, reply, message, arg, locale) {
-        let timestamp = await client.db.guildUtility.getCurrentTimestamp()
+        let timestamp = await client.db.guildUtils.getCurrentTimestamp()
             //  Handle if guild doesn't have any registered rank.
         if (this.subConfig.value.length <= 0) return await reply.send(locale.SETRANK.RESET_NULL_RANKS)
             //  Confirmation before performing the action
@@ -364,7 +364,7 @@ module.exports = {
             this.subConfig.setByUserId = message.member.id
             this.subConfig.updatedAt = timestamp
             this.subConfig.value = []
-            client.db.guildUtility.deleteGuildConfiguration(this.subConfigID, message.guild.id)
+            client.db.guildUtils.deleteGuildConfiguration(this.subConfigID, message.guild.id)
             return await reply.send(locale.SETRANK.SUCCESSFULLY_RESET, { status: `success` })
         })
     },
@@ -377,7 +377,7 @@ module.exports = {
         //  Handle if the guild already has disabled the configuration
         if (!this.primaryConfig.value) return await reply.send(locale.SETRANK.ALREADY_DISABLED, { socket: { prefix: prefix } })
             //  Otherwise, update the configuration. Both in the cache and database.
-        client.db.guildUtility.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,

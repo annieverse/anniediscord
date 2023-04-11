@@ -39,26 +39,26 @@ module.exports = {
              * @returns {boolean} boolean
              */
         const userHasTheme = async theme => {
-            let res = await client.db.userUtility.checkIfThemeOwned(theme, message.author.id, message.guild.id)
+            let res = await client.db.userUtils.checkIfThemeOwned(theme, message.author.id, message.guild.id)
             let resAnswer = Object.values(res)[0] == 1 ? true : false
             if (resAnswer) return true
                 // Give item to user
-            await client.db.userUtility.GiveThemeToUser(theme, message.author.id, message.guild.id)
+            await client.db.userUtils.GiveThemeToUser(theme, message.author.id, message.guild.id)
             return true
         }
-        let currentTheme = await client.db.userUtility.findCurrentTheme(message.author.id, message.guild.id)
+        let currentTheme = await client.db.userUtils.findCurrentTheme(message.author.id, message.guild.id)
         if (darkThemeStrings.includes(arg)) {
             if (currentTheme == `dark`) return await reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
             let hasTheme = await userHasTheme(`dark`)
             if (!hasTheme) return await reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
-            client.db.userUtility.setTheme(`dark`, message.author.id, message.guild.id)
+            client.db.userUtils.setTheme(`dark`, message.author.id, message.guild.id)
             return await reply.send(locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
         }
         if (lightThemeStrings.includes(arg)) {
             if (currentTheme == `light`) return await reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
             let hasTheme = await userHasTheme(`light`)
             if (!hasTheme) return await reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
-            client.db.userUtility.setTheme(`light`, message.author.id, message.guild.id)
+            client.db.userUtils.setTheme(`light`, message.author.id, message.guild.id)
             return await reply.send(locale.SWITCH_THEME.SET_LIGHTMODE, { status: `success` })
         }
         //  Handle if no theme match with the keyword
@@ -71,21 +71,21 @@ module.exports = {
          * @returns {boolean} boolean
          */
         const userHasTheme = async theme => {
-            let res = await client.db.userUtility.checkIfThemeOwned(theme, interaction.member.id, interaction.member.id)
+            let res = await client.db.userUtils.checkIfThemeOwned(theme, interaction.member.id, interaction.member.id)
             let resAnswer = Object.values(res)[0] == 1 ? true : false
             if (resAnswer) return true
                 // Give item to user
-            await client.db.userUtility.GiveThemeToUser(theme, interaction.member.id, interaction.guild.id)
+            await client.db.userUtils.GiveThemeToUser(theme, interaction.member.id, interaction.guild.id)
             return true
         }
         let theme = options.getString(`theme`)
-        let currentTheme = await client.db.userUtility.findCurrentTheme(interaction.member.id, interaction.guild.id)
+        let currentTheme = await client.db.userUtils.findCurrentTheme(interaction.member.id, interaction.guild.id)
         if ((theme == `dark` && currentTheme == `dark`) || (theme == `light` && currentTheme == `light`)) return await reply.send(locale.SWITCH_THEME.ALREADY_THAT_THEME, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
         let hasTheme = null
         if (theme == `dark`) hasTheme = await userHasTheme(`dark`)
         if (theme == `light`) hasTheme = await userHasTheme(`light`)
         if (!hasTheme) return await reply.send(locale.SWITCH_THEME.NO_THEME_OWNED)
-        client.db.userUtility.setTheme(theme, interaction.member.id, interaction.guild.id)
+        client.db.userUtils.setTheme(theme, interaction.member.id, interaction.guild.id)
         return await reply.send(theme == `light`? locale.SWITCH_THEME.SET_LIGHTMODE : locale.SWITCH_THEME.SET_NIGHTMODE, { status: `success` })
     },
 }

@@ -76,7 +76,7 @@ module.exports = {
                 items.set(item_raw.item_id,i.amount) // Use item_id as key to prevent overwriting values
             }
             for (const i of items) {
-                client.db.databaseUtility.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     itemId: i[0],
                     value: i[1],
                     userId: interaction.member.id,
@@ -85,7 +85,7 @@ module.exports = {
             }
         }
         if (ac > 0) {
-            client.db.databaseUtility.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 value: ac,
                 userId: interaction.member.id,

@@ -137,7 +137,7 @@ class itemEffects {
      * @return {void}
      */
     _itemUpdate(itemId, amount, operation) {
-        this.client.db.databaseUtility.updateInventory({
+        this.client.db.databaseUtils.updateInventory({
             operation: operation,
             itemId: itemId,
             value: amount,
