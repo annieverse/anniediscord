@@ -2080,8 +2080,6 @@ class Shop extends DatabaseUtility {
 	 */
 	getItem(keyword, guildId) {
 		const fn = this.formatFunctionLog(`getItem`)
-		if (!keyword) throw new TypeError(`${fn} parameter "keyword" cannot be blank.`)
-		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		const str = `SELECT 
 
 				items.item_id AS item_id,
@@ -2132,7 +2130,7 @@ class Shop extends DatabaseUtility {
 			LIMIT 1`
 			, `get`
 			, { keyword: keyword }
-			, `${fn} fetch single item for GUILD_ID:${guildId}`
+			, `${fn} fetch single item by item name:${keyword}`
 		)
 	}
 
@@ -2149,7 +2147,7 @@ class Shop extends DatabaseUtility {
             FROM shop
             WHERE guild_id = $guildId`
 			, `all`
-			, {guiildId:guildId}
+			, {guildId:guildId}
 			, `${fn} fetch shop for GUILD_ID:${guildId}`
 		)
 	}

@@ -37,7 +37,6 @@ module.exports = {
             //  Direct roll if user already has the tickets.
         const instanceId = `GACHA_SESSION:${message.guild.id}@${message.author.id}`
         if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, message, arg, locale, instanceId, userData)
-        const gachaItem = await client.db.shop.getItem(71)
         const userCurrentCurrency = userData.inventory.artcoins
         const amountToPay = 120 * amountToOpen
             //  Handle if user doesn't have enough artcoins to buy tickets
