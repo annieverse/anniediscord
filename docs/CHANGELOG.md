@@ -1,3 +1,10 @@
+## [9.5.6](https://github.com/klerikdust/anniediscord/compare/v9.5.5...v9.5.6) (2023-04-11)
+
+
+### Bug Fixes
+
+* **setshop:** edit option flow ([09076ab](https://github.com/klerikdust/anniediscord/commit/09076ab190f8d9ff126869623a628a19bdf8f7a4))
+
 ## [9.5.5](https://github.com/klerikdust/anniediscord/compare/v9.5.4...v9.5.5) (2023-03-04)
 
 
