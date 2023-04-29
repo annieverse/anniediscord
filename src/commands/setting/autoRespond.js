@@ -171,7 +171,7 @@ module.exports = {
     async enable(client, reply, message, arg, locale) {
         //  Handle if module already enabled
         if (this.primaryConfig.value) {
-            const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.AUTORESPONDER.ALREADY_ENABLED, {
                 socket: {
                     emoji: await client.getEmoji(`692428969667985458`),
@@ -181,7 +181,7 @@ module.exports = {
             })
         }
         //  Update configurations
-        client.db.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -209,7 +209,7 @@ module.exports = {
             })
         }
         //  Update configurations
-        client.db.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
@@ -229,7 +229,7 @@ module.exports = {
      */
     async info(client, reply, message, arg, locale, prefix) {
         //  Fetch registered ARs.
-        const ars = await client.db.getAutoResponders(message.guild.id)
+        const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
         //  Handle if there are no registered ARs.
         if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
             socket: {
@@ -237,7 +237,7 @@ module.exports = {
                 prefix: prefix
             }
         })
-        const localizedTime = await client.db.toLocaltime(ars[0].registered_at)
+        const localizedTime = await client.db.systemUtils.toLocaltime(ars[0].registered_at)
         const author = await client.users.fetch(ars[0].user_id)
         return await reply.send(this._parseRegisteredAutoResponders(ars, false, {
             size: ars.length,
@@ -292,7 +292,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Register
-            client.db.registerAutoResponder({
+            client.db.autoResponder.registerAutoResponder({
                 guildId: message.guild.id,
                 userId: message.member.id,
                 trigger: trigger,
@@ -320,7 +320,7 @@ module.exports = {
      */
     async delete(client, reply, message, arg, locale, prefix, slashCommand = false) {
         //  Handle if guild does not have any ARs to be deleted
-        const ars = await client.db.getAutoResponders(message.guild.id)
+        const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
         if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
@@ -343,7 +343,7 @@ module.exports = {
         })
         //  Performs deletion
         targetAR = targetAR[0]
-        client.db.deleteAutoResponder(targetAR.ar_id, message.guild.id)
+        client.db.autoResponder.deleteAutoResponder(targetAR.ar_id, message.guild.id)
         return await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
             socket: { emoji: await client.getEmoji(`789212493096026143`) },
             status: `success`
@@ -356,7 +356,7 @@ module.exports = {
      */
     async reset(client, reply, message, arg, locale, prefix) {
         //  Handle if guild does not have any ARs to be deleted
-        const ars = await client.db.getAutoResponders(message.guild.id)
+        const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
         if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
@@ -374,7 +374,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Wipeout ARs
-            client.db.clearAutoResponders(message.guild.id)
+            client.db.autoResponder.clearAutoResponders(message.guild.id)
             await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_RESET, {
                 socket: { totalArs: ars.length }
             })

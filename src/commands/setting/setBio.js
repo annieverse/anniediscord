@@ -63,7 +63,7 @@ module.exports = {
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
-            client.db.setUserBio(arg, message.author.id)
+            client.db.userUtils.setUserBio(arg, message.author.id)
             return await reply.send(``, {
                 customHeader: [`Yay! your new profile's bio has been set!♡`, message.author.displayAvatarURL()]
             })
@@ -93,7 +93,7 @@ module.exports = {
         const c = new Confirmator(interaction, reply, true)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.setUserBio(newBio, interaction.member.id)
+            client.db.userUtils.setUserBio(newBio, interaction.member.id)
             return await reply.send(``, {
                 customHeader: [`Yay! your new profile's bio has been set!♡`, interaction.member.displayAvatarURL()],
                 followUp: true

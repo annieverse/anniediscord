@@ -32,7 +32,7 @@ module.exports = {
          * Fill choices with the available packages found in DB
          */
         const focusedValue = interaction.options.getFocused()
-        const packages_raw = await client.db.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customReward.getRewardAmount(interaction.guild.id)
         if (packages_raw.length < 1) return await interaction.respond([{ name: `No Packages Available`, value: `none` }])
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
@@ -76,7 +76,7 @@ module.exports = {
                 items.set(item_raw.item_id,i.amount) // Use item_id as key to prevent overwriting values
             }
             for (const i of items) {
-                client.db.updateInventory({
+                client.db.databaseUtils.updateInventory({
                     itemId: i[0],
                     value: i[1],
                     userId: interaction.member.id,
@@ -85,7 +85,7 @@ module.exports = {
             }
         }
         if (ac > 0) {
-            client.db.updateInventory({
+            client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 value: ac,
                 userId: interaction.member.id,

@@ -15,7 +15,7 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        const buffs = await client.db.getSavedUserDurationalBuffs(message.author.id)
+        const buffs = await client.db.durationalBuffs.getSavedUserDurationalBuffs(message.author.id)
         if (!buffs.length) return await reply.send(locale.BUFF.NO_ACTIVE_BUFFS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)
@@ -24,7 +24,7 @@ module.exports = {
         let str = ``
         for (let i = 0; i < buffs.length; i++) {
             const buff = buffs[i]
-            const localTime = await client.db.toLocaltime(buff.registered_at)
+            const localTime = await client.db.systemUtils.toLocaltime(buff.registered_at)
             const expireAt = new Date(localTime).getTime() + buff.duration
             str += `╰☆～(${buff.multiplier*100}%)(${ms(new Date(expireAt).getTime() - Date.now(), {long:true})}) ${buff.type} boost from **'${buff.name}'** buff.\n`
         }
@@ -33,7 +33,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const buffs = await client.db.getSavedUserDurationalBuffs(interaction.member.id)
+        const buffs = await client.db.durationalBuffs.getSavedUserDurationalBuffs(interaction.member.id)
         if (!buffs.length) return await reply.send(locale.BUFF.NO_ACTIVE_BUFFS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)
@@ -42,7 +42,7 @@ module.exports = {
         let str = ``
         for (let i = 0; i < buffs.length; i++) {
             const buff = buffs[i]
-            const localTime = await client.db.toLocaltime(buff.registered_at)
+            const localTime = await client.db.systemUtils.toLocaltime(buff.registered_at)
             const expireAt = new Date(localTime).getTime() + buff.duration
             str += `╰☆～(${buff.multiplier*100}%)(${ms(new Date(expireAt).getTime() - Date.now(), {long:true})}) ${buff.type} boost from **'${buff.name}'** buff.\n`
         }

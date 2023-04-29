@@ -6,6 +6,7 @@ const Reminder = require(`../libs/reminder`)
  * @return {void}
  */
 module.exports = function ready(annie) {
+    annie.db.initializeDb()
     annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()
     annie.registerGuildAutoResponders()

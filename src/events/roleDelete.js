@@ -21,7 +21,7 @@ module.exports = async function roleDelete(client, role) {
 			//  If the deleted role is one of the registered rank, the ommits from cache and database
 			if (role.id === rank.ROLE) {
 				const newRegisteredRanks = registeredRanks.value.filter(node => node.ROLE != role.id)
-		        await client.db.updateGuildConfiguration({
+		        await client.db.guildUtils.updateGuildConfiguration({
 		            configCode: `RANKS_LIST`,
 		            customizedParameter: newRegisteredRanks,
 		            guild: role.guild,
@@ -39,7 +39,7 @@ module.exports = async function roleDelete(client, role) {
 			//  If the deleted role is one of the welcomer role, the ommits from cache and database
 			if (role.id === welcomerRole) {
 				const newWelcomerRoles = registeredWelcomerRoles.value.filter(node => node != role.id)
-		        await client.db.updateGuildConfiguration({
+		        await client.db.guildUtils.updateGuildConfiguration({
 		            configCode: `WELCOMER_ROLES`,
 		            customizedParameter: newWelcomerRoles,
 		            guild: role.guild,

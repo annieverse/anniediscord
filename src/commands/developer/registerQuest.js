@@ -19,15 +19,17 @@ module.exports = {
         const confirmation = await reply.send(`You are going to register the following quest.\n**NAME::** ${name}\n**DESCRIPTION::** ${description}\n**REWARD:: **${commanifier(reward)}\n**CORRECT_ANSWER::** ${correctAnswer}`)
         const c = new Confirmator(message, reply)
         await c.setup(message.author.id, confirmation)
-        return c.onAccept(() => {
-            client.db._query(`
-				INSERT INTO quests(
-					reward_amount,
-					name,
-					description,
-					correct_answer
-				)
-				VALUES(?, ?, ?, ?)`, `run`, [parseInt(reward), name, description, correctAnswer], `Registered new quest`)
+        return c.onAccept(async () => {
+            // await client.db.quests().registerQuest(parseInt(reward), name, description, correctAnswer)
+            await client.db.quests().registerQuest()
+            // client.db._query(`
+			// 	INSERT INTO quests(
+			// 		reward_amount,
+			// 		name,
+			// 		description,
+			// 		correct_answer
+			// 	)
+			// 	VALUES(?, ?, ?, ?)`, `run`, [parseInt(reward), name, description, correctAnswer], `Registered new quest`)
             reply.send(`Quest successfully registered!`)
         })
     }

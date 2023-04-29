@@ -130,9 +130,9 @@ module.exports = {
                     }
                 })
                 //  Adds reputation point to target user
-            client.db.updateUserReputation(amount, targetUser.master.id, message.author.id, message.guild.id)
+            client.db.userUtils.updateUserReputation(amount, targetUser.master.id, message.author.id, message.guild.id)
                 //  Deduct gifts from sender
-            client.db.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: message.author.id, guildId: message.guild.id })
+            client.db.databaseUtils.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: message.author.id, guildId: message.guild.id })
             return await reply.send(``, {
                 customHeader: [`${targetUser.master.username} has received your gifts!♡`, targetUser.master.displayAvatarURL()],
                 socket: {
@@ -217,9 +217,9 @@ module.exports = {
                     followUp: true
                 })
                 //  Adds reputation point to target user
-            client.db.updateUserReputation(amount, targetUser.id, interaction.member.id, interaction.guild.id)
+            client.db.userUtils.updateUserReputation(amount, targetUser.id, interaction.member.id, interaction.guild.id)
                 //  Deduct gifts from sender
-            client.db.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
+            client.db.databaseUtils.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
             return await reply.send(``, {
                 customHeader: [`${targetUser.username} has received your gifts!♡`, targetUser.displayAvatarURL()],
                 socket: {

@@ -24,7 +24,7 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
-        const userGender = await client.db.getUserGender(message.author.id)
+        const userGender = await client.db.userUtils.getUserGender(message.author.id)
         if (!arg) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,
             socket: {
@@ -41,8 +41,8 @@ module.exports = {
         const targetGender = malePool.includes(key) ? `m` :
             femalePool.includes(key) ? `f` : null
         //  Update/register gender
-        !targetGender ? client.db.updateUserGenderToneutral(message.author.id) :
-            client.db.updateUserGender(message.author.id, targetGender)
+        !targetGender ? client.db.userUtils.updateUserGenderToneutral(message.author.id) :
+            client.db.userUtils.updateUserGender(message.author.id, targetGender)
         return await reply.send(locale.SETGENDER.SUCCESSFUL, {
             status: `success`,
             socket: {
@@ -51,7 +51,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const userGender = await client.db.getUserGender(interaction.member.id)    
+        const userGender = await client.db.userUtils.getUserGender(interaction.member.id)    
         const key = options.getString(`gender`)
         if (!key) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,
@@ -68,9 +68,9 @@ module.exports = {
         const targetGender = malePool.includes(key.toLowerCase()) ? `m` :
             femalePool.includes(key.toLowerCase()) ? `f` :
                 null
-        !targetGender ? client.db.updateUserGenderToneutral(interaction.member.id) :
+        !targetGender ? client.db.userUtils.updateUserGenderToneutral(interaction.member.id) :
             //  Update/register gender
-            client.db.updateUserGender(interaction.member.id, targetGender)
+            client.db.userUtils.updateUserGender(interaction.member.id, targetGender)
         return await reply.send(locale.SETGENDER.SUCCESSFUL, {
             status: `success`,
             socket: {

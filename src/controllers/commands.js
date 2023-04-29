@@ -75,7 +75,7 @@ module.exports = async (client={}, message={}) => {
         )
         //  Dispose
         command = null
-        return client.db.recordsCommandUsage({
+        return client.db.systemUtils.recordsCommandUsage({
             guild_id: message.guild.id,
             user_id: message.author.id,
             command_alias: targetCommand,

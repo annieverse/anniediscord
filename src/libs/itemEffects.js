@@ -57,7 +57,7 @@ class itemEffects {
      * @return {string|null}
      */
     async displayItemBuffs(itemId) {
-        const itemEffects = await this.client.db.getItemEffects(itemId)
+        const itemEffects = await this.client.db.shop.getItemEffects(itemId)
         let str = `The following buffs will be applied upon use::\n`
         if (!itemEffects.length) return null
         for (let i=0; i<itemEffects.length; i++) {
@@ -71,7 +71,7 @@ class itemEffects {
             }
             if ([3, 4].includes(effect.effect_ref_id)) {
                 const transaction = effect.effect_ref_id === 3 ? `Receiving` : `Removed`
-                const item = await this.client.db.getItem(raw.itemId)
+                const item = await this.client.db.shop.getItem(raw.itemId)
                 str += `╰☆～${transaction} ${raw.amount}pcs of **${item.name}**\n` 
             }
             if ([5, 6].includes(effect.effect_ref_id)) {
@@ -88,7 +88,7 @@ class itemEffects {
      * @return {void}
      */
     async applyItemEffects(itemId) {
-        const itemEffects = await this.client.db.getItemEffects(itemId)
+        const itemEffects = await this.client.db.shop.getItemEffects(itemId)
         if (!itemEffects.length) return
         for (let i=0; i<itemEffects.length; i++) {
             const effect = itemEffects[i]
@@ -137,7 +137,7 @@ class itemEffects {
      * @return {void}
      */
     _itemUpdate(itemId, amount, operation) {
-        this.client.db.updateInventory({
+        this.client.db.databaseUtils.updateInventory({
             operation: operation,
             itemId: itemId,
             value: amount,
@@ -177,17 +177,6 @@ class itemEffects {
     }
 
     /**
-     * Subtracting a specified amount of exp.
-     * @param {number} exp
-     * @return {void}
-     */
-    removeExp(exp) {
-        if (typeof exp !== `number`) exp = parseInt(exp)
-        //  Directly subtract from DB since we don't need to update rank/level-up message.
-        this.client.db.subtractUserExp(exp, this.message.author.id, this.message.guild.id)
-    }
-
-    /**
      * Base function for durational item.
      * @param {string} buffType
      * @param {string} name
@@ -203,17 +192,17 @@ class itemEffects {
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false
-        const userDurationalBuffs = await this.client.db.getSavedUserDurationalBuffs(this.message.member.id)
+        const userDurationalBuffs = await this.client.db.durationalBuffs.getSavedUserDurationalBuffs(this.message.member.id)
         if (userDurationalBuffs.filter(b => (b.name.toLowerCase() === name.toLowerCase()) 
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true
-        this.client.db.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.member.id, this.message.guild.id)
+        this.client.db.durationalBuffs.registerUserDurationalBuff(buffType, name, multiplier, duration, this.message.member.id, this.message.guild.id)
         const cronTask = async () => {
             //  Flush from cache and sqlite
             this.client.db.redis.srem(key, multiplier)
-            this.client.db.getUserDurationalBuffId(buffType, name, multiplier, this.message.member.id, this.message.guild.id)
+            this.client.db.durationalBuffs.getUserDurationalBuffId(buffType, name, multiplier, this.message.member.id, this.message.guild.id)
             .then(id => {
-                this.client.db.removeUserDurationalBuff(id)
+                this.client.db.durationalBuffs.removeUserDurationalBuff(id)
             })
             //  Attempt to notice the user about expiration
             this.client.responseLibs(this.message).send(`Your **'${name}'** buff has expired! ${await this.client.getEmoji(`AnnieHeartPeek`)}`, {

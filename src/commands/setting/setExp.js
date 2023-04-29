@@ -157,7 +157,7 @@ module.exports = {
             if (!this.primaryConfig.setByUserId) return await reply.send(locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
                 socket: { emoji: await client.getEmoji(`692428843058724994`) }
             })
-            const localizeTime = await client.db.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.SETEXP.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
@@ -166,7 +166,7 @@ module.exports = {
             })
         }
         //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 1,
             guild: message.guild,
@@ -190,7 +190,7 @@ module.exports = {
                 socket: { prefix: prefix }
             })
             //  Update configs
-        client.db.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: 0,
             guild: message.guild,
@@ -254,7 +254,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             expLib.updateRank(newData.level)
-            client.db.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
+            client.db.userUtils.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
             await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
                 followUp: true
@@ -358,7 +358,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             expLib.updateRank(0)
-            client.db.resetUserExp(targetUser.master.id, message.guild.id)
+            client.db.userUtils.resetUserExp(targetUser.master.id, message.guild.id)
             await reply.send(``, {
                 customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()],
                 followUp: true

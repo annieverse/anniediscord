@@ -19,12 +19,12 @@ module.exports = {
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
 	async execute(client, reply, message, arg, locale) {
-		const quests = await client.db.getAllQuests()
+		const quests = await client.db.quests.getAllQuests()
 		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
 		const userData = await (new User(client, message)).requestMetadata(message.author, 2)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
-		const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
+		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
 			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
@@ -44,7 +44,7 @@ module.exports = {
 		let nextQuestId = userData.quests.next_quest_id
 		if (!nextQuestId) {
 			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			client.db.updateUserNextActiveQuest(message.author.id, message.guild.id, nextQuestId)
+			client.db.quests.updateUserNextActiveQuest(message.author.id, message.guild.id, nextQuestId)
 		}
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
@@ -80,9 +80,9 @@ module.exports = {
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
-			client.db.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: message.guild.id, userId: message.author.id })
-			client.db.updateUserQuest(message.author.id, message.guild.id, Math.floor(Math.random() * quests.length) || 1)
-			client.db.recordQuestActivity(nextQuestId, message.author.id, message.guild.id, answer)
+			client.db.databaseUtils.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: message.guild.id, userId: message.author.id })
+			client.db.quests.updateUserNextActiveQuest(message.author.id, message.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			client.db.quests.recordQuestActivity(nextQuestId, message.author.id, message.guild.id, answer)
 			//  Successful
 			client.db.redis.del(sessionID)
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
@@ -95,12 +95,12 @@ module.exports = {
 		})
 	},
 	async Iexecute(client, reply, interaction, options, locale) {
-		const quests = await client.db.getAllQuests()
+		const quests = await client.db.quests.getAllQuests()
 		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
 		const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
-		const lastClaimAt = await client.db.toLocaltime(userData.quests.updated_at)
+		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
 		//  Handle if user's quest queue still in cooldown
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
 			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
@@ -121,7 +121,7 @@ module.exports = {
 		let nextQuestId = userData.quests.next_quest_id
 		if (!nextQuestId) {
 			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			client.db.updateUserNextActiveQuest(interaction.member.id, interaction.guild.id, nextQuestId)
+			client.db.quests.updateUserNextActiveQuest(interaction.member.id, interaction.guild.id, nextQuestId)
 		}
 		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 
@@ -216,9 +216,9 @@ module.exports = {
 			}
 			buttonCollector.stop()
 			//  Update reward, user quest data and store activity to quest_log activity
-			client.db.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: interaction.guild.id, userId: interaction.member.id })
-			client.db.updateUserQuest(interaction.member.id, interaction.guild.id, Math.floor(Math.random() * quests.length) || 1)
-			client.db.recordQuestActivity(nextQuestId, interaction.member.id, interaction.guild.id, answer)
+			client.db.databaseUtils.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: interaction.guild.id, userId: interaction.member.id })
+			client.db.quests.updateUserNextActiveQuest(interaction.member.id, interaction.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			client.db.quests.recordQuestActivity(nextQuestId, interaction.member.id, interaction.guild.id, answer)
 			//  Successful
 			client.db.redis.del(sessionID)
 			message.edit({ components: [] })

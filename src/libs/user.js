@@ -134,29 +134,29 @@ class User {
 		//  Handle if user object isn't valid
 		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
         //  Perform pre-check for the guild
-        await db.registerGuild(this.message.guild)
+        await db.guildUtils.registerGuild(this.message.guild)
 		try {
             //  Do userdata validation if the target is external/not the author of the message.
             //  This to ensure that the target doesn't missing the required user entry.
-            if (user.id !== this.message.member.id) await db.validateUserEntry(user.id, user.username)
+            if (user.id !== this.message.member.id) await db.databaseUtils.validateUserEntry(user.id, user.username)
 			/** --------------------------------------------------------------------
 			 *  DATA-BLOCK LEVEL 2
 			 *  --------------------------------------------------------------------
 			 *  Consists of discord properties data + user's customized locale + extended metadata from own database.
 			 */
 			//  Basic data such as saved username, language, user_id and registered date
-			const main = await db.getUser(user.id)
+			const main = await db.userUtils.getUser(user.id)
 			//  User's reputations data
-			const reputations = await db.getUserReputation(user.id, this.message.guild.id)
+			const reputations = await db.userUtils.getUserReputation(user.id, this.message.guild.id)
 			//  User's dailies, streak and stuff
-			const dailies = await db.getUserDailies(user.id, this.message.guild.id)
+			const dailies = await db.userUtils.getUserDailies(user.id, this.message.guild.id)
 			//  User's relationship trees.
-			const relationships = await db.getUserRelations(user.id,this.message.guild.id)
+			const relationships = await db.userUtils.getUserRelations(user.id,this.message.guild.id)
 			//  User's quests data
-			const quests = await db.getUserQuests(user.id, this.message.guild.id)
+			const quests = await db.userUtils.getUserQuests(user.id, this.message.guild.id)
 
 			//  User's parsed experience points data
-			const experienceData = await db.getUserExp(user.id, this.message.guild.id)
+			const experienceData = await db.userUtils.getUserExp(user.id, this.message.guild.id)
 			const parsedExp = this.bot.experienceLibs(this.message.member, this.message.guild).xpFormula(experienceData.current_exp)
 			const exp = {
 				raw: experienceData,
@@ -174,7 +174,7 @@ class User {
 			 *  Access inventory.raw if you wanted a verbose version of inventory meta structure
 			 *  --------------------------------------------------
 			 */
-			const inventoryData = await db.getUserInventory(user.id, this.message.guild.id)
+			const inventoryData = await db.userUtils.getUserInventory(user.id, this.message.guild.id)
 			const simplifiedInventory = this._simplifyInventory(inventoryData)
 			const inventory = {
 				raw: inventoryData,
@@ -189,7 +189,7 @@ class User {
 			 *  --------------------------------------------------
 			 */
 			const theme = inventory.raw.filter(key => (key.type_name === `Themes`) && (key.in_use === 1))
-			const usedTheme = theme.length ? theme[0] : await db.getItem(`light`)
+			const usedTheme = theme.length ? theme[0] : await db.shop.getItem(`light`)
 			//  If custom ranks aren't registered in the guild yet, then use the default one instead.
 			const rankList = this.guild.configs.get(`RANKS_LIST`).value
 			const selectedRankPool = async () => {
@@ -230,13 +230,13 @@ class User {
 			 *  These might come in handy in developer's side, such as shortcut.
 			 *  --------------------------------------------------
 			 */
-			const cover = await db.getUserCover(user.id, this.guild.id)
+			const cover = await db.userUtils.getUserCover(user.id, this.guild.id)
 			let usedCover = {}
 			if (cover) {
 				usedCover = cover
 			}
 			else {
-				usedCover = await db.getItem(`defaultcover1`)
+				usedCover = await db.shop.getItem(`defaultcover1`)
 				usedCover.isDefault = true
 			}
 			const sticker = inventory.raw.filter(key => (key.type_name === `Stickers`) && (key.in_use === 1))

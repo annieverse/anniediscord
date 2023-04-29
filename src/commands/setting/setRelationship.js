@@ -56,7 +56,7 @@ module.exports = {
         type: ApplicationCommandType.ChatInput,
         limit: 7,
         async execute(client, reply, message, arg, locale, prefix) {
-            const availableRelationships = await client.db.getAvailableRelationships()
+            const availableRelationships = await client.db.relationships.deleteGuildConfiguration()
                 //  Handle if user doesn't provide any argument
             if (!arg) return await reply.send(locale.RELATIONSHIP.GUIDE, {
                 header: `Hi, ${message.author.username}!`,
@@ -100,8 +100,8 @@ module.exports = {
                 await c.setup(message.author.id, deleteConfirmation)
                 return c.onAccept(async () => {
                     //  Update relationship data on both side
-                    client.db.removeUserRelationship(message.author.id, targetUser.master.id)
-                    client.db.removeUserRelationship(targetUser.master.id, message.author.id)
+                    client.db.relationships.removeUserRelationship(message.author.id, targetUser.master.id)
+                    client.db.relationships.removeUserRelationship(targetUser.master.id, message.author.id)
                     return await reply.send(``, {
                         customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()]
                     })
@@ -124,7 +124,7 @@ module.exports = {
             let searchStringResult = stringSimilarity.findBestMatch(arg, availableRelationships.map(i => i.name))
             const relationship = searchStringResult.bestMatch.rating >= 0.3 ? availableRelationships.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
             if (!relationship) return await reply.send(locale.RELATIONSHIP.TYPE_DOESNT_EXIST, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
-            const targetGender = await client.db.getUserGender(targetUser.master.id)
+            const targetGender = await client.db.userUtils.getUserGender(targetUser.master.id)
             const relRole = targetGender ? relationshipPairs[targetGender.gender][relationship.name] : relationship.name
                 //  Render confirmation
             const confirmation = await reply.send(locale.RELATIONSHIP.TARGET_CONFIRMATION, {
@@ -140,9 +140,9 @@ module.exports = {
             c.onAccept(async() => {
                 //  Update relationship data on both side
                 const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
-                const authorRelationship = await client.db.getRelationship(authorRelationshipStatus)
-                client.db.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
-                client.db.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
+                const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
+                client.db.relationships.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
+                client.db.relationships.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
                 return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
@@ -154,7 +154,7 @@ module.exports = {
             })
         },
         async Iexecute(client, reply, interaction, options, locale) {
-            const availableRelationships = await client.db.getAvailableRelationships()
+            const availableRelationships = await client.db.relationships.deleteGuildConfiguration()
             let arg = null
             if (options.getSubcommand() === `remove`) {
                 arg = [`remove`, options.getUser(`user`).id]
@@ -196,8 +196,8 @@ module.exports = {
                 await c.setup(interaction.member.id, deleteConfirmation)
                 return c.onAccept(async () => {
                     //  Update relationship data on both side
-                    client.db.removeUserRelationship(interaction.member.id, targetUser.master.id)
-                    client.db.removeUserRelationship(targetUser.master.id, interaction.member.id)
+                    client.db.relationships.removeUserRelationship(interaction.member.id, targetUser.master.id)
+                    client.db.relationships.removeUserRelationship(targetUser.master.id, interaction.member.id)
                     return await reply.send(``, {
                         customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()],
                         followUp: true
@@ -235,9 +235,9 @@ module.exports = {
             c.onAccept(async() => {
                 //  Update relationship data on both side
                 const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
-                const authorRelationship = await client.db.getRelationship(authorRelationshipStatus)
-                client.db.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
-                client.db.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id))
+                const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
+                client.db.relationships.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
+                client.db.relationships.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id))
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()], followUp: true })
                 return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
@@ -270,8 +270,8 @@ module.exports = {
         },
 
         /**
-         * Properly arrange returned list from `db.getAvailableRelationships`
-         * @param {array} [list=[]] db.getAvailableRelationships
+         * Properly arrange returned list from `db.relationships.deleteGuildConfiguration`
+         * @param {array} [list=[]] db.relationships.deleteGuildConfiguration
          * @returns {string}
          */
         prettifyList(list) {

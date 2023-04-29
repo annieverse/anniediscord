@@ -49,7 +49,26 @@ module.exports = function masterShard() {
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
-	manager.spawn(`auto`, 30000, 60000 * 2)
+	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection)=>{
+		try {
+			const manager = collection.get(0).manager
+			const fetchServers = await manager.fetchClientValues(`guilds.cache.size`)
+			const serverCount = fetchServers.reduce((prev, val) => prev + val, 0)
+			const shardCount = manager.totalShards
+			manager.broadcastEval((c,{serverCount,shardCount})=>{
+				if (!c.isReady()) return
+				if (c.dev) return
+				c.dblApi.postStats({
+					serverCount: serverCount,
+					shardId: c.shard.ids[0],
+					shardCount: shardCount
+				})
+			}, {context:{serverCount:serverCount,shardCount:shardCount},shard: 0 })
+		} catch (error) {
+			logger.error(`[master.js] > ${error}`)
+		}
+	})
+
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
 	//  Send shard count to DBL webhook.
 	server.post(`/dblwebhook`, wh.listener((vote) => {
@@ -57,16 +76,9 @@ module.exports = function masterShard() {
 		logger.info(`USER_ID:${userId} just voted!`)
 		function sendReward(c, { userId }) {
 			c.users.fetch(userId).then(async user => {
-				c.logger.info(user)
-				c.logger.info(user.id)
 				//  Only perform on SHARD_ID:0
 				if (c.shard.ids[0] === 0) {
-					c.dblApi.postStats({
-						serverCount: c.guilds.cache.size,
-						shardId: c.shard.ids[0],
-						shardCount: c.options.shardCount
-					})
-					c.db.updateInventory({
+					c.db.databaseUtils.updateInventory({
 						itemId: 52,
 						userId: userId,
 						value: 5000,

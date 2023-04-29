@@ -31,8 +31,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        const betaFeature = Math.floor(Math.random()*100) > 50
-        const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
+        const image = (await new GUI(userData, client).build()).toBuffer()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
             socket: {
@@ -42,8 +41,7 @@ module.exports = {
             },
             image: image,
             prebuffer: true,
-            simplified: true,
-            feedback: betaFeature
+            simplified: true
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -53,8 +51,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        const betaFeature = Math.floor(Math.random()*100) > 50
-        const image = (await new GUI(userData, client).build(betaFeature)).toBuffer()
+        const image = (await new GUI(userData, client).build()).toBuffer()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
             socket: {
@@ -65,8 +62,7 @@ module.exports = {
             image: image,
             prebuffer: true,
             simplified: true,
-            followUp: true,
-            feedback: betaFeature
+            followUp: true
         })
     }
 }

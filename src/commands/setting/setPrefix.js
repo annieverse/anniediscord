@@ -20,7 +20,7 @@ module.exports = {
                 prefix: message.guild.configs.get(`PREFIX`).value
             }
         })
-        client.db.updateGuildConfiguration({
+        client.db.guildUtils.updateGuildConfiguration({
             configCode: `PREFIX`,
             customizedParameter: arg,
             guild: message.guild,
