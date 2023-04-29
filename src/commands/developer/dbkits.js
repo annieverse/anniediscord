@@ -27,7 +27,7 @@ module.exports = {
                 //	Flag check as well
             if (!flag) return reply.send(locale.DBKITS.MISSING_FLAG)
             const initTime = process.hrtime()
-            const result = await client.db._query(stmt, flag)
+            const result = await client.db.databaseUtils._query(stmt, flag)
             const parsedResult = JSON.stringify(result).replace(/\,/g, `,\n`)
             return reply.send(locale.EXEC_CODE, {
                 socket: {
