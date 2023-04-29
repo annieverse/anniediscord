@@ -213,9 +213,9 @@ class Annie extends Discord.Client {
          */
         async registerGuildConfigurations(guildId = null) {
             const initTime = process.hrtime()
-            const registeredGuildConfigurations = await this.db.guildUtils.getAllGuildsConfigurations()
-                //  If prompted to register only single guild, then use single-element array.
             const getGuilds = guildId ? [guildId] : this.guilds.cache.map(guild => guild.id)
+            const registeredGuildConfigurations = await this.db.guildUtils.getAllGuildsConfigurations(getGuilds)
+                //  If prompted to register only single guild, then use single-element array.
             for (let i = 0; i < getGuilds.length; i++) {
                 let guild = this.guilds.cache.get(getGuilds[i])
                 let existingGuildConfigs = registeredGuildConfigurations.filter(node => node.guild_id === guild.id)

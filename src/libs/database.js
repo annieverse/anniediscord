@@ -1159,14 +1159,19 @@ class GuildUtils extends DatabaseUtils {
 
 	/**
 	 * Fetch all the available guild configurations.
+	 * @param {Array} guildIds
 	 * @returns {QueryResult}
 	 */
-	async getAllGuildsConfigurations() {
+	async getAllGuildsConfigurations(guildIds) {		
 		const fn = this.formatFunctionLog(`getAllGuildsConfigurations`)
+		if (!guildIds) throw new TypeError(`${fn} property "guildIds" must be a guild snowflake or array of guild snowflakes.`)
+		if (typeof(guildIds) != `object` && !Array.isArray(guildIds)) throw new TypeError(`${fn} property "guildIds" must be a Array.`)
+		const guildsInCache = guildIds.join(`,`)
 		return this._query(`
 			SELECT * 
-			FROM guild_configurations`
-			, `all`, [], `${fn} fetch all guild configs`
+			FROM guild_configurations
+			WHERE guild_id IN ($guildId)`
+			, `all`, {guildId: guildsInCache}, `${fn} fetch all guild configs`
 		)
 	}
 
