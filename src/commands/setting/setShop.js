@@ -1020,6 +1020,7 @@ module.exports = {
      */
     async edit(client, reply, message, arg, locale, prefix, args) {
         const guildItems = await client.db.shop.getItem(null, message.guild.id)
+        const isApplicationCommand = message.type != 2
         if (!guildItems.length) return await reply.send(locale.SETSHOP.DELETE_EMPTY_ITEMS)
         const keyword = args.slice(1).join(` `)
         if (!keyword) return await reply.send(locale.SETSHOP.DELETE_MISSING_TARGET, {
@@ -1090,7 +1091,7 @@ module.exports = {
             components: [selectMenuActionRow, buttonActionRow]
         })
 
-        const member = message.user.id
+        const member = isApplicationCommand ? message.author.id : message.user.id
         const filter = (i) => (i.customId === selectMenuId || i.customId === doneCancelButtonId) && i.user.id === member
         const editItemListenerTimer = 30000
         const editItemListener = guide.createMessageComponentCollector({
@@ -1101,7 +1102,7 @@ module.exports = {
             i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
         })
         editItemListener.on(`end`, async (collected, reason) => {
-            const msg = await message.fetchReply()
+            const msg = await guide.fetch()
             try {
                 msg.edit({
                     content: `Shop editor interface has been closed.`, components: [], embeds: []
@@ -1118,7 +1119,7 @@ module.exports = {
             let selection = i.values[0]
             const modalEditId = `${selection}_${i.id}`
             const modalEdit = new ModalBuilder().setCustomId(modalEditId).setTitle(`You are editing the item's ${selection}`)
-            message.editReply({ components: [selectMenuActionRow, buttonActionRow] })
+            guide.edit({ components: [selectMenuActionRow, buttonActionRow] })
             switch (selection) {
                 case `name`:
                     const nameAnswerInput = new TextInputBuilder()
@@ -1194,12 +1195,11 @@ module.exports = {
                     break
             }
         })
-        async function getModalResponse(modal) {
+        async function getModalResponse(modal, i) {
             const filter = (interaction) => interaction.customId === modal.data.custom_id
-
             let rawAnswer
             try {
-                rawAnswer = await message.awaitModalSubmit({ filter, time: 30000 })
+                rawAnswer = await i.awaitModalSubmit({ filter, time: 30000 })
             } catch (error) {
                 client.logger.error(`Error has been handled\n${error}`)
             }
@@ -1209,7 +1209,7 @@ module.exports = {
         }
         async function name(modal, interaction) {
             interaction.showModal(modal)
-            const rawAnswer = await getModalResponse(modal)
+            const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const nameLimit = 20
@@ -1239,7 +1239,7 @@ module.exports = {
 
         async function description(modal, interaction) {
             interaction.showModal(modal)
-            const rawAnswer = await getModalResponse(modal)
+            const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const descLimit = 120
@@ -1261,7 +1261,7 @@ module.exports = {
 
         async function price(modal, interaction) {
             interaction.showModal(modal)
-            const rawAnswer = await getModalResponse(modal)
+            const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const priceLimit = 999999999999999
@@ -1287,7 +1287,7 @@ module.exports = {
 
         async function stock(modal, interaction) {
             interaction.showModal(modal)
-            const rawAnswer = await getModalResponse(modal)
+            const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const stockLimit = 999999999999999
@@ -1316,7 +1316,7 @@ module.exports = {
 
         async function response(modal, interaction) {
             interaction.showModal(modal)
-            const rawAnswer = await getModalResponse(modal)
+            const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
             const messageUponUseLimit = 120
