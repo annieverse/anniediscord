@@ -56,7 +56,7 @@ module.exports = {
         type: ApplicationCommandType.ChatInput,
         limit: 7,
         async execute(client, reply, message, arg, locale, prefix) {
-            const availableRelationships = await client.db.relationships.deleteGuildConfiguration()
+            const availableRelationships = await client.db.relationships.getAvailableRelationships()
                 //  Handle if user doesn't provide any argument
             if (!arg) return await reply.send(locale.RELATIONSHIP.GUIDE, {
                 header: `Hi, ${message.author.username}!`,
@@ -154,7 +154,7 @@ module.exports = {
             })
         },
         async Iexecute(client, reply, interaction, options, locale) {
-            const availableRelationships = await client.db.relationships.deleteGuildConfiguration()
+            const availableRelationships = await client.db.relationships.getAvailableRelationships()
             let arg = null
             if (options.getSubcommand() === `remove`) {
                 arg = [`remove`, options.getUser(`user`).id]
@@ -270,8 +270,8 @@ module.exports = {
         },
 
         /**
-         * Properly arrange returned list from `db.relationships.deleteGuildConfiguration`
-         * @param {array} [list=[]] db.relationships.deleteGuildConfiguration
+         * Properly arrange returned list from `db.relationships.getAvailableRelationships`
+         * @param {array} [list=[]] db.relationships.getAvailableRelationships
          * @returns {string}
          */
         prettifyList(list) {
