@@ -418,7 +418,7 @@ class UserUtils extends DatabaseUtils {
 	 */
 	async updateUserExp(amount = 0, userId = ``, guildId = ``, operation = `+`) {
 		const fn = this.formatFunctionLog(`updateUserExp`)
-		if (!amount) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
+		if (!amount && amount != 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
 		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
@@ -593,7 +593,7 @@ class UserUtils extends DatabaseUtils {
 	 */
 	async updateUserReputation(amount = 0, userId = ``, givenBy = null, guildId = ``, operation = `+`) {
 		const fn = this.formatFunctionLog(`updateUserReputation`)
-		if (!amount) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
+		if (!amount && amount != 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
 		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
