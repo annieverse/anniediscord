@@ -1,4 +1,5 @@
 const SqliteClient = require(`better-sqlite3`)
+const { Client } = require(`pg`)
 const Redis = require(`async-redis`)
 const logger = require(`pino`)({ name: `DATABASE`, level: `debug` })
 const getBenchmark = require(`../utils/getBenchmark`)
@@ -23,10 +24,16 @@ class Database {
 	 * @returns {this}
 	 */
 	connect(path = `.data/database.sqlite`, fsPath = `../../.data/database.sqlite`) {
+		this.client = new Client({
+			host: process.env.PG_HOST,
+			database: process.env.PG_DB,
+			user: process.env.PG_USER,
+			password: process.env.PG_PASS,
+			port: process.env.PG_PORT
+		})
 		/**
 		 * This will check if the db file exists or not.
 		 * If file is not found, throw an error.
-		 */
 		fs.accessSync(join(__dirname, fsPath), fs.constants.F_OK)
 		this.client = new SqliteClient(path, { timeout: 10000 })
 		this.client.pragma(`journal_mode = WAL`)
@@ -42,6 +49,16 @@ class Database {
 				this.client.pragma(`wal_checkpoint(RESTART)`)
 			}
 		}), 5000).unref()
+		*/
+		this.client
+		.connect()
+		.then(() => {
+			logger.info(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
+		})
+		.catch(err => {
+			logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
+			process.exit()
+		})
 		this.connectRedis()
 		return this
 	}
@@ -1414,7 +1431,6 @@ class Relationships extends DatabaseUtils {
 		return true
 	}
 }
-
 
 class AutoResponder extends DatabaseUtils {
 	constructor(client) {
