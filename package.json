@@ -13,7 +13,7 @@
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check"
   },
-  "homepage": "https://github.com/klerikdust/anniediscord#readme",
+  "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {
     "node": ">=16.0.0"
   },
@@ -25,9 +25,9 @@
     "Fwubbles (https://github.com/Fwubbles)"
   ],
   "license": "MIT",
-  "repository": "github:klerikdust/anniediscord",
+  "repository": "github:annieverse/anniediscord",
   "bugs": {
-    "url": "https://github.com/klerikdust/anniediscord/issues"
+    "url": "https://github.com/annieverse/anniediscord/issues"
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.0",
