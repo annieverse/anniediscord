@@ -1166,13 +1166,12 @@ class GuildUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`getAllGuildsConfigurations`)
 		if (!guildIds) throw new TypeError(`${fn} property "guildIds" must be a guild snowflake or array of guild snowflakes.`)
 		if (typeof(guildIds) != `object` && !Array.isArray(guildIds)) throw new TypeError(`${fn} property "guildIds" must be a Array.`)
-		const guildsInCache = guildIds.join(`,`)
-		return this._query(`
-			SELECT * 
-			FROM guild_configurations
-			WHERE guild_id IN ($guildId)`
-			, `all`, {guildId: guildsInCache}, `${fn} fetch all guild configs`
-		)
+		const guildsInCache = JSON.stringify(guildIds)
+		// Select statement to only return guilds that were supplied and not dormat guilds (based on discord's cache)
+		return this._query(`SELECT * FROM guild_configurations WHERE guild_id IN (SELECT value FROM json_each($guildsInCache))`
+		, `all`
+		, {guildsInCache: guildsInCache}
+		, `${fn} fetch all guild configs`)
 	}
 
 	/**
@@ -1218,7 +1217,7 @@ class GuildUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`updateGuildConfiguration`)
 		if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be string and non-faulty value.`)
 		if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
-		if (!customizedParameter) throw new TypeError(`${fn} parameter "customizedParameter" cannot be blank.`)
+		if (!customizedParameter && customizedParameter !=0) throw new TypeError(`${fn} parameter "customizedParameter" cannot be blank.`)
 		if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
 		//  Register guild incase they aren't registered yet
 		this.registerGuild(guild)
@@ -1227,8 +1226,8 @@ class GuildUtils extends DatabaseUtils {
 		const parsedValueParameter = typeof customizedParameter === `object`
 			? JSON.stringify(customizedParameter)
 			: typeof customizedParameter === `number`
-				? parseInt(customizedParameter)
-				: customizedParameter
+				? Math.trunc(parseInt(customizedParameter)).toString()
+				: customizedParameter.toString()
 		const res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
