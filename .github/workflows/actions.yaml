@@ -1,11 +1,5 @@
 name: Annieverse
 
-permissions:
-  contents: write
-  pull-requests: write 
-  issues: read
-  packages: none
-
 # Only trigger master push
 on:
   push:
@@ -19,7 +13,7 @@ jobs:
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       # Setting up nodejs environment
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
