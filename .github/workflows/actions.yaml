@@ -1,5 +1,8 @@
 name: Annieverse
 
+# Setup the permissions
+permissions: read-all|write-all
+
 # Only trigger master push
 on:
   push:
