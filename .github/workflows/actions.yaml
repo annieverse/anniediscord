@@ -1,15 +1,10 @@
 name: Annieverse
 
-
-
 # Only trigger master push
 on:
   push:
     branches:
       - master
-# Setup the permissions
-permissions: read-all|write-all
-
 jobs:
   # Build and run test suite
   build:
