@@ -48,5 +48,5 @@ jobs:
       # Run semantic-release script
       - name: Versionize and publish
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secret.GH_TOKEN }}
         run: npx semantic-release
