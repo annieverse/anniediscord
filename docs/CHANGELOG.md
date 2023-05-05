@@ -1,3 +1,11 @@
+## [9.5.7](https://github.com/annieverse/anniediscord/compare/v9.5.6...v9.5.7) (2023-05-05)
+
+
+### Bug Fixes
+
+* **commands:** user metadata incomplete ([38b763f](https://github.com/annieverse/anniediscord/commit/38b763f89d8e180f13f1fd73c21aa79501c82b11))
+* **modules:** modules being auto disabled ([e34ad7c](https://github.com/annieverse/anniediscord/commit/e34ad7c0e4efe421d8c26f6b4c6251aa9f21c013))
+
 ## [9.5.6](https://github.com/klerikdust/anniediscord/compare/v9.5.5...v9.5.6) (2023-04-11)
 
 
