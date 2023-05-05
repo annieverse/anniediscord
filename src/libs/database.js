@@ -19,11 +19,9 @@ class Database {
 	}
 	/**
 	 * Opening database connection
-	 * @param {string} [path=`.data/database.sqlite`]
-	 * @param {string} [fsPath=`../../.data/database.sqlite`]
 	 * @returns {this}
 	 */
-	connect(path = `.data/database.sqlite`, fsPath = `../../.data/database.sqlite`) {
+	connect() {
 		this.client = new Client({
 			host: process.env.PG_HOST,
 			database: process.env.PG_DB,
@@ -114,7 +112,7 @@ class DatabaseUtils {
 	async _query(stmt = ``, type = `get`, supplies = [], log) {
 		//	Return if no statement has found
 		if (!stmt) return null
-		const que = this.client.prepare(stmt)
+		const que = this.client.query(stmt)
 		const fn = this.client.transaction(params => que[type](params))
 		const result = await fn(supplies)
 		if (!result) return null
