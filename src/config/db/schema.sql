@@ -292,5 +292,3 @@ CREATE TABLE custom_rewards (
   reward TEXT NOT NULL,
   reward_name TEXT NOT NULL
 )
-
-
