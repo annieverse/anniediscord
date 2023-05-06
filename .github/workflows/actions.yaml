@@ -17,11 +17,10 @@ jobs:
       # Setting up nodejs environment
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
-        with:
-          node-version: 18.16
       # Installing dependencies
       - name: Installing Dependencies
         run: npm install
+          using:'node18'
       # Linting Test
       - name: Codestyle Test
         run: npm run lint:check
@@ -41,11 +40,10 @@ jobs:
       # Setting up nodejs environment
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
-        with:
-          node-version: 18.16
       # Installing dependencies
       - name: Installing Dependencies
         run: npm install
+          using:'node18'
       # Run semantic-release script
       - name: Versionize and publish
         env:
