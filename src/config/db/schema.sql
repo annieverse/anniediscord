@@ -10,7 +10,7 @@ CREATE TABLE commands_log (
   resolved_in TEXT,
   FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (guild_id) REFERENCES guilds (guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE resource_log (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     log_id SERIAL PRIMARY KEY,
@@ -18,7 +18,7 @@ CREATE TABLE resource_log (
     ping REAL,
     cpu REAL,
     memory REAL
-)
+);
 CREATE TABLE quest_log (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     quest_id INTEGER,
@@ -29,7 +29,7 @@ CREATE TABLE quest_log (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (quest_id) REFERENCES quests(quest_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 
 
 --  User branches
@@ -43,7 +43,7 @@ CREATE TABLE users (
     verified INTEGER DEFAULT 0,
     lang TEXT DEFAULT 'en',
     receive_notification INTEGER DEFAULT -1
-)
+);
 CREATE TABLE user_dailies (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -53,7 +53,7 @@ CREATE TABLE user_dailies (
   PRIMARY KEY(user_id, guild_id),
   FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
   FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_exp (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -66,7 +66,7 @@ CREATE TABLE user_exp (
     FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(booster_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE
     FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_reputations (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_giving_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -79,7 +79,7 @@ CREATE TABLE user_reputations (
   FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
   FOREIGN KEY(recently_received_by) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
   FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_inventories (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -91,7 +91,7 @@ CREATE TABLE user_inventories (
     PRIMARY KEY(user_id, item_id, guild_id),
     FOREIGN KEY(item_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_relationships (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -103,7 +103,7 @@ CREATE TABLE user_relationships (
     FOREIGN KEY(user_id_a) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(user_id_b) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(relationship_id) REFERENCES relationships(relationship_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_quests (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -123,7 +123,7 @@ CREATE TABLE user_quests (
         REFERENCES guilds(guild_id) 
         ON DELETE CASCADE
         ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_reminders (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   reminder_id SERIAL PRIMARY KEY,
@@ -132,7 +132,7 @@ CREATE TABLE user_reminders (
   remind_at TIMESTAMP,
   FOREIGN KEY(user_id)
     REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_self_covers (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     cover_id TEXT,
@@ -147,7 +147,7 @@ CREATE TABLE user_self_covers (
         REFERENCES guilds(guild_id) 
         ON DELETE CASCADE
         ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_gender(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id TEXT PRIMARY KEY,
@@ -156,7 +156,7 @@ CREATE TABLE user_gender(
     REFERENCES users(user_id) 
         ON DELETE CASCADE
         ON UPDATE CASCADE
-)
+);
 CREATE TABLE user_durational_buffs(
     buff_id SERIAL PRIMARY KEY,
     registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -168,7 +168,7 @@ CREATE TABLE user_durational_buffs(
     guild_id TEXT,
     FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-)
+);
 
 
 --  Guilds/server branches
@@ -178,7 +178,7 @@ CREATE TABLE guilds (
   guild_id TEXT PRIMARY KEY,
   name TEXT,
   bio TEXT
-)
+);
 CREATE TABLE guild_configurations (
     registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -189,7 +189,7 @@ CREATE TABLE guild_configurations (
     set_by_user_id TEXT,
     FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(set_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE
-)
+);
 
 
 --  Item branches
@@ -218,7 +218,7 @@ CREATE TABLE items (
     REFERENCES item_types(type_id)
     ON UPDATE CASCADE
     ON DELETE SET NULL
-)
+);
 CREATE TABLE item_gacha (
   gacha_id SERIAL PRIMARY KEY,
   item_id INTEGER,
@@ -228,20 +228,20 @@ CREATE TABLE item_gacha (
     REFERENCES items(item_id)
       ON DELETE CASCADE
       ON UPDATE CASCADE
-)
+);
 CREATE TABLE item_types (
   type_id SERIAL PRIMARY KEY,
   name TEXT,
   alias TEXT,
   max_stacks INTEGER DEFAULT 9999,
   max_use INTEGER DEFAULT 9999
-)
+);
 CREATE TABLE item_rarities (
   rarity_id SERIAL PRIMARY KEY,
   name TEXT,
   level INTEGER UNIQUE,
   color TEXT DEFAULT '#000000'
-)
+);
 CREATE TABLE item_effects (
   effect_id SERIAL PRIMARY KEY,
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -249,7 +249,7 @@ CREATE TABLE item_effects (
   guild_id TEXT REFERENCES guilds(guild_id) ON UPDATE CASCADE ON DELETE CASCADE,
   effect_ref_id INTEGER,
   parameter TEXT
-)
+);
 
 
 --  Miscellaneous master with no direct name links
@@ -261,13 +261,13 @@ CREATE TABLE quests (
   name TEXT,
   description TEXT,
   correct_answer TEXT
-)
+);
 CREATE TABLE relationships (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   relationship_id SERIAL PRIMARY KEY,
   name TEXT
-)
+);
 CREATE TABLE affiliates (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -275,7 +275,7 @@ CREATE TABLE affiliates (
   description TEXT DEFAULT 'Another awesome server!',
   invite_link TEXT,
   notes TEXT
-)
+);
 CREATE TABLE autoresponders (
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   ar_id SERIAL PRIMARY KEY,
@@ -283,7 +283,7 @@ CREATE TABLE autoresponders (
   user_id TEXT REFERENCES users(user_id),
   trigger TEXT,
   response TEXT
-)
+);
 CREATE TABLE custom_rewards (
   registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   reward_id SERIAL PRIMARY KEY,
@@ -291,4 +291,4 @@ CREATE TABLE custom_rewards (
   set_by_user_id TEXT NOT NULL REFERENCES users(user_id),
   reward TEXT NOT NULL,
   reward_name TEXT NOT NULL
-)
+);
