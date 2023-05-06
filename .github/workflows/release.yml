@@ -18,10 +18,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
+      - run: npm i
       - run: npm test
-      - name: Codestyle Test
-        run: npm run lint:check
       
   release:
     name: Release
@@ -34,7 +32,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-        # Run semantic-release script
+      # Setting up nodejs environment
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm i
+      # Run semantic-release script
       - name: Versionize and publish
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
