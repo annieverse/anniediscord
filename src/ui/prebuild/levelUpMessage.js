@@ -4,7 +4,7 @@ const urlToBuffer = require(`../../utils/urlToBuffer`)
 class UI {
 	/**
 	 * LevelUp-Message UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {number} [level=0] new level to be displayed in the card
 	 * @return {Canvas}
@@ -44,7 +44,7 @@ class UI {
 		})
 		//  Finalize
 		card.ready()
-		return card.canv.toBuffer()
+		return card.canv.png()
 	}
 }
 
