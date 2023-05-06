@@ -26,6 +26,19 @@ CREATE TABLE quests (
   description TEXT,
   correct_answer TEXT
 );
+CREATE TABLE item_types (
+  type_id SERIAL PRIMARY KEY,
+  name TEXT,
+  alias TEXT,
+  max_stacks INTEGER DEFAULT 9999,
+  max_use INTEGER DEFAULT 9999
+);
+CREATE TABLE item_rarities (
+  rarity_id SERIAL PRIMARY KEY,
+  name TEXT,
+  level INTEGER UNIQUE,
+  color TEXT DEFAULT '#000000'
+);
 CREATE TABLE items (
   registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -94,19 +107,6 @@ CREATE TABLE item_gacha (
       ON DELETE CASCADE
       ON UPDATE CASCADE
 );
-CREATE TABLE item_types (
-  type_id SERIAL PRIMARY KEY,
-  name TEXT,
-  alias TEXT,
-  max_stacks INTEGER DEFAULT 9999,
-  max_use INTEGER DEFAULT 9999
-);
-CREATE TABLE item_rarities (
-  rarity_id SERIAL PRIMARY KEY,
-  name TEXT,
-  level INTEGER UNIQUE,
-  color TEXT DEFAULT '#000000'
-);
 CREATE TABLE item_effects (
   effect_id SERIAL PRIMARY KEY,
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -124,7 +124,7 @@ CREATE TABLE user_dailies (
   total_streak INTEGER DEFAULT 0,
   guild_id TEXT,
   PRIMARY KEY(user_id, guild_id),
-  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE user_exp (
@@ -137,7 +137,7 @@ CREATE TABLE user_exp (
     guild_id TEXT,
     PRIMARY KEY(user_id, guild_id),
     FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(booster_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY(booster_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE user_reputations (
@@ -149,8 +149,8 @@ CREATE TABLE user_reputations (
   recently_received_by TEXT,
   guild_id TEXT,
   PRIMARY KEY(user_id, guild_id),
-  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
-  FOREIGN KEY(recently_received_by) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY(recently_received_by) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE TABLE user_inventories (
@@ -170,7 +170,7 @@ CREATE TABLE user_relationships (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id_a TEXT,
     user_id_b TEXT,
-    relationship_id TEXT,
+    relationship_id INTEGER,
     guild_id TEXT,
     PRIMARY KEY(user_id_a, user_id_b, guild_id),
     FOREIGN KEY(user_id_a) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
