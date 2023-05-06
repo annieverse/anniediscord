@@ -37,6 +37,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          persist-credentials: false
       # Setting up nodejs environment
       - name: Setup Node.js
         uses: actions/setup-node@v2-beta
@@ -48,5 +49,5 @@ jobs:
       # Run semantic-release script
       - name: Versionize and publish
         env:
-          GITHUB_TOKEN: ${{ secret.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
