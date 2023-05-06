@@ -3,12 +3,13 @@ const Color = require(`color`)
 const loadAsset = require(`../../utils/loadAsset`)
 const formatK = require(`../../utils/formatK`)
 const symbolParser = require(`../../utils/symbolParser`)
-const {resolveImage} = require(`canvas-constructor`)
+const {loadImage} = require(`canvas-constructor/cairo`)
+const { contrastColor } = require(`contrast-color`)
 
 class UI {
 	/**
 	 * Profile UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {object} [bot] current client's instance object
 	 * @param {object} [testResolution] manipulating card's width and height for testing/previewing purpose.
@@ -60,8 +61,10 @@ class UI {
 		
 		const darkColorTheme = card.getColorPalette(`dark`)
 
+		const adjustedPrimaryColorContrast_contrastColor = contrastColor({ bgColor: adjustedPrimaryColorContrast })
+
 		//  Sticker
-		if (this.user.usedSticker) card.canv.printImage(await resolveImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
+		if (this.user.usedSticker) card.canv.printImage(await loadImage(await loadAsset(`sticker_${this.user.usedSticker.alias}`)), startPos_x, startPos_y + 194, baseWidth, 206)
 		//  Cover
 		await card.addBackgroundLayer(this.user.usedCover.alias, {
 			isSelfUpload: this.user.usedCover.isSelfUpload,
@@ -72,7 +75,7 @@ class UI {
 		//  Avatar
 		card.canv.setColor(card.color.main)
 			.printCircle(startPos_x + 70, 200, 52) 
-			.printCircularImage(await resolveImage(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})), startPos_x + 70, 200, 50, 50, 25)
+			.printCircularImage(await loadImage(this.user.master.displayAvatarURL({extension: `png`, forceStatic: true})), startPos_x + 70, 200, 50, 50, 25)
 		//  Badges
 		const badges = this.user.inventory.raw.filter(key => key.type_id === 2)
 		const availableBadges = []
@@ -88,7 +91,7 @@ class UI {
 		for (let i = 0; i < availableBadges.length; i++) {
 			//  Limit displayed badges to specified amount
             if (i > 4) break
-            card.canv.printImage(await resolveImage(await loadAsset(availableBadges[i])), this.width - 55 - i*32, 215, 26, 26)
+            card.canv.printImage(await loadImage(await loadAsset(availableBadges[i])), this.width - 55 - i*32, 215, 26, 26)
 		}
 
 		//  Username
@@ -108,12 +111,7 @@ class UI {
 
 		// For the actual title
 		card.canv.setTextFont(`7pt roboto`)
-			.setStroke(usingLightMode ? card._resolveColor(`white`) : darkColorTheme.text)
-			// .setStroke(usingLightMode ? card._resolveColor(`black`) : darkColorTheme.text)
-			.setStrokeWidth(1)
-			.printStrokeText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
-			.setColor(usingLightMode? card._resolveColor(`black`) : adjustedPrimaryColorContrast)			
-			// .setColor(usingLightMode? card._resolveColor(`white`) : adjustedPrimaryColorContrast)			
+			.setColor(usingLightMode? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)				
 			.printText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
 		//  Verified/Blue Badge if any
@@ -122,7 +120,7 @@ class UI {
 		 * 1/27/23
 		 */
 		// const verifiedStartingPoint = card.canv.measureText(this.user.master.username).width * 1.3 + 2
-		// if (this.user.main.verified) card.canv.printImage(await resolveImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
+		// if (this.user.main.verified) card.canv.printImage(await loadImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
 
 		// Rank Bar
 		card.canv.save()
@@ -130,12 +128,7 @@ class UI {
 			.createRoundedClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.printRectangle(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setTextFont(`10pt roboto-bold`)
-			.setStroke(card._resolveColor(`white`))
-			// .setStroke(card._resolveColor(`black`))
-			.setStrokeWidth(1)
-			.printStrokeText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
-			.setColor(card._resolveColor(`black`))
-			// .setColor(card._resolveColor(`white`))
+			.setColor(adjustedPrimaryColorContrast_contrastColor)
 			.printText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
 			.restore()
 
@@ -163,7 +156,7 @@ class UI {
 				.printText(this.formatString(bio, 3).fourth, descriptionMarginLeft, descriptionMarginTop+(descriptionMarginBetweenParagraph*3))
 		}
 
-		
+
 		//  Footer Components [Heart, Level, Fame/Reputation Points]
 		if (usingLightMode) {			
 			// use role color as one bubble
@@ -176,11 +169,11 @@ class UI {
 				
 		card.canv.setTextAlign(`center`)
 			.setTextFont(`17pt roboto`)
-			.setColor(usingLightMode ? card._resolveColor(`black`) : adjustedPrimaryColorContrast)
+			.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)
 			.printText(formatK(this.user.inventory.artcoins), 70, 370)
 			.printText(this.user.exp.level, 160, 370)
 			.printText(formatK(this.user.reputations.total_reps), 250, 370)
-			.setColor(usingLightMode ? card._resolveColor(`black`) : darkColorTheme.text)
+			.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : darkColorTheme.text)
 			.setTextFont(`7pt roboto`)
 			.printText(`ARTCOINS`, 70, 390)
 			.printText(`LEVEL`, 160, 390) 

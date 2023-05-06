@@ -79,7 +79,7 @@ module.exports = {
             const loading = await reply.send(locale.GIFT.RENDERING_AVAILABLE_GIFTS, { simplified: true, socket: { emoji: await client.getEmoji(`790994076257353779`) } })
             await reply.send(locale.GIFT.SHORT_GUIDE, {
                 prebuffer: true,
-                image: (await new inventoryGUI(userData, client).build()).toBuffer(),
+                image: (await new inventoryGUI(userData, client).build()).png(),
                 socket: {
                     prefix: client.prefix,
                     referenceItem: availableGifts[0].name.toLowerCase(),
@@ -163,7 +163,7 @@ module.exports = {
             })
             await reply.send(locale.GIFT.SHORT_GUIDE, {
                 prebuffer: true,
-                image: (await new inventoryGUI(userData, client).build()).toBuffer(),
+                image: (await new inventoryGUI(userData, client).build()).png(),
                 socket: {
                     prefix: `/`,
                     referenceItem: availableGifts[0].name.toLowerCase(),

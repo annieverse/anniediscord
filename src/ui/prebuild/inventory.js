@@ -2,12 +2,12 @@ const Color = require(`color`)
 const Cards = require(`../components/cards`)
 const ThemePresets = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)
-const {resolveImage} = require(`canvas-constructor`)
+const {loadImage} = require(`canvas-constructor/cairo`)
 
 class UI {
 	/**
 	 * Inventory UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {Client} [bot={}] current bot instance
 	 * @return {Canvas}
@@ -124,7 +124,7 @@ class UI {
 		 * @param {ArrayOfPosition} pos Preferably to use the same grid array across function
 		 * @renderIcon
 		 */
-		const renderIcon = async (id, pos=[]) => this.card.canv.printImage(await resolveImage(await loadAsset(id)), ...pos)
+		const renderIcon = async (id, pos=[]) => this.card.canv.printImage(await loadImage(await loadAsset(id)), ...pos)
 
 		/**
 		 * Get absolute dimension for each item grid. Returns an array

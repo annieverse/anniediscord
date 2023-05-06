@@ -2,12 +2,12 @@ const Canvas = require(`../setup`)
 const palette = require(`../colors/default`)
 const theme = require(`../colors/themes`)
 const loadAsset = require(`../../utils/loadAsset`)
-const {resolveImage} = require(`canvas-constructor`)
+const {loadImage} = require(`canvas-constructor/cairo`)
 
 class UI {
 	/**
 	 * Gacha UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @return {Canvas}
 	 */
 	constructor(container, drawCount=1, user){
@@ -49,7 +49,7 @@ class UI {
 			this.shadowGround()
 			this.removeShadowLayer()
 			//  Load item asset
-			this.canv.printImage(await resolveImage(await loadAsset(item.alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
+			this.canv.printImage(await loadImage(await loadAsset(item.alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 		} else {
 			//   Add base shape
 			this.drawCardBase(this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
@@ -59,8 +59,8 @@ class UI {
 		}      
 
 		//  Add flare overlay for item with rarity above 3
-		if (item.rarity_level > 3) this.canv.printImage(await resolveImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`)), 0, 0, this.canvas_x, this.canvas_y)
-		return this.canv.toBuffer()
+		if (item.rarity_level > 3) this.canv.printImage(await loadImage(await loadAsset(`rarityflare_micro_${item.rarity_level}`)), 0, 0, this.canvas_x, this.canvas_y)
+		return this.canv.png()
 	}
 
 	/**
@@ -91,7 +91,7 @@ class UI {
 				if (i > 0) this.canv.setColor(palette.darkmatte)
 				//  Render without base if its a card item
 				if (item(`type_name`) === `Cards`) {
-					this.canv.printImage(await resolveImage(await loadAsset(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10)
+					this.canv.printImage(await loadImage(await loadAsset(item(`alias`))), dynamicX-2, set_y-4, card_dx+5, card_dy+10)
 					continue
 				}
 				//  Draw card base
@@ -110,8 +110,8 @@ class UI {
 		//  Add flare overlay for item with rarity above 3
 		const rareRarities = this.container.filter(item => item.rarity_level > 3).map(item => item.rarity_level)
 		const highestRarityInPool = Math.max.apply(Math, rareRarities)
-		if (highestRarityInPool > 3) this.canv.printImage(await resolveImage(await loadAsset(`rarityflare_${highestRarityInPool}`)), 0, 0, this.canvas_x, this.canvas_y)
-		return this.canv.toBuffer()
+		if (highestRarityInPool > 3) this.canv.printImage(await loadImage(await loadAsset(`rarityflare_${highestRarityInPool}`)), 0, 0, this.canvas_x, this.canvas_y)
+		return this.canv.png()
 	}
 
 	/**
@@ -125,7 +125,7 @@ class UI {
      *  @param {Integer} index current index position of item's object
      */
 	async itemVisual(x, y, dx, dy, index = 0) {
-		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
+		this.canv.printImage(await loadImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
 	}
 
 	/**

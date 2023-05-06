@@ -8,7 +8,7 @@ const Color = require(`color`)
 class UI {
 	/**
 	 * Level UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @return {Canvas}
 	 */

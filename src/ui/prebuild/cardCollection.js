@@ -1,7 +1,7 @@
 const Canvas = require(`../setup`)
 const loadAsset = require(`../../utils/loadAsset`)
 const palette = require(`../colors/default`)
-const {resolveImage} = require(`canvas-constructor`)
+const {loadImage} = require(`canvas-constructor/cairo`)
 
 /**
  *  Handles canvas-powered graphic result from gacha roll
@@ -37,7 +37,7 @@ class canvasGUI {
      *  @param {Integer} index current index position of item's object
      */
 	async itemVisual(x, y, dx, dy, dm, index = 0) {
-		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
+		this.canv.printImage(await loadImage(await loadAsset(this.container[index].alias)), x, y, dx, dy)
 	}
 
 
@@ -116,9 +116,9 @@ class canvasGUI {
 		this.shadowGround()
 		this.removeShadowLayer()
 		//  Load item asset
-		this.canv.printImage(await resolveImage(await loadAsset(this.container[index].alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
+		this.canv.printImage(await loadImage(await loadAsset(this.container[index].alias)), this.startPos_x, this.startPos_y, this.baseWidth, this.baseHeight)
 		//  Render
-		return this.canv.toBuffer()
+		return this.canv.png()
 	}
 	async create() {
 		var strips = []
@@ -160,11 +160,11 @@ class canvasGUI {
 			if (i == 20) y = (-1*(originalY * 5)) + height * 4
 			if (i == 25) y = (-1*(originalY * 5)) + height * 5
 			if (i == 5 || i == 10 || i == 15 || i == 20 || i == 25) x = originalX
-			canv.printImage(await resolveImage(strips[i]), x, y, baseWidth, baseHeight)
+			canv.printImage(await loadImage(strips[i]), x, y, baseWidth, baseHeight)
 			canv.save()
 			x += (baseWidth-25)			
 		}
-		return canv.toBuffer()
+		return canv.png()
 	}
 }
 

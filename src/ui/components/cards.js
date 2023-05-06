@@ -1,5 +1,5 @@
 const Canvas = require(`../setup`)
-const { resolveImage } = require(`canvas-constructor`)
+const { loadImage } = require(`canvas-constructor/cairo`)
 const loadAsset = require(`../../utils/loadAsset`)
 const sizeOfBuffer = require(`buffer-image-size`)
 const Color = require(`color`)
@@ -42,7 +42,7 @@ class Card {
 	}
 
 	getBuffer(){
-		return this.canv.toBuffer()
+		return this.canv.png()
 	}
 
 	/**
@@ -143,7 +143,7 @@ class Card {
 			if (imgSize.width > this.width) return imgSize.height-((imgSize.width - this.width)/1.5)
 			return this.height
 		}
-		let image = await resolveImage(img)
+		let image = await loadImage(img)
 		img = image
 		grad.addColorStop(1, this.color.main)
 		grad.addColorStop(0, semiTransparent)
@@ -349,11 +349,11 @@ class Card {
 		this.canv
 		.setColor(color)
 		.setTextAlign(align)
-		.setTextFont(size ? `${parseInt(size)}pt roboto-${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
+		.setTextFont(size ? `${parseInt(size)}px roboto-${fontWeight}` : DEFAULT.HEADER.TITLE.FONT)
 		.printText(main, this._getHorizontalAlign(align)+marginLeft, this.reservedSpace+marginTop)
 		if (caption) {
 			this.canv
-			.setTextFont(size ? `${parseInt(size/1.5)}pt roboto-${fontWeight}` : DEFAULT.HEADER.CAPTION.FONT)
+			.setTextFont(size ? `${parseInt(size/1.5)}px roboto-${fontWeight}` : DEFAULT.HEADER.CAPTION.FONT)
 			.setColor(captionColor)
 			.printText(caption, this._getHorizontalAlign(align)+marginLeft, this.reservedSpace+marginTop+captionMargin)
 		}
@@ -431,14 +431,14 @@ class Card {
 		}
 		
 		if (avatar) {
-			avatar = await resolveImage(avatar)
+			avatar = await loadImage(avatar)
 			this.canv.printCircularImage(avatar, avatarMarginLeft(), (this.reservedSpace+marginTop)-3, customAvatarWidth, customAvatarHeight, customAvatarRadius)
 		}
 		if (main) {
 			this.canv
 			.setColor(mainColor)
 			.setTextAlign(align)
-			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}pt roboto-${fontWeight}`)
+			.setTextFont(CONTENT.MAIN_TEXT.SIZE[size] || `${size}px roboto-${fontWeight}`)
 			.printText(main, mainMarginLeft(), this.reservedSpace+marginTop)
 		}
 
@@ -450,7 +450,7 @@ class Card {
 			this.reservedSpace += marginTop
 		}
 		if (img) {
-			img = await resolveImage(img)
+			img = await loadImage(img)
 			this.canv.printImage(img, marginLeft+this._getHorizontalAlign(justify), this.reservedSpace+marginTop-marginBottom, imgDx, imgDy)
 		}
 		return this
@@ -491,13 +491,13 @@ class Card {
 		if (gradient) {
 			this.canv
 			.setGlobalAlpha(0.5)
-			.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
+			.printImage(await loadImage(bg), 0, top, dynamic.width, dynamic.height)
 			.setGlobalAlpha(1)
 			.setColor(grad)
 			.printRectangle(0, 0, this.width, this.height)
 		}
 		else {
-			this.canv.printImage(await resolveImage(bg), 0, top, dynamic.width, dynamic.height)
+			this.canv.printImage(await loadImage(bg), 0, top, dynamic.width, dynamic.height)
 		}
 	}
 }

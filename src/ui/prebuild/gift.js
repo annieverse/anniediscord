@@ -5,7 +5,7 @@ const loadAsset = require(`../../utils/loadAsset`)
 class UI {
 	/**
 	 * Gift UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {object} [gift={}] item metadata
      * @param {number} [amount=0] amount of gift to send

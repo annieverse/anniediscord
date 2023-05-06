@@ -57,7 +57,7 @@ module.exports = {
         }).build(betaFeature)
         const confirmation = await reply.send(locale.SETBIO.PREVIEW_CONFIRMATION, {
             prebuffer: true,
-            image: img.toBuffer()
+            image: img.png()
         })
         rendering.delete()
         const c = new Confirmator(message, reply)
@@ -86,7 +86,7 @@ module.exports = {
         }).build(betaFeature)
         const confirmation = await reply.send(locale.SETBIO.PREVIEW_CONFIRMATION, {
             prebuffer: true,
-            image: img.toBuffer(),
+            image: img.png(),
             followUp: true
         })
         rendering.delete()
