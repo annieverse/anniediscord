@@ -26,8 +26,8 @@ jobs:
       - name: Codestyle Test
         run: npm test
       
-  release:
-    name: Release
+  publish:
+    name: Publish Release
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
