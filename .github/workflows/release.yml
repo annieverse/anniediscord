@@ -1,9 +1,8 @@
 name: Release
-
 on:
   push:
     branches: [ "master" ]
-
+    
 jobs:
   build:
     permissions:
@@ -25,7 +24,7 @@ jobs:
       - run: npm ci
       - name: Codestyle Test
         run: npm test
-      
+        
   publish:
     name: Publish Release
     runs-on: ubuntu-20.04
