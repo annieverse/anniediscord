@@ -44,7 +44,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm ci
       # Run semantic-release script
-      - name: Versionize and publish
+      - name: Versionize
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
