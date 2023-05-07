@@ -6,11 +6,15 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write 
+      issues: write 
+      pull-requests: write 
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 18 ]
-    name: Node ${{ matrix.node }} sample
+        node: [ 18.16, 18.x ]
+    name: Build and Test
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -18,8 +22,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm i
-      - run: npm test
+      - run: npm ci
+      - name: Codestyle Test
+        run: npm test
       
   release:
     name: Release
@@ -37,9 +42,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm i
+      - run: npm ci
       # Run semantic-release script
-      - name: Versionize and publish
+      - name: Versionize
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
+      - name: Publish Release
+      - run: npm publish --access public
