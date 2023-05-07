@@ -48,5 +48,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
-      - name: Publish Release
-      - run: npm publish --access public
