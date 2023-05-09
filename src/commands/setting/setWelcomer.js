@@ -384,8 +384,7 @@ module.exports = {
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
-            },
-            followUp: true
+            }
         })
         const renderingMsg = await reply.send(locale.COMMAND.FETCHING, {
             simplified: true,

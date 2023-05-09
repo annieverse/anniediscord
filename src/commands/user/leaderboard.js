@@ -106,7 +106,7 @@ module.exports = {
                 load.delete()
                 await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${message.guild.name}'s Ranking`, {
                     prebuffer: true,
-                    image: img.toBuffer(),
+                    image: img.png(),
                     simplified: true
                 })
                 const author = validUsers.filter(key => key.id === message.author.id)[0]
@@ -171,7 +171,7 @@ module.exports = {
             load.delete()
             await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${interaction.guild.name}'s Ranking`, {
                 prebuffer: true,
-                image: img.toBuffer(),
+                image: img.png(),
                 simplified: true,
                 followUp: true
             })

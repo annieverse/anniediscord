@@ -1,12 +1,12 @@
 const Cards = require(`../components/cards`)
 const relationshipPairs = require(`../../config/relationshipPairs.json`)
 const loadAsset = require(`../../utils/loadAsset`)
-const {resolveImage} = require(`canvas-constructor`)
+const {loadImage} = require(`canvas-constructor/cairo`)
 
 class UI {
     /**
      * Relationship UI Builder.
-     * to access the buffer, please call `.toBuffer()` after running `this.build()`
+     * to access the buffer, please call `.png()` after running `this.build()`
      * @legacy
      * @return {Canvas}
      */
@@ -44,7 +44,7 @@ class UI {
         for (let i=0; i<Math.min(this.relationships.length, this.limit); i++) {
             const rel = this.relationships[i]
             const user = await this.bot.users.fetch(rel.assigned_user_id)
-            const relAvatar = user ? await resolveImage(user.displayAvatarURL({extension: `png`, forceStatic: true})) : await resolveImage(await loadAsset(`error`))
+            const relAvatar = user ? await loadImage(user.displayAvatarURL({extension: `png`, forceStatic: true})) : await loadImage(await loadAsset(`error`))
             const relName = user ? user.username : rel.assigned_user_id
             const relGender = await this.bot.db.userUtils.getUserGender(rel.assigned_user_id)
             const pairRole = relationshipPairs.MASTER_PAIR[rel.relationship_name]

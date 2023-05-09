@@ -31,7 +31,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        const image = (await new GUI(userData, client).build()).toBuffer()
+        const image = (await new GUI(userData, client).build()).png()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
             socket: {
@@ -51,7 +51,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const userData = await userLib.requestMetadata(targetUser, 2)
-        const image = (await new GUI(userData, client).build()).toBuffer()
+        const image = (await new GUI(userData, client).build()).png()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
             socket: {

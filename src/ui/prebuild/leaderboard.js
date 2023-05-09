@@ -5,7 +5,7 @@ const urlToBuffer = require(`../../utils/urlToBuffer`)
 class UI {
 	/**
 	 * Leaderboard UI Builder.
-	 * to access the buffer, please call `.toBuffer()` after running `this.build()`
+	 * to access the buffer, please call `.png()` after running `this.build()`
 	 * @param {User} [user={}] parsed user object from `./src/libs/user`
 	 * @param {object} [lbData={}] returned result from `Database.indexRanking()`
      * @parma {Client} client Current bot instance.
@@ -48,7 +48,7 @@ class UI {
 			})
 
 			//  User name
-			//  This one required to be async, since we use canvas constructor's .resolveImage()
+			//  This one required to be async, since we use canvas constructor's .loadImage()
 			//  to handle the avatar.
 			const userName = await this.client.getUsername(topTenRows[row].id)
 			await card.addContent({

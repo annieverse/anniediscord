@@ -146,7 +146,7 @@ module.exports = {
         const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
-            image: img.toBuffer(),
+            image: img.png(),
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
@@ -275,7 +275,7 @@ module.exports = {
         const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
-            image: img.toBuffer(),
+            image: img.png(),
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
@@ -330,7 +330,7 @@ module.exports = {
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
         const confirmation = await reply.send(locale.SETCOVER[`PREVIEW_CONFIRMATION`], {
             prebuffer: true,
-            image: img.toBuffer(),
+            image: img.png(),
             socket: {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),

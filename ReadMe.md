@@ -1,6 +1,6 @@
 # Say hello to **Annie.**
 
-![UptimeRobot](https://img.shields.io/uptimerobot/ratio/m792603658-7e50ae6bb7f048a0435792d8)
+![UptimeRobot](https://img.shields.io/uptimerobot/ratio/m792603658-7e50ae6bb7f048a0435792d8) [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
 ![annie](https://i.ibb.co/YpzBxS5/anniebanner.png)
 
