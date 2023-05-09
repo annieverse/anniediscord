@@ -1,9 +1,11 @@
-const SqliteClient = require(`better-sqlite3`)
+const { Client, types } = require(`pg`)
+//  Remove pg's number to string conversion
+types.setTypeParser(20, function(val) {
+    return parseInt(val, 10)
+})
 const Redis = require(`async-redis`)
 const logger = require(`pino`)({ name: `DATABASE`, level: `debug` })
 const getBenchmark = require(`../utils/getBenchmark`)
-const fs = require(`fs`)
-const { join } = require(`path`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -18,30 +20,25 @@ class Database {
 	}
 	/**
 	 * Opening database connection
-	 * @param {string} [path=`.data/database.sqlite`]
-	 * @param {string} [fsPath=`../../.data/database.sqlite`]
 	 * @returns {this}
 	 */
-	connect(path = `.data/database.sqlite`, fsPath = `../../.data/database.sqlite`) {
-		/**
-		 * This will check if the db file exists or not.
-		 * If file is not found, throw an error.
-		 */
-		fs.accessSync(join(__dirname, fsPath), fs.constants.F_OK)
-		this.client = new SqliteClient(path, { timeout: 10000 })
-		this.client.pragma(`journal_mode = WAL`)
-		this.client.pragma(`synchronous = FULL`)
-		logger.info(`SQLITE <CONNECTED>`)
-		//  Refresh wal checkpoint if exceeds the threeshold once very 30 seconds.
-		setInterval(fs.stat.bind(null, path, (err, stat) => {
-			if (err) {
-				if (err.code !== `ENOENT`) throw err
-				// 1e+8 equals to 100 megabytes. 
-			}
-			if (stat.size > 2e+9) {
-				this.client.pragma(`wal_checkpoint(RESTART)`)
-			}
-		}), 5000).unref()
+	connect() {
+		this.client = new Client({
+			host: process.env.PG_HOST,
+			database: process.env.PG_DB,
+			user: process.env.PG_USER,
+			password: process.env.PG_PASS,
+			port: process.env.PG_PORT
+		})
+		this.client
+		.connect()
+		.then(() => {
+			logger.info(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
+		})
+		.catch(err => {
+			logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
+			process.exit()
+		})
 		this.connectRedis()
 		return this
 	}
@@ -86,6 +83,29 @@ class DatabaseUtils {
 	}
 
 	/**
+	 * Parsing query to match with PostgreSQL format.
+	 * @param {string} query 
+	 * @param {object} params 
+	 * @return {object}
+	 */
+	_convertNamedParamsToPositionalParams(query, params) {
+		let positionalParams = [];
+		let index = 1;
+	
+		const convertedQuery = query.replace(/\$\w+/g, (param) => {
+			const paramName = param.slice(1);
+			if (params.hasOwnProperty(paramName)) {
+				positionalParams.push(params[paramName]);
+			} else {
+				throw new Error(`Missing value for parameter ${paramName}`);
+			}
+			return `$${index++}`;
+		});
+	
+		return [convertedQuery, positionalParams];
+	}
+
+	/**
 	 * 	Standardized method for executing sql query
 	 * 	@param {string} [stmt=``] sql statement
 	 * 	@param {string} [type=`get`] `get` for single result, `all` for multiple result
@@ -97,12 +117,17 @@ class DatabaseUtils {
 	async _query(stmt = ``, type = `get`, supplies = [], log) {
 		//	Return if no statement has found
 		if (!stmt) return null
-		const que = this.client.prepare(stmt)
-		const fn = this.client.transaction(params => que[type](params))
-		const result = await fn(supplies)
+		if (type === `run`) stmt = stmt + ` RETURNING *`
+		const [ parsedStatement, parsedParameters ] = this._convertNamedParamsToPositionalParams(stmt, supplies)
+		let result = await this.client.query(parsedStatement, parsedParameters)
 		if (!result) return null
 		if (log) logger.info(log)
-		return result
+		if (type === `all`) return result.rows
+		if (type === `run`) {
+			result.changes = result.rowCount
+			return result
+		}
+		return result.rows[0]
 	}
 
 
@@ -210,7 +235,7 @@ class DatabaseUtils {
 					UPDATE user_inventories
 					SET 
 						quantity = quantity ${operation} $value,
-						updated_at = datetime('now')
+						updated_at = CURRENT_TIMESTAMP
 					WHERE item_id = $itemId AND user_id = $userId`
 					, `run`
 					, { value: value, itemId: itemId, userId: userId }
@@ -235,7 +260,7 @@ class DatabaseUtils {
 					UPDATE user_inventories
 					SET 
 						quantity = quantity ${operation} $value,
-						updated_at = datetime('now')
+						updated_at = CURRENT_TIMESTAMP
 						WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId`
 					, `run`
 					, { value: value, itemId: itemId, userId: userId, guildId: guildId }
@@ -244,8 +269,7 @@ class DatabaseUtils {
 			}
 		}
 
-		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`${fn} ${type}(${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.info(`${fn} (${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return true
 	}
 
@@ -603,7 +627,7 @@ class UserUtils extends DatabaseUtils {
                 UPDATE user_reputations 
                 SET 
                     total_reps = total_reps + $value,
-                    last_received_at = datetime('now'),
+                    last_received_at = CURRENT_TIMESTAMP,
                     recently_received_by = $receivedBy
                 WHERE user_id = $userId AND guild_id = $guildId`
 				, `run`
@@ -612,7 +636,7 @@ class UserUtils extends DatabaseUtils {
 			),
 			insert: await this._query(`
                 INSERT INTO user_reputations(last_giving_at, user_id, guild_id, total_reps)
-                SELECT datetime('now','-1 day'), $userId, $guildId, $amount
+                SELECT DATE('now'::timestamp - INTERVAL '1 day'), $userId, $guildId, $amount
                 WHERE NOT EXISTS (SELECT 1 FROM user_reputations WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, { userId: userId, guildId: guildId, amount: amount }
@@ -674,7 +698,7 @@ class UserUtils extends DatabaseUtils {
 			update: await this._query(`
                 UPDATE user_dailies 
                 SET 
-                    updated_at = datetime('now'),
+                    updated_at = CURRENT_TIMESTAMP,
                     total_streak = $totalStreak
                 WHERE user_id = $userId AND guild_id = $guildId`
 				, `run`
@@ -683,7 +707,7 @@ class UserUtils extends DatabaseUtils {
 			),
 			insert: await this._query(`
                 INSERT INTO user_dailies(updated_at, total_streak, user_id, guild_id)
-                SELECT datetime('now','-1 day'), -1, $userId, $guildId
+                SELECT DATE('now'::timestamp - INTERVAL '1 day'), -1, $userId, $guildId
                 WHERE NOT EXISTS (SELECT 1 FROM user_dailies WHERE user_id = $userId AND guild_id = $guildId)`
 				, `run`
 				, { userId: userId, guildId: guildId }
@@ -740,7 +764,7 @@ class UserUtils extends DatabaseUtils {
 		//  Register user's quest data if not present
 		await this._query(`
 			INSERT INTO user_quests (updated_at, user_id, guild_id)
-			SELECT datetime('now','-1 day'), $userId, $guildId
+			SELECT DATE('now'::timestamp - INTERVAL '1 day'), $userId, $guildId
 			WHERE NOT EXISTS (SELECT 1 FROM user_quests WHERE user_id = $userId AND guild_id = $guildId)`
 			, `run`
 			, { userId: userId, guildId: guildId }
@@ -1067,7 +1091,7 @@ class UserUtils extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`
 			UPDATE user_reputations 
-			SET last_giving_at = datetime('now')
+			SET last_giving_at = CURRENT_TIMESTAMP
 			WHERE user_id = $userId 
             AND guild_id = $guildId`
 			, `run`
@@ -1106,7 +1130,7 @@ class SystemUtils extends DatabaseUtils {
 				command_alias, 
 				resolved_in
 			)
-			VALUES (datetime('now'), $userId, $guildId, $commandAlias, $resolvedIn)`
+			VALUES (CURRENT_TIMESTAMP, $userId, $guildId, $commandAlias, $resolvedIn)`
 			, `run`
 			, { userId: user_id, guildId: guild_id, commandAlias: command_alias, resolvedIn: resolved_in }
 			, `${fn} Log command usage`
@@ -1139,15 +1163,7 @@ class SystemUtils extends DatabaseUtils {
 	 * @returns {string}
 	 */
 	async toLocaltime(timestamp = `now`) {
-		const fn = this.formatFunctionLog(`getTotalCommandUsage`)
-		if (!timestamp) throw new TypeError(`${fn} parameter "guild_id" cannot be blank.`)
-		const res = await this._query(`
-			SELECT datetime($timestamp, 'localtime') AS timestamp`
-			, `get`
-			, { timestamp: timestamp }
-			, `${fn} fetch machine's time`
-		)
-		return res.timestamp
+		return timestamp
 	}
 }
 
@@ -1255,7 +1271,7 @@ class GuildUtils extends DatabaseUtils {
 			   SET 
 				   customized_parameter = $parameter,
 				   set_by_user_id = $userId,
-				   updated_at = datetime('now')
+				   updated_at = CURRENT_TIMESTAMP
 			   WHERE 
 				   config_code = $configCode
 				   AND guild_id = $guildId`
@@ -1413,7 +1429,6 @@ class Relationships extends DatabaseUtils {
 		return true
 	}
 }
-
 
 class AutoResponder extends DatabaseUtils {
 	constructor(client) {
@@ -1633,7 +1648,7 @@ class DurationalBuffs extends DatabaseUtils {
 			//  Update duration
 			if (res.instance > 0) return this._query(`
                 UPDATE user_durational_buffs
-                SET registered_at = datetime('now')
+                SET registered_at = CURRENT_TIMESTAMP
                 WHERE
                     type = $buffType
 					AND name = $name
@@ -1747,7 +1762,7 @@ class CustomRewards extends DatabaseUtils {
 	recordReward(guildId, userId, rewardBlob, rewardName) {
 		const fn = this.formatFunctionLog(`recordReward`)
 		return this._query(` INSERT INTO custom_rewards (registered_at, guild_id, set_by_user_id, reward, reward_name)
-		VALUES (datetime('now'), $guildId, $user_id, $reward, $rewardName)`
+		VALUES (CURRENT_TIMESTAMP, $guildId, $user_id, $reward, $rewardName)`
 			, `run`
 			, { guild_id: guildId, user_id: userId, reward: rewardBlob, rewardName: rewardName }
 			, `${fn} Inserting record for new package for guild: ${guildId}`
@@ -1831,7 +1846,7 @@ class Covers extends DatabaseUtils {
 				UPDATE user_self_covers
 				SET 
 					cover_id = $coverId,
-					registered_at = datetime('now')
+					registered_at = CURRENT_TIMESTAMP
 				WHERE 
 					user_id = $userId 
 					AND guild_id = $guildId`
@@ -2306,7 +2321,7 @@ class Quests extends DatabaseUtils {
 		return this._query(`
 			UPDATE user_quests
 			SET 
-				updated_at = datetime('now'),
+				updated_at = CURRENT_TIMESTAMP,
 				next_quest_id = $nextQuestId
 			WHERE
 				user_id = $userId
@@ -2338,7 +2353,7 @@ class Quests extends DatabaseUtils {
 				user_id,
 				answer
 			)
-			VALUES($questId, $userId, $guildId, $answer)`
+			VALUES($guildId, $questId, $userId, $answer)`
 			, `run`
 			, { questId: questId, userId: userId, guildId: guildId, answer: answer }
 			, `${fn} Storing ${userId}@${guildId} quest's activity to quest_log table`
