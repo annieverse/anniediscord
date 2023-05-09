@@ -1,3 +1,16 @@
+# [9.6.0](https://github.com/annieverse/anniediscord/compare/v9.5.7...v9.6.0) (2023-05-09)
+
+
+### Bug Fixes
+
+* **db:** revise schema order. ([c9d3e8f](https://github.com/annieverse/anniediscord/commit/c9d3e8f72252c26406249b2acfbddd6dedfafda2))
+* **db:** schema adjustment. ([deaeced](https://github.com/annieverse/anniediscord/commit/deaeced99602c44d92f4f6f2466ce12e33977813))
+
+
+### Features
+
+* **db:** added pg-supported schema. ([d976450](https://github.com/annieverse/anniediscord/commit/d9764501ed33e6bc9d5afe68e0750be5ffb904c1))
+
 ## [9.5.7](https://github.com/annieverse/anniediscord/compare/v9.5.6...v9.5.7) (2023-05-05)
 
 
