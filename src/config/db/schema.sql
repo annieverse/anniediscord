@@ -1,290 +1,1205 @@
---  Master/root tables
-CREATE TABLE users (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id TEXT PRIMARY KEY,
-    name TEXT,
-    bio TEXT DEFAULT 'Hi! I''m a new user!',
-    verified INTEGER DEFAULT 0,
-    lang TEXT DEFAULT 'en',
-    receive_notification INTEGER DEFAULT -1
-);
-CREATE TABLE guilds (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  guild_id TEXT PRIMARY KEY,
-  name TEXT,
-  bio TEXT
-);
-CREATE TABLE quests (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  quest_id SERIAL PRIMARY KEY,
-  reward_amount INTEGER,
-  name TEXT,
-  description TEXT,
-  correct_answer TEXT
-);
-CREATE TABLE item_types (
-  type_id SERIAL PRIMARY KEY,
-  name TEXT,
-  alias TEXT,
-  max_stacks INTEGER DEFAULT 9999,
-  max_use INTEGER DEFAULT 9999
-);
-CREATE TABLE item_rarities (
-  rarity_id SERIAL PRIMARY KEY,
-  name TEXT,
-  level INTEGER UNIQUE,
-  color TEXT DEFAULT '#000000'
-);
-CREATE TABLE items (
-  registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  item_id SERIAL PRIMARY KEY,
-  name TEXT,
-  description TEXT,
-  alias TEXT,
-  type_id INTEGER,
-  rarity_id INTEGER,
-  bind TEXT DEFAULT '0',
-  usable INTEGER DEFAULT 0,
-  response_on_use TEXT,
-  owned_by_guild_id TEXT,
+--
+-- PostgreSQL database dump
+--
 
-  CONSTRAINT fk_items_rarity_id
-    FOREIGN KEY (rarity_id)
-    REFERENCES item_rarities(rarity_id)
-    ON UPDATE CASCADE
-    ON DELETE SET NULL,
-  
-  CONSTRAINT fk_items_type_id
-    FOREIGN KEY (type_id)
-    REFERENCES item_types(type_id)
-    ON UPDATE CASCADE
-    ON DELETE SET NULL
-);
-CREATE TABLE relationships (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  relationship_id SERIAL PRIMARY KEY,
-  name TEXT
-);
-CREATE TABLE affiliates (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  guild_id TEXT NOT NULL REFERENCES guilds(guild_id),
-  description TEXT DEFAULT 'Another awesome server!',
-  invite_link TEXT,
-  notes TEXT
-);
-CREATE TABLE autoresponders (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  ar_id SERIAL PRIMARY KEY,
-  guild_id TEXT REFERENCES guilds(guild_id),
-  user_id TEXT REFERENCES users(user_id),
-  trigger TEXT,
-  response TEXT
-);
-CREATE TABLE custom_rewards (
-  registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  reward_id SERIAL PRIMARY KEY,
-  guild_id TEXT NOT NULL REFERENCES guilds(guild_id),
-  set_by_user_id TEXT NOT NULL REFERENCES users(user_id),
-  reward TEXT NOT NULL,
-  reward_name TEXT NOT NULL
-);
+-- Dumped from database version 14.7 (Ubuntu 14.7-0ubuntu0.22.04.1)
+-- Dumped by pg_dump version 14.7 (Ubuntu 14.7-0ubuntu0.22.04.1)
 
---  Item branches
-CREATE TABLE item_gacha (
-  gacha_id SERIAL PRIMARY KEY,
-  item_id INTEGER,
-  quantity INTEGER DEFAULT 1,
-  weight REAL,
-  FOREIGN KEY(item_id)
-    REFERENCES items(item_id)
-      ON DELETE CASCADE
-      ON UPDATE CASCADE
-);
-CREATE TABLE item_effects (
-  effect_id SERIAL PRIMARY KEY,
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  item_id INTEGER REFERENCES items(item_id) ON UPDATE CASCADE ON DELETE CASCADE,
-  guild_id TEXT REFERENCES guilds(guild_id) ON UPDATE CASCADE ON DELETE CASCADE,
-  effect_ref_id INTEGER,
-  parameter TEXT
-);
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
---  User branches
-CREATE TABLE user_dailies (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  user_id TEXT,
-  total_streak INTEGER DEFAULT 0,
-  guild_id TEXT,
-  PRIMARY KEY(user_id, guild_id),
-  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_exp (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id TEXT,
-    current_exp INTEGER DEFAULT 0,
-    booster_id INTEGER,
-    booster_activated_at TIMESTAMP,
-    guild_id TEXT,
-    PRIMARY KEY(user_id, guild_id),
-    FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(booster_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_reputations (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_giving_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  last_received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  user_id TEXT,
-  total_reps INTEGER DEFAULT 0,
-  recently_received_by TEXT,
-  guild_id TEXT,
-  PRIMARY KEY(user_id, guild_id),
-  FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY(recently_received_by) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_inventories (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id TEXT,
-    item_id INTEGER,
-    quantity INTEGER DEFAULT 0,
-    in_use INTEGER DEFAULT 0,
-    guild_id TEXT,
-    PRIMARY KEY(user_id, item_id, guild_id),
-    FOREIGN KEY(item_id) REFERENCES items(item_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_relationships (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id_a TEXT,
-    user_id_b TEXT,
-    relationship_id INTEGER,
-    guild_id TEXT,
-    PRIMARY KEY(user_id_a, user_id_b, guild_id),
-    FOREIGN KEY(user_id_a) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(user_id_b) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(relationship_id) REFERENCES relationships(relationship_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_quests (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id TEXT,
-    guild_id TEXT,
-    next_quest_id INTEGER,
-    PRIMARY KEY(user_id, guild_id),
-    FOREIGN KEY(next_quest_id)
-        REFERENCES quests(quest_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY(user_id)
-        REFERENCES users(user_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY(guild_id)
-        REFERENCES guilds(guild_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-CREATE TABLE user_reminders (
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  reminder_id SERIAL PRIMARY KEY,
-  user_id TEXT,
-  message TEXT,
-  remind_at TIMESTAMP,
-  FOREIGN KEY(user_id)
-    REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-CREATE TABLE user_self_covers (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    cover_id TEXT,
-    user_id TEXT,
-    guild_id TEXT,
-    PRIMARY KEY(user_id, guild_id),
-    FOREIGN KEY(user_id)
-        REFERENCES users(user_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY(guild_id)
-        REFERENCES guilds(guild_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-CREATE TABLE user_gender(
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id TEXT PRIMARY KEY,
-    gender TEXT,
-    FOREIGN KEY(user_id)
-    REFERENCES users(user_id) 
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-CREATE TABLE user_durational_buffs(
-    buff_id SERIAL PRIMARY KEY,
-    registered_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    name TEXT,
-    type TEXT,
-    multiplier INTEGER,
-    duration INTEGER,
-    user_id TEXT,
-    guild_id TEXT,
-    FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: affiliates; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.affiliates (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    guild_id text NOT NULL,
+    description text DEFAULT 'Another awesome guild!'::text,
+    invite_link text,
+    notes text
 );
 
 
---  Guild branches
-CREATE TABLE guild_configurations (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    config_id SERIAL PRIMARY KEY,
-    config_code TEXT,
-    guild_id TEXT,
-    customized_parameter TEXT,
-    set_by_user_id TEXT,
-    FOREIGN KEY(guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY(set_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE
+ALTER TABLE public.affiliates OWNER TO annie;
+
+--
+-- Name: autoresponders; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.autoresponders (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    ar_id bigint NOT NULL,
+    guild_id text,
+    user_id text,
+    trigger text,
+    response text
 );
 
---  Log branches (independent/unlinked)
-CREATE TABLE commands_log (
-  log_id SERIAL PRIMARY KEY,
-  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  user_id TEXT,
-  channel_id TEXT,
-  guild_id TEXT,
-  command_alias TEXT,
-  resolved_in TEXT,
-  FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (guild_id) REFERENCES guilds (guild_id) ON DELETE CASCADE ON UPDATE CASCADE
+
+ALTER TABLE public.autoresponders OWNER TO annie;
+
+--
+-- Name: autoresponders_ar_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.autoresponders ALTER COLUMN ar_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.autoresponders_ar_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
 );
-CREATE TABLE resource_log (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    log_id SERIAL PRIMARY KEY,
-    uptime INTEGER,
-    ping REAL,
-    cpu REAL,
-    memory REAL
+
+
+--
+-- Name: commands_log; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.commands_log (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    log_id bigint NOT NULL,
+    user_id text,
+    channel_id text,
+    guild_id text,
+    command_alias text,
+    resolved_in text
 );
-CREATE TABLE quest_log (
-    registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    quest_id INTEGER,
-    user_id TEXT,
-    guild_id TEXT,
-    answer TEXT,
-    PRIMARY KEY (quest_id, user_id, guild_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (guild_id) REFERENCES guilds(guild_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (quest_id) REFERENCES quests(quest_id) ON DELETE CASCADE ON UPDATE CASCADE
+
+
+ALTER TABLE public.commands_log OWNER TO annie;
+
+--
+-- Name: commands_log_log_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.commands_log ALTER COLUMN log_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.commands_log_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
 );
+
+
+--
+-- Name: custom_rewards; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.custom_rewards (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    reward_id bigint NOT NULL,
+    guild_id text NOT NULL,
+    set_by_user_id text NOT NULL,
+    reward text NOT NULL,
+    reward_name text NOT NULL
+);
+
+
+ALTER TABLE public.custom_rewards OWNER TO annie;
+
+--
+-- Name: custom_rewards_reward_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.custom_rewards ALTER COLUMN reward_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.custom_rewards_reward_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: guild_configurations; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.guild_configurations (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    config_id bigint NOT NULL,
+    config_code text,
+    guild_id text,
+    customized_parameter text,
+    set_by_user_id text
+);
+
+
+ALTER TABLE public.guild_configurations OWNER TO annie;
+
+--
+-- Name: guild_configurations_config_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.guild_configurations ALTER COLUMN config_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.guild_configurations_config_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: guilds; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.guilds (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    guild_id text NOT NULL,
+    name text,
+    bio text DEFAULT 'Another awesome guild!'::text
+);
+
+
+ALTER TABLE public.guilds OWNER TO annie;
+
+--
+-- Name: item_effects; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.item_effects (
+    effect_id bigint NOT NULL,
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    item_id bigint,
+    guild_id text,
+    effect_ref_id bigint,
+    parameter text
+);
+
+
+ALTER TABLE public.item_effects OWNER TO annie;
+
+--
+-- Name: item_effects_effect_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.item_effects ALTER COLUMN effect_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.item_effects_effect_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: item_gacha; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.item_gacha (
+    gacha_id bigint NOT NULL,
+    item_id bigint,
+    quantity bigint DEFAULT 1,
+    weight double precision
+);
+
+
+ALTER TABLE public.item_gacha OWNER TO annie;
+
+--
+-- Name: item_gacha_gacha_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.item_gacha ALTER COLUMN gacha_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.item_gacha_gacha_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: item_rarities; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.item_rarities (
+    rarity_id bigint NOT NULL,
+    name text,
+    level bigint,
+    color text DEFAULT '#000000'::text
+);
+
+
+ALTER TABLE public.item_rarities OWNER TO annie;
+
+--
+-- Name: item_rarities_rarity_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.item_rarities ALTER COLUMN rarity_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.item_rarities_rarity_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: item_types; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.item_types (
+    type_id bigint NOT NULL,
+    name text,
+    alias text,
+    max_stacks bigint DEFAULT 9999,
+    max_use bigint DEFAULT 9999
+);
+
+
+ALTER TABLE public.item_types OWNER TO annie;
+
+--
+-- Name: item_types_type_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.item_types ALTER COLUMN type_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.item_types_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: items; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.items (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    item_id bigint NOT NULL,
+    name text,
+    description text,
+    alias text,
+    type_id bigint,
+    rarity_id bigint,
+    bind text,
+    usable bigint DEFAULT 0,
+    response_on_use text,
+    owned_by_guild_id text
+);
+
+
+ALTER TABLE public.items OWNER TO annie;
+
+--
+-- Name: items_item_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.items ALTER COLUMN item_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.items_item_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: quest_log; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.quest_log (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    guild_id text,
+    quest_id bigint,
+    user_id text,
+    answer text
+);
+
+
+ALTER TABLE public.quest_log OWNER TO annie;
+
+--
+-- Name: quests; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.quests (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    quest_id bigint NOT NULL,
+    reward_amount bigint,
+    name text,
+    description text,
+    correct_answer text
+);
+
+
+ALTER TABLE public.quests OWNER TO annie;
+
+--
+-- Name: quests_quest_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.quests ALTER COLUMN quest_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.quests_quest_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: relationships; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.relationships (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    relationship_id bigint NOT NULL,
+    name text
+);
+
+
+ALTER TABLE public.relationships OWNER TO annie;
+
+--
+-- Name: relationships_relationship_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.relationships ALTER COLUMN relationship_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.relationships_relationship_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: resource_log; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.resource_log (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    log_id bigint NOT NULL,
+    uptime bigint,
+    ping double precision,
+    cpu double precision,
+    memory double precision
+);
+
+
+ALTER TABLE public.resource_log OWNER TO annie;
+
+--
+-- Name: resource_log_log_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.resource_log ALTER COLUMN log_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.resource_log_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: shop; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.shop (
+    item_id bigint NOT NULL,
+    guild_id text,
+    quantity bigint DEFAULT '-1'::integer,
+    price bigint DEFAULT 0,
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.shop OWNER TO annie;
+
+--
+-- Name: shop_item_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.shop ALTER COLUMN item_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.shop_item_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: user_dailies; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_dailies (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    total_streak bigint DEFAULT 0,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_dailies OWNER TO annie;
+
+--
+-- Name: user_durational_buffs; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_durational_buffs (
+    buff_id bigint NOT NULL,
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    name text,
+    type text,
+    multiplier bigint,
+    duration bigint,
+    user_id text,
+    guild_id text
+);
+
+
+ALTER TABLE public.user_durational_buffs OWNER TO annie;
+
+--
+-- Name: user_durational_buffs_buff_id_seq; Type: SEQUENCE; Schema: public; Owner: annie
+--
+
+ALTER TABLE public.user_durational_buffs ALTER COLUMN buff_id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.user_durational_buffs_buff_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: user_exp; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_exp (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    current_exp bigint DEFAULT 0,
+    booster_id bigint,
+    booster_activated_at timestamp without time zone,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_exp OWNER TO annie;
+
+--
+-- Name: user_gender; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_gender (
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    gender text
+);
+
+
+ALTER TABLE public.user_gender OWNER TO annie;
+
+--
+-- Name: user_inventories; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_inventories (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    item_id bigint NOT NULL,
+    quantity bigint DEFAULT 0,
+    in_use bigint DEFAULT 0,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_inventories OWNER TO annie;
+
+--
+-- Name: user_quests; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_quests (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    guild_id text NOT NULL,
+    next_quest_id bigint
+);
+
+
+ALTER TABLE public.user_quests OWNER TO annie;
+
+--
+-- Name: user_relationships; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_relationships (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id_a text NOT NULL,
+    user_id_b text NOT NULL,
+    relationship_id bigint,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_relationships OWNER TO annie;
+
+--
+-- Name: user_reminders; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_reminders (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    reminder_id text NOT NULL,
+    user_id text,
+    message text,
+    remind_at text
+);
+
+
+ALTER TABLE public.user_reminders OWNER TO annie;
+
+--
+-- Name: user_reputations; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_reputations (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    last_giving_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    last_received_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    total_reps bigint DEFAULT 0,
+    recently_received_by text,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_reputations OWNER TO annie;
+
+--
+-- Name: user_self_covers; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.user_self_covers (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    cover_id text,
+    user_id text NOT NULL,
+    guild_id text NOT NULL
+);
+
+
+ALTER TABLE public.user_self_covers OWNER TO annie;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: annie
+--
+
+CREATE TABLE public.users (
+    registered_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    last_login_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    user_id text NOT NULL,
+    name character varying(32),
+    bio text DEFAULT 'Hi! I''m a new user!'::text,
+    verified bigint DEFAULT 0,
+    lang text DEFAULT 'en'::text,
+    receive_notification bigint DEFAULT '-1'::integer
+);
+
+
+ALTER TABLE public.users OWNER TO annie;
+
+--
+-- Name: affiliates affiliates_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.affiliates
+    ADD CONSTRAINT affiliates_pkey PRIMARY KEY (guild_id);
+
+
+--
+-- Name: autoresponders autoresponders_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.autoresponders
+    ADD CONSTRAINT autoresponders_pkey PRIMARY KEY (ar_id);
+
+
+--
+-- Name: commands_log commands_log_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.commands_log
+    ADD CONSTRAINT commands_log_pkey PRIMARY KEY (log_id);
+
+
+--
+-- Name: custom_rewards custom_rewards_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.custom_rewards
+    ADD CONSTRAINT custom_rewards_pkey PRIMARY KEY (reward_id);
+
+
+--
+-- Name: guild_configurations guild_configurations_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.guild_configurations
+    ADD CONSTRAINT guild_configurations_pkey PRIMARY KEY (config_id);
+
+
+--
+-- Name: guilds guilds_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.guilds
+    ADD CONSTRAINT guilds_pkey PRIMARY KEY (guild_id);
+
+
+--
+-- Name: item_effects item_effects_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_effects
+    ADD CONSTRAINT item_effects_pkey PRIMARY KEY (effect_id);
+
+
+--
+-- Name: item_gacha item_gacha_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_gacha
+    ADD CONSTRAINT item_gacha_pkey PRIMARY KEY (gacha_id);
+
+
+--
+-- Name: item_rarities item_rarities_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_rarities
+    ADD CONSTRAINT item_rarities_pkey PRIMARY KEY (rarity_id);
+
+
+--
+-- Name: item_types item_types_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_types
+    ADD CONSTRAINT item_types_pkey PRIMARY KEY (type_id);
+
+
+--
+-- Name: items items_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_pkey PRIMARY KEY (item_id);
+
+
+--
+-- Name: quests quests_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.quests
+    ADD CONSTRAINT quests_pkey PRIMARY KEY (quest_id);
+
+
+--
+-- Name: relationships relationships_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.relationships
+    ADD CONSTRAINT relationships_pkey PRIMARY KEY (relationship_id);
+
+
+--
+-- Name: resource_log resource_log_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.resource_log
+    ADD CONSTRAINT resource_log_pkey PRIMARY KEY (log_id);
+
+
+--
+-- Name: shop shop_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.shop
+    ADD CONSTRAINT shop_pkey PRIMARY KEY (item_id);
+
+
+--
+-- Name: user_dailies user_dailies_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_dailies
+    ADD CONSTRAINT user_dailies_pkey PRIMARY KEY (user_id, guild_id);
+
+
+--
+-- Name: user_durational_buffs user_durational_buffs_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_durational_buffs
+    ADD CONSTRAINT user_durational_buffs_pkey PRIMARY KEY (buff_id);
+
+
+--
+-- Name: user_exp user_exp_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_exp
+    ADD CONSTRAINT user_exp_pkey PRIMARY KEY (user_id, guild_id);
+
+
+--
+-- Name: user_gender user_gender_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_gender
+    ADD CONSTRAINT user_gender_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: user_inventories user_inventories_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_inventories
+    ADD CONSTRAINT user_inventories_pkey PRIMARY KEY (user_id, item_id, guild_id);
+
+
+--
+-- Name: user_quests user_quests_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_quests
+    ADD CONSTRAINT user_quests_pkey PRIMARY KEY (user_id, guild_id);
+
+
+--
+-- Name: user_relationships user_relationships_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_relationships
+    ADD CONSTRAINT user_relationships_pkey PRIMARY KEY (user_id_a, user_id_b, guild_id);
+
+
+--
+-- Name: user_reminders user_reminders_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_reminders
+    ADD CONSTRAINT user_reminders_pkey PRIMARY KEY (reminder_id);
+
+
+--
+-- Name: user_reputations user_reputations_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_reputations
+    ADD CONSTRAINT user_reputations_pkey PRIMARY KEY (user_id, guild_id);
+
+
+--
+-- Name: user_self_covers user_self_covers_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_self_covers
+    ADD CONSTRAINT user_self_covers_pkey PRIMARY KEY (user_id, guild_id);
+
+
+--
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: sqlite_autoindex_item_rarities_1; Type: INDEX; Schema: public; Owner: annie
+--
+
+CREATE UNIQUE INDEX sqlite_autoindex_item_rarities_1 ON public.item_rarities USING btree (level);
+
+
+--
+-- Name: affiliates affiliates_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.affiliates
+    ADD CONSTRAINT affiliates_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: autoresponders autoresponders_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.autoresponders
+    ADD CONSTRAINT autoresponders_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: autoresponders autoresponders_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.autoresponders
+    ADD CONSTRAINT autoresponders_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: commands_log commands_log_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.commands_log
+    ADD CONSTRAINT commands_log_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: commands_log commands_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.commands_log
+    ADD CONSTRAINT commands_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: custom_rewards custom_rewards_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.custom_rewards
+    ADD CONSTRAINT custom_rewards_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: custom_rewards custom_rewards_set_by_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.custom_rewards
+    ADD CONSTRAINT custom_rewards_set_by_user_id_fkey FOREIGN KEY (set_by_user_id) REFERENCES public.users(user_id) ON DELETE SET DEFAULT;
+
+
+--
+-- Name: guild_configurations guild_configurations_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.guild_configurations
+    ADD CONSTRAINT guild_configurations_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: guild_configurations guild_configurations_set_by_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.guild_configurations
+    ADD CONSTRAINT guild_configurations_set_by_user_id_fkey FOREIGN KEY (set_by_user_id) REFERENCES public.users(user_id) ON DELETE SET NULL;
+
+
+--
+-- Name: item_effects item_effects_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_effects
+    ADD CONSTRAINT item_effects_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: item_effects item_effects_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_effects
+    ADD CONSTRAINT item_effects_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(item_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: item_gacha item_gacha_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.item_gacha
+    ADD CONSTRAINT item_gacha_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(item_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: items items_owned_by_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_owned_by_guild_id_fkey FOREIGN KEY (owned_by_guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: items items_rarity_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_rarity_id_fkey FOREIGN KEY (rarity_id) REFERENCES public.item_rarities(rarity_id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: items items_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.items
+    ADD CONSTRAINT items_type_id_fkey FOREIGN KEY (type_id) REFERENCES public.item_types(type_id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: quest_log quest_log_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.quest_log
+    ADD CONSTRAINT quest_log_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: quest_log quest_log_quest_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.quest_log
+    ADD CONSTRAINT quest_log_quest_id_fkey FOREIGN KEY (quest_id) REFERENCES public.quests(quest_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: quest_log quest_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.quest_log
+    ADD CONSTRAINT quest_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: shop shop_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.shop
+    ADD CONSTRAINT shop_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: shop shop_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.shop
+    ADD CONSTRAINT shop_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(item_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_dailies user_dailies_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_dailies
+    ADD CONSTRAINT user_dailies_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_dailies user_dailies_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_dailies
+    ADD CONSTRAINT user_dailies_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_durational_buffs user_durational_buffs_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_durational_buffs
+    ADD CONSTRAINT user_durational_buffs_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_durational_buffs user_durational_buffs_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_durational_buffs
+    ADD CONSTRAINT user_durational_buffs_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_exp user_exp_booster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_exp
+    ADD CONSTRAINT user_exp_booster_id_fkey FOREIGN KEY (booster_id) REFERENCES public.items(item_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_exp user_exp_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_exp
+    ADD CONSTRAINT user_exp_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_exp user_exp_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_exp
+    ADD CONSTRAINT user_exp_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_gender user_gender_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_gender
+    ADD CONSTRAINT user_gender_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_inventories user_inventories_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_inventories
+    ADD CONSTRAINT user_inventories_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_inventories user_inventories_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_inventories
+    ADD CONSTRAINT user_inventories_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.items(item_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_inventories user_inventories_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_inventories
+    ADD CONSTRAINT user_inventories_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_quests user_quests_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_quests
+    ADD CONSTRAINT user_quests_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_quests user_quests_next_quest_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_quests
+    ADD CONSTRAINT user_quests_next_quest_id_fkey FOREIGN KEY (next_quest_id) REFERENCES public.quests(quest_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_quests user_quests_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_quests
+    ADD CONSTRAINT user_quests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_relationships user_relationships_relationship_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_relationships
+    ADD CONSTRAINT user_relationships_relationship_id_fkey FOREIGN KEY (relationship_id) REFERENCES public.relationships(relationship_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_relationships user_relationships_user_id_a_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_relationships
+    ADD CONSTRAINT user_relationships_user_id_a_fkey FOREIGN KEY (user_id_a) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_relationships user_relationships_user_id_b_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_relationships
+    ADD CONSTRAINT user_relationships_user_id_b_fkey FOREIGN KEY (user_id_b) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_reminders user_reminders_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_reminders
+    ADD CONSTRAINT user_reminders_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_reputations user_reputations_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_reputations
+    ADD CONSTRAINT user_reputations_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_reputations user_reputations_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_reputations
+    ADD CONSTRAINT user_reputations_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_self_covers user_self_covers_guild_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_self_covers
+    ADD CONSTRAINT user_self_covers_guild_id_fkey FOREIGN KEY (guild_id) REFERENCES public.guilds(guild_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_self_covers user_self_covers_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: annie
+--
+
+ALTER TABLE ONLY public.user_self_covers
+    ADD CONSTRAINT user_self_covers_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

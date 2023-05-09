@@ -117,11 +117,16 @@ class DatabaseUtils {
 	async _query(stmt = ``, type = `get`, supplies = [], log) {
 		//	Return if no statement has found
 		if (!stmt) return null
+		if (type === `run`) stmt = stmt + ` RETURNING *`
 		const [ parsedStatement, parsedParameters ] = this._convertNamedParamsToPositionalParams(stmt, supplies)
-		const result = await this.client.query(parsedStatement, parsedParameters)
+		let result = await this.client.query(parsedStatement, parsedParameters)
 		if (!result) return null
 		if (log) logger.info(log)
 		if (type === `all`) return result.rows
+		if (type === `run`) {
+			result.changes = result.rowCount
+			return result
+		}
 		return result.rows[0]
 	}
 
@@ -264,8 +269,7 @@ class DatabaseUtils {
 			}
 		}
 
-		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.info(`${fn} ${type}(${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.info(`${fn} (${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return true
 	}
 
@@ -2350,7 +2354,7 @@ class Quests extends DatabaseUtils {
 				user_id,
 				answer
 			)
-			VALUES($questId, $userId, $guildId, $answer)`
+			VALUES($guildId, $questId, $userId, $answer)`
 			, `run`
 			, { questId: questId, userId: userId, guildId: guildId, answer: answer }
 			, `${fn} Storing ${userId}@${guildId} quest's activity to quest_log table`
