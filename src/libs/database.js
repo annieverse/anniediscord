@@ -89,20 +89,21 @@ class DatabaseUtils {
 	 * @return {object}
 	 */
 	_convertNamedParamsToPositionalParams(query, params) {
-		let positionalParams = [];
-		let index = 1;
+		let positionalParams = []
+		let index = 1
 	
 		const convertedQuery = query.replace(/\$\w+/g, (param) => {
-			const paramName = param.slice(1);
+			const paramName = param.slice(1)
+			// eslint-disable-next-line no-prototype-builtins
 			if (params.hasOwnProperty(paramName)) {
-				positionalParams.push(params[paramName]);
+				positionalParams.push(params[paramName])
 			} else {
-				throw new Error(`Missing value for parameter ${paramName}`);
+				throw new Error(`Missing value for parameter ${paramName}`)
 			}
-			return `$${index++}`;
-		});
+			return `$${index++}`
+		})
 	
-		return [convertedQuery, positionalParams];
+		return [convertedQuery, positionalParams]
 	}
 
 	/**
