@@ -1,3 +1,10 @@
+## [9.6.1](https://github.com/annieverse/anniediscord/compare/v9.6.0...v9.6.1) (2023-05-11)
+
+
+### Bug Fixes
+
+* **database:** pg json casting on guild conf retrieve method. ([8d464fa](https://github.com/annieverse/anniediscord/commit/8d464faf4d5b6108a9245f9c8860ef9280e73ecc))
+
 # [9.6.0](https://github.com/annieverse/anniediscord/compare/v9.5.7...v9.6.0) (2023-05-09)
 
 
