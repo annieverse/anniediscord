@@ -1,3 +1,10 @@
+## [9.6.2](https://github.com/annieverse/anniediscord/compare/v9.6.1...v9.6.2) (2023-05-11)
+
+
+### Bug Fixes
+
+* **database:** cast to null for empty data, instead of undefined. ([1a8a981](https://github.com/annieverse/anniediscord/commit/1a8a9811ea89195d19a2c1c8d0e4124a1963d60b))
+
 ## [9.6.1](https://github.com/annieverse/anniediscord/compare/v9.6.0...v9.6.1) (2023-05-11)
 
 
