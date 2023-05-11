@@ -124,11 +124,18 @@ class DatabaseUtils {
 		if (!result) return null
 		if (log) logger.info(log)
 		if (type === `all`) return result.rows
+
+		//  Run type
 		if (type === `run`) {
 			result.changes = result.rowCount
 			return result
 		}
-		return result.rows[0]
+
+
+		//  Get type
+		const getTypeData = result.rows[0]
+		//  Immediately cast to null if undefined
+		return getTypeData === undefined ? null : getTypeData
 	}
 
 
@@ -507,7 +514,7 @@ class UserUtils extends DatabaseUtils {
 		const cache = await this.redis.get(key)
 		if (cache) return JSON.parse(cache)
 		//  Otherwise fetch from db and store it to cache for later use.
-		const query = () => this._query(`
+		const query = async () => this._query(`
             SELECT *
             FROM user_exp
             WHERE user_id = $userId
