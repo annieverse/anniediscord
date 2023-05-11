@@ -1183,11 +1183,11 @@ class GuildUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`getAllGuildsConfigurations`)
 		if (!guildIds) throw new TypeError(`${fn} property "guildIds" must be a guild snowflake or array of guild snowflakes.`)
 		if (typeof(guildIds) != `object` && !Array.isArray(guildIds)) throw new TypeError(`${fn} property "guildIds" must be a Array.`)
-		const guildsInCache = JSON.stringify(guildIds)
 		// Select statement to only return guilds that were supplied and not dormat guilds (based on discord's cache)
-		return this._query(`SELECT * FROM guild_configurations WHERE guild_id IN (SELECT value FROM json_each($guildsInCache))`
+		// I updated this to prevent weird behavior in postgresql. Temporarily. -Naph
+		return this._query(`SELECT * FROM guild_configurations WHERE guild_id = ANY($guildIds)`
 		, `all`
-		, {guildsInCache: guildsInCache}
+		, {guildIds: guildIds}
 		, `${fn} fetch all guild configs`)
 	}
 
