@@ -1165,7 +1165,7 @@ class SystemUtils extends DatabaseUtils {
 		if (cache !== null) return JSON.parse(cache)
 		//  Else, hit db
 		const res = await this._query(`
-			SELECT COUNT(command_alias) AS 'total'
+			SELECT COUNT(command_alias) AS total
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
