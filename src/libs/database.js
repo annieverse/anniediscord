@@ -1228,7 +1228,6 @@ class GuildUtils extends DatabaseUtils {
 			WHERE NOT EXISTS (SELECT 1 FROM guilds WHERE guild_id = $guildId)`
 			, `run`
 			, { guildId: guild.id, guildName: guild.name }
-			, `${fn} Create record for new guild`
 		)
 	}
 
