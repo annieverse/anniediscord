@@ -1,3 +1,10 @@
+## [9.6.5](https://github.com/annieverse/anniediscord/compare/v9.6.4...v9.6.5) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** stats failing due to syntax err. ([1d18464](https://github.com/annieverse/anniediscord/commit/1d1846456728e78ea76600b62e7a064032e51f49))
+
 ## [9.6.4](https://github.com/annieverse/anniediscord/compare/v9.6.3...v9.6.4) (2023-05-12)
 
 
