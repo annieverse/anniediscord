@@ -1,3 +1,10 @@
+## [9.6.4](https://github.com/annieverse/anniediscord/compare/v9.6.3...v9.6.4) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** getItem fails to perform due to syntax err. ([5dd9903](https://github.com/annieverse/anniediscord/commit/5dd99033362cc29f83ad7220bebf761a48087323))
+
 ## [9.6.3](https://github.com/annieverse/anniediscord/compare/v9.6.2...v9.6.3) (2023-05-12)
 
 
