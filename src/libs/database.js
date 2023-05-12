@@ -2134,7 +2134,7 @@ class Shop extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`getItem`)
 		const str = `SELECT 
 
-				items.item_id AS item_id,
+				items.item_id AS item_id
 				items.name AS name,
 				items.description AS description,
 				items.alias AS alias,
@@ -2174,15 +2174,16 @@ class Shop extends DatabaseUtils {
 			, { keyword: keyword, guildId: guildId }
 			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
-		return this._query(str + ` 
+		//  Do lookup on global pool
+		if (typeof keyword === `string`) str + ` 
 			WHERE 
-				items.item_id = $keyword
-				OR lower(items.name) = lower($keyword)
-				OR lower(items.alias) = lower($keyword)
-			LIMIT 1`
+				lower(items.name) = lower($keyword)
+				OR lower(items.alias) = lower($keyword)`
+		if (typeof keyword === `number`) str + ` WHERE items.item_id = $keyword`
+		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }
-			, `${fn} fetch single item by item name:${keyword}`
+			, `${fn} fetch single item by keyword:${keyword}`
 		)
 	}
 

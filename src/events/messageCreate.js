@@ -14,7 +14,8 @@ module.exports = (client, message) => {
     //  Ensure that guild configs have been properly loaded first
     if (!message.guild.configs) return
     client.db.databaseUtils.validateUserEntry(message.author.id, message.author.username)
-    .then(() => {
+    .then(async () => {
+        await db.guildUtils.registerGuild(this.message.guild)
         //  Display quick prefix hint when mentioned.
         //  Subtracted number at message.content.length is the whitespace made during mention.
         const prefix = message.guild.configs.get(`PREFIX`).value
