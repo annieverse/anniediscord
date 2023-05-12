@@ -1,3 +1,16 @@
+## [9.6.3](https://github.com/annieverse/anniediscord/compare/v9.6.2...v9.6.3) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** getItem() fails to lookup on dynamic parameter. ([220b551](https://github.com/annieverse/anniediscord/commit/220b55162e48383eeed0cafd4133caa376cfe20f))
+* **event:** registerGuild ref. ([efb5ce9](https://github.com/annieverse/anniediscord/commit/efb5ce98cbdb87e14ec7f7297c9398dbee4e1096))
+
+
+### Performance Improvements
+
+* **db:** do early check on guild availability thru message event. ([54064b5](https://github.com/annieverse/anniediscord/commit/54064b5938e2bcb77e4bb9ae69fb7a3f63ca5fd5))
+
 ## [9.6.2](https://github.com/annieverse/anniediscord/compare/v9.6.1...v9.6.2) (2023-05-11)
 
 
