@@ -39,6 +39,9 @@ class Database {
 			logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
 			process.exit()
 		})
+		this.client.on(`error`, (err) => {
+			logger.error(`Ouch snap! >> ${err.stack}`)
+		})
 		this.connectRedis()
 		return this
 	}
@@ -116,26 +119,31 @@ class DatabaseUtils {
 	 *  @returns {QueryResult|null}
 	 */
 	async _query(stmt = ``, type = `get`, supplies = [], log) {
-		//	Return if no statement has found
-		if (!stmt) return null
-		if (type === `run`) stmt = stmt + ` RETURNING *`
-		const [ parsedStatement, parsedParameters ] = this._convertNamedParamsToPositionalParams(stmt, supplies)
-		let result = await this.client.query(parsedStatement, parsedParameters)
-		if (!result) return null
-		if (log) logger.info(log)
-		if (type === `all`) return result.rows
+		try {
+			//	Return if no statement has found
+			if (!stmt) return null
+			if (type === `run`) stmt = stmt + ` RETURNING *`
+			const [ parsedStatement, parsedParameters ] = this._convertNamedParamsToPositionalParams(stmt, supplies)
+			let result = await this.client.query(parsedStatement, parsedParameters)
+			if (!result) return null
+			if (log) logger.info(log)
+			if (type === `all`) return result.rows
 
-		//  Run type
-		if (type === `run`) {
-			result.changes = result.rowCount
-			return result
+			//  Run type
+			if (type === `run`) {
+				result.changes = result.rowCount
+				return result
+			}
+
+
+			//  Get type
+			const getTypeData = result.rows[0]
+			//  Immediately cast to null if undefined
+			return getTypeData === undefined ? null : getTypeData
 		}
-
-
-		//  Get type
-		const getTypeData = result.rows[0]
-		//  Immediately cast to null if undefined
-		return getTypeData === undefined ? null : getTypeData
+		catch(e) {
+			this.client.emit(`error`, e)
+		}
 	}
 
 
@@ -1228,7 +1236,6 @@ class GuildUtils extends DatabaseUtils {
 			WHERE NOT EXISTS (SELECT 1 FROM guilds WHERE guild_id = $guildId)`
 			, `run`
 			, { guildId: guild.id, guildName: guild.name }
-			, `${fn} Create record for new guild`
 		)
 	}
 
@@ -2132,9 +2139,9 @@ class Shop extends DatabaseUtils {
 	 */
 	getItem(keyword, guildId) {
 		const fn = this.formatFunctionLog(`getItem`)
-		const str = `SELECT 
+		let str = `SELECT 
 
-				items.item_id AS item_id
+				items.item_id AS item_id,
 				items.name AS name,
 				items.description AS description,
 				items.alias AS alias,
@@ -2175,11 +2182,11 @@ class Shop extends DatabaseUtils {
 			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
 		//  Do lookup on global pool
-		if (typeof keyword === `string`) str + ` 
-			WHERE 
+		if (typeof keyword === `string`) str = str + ` 
+			\nWHERE 
 				lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)`
-		if (typeof keyword === `number`) str + ` WHERE items.item_id = $keyword`
+		if (typeof keyword === `number`) str = str + `\nWHERE items.item_id = $keyword`
 		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }
