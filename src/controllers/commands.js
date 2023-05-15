@@ -20,7 +20,7 @@ module.exports = async (client={}, message={}) => {
     const arg = message.content.slice(prefix.length + targetCommand.length+1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
-    const reply = client.responseLibs(message)
+    let reply = client.responseLibs(message)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
@@ -58,7 +58,13 @@ module.exports = async (client={}, message={}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-    const locale = client.locales.en
+    let locale = null
+
+    // Handle localization
+    const userData = await client.db.userUtils.getUser(message.author.id)
+    locale = client.localizer.getTargetLocales(userData.lang)
+    reply = client.responseLibs(message, false, locale.__metadata)
+
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {
         return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)

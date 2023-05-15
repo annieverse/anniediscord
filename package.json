@@ -7,7 +7,7 @@
   "scripts": {
     "lint:check": "eslint src",
     "lint:fix": "eslint src --fix",
-    "unit-test": "node ./node_modules/mocha/bin/mocha \"test/*.js\"",
+    "unit-test": "node ./node_modules/mocha/bin/mocha tests/**/*.js",
     "start": "pm2 start index.js --name \"production\" && echo \"Started production\"",
     "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",

@@ -41,9 +41,10 @@ class Response {
 	/**
 	 * @param {object} [message={}] Target message's instance.
 	 * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+	 * @param {object} [localeMetadata=null] For testing purposes. Optional
 	 * 'message' parameter is replaced with 'channel' object.
 	 */
-	constructor(message = {}, channelAsInstance = false) {
+	constructor(message = {}, channelAsInstance = false, localeMetadata=null) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
@@ -63,6 +64,12 @@ class Response {
 		 * Determine if the message is a Slash command.
 		 */
 		this.isSlash = message.type != 0 ? true : false
+
+		/**
+		 * The metadata of locale to be used
+		 * @type {object|null}
+		 */
+		this.localeMetadata = localeMetadata
 	}
 
 	setMessage(message, channelAsInstance = false) {
@@ -100,6 +107,17 @@ class Response {
 	 * @return {void}
 	 */
 	async send(content = ``, plugins = {}) {
+
+		//  Locale logging purpose
+		if (this.localeMetadata !== null) {
+			if (process.env.NODE_ENV === `development`) {
+				const meta = this.localeMetadata
+				content = (meta.isFallingback 
+				? `<❌Locale attempt to target :: ${meta.targetLang.toUpperCase()}>\n<✅Falling back to :: ${meta.fallbackLang.toUpperCase()}>`
+				: `<✅Locale target :: ${meta.targetLang.toUpperCase()}>`) + `\n${content}`
+			}
+		}
+
 		let socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
 		plugins.color = color

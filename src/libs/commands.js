@@ -75,7 +75,7 @@ class Commands {
          * The default locale for current command instance
          * @type {string}
          */	
-		this.locale = Stacks.bot.locale[`en`]	
+		this.locale = Stacks.bot.locale
 
 		/**
          * Logger libs
@@ -105,7 +105,7 @@ class Commands {
      * @return {*}
      */
     reply(content, plugins) {
-        return this.responseClass.send(content, plugins)
+      return this.responseClass.send(content, plugins)
     }
 
 	/**
