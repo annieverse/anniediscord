@@ -851,7 +851,7 @@
     "CLOSED": "Oh, la boutique est toujours fermée ! Revenez une prochaine fois !",
     "BUY_TIPS": "Tapez **`{{prefix}}buy <article>`** pour l'acheter ! {{emoji}}",
     "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Bienvenue dans mon marché !**\nQue voulez-vous acheter aujourd'hui ? Ou plus précisément, quelle boutique voulez-vous visiter ? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Boutique de Cover**\n\n☆～(2) **Boutique de Cadeaux**\n☆～(3) **Boutique de Matériaux**\n☆～(4) **Boutique de Badges**"
-  },
+},
   "STATCARD": {
     "INVALID_USER": "Désolé, je n'ai pas pu trouver cet utilisateur.",
     "HEADER": "<:Annie_Smug:523686816545636352> **| Carte de statistiques pour {0}**",
