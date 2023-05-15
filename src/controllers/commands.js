@@ -20,12 +20,16 @@ module.exports = async (client={}, message={}) => {
     const arg = message.content.slice(prefix.length + targetCommand.length+1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
-    let reply = client.responseLibs(message)
+    // Handle localization
+    let locale = null
+    const userData = await client.db.userUtils.getUserLocale(message.author.id)
+    locale = client.localizer.getTargetLocales(userData.lang)
+    let reply = client.responseLibs(message, false, locale.__metadata)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
         if (!commandChannels.includes(message.channel.id)) {
-            await reply.send(client.locales.en.NON_COMMAND_CHANNEL, {
+            await reply.send(locale.NON_COMMAND_CHANNEL, {
                 deleteIn: 5,
                 socket: {
                     user: message.author.username,
@@ -49,7 +53,7 @@ module.exports = async (client={}, message={}) => {
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
         const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return await reply.send(client.locales.en.COMMAND.STILL_COOLDOWN, {
+        if (diff > 0) return await reply.send(locale.COMMAND.STILL_COOLDOWN, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`),
                 user: message.author.username,
@@ -58,12 +62,6 @@ module.exports = async (client={}, message={}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-    let locale = null
-
-    // Handle localization
-    const userData = await client.db.userUtils.getUser(message.author.id)
-    locale = client.localizer.getTargetLocales(userData.lang)
-    reply = client.responseLibs(message, false, locale.__metadata)
 
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {

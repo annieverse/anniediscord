@@ -633,11 +633,10 @@ class UserUtils extends DatabaseUtils {
 	 */
 	async updateUserReputation(amount = 0, userId = ``, givenBy = null, guildId = ``, operation = `+`) {
 		const fn = this.formatFunctionLog(`updateUserReputation`)
-		if (!amount && amount != 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
-		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
+		if (!amount && amount !== 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
-		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
+		if (operation !== `+` && operation !== `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
 		const res = {
 			update: await this._query(`
                 UPDATE user_reputations 
@@ -1092,6 +1091,26 @@ class UserUtils extends DatabaseUtils {
 			, `get`
 			, { userId: userId }
 			, `${fn} fetch locale for USER_ID:${userId}`
+		)
+	}
+
+	/**
+	 * Update target's user locale
+	 * @param {string} locale Updated language
+	 * @param {string} userId target user's discord id
+	 * @returns {QueryResult}
+	 */
+	async updateUserLocale(locale, userId) {
+		const fn = this.formatFunctionLog(`updateUserLocale`)
+		if (!locale) throw new TypeError(`${fn} parameter "locale" cannot be blank.`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		return this._query(`
+			UPDATE users
+			SET lang = $lang
+			WHERE user_id = $userId`
+			, `get`
+			, { lang: locale, userId: userId }
+			, `${fn} Updated locale for USER_ID:${userId} to ${locale}`
 		)
 	}
 

@@ -16,6 +16,9 @@ class Localizer {
   
       // The pool of available locales.
       this.localesPool = {};
+
+      // The codes pool of available locales.
+      this.localeCodesPool = [];
   
       // The list of files in the target directory.
       this.src = readdirSync(path);
@@ -31,6 +34,7 @@ class Localizer {
       // Add each available locale to the pool.
       locales.forEach((file) => {
         const localeCode = file.replace(/.json/, ``);
+        this.localeCodesPool.push(localeCode)
         this.localesPool[localeCode] = require(`../locales/${file}`);
       });
     }

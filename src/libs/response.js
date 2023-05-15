@@ -107,17 +107,7 @@ class Response {
 	 * @return {void}
 	 */
 	async send(content = ``, plugins = {}) {
-
-		//  Locale logging purpose
-		if (this.localeMetadata !== null) {
-			if (process.env.NODE_ENV === `development`) {
-				const meta = this.localeMetadata
-				content = (meta.isFallingback 
-				? `<❌Locale attempt to target :: ${meta.targetLang.toUpperCase()}>\n<✅Falling back to :: ${meta.fallbackLang.toUpperCase()}>`
-				: `<✅Locale target :: ${meta.targetLang.toUpperCase()}>`) + `\n${content}`
-			}
-		}
-
+	
 		let socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
 		plugins.color = color

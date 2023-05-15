@@ -75,7 +75,7 @@ class Commands {
          * The default locale for current command instance
          * @type {string}
          */	
-		this.locale = Stacks.bot.locale
+		this.locale = Stacks.bot.locales
 
 		/**
          * Logger libs
