@@ -41,9 +41,10 @@ class Response {
 	/**
 	 * @param {object} [message={}] Target message's instance.
 	 * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+	 * @param {object} [localeMetadata=null] For testing purposes. Optional
 	 * 'message' parameter is replaced with 'channel' object.
 	 */
-	constructor(message = {}, channelAsInstance = false) {
+	constructor(message = {}, channelAsInstance = false, localeMetadata=null) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
@@ -63,6 +64,12 @@ class Response {
 		 * Determine if the message is a Slash command.
 		 */
 		this.isSlash = message.type != 0 ? true : false
+
+		/**
+		 * The metadata of locale to be used
+		 * @type {object|null}
+		 */
+		this.localeMetadata = localeMetadata
 	}
 
 	setMessage(message, channelAsInstance = false) {
@@ -100,6 +107,7 @@ class Response {
 	 * @return {void}
 	 */
 	async send(content = ``, plugins = {}) {
+	
 		let socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
 		plugins.color = color
@@ -352,8 +360,9 @@ class Response {
 		}
 		//  Add image preview
 		if (image) {
-			embed.file = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), `preview.jpg`)
-			embed.setImage(`attachment://${embed.file.name}`)
+			const img = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), { name: `preview.jpg` })
+			embed.file = img
+			embed.setImage(`attachment://preview.jpg`)
 		} else if (embed.file) {
 			embed.image.url = null
 			embed.file = null

@@ -3,7 +3,7 @@ const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
-const localizer = require(`./libs/localizer`)
+const Localizer = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
@@ -130,9 +130,10 @@ class Annie extends Discord.Client {
              * Response/Message Wrapper.
              * @param {Message} message Resolvable message instance
              * @param {boolean} [channelAsInstance=false] Toggle `true` when supplied
+             * @param {object} [localeMetadata=null] For Logging purpose
              * @return {external:Response}
              */
-            this.responseLibs = (message, channelAsInstance = false) => new Response(message, channelAsInstance)
+            this.responseLibs = (message, channelAsInstance = false, localeMetadata = null) => new Response(message, channelAsInstance, localeMetadata)
 
             /**
              * The default function for calculating task performance in milliseconds.
@@ -196,7 +197,9 @@ class Annie extends Discord.Client {
                 require(`./commands/applicationCommandsLoader`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
                 require(`./controllers/handleComponents`)({ logger: this.logger, client:this})
                 this.registerNode(APPLICATION_COMMANDS, `application_commands`)
-                this.registerNode(localizer(), `locales`)
+                const localizer = new Localizer()
+                this.registerNode(localizer, `localizer`)
+                this.registerNode(localizer.localesPool, `locales`)
                 require(`./controllers/events`)(this)
                 this.login(process.env.BOT_TOKEN)
             } catch (e) {
