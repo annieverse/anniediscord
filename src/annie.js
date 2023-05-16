@@ -382,9 +382,10 @@ class Annie extends Discord.Client {
     /**
      *  An Emoji finder. Fetch all the available emoji based on given emoji name
      *  @param {string} [keyword=``] emoji keyword to search
+     *  @param {boolean} [serverId=``] What server the emoji belongs to
      *  @return {Emoji|null}
      */
-    getEmoji(keyword=``) {
+    getEmoji(keyword=``, serverId=``) {
         return emoji(keyword, this)
     }
 

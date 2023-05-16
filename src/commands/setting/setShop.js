@@ -263,7 +263,7 @@ module.exports = {
         let responseMessageContent = {
             instructions: `Please click the button of the value you would like to enter`,
             buffsoptions: `**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Once in the popup after hitting the \`buffs?\` button do one of the following\n♡ Type **\`addrole <roles>\`** to get specified roles once used.\n♡ Type **\`removerole <roles>\`** to remove specified roles from user once used.\n♡ Type **\`additem <amount> <itemName/itemId>\`** to receive specified items once used.\n♡ Type **\`removeitem <amount> <itemName/itemId>\`** to remove specified items from user's inventory.\n♡ Type **\`expboost <percentage> <duration>\`** To give exp boost to the user for specified amount of time.\n♡ Type **\`acboost <percentage> <duration>\`** to give artcoins boost to the user for specified amount of time.`,
-            start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.responseOnUse === `~` ? `default` : metadata.responseOnUse}`,
+            start: `\n╰☆～**Name ::** ${metadata.name}\n╰☆～**Description ::** ${metadata.description}\n╰☆～**Price ::** ${await client.getEmoji(`758720612087627787`)}${commanifier(metadata.price)} @pcs\n╰☆～**Can be traded ::** ${metadata.tradeable == `y` ? `yes` : `no`}\n╰☆～**My response after the item is used ::** ${metadata.responseOnUse === `~` ? `default` : metadata.responseOnUse}`,
         }
 
         let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`) + Object.values(responseMessageContent).slice(-1), {
@@ -684,7 +684,7 @@ module.exports = {
                     metadata.price = input
                     dataDisplay.edit({
                         content: locale.SETSHOP.ADD_STOCK,
-                        embeds: [await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`artcoins`)}${commanifier(input)} @pcs`)]
+                        embeds: [await joinFunction(`\n╰☆～**Price ::** ${await client.getEmoji(`758720612087627787`)}${commanifier(input)} @pcs`)]
                     })
                     phase++
                     break

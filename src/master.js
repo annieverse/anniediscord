@@ -84,7 +84,7 @@ module.exports = function masterShard() {
 						value: 5000,
 						distributeMultiAccounts: true
 					})
-					const artcoinsEmoji = await c.getEmoji(`artcoins`)
+					const artcoinsEmoji = await c.getEmoji(`artcoins`,`577121315480272908`)
 					user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
 						.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
 					c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
