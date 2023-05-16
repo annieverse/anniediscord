@@ -17,9 +17,8 @@ module.exports = {
   messageCommand: true,
   options: [{
     name: `language`,
-    description: `Available languages you can set`,
+    description: `Available Annie's languages you can set`,
     type: ApplicationCommandOptionType.String,
-    choices: [{ name: `male`, value: `male` }, { name: `female`, value: `female` }, { name: `neutral`, value: `neutral` }]
   }],
   type: ApplicationCommandType.ChatInput,
   async execute(client, reply, message, arg, locale, prefix) {
@@ -54,12 +53,20 @@ module.exports = {
     if (!arg) return await reply.send(locale.SETLANGUAGE.GUIDE, {
       image: `banner_setlanguage`,
       socket: {
-          prefix: message.guild.configs.get(`PREFIX`).value,
+          prefix: interaction.guild.configs.get(`PREFIX`).value,
           languages: `<${client.localizer.localeCodesPool.join(`/`)}>`,
           currentLanguage: locale.__metadata.targetLang
       }
     })
+    const availableLocales = client.localizer.localeCodesPool
     const targetLocale = arg.toLowerCase()
+    if (!availableLocales.includes(targetLocale)) {
+      return reply.send(locale.SETLANGUAGE.INVALID_LANG, {
+        socket: {
+            languages: `<${client.localizer.localeCodesPool.join(`/`)}>`
+        }
+      })
+    }
     locale = client.localizer.getTargetLocales(targetLocale)
     await client.db.userUtils.updateUserLocale(targetLocale, interaction.member.id)
     return reply.send(locale.SETLANGUAGE.SUCCESSFUL, {

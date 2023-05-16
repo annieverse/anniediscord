@@ -62,7 +62,6 @@ module.exports = async (client={}, message={}) => {
         })
     }
     client.cooldowns.set(instanceId, Date.now())
-
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sismember(`VALIDATED_USERID`, message.author.id)) === 0) {
         return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)
