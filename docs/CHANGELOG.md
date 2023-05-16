@@ -1,3 +1,19 @@
+# [9.7.0](https://github.com/annieverse/anniediscord/compare/v9.6.5...v9.7.0) (2023-05-16)
+
+
+### Bug Fixes
+
+* **response:** unwrapped img plugin. ([45e003a](https://github.com/annieverse/anniediscord/commit/45e003afa52089a44453fdf5a8817674a52e7fb2))
+
+
+### Features
+
+* **l10n:** french localization. ([ea2d79a](https://github.com/annieverse/anniediscord/commit/ea2d79a36390e080cf48c9857e34120134dfd7c4))
+* **locales:** backend for user-specific language switcher. ([32743fe](https://github.com/annieverse/anniediscord/commit/32743fecc70e63a6d5bdd8ccd1df7546b19dfc4a))
+* **setLanguage:** a cmd to allow user switching locale via regular command. ([1476bb4](https://github.com/annieverse/anniediscord/commit/1476bb4f49d2fd324a43a715129bcf155c35b9d7))
+* **setLanguage:** added slash-support for language switcher command. ([bfbd31a](https://github.com/annieverse/anniediscord/commit/bfbd31a606383c05f32441811cfa578bf35b55d3))
+* **setLanguage:** added unit test. ([024f67d](https://github.com/annieverse/anniediscord/commit/024f67d133574656ecf6ceaaa53e971e9d11e4c9))
+
 ## [9.6.5](https://github.com/annieverse/anniediscord/compare/v9.6.4...v9.6.5) (2023-05-12)
 
 
