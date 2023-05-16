@@ -360,8 +360,9 @@ class Response {
 		}
 		//  Add image preview
 		if (image) {
-			embed.file = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), `preview.jpg`)
-			embed.setImage(`attachment://${embed.file.name}`)
+			const img = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), { name: `preview.jpg` })
+			embed.file = img
+			embed.setImage(`attachment://preview.jpg`)
 		} else if (embed.file) {
 			embed.image.url = null
 			embed.file = null
