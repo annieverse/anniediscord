@@ -31,6 +31,9 @@ jobs:
     name: Release Tag
     runs-on: ubuntu-20.04
     needs: [build]
+    strategy:
+      matrix:
+        node: [ 18.16, 18.x ]
     steps:
       # Checking out
       - name: Checkout
