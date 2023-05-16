@@ -16,9 +16,6 @@ logs
 # Sensitive login information
 .env
 
-# Database dir
-.data
-
 # Cache directory for Pixiv API
 .pixivcaches
 
@@ -28,4 +25,11 @@ logs
 # VIM files
 *.swp
 
+# MacOS development
 *.DS_Store
+
+# Visual Studio Code configuration folder
+.vscode
+
+# pm2 module
+.pm2
