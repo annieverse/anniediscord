@@ -15,12 +15,13 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
         return onCache
     }
 
+    function findEmojiFromServer(guild, nameOrId) {
+        return guild.emojis.cache.get(nameOrId) || guild.emojis.cache.find(e => e.name.toLowerCase() === nameOrId.toLowerCase())
+    }
+
     if (serverId) {
         const guild = await client.guilds.fetch(serverId)
         await guild.emojis.fetch() // prevent Caching issues
-        function findEmojiFromServer(guild, nameOrId) {
-            return guild.emojis.cache.get(nameOrId) || guild.emojis.cache.find(e => e.name.toLowerCase() === nameOrId.toLowerCase())
-        }
         const findingEmoji = findEmojiFromServer(guild, emojiKeyword)
         const foundEmoji = findingEmoji.find(emoji => emoji)
         if (!foundEmoji) return `(???)`
