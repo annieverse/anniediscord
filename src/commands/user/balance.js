@@ -33,7 +33,7 @@ module.exports = {
         return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: targetUser.displayAvatarURL(),
             socket: {
-                emoji: await client.getEmoji(`758720612087627787`),
+                emoji: await client.getEmoji(`758720612087627787`,`577121315480272908`),
                 amount: commanifier(targetUserBalance),
                 tips: targetUser.id === message.author.id ? `Use **\`${client.prefix}pay\`** to share with friends!` : ` `
             }
