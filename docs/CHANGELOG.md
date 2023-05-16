@@ -1,3 +1,11 @@
+## [9.7.1](https://github.com/annieverse/anniediscord/compare/v9.7.0...v9.7.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* **confirmation:** cancel reaction not working ([6b31ead](https://github.com/annieverse/anniediscord/commit/6b31ead16a90a55abcfc4ae4fc791429c5f619fe))
+* **emoji:** invalid emoji used ([26fa3f0](https://github.com/annieverse/anniediscord/commit/26fa3f01ba556f7e4abf1cfd00e7e3b00193e8c2))
+
 # [9.7.0](https://github.com/annieverse/anniediscord/compare/v9.6.5...v9.7.0) (2023-05-16)
 
 
