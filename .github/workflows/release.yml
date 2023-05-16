@@ -24,6 +24,8 @@ jobs:
       - run: npm ci
       - name: Codestyle Test
         run: npm test
+      - name: Unit Test
+        run: npm run unit-test
         
   publish:
     name: Publish Release
