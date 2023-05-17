@@ -54,7 +54,7 @@ module.exports = {
                 min: this.minimumToSell
             }
         })
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
         //  Handle if user doesn't have any fragments in their inventory
         if (!userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
             socket: {
@@ -110,7 +110,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
         //  Handle if user doesn't have any fragments in their inventory
         if (!userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.EMPTY_FRAGMENTS, {
             socket: {

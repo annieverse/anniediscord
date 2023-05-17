@@ -27,7 +27,7 @@ module.exports = {
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
-        const targetUserData = await userLib.requestMetadata(targetUser, 2)
+        const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
             //  Handle if user doesn't have any relationships
         if (!targetUserData.relationships.length) return await reply.send(locale.RELATIONSHIP.IS_EMPTY, {
             socket: { prefix: client.prefix }
@@ -40,7 +40,7 @@ module.exports = {
                 user: targetUser.id
             }
         })
-        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(message.author, 2)
+        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(message.author, 2,locale)
         await reply.send(locale.COMMAND.TITLE, {
             simplified: true,
             prebuffer: true,
@@ -64,7 +64,7 @@ module.exports = {
         const userLib = new User(client, interaction)
         let targetUser = options.getUser(`user`) || interaction.member.user
         
-        const targetUserData = await userLib.requestMetadata(targetUser, 2)
+        const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
             //  Handle if user doesn't have any relationships
         if (!targetUserData.relationships.length) return await reply.send(locale.RELATIONSHIP.IS_EMPTY, {
             socket: { prefix: `/` }
@@ -77,7 +77,7 @@ module.exports = {
                 user: targetUser.id
             }
         })
-        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(interaction.member.user, 2)
+        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(interaction.member.user, 2,locale)
         await reply.send(locale.COMMAND.TITLE, {
             simplified: true,
             prebuffer: true,

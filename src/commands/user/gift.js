@@ -64,7 +64,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale) {
         const itemFilter = item => (item.type_id === 10) && (item.quantity > 0)
         const userLib = new User(client, message)
-        let userData = await userLib.requestMetadata(message.author, 2)
+        let userData = await userLib.requestMetadata(message.author, 2,locale)
         const availableGifts = userData.inventory.raw.filter(itemFilter)
             //  Handle if user don't have any gifts to send
         if (!availableGifts.length) return await reply.send(locale.GIFT.UNAVAILABLE, {
@@ -109,7 +109,7 @@ module.exports = {
                 }
             })
             //  Render confirmation
-        const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
+        const targetUserData = await userLib.requestMetadata(targetUser.master, 2,locale)
         const confirmation = await reply.send(locale.GIFT.CONFIRMATION, {
             prebuffer: true,
             image: await new giftGUI(targetUserData, gift, amount).build(),
@@ -145,7 +145,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const itemFilter = item => (item.type_id === 10) && (item.quantity > 0)
         const userLib = new User(client, interaction)
-        let userData = await userLib.requestMetadata(interaction.member.user, 2)
+        let userData = await userLib.requestMetadata(interaction.member.user, 2,locale)
         const availableGifts = userData.inventory.raw.filter(itemFilter)
             //  Handle if user don't have any gifts to send
         if (!availableGifts.length) return await reply.send(locale.GIFT.UNAVAILABLE, {
@@ -195,7 +195,7 @@ module.exports = {
                 }
             })
             //  Render confirmation
-        const targetUserData = await userLib.requestMetadata(targetUser, 2)
+        const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
         const confirmation = await reply.send(locale.GIFT.CONFIRMATION, {
             prebuffer: true,
             image: await new giftGUI(targetUserData, gift, amount).build(),

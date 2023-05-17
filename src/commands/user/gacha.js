@@ -28,7 +28,7 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
         const amountToOpen = arg ? trueInt(arg) : 1
             //  Handle if amount to be opened is out of defined range.
         if (!this.amountToOpenRanges.includes(amountToOpen)) return await reply.send(locale.GACHA.AMOUNT_OUTOFRANGE, {
@@ -73,7 +73,7 @@ module.exports = {
     },
 
     async Iexecute(client, reply, interaction, options, locale) {
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
         const amountToOpen = options.getInteger(`amount`)
         
             //  Handle if amount to be opened is out of defined range.

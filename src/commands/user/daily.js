@@ -53,7 +53,7 @@ module.exports = {
 			targetUser = targetUser.master || targetUser
 		}
 		//  Normalize structure
-		const targetUserData = await userLib.requestMetadata(targetUser, 2)
+		const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
 		const isSelf = userLib.isSelf(targetUser.id)
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(targetUserData.dailies.updated_at)

@@ -9,7 +9,7 @@ module.exports = async (client, interaction, command) =>{
     let locale = null
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     locale = client.localizer.getTargetLocales(userData.lang)
-    let reply = client.responseLibs(interaction, false, locale.__metadata)
+    let reply = client.responseLibs(interaction, false, locale)
     const options = interaction.options
     const targetCommand = interaction.commandName
         // Handle if user doesn't have enough permission level to use the command
@@ -25,7 +25,7 @@ module.exports = async (client, interaction, command) =>{
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
         const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return await reply.send(client.locales.en.COMMAND.STILL_COOLDOWN, {
+        if (diff > 0) return await reply.send(locale.COMMAND.STILL_COOLDOWN, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`),
                 user: interaction.user.username,
@@ -50,12 +50,12 @@ module.exports = async (client, interaction, command) =>{
             resolved_in: client.getBenchmark(initTime)
         })
     } catch (err) {
-        if (err) client.logger.error(err)
-
-        // await interaction.reply({
-        //     content: `An error occured while trying to process that command`,
-        //     ephemeral: true
-        // })
+        if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
+                socket: {
+                    error: err.stack,
+                    emoji: await client.getEmoji(`AnnieThinking`)
+                }
+            }).catch(err => client.logger.error(err))
 
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(err.message)) {
             await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
@@ -80,25 +80,25 @@ module.exports = async (client, interaction, command) =>{
                 ephemeral: true})
         }
         //  Report to support server
-        formatedErrorLog(client,{i:interaction, providedArguments:JSON.stringify(interaction.options.data), error_name:err.name, error_message:err.message,error_stack:err.stack,targetCommand: targetCommand})
+        client.shard.broadcastEval(formatedErrorLog, { context: {guildId:interaction.guildId,userId:interaction.user.id,providedArgs:JSON.stringify(interaction.options.data), error_message:err.message,targetCommand: targetCommand}})
     }
-    async function formatedErrorLog(c,options={}) {
-        const guild = await c.fetchGuildPreview(options.i.guildId)
-        const user = await c.users.fetch(options.i.user.id)
+    async function formatedErrorLog(c,{guildId,userId,providedArgs,error_message,targetCommand}) {
+        const guild = await c.fetchGuildPreview(guildId)
+        const user = await c.users.fetch(userId)
         const date = new Date()
         const levelZeroErrors = [
             `Missing Permissions`,
             `Unsupported image type`,
             `unsupported file type: undefined`
         ]
-        const providedArguments = options.providedArguments.length > 0 ? `\`${options.providedArguments}\`` : `No arguments provided`
+        const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
         if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
 
-        const channel = levelZeroErrors.includes(options.error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
+        const channel = levelZeroErrors.includes(error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){
-            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**ARGUMENTS (Raw data):** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.error_message}\n─────────────────☆～:;`})
+            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${targetCommand}\n**ARGUMENTS (Raw data):** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${error_message}\n─────────────────☆～:;`})
         }
         return
     }

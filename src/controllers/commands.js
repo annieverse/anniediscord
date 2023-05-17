@@ -24,7 +24,7 @@ module.exports = async (client={}, message={}) => {
     let locale = null
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
     locale = client.localizer.getTargetLocales(userData.lang)
-    let reply = client.responseLibs(message, false, locale.__metadata)
+    let reply = client.responseLibs(message, false, locale)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
@@ -113,26 +113,25 @@ module.exports = async (client={}, message={}) => {
         }
         //  Report to support server
         client.logger.error(e)
-        formatedErrorLog(client,{msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand})
-        // client.shard.broadcastEval(formatedErrorLog, {context: {options: {msg:message, providedArguments:arg, error_name:e.name, error_message:e.message,error_stack:e.stack,targetCommand: targetCommand}}}).catch(error => client.logger.error(error))
+        client.shard.broadcastEval(formatedErrorLog, {context: {guildId:message.guildId, authorId:message.author.id, providedArgs:arg, error_message:e.message,targetCommand: targetCommand}}).catch(error => client.logger.error(error))
     }
-    async function formatedErrorLog(c,options={}) {
-        const guild = await c.fetchGuildPreview(options.msg.guildId)
-        const user = await c.users.fetch(options.msg.author.id)
+    async function formatedErrorLog(c,{guildId,authorId, providedArgs,error_message,targetCommand}) {
+        const guild = await c.fetchGuildPreview(guildId)
+        const user = await c.users.fetch(authorId)
         const date = new Date()
         const levelZeroErrors = [
             `Missing Permissions`,
             `Unsupported image type`,
             `unsupported file type: undefined`
         ]
-        const providedArguments = options.providedArguments.length > 0 ? `\`${options.providedArguments}\`` : `No arguments provided`
+        const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
         if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
 
-        const channel = levelZeroErrors.includes(options.error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
+        const channel = levelZeroErrors.includes(error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){
-            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${options.targetCommand}\n**ARGUMENTS:** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${options.error_message}\n─────────────────☆～:;`})
+            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${targetCommand}\n**ARGUMENTS:** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${error_message}\n─────────────────☆～:;`})
         }
         return
     }

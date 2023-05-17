@@ -42,7 +42,7 @@ module.exports = {
                 chars: arg.length - this.charactersLimit
             }
         })
-        let userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        let userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
         userData.main.bio = arg
         const rendering = await reply.send(locale.SETBIO.RENDERING, {
             simplified: true,
@@ -71,7 +71,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let newBio = options.getString(`bio`)
-        let userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+        let userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
         userData.main.bio = newBio
         const rendering = await reply.send(locale.SETBIO.RENDERING, {
             simplified: true,

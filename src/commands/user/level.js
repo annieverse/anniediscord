@@ -31,7 +31,7 @@ module.exports = {
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
-        const userData = await userLib.requestMetadata(targetUser, 2)
+        const userData = await userLib.requestMetadata(targetUser, 2,locale)
         await reply.send(locale.COMMAND.FETCHING, {
                 simplified: true,
                 socket: {
@@ -62,7 +62,7 @@ module.exports = {
         const userLib = new User(client, interaction)
         let targetUser = options.getUser(`user`) || interaction.member.user
         
-        const userData = await userLib.requestMetadata(targetUser, 2)
+        const userData = await userLib.requestMetadata(targetUser, 2,locale)
         await reply.send(locale.COMMAND.FETCHING, {
                 simplified: true,
                 socket: {

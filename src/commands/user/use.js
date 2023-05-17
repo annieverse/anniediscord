@@ -27,7 +27,7 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        const data = await (new User(client, message)).requestMetadata(message.author, 2)
+        const data = await (new User(client, message)).requestMetadata(message.author, 2,locale)
         if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
@@ -54,7 +54,7 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
         })
-        const effectLib = new ItemEffects(client, message)
+        const effectLib = new ItemEffects(client, message, locale)
         //  Usage confirmation
         const confirmation = await reply.send(locale.USE.CONFIRMATION, {
             thumbnail: message.author.displayAvatarURL(),
@@ -88,7 +88,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const data = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+        const data = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
         if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
@@ -116,7 +116,7 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             }
         })
-        const effectLib = new ItemEffects(client, interaction)
+        const effectLib = new ItemEffects(client, interaction,locale)
         //  Usage confirmation
         const confirmation = await reply.send(locale.USE.CONFIRMATION, {
             thumbnail: interaction.member.displayAvatarURL(),

@@ -27,7 +27,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         const darkThemeStrings = [`dark`, `black`, `darktheme`, `dark_profileskin`, `nightmode`, `night`]
         const lightThemeStrings = [`light`, `white`, `lighttheme`, `light_profileskin`, `lightmode`, `day`]
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
             //  Returns if user didn't specify any keyword
         if (!arg) return await reply.send(locale.SWITCH_THEME.MISSING_KEYWORD, {
                 image: `banner_settheme`,

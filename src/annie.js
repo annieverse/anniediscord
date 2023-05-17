@@ -124,7 +124,7 @@ class Annie extends Discord.Client {
              * @param {TextChannel} channel Target level-up message channel.
              * @return {external:Experience}
              */
-            this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
+            this.experienceLibs = (user, guild, channel, locale) => new Experience(this, user, guild, channel, locale)
 
             /**
              * Response/Message Wrapper.

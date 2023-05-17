@@ -29,7 +29,7 @@ module.exports = {
             if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Normalize structure
             targetUser = targetUser.master || targetUser
-            const userData = await userLib.requestMetadata(targetUser, 2)
+            const userData = await userLib.requestMetadata(targetUser, 2,locale)
                 //  Fetch cards type in user's inventory and sort by rarity descendantly
             let filteredInventory = userData.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a, b) => (b.rarity_level - a.rarity_level))
             this.shouldSplitResult = true
@@ -73,7 +73,7 @@ module.exports = {
         async Iexecute(client, reply, interaction, options, locale) {
             const userLib = new User(client, interaction)
             let targetUser = options.getUser(`user`) || interaction.member.user
-            const userData = await userLib.requestMetadata(targetUser, 2)
+            const userData = await userLib.requestMetadata(targetUser, 2,locale)
             //  Fetch cards type in user's inventory and sort by rarity descendantly
             let filteredInventory = userData.inventory.raw.filter(prop => prop.type_name.toUpperCase() === `CARDS`).sort((a, b) => (b.rarity_level - a.rarity_level))
             this.shouldSplitResult = true

@@ -82,7 +82,7 @@ module.exports = {
                 userId: message.author.id, 
                 guildId: message.guild.id
             })
-			client.experienceLibs(message.member, message.guild, message.channel).execute(totalGainedExp)
+			client.experienceLibs(message.member, message.guild, message.channel,locale).execute(totalGainedExp)
 			return await reply.send(locale.CARTCOIN.SUCCESSFUL, {
 				status: `success`,
 				socket: {
@@ -131,7 +131,7 @@ module.exports = {
                 userId: interaction.member.id, 
                 guildId: interaction.guild.id
             })
-            client.experienceLibs(interaction.member, interaction.guild, interaction.channel).execute(totalGainedExp)
+            client.experienceLibs(interaction.member, interaction.guild, interaction.channel,locale).execute(totalGainedExp)
             return await reply.send(locale.CARTCOIN.SUCCESSFUL, {
                 status: `success`,
                 socket: {

@@ -30,7 +30,7 @@ module.exports = {
             if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Normalize structure
             targetUser = targetUser.master || targetUser
-            let targetUserData = await userLib.requestMetadata(targetUser, 2)
+            let targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
                 //  Handle if couldn't fetch the inventory
             const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
             if (targetUserData.inventory.raw.length <= 0) return await reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })
@@ -79,7 +79,7 @@ module.exports = {
             const userLib = new User(client, interaction)
             let targetUser = options.getUser(`user`) || interaction.member.user
             if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
-            let targetUserData = await userLib.requestMetadata(targetUser, 2)
+            let targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
                 //  Handle if couldn't fetch the inventory
             const INVALID_INVENTORY = userLib.isSelf(targetUser.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
             if (targetUserData.inventory.raw.length <= 0) return await reply.send(INVALID_INVENTORY, { socket: { user: targetUser.username } })

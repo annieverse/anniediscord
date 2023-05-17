@@ -21,7 +21,7 @@ module.exports = {
 	async execute(client, reply, message, arg, locale) {
 		const quests = await client.db.quests.getAllQuests()
 		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
-		const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+		const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
@@ -97,7 +97,7 @@ module.exports = {
 	async Iexecute(client, reply, interaction, options, locale) {
 		const quests = await client.db.quests.getAllQuests()
 		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
-		const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+		const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
 		const questIdsPool = quests.map(q => q.quest_id)
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
