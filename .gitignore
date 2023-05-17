@@ -29,3 +29,4 @@ logs
 *.swp
 
 *.DS_Store
+.launch.sh
