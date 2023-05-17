@@ -2,7 +2,7 @@ name: Publish Release
 on: 
   push:
     tags:
-      - v*.*.*
+      - 'v*.*.*'
       
 permissions:
   contents: write
@@ -15,11 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Generate Changelog
-        run: echo "# Good things have arrived" > ${{ github.workspace }}-docs/CHANGELOG.txt
+        run: echo "# Good things have arrived" > ${{ github.workspace }}/docs/CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          body_path: ${{ github.workspace }}-docs/CHANGELOG.txt
+          body_path: ${{ github.workspace }}/docs/CHANGELOG.txt
           # note you'll typically need to create a personal access token
           # with permissions to create releases in the other repo
           token: ${{ secrets.GH_TOKEN }}
