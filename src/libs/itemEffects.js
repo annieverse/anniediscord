@@ -21,7 +21,7 @@ class itemEffects {
      * @param {Client} client Current bot/client instance.
      * @param {Message} message Current message instance that invoked the class.
      */
-    constructor(client, message) {
+    constructor(client, message, locale) {
         /**
          * Current client instance.
          * @type {client}
@@ -32,6 +32,11 @@ class itemEffects {
          * @type {Message}
          */
         this.message = message
+        /**
+         * Current user's locale
+         * @type {JSON}
+         */
+        this.locale = locale
         /**
          * Instance identifier
          * @type {string}
@@ -173,7 +178,7 @@ class itemEffects {
      */
     addExp(exp) {
         if (typeof exp !== `number`) exp = parseInt(exp)
-        this.client.experienceLibs(this.message, this.message.guild, this.message.channel).execute()
+        this.client.experienceLibs(this.message, this.message.guild, this.message.channel, this.locale).execute()
     }
 
     /**

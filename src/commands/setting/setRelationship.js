@@ -76,13 +76,13 @@ module.exports = {
                 arg = arg.split(` `).slice(1).join(` `)
             }
             const userLib = new User(client, message)
-            const userData = await userLib.requestMetadata(message.author, 2)
+            const userData = await userLib.requestMetadata(message.author, 2,locale)
             const userRels = userData.relationships.map(node => node.assigned_user_id)
             const targetUser = await userLib.lookFor(arg, useRemoveAction ? await this.fetchLocalPool(userRels, client) : null)
             if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Handle if target is the author
             if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
-            const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
+            const targetUserData = await userLib.requestMetadata(targetUser.master, 2,locale)
                 //  Handle delete action	
             const c = new Confirmator(message, reply)
             if (useRemoveAction) {
@@ -172,13 +172,13 @@ module.exports = {
                 arg = [arg.slice(1).join(` `)]
             }
             const userLib = new User(client, interaction)
-            const userData = await userLib.requestMetadata(interaction.member, 2)
+            const userData = await userLib.requestMetadata(interaction.member, 2,locale)
             const userRels = userData.relationships.map(node => node.assigned_user_id)
             const targetUser = await userLib.lookFor(arg[0], useRemoveAction ? await this.fetchLocalPool(userRels, client) : null)
             if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
                 //  Handle if target is the author
             if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
-            const targetUserData = await userLib.requestMetadata(targetUser.master, 2)
+            const targetUserData = await userLib.requestMetadata(targetUser.master, 2,locale)
                 //  Handle delete action	
             const c = new Confirmator(interaction, reply, true)
             if (useRemoveAction) {

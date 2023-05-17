@@ -26,9 +26,9 @@ jobs:
         run: npm test
       - name: Unit Test
         run: npm run unit-test
-        
-  publish:
-    name: Publish Release
+          
+  tag:
+    name: Release Tag
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
@@ -42,10 +42,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 18.16
       - run: npm ci
       # Run semantic-release script
       - name: Versionize
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
+          

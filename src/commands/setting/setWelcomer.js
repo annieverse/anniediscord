@@ -370,7 +370,7 @@ module.exports = {
             },
             followUp: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
     },

@@ -124,7 +124,7 @@ class Annie extends Discord.Client {
              * @param {TextChannel} channel Target level-up message channel.
              * @return {external:Experience}
              */
-            this.experienceLibs = (user, guild, channel) => new Experience(this, user, guild, channel)
+            this.experienceLibs = (user, guild, channel, locale) => new Experience(this, user, guild, channel, locale)
 
             /**
              * Response/Message Wrapper.
@@ -382,9 +382,10 @@ class Annie extends Discord.Client {
     /**
      *  An Emoji finder. Fetch all the available emoji based on given emoji name
      *  @param {string} [keyword=``] emoji keyword to search
+     *  @param {boolean} [serverId=``] What server the emoji belongs to
      *  @return {Emoji|null}
      */
-    getEmoji(keyword=``) {
+    getEmoji(keyword=``, serverId=``) {
         return emoji(keyword, this)
     }
 

@@ -1,0 +1,24 @@
+name: Test Code
+
+on: [pull_request]
+
+jobs:  
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 18.16, 18.x ]
+    name: Build and Run Test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - name: Codestyle Test
+        run: npm run test
+      # Add in once we have unit tests
+      # - name: Unit Test
+      #  run: npm run unit-test

@@ -46,7 +46,7 @@ module.exports = {
         maxAllowed: 999999,
         async execute(client, reply, message, arg, locale) {
             const userLib = new User(client, message)
-            const userData = await userLib.requestMetadata(message.author, 2)
+            const userData = await userLib.requestMetadata(message.author, 2,locale)
                 //  Returns if user level is below the requirement
             if (userData.exp.level < this.requirementLevel) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
                 //  Displays as guide if user doesn't specify any parameter
@@ -73,7 +73,7 @@ module.exports = {
             const amountOfTax = amountToSend * this.tax
             const total = Math.round(amountToSend - amountOfTax)
                 //  Render confirmation
-            const targetUserData = await userLib.requestMetadata(targetUser, 2)
+            const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
             const confirmation = await reply.send(locale.PAY.USER_CONFIRMATION, {
                         prebuffer: true,
                         image: await new GUI(targetUserData, total).build(),
@@ -99,7 +99,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
-            const userData = await userLib.requestMetadata(interaction.member.user, 2)
+            const userData = await userLib.requestMetadata(interaction.member.user, 2,locale)
                 //  Returns if user level is below the requirement
             if (userData.exp.level < this.requirementLevel) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
                 //  Displays as guide if user doesn't specify any parameter
@@ -118,7 +118,7 @@ module.exports = {
             const amountOfTax = amountToSend * this.tax
             const total = Math.round(amountToSend - amountOfTax)
                 //  Render confirmation
-            const targetUserData = await userLib.requestMetadata(targetUser, 2)
+            const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
             const confirmation = await reply.send(locale.PAY.USER_CONFIRMATION, {
                         prebuffer: true,
                         image: await new GUI(targetUserData, total).build(),

@@ -101,7 +101,7 @@ module.exports = {
                         }
                     })
                 }
-                const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+                const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
                 const img = await new GUI(userData, validUsers, client,message.guild).build()
                 load.delete()
                 await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${message.guild.name}'s Ranking`, {
@@ -166,7 +166,7 @@ module.exports = {
                     followUp: true
                 })
             }
-            const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2)
+            const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
             const img = await new GUI(userData, validUsers, client, interaction.guild).build()
             load.delete()
             await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${interaction.guild.name}'s Ranking`, {

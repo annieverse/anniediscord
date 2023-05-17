@@ -321,7 +321,7 @@ module.exports = {
                 emoji: await client.getEmoji(`751016612248682546`),
                 rankSize: this.subConfig.value.length,
                 guild: message.guild.name,
-                list: await this._prettifyList(this.subConfig.value, client, message)
+                list: await this._prettifyList(this.subConfig.value, client, message, locale)
             },
             footer: `Updated by ${await client.getUsername(this.subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
         })
@@ -394,12 +394,12 @@ module.exports = {
      * @param {Message} message Current message instance
      * @returns {string}
      */
-    async _prettifyList(source = [], client, message) {
+    async _prettifyList(source = [], client, message, locale) {
         let res = ``
         for (let i = 0; i < source.length; i++) {
             if (i <= 0) res += `\n╭*:;,．★ ～☆*──────────╮\n\n`
             const rank = source[i]
-            const expMeta = await client.experienceLibs(message.member, message.guild).xpReverseFormula(rank.LEVEL)
+            const expMeta = await client.experienceLibs(message.member, message.guild, null, locale).xpReverseFormula(rank.LEVEL)
             res += `**• LV${rank.LEVEL} - ${this._getRoleName(rank.ROLE, message)}**\n> Required EXP: ${commanifier(expMeta.minexp)}\n\n`
             if (i === (source.length - 1)) res += `╰──────────☆～*:;,．*╯\n`
         }

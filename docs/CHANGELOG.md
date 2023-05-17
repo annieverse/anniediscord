@@ -1,3 +1,68 @@
+## [9.7.2](https://github.com/annieverse/anniediscord/compare/v9.7.1...v9.7.2) (2023-05-17)
+
+
+### Bug Fixes
+
+* **localizer:** changed over references ([99bce9f](https://github.com/annieverse/anniediscord/commit/99bce9f9cea8b37063a7d47abd5f6495b0464a6a))
+
+## [9.7.1](https://github.com/annieverse/anniediscord/compare/v9.7.0...v9.7.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* **confirmation:** cancel reaction not working ([6b31ead](https://github.com/annieverse/anniediscord/commit/6b31ead16a90a55abcfc4ae4fc791429c5f619fe))
+* **emoji:** invalid emoji used ([26fa3f0](https://github.com/annieverse/anniediscord/commit/26fa3f01ba556f7e4abf1cfd00e7e3b00193e8c2))
+
+# [9.7.0](https://github.com/annieverse/anniediscord/compare/v9.6.5...v9.7.0) (2023-05-16)
+
+
+### Bug Fixes
+
+* **response:** unwrapped img plugin. ([45e003a](https://github.com/annieverse/anniediscord/commit/45e003afa52089a44453fdf5a8817674a52e7fb2))
+
+
+### Features
+
+* **l10n:** french localization. ([ea2d79a](https://github.com/annieverse/anniediscord/commit/ea2d79a36390e080cf48c9857e34120134dfd7c4))
+* **locales:** backend for user-specific language switcher. ([32743fe](https://github.com/annieverse/anniediscord/commit/32743fecc70e63a6d5bdd8ccd1df7546b19dfc4a))
+* **setLanguage:** a cmd to allow user switching locale via regular command. ([1476bb4](https://github.com/annieverse/anniediscord/commit/1476bb4f49d2fd324a43a715129bcf155c35b9d7))
+* **setLanguage:** added slash-support for language switcher command. ([bfbd31a](https://github.com/annieverse/anniediscord/commit/bfbd31a606383c05f32441811cfa578bf35b55d3))
+* **setLanguage:** added unit test. ([024f67d](https://github.com/annieverse/anniediscord/commit/024f67d133574656ecf6ceaaa53e971e9d11e4c9))
+
+## [9.6.5](https://github.com/annieverse/anniediscord/compare/v9.6.4...v9.6.5) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** stats failing due to syntax err. ([1d18464](https://github.com/annieverse/anniediscord/commit/1d1846456728e78ea76600b62e7a064032e51f49))
+
+## [9.6.4](https://github.com/annieverse/anniediscord/compare/v9.6.3...v9.6.4) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** getItem fails to perform due to syntax err. ([5dd9903](https://github.com/annieverse/anniediscord/commit/5dd99033362cc29f83ad7220bebf761a48087323))
+
+## [9.6.3](https://github.com/annieverse/anniediscord/compare/v9.6.2...v9.6.3) (2023-05-12)
+
+
+### Bug Fixes
+
+* **database:** getItem() fails to lookup on dynamic parameter. ([220b551](https://github.com/annieverse/anniediscord/commit/220b55162e48383eeed0cafd4133caa376cfe20f))
+* **event:** registerGuild ref. ([efb5ce9](https://github.com/annieverse/anniediscord/commit/efb5ce98cbdb87e14ec7f7297c9398dbee4e1096))
+
+
+### Performance Improvements
+
+* **db:** do early check on guild availability thru message event. ([54064b5](https://github.com/annieverse/anniediscord/commit/54064b5938e2bcb77e4bb9ae69fb7a3f63ca5fd5))
+
+## [9.6.2](https://github.com/annieverse/anniediscord/compare/v9.6.1...v9.6.2) (2023-05-11)
+
+
+### Bug Fixes
+
+* **database:** cast to null for empty data, instead of undefined. ([1a8a981](https://github.com/annieverse/anniediscord/commit/1a8a9811ea89195d19a2c1c8d0e4124a1963d60b))
+
 ## [9.6.1](https://github.com/annieverse/anniediscord/compare/v9.6.0...v9.6.1) (2023-05-11)
 
 
