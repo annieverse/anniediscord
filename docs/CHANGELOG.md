@@ -1,3 +1,10 @@
+## [9.7.3](https://github.com/annieverse/anniediscord/compare/v9.7.2...v9.7.3) (2023-05-17)
+
+
+### Bug Fixes
+
+* **database:** relationship col ref. ([2a39d7e](https://github.com/annieverse/anniediscord/commit/2a39d7e32f50336a4a50c3254428ca1d4f96b178))
+
 ## [9.7.2](https://github.com/annieverse/anniediscord/compare/v9.7.1...v9.7.2) (2023-05-17)
 
 
