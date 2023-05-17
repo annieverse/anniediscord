@@ -26,23 +26,11 @@ jobs:
         run: npm test
       - name: Unit Test
         run: npm run unit-test
-  last-published-tag:
-    runs-on: ubuntu-latest
-    outputs: 
-        versionLatest: ${{steps.keydb.outputs.release}}
-    steps:
-      - id: keydb
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: ${{ github.repository }}
-      - name: What version
-        id: version
-        run: echo "# Last tag used" > ${{steps.keydb.outputs.release}}
-        
+          
   tag:
     name: Release Tag
     runs-on: ubuntu-20.04
-    needs: [build,last-published-tag]
+    needs: [build]
     steps:
       # Checking out
       - name: Checkout
@@ -61,18 +49,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
-      - name: Generate Changelog
-        run: echo "# Good things have arrived" > ${{ github.workspace }}/docs/CHANGELOG.txt
-      - name: Whats the current tag?
-        run: echo "# Current tag" > ${{github.ref_name}}
-      - name: whats the last tag published?
-        run: echo "# last released tag" > ${{needs.last-published-tag.outputs.versionLatest}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref_name, 'refs/tags/')
-        with:
-          body_path: ${{ github.workspace }}/docs/CHANGELOG.txt
-          # note you'll typically need to create a personal access token
-          # with permissions to create releases in the other repo
-          token: ${{ secrets.GH_TOKEN }}
           

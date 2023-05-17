@@ -3,7 +3,7 @@
   "version": "9.7.1",
   "description": "An artsy bot — bring the best aesthetic vibe, to your community.",
   "main": "index.js",
-  "private": true,
+  "private": false,
   "scripts": {
     "lint:check": "eslint src",
     "lint:fix": "eslint src --fix",
