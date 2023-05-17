@@ -1,3 +1,10 @@
+## [9.7.2](https://github.com/annieverse/anniediscord/compare/v9.7.1...v9.7.2) (2023-05-17)
+
+
+### Bug Fixes
+
+* **localizer:** changed over references ([99bce9f](https://github.com/annieverse/anniediscord/commit/99bce9f9cea8b37063a7d47abd5f6495b0464a6a))
+
 ## [9.7.1](https://github.com/annieverse/anniediscord/compare/v9.7.0...v9.7.1) (2023-05-16)
 
 
