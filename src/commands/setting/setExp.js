@@ -226,7 +226,7 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        let baseData = await userClass.requestMetadata(targetUser.master, 2)
+        let baseData = await userClass.requestMetadata(targetUser.master, 2,locale)
         const combinedExp = baseData.exp.current_exp - amountToSubtract
         if (combinedExp <= 0) return await reply.send(locale.SETEXP.MINUS_OVERLIMIT, {
             socket: {
@@ -234,7 +234,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428748838010970`)
             }
         })
-        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel,locale)
         let newData = expLib.xpFormula(combinedExp)
         baseData.exp = {
             current_exp: combinedExp,
@@ -294,9 +294,9 @@ module.exports = {
                 amount: commanifier(this.softLimit)
             }
         })
-        let baseData = await userClass.requestMetadata(targetUser.master, 2)
+        let baseData = await userClass.requestMetadata(targetUser.master, 2,locale)
         const combinedExp = baseData.exp.current_exp + amountToAdd
-        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel,locale)
         let newData = expLib.xpFormula(combinedExp)
         baseData.exp = {
             current_exp: combinedExp,
@@ -337,8 +337,8 @@ module.exports = {
         const userClass = new User(client, message)
         const targetUser = await userClass.lookFor(this.args.slice(1).join(` `))
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
-        let baseData = await userClass.requestMetadata(targetUser.master, 2)
-        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel)
+        let baseData = await userClass.requestMetadata(targetUser.master, 2,locale)
+        const expLib = client.experienceLibs(message.guild.members.cache.get(targetUser.master.id), message.guild, message.channel,locale)
         let newData = expLib.xpFormula(0)
         baseData.exp = {
             current_exp: 0,

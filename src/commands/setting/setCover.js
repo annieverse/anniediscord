@@ -63,7 +63,7 @@ module.exports = {
     uploadCost: 1000,
     FileTypesNotAllowed: [`.apng`, `.avif`, `.gif`, `.webp`],
     async execute(client, reply, message, arg, locale, prefix) {
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
         const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
@@ -190,7 +190,7 @@ module.exports = {
         if (options.getSubcommand() == `reset`) {
             return this.reset(client, reply, interaction, options, locale)
         }
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2,locale)
         const OLD_COVER = userData.usedCover
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
@@ -314,7 +314,7 @@ module.exports = {
     async reset(client, reply, interaction, options, locale) {
         this.cover = await client.db.shop.getItem(`defaultcover1`)
         // if (this.cover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2,locale)
         if (userData.usedCover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
         const OLD_COVER = userData.usedCover
         userData.usedCover = this.cover

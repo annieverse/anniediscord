@@ -231,7 +231,7 @@ module.exports = {
         })
         let newText = this.args.slice(1).join(` `)
             //  Dummy level-up message for the preview
-        const userData = await (new User(client, message)).requestMetadata(message.member, 2)
+        const userData = await (new User(client, message)).requestMetadata(message.member, 2,locale)
         await reply.send(newText, {
             prebuffer: true,
             simplified: true,

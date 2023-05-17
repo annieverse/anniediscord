@@ -30,7 +30,7 @@ module.exports = {
         const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
-        const userData = await userLib.requestMetadata(targetUser, 2)
+        const userData = await userLib.requestMetadata(targetUser, 2,locale)
         const image = (await new GUI(userData, client).build()).png()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
@@ -50,7 +50,7 @@ module.exports = {
         const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
-        const userData = await userLib.requestMetadata(targetUser, 2)
+        const userData = await userLib.requestMetadata(targetUser, 2,locale)
         const image = (await new GUI(userData, client).build()).png()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {

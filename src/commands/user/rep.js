@@ -24,7 +24,7 @@ module.exports = {
     cooldown: [23, `hours`],
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
-        const userData = await userLib.requestMetadata(message.author, 2)
+        const userData = await userLib.requestMetadata(message.author, 2, locale)
         const now = moment()
         const lastGiveAt = await client.db.systemUtils.toLocaltime(userData.reputations.last_giving_at)
             //  Returns if user's last reps give still under 23 hours.
@@ -51,7 +51,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
-        const userData = await userLib.requestMetadata(interaction.member, 2)
+        const userData = await userLib.requestMetadata(interaction.member, 2,locale)
         const now = moment()
         const lastGiveAt = await client.db.systemUtils.toLocaltime(userData.reputations.last_giving_at)
             //  Returns if user's last reps give still under 23 hours.

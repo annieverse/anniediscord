@@ -86,7 +86,7 @@ module.exports = class Confirmator {
                 await interact.fetchReply()
 
                 // send the final response
-                return await this.reply.send(this.message.client.locales.en.ACTION_CANCELLED, {
+                return await this.reply.send(this.reply.localeMetadata.ACTION_CANCELLED, {
                     socket: {
                         emoji: await this.message.client.getEmoji(`781954016271138857`)
                     },
