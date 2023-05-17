@@ -24,6 +24,7 @@ logs
 
 # VIM files
 *.swp
+.launch.sh
 
 # MacOS development
 *.DS_Store
@@ -33,3 +34,4 @@ logs
 
 # pm2 module
 .pm2
+
