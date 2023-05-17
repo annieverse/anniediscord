@@ -11,7 +11,7 @@
     "start": "pm2 start index.js --name \"production\" && echo \"Started production\"",
     "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
-    "test": "npm run lint:check"
+    "test": "npm run lint:check && npm run unit-test && echo 'Tests finished.'"
   },
   "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {
