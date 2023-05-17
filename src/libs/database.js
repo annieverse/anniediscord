@@ -748,15 +748,15 @@ class UserUtils extends DatabaseUtils {
 				relationships.relationship_id AS "relationship_id",
 				relationships.name AS "relationship_name",
 
-				user_relationships.user_id_A AS "author_user_id",
-				user_relationships.user_id_B AS "assigned_user_id"
+				user_relationships.user_id_a AS "author_user_id",
+				user_relationships.user_id_b AS "assigned_user_id"
 			FROM user_relationships
 
 			INNER JOIN relationships
 			ON relationships.relationship_id = user_relationships.relationship_id
 
 			WHERE 
-				user_relationships.user_id_A = $userId
+				user_relationships.user_id_a = $userId
 				AND user_relationships.relationship_id > 0
 				AND user_relationships.relationship_id IS NOT NULL
 			ORDER BY user_relationships.registered_at DESC`
@@ -1396,8 +1396,8 @@ class Relationships extends DatabaseUtils {
 		return this._query(`
             DELETE FROM user_relationships
             WHERE 
-            	user_id_A = ?
-				AND user_id_B = ?`
+            	user_id_a = ?
+				AND user_id_b = ?`
 			, `run`
 			, [userA, userB]
 			, `${fn} Removing ${userA} and ${userB} relationship.`
@@ -1438,9 +1438,9 @@ class Relationships extends DatabaseUtils {
 		let res = {
 			//	Insert if no data entry exists.
 			insert: await this._query(`
-	            INSERT INTO user_relationships (user_id_A, user_id_B, relationship_id, guild_id)
+	            INSERT INTO user_relationships (user_id_a, user_id_b, relationship_id, guild_id)
 				SELECT $userA, $userB, $relationshipId, $guildId
-				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_A = $userA AND user_id_B = $userB)`
+				WHERE NOT EXISTS (SELECT 1 FROM user_relationships WHERE user_id_a = $userA AND user_id_b = $userB)`
 				, `run`
 				, { userA: userA, userB: userB, relationshipId: relationshipId, guildId: guildId }
 				, `${fn} Registering new relationship for ${userA} and ${userB} in GUILD_ID ${guildId}`
@@ -1450,8 +1450,8 @@ class Relationships extends DatabaseUtils {
 				UPDATE user_relationships
 				SET relationship_id = $relationshipId
 				WHERE 
-					user_id_A = $userA
-					AND user_id_B = $userB`
+					user_id_a = $userA
+					AND user_id_b = $userB`
 				, `run`
 				, { relationshipId: relationshipId, userA: userA, userB: userB }
 				, `${fn} updating relationship for USER_ID:${userA} and USER_ID:${userB} in GUILD_ID:${guildId}`
