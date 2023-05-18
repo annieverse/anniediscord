@@ -4,7 +4,15 @@ types.setTypeParser(20, function(val) {
     return parseInt(val, 10)
 })
 const Redis = require(`async-redis`)
-const logger = require(`pino`)({ name: `DATABASE`, level: `debug` })
+const logger = require(`pino`)({ name: `DATABASE`, timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"` })
+// logger.transport({
+// 	target: [
+// 		{
+// 			target: 'pino/file',
+//       		options: { destination: `${__dirname}/app.log` },	
+// 		}
+// 	]
+// })
 const getBenchmark = require(`../utils/getBenchmark`)
 
 /**

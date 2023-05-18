@@ -152,7 +152,7 @@ class Annie extends Discord.Client {
              * The default function for handling logging tasks.
              * @type {Pino}
              */
-            this.logger = require(`pino`)({ name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}` })
+            this.logger = require(`pino`)({ name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`, timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`})
 
             /**
              * Stores Annie's Support Server invite link.

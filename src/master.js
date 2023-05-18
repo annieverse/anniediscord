@@ -3,6 +3,7 @@ const express = require(`express`)
 const logger = require(`pino`)({ name: `MASTER_SHARD` })
 const { Webhook } = require(`@top-gg/sdk`)
 const fs = require(`fs`)
+const { AutoPoster } = require('topgg-autoposter')
 
 /**
  *  Parse shard name for given shard id.
@@ -38,6 +39,17 @@ module.exports = function masterShard() {
 		token: process.env.BOT_TOKEN,
 		execArgv: [`--trace-warnings`],
 	})
+	
+	// const poster = AutoPoster(process.env.DBLWEBHOOK_AUTH, manager) // First parmater = 'topggtoken'
+
+	// poster.on('posted', (stats) => {
+	// 	logger.info(`[TOP.GG SDK AUTOPOSTER] Posted stats to Top.gg | ${stats.serverCount} servers`)
+	// })
+
+	// poster.on('error', (err) => { 
+	// 	logger.error(`[master.js] > ${err}`)
+	// })
+
 	const server = express()
 	manager.on(`shardCreate`, shard => {
 		const id = getCustomShardId(shard.id)
