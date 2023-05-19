@@ -13,6 +13,7 @@ const superagent = require(`superagent`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
+const {shardLogger} = require(`../pino.config.js`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
@@ -152,7 +153,7 @@ class Annie extends Discord.Client {
              * The default function for handling logging tasks.
              * @type {Pino}
              */
-            this.logger = require(`pino`)({ name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}`, timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`})
+            this.logger = shardLogger(`SHARD_ID:${this.shardId}/${shardName[this.shardId]}`)
 
             /**
              * Stores Annie's Support Server invite link.

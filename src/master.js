@@ -1,6 +1,6 @@
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
-const logger = require(`pino`)({ name: `MASTER_SHARD` })
+const { masterLogger:logger }  = require(`../pino.config.js`)
 const { Webhook } = require(`@top-gg/sdk`)
 const fs = require(`fs`)
 const { AutoPoster } = require('topgg-autoposter')
@@ -15,8 +15,8 @@ const getCustomShardId = (id) => {
 }
 module.exports = function masterShard() {
 	process.on(`unhandledRejection`, err => {
-		logger.info(`Unhandled rejection: ${err.message}`, err)
-		logger.warn(err)
+		logger.warn(`Unhandled rejection: ${err.message}`, err)
+		logger.error(err)
 	})
 	function makeDirs() {
 		if (!fs.existsSync(`./src/assets/customShop`)) fs.mkdirSync(`./src/assets/customShop`,)
@@ -25,6 +25,8 @@ module.exports = function masterShard() {
 		if (fs.existsSync(`./src/assets/customWelcomer`)) logger.info(`Directory './src/assets/customWelcomer' exists`)
 		if (!fs.existsSync(`./src/assets/selfupload`)) fs.mkdirSync(`./src/assets/selfupload`)
 		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(`Directory './src/assets/selfupload' exists`)
+		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
+		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
 	}
 	if (fs.existsSync(`./assets`)) {
 		makeDirs()

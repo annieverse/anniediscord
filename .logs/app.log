@@ -1,0 +1,16 @@
+{"level":31,"timestamp":"2023-05-18T23:51:41.196Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"REDIS <CONNECTED>"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.206Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"PostgreSQL server connected on PORT:5432."}
+{"level":31,"timestamp":"2023-05-18T23:51:41.574Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[Reminders.getAllReminders()] getting all reminders"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.579Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[GuildUtils.getAllGuildsConfigurations()] fetch all guild configs"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.583Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getGuildsWithAutoResponders()] fetch all autoresponders"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.584Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[DurationalBuffs.getSavedUserDurationalBuffs()] fetch all durantional buffs"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.585Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getAutoResponders()] fetch autoresponders for GUILD_ID:459891664182312980"}
+{"level":31,"timestamp":"2023-05-18T23:51:41.586Z","pid":253542,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getAutoResponders()] fetch autoresponders for GUILD_ID:577121315480272908"}
+{"level":31,"timestamp":"2023-05-18T23:52:19.680Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"REDIS <CONNECTED>"}
+{"level":31,"timestamp":"2023-05-18T23:52:19.691Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"PostgreSQL server connected on PORT:5432."}
+{"level":31,"timestamp":"2023-05-18T23:52:20.079Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[Reminders.getAllReminders()] getting all reminders"}
+{"level":31,"timestamp":"2023-05-18T23:52:20.084Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[GuildUtils.getAllGuildsConfigurations()] fetch all guild configs"}
+{"level":31,"timestamp":"2023-05-18T23:52:20.088Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getGuildsWithAutoResponders()] fetch all autoresponders"}
+{"level":31,"timestamp":"2023-05-18T23:52:20.089Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[DurationalBuffs.getSavedUserDurationalBuffs()] fetch all durantional buffs"}
+{"level":31,"timestamp":"2023-05-18T23:52:20.090Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getAutoResponders()] fetch autoresponders for GUILD_ID:459891664182312980"}
+{"level":31,"timestamp":"2023-05-18T23:52:20.091Z","pid":253816,"hostname":"DESKTOP-9H2LR0E","msg":"[AutoResponder.getAutoResponders()] fetch autoresponders for GUILD_ID:577121315480272908"}
