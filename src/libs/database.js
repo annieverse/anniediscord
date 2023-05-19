@@ -1379,7 +1379,7 @@ class Relationships extends DatabaseUtils {
 		return this._query(`
 			SELECT * FROM relationships
 			WHERE name IN ('parent', 'kid', 'old sibling', 'young sibling', 'couple', 'bestfriend') ORDER BY relationship_id ASC`
-			, `all`, [], `${fn} fetch all ralationship options`
+			, `all`, {}, `${fn} fetch all ralationship options`
 		)
 	}
 
@@ -1396,10 +1396,10 @@ class Relationships extends DatabaseUtils {
 		return this._query(`
             DELETE FROM user_relationships
             WHERE 
-            	user_id_a = ?
-				AND user_id_b = ?`
+            	user_id_a = $userA
+				AND user_id_b = $userB`
 			, `run`
-			, [userA, userB]
+			, {userA:userA, userB:userB}
 			, `${fn} Removing ${userA} and ${userB} relationship.`
 		)
 	}
