@@ -47,29 +47,18 @@ const defaultOptions = {
     timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
 }
 
-const fileTransport = pino.transport({
-    targets: [
-        {
-            target: 'pino/file',
-            options: { destination: `${__dirname}/.logs/app.log` },
-        },
-        {
-            target: 'pino/file', // logs to the standard output by default
-        },
-    ],
-});
-
 defaultOptions.name = `MASTER_SHARD`
 const masterLogger = pino(defaultOptions)
+
+defaultOptions.name = `DATABASE`
+const databaseLogger = pino(defaultOptions)
+
+defaultOptions.name = `LOCALIZER`
+const localizerLogger = pino(defaultOptions)
 
 const shardLogger = (name) => {
     defaultOptions.name = name
     return pino(defaultOptions)
 }
 
-defaultOptions.name = `DATABASE`
-const databaseLogger = pino(defaultOptions)
-
-
-
-module.exports = { databaseLogger, masterLogger, shardLogger }
+module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger }

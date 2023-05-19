@@ -5,7 +5,6 @@ types.setTypeParser(20, function(val) {
 })
 const Redis = require(`async-redis`)
 const { databaseLogger:logger }  = require(`../../pino.config.js`)
-// const logger = require(`pino`)({ name: `DATABASE`, timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"` })
 const getBenchmark = require(`../utils/getBenchmark`)
 
 /**

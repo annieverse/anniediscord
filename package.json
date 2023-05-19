@@ -8,7 +8,7 @@
     "lint:check": "eslint src",
     "lint:fix": "eslint src --fix",
     "unit-test": "node ./node_modules/mocha/bin/mocha tests/**/*.js",
-    "start": "pm2 start index.js --name \"production\" && echo \"Started production\"",
+    "start": "pm2 start ecosystem.config.js && echo \"Started production\"",
     "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js | pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check && npm run unit-test && echo 'Tests finished.'"

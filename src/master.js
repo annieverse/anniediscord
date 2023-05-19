@@ -3,7 +3,6 @@ const express = require(`express`)
 const { masterLogger:logger }  = require(`../pino.config.js`)
 const { Webhook } = require(`@top-gg/sdk`)
 const fs = require(`fs`)
-const { AutoPoster } = require('topgg-autoposter')
 
 /**
  *  Parse shard name for given shard id.
@@ -13,6 +12,7 @@ const { AutoPoster } = require('topgg-autoposter')
 const getCustomShardId = (id) => {
 	return `[SHARD_ID:${id}/${shardName[id]}]`
 }
+
 module.exports = function masterShard() {
 	process.on(`unhandledRejection`, err => {
 		logger.warn(`Unhandled rejection: ${err.message}`, err)
@@ -41,16 +41,6 @@ module.exports = function masterShard() {
 		token: process.env.BOT_TOKEN,
 		execArgv: [`--trace-warnings`],
 	})
-	
-	// const poster = AutoPoster(process.env.DBLWEBHOOK_AUTH, manager) // First parmater = 'topggtoken'
-
-	// poster.on('posted', (stats) => {
-	// 	logger.info(`[TOP.GG SDK AUTOPOSTER] Posted stats to Top.gg | ${stats.serverCount} servers`)
-	// })
-
-	// poster.on('error', (err) => { 
-	// 	logger.error(`[master.js] > ${err}`)
-	// })
 
 	const server = express()
 	manager.on(`shardCreate`, shard => {
@@ -74,8 +64,8 @@ module.exports = function masterShard() {
 				if (c.dev) return
 				c.dblApi.postStats({
 					serverCount: serverCount,
-					shardId: c.shard.ids[0],
-					shardCount: shardCount
+					shardCount: shardCount,
+					shards: manager.shards
 				})
 			}, {context:{serverCount:serverCount,shardCount:shardCount},shard: 0 })
 		} catch (error) {

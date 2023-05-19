@@ -36,4 +36,4 @@ logs
 .pm2
 
 # Logs
-./.logs
+.logs
