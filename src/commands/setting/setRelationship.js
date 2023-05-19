@@ -141,8 +141,8 @@ module.exports = {
                 //  Update relationship data on both side
                 const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
                 const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
-                client.db.relationships.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
-                client.db.relationships.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id))
+                client.db.relationships.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id), message.guildId)
+                client.db.relationships.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id),message.guildId)
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
                 return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
@@ -236,8 +236,8 @@ module.exports = {
                 //  Update relationship data on both side
                 const authorRelationshipStatus = relationshipPairs.MASTER_PAIR[relationship.name]
                 const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
-                client.db.relationships.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id))
-                client.db.relationships.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id))
+                client.db.relationships.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id),interaction.guildId)
+                client.db.relationships.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id),interaction.guildId)
                 await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()], followUp: true })
                 return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
