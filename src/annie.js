@@ -13,6 +13,7 @@ const superagent = require(`superagent`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
+const {shardLogger} = require(`../pino.config.js`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
@@ -152,7 +153,7 @@ class Annie extends Discord.Client {
              * The default function for handling logging tasks.
              * @type {Pino}
              */
-            this.logger = require(`pino`)({ name: `SHARD_ID:${this.shardId}/${shardName[this.shardId]}` })
+            this.logger = shardLogger(`SHARD_ID:${this.shardId}/${shardName[this.shardId]}`)
 
             /**
              * Stores Annie's Support Server invite link.
@@ -247,7 +248,6 @@ class Annie extends Discord.Client {
          * @return {void}
          */
         async registerUserDurationalBuffs() {
-                //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
                 this.db.durationalBuffs.getSavedDurationalBuffs().then(async src => {
                             if (!src.length) return
                             let count = 0

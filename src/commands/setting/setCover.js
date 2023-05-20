@@ -88,7 +88,17 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await superagent.get(url)
+            const response = await superagent.get(url).catch(async (error) =>{
+                client.logger.error(`[setCover.js][Superagent] > ${error}`)
+                await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+                    socket: {
+                        emoji: await client.getEmoji(`692428843058724994`)
+                    },
+                    ephemeral: true
+                })
+                return null
+            })
+            if (response===null) return
             const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
@@ -217,7 +227,17 @@ module.exports = {
         const id = uuidv4()
         if (isValidUpload) {
             if (!url) return await reply.send(`Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: ${this.FileTypesNotAllowed.join(`, `)}`)
-            const response = await superagent.get(url)
+            const response = await superagent.get(url).catch(async (error) =>{
+                client.logger.error(`[setCover.js][Superagent] > ${error}`)
+                await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+                    socket: {
+                        emoji: await client.getEmoji(`692428843058724994`)
+                    },
+                    ephemeral: true
+                })
+                return null
+            })
+            if (response===null) return
             const buffer = response.body
             fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
