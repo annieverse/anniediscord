@@ -1,3 +1,10 @@
+## [9.7.4](https://github.com/annieverse/anniediscord/compare/v9.7.3...v9.7.4) (2023-05-19)
+
+
+### Bug Fixes
+
+* **relationship:** new relationships not saving ([6b86c9d](https://github.com/annieverse/anniediscord/commit/6b86c9d86e6c8f3adc35f890ae51fb84a64a80a0))
+
 ## [9.7.3](https://github.com/annieverse/anniediscord/compare/v9.7.2...v9.7.3) (2023-05-17)
 
 
