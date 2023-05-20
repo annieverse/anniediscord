@@ -35,5 +35,5 @@ logs
 # pm2 module
 .pm2
 
-# log folder
+# Logs
 .logs
