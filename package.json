@@ -60,7 +60,6 @@
     "pixiv-img": "^1.0.0",
     "string-similarity": "^4.0.2",
     "superagent": "^8.0.0",
-    "topgg-autoposter": "^2.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
