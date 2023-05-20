@@ -24,7 +24,7 @@ module.exports = {
      */
     description: `This is developer only command to retrieve or delete userdata`,
     /**
-     * Define how to use the command. Include optional arguments/flags if needed
+     * Define how to use the command. Include optional argu/flags if needed
      * @required
      * @type {string}
      */
@@ -61,16 +61,16 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        let arguments = arg.split(` `) // Split into action and target user arguments[0] = action | arguments[1] = user 
+        let argu = arg.split(` `) // Split into action and target user argu[0] = action | argu[1] = user 
 
-        async function getUser(client, reply, message, arguments, locale) {
+        async function getUser(client, reply, message, argu, locale) {
             const userLib = new User(client, message)
             // Check if user is using on themselves
-            if (userLib.isSelf(arguments[1])) {
+            if (userLib.isSelf(argu[1])) {
                 await reply.send(`I'm sorry but you can not do this command on yourself`)
                 return false
             }
-            const userDataParent = await client.db.userUtils.getUser(arguments[1].trim())
+            const userDataParent = await client.db.userUtils.getUser(argu[1].trim())
             // Check if user exists
             if (userDataParent === null) {
                 await reply.send(`I'm sorry but I dont have a user with that id in my storage`)
@@ -78,22 +78,22 @@ module.exports = {
             }
             return true
         }
-        switch (arguments[0].trim()) {
+        switch (argu[0].trim()) {
             case `retrieve`:
-                if (getUser(client, reply, message, arguments, locale) === false) return
-                this.retrieveUserdata(client, reply, message, arguments, locale)
+                if (getUser(client, reply, message, argu, locale) === false) return
+                this.retrieveUserdata(client, reply, message, argu, locale)
                 break
             case `remove`:
-                if (getUser(client, reply, message, arguments, locale) === false) return
-                this.removeUserdata(client, reply, message, arguments, locale)
+                if (getUser(client, reply, message, argu, locale) === false) return
+                this.removeUserdata(client, reply, message, argu, locale)
                 break
             case `tables`:
-                this.getAvailableTables(client, reply, message, arguments, locale)
+                this.getAvailableTables(client, reply, message, argu, locale)
             default:
-                this.defaultAction(client, reply, message, arguments, locale)
+                this.defaultAction(client, reply, message, argu, locale)
         }
     },
-    async getMetadata(client, reply, message, arguments, locale) {
+    async getMetadata(client, reply, message, argu, locale) {
         let sqlAllTablesForTableNames = `SELECT f.table_name AS foreign_key_table, r.constraint_name AS constraint_name
         FROM information_schema.table_constraints f
         INNER JOIN information_schema.referential_constraints r
@@ -128,13 +128,13 @@ module.exports = {
         }
         return { tables: Array.from(SQLS.keys()), sqlStmts: SQLS }
     },
-    async getAvailableTables(client, reply, message, arguments, locale) {
-        let { tables } = await this.getMetadata(client, reply, message, arguments, locale)
+    async getAvailableTables(client, reply, message, argu, locale) {
+        let { tables } = await this.getMetadata(client, reply, message, argu, locale)
         return await reply.send(this.formatTables(tables), { paging: true })
     },
-    async retrieveUserdata(client, reply, message, arguments, locale) {
-        let userId = arguments[1]
-        let { tables, sqlStmts } = await this.getMetadata(client, reply, message, arguments, locale)
+    async retrieveUserdata(client, reply, message, argu, locale) {
+        let userId = argu[1]
+        let { tables, sqlStmts } = await this.getMetadata(client, reply, message, argu, locale)
         const availableGroups = [`usermetadata`, `userItems`, `userLog`, `userSettingsOrConfig`].map(w => w.toLowerCase()) // Must match the items in variable "groups"
         /**
          * Return a map based on inputed array values
@@ -280,8 +280,8 @@ module.exports = {
             }
         })
     },
-    async removeUserdata(client, reply, message, arguments, locale) {
-        const userId = arguments[1]
+    async removeUserdata(client, reply, message, argu, locale) {
+        const userId = argu[1]
         const sql = `DELETE FROM users WHERE user_id=$userID`
         await client.db.databaseUtils._query(sql
             , `run`
@@ -290,7 +290,7 @@ module.exports = {
         await reply.send(`All data tied to user:${userId} has been deleted`)
         return
     },
-    async defaultAction(client, reply, message, arguments, locale) {
+    async defaultAction(client, reply, message, argu, locale) {
         return await reply.send(`I'm sorry but my only options are to tables, retrieve, or remove.`)
     },
     formatTables(tables) {
