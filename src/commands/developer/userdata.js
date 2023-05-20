@@ -1,6 +1,6 @@
-const { Collection } = require('discord.js')
+const { Collection } = require(`discord.js`)
 const User = require(`../../libs/user`)
-const fs = require('fs')
+const fs = require(`fs`)
 /**
  * @author pan
  */
@@ -18,7 +18,7 @@ module.exports = {
      */
     aliases: [],
     /**
-     * Make a short, clear and concise command's description
+     * Make a short, clear and concise command`s description
      * @required
      * @type {string}
      */
@@ -48,7 +48,7 @@ module.exports = {
      */
     applicationCommand: false,
     /**
-     * Define if the command is a regualr text command or not. If it is, it will be available to all guilds. (message commands are for example '!help')
+     * Define if the command is a regualr text command or not. If it is, it will be available to all guilds. (message commands are for example `!help`)
      * @required
      * @type {boolean}
      */
@@ -61,7 +61,7 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        const arguments = arg.split(` `) // Split into action and target user; arguments[0] = action | arguments[1] = user 
+        let arguments = arg.split(` `) // Split into action and target user arguments[0] = action | arguments[1] = user 
 
         async function getUser(client, reply, message, arguments, locale) {
             const userLib = new User(client, message)
@@ -106,11 +106,10 @@ module.exports = {
             , `all`
             , {}
             , `[userdata.js] retrieving Table names`)
-        delete sqlAllTablesForTableNames
 
         getAllTablesForData = getAllTablesForData.map(a => {
-            let foreignColKey = a.constraint_name.substring(0, a.constraint_name.indexOf(`_fkey`));
-            foreignColKey = foreignColKey.replace(`${a.foreign_key_table}_`, "") // Reduce down to just the foreign Col Keys
+            let foreignColKey = a.constraint_name.substring(0, a.constraint_name.indexOf(`_fkey`))
+            foreignColKey = foreignColKey.replace(`${a.foreign_key_table}_`, ``) // Reduce down to just the foreign Col Keys
             return ({ table: a.foreign_key_table, foreignColKey: foreignColKey })  // Reduce down to just the table names
         })
 
@@ -118,7 +117,7 @@ module.exports = {
         SQLS.set(`users`, `SELECT * FROM users WHERE users.user_id=$userId`)
 
         for (let index = 0; index < getAllTablesForData.length; index++) {
-            const element = getAllTablesForData[index];
+            const element = getAllTablesForData[index]
             let key = element.table
             let sql = `SELECT * FROM ${element.table} WHERE ${element.table}.${element.foreignColKey}=$userId`
             if (SQLS.has(key)) {
@@ -126,10 +125,7 @@ module.exports = {
                 sql = sql + ` OR ${element.table}.${element.foreignColKey}=$userId`
             }
             SQLS.set(key, sql)
-            delete sql
-            delete key
         }
-        delete getAllTablesForData
         return { tables: Array.from(SQLS.keys()), sqlStmts: SQLS }
     },
     async getAvailableTables(client, reply, message, arguments, locale) {
@@ -175,10 +171,10 @@ module.exports = {
                         fs.unlinkSync(filepath)
                     }
                 } catch (error) {
-                    console.error(error)
+                    client.logger.error(error)
                 }
-                let file = fs.createWriteStream(filepath);
-                file.on('error', function (err) { console.error(err)/* error handling */ });
+                let file = fs.createWriteStream(filepath)
+                file.on(`error`, function (err) { client.logger.error(err)/* error handling */ })
                 for (const table of groups[input]) {
                     let sql = table[1]
                     let res = await client.db.databaseUtils._query(sql
@@ -187,9 +183,9 @@ module.exports = {
                         , `[userdata.js] Retrieving user_id:${userId} from Table:${table[0]}`)
                     let border = `===========================================================\n`
                     file.write(`\n${border}The follow data is from ${table[0]}\n${border}\n`)
-                    res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + '\n'); })
+                    res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 }
-                file.end();
+                file.end()
                 await reply.send(`Here is the data from \`${input}\` group for user with id: ${userId}`, {
                     file: filepath,
                     fileName: filename,
@@ -201,7 +197,7 @@ module.exports = {
                             fs.unlinkSync(filepath)
                         }
                     } catch (error) {
-                        console.error(error)
+                        client.logger.error(error)
                     }
                 }, 60000)
             } else if (tables.includes(input)) {
@@ -219,15 +215,15 @@ module.exports = {
                         fs.unlinkSync(filepath)
                     }
                 } catch (error) {
-                    console.error(error)
+                    client.logger.error(error)
                 }
 
-                var file = fs.createWriteStream(filepath);
-                file.on('error', function (err) { console.error(err)/* error handling */ })
+                var file = fs.createWriteStream(filepath)
+                file.on(`error`, function (err) { client.logger.error(err)/* error handling */ })
                 let border = `===========================================================\n`
                 file.write(`\n${border}The follow data is from ${input}\n${border}\n`)
-                res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + '\n') })
-                file.end();
+                res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
+                file.end()
                 await reply.send(`Here is the data from \`${input}\` table for user with id: ${userId}`,{
                     file: filepath,
                     fileName: filename,
@@ -239,7 +235,7 @@ module.exports = {
                             fs.unlinkSync(filepath)
                         }
                     } catch (error) {
-                        console.error(error)
+                        client.logger.error(error)
                     }
                 }, 60000)
             } else if (input === `all`){
@@ -250,10 +246,10 @@ module.exports = {
                         fs.unlinkSync(filepath)
                     }
                 } catch (error) {
-                    console.error(error)
+                    client.logger.error(error)
                 }
-                let file = fs.createWriteStream(filepath);
-                file.on('error', function (err) { console.error(err)/* error handling */ });
+                let file = fs.createWriteStream(filepath)
+                file.on(`error`, function (err) { client.logger.error(err)/* error handling */ })
                 for (const table of sqlStmts){
                     let sql = table[1]
                     let res = await client.db.databaseUtils._query(sql
@@ -262,9 +258,9 @@ module.exports = {
                         , `[userdata.js] Retrieving user_id:${userId} from Table:${table[0]}`)
                     let border = `===========================================================\n`
                     file.write(`\n${border}The follow data is from ${table[0]}\n${border}\n`)
-                    res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + '\n'); })
+                    res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 }                
-                file.end();
+                file.end()
                 await reply.send(`Here is the all data for user with id: ${userId}`,{
                     file: filepath,
                     fileName: filename,
@@ -276,7 +272,7 @@ module.exports = {
                             fs.unlinkSync(filepath)
                         }
                     } catch (error) {
-                        console.error(error)
+                        client.logger.error(error)
                     }
                 }, 60000)
             } else {
@@ -301,7 +297,7 @@ module.exports = {
         function chunkify(a, n) {
             if (n < 2) return [a]
 
-            var len = a.length, out = [], i = 0, size;
+            var len = a.length, out = [], i = 0, size
 
             if (len % n === 0) {
                 size = Math.floor(len / n)
@@ -309,10 +305,10 @@ module.exports = {
                     out.push(a.slice(i, i += size))
                 }
             } else {
-                n--;
+                n--
                 size = Math.floor(len / n)
                 if (len % size === 0)
-                    size--;
+                    size--
                 while (i < size * n) {
                     out.push(a.slice(i, i += size))
                 }
@@ -325,7 +321,7 @@ module.exports = {
         let finalRes = []
         let chunkedArrays = chunkify(tables, 12)
         for (let index = 0; index < chunkedArrays.length; index++) {
-            const element = chunkedArrays[index];
+            const element = chunkedArrays[index]
             let raw = ``
             if (index === 0) {
                 raw = firstMsg + element.join(`\n`)
