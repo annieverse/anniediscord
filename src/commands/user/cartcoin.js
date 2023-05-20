@@ -10,7 +10,7 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
 module.exports = {
         name: `cartcoin`,
         aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`, `artcoinconvert`, `convertartcoin`],
-        description: `Converts Artcoins into EXP at the rahttps://media.discordapp.net/attachments/527190439661404174/843838360396234763/unknown.png?size=64te of 1:8`,
+        description: `Converts Artcoins into EXP at the rate of 1:8`,
         usage: `cartcoin <Amount>`,
         permissionLevel: 0,
         multiUser: false,
