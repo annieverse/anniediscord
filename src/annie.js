@@ -386,7 +386,7 @@ class Annie extends Discord.Client {
      *  @return {Emoji|null}
      */
     getEmoji(keyword=``, serverId=``) {
-        return emoji(keyword, this)
+        return emoji(keyword, this, serverId)
     }
 
     /**
