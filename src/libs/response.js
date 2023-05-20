@@ -133,6 +133,12 @@ class Response {
 		let directMessage = plugins.dm || false
 		let feedback = plugins.feedback || false
 		let components = plugins.components || null
+		let file = {
+			attachment: plugins.file,
+			name: plugins.fileName,
+			description: plugins.fileDescription
+		  }
+		if (!file.attachment || !file.name || !file.description) file = null
 		/**
 		 * Add feedback button to message if enabled
 		 */
@@ -440,6 +446,9 @@ class Response {
 			}
 		}
 
+		if (file) sent = await RESPONSE_REF[RESPONSE_TYPE]({
+			files:[file]
+		})
 		if (!deleteIn) return sent
 		sent
 		return setTimeout(() => {
