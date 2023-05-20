@@ -1316,7 +1316,7 @@ class GuildUtils extends DatabaseUtils {
 		}
 
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		loggerdatabase(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
+		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
 		//  Cache result if provided 
 		if (cacheTo) {
 			const targetConfig = cacheTo.get(configCode)

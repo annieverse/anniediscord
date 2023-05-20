@@ -248,7 +248,6 @@ class Annie extends Discord.Client {
          * @return {void}
          */
         async registerUserDurationalBuffs() {
-                //if (!await this.db.isUserDurationalBuffsTableExists()) return this.logger.warn(`user_durational_buffs table hasn't been created yet.`)
                 this.db.durationalBuffs.getSavedDurationalBuffs().then(async src => {
                             if (!src.length) return
                             let count = 0
