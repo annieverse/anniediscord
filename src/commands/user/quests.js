@@ -257,7 +257,7 @@ module.exports = {
 	getLangQuestProp(lang,langSource, quest_id,prop){
 		if (prop != `name` && prop != `description`) throw new TypeError(`[quest.js][getLangQuestProp] parmeter prop can only be "name" or "description"`)
 		try {
-			if (!questlang[quest_id][prop]) throw Error(`Quest lang prop not populated`)
+			if (!lang[quest_id][prop]) throw Error(`Quest lang prop not populated`)
 		} catch (error) {
 			return langSource.en[quest_id][prop]
 		}
