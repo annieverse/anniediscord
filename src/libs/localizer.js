@@ -1,5 +1,5 @@
 const { readdirSync } = require(`fs`)
-const logger = require(`pino`)({ name: `LOCALIZER`, level: `info` })
+const {localizerLogger:logger} = require(`../../pino.config`)
 /**
  * A utility class that retrieves available locales in the target directory.
  */

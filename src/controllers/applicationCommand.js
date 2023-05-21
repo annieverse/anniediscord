@@ -54,7 +54,8 @@ module.exports = async (client, interaction, command) =>{
                 socket: {
                     error: err.stack,
                     emoji: await client.getEmoji(`AnnieThinking`)
-                }
+                },
+                followUp: true
             }).catch(err => client.logger.error(err))
 
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(err.message)) {
@@ -80,6 +81,7 @@ module.exports = async (client, interaction, command) =>{
                 ephemeral: true})
         }
         //  Report to support server
+        client.logger.error(err)
         client.shard.broadcastEval(formatedErrorLog, { context: {guildId:interaction.guildId,userId:interaction.user.id,providedArgs:JSON.stringify(interaction.options.data), error_message:err.message,targetCommand: targetCommand}})
     }
     async function formatedErrorLog(c,{guildId,userId,providedArgs,error_message,targetCommand}) {
