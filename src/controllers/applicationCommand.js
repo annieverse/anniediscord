@@ -8,7 +8,8 @@ module.exports = async (client, interaction, command) =>{
     // Handle localization
     let locale = null
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    locale = client.localizer.getTargetLocales(userData.lang)
+    locale = client.localizer.getTargetLocales(userData.lang)    
+    locale.currentLang = userData.lang
     let reply = client.responseLibs(interaction, false, locale)
     const options = interaction.options
     const targetCommand = interaction.commandName

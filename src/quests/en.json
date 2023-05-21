@@ -1,0 +1,247 @@
+{
+    "1": {
+      "name": "What's my favorite color?",
+      "description": "I know we've met each other for a long time, but did you know what my favorite color is~? hmm? ooh.. do you need the clue? sorry but that would be too easy and therefore the \"answer\" is already pretty obvious~",
+      "answer": "red"
+    },
+    "2": {
+      "name": "Color Experiment #1!",
+      "description": "Let's play with color! now- what's the result of combining **blue** with **red**?? can you guess it?",
+      "answer": "purple"
+    },
+    "3": {
+      "name": "Do you know \"Art Noveau\"?",
+      "description": "In which language the \"name\" \"Art Nouveau\" means \"new art\"?",
+      "answer": "french"
+    },
+    "4": {
+      "name": "Color Experiment #2!",
+      "description": "Lets play with color again! now- what is the result of combining **yellow** with **blue**?? can you guess it!?",
+      "answer": "green"
+    },
+    "6": {
+      "name": "Platform Awareness",
+      "description": "Ah, It's been a while since the last time I visited those popular art sites. Do you remember which platform that dominates anime-styled artworks? pixiv, artstation or deviantart?",
+      "answer": "pixiv"
+    },
+    "7": {
+      "name": "Historical Painting #1",
+      "description": "Remember the legendary painter, Leonardo Da Vinci? what was the \"name\" of his most popular painting? is it **De Lisa** or **Mona Lisa**?",
+      "answer": "mona lisa"
+    },
+    "8": {
+      "name": "Color Experiment #3!",
+      "description": "I just ate a banana and a strawberry today~! you know they have pretty colors right? can you imagine what the color you get if you combine **yellow** and **red**??",
+      "answer": "orange"
+    },
+    "9": {
+      "name": "Color Experiment #4!",
+      "description": "Oh hey, I just found out the meaning of balance behind Yin and Yang! but, the more I look at their color, the more I become curious ... what if you combine **white** and **black**? what color you will get?",
+      "answer": "gray"
+    },
+    "10": {
+      "name": "Color Experiment #5!",
+      "description": "I was observing my tomato plants this morning, and quite mesmerized with how pretty the colors they have~!<3\r\nNow imagine, what would it be look like if you combine the **red** color of tomato with the **green** color of the leaf?",
+      "answer": "brown"
+    },
+    "11": {
+      "name": "Color Experiment #6!",
+      "description": "I bought a pair of bubblegum today, and they taste so good~ I remembered the colors of bubblegum I just bought were **cyan** and **magenta!** Now now, what if you combine those colors? what new color will you get??!",
+      "answer": "blue"
+    },
+    "12": {
+      "name": "Picking the right tool",
+      "description": "today is so boring~ I do not really know what to do now. Should I draw something? hold on, let me check my bag- ah, I brought a **Banana** and a **Pencil**! Which one should I use for drawing?!",
+      "answer": "pencil"
+    },
+    "13": {
+      "name": "Uh, is it shrimp?",
+      "description": "My sister, Unnie was introducing me to this HSL thing earlier ago. She said, this is one of the important tool in digital art, just like color wheels! I remembered she said the letter H stands for hue- then L for lightness.. and the S... uh, shrimp? wait- no, that sounds weird. What does the **S** stands for in **HSL?**",
+      "answer": "saturation"
+    },
+    "14": {
+      "name": "Color Experiment #7",
+      "description": "I was bored and decided to see what colours I would get from shining different coloured lights in one spot. I made many pretty colours, and then I tried shining a **red, green and blue** light at the same spot, and the result was shocking. Can you guess what colour the three lights made?",
+      "answer": "white"
+    },
+    "15": {
+      "name": "Color schooling time! #3",
+      "description": "the night sky is so pretty... I wonder what kind of blue the night sky is... Can you \"name\" it?",
+      "answer": "midnight blue"
+    },
+    "16": {
+      "name": "Melty Time?",
+      "description": "time seems to just fly by, right? Who drew a painting with a lot of melted watches hanging around? **Pablo Picasso**, **Salvador Dali**‎, or **Rene Magritte‎?**",
+      "answer": "salvador dali"
+    },
+    "17": {
+      "name": "Eeh, warm purple?",
+      "description": "Yesterday I passed an art check, where I was asked if purple was a **warm** or **cool** color. I dont remember the \"answer\", do you know it?",
+      "answer": "cool"
+    },
+    "18": {
+      "name": "Color Experiment #9",
+      "description": "I was painting with my sister, and I wonder... what color will you get from **mixing red and white?**",
+      "answer": "pink"
+    },
+    "19": {
+      "name": "Historical Painting #2",
+      "description": "Do you know the other legendary painter, Vincent van Gogh? What was the \"name\" of one of his most famous paintings? Was it **Starry Night** or **Moony day?**",
+      "answer": "starry night"
+    },
+    "20": {
+      "name": "Colour Complements #1",
+      "description": "Let's learn about complimentary colours! Complementary colours are two colours opposite from each other on the colour wheel, so can you guess what colour is **opposite of orange?**",
+      "answer": "blue"
+    },
+    "21": {
+      "name": "Historical Painting #3",
+      "description": "Do you remember the one who said \"when I do not have blue, I put red\"? was it **Piet Mondrian** or **Pablo Picasso?**",
+      "answer": "pablo picasso"
+    },
+    "22": {
+      "name": "visiting Local Museum!",
+      "description": "I was visiting the local art museum with my sister this morning! There are lots of famous paintings being displayed in there and my favorite one was Sistine Chapel Ceiling! If I could recall,  the artist was **Lichelingelo?** or **Michelangelo?**",
+      "answer": "michelangelo"
+    },
+    "23": {
+      "name": "Your daily motivation!",
+      "description": "someone once said, \"Every artist was first an amateur\". But did you know who actually said that? was it **Ralph Waldo Emerson** or **Thomas Merton?**",
+      "answer": "ralph waldo emerson"
+    },
+    "24": {
+      "name": "Recall the primary colour!",
+      "description": "Which of the following is not a primary color? Is it **red, yellow, green, or blue?** for your hint, a primary color can't be made by mixing other colors together.",
+      "answer": "green"
+    },
+    "25": {
+      "name": "Ugh, printing is hard ...",
+      "description": "I just got commissioned to draw a poster for print! My sister Unnie suggested that I draw in CYMK color profile instead of RGB. CYMK stands for... Cyan, Yellow, Magenta, and... K?? **What does K stand for?**",
+      "answer": "key"
+    },
+    "26": {
+      "name": "Art Maffs!",
+      "description": "I bought red and green colored lights the other day~ When I mixed them together they created yellow! Amazing! So i tried mixing my red and green paints but it turned out disgusting... Whats the type of color mixing for paints called? **Additive Colors or Subtractive Colors?**",
+      "answer": "subtractive colors"
+    },
+    "27": {
+      "name": "Whoa! Magic Lines!",
+      "description": "I was drawing on my brand new tablet the other day, but when i zoomed into my lineart it became all blurry... So my brother showed me this other program. I can draw circles and squares, and no matter how much I zoom in, my lines stay sharp! Whats that called? **Raster, Matrix, Vector or Polygon?**",
+      "answer": "vector"
+    },
+    "28": {
+      "name": "Pablo's Fleur",
+      "description": "I heard from my sister that Pablo Picasso (1904 - 1906) has made an artwork series called 'Period'? eh, I feel like something is missing; what was the series called? **Rose Period or Blue Period?**",
+      "answer": "rose period"
+    },
+    "29": {
+      "name": "Historical Painting #2 (extend)",
+      "description": "I remember that The Starry Night was painted by Vincent van Gogh! but I don't remember when it was painted... was it **May 1842, September 1868, June 1889, or January 1903?**",
+      "answer": "june 1889"
+    },
+    "30": {
+      "name": "the artist's way!",
+      "description": "Do you remember the artist who said 'Learn the rules like a pro so you can break them like an artist.' Was it **Dalai Lama, Pablo Picasso, or Ralph Waldo Emerson?**",
+      "answer": "pablo picasso"
+    },
+    "31": {
+      "name": "Upgrade to secondary colours!",
+      "description": "We've learn about primary colours previously, now let's get into secondary one! Which of the following is not a secondary color? **Orange, yellow, green, or purple?** For your hint, a secondary color is made by mixing two primary colors together.",
+      "answer": "yellow"
+    },
+    "32": {
+      "name": "It's the egg!",
+      "description": "Hey, hey! Hear me up! Did you know who used eggs as their painting material? Was it **Pablo Picasso or Da Vinci?**",
+      "answer": "da vinci"
+    },
+    "33": {
+      "name": "Landscape of Survival",
+      "description": "I just visited museum last week with my sister and saw this one unique painting called 'view of Toledo'. But I couldn't clearly remember the artist's 'name' though. Based on the style, this is possibly made either by **Pablo Picasso**, **Vincent Van Gogh** or **El Greco**. Which one is the correct one? :0",
+      "answer": "el greco"
+    },
+    "34": {
+      "name": "Color Experiment #10!",
+      "description": "I was painting a sunflower but I realized I do not have any green paint left... what colour can I mix to get green? Is it **yellow and red** or **yellow and blue?**",
+      "answer": "yellow and blue"
+    },
+    "35": {
+      "name": "Lustrous Pearl",
+      "description": "I was having art lesson and our teacher showed us a famous painting Girl With A Pearl Earring. When my friend asked me who painted it, I couldn't remember... was it by **Leonardo Da Vinci**, **Vincent Van Gogh** or **Johannes Vermeer?**",
+      "answer": "johannes vermeer"
+    },
+    "36": {
+      "name": "the basic term!",
+      "description": "Earlier today, I was using black to make darker colors, and white to make lighter colors. What are these adjusted colors called? **Hades and Mints** or **Shades and Tints?**",
+      "answer": "shades and tints"
+    },
+    "37": {
+      "name": "Color Experiment #11!",
+      "description": "In art lesson today, we were experimenting with different colours of light. When I shone red light and green light together, the result was surprising! Can you guess what colour is that? **Magenta** or **Yellow?**",
+      "answer": "yellow"
+    },
+    "38": {
+      "name": "Bandaged Ear",
+      "description": "A friend was asking me a question, he asked me who's the artist that cut off his own ear. Do you know who made that painting? Was it made by **Aether Van Gogh** or **Vincent Van Gogh?**",
+      "answer": "vincent van gogh"
+    },
+    "39": {
+      "name": "Look, color wheel!",
+      "description": "sometime today, I was examining the color wheel of my favorite digital art app. Can you tell me which color is on the opposing side of yellow? is it **green**, **blue**, or **purple?**",
+      "answer": "purple"
+    },
+    "40": {
+      "name": "Historical Color!",
+      "description": "Hey hey, what is the most popular but deadly toxic color in the 1814? Is it **Dandelion Yellow**, **Emerald Green**, or **Maroon Red?**",
+      "answer": "emerald green"
+    },
+    "41": {
+      "name": "Cubism",
+      "description": "Heii, I have an art test tomorrow and there is one part that I could not really remember. Who created the type of art 'name'd Cubism? was it by **Pablo Picasso and Georges Braque** or **Aether and Salvador?**\\nThe 'answer' must be two artists.",
+      "answer": "pablo picasso and georges braque"
+    },
+    "42": {
+      "name": "types of Art",
+      "description": "the artist 'name'd Kandinsky is considered the first artist for which type of art? **Surrealism** or **Abstract?**",
+      "answer": "abstract"
+    },
+    "43": {
+      "name": "Du Claude!",
+      "description": "Claude Monet is most known for his paintings of **Fire Lilies** or **Water Lilies?**",
+      "answer": "water lilies"
+    },
+    "44": {
+      "name": "the pity work",
+      "description": "What is the only piece of artwork that Michelangelo ever signed? **The Peita**, **The Pieat**, **The Paeti**, **The Pieta** or **The Piaite?**",
+      "answer": "the pieta"
+    },
+    "45": {
+      "name": "Abstractionism",
+      "description": "It's pop quiz time! 'Abstract art needs to have a meaning.' Do you think this is this **true** or **false?**",
+      "answer": "false"
+    },
+    "46": {
+      "name": "Paint?",
+      "description": "today my art teacher asked me a question and I didn't know the 'answer'. She told me that she would let me think about it overnight. Can you help me 'answer' it? What paint is made from pigments and plastic? Is it **Oil**, **Acrylic**, or **Gouache?**",
+      "answer": "acrylic"
+    },
+    "47": {
+      "name": "When he was born?",
+      "description": "Could you help me with a homework? I'm wondering, when was Pablo Picasso born? was it in **1879**, **1850**, **2020**, or **1881?**",
+      "answer": "1881"
+    },
+    "48": {
+      "name": "What? sus paint!",
+      "description": "Wait a second, this list of paints is a bit off,. hmmm. What do you think? Which one of these options is not a real type of paint? **E'name'l**, **Acrylic**, or **Fruity**?",
+      "answer": "fruity"
+    },
+    "49": {
+      "name": "spinning Wheel!",
+      "description": "I was examining a coloured spinning wheel. I was wondering which colour would most likely come up next. There were 3 pinks, 4 reds and 2 greens. Which one would most likely come up next? **purple**, **orange**, or **red**?",
+      "answer": "red"
+    },
+    "50": {
+      "name": "the Mona Lisa",
+      "description": "I took a history class last week and I have been wondering…what year was the Mona Lisa painted? **1278**, **4619**, or **1503?**",
+      "answer": "1503"
+    }
+  }

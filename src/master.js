@@ -28,11 +28,11 @@ module.exports = function masterShard() {
 		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
 		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
 	}
-	if (fs.existsSync(`./assets`)) {
+	if (fs.existsSync(`./src/assets`)) {
 		makeDirs()
 	} else {
-		fs.mkdirSync(`./assets`)
-		logger.info(`Directory './assets' exists`)
+		fs.mkdirSync(`./src/assets`)
+		logger.info(`Directory './src/assets' exists`)
 		makeDirs()
 	}
 	const { ShardingManager } = require(`discord.js`)

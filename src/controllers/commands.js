@@ -24,6 +24,7 @@ module.exports = async (client={}, message={}) => {
     let locale = null
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
     locale = client.localizer.getTargetLocales(userData.lang)
+    locale.currentLang = userData.lang
     let reply = client.responseLibs(message, false, locale)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value

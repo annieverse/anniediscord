@@ -160,6 +160,7 @@ class Response {
 		let fetchReply = plugins.fetchReply || true
 		let followUp = plugins.followUp || false
 		let ephemeral = plugins.ephemeral || false
+		followUp = this.isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = !directMessage ? this.isSlash ? this.message : field : field
 		const RESPONSE_TYPE = !directMessage ?this.isSlash ? followUp ? `followUp` : `reply` : `send` : `send`
 		const isComponentArray = Array.isArray(components)
