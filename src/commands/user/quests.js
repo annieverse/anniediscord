@@ -54,7 +54,7 @@ module.exports = {
 				return collector.stop()
 			}
 			//  Handle if the answer is incorrect
-			if (answer !== questIdKey.answer) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
+			if (answer !== this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`answer`)) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
@@ -158,7 +158,7 @@ module.exports = {
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
 			const message = await i.fetchReply()
 			//  Handle if the answer is incorrect
-			if (answer !== questIdKey.answer) {
+			if (answer !== this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`answer`)) {
 				answerAttempt++
 				if (answerAttempt > 10) {
 					message.edit({ components: [] })
@@ -255,12 +255,12 @@ module.exports = {
 	 * @returns 
 	 */
 	getLangQuestProp(lang,langSource, quest_id,prop){
-		if (prop != `name` && prop != `description`) throw new TypeError(`[quest.js][getLangQuestProp] parmeter prop can only be "name" or "description"`)
+		if (prop != `name` && prop != `description` && prop != `answer`) throw new TypeError(`[quest.js][getLangQuestProp] parmeter prop can only be "name" or "description"`)
 		try {
 			if (!lang[quest_id][prop]) throw Error(`Quest lang prop not populated`)
 		} catch (error) {
 			return langSource.en[quest_id][prop]
 		}
-		return lang
+		return lang[quest_id][prop]
 	}
 }
