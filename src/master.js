@@ -64,8 +64,7 @@ module.exports = function masterShard() {
 				if (c.dev) return
 				c.dblApi.postStats({
 					serverCount: serverCount,
-					shardCount: shardCount,
-					shards: m.shards
+					shardCount: shardCount
 				})
 			}, {context:{serverCount:serverCount,shardCount:shardCount} })
 		} catch (error) {
