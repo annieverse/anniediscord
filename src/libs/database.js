@@ -2376,7 +2376,7 @@ class Quests extends DatabaseUtils {
 	   * @return {QueryResult}
 	   */
 	recordQuestActivity(questId, userId, guildId, answer) {
-		const fn = this.formatFunctionLog(`updateUserQuest`)
+		const fn = this.formatFunctionLog(`recordQuestActivity`)
 		if (!questId) throw new TypeError(`${fn} parameter "questId" cannot be blank.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
