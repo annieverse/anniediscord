@@ -55,19 +55,19 @@ module.exports = function masterShard() {
 	//  Will send timeout warn in 2 minutes.
 	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection)=>{
 		try {
-			const manager = collection.get(0).manager
-			const fetchServers = await manager.fetchClientValues(`guilds.cache.size`)
+			const m = collection.get(0).manager
+			const fetchServers = await m.fetchClientValues(`guilds.cache.size`)
 			const serverCount = fetchServers.reduce((prev, val) => prev + val, 0)
-			const shardCount = manager.totalShards
-			manager.broadcastEval((c,{serverCount,shardCount})=>{
+			const shardCount = m.totalShards
+			m.broadcastEval((c,{serverCount,shardCount})=>{
 				if (!c.isReady()) return
 				if (c.dev) return
 				c.dblApi.postStats({
 					serverCount: serverCount,
 					shardCount: shardCount,
-					shards: manager.shards
+					shards: m.shards
 				})
-			}, {context:{serverCount:serverCount,shardCount:shardCount},shard: 0 })
+			}, {context:{serverCount:serverCount,shardCount:shardCount} })
 		} catch (error) {
 			logger.error(`[master.js] > ${error}`)
 		}
