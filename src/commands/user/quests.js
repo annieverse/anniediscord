@@ -2,6 +2,7 @@ const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
 const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require(`discord.js`)
+const Quest = require(`../../libs/quests`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
  * You can take quest every 2 hours.
@@ -19,20 +20,22 @@ module.exports = {
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
 	async execute(client, reply, message, arg, locale) {
-		const questMetadata = await this.getQuestMetadata(client, reply, message, locale)
-		if (questMetadata===false) return
-		const questlang = this.getLangQuest(questMetadata.questData[locale.currentLang],questMetadata.questData)
-		const questIdKey = questlang[questMetadata.activeQuest.quest_id]
+		const user = message.member.user
+		const sessionID = `QUEST_SESSION_${user.id}@${message.guild.id}`
+		const questSession = new Quest(client, reply)
+		await questSession.start(sessionID, user, locale, message)
+		if (questSession.getSessionActive) return 
+		if (!questSession.getQuestAvailable) return
 
 		const fetching = await reply.send(locale.QUEST.FETCHING, { simplified: true, socket: { emoji: await client.getEmoji(`790994076257353779`) } })
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
-			header: `${message.author.username} is taking a quest!`,
+			header: `${user.username} is taking a quest!`,
 			footer: locale.QUEST.FOOTER,
-			thumbnail: message.author.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			socket: {
-				questTitle: this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`name`),
-				description: this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`description`),
-				reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(questMetadata.activeQuest.reward_amount)}`
+				questTitle: questSession.getQuestTitle,
+				description: questSession.getQuestDescription,
+				reward: questSession.getQuestFormattedReward
 			}
 		})
 		fetching.delete()
@@ -43,43 +46,38 @@ module.exports = {
 			time: 120000
 		})
 		collector.on(`collect`, async msg => {
-			let answer = msg.content.toLowerCase()
-			if (answer.startsWith((client.prefix))) answer = answer.slice(1)
-			// Handle if user asked to cancel the quest
-			if ([`cancel`].includes(answer)) {
+			questSession.testAnswer(msg.content)
+			if ([`cancel`].includes(questSession.userAnswer)) {
 				await reply.send(locale.QUEST.CANCEL)
 				msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 				quest.delete()
-				client.db.redis.del(questMetadata.sessionID)
+				questSession.cancelSession()
 				return collector.stop()
 			}
 			//  Handle if the answer is incorrect
-			if (answer !== this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`answer`)) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
+			if (questSession.getAnswerIsCorrect===false) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
-			//  Update reward, user quest data and store activity to quest_log activity
-			client.db.databaseUtils.updateInventory({ itemId: 52, value: questMetadata.activeQuest.reward_amount, guildId: message.guild.id, userId: message.author.id })
-			client.db.quests.updateUserNextActiveQuest(message.author.id, message.guild.id, Math.floor(Math.random() * questMetadata.quests.length) || 1)
-			client.db.quests.recordQuestActivity(questMetadata.nextQuestId, message.author.id, message.guild.id, answer)
-			//  Successful
-			client.db.redis.del(questMetadata.sessionID)
+			questSession.updateRewards()
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
 					user: message.author.username,
-					reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(questMetadata.activeQuest.reward_amount)}`
+					reward: questSession.getQuestFormattedReward
 				}
 			})
 		})
 	},
 	async Iexecute(client, reply, interaction, options, locale) {
-		const questMetadata = await this.getQuestMetadata(client, reply, interaction, locale)
-		if (questMetadata===false) return
+		const user = interaction.member.user
+		const sessionID = `QUEST_SESSION_${user.id}@${interaction.guild.id}`
 		
-		const questlang = this.getLangQuest(questMetadata.questData[locale.currentLang],questMetadata.questData)
-		const questIdKey = questlang[questMetadata.activeQuest.quest_id]
+		const questSession = new Quest(client, reply)
+		await questSession.start(sessionID, user, locale, interaction)
+		if (questSession.getSessionActive) return 
+		if (!questSession.getQuestAvailable) return
 
-		const buttonCustomId = questMetadata.sessionID + `answer`
+		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
 			.addComponents(
 				new ButtonBuilder()
@@ -92,18 +90,17 @@ module.exports = {
 					.setStyle(ButtonStyle.Secondary)
 			)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
-			header: `${interaction.member.user.username} is taking a quest!`,
+			header: `${user.username} is taking a quest!`,
 			footer: locale.QUEST.FOOTER + `\n10 tries total`,
-			thumbnail: interaction.member.user.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			socket: {
-				questTitle: this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`name`),
-				description: this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`description`),
-				reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(questMetadata.activeQuest.reward_amount)}`
+				questTitle: questSession.getQuestTitle,
+				description: questSession.getQuestDescription,
+				reward: questSession.getQuestFormattedReward
 			},
 			components: row
 		})
-		const member = interaction.user.id
-		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === member
+		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === user.id
 		const buttonCollector = quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0
 		buttonCollector.on(`ignore`, async (i) => {
@@ -114,7 +111,7 @@ module.exports = {
 			const message = await interaction.fetchReply()
 			try {
 				message.edit({ components: [] })
-				client.db.redis.del(questMetadata.sessionID)
+				questSession.cancelSession()
 				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, followUp: true })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
@@ -124,13 +121,13 @@ module.exports = {
 			// Handle if user asked to cancel the quest
 			if (i.customId === `cancelQuest`) {
 				i.update({ embeds: [await reply.send(locale.QUEST.CANCEL, { raw: true })], components: [] })
-				client.db.redis.del(questMetadata.sessionID)
+				questSession.cancelSession()
 				return buttonCollector.stop()
 			}
-			const modalId = questMetadata.sessionID + `-` + i.id
+			const modalId = `${questSession.getSessionId}-${i.id}`
 			const modal = new ModalBuilder()
 				.setCustomId(modalId)
-				.setTitle(questIdKey.name)
+				.setTitle(questSession.getQuestTitle)
 
 			const questAnswerInput = new TextInputBuilder()
 				.setCustomId(`questAnswerInput`)
@@ -156,9 +153,11 @@ module.exports = {
 			if (!rawAnswer) return
 			rawAnswer.deferUpdate()
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
+			questSession.testAnswer(answer)
+
 			const message = await i.fetchReply()
 			//  Handle if the answer is incorrect
-			if (answer !== this.getLangQuestProp(questlang,questMetadata.questData,questMetadata.activeQuest.quest_id,`answer`)) {
+			if (questSession.getAnswerIsCorrect===false) {
 				answerAttempt++
 				if (answerAttempt > 10) {
 					message.edit({ components: [] })
@@ -168,99 +167,16 @@ module.exports = {
 				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
 			}
 			buttonCollector.stop()
-			//  Update reward, user quest data and store activity to quest_log activity
-			client.db.databaseUtils.updateInventory({ itemId: 52, value: questMetadata.activeQuest.reward_amount, guildId: interaction.guild.id, userId: interaction.member.id })
-			client.db.quests.updateUserNextActiveQuest(interaction.member.id, interaction.guild.id, Math.floor(Math.random() * questMetadata.quests.length) || 1)
-			client.db.quests.recordQuestActivity(questMetadata.nextQuestId, interaction.member.id, interaction.guild.id, answer)
-			//  Successful
-			client.db.redis.del(questMetadata.sessionID)
+			questSession.updateRewards()
 			message.edit({ components: [] })
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
-					user: interaction.member.user.username,
-					reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(questMetadata.activeQuest.reward_amount)}`
+					user: user.username,
+					reward: questSession.getQuestFormattedReward
 				},
 				followUp: true
 			})
 		})
-	},
-	async getQuestMetadata(client, reply, messageRef, locale) {
-		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION_${messageRef.member.user.id}@${messageRef.guild.id}`
-		if (await client.db.redis.exists(sessionID)) {
-			await reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
-			return false
-		}
-		//  Session up for 2 minutes
-		client.db.redis.set(sessionID, 1, `EX`, 60 * 2)
-
-		const quests = await client.db.quests.getAllQuests()
-		if (!quests.length) {
-			await reply.send(locale.QUEST.EMPTY)
-			return false
-		}
-		const userData = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2, locale)
-		const questIdsPool = quests.map(q => q.quest_id)
-		const now = moment()
-		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
-		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) {
-			await reply.send(locale.QUEST.COOLDOWN, {
-				topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
-				thumbnail: messageRef.member.user.displayAvatarURL(),
-				socket: {
-					time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-					prefix: client.prefix
-				},
-			})
-			return false
-		}
-		let nextQuestId = userData.quests.next_quest_id
-		if (!nextQuestId) {
-			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			client.db.quests.updateUserNextActiveQuest(messageRef.member.user.id, messageRef.guild.id, nextQuestId)
-		}
-		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
-		// Try to grab the correct language file, if it fails fallback to en
-		let questData = {}
-		questData.en = require(`./../../quests/en.json`)
-		try {
-			if (locale.currentLang != `en`) questData[locale.currentLang] = require(`./../../quests/${locale.currentLang}.json`)
-		} catch (error) {
-			client.logger.warn(`[quests.js] Could not load "${locale.currentLang}" lang for quests`)
-		}
-		return {activeQuest,questData,quests,nextQuestId,sessionID}
-	},
-	/**
-	 * Try to return the correct property from the object and fall back to en if the locale isnt available
-	 * @param {Object} lang 
-	 * @param {Object} data 
-	 * @returns 
-	 */
-	getLangQuest(lang,data){
-		try {
-			if (!lang) throw Error(`Quest lang not populated`)
-		} catch (error) {
-			return data.en
-		}
-		return lang
-	},
-	/**
-	 * Try to return the correct property from the object and fall back to en if the locale isnt available
-	 * @param {Object} lang 
-	 * @param {Object} langSource 
-	 * @param {Object} quest_id 
-	 * @param {Object} prop 
-	 * @returns 
-	 */
-	getLangQuestProp(lang,langSource, quest_id,prop){
-		if (prop != `name` && prop != `description` && prop != `answer`) throw new TypeError(`[quest.js][getLangQuestProp] parmeter prop can only be "name" or "description"`)
-		try {
-			if (!lang[quest_id][prop]) throw Error(`Quest lang prop not populated`)
-		} catch (error) {
-			return langSource.en[quest_id][prop]
-		}
-		return lang[quest_id][prop]
 	}
 }
