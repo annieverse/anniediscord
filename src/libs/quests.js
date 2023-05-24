@@ -287,7 +287,7 @@ class Quest {
     updateRewards() {
         //  Update reward, user quest data and store activity to quest_log activity
         this.client.db.databaseUtils.updateInventory({ itemId: 52, value: this.questReward, guildId: this.messageRef.guild.id, userId: this.user.id })
-        this.client.db.quests.updateUserNextActiveQuest(this.user.id, this.messageRef.guild.id, this.genNextQuestId)
+        this.client.db.quests.updateUserQuest(this.user.id, this.messageRef.guild.id, this.genNextQuestId)
         this.client.db.quests.recordQuestActivity(this._nextQuestId, this.user.id, this.messageRef.guild.id, this.userAnswer)
         this.cancelSession()
     }
