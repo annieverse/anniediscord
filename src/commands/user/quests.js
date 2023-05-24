@@ -2,6 +2,7 @@ const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
 const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require(`discord.js`)
+const Quest = require(`../../libs/quests`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
  * You can take quest every 2 hours.
@@ -19,42 +20,22 @@ module.exports = {
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
 	async execute(client, reply, message, arg, locale) {
-		const quests = await client.db.quests.getAllQuests()
-		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
-		const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
-		const questIdsPool = quests.map(q => q.quest_id)
-		const now = moment()
-		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
-		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
-			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
-			thumbnail: message.author.displayAvatarURL(),
-			socket: {
-				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-				prefix: client.prefix
-			},
-		})
-		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION_${message.author.id}@${message.guild.id}`
-		if (await client.db.redis.exists(sessionID)) return await reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
-		//  Session up for 2 minutes
-		client.db.redis.set(sessionID, 1, `EX`, 60 * 2)
+		const user = message.member.user
+		const sessionID = `QUEST_SESSION_${user.id}@${message.guild.id}`
+		const questSession = new Quest(client, reply)
+		await questSession.start(sessionID, user, locale, message)
+		if (questSession.getSessionActive) return 
+		if (!questSession.getQuestAvailable) return
+
 		const fetching = await reply.send(locale.QUEST.FETCHING, { simplified: true, socket: { emoji: await client.getEmoji(`790994076257353779`) } })
-		//  Update ID if active quest couldn't be found with the saved quest_id
-		let nextQuestId = userData.quests.next_quest_id
-		if (!nextQuestId) {
-			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			client.db.quests.updateUserNextActiveQuest(message.author.id, message.guild.id, nextQuestId)
-		}
-		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
-			header: `${message.author.username} is taking a quest!`,
+			header: `${user.username} is taking a quest!`,
 			footer: locale.QUEST.FOOTER,
-			thumbnail: message.author.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			socket: {
-				questTitle: activeQuest.name,
-				description: activeQuest.description,
-				reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+				questTitle: questSession.getQuestTitle,
+				description: questSession.getQuestDescription,
+				reward: questSession.getQuestFormattedReward
 			}
 		})
 		fetching.delete()
@@ -65,18 +46,16 @@ module.exports = {
 			time: 120000
 		})
 		collector.on(`collect`, async msg => {
-			let answer = msg.content.toLowerCase()
-			if (answer.startsWith((client.prefix))) answer = answer.slice(1)
-			// Handle if user asked to cancel the quest
-			if ([`cancel`].includes(answer)) {
+			questSession.testAnswer(msg.content)
+			if ([`cancel`].includes(questSession.userAnswer)) {
 				await reply.send(locale.QUEST.CANCEL)
 				msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 				quest.delete()
-				client.db.redis.del(sessionID)
+				questSession.cancelSession()
 				return collector.stop()
 			}
 			//  Handle if the answer is incorrect
-			if (answer !== activeQuest.correct_answer) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
+			if (questSession.getAnswerIsCorrect===false) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
 			//  Update reward, user quest data and store activity to quest_log activity
@@ -89,43 +68,21 @@ module.exports = {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
 					user: message.author.username,
-					reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+					reward: questSession.getQuestFormattedReward
 				}
 			})
 		})
 	},
 	async Iexecute(client, reply, interaction, options, locale) {
-		const quests = await client.db.quests.getAllQuests()
-		if (!quests.length) return await reply.send(locale.QUEST.EMPTY)
-		const userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
-		const questIdsPool = quests.map(q => q.quest_id)
-		const now = moment()
-		const lastClaimAt = await client.db.systemUtils.toLocaltime(userData.quests.updated_at)
-		//  Handle if user's quest queue still in cooldown
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.QUEST.COOLDOWN, {
-			topNotch: `**Shall we do something else first?** ${await client.getEmoji(`692428969667985458`)}`,
-			thumbnail: interaction.member.displayAvatarURL(),
-			socket: {
-				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-				prefix: client.prefix
-			},
-		})
-		//  Handle if user already took the quest earlier ago. Purposely made to avoid spam abuse.
-		const sessionID = `QUEST_SESSION_${interaction.member.id}@${interaction.guild.id}`
+		const user = interaction.member.user
+		const sessionID = `QUEST_SESSION_${user.id}@${interaction.guild.id}`
+		
+		const questSession = new Quest(client, reply)
+		await questSession.start(sessionID, user, locale, interaction)
+		if (questSession.getSessionActive) return 
+		if (!questSession.getQuestAvailable) return
 
-		if (await client.db.redis.exists(sessionID)) return await reply.send(locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
-		//  Session up for 2 minutes
-		client.db.redis.set(sessionID, 1, `EX`, 60 * 2)
-
-		//  Update ID if active quest couldn't be found with the saved quest_id
-		let nextQuestId = userData.quests.next_quest_id
-		if (!nextQuestId) {
-			nextQuestId = questIdsPool[Math.floor(Math.random() * questIdsPool.length)]
-			client.db.quests.updateUserNextActiveQuest(interaction.member.id, interaction.guild.id, nextQuestId)
-		}
-		let activeQuest = quests.find(node => node.quest_id === nextQuestId)
-
-		const buttonCustomId = sessionID + `answer`
+		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
 			.addComponents(
 				new ButtonBuilder()
@@ -138,30 +95,29 @@ module.exports = {
 					.setStyle(ButtonStyle.Secondary)
 			)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
-			header: `${interaction.member.user.username} is taking a quest!`,
+			header: `${user.username} is taking a quest!`,
 			footer: locale.QUEST.FOOTER + `\n10 tries total`,
-			thumbnail: interaction.member.user.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			socket: {
-				questTitle: activeQuest.name,
-				description: activeQuest.description,
-				reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+				questTitle: questSession.getQuestTitle,
+				description: questSession.getQuestDescription,
+				reward: questSession.getQuestFormattedReward
 			},
 			components: row
 		})
-		const member = interaction.user.id
-		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === member
-		const buttonCollector = quest.createMessageComponentCollector({ filter , time: 30000 })
+		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === user.id
+		const buttonCollector = quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0
-		buttonCollector.on(`ignore`, async (i) =>{
-			i.reply({content:`I'm sorry but only the user who sent this message may interact with it.`,ephemeral: true})
+		buttonCollector.on(`ignore`, async (i) => {
+			i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
 		})
-		buttonCollector.on(`end`, async (collected, reason)=>{
+		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
 			const message = await interaction.fetchReply()
 			try {
 				message.edit({ components: [] })
-				client.db.redis.del(sessionID)
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`,{ephemeral: true, followUp:true})
+				questSession.cancelSession()
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, followUp: true })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
@@ -169,14 +125,14 @@ module.exports = {
 		buttonCollector.on(`collect`, async i => {
 			// Handle if user asked to cancel the quest
 			if (i.customId === `cancelQuest`) {
-				i.update({embeds: [await reply.send(locale.QUEST.CANCEL,{raw: true})], components: []})
-				client.db.redis.del(sessionID)
+				i.update({ embeds: [await reply.send(locale.QUEST.CANCEL, { raw: true })], components: [] })
+				questSession.cancelSession()
 				return buttonCollector.stop()
 			}
-			const modalId = sessionID+`-`+i.id
+			const modalId = `${questSession.getSessionId}-${i.id}`
 			const modal = new ModalBuilder()
 				.setCustomId(modalId)
-				.setTitle(activeQuest.name)
+				.setTitle(questSession.getQuestTitle)
 
 			const questAnswerInput = new TextInputBuilder()
 				.setCustomId(`questAnswerInput`)
@@ -190,10 +146,9 @@ module.exports = {
 			modal.addComponents(firstActionRow)
 
 			buttonCollector.resetTimer({ time: 30000 })
-			
+
 			await i.showModal(modal)
-			// const filter = (interaction, collection) =>	interaction.customId === sessionID && collection.last()
-			const filter = (interaction) =>	interaction.customId === modalId
+			const filter = (interaction) => interaction.customId === modalId
 			let rawAnswer
 			try {
 				rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
@@ -203,9 +158,11 @@ module.exports = {
 			if (!rawAnswer) return
 			rawAnswer.deferUpdate()
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
+			questSession.testAnswer(answer)
+
 			const message = await i.fetchReply()
 			//  Handle if the answer is incorrect
-			if (answer !== activeQuest.correct_answer) {
+			if (questSession.getAnswerIsCorrect===false) {
 				answerAttempt++
 				if (answerAttempt > 10) {
 					message.edit({ components: [] })
@@ -225,8 +182,8 @@ module.exports = {
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
-					user: interaction.member.user.username,
-					reward: `${await client.getEmoji(`758720612087627787`)}${commanifier(activeQuest.reward_amount)}`
+					user: user.username,
+					reward: questSession.getQuestFormattedReward
 				},
 				followUp: true
 			})
