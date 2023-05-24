@@ -1,3 +1,10 @@
+## [9.7.5](https://github.com/annieverse/anniediscord/compare/v9.7.4...v9.7.5) (2023-05-23)
+
+
+### Bug Fixes
+
+* **quests:** cooldown not updated ([86316f8](https://github.com/annieverse/anniediscord/commit/86316f8a0e56df3948350f0ce5dd8487fc1b15e5))
+
 ## [9.7.4](https://github.com/annieverse/anniediscord/compare/v9.7.3...v9.7.4) (2023-05-19)
 
 

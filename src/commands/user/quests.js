@@ -58,7 +58,12 @@ module.exports = {
 			if (questSession.getAnswerIsCorrect===false) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			collector.stop()
 			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
-			questSession.updateRewards()
+			//  Update reward, user quest data and store activity to quest_log activity
+			client.db.databaseUtils.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: message.guild.id, userId: message.author.id })
+			client.db.quests.updateUserQuest(message.author.id, message.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			client.db.quests.recordQuestActivity(nextQuestId, message.author.id, message.guild.id, answer)
+			//  Successful
+			client.db.redis.del(sessionID)
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
@@ -167,7 +172,12 @@ module.exports = {
 				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
 			}
 			buttonCollector.stop()
-			questSession.updateRewards()
+			//  Update reward, user quest data and store activity to quest_log activity
+			client.db.databaseUtils.updateInventory({ itemId: 52, value: activeQuest.reward_amount, guildId: interaction.guild.id, userId: interaction.member.id })
+			client.db.quests.updateUserQuest(interaction.member.id, interaction.guild.id, Math.floor(Math.random() * quests.length) || 1)
+			client.db.quests.recordQuestActivity(nextQuestId, interaction.member.id, interaction.guild.id, answer)
+			//  Successful
+			client.db.redis.del(sessionID)
 			message.edit({ components: [] })
 			return await reply.send(locale.QUEST.SUCCESSFUL, {
 				socket: {
