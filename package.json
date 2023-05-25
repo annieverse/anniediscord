@@ -43,7 +43,7 @@
     "axios": "^1.4.0",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.11.2",
-    "canvas-constructor": "^7.0.0",
+    "canvas-constructor": "^7.0.1",
     "color": "^4.1.0",
     "contrast-color": "^1.0.1",
     "cron-job-manager": "^2.1.4",
