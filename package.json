@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.0",
-    "@napi-rs/canvas": "^0.1.40",
+    "@napi-rs/canvas": "^0.1.41",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/git": "^10.0.1",
