@@ -84,12 +84,12 @@ module.exports = {
         })
     },
     async execute(client, reply, message, arg, locale) {
-        await this.fetchPixivResult(client, reply, arg, locale)
+        return await this.fetchPixivResult(client, reply, arg, locale)
     },
 
     async Iexecute(client, reply, interaction, options, locale) {
         let arg = options.getString(`tag`)
-        await this.fetchPixivResult(client, reply, arg, locale)
+        return await this.fetchPixivResult(client, reply, arg, locale)
     },
 
     /**

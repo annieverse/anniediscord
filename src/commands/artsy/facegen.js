@@ -15,11 +15,11 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        await this.getRandomId(client, reply, message, locale)
+        return await this.getRandomId(client, reply, message, locale)
     },
 
     async Iexecute(client, reply, interaction, options, locale) {
-        await this.getRandomId(client, reply, interaction, locale)
+        return await this.getRandomId(client, reply, interaction, locale)
     },
     async getRandomId(client, reply, messageRef, locale) {
         const source = `https://www.thiswaifudoesnotexist.net/`

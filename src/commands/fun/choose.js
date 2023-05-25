@@ -1,9 +1,9 @@
 const random = require(`../../utils/random`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-    /**
-     * I'll try to pick any options you give!
-     * @author klerikdust
-     */
+/**
+ * I'll try to pick any options you give!
+ * @author klerikdust
+ */
 module.exports = {
     name: `choose`,
     aliases: [`choose`, `pick`],
@@ -22,13 +22,14 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         if (!arg) return await reply.send(locale.CHOOSE.GUIDE)
-            //  Handle if Annie can't parse options from user's input.
-        const opts = this._tokenizedOptions(arg)
-        if (!opts) return await reply.send(locale.CHOOSE.INVALID_OPTIONS)
-        return await reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
+        return await this.run(arg, client, reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const opts = this._tokenizedOptions(options.getString(`choices`))
+        return await this.run(options.getString(`choices`), client, reply, locale)
+    },
+    async run(options, client, reply, locale) {
+        //  Handle if Annie can't parse options from user's input.
+        const opts = this._tokenizedOptions(options)
         if (!opts) return await reply.send(locale.CHOOSE.INVALID_OPTIONS)
         return await reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
     },

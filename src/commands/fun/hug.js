@@ -24,47 +24,28 @@ module.exports = {
         type: ApplicationCommandOptionType.User
     }],
     type: ApplicationCommandType.ChatInput,
+    hugGenLink: `https://purrbot.site/api/img/sfw/hug/gif`,
     async execute(client, reply, message, arg, locale) {
-        const {
-            body
-        } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
-        //  Multi-user hug
-        if (arg) {
-            const target = await (new User(client, message)).lookFor(arg)
-            if (!target) return await reply.send(locale.HUG.INVALID_TARGET, {
-                socket: {
-                    emoji: await client.getEmoji(`AnnieCry`)
-                }
-            })
-            return await reply.send(locale.HUG.OTHER_USER, {
-                socket: {
-                    user: message.author.username,
-                    targetUser: target.master.username
-                },
-                imageGif: body.link
-            })
-        }
-        return await reply.send(locale.HUG.THEMSELVES, {
-            socket: {
-                user: message.author.username
-            },
-            imageGif: body.link
-        })
+        const target = arg ? (await (new User(client, message)).lookFor(arg)).master : null
+        const user = message.author
+        return await this.run(target, user, reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const {
-            body
-        } = await superagent.get(`https://purrbot.site/api/img/sfw/hug/gif`)
-        const target = options.getUser(`user`) 
-        !target ? await reply.send(locale.HUG.THEMSELVES, {
+        const target = options.getUser(`user`)
+        const user = interaction.member.user
+        return await this.run(target, user, reply, locale)
+    },
+    async run(targetUser, user, reply, locale) {
+        const { body } = await superagent.get(this.hugGenLink)
+        return !targetUser ? await reply.send(locale.HUG.THEMSELVES, {
             socket: {
-                user: interaction.member.user.username
+                user: user.username
             },
             imageGif: body.link
         }) : await reply.send(locale.HUG.OTHER_USER, {
             socket: {
-                user: interaction.member.user.username,
-                targetUser: target.username
+                user: user.username,
+                targetUser: targetUser.username
             },
             imageGif: body.link
         })
