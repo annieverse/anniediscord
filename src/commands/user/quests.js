@@ -1,12 +1,9 @@
-const moment = require(`moment`)
-const User = require(`../../libs/user`)
-const commanifier = require(`../../utils/commanifier`)
 const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require(`discord.js`)
 const Quest = require(`../../libs/quests`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
  * You can take quest every 2 hours.
- * @author klerikdust
+ * @author klerikdust and Pan
  */
 module.exports = {
 	name: `quests`,
