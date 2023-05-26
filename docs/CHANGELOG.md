@@ -1,3 +1,10 @@
+## [9.7.6](https://github.com/annieverse/anniediscord/compare/v9.7.5...v9.7.6) (2023-05-26)
+
+
+### Bug Fixes
+
+* **customRewards:** failing on create ([2baa302](https://github.com/annieverse/anniediscord/commit/2baa302e1d6dd10dea358c0003d364f59a17000c))
+
 ## [9.7.5](https://github.com/annieverse/anniediscord/compare/v9.7.4...v9.7.5) (2023-05-23)
 
 
