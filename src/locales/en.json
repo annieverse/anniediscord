@@ -18,7 +18,8 @@
     },
     "AFFILIATES": {
         "EMPTY": "Ops, there are no registered affiliates at the moment!",
-        "DISPLAY": "**Hi, {{user}}!** here you can see all the servers that has been supporting the development of Annie.\n{{list}}"
+        "DISPLAY": "**Hi, {{user}}!** here you can see all the servers that has been supporting the development of Annie.\n{{list}}",
+        "HEADER": "Annie's Affiliated Servers"
     },
     "ASK": {
         "ANSWERS": [
@@ -211,7 +212,7 @@
         "ERROR": "Something went wrong ..",
         "COOLING_DOWN": "You can make changes again in 5 seconds."
     },
-    "DONATE": "Please go to this site: [Donate](https://www.patreon.com/anniediscord)",
+    "DONATE": "Please ask in our support server how you can support us.",
     "ERROR": "Ops, something went wrong.\n```diff\n- {{error}}\n```",
     "ERROR_ON_PRODUCTION": "**Oops, I just got hit by something ...** {{emoji}}\n╰ Sorry for this inconvenience; I'll forward it to my developers.",
     "ERROR_ON_DEV": "Hmm, does not working as expected. {{emoji}}\n```diff\n- {{error}}\n```",
@@ -289,7 +290,7 @@
     },
     "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_AFFILIATE_INVITE": "Don't forget to check my affiliated server too! {{emoji}}\n{{affiliateLink}}",
-    "GENERATE_BOT_INVITE": "You seem to be interested with me. {{botInviteLink}}!",
+    "GENERATE_BOT_INVITE": "You seem to be interested with me. [Let's add me to your server!]({{botInviteLink}})!",
     "GETLOG": {
         "NULL": "Sorry **{{user}}** ... I can't find any saved logs in my directory. {{emoji}}",
         "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
@@ -674,6 +675,7 @@
         "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}"
 
     },
+    "SERVERINFO":"A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! ",
     "SETSOCIALMEDIA": {
         "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
         "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
@@ -876,7 +878,8 @@
         "DISPLAY": "**Hewoo there!♡*** you are currently looking at my node statistic. These data can be useful addition when you are reporting bugs to the developers!\n╭*:;,．★ ～☆*───────╮\n**•Who's my caretaker?**\n> Say hello to Naph and Pan! these are the guys who have been generously taking care of me and teaching me new stuff. I was developed purely for personal-project; but I'd really appreciate any kind of donation!\n───────\n**• Am I the real, Annie?**\n> Well yes, but actually no. What you see right now is one my replica named **{{shard}}**.\n───────\n**• Hmm, am I lagging?**\n> Maybe? at the moment my latency is {{ping}} ms. But don't mind the numbers, I'll try my best to serve you!\n───────\n**• How long I've been up?**\n> Around {{uptime}} I think? with total of {{memory}} used memory. Yeah, sorry about that. I sleep quite often.\n───────\n**• How many guilds I've been serving in?**\n> In the current version (v{{version}}) there are total of {{servers}} servers who have been actively using my service. {{totalCommands}} commands were also ran inside these servers! I know the numbers may be not that high,.. but this is a huge milestone for me. {{emoji}}\n╰────────☆～*:;,．*╯",
         "NO_DATA_FOUND": "I can't find any data associated with **{{selectedMetric}}** field. {{emoji}}",
         "INVALID_DATE": "Invalid parameter, baka. Try type `7` as the parameter to get aggregated data for this week.",
-        "INSIGHT": "I can see **{{percentage}}%** from previous **last {{days}} days** datapoint. {{emoji}}"
+        "INSIGHT": "I can see **{{percentage}}%** from previous **last {{days}} days** datapoint. {{emoji}}",
+        "HEADER": "The State of Annie"
     },
     "INTERNAL_SYSTEM": {
         "DATABASE_CONNECTED": "Database successfully connected",

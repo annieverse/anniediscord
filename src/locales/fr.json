@@ -18,7 +18,8 @@
   },
   "AFFILIATES": {
       "EMPTY": "Oups, il n'y a pas d'affiliés enregistrés pour le moment !",
-      "DISPLAY": "**Bonjour, {{user}} !** Ici, vous pouvez voir tous les serveurs qui ont soutenu le développement d'Annie.\n{{list}}"
+      "DISPLAY": "**Bonjour, {{user}} !** Ici, vous pouvez voir tous les serveurs qui ont soutenu le développement d'Annie.\n{{list}}",
+      "HEADER": "Serveurs affiliés d'Annie"
   },
   "ASK": {
       "ANSWERS": [
@@ -211,7 +212,7 @@
   "ERROR": "Quelque chose s'est mal passé..",
   "COOLING_DOWN": "Vous pouvez effectuer à nouveau des modifications dans 5 secondes."
 },
-"DONATE": "Veuillez vous rendre sur ce site: [Donation](https://www.patreon.com/anniediscord)",
+"DONATE": "Veuillez demander à notre serveur d'assistance comment vous pouvez nous aider.",
 "ERROR": "Oops, quelque chose s'est mal passé.\n```diff\n- {{error}}\n```",
 "ERROR_ON_PRODUCTION": "**Oops, je viens de prendre un coup ...** {{emoji}}\n╰ Désolé pour ce désagrément; je le transmettrai à mes développeurs.",
 "ERROR_ON_DEV": "Hmm, ça ne fonctionne pas comme prévu. {{emoji}}\n```diff\n- {{error}}\n```",
@@ -289,7 +290,7 @@
 },
 "GENERATE_SERVER_INVITE": "Viens me rendre visite chez moi ! {{emoji}}\n{{serverLink}}",
 "GENERATE_AFFILIATE_INVITE": "N'oublie pas de visiter également mon serveur affilié ! {{emoji}}\n{{affiliateLink}}",
-"GENERATE_BOT_INVITE": "Tu sembles intéressé par moi. {{botInviteLink}} !",
+"GENERATE_BOT_INVITE": "Tu sembles intéressé par moi. [Ajoutons-moi à votre serveur !]({{botInviteLink}}) !",
 "GETLOG": {
   "NULL": "Désolé **{{user}}**... Je ne peux trouver aucun journal sauvegardé dans mon répertoire. {{emoji}}",
   "UNAUTHORIZED": "Désolé, vous n'êtes pas autorisé à accéder à ce champ.",
@@ -875,7 +876,8 @@
     "DISPLAY": "**Hewoo there!♡*** Vous regardez actuellement mes statistiques de nœud. Ces données peuvent être utiles lorsque vous signalez des bugs aux développeurs !\n╭*:;,．★ ～☆*───────╮\n**• Qui est mon gardien ?**\n> Dites bonjour à Naph et Pan ! Ce sont les personnes qui ont généreusement pris soin de moi et m'ont appris de nouvelles choses. J'ai été développé uniquement pour un projet personnel ; mais j'apprécierais vraiment tout type de don !\n───────\n**• Suis-je la vraie Annie ?**\n> Eh bien oui, mais en réalité non. Ce que vous voyez maintenant est l'une de mes répliques appelée **{{shard}}**.\n───────\n**• Hmm, est-ce que je suis en retard ?**\n> Peut-être ? Pour le moment, ma latence est de {{ping}} ms. Mais ne vous souciez pas des chiffres, je ferai de mon mieux pour vous servir !\n───────\n**• Depuis combien de temps suis-je actif ?**\n> Environ {{uptime}} je pense ? avec un total de {{memory}} mémoire utilisée. Ouais, désolé pour ça. Je dors assez souvent.\n───────\n**• Combien de serveurs ai-je servi ?**\n> Dans la version actuelle (v{{version}}), il y a un total de {{servers}} serveurs qui utilisent activement mes services. {{totalCommands}} commandes ont également été exécutées dans ces serveurs ! Je sais que les chiffres ne sont peut-être pas si élevés,.. mais c'est une étape importante pour moi. {{emoji}}\n╰────────☆～*:;,．*╯",
     "NO_DATA_FOUND": "Je ne trouve aucune donnée associée au champ **{{selectedMetric}}**. {{emoji}}",
     "INVALID_DATE": "Paramètre invalide, baka. Essayez de taper `7` comme paramètre pour obtenir des données agrégées pour cette semaine.",
-    "INSIGHT": "Je vois **{{percentage}}%** par rapport au dernier point de données des **{{days}} derniers jours**. {{emoji}}"
+    "INSIGHT": "Je vois **{{percentage}}%** par rapport au dernier point de données des **{{days}} derniers jours**. {{emoji}}",
+    "HEADER": "L'état d'Annie"
   },
   "INTERNAL_SYSTEM": {
     "DATABASE_CONNECTED": "Connexion à la base de données réussie",
@@ -918,5 +920,7 @@
     "UNAVAILABLE": "**Je m'excuse,** mon état actuel ne prend pas encore en charge le service de vote. Veuillez contacter mes développeurs pour plus de détails.",
     "IS_COOLDOWN": "**Salut, ton prochain vote est encore en attente !**\n╰ Pendant que nous y sommes, pourquoi ne pas **{{page}}** à mon sujet d'abord ? {{emoji}}",
     "READY": "╭*:;,．★ ～☆*────────────────╮\n**Pouvez-vous prendre une minute pour me voter sur {{url}} ?**\n Ne vous inquiétez pas pour la récompense ! J'ai déjà préparé quelque chose de spécial pour vous♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nN'oubliez pas, vous pouvez voter toutes les **12 heures.**"
-  }
+  },
+  "SERVERINFO":"A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! "
+    
 }

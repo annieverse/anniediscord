@@ -15,19 +15,19 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        return await reply.send(locale.REQUEST_PING, {
-            status: `success`,
-            socket: {
-                ping: commanifier(Math.floor(client.ws.ping)),
-                emoji: await client.getEmoji(`789212493096026143`)
-            }
-        })
+        return await this.run(client,reply,locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        return await this.run(client,reply,locale)
+    },
+    getPing(client){
+        return commanifier(Math.floor(client.ws.ping))
+    },
+    async run(client,reply,locale){
         return await reply.send(locale.REQUEST_PING, {
             status: `success`,
             socket: {
-                ping: commanifier(Math.floor(client.ws.ping)),
+                ping: this.getPing(client),
                 emoji: await client.getEmoji(`789212493096026143`)
             }
         })
