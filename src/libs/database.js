@@ -350,6 +350,7 @@ class DatabaseUtils {
 			a.length === b.length &&
 			a.every((val, index) => val === b[index])
 	}
+
 }
 
 class Reminders extends DatabaseUtils {
@@ -1207,6 +1208,42 @@ class GuildUtils extends DatabaseUtils {
 		super(client)
 		this.fnClass = `GuildUtils`
 	}
+	
+	/**
+	 * Mark a guild for deletion when leaving guild
+	 */
+	async markForDeletion(guildId){
+		const fn = this.formatFunctionLog(`markForDeletion`)
+		if (!guildId) throw new TypeError(`${fn} property "guildId" must be a guild snowflake.`)
+		return await this._query(`UPDATE guilds SET left_guild=CURRENT_TIMESTAMP WHERE guild_id=$guildId`,`run`,{guildId:guildId},`${fn} Updating guild_id:${guildId} deletion date`)
+	}
+
+	/**
+	 * Mark a guild for deletion when leaving guild
+	 */
+	async umarkForDeletion(guildId){
+		const fn = this.formatFunctionLog(`umarkForDeletion`)
+		if (!guildId) throw new TypeError(`${fn} property "guildId" must be a guild snowflake.`)
+		return await this._query(`UPDATE guilds SET left_guild=null WHERE guild_id=$guildId AND left_guild IS NOT NULL`,`run`,{guildId:guildId},`${fn} Updating guild_id:${guildId} deletion date`)
+	}
+
+	async deleteBulk(guilds){
+		const fn = this.formatFunctionLog(`deleteBulk`)
+		if (guilds.length === 0 ) return
+		console.log(guilds)
+		return await this._query(`DELETE FROM guilds WHERE guild_id IN ($guildId)`,`run`,{guildId:guilds},`${fn} Deleting bulk guild's`)
+	}
+
+	async unmarkBulk(guilds){
+		const fn = this.formatFunctionLog(`unmarkBulk`)
+		if (guilds.length === 0 ) return
+		return await this._query(`UPDATE guilds SET left_guild=null WHERE NOT (guild_id = ANY ($guildId))`,`run`,{guildId:guilds},`${fn} Updating bulk guild's deletion date`)
+	}
+
+	async getAllGuildsMarkedForDeletion(){
+		const fn = this.formatFunctionLog(`getAllGuildsMarkedForDeletion`)
+		return await this._query(`SELECT guild_id FROM guilds WHERE left_guild < CURRENT_DATE - interval '60 day' AND left_guild IS NOT NULL`,`all`,{},`${fn} retrieving all guilds ready to be deleted`)
+	}
 
 	/**
 	 * Fetch all the available guild configurations.
@@ -1325,6 +1362,7 @@ class GuildUtils extends DatabaseUtils {
 			targetConfig.updatedAt = await this.getCurrentTimestamp()
 			logger.database(`${fn} cached ${configCode}@${guild.id}`)
 		}
+		this.umarkForDeletion(guild.id)
 		return true
 	}
 
@@ -1360,6 +1398,7 @@ class GuildUtils extends DatabaseUtils {
 		)
 		const type = res.changes ? `DELETED` : `NO_CHANGES`
 		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
+		this.umarkForDeletion(guildId)
 		return true
 	}
 }

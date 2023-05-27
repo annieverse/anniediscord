@@ -1,5 +1,6 @@
 const Topgg = require(`@top-gg/sdk`)
 const Reminder = require(`../libs/reminder`)
+const dataCleaner = require(`../libs/dataCleanup.js`)
 /**
  * Ready event.
  * @param {Client} annie Current bot/worker instance.
@@ -7,6 +8,13 @@ const Reminder = require(`../libs/reminder`)
  */
 module.exports = function ready(annie) {
     annie.db.initializeDb()
+    const cleaner = new dataCleaner(annie)
+    cleaner.getGuildsMarkedForDeletion()
+    let current_shard = (annie.guilds.cache.first()).shard.id
+    let last_shard = (annie.shard.ids)[(annie.shard.ids).length - 1]
+    if (current_shard == last_shard) {
+        cleaner.deleteBulkGuilds()
+    }
     annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()
     annie.registerGuildAutoResponders()
