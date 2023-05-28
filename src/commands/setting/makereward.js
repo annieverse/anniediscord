@@ -91,7 +91,7 @@ module.exports = {
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
         // Get all currently available packages for the guild to test against, so there are none with duplicate names.
-        const packages = await client.db.customReward.getRewardAmount(interaction.guild.id)
+        const packages = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
         if (packages.length >= 25) return await reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
 
         const packages_collection = new Collection()
@@ -639,7 +639,7 @@ module.exports = {
                     const pack = rewardSchema.pack(data) // The package is saved as a string that will be read when getting unpacked and turned back into an object.
                     // trackingMessageContent[`footer`] = `Your package has been added, you can view the packages with '/makereward list'`
                     updateTrackerMessage(`footer`,`Your package has been added, you can view the packages with '/makereward list'`)
-                    client.db.customReward.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
+                    client.db.customRewardUtils.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
                     confirmOrCancelListener.stop()
                 } else {
                     // trackingMessageContent[`footer`] = `The package has not been added, please run the command again if you wish to add a package.`
@@ -728,7 +728,7 @@ module.exports = {
 
     },
     async listPackages(client, reply, interaction, options, locale) {
-        const packages_raw = await client.db.customReward.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
         if (packages_raw.length < 1) return await reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
@@ -785,7 +785,7 @@ module.exports = {
          */
         if (interaction.options.getSubcommand() !== `delete`) return
         const focusedValue = interaction.options.getFocused()
-        const packages_raw = await client.db.customReward.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
         if (packages_raw.length < 1) return await interaction.respond(`I'm sorry you dont have any packages made currently`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
@@ -831,7 +831,7 @@ module.exports = {
             let whatButtonWasPressed = xyx.customId
             if (whatButtonWasPressed === `confirm`) {
                 confirmationMessageContent = `Your package has been deleted`
-                client.db.customReward.deleteReward(interaction.guild.id, packageName)
+                client.db.customRewardUtils.deleteReward(interaction.guild.id, packageName)
                 confirmOrCancelListener.stop()
             } else {
                 confirmationMessageContent = `Your package has not been deleted`

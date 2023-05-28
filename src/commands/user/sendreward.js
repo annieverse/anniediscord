@@ -33,7 +33,7 @@ module.exports = {
          * Fill choices with the available packages found in DB
          */
         const focusedValue = interaction.options.getFocused()
-        const packages_raw = await client.db.customReward.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
         if (packages_raw.length < 1) return await interaction.respond([{ name: `No Packages Available`, value: `none` }])
         const packages_collection = new Collection()
         packages_raw.forEach(element => {

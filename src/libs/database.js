@@ -55,7 +55,7 @@ class Database {
 		this.durationalBuffs = new DurationalBuffs(this)
 		this.userUtils = new UserUtils(this)
 		this.systemUtils = new SystemUtils(this)
-		this.customRewards = new CustomRewards(this)
+		this.customRewardUtils = new CustomRewards(this)
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
 		this.relationships = new Relationships(this)
@@ -1778,9 +1778,10 @@ class CustomRewards extends DatabaseUtils {
 	 */
 	getRewardAmount(guildId) {
 		const fn = this.formatFunctionLog(`getRewardAmount`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId`
 			, `all`
-			, { guild_id: guildId }
+			, { guildId: guildId }
 			, `${fn} Retrieving all packages for guild: ${guildId}`
 		)
 	}
@@ -1796,9 +1797,9 @@ class CustomRewards extends DatabaseUtils {
 	recordReward(guildId, userId, rewardBlob, rewardName) {
 		const fn = this.formatFunctionLog(`recordReward`)
 		return this._query(` INSERT INTO custom_rewards (registered_at, guild_id, set_by_user_id, reward, reward_name)
-		VALUES (CURRENT_TIMESTAMP, $guildId, $user_id, $reward, $rewardName)`
+		VALUES (CURRENT_TIMESTAMP, $guildId, $userId, $reward, $rewardName)`
 			, `run`
-			, { guild_id: guildId, user_id: userId, reward: rewardBlob, rewardName: rewardName }
+			, { guildId: guildId, userId: userId, reward: rewardBlob, rewardName: rewardName }
 			, `${fn} Inserting record for new package for guild: ${guildId}`
 		)
 	}
@@ -1813,7 +1814,7 @@ class CustomRewards extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`deleteReward`)
 		return this._query(` DELETE FROM custom_rewards WHERE guild_id = $guildId AND reward_name = $rewardName`
 			, `run`
-			, { guild_id: guildId, rewardName: rewardName }
+			, { guildId: guildId, rewardName: rewardName }
 			, `${fn} deleting package with name: ${rewardName} from guild: ${guildId}`
 		)
 	}
