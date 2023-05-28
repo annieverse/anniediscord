@@ -1,3 +1,4 @@
+"use strict"
 const customReward = require(`../../libs/customRewards`)
 const stringSimilarity = require(`string-similarity`)
 const {

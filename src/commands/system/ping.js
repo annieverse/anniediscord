@@ -1,3 +1,4 @@
+"use strict"
 const commanifier = require(`../../utils/commanifier`)
 const { ApplicationCommandType } = require(`discord.js`)
     /**

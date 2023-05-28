@@ -1,3 +1,4 @@
+"use strict"
 const commanifier = require(`../../utils/commanifier`)
 const loadAsset = require(`../../utils/loadAsset`)
 const {

@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, PermissionFlagsBits, OAuth2Scopes } = require(`discord.js`)
 const getBotInviteUrl = require(`../../utils/botInvite.js`)
 /**

@@ -1,3 +1,4 @@
+"use strict"
 const User = require(`../../libs/user`)
 const Confirmator = require(`../../libs/confirmator`)
 const ItemEffects = require(`../../libs/itemEffects`)

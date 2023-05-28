@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * You can ask any question and Annie will answer you.

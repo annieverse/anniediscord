@@ -1,3 +1,4 @@
+"use strict"
 const random = require(`../../utils/random`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**

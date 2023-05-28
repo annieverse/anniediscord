@@ -1,3 +1,4 @@
+"use strict"
 const { EmbedBuilder } = require(`discord.js`)
 const User = require(`../../libs/user`)
 const { crimson } = require(`../../ui/colors/default`)

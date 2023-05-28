@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 const superagent = require(`superagent`)
 const User = require(`../../libs/user`)

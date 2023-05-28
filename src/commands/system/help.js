@@ -1,3 +1,4 @@
+"use strict"
 const category = require(`../../config/commandCategories`)
 const getBotInviteUrl = require(`../../utils/botInvite.js`)
 /**

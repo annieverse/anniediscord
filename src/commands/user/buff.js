@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType } = require(`discord.js`)
 const ms = require(`ms`)
     /**

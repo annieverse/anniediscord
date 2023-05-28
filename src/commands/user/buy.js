@@ -1,3 +1,4 @@
+"use strict"
 const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 const commanifier = require(`../../utils/commanifier`)

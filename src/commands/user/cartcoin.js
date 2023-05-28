@@ -1,3 +1,4 @@
+"use strict"
 const commanifier = require(`../../utils/commanifier`)
 const Confirmator = require(`../../libs/confirmator`)
 const trueInt = require(`../../utils/trueInt`)

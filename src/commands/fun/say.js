@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * Talk through bot.

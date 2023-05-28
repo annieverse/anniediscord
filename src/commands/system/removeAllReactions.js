@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * App command to remove reactions on a message.

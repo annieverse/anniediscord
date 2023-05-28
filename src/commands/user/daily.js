@@ -1,3 +1,4 @@
+"use strict"
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)

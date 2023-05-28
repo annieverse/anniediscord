@@ -1,3 +1,4 @@
+"use strict"
 const Confirmator = require(`../../libs/confirmator`)
 const User = require(`../../libs/user`)
 const inventoryGUI = require(`../../ui/prebuild/inventory`)

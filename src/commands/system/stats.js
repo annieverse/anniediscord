@@ -1,3 +1,4 @@
+"use strict"
 const memUsage = require(`../../utils/memoryUsage`)
 const pkg = require(`../../../package`)
 const shardName = require(`../../config/shardName`)

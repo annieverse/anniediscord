@@ -1,3 +1,4 @@
+"use strict"
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)

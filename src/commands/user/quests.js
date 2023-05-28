@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require(`discord.js`)
 const Quest = require(`../../libs/quests`)
 /**

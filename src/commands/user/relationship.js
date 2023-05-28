@@ -1,3 +1,4 @@
+"use strict"
 const User = require(`../../libs/user`)
 const GUI = require((`../../ui/prebuild/relationship`))
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)

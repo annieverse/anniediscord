@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType } = require(`discord.js`)
     /**
      * List of servers that supporting the development of Annie.

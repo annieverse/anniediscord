@@ -1,3 +1,4 @@
+"use strict"
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
