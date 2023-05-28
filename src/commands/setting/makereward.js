@@ -741,12 +741,12 @@ module.exports = {
             packages.push(await formatPackage(raw_package[0], raw_package[1]))
         }
 
-        async function formatPackage(packageName, package) {
-            const acReward = package.acReward
+        async function formatPackage(packageName, pack) {
+            const acReward = pack.acReward
             const roles = []
             const items = []
-            if (package.roles.length > 0) {
-                const rawRoleIds = package.roles.map(a => JSON.parse(a.id))
+            if (pack.roles.length > 0) {
+                const rawRoleIds = pack.roles.map(a => JSON.parse(a.id))
                 for (const roleId of rawRoleIds) {
                     await interaction.guild.roles.fetch(roleId)
                     let rawRole = interaction.guild.roles.cache.get(roleId)
@@ -754,8 +754,8 @@ module.exports = {
                     roles.push(role)
                 }
             }
-            if (package.item.length > 0) {
-                const rawItems = package.item
+            if (pack.item.length > 0) {
+                const rawItems = pack.item
                 for (const i of rawItems) {
                     let item_raw = JSON.parse(i.object)
                     let item = `Item: ${item_raw.name} Quantity: ${i.amount}`
