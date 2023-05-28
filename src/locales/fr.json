@@ -308,7 +308,8 @@
   "UNAVAILABLE": "**Oh non, tu n'as aucun cadeau pour le moment !**\nMais ne t'inquiète pas - tu peux les obtenir avec **`{{prefix}}gacha`** et mon **`{{prefix}}shop`**!♡ {{emoji}}",
   "GUIDE_TO_PICK_GIFT": "Tapez `<quantité> <nomducadeau>` pour commencer à envoyer le cadeau.",
   "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecte de vos cadeaux..`**",
-  "CONFIRMATION": "Offrir un cadeau à **{{user}}** avec **{{gift}}** ?\n─────────────────☆～:;,．\nUne fois réagi, le cadeau sera converti en {{amount}}+ points de réputation pour eux."
+  "CONFIRMATION": "Offrir un cadeau à **{{user}}** avec **{{gift}}** ?\n─────────────────☆～:;,．\nUne fois réagi, le cadeau sera converti en {{amount}}+ points de réputation pour eux.",
+  "HEADER":"a reçu vos cadeaux !♡"
 },
 "HELP": {
   "LANDING": "Êtes-vous à la recherche d'un démarrage rapide?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Vérifiez combien d'expérience vous avez obtenu après ces heures de bavardage. Je peux voir à quel point vous êtes bavard juste à partir de ça. ;)\n\n**`{{prefix}}bal`**\n> Vous êtes-vous déjà demandé combien de artcoins vous avez actuellement dans votre compte? C'est une chose importante à faire pour impressionner votre ami, tehee.\n\n**`{{prefix}}daily`**\n> Avez-vous entendu parler de 'cadeaux gratuits'? oui, je vous récompense avec 250 artcoins gratuits toutes les 23 heures! Alors, assurez-vous de ne pas le manquer, d'accord !?\n\n**`{{prefix}}leaderboard`**\n> Curieux de savoir qui a le plus d'expérience, de artcoins et de points de renommée dans votre serveur ? Il est temps de prendre votre trône.\n\n**`{{prefix}}profile`**\n> Ici, vous pourrez voir votre classement actuel, votre niveau, vos artcoins et vos points de renommée en un coup d'œil. Cela peut sembler simple au début, mais hé ; nous allons le décorer ensemble !\n╰──────────☆～*:;,．*╯\nPour une liste complète, consultez Commandpedia en appuyant sur le bouton :book: sur ce message.",

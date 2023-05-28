@@ -308,7 +308,8 @@
         "UNAVAILABLE": "**Aw, you don't have any gifts at the moment!**\nBut don't worry- you can attain them from **`{{prefix}}gacha`** and my **`{{prefix}}shop`**!♡ {{emoji}}",
         "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
         "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
-        "CONFIRMATION": "Gift **{{user}}** with **{{gift}}**?\n─────────────────☆～:;,．\nOnce reacted, the gift will be turned into {{amount}}+ rep points for them."
+        "CONFIRMATION": "Gift **{{user}}** with **{{gift}}**?\n─────────────────☆～:;,．\nOnce reacted, the gift will be turned into {{amount}}+ rep points for them.",
+        "HEADER":"has received your gifts!♡"
     },
     "HELP": {
         "LANDING": "Are you looking for a quick start?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Check how much exp you get after those hours of chit-chatting. I can see how talkative you are just from this. ;)\n\n**`{{prefix}}bal`**\n> Have you ever wondered, how many artcoins you are currently have in your account right now? This is important thing to do in order to impress your friend, tehee.\n\n**`{{prefix}}daily`**\n> Did you hear 'freebies'? yes, I reward you free 250 artcoins for every 23 hours! So, make sure to not skip it, okay!?\n\n**`{{prefix}}leaderboard`**\n> Curious who got the highest exp, artcoins and fame points in your server? Now it's time to take your throne.\n\n**`{{prefix}}profile`**\n> Here you will be able to see your current rank, level, artcoins and fame points at a glance. It may be plain at first, but hey; we'll decorate it together!\n╰──────────☆～*:;,．*╯\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
