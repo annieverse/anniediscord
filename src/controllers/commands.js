@@ -21,10 +21,10 @@ module.exports = async (client={}, message={}) => {
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     // Handle localization
-    let locale = null
-    const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    locale = client.localizer.getTargetLocales(userData.lang)
-    locale.currentLang = userData.lang
+    let locale = client.locales.en
+    // const userData = await client.db.userUtils.getUserLocale(message.author.id)
+    // locale = client.localizer.getTargetLocales(userData.lang)
+    // locale.currentLang = userData.lang
     let reply = client.responseLibs(message, false, locale)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
