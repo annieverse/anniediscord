@@ -75,7 +75,7 @@ module.exports = {
         const c = new Confirmator(messageRef, reply)
         c.setup(messageRef.member.id, suggestToBuy)
         //  Timeout in 30 seconds
-        client.db.redis.set(instanceId, `1`, `EX`, 30)
+        client.db.redis.set(instanceId, `1`, {EX: 30})
         c.onAccept(async () => {
             //  Deduct balance & deliver lucky tickets
             await client.db.databaseUtils.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })

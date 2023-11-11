@@ -207,7 +207,7 @@ module.exports = {
         }
         const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
         // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+        client.db.redis.set(sessionId, 1, {EX: 60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
         let item_name = args[1]
@@ -572,7 +572,7 @@ module.exports = {
         }
         const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
         if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+        client.db.redis.set(sessionId, 1, {EX: 60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
         let phaseJump = false
         let dataDisplay = null

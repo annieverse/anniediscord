@@ -46,7 +46,7 @@ module.exports = {
         const {preferredLocale, name, createdAt, systemChannel} = messageRef.guild
         const iconURL = messageRef.guild.iconURL()
         const res = {userSize, botSize, guildOwner, preferredLocale, name, createdAt, joinedAt, systemChannel, channelSize, roleSize, iconURL}
-        client.db.redis.set(cacheId, JSON.stringify(res), `EX`, 60*30)
+        client.db.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 30})
         return res
     },
     async run(client, reply, messageRef, locale){

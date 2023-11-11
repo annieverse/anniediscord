@@ -537,7 +537,7 @@ class UserUtils extends DatabaseUtils {
 			exp = await query()
 		}
 		//  Store for 1 minute expire
-		this.redis.set(key, JSON.stringify(exp), `EX`, 60)
+		this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
 
@@ -1187,7 +1187,7 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.redis.set(key, JSON.stringify(res), `EX`, (60 * 60) * 12)
+		this.redis.set(key, JSON.stringify(res), {EX: (60 * 60) * 12})
 		return res
 	}
 
@@ -1989,7 +1989,7 @@ class Shop extends DatabaseUtils {
 			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, 60 * 60)
+		this.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 60})
 		return res
 	}
 
@@ -2313,7 +2313,7 @@ class Quests extends DatabaseUtils {
 			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, (60 * 60) * 3)
+		this.redis.set(cacheId, JSON.stringify(res), {EX: (60 * 60) * 3})
 		return res
 	}
 

@@ -158,7 +158,7 @@ class Quest {
             return true
         }
         //  Session up for 2 minutes
-        this.client.db.redis.set(this.#sessionId, 1, `EX`, 60 * 2)
+        this.client.db.redis.set(this.#sessionId, 1, {EX: 60 * 2})
         return false
     }
 

@@ -24,7 +24,7 @@ module.exports = (client, message) => {
             const prefixHintId = `PREFIX_HINT@${message.guild.id}`
             return client.db.redis.exists(prefixHintId).then(res => {
                 if (res) return
-                client.db.redis.set(prefixHintId, 1, `EX`, 15)
+                client.db.redis.set(prefixHintId, 1, {EX: 15})
                 client.responseLibs(message).send(`Type **\`${prefix}help\`** to see my commands. ♡`, {
                     deleteIn: 5
                 })
