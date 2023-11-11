@@ -263,7 +263,7 @@ class Reminder {
      */
     get baseReminderContext() {
         return {
-            registeredAt: new Date(),
+            registeredAt: new Date().toUTCString(),
             id: null,
             userId: null,
             message: ``,

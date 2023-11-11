@@ -43,7 +43,7 @@ class Quest {
         this.#userAnswer = a.toLowerCase()
     }
 
-    set #setQuestAnswer(a){
+    set #setQuestAnswer(a) {
         this.#questAnswer = a.toLowerCase()
     }
 
@@ -58,16 +58,16 @@ class Quest {
     get getQuestTitle() {
         return this.#questTitle
     }
-    
+
     get getQuestDescription() {
         return this.#questDescription
     }
 
-    get getQuestFormattedReward(){
+    get getQuestFormattedReward() {
         return this.#questFormattedReward
     }
 
-    get getAnswerIsCorrect(){
+    get getAnswerIsCorrect() {
         return this.#answerIsCorrect
     }
 
@@ -124,7 +124,7 @@ class Quest {
         return questIdsPool[Math.floor(Math.random() * questIdsPool.length)] || 1
     }
 
-    
+
     async #fetchQuests() {
         const q = await this.client.db.quests.getAllQuests()
         if (!q.length) {
@@ -146,7 +146,7 @@ class Quest {
         return this.#questlocalePool = questlocale
     }
 
-    
+
     /**
      * check the user's session and set set one if ones not running
      * @returns {Promise | Boolean}

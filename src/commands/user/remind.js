@@ -54,28 +54,16 @@ module.exports = {
         }
         //  Handle if the date is not valid
         const context = client.reminders.getContextFrom(arg, message.author.id)
-        if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
-            socket: {
-                emoji: await client.getEmoji(`790338393015713812`),
-                prefix: client.prefix
-            }
-        })
-        client.reminders.register(context)
-        return await reply.send(locale.REMINDER.SUCCESSFUL, {
-            status: `success`,
-            socket: {
-                emoji: await client.getEmoji(`789212493096026143`),
-                time: moment(context.remindAt.timestamp).fromNow()
-            }
-        })
+        return await this.run(client, reply, locale, context)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        //  Handle if the date is not valid
-        let arg = `${options.getString(`message`)} in ${options.getInteger(`in_how_long`)} ${options.getString(`time_unit`)}`
         const reminderMessage = await options.getString(`message`)
         const reminderTimeAmount = await options.getInteger(`in_how_long`)
         const reminderTimeUnit = await options.getString(`time_unit`)
         const context = client.reminders.getContext(reminderMessage, reminderTimeAmount, reminderTimeUnit, interaction.member.id)
+        return await this.run(client, reply, locale, context)
+    },
+    async run(client, reply, locale, context){
         if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),

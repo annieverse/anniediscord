@@ -379,7 +379,7 @@ class Reminders extends DatabaseUtils {
 	 * @return {QueryResult}
 	 */
 	registerUserReminder(context) {
-
+		const fn = this.formatFunctionLog(`registerUserReminder`)
 		const validKeys = [
 			`registeredAt`,
 			`id`,
@@ -390,7 +390,6 @@ class Reminders extends DatabaseUtils {
 		]
 		if (!context) new TypeError(`${fn} parameter "context" cannot be blank.`)
 		if (typeof (context) === `object` && this.arrayEquals(Object.keys(context), validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: registeredAt, id, userId, message, and remindAt.`)
-		const fn = this.formatFunctionLog(`registerUserReminder`)
 		return this._query(`
 			INSERT INTO user_reminders(
 				registered_at,

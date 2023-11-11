@@ -17,60 +17,12 @@ module.exports = {
 	messageCommand: true,
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
-	async execute(client, reply, message, arg, locale) {
-		const user = message.member.user
-		const sessionID = `QUEST_SESSION_${user.id}@${message.guild.id}`
-		const questSession = new Quest(client, reply)
-		await questSession.start(sessionID, user, locale, message)
-		if (questSession.getSessionActive) return 
-		if (!questSession.getQuestAvailable) return 
-		const fetching = await reply.send(locale.QUEST.FETCHING, { simplified: true, socket: { emoji: await client.getEmoji(`790994076257353779`) } })
-		const quest = await reply.send(locale.QUEST.DISPLAY, {
-			header: `${user.username} is taking a quest!`,
-			footer: locale.QUEST.FOOTER,
-			thumbnail: user.displayAvatarURL(),
-			socket: {
-				questTitle: questSession.getQuestTitle,
-				description: questSession.getQuestDescription,
-				reward: questSession.getQuestFormattedReward
-			}
-		})
-		fetching.delete()
-		//  Prepare answer collectors
-		const collector = message.channel.createMessageCollector({
-			filter: m => m.author.id === message.author.id,
-			max: 10,
-			time: 120000
-		})
-		collector.on(`collect`, async msg => {
-			questSession.testAnswer(msg.content)
-			if ([`cancel`].includes(questSession.userAnswer)) {
-				await reply.send(locale.QUEST.CANCEL)
-				msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
-				quest.delete()
-				questSession.cancelSession()
-				return collector.stop()
-			}
-			//  Handle if the answer is incorrect
-			if (questSession.getAnswerIsCorrect===false) return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
-			collector.stop()
-			msg.delete().catch(e => client.logger.warn(`fail to delete quest-answer due to lack of permission in GUILD_ID:${message.guild.id} > ${e.stack}`))
-			questSession.updateRewards()
-			return await reply.send(locale.QUEST.SUCCESSFUL, {
-				socket: {
-					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
-					user: message.author.username,
-					reward: questSession.getQuestFormattedReward
-				}
-			})
-		})
-	},
-	async Iexecute(client, reply, interaction, options, locale) {
-		const user = interaction.member.user
-		const sessionID = `QUEST_SESSION_${user.id}@${interaction.guild.id}`
+	async run(client, reply, messageRef, locale){
+		const user = messageRef.member.user
+		const sessionID = `QUEST_SESSION_${user.id}@${messageRef.guild.id}`
 		
 		const questSession = new Quest(client, reply)
-		await questSession.start(sessionID, user, locale, interaction)
+		await questSession.start(sessionID, user, locale, messageRef)
 		if (questSession.getSessionActive) return 
 		if (!questSession.getQuestAvailable) return 
 
@@ -105,7 +57,7 @@ module.exports = {
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = await interaction.fetchReply()
+			const message = await messageRef.fetchReply() || await messageRef.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
@@ -143,7 +95,7 @@ module.exports = {
 			const filter = (interaction) => interaction.customId === modalId
 			let rawAnswer
 			try {
-				rawAnswer = await interaction.awaitModalSubmit({ filter, time: 30000 })
+				rawAnswer = await i.awaitModalSubmit({ filter, time: 30000 })
 			} catch (error) {
 				client.logger.error(`Error has been handled\n${error}`)
 			}
@@ -175,5 +127,11 @@ module.exports = {
 				followUp: true
 			})
 		})
+	},
+	async execute(client, reply, message, arg, locale) {
+		return await this.run(client, reply, message, locale)
+	},
+	async Iexecute(client, reply, interaction, options, locale) {
+		return await this.run(client, reply, interaction, locale)
 	}
 }
