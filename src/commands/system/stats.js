@@ -1,3 +1,4 @@
+"use strict"
 const memUsage = require(`../../utils/memoryUsage`)
 const pkg = require(`../../../package`)
 const shardName = require(`../../config/shardName`)
@@ -5,10 +6,10 @@ const ms = require(`ms`)
 const commanifier = require(`../../utils/commanifier`)
 
 const { ApplicationCommandType } = require(`discord.js`)
-    /**
-     * Gives info about the current bot performance.
-     * @author klerikdust
-     */
+/**
+ * Gives info about the current bot performance.
+ * @author klerikdust
+ */
 module.exports = {
     name: `stats`,
     aliases: [`stats`, `botinfo`, `annieinfo`, `info`, `anniestatus`],
@@ -20,49 +21,27 @@ module.exports = {
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        const { total } = await client.db.systemUtils.getTotalCommandUsage()
-            //  Cache server size for every 12 hour
-        const serverSize = async() => {
-            const key = `MASTER:GUILD_SIZE`
-            const onCache = await client.db.redis.get(key)
-            if (onCache) return onCache
-            const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
-            client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
-            return size
-
-        }
-        return await reply.send(locale.SYSTEM_STATS.DISPLAY, {
-            header: `The State of Annie`,
-            thumbnail: client.user.displayAvatarURL(),
-            socket: {
-                shard: shardName[message.guild.shard.id],
-                ping: commanifier(client.ws.ping),
-                uptime: ms(client.uptime, { long: true }),
-                memory: this.formatBytes(memUsage()),
-                totalCommands: commanifier(total),
-                version: pkg.version,
-                servers: commanifier(await serverSize()),
-                emoji: await client.getEmoji(`AnnieNyaa`)
-            }
-        })
+        return await this.run(client,reply,message,locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        return await this.run(client,reply,interaction,locale)
+    },
+    async run(client,reply,messageRef,locale) {
         const { total } = await client.db.systemUtils.getTotalCommandUsage()
-            //  Cache server size for every 12 hour
-        const serverSize = async() => {
+        //  Cache server size for every 12 hour
+        const serverSize = async () => {
             const key = `MASTER:GUILD_SIZE`
             const onCache = await client.db.redis.get(key)
             if (onCache) return onCache
             const size = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
-            client.db.redis.set(key, size, `EX`, (60 * 60) * 12)
+            client.db.redis.set(key, size, {EX: (60 * 60) * 12})
             return size
-
         }
         return await reply.send(locale.SYSTEM_STATS.DISPLAY, {
-            header: `The State of Annie`,
+            header: locale.SYSTEM_STATS.HEADER,
             thumbnail: client.user.displayAvatarURL(),
             socket: {
-                shard: shardName[interaction.guild.shard.id],
+                shard: shardName[messageRef.guild.shard.id],
                 ping: commanifier(client.ws.ping),
                 uptime: ms(client.uptime, { long: true }),
                 memory: this.formatBytes(memUsage()),

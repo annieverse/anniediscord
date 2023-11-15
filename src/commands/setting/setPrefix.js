@@ -1,3 +1,4 @@
+"use strict"
 /**
  * Customize prefix per guild setting.
  * @author klerikdust

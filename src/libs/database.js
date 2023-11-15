@@ -379,7 +379,7 @@ class Reminders extends DatabaseUtils {
 	 * @return {QueryResult}
 	 */
 	registerUserReminder(context) {
-
+		const fn = this.formatFunctionLog(`registerUserReminder`)
 		const validKeys = [
 			`registeredAt`,
 			`id`,
@@ -390,7 +390,6 @@ class Reminders extends DatabaseUtils {
 		]
 		if (!context) new TypeError(`${fn} parameter "context" cannot be blank.`)
 		if (typeof (context) === `object` && this.arrayEquals(Object.keys(context), validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: registeredAt, id, userId, message, and remindAt.`)
-		const fn = this.formatFunctionLog(`registerUserReminder`)
 		return this._query(`
 			INSERT INTO user_reminders(
 				registered_at,
@@ -538,7 +537,7 @@ class UserUtils extends DatabaseUtils {
 			exp = await query()
 		}
 		//  Store for 1 minute expire
-		this.redis.set(key, JSON.stringify(exp), `EX`, 60)
+		this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
 
@@ -1188,7 +1187,7 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.redis.set(key, JSON.stringify(res), `EX`, (60 * 60) * 12)
+		this.redis.set(key, JSON.stringify(res), {EX: (60 * 60) * 12})
 		return res
 	}
 
@@ -1990,7 +1989,7 @@ class Shop extends DatabaseUtils {
 			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, 60 * 60)
+		this.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 60})
 		return res
 	}
 
@@ -2314,7 +2313,7 @@ class Quests extends DatabaseUtils {
 			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, (60 * 60) * 3)
+		this.redis.set(cacheId, JSON.stringify(res), {EX: (60 * 60) * 3})
 		return res
 	}
 

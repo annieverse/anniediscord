@@ -1,3 +1,4 @@
+"use strict"
 const Discord = require(`discord.js`)
 const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)

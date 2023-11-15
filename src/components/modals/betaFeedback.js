@@ -9,7 +9,7 @@ module.exports = {
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `FEEDBACK:${interaction.member.id}`
         if (await client.db.redis.exists(sessionID)) return interaction.reply({content:`I'm sorry but you have recently sent feedback already`, ephemeral:true})
-        client.db.redis.set(sessionID, 1, `EX`, 60 * 5)
+        client.db.redis.set(sessionID, 1, {EX: 60 * 5})
 
         const customID = `${interaction.customId}_${interaction.applicationId}_${interaction.user.id}_${Date.now()}`
         const modal = new ModalBuilder().setCustomId(customID).setTitle(`Beta feature Feedback`)

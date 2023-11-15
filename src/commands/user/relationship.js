@@ -1,10 +1,11 @@
+"use strict"
 const User = require(`../../libs/user`)
 const GUI = require((`../../ui/prebuild/relationship`))
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-    /**
-     * Display user's relationship trees
-     * @author klerikdust
-     */
+/**
+ * Display user's relationship trees
+ * @author klerikdust
+ */
 module.exports = {
     name: `relationship`,
     aliases: [`rel`, `rtship`, `relation`, `relations`, `relationship`],
@@ -21,51 +22,12 @@ module.exports = {
         type: ApplicationCommandOptionType.User
     }],
     type: ApplicationCommandType.ChatInput,
-    async execute(client, reply, message, arg, locale, prefix) {
-        const userLib = new User(client, message)
-        let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
-            //  Normalize structure
-        targetUser = targetUser.master || targetUser
-        const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
-            //  Handle if user doesn't have any relationships
-        if (!targetUserData.relationships.length) return await reply.send(locale.RELATIONSHIP.IS_EMPTY, {
-            socket: { prefix: client.prefix }
-        })
-        const fetching = await reply.send(locale.COMMAND.FETCHING, {
-            simplified: true,
-            socket: {
-                command: `relationship`,
-                emoji: await client.getEmoji(`790994076257353779`),
-                user: targetUser.id
-            }
-        })
-        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(message.author, 2,locale)
-        await reply.send(locale.COMMAND.TITLE, {
-            simplified: true,
-            prebuffer: true,
-            socket: {
-                command: `Relationship`,
-                emoji: await client.getEmoji(`692429004417794058`),
-                user: targetUser.username
-            },
-            image: await new GUI(targetUserData, client, userData).build()
-        })
-        fetching.delete()
-        if (userLib.isSelf(targetUser.id)) return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
-            simplified: true,
-            socket: {
-                prefix: prefix,
-                emoji: await client.getEmoji(`848521456543203349`)
-            }
-        })
-    },
-    async Iexecute(client, reply, interaction, options, locale) {
-        const userLib = new User(client, interaction)
-        let targetUser = options.getUser(`user`) || interaction.member.user
-        
-        const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
-            //  Handle if user doesn't have any relationships
+    async run(client, reply, messageRef, locale, user) {
+        const userLib = new User(client, messageRef)
+        let targetUser = user
+
+        const targetUserData = await userLib.requestMetadata(targetUser, 2, locale)
+        //  Handle if user doesn't have any relationships
         if (!targetUserData.relationships.length) return await reply.send(locale.RELATIONSHIP.IS_EMPTY, {
             socket: { prefix: `/` }
         })
@@ -77,7 +39,7 @@ module.exports = {
                 user: targetUser.id
             }
         })
-        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(interaction.member.user, 2,locale)
+        let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(messageRef.member.user, 2, locale)
         await reply.send(locale.COMMAND.TITLE, {
             simplified: true,
             prebuffer: true,
@@ -97,7 +59,20 @@ module.exports = {
                 emoji: await client.getEmoji(`848521456543203349`)
             },
             followUp: true,
-            ephemeral:true
+            ephemeral: true
         })
+    },
+    async execute(client, reply, message, arg, locale, prefix) {
+        const userLib = new User(client, message)
+        let targetUser = arg ? await userLib.lookFor(arg) : message.author
+        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        //  Normalize structure
+        targetUser = targetUser.master || targetUser
+
+        return await this.run(client, reply, message, locale, targetUser)
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        let targetUser = options.getUser(`user`) || interaction.member.user
+        return await this.run(client, reply, interaction, locale, targetUser)
     }
 }

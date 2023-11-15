@@ -1,3 +1,4 @@
+"use strict"
 const GUI = require(`../../ui/prebuild/levelUpMessage`)
 const Confirmator = require(`../../libs/confirmator`)
 const User = require(`../../libs/user`)

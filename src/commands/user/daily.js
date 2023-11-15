@@ -1,3 +1,4 @@
+"use strict"
 const moment = require(`moment`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
@@ -15,9 +16,9 @@ module.exports = {
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
 	permissionLevel: 0,
-    multiUser: false,
+	multiUser: false,
 	applicationCommand: true,
-    messageCommand: true,
+	messageCommand: true,
 	options: [{
 		name: `user`,
 		description: `User you wish to claim daily of`,
@@ -29,43 +30,33 @@ module.exports = {
 	rewardAmount: 250,
 	bonusAmount: 10,
 	async execute(client, reply, message, arg, locale) {
-		await this.claimDaily(client, message, reply, locale, {
-			arg: arg
-		})
+		const userLib = new User(client, message)
+		let targetUser = arg ? await userLib.lookFor(arg) : message.author
+		if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+		//  Normalize structure
+		targetUser = targetUser.master || targetUser
+		return await this.claimDaily(client, message, reply, locale, targetUser)
 	},
 	async Iexecute(client, reply, interaction, options, locale) {
-		await this.claimDaily(client, interaction, reply, locale, {
-			isInteraction: true
-		})
+		const targetUser = options.getUser(`user`) || interaction.member.user
+		return await this.claimDaily(client, interaction, reply, locale, targetUser)
 	},
-	async claimDaily(client, messageObject, reply, locale, {
-		arg,
-		isInteraction = false
-	}) {
-		const userLib = new User(client, messageObject)
-		let targetUser
-		if (isInteraction) {
-			targetUser = messageObject.options.getUser(`user`) || messageObject.member.user
-		} else {
-			targetUser = arg ? await userLib.lookFor(arg) : messageObject.author
-			if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
-			//  Normalize structure
-			targetUser = targetUser.master || targetUser
-		}
+	async claimDaily(client, messageRef, reply, locale, user) {
+		const userLib = new User(client, messageRef)
 		//  Normalize structure
-		const targetUserData = await userLib.requestMetadata(targetUser, 2,locale)
-		const isSelf = userLib.isSelf(targetUser.id)
+		const targetUserData = await userLib.requestMetadata(user, 2, locale)
+		const isSelf = userLib.isSelf(user.id)
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(targetUserData.dailies.updated_at)
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
-			thumbnail: targetUser.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			topNotch: isSelf ?
 				`**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` :
-				`**${targetUser.username} already claimed their dailies!** ${await client.getEmoji(`692428748838010970`)}`,
+				`**${user.username} already claimed their dailies!** ${await client.getEmoji(`692428748838010970`)}`,
 			socket: {
 				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
-				user: targetUser.username,
+				user: user.username,
 				prefix: client.prefix
 			}
 		})
@@ -75,20 +66,20 @@ module.exports = {
 		const hasPoppy = targetUserData.inventory.poppy_card
 		if (hasPoppy) totalStreak = targetUserData.dailies.total_streak + 1
 		let bonus = totalStreak ? this.bonusAmount * totalStreak : 0
-		client.db.userUtils.updateUserDailies(totalStreak, targetUser.id, messageObject.guild.id)
+		client.db.userUtils.updateUserDailies(totalStreak, user.id, messageRef.guild.id)
 		client.db.databaseUtils.updateInventory({
 			itemId: 52,
 			value: this.rewardAmount + bonus,
-			userId: messageObject.member.id,
-			guildId: messageObject.guild.id
+			userId: messageRef.member.id,
+			guildId: messageRef.guild.id
 		})
 		await reply.send(locale.DAILIES.CLAIMED, {
 			status: `success`,
-			thumbnail: targetUser.displayAvatarURL(),
+			thumbnail: user.displayAvatarURL(),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
 			socket: {
 				amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(this.rewardAmount)}${bonus ? `(+${commanifier(bonus)})` : ``}`,
-				user: targetUser.username,
+				user: user.username,
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
 		})

@@ -1,3 +1,4 @@
+"use strict"
 const { Collection } = require(`discord.js`)
 const User = require(`../../libs/user`)
 const fs = require(`fs`)

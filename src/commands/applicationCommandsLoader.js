@@ -1,3 +1,4 @@
+"use strict"
 const {
     REST
 } = require(`@discordjs/rest`)

@@ -4,6 +4,7 @@
 ## Simply copy paste this code
 
 ```javascript
+"use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * Command's Class description

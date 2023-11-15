@@ -1,3 +1,4 @@
+"use strict"
 const {
     ComponentType,
     ActionRowBuilder,
@@ -9,7 +10,7 @@ const {
  * @class
  */
 module.exports = class Confirmator {
-    constructor(message, reply, slashCommand) {
+    constructor(message, reply) {
         /**
          * Used emoji for reject button.
          * @type {string}
@@ -25,11 +26,6 @@ module.exports = class Confirmator {
          * @type {external:Response}
          */
         this.reply = reply
-        /**
-         * Whether this is a slash command or not.
-         * @type {boolean}
-         */
-        this.slashCommand = slashCommand || false
     }
 
     /**
@@ -38,7 +34,7 @@ module.exports = class Confirmator {
      * @param {Message} [targetMessage=this.message] Target to attach the event to.
      * @return {void}
      */
-    async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
+    setup(targetUserId = this.message.author.id, targetMessage = this.message) {
         this.message = targetMessage
         let row = new ActionRowBuilder()
             .addComponents(
