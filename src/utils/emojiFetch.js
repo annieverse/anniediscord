@@ -9,7 +9,8 @@ const Discord = require(`discord.js`)
 const emojiFetch = async (emojiKeyword, client, serverId) => {
     const cacheId = `EMOJI_CACHE_${emojiKeyword}`
     //  Check on own client first.
-    const onCache = await client.db.redis.get(cacheId)
+    const onCache = await client.db.databaseUtils.getCache(cacheId)
+    // const onCache = await client.db.redis.get(cacheId)
     if (onCache) {
         //  Use cache for faster response
         return onCache
@@ -26,7 +27,8 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
         const foundEmoji = findingEmoji.find(emoji => emoji)
         if (!foundEmoji) return `(???)`
         const emoji = guild.emojis.resolve(FoundEmoji.id) 
-        await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
+        client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
+        // await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
         return emoji
     }
 
@@ -42,7 +44,8 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
     if (FoundEmoji === `(???)`) return `(???)`
     const guild = await client.guilds.fetch(FoundEmoji.guildId)
     const emoji = guild.emojis.resolve(FoundEmoji.id) 
-    await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
+    client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
+    // await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
     return emoji
                 
 }

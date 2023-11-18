@@ -22,9 +22,12 @@ module.exports = (client, message) => {
         if (message.mentions.users.has(client.user.id) && (message.content.length-1) <= `<@${client.user.id}>`.length) {
             //  To avoid spam, cache the 15s cooldown per guild
             const prefixHintId = `PREFIX_HINT@${message.guild.id}`
-            return client.db.redis.exists(prefixHintId).then(res => {
+            return client.db.databaseUtils.doesCacheExist(prefixHintId)
+            // return client.db.redis.exists(prefixHintId)
+            .then(res => {
                 if (res) return
-                client.db.redis.set(prefixHintId, 1, {EX: 15})
+                client.db.databaseUtils.setCache(prefixHintId,1,{EX:15})
+                // client.db.redis.set(prefixHintId, 1, {EX: 15})
                 client.responseLibs(message).send(`Type **\`${prefix}help\`** to see my commands. ♡`, {
                     deleteIn: 5
                 })

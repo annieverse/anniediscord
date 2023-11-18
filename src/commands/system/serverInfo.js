@@ -26,8 +26,10 @@ module.exports = {
     async getStats(client, messageRef){
         const cacheId = `SERVERINFO_${messageRef.guildId}`
         
-        if (await client.db.redis.exists(cacheId)) {
-            let res = await client.db.redis.get(cacheId)
+        if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
+            // if (await client.db.redis.exists(cacheId)) {
+            let res = await client.db.databaseUtils.getCache(cacheId)
+            // let res = await client.db.redis.get(cacheId)
             try {
                 let jsonRes = JSON.parse(res)
                 return jsonRes
@@ -46,7 +48,8 @@ module.exports = {
         const {preferredLocale, name, createdAt, systemChannel} = messageRef.guild
         const iconURL = messageRef.guild.iconURL()
         const res = {userSize, botSize, guildOwner, preferredLocale, name, createdAt, joinedAt, systemChannel, channelSize, roleSize, iconURL}
-        client.db.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 30})
+        client.db.databaseUtils.setCache(cacheId,res,{EX:60*30})
+        // client.db.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 30})
         return res
     },
     async run(client, reply, messageRef, locale){
