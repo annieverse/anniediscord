@@ -49,7 +49,7 @@ module.exports = (client, message) => {
         }
         client.cooldowns.set(gainingId, Date.now())
         const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
-        client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
+        client.db.redis.sMembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.db.databaseUtils.updateInventory({
@@ -65,7 +65,7 @@ module.exports = (client, message) => {
         const userData = await client.db.userUtils.getUserLocale(message.author.id)
         const locale = client.localizer.getTargetLocales(userData.lang)
 
-        client.db.redis.smembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
+        client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.experienceLibs(message.member, message.guild, message.channel, locale)

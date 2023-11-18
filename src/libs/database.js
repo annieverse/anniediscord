@@ -3,7 +3,7 @@ const { Client, types } = require(`pg`)
 types.setTypeParser(20, function (val) {
 	return parseInt(val, 10)
 })
-const Redis = require(`async-redis`)
+const Redis = require(`redis`)
 const { databaseLogger: logger } = require(`../../pino.config.js`)
 const getBenchmark = require(`../utils/getBenchmark`)
 
@@ -67,10 +67,12 @@ class Database {
 	 */
 	async connectRedis() {
 		const redisClient = await Redis.createClient()
+		redisClient.connect()
+		redisClient.sMembers
 		redisClient.on(`error`, err => {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
-		})
+		})		
 		redisClient.on(`connect`, async () => {
 			logger.database(`REDIS <CONNECTED>`)
 			this.redis = redisClient
@@ -186,6 +188,7 @@ class DatabaseUtils {
 		/**
 		 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, GETSET, it is possible that in future versions of Redis these commands will be deprecated and finally removed.
 		 */
+		if (typeof(value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
 		return this.redis.set(key, value, options)
 	}
 
@@ -220,7 +223,7 @@ class DatabaseUtils {
 		if (!userName) throw new TypeError(`${fn} parameter "userName" cannot be blank.`)
 		//  Check on cache
 		const key = `VALIDATED_USERID`
-		const onCache = await this.redis.sismember(key, userId)
+		const onCache = await this.redis.sIsMember(key, userId)
 		//  if true/registered, skip database hit.
 		if (onCache) return
 		const res = await this._query(`
@@ -232,7 +235,7 @@ class DatabaseUtils {
 			, `${fn} Validating user ${userName}(${userId})`
 		)
 		if (res.changes) logger.database(`USER_ID:${userId} registered`)
-		this.redis.sadd(key, userId)
+		this.redis.sAdd(key, userId)
 	}
 
 	/**
@@ -552,7 +555,7 @@ class UserUtils extends DatabaseUtils {
 			exp = await query()
 		}
 		//  Store for 1 minute expire
-		this.setCache(key, exp, { EX: 60 })
+		this.setCache(key, JSON.stringify(exp), { EX: 60 })
 		// this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
@@ -1517,7 +1520,7 @@ class AutoResponder extends DatabaseUtils {
 		if (typeof (fetchCache) !== `boolean`) throw new TypeError(`${fn} parameter "fetchCache" must be a boolean.`)
 		//  Check in cache
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (fetchCache && await this.isCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
+		if (fetchCache && await this.doesCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
 		return this._query(`
 			SELECT *
 			FROM autoresponders
@@ -1542,7 +1545,7 @@ class AutoResponder extends DatabaseUtils {
 		//  Insert into cache
 		let cache = []
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (await this.isCacheExist(cacheID)) cache = JSON.parse(await this.getCache(cacheID))
+		if (await this.doesCacheExist(cacheID)) cache = JSON.parse(await this.getCache(cacheID))
 		await this._query(`
 			INSERT INTO autoresponders(
 				guild_id,
@@ -1587,7 +1590,7 @@ class AutoResponder extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Delete element from cache if available
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (await this.isCacheExist(cacheID)) {
+		if (await this.doesCacheExist(cacheID)) {
 			const cache = JSON.parse(await this.getCache(cacheID))
 			const updatedCache = cache.filter(node => node.ar_id !== id)
 			//  Delete whole array if updatedCache is empty
