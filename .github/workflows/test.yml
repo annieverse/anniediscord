@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 20.8, 20.x ]
+        node: [ 20.8.0, 20.x ]
     name: Build and Run Test
     steps:
       - name: Checkout
@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
+      - run: npm install
       - name: Codestyle Test
         run: npm run test
       # Add in once we have unit tests
