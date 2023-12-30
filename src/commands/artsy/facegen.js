@@ -1,4 +1,6 @@
-const { ApplicationCommandType} = require(`discord.js`)
+"use strict"
+const { ApplicationCommandType } = require(`discord.js`)
+
 /**
  * AI-Generated Anime Face provided by Gwern@TWDNE
  * @author klerikdust
@@ -9,28 +11,18 @@ module.exports = {
     description: `AI-Generated Anime Face provided by Gwern@TWDNE`,
     usage: `facegen`,
     permissionLevel: 0,
-    multiUser:false,
+    multiUser: false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        const source = `https://www.thiswaifudoesnotexist.net/`
-        const getID = Math.floor(Math.random() * 100000)
-        const fetching = await reply.send(locale.FACEGEN.FETCHING, {
-            simplified: true,
-            socket: {
-                emoji: await client.getEmoji(`790994076257353779`)
-            }
-        })
-        await reply.send(locale.FACEGEN.HEADER, {
-            customHeader: [message.author.username, message.author.displayAvatarURL()],
-            image: source + `example-${getID}.jpg`,
-            prebuffer: true
-        })
-        fetching.delete()
+        return await this.getRandomId(client, reply, message, locale)
     },
-    
+
     async Iexecute(client, reply, interaction, options, locale) {
+        return await this.getRandomId(client, reply, interaction, locale)
+    },
+    async getRandomId(client, reply, messageRef, locale) {
         const source = `https://www.thiswaifudoesnotexist.net/`
         const getID = Math.floor(Math.random() * 100000)
         const fetching = await reply.send(locale.FACEGEN.FETCHING, {
@@ -40,7 +32,7 @@ module.exports = {
             }
         })
         await reply.send(locale.FACEGEN.HEADER, {
-            customHeader: [interaction.member.user.username, interaction.member.displayAvatarURL()],
+            customHeader: [messageRef.member.user.username, messageRef.member.displayAvatarURL()],
             image: source + `example-${getID}.jpg`,
             prebuffer: true,
             followUp: true

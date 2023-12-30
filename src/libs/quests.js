@@ -43,7 +43,7 @@ class Quest {
         this.#userAnswer = a.toLowerCase()
     }
 
-    set #setQuestAnswer(a){
+    set #setQuestAnswer(a) {
         this.#questAnswer = a.toLowerCase()
     }
 
@@ -58,16 +58,16 @@ class Quest {
     get getQuestTitle() {
         return this.#questTitle
     }
-    
+
     get getQuestDescription() {
         return this.#questDescription
     }
 
-    get getQuestFormattedReward(){
+    get getQuestFormattedReward() {
         return this.#questFormattedReward
     }
 
-    get getAnswerIsCorrect(){
+    get getAnswerIsCorrect() {
         return this.#answerIsCorrect
     }
 
@@ -98,7 +98,8 @@ class Quest {
     }
 
     cancelSession() {
-        return this.client.db.redis.del(this.#sessionId)
+        return this.client.db.databaseUtils.delCache(this.#sessionId)
+        // return this.client.db.redis.del(this.#sessionId)
     }
 
     testAnswer(a) {
@@ -124,7 +125,7 @@ class Quest {
         return questIdsPool[Math.floor(Math.random() * questIdsPool.length)] || 1
     }
 
-    
+
     async #fetchQuests() {
         const q = await this.client.db.quests.getAllQuests()
         if (!q.length) {
@@ -146,19 +147,22 @@ class Quest {
         return this.#questlocalePool = questlocale
     }
 
-    
+
     /**
      * check the user's session and set set one if ones not running
      * @returns {Promise | Boolean}
      */
     async #checkSession() {
         if (this.client.dev) return false
-        if (await this.client.db.redis.exists(this.#sessionId)) {
+        
+        // if (await this.client.db.redis.exists(this.#sessionId)) {
+        if (await this.client.db.databaseUtils.doesCacheExist(this.#sessionId)) {
             await this.reply.send(this.#locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await this.client.getEmoji(`692428748838010970`) } })
             return true
         }
         //  Session up for 2 minutes
-        this.client.db.redis.set(this.#sessionId, 1, `EX`, 60 * 2)
+        this.client.db.databaseUtils.setCache(this.#sessionId,1,{EX:60*2})
+        // this.client.db.redis.set(this.#sessionId, 1, {EX: 60 * 2})
         return false
     }
 

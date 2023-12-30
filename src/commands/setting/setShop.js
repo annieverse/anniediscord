@@ -1,3 +1,4 @@
+"use strict"
 const Confirmator = require(`../../libs/confirmator`)
 const stringSimilarity = require(`string-similarity`)
 const ms = require(`ms`)
@@ -205,8 +206,10 @@ module.exports = {
             usable: 1
         }
         const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
+        if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+        client.db.databaseUtils.setCache(sessionId,1,{EX:60 * 3})
+        // client.db.redis.set(sessionId, 1, {EX: 60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
         let item_name = args[1]
@@ -217,7 +220,8 @@ module.exports = {
         async function checkItemName(client, message, name) {
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === name.toLowerCase()).length > 0) {
-                client.db.redis.del(sessionId)
+                client.db.databaseUtils.delCache(sessionId)
+                // client.db.redis.del(sessionId)
                 await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: name
@@ -292,7 +296,8 @@ module.exports = {
             i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
         })
         buttonCollector.on(`end`, async (collected, reason) => {
-            client.db.redis.del(sessionId)
+            client.db.databaseUtils.delCache(sessionId)
+            // client.db.redis.del(sessionId)
             if (completed) return
             if (reason != `shop adding item has been cancelled` && reason != `time`) return
             const message = await interaction.fetchReply()
@@ -570,8 +575,11 @@ module.exports = {
             usable: 1
         }
         const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
-        if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.redis.set(sessionId, 1, `EX`, 60 * 3)
+        
+        if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
+        client.db.databaseUtils.setCache(sessionId,1,{EX:60 * 3})
+        // client.db.redis.set(sessionId, 1, {EX: 60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
         let phaseJump = false
         let dataDisplay = null
@@ -580,7 +588,8 @@ module.exports = {
             phaseJump = true
             const nameLimit = 20
             if (secondArg.length >= nameLimit) {
-                client.db.redis.del(sessionId)
+                client.db.databaseUtils.delCache(sessionId)
+                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                     socket: {
                         limit: nameLimit
@@ -589,7 +598,8 @@ module.exports = {
             }
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
-                client.db.redis.del(sessionId)
+                client.db.databaseUtils.delCache(sessionId)
+                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: secondArg
@@ -854,7 +864,8 @@ module.exports = {
             }
         })
         pool.on(`end`, async () => {
-            client.db.redis.del(sessionId)
+            client.db.databaseUtils.delCache(sessionId)
+            // client.db.redis.del(sessionId)
             if (completed) return
             dataDisplay.delete()
             await reply.send(`Shop register interface has been closed.`, {

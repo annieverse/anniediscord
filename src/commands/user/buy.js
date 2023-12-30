@@ -1,9 +1,10 @@
+"use strict"
 const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 const commanifier = require(`../../utils/commanifier`)
 const {
     ApplicationCommandType,
-    ApplicationCommandOptionType 
+    ApplicationCommandOptionType
 } = require(`discord.js`)
 /**
  * Buy any purchasable items from server shop!
@@ -26,24 +27,20 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale, prefix) {
-        let guild = message.guild
-        let {
-            item,
-            shopMetadata
-        } = await this.getItem(client, guild, reply, locale, prefix, arg)
-        if (!item) return
-        await this.confirmOrDeny(false, message, client, locale, reply, shopMetadata, item, message.author, guild, prefix)
+        return await this.run(client, reply, message, arg, locale, prefix)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let arg = options.getString(`item`)
         let prefix = `/`
-        let guild = interaction.guild
+        return await this.run(client, reply, interaction, arg, locale, prefix)
+    },
+    async run(client, reply, messageRef, arg, locale, prefix) {
         let {
             item,
             shopMetadata
-        } = await this.getItem(client, guild, reply, locale, prefix, arg)
+        } = await this.getItem(client, messageRef.guild, reply, locale, prefix, arg)
         if (!item) return
-        await this.confirmOrDeny(true, interaction, client, locale, reply, shopMetadata, item, interaction.member.user, guild, `/`)
+        return await this.confirmOrDeny(false, messageRef, client, locale, reply, shopMetadata, item, messageRef.member, messageRef.guild, prefix)
     },
     async getItem(client, guild, reply, locale, prefix, arg) {
         const guildShop = await client.db.shop.getGuildShop(guild.id)
@@ -55,7 +52,7 @@ module.exports = {
                 socket: {
                     prefix: prefix
                 },
-                followUp:true
+                followUp: true
             })
         }
         //  Handle shop closure
@@ -77,7 +74,7 @@ module.exports = {
                     prefix: prefix,
                     emoji: await client.getEmoji(`AnnieHeartPeek`)
                 },
-                followUp:true
+                followUp: true
             })
         }
         const shopMetadata = guildShop.find(i => i.item_id === item.item_id)
@@ -95,7 +92,7 @@ module.exports = {
         }
     },
     async confirmOrDeny(slashCommand, message, client, locale, reply, shopMetadata, item, user, guild, prefix) {
-        
+
         if (slashCommand) {
             const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
                 thumbnail: user.displayAvatarURL(),
@@ -116,7 +113,7 @@ module.exports = {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
                     },
-                    followUp:true
+                    followUp: true
                 })
                 //  Deduct artcoins
                 client.db.databaseUtils.updateInventory({
@@ -136,7 +133,7 @@ module.exports = {
                 })
                 //  Reduce available supply if supply wasn't set as unlimited.
                 if (shopMetadata.quantity !== `~`) client.db.shop.subtractItemSupply(item.item_id, 1)
-                
+
                 return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {

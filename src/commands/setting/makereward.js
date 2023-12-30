@@ -1,3 +1,4 @@
+"use strict"
 const customReward = require(`../../libs/customRewards`)
 const stringSimilarity = require(`string-similarity`)
 const {
@@ -120,8 +121,10 @@ module.exports = {
 
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
-        if (await client.db.redis.exists(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
-        client.db.redis.set(sessionID, 1, `EX`, 60 * 3)
+        if (await client.db.databaseUtils.doesCacheExist(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
+        // if (await client.db.redis.exists(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
+        client.db.databaseUtils.setCache(sessionID,1,{EX:60 * 3})
+        // client.db.redis.set(sessionID, 1, {EX: 60 * 3})
 
 
         // Set up and send the message that will be updated as choices are made.
@@ -211,7 +214,8 @@ module.exports = {
                 try {
                     message.edit({ components: [] })
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
-                    client.db.redis.del(sessionID)
+                    client.db.databaseUtils.delCache(sessionID)
+                    // client.db.redis.del(sessionID)
                     await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
@@ -424,7 +428,8 @@ module.exports = {
                 try {
                     message.edit({ components: [] })
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
-                    client.db.redis.del(sessionID)
+                    client.db.databaseUtils.delCache(sessionID)
+                    // client.db.redis.del(sessionID)
                     await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
@@ -649,7 +654,8 @@ module.exports = {
             })
 
             confirmOrCancelListener.on(`end`, async () => {
-                client.db.redis.del(sessionID)
+                client.db.databaseUtils.delCache(sessionID)
+                // client.db.redis.del(sessionID)
                 return await trackingMessage.edit({
                     components: []
                 })
@@ -740,12 +746,12 @@ module.exports = {
             packages.push(await formatPackage(raw_package[0], raw_package[1]))
         }
 
-        async function formatPackage(packageName, package) {
-            const acReward = package.acReward
+        async function formatPackage(packageName, pack) {
+            const acReward = pack.acReward
             const roles = []
             const items = []
-            if (package.roles.length > 0) {
-                const rawRoleIds = package.roles.map(a => JSON.parse(a.id))
+            if (pack.roles.length > 0) {
+                const rawRoleIds = pack.roles.map(a => JSON.parse(a.id))
                 for (const roleId of rawRoleIds) {
                     await interaction.guild.roles.fetch(roleId)
                     let rawRole = interaction.guild.roles.cache.get(roleId)
@@ -753,8 +759,8 @@ module.exports = {
                     roles.push(role)
                 }
             }
-            if (package.item.length > 0) {
-                const rawItems = package.item
+            if (pack.item.length > 0) {
+                const rawItems = pack.item
                 for (const i of rawItems) {
                     let item_raw = JSON.parse(i.object)
                     let item = `Item: ${item_raw.name} Quantity: ${i.amount}`

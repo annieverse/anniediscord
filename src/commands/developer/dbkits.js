@@ -1,3 +1,4 @@
+"use strict"
 /* eslint-disable no-useless-escape */
 /**
  * 	Running database queries on air

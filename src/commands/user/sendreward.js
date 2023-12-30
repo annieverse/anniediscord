@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, Collection } = require(`discord.js`)
 const customReward = require(`../../libs/customRewards`)
 /**

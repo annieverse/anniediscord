@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType } = require(`discord.js`)
     /**
      * List of servers that supporting the development of Annie.
@@ -14,28 +15,23 @@ module.exports = {
         messageCommand: true,
         type: ApplicationCommandType.ChatInput,
         async execute(client, reply, message, arg, locale) {
-            const affiliateList = await client.db.guildUtils.getAffiliates()
-                //  Handle if there are no registered affiliates
-            if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
-            return await reply.send(locale.AFFILIATES.DISPLAY, {
-                header: `Annie's Affiliated Servers`,
-                thumbnail: client.user.displayAvatarURL(),
-                socket: {
-                    list: await this._prettifyList(affiliateList, client),
-                    user: message.author.username
-                },
-            })
+            const user = message.author
+            await await this.run(client, reply, user, locale)
         },
         async Iexecute(client, reply, interaction, options, locale) {
+            const user = interaction.user
+            await await this.run(client, reply, user, locale)
+        },
+        async run(client, reply, user, locale){
             const affiliateList = await client.db.guildUtils.getAffiliates()
             //  Handle if there are no registered affiliates
             if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
             return await reply.send(locale.AFFILIATES.DISPLAY, {
-                header: `Annie's Affiliated Servers`,
+                header: locale.AFFILIATES.HEADER,
                 thumbnail: client.user.displayAvatarURL(),
                 socket: {
                     list: await this._prettifyList(affiliateList, client),
-                    user: interaction.user.username
+                    user: user.username
                 },
             })
         },
@@ -48,7 +44,9 @@ module.exports = {
         async _prettifyList(source = [], client) {
             //  Pull from cache if available
             const cacheId = `AFFILIATES_LIST`
-            if (await client.db.redis.exists(cacheId)) return client.db.redis.get(cacheId)
+            
+            if (await client.db.databaseUtils.doesCacheExist(cacheId)) return await client.db.databaseUtils.getCache(cacheId)
+            // if (await client.db.redis.exists(cacheId)) return await client.db.databaseUtils.getCache(cacheId)
             let res = ``
             for (let i = 0; i < source.length; i++) {
                 if (i <= 0) res += `\n╭───────────────────╮\n\n`
@@ -66,7 +64,8 @@ module.exports = {
             }
             //  Cache the result to avoid broadcasting.
             //  Expire until 12 hours
-            client.db.redis.set(cacheId, res)
+            client.db.databaseUtils.setCache(cacheId,res,{EX:(60 * 60) * 12})
+            // client.db.redis.set(cacheId, res)
             return res
         }
 }

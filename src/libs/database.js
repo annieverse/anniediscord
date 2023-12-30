@@ -1,10 +1,10 @@
 const { Client, types } = require(`pg`)
 //  Remove pg's number to string conversion
-types.setTypeParser(20, function(val) {
-    return parseInt(val, 10)
+types.setTypeParser(20, function (val) {
+	return parseInt(val, 10)
 })
-const Redis = require(`async-redis`)
-const { databaseLogger:logger }  = require(`../../pino.config.js`)
+const Redis = require(`redis`)
+const { databaseLogger: logger } = require(`../../pino.config.js`)
 const getBenchmark = require(`../utils/getBenchmark`)
 
 /**
@@ -31,14 +31,14 @@ class Database {
 			port: process.env.PG_PORT
 		})
 		this.client
-		.connect()
-		.then(() => {
-			logger.database(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
-		})
-		.catch(err => {
-			logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
-			process.exit()
-		})
+			.connect()
+			.then(() => {
+				logger.database(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
+			})
+			.catch(err => {
+				logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
+				process.exit()
+			})
 		this.client.on(`error`, (err) => {
 			logger.error(`Ouch snap! >> ${err.stack}`)
 		})
@@ -67,10 +67,12 @@ class Database {
 	 */
 	async connectRedis() {
 		const redisClient = await Redis.createClient()
+		redisClient.connect()
+		redisClient.sMembers
 		redisClient.on(`error`, err => {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
-		})
+		})		
 		redisClient.on(`connect`, async () => {
 			logger.database(`REDIS <CONNECTED>`)
 			this.redis = redisClient
@@ -94,7 +96,7 @@ class DatabaseUtils {
 	_convertNamedParamsToPositionalParams(query, params) {
 		let positionalParams = []
 		let index = 1
-	
+
 		const convertedQuery = query.replace(/\$\w+/g, (param) => {
 			const paramName = param.slice(1)
 			// eslint-disable-next-line no-prototype-builtins
@@ -105,7 +107,7 @@ class DatabaseUtils {
 			}
 			return `$${index++}`
 		})
-	
+
 		return [convertedQuery, positionalParams]
 	}
 
@@ -123,7 +125,7 @@ class DatabaseUtils {
 			//	Return if no statement has found
 			if (!stmt) return null
 			if (type === `run`) stmt = stmt + ` RETURNING *`
-			const [ parsedStatement, parsedParameters ] = this._convertNamedParamsToPositionalParams(stmt, supplies)
+			const [parsedStatement, parsedParameters] = this._convertNamedParamsToPositionalParams(stmt, supplies)
 			let result = await this.client.query(parsedStatement, parsedParameters)
 			if (!result) return null
 			if (log) logger.database(log)
@@ -141,7 +143,7 @@ class DatabaseUtils {
 			//  Immediately cast to null if undefined
 			return getTypeData === undefined ? null : getTypeData
 		}
-		catch(e) {
+		catch (e) {
 			this.client.emit(`error`, e)
 		}
 	}
@@ -152,28 +154,42 @@ class DatabaseUtils {
 	 * @param {string} [key=``] Target cache's key.
 	 * @return {boolean}
 	 */
-	async isCacheExist(key = ``) {
-		const cache = await this.redis.get(key)
-		return cache !== null ? true : false
+	async doesCacheExist(key = ``) {
+		return await this.redis.exists(key)
 	}
 
 	/**
 	 * Retrieve cache.
 	 * @param {string} [key=``] Target cache's key.
-	 * @return {string|null}
+	 * @return {Promise}
 	 */
-	getCache(key = ``) {
-		return this.redis.get(key)
+	async getCache(key = ``) {
+		return await this.redis.get(key)
 	}
 
 	/**
 	 * Register cache.
 	 * @param {string} [key=``] Target cache's key.
 	 * @param {string} [value=``] The content to be filled in.
-	 * @return {boolean}
+	 * @param {object} [options={}] additional options to be passed thru
+	 * Options
+	 * The SET command supports a set of options that modify its behavior:
+	 * EX seconds -- Set the specified expire time, in seconds.
+	 * PX milliseconds -- Set the specified expire time, in milliseconds.
+	 * EXAT timestamp-seconds -- Set the specified Unix time at which the key will expire, in seconds.
+	 * PXAT timestamp-milliseconds -- Set the specified Unix time at which the key will expire, in milliseconds.
+	 * NX -- Only set the key if it does not already exist.
+	 * XX -- Only set the key if it already exists.
+	 * KEEPTTL -- Retain the time to live associated with the key.
+	 * GET -- Return the old string stored at key, or nil if key did not exist. An error is returned and SET aborted if the value stored at key is not a string.
+	 * @return {Redis.AsyncRedis}
 	 */
-	setCache(key = ``, value = ``) {
-		return this.redis.set(key, value)
+	setCache(key = ``, value = ``, options = {}) {
+		/**
+		 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, GETSET, it is possible that in future versions of Redis these commands will be deprecated and finally removed.
+		 */
+		if (typeof(value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
+		return this.redis.set(key, value, options)
 	}
 
 	/**
@@ -181,7 +197,7 @@ class DatabaseUtils {
 	 * @param {string} [key=``] Target cache's key.
 	 * @return {boolean}
 	 */
-	clearCache(key = ``) {
+	delCache(key = ``) {
 		logger.database(`[Redis.clearCache] cleared cache in key '${key}'.`)
 		return this.redis.del(key)
 	}
@@ -207,7 +223,7 @@ class DatabaseUtils {
 		if (!userName) throw new TypeError(`${fn} parameter "userName" cannot be blank.`)
 		//  Check on cache
 		const key = `VALIDATED_USERID`
-		const onCache = await this.redis.sismember(key, userId)
+		const onCache = await this.redis.sIsMember(key, userId)
 		//  if true/registered, skip database hit.
 		if (onCache) return
 		const res = await this._query(`
@@ -219,7 +235,7 @@ class DatabaseUtils {
 			, `${fn} Validating user ${userName}(${userId})`
 		)
 		if (res.changes) logger.database(`USER_ID:${userId} registered`)
-		this.redis.sadd(key, userId)
+		this.redis.sAdd(key, userId)
 	}
 
 	/**
@@ -380,7 +396,7 @@ class Reminders extends DatabaseUtils {
 	 * @return {QueryResult}
 	 */
 	registerUserReminder(context) {
-
+		const fn = this.formatFunctionLog(`registerUserReminder`)
 		const validKeys = [
 			`registeredAt`,
 			`id`,
@@ -391,7 +407,6 @@ class Reminders extends DatabaseUtils {
 		]
 		if (!context) new TypeError(`${fn} parameter "context" cannot be blank.`)
 		if (typeof (context) === `object` && this.arrayEquals(Object.keys(context), validKeys)) new TypeError(`${fn} parameter "context" must be a object and include the following: registeredAt, id, userId, message, and remindAt.`)
-		const fn = this.formatFunctionLog(`registerUserReminder`)
 		return this._query(`
 			INSERT INTO user_reminders(
 				registered_at,
@@ -484,8 +499,9 @@ class UserUtils extends DatabaseUtils {
 				, `${fn} inserting record for user's exp`
 			)
 		}
-		//  Refresh cache 
-		this.redis.del(`EXP_${userId}@${guildId}`)
+		//  Refresh cache
+		this.delCache(`EXP_${userId}@${guildId}`)
+		// this.redis.del(`EXP_${userId}@${guildId}`)
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
@@ -520,7 +536,8 @@ class UserUtils extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
-		const cache = await this.redis.get(key)
+		const cache = await this.getCache(key)
+		// const cache = await this.redis.get(key)
 		if (cache) return JSON.parse(cache)
 		//  Otherwise fetch from db and store it to cache for later use.
 		const query = async () => this._query(`
@@ -539,7 +556,8 @@ class UserUtils extends DatabaseUtils {
 			exp = await query()
 		}
 		//  Store for 1 minute expire
-		this.redis.set(key, JSON.stringify(exp), `EX`, 60)
+		this.setCache(key, JSON.stringify(exp), { EX: 60 })
+		// this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
 
@@ -566,7 +584,8 @@ class UserUtils extends DatabaseUtils {
 			, { userId: userId, guildId: guildId }
 		).then(() => logger.database(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
-		this.redis.del(key)
+		this.delCache(key)
+		// this.redis.del(key)
 	}
 
 	/**
@@ -676,7 +695,8 @@ class UserUtils extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Check for cache availability
 		const key = `DAILIES_${userId}@${guildId}`
-		const onCache = await this.redis.get(key)
+		const onCache = await this.getCache(key)
+		// const onCache = await this.redis.get(key)
 		if (onCache) return JSON.parse(onCache)
 		const query = () => this._query(`
             SELECT *
@@ -694,7 +714,8 @@ class UserUtils extends DatabaseUtils {
 			res = await query()
 		}
 		//  Cache for 12 hours
-		this.redis.set(key, JSON.stringify(res))
+		this.setCache(key, res, { EX: (60 * 60) * 12 })
+		// this.redis.set(key, JSON.stringify(res))
 		return res
 	}
 
@@ -731,7 +752,8 @@ class UserUtils extends DatabaseUtils {
 			)
 		}
 		//  Refresh cache
-		this.redis.del(`DAILIES_${userId}@${guildId}`)
+		this.delCache(`DAILIES_${userId}@${guildId}`)
+		// this.redis.del(`DAILIES_${userId}@${guildId}`)
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
@@ -1189,7 +1211,8 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.redis.set(key, JSON.stringify(res), `EX`, (60 * 60) * 12)
+		this.setCache(key, res, { EX: (60 * 60) * 12 })
+		// this.redis.set(key, JSON.stringify(res), {EX: (60 * 60) * 12})
 		return res
 	}
 
@@ -1250,16 +1273,16 @@ class GuildUtils extends DatabaseUtils {
 	 * @param {Array} guildIds
 	 * @returns {QueryResult}
 	 */
-	async getAllGuildsConfigurations(guildIds) {		
+	async getAllGuildsConfigurations(guildIds) {
 		const fn = this.formatFunctionLog(`getAllGuildsConfigurations`)
 		if (!guildIds) throw new TypeError(`${fn} property "guildIds" must be a guild snowflake or array of guild snowflakes.`)
-		if (typeof(guildIds) != `object` && !Array.isArray(guildIds)) throw new TypeError(`${fn} property "guildIds" must be a Array.`)
+		if (typeof (guildIds) != `object` && !Array.isArray(guildIds)) throw new TypeError(`${fn} property "guildIds" must be a Array.`)
 		// Select statement to only return guilds that were supplied and not dormat guilds (based on discord's cache)
 		// I updated this to prevent weird behavior in postgresql. Temporarily. -Naph
 		return this._query(`SELECT * FROM guild_configurations WHERE guild_id = ANY($guildIds)`
-		, `all`
-		, {guildIds: guildIds}
-		, `${fn} fetch all guild configs`)
+			, `all`
+			, { guildIds: guildIds }
+			, `${fn} fetch all guild configs`)
 	}
 
 	/**
@@ -1304,7 +1327,7 @@ class GuildUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`updateGuildConfiguration`)
 		if (!configCode || typeof configCode !== `string`) throw new TypeError(`${fn} property "configCode" must be string and non-faulty value.`)
 		if (!guild || typeof guild !== `object`) throw new TypeError(`${fn} property "guild" must be a guild object and non-faulty value.`)
-		if (!customizedParameter && customizedParameter !=0) throw new TypeError(`${fn} parameter "customizedParameter" cannot be blank.`)
+		if (!customizedParameter && customizedParameter != 0) throw new TypeError(`${fn} parameter "customizedParameter" cannot be blank.`)
 		if (!setByUserId || typeof setByUserId !== `string`) throw new TypeError(`${fn} property "setByUserId" must be string and cannot be anonymous.`)
 		//  Register guild incase they aren't registered yet
 		this.registerGuild(guild)
@@ -1438,7 +1461,7 @@ class Relationships extends DatabaseUtils {
             	user_id_a = $userA
 				AND user_id_b = $userB`
 			, `run`
-			, {userA:userA, userB:userB}
+			, { userA: userA, userB: userB }
 			, `${fn} Removing ${userA} and ${userB} relationship.`
 		)
 	}
@@ -1536,7 +1559,7 @@ class AutoResponder extends DatabaseUtils {
 		if (typeof (fetchCache) !== `boolean`) throw new TypeError(`${fn} parameter "fetchCache" must be a boolean.`)
 		//  Check in cache
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (fetchCache && await this.isCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
+		if (fetchCache && await this.doesCacheExist(cacheID)) return JSON.parse(await this.getCache(cacheID))
 		return this._query(`
 			SELECT *
 			FROM autoresponders
@@ -1561,7 +1584,7 @@ class AutoResponder extends DatabaseUtils {
 		//  Insert into cache
 		let cache = []
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (await this.isCacheExist(cacheID)) cache = JSON.parse(await this.getCache(cacheID))
+		if (await this.doesCacheExist(cacheID)) cache = JSON.parse(await this.getCache(cacheID))
 		await this._query(`
 			INSERT INTO autoresponders(
 				guild_id,
@@ -1606,7 +1629,7 @@ class AutoResponder extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Delete element from cache if available
 		const cacheID = `REGISTERED_AR@${guildId}`
-		if (await this.isCacheExist(cacheID)) {
+		if (await this.doesCacheExist(cacheID)) {
 			const cache = JSON.parse(await this.getCache(cacheID))
 			const updatedCache = cache.filter(node => node.ar_id !== id)
 			//  Delete whole array if updatedCache is empty
@@ -1993,7 +2016,8 @@ class Shop extends DatabaseUtils {
 	async getGachaRewardsPool() {
 		const fn = this.formatFunctionLog(`getGachaRewardsPool`)
 		const cacheId = `GACHA_REWARDS_POOL`
-		const onCache = await this.redis.get(cacheId)
+		const onCache = await this.getCache(cacheId)
+		// const onCache = await this.redis.get(cacheId)
 		if (onCache) return JSON.parse(onCache)
 		const res = await this._query(`
 			SELECT 
@@ -2029,7 +2053,8 @@ class Shop extends DatabaseUtils {
 			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, 60 * 60)
+		this.setCache(cacheId, res, { EX: 60 * 60 })
+		// this.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 60})
 		return res
 	}
 
@@ -2092,7 +2117,7 @@ class Shop extends DatabaseUtils {
             INSERT INTO shop(item_id, guild_id, quantity, price)
             VALUES($itemId, $guildId, $quantity, $price)`
 			, `run`
-			, {itemId:itemId, guildId:guildId, quantity:quantity, price:price}
+			, { itemId: itemId, guildId: guildId, quantity: quantity, price: price }
 			, `${fn} register item with a GUILD_ID:${guildId}`
 		)
 	}
@@ -2119,7 +2144,7 @@ class Shop extends DatabaseUtils {
                 parameter)
             VALUES($itemId, $guildId, $effectRefId, $parameters)`
 			, `run`
-			, {itemId:itemId, guildId:guildId, effectRefId:effectRefId, parameters:JSON.stringify(parameters)}
+			, { itemId: itemId, guildId: guildId, effectRefId: effectRefId, parameters: JSON.stringify(parameters) }
 			, `${fn} register new effect for item`
 		)
 	}
@@ -2136,14 +2161,14 @@ class Shop extends DatabaseUtils {
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!targetProperty) throw new TypeError(`${fn} parameter "targetProperty" cannot be blank.`)
 		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
-		const validColumns = [`item_id`,`name`,`description`,`alias`,`type_id`,`rarity_id`,`bind`,`usable`,`response_on_use`, `owned_by_guild_id`]
+		const validColumns = [`item_id`, `name`, `description`, `alias`, `type_id`, `rarity_id`, `bind`, `usable`, `response_on_use`, `owned_by_guild_id`]
 		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
 		this._query(`
             UPDATE items
             SET ${targetProperty} = $param
             WHERE item_id = $itemId`
 			, `run`
-			, {param:param, itemId:itemId}
+			, { param: param, itemId: itemId }
 			, `${fn} Update item details`
 		)
 	}
@@ -2160,15 +2185,15 @@ class Shop extends DatabaseUtils {
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!targetProperty) throw new TypeError(`${fn} parameter "targetProperty" cannot be blank.`)
 		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
-		const validColumns = [`item_id`,`guild_id`,`quantity`,`price`]
+		const validColumns = [`item_id`, `guild_id`, `quantity`, `price`]
 		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
-		
+
 		this._query(`
             UPDATE shop
             SET ${targetProperty} = $param
             WHERE item_id = $itemId`
 			, `run`
-			, {param:param, itemId:itemId}
+			, { param: param, itemId: itemId }
 			, `${fn} update item details in shop`
 		)
 	}
@@ -2228,7 +2253,7 @@ class Shop extends DatabaseUtils {
 		//  Do whole fetch on specific guild
 		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = $guildId`
 			, `all`
-			, {guildId:guildId}
+			, { guildId: guildId }
 			, `${fn} fetch all items for GUILD_ID:${guildId}`
 		)
 		//  Do single fetch on specific guild
@@ -2266,7 +2291,7 @@ class Shop extends DatabaseUtils {
             FROM shop
             WHERE guild_id = $guildId`
 			, `all`
-			, {guildId:guildId}
+			, { guildId: guildId }
 			, `${fn} fetch shop for GUILD_ID:${guildId}`
 		)
 	}
@@ -2285,7 +2310,7 @@ class Shop extends DatabaseUtils {
             SET quantity = quantity - $amount
             WHERE item_id = $itemId`
 			, `run`
-			, {amount:amount, itemId:itemId}
+			, { amount: amount, itemId: itemId }
 			, `${fn} update item amount in shop`
 		)
 	}
@@ -2303,7 +2328,7 @@ class Shop extends DatabaseUtils {
             FROM item_effects
             WHERE item_id = $itemId`
 			, `all`
-			, {itemId:itemId}
+			, { itemId: itemId }
 			, `${fn} fetch item effects for ITEM_ID:${itemId}`
 		)
 	}
@@ -2343,7 +2368,9 @@ class Quests extends DatabaseUtils {
 	async getAllQuests() {
 		const fn = this.formatFunctionLog(`getAllQuests`)
 		const cacheId = `CACHED_QUESTS_POOL`
-		const cache = await this.redis.get(cacheId)
+
+		const cache = await this.getCache(cacheId)
+		// const cache = await this.redis.get(cacheId)
 		if (cache !== null) return JSON.parse(cache)
 		const res = await this._query(`
 			SELECT *
@@ -2353,7 +2380,8 @@ class Quests extends DatabaseUtils {
 			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
-		this.redis.set(cacheId, JSON.stringify(res), `EX`, (60 * 60) * 3)
+		this.setCache(cacheId, res, { EX: (60 * 60) * 3 })
+		// this.redis.set(cacheId, JSON.stringify(res), {EX: (60 * 60) * 3})
 		return res
 	}
 

@@ -1,3 +1,4 @@
+"use strict"
 const Confirmator = require(`../../libs/confirmator`)
 const GUI = require(`../../ui/prebuild/welcomer`)
 const moment = require(`moment`)

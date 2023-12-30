@@ -193,7 +193,7 @@ class itemEffects {
     async _durationalBuff(buffType, name, multiplier, duration) {
         buffType = buffType.toUpperCase()
         const key = `${buffType}_BUFF:${this.message.guild.id}@${this.message.member.id}`
-        this.client.db.redis.sadd(key, multiplier)
+        this.client.db.redis.sAdd(key, multiplier)
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false

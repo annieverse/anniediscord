@@ -71,14 +71,7 @@ class Response {
 		 */
 		this.localeMetadata = localeMetadata
 	}
-
-	setMessage(message, channelAsInstance = false) {
-		this.message = message
-		return this.targetField = channelAsInstance ?
-			message :
-			message.channel ?
-			message.channel : null
-	}
+	
 	/**
 	 * Plug variables into available socket in the target string.
 	 * @param {string} [content=``] Target string.

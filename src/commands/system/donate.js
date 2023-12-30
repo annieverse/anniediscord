@@ -1,3 +1,4 @@
+"use strict"
 const { ApplicationCommandType } = require(`discord.js`)
 
 /**
@@ -11,14 +12,17 @@ module.exports = {
     usage: `donate`,
     permissionLevel: 0,
     multiUser: false,
-    applicationCommand: false,
-    messageCommand: false,
+    applicationCommand: true,
+    messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        await reply.send(`Please ask in our support server how you can support us.`)
+        return await this.run(reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        await reply.send(`Please ask in our support server how you can support us.`)
+        return await this.run(reply, locale)
+    },
+    async run(reply, locale){
+        return await reply.send(locale.DONATE)
     }
 
 }

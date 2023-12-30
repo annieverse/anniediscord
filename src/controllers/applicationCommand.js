@@ -6,10 +6,10 @@ const {
 const {InteractionType} = require(`discord.js`)
 module.exports = async (client, interaction, command) =>{
     // Handle localization
-    let locale = null
-    const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    locale = client.localizer.getTargetLocales(userData.lang)    
-    locale.currentLang = userData.lang
+    let locale = client.locales.en
+    // const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
+    // locale = client.localizer.getTargetLocales(userData.lang)    
+    // locale.currentLang = userData.lang
     let reply = client.responseLibs(interaction, false, locale)
     const options = interaction.options
     const targetCommand = interaction.commandName
@@ -36,7 +36,7 @@ module.exports = async (client, interaction, command) =>{
     }
     client.cooldowns.set(instanceId, Date.now())
     // Prevent user with uncomplete data to proceed the command.
-    if ((await client.db.redis.sismember(`VALIDATED_USERID`, interaction.user.id)) === 0) {
+    if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, interaction.user.id)) === 0) {
         return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)
     }
     try {

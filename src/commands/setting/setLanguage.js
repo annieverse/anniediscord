@@ -1,3 +1,4 @@
+"use strict"
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType
@@ -13,8 +14,8 @@ module.exports = {
   usage: `setlang <language name/code>`,
   permissionLevel: 0,
   multiUser: false,
-  applicationCommand: true,
-  messageCommand: true,
+  applicationCommand: false,
+  messageCommand: false,
   options: [{
     name: `language`,
     description: `Available Annie's languages you can set`,

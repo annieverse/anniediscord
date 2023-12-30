@@ -1,3 +1,4 @@
+"use strict"
 const GUI = require(`../../ui/prebuild/profile`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
@@ -27,35 +28,24 @@ module.exports = {
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
             //  Normalize structure
         targetUser = targetUser.master || targetUser
-        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
-            socket: { emoji: await client.getEmoji(`790994076257353779`) }
-        })
         const userData = await userLib.requestMetadata(targetUser, 2,locale)
-        const image = (await new GUI(userData, client).build()).png()
-        fetching.delete()
-        return await reply.send(locale.COMMAND.TITLE, {
-            socket: {
-                user: targetUser.username,
-                emoji: await client.getEmoji(`692428927620087850`),
-                command: `Profile`
-            },
-            image: image,
-            prebuffer: true,
-            simplified: true
-        })
+        return await this.run(client,reply,locale,userData)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const userLib = new User(client, interaction)
         let targetUser = options.getUser(`user`) || interaction.member.user
+        const userData = await userLib.requestMetadata(targetUser, 2,locale)
+        return await this.run(client,reply,locale,userData)
+    },
+    async run(client,reply,locale, user){
         const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
-        const userData = await userLib.requestMetadata(targetUser, 2,locale)
-        const image = (await new GUI(userData, client).build()).png()
+        const image = (await new GUI(user, client).build()).png()
         fetching.delete()
         return await reply.send(locale.COMMAND.TITLE, {
             socket: {
-                user: targetUser.username,
+                user: user.master.username,
                 emoji: await client.getEmoji(`692428927620087850`),
                 command: `Profile`
             },
