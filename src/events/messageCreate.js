@@ -22,9 +22,12 @@ module.exports = (client, message) => {
         if (message.mentions.users.has(client.user.id) && (message.content.length-1) <= `<@${client.user.id}>`.length) {
             //  To avoid spam, cache the 15s cooldown per guild
             const prefixHintId = `PREFIX_HINT@${message.guild.id}`
-            return client.db.redis.exists(prefixHintId).then(res => {
+            return client.db.databaseUtils.doesCacheExist(prefixHintId)
+            // return client.db.redis.exists(prefixHintId)
+            .then(res => {
                 if (res) return
-                client.db.redis.set(prefixHintId, 1, {EX: 15})
+                client.db.databaseUtils.setCache(prefixHintId,1,{EX:15})
+                // client.db.redis.set(prefixHintId, 1, {EX: 15})
                 client.responseLibs(message).send(`Type **\`${prefix}help\`** to see my commands. ♡`, {
                     deleteIn: 5
                 })
@@ -46,7 +49,7 @@ module.exports = (client, message) => {
         }
         client.cooldowns.set(gainingId, Date.now())
         const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
-        client.db.redis.smembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
+        client.db.redis.sMembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.db.databaseUtils.updateInventory({
@@ -63,7 +66,7 @@ module.exports = (client, message) => {
         // const locale = client.localizer.getTargetLocales(userData.lang)
         const locale = client.locales.en
 
-        client.db.redis.smembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
+        client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.experienceLibs(message.member, message.guild, message.channel, locale)

@@ -268,7 +268,7 @@ class Annie extends Discord.Client {
                                         })
                                     continue
                                 }
-                                this.db.redis.sadd(key, node.multiplier)
+                                this.db.redis.sAdd(key, node.multiplier)
                                 this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
                                             //  Flush from cache and sqlite
                                             this.db.redis.srem(key, node.multiplier)

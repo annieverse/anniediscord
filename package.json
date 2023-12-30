@@ -39,7 +39,6 @@
     "@semantic-release/npm": "^10.0.3",
     "@semantic-release/release-notes-generator": "^11.0.2",
     "@top-gg/sdk": "^3.1.5",
-    "async-redis": "^2.0.0",
     "axios": "^1.4.0",
     "buffer-image-size": "^0.6.4",
     "canvas": "^2.11.2",
@@ -57,6 +56,7 @@
     "pino": "^8.14.1",
     "pixiv-api-client": "^0.24.0",
     "pixiv-img": "^1.0.0",
+    "redis": "^4.6.10",
     "string-similarity": "^4.0.2",
     "superagent": "^8.0.0",
     "uuid": "^9.0.0"
