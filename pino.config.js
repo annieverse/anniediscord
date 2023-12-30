@@ -27,13 +27,14 @@ const pino = require(`pino`)
  * Dont use 10, 20, 30, 40, 50, 60
  */
 const levels = {
-    database: 31 // Any number between info (30) and warn (40) will work the same
+    database: process.env.NODE_ENV === `development` ? 31 : 29 // Any number between info (30) and warn (40) will work the same
+    // database: 31 // Any number between info (30) and warn (40) will work the same
 }
 
 const defaultOptions = {
     formatters: {
         bindings: (bindings) => {
-            return { name: bindings.name };
+            return { name: bindings.name }
         },
         level: (label) => {
             return {
