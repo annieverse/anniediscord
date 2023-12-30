@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 18.16, 18.x ]
+        node: [ 20.8, 20.x ]
     name: Build and Run Test
     steps:
       - name: Checkout

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ 18.16, 18.x ]
+        node: [ 20.8, 20.x ]
     name: Build and Test
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.16
+          node-version: 20.8
       - run: npm ci
       # Run semantic-release script
       - name: Versionize
