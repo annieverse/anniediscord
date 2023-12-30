@@ -49,7 +49,6 @@ class dataCleaner {
         if (!(await this.client.db.redis.exists(this.sessionId2))) return
         let sessionData = await this.client.db.redis.get(this.sessionId2)
         let guildsDelete = sessionData.length == 0 ? [] : sessionData.split(`:::`)
-        console.log(guildsDelete)
         if (guildsDelete.length == 0) return
         this.client.db.guildUtils.deleteBulk(guildsDelete)
         this.client.db.redis.del(this.sessionId2)

@@ -1253,7 +1253,6 @@ class GuildUtils extends DatabaseUtils {
 	async deleteBulk(guilds){
 		const fn = this.formatFunctionLog(`deleteBulk`)
 		if (guilds.length === 0 ) return
-		console.log(guilds)
 		return await this._query(`DELETE FROM guilds WHERE guild_id IN ($guildId)`,`run`,{guildId:guilds},`${fn} Deleting bulk guild's`)
 	}
 
