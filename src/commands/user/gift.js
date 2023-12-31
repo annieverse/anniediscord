@@ -33,7 +33,8 @@ module.exports = {
             name: `amount`,
             description: `Amount of gifts you wish to send`,
             required: true,
-            type: ApplicationCommandOptionType.Integer
+            type: ApplicationCommandOptionType.Integer,
+            min_value: 1
         }, {
             name: `item`,
             description: `Item you wish to send`,
@@ -128,7 +129,7 @@ module.exports = {
         })
         //  Handle if can't parse the desired user's gift amount
         const amount = args[2]
-        if (!amount) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
+        if (!amount || amount<1) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
             socket: {
                 gift: gift.name,
                 example: `e.g. **\`${prefix}gift ${targetUser.username} 10 ${gift.name.toLowerCase()}\`**`
