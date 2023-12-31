@@ -76,7 +76,7 @@ module.exports = {
         //  Handle if the specified gift cannot be found
         const item = arg.replace(targetUser.usedKeyword + ` `, ``) // Trim additional whitespace
         const amount = item.replace(/\D/g, ``)
-        let args = [targetUser, item, amount]
+        let args = [targetUser.master, item, amount]
         return await this.run(client, message, reply, locale, args, client.prefix)
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -142,7 +142,7 @@ module.exports = {
             image: await new giftGUI(targetUserData, gift, amount).build(),
             socket: {
                 user: targetUser.username,
-                gift: `${await client.getEmoji(gift.alias)} ${gift.name}`,
+                gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${gift.name}`,
                 amount: commanifier(amount)
             }
         })
@@ -165,7 +165,7 @@ module.exports = {
                 customHeader: [`${targetUser.username} ${locale.GIFT.HEADER}`, targetUser.displayAvatarURL()],
                 socket: {
                     user: targetUser.username,
-                    gift: `${await client.getEmoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
+                    gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`
                 },
                 followUp: true
             })
