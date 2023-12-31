@@ -1,3 +1,10 @@
+## [9.7.7](https://github.com/annieverse/anniediscord/compare/v9.7.6...v9.7.7) (2023-12-31)
+
+
+### Bug Fixes
+
+* **gift:** Negative amounts ([1f2b5b4](https://github.com/annieverse/anniediscord/commit/1f2b5b431ff03d70d3cf5c43fb2f650be1df0ff7))
+
 ## [9.7.6](https://github.com/annieverse/anniediscord/compare/v9.7.5...v9.7.6) (2023-05-26)
 
 
