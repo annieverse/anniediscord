@@ -713,7 +713,7 @@ class UserUtils extends DatabaseUtils {
 			res = await query()
 		}
 		//  Cache for 12 hours
-		this.setCache(key, res, { EX: (60 * 60) * 12 })
+		this.setCache(key, JSON.stringify(res), { EX: (60 * 60) * 12 })
 		// this.redis.set(key, JSON.stringify(res))
 		return res
 	}

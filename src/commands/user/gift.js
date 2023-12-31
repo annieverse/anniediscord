@@ -33,7 +33,8 @@ module.exports = {
             name: `amount`,
             description: `Amount of gifts you wish to send`,
             required: true,
-            type: ApplicationCommandOptionType.Integer
+            type: ApplicationCommandOptionType.Integer,
+            min_value: 1
         }, {
             name: `item`,
             description: `Item you wish to send`,
@@ -75,7 +76,7 @@ module.exports = {
         //  Handle if the specified gift cannot be found
         const item = arg.replace(targetUser.usedKeyword + ` `, ``) // Trim additional whitespace
         const amount = item.replace(/\D/g, ``)
-        let args = [targetUser, item, amount]
+        let args = [targetUser.master, item, amount]
         return await this.run(client, message, reply, locale, args, client.prefix)
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -128,7 +129,7 @@ module.exports = {
         })
         //  Handle if can't parse the desired user's gift amount
         const amount = args[2]
-        if (!amount) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
+        if (!amount || amount<1) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
             socket: {
                 gift: gift.name,
                 example: `e.g. **\`${prefix}gift ${targetUser.username} 10 ${gift.name.toLowerCase()}\`**`
@@ -141,7 +142,7 @@ module.exports = {
             image: await new giftGUI(targetUserData, gift, amount).build(),
             socket: {
                 user: targetUser.username,
-                gift: `${await client.getEmoji(gift.alias)} ${gift.name}`,
+                gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${gift.name}`,
                 amount: commanifier(amount)
             }
         })
@@ -164,7 +165,7 @@ module.exports = {
                 customHeader: [`${targetUser.username} ${locale.GIFT.HEADER}`, targetUser.displayAvatarURL()],
                 socket: {
                     user: targetUser.username,
-                    gift: `${await client.getEmoji(gift.alias)} ${commanifier(amount)}x ${gift.name}!`
+                    gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`
                 },
                 followUp: true
             })
