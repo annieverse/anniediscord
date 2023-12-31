@@ -100,7 +100,8 @@
       "INSUFFICIENT_AMOUNT": "Eehh- vous n'avez actuellement que **{{amount}}** artcoins. Allez travailler plus dur! {{emoji}}",
       "INVALID_AMOUNT": "Vous devez mettre au moins **8 artcoins**, *baka!* {{emoji}}",
       "SUCCESSFUL": "Youpi! **{{artcoins}}** ont été convertis en **{{exp}}** avec succès!",
-      "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nAppuyez sur le bouton pour confirmer la conversion."
+      "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nAppuyez sur le bouton pour confirmer la conversion.",
+      "ALREADY_IN_PROGRESS":"Désolé, vous avez déjà l'air d'essayer de faire ça."
   },
   "CATEXP": {
       "UNAVAILABLE": "Vous n'avez pas d'expérience à réclamer.",
