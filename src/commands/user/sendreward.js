@@ -61,11 +61,7 @@ module.exports = {
         let roles = []
         const items = new Collection()
         const ac = rawObject.acReward
-        console.log(roles)
-        console.log(items)
-        console.log(ac)
         if (rawObject.roles.length > 0) {
-            console.log(`roles`)
             roles = rawObject.roles.map(a => JSON.parse(a.id))
             for (const id of roles) {
                 await interaction.guild.members.fetch(user.id)
@@ -75,7 +71,6 @@ module.exports = {
             }
         }
         if (rawObject.item.length > 0) {
-            console.log(`items`)
             const rawItems = rawObject.item
             for (const i of rawItems) {
                 let item_raw = JSON.parse(i.object)
@@ -91,9 +86,6 @@ module.exports = {
             }
         }
         if (ac > 0) {
-            console.log(`ac`)
-            console.log(interaction.member.id)
-            console.log(interaction.guild.id)
             client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 value: ac,
