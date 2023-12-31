@@ -1,3 +1,10 @@
+## [9.7.8](https://github.com/annieverse/anniediscord/compare/v9.7.7...v9.7.8) (2023-12-31)
+
+
+### Bug Fixes
+
+* **cartcoin:** duplication ([cc8d8c4](https://github.com/annieverse/anniediscord/commit/cc8d8c4bd745b9f6dd49d17658add2caca8c6db2))
+
 ## [9.7.7](https://github.com/annieverse/anniediscord/compare/v9.7.6...v9.7.7) (2023-12-31)
 
 
