@@ -100,7 +100,8 @@
         "INSUFFICIENT_AMOUNT": "Eehh- right now you only have **{{amount}}** artcoins. Go grind harder! {{emoji}}",
         "INVALID_AMOUNT": "You need to put atleast **8 artcoins**, *baka!* {{emoji}}",
         "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion."
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion.",
+        "ALREADY_IN_PROGRESS":"Sorry, you already look like you are trying to do this."
     },
     "CATEXP": {
         "UNAVAILABLE": "You don't have any exp to claim.",

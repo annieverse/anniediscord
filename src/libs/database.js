@@ -1799,13 +1799,30 @@ class CustomRewards extends DatabaseUtils {
 	 * @param {string} guildId 
 	 * @returns {Promise}
 	 */
-	getRewardAmount(guildId) {
-		const fn = this.formatFunctionLog(`getRewardAmount`)
+	getCustomRewards(guildId) {
+		const fn = this.formatFunctionLog(`getCustomRewards`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId`
 			, `all`
 			, { guildId: guildId }
 			, `${fn} Retrieving all packages for guild: ${guildId}`
+		)
+	}
+
+	/**
+	 * Retrieve specific reward package for specific Discord guild
+	 * @param {string} guildId 
+	 * @param {string} packageName 
+	 * @returns {Promise}
+	 */
+	getRewardByName(guildId, packageName){
+		const fn = this.formatFunctionLog(`getRewardByName`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!packageName) throw new TypeError(`${fn} parameter "packageName" cannot be blank.`)
+		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId AND reward_name = $packageName`
+			, `all`
+			, { guildId: guildId, packageName: packageName }
+			, `${fn} Retrieving package ${packageName} for guild: ${guildId}`
 		)
 	}
 
