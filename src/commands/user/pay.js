@@ -48,7 +48,7 @@ module.exports = {
     async userCheck(client, message, locale, arg, target) {
         const userLib = new User(client, message)
         if (target == `sender`) {
-            const userData = await userLib.requestMetadata(message.author, 2, locale)
+            const userData = await userLib.requestMetadata(message.member, 2, locale)
             if (userData.exp.level < this.requirementLevel) return false
             return userData
         } else if (target == `reciever`) {
@@ -97,7 +97,7 @@ module.exports = {
     async run(client, reply, messageRef, locale, {a:amount, u:user}) {
         const sender = await this.userCheck(client, messageRef, locale, null, `sender`)
         if (!sender) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
-        const reciever = await this.userCheck(client, messageRef, locale, user, `reciever`)
+        const reciever = await this.userCheck(client, messageRef, locale, user.username, `reciever`)
         if (reciever == 3) return await reply.send(locale.USER.IS_INVALID)
         if (reciever == 4) return await reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
 
@@ -119,14 +119,14 @@ module.exports = {
         })
 
         const c = new Confirmator(messageRef, reply)
-        await c.setup(messageRef.author.id, confirmation)
+        await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
             if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE,{ followUp: true })
             //  Send artcoins to target user
             client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.amountToSend, userId: reciever.master.id, guildId: messageRef.guild.id })
             //  Deduct artcoins from sender's balance
-            client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.senderAmount, operation: `-`, userId: messageRef.author.id, guildId: messageRef.guild.id })
+            client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.senderAmount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
             await reply.send(``, {
                 customHeader: [`${reciever.master.username} has received your artcoins!♡`, reciever.master.displayAvatarURL()],
                 socket: { target: reciever.master.username },
