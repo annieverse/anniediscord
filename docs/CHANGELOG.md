@@ -1,3 +1,10 @@
+## [9.7.9](https://github.com/annieverse/anniediscord/compare/v9.7.8...v9.7.9) (2024-01-01)
+
+
+### Bug Fixes
+
+* **pay:** cant find user ([0248557](https://github.com/annieverse/anniediscord/commit/024855769cb0460f1260b6e33de81ca24b13fab4))
+
 ## [9.7.8](https://github.com/annieverse/anniediscord/compare/v9.7.7...v9.7.8) (2023-12-31)
 
 
