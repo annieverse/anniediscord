@@ -31,7 +31,7 @@
     "url": "https://github.com/annieverse/anniediscord/issues"
   },
   "dependencies": {
-    "@discordjs/rest": "^1.0.0",
+    "@discordjs/rest": "^2.2.0",
     "@napi-rs/canvas": "^0.1.41",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^11.1.0",
