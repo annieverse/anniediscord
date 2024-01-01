@@ -62,7 +62,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "chai": "^4.3.7",
+    "chai": "^5.0.0",
     "dotenv": "^16.1.4",
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
