@@ -20,6 +20,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async run(client, reply, messageRef, locale){
         const guildShop = await client.db.shop.getGuildShop(messageRef.guild.id)
+        
         if (!guildShop.length) {
             await reply.send(locale.SHOP.NO_ITEMS)
             return await reply.send(locale.SHOP.SETUP_TIPS, {
@@ -44,7 +45,7 @@ module.exports = {
             if (breakpoint <= 1) {
                 str += shopText + `\n\n`
             }
-            str += `╰☆～(ID:${item.item_id}) **${item.name}**\n> ${artcoinsEmoji}**${commanifier(shopMeta.price)}**\n> ${item.description}\n> Available Stock :: ${shopMeta.quantity === `~` ? `unlimited` : commanifier(shopMeta.quantity)}\n`
+            str += `╰☆～(ID:${item.item_id}) **${item.name}**\n> ${artcoinsEmoji}**${commanifier(shopMeta.price)}**\n> ${item.description}\n> Available Stock :: ${shopMeta.quantity === `~` || BigInt(shopMeta.quantity) == 9223372036854775808n ? `unlimited` : commanifier(shopMeta.quantity)}\n`
             if (breakpoint >= 3 || i === (guildShop.length - 1)) {
                 str += `\n╰──────────☆～*:;,．*╯`
                 breakpoint = 0

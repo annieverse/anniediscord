@@ -155,14 +155,12 @@ class Quest {
     async #checkSession() {
         if (this.client.dev) return false
         
-        // if (await this.client.db.redis.exists(this.#sessionId)) {
         if (await this.client.db.databaseUtils.doesCacheExist(this.#sessionId)) {
             await this.reply.send(this.#locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await this.client.getEmoji(`692428748838010970`) } })
             return true
         }
         //  Session up for 2 minutes
-        this.client.db.databaseUtils.setCache(this.#sessionId,1,{EX:60*2})
-        // this.client.db.redis.set(this.#sessionId, 1, {EX: 60 * 2})
+        this.client.db.databaseUtils.setCache(this.#sessionId,`1`,{EX:60*2})
         return false
     }
 

@@ -59,7 +59,7 @@ module.exports = {
         if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
             return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS,{ephemeral:true})
         }
-        client.db.databaseUtils.setCache(cacheId, `value doesnt matter`, { EX: 60 * 30 })
+        client.db.databaseUtils.setCache(cacheId, `1`, { EX: 60 * 30 })
         const userBalance = await client.db.userUtils.getUserBalance(messageRef.member.id, messageRef.guildId)
         const amountToUse = arg.startsWith(`all`) ? userBalance : trueInt(arg)
         //  Returns if user amount input is below the acceptable threeshold
