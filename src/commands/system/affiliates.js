@@ -46,7 +46,6 @@ module.exports = {
             const cacheId = `AFFILIATES_LIST`
             
             if (await client.db.databaseUtils.doesCacheExist(cacheId)) return await client.db.databaseUtils.getCache(cacheId)
-            // if (await client.db.redis.exists(cacheId)) return await client.db.databaseUtils.getCache(cacheId)
             let res = ``
             for (let i = 0; i < source.length; i++) {
                 if (i <= 0) res += `\n╭───────────────────╮\n\n`
@@ -64,8 +63,7 @@ module.exports = {
             }
             //  Cache the result to avoid broadcasting.
             //  Expire until 12 hours
-            client.db.databaseUtils.setCache(cacheId,res,{EX:(60 * 60) * 12})
-            // client.db.redis.set(cacheId, res)
+            client.db.databaseUtils.setCache(cacheId,JSON.stringify(res),{EX:(60 * 60) * 12})
             return res
         }
 }

@@ -556,7 +556,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Store for 1 minute expire
 		this.setCache(key, JSON.stringify(exp), { EX: 60 })
-		// this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
 
@@ -714,7 +713,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Cache for 12 hours
 		this.setCache(key, JSON.stringify(res), { EX: (60 * 60) * 12 })
-		// this.redis.set(key, JSON.stringify(res))
 		return res
 	}
 
@@ -1210,8 +1208,7 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.setCache(key, res, { EX: (60 * 60) * 12 })
-		// this.redis.set(key, JSON.stringify(res), {EX: (60 * 60) * 12})
+		this.setCache(key, JSON.stringify(res), {EX: (60 * 60) * 12})
 		return res
 	}
 
@@ -2031,8 +2028,7 @@ class Shop extends DatabaseUtils {
 			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
-		this.setCache(cacheId, res, { EX: 60 * 60 })
-		// this.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 60})
+		this.setCache(cacheId, JSON.stringify(res), { EX: 60 * 60 })
 		return res
 	}
 
@@ -2095,7 +2091,7 @@ class Shop extends DatabaseUtils {
             INSERT INTO shop(item_id, guild_id, quantity, price)
             VALUES($itemId, $guildId, $quantity, $price)`
 			, `run`
-			, { itemId: itemId, guildId: guildId, quantity: quantity, price: price }
+			, { itemId: itemId, guildId: guildId, quantity: BigInt(quantity), price: price }
 			, `${fn} register item with a GUILD_ID:${guildId}`
 		)
 	}
@@ -2358,8 +2354,7 @@ class Quests extends DatabaseUtils {
 			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
-		this.setCache(cacheId, res, { EX: (60 * 60) * 3 })
-		// this.redis.set(cacheId, JSON.stringify(res), {EX: (60 * 60) * 3})
+		this.setCache(cacheId, JSON.stringify(res), { EX: (60 * 60) * 3 })
 		return res
 	}
 

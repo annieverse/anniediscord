@@ -61,7 +61,6 @@ module.exports = {
         })
         
         if (await client.db.databaseUtils.doesCacheExist(instanceId)) return await reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
-        // if (await client.db.redis.exists(instanceId)) return await reply.send(locale.GACHA.SESSION_STILL_ACTIVE)
         /**
          * --------------------
          * 1.) GIVE PURCHASE OFFER TO USER
@@ -78,7 +77,6 @@ module.exports = {
         c.setup(messageRef.member.id, suggestToBuy)
         //  Timeout in 30 seconds
         client.db.databaseUtils.setCache(instanceId,`1`,{EX:30})
-        // client.db.redis.set(instanceId, `1`, {EX: 30})
         c.onAccept(async () => {
             //  Deduct balance & deliver lucky tickets
             await client.db.databaseUtils.updateInventory({ itemId: 52, value: amountToPay, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
