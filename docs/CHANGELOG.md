@@ -1,3 +1,10 @@
+## [9.7.10](https://github.com/annieverse/anniediscord/compare/v9.7.9...v9.7.10) (2024-01-06)
+
+
+### Bug Fixes
+
+* **rep:** Backend issue ([50771bf](https://github.com/annieverse/anniediscord/commit/50771bfc118a381856ef87b1ec5916c5d9a40a02))
+
 ## [9.7.9](https://github.com/annieverse/anniediscord/compare/v9.7.8...v9.7.9) (2024-01-01)
 
 
