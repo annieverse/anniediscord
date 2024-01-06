@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install
+      - run: npm ci
       - name: Codestyle Test
         run: npm test
       - name: Unit Test
@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20.8.0
-      - run: npm install
+      - run: npm ci
       # Run semantic-release script
       - name: Versionize
         env:
