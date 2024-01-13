@@ -1,3 +1,11 @@
+## [9.7.11](https://github.com/annieverse/anniediscord/compare/v9.7.10...v9.7.11) (2024-01-13)
+
+
+### Bug Fixes
+
+* **gift:** error finding emoji ([cd6380b](https://github.com/annieverse/anniediscord/commit/cd6380bc9ee9802769f96c1a550457e9cd10f046))
+* **makereward:** unable to see made ones ([8b53a3c](https://github.com/annieverse/anniediscord/commit/8b53a3caa46a4b97dedf8699e38dc02370d88a63))
+
 ## [9.7.10](https://github.com/annieverse/anniediscord/compare/v9.7.9...v9.7.10) (2024-01-06)
 
 
