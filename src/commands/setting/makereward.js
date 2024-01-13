@@ -91,7 +91,7 @@ module.exports = {
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
         // Get all currently available packages for the guild to test against, so there are none with duplicate names.
-        const packages = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages.length >= 25) return await reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
 
         const packages_collection = new Collection()
@@ -730,7 +730,7 @@ module.exports = {
 
     },
     async listPackages(client, reply, interaction, options, locale) {
-        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages_raw.length < 1) return await reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
@@ -787,7 +787,7 @@ module.exports = {
          */
         if (interaction.options.getSubcommand() !== `delete`) return
         const focusedValue = interaction.options.getFocused()
-        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages_raw.length < 1) return await interaction.respond(`I'm sorry you dont have any packages made currently`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
