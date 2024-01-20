@@ -1,3 +1,10 @@
+## [9.7.12](https://github.com/annieverse/anniediscord/compare/v9.7.11...v9.7.12) (2024-01-20)
+
+
+### Bug Fixes
+
+* **AR:** deletion not working ([d4ad03f](https://github.com/annieverse/anniediscord/commit/d4ad03fb26c68257516ea8048f1ab2c466dcb40b))
+
 ## [9.7.11](https://github.com/annieverse/anniediscord/compare/v9.7.10...v9.7.11) (2024-01-13)
 
 
