@@ -123,7 +123,8 @@ module.exports = async (client={}, message={}) => {
         const levelZeroErrors = [
             `Missing Permissions`,
             `Unsupported image type`,
-            `unsupported file type: undefined`
+            `unsupported file type: undefined`,
+            `Missing Access`
         ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache

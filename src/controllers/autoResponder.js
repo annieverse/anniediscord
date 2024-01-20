@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
     const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
     if (ars.length <= 0) return 
     //  Reject if context doesn't match with guild's any registered ARs.
-    const foundArs = ars.filter(ar => ar.trigger === message.content)
+    const foundArs = ars.filter(ar => ar.trigger == message.content)
     if (foundArs.length <= 0) return 
     //  15s cooldown to prevent spam
     const { ar_id, response } = foundArs[0]
