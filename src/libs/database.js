@@ -1624,7 +1624,7 @@ class AutoResponder extends DatabaseUtils {
 			DELETE FROM autoresponders
 			WHERE guild_id = $guildId`
 			, `run`
-			, [guildId]
+			, {guildId: guildId}
 			, `${fn} Deleting all ARs from GUILD_ID:${guildId}`
 		)
 	}
