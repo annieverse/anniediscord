@@ -1,3 +1,10 @@
+# [9.8.0](https://github.com/annieverse/anniediscord/compare/v9.7.12...v9.8.0) (2024-01-21)
+
+
+### Features
+
+* **welcomer:** setup multiple responses ([673af14](https://github.com/annieverse/anniediscord/commit/673af143fa6358ff54f9d43db1f4221e80da5194))
+
 ## [9.7.12](https://github.com/annieverse/anniediscord/compare/v9.7.11...v9.7.12) (2024-01-20)
 
 
