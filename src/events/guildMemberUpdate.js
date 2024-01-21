@@ -61,10 +61,10 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
             /**
              * Handle multiple channels
              */
-            if (configs.get(`WELCOMER_ADDITIONAL_CHANNELS`)) {
-                let additional_channels = configs.get(`WELCOMER_ADDITIONAL_CHANNELS`).value
+            if (configs.get(`WELCOMER_ADDITIONAL_CHANNELS`).value) {
+                let additionalChannels = configs.get(`WELCOMER_ADDITIONAL_CHANNELS`).value
 
-                let channelsWithText = new Collection(additional_channels.map((obj) => [obj.channel, obj.text]))
+                let channelsWithText = new Collection(additionalChannels.map((obj) => [obj.channel, obj.text]))
 
                 for (const [channel, text] of channelsWithText) {
                     if (newMember.permissionsIn(channel).has(`ViewChannel`)) {
