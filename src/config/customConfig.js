@@ -135,6 +135,28 @@ module.exports = {
             },
             {
                 /**
+                 *  Allow for multiple channels to send welcomer message to. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_ADDITIONAL_CHANNELS`,
+                description: `Allow for multiple channels to send welcomer message to`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: null
+            },
+            {
+                /**
+                 *  Wait for user to finish onboarding before sending message. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_ONBOARDWAIT`,
+                description: `Allow for multiple channels to send welcomer message to`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
                  *  A module that enables Annie's Experience Point System
                  *  @type {object}
                  */

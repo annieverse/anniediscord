@@ -15,7 +15,9 @@ module.exports = function eventsController(annie) {
     annie.on(Events.Debug,l => annie.logger.info(l))
     annie.on(Events.Warn,l => annie.logger.info(l))
     annie.on(Events.ShardReady,(id, unavailableGuilds) => reqEvent(`shardReady`)(annie, id, unavailableGuilds))
-        //  Events below this point is only available in the production
+    annie.on(Events.GuildMemberAdd, (member) => reqEvent(`guildMemberAdd`)(annie, member))    
+    annie.on(Events.GuildMemberUpdate, (oldMember,newMember) => reqEvent(`guildMemberUpdate`)(annie, oldMember,newMember))
+    //  Events below this point is only available in the production
     if (annie.dev) return
     annie.on(Events.MessageDelete, (message) => reqEvent(`messageDelete`)(annie, message))
     annie.on(Events.MessageBulkDelete, (messages, channel) => reqEvent(`messageDeleteBulk`)(annie, messages, channel))
@@ -27,6 +29,6 @@ module.exports = function eventsController(annie) {
     annie.on(Events.ChannelCreate, (channel) => reqEvent(`channelCreate`)(annie, channel))
     annie.on(Events.GuildBanAdd, (guild, user) => reqEvent(`guildBanAdd`)(annie, guild, user))
     annie.on(Events.GuildBanRemove, (guild, user) => reqEvent(`guildBanRemove`)(annie, guild, user))
-    annie.on(Events.GuildMemberAdd, (member) => reqEvent(`guildMemberAdd`)(annie, member))
-    annie.on(Events.GuildMemberUpdate, (oldMember,newMember) => reqEvent(`guildMemberUpdate`)(annie, oldMember,newMember))
+    // annie.on(Events.GuildMemberAdd, (member) => reqEvent(`guildMemberAdd`)(annie, member))
+    // annie.on(Events.GuildMemberUpdate, (oldMember,newMember) => reqEvent(`guildMemberUpdate`)(annie, oldMember,newMember))
 }

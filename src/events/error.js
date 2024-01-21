@@ -7,7 +7,8 @@ module.exports = function DiscordError(client, e) {
         const levelZeroErrors = [
             `Missing Permissions`,
             `Unsupported image type`,
-            `unsupported file type: undefined`
+            `unsupported file type: undefined`,
+            `Missing access`
         ]
         const lvl0Test = levelZeroErrors.includes(error_message)
         const lvl0ChanCacheTest = !c.channels.cache.has(`797521371889532988`)
@@ -16,5 +17,5 @@ module.exports = function DiscordError(client, e) {
         lvl0Test ? lvl1ChanCacheTest ? c.channels.fetch(`848425166295269396`).then(channel => channel.send(ERROR_MESSAGE)) : c.channels.cache.get(`848425166295269396`).send(ERROR_MESSAGE) : lvl0ChanCacheTest ? c.channels.fetch(`797521371889532988`).then(channel => channel.send(ERROR_MESSAGE)) : c.channels.cache.get(`797521371889532988`).send(ERROR_MESSAGE)
         return
     }
-    return client.logger.error(`Ops, something went wrong > ${e}`)
+    return client.logger.error(`Ops, something went wrong > ${e}\n${e.stack}`)
 }
