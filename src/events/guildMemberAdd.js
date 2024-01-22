@@ -33,7 +33,7 @@ module.exports = async function guildMemberAdd(client, member) {
      *  -------------------------------------------------------
      */
     if (configs.get(`WELCOMER_MODULE`).value) {
-        if (configs.get(`WELCOMER_ONBOARDWAIT`).value) return
+        if ((await member.guild.fetchOnboarding()).enabled && configs.get(`WELCOMER_ONBOARDWAIT`).value) return
         //  Prepare welcomer target channel
         let welcomerChannel = configs.get(`WELCOMER_CHANNEL`) 
         let getTargetWelcomerChannel = welcomerChannel.value

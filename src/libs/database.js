@@ -198,7 +198,7 @@ class DatabaseUtils {
 	 * @return {boolean}
 	 */
 	delCache(key = ``) {
-		logger.database(`[Redis.clearCache] cleared cache in key '${key}'.`)
+		logger.database(`[Redis.delCache] cleared cache in key '${key}'.`)
 		return this.redis.del(key)
 	}
 
@@ -1592,7 +1592,7 @@ class AutoResponder extends DatabaseUtils {
 			const updatedCache = cache.filter(node => node.ar_id !== id)
 			//  Delete whole array if updatedCache is empty
 			if (updatedCache.length <= 0) {
-				this.clearCache(cacheID)
+				this.delCache(cacheID)
 			}
 			//  Else, just update the array
 			else {
@@ -1619,12 +1619,12 @@ class AutoResponder extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`clearAutoResponders`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Clear ARs in cache
-		this.clearCache(`REGISTERED_AR@${guildId}`)
+		this.delCache(`REGISTERED_AR@${guildId}`)
 		return this._query(`
 			DELETE FROM autoresponders
 			WHERE guild_id = $guildId`
 			, `run`
-			, [guildId]
+			, {guildId: guildId}
 			, `${fn} Deleting all ARs from GUILD_ID:${guildId}`
 		)
 	}
