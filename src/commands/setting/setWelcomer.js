@@ -405,7 +405,7 @@ module.exports = {
         const PARENT_CONFIG_TEXT = this.guildConfigurations.get(`WELCOMER_TEXT`)
 
         if (!PARENT_CONFIG_CHANNEL || !PARENT_CONFIG_TEXT) return await reply.send(locale.SETWELCOMER.NO_DEFAULT_CHANNEL)
-        let channels_raw = !this.guildConfigurations.get(this.selectedModule) ? [] : this.guildConfigurations.get(this.selectedModule).value
+        let channels_raw = !this.guildConfigurations.get(this.selectedModule).value ? [] : this.guildConfigurations.get(this.selectedModule).value
         let channelsWithText = new Collection(channels_raw.map((obj) => [obj.channel, obj.text]))
         channelsWithText.set(PARENT_CONFIG_CHANNEL.value, PARENT_CONFIG_TEXT.value)
 
