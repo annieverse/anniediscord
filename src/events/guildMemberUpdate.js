@@ -40,7 +40,7 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
             }
         }
 
-        if (!configs.get(`WELCOMER_ONBOARDWAIT`).value) return
+        if (!configs.get(`WELCOMER_ONBOARDWAIT`).value && (await newMember.guild.fetchOnboarding()).enabled) return
         //  Prepare welcomer target channel
         let getTargetWelcomerChannel = configs.get(`WELCOMER_CHANNEL`).value
         //  Prepare welcomer banner img
