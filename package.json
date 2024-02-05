@@ -56,7 +56,7 @@
     "pino": "^8.14.1",
     "pixiv-api-client": "^0.25.0",
     "pixiv-img": "^1.0.0",
-    "redis": "^4.6.10",
+    "redis": "^4.6.13",
     "string-similarity": "^4.0.2",
     "superagent": "^8.0.0",
     "uuid": "^9.0.0"
