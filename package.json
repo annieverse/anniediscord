@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {
-    "node": ">=20.8.0",
+    "node": ">=20.8.1",
     "npm": "^10.7.0"
   },
   "contributors": [
