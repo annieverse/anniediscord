@@ -1,5 +1,5 @@
 # PRIVACY POLICY
-##### Last updated and effective: 21 September 2022
+##### Last updated and effective: 10 May 2024
 
 The use of this application ("Bot") in a server requires the collection of some specific user data ("Data"). The Data collected includes, but is not limited to Discord user ID values. Use of the Bot is considered an agreement to the terms of this Policy. 
 
@@ -7,11 +7,11 @@ The use of this application ("Bot") in a server requires the collection of some 
 
 We do not store any personally identifiable data.
 
-We may store partial message content, snowflake IDs, and displayable username for any commands you send to provide our service.
+We may store partial message content, snowflake IDs, and displayable usernames for any commands you send to provide our service.
 
 ## Storage of Data
 
-Data is stored in a SQLite database. The database is secured to prevent external access, however no guarantee is provided and the Bot owners assume no liability for the unintentional or malicious breach of Data. In the event of an unauthorised Data access, users will be notified through the Discord client application.
+Data is stored in a PostgreSQL database. The database is secured to prevent external access, however, no guarantee is provided and the Bot owners assume no liability for the unintentional or malicious breach of Data. In the event of unauthorized Data access, users will be notified through the Discord client application.
 
 ## Access to Data
 
@@ -27,7 +27,7 @@ Data is stored for as long as it is needed for functionality.
 
 ## HOW CAN I CONTACT YOU IF I HAVE CONCERNS ABOUT YOUR BOT?
 
-If you have any concerns you can contact us in our support server [Support Server](https://discord.gg/HjPHCyG346)
+If you have any concerns you can contact us on our support server [Support Server](https://discord.gg/HjPHCyG346)
 
 ## HOW CAN I REQUEST DATA TO BE REMOVED?
 
