@@ -18,7 +18,7 @@ config.exp = {
 	 *  @default 10 - 15 exp
 	 *  @type {array}
 	 */
-	baseAmount: [10, 15],
+	baseAmount: [1, 5],
 
 	/**
 	 *  This will set the base number for exp multiplier.
@@ -47,7 +47,7 @@ config.currency = {
 	 *  @default 1 - 5 Artcoins
 	 *  @type {array}
 	 */
-	baseAmount: [1, 5],
+	baseAmount: [10, 15],
 
 	/**
 	 *  This will set the base number for currency multiplier.
