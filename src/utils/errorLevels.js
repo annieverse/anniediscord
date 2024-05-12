@@ -1,4 +1,4 @@
-export const levelZeroErrors = [
+module.exports = levelZeroErrors = [
     `Missing Access`,
     `Missing Permissions`,
     `Unsupported image type`,
