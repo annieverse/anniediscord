@@ -1,6 +1,7 @@
 const {
     InteractionType
 } = require(`discord.js`)
+const { levelZeroErrors } = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 module.exports = async (client, interaction) => {
     // const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
@@ -50,11 +51,11 @@ module.exports = async (client, interaction) => {
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(userId)
         const date = new Date()
-        const levelZeroErrors = [
-            `Missing Permissions`,
-            `Unsupported image type`,
-            `unsupported file type: undefined`
-        ]
+        // const levelZeroErrors = [
+        //     `Missing Permissions`,
+        //     `Unsupported image type`,
+        //     `unsupported file type: undefined`
+        // ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)

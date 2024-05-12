@@ -1,15 +1,16 @@
+const { levelZeroErrors } = require(`../utils/errorLevels.js`)
 module.exports = function DiscordError(client, e) {
     if (!client.dev) return
     //  Report to support server
     client.shard.broadcastEval(formatedErrorLog, { context: { error_message: e.message } })
     function formatedErrorLog(c, { error_message }) {
         const date = new Date()
-        const levelZeroErrors = [
-            `Missing Permissions`,
-            `Unsupported image type`,
-            `unsupported file type: undefined`,
-            `Missing access`
-        ]
+        // const levelZeroErrors = [
+        //     `Missing Permissions`,
+        //     `Unsupported image type`,
+        //     `unsupported file type: undefined`,
+        //     `Missing access`
+        // ]
         const lvl0Test = levelZeroErrors.includes(error_message)
         const lvl0ChanCacheTest = !c.channels.cache.has(`797521371889532988`)
         const lvl1ChanCacheTest = !c.channels.cache.has(`848425166295269396`)
