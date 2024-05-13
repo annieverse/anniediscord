@@ -34,7 +34,7 @@ class Currency extends Points {
      *  @type {number}
      */
     get baseGainedCurrency() {
-        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{});
+        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{})
     	const [min, max] = configurations.CHAT_CURRENCY
     	return this.randomize(min, max)
     }

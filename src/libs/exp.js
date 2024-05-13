@@ -52,7 +52,7 @@ class Experience {
      *  @type {number}
      */
     get defaultGain() {
-        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{});
+        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{})
         const [ max, min ] = configurations.CHAT_EXP
     	return Math.floor(Math.random() * (max - min + 1) + min)
     }

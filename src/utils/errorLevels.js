@@ -1,4 +1,4 @@
-module.exports = levelZeroErrors = [
+module.exports = [
     `Missing Access`,
     `Missing Permissions`,
     `Unsupported image type`,
