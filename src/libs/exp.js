@@ -1,6 +1,7 @@
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
 const { AttachmentBuilder } = require(`discord.js`) 
+const defaultConfigs = require(`../config/customConfig.js`)
 
 /**
  * @typedef {object} MemberExperience
@@ -51,7 +52,8 @@ class Experience {
      *  @type {number}
      */
     get defaultGain() {
-        const [ max, min ] = [ 10, 15 ]
+        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{})
+        const [ max, min ] = configurations.CHAT_EXP
     	return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
