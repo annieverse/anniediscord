@@ -3,9 +3,9 @@ const {
 } = require(`discord.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 module.exports = async (client, interaction) => {
-    // const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    // const locale = client.localizer.getTargetLocales(userData.lang)
-    const locale = client.locales.en
+    const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
+    const locale = client.localizer.getTargetLocales(userData.lang)
+    // const locale = client.locales.en
     const reply = client.responseLibs(interaction, false, locale)
     try {
         await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
