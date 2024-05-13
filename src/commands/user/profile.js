@@ -43,7 +43,8 @@ module.exports = {
         })
         const image = (await new GUI(user, client).build()).png()
         fetching.delete()
-        return await reply.send(locale.COMMAND.TITLE, {
+        // Followup tips for newcomer
+        return reply.send(locale.COMMAND.TITLE + (!user.usedCover.isSelfUpload ? `\n` + locale.PROFILECARD.NEWCOMER_TIPS : ``), {
             socket: {
                 user: user.master.username,
                 emoji: await client.getEmoji(`692428927620087850`),

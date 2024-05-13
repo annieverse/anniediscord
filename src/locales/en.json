@@ -457,6 +457,7 @@
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "FETCHING": "{{emoji}} *Hold on- your profile card still in build ...*",
+        "NEWCOMER_TIPS": "Friendly reminder, you can spice up your card with **`setcover`** command!",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
     },
     "PORTFOLIOCARD": {

@@ -457,6 +457,7 @@
   "PROFILECARD": {
     "INVALID_USER": "Désolé, je n'ai pas pu trouver cet utilisateur.",
     "FETCHING": "{{emoji}} *Attendez un instant - votre carte de profil est en cours de construction...*",
+    "NEWCOMER_TIPS": "Rappel amical, vous pouvez pimenter votre profil avec la commande **`setcover`** !",
     "HEADER": "<:Annie_Smug:523686816545636352> **| Carte de profil pour {0}**"
   },
   "PORTFOLIOCARD": {
