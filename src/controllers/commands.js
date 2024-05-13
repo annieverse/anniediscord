@@ -122,12 +122,6 @@ module.exports = async (client={}, message={}) => {
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(authorId)
         const date = new Date()
-        // const levelZeroErrors = [
-        //     `Missing Permissions`,
-        //     `Unsupported image type`,
-        //     `unsupported file type: undefined`,
-        //     `Missing Access`
-        // ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
