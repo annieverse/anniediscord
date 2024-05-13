@@ -506,7 +506,7 @@ module.exports = {
                 description: `The arbritrary amount of exp gained from chat activity`,
                 customizable: true,
                 allowedTypes: [`array`],
-                value: [1, 5]
+                value: [10, 15]
             },
             {
                 /**
@@ -517,7 +517,7 @@ module.exports = {
                 description: `The arbritrary amount of currency gained from chat activity`,
                 customizable: true,
                 allowedTypes: [`array`],
-                value: [10, 15]
+                value: [1, 5]
             },
             {
                 /**
