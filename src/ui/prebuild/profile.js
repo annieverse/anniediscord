@@ -69,6 +69,9 @@ class UI {
 		//  Cover
 		await card.addBackgroundLayer(this.user.usedCover.alias, {
 			isSelfUpload: this.user.usedCover.isSelfUpload,
+			gradient: !this.user.usedCover.isSelfUpload,
+			gradientOpacity: 0.9,
+			gradientHeight: Math.floor(card.height/2.5),
 			minHeight: 197
 		})
 		card.canv.setColor(card.color.main)
