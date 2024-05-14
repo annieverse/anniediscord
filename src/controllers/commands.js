@@ -25,7 +25,7 @@ module.exports = async (client={}, message={}) => {
     // Handle localization
     // let locale = client.locales.en
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    const locale = client.localizer.getTargetLocales(userData.lang)
+    const locale = client.getTargetLocales(userData.lang)
     // locale.currentLang = userData.lang
     let reply = client.responseLibs(message, false, locale)
     // Handle non-command-allowed channels

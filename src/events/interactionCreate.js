@@ -5,7 +5,7 @@ const { levelZeroErrors } = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 module.exports = async (client, interaction) => {
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    const locale = client.localizer.getTargetLocales(userData.lang)
+    const locale = client.getTargetLocales(userData.lang)
     // const locale = client.locales.en
     const reply = client.responseLibs(interaction, false, locale)
     try {

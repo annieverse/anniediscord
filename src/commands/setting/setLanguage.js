@@ -40,7 +40,7 @@ module.exports = {
           }
         })
       }
-      locale = client.localizer.getTargetLocales(targetLocale)
+      locale = client.getTargetLocales(targetLocale)
       await client.db.userUtils.updateUserLocale(targetLocale, message.author.id)
       return reply.send(locale.SETLANGUAGE.SUCCESSFUL, {
           status: `success`,
@@ -68,7 +68,7 @@ module.exports = {
         }
       })
     }
-    locale = client.localizer.getTargetLocales(targetLocale)
+    locale = client.getTargetLocales(targetLocale)
     await client.db.userUtils.updateUserLocale(targetLocale, interaction.member.id)
     return reply.send(locale.SETLANGUAGE.SUCCESSFUL, {
       status: `success`,
