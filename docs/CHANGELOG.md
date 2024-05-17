@@ -1,3 +1,10 @@
+## [9.8.1](https://github.com/annieverse/anniediscord/compare/v9.8.0...v9.8.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* **pay:** invaild user ([ef342bf](https://github.com/annieverse/anniediscord/commit/ef342bf435c9d1a43fe6bc674c5c02a59f1731d0))
+
 # [9.8.0](https://github.com/annieverse/anniediscord/compare/v9.7.12...v9.8.0) (2024-01-21)
 
 
