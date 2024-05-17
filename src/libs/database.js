@@ -72,7 +72,7 @@ class Database {
 		redisClient.on(`error`, err => {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
-		})		
+		})
 		redisClient.on(`connect`, async () => {
 			logger.database(`REDIS <CONNECTED>`)
 			this.redis = redisClient
@@ -188,7 +188,7 @@ class DatabaseUtils {
 		/**
 		 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, GETSET, it is possible that in future versions of Redis these commands will be deprecated and finally removed.
 		 */
-		if (typeof(value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
+		if (typeof (value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
 		return this.redis.set(key, value, options)
 	}
 
@@ -1104,7 +1104,7 @@ class UserUtils extends DatabaseUtils {
 	async getUserLocale(userId) {
 		const fn = this.formatFunctionLog(`getUserLocale`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
-		return this._query(`
+		const query = this._query(`
 			SELECT lang
 			FROM users
 			WHERE user_id = $userId`
@@ -1112,6 +1112,18 @@ class UserUtils extends DatabaseUtils {
 			, { userId: userId }
 			, `${fn} fetch locale for USER_ID:${userId}`
 		)
+		if (!query) {
+			this._query(`
+				UPDATE users
+				SET lang = $lang
+				WHERE user_id = $userId`
+				, `run`
+				, { lang: `en`, userId: userId }
+				, `${fn} Updated locale for USER_ID:${userId}`
+			)
+			return { lang: `en` }
+		}
+		return query
 	}
 
 	/**
@@ -1128,7 +1140,7 @@ class UserUtils extends DatabaseUtils {
 			UPDATE users
 			SET lang = $lang
 			WHERE user_id = $userId`
-			, `get`
+			, `run`
 			, { lang: locale, userId: userId }
 			, `${fn} Updated locale for USER_ID:${userId} to ${locale}`
 		)
@@ -1208,7 +1220,7 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.setCache(key, JSON.stringify(res), {EX: (60 * 60) * 12})
+		this.setCache(key, JSON.stringify(res), { EX: (60 * 60) * 12 })
 		return res
 	}
 
@@ -1624,7 +1636,7 @@ class AutoResponder extends DatabaseUtils {
 			DELETE FROM autoresponders
 			WHERE guild_id = $guildId`
 			, `run`
-			, {guildId: guildId}
+			, { guildId: guildId }
 			, `${fn} Deleting all ARs from GUILD_ID:${guildId}`
 		)
 	}
@@ -1812,7 +1824,7 @@ class CustomRewards extends DatabaseUtils {
 	 * @param {string} packageName 
 	 * @returns {Promise}
 	 */
-	getRewardByName(guildId, packageName){
+	getRewardByName(guildId, packageName) {
 		const fn = this.formatFunctionLog(`getRewardByName`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!packageName) throw new TypeError(`${fn} parameter "packageName" cannot be blank.`)

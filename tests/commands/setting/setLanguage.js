@@ -85,7 +85,7 @@
 
 //       await setlanguageCommand.execute(client, reply, message, arg, locale);
 
-//       expect(client.localizer.getTargetLocales).to.be.calledOnceWith('en');
+//       expect(client.getTargetLocales).to.be.calledOnceWith('en');
 //       expect(client.db.userUtils.updateUserLocale).to.be.calledOnceWith('en', '123');
 //       expect(reply.send).to.be.calledOnceWith(locale.SETLANGUAGE.SUCCESSFUL, {
 //         status: 'success',
@@ -176,7 +176,7 @@
 
 //       await setlanguageCommand.Iexecute(client, reply, interaction, options, locale);
 
-//       expect(client.localizer.getTargetLocales).to.be.calledOnceWith('en');
+//       expect(client.getTargetLocales).to.be.calledOnceWith('en');
 //       expect(client.db.userUtils.updateUserLocale).to.be.calledOnceWith('en', '456');
 //       expect(reply.send).to.be.calledOnceWith(locale.SETLANGUAGE.SUCCESSFUL, {
 //         status: 'success',

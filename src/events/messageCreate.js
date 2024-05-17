@@ -60,9 +60,9 @@ module.exports = (client, message) => {
         if (!message.guild.configs.get(`EXP_MODULE`).value) return
         const chatExpBase = message.guild.configs.get(`CHAT_EXP`).value
         
-        // const userData = await client.db.userUtils.getUserLocale(message.author.id)
-        // const locale = client.localizer.getTargetLocales(userData.lang)
-        const locale = client.locales.en
+        // const locale = client.locales.en
+        const userData = await client.db.userUtils.getUserLocale(message.author.id)
+        const locale = client.getTargetLocales(userData.lang)
 
         client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
