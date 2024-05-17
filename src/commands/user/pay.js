@@ -92,12 +92,12 @@ module.exports = {
         })
         const amountToSend = options.getInteger(`amount`)
         const targetUser = options.getUser(`user`)
-        return await this.run(client, reply, interaction, locale, {a:amountToSend, u:targetUser})
+        return await this.run(client, reply, interaction, locale, {a:amountToSend, u:targetUser.username})
     },
     async run(client, reply, messageRef, locale, {a:amount, u:user}) {
         const sender = await this.userCheck(client, messageRef, locale, null, `sender`)
         if (!sender) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
-        const reciever = await this.userCheck(client, messageRef, locale, user.username, `reciever`)
+        const reciever = await this.userCheck(client, messageRef, locale, user, `reciever`)
         if (reciever == 3) return await reply.send(locale.USER.IS_INVALID)
         if (reciever == 4) return await reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
 
