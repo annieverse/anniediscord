@@ -2,8 +2,8 @@
 
 ![annie](https://i.ibb.co.com/5swkj7k/annie-public-banner-final.png)
 
-## bring the aesthetic environment to your server  ₊˚⊹
-customizable levelling and economy system • create your very own server's shop and items •  minimalistic profile, level, and relationship cards • other basic server management modules
+### bring the minimalist-aesthetic vibe to your server  ₊˚⊹
+customizable levelling and economy system ♡  create your very own server's shop and items ♡ minimalistic profile, level, and relationship cards ♡  other basic server management modules
 
 
 wants to get in touch or share feedback to improve annie? have a visit to her [support server](https://discord.gg/HjPHCyG346)!
