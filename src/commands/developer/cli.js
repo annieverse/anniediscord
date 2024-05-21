@@ -1,6 +1,6 @@
 "use strict"
-/* eslint-disable no-unused-vars*/
-/* eslint-disable no-useless-escape*/
+ 
+ 
 const cmd = require(`node-cmd`)
     /**
      * 	Running terminal command

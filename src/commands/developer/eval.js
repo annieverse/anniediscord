@@ -1,6 +1,6 @@
 "use strict"
-/* eslint-disable no-unused-vars*/
-/* eslint-disable no-useless-escape*/
+ 
+ 
 /**
  * 	Evaluate line of code on air
  * 	@author klerikdust

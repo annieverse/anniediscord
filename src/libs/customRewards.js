@@ -6,8 +6,8 @@ const {
 
 class rewardPackageStruct {
 
-    constructor(name) {
-        this.name = `default` || name
+    constructor(name = `default`) {
+        this.name = name
     }
 
     /**
