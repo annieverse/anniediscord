@@ -1,3 +1,10 @@
+## [9.8.2](https://github.com/annieverse/anniediscord/compare/v9.8.1...v9.8.2) (2024-05-22)
+
+
+### Bug Fixes
+
+* **experienceLibs:** unable to send rank up message ([9ca2dee](https://github.com/annieverse/anniediscord/commit/9ca2dee30962c369c7d31c7bddfcd361035523a2))
+
 ## [9.8.1](https://github.com/annieverse/anniediscord/compare/v9.8.0...v9.8.1) (2024-05-17)
 
 
