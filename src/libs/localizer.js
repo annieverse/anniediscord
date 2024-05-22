@@ -30,4 +30,9 @@ const getTargetLocales = (targetLang, fallbackLang = `en`) => {
   return locales[TLang]
 }
 
-module.exports = { getTargetLocales }
+const availableLocales = {
+    "english":`en`,
+    "french":`fr`
+}
+
+module.exports = { getTargetLocales, availableLocales }

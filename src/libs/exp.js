@@ -19,7 +19,7 @@ const defaultConfigs = require(`../config/customConfig.js`)
 class Experience {
     //  For the 'user' parameter it is recommended to use GuildMember object instead of raw user.
     //  'channel' parameter as the target channel when user leveled up.
-    constructor(client, user, guild, channel) {
+    constructor(client, user, guild, channel, locale) {
         /**
          * Current bot client instance.
          * @type {Client}
@@ -45,6 +45,11 @@ class Experience {
          * @type {string}
          */
         this.instanceId = `[EXP_LIBS_${this.guild.id}@${this.user.id}]` 
+        /**
+         * User's language
+         * @type {Object}
+         */
+        this.locale = locale
 	}
     
     /**
@@ -141,7 +146,7 @@ class Experience {
     async levelUpPerks(newLevel=0) {
         //  Parsing content for level-up message
         const img = await new GUI(await this._getMinimalUserMetadata(), newLevel).build()
-        const defaultText = this.client.locales.en.LEVELUP.DEFAULT_RESPONSES
+        const defaultText = this.locale.LEVELUP.DEFAULT_RESPONSES
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
         const messageComponents = {content: displayedText, files:[new AttachmentBuilder(img, `LEVELUP_${this.user.id}.jpg`)]}
