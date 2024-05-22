@@ -34,7 +34,7 @@ class Quest {
         this.#nextQuestId = id
         if (!this.#nextQuestId) {
             this.#nextQuestId = this.#generateNextQuestId()
-            this.client.db.quests.updateUserNextActiveQuest(this.#user.id, this.#messageRef.guild.id, this.#nextQuestId)
+            this.client.db.quests.updateUserNextActiveQuest(this.#user.id, this.#messageRef.guild.id, this.#nextQuestId, this.#locale.lang)
         }
         this.#setActiveQuest = this.#nextQuestId
     }
@@ -131,8 +131,8 @@ class Quest {
     updateRewards() {
         //  Update reward, user quest data and store activity to quest_log activity
         this.client.db.databaseUtils.updateInventory({ itemId: 52, value: this.#questReward, guildId: this.#messageRef.guild.id, userId: this.#user.id })
-        this.client.db.quests.updateUserQuest(this.#user.id, this.#messageRef.guild.id, this.#newNextQuestId)
-        this.client.db.quests.recordQuestActivity(this.#nextQuestId, this.#user.id, this.#messageRef.guild.id, this.#userAnswer)
+        this.client.db.quests.updateUserQuest(this.#user.id, this.#messageRef.guild.id, this.#newNextQuestId, this.#locale.lang)
+        this.client.db.quests.recordQuestActivity(this.#nextQuestId, this.#user.id, this.#messageRef.guild.id, this.#userAnswer, this.#locale.lang)
         this.cancelSession()
     }
 

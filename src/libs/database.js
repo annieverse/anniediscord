@@ -2377,19 +2377,22 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserNextActiveQuest(userId, guildId, nextQuestId) {
+	updateUserNextActiveQuest(userId, guildId, nextQuestId, lang) {
 		const fn = this.formatFunctionLog(`updateUserNextActiveQuest`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
-			SET next_quest_id = $nextQuestId
+			SET 
+				next_quest_id = $nextQuestId,
+				lang = $lang
 			WHERE
 				user_id = $userId
 				AND guild_id = $guildId`
 			, `run`
-			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId, lang: lang }
 			, `${fn} Updating next active quest ID for ${userId}@${guildId}`
 		)
 	}
@@ -2401,21 +2404,23 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [nextQuestId] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserQuest(userId, guildId, nextQuestId) {
+	updateUserQuest(userId, guildId, nextQuestId, lang) {
 		const fn = this.formatFunctionLog(`updateUserQuest`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
 			SET 
 				updated_at = CURRENT_TIMESTAMP,
-				next_quest_id = $nextQuestId
+				next_quest_id = $nextQuestId,
+				lang = $lang
 			WHERE
 				user_id = $userId
 				AND guild_id = $guildId`
 			, `run`
-			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId, lang: lang }
 			, `${fn} Updating ${userId}@${guildId} quest data`
 		)
 	}
@@ -2428,22 +2433,24 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [answer=``] the answer used to clear the quest
 	   * @return {QueryResult}
 	   */
-	recordQuestActivity(questId, userId, guildId, answer) {
+	recordQuestActivity(questId, userId, guildId, answer, lang) {
 		const fn = this.formatFunctionLog(`recordQuestActivity`)
 		if (!questId) throw new TypeError(`${fn} parameter "questId" cannot be blank.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!answer) throw new TypeError(`${fn} parameter "answer" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			INSERT INTO quest_log(
 				guild_id,
 				quest_id,
 				user_id,
-				answer
+				answer,
+				lang
 			)
-			VALUES($guildId, $questId, $userId, $answer)`
+			VALUES($guildId, $questId, $userId, $answer, $lang)`
 			, `run`
-			, { questId: questId, userId: userId, guildId: guildId, answer: answer }
+			, { questId: questId, userId: userId, guildId: guildId, answer: answer, lang: lang }
 			, `${fn} Storing ${userId}@${guildId} quest's activity to quest_log table`
 		)
 	}
