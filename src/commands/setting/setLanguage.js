@@ -56,7 +56,7 @@ module.exports = {
     const filtered = choices.filter(choice => choice.startsWith(focusedValue))
 
     function capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
+      return string.charAt(0).toUpperCase() + string.slice(1)
     }
     await interaction.respond(
       filtered.map(choice => ({ name: capitalizeFirstLetter(choice), value: client.availableLocales[choice] })),
