@@ -36,7 +36,22 @@ class Quest {
             this.#nextQuestId = this.#generateNextQuestId()
             this.client.db.quests.updateUserNextActiveQuest(this.#user.id, this.#messageRef.guild.id, this.#nextQuestId)
         }
-        this.#activeQuest = this.#quests.find(node => node.quest_id === this.#nextQuestId)
+        this.#setActiveQuest = this.#nextQuestId
+    }
+
+    set #setActiveQuest(a) {
+        if (!this.#questlocalePool[this.#locale.lang].length) {
+            this.#activeQuest = this.#questlocalePool.en.find(node => node.quest_id === a)
+        } else {
+            let attemptedQuest
+            try {
+                attemptedQuest = this.#questlocalePool[this.#locale.lang].find(node => node.quest_id === a)
+            } catch (error) {
+                attemptedQuest = this.#questlocalePool.en.find(node => node.quest_id === a)
+            }
+            if (attemptedQuest === undefined) attemptedQuest = this.#questlocalePool.en.find(node => node.quest_id === a)
+            this.#activeQuest = attemptedQuest
+        }
     }
 
     set #setUserAnswer(a) {
@@ -89,9 +104,10 @@ class Quest {
 
         this.#newNextQuestId = this.#generateNextQuestId()
         this.#setNextQuestId = this.#userData.quests.next_quest_id
+
         this.#questTitle = this.#langQuestProp(`name`)
         this.#questDescription = this.#langQuestProp(`description`)
-        this.#setQuestAnswer = this.#langQuestProp(`answer`)
+        this.#setQuestAnswer = this.#langQuestProp(`correct_answer`)
 
         this.#questReward = this.#activeQuest.reward_amount
         this.#questFormattedReward = `${await this.client.getEmoji(`758720612087627787`)}${commanifier(this.#questReward)}`
@@ -138,11 +154,11 @@ class Quest {
     #fetchQuestlocalePool() {
         // Try to grab the correct language file, if it fails fallback to en
         let questlocale = {}
-        questlocale.en = require(`./../quests/en.json`)
+        questlocale.en = this.#quests.filter(q => q.lang == `en`)
         try {
-            if (this.#locale.currentLang != `en`) questlocale[this.#locale.currentLang] = require(`./../quests/${this.#locale.currentLang}.json`)
+            if (this.#locale.lang != `en`) questlocale[this.#locale.lang] = this.#quests.filter(q => q.lang == this.#locale.lang)
         } catch (error) {
-            this.client.logger.warn(`[quests.js] Could not load "${this.#locale.currentLang}" lang for quests`)
+            this.client.logger.warn(`[quests.js] Could not load "${this.#locale.lang}" lang for quests`)
         }
         return this.#questlocalePool = questlocale
     }
@@ -154,13 +170,13 @@ class Quest {
      */
     async #checkSession() {
         if (this.client.dev) return false
-        
+
         if (await this.client.db.databaseUtils.doesCacheExist(this.#sessionId)) {
             await this.reply.send(this.#locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await this.client.getEmoji(`692428748838010970`) } })
             return true
         }
         //  Session up for 2 minutes
-        this.client.db.databaseUtils.setCache(this.#sessionId,`1`,{EX:60*2})
+        this.client.db.databaseUtils.setCache(this.#sessionId, `1`, { EX: 60 * 2 })
         return false
     }
 
@@ -192,7 +208,7 @@ class Quest {
      * @returns 
      */
     #langQuestProp(prop) {
-        if (prop != `name` && prop != `description` && prop != `answer`) throw new TypeError(`[quest.js][langQuestProp] parmeter prop can only be "name" or "description"`)
+        if (prop != `name` && prop != `description` && prop != `correct_answer`) throw new TypeError(`[quest.js][langQuestProp] parmeter prop can only be "name" or "description"`)
         try {
             if (!this.#activeQuest[prop]) throw Error(`Quest lang prop not populated`)
         } catch (error) {

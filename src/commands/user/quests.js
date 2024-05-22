@@ -23,9 +23,9 @@ module.exports = {
 		
 		const questSession = new Quest(client, reply)
 		await questSession.start(sessionID, user, locale, messageRef)
-		if (questSession.getSessionActive) return 
-		if (!questSession.getQuestAvailable) return 
-
+		// if (questSession.getSessionActive) return 
+		// if (!questSession.getQuestAvailable) return 
+		
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
 			.addComponents(
@@ -40,7 +40,7 @@ module.exports = {
 			)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
 			header: `${user.username} is taking a quest!`,
-			footer: locale.QUEST.FOOTER + `\n10 tries total`,
+			footer: locale.QUEST.FOOTER + `\nIf your answer keeps failing try the English version of the answer\n10 tries total`,
 			thumbnail: user.displayAvatarURL(),
 			socket: {
 				questTitle: questSession.getQuestTitle,
