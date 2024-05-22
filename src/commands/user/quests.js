@@ -23,8 +23,8 @@ module.exports = {
 		
 		const questSession = new Quest(client, reply)
 		await questSession.start(sessionID, user, locale, messageRef)
-		// if (questSession.getSessionActive) return 
-		// if (!questSession.getQuestAvailable) return 
+		if (questSession.getSessionActive) return 
+		if (!questSession.getQuestAvailable) return 
 		
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
