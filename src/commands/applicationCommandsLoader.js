@@ -36,7 +36,6 @@ module.exports = function applicationCommandLoader({
         try {
             logger.info(`Started refreshing application (/) commands.`)
             if (process.env.NODE_ENV === `production` || process.env.NODE_ENV === `production_beta`) {
-                logger.info(`UPLOADING COMMANDS`)
                 await rest.put(
                     Routes.applicationCommands(NODE_ENVIRONMENT_CLIENT_ID), {
                     body: applicationCommands
