@@ -1,0 +1,7 @@
+const commandsLoader = require(`./src/commands/loader.js`)
+const {APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
+const {shardLogger} = require(`./pino.config.js`)
+const logger = shardLogger(`LOAD APPLICATION COMMANDS`)
+const applicationCommandLoader = require(`./src/commands/applicationCommandsLoader.js`)
+logger.info(`TEST`)
+applicationCommandLoader({ logger: logger, commands: APPLICATION_COMMANDS })
