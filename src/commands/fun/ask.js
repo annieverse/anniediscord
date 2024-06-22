@@ -13,6 +13,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [
         { name: `question`, description: `Type out your question.`, required: true, type: ApplicationCommandOptionType.String }
     ],

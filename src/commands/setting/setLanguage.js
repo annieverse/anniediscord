@@ -16,6 +16,7 @@ module.exports = {
   multiUser: false,
   applicationCommand: true,
   messageCommand: true,
+  server_specific: false,
   options: [{
     name: `language`,
     description: `Available Annie's languages you can set`,

@@ -15,6 +15,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `user`,
         description: `Any user you would like to give a pat?`,

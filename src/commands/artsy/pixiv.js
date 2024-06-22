@@ -24,6 +24,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `tag`,
         description: `Search by tag`,

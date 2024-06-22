@@ -11,6 +11,7 @@ module.exports = {
     description: `Output bot's latency`,
     usage: `ping`,
     permissionLevel: 0,
+    server_specific: false,
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,

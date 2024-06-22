@@ -19,6 +19,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `item`,
         description: `Item id or name you wish to buy`,

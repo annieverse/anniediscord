@@ -55,6 +55,18 @@ module.exports = {
      */
     messageCommand: true,
     /**
+     * Define if the command is to be used in specific servers
+     * @required
+     * @type {boolean}
+     */
+    server_specific: false,
+    /**
+     * Define what servers the command is used in. 
+     * @required ONLY if "server_specific" is set to true.
+     * @type {Array}
+     */
+    server_specific: [`577121315480272908`],
+    /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
      * [client, reply, message, arg, locale]

@@ -15,6 +15,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    server_specific: false,
     messageCommand: true,
     options: [{
         name: `gender`,

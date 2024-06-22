@@ -17,6 +17,7 @@ module.exports = {
     usage: `stats`,
     permissionLevel: 0,
     multiUser: false,
+    server_specific: false,
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,

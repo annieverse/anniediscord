@@ -14,6 +14,8 @@ module.exports = {
     multiUser: false,
     applicationCommand: false,
     messageCommand: true,
+    server_specific: true,
+    server_specific: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         const initTime = process.hrtime()
         try {

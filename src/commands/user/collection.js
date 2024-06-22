@@ -14,6 +14,7 @@ module.exports = {
     multiUser: false,
     messageCommand: true,
     applicationCommand: true,
+    server_specific: false,
     options: [
         {
             name: `user`,

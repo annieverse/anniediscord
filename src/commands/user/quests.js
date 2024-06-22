@@ -17,6 +17,7 @@ module.exports = {
 	messageCommand: true,
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
+    server_specific: false,
 	async run(client, reply, messageRef, locale){
 		const user = messageRef.member.user
 		const sessionID = `QUEST_SESSION_${user.id}@${messageRef.guild.id}`
