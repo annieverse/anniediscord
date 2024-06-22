@@ -16,7 +16,7 @@ module.exports = {
     applicationCommand: false,
     server_specific: true,
     messageCommand: true,
-    server_specific: [`577121315480272908`],
+    servers: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         //	Return if user doesn't specify arguments.
         if (!arg) return reply.send(locale.CLI.GUIDE)

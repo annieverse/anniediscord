@@ -15,7 +15,7 @@ module.exports = {
         applicationCommand: false,
         messageCommand: true,
         server_specific: true,
-        server_specific: [`577121315480272908`],
+        servers: [`577121315480272908`],
         async execute(client, reply, message, arg) {
             const target = await (new User(client, message)).lookFor(arg)
             if (!target) return reply.send(`Sadly, the user is unreachable`)

@@ -194,11 +194,12 @@ class Annie extends Discord.Client {
             try {
                 // const databaseConnection = await new Database().connect()
                 this.registerNode(new Database().connect(), `db`)
-                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
+                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS, GUILDONLY_COMMANDS} = commandsLoader({ logger: this.logger })
                 this.registerNode(MESSAGE_COMMANDS, `message_commands`)
                 // require(`./commands/applicationCommandsLoader`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
                 require(`./controllers/handleComponents`)({ logger: this.logger, client:this})
                 this.registerNode(APPLICATION_COMMANDS, `application_commands`)
+                this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
                 this.registerNode(getTargetLocales, `getTargetLocales`)
                 this.registerNode(availableLocales, `availableLocales`)
                 // this.registerNode(localizer(),`locales`)

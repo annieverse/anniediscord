@@ -89,7 +89,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    server_specific: [`577121315480272908`],
+    servers: [`577121315480272908`],
     /**
      * Any other properties you want to add to the command.
      */
@@ -119,18 +119,23 @@ module.exports = {
     async run(client, reply, messageRef, locale, arg) {
         // ... Your command ran here.
         // Only carry over the arguments you need.
+        const availableItems = await client.db.shop.getItem(null, messageRef.guild.id)
+        // End phase if there are no items available
+        if (!availableItems.length) {
+            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, { followUp: true, ephemeral: true })
+        }
         //  Find best match
-        const searchStringResult = stringSimilarity.findBestMatch(answerName, availableItems.map(i => i.name.toLowerCase()))
+        const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
         const item = searchStringResult.bestMatch.rating >= 0.5
             //  By name
             ?
             availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
             //  Fallback search by ID
             :
-            availableItems.find(i => parseInt(i.item_id) === parseInt(answerName))
+            availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!item) return await reply.send(`I'm sorry no item under that name or Id, please try again`)
         console.log(item)
-        console.log(item).item_id
+        console.log(item.item_id)
         // client.db.guildUtils.updateGuildConfiguration({
         //     configCode: this.configId,
         //     customizedParameter: item,

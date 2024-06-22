@@ -65,7 +65,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    server_specific: [`577121315480272908`],
+    servers: [`577121315480272908`],
     /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below

@@ -10,6 +10,10 @@ module.exports = async (client, interaction) => {
     const reply = client.responseLibs(interaction, false, locale)
     try {
         await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
+        if (client.guildonly_commands.has(interaction.guildId)) {
+            let guildonlycommands = client.guildonly_commands.get(interaction.guildId)
+            client.application_commands = client.application_commands.concat([...guildonlycommands])
+        }
         if (interaction.type === InteractionType.ApplicationCommand) {
             let command = client.application_commands.get(interaction.commandName)
             // Ignore non-registered commands
@@ -42,8 +46,9 @@ module.exports = async (client, interaction) => {
             }
         }).catch(err => client.logger.error(err))
         await reply.send(locale.ERROR_ON_PRODUCTION, {
-            socket: {emoji: await client.getEmoji(`AnniePout`)},
-            ephemeral: true})
+            socket: { emoji: await client.getEmoji(`AnniePout`) },
+            ephemeral: true
+        })
         client.logger.error(err)
         client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName } })
     }
