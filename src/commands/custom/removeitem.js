@@ -13,7 +13,7 @@ module.exports = {
      * @required
      * @type {string}
      */
-    name: `setitem`,
+    name: `removeitem`,
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required
@@ -25,13 +25,13 @@ module.exports = {
      * @required
      * @type {string}
      */
-    description: `Set the item you want to use for the leaderboard.`,
+    description: `remove items from a user or all users.`,
     /**
      * Define how to use the command. Include optional arguments/flags if needed
      * @required
      * @type {string}
      */
-    usage: `setitem <item>`,
+    usage: `removeitem amount`,
     /**
      * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
      * @required
@@ -69,10 +69,21 @@ module.exports = {
      * @type {Array}
      */
     options: [{
-        name: `item`, // Must be all lowercase
-        description: `The item name or Id`,
+        name: `amount`, // Must be all lowercase
+        description: `The amount to set the items to`,
         required: true,
-        type: ApplicationCommandOptionType.String
+        type: ApplicationCommandOptionType.Integer,
+        min_value: 0
+    }, {
+        name: `allusers`, // Must be all lowercase
+        description: `Toggle for all users`,
+        required: true,
+        type: ApplicationCommandOptionType.Boolean
+    }, {
+        name: `user`, // Must be all lowercase
+        description: `The user you wish to edit`,
+        required: false,
+        type: ApplicationCommandOptionType.User
     }],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
@@ -114,45 +125,51 @@ module.exports = {
      * @type {function}
      */
     async Iexecute(client, reply, interaction, options, locale) {
-        const arg = options.getString(`item`)
-        return this.run(client, reply, interaction, locale, arg)
+        const args = [options.getInteger(`amount`), options.getBoolean(`allusers`), options.getUser(`user`)]
+        return this.run(client, reply, interaction, locale, args)
     },
-    async run(client, reply, messageRef, locale, arg) {
+    async run(client, reply, messageRef, locale, args) {
         // ... Your command ran here.
         // Only carry over the arguments you need.
-        const availableItems = await client.db.shop.getItem(null, messageRef.guild.id)
-        // End phase if there are no items available
-        if (!availableItems.length) {
-            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, { followUp: true, ephemeral: true })
-        }
-        //  Find best match
-        const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
-        const item = searchStringResult.bestMatch.rating >= 0.5
-            //  By name
-            ?
-            availableItems.find(i => i.name.toLowerCase() === searchStringResult.bestMatch.target)
-            //  Fallback search by ID
-            :
-            availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
+        const itemConfigId = `${messageRef.guild.id}_LB_ITEM`
+        const itemId = messageRef.guild.configs.get(itemConfigId).value
+        if (!itemId) return await reply.send(`Please run \`setitem\` first.`)
+        const item = await client.db.shop.getItem(itemId, messageRef.guild.id)
 
-        if (!item) return await reply.send(`I'm sorry no item under that name or Id, please try again`)
-        
-        const confirmation = await reply.send(`Are you sure you want to set \`${item.name}\` as the item for leaderboard?`)
-        
-        const c = new Confirmator(messageRef, reply)
-        c.setup(messageRef.member.id, confirmation)
-        c.onAccept(async () => {
-            const configId = `${messageRef.guild.id}_LB_ITEM`
-            client.db.guildUtils.updateGuildConfiguration({
-                configCode: configId,
-                customizedParameter: item.item_id,
-                guild: messageRef.guild.id,
-                setByUserId: messageRef.member.id,
-                cacheTo: messageRef.guild.configs
+        const amount = args[0]
+        const allUsers = args[1]
+        const user = args[2]
+
+        if (allUsers) {
+            const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\` for all users?`)
+            const c = new Confirmator(messageRef, reply)
+            c.setup(messageRef.member.id, confirmation)
+            c.onAccept(async () => {
+                client.db.guildUtils.editInventoryOfWholeGuild({
+                    operation: `-`,
+                    guildId: messageRef.guild.id,
+                    itemId: itemId,
+                    value: amount
+                })
+                return await reply.send(`The item has been set to ${item.name}`)
             })
+        } else {
+            const confirmation = await reply.send(`Are you sure you want to set the amount of items for \`${item.name}\` to \`${amount}\` for \`${user}\`?`)
+            const c = new Confirmator(messageRef, reply)
+            c.setup(messageRef.member.id, confirmation)
+            c.onAccept(async () => {
+                client.db.databaseUtils.updateInventory({
+                    operation: `-`,
+                    userId: user.id,
+                    guildId: messageRef.guild.id,
+                    itemId: itemId,
+                    value: amount
+                })
+                return await reply.send(`The item has been set to ${item.name}`)
+            })
+        }
 
-            return await reply.send(`The item has been set to ${item.name}`)
-        })
+
         return
     }
 }

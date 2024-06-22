@@ -311,9 +311,9 @@ class DatabaseUtils {
 	* @param {string} [guildId] of target guild
 	* @returns {QueryResult}
 	*/
-	async indexRanking(group, guildId) {
+	async indexRanking(group, guildId, itemId) {
 		const fn = this.formatFunctionLog(`indexRanking`)
-		const validOptions = [`exp`, `artcoins`, `fame`]
+		const validOptions = [`exp`, `artcoins`, `fame`, `custom`]
 		if (!group) throw new TypeError(`${fn} parameter "group" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!validOptions.includes(group)) throw new RangeError(`${fn} parameter "group" is not a valid option`)
@@ -355,6 +355,19 @@ class DatabaseUtils {
 					, { guildId: guildId }
 					, `${fn} Fetching ${group} leaderboard`
 				)
+			case `custom`:
+				return this._query(`
+					SELECT 
+						user_id AS id, 
+						quantity AS points 
+					FROM user_inventories 
+					WHERE item_id = itemId 
+						AND guild_id = $guildId
+					ORDER BY quantity DESC`
+							, `all`
+							, { guildId: guildId, itemId: itemId }
+							, `${fn} Fetching ${group} leaderboard`
+						)
 			default:
 				break
 		}
@@ -1392,6 +1405,33 @@ class GuildUtils extends DatabaseUtils {
 		)
 		const type = res.changes ? `DELETED` : `NO_CHANGES`
 		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
+		return true
+	}
+
+	async editInventoryOfWholeGuild(operation, guildId, itemId, value) {
+		const fn = this.formatFunctionLog(`editInventoryOfWholeGuild`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!operation) throw new TypeError(`${fn} parameter "operation" cannot be blank.`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		let res
+		res = {
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+					UPDATE user_inventories
+					SET quantity = (
+						CASE WHEN quantity ${operation} $value<0 THEN 0
+							 ELSE quantity ${operation} $value
+						END),
+						updated_at = CURRENT_TIMESTAMP
+						WHERE item_id = $itemId AND guild_id = $guildId`
+				, `run`
+				, { value: value, itemId: itemId, guildId: guildId }
+				, `${fn} Updating all user inventories`
+			)
+		}
+
+		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
 		return true
 	}
 }

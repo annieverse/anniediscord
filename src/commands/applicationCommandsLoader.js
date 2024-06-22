@@ -107,8 +107,7 @@ module.exports = function applicationCommandLoader({
                         commandObj.forEach(item => {
                             formatDescriptions(item)
                         })
-                        console.log(serverId)
-                        console.log(commandObj)
+
                         await rest.put(
                             Routes.applicationGuildCommands(`514688969355821077`, serverId), {
                             body:  CLEARCMD ? [] : commandObj
