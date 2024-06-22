@@ -142,11 +142,11 @@ module.exports = {
         const c = new Confirmator(messageRef, reply)
         c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            const configId = `${messageRef.guild.id}_LB_ITEM`
+            const configId = `CUSTOM_LB_ITEM`
             client.db.guildUtils.updateGuildConfiguration({
                 configCode: configId,
                 customizedParameter: item.item_id,
-                guild: messageRef.guild.id,
+                guild: messageRef.guild,
                 setByUserId: messageRef.member.id,
                 cacheTo: messageRef.guild.configs
             })

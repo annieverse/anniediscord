@@ -2,7 +2,7 @@
 const GUI = require(`../../ui/prebuild/leaderboard`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
 /**
  * Displays your server leaderboard!
  * @author klerikdust
@@ -26,11 +26,10 @@ module.exports = {
         return await this.run(client, reply, interaction, locale)
     },
     async run(client, reply, messageRef, locale) {
-        const itemConfigId = `${messageRef.guild.id}_LB_ITEM`
+        const itemConfigId = `CUSTOM_LB_ITEM`
+        if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
         const itemId = messageRef.guild.configs.get(itemConfigId).value
-        if (!itemId) return await reply.send(`Please run \`setitem\` first.`)
-        const item = await client.db.shop.getItem(itemId, messageRef.guild.id)
-
+        const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
         const selectedGroup = item.name
         return await reply.send(locale.COMMAND.FETCHING, {
             socket: {
@@ -42,7 +41,7 @@ module.exports = {
         })
             .then(async load => {
                 //  Fetch points data and eliminates zero values if present.
-                let lbData = (await client.db.databaseUtils.indexRanking(`custom`, messageRef.guild.id,item.item_id)).filter(node => node.points > 0)
+                let lbData = (await client.db.databaseUtils.indexRanking(`custom`, messageRef.guild.id, item.item_id)).filter(node => node.points > 0)
                 let validUsers = []
                 //  Fetching uncached users
                 for (let i = 0; i < lbData.length; i++) {

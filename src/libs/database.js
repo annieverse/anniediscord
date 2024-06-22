@@ -361,7 +361,7 @@ class DatabaseUtils {
 						user_id AS id, 
 						quantity AS points 
 					FROM user_inventories 
-					WHERE item_id = itemId 
+					WHERE item_id = $itemId 
 						AND guild_id = $guildId
 					ORDER BY quantity DESC`
 							, `all`
@@ -1408,7 +1408,7 @@ class GuildUtils extends DatabaseUtils {
 		return true
 	}
 
-	async editInventoryOfWholeGuild(operation, guildId, itemId, value) {
+	async editInventoryOfWholeGuild({itemId, value=0, operation= `+`, guildId}) {
 		const fn = this.formatFunctionLog(`editInventoryOfWholeGuild`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
@@ -2276,14 +2276,14 @@ class Shop extends DatabaseUtils {
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id`
-		//  Do whole fetch on specific guild
+		//  Do whole fetch on specific guild, without item
 		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = $guildId`
 			, `all`
 			, { guildId: guildId }
 			, `${fn} fetch all items for GUILD_ID:${guildId}`
 		)
-		//  Do single fetch on specific guild
-		if (keyword && typeof guildId === `string`) return this._query(str + `
+		//  Do single fetch on specific guild, based on item name
+		if (typeof keyword != `number` && typeof guildId === `string`) return this._query(str + `
             WHERE 
                 owned_by_guild_id = $guildId
                 AND lower(items.name) = lower($keyword)`
@@ -2291,12 +2291,24 @@ class Shop extends DatabaseUtils {
 			, { keyword: keyword, guildId: guildId }
 			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
-		//  Do lookup on global pool
+		//  Do single fetch on specific guild, based on item id
+		if (typeof keyword === `number` && typeof guildId === `string`) return this._query(str + `
+            WHERE 
+                owned_by_guild_id = $guildId
+                AND items.item_id = $keyword`
+			, `get`
+			, { keyword: keyword, guildId: guildId }
+			, `${fn} fetch single item for GUILD_ID:${guildId}`
+		)
+		//  Do lookup on global pool, without guild data
 		if (typeof keyword === `string`) str = str + ` 
 			\nWHERE 
 				lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)`
+				
+		//  Do lookup on global pool, based on item id without guild data
 		if (typeof keyword === `number`) str = str + `\nWHERE items.item_id = $keyword`
+		
 		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }

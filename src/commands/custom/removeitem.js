@@ -131,17 +131,17 @@ module.exports = {
     async run(client, reply, messageRef, locale, args) {
         // ... Your command ran here.
         // Only carry over the arguments you need.
-        const itemConfigId = `${messageRef.guild.id}_LB_ITEM`
+        const itemConfigId = `CUSTOM_LB_ITEM`
+        if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
         const itemId = messageRef.guild.configs.get(itemConfigId).value
-        if (!itemId) return await reply.send(`Please run \`setitem\` first.`)
-        const item = await client.db.shop.getItem(itemId, messageRef.guild.id)
+        const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
 
         const amount = args[0]
         const allUsers = args[1]
         const user = args[2]
 
         if (allUsers) {
-            const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\` for all users?`)
+            const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\`(s) for all users?`)
             const c = new Confirmator(messageRef, reply)
             c.setup(messageRef.member.id, confirmation)
             c.onAccept(async () => {
@@ -151,10 +151,10 @@ module.exports = {
                     itemId: itemId,
                     value: amount
                 })
-                return await reply.send(`The item has been set to ${item.name}`)
+                return await reply.send(`Removed \`${amount}\` \`${item.name}\`(s) from all users`)
             })
         } else {
-            const confirmation = await reply.send(`Are you sure you want to set the amount of items for \`${item.name}\` to \`${amount}\` for \`${user}\`?`)
+            const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\`(s) for ${user}?`)
             const c = new Confirmator(messageRef, reply)
             c.setup(messageRef.member.id, confirmation)
             c.onAccept(async () => {
@@ -165,7 +165,7 @@ module.exports = {
                     itemId: itemId,
                     value: amount
                 })
-                return await reply.send(`The item has been set to ${item.name}`)
+                return await reply.send(`Removed \`${amount}\` \`${item.name}\`(s) from ${user}`)
             })
         }
 
