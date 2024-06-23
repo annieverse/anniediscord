@@ -6,6 +6,7 @@ types.setTypeParser(20, function (val) {
 const Redis = require(`redis`)
 const { databaseLogger: logger } = require(`../../pino.config.js`)
 const getBenchmark = require(`../utils/getBenchmark`)
+const { pipeline } = require(`node:stream/promises`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -364,13 +365,32 @@ class DatabaseUtils {
 					WHERE item_id = $itemId 
 						AND guild_id = $guildId
 					ORDER BY quantity DESC`
-							, `all`
-							, { guildId: guildId, itemId: itemId }
-							, `${fn} Fetching ${group} leaderboard`
-						)
+					, `all`
+					, { guildId: guildId, itemId: itemId }
+					, `${fn} Fetching ${group} leaderboard`
+				)
 			default:
 				break
 		}
+	}
+
+	async exportData({ itemId, guildId, filepath }) {
+		const fn = this.formatFunctionLog(`exportData`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!filepath) throw new TypeError(`${fn} parameter "filepath" cannot be blank.`)
+		const q = `COPY (SELECT user_id, quantity FROM user_inventories WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		const copyTo = require(`pg-copy-streams`).to
+		const { stringify } = require(`csv-stringify`)
+		const fs = require(`fs`)
+		const stream = this.client.query(copyTo(q))
+		const filename = filepath
+		const writableStream = fs.createWriteStream(filename)
+		const columns = [`userId`, `Quantity`]
+		const stringifier = stringify({ header: true, columns: columns })
+		stringifier.pipe(writableStream)
+		await pipeline(stream, writableStream)
+		writableStream.close()
 	}
 
 	arrayEquals(a, b) {
@@ -1408,7 +1428,7 @@ class GuildUtils extends DatabaseUtils {
 		return true
 	}
 
-	async editInventoryOfWholeGuild({itemId, value=0, operation= `+`, guildId}) {
+	async editInventoryOfWholeGuild({ itemId, value = 0, operation = `+`, guildId }) {
 		const fn = this.formatFunctionLog(`editInventoryOfWholeGuild`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
@@ -2305,10 +2325,10 @@ class Shop extends DatabaseUtils {
 			\nWHERE 
 				lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)`
-				
+
 		//  Do lookup on global pool, based on item id without guild data
 		if (typeof keyword === `number`) str = str + `\nWHERE items.item_id = $keyword`
-		
+
 		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }

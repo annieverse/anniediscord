@@ -29,7 +29,7 @@ module.exports = {
      * @required
      * @type {string}
      */
-    usage: `userdata @user retrieve`,
+    usage: `userdata retrieve @user`,
     /**
      * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
      * @required
