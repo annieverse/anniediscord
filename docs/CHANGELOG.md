@@ -1,3 +1,10 @@
+# [9.9.0](https://github.com/annieverse/anniediscord/compare/v9.8.2...v9.9.0) (2024-06-25)
+
+
+### Features
+
+* **avariksaga:** custom commands ([49c24a4](https://github.com/annieverse/anniediscord/commit/49c24a47024b2012113a7c5848e9fc3c6b166323))
+
 ## [9.8.2](https://github.com/annieverse/anniediscord/compare/v9.8.1...v9.8.2) (2024-05-22)
 
 
