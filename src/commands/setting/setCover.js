@@ -25,6 +25,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `attachment`,
         description: `upload a custom image via attachment.`,

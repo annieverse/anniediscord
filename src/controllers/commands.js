@@ -18,6 +18,7 @@ module.exports = async (client={}, message={}) => {
     let command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
     if (!command) return 
+    if (command.server_specific && !command.servers.includes(message.guildId)) return
     //  Plus one from whitespace
     const arg = message.content.slice(prefix.length + targetCommand.length+1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command

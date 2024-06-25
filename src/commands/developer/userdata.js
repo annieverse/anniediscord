@@ -29,7 +29,7 @@ module.exports = {
      * @required
      * @type {string}
      */
-    usage: `userdata @user retrieve`,
+    usage: `userdata retrieve @user`,
     /**
      * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
      * @required
@@ -54,6 +54,18 @@ module.exports = {
      * @type {boolean}
      */
     messageCommand: true,
+    /**
+     * Define if the command is to be used in specific servers
+     * @required
+     * @type {boolean}
+     */
+    server_specific: false,
+    /**
+     * Define what servers the command is used in. 
+     * @required ONLY if "server_specific" is set to true.
+     * @type {Array}
+     */
+    servers: [`577121315480272908`],
     /**
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below

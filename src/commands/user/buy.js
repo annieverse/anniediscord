@@ -19,6 +19,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `item`,
         description: `Item id or name you wish to buy`,
@@ -138,7 +139,7 @@ module.exports = {
                 return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {
-                        user: user.username,
+                        user: user.user.username,
                         item: item.name,
                         prefix: prefix
                     },
@@ -183,10 +184,11 @@ module.exports = {
                 })
                 //  Reduce available supply if supply wasn't set as unlimited.
                 if (shopMetadata.quantity !== `~`) client.db.shop.subtractItemSupply(item.item_id, 1)
+                
                 return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {
-                        user: user.username,
+                        user: user.user.username,
                         item: item.name,
                         prefix: prefix
                     }

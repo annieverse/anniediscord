@@ -584,6 +584,17 @@ module.exports = {
                 customizable: true,
                 allowedTypes: [`string`],
                 value: ``
+            },
+            {
+                /**
+                 *  The image that will be displayed as shop's background
+                 *  @type {object}
+                 */
+                name: `CUSTOM_LB_ITEM`,
+                description: `An item used for custom leaderboard`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
             }
         ]
     }

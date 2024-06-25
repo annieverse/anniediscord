@@ -9,6 +9,7 @@ module.exports = {
     aliases: [],
     description: `Remove all reactions on a message`,
     usage: `removeallreactions`,
+    server_specific: false,
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,

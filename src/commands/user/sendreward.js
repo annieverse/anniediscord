@@ -14,6 +14,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: false,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.ManageEvents.toString(),
     options: [{
         name: `user`,

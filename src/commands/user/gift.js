@@ -19,6 +19,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `send`,
         description: `Send a gift to a user`,

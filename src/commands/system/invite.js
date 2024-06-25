@@ -13,6 +13,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    server_specific: false,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {

@@ -17,6 +17,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     type: ApplicationCommandType.ChatInput,
     async run(client, reply, messageRef, locale){
         const guildShop = await client.db.shop.getGuildShop(messageRef.guild.id)

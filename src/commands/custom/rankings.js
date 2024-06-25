@@ -2,82 +2,38 @@
 const GUI = require(`../../ui/prebuild/leaderboard`)
 const User = require(`../../libs/user`)
 const commanifier = require(`../../utils/commanifier`)
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType } = require(`discord.js`)
 /**
  * Displays your server leaderboard!
  * @author klerikdust
  */
 module.exports = {
-    name: `leaderboard`,
-    aliases: [`rank`, `leaderboard`, `rank`, `ranking`, `lb`, `leaderboards`],
-    description: `Displaying your server leaderboard!`,
-    usage: `leaderboard`,
+    name: `rankings`,
+    aliases: [],
+    description: `Displaying your server leaderboard for selected item!`,
+    usage: `rankings`,
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
-    messageCommand: true,
-    server_specific: false,
-    options: [{
-        name: `leaderboard`,
-        description: `Displays the leaderboard of the selected option`,
-        required: true,
-        type: ApplicationCommandOptionType.String,
-        choices: [
-            { name: `exp`, value: `exp` },
-            { name: `artcoins`, value: `artcoins` },
-            { name: `fame`, value: `fame` }
-        ]
-    }],
+    messageCommand: false,
+    server_specific: true,
+    servers: [`577121315480272908`,`882552960771555359`],
     type: ApplicationCommandType.ChatInput,
-    /**
-     * First element of the child array determines the leaderboard category name.
-     * @type {array}
-     */
-    keywords: [
-        [`exp`, `exp`, `xp`, `lvl`, `level`],
-        [`artcoins`, `artcoins`, `ac`, `artcoin`, `balance`, `bal`],
-        [`fame`, `fames`, `rep`, `reputation`, `reputations`, `reps`],
-        [`artists`, `hearts`, `arts`, `artist`, `art`, `artwork`],
-        [`halloween`, `candies`, `hallowee`, `candies`, `cdy`, `spooky`, `spook`]
-    ],
-    /**
-     * Aggregate available keywords in `this.keywords`.
-     * @return {object}
-     */
-    wholeKeywords() {
-        let arr = []
-        for (let i = 0; i < this.keywords.length; i++) {
-            arr.push(...this.keywords[i])
-        }
-        return arr
-    },
     async execute(client, reply, message, arg, locale) {
-        //  Returns a guide if no parameter was specified.
-        if (!arg) return await reply.send(locale.LEADERBOARD.GUIDE, {
-            header: `Hi, ${message.author.username}!`,
-            image: `banner_leaderboard`,
-            socket: {
-                prefix: client.prefix,
-                emoji: await client.getEmoji(`692428597570306218`)
-            }
-        })
-        return await this.run(client, reply, message, locale, arg)
+        return await this.run(client, reply, message, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        let arg = options.getString(`leaderboard`)
-        return await this.run(client, reply, interaction, locale, arg)
+        return await this.run(client, reply, interaction, locale)
     },
-    async run(client, reply, messageRef, locale, arg) {
-        if (!this.wholeKeywords().includes(arg.toLowerCase())) return await reply.send(locale.LEADERBOARD.INVALID_CATEGORY, {
-            socket: { emoji: await client.getEmoji(`692428969667985458`) }
-        })
-        //  Store key of selected group
-        const selectedGroupParent = this.keywords.filter(v => v.includes(arg.toLowerCase()))[0]
-        const selectedGroup = selectedGroupParent[0]
-        const selectedGroupIdentifier = selectedGroupParent[1]
+    async run(client, reply, messageRef, locale) {
+        const itemConfigId = `CUSTOM_LB_ITEM`
+        if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
+        const itemId = messageRef.guild.configs.get(itemConfigId).value
+        const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
+        const selectedGroup = item.name
         return await reply.send(locale.COMMAND.FETCHING, {
             socket: {
-                command: `${selectedGroup} leaderboard`,
+                command: `Custom leaderboard for ${selectedGroup}(s)`,
                 emoji: await client.getEmoji(`790994076257353779`),
                 user: messageRef.member.id
             },
@@ -85,7 +41,7 @@ module.exports = {
         })
             .then(async load => {
                 //  Fetch points data and eliminates zero values if present.
-                let lbData = (await client.db.databaseUtils.indexRanking(selectedGroup, messageRef.guild.id)).filter(node => node.points > 0)
+                let lbData = (await client.db.databaseUtils.indexRanking(`custom`, messageRef.guild.id, item.item_id)).filter(node => node.points > 0)
                 let validUsers = []
                 //  Fetching uncached users
                 for (let i = 0; i < lbData.length; i++) {
@@ -126,7 +82,7 @@ module.exports = {
                     socket: {
                         rank: validUsers.indexOf(author) + 1,
                         points: author ? commanifier(author.points) : 0,
-                        emoji: selectedGroupIdentifier,
+                        emoji: `⭐`,
                     },
                     followUp: true
                 })

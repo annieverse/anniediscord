@@ -20,6 +20,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     options: [/* {
         name: `action`,

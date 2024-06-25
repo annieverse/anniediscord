@@ -6,6 +6,7 @@ types.setTypeParser(20, function (val) {
 const Redis = require(`redis`)
 const { databaseLogger: logger } = require(`../../pino.config.js`)
 const getBenchmark = require(`../utils/getBenchmark`)
+const { pipeline } = require(`node:stream/promises`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -311,9 +312,9 @@ class DatabaseUtils {
 	* @param {string} [guildId] of target guild
 	* @returns {QueryResult}
 	*/
-	async indexRanking(group, guildId) {
+	async indexRanking(group, guildId, itemId) {
 		const fn = this.formatFunctionLog(`indexRanking`)
-		const validOptions = [`exp`, `artcoins`, `fame`]
+		const validOptions = [`exp`, `artcoins`, `fame`, `custom`]
 		if (!group) throw new TypeError(`${fn} parameter "group" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!validOptions.includes(group)) throw new RangeError(`${fn} parameter "group" is not a valid option`)
@@ -355,9 +356,41 @@ class DatabaseUtils {
 					, { guildId: guildId }
 					, `${fn} Fetching ${group} leaderboard`
 				)
+			case `custom`:
+				return this._query(`
+					SELECT 
+						user_id AS id, 
+						quantity AS points 
+					FROM user_inventories 
+					WHERE item_id = $itemId 
+						AND guild_id = $guildId
+					ORDER BY quantity DESC`
+					, `all`
+					, { guildId: guildId, itemId: itemId }
+					, `${fn} Fetching ${group} leaderboard`
+				)
 			default:
 				break
 		}
+	}
+
+	async exportData({ itemId, guildId, filepath }) {
+		const fn = this.formatFunctionLog(`exportData`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!filepath) throw new TypeError(`${fn} parameter "filepath" cannot be blank.`)
+		const q = `COPY (SELECT user_id, quantity FROM user_inventories WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		const copyTo = require(`pg-copy-streams`).to
+		const { stringify } = require(`csv-stringify`)
+		const fs = require(`fs`)
+		const stream = this.client.query(copyTo(q))
+		const filename = filepath
+		const writableStream = fs.createWriteStream(filename)
+		const columns = [`userId`, `Quantity`]
+		const stringifier = stringify({ header: true, columns: columns })
+		stringifier.pipe(writableStream)
+		await pipeline(stream, writableStream)
+		writableStream.close()
 	}
 
 	arrayEquals(a, b) {
@@ -1394,6 +1427,33 @@ class GuildUtils extends DatabaseUtils {
 		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
 		return true
 	}
+
+	async editInventoryOfWholeGuild({ itemId, value = 0, operation = `+`, guildId }) {
+		const fn = this.formatFunctionLog(`editInventoryOfWholeGuild`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!operation) throw new TypeError(`${fn} parameter "operation" cannot be blank.`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		let res
+		res = {
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+					UPDATE user_inventories
+					SET quantity = (
+						CASE WHEN quantity ${operation} $value<0 THEN 0
+							 ELSE quantity ${operation} $value
+						END),
+						updated_at = CURRENT_TIMESTAMP
+						WHERE item_id = $itemId AND guild_id = $guildId`
+				, `run`
+				, { value: value, itemId: itemId, guildId: guildId }
+				, `${fn} Updating all user inventories`
+			)
+		}
+
+		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
+		return true
+	}
 }
 
 class Relationships extends DatabaseUtils {
@@ -2236,14 +2296,14 @@ class Shop extends DatabaseUtils {
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id`
-		//  Do whole fetch on specific guild
+		//  Do whole fetch on specific guild, without item
 		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = $guildId`
 			, `all`
 			, { guildId: guildId }
 			, `${fn} fetch all items for GUILD_ID:${guildId}`
 		)
-		//  Do single fetch on specific guild
-		if (keyword && typeof guildId === `string`) return this._query(str + `
+		//  Do single fetch on specific guild, based on item name
+		if (typeof keyword != `number` && typeof guildId === `string`) return this._query(str + `
             WHERE 
                 owned_by_guild_id = $guildId
                 AND lower(items.name) = lower($keyword)`
@@ -2251,12 +2311,24 @@ class Shop extends DatabaseUtils {
 			, { keyword: keyword, guildId: guildId }
 			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
-		//  Do lookup on global pool
+		//  Do single fetch on specific guild, based on item id
+		if (typeof keyword === `number` && typeof guildId === `string`) return this._query(str + `
+            WHERE 
+                owned_by_guild_id = $guildId
+                AND items.item_id = $keyword`
+			, `get`
+			, { keyword: keyword, guildId: guildId }
+			, `${fn} fetch single item for GUILD_ID:${guildId}`
+		)
+		//  Do lookup on global pool, without guild data
 		if (typeof keyword === `string`) str = str + ` 
 			\nWHERE 
 				lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)`
+
+		//  Do lookup on global pool, based on item id without guild data
 		if (typeof keyword === `number`) str = str + `\nWHERE items.item_id = $keyword`
+
 		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }

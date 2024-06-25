@@ -20,6 +20,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     amountToOpenRanges: [1, 10],
+    server_specific: false,
     options: [{
         name: `amount`,
         description: `Amount of tickets to open`,
