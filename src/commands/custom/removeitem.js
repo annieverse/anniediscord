@@ -135,7 +135,8 @@ module.exports = {
         if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
         const itemId = messageRef.guild.configs.get(itemConfigId).value
         const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
-
+        if (!item) return await reply.send(`Please run \`setitem\` first.`)
+            
         const amount = args[0]
         const allUsers = args[1]
         const user = args[2]

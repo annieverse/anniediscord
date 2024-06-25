@@ -30,6 +30,7 @@ module.exports = {
         if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
         const itemId = messageRef.guild.configs.get(itemConfigId).value
         const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
+        if (!item) return await reply.send(`Please run \`setitem\` first.`)
         const selectedGroup = item.name
         return await reply.send(locale.COMMAND.FETCHING, {
             socket: {
