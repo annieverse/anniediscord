@@ -123,8 +123,8 @@ module.exports = async (client={}, message={}) => {
         const date = new Date()
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
-        if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
-        if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
+        if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`,{cache:true,force:true})
+        if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`,{cache:true,force:true})
 
         const channel = levelZeroErrors.includes(error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){
