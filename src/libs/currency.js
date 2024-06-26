@@ -1,4 +1,5 @@
 const Points = require(`./points`)
+const defaultConfigs = require(`../config/customConfig.js`)
 /**
  * Sub module of Points. Handling currency systems
  * @author klerikdust
@@ -33,7 +34,8 @@ class Currency extends Points {
      *  @type {number}
      */
     get baseGainedCurrency() {
-    	const [min, max] = this.currencyConfig.baseAmount
+        let configurations = defaultConfigs.availableConfigurations.reduce((obj, item) => (obj[item.name] = item.value, obj) ,{})
+    	const [min, max] = configurations.CHAT_CURRENCY
     	return this.randomize(min, max)
     }
 

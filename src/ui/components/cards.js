@@ -470,7 +470,8 @@ class Card {
 		top=0, 
 		minHeight=0,
 		gradient=false,
-		gradientHeight=Math.floor(this.height/2)
+		gradientHeight=Math.floor(this.height/2),
+		gradientOpacity=0.5
 	}) {
 		let bg = typeof img === `string` ? await loadAsset(img, {assetsPath:isSelfUpload ? `./src/assets/selfupload` : `./src/assets`}) : img
 		const {
@@ -490,7 +491,7 @@ class Card {
 		grad.addColorStop(0, semiTransparent(`0.7`))
 		if (gradient) {
 			this.canv
-			.setGlobalAlpha(0.5)
+			.setGlobalAlpha(gradientOpacity)
 			.printImage(await loadImage(bg), 0, top, dynamic.width, dynamic.height)
 			.setGlobalAlpha(1)
 			.setColor(grad)

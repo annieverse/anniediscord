@@ -1,4 +1,5 @@
 {
+    "lang":"en",
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "GUIDE": "You are authorized to use the **Artcoins Generator**.",
@@ -100,7 +101,8 @@
         "INSUFFICIENT_AMOUNT": "Eehh- right now you only have **{{amount}}** artcoins. Go grind harder! {{emoji}}",
         "INVALID_AMOUNT": "You need to put atleast **8 artcoins**, *baka!* {{emoji}}",
         "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion."
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion.",
+        "ALREADY_IN_PROGRESS": "Sorry, you already look like you are trying to do this."
     },
     "CATEXP": {
         "UNAVAILABLE": "You don't have any exp to claim.",
@@ -309,7 +311,7 @@
         "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
         "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
         "CONFIRMATION": "Gift **{{user}}** with **{{gift}}**?\n─────────────────☆～:;,．\nOnce reacted, the gift will be turned into {{amount}}+ rep points for them.",
-        "HEADER":"has received your gifts!♡"
+        "HEADER": "has received your gifts!♡"
     },
     "HELP": {
         "LANDING": "Are you looking for a quick start?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Check how much exp you get after those hours of chit-chatting. I can see how talkative you are just from this. ;)\n\n**`{{prefix}}bal`**\n> Have you ever wondered, how many artcoins you are currently have in your account right now? This is important thing to do in order to impress your friend, tehee.\n\n**`{{prefix}}daily`**\n> Did you hear 'freebies'? yes, I reward you free 250 artcoins for every 23 hours! So, make sure to not skip it, okay!?\n\n**`{{prefix}}leaderboard`**\n> Curious who got the highest exp, artcoins and fame points in your server? Now it's time to take your throne.\n\n**`{{prefix}}profile`**\n> Here you will be able to see your current rank, level, artcoins and fame points at a glance. It may be plain at first, but hey; we'll decorate it together!\n╰──────────☆～*:;,．*╯\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
@@ -456,6 +458,7 @@
     "PROFILECARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",
         "FETCHING": "{{emoji}} *Hold on- your profile card still in build ...*",
+        "NEWCOMER_TIPS": "Friendly reminder, you can spice up your card with **`setcover`** command!",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
     },
     "PORTFOLIOCARD": {
@@ -482,7 +485,16 @@
         "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour next quest will be available\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nClaim your **`{{prefix}}daily`** if you haven't yet!",
         "EMPTY": "Sorry, no quests are available to take at the moment!",
         "CANCEL": "Alright, quest has been cancelled.",
-        "PRAISE": ["Awesome", "Nice", "GG", "Genius", "Goodjob", "Impressive", "Magnificent", "Astounding"],
+        "PRAISE": [
+            "Awesome",
+            "Nice",
+            "GG",
+            "Genius",
+            "Goodjob",
+            "Impressive",
+            "Magnificent",
+            "Astounding"
+        ],
         "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}"
     },
     "RECYCLE": {
@@ -674,9 +686,8 @@
         "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}setlog enable`",
         "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}setlog channel #mylogs`**",
         "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}"
-
     },
-    "SERVERINFO":"A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! ",
+    "SERVERINFO": "A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! ",
     "SETSOCIALMEDIA": {
         "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
         "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
@@ -747,7 +758,7 @@
         "STACK_ENABLE": "**Aye, roles paradise! ♡**\n╰ Your member now will keep their previous rank roles."
     },
     "SETWELCOMER": {
-        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles! By any chance if you assigned wrong roles by mistake, you can always do 'reset' option.\n(For registering) e.g. __{{prefix}}setwelcomer role @muffins @cupcake__\n(For reset) e.g. __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the welcomer. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Toggle this option if you want more clean, simple & plain welcomer message without any image!\n\n**`{{prefix}}setwelcomer userimage`**\n> Tired of choosing a suitable welcomer image? toggle this option to display user's image as the welcomer background!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Was the light mode too light for you? we all do. That's why I provided a dark theme, tehee.\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles! By any chance if you assigned wrong roles by mistake, you can always do 'reset' option.\n(For registering) e.g. __{{prefix}}setwelcomer role @muffins @cupcake__\n(For reset) e.g. __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the welcomer. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Toggle this option if you want more clean, simple & plain welcomer message without any image!\n\n**`{{prefix}}setwelcomer userimage`**\n> Tired of choosing a suitable welcomer image? toggle this option to display user's image as the welcomer background!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Was the light mode too light for you? we all do. That's why I provided a dark theme, tehee.\n\n**{{prefix}}setwelcomer multiple add <channel>**\n> To add addition channel. **Must do `{{prefix}}setwelcomer` channel first**\n\n{{prefix}}setwelcomer multiple remove <channel>**\n> To remove addition channel.\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
         "ALREADY_ENABLED": "The Welcomer already enabled by **{{user}}, {{date}}**",
         "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
@@ -760,6 +771,10 @@
         "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
         "ROLE_SUCCESSFULLY_RESET": "**Alright, done!** assigned roles in welcomer have been removed♡",
         "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
+        "ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in one of these {{channels}} whenever they joined to this guild!",
+        "ADDITIONAL_CHANNELS": "Here are all of your available channels that are registered\n{{channels}}",
+        "ADDITIONAL_CHANNEL_FAIL_REGISTERED": "Looks like the channel you are trying to add is already registered",
+        "ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED": "Looks like the channel you are trying to add is not registered yet, or is your main welcome channel",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
         "EMPTY_IMAGE_PARAMETER": "Don't forget to write what default image option you would like to use!\neg. `{{prefix}}setwelcomer defaultimage user pfp`",
         "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
@@ -778,7 +793,9 @@
         "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
         "THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
         "THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
-        "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!"
+        "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!",
+        "NO_DEFAULT_CHANNEL": "Please complete set main welcome channel and main welcome text first.",
+        "ONBOARDWAIT_CONFIRM": "**Onboarding wait** has been successfully {{setting}} in this guild!"
     },
     "SETSHOP": {
         "GUIDE": "Ready to create a customized virtual items that your member able to buy? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Don't forget to open up the shop first, before applying anything else!\n\n**`{{prefix}}setshop text <message>`**\n> Create a short, yet unique shop's header of your server! Use {{user}} to mention the user.\ne.g. __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Your registered item doesn't seem to attract that much? I guess its time to delete them.\n\n**`{{prefix}}setshop add <itemName>`**\n> Nothing as good as creating your own item for your server! Put a unique name, set price, add effects, and profit.\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Missing some details on your recently registered item?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> To enhance the personalization even further, try upload a unique banner for your server's shop!\n\n**`{{prefix}}setshop close`**\n> Got something in mind? wanna set a shopping day for your member? you can close the shop first and open it again whenever you are ready.\n\n╰──────────☆～*:;,．*╯",
@@ -852,7 +869,7 @@
         "TEMPORARILY_CLOSED": "**H-hi! the shop gets temporarily closed until further notice.**\n╰─Sorry for this inconvenience! {{emoji}}",
         "NO_ITEMS": "**Nothing to buy!** this server hasn't set their own shop yet.",
         "SETUP_TIPS": "Try ask the server owner/admin to setup one with **`{{prefix}}setshop`** command!♡",
-        "CLOSED": "Aw, the shop still closed! please comeback next time!", 
+        "CLOSED": "Aw, the shop still closed! please comeback next time!",
         "BUY_TIPS": "Type **`{{prefix}}buy <item>`** to purchase it! {{emoji}}",
         "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**"
     },

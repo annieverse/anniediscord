@@ -132,7 +132,7 @@ class User {
 		const fn = `[User.requestMetadata()]`
 		const db = this.bot.db
 		//  Handle if user object isn't valid
-		if (!user.id || typeof user !== `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
+		if (!user.id && typeof user != `object`) throw new TypeError(`${fn} parameter 'user' should be a valid collection of user metadata.`)
         //  Perform pre-check for the guild
         await db.guildUtils.registerGuild(this.message.guild)
 		try {

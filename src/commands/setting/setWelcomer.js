@@ -8,6 +8,7 @@ const {
     v4: uuidv4
 } = require(`uuid`)
 const findRole = require(`../../utils/findRole`)
+const { Collection } = require(`discord.js`)
 
 const {
     ApplicationCommandType,
@@ -27,6 +28,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `enable`,
@@ -108,6 +110,50 @@ module.exports = {
         description: `Allow user set image for welcome message.`,
         type: ApplicationCommandOptionType.Subcommand,
     }, {
+        name: `multiple`,
+        description: `Send a welcome message to a specfic channel based on roles/channels`,
+        type: ApplicationCommandOptionType.SubcommandGroup,
+        options: [{
+            name: `add`,
+            description: `Add a channel to recieve welcome messages`,
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [{
+                name: `channel`,
+                description: `Channel name`,
+                required: true,
+                type: ApplicationCommandOptionType.Channel,
+            }, {
+                name: `text`,
+                description: `Set text for welcome message in this channel.`,
+                type: ApplicationCommandOptionType.String,
+                required: true,
+            }]
+        }, {
+            name: `remove`,
+            description: `Remove a channel to recieve welcome messages`,
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [{
+                name: `channel`,
+                description: `Channel name`,
+                required: true,
+                type: ApplicationCommandOptionType.Channel,
+            }]
+        }, {
+            name: `list`,
+            description: `view all channels that can recieve welcome messages`,
+            type: ApplicationCommandOptionType.Subcommand,
+        }]
+    }, {
+        name: `onboardwait`,
+        description: `Wait for user to finish onboarding before sending welcome message.`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `wait`,
+            description: `toggle to wait or not`,
+            required: true,
+            type: ApplicationCommandOptionType.Boolean,
+        }]
+    }, {
         name: `noimage`,
         description: `Allow user set image for welcome message.`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -128,7 +174,7 @@ module.exports = {
      * An array of the available options for welcomer module
      * @type {array}
      */
-    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `userimage`, `noimage`, `theme`, `preview`],
+    actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `userimage`, `noimage`, `theme`, `preview`, `multipleadd`, `multipleremove`, `multiplelist`, `onboardwait`],
 
     /**
      * Reference key to welcomer sub-modules config code.
@@ -143,7 +189,11 @@ module.exports = {
         "image": `WELCOMER_IMAGE`,
         "userimage": `WELCOMER_USERIMAGE`,
         "noimage": `WELCOMER_NOIMAGE`,
-        "theme": `WELCOMER_THEME`
+        "theme": `WELCOMER_THEME`,
+        "multipleadd": `WELCOMER_ADDITIONAL_CHANNELS`,
+        "multipleremove": `WELCOMER_ADDITIONAL_CHANNELS`,
+        "multiplelist": `WELCOMER_ADDITIONAL_CHANNELS`,
+        "onboardwait": `WELCOMER_ONBOARDWAIT`
     },
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return await reply.send(locale.SETWELCOMER.GUIDE, {
@@ -168,9 +218,7 @@ module.exports = {
         this.selectedModule = this.actionReference[this.action]
         //  This is the main configuration of setwelcomer, so everything dependant on this value
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
-        //  This is the sub-part of main configuration such as welcomer's channel, text, etc
-        this.subConfig = this.guildConfigurations.get(this.selectedModule)
-        return this[this.args[0].toLowerCase()](client, reply, message, arg, locale, prefix)
+        return this[this.args[0].toLowerCase()](client, reply, message, locale, prefix)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `enable`) {
@@ -225,21 +273,199 @@ module.exports = {
             this.action = `preview`
             this.args = [this.action]
         }
+        if (options.getSubcommandGroup() === `multiple`) {
+            if (options.getSubcommand() === `add`) {
+                this.action = `multipleadd`
+                this.args = [this.action, options.getChannel(`channel`).id, options.getString(`text`)]
+            } else if (options.getSubcommand() === `remove`) {
+                this.action = `multipleremove`
+                this.args = [this.action, options.getChannel(`channel`).id]
+            } else if (options.getSubcommand() === `list`) {
+                this.action = `multiplelist`
+                this.args = [this.action]
+            }
+        }
+        if (options.getSubcommand() === `onboardwait`) {
+            this.action = `onboardwait`
+            this.args = [this.action, options.getBoolean(`wait`)]
+        }
         //  Run action
         this.annieRole = (await interaction.guild.members.fetch(client.user.id)).roles.highest
         this.guildConfigurations = interaction.guild.configs
         this.selectedModule = this.actionReference[this.action]
         //  This is the main configuration of setwelcomer, so everything dependant on this value
         this.primaryConfig = this.guildConfigurations.get(`WELCOMER_MODULE`)
-        //  This is the sub-part of main configuration such as welcomer's channel, text, etc
-        this.subConfig = this.guildConfigurations.get(this.selectedModule)
-        return this[this.args[0].toLowerCase()](client, reply, interaction, null, locale, `/`)
+        return this[this.args[0].toLowerCase()](client, reply, interaction, locale, `/`)
+    },
+    async onboardwait(client, reply, message, locale, prefix) {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        // WELCOMER_ONBOARDWAIT
+        if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+        const currentSelection = this.guildConfigurations.get(this.selectedModule).value === 0 ? false : this.guildConfigurations.get(this.selectedModule).value === 1 ? true : false
+        const changeSelection = typeof (this.args[1]) === `string` ? this.args[1].toLowerCase() === `true` ? 1 : this.args[1].toLowerCase() === `false` ? 0 : 0 : this.args[1]
+        const valueToAddToDB = changeSelection ? 1 : 0
+        if (currentSelection === changeSelection) return await reply.send(`Module is already configured`)
+
+        client.db.guildUtils.updateGuildConfiguration({
+            configCode: this.selectedModule,
+            customizedParameter: valueToAddToDB,
+            guild: message.guild,
+            setByUserId: message.member.id,
+            cacheTo: this.guildConfigurations
+        })
+        return await reply.send(locale.SETWELCOMER.ONBOARDWAIT_CONFIRM, {
+            status: `success`,
+            socket: {
+                setting: changeSelection ? `enabled` : `disabled`
+            }
+        })
+    },
+    async multiplelist(client, reply, message, locale, prefix) {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        const PARENT_CONFIG_CHANNEL = this.guildConfigurations.get(`WELCOMER_CHANNEL`)
+
+        if (!PARENT_CONFIG_CHANNEL) return await reply.send(locale.SETWELCOMER.NO_DEFAULT_CHANNEL)
+        const channels_raw = !this.guildConfigurations.get(this.selectedModule) ? [] : this.guildConfigurations.get(this.selectedModule).value
+        return await reply.send(locale.SETWELCOMER.ADDITIONAL_CHANNELS, {
+            socket: {
+                channels: `<#${PARENT_CONFIG_CHANNEL.value}>, ${(channels_raw.map(x => `<#${x.channel}>`)).join(`, `)}`
+            }
+        })
+    },
+    async multipleremove(client, reply, message, locale, prefix) {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        const PARENT_CONFIG_CHANNEL = this.guildConfigurations.get(`WELCOMER_CHANNEL`)
+
+        if (!PARENT_CONFIG_CHANNEL) return await reply.send(locale.SETWELCOMER.NO_DEFAULT_CHANNEL)
+        let channels_raw = !this.guildConfigurations.get(this.selectedModule) ? [] : this.guildConfigurations.get(this.selectedModule).value
+        let channelsWithText = new Collection(channels_raw.map((obj) => [obj.channel, obj.text]))
+        //  Handle if search keyword isn't provided
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        let testCondition = false
+        if (message.mentions) {
+            testCondition = message.mentions.channels.first() || message.guild.channels.cache.get(this.args[1]) ||
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        } else {
+            testCondition = message.guild.channels.cache.get(this.args[1]) ||
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        }
+
+        //  Do channel searching by three possible conditions
+        const searchChannel = testCondition
+        //  Handle if target channel couldn't be found
+        if (!searchChannel) return await reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
+            socket: {
+                emoji: await client.getEmoji(`692428578683617331`)
+            }
+        })
+        let condition = channelsWithText.has(searchChannel.id)
+        if (!condition) return await reply.send(locale.SETWELCOMER.ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED, {
+            status: `fail`
+        })
+
+        channelsWithText.delete(searchChannel.id)
+        const channels = Array.from(channelsWithText, ([channel, text]) => ({ channel, text }))
+
+        client.db.guildUtils.updateGuildConfiguration({
+            configCode: this.selectedModule,
+            customizedParameter: channels,
+            guild: message.guild,
+            setByUserId: message.member.id,
+            cacheTo: this.guildConfigurations
+        })
+        return await reply.send(locale.SETWELCOMER.ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED, {
+            status: `success`,
+            socket: {
+                channels: `<#${PARENT_CONFIG_CHANNEL.value}>, ${(channels.map(x => `<#${x.channel}>`)).join(`, `)}`
+            }
+        })
+    },
+    async multipleadd(client, reply, message, locale, prefix) {
+        if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        const PARENT_CONFIG_CHANNEL = this.guildConfigurations.get(`WELCOMER_CHANNEL`)
+        const PARENT_CONFIG_TEXT = this.guildConfigurations.get(`WELCOMER_TEXT`)
+
+        if (!PARENT_CONFIG_CHANNEL || !PARENT_CONFIG_TEXT) return await reply.send(locale.SETWELCOMER.NO_DEFAULT_CHANNEL)
+        let channels_raw = !this.guildConfigurations.get(this.selectedModule).value ? [] : this.guildConfigurations.get(this.selectedModule).value
+        let channelsWithText = new Collection(channels_raw.map((obj) => [obj.channel, obj.text]))
+        channelsWithText.set(PARENT_CONFIG_CHANNEL.value, PARENT_CONFIG_TEXT.value)
+
+        //  Handle if search keyword isn't provided
+        if (!this.args[1]) return await reply.send(locale.SETWELCOMER.EMPTY_CHANNEL_PARAMETER, {
+            socket: {
+                prefix: prefix
+            }
+        })
+        let testCondition = false
+        if (message.mentions) {
+            testCondition = message.mentions.channels.first() || message.guild.channels.cache.get(this.args[1]) ||
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        } else {
+            testCondition = message.guild.channels.cache.get(this.args[1]) ||
+                message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase())
+        }
+
+        //  Do channel searching by three possible conditions
+        const searchChannel = testCondition
+        //  Handle if target channel couldn't be found
+        if (!searchChannel) return await reply.send(locale.SETWELCOMER.INVALID_CHANNEL, {
+            socket: {
+                emoji: await client.getEmoji(`692428578683617331`)
+            }
+        })
+
+        /**
+         * Put all info together to save to db
+         */
+        let condition = channelsWithText.has(searchChannel.id)
+        // let condition = channels.includes(searchChannel.id) || channels.includes(PARENT_CONFIG.value)
+        if (condition) return await reply.send(locale.SETWELCOMER.ADDITIONAL_CHANNEL_FAIL_REGISTERED, {
+            status: `fail`
+        })
+
+        channelsWithText.set(searchChannel.id, this.args[2])
+        channelsWithText.delete(PARENT_CONFIG_CHANNEL.value)
+        const channels = Array.from(channelsWithText, ([channel, text]) => ({ channel, text }))
+
+        client.db.guildUtils.updateGuildConfiguration({
+            configCode: this.selectedModule,
+            customizedParameter: channels,
+            guild: message.guild,
+            setByUserId: message.member.id,
+            cacheTo: this.guildConfigurations
+        })
+        return await reply.send(locale.SETWELCOMER.ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED, {
+            status: `success`,
+            socket: {
+                channels: `<#${PARENT_CONFIG_CHANNEL.value}>, ${(channels.map(x => `<#${x.channel}>`)).join(`, `)}`
+            }
+        })
     },
     /**
      * Enabling welcomer module
      * @return {void}
      */
-    async enable(client, reply, message, arg, locale, prefix) {
+    async enable(client, reply, message, locale, prefix) {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             return await reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
@@ -269,7 +495,7 @@ module.exports = {
      * Disabling welcomer module
      * @return {void}
      */
-    async disable(client, reply, message, arg, locale, prefix) {
+    async disable(client, reply, message, locale, prefix) {
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
@@ -291,7 +517,7 @@ module.exports = {
      * Set new target channel for welcomer module
      * @return {void}
      */
-    async channel(client, reply, message, arg, locale, prefix) {
+    async channel(client, reply, message, locale, prefix) {
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
                 prefix: prefix
@@ -339,7 +565,7 @@ module.exports = {
      * Set message to be attached in the welcomer.
      * @return {void}
      */
-    async text(client, reply, message, arg, locale, prefix) {
+    async text(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -373,14 +599,14 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },
 
     /**
      * Preview this guild's welcomer message
      * @return {void}
      */
-    async preview(client, reply, message, arg, locale, prefix) {
+    async preview(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -410,7 +636,7 @@ module.exports = {
      * Adding role when user joined the guild 
      * @return {void}
      */
-    async role(client, reply, message, arg, locale, prefix) {
+    async role(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -473,7 +699,7 @@ module.exports = {
      * Managing welcomer's image. 
      * @return {void}
      */
-    async imagereset(client, reply, message, arg, locale, prefix) {
+    async imagereset(client, reply, message, locale, prefix) {
         const welcomerImage = message.guild.configs.get(`WELCOMER_IMAGE`).value
         if (welcomerImage === `welcomer` || !welcomerImage) return await reply.send(`You use the default configuration already.`)
         const confirmation = await reply.send(locale.SETWELCOMER.CONFIRMATION_IMAGE, {
@@ -501,7 +727,7 @@ module.exports = {
      * Managing welcomer's image. 
      * @return {void}
      */
-    async image(client, reply, message, arg, locale, prefix) {
+    async image(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -576,7 +802,7 @@ module.exports = {
      * Toggle user's profile picture as the background of welcomer message.
      * @return {void}
      */
-    async userimage(client, reply, message, arg, locale, prefix) {
+    async userimage(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -614,14 +840,14 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },
 
     /**
      * Enabling/disabling image from the welcomer.
      * @return {void}
      */
-    async noimage(client, reply, message, arg, locale, prefix) {
+    async noimage(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {
@@ -650,7 +876,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, arg, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },
 
     /** 
@@ -683,7 +909,7 @@ module.exports = {
      * Theme management
      * @return {void}
      */
-    async theme(client, reply, message, arg, locale, prefix) {
+    async theme(client, reply, message, locale, prefix) {
         //  Handle if the user hasn't enabled the module yet
         if (!this.primaryConfig.value) return await reply.send(locale.SETWELCOMER.ALREADY_DISABLED, {
             socket: {

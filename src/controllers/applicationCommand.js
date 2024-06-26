@@ -4,12 +4,11 @@ const {
     cooldown
 } = require(`../config/commands`)
 const {InteractionType} = require(`discord.js`)
+const { levelZeroErrors } = require(`../utils/errorLevels.js`)
 module.exports = async (client, interaction, command) =>{
     // Handle localization
-    let locale = client.locales.en
-    // const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    // locale = client.localizer.getTargetLocales(userData.lang)    
-    // locale.currentLang = userData.lang
+    const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
+    const locale = client.getTargetLocales(userData.lang)    
     let reply = client.responseLibs(interaction, false, locale)
     const options = interaction.options
     const targetCommand = interaction.commandName
@@ -89,11 +88,6 @@ module.exports = async (client, interaction, command) =>{
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(userId)
         const date = new Date()
-        const levelZeroErrors = [
-            `Missing Permissions`,
-            `Unsupported image type`,
-            `unsupported file type: undefined`
-        ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)

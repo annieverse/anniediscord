@@ -17,6 +17,7 @@ module.exports = {
 	messageCommand: true,
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
+    server_specific: false,
 	async run(client, reply, messageRef, locale){
 		const user = messageRef.member.user
 		const sessionID = `QUEST_SESSION_${user.id}@${messageRef.guild.id}`
@@ -25,7 +26,7 @@ module.exports = {
 		await questSession.start(sessionID, user, locale, messageRef)
 		if (questSession.getSessionActive) return 
 		if (!questSession.getQuestAvailable) return 
-
+		
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
 			.addComponents(
@@ -40,7 +41,7 @@ module.exports = {
 			)
 		const quest = await reply.send(locale.QUEST.DISPLAY, {
 			header: `${user.username} is taking a quest!`,
-			footer: locale.QUEST.FOOTER + `\n10 tries total`,
+			footer: locale.QUEST.FOOTER + `\nIf your answer keeps failing try the English version of the answer\n10 tries total`,
 			thumbnail: user.displayAvatarURL(),
 			socket: {
 				questTitle: questSession.getQuestTitle,

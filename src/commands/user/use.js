@@ -20,6 +20,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `item`,
         description: `The item you want to use`,

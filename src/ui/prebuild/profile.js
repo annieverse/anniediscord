@@ -60,6 +60,7 @@ class UI {
 		.createBase({cornerRadius: 25})
 		
 		const darkColorTheme = card.getColorPalette(`dark`)
+		const lightColorTheme = card.getColorPalette(`light`)
 
 		const adjustedPrimaryColorContrast_contrastColor = contrastColor({ bgColor: adjustedPrimaryColorContrast })
 
@@ -68,6 +69,9 @@ class UI {
 		//  Cover
 		await card.addBackgroundLayer(this.user.usedCover.alias, {
 			isSelfUpload: this.user.usedCover.isSelfUpload,
+			gradient: !this.user.usedCover.isSelfUpload,
+			gradientOpacity: 0.9,
+			gradientHeight: Math.floor(card.height/2.5),
 			minHeight: 197
 		})
 		card.canv.setColor(card.color.main)
@@ -100,18 +104,25 @@ class UI {
 			.setTextFont(`${this.resizeLongNickname(this.user.master.username || this.user.master.user.username)} roboto-bold`)
 			.printText(this.user.master.username || this.user.master.user.username, startPos_x + 70, 272)
 
-		//  User's Title
+		/**
+		 * Future notes:
+		 * Light/dark mode text adaption
+		 * Code example -> usingLightMode? adjustedPrimaryColorContrast : darkColorTheme.main
+		 */
 
+		//  User's Title
 		// For the background bubble around the title
+		/*
 		card.canv.save()
 			.setColor(usingLightMode? adjustedPrimaryColorContrast : darkColorTheme.main)
 			.createRoundedClip(startPos_x + 17, startPos_y + 266, 110, 20, 20)
 			.printRectangle(startPos_x + 17, startPos_y + 266, 110, 20)
 			.restore()
+		*/
 
 		// For the actual title
 		card.canv.setTextFont(`7pt roboto`)
-			.setColor(usingLightMode? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)				
+			//.setColor(usingLightMode? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)				
 			.printText(this.user.title.toUpperCase().split(``).join(` `), startPos_x + 70, 289)
 
 		//  Verified/Blue Badge if any
@@ -121,20 +132,19 @@ class UI {
 		 */
 		// const verifiedStartingPoint = card.canv.measureText(this.user.master.username).width * 1.3 + 2
 		// if (this.user.main.verified) card.canv.printImage(await loadImage(await loadAsset(`verified_badge`)), startPos_x + 60 + verifiedStartingPoint, 256, 16, 16)
-
+		
 		// Rank Bar
 		card.canv.save()
-			.setColor(adjustedPrimaryColorContrast)
+			.setColor(usingLightMode ? darkColorTheme.main : lightColorTheme.main)
 			.createRoundedClip(startPos_x + 150, startPos_y + 250, 130, 20, 20)
 			.printRectangle(startPos_x + 150, startPos_y + 250, 130, 20)
 			.setTextFont(`10pt roboto-bold`)
-			.setColor(adjustedPrimaryColorContrast_contrastColor)
+			.setColor(usingLightMode ? lightColorTheme.main : darkColorTheme.main)
 			.printText(symbolParser(this.user.rank.name), startPos_x + 215, startPos_y + 264)
 			.restore()
-
 		//  Description
 		const bio = this.user.main.bio
-		const descriptionMarginLeft = 50
+		const descriptionMarginLeft = 45
 		const descriptionMarginTop = 310
 		const descriptionMarginBetweenParagraph = 13
 		card.canv.setColor(card.color.text)
@@ -158,6 +168,7 @@ class UI {
 
 
 		//  Footer Components [Heart, Level, Fame/Reputation Points]
+		/*
 		if (usingLightMode) {			
 			// use role color as one bubble
 			card.canv.save()
@@ -166,14 +177,15 @@ class UI {
 			.printRectangle(18, 343, card.width - 38, 62)
 			.restore()
 		}
+		*/
 				
 		card.canv.setTextAlign(`center`)
 			.setTextFont(`17pt roboto`)
-			.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)
+			//.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : adjustedPrimaryColorContrast)
 			.printText(formatK(this.user.inventory.artcoins), 70, 370)
 			.printText(this.user.exp.level, 160, 370)
 			.printText(formatK(this.user.reputations.total_reps), 250, 370)
-			.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : darkColorTheme.text)
+			//.setColor(usingLightMode ? adjustedPrimaryColorContrast_contrastColor : darkColorTheme.text)
 			.setTextFont(`7pt roboto`)
 			.printText(`ARTCOINS`, 70, 390)
 			.printText(`LEVEL`, 160, 390) 

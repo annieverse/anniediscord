@@ -4,7 +4,7 @@ const customConfig = require(`./config/customConfig.js`)
 const config = require(`./config/global`)
 const commandsLoader = require(`./commands/loader`)
 const Database = require(`./libs/database`)
-const localizer = require(`./libs/localizer`)
+const {getTargetLocales, availableLocales} = require(`./libs/localizer`)
 const getBenchmark = require(`./utils/getBenchmark`)
 const PointsController = require(`./controllers/points`)
 const Experience = require(`./libs/exp`)
@@ -194,15 +194,15 @@ class Annie extends Discord.Client {
             try {
                 // const databaseConnection = await new Database().connect()
                 this.registerNode(new Database().connect(), `db`)
-                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS} = commandsLoader({ logger: this.logger })
+                const {MESSAGE_COMMANDS, APPLICATION_COMMANDS, GUILDONLY_COMMANDS} = commandsLoader({ logger: this.logger })
                 this.registerNode(MESSAGE_COMMANDS, `message_commands`)
-                require(`./commands/applicationCommandsLoader`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
+                // require(`./commands/applicationCommandsLoader`)({ logger: this.logger, commands: APPLICATION_COMMANDS })
                 require(`./controllers/handleComponents`)({ logger: this.logger, client:this})
                 this.registerNode(APPLICATION_COMMANDS, `application_commands`)
-                // const localizer = new Localizer()
-                // this.registerNode(localizer, `localizer`)
-                // this.registerNode(localizer.localesPool, `locales`)
-                this.registerNode(localizer(),`locales`)
+                this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
+                this.registerNode(getTargetLocales, `getTargetLocales`)
+                this.registerNode(availableLocales, `availableLocales`)
+                // this.registerNode(localizer(),`locales`)
                 require(`./controllers/events`)(this)
                 this.login(process.env.BOT_TOKEN)
             } catch (e) {
@@ -268,10 +268,10 @@ class Annie extends Discord.Client {
                                         })
                                     continue
                                 }
-                                this.db.redis.sAdd(key, node.multiplier)
+                                this.db.redis.sAdd(key, `${node.multiplier}`)
                                 this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
                                             //  Flush from cache and sqlite
-                                            this.db.redis.srem(key, node.multiplier)
+                                            this.db.redis.srem(key, `${node.multiplier}`)
                                             this.db.durationalBuffs.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
                                                 .then(id => {
                                                     this.db.durationalBuffs.removeUserDurationalBuff(id)

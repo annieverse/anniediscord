@@ -14,6 +14,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `choices`,
         description: `Please give me some options to pick from, seperated by , or "or".`,

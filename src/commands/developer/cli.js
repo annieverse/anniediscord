@@ -1,6 +1,6 @@
 "use strict"
-/* eslint-disable no-unused-vars*/
-/* eslint-disable no-useless-escape*/
+ 
+ 
 const cmd = require(`node-cmd`)
     /**
      * 	Running terminal command
@@ -14,7 +14,9 @@ module.exports = {
     permissionLevel: 4,
     multiUser: false,
     applicationCommand: false,
+    server_specific: true,
     messageCommand: true,
+    servers: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         //	Return if user doesn't specify arguments.
         if (!arg) return reply.send(locale.CLI.GUIDE)

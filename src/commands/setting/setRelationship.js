@@ -21,6 +21,7 @@ module.exports = {
         multiUser: false,
         applicationCommand: true,
         messageCommand: true,
+        server_specific: false,
         options: [{
             name: `remove`,
             description: `Action to perform.`,

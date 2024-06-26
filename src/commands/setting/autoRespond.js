@@ -20,6 +20,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     options: [/* {
         name: `action`,
@@ -338,7 +339,7 @@ module.exports = {
             }
         })
         //  Handle if target AR to be deleted does not exists.
-        let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword.toLowerCase()))
+        let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword))
         if (!targetAR.length) return await reply.send(locale.AUTORESPONDER.DELETE_TARGET_INVALID, {
             socket: { emoji: await client.getEmoji(`692428807193493657`) }
         })
