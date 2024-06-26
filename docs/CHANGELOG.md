@@ -1,3 +1,10 @@
+## [9.9.1](https://github.com/annieverse/anniediscord/compare/v9.9.0...v9.9.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* **sendreward:** package not going to user ([133f7ab](https://github.com/annieverse/anniediscord/commit/133f7ab931b9a27a9e1bca4f1bbc222ff4f7e88e))
+
 # [9.9.0](https://github.com/annieverse/anniediscord/compare/v9.8.2...v9.9.0) (2024-06-25)
 
 
