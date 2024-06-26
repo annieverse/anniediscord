@@ -51,7 +51,7 @@ module.exports = {
     async Iexecute(client, reply, interaction, options, locale) {
         const user = options.getUser(`user`)
         const packageName = options.getString(`package_name`)
-        
+
         // handle if no packages are availble
         if (packageName === `none`) return await reply.send(`I'm sorry but you dont have any packages made, you can make one with \`/makereward create\``)
 
@@ -62,26 +62,27 @@ module.exports = {
         let roles = []
         const items = new Collection()
         const ac = rawObject.acReward
+        if (!interaction.guild.members.cache.has(user.id)) await interaction.guild.members.fetch({ user: user.id, force: false, cache: true })
+
         if (rawObject.roles.length > 0) {
             roles = rawObject.roles.map(a => JSON.parse(a.id))
             for (const id of roles) {
-                await interaction.guild.members.fetch(user.id)
                 // Ignore the role if the user already has the role
                 if (interaction.guild.members.cache.get(user.id).roles.cache.has(id)) continue
-                interaction.guild.members.addRole({user:user.id,role:id})
+                interaction.guild.members.addRole({ user: user.id, role: id })
             }
         }
         if (rawObject.item.length > 0) {
             const rawItems = rawObject.item
             for (const i of rawItems) {
                 let item_raw = JSON.parse(i.object)
-                items.set(item_raw.item_id,i.amount) // Use item_id as key to prevent overwriting values
+                items.set(item_raw.item_id, i.amount) // Use item_id as key to prevent overwriting values
             }
             for (const i of items) {
                 client.db.databaseUtils.updateInventory({
                     itemId: i[0],
                     value: i[1],
-                    userId: interaction.member.id,
+                    userId: user.id,
                     guildId: interaction.guild.id
                 })
             }
@@ -90,11 +91,11 @@ module.exports = {
             client.db.databaseUtils.updateInventory({
                 itemId: 52,
                 value: ac,
-                userId: interaction.member.id,
+                userId: user.id,
                 guildId: interaction.guild.id
             })
         }
 
-        await reply.send(`${user} has recieved the package ${packageName}`,{ephemeral:true})
+        await reply.send(`${user} has recieved the package ${packageName}`, { ephemeral: true })
     }
 }
