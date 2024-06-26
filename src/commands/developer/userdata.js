@@ -210,7 +210,7 @@ module.exports = {
                     , `all`
                     , { userId: userId }
                     , `[userdata.js] Retrieving user_id:${userId} from Table:${input}`)
-                
+
                 try {
                     if (fs.existsSync(filepath)) {
                         fs.unlinkSync(filepath)
@@ -225,7 +225,7 @@ module.exports = {
                 file.write(`\n${border}The follow data is from ${input}\n${border}\n`)
                 res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 file.end()
-                await reply.send(`Here is the data from \`${input}\` table for user with id: ${userId}`,{
+                await reply.send(`Here is the data from \`${input}\` table for user with id: ${userId}`, {
                     file: filepath,
                     fileName: filename,
                     fileDescription: `user requested data`
@@ -239,7 +239,7 @@ module.exports = {
                         client.logger.error(error)
                     }
                 }, 60000)
-            } else if (input === `all`){
+            } else if (input === `all`) {
                 let filename = `${userId}-${input}data.txt`
                 let filepath = `./.logs/${filename}`
                 try {
@@ -251,7 +251,7 @@ module.exports = {
                 }
                 let file = fs.createWriteStream(filepath)
                 file.on(`error`, function (err) { client.logger.error(err)/* error handling */ })
-                for (const table of sqlStmts){
+                for (const table of sqlStmts) {
                     let sql = table[1]
                     let res = await client.db.databaseUtils._query(sql
                         , `all`
@@ -260,9 +260,9 @@ module.exports = {
                     let border = `===========================================================\n`
                     file.write(`\n${border}The follow data is from ${table[0]}\n${border}\n`)
                     res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
-                }                
+                }
                 file.end()
-                await reply.send(`Here is the all data for user with id: ${userId}`,{
+                await reply.send(`Here is the all data for user with id: ${userId}`, {
                     file: filepath,
                     fileName: filename,
                     fileDescription: `user requested data`
@@ -284,6 +284,12 @@ module.exports = {
     async removeUserdata(client, reply, message, argu, locale) {
         const userId = argu[1]
         const sql = `DELETE FROM users WHERE user_id=$userID`
+        const updateConfig = `UPDATE guild_configurations SET setByUserId=$bot, updated_at = CURRENT_TIMESTAMP WHERE setByUserId=$userID`
+        await client.db.databaseUtils._query(updateConfig
+            , `run`
+            , { bot: client.user.id, userId: userId }
+            , `[userdata.js] Updating "guild_configurations" user to ${userId}`)
+
         await client.db.databaseUtils._query(sql
             , `run`
             , { userId: userId }
