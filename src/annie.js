@@ -268,10 +268,10 @@ class Annie extends Discord.Client {
                                         })
                                     continue
                                 }
-                                this.db.redis.sAdd(key, node.multiplier)
+                                this.db.redis.sAdd(key, `${node.multiplier}`)
                                 this.cronManager.add(node.multiplier + `_` + key, new Date(expireAt), () => {
                                             //  Flush from cache and sqlite
-                                            this.db.redis.srem(key, node.multiplier)
+                                            this.db.redis.srem(key, `${node.multiplier}`)
                                             this.db.durationalBuffs.getUserDurationalBuffId(node.type, node.name, node.multiplier, node.user_id, node.guild_id)
                                                 .then(id => {
                                                     this.db.durationalBuffs.removeUserDurationalBuff(id)
