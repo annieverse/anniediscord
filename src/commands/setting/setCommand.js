@@ -20,6 +20,7 @@ module.exports = {
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `channel`,
         description: `Action to perform.`,

@@ -2,6 +2,8 @@ const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
 const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
+const { levelZeroErrors } = require(`../utils/errorLevels.js`)
+
 /**
  * Centralized Controller to handle incoming command request
  * @since 6.0.0
@@ -16,15 +18,14 @@ module.exports = async (client={}, message={}) => {
     let command = findCommandProperties(client, targetCommand)
     // Ignore non-registered commands
     if (!command) return 
+    if (command.server_specific && !command.servers.includes(message.guildId)) return
     //  Plus one from whitespace
     const arg = message.content.slice(prefix.length + targetCommand.length+1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     // Handle localization
-    let locale = client.locales.en
-    // const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    // locale = client.localizer.getTargetLocales(userData.lang)
-    // locale.currentLang = userData.lang
+    const userData = await client.db.userUtils.getUserLocale(message.author.id)
+    const locale = client.getTargetLocales(userData.lang)
     let reply = client.responseLibs(message, false, locale)
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
@@ -120,15 +121,10 @@ module.exports = async (client={}, message={}) => {
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(authorId)
         const date = new Date()
-        const levelZeroErrors = [
-            `Missing Permissions`,
-            `Unsupported image type`,
-            `unsupported file type: undefined`
-        ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
-        if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)
-        if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
+        if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`,{cache:true,force:true})
+        if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`,{cache:true,force:true})
 
         const channel = levelZeroErrors.includes(error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
         if (channel){

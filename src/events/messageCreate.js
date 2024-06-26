@@ -23,11 +23,9 @@ module.exports = (client, message) => {
             //  To avoid spam, cache the 15s cooldown per guild
             const prefixHintId = `PREFIX_HINT@${message.guild.id}`
             return client.db.databaseUtils.doesCacheExist(prefixHintId)
-            // return client.db.redis.exists(prefixHintId)
             .then(res => {
                 if (res) return
-                client.db.databaseUtils.setCache(prefixHintId,1,{EX:15})
-                // client.db.redis.set(prefixHintId, 1, {EX: 15})
+                client.db.databaseUtils.setCache(prefixHintId,`1`,{EX:15})
                 client.responseLibs(message).send(`Type **\`${prefix}help\`** to see my commands. ♡`, {
                     deleteIn: 5
                 })
@@ -62,9 +60,9 @@ module.exports = (client, message) => {
         if (!message.guild.configs.get(`EXP_MODULE`).value) return
         const chatExpBase = message.guild.configs.get(`CHAT_EXP`).value
         
-        // const userData = await client.db.userUtils.getUserLocale(message.author.id)
-        // const locale = client.localizer.getTargetLocales(userData.lang)
-        const locale = client.locales.en
+        // const locale = client.locales.en
+        const userData = await client.db.userUtils.getUserLocale(message.author.id)
+        const locale = client.getTargetLocales(userData.lang)
 
         client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {

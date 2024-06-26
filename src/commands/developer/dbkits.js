@@ -13,6 +13,8 @@ module.exports = {
     multiUser: false,
     applicationCommand: false,
     messageCommand: true,
+    server_specific: true,
+    servers: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         //	Return if user doesn't specify arguments.
         if (!arg) return reply.send(locale.DBKITS.AUTHORIZED, {

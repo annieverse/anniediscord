@@ -1,3 +1,81 @@
+## [9.9.1](https://github.com/annieverse/anniediscord/compare/v9.9.0...v9.9.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* **sendreward:** package not going to user ([133f7ab](https://github.com/annieverse/anniediscord/commit/133f7ab931b9a27a9e1bca4f1bbc222ff4f7e88e))
+
+# [9.9.0](https://github.com/annieverse/anniediscord/compare/v9.8.2...v9.9.0) (2024-06-25)
+
+
+### Features
+
+* **avariksaga:** custom commands ([49c24a4](https://github.com/annieverse/anniediscord/commit/49c24a47024b2012113a7c5848e9fc3c6b166323))
+
+## [9.8.2](https://github.com/annieverse/anniediscord/compare/v9.8.1...v9.8.2) (2024-05-22)
+
+
+### Bug Fixes
+
+* **experienceLibs:** unable to send rank up message ([9ca2dee](https://github.com/annieverse/anniediscord/commit/9ca2dee30962c369c7d31c7bddfcd361035523a2))
+
+## [9.8.1](https://github.com/annieverse/anniediscord/compare/v9.8.0...v9.8.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* **pay:** invaild user ([ef342bf](https://github.com/annieverse/anniediscord/commit/ef342bf435c9d1a43fe6bc674c5c02a59f1731d0))
+
+# [9.8.0](https://github.com/annieverse/anniediscord/compare/v9.7.12...v9.8.0) (2024-01-21)
+
+
+### Features
+
+* **welcomer:** setup multiple responses ([673af14](https://github.com/annieverse/anniediscord/commit/673af143fa6358ff54f9d43db1f4221e80da5194))
+
+## [9.7.12](https://github.com/annieverse/anniediscord/compare/v9.7.11...v9.7.12) (2024-01-20)
+
+
+### Bug Fixes
+
+* **AR:** deletion not working ([d4ad03f](https://github.com/annieverse/anniediscord/commit/d4ad03fb26c68257516ea8048f1ab2c466dcb40b))
+
+## [9.7.11](https://github.com/annieverse/anniediscord/compare/v9.7.10...v9.7.11) (2024-01-13)
+
+
+### Bug Fixes
+
+* **gift:** error finding emoji ([cd6380b](https://github.com/annieverse/anniediscord/commit/cd6380bc9ee9802769f96c1a550457e9cd10f046))
+* **makereward:** unable to see made ones ([8b53a3c](https://github.com/annieverse/anniediscord/commit/8b53a3caa46a4b97dedf8699e38dc02370d88a63))
+
+## [9.7.10](https://github.com/annieverse/anniediscord/compare/v9.7.9...v9.7.10) (2024-01-06)
+
+
+### Bug Fixes
+
+* **rep:** Backend issue ([50771bf](https://github.com/annieverse/anniediscord/commit/50771bfc118a381856ef87b1ec5916c5d9a40a02))
+
+## [9.7.9](https://github.com/annieverse/anniediscord/compare/v9.7.8...v9.7.9) (2024-01-01)
+
+
+### Bug Fixes
+
+* **pay:** cant find user ([0248557](https://github.com/annieverse/anniediscord/commit/024855769cb0460f1260b6e33de81ca24b13fab4))
+
+## [9.7.8](https://github.com/annieverse/anniediscord/compare/v9.7.7...v9.7.8) (2023-12-31)
+
+
+### Bug Fixes
+
+* **cartcoin:** duplication ([cc8d8c4](https://github.com/annieverse/anniediscord/commit/cc8d8c4bd745b9f6dd49d17658add2caca8c6db2))
+
+## [9.7.7](https://github.com/annieverse/anniediscord/compare/v9.7.6...v9.7.7) (2023-12-31)
+
+
+### Bug Fixes
+
+* **gift:** Negative amounts ([1f2b5b4](https://github.com/annieverse/anniediscord/commit/1f2b5b431ff03d70d3cf5c43fb2f650be1df0ff7))
+
 ## [9.7.6](https://github.com/annieverse/anniediscord/compare/v9.7.5...v9.7.6) (2023-05-26)
 
 

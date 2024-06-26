@@ -135,6 +135,28 @@ module.exports = {
             },
             {
                 /**
+                 *  Allow for multiple channels to send welcomer message to. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_ADDITIONAL_CHANNELS`,
+                description: `Allow for multiple channels to send welcomer message to`,
+                customizable: true,
+                allowedTypes: [`array`],
+                value: null
+            },
+            {
+                /**
+                 *  Wait for user to finish onboarding before sending message. 
+                 *  @type {object}
+                 */
+                name: `WELCOMER_ONBOARDWAIT`,
+                description: `Allow for multiple channels to send welcomer message to`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
                  *  A module that enables Annie's Experience Point System
                  *  @type {object}
                  */
@@ -484,7 +506,7 @@ module.exports = {
                 description: `The arbritrary amount of exp gained from chat activity`,
                 customizable: true,
                 allowedTypes: [`array`],
-                value: [1, 5]
+                value: [10, 15]
             },
             {
                 /**
@@ -495,7 +517,7 @@ module.exports = {
                 description: `The arbritrary amount of currency gained from chat activity`,
                 customizable: true,
                 allowedTypes: [`array`],
-                value: [10, 15]
+                value: [1, 5]
             },
             {
                 /**
@@ -559,6 +581,17 @@ module.exports = {
                  */
                 name: `SHOP_IMAGE`,
                 description: `The image that will be displayed as shop's background`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
+            },
+            {
+                /**
+                 *  The image that will be displayed as shop's background
+                 *  @type {object}
+                 */
+                name: `CUSTOM_LB_ITEM`,
+                description: `An item used for custom leaderboard`,
                 customizable: true,
                 allowedTypes: [`string`],
                 value: ``

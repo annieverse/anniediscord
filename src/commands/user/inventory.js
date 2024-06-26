@@ -16,6 +16,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `user`,
         description: `User you wish to view inventory of`,

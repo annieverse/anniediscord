@@ -16,6 +16,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `leaderboard`,
         description: `Displays the leaderboard of the selected option`,

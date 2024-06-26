@@ -100,7 +100,7 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        // ... Your command ran here.
+        // ... Set up and then point to this.run()
     },
     /**
      * The executed function upon command invocation.
@@ -110,7 +110,11 @@ module.exports = {
      * @type {function}
      */
     async Iexecute(client, reply, interaction, options, locale) {
+        // ... Set up and then point to this.run()
+    },
+    async run(client, reply, messageRef, locale){
         // ... Your command ran here.
+        // Only carry over the arguments you need.
     }
 }
 ```

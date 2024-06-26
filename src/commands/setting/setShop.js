@@ -30,6 +30,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [{
         name: `open`,
@@ -207,9 +208,7 @@ module.exports = {
         }
         const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.databaseUtils.setCache(sessionId,1,{EX:60 * 3})
-        // client.db.redis.set(sessionId, 1, {EX: 60 * 3})
+        client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
         let item_name = args[1]
@@ -317,7 +316,7 @@ module.exports = {
             }
             if (i.customId === finishedButtonId) {
                 completed = true
-                if (!Object.prototype.hasOwnProperty.call(metadata, `stocks`)) metadata[`stocks`] = `~`
+                if (!Object.prototype.hasOwnProperty.call(metadata, `stocks`)) metadata[`stocks`] = 9223372036854775807n
                 //  Register item
                 await client.db.shop.registerItem(metadata)
                 const item = await client.db.shop.getItem(metadata.name, interaction.guild.id)
@@ -350,7 +349,7 @@ module.exports = {
                 // Short means only a single line of text
                 .setStyle(TextInputStyle.Short)
                 .setRequired(true)
-                .setPlaceholder(`Type **\`~\`** for unlimited stocks.`)
+                .setPlaceholder(`Type \`~\` for unlimited stocks.`)
             const modalBuffs = new ModalBuilder()
                 .setCustomId(buffsModalId)
                 .setTitle(`Stock`)
@@ -384,7 +383,7 @@ module.exports = {
                 if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                     deleteIn: 5, followUp: true
                 })
-                metadata.stocks = input
+                metadata.stocks = input == `~` ? 9223372036854775807n : input
                 responseMessageContent[`stock`] = `\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`
                 await joinFunction()
             } else if (i.customId === buffsButtonId) {
@@ -577,10 +576,9 @@ module.exports = {
         const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
         
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        // if (await client.db.redis.exists(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.databaseUtils.setCache(sessionId,1,{EX:60 * 3})
-        // client.db.redis.set(sessionId, 1, {EX: 60 * 3})
+        client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
+
         let phaseJump = false
         let dataDisplay = null
         if (args[1]) {

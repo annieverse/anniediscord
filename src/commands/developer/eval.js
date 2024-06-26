@@ -1,6 +1,6 @@
 "use strict"
-/* eslint-disable no-unused-vars*/
-/* eslint-disable no-useless-escape*/
+ 
+ 
 /**
  * 	Evaluate line of code on air
  * 	@author klerikdust
@@ -14,6 +14,8 @@ module.exports = {
     multiUser: false,
     applicationCommand: false,
     messageCommand: true,
+    server_specific: true,
+    servers: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         const initTime = process.hrtime()
         try {

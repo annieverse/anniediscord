@@ -1,23 +1,13 @@
 const Banner = require(`../ui/prebuild/welcomer`)
+const {parseWelcomerText} = require(`../utils/welcomerFunctions.js`)
 module.exports = async function guildMemberAdd(client, member) {   
+    await member.fetch()
     if (!member.guild.configs) return 
-
     //  Import configs
     let instance = `[EVENTS@GUILD_MEMBER_ADD]`
     let guild = member.guild
     let configs = guild.configs
-    /**
-     * Parsing welcomer text's sockets.
-     * @param {string} [text=``] target string to be parsed from
-     * @returns {string}
-     */
-    const parseWelcomerText = (text=``) => {
-        // Replace new line character in case it doesnt make the new line
-        text = text.replace(/\\n/g, `\n`)
-        text = text.replace(/{{guild}}/gi, `**${guild.name}**`)
-        text = text.replace(/{{user}}/gi, member)
-        return text
-    }
+
     /**
      *  -------------------------------------------------------
      *  LOG MODULE
@@ -43,14 +33,15 @@ module.exports = async function guildMemberAdd(client, member) {
      *  -------------------------------------------------------
      */
     if (configs.get(`WELCOMER_MODULE`).value) {
+        if ((await member.guild.fetchOnboarding()).enabled && configs.get(`WELCOMER_ONBOARDWAIT`).value) return
         //  Prepare welcomer target channel
-        let welcomerChannel = configs.get(`WELCOMER_CHANNEL`)
+        let welcomerChannel = configs.get(`WELCOMER_CHANNEL`) 
         let getTargetWelcomerChannel = welcomerChannel.value
         //  Prepare welcomer banner img
         let renderedBanner = await new Banner(member, client).build()
         //  Prepare greeting text
         let welcomerText = configs.get(`WELCOMER_TEXT`)
-        let getWelcomerText = parseWelcomerText(welcomerText.value)
+        let getWelcomerText = parseWelcomerText(welcomerText.value, guild, member)
         //  Attempt to DM the joined user if guild's owner hasn't setup the welcomer channel yet
         if (!getTargetWelcomerChannel) {
                 client.responseLibs(member, true)

@@ -28,6 +28,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: false,
+    server_specific: false,
     default_member_permissions: PermissionFlagsBits.ManageEvents.toString(),
     options: [{
         name: `create`,
@@ -91,7 +92,7 @@ module.exports = {
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
         // Get all currently available packages for the guild to test against, so there are none with duplicate names.
-        const packages = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages.length >= 25) return await reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
 
         const packages_collection = new Collection()
@@ -122,10 +123,7 @@ module.exports = {
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.guild.id}@${interaction.member.id}`
         if (await client.db.databaseUtils.doesCacheExist(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
-        // if (await client.db.redis.exists(sessionID)) return await reply.send({content:`I'm sorry but you have a create package session still active please wait a few before trying again`,ephemeral:true})
-        client.db.databaseUtils.setCache(sessionID,1,{EX:60 * 3})
-        // client.db.redis.set(sessionID, 1, {EX: 60 * 3})
-
+        client.db.databaseUtils.setCache(sessionID,`1`,{EX:60 * 3})
 
         // Set up and send the message that will be updated as choices are made.
         let trackingMessage = await reply.send(Object.values(trackingMessageContent).join(`\n`), {
@@ -733,7 +731,7 @@ module.exports = {
 
     },
     async listPackages(client, reply, interaction, options, locale) {
-        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages_raw.length < 1) return await reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
@@ -790,7 +788,7 @@ module.exports = {
          */
         if (interaction.options.getSubcommand() !== `delete`) return
         const focusedValue = interaction.options.getFocused()
-        const packages_raw = await client.db.customRewardUtils.getRewardAmount(interaction.guild.id)
+        const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
         if (packages_raw.length < 1) return await interaction.respond(`I'm sorry you dont have any packages made currently`)
         const packages_collection = new Collection()
         packages_raw.forEach(element => {

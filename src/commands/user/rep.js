@@ -15,6 +15,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `user`,
         description: `Give a reputation point to the specified user`,
@@ -39,7 +40,7 @@ module.exports = {
         return await this.run(client, reply, interaction, locale, targetUser)
     },
     async run(client, reply, messageRef, locale, user, uLib) {
-        const userLib = userLib || new User(client, messageRef)
+        const userLib = uLib || new User(client, messageRef)
         const userData = await userLib.requestMetadata(messageRef.member, 2, locale)
         const now = moment()
         const lastGiveAt = await client.db.systemUtils.toLocaltime(userData.reputations.last_giving_at)

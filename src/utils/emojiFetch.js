@@ -24,11 +24,9 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
         const guild = await client.guilds.fetch(serverId)
         await guild.emojis.fetch() // prevent Caching issues
         const findingEmoji = findEmojiFromServer(guild, emojiKeyword)
-        const foundEmoji = findingEmoji.find(emoji => emoji)
-        if (!foundEmoji) return `(???)`
-        const emoji = guild.emojis.resolve(FoundEmoji.id) 
+        if (!findingEmoji) return `(???)`
+        const emoji = guild.emojis.resolve(findingEmoji.id) 
         client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
-        // await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
         return emoji
     }
 
@@ -45,7 +43,6 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
     const guild = await client.guilds.fetch(FoundEmoji.guildId)
     const emoji = guild.emojis.resolve(FoundEmoji.id) 
     client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
-    // await client.db.redis.set(cacheId, emoji.toString(), {EX: 60*60*12})
     return emoji
                 
 }

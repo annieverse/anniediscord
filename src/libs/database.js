@@ -6,6 +6,7 @@ types.setTypeParser(20, function (val) {
 const Redis = require(`redis`)
 const { databaseLogger: logger } = require(`../../pino.config.js`)
 const getBenchmark = require(`../utils/getBenchmark`)
+const { pipeline } = require(`node:stream/promises`)
 
 /**
  * Centralized Class for handling various database tasks 
@@ -72,7 +73,7 @@ class Database {
 		redisClient.on(`error`, err => {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
-		})		
+		})
 		redisClient.on(`connect`, async () => {
 			logger.database(`REDIS <CONNECTED>`)
 			this.redis = redisClient
@@ -188,7 +189,7 @@ class DatabaseUtils {
 		/**
 		 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, GETSET, it is possible that in future versions of Redis these commands will be deprecated and finally removed.
 		 */
-		if (typeof(value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
+		if (typeof (value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
 		return this.redis.set(key, value, options)
 	}
 
@@ -198,7 +199,7 @@ class DatabaseUtils {
 	 * @return {boolean}
 	 */
 	delCache(key = ``) {
-		logger.database(`[Redis.clearCache] cleared cache in key '${key}'.`)
+		logger.database(`[Redis.delCache] cleared cache in key '${key}'.`)
 		return this.redis.del(key)
 	}
 
@@ -311,9 +312,9 @@ class DatabaseUtils {
 	* @param {string} [guildId] of target guild
 	* @returns {QueryResult}
 	*/
-	async indexRanking(group, guildId) {
+	async indexRanking(group, guildId, itemId) {
 		const fn = this.formatFunctionLog(`indexRanking`)
-		const validOptions = [`exp`, `artcoins`, `fame`]
+		const validOptions = [`exp`, `artcoins`, `fame`, `custom`]
 		if (!group) throw new TypeError(`${fn} parameter "group" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!validOptions.includes(group)) throw new RangeError(`${fn} parameter "group" is not a valid option`)
@@ -355,9 +356,41 @@ class DatabaseUtils {
 					, { guildId: guildId }
 					, `${fn} Fetching ${group} leaderboard`
 				)
+			case `custom`:
+				return this._query(`
+					SELECT 
+						user_id AS id, 
+						quantity AS points 
+					FROM user_inventories 
+					WHERE item_id = $itemId 
+						AND guild_id = $guildId
+					ORDER BY quantity DESC`
+					, `all`
+					, { guildId: guildId, itemId: itemId }
+					, `${fn} Fetching ${group} leaderboard`
+				)
 			default:
 				break
 		}
+	}
+
+	async exportData({ itemId, guildId, filepath }) {
+		const fn = this.formatFunctionLog(`exportData`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!filepath) throw new TypeError(`${fn} parameter "filepath" cannot be blank.`)
+		const q = `COPY (SELECT user_id, quantity FROM user_inventories WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		const copyTo = require(`pg-copy-streams`).to
+		const { stringify } = require(`csv-stringify`)
+		const fs = require(`fs`)
+		const stream = this.client.query(copyTo(q))
+		const filename = filepath
+		const writableStream = fs.createWriteStream(filename)
+		const columns = [`userId`, `Quantity`]
+		const stringifier = stringify({ header: true, columns: columns })
+		stringifier.pipe(writableStream)
+		await pipeline(stream, writableStream)
+		writableStream.close()
 	}
 
 	arrayEquals(a, b) {
@@ -557,7 +590,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Store for 1 minute expire
 		this.setCache(key, JSON.stringify(exp), { EX: 60 })
-		// this.redis.set(key, JSON.stringify(exp), {EX: 60})
 		return exp
 	}
 
@@ -714,8 +746,7 @@ class UserUtils extends DatabaseUtils {
 			res = await query()
 		}
 		//  Cache for 12 hours
-		this.setCache(key, res, { EX: (60 * 60) * 12 })
-		// this.redis.set(key, JSON.stringify(res))
+		this.setCache(key, JSON.stringify(res), { EX: (60 * 60) * 12 })
 		return res
 	}
 
@@ -1107,7 +1138,7 @@ class UserUtils extends DatabaseUtils {
 	async getUserLocale(userId) {
 		const fn = this.formatFunctionLog(`getUserLocale`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
-		return this._query(`
+		const query = this._query(`
 			SELECT lang
 			FROM users
 			WHERE user_id = $userId`
@@ -1115,6 +1146,18 @@ class UserUtils extends DatabaseUtils {
 			, { userId: userId }
 			, `${fn} fetch locale for USER_ID:${userId}`
 		)
+		if (!query) {
+			this._query(`
+				UPDATE users
+				SET lang = $lang
+				WHERE user_id = $userId`
+				, `run`
+				, { lang: `en`, userId: userId }
+				, `${fn} Updated locale for USER_ID:${userId}`
+			)
+			return { lang: `en` }
+		}
+		return query
 	}
 
 	/**
@@ -1131,7 +1174,7 @@ class UserUtils extends DatabaseUtils {
 			UPDATE users
 			SET lang = $lang
 			WHERE user_id = $userId`
-			, `get`
+			, `run`
 			, { lang: locale, userId: userId }
 			, `${fn} Updated locale for USER_ID:${userId} to ${locale}`
 		)
@@ -1211,8 +1254,7 @@ class SystemUtils extends DatabaseUtils {
 			FROM commands_log`, `get`, [], `${fn} fetch total commands ran`
 		)
 		//  Store for 12 hours expire
-		this.setCache(key, res, { EX: (60 * 60) * 12 })
-		// this.redis.set(key, JSON.stringify(res), {EX: (60 * 60) * 12})
+		this.setCache(key, JSON.stringify(res), { EX: (60 * 60) * 12 })
 		return res
 	}
 
@@ -1421,6 +1463,33 @@ class GuildUtils extends DatabaseUtils {
 		const type = res.changes ? `DELETED` : `NO_CHANGES`
 		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
 		this.umarkForDeletion(guildId)
+		return true
+	}
+
+	async editInventoryOfWholeGuild({ itemId, value = 0, operation = `+`, guildId }) {
+		const fn = this.formatFunctionLog(`editInventoryOfWholeGuild`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!operation) throw new TypeError(`${fn} parameter "operation" cannot be blank.`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		let res
+		res = {
+			//	Try to update available row. It won't crash if no row is found.
+			update: await this._query(`
+					UPDATE user_inventories
+					SET quantity = (
+						CASE WHEN quantity ${operation} $value<0 THEN 0
+							 ELSE quantity ${operation} $value
+						END),
+						updated_at = CURRENT_TIMESTAMP
+						WHERE item_id = $itemId AND guild_id = $guildId`
+				, `run`
+				, { value: value, itemId: itemId, guildId: guildId }
+				, `${fn} Updating all user inventories`
+			)
+		}
+
+		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
 		return true
 	}
 }
@@ -1633,7 +1702,7 @@ class AutoResponder extends DatabaseUtils {
 			const updatedCache = cache.filter(node => node.ar_id !== id)
 			//  Delete whole array if updatedCache is empty
 			if (updatedCache.length <= 0) {
-				this.clearCache(cacheID)
+				this.delCache(cacheID)
 			}
 			//  Else, just update the array
 			else {
@@ -1660,12 +1729,12 @@ class AutoResponder extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`clearAutoResponders`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		//  Clear ARs in cache
-		this.clearCache(`REGISTERED_AR@${guildId}`)
+		this.delCache(`REGISTERED_AR@${guildId}`)
 		return this._query(`
 			DELETE FROM autoresponders
 			WHERE guild_id = $guildId`
 			, `run`
-			, [guildId]
+			, { guildId: guildId }
 			, `${fn} Deleting all ARs from GUILD_ID:${guildId}`
 		)
 	}
@@ -1837,13 +1906,30 @@ class CustomRewards extends DatabaseUtils {
 	 * @param {string} guildId 
 	 * @returns {Promise}
 	 */
-	getRewardAmount(guildId) {
-		const fn = this.formatFunctionLog(`getRewardAmount`)
+	getCustomRewards(guildId) {
+		const fn = this.formatFunctionLog(`getCustomRewards`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId`
 			, `all`
 			, { guildId: guildId }
 			, `${fn} Retrieving all packages for guild: ${guildId}`
+		)
+	}
+
+	/**
+	 * Retrieve specific reward package for specific Discord guild
+	 * @param {string} guildId 
+	 * @param {string} packageName 
+	 * @returns {Promise}
+	 */
+	getRewardByName(guildId, packageName) {
+		const fn = this.formatFunctionLog(`getRewardByName`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!packageName) throw new TypeError(`${fn} parameter "packageName" cannot be blank.`)
+		return this._query(`SELECT * FROM custom_rewards WHERE guild_id = $guildId AND reward_name = $packageName`
+			, `all`
+			, { guildId: guildId, packageName: packageName }
+			, `${fn} Retrieving package ${packageName} for guild: ${guildId}`
 		)
 	}
 
@@ -2052,8 +2138,7 @@ class Shop extends DatabaseUtils {
 			, `all`, [], `${fn} fetch gacha pool`
 		)
 		//  Cache rewards pool for 1 hour
-		this.setCache(cacheId, res, { EX: 60 * 60 })
-		// this.redis.set(cacheId, JSON.stringify(res), {EX: 60 * 60})
+		this.setCache(cacheId, JSON.stringify(res), { EX: 60 * 60 })
 		return res
 	}
 
@@ -2116,7 +2201,7 @@ class Shop extends DatabaseUtils {
             INSERT INTO shop(item_id, guild_id, quantity, price)
             VALUES($itemId, $guildId, $quantity, $price)`
 			, `run`
-			, { itemId: itemId, guildId: guildId, quantity: quantity, price: price }
+			, { itemId: itemId, guildId: guildId, quantity: BigInt(quantity), price: price }
 			, `${fn} register item with a GUILD_ID:${guildId}`
 		)
 	}
@@ -2249,14 +2334,14 @@ class Shop extends DatabaseUtils {
 				ON item_types.type_id = items.type_id
 			INNER JOIN item_rarities
 				ON item_rarities.rarity_id = items.rarity_id`
-		//  Do whole fetch on specific guild
+		//  Do whole fetch on specific guild, without item
 		if (keyword === null && typeof guildId === `string`) return this._query(str + ` WHERE owned_by_guild_id = $guildId`
 			, `all`
 			, { guildId: guildId }
 			, `${fn} fetch all items for GUILD_ID:${guildId}`
 		)
-		//  Do single fetch on specific guild
-		if (keyword && typeof guildId === `string`) return this._query(str + `
+		//  Do single fetch on specific guild, based on item name
+		if (typeof keyword != `number` && typeof guildId === `string`) return this._query(str + `
             WHERE 
                 owned_by_guild_id = $guildId
                 AND lower(items.name) = lower($keyword)`
@@ -2264,12 +2349,24 @@ class Shop extends DatabaseUtils {
 			, { keyword: keyword, guildId: guildId }
 			, `${fn} fetch single item for GUILD_ID:${guildId}`
 		)
-		//  Do lookup on global pool
+		//  Do single fetch on specific guild, based on item id
+		if (typeof keyword === `number` && typeof guildId === `string`) return this._query(str + `
+            WHERE 
+                owned_by_guild_id = $guildId
+                AND items.item_id = $keyword`
+			, `get`
+			, { keyword: keyword, guildId: guildId }
+			, `${fn} fetch single item for GUILD_ID:${guildId}`
+		)
+		//  Do lookup on global pool, without guild data
 		if (typeof keyword === `string`) str = str + ` 
 			\nWHERE 
 				lower(items.name) = lower($keyword)
 				OR lower(items.alias) = lower($keyword)`
+
+		//  Do lookup on global pool, based on item id without guild data
 		if (typeof keyword === `number`) str = str + `\nWHERE items.item_id = $keyword`
+
 		return this._query(str + ` LIMIT 1`
 			, `get`
 			, { keyword: keyword }
@@ -2379,8 +2476,7 @@ class Quests extends DatabaseUtils {
 			, `${fn} Fetching all the available quests in master quests table`
 		)
 		//  Store quest pool cache for 3 hours.
-		this.setCache(cacheId, res, { EX: (60 * 60) * 3 })
-		// this.redis.set(cacheId, JSON.stringify(res), {EX: (60 * 60) * 3})
+		this.setCache(cacheId, JSON.stringify(res), { EX: (60 * 60) * 3 })
 		return res
 	}
 
@@ -2391,19 +2487,22 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [nextQuestId=``] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserNextActiveQuest(userId, guildId, nextQuestId) {
+	updateUserNextActiveQuest(userId, guildId, nextQuestId, lang) {
 		const fn = this.formatFunctionLog(`updateUserNextActiveQuest`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
-			SET next_quest_id = $nextQuestId
+			SET 
+				next_quest_id = $nextQuestId,
+				lang = $lang
 			WHERE
 				user_id = $userId
 				AND guild_id = $guildId`
 			, `run`
-			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId, lang: lang }
 			, `${fn} Updating next active quest ID for ${userId}@${guildId}`
 		)
 	}
@@ -2415,21 +2514,23 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [nextQuestId] quest_id to be supplied on user's next quest take
 	   * @return {QueryResult}
 	   */
-	updateUserQuest(userId, guildId, nextQuestId) {
+	updateUserQuest(userId, guildId, nextQuestId, lang) {
 		const fn = this.formatFunctionLog(`updateUserQuest`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!nextQuestId) throw new TypeError(`${fn} parameter "nextQuestId" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			UPDATE user_quests
 			SET 
 				updated_at = CURRENT_TIMESTAMP,
-				next_quest_id = $nextQuestId
+				next_quest_id = $nextQuestId,
+				lang = $lang
 			WHERE
 				user_id = $userId
 				AND guild_id = $guildId`
 			, `run`
-			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId }
+			, { nextQuestId: nextQuestId, userId: userId, guildId: guildId, lang: lang }
 			, `${fn} Updating ${userId}@${guildId} quest data`
 		)
 	}
@@ -2442,22 +2543,24 @@ class Quests extends DatabaseUtils {
 	   * @param {string} [answer=``] the answer used to clear the quest
 	   * @return {QueryResult}
 	   */
-	recordQuestActivity(questId, userId, guildId, answer) {
+	recordQuestActivity(questId, userId, guildId, answer, lang) {
 		const fn = this.formatFunctionLog(`recordQuestActivity`)
 		if (!questId) throw new TypeError(`${fn} parameter "questId" cannot be blank.`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!answer) throw new TypeError(`${fn} parameter "answer" cannot be blank.`)
+		if (!lang) throw new TypeError(`${fn} parameter "lang" cannot be blank.`)
 		return this._query(`
 			INSERT INTO quest_log(
 				guild_id,
 				quest_id,
 				user_id,
-				answer
+				answer,
+				lang
 			)
-			VALUES($guildId, $questId, $userId, $answer)`
+			VALUES($guildId, $questId, $userId, $answer, $lang)`
 			, `run`
-			, { questId: questId, userId: userId, guildId: guildId, answer: answer }
+			, { questId: questId, userId: userId, guildId: guildId, answer: answer, lang: lang }
 			, `${fn} Storing ${userId}@${guildId} quest's activity to quest_log table`
 		)
 	}

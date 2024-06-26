@@ -14,6 +14,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    server_specific: false,
     options: [{
         name: `message`,
         description: `The message to be reminded`,
