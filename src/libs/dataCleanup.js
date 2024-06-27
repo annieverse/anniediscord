@@ -19,12 +19,6 @@ class dataCleaner {
             const cachedGuildIds = client.guilds.cache.map(guild => { if (guild.available) return guild.id })
             const DBCachedGuildIds = guildsMarked.split(`:::`)
             const readyGuilds = cachedGuildIds.filter(guild => DBCachedGuildIds.includes(guild))
-            console.log(`cachedGuildIds`)
-            console.log(cachedGuildIds)
-            console.log(`DBCachedGuildIds`)
-            console.log(DBCachedGuildIds)
-            console.log(`readyGuilds`)
-            console.log(readyGuilds)
             const guildsToBeDeleted = readyGuilds.join(`:::`)
             const guildsReadyForDeletion = `guildsReadyForDeletion`
             if ((await client.db.databaseUtils.doesCacheExist(guildsReadyForDeletion))) {
