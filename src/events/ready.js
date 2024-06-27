@@ -9,11 +9,11 @@ const dataCleaner = require(`../libs/dataCleanup.js`)
 module.exports = function ready(annie) {
     annie.db.initializeDb()
     const cleaner = new dataCleaner(annie)
-    cleaner.getGuildsMarkedForDeletion()
     let current_shard = (annie.guilds.cache.first()).shard.id
     let last_shard = (annie.shard.ids)[(annie.shard.ids).length - 1]
     if (current_shard == last_shard) {
-        cleaner.deleteBulkGuilds()
+        cleaner.getGuildsMarkedForDeletion()
+        setTimeout(async ()=> await cleaner.deleteBulkGuilds(),1000) 
     }
     annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()

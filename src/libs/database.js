@@ -1273,40 +1273,51 @@ class GuildUtils extends DatabaseUtils {
 		super(client)
 		this.fnClass = `GuildUtils`
 	}
-	
+
 	/**
 	 * Mark a guild for deletion when leaving guild
 	 */
-	async markForDeletion(guildId){
+	async markForDeletion(guildId) {
 		const fn = this.formatFunctionLog(`markForDeletion`)
 		if (!guildId) throw new TypeError(`${fn} property "guildId" must be a guild snowflake.`)
-		return await this._query(`UPDATE guilds SET left_guild=CURRENT_TIMESTAMP WHERE guild_id=$guildId`,`run`,{guildId:guildId},`${fn} Updating guild_id:${guildId} deletion date`)
+		return await this._query(`UPDATE guilds SET left_guild=CURRENT_TIMESTAMP WHERE guild_id=$guildId`, `run`, { guildId: guildId }, `${fn} Updating guild_id:${guildId} deletion date`)
 	}
 
 	/**
 	 * Mark a guild for deletion when leaving guild
 	 */
-	async umarkForDeletion(guildId){
+	async umarkForDeletion(guildId) {
 		const fn = this.formatFunctionLog(`umarkForDeletion`)
 		if (!guildId) throw new TypeError(`${fn} property "guildId" must be a guild snowflake.`)
-		return await this._query(`UPDATE guilds SET left_guild=null WHERE guild_id=$guildId AND left_guild IS NOT NULL`,`run`,{guildId:guildId},`${fn} Updating guild_id:${guildId} deletion date`)
+		return await this._query(`UPDATE guilds SET left_guild=null WHERE guild_id=$guildId`, `run`, { guildId: guildId }, `${fn} Updating guild_id:${guildId} deletion date`)
 	}
 
-	async deleteBulk(guilds){
+	/**
+	 * Delete an array of guilds
+	 * @param {array} guilds 
+	 * @returns 
+	 */
+	async deleteBulk(guilds) {
 		const fn = this.formatFunctionLog(`deleteBulk`)
-		if (guilds.length === 0 ) return
-		return await this._query(`DELETE FROM guilds WHERE guild_id IN ($guildId)`,`run`,{guildId:guilds},`${fn} Deleting bulk guild's`)
+		if (!guilds) throw new TypeError(`${fn} property "guilds" must be a Array of guild Id(s).`)
+		if (guilds.length === 0) return
+		return await this._query(`DELETE FROM guilds WHERE guild_id IN ($guildId)`, `run`, { guildId: guilds }, `${fn} Deleting bulk guild's`)
 	}
 
-	async unmarkBulk(guilds){
+	/**
+	 * @deprecated
+	 * @param {array} guilds 
+	 * @returns 
+	 */
+	async unmarkBulk(guilds) {
 		const fn = this.formatFunctionLog(`unmarkBulk`)
-		if (guilds.length === 0 ) return
-		return await this._query(`UPDATE guilds SET left_guild=null WHERE NOT (guild_id = ANY ($guildId))`,`run`,{guildId:guilds},`${fn} Updating bulk guild's deletion date`)
+		if (guilds.length === 0) return
+		return await this._query(`UPDATE guilds SET left_guild=null WHERE NOT (guild_id = ANY ($guildId))`, `run`, { guildId: guilds }, `${fn} Updating bulk guild's deletion date`)
 	}
 
-	async getAllGuildsMarkedForDeletion(){
+	async getAllGuildsMarkedForDeletion() {
 		const fn = this.formatFunctionLog(`getAllGuildsMarkedForDeletion`)
-		return await this._query(`SELECT guild_id FROM guilds WHERE left_guild < CURRENT_DATE - interval '60 day' AND left_guild IS NOT NULL`,`all`,{},`${fn} retrieving all guilds ready to be deleted`)
+		return await this._query(`SELECT guild_id FROM guilds WHERE left_guild < CURRENT_DATE - interval '60 day' AND left_guild IS NOT NULL`, `all`, {}, `${fn} retrieving all guilds ready to be deleted`)
 	}
 
 	/**
