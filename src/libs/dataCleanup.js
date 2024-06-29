@@ -16,11 +16,13 @@ class dataCleaner {
 
     async getGuildsMarkedForDeletion() {
         async function broadcast(client, { guildsMarked }) {
+            await client.guilds.fetch()
             const cachedGuildIds = client.guilds.cache.map(guild => { if (guild.available) return guild.id })
             const DBCachedGuildIds = guildsMarked.split(`:::`)
             const readyGuilds = cachedGuildIds.filter(guild => DBCachedGuildIds.includes(guild))
-            const guildsToBeDeleted = readyGuilds.join(`:::`)
-            const guildsReadyForDeletion = `guildsReadyForDeletion`
+            const guildsReadyForDeletion = readyGuilds.join(`:::`)
+            // Following comment are for testing only
+            // const guildsReadyForDeletion = `guildsReadyForDeletion`
             if ((await client.db.databaseUtils.doesCacheExist(guildsReadyForDeletion))) {
                 // Key Exists already
                 const data = await client.db.databaseUtils.getCache(guildsReadyForDeletion)
@@ -31,9 +33,9 @@ class dataCleaner {
                 client.db.databaseUtils.setCache(guildsReadyForDeletion, guildsToBeDeleted, { EX: 60 * 3 })
             }
         }
-
-        this.db.databaseUtils.delCache(this.markedGuilds)
-        this.db.databaseUtils.delCache(this.guildsReadyForDeletion)
+        // Following Two comments are for testing only
+        // this.db.databaseUtils.delCache(this.markedGuilds)
+        // this.db.databaseUtils.delCache(this.guildsReadyForDeletion)
         if (!(await this.db.databaseUtils.doesCacheExist(this.markedGuilds))) {
             const guildsMarkedForDeletion = await this.db.guildUtils.getAllGuildsMarkedForDeletion()
             if (!guildsMarkedForDeletion) return // No need to continue if there are no guilds to delete
@@ -55,8 +57,6 @@ class dataCleaner {
         this.db.databaseUtils.delCache(this.markedGuilds)
         return
     }
-
-
 }
 
 module.exports = dataCleaner
