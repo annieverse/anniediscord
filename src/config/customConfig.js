@@ -595,6 +595,28 @@ module.exports = {
                 customizable: true,
                 allowedTypes: [`string`],
                 value: ``
+            },
+            {
+                /**
+                 *  The image that will be displayed as shop's background
+                 *  @type {object}
+                 */
+                name: `CUSTOM_SHOP_LOG_MODULE`,
+                description: `Toggle Logging for the shop, for when a user buys an item.`,
+                customizable: true,
+                allowedTypes: [`boolean`],
+                value: 0
+            },
+            {
+                /**
+                 *  The image that will be displayed as shop's background
+                 *  @type {object}
+                 */
+                name: `CUSTOM_SHOP_LOG_CHANNEL`,
+                description: `Set the channel where shop logs will go.`,
+                customizable: true,
+                allowedTypes: [`string`],
+                value: ``
             }
         ]
     }

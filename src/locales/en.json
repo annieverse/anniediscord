@@ -1,5 +1,5 @@
 {
-    "lang":"en",
+    "lang": "en",
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "GUIDE": "You are authorized to use the **Artcoins Generator**.",
@@ -872,6 +872,19 @@
         "CLOSED": "Aw, the shop still closed! please comeback next time!",
         "BUY_TIPS": "Type **`{{prefix}}buy <item>`** to purchase it! {{emoji}}",
         "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**"
+    },
+    "SHOP_LOG": {
+        "GUIDE": "This is your control center for configuring the **Shop Log System**. Check out what are the available actions for this module:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}shoplog enable`**\n> This action will enable activity-logging feature in your guild once you enable it and for the types of logs you will receive, are following the default preset.\n\n**`{{prefix}}shoplog channel <targetChannel>`**\n> This action defines which channel should Annie send the logs in and make sure Annie has an access to that channel as well!\ne.g. __{{prefix}}shoplog channel #logs__\n\n**`{{prefix}}shoplog disable`**\n> I know you are probably feeling annoyed getting all the useless logs from me, that's why this action exists.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Sowwy! please only use one of these actions `{{actions}}`",
+        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
+        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}shoplog enable`**",
+        "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
+        "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
+        "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!",
+        "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}shoplog enable`",
+        "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}shoplog channel #mylogs`**",
+        "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}",
+        "ITEM_BOUGHT": "{{user}}`{{userId}}` just bought {{itemName}}`{{itemId}}`"
     },
     "STATCARD": {
         "INVALID_USER": "Sorry, I couldn't find that user.",

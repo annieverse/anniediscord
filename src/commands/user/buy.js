@@ -136,6 +136,23 @@ module.exports = {
                 const unlimitedSupply = shopMetadata.quantity != `~` && shopMetadata.quantity != 9223372036854775807n
                 if (unlimitedSupply) client.db.shop.subtractItemSupply(item.item_id, 1)
 
+                // Custom Shop Logging
+                if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
+                    const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
+                    const channel = await guild.channels.fetch(channelId)
+                    await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
+                        status: `success`,
+                        socket: {
+                            user: user.user.username,
+                            userId: user.user.id,
+                            itemName: item.name,
+                            itemId: item.id
+                        },
+                        followUp: true,
+                        field: channel
+                    })
+                }
+
                 return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {
@@ -184,7 +201,23 @@ module.exports = {
                 })
                 //  Reduce available supply if supply wasn't set as unlimited.
                 if (shopMetadata.quantity !== `~`) client.db.shop.subtractItemSupply(item.item_id, 1)
-                
+                    
+                if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
+                    const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
+                    const channel = await guild.channels.fetch(channelId)
+                    await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
+                        status: `success`,
+                        socket: {
+                            user: user.user.username,
+                            userId: user.user.id,
+                            itemName: item.name,
+                            itemId: item.id
+                        },
+                        followUp: true,
+                        field: channel
+                    })
+                }
+
                 return await reply.send(locale.BUY.SUCCESSFUL, {
                     status: `success`,
                     socket: {

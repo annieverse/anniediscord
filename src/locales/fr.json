@@ -1,5 +1,5 @@
 {
-  "lang":"fr",
+  "lang": "fr",
   "ACTION_CANCELLED": "D'accord! l'action a été annulée!♡ {{emoji}}",
   "ADDAC": {
     "GUIDE": "Vous êtes autorisé à utiliser le Générateur d'Artcoins.",
@@ -871,6 +871,19 @@
     "CLOSED": "Oh, la boutique est toujours fermée ! Revenez une prochaine fois !",
     "BUY_TIPS": "Tapez **`{{prefix}}buy <article>`** pour l'acheter ! {{emoji}}",
     "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Bienvenue dans mon marché !**\nQue voulez-vous acheter aujourd'hui ? Ou plus précisément, quelle boutique voulez-vous visiter ? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Boutique de Cover**\n\n☆～(2) **Boutique de Cadeaux**\n☆～(3) **Boutique de Matériaux**\n☆～(4) **Boutique de Badges**"
+  },
+  "SHOP_LOG": {
+    "GUIDE": "Voici votre centre de contrôle pour configurer le **Shop Log System**. Découvrez quelles sont les actions disponibles pour ce module :\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}shoplog enable`**\n> Cette action permet d'activer la fonction de journalisation des activités dans votre guilde une fois activée, et pour les types de logs que vous recevrez, ils suivront le paramètre par défaut.\n\n**`{{prefix}}shoplog channel <targetChannel>`**\n> Cette action définit dans quel canal Annie doit envoyer les logs, assurez-vous également qu'Annie ait accès à ce canal !\npar ex. __{{prefix}}shoplog channel #logs__\n\n**`{{prefix}}shoplog disable`**\n> Je sais que vous êtes probablement agacé de recevoir tous les logs inutiles de ma part, c'est pourquoi cette action existe.\n\n╰──────────☆～*:;,．*╯",
+    "INVALID_ACTION": "Désolé ! Veuillez n'utiliser qu'une seule de ces actions : `{{actions}}`",
+    "ALREADY_ENABLED": "Ce module a déjà été activé par **{{user}}, {{date}}**",
+    "ALREADY_DISABLED": "**Ce Shop Log System n'a pas encore été activé♡**\nPour l'activer, tapez **`{{prefix}}shoplog enable`**",
+    "SUCCESSFULLY_ENABLED": "Super ! Le **Shop Log System** a été activé avec succès !",
+    "SUCCESSFULLY_DISABLED": "Terminé ! Le **Shop Log System** a été désactivé avec succès !",
+    "SUCCESSFULLY_UPDATING_CHANNEL": "D'accord ! Je commencerai bientôt à envoyer les logs dans {{channel}} !",
+    "SHOULD_BE_ENABLED": "Hé ! Vous n'avez pas encore activé le **Shop Log System** !\nActivez-le en tapant `{{prefix}}shoplog enable`",
+    "MISSING_CHANNEL": "**N'oubliez pas d'inclure le canal cible des logs, d'accord ?♡** {{emoji}}\npar ex. **`{{prefix}}shoplog channel #meslogs`**",
+    "INVALID_CHANNEL": "**Hmm, cela ne semble pas être un canal valide.**\nPouvez-vous essayer un autre canal à la place ? {{emoji}}",
+    "ITEM_BOUGHT": "{{user}}`{{userId}}` just bought {{itemName}}`{{itemId}}`"
   },
   "STATCARD": {
     "INVALID_USER": "Désolé, je n'ai pas pu trouver cet utilisateur.",
