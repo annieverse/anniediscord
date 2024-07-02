@@ -52,6 +52,7 @@ module.exports = function applicationCommandLoader({
                 },
                 )
             } else {
+                const BOTID = process.env.NODE_DEV_ID
                 if (process.env.NODE_DEV_CLIENT === `PAN`) {
                     /**
                      * For Pan's local bot use only
@@ -60,16 +61,11 @@ module.exports = function applicationCommandLoader({
                     // test botv2: 1254197982132310167
                     // Annie support server
                     await rest.put(
-                        Routes.applicationGuildCommands(`1254197982132310167`, `577121315480272908`), {
-                        body: CLEARCMD ? [] : commands
+                        Routes.applicationCommands(BOTID), {
+                        body: commands
                     },
                     )
-                    // Pan's test server
-                    await rest.put(
-                        Routes.applicationGuildCommands(`1254197982132310167`, `597171669550759936`), {
-                        body: CLEARCMD ? [] : commands
-                    },
-                    )
+                    
                 } else if (process.env.NODE_DEV_CLIENT === `NAPH`) {
                     /**
                      * For Naph's local bot use only
@@ -101,24 +97,27 @@ module.exports = function applicationCommandLoader({
                     },
                     )
                 }
-            } else {
+            } else {                
+                const BOTID = process.env.NODE_DEV_ID  
                 if (process.env.NODE_DEV_CLIENT === `PAN`) {
                     /**
                      * For Pan's local bot use only
                      */
                     // test botv1: 514688969355821077
                     // test botv2: 1254197982132310167
-                    // Annie support server          
+                    // Annie support server        
+                    const allowedServersForDev = [`577121315480272908`,`597171669550759936`] // [Annie support server, Pan's test server]
                     for (const [serverId, commandObj] of commands.entries()) {
                         commandObj.forEach(item => {
                             formatDescriptions(item)
                         })
-
-                        await rest.put(
-                            Routes.applicationGuildCommands(`1254197982132310167`, serverId), {
-                            body: CLEARCMD ? [] : commandObj
-                        },
-                        )
+                        if (allowedServersForDev.includes(serverId)){
+                            await rest.put(
+                                Routes.applicationGuildCommands(BOTID, serverId), {
+                                body: CLEARCMD ? [] : commandObj
+                            },
+                            )
+                        }
                     }
                 } else if (process.env.NODE_DEV_CLIENT === `NAPH`) {
                     /**
