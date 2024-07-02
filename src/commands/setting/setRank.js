@@ -11,7 +11,7 @@ const {
 } = require(`discord.js`)
     /**
      * Customize role-rank system in the guild.
-     * @author Pan
+     * @author Andrew
      * @revised by klerikdust
      */
 module.exports = {

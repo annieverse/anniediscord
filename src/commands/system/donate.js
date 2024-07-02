@@ -3,7 +3,7 @@ const { ApplicationCommandType } = require(`discord.js`)
 
 /**
  * Command's Class description
- * @author Pan
+ * @author Andrew
  */
 module.exports = {
     name: `donate`,
