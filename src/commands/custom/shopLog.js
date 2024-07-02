@@ -1,6 +1,6 @@
 "use strict"
 const moment = require(`moment`)
-const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * Displays your server leaderboard!
  * @author klerikdust
@@ -47,6 +47,7 @@ module.exports = {
      */
     subConfigID: `CUSTOM_SHOP_LOG_CHANNEL`,
     type: ApplicationCommandType.ChatInput,
+    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     async execute(client, reply, message, arg, locale) {
         return await this.run(client, reply, message, locale)
     },
