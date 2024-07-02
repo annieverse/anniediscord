@@ -60,6 +60,7 @@ class Database {
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
 		this.relationships = new Relationships(this)
+		this.custom = new Custom(this)
 	}
 
 	/**
@@ -379,14 +380,16 @@ class DatabaseUtils {
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!filepath) throw new TypeError(`${fn} parameter "filepath" cannot be blank.`)
-		const q = `COPY (SELECT user_id, quantity FROM user_inventories WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		const q = `COPY (SELECT user_inventories.user_id, user_inventories.quantity, avarik_saga.wallet FROM user_inventories FULL JOIN avarik_saga ON user_inventories.user_id = avarik_saga.user_id WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		// const q = `COPY (SELECT user_id, quantity FROM user_inventories WHERE item_id = ${itemId}::bigint AND guild_id = ${guildId}::text AND quantity >=1 ORDER BY quantity DESC) TO STDOUT WITH CSV DELIMITER ',' HEADER`
+		// SELECT user_inventories.user_id, user_inventories.quantity, avarik_saga.wallet FROM user_inventories FULL JOIN avarik_saga ON user_inventories.user_id = avarik_saga.user_id
 		const copyTo = require(`pg-copy-streams`).to
 		const { stringify } = require(`csv-stringify`)
 		const fs = require(`fs`)
 		const stream = this.client.query(copyTo(q))
 		const filename = filepath
 		const writableStream = fs.createWriteStream(filename)
-		const columns = [`userId`, `Quantity`]
+		const columns = [`userId`, `Quantity`, `Wallet Address`]
 		const stringifier = stringify({ header: true, columns: columns })
 		stringifier.pipe(writableStream)
 		await pipeline(stream, writableStream)
@@ -1434,10 +1437,7 @@ class GuildUtils extends DatabaseUtils {
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (!operation) throw new TypeError(`${fn} parameter "operation" cannot be blank.`)
 		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
-		let res
-		res = {
-			//	Try to update available row. It won't crash if no row is found.
-			update: await this._query(`
+		await this._query(`
 					UPDATE user_inventories
 					SET quantity = (
 						CASE WHEN quantity ${operation} $value<0 THEN 0
@@ -1449,7 +1449,6 @@ class GuildUtils extends DatabaseUtils {
 				, { value: value, itemId: itemId, guildId: guildId }
 				, `${fn} Updating all user inventories`
 			)
-		}
 
 		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
 		return true
@@ -2527,7 +2526,48 @@ class Quests extends DatabaseUtils {
 		)
 	}
 }
+class Custom extends DatabaseUtils{
+	constructor(client){
+		super(client)
+	}
 
+	async setWalletAddress(userId, wallet){
+		const fn = this.formatFunctionLog(`setWalletAddress`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!wallet) throw new TypeError(`${fn} parameter "wallet" cannot be blank.`)
+		let res = {
+			insert: await this._query(`
+				INSERT INTO avarik_saga(user_id, wallet)
+				SELECT $userId, $wallet
+				WHERE NOT EXISTS (SELECT 1 FROM avarik_saga WHERE user_id = $userId)`
+				, `run`
+				, { userId: userId, wallet: wallet }
+				, `${fn} Linking wallet address for ${userId}`
+			),
+			update: await this._query(`
+				UPDATE avarik_saga
+				SET wallet = $wallet
+				WHERE user_id = $userId`
+				,`run`
+				,{ userId: userId, wallet: wallet}
+				,`${fn} Updating wallet address for ${userId}`)
+		}
+		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		logger.database(`${fn} ${stmtType} Avarik Saga Wallet link with user`)
+		return true
+	}
+
+	async deleteWalletAddress(userId){
+		const fn = this.formatFunctionLog(`deleteWalletAddress`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		return await this._query(`
+				DELETE FROM avarik_saga
+				WHERE user_id = $userId`
+				,`run`
+				,{ userId: userId}
+				,`${fn} Deleting wallet address for ${userId}`)
+	}
+}
 /* class Template extends DatabaseUtils{
 	constructor(client){
 		super(client)

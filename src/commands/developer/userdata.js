@@ -3,7 +3,7 @@ const { Collection } = require(`discord.js`)
 const User = require(`../../libs/user`)
 const fs = require(`fs`)
 /**
- * @author pan
+ * @author Andrew
  */
 module.exports = {
     /**

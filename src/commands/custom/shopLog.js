@@ -6,7 +6,7 @@ const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType } 
  * @author klerikdust
  */
 module.exports = {
-    name: `shopLog`,
+    name: `shoplog`,
     aliases: [],
     description: `Displaying your server leaderboard for selected item!`,
     usage: `shopLog enable`,

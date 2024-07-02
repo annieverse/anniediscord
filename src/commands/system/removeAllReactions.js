@@ -2,7 +2,7 @@
 const { ApplicationCommandType, PermissionFlagsBits } = require(`discord.js`)
 /**
  * App command to remove reactions on a message.
- * @author Pan
+ * @author Andrew
  */
 module.exports = {
     name: `removeallreactions`,
