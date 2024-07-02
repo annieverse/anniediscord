@@ -60,15 +60,21 @@ module.exports = {
      * @type {Array}
      */
     options: [{
-        name: `address`, // Must be all lowercase
-        description: `Your address you would like to link`,
-        required: true,
-        type: ApplicationCommandOptionType.String
-    }, {
         name: `remove`, // Must be all lowercase
         description: `Remove your address`,
         type: ApplicationCommandOptionType.Subcommand
-    }],
+    },{
+        name: `address`, // Must be all lowercase
+        description: `Your address you would like to link`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `set`,
+            description: `Set a wallet address.`,
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }]
+        }, 
+    ],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
      * @required Only if applicationCommand is true
@@ -110,8 +116,10 @@ module.exports = {
      */
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `remove`) return this.delete(client, reply, interaction)
-        const arg = options.getString(`address`)
-        return this.run(client, reply, interaction, arg)
+        if (options.getSubcommand() === `address`){
+            const arg = options.getString(`set`)
+            return this.run(client, reply, interaction, arg)
+        }
     },
     async run(client, reply, messageRef, arg) {
         client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
