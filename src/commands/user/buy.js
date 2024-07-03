@@ -94,7 +94,6 @@ module.exports = {
     },
     async confirmOrDeny(slashCommand, message, client, locale, reply, shopMetadata, item, user, guild, prefix) {
 
-        if (slashCommand) {
             const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
                 thumbnail: user.displayAvatarURL(),
                 socket: {
@@ -106,7 +105,7 @@ module.exports = {
             const c = new Confirmator(message, reply, true)
             await c.setup(user.id, confirmation)
             c.onAccept(async () => {
-                await message.fetchReply()
+                if (message.applicationId != null) await message.fetchReply()
                 const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
                 //  Handle if user does not have sufficient artcoins
                 if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
@@ -140,13 +139,14 @@ module.exports = {
                 if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
                     const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
                     const channel = await guild.channels.fetch(channelId)
+                    console.log(channel)
                     await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
                         status: `success`,
                         socket: {
                             user: user.user.username,
                             userId: user.user.id,
                             itemName: item.name,
-                            itemId: item.id
+                            itemId: item.item_id
                         },
                         followUp: true,
                         field: channel
@@ -163,70 +163,5 @@ module.exports = {
                     followUp: true
                 })
             })
-        } else {
-            const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
-                thumbnail: user.displayAvatarURL(),
-                socket: {
-                    emoji: await client.getEmoji(`758720612087627787`),
-                    price: commanifier(shopMetadata.price),
-                    item: item.name
-                }
-            })
-            const c = new Confirmator(message, reply, false)
-            await c.setup(user.id, confirmation)
-            c.onAccept(async () => {
-                const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
-                //  Handle if user does not have sufficient artcoins
-                if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
-                    socket: {
-                        amount: commanifier(shopMetadata.price - balance),
-                        emoji: await client.getEmoji(`758720612087627787`)
-                    }
-                })
-                //  Deduct artcoins
-                client.db.databaseUtils.updateInventory({
-                    operation: `-`,
-                    userId: user.id,
-                    guildId: guild.id,
-                    itemId: 52,
-                    value: shopMetadata.price
-                })
-                //  Send item
-                client.db.databaseUtils.updateInventory({
-                    operation: `+`,
-                    userId: user.id,
-                    guildId: guild.id,
-                    itemId: item.item_id,
-                    value: 1
-                })
-                //  Reduce available supply if supply wasn't set as unlimited.
-                if (shopMetadata.quantity !== `~`) client.db.shop.subtractItemSupply(item.item_id, 1)
-                    
-                if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
-                    const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
-                    const channel = await guild.channels.fetch(channelId)
-                    await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
-                        status: `success`,
-                        socket: {
-                            user: user.user.username,
-                            userId: user.user.id,
-                            itemName: item.name,
-                            itemId: item.id
-                        },
-                        followUp: true,
-                        field: channel
-                    })
-                }
-
-                return await reply.send(locale.BUY.SUCCESSFUL, {
-                    status: `success`,
-                    socket: {
-                        user: user.user.username,
-                        item: item.name,
-                        prefix: prefix
-                    }
-                })
-            })
-        }
     }
 }
