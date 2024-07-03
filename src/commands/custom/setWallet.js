@@ -35,7 +35,7 @@ module.exports = {
      * @required
      * @type {number}
      */
-    permissionLevel: 2,
+    permissionLevel: 0,
     /**
      * Define if the command allows for a user as an arguement and needs the user metadata.
      * @required
