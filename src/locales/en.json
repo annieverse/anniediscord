@@ -808,7 +808,7 @@
         "SUCCESSFULLY_DISABLED": "Shop has been successfully closed.",
         "EDIT_NAME_SUCCESSFUL": "**'{{oldItem}}'** item name has been changed to **'{{newItem}}'**!",
         "EDIT_DESC_SUCCESSFUL": "**'{{item}}'** description has been updated!",
-        "EDIT_PRICE_INVALID": "Please type invalid number!",
+        "EDIT_PRICE_INVALID": "Please type a valid number!",
         "EDIT_PRICE_OVERLIMIT": "Keep in mind, you cannot exceed **{{limit}}** artcoins in price.",
         "EDIT_PRICE_SUCCESSFUL": "**'{{item}}'** price has been updated!",
         "EDIT_STOCK_OVERLIMIT": "Hey, you can't restock **{{limit}}** items at a time!",

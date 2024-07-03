@@ -1299,6 +1299,7 @@ module.exports = {
             const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
+            const amount = params == `~` ? 9223372036854775807n : params
             const stockLimit = 999999999999999
             const setAsUnlimited = params === `~`
             if (!setAsUnlimited) {
@@ -1314,7 +1315,7 @@ module.exports = {
                     followUp: true
                 })
             }
-            client.db.shop.updateShopItemMetadata(item.item_id, `quantity`, params)
+            client.db.shop.updateShopItemMetadata(item.item_id, `quantity`, amount)
             await reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
                 socket: {
                     item: item.name

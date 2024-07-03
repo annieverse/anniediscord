@@ -63,7 +63,7 @@ class Response {
 		/**
 		 * Determine if the message is a Slash command.
 		 */
-		this.isSlash = message.type != 0 ? true : false
+		this.isSlash = message.applicationId === null ? true : false
 
 		/**
 		 * The metadata of locale to be used
@@ -448,6 +448,10 @@ class Response {
 		return setTimeout(() => {
 			sent.delete()
 		}, deleteIn * 1000)
+	}
+
+	async sendMessage(){
+		return
 	}
 
 	/**

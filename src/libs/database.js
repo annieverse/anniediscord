@@ -2274,15 +2274,15 @@ class Shop extends DatabaseUtils {
 	 * @param {*} param New value for target property 
 	 * @return {void}
 	 */
-	updateShopItemMetadata(itemId, targetProperty, param) {
+	async updateShopItemMetadata(itemId, targetProperty, param) {
 		const fn = this.formatFunctionLog(`updateShopItemMetadata`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
 		if (!targetProperty) throw new TypeError(`${fn} parameter "targetProperty" cannot be blank.`)
 		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
 		const validColumns = [`item_id`, `guild_id`, `quantity`, `price`]
 		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
-
-		this._query(`
+		
+		await this._query(`
             UPDATE shop
             SET ${targetProperty} = $param
             WHERE item_id = $itemId`
