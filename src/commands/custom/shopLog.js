@@ -10,7 +10,7 @@ module.exports = {
     aliases: [],
     description: `Displaying your server leaderboard for selected item!`,
     usage: `shopLog enable`,
-    permissionLevel: 0,
+    permissionLevel: 2,
     multiUser: false,
     applicationCommand: true,
     messageCommand: false,
