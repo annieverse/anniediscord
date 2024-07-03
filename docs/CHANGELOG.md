@@ -1,3 +1,10 @@
+## [9.9.2](https://github.com/annieverse/anniediscord/compare/v9.9.1...v9.9.2) (2024-07-03)
+
+
+### Bug Fixes
+
+* **permissions:** wrong perm level ([fb25206](https://github.com/annieverse/anniediscord/commit/fb252066063a9460242c55bae5362413d482521b))
+
 ## [9.9.1](https://github.com/annieverse/anniediscord/compare/v9.9.0...v9.9.1) (2024-06-26)
 
 
