@@ -450,10 +450,6 @@ class Response {
 		}, deleteIn * 1000)
 	}
 
-	async sendMessage(){
-		return
-	}
-
 	/**
 	 *  Registering each element of array into its own embed.
 	 *  @param {array} [pages=[]] source array to be registered. Element must be `string`.
