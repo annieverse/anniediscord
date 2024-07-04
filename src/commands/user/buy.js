@@ -136,7 +136,6 @@ module.exports = {
                 if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
                     const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
                     const channel = await guild.channels.fetch(channelId)
-                    console.log(channel)
                     await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
                         status: `success`,
                         socket: {
