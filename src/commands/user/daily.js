@@ -88,8 +88,7 @@ module.exports = {
 			simplified: true,
 			socket: {
 				prefix: client.prefix
-			},
-			followUp: true
+			}
 		})
 	}
 }

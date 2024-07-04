@@ -242,7 +242,7 @@ module.exports = {
                 user: message.member
             }
         })
-        const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION,{followUp: true})
+        const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)
         const c = new Confirmator(message, reply, message.type == 0 ? false : true)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
@@ -257,8 +257,7 @@ module.exports = {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
     },

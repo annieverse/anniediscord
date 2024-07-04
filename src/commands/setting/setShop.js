@@ -381,15 +381,14 @@ module.exports = {
                 rawAnswer.deferUpdate()
                 const input = rawAnswer.fields.getTextInputValue(`stockAnswerInput`).toLowerCase()
                 if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
-                    deleteIn: 5, followUp: true
+                    deleteIn: 5
                 })
                 metadata.stocks = input == `~` ? 9223372036854775807n : input
                 responseMessageContent[`stock`] = `\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`
                 await joinFunction()
             } else if (i.customId === buffsButtonId) {
                 if (buffOptions.length >= 3) return await reply.send(`Sorry no more buffs can be added`, {
-                    deleteIn: 5,
-                    followUp: true
+                    deleteIn: 5
                 })
                 await i.showModal(modalBuffs)
                 const filter = (filter_interaction) => filter_interaction.customId === buffsModalId && filter_interaction.user.id === interaction.member.user.id
@@ -405,8 +404,7 @@ module.exports = {
                 const message = await i.fetchReply()
                 const params = answer.split(` `)
                 if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return await reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
-                    deleteIn: 5,
-                    followUp: true
+                    deleteIn: 5
                 })
                 //  Role update buff
                 const clientRole = interaction.guild.members.me.roles.highest
@@ -415,17 +413,16 @@ module.exports = {
                     let roleNames = ``
                     const roles = params.slice(1)
                     if (!roles.length) return await reply.send(locale.SETSHOP.ADD_BUFF_MISSING_ROLE, {
-                        deleteIn: 5,
-                        followUp: true
+                        deleteIn: 5
                     })
                     for (let i = 0; i < roles.length; i++) {
                         const ref = roles[i]
                         const role = findRole(ref, message.guild)
                         if (!role) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ROLE, {
-                            deleteIn: 5, followUp: true
+                            deleteIn: 5
                         })
                         if (role.position >= clientRole.position) return await reply.send(locale.SETSHOP.ADD_BUFF_TOO_HIGH_ROLE, {
-                            deleteIn: 5, followUp: true
+                            deleteIn: 5
                         })
                         res.push(role.id)
                         roleNames += role.name + ((i + 1) >= roles.length ? ` ` : `, `)
@@ -443,13 +440,11 @@ module.exports = {
                 if ([`additem`, `removeitem`].includes(params[0])) {
                     const amount = trueInt(params[1])
                     if (!amount) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_ITEM_AMOUNT, {
-                        deleteIn: 5,
-                        followUp: true
+                        deleteIn: 5
                     })
                     const targetItem = await client.db.shop.getItem(params.slice(2).join(` `))
                     if (!targetItem) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_TARGET_ITEM, {
-                        deleteIn: 5,
-                        followUp: true
+                        deleteIn: 5
                     })
                     const isItemAddition = params[0] === `additem`
                     buffs.push({
@@ -467,13 +462,11 @@ module.exports = {
                 if ([`expboost`, `acboost`].includes(params[0])) {
                     const multiplier = params[1].replace(/[^0-9a-z-A-Z ]/g, ``)
                     if (!multiplier) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_MULTIPLIER, {
-                        deleteIn: 5,
-                        followUp: true
+                        deleteIn: 5
                     })
                     const duration = ms(params.slice(2).join(` `))
                     if (!duration) return await reply.send(locale.SETSHOP.ADD_BUFF_INVALID_DURATION, {
-                        deleteIn: 5,
-                        followUp: true
+                        deleteIn: 5
                     })
                     const isExpBuff = params[0] === `expboost`
                     buffs.push({
@@ -895,8 +888,7 @@ module.exports = {
                 socket: {
                     prefix: prefix,
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
     },
@@ -944,8 +936,7 @@ module.exports = {
                 socket: {
                     prefix: prefix,
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
     },
@@ -1017,8 +1008,7 @@ module.exports = {
             await reply.send(locale.SETSHOP.DELETE_SUCCESSFUL, {
                 socket: {
                     item: item.name
-                },
-                followUp: true
+                }
             })
         })
     },
@@ -1226,23 +1216,20 @@ module.exports = {
                 deleteIn: 5,
                 socket: {
                     limit: nameLimit
-                },
-                followUp: true
+                }
             })
             if (guildItems.filter(i => i.name.toLowerCase() === params.toLowerCase()).length > 0) return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                 deleteIn: 5,
                 socket: {
                     item: params
-                },
-                followUp: true
+                }
             })
             client.db.shop.updateItemMetadata(item.item_id, `name`, params)
             await reply.send(locale.SETSHOP.EDIT_NAME_SUCCESSFUL, {
                 socket: {
                     oldItem: item.name,
                     newItem: params
-                },
-                followUp: true
+                }
             })
         }
 
@@ -1256,15 +1243,13 @@ module.exports = {
                 deleteIn: 5,
                 socket: {
                     limit: descLimit
-                },
-                followUp: true
+                }
             })
             client.db.shop.updateItemMetadata(item.item_id, `description`, params)
             await reply.send(locale.SETSHOP.EDIT_DESC_SUCCESSFUL, {
                 socket: {
                     item: item.name
-                },
-                followUp: true
+                }
             })
         }
 
@@ -1278,19 +1263,16 @@ module.exports = {
                 deleteIn: 5,
                 socket: {
                     limit: commanifier(priceLimit)
-                },
-                followUp: true
+                }
             })
             if (!trueInt(params)) return await reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                deleteIn: 5,
-                followUp: true
+                deleteIn: 5
             })
             client.db.shop.updateShopItemMetadata(item.item_id, `price`, parseInt(params))
             await reply.send(locale.SETSHOP.EDIT_PRICE_SUCCESSFUL, {
                 socket: {
                     item: item.name
-                },
-                followUp: true
+                }
             })
         }
 
@@ -1307,20 +1289,17 @@ module.exports = {
                     deleteIn: 5,
                     socket: {
                         limit: commanifier(stockLimit)
-                    },
-                    followUp: true
+                    }
                 })
                 if (!trueInt(params)) return await reply.send(locale.SETSHOP.EDIT_PRICE_INVALID, {
-                    deleteIn: 5,
-                    followUp: true
+                    deleteIn: 5
                 })
             }
             client.db.shop.updateShopItemMetadata(item.item_id, `quantity`, amount)
             await reply.send(locale.SETSHOP.EDIT_STOCK_SUCCESSFUL, {
                 socket: {
                     item: item.name
-                },
-                followUp: true
+                }
             })
         }
 
@@ -1334,15 +1313,13 @@ module.exports = {
                 deleteIn: 5,
                 socket: {
                     limit: messageUponUseLimit
-                },
-                followUp: true
+                }
             })
             client.db.shop.updateItemMetadata(item.item_id, `response_on_use`, params)
             await reply.send(locale.SETSHOP.EDIT_MSGUPONUSE_SUCCESSFUL, {
                 socket: {
                     item: item.name
-                },
-                followUp: true
+                }
             })
         }
     },

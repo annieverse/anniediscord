@@ -123,15 +123,14 @@ module.exports = {
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Handle if user trying to send artcoins above the amount they had
-            if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE,{ followUp: true })
+            if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE)
             //  Send artcoins to target user
             client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.amountToSend, userId: reciever.master.id, guildId: messageRef.guild.id })
             //  Deduct artcoins from sender's balance
             client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.senderAmount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
             await reply.send(``, {
                 customHeader: [`${reciever.master.username} has received your artcoins!♡`, reciever.master.displayAvatarURL()],
-                socket: { target: reciever.master.username },
-                followUp: true
+                socket: { target: reciever.master.username }
             })
         })
     }

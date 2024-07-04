@@ -35,8 +35,7 @@ module.exports = {
         await reply.send(locale.FACEGEN.HEADER, {
             customHeader: [messageRef.member.user.username, messageRef.member.displayAvatarURL()],
             image: source + `example-${getID}.jpg`,
-            prebuffer: true,
-            followUp: true
+            prebuffer: true
         })
         fetching.delete()
     }

@@ -72,16 +72,14 @@ module.exports = {
                     prebuffer: true,
                     image: await new GUI(targetUserData).build(),
                     paging: true,
-                    customHeader: [`${user.username}'s Inventory!`, user.displayAvatarURL()],
-                    followUp: true
+                    customHeader: [`${user.username}'s Inventory!`, user.displayAvatarURL()]
                 })
                 if (userLib.isSelf(user.id)) await reply.send(locale.INVENTORY.AUTHOR_TIPS, {
                     simplified: true,
                     socket: {
                         prefix: `/`,
                         emoji: await client.getEmoji(`848521358236319796`)
-                    },
-                    followUp: true
+                    }
                 })
                 return loading.delete()
             })

@@ -63,8 +63,7 @@ module.exports = {
                         socket: {
                             category: selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1),
                             emoji: await client.getEmoji(`751024231189315625`)
-                        },
-                        followUp: true
+                        }
                     })
                 }
                 const userData = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2, locale)
@@ -73,8 +72,7 @@ module.exports = {
                 await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${messageRef.guild.name}'s Ranking`, {
                     prebuffer: true,
                     image: img.png(),
-                    simplified: true,
-                    followUp: true
+                    simplified: true
                 })
                 const author = validUsers.filter(key => key.id === messageRef.member.id)[0]
                 const footer = author ? locale.LEADERBOARD.AUTHOR_RANK : locale.LEADERBOARD.UNRANKED
@@ -84,8 +82,7 @@ module.exports = {
                         rank: validUsers.indexOf(author) + 1,
                         points: author ? commanifier(author.points) : 0,
                         emoji: `⭐`,
-                    },
-                    followUp: true
+                    }
                 })
             })
     }

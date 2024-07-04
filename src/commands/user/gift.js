@@ -110,8 +110,7 @@ module.exports = {
                     prefix: prefix,
                     referenceItem: availableGifts[0].name.toLowerCase(),
                     items: await this.displayGifts(availableGifts, client)
-                },
-                followUp: true
+                }
             })
             return loading.delete()
         }
@@ -155,8 +154,7 @@ module.exports = {
                 socket: {
                     gift: `${await client.getEmoji(gift.alias)} ${commanifier(gift.quantity)}x ${gift.name}`,
                     emoji: await client.getEmoji(`692428613122785281`)
-                },
-                followUp: true
+                }
             })
             //  Adds reputation point to target user
             client.db.userUtils.updateUserReputation(amount, targetUser.id, messageRef.member.id, messageRef.guild.id)
@@ -167,8 +165,7 @@ module.exports = {
                 socket: {
                     user: targetUser.username,
                     gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`
-                },
-                followUp: true
+                }
             })
         })
     }

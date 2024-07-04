@@ -92,8 +92,7 @@ module.exports = {
                 socket: {
                     item: `**${targetItem.name}**`,
                     user: `**${messageRef.member.user.username}**`
-                },
-                followUp: true
+                }
             })
         })
     }

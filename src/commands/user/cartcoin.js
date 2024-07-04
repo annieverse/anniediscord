@@ -112,8 +112,7 @@ module.exports = {
                 socket: {
                     artcoins: `${await client.getEmoji(`758720612087627787`)} ${commanifier(amountToUse)}`,
                     exp: `${commanifier(totalGainedExp)} EXP`
-                },
-                followUp: true
+                }
             })
         })
     }

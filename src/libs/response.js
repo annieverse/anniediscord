@@ -44,7 +44,7 @@ class Response {
 	 * @param {object} [localeMetadata=null] For testing purposes. Optional
 	 * 'message' parameter is replaced with 'channel' object.
 	 */
-	constructor(message = {}, channelAsInstance = false, localeMetadata=null) {
+	constructor(message = {}, channelAsInstance = false, localeMetadata = null) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
@@ -58,7 +58,7 @@ class Response {
 		this.targetField = channelAsInstance ?
 			message :
 			message.channel ?
-			message.channel : null
+				message.channel : null
 
 		/**
 		 * Determine if the message is a Slash command.
@@ -71,7 +71,7 @@ class Response {
 		 */
 		this.localeMetadata = localeMetadata
 	}
-	
+
 	/**
 	 * Plug variables into available socket in the target string.
 	 * @param {string} [content=``] Target string.
@@ -99,8 +99,8 @@ class Response {
 	 * @param {Object} [plugins={}] List of plugins to be applied into the message.
 	 * @return {void}
 	 */
-	async send(content = ``, plugins = {}) {
-	
+	async sendOld(content = ``, plugins = {}) {
+
 		let socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
 		plugins.color = color
@@ -130,32 +130,32 @@ class Response {
 			attachment: plugins.file,
 			name: plugins.fileName,
 			description: plugins.fileDescription
-		  }
+		}
 		if (!file.attachment || !file.name || !file.description) file = null
 		/**
 		 * Add feedback button to message if enabled
 		 */
-		const row = new ActionRowBuilder() 
-                .addComponents(
-                    new ButtonBuilder()
-                    .setCustomId(`betaFeedback`)
-                    .setLabel(`Beta Feature Feedback`)
-                    .setStyle(ButtonStyle.Secondary)
-                )
-		if (feedback){
-			if (!components){
+		const row = new ActionRowBuilder()
+			.addComponents(
+				new ButtonBuilder()
+					.setCustomId(`betaFeedback`)
+					.setLabel(`Beta Feature Feedback`)
+					.setStyle(ButtonStyle.Secondary)
+			)
+		if (feedback) {
+			if (!components) {
 				components = [row]
-			}else{
+			} else {
 				components.push(row)
 			}
-		}		
-		
+		}
+
 		let fetchReply = plugins.fetchReply || true
 		let followUp = plugins.followUp || false
 		let ephemeral = plugins.ephemeral || false
 		followUp = this.isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = !directMessage ? this.isSlash ? this.message : field : field
-		const RESPONSE_TYPE = !directMessage ?this.isSlash ? followUp ? `followUp` : `reply` : `send` : `send`
+		const RESPONSE_TYPE = !directMessage ? this.isSlash ? followUp ? `followUp` : `reply` : `send` : `send`
 		const isComponentArray = Array.isArray(components)
 		isComponentArray ? null : components ? components = [components] : null
 		//  Handle message with paging property enabled
@@ -225,7 +225,7 @@ class Response {
 						if (previewedPages.includes(page)) return
 						previewedPages.push(page)
 						let loading = await RESPONSE_REF[RESPONSE_TYPE]({
-							content: `\`Rendering preview for cards page ${page+1}/${embeddedPages.length} ...\``
+							content: `\`Rendering preview for cards page ${page + 1}/${embeddedPages.length} ...\``
 						})
 						let img = await new GUI(plugins.cardPreviews[page]).create()
 						RESPONSE_REF[RESPONSE_TYPE]({
@@ -405,13 +405,13 @@ class Response {
 
 			if (embed.file) {
 				components ? sent = await RESPONSE_REF[RESPONSE_TYPE]({
-						content: topNotch,
-						embeds: [embed],
-						files: [embed.file],
-						components: components,
-						fetchReply: fetchReply,
-						ephemeral: ephemeral
-					}) :
+					content: topNotch,
+					embeds: [embed],
+					files: [embed.file],
+					components: components,
+					fetchReply: fetchReply,
+					ephemeral: ephemeral
+				}) :
 					sent = await RESPONSE_REF[RESPONSE_TYPE]({
 						content: topNotch,
 						embeds: [embed],
@@ -441,7 +441,7 @@ class Response {
 		}
 
 		if (file) sent = await RESPONSE_REF[RESPONSE_TYPE]({
-			files:[file]
+			files: [file]
 		})
 		if (!deleteIn) return sent
 		sent
@@ -450,8 +450,337 @@ class Response {
 		}, deleteIn * 1000)
 	}
 
-	async sendMessage(){
-		return
+	/**
+	 * Sending response
+	 * @param {String} [content=``] Main content of the message to be displayed.
+	 * @param {Object} plugins List of plugins to be applied into the message.
+	 * @param {Array} plugins.socket 
+	 * @param {String} plugins.color 
+	 * @param {String} plugins.url 
+	 * @param {String} plugins.image 
+	 * @param {String} plugins.imageGif 
+	 * @param {String} plugins.thumbnail 
+	 * @param {String} plugins.header 
+	 * @param {String} plugins.footer 
+	 * @param {String} plugins.customHeader 
+	 * @param {String} plugins.timestamp 
+	 * @param {String} plugins.status 
+	 * @param {String} plugins.topNotch 
+	 * @param {Boolean} plugins.simplified 
+	 * @param {Boolean} plugins.notch 
+	 * @param {Boolean} plugins.prebuffer 
+	 * @param {Boolean} plugins.paging 
+	 * @param {Boolean} plugins.cardPreviews 
+	 * @param {Boolean} plugins.raw 
+	 * @param {Boolean} plugins.timestampAsFooter 
+	 * @param {Boolean} plugins.directMessage 
+	 * @param {Boolean} plugins.feedback  
+	 * @param {Boolean} plugins.fetchReply 
+	 * @param {Boolean} plugins.ephemeral 
+	 * @param {Object | String} plugins.field 
+	 * @param {String | Number} plugins.deleteIn 
+	 * @param {Array | String | Object} plugins.components
+	 * @param {Object} plugins.file
+	 * @param {String} plugins.file.filePath 
+	 * @param {String} plugins.file.fileName 
+	 * @param {String} plugins.file.fileDescription 
+	 * @return {void}
+	 */
+	async send(content = ``, plugins = {}) {
+		let socket = plugins.socket || []
+		let color = plugins.color || palette.crimson
+		let url = plugins.url || null
+		let image = plugins.image || null
+		let imageGif = plugins.imageGif || null
+		let field = plugins.field || this.targetField
+		let simplified = plugins.simplified || false
+		let thumbnail = plugins.thumbnail || null
+		let notch = plugins.notch || false
+		let prebuffer = plugins.prebuffer || false
+		let header = plugins.header || null
+		let footer = plugins.footer || null
+		let customHeader = plugins.customHeader || null
+		let deleteIn = plugins.deleteIn || null
+		let timestamp = plugins.timestamp || null
+		let paging = plugins.paging || null
+		let status = plugins.status || null
+		let cardPreviews = plugins.cardPreviews || null
+		let topNotch = plugins.topNotch || null
+		let raw = plugins.raw || false
+		let timestampAsFooter = plugins.timestampAsFooter || false
+		let directMessage = plugins.dm || false
+		let feedback = plugins.feedback || false
+		let components = plugins.components || null
+		let file = plugins.file || null
+		let fetchReply = plugins.fetchReply || true
+		let ephemeral = plugins.ephemeral || false
+
+		const isSlash = this.message.applicationId === null ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
+		const RESPONSE_REF = directMessage ? `send` : isSlash ? this.message : field
+		const RESPONSE_TYPE = directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
+		const embed = new EmbedBuilder()
+
+		/**
+		 * Format Components to correct data type
+		 */
+		formatComponents()
+
+		/**
+		 * Create file object if supplied data
+		 */
+		constructFileProp()
+
+		/**
+		 * Add feedback button to message if enabled
+		 */
+		betaFeedback()
+
+		//  Handle message with paging property enabled
+		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews)
+
+		//  Replace content with error message if content is a faulty value
+		if (typeof content != `string`) content = this.localeMetadata.LOCALIZATION_ERROR
+		//  Find all the available {{}} socket in the string.
+		replaceSockets()
+
+		//  Mutate message if status property is defined
+		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
+
+		//  Returns simple message w/o embed
+		if (simplified) return await sendMessage()
+
+		//  Add notch/chin
+		if (notch) content = `\u200C\n${content}\n\u200C`
+
+		if (content === ``) content = null
+
+
+		await createEmbed()
+
+		if (raw) return embed
+
+		let sent = await sendMessage()
+
+		if (file) sent = await sendMessage()
+
+		if (!deleteIn) return sent
+		sent
+
+		return setTimeout(() => {
+			sent.delete()
+		}, deleteIn * 1000)
+
+
+		async function sendMessage() {
+			const noEmbed = Object.keys(embed.data).length === 0
+			const noEmbedDescription = embed.data.description === undefined
+			
+			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
+				files: [file]
+			})
+
+			return RESPONSE_REF[RESPONSE_TYPE]({
+				content: noEmbed ? content : topNotch ? topNotch : null,
+				embeds: noEmbed ? null : noEmbedDescription ? null : [embed],
+				files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
+				components: components ? components : null,
+				fetchReply: fetchReply,
+				ephemeral: ephemeral
+			})
+		}
+
+		async function createEmbed() {
+			embed.setColor(palette[color] || color).setDescription(content).setThumbnail(thumbnail)
+			embed.file = null
+			//  Add header
+			if (header) embed.setTitle(header)
+			//  Custom header
+			if (customHeader) embed.setAuthor({
+				name: customHeader[0],
+				iconURL: customHeader[1]
+			})
+			//  Add footer
+			if (footer) embed.setFooter({
+				text: footer
+			})
+			//  Timestamp footer
+			if (timestampAsFooter) embed.setTimestamp()
+			//  Add timestamp on footer part
+			if (timestamp) embed.setTimestamp()
+			// Add url
+			if (url) embed.setURL(url)
+			//  Add image preview
+			if (imageGif) {
+				embed.setImage(imageGif)
+			} else if (embed.file) {
+				embed.image.url = null
+				embed.file = null
+			}
+			//  Add image preview
+			if (image) {
+				const img = new AttachmentBuilder(prebuffer ? image : await loadAsset(image), { name: `preview.jpg` })
+				embed.file = img
+				embed.setImage(`attachment://preview.jpg`)
+			} else if (embed.file) {
+				embed.image.url = null
+				embed.file = null
+			}
+		}
+
+		function formatComponents() {
+			const isComponentArray = Array.isArray(components)
+			if (components && !isComponentArray) components = [components]
+		}
+
+		function betaFeedback() {
+			const row = new ActionRowBuilder()
+				.addComponents(
+					new ButtonBuilder()
+						.setCustomId(`betaFeedback`)
+						.setLabel(`Beta Feature Feedback`)
+						.setStyle(ButtonStyle.Secondary)
+				)
+
+			if (feedback) return !components ? components = [row] : components.push(row)
+		}
+
+		function constructFileProp() {
+			if (file === null || file === undefined || !plugins.file.filePath || !plugins.file.fileName || !plugins.file.fileDescription) {
+				file = null
+			} else {
+				file.attachment = plugins.file.filePath
+				file.name = plugins.file.fileName
+				file.description = plugins.file.fileDescription
+			}
+		}
+
+		function replaceSockets() {
+			let sockets = content.match(/\{{(.*?)\}}/g)
+			if (sockets === null) sockets = []
+			for (let i = 0; i < sockets.length; i++) {
+				const key = sockets[i].match(/\{{([^)]+)\}}/)
+				if (!key) continue
+				//  Index `0` has key with the double curly braces, index `1` only has the inside value.
+				const pieceToAttach = socket[key[1]]
+				if (pieceToAttach || pieceToAttach === 0) content = content.replace(new RegExp(`\\` + key[0], `g`), pieceToAttach)
+			}
+		}
+	}
+
+	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews) {
+		let page = 0
+		const embeddedPages = await this._registerPages(content, plugins)
+		return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? components ? {
+			embeds: [embeddedPages[0]],
+			files: [embeddedPages[0].file],
+			components: components,
+			fetchReply: fetchReply,
+			ephemeral: ephemeral
+		} : {
+			embeds: [embeddedPages[0]],
+			files: [embeddedPages[0].file],
+			fetchReply: fetchReply,
+			ephemeral: ephemeral
+		} : components ? {
+			embeds: [embeddedPages[0]],
+			files: [],
+			components: components,
+			fetchReply: fetchReply,
+			ephemeral: ephemeral
+		} : {
+			embeds: [embeddedPages[0]],
+			files: [],
+			fetchReply: fetchReply,
+			ephemeral: ephemeral
+		}).then(async (msg) => {
+			this.ref = this.message.user
+			//  Buttons
+			if (embeddedPages.length > 1) {
+				await msg.react(`⏪`)
+				await msg.react(`⏩`)
+			}
+			// Filters - These make sure the varibles are correct before running a part of code
+			let filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
+			//  Timeout limit for page buttons
+			const backwards = msg.createReactionCollector({
+				filter,
+				time: 300000
+			})
+			filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
+			const forwards = msg.createReactionCollector({
+				filter,
+				time: 300000
+			})
+			//  Add preview button if cardPreviews is enabled
+			if (cardPreviews) {
+				await msg.react(`👀`)
+				let filter = (reaction, user) => isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
+				let preview = msg.createReactionCollector(filter, {
+					time: 300000
+				})
+				let previewedPages = []
+				preview.on(`collect`, async (r) => {
+					r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+					if (previewedPages.includes(page)) return
+					previewedPages.push(page)
+					let loading = await RESPONSE_REF[RESPONSE_TYPE]({
+						content: `\`Rendering preview for cards page ${page + 1}/${embeddedPages.length} ...\``
+					})
+					let img = await new GUI(plugins.cardPreviews[page]).create()
+					RESPONSE_REF[RESPONSE_TYPE]({
+						files: [new AttachmentBuilder(img)]
+					})
+					loading.delete()
+				})
+			}
+			//	Left navigation
+			backwards.on(`collect`, r => {
+				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				page--
+				if (embeddedPages[page]) {
+					msg.edit(embeddedPages[page].file ? {
+						embeds: [embeddedPages[page]],
+						files: [embeddedPages[page].file]
+					} : {
+						embeds: [embeddedPages[page]],
+						files: []
+					})
+				} else {
+					page = embeddedPages.length - 1
+					msg.edit(embeddedPages[page].file ? {
+						embeds: [embeddedPages[page]],
+						files: [embeddedPages[page].file]
+					} : {
+						embeds: [embeddedPages[page]],
+						files: []
+					})
+				}
+			})
+			//	Right navigation
+			forwards.on(`collect`, r => {
+				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				page++
+				if (embeddedPages[page]) {
+					msg.edit(embeddedPages[page].file ? {
+						embeds: [embeddedPages[page]],
+						files: [embeddedPages[page].file]
+					} : {
+						embeds: [embeddedPages[page]],
+						files: []
+					})
+				} else {
+					page = 0
+					msg.edit(embeddedPages[page].file ? {
+						embeds: [embeddedPages[page]],
+						files: [embeddedPages[page].file]
+					} : {
+						embeds: [embeddedPages[page]],
+						files: []
+					})
+				}
+			})
+		})
 	}
 
 	/**
@@ -464,8 +793,8 @@ class Response {
 		let res = []
 		for (let i = 0; i < pages.length; i++) {
 			res[i] = new EmbedBuilder().setFooter({
-				text: `(${i+1}/${pages.length})`
-			}).setDescription(`${src.topNotch||``}\n${this.socketing(pages[i], src.socket)}`)
+				text: `(${i + 1}/${pages.length})`
+			}).setDescription(`${src.topNotch || ``}\n${this.socketing(pages[i], src.socket)}`)
 			if (src.image) {
 				let attachment = new AttachmentBuilder(src.prebuffer ? src.image : await loadAsset(src.image), `preview.jpg`)
 				res[i].setImage(`attachment://${attachment.name}`)
@@ -479,7 +808,7 @@ class Response {
 			})
 			if (src.thumbnail) res[i].setThumbnail(src.thumbnail)
 			if (src.cardPreviews) res[i].setFooter({
-				text: `Press the eyes emoji to preview. (${i+1}/${pages.length})`
+				text: `Press the eyes emoji to preview. (${i + 1}/${pages.length})`
 			})
 		}
 		return res

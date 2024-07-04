@@ -1,13 +1,13 @@
 const {
     InteractionType
 } = require(`discord.js`)
-const { levelZeroErrors } = require(`../utils/errorLevels.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 module.exports = async (client, interaction) => {
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     const locale = client.getTargetLocales(userData.lang)
     // const locale = client.locales.en
-    const reply = client.responseLibs(interaction, false, locale)
+    const reply = client.responseLibs(interaction, true, locale)
     try {
         await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
         if (client.guildonly_commands.has(interaction.guildId)) {
@@ -50,17 +50,12 @@ module.exports = async (client, interaction) => {
             ephemeral: true
         })
         client.logger.error(err)
-        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName } })
+        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } })
     }
-    async function formatedErrorLog(c, { guildId, userId, providedArgs, error_message, targetCommand }) {
+    async function formatedErrorLog(c, { guildId, userId, providedArgs, error_message, targetCommand, levelZeroErrors }) {
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(userId)
         const date = new Date()
-        // const levelZeroErrors = [
-        //     `Missing Permissions`,
-        //     `Unsupported image type`,
-        //     `unsupported file type: undefined`
-        // ]
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
         // Make sure channels are in the cache
         if (!c.channels.cache.has(`848425166295269396`)) await c.channels.fetch(`848425166295269396`)

@@ -74,8 +74,7 @@ module.exports = {
                     paging: true,
                     cardPreviews: this.splittedInventory,
                     thumbnail: user.displayAvatarURL(),
-                    header: `${user.username}'s Card Collections`,
-                    followUp: true
+                    header: `${user.username}'s Card Collections`
                 })
                 loading.delete()
             })

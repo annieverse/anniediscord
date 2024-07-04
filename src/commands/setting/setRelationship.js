@@ -201,8 +201,7 @@ module.exports = {
                     client.db.relationships.removeUserRelationship(interaction.member.id, targetUser.master.id)
                     client.db.relationships.removeUserRelationship(targetUser.master.id, interaction.member.id)
                     return await reply.send(``, {
-                        customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()],
-                        followUp: true
+                        customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()]
                     })
                 })
             }
@@ -240,14 +239,13 @@ module.exports = {
                 const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
                 client.db.relationships.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id),interaction.guildId)
                 client.db.relationships.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id),interaction.guildId)
-                await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()], followUp: true })
+                await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
                 return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
                     simplified: true,
                     socket: {
                         prefix: `/`,
                         emoji: await client.getEmoji(`848521358236319796`)
-                    },
-                    followUp: true
+                    }
                 })
             })
         },

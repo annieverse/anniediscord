@@ -52,8 +52,7 @@ module.exports = {
                 simplified: true,
                 socket: {
                     prefix: prefix
-                },
-                followUp: true
+                }
             })
         }
         //  Handle shop closure
@@ -74,8 +73,7 @@ module.exports = {
                 socket: {
                     prefix: prefix,
                     emoji: await client.getEmoji(`AnnieHeartPeek`)
-                },
-                followUp: true
+                }
             })
         }
         const shopMetadata = guildShop.find(i => i.item_id === item.item_id)
@@ -112,8 +110,7 @@ module.exports = {
                     socket: {
                         amount: commanifier(shopMetadata.price - balance),
                         emoji: await client.getEmoji(`758720612087627787`)
-                    },
-                    followUp: true
+                    }
                 })
                 //  Deduct artcoins
                 client.db.databaseUtils.updateInventory({
@@ -148,7 +145,6 @@ module.exports = {
                             itemName: item.name,
                             itemId: item.item_id
                         },
-                        followUp: true,
                         field: channel
                     })
                 }
@@ -159,8 +155,7 @@ module.exports = {
                         user: user.user.username,
                         item: item.name,
                         prefix: prefix
-                    },
-                    followUp: true
+                    }
                 })
             })
     }

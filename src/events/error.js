@@ -1,9 +1,9 @@
-const { levelZeroErrors } = require(`../utils/errorLevels.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 module.exports = function DiscordError(client, e) {
-    if (!client.dev) return
+    // if (!client.dev) return // Should return any errors to support server if they arnt caught by other handlers
     //  Report to support server
-    client.shard.broadcastEval(formatedErrorLog, { context: { error_message: e.message } })
-    function formatedErrorLog(c, { error_message }) {
+    client.shard.broadcastEval(formatedErrorLog, { context: { error_message: e.message, levelZeroErrors: levelZeroErrors } })
+    function formatedErrorLog(c, { error_message, levelZeroErrors }) {
         const date = new Date()
         const lvl0Test = levelZeroErrors.includes(error_message)
         const lvl0ChanCacheTest = !c.channels.cache.has(`797521371889532988`)

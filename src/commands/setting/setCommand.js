@@ -177,8 +177,7 @@ module.exports = {
                 status: `success`,
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
     }

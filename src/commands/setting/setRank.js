@@ -170,8 +170,7 @@ module.exports = {
             //  Spawn tip if user is a first timer
         if (this.firstTimer) return await reply.send(locale.SETRANK.FIRST_TIMER_TIP, {
             simplified: true,
-            socket: { prefix: prefix },
-            followUp: true
+            socket: { prefix: prefix }
         })
     },
 

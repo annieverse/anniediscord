@@ -62,7 +62,7 @@ module.exports = {
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, followUp: true })
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
@@ -114,7 +114,7 @@ module.exports = {
 					return buttonCollector.stop()
 				}
 				buttonCollector.resetTimer({ time: 30000 })
-				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3, followUp: true })
+				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
 			}
 			buttonCollector.stop()
 			questSession.updateRewards()
@@ -124,8 +124,7 @@ module.exports = {
 					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
 					user: user.username,
 					reward: questSession.getQuestFormattedReward
-				},
-				followUp: true
+				}
 			})
 		})
 	},

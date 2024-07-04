@@ -55,7 +55,6 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             },
             field: targetChannel,
-            followUp: true,
             dm: dm
         })
     }
