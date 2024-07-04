@@ -82,7 +82,6 @@ module.exports = async (client, interaction, command) => {
         }
         //  Report to support server
 
-        console.log(`\n\n\n HELLO3`)
         client.logger.error(err)
         client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } })
     }

@@ -117,7 +117,6 @@ module.exports = async (client = {}, message = {}) => {
         }
         //  Report to support server
 
-        console.log(`\n\n\n HELLO`)
         client.logger.error(e)
         client.shard.broadcastEval(formatedErrorLog, { context: { guildId: message.guildId, authorId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(error => client.logger.error(error))
     }

@@ -389,11 +389,6 @@ class Response {
 				}
 			})
 		})
-		if (!deleteIn) return sent
-		sent
-		return setTimeout(() => {
-			sent.delete()
-		}, deleteIn * 1000)
 	}
 
 	/**
