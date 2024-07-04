@@ -1,3 +1,11 @@
+## [9.9.3](https://github.com/annieverse/anniediscord/compare/v9.9.2...v9.9.3) (2024-07-04)
+
+
+### Bug Fixes
+
+* **buy:** incorrect locale ([3fabf2f](https://github.com/annieverse/anniediscord/commit/3fabf2f7346478a133bb049acfb4f42f5eb895a8))
+* **setshop:** edit stock to unlimited ([d41d7f8](https://github.com/annieverse/anniediscord/commit/d41d7f8506345ec2f7c3a1f3f79e5be7a75c72b6))
+
 ## [9.9.2](https://github.com/annieverse/anniediscord/compare/v9.9.1...v9.9.2) (2024-07-03)
 
 
