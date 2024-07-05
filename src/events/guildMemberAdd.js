@@ -55,8 +55,7 @@ module.exports = async function guildMemberAdd(client, member) {
             //  Handle if target channel is invalid or cannot be found
             if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`) 
             const ch = guild.channels.cache.get(getTargetWelcomerChannel)
-            client.responseLibs(ch, true) 
-            .send(getWelcomerText, {
+            client.responseLibs(ch, true).send(getWelcomerText, {
                 simplified: true,
                 prebuffer: true,
                 image: renderedBanner

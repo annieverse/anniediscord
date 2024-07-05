@@ -117,7 +117,7 @@ class itemEffects {
         //  Skip addition if user already has the role
         if (this.message.member.roles.cache.has(roleIds)) return
         this.message.member.roles.add(roleIds)
-        .catch(e => this.client.logger.warn(`${this.instanceId} <ADD_ROLE_FAIL> ${e.stack}`))
+        .catch(e => this.client.logger.error(`${this.instanceId} <ADD_ROLE_FAIL> ${e.stack}`))
     }
 
     /**
@@ -130,7 +130,7 @@ class itemEffects {
         //  Skip addition if user already has the role
         if (this.message.member.roles.cache.has(roleIds)) return
         this.message.member.roles.remove(roleIds)
-        .catch(e => this.client.logger.warn(`${this.instanceId} <REMOVE_ROLE_FAIL> ${e.stack}`))
+        .catch(e => this.client.logger.error(`${this.instanceId} <REMOVE_ROLE_FAIL> ${e.stack}`))
     }
 
     /**
