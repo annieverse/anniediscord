@@ -3,13 +3,12 @@ const {
 } = require(`discord.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
-module.exports = async (client, interaction) => {
+module.exports = async (client, interaction) => {    
+    await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     const locale = client.getTargetLocales(userData.lang)
-    // const locale = client.locales.en
     const reply = client.responseLibs(interaction, true, locale)
     try {
-        await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
         if (client.guildonly_commands.has(interaction.guildId)) {
             let guildonlycommands = client.guildonly_commands.get(interaction.guildId)
             client.application_commands = client.application_commands.concat([...guildonlycommands])
