@@ -64,8 +64,7 @@ module.exports = {
                         emoji: await client.getEmoji(`692428597570306218`),
                         user: user.username,
                         command: `Level`
-                    },
-                    followUp: true
+                    }
                 })
 
                 return loading.delete()

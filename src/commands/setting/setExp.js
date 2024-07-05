@@ -258,8 +258,7 @@ module.exports = {
             expLib.updateRank(newData.level)
             client.db.userUtils.updateUserExp(amountToSubtract, targetUser.master.id, message.guild.id, `-`)
             await reply.send(``, {
-                customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
-                followUp: true
+                customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()]
             })
         })
     },
@@ -319,8 +318,7 @@ module.exports = {
         c.onAccept(async () => {
             expLib.execute(amountToAdd)
             await reply.send(``, {
-                customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()],
-                followUp: true
+                customHeader: [`${targetUser.master.username} exp has been updated!♡`, targetUser.master.displayAvatarURL()]
             })
         })
     },
@@ -362,8 +360,7 @@ module.exports = {
             expLib.updateRank(0)
             client.db.userUtils.resetUserExp(targetUser.master.id, message.guild.id)
             await reply.send(``, {
-                customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()],
-                followUp: true
+                customHeader: [`${targetUser.master.username} exp has been wiped out!♡`, targetUser.master.displayAvatarURL()]
             })
         })
     }

@@ -124,8 +124,7 @@ module.exports = {
             image: await new GUI(loots, drawCount, userData).build(),
             socket: {
                 items: this.displayDetailedLoots(client, loots)
-            },
-            followUp: true
+            }
         })
         return message.type == 0 ? fetching.delete() : null
     },

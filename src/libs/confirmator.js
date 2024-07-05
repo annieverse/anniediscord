@@ -85,8 +85,7 @@ module.exports = class Confirmator {
                 return await this.reply.send(this.reply.localeMetadata.ACTION_CANCELLED, {
                     socket: {
                         emoji: await this.message.client.getEmoji(`781954016271138857`)
-                    },
-                    followUp: true
+                    }
                 })
             }
 

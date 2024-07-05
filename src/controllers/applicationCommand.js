@@ -3,24 +3,24 @@ const getUserPermission = require(`../libs/permissions`)
 const {
     cooldown
 } = require(`../config/commands`)
-const {InteractionType} = require(`discord.js`)
-const { levelZeroErrors } = require(`../utils/errorLevels.js`)
-module.exports = async (client, interaction, command) =>{
+const { InteractionType } = require(`discord.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
+module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    const locale = client.getTargetLocales(userData.lang)    
+    const locale = client.getTargetLocales(userData.lang)
     let reply = client.responseLibs(interaction, false, locale)
     const options = interaction.options
     const targetCommand = interaction.commandName
-        // Handle if user doesn't have enough permission level to use the command
+    // Handle if user doesn't have enough permission level to use the command
     const userPermission = getUserPermission(interaction, interaction.user.id)
     if (command.permissionLevel > userPermission.level) return await reply.send(``, {
-            customHeader: [
-                `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
-                interaction.user.displayAvatarURL()
-            ]
-        })
-        // Handle cooldowns
+        customHeader: [
+            `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
+            interaction.user.displayAvatarURL()
+        ]
+    })
+    // Handle cooldowns
     const instanceId = `CMD_${command.name.toUpperCase()}_${interaction.user.id}@${interaction.guildId}`
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
@@ -51,12 +51,11 @@ module.exports = async (client, interaction, command) =>{
         })
     } catch (err) {
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
-                socket: {
-                    error: err.stack,
-                    emoji: await client.getEmoji(`AnnieThinking`)
-                },
-                followUp: true
-            }).catch(err => client.logger.error(err))
+            socket: {
+                error: err.stack,
+                emoji: await client.getEmoji(`AnnieThinking`)
+            }
+        }).catch(err => client.logger.error(err))
 
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(err.message)) {
             await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
@@ -74,17 +73,19 @@ module.exports = async (client, interaction, command) =>{
                 },
                 ephemeral: true
             })
-            .catch(permErr => permErr)
+                .catch(permErr => permErr)
         } else {
             await reply.send(locale.ERROR_ON_PRODUCTION, {
-                socket: {emoji: await client.getEmoji(`AnniePout`)},
-                ephemeral: true})
+                socket: { emoji: await client.getEmoji(`AnniePout`) },
+                ephemeral: true
+            })
         }
         //  Report to support server
+
         client.logger.error(err)
-        client.shard.broadcastEval(formatedErrorLog, { context: {guildId:interaction.guildId,userId:interaction.user.id,providedArgs:JSON.stringify(interaction.options.data), error_message:err.message,targetCommand: targetCommand}})
+        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } })
     }
-    async function formatedErrorLog(c,{guildId,userId,providedArgs,error_message,targetCommand}) {
+    async function formatedErrorLog(c, { guildId, userId, providedArgs, error_message, targetCommand, levelZeroErrors }) {
         const guild = await c.fetchGuildPreview(guildId)
         const user = await c.users.fetch(userId)
         const date = new Date()
@@ -94,8 +95,8 @@ module.exports = async (client, interaction, command) =>{
         if (!c.channels.cache.has(`797521371889532988`)) await c.channels.fetch(`797521371889532988`)
 
         const channel = levelZeroErrors.includes(error_message) ? await c.channels.cache.get(`848425166295269396`) : await c.channels.cache.get(`797521371889532988`)
-        if (channel){
-            return channel.send({content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${targetCommand}\n**ARGUMENTS (Raw data):** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime()/1000)}:F>\n**ISSUE_TRACE:** ${error_message}\n─────────────────☆～:;`})
+        if (channel) {
+            return channel.send({ content: `─────────────────☆～:;\n**GUILD_ID:** ${guild.id} - ${guild.name}\n**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}\n**AFFECTED_CMD:** ${targetCommand}\n**ARGUMENTS (Raw data):** ${providedArguments}\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime() / 1000)}:F>\n**ISSUE_TRACE:** ${error_message}\n─────────────────☆～:;` })
         }
         return
     }

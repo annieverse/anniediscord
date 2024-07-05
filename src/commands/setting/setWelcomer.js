@@ -594,8 +594,7 @@ module.exports = {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`692428927620087850`)
-            },
-            followUp: true
+            }
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
@@ -627,8 +626,7 @@ module.exports = {
         return await reply.send(this._parseWelcomeText(message), {
             simplified: true,
             prebuffer: true,
-            image: img,
-            followUp: true
+            image: img
         })
     },
 
@@ -716,8 +714,7 @@ module.exports = {
             await reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
 
@@ -793,8 +790,7 @@ module.exports = {
             await reply.send(locale.SETWELCOMER.IMAGE_SUCCESSFULLY_APPLIED, {
                 socket: {
                     emoji: await client.getEmoji(`789212493096026143`)
-                },
-                followUp: true
+                }
             })
         })
     },
@@ -835,8 +831,7 @@ module.exports = {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`692428927620087850`)
-            },
-            followUp: true
+            }
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)
@@ -871,8 +866,7 @@ module.exports = {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`692428927620087850`)
-            },
-            followUp: true
+            }
         })
         const c = new Confirmator(message, reply)
         await c.setup(message.member.id, tipsToPreview)

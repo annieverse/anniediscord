@@ -123,7 +123,7 @@ module.exports = {
         const availableItems = await client.db.shop.getItem(null, messageRef.guild.id)
         // End phase if there are no items available
         if (!availableItems.length) {
-            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, { followUp: true, ephemeral: true })
+            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, {  ephemeral: true })
         }
         //  Find best match
         const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))

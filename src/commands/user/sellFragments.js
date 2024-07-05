@@ -128,8 +128,7 @@ module.exports = {
                 operation: `-`
             })
             return await reply.send(``, {
-                customHeader: [`Fragments has been sold!`, messageRef.member.displayAvatarURL()],
-                followUp: true
+                customHeader: [`Fragments has been sold!`, messageRef.member.displayAvatarURL()]
             })
         })
     }

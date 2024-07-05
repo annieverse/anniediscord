@@ -53,8 +53,7 @@ module.exports = {
             },
             image: image,
             prebuffer: true,
-            simplified: true,
-            followUp: true
+            simplified: true
         })
     }
 }

@@ -73,8 +73,7 @@ module.exports = {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`),
                 prefix: `/`
-            },
-            followUp: true
+            }
         })
     },
     async execute(client, reply, message, arg, locale, prefix) {

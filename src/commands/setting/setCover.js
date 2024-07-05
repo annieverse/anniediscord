@@ -302,8 +302,7 @@ module.exports = {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
                 emoji: await client.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
-            },
-            followUp: true
+            }
         })
         fetching.delete()
         const c = new Confirmator(interaction, reply, true)
@@ -328,8 +327,7 @@ module.exports = {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)
-                },
-                followUp: true
+                }
             })
         })
     },
@@ -357,8 +355,7 @@ module.exports = {
                 cover: this.cover.name,
                 uploadCost: commanifier(this.uploadCost),
                 emoji: await client.getEmoji(`692428927620087850`)
-            },
-            followUp: true
+            }
         })
         fetching.delete()
         const c = new Confirmator(interaction, reply, true)
@@ -374,8 +371,7 @@ module.exports = {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)
-                },
-                followUp: true
+                }
             })
         })
     },

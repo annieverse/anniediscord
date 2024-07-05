@@ -49,8 +49,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692429004417794058`),
                 user: targetUser.username
             },
-            image: await new GUI(targetUserData, client, userData).build(),
-            followUp: true
+            image: await new GUI(targetUserData, client, userData).build()
         })
         fetching.delete()
         if (userLib.isSelf(targetUser.id)) return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
@@ -59,7 +58,6 @@ module.exports = {
                 prefix: `/`,
                 emoji: await client.getEmoji(`848521456543203349`)
             },
-            followUp: true,
             ephemeral: true
         })
     },

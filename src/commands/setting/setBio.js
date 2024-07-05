@@ -88,8 +88,7 @@ module.exports = {
         }).build(betaFeature)
         const confirmation = await reply.send(locale.SETBIO.PREVIEW_CONFIRMATION, {
             prebuffer: true,
-            image: img.png(),
-            followUp: true
+            image: img.png()
         })
         rendering.delete()
         const c = new Confirmator(interaction, reply, true)
@@ -97,8 +96,7 @@ module.exports = {
         c.onAccept(async () => {
             client.db.userUtils.setUserBio(newBio, interaction.member.id)
             return await reply.send(``, {
-                customHeader: [`Yay! your new profile's bio has been set!♡`, interaction.member.displayAvatarURL()],
-                followUp: true
+                customHeader: [`Yay! your new profile's bio has been set!♡`, interaction.member.displayAvatarURL()]
             })
         })
     }

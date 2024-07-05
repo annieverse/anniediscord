@@ -167,7 +167,7 @@ module.exports = {
                 // trackingMessageContent[`roles`] = `(0/0) roles selected, There are no roles available to add`
                 roles = []
                 updateTrackerMessage(`roles`, `(0/0) roles selected, There are no roles available to add`)
-                await await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { followUp: true, ephemeral:true })
+                await await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, {  ephemeral:true })
                 phase++
                 // Test to see if we need to go to item select, if not go to the confirmation method
                 if (endPhase === phase) return phaseTwo()
@@ -194,7 +194,7 @@ module.exports = {
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
-            const role_adding = await reply.send(`Time to add any roles if you wish.`, { followUp: true, components: row })
+            const role_adding = await reply.send(`Time to add any roles if you wish.`, {  components: row })
             const member = interaction.user.id
             const filter = interaction => [roleButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
             // const filter = interaction => (interaction.customId === roleButtonCustomId || interaction.customId === cancelButtonCustomId || interaction.customId === finishedButtonCustomId) && interaction.user.id === member
@@ -214,7 +214,7 @@ module.exports = {
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     client.db.databaseUtils.delCache(sessionID)
                     // client.db.redis.del(sessionID)
-                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -312,7 +312,6 @@ module.exports = {
                                 .setStyle(ButtonStyle.Danger)
                         )
                     const confirmationRole = await reply.send(`The role i found was: ${role.name}, is this correct`, {
-                        followUp: true,
                         components: [roleConfirmationRow]
                     })
                     const rolefilter = roleInteraction => [`confirm`, `cancel`].some(id => id === roleInteraction.customId) && roleInteraction.user.id === member
@@ -385,7 +384,7 @@ module.exports = {
                 items = []
                 // trackingMessageContent[`items`] = `(0/0) items selected, There are no items available to add`
                 updateTrackerMessage(`items`, `(0/0) items selected, There are no items available to add`)
-                return await reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { followUp: true, ephemeral: true })
+                return await reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, {  ephemeral: true })
             }
 
             // Create the buttons and collector for adding an item
@@ -408,7 +407,7 @@ module.exports = {
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
-            const item_adding = await reply.send(`Time to add any items if you wish.`, { followUp: true, components: row })
+            const item_adding = await reply.send(`Time to add any items if you wish.`, {  components: row })
             const member = interaction.user.id
             const filter = interaction => [itemButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
             // const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
@@ -428,7 +427,7 @@ module.exports = {
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
                     client.db.databaseUtils.delCache(sessionID)
                     // client.db.redis.del(sessionID)
-                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true, followUp: true })
+                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -524,7 +523,6 @@ module.exports = {
                                 .setStyle(ButtonStyle.Danger)
                         )
                     const confirmationItem = await reply.send(`The item i found was: ${item.name}, is this correct`, {
-                        followUp: true,
                         components: [itemConfirmationRow]
                     })
                     const itemfilter = iteminteraction => [`confirm`,`cancel`].some(id=>id===iteminteraction.customId) && iteminteraction.user.id === member
@@ -555,7 +553,6 @@ module.exports = {
                             } else {
                                 // Assign the quantity as 1 if the quantity entered wasnt an integer or is a negative integer
                                 await reply.send(`I'm sorry the quantity you typed in was not a number I will default the amount to 1`, {
-                                    followUp: true,
                                     deleteIn: 5000,
                                     ephemeral: true
                                 })
