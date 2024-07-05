@@ -82,7 +82,7 @@ class Experience {
             this.client.db.userUtils.updateUserExp(expToBeAdded, this.user.id, this.guild.id)
         })
         .catch(e => {
-            this.client.logger.warn(`${this.instanceId} <FAIL> to gain exp > ${e.message}`)
+            this.client.logger.error(`${this.instanceId} <FAIL> to gain exp > ${e.message}`)
         })
     }
 	
@@ -107,7 +107,7 @@ class Experience {
             await this.user.roles.add(userRankRole)
         }
         catch(e) {
-            this.client.logger.warn(`${this.instanceId} <FAIL> role assign > ${e.message}`)
+            this.client.logger.error(`${this.instanceId} <FAIL> role assign > ${e.message}`)
         }
         if (this.guild.configs.get(`RANKS_STACK`).value) return
         //  Remove non-current rank roles if RANKS_STACK is disabled
@@ -121,7 +121,7 @@ class Experience {
             if (!this.user.roles.cache.has(userRankRole.id)) this.user.roles.add(userRankRole)
         }
         catch(e) {
-            this.client.logger.warn(`${this.instanceId} <FAIL> role remove > ${e.message}`)
+            this.client.logger.error(`${this.instanceId} <FAIL> role remove > ${e.message}`)
         }
 	}
 
@@ -154,13 +154,13 @@ class Experience {
         const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {
             const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
-            if (!targetChannel) return this.client.logger.warn(`${this.instanceId} <FAIL> invalid level up message channel`)
+            if (!targetChannel) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
             return targetChannel.send(messageComponents)
-            .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
+            .catch(e => this.client.logger.error(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
         }
         //  Otherwise, send message to the channel where user got leveled-up.
         return this.targetLevelUpChannel.send(messageComponents)
-        .catch(e => this.client.logger.warn(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
+        .catch(e => this.client.logger.error(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
     }
 
     /**

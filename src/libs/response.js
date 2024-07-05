@@ -115,7 +115,7 @@ class Response {
 		let fetchReply = plugins.fetchReply || true
 		let ephemeral = plugins.ephemeral || false
 
-		const isSlash = this.message.applicationId === null ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = directMessage ? `send` : isSlash ? this.message : field
 		const RESPONSE_TYPE = directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`

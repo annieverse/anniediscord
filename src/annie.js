@@ -189,7 +189,10 @@ class Annie extends Discord.Client {
          * @returns {void}
          */
         prepareLogin() {
-            process.on(`unhandledRejection`, err => this.logger.warn(err))
+            process.on(`unhandledRejection`, err => {
+                this.logger.warn(`unhandledRejection > ${err}`)
+                this.logger.error(err)
+            })
             
             try {
                 this.registerNode(new Database().connect(), `db`)
