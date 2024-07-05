@@ -1,3 +1,11 @@
+## [9.9.4](https://github.com/annieverse/anniediscord/compare/v9.9.3...v9.9.4) (2024-07-05)
+
+
+### Bug Fixes
+
+* **applicationCmds:** invalid user ([c1994d7](https://github.com/annieverse/anniediscord/commit/c1994d7a2c26b83c71c61551cdbce08fcfe18ffe))
+* **guildmemberadd:** sometimes not sending ([89e4963](https://github.com/annieverse/anniediscord/commit/89e4963960dfb243e9229b62b038b0adaebf6822))
+
 ## [9.9.3](https://github.com/annieverse/anniediscord/compare/v9.9.2...v9.9.3) (2024-07-04)
 
 
