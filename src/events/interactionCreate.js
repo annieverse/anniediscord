@@ -23,19 +23,19 @@ module.exports = async (client, interaction) => {
             let command = client.application_commands.get(interaction.commandName)
             // Ignore non-registered commands
             if (!command) return
-            try {
+            // try {
                 command.autocomplete(client, interaction)
-            } catch (error) {
-                client.logger.error(error)
-            }
+            // } catch (error) {
+            //     client.logger.error(error)
+            // }
         } else if (interaction.type === InteractionType.MessageComponent) {
             const modal = client.modals.get(interaction.customId)
             if (!modal) return new Error(`There is no code for this modal yet`)
-            try {
+            // try {
                 await modal.execute(interaction, client)
-            } catch (error) {
-                client.logger.error(error)
-            }
+            // } catch (error) {
+            //     client.logger.error(error)
+            // }
         }
     } catch (err) {
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {

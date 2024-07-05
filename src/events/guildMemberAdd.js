@@ -53,6 +53,13 @@ module.exports = async function guildMemberAdd(client, member) {
                 .catch(()=> client.logger.warn(`${instance} failed to send the requested welcomer message due to there was no welcomer channel and the user's dm were locked.`))
         } else {
             //  Handle if target channel is invalid or cannot be found
+            try {
+                await guild.channels.fetch(getTargetWelcomerChannel)
+            } catch (error) {
+                client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+                client.logger.error(error)
+                return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+            }
             if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`) 
             const ch = guild.channels.cache.get(getTargetWelcomerChannel)
             client.responseLibs(ch, true).send(getWelcomerText, {

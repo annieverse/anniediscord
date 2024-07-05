@@ -3,7 +3,8 @@ const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection } = require(`discord.js`)
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
-    await newMember.fetch()
+    if (!newMember) return
+    await newMember.fetch(true)
     if (!newMember.guild.configs) return
     //  Import configs
 

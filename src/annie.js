@@ -191,6 +191,8 @@ class Annie extends Discord.Client {
         prepareLogin() {
             process.on(`unhandledRejection`, err => {
                 this.logger.warn(`unhandledRejection > ${err}`)
+                this.logger.warn(err.promise)
+                this.logger.warn(err.reason)
                 this.logger.error(err)
             })
             
