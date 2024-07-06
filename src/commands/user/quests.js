@@ -58,7 +58,7 @@ module.exports = {
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = isSlash ? await messageRef.fetchReply().catch(error=>logger.error(error)) : await messageRef.fetch().catch(error=>logger.error(error))
+			const message = isSlash ? await messageRef.fetchReply().catch(error=>client.logger.error(error)) : await messageRef.fetch().catch(error=>client.logger.error(error))
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
