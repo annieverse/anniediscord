@@ -1,5 +1,5 @@
 const levelZeroErrors = require(`../utils/errorLevels.js`)
-module.exports = function DiscordError(client, e) {
+module.exports = function error(client, e) {
     // if (!client.dev) return // Should return any errors to support server if they arnt caught by other handlers
     //  Report to support server
     client.logger.error(`Ops, something went wrong > ${e}\n${e.stack}`)

@@ -15,6 +15,7 @@ const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
 const {shardLogger} = require(`../pino.config.js`)
+const levelZeroErrors = require(`../src/utils/errorLevels.js`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
@@ -191,9 +192,17 @@ class Annie extends Discord.Client {
         prepareLogin() {
             process.on(`unhandledRejection`, err => {
                 this.logger.warn(`unhandledRejection > ${err}`)
-                this.logger.warn(err.promise)
-                this.logger.warn(err.reason)
                 this.logger.error(err)
+                this.shard.broadcastEval(formatedErrorLog, { context: { error_message: err.message, error_stack: err.stack, levelZeroErrors: levelZeroErrors } })
+                function formatedErrorLog(c, { error_message, error_stack, levelZeroErrors }) {
+                    const date = new Date()
+                    const lvl0Test = levelZeroErrors.includes(error_message)
+                    const lvl0ChanCacheTest = !c.channels.cache.has(`797521371889532988`)
+                    const lvl1ChanCacheTest = !c.channels.cache.has(`848425166295269396`)
+                    const ERROR_MESSAGE = { content: `─────────────────☆～:;\n**unhandledRejection**\n**Discord Error event**\n**TIMESTAMP:** ${date}\n**LOCAL_TIME:** <t:${Math.floor(date.getTime() / 1000)}:F>\n**ISSUE_TRACE:** ${error_message}\n**ISSUE_STACK:** ${error_stack}\n─────────────────☆～:;` }
+                    lvl0Test ? lvl1ChanCacheTest ? c.channels.fetch(`848425166295269396`).then(channel => channel.send(ERROR_MESSAGE)) : c.channels.cache.get(`848425166295269396`).send(ERROR_MESSAGE) : lvl0ChanCacheTest ? c.channels.fetch(`797521371889532988`).then(channel => channel.send(ERROR_MESSAGE)) : c.channels.cache.get(`797521371889532988`).send(ERROR_MESSAGE)
+                    return
+                }
             })
             
             try {

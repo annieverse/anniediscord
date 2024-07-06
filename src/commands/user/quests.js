@@ -26,6 +26,7 @@ module.exports = {
 		await questSession.start(sessionID, user, locale, messageRef)
 		if (questSession.getSessionActive) return 
 		if (!questSession.getQuestAvailable) return 
+		const isSlash = messageRef.applicationId === null || messageRef.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 		
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
@@ -58,7 +59,7 @@ module.exports = {
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = await messageRef.fetchReply() || await messageRef.fetch()
+			const message = !isSlash ? await messageRef?.fetchReply() : await messageRef?.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()

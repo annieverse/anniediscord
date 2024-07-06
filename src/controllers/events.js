@@ -19,6 +19,7 @@ module.exports = function eventsController(annie) {
     annie.on(Events.GuildMemberUpdate, (oldMember,newMember) => reqEvent(`guildMemberUpdate`)(annie, oldMember,newMember))
     //  Events below this point is only available in the production
     if (annie.dev) return
+    annie.on(Events.ShardError,(error)=>annie.logger.error(error))
     annie.on(Events.MessageDelete, (message) => reqEvent(`messageDelete`)(annie, message))
     annie.on(Events.MessageBulkDelete, (messages, channel) => reqEvent(`messageDeleteBulk`)(annie, messages, channel))
     annie.on(Events.GuildRoleCreate, (role) => reqEvent(`roleCreate`)(annie, role))
