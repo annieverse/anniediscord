@@ -1,9 +1,10 @@
 const levelZeroErrors = require(`../utils/errorLevels.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
 module.exports = function error(client, e) {
     // if (!client.dev) return // Should return any errors to support server if they arnt caught by other handlers
     //  Report to support server
     client.logger.error(`Ops, something went wrong > ${e}\n${e.stack}`)
-    client.shard.broadcastEval(formatedErrorLog, { context: { error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } })
+    client.shard.broadcastEval(errorRelay, { context: { fileName: `error.js`, errorType: `normal`,error_message: e.message, error_stack: e.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     function formatedErrorLog(c, { error_message, error_stack, levelZeroErrors }) {
         const date = new Date()
         const lvl0Test = levelZeroErrors.includes(error_message)

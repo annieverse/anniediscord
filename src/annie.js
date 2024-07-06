@@ -16,6 +16,7 @@ const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
 const {shardLogger} = require(`../pino.config.js`)
 const levelZeroErrors = require(`../src/utils/errorLevels.js`)
+const errorRelay = require(`../src/utils/errorHandler.js`)
 
 class Annie extends Discord.Client {
         constructor(intents) {
@@ -193,8 +194,8 @@ class Annie extends Discord.Client {
             process.on(`unhandledRejection`, err => {
                 this.logger.warn(`unhandledRejection > ${err}`)
                 this.logger.error(err)
-                // if (!this.isReady()) return
-                // this.shard.broadcastEval(formatedErrorLog, { context: { error_message: err.message, error_stack: err.stack, levelZeroErrors: levelZeroErrors } })
+                if (!this.isReady()) return
+                this.shard.broadcastEval(errorRelay, { context: { fileName: `annie.js`, errorType: `normal`,error_message: err.message, error_stack: err.stack,levelZeroErrors:levelZeroErrors } }).catch(error => this.logger.error(error))
                 // function formatedErrorLog(c, { error_message, error_stack, levelZeroErrors }) {
                 //     const date = new Date()
                 //     const lvl0Test = levelZeroErrors.includes(error_message)

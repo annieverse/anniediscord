@@ -5,6 +5,7 @@ const {
 } = require(`../config/commands`)
 const { InteractionType } = require(`discord.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
 module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
@@ -50,12 +51,13 @@ module.exports = async (client, interaction, command) => {
             resolved_in: client.getBenchmark(initTime)
         })
     } catch (err) {
+        client.logger.error(err)
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: err.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
-        }).catch(err => client.logger.error(err))
+        }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
 
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(err.message)) {
             await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
@@ -63,7 +65,7 @@ module.exports = async (client, interaction, command) => {
                     emoji: await client.getEmoji(`692428843058724994`)
                 },
                 ephemeral: true
-            })
+            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
         else if (err.code === 50013) {
@@ -72,18 +74,16 @@ module.exports = async (client, interaction, command) => {
                     emoji: await client.getEmoji(`AnnieCry`)
                 },
                 ephemeral: true
-            })
+            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
                 .catch(permErr => permErr)
         } else {
             await reply.send(locale.ERROR_ON_PRODUCTION, {
                 socket: { emoji: await client.getEmoji(`AnniePout`) },
                 ephemeral: true
-            })
+            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Report to support server
-
-        client.logger.error(err)
-        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } })
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`,error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
     async function formatedErrorLog(c, { guildId, userId, providedArgs, error_message, targetCommand, levelZeroErrors }) {
         const guild = await c.fetchGuildPreview(guildId)
