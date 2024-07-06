@@ -193,6 +193,7 @@ class Annie extends Discord.Client {
             process.on(`unhandledRejection`, err => {
                 this.logger.warn(`unhandledRejection > ${err}`)
                 this.logger.error(err)
+                if (!this.isReady()) return
                 this.shard.broadcastEval(formatedErrorLog, { context: { error_message: err.message, error_stack: err.stack, levelZeroErrors: levelZeroErrors } })
                 function formatedErrorLog(c, { error_message, error_stack, levelZeroErrors }) {
                     const date = new Date()
