@@ -175,7 +175,10 @@ class Response {
 		async function sendMessage() {
 			const noEmbed = Object.keys(embed.data).length === 0
 			const noEmbedDescription = embed.data.description === undefined
-			
+			if (!RESPONSE_REF) return
+			if (!RESPONSE_TYPE) return
+			if (!RESPONSE_REF[RESPONSE_TYPE]) return
+
 			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
