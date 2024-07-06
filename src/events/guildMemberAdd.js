@@ -59,7 +59,7 @@ module.exports = async function guildMemberAdd(client, member) {
         } else {
             //  Handle if target channel is invalid or cannot be found
             try {
-                const channelFetch = (await guild.channels.fetch(getTargetWelcomerChannel)).catch((error)=>client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} > Attempted: ${getTargetWelcomerChannel} > error: ${error} \n> ${error.stack}`))
+                const channelFetch = await guild.channels.fetch(getTargetWelcomerChannel)
                 if (!channelFetch) return
                 if (channelFetch.type != ChannelType.GuildText && channelFetch.type != ChannelType.PublicThread) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                 if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
@@ -70,7 +70,7 @@ module.exports = async function guildMemberAdd(client, member) {
                     image: renderedBanner
                 })
             } catch (error) {
-                client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+                client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} \n> Attempted Channel: ${getTargetWelcomerChannel} \n> error: ${error} \n> ${error.stack}`)
                 client.logger.error(error)
                 return client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
             }
