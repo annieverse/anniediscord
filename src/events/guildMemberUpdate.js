@@ -1,17 +1,18 @@
 "use strict"
 const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
-const { Collection } = require(`discord.js`)
+const { Collection, ChannelType } = require(`discord.js`)
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!newMember) return
-    await newMember.fetch(true)
+    if (newMember.partial) return
+    if (oldMember.partial) return
+    await newMember.fetch()
     if (!newMember.guild.configs) return
     //  Import configs
 
     let instance = `[EVENTS@GUILD_MEMBER_UPDATE]`
     let guild = newMember.guild
     let configs = guild.configs
-
 
     let oldmemberFlags = oldMember.flags.serialize()
     let newmemberFlags = newMember.flags.serialize()
@@ -53,7 +54,6 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                     let additionalChannels = configs.get(`WELCOMER_ADDITIONAL_CHANNELS`).value
 
                     let channelsWithText = new Collection(additionalChannels.map((obj) => [obj.channel, obj.text]))
-                    // channelsWithText.set(getTargetWelcomerChannel,welcomerText.value)
 
                     for (const [channel, text] of channelsWithText) {
                         if (newMember.permissionsIn(channel).has(`ViewChannel`)) {
@@ -61,24 +61,28 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                             if (!guild.channels.cache.has(channel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                             getWelcomerText = parseWelcomerText(text, guild, newMember)
                             const ch = guild.channels.cache.get(channel)
-
-                            client.responseLibs(ch, true)
-                                .send(getWelcomerText, {
-                                    simplified: true,
-                                    prebuffer: true,
-                                    image: renderedBanner
-                                })
+                            if (ch.type === ChannelType.GuildText || ch.type === ChannelType.PublicThread) {
+                                client.responseLibs(ch, true)
+                                    .send(getWelcomerText, {
+                                        simplified: true,
+                                        prebuffer: true,
+                                        image: renderedBanner
+                                    })
+                            }
                             break
+                            
                         } else if (channelsWithText.lastKey() === channel) {
                             //  Handle if target channel is invalid or cannot be found
                             if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                             const ch = guild.channels.cache.get(getTargetWelcomerChannel)
-                            client.responseLibs(ch, true)
-                                .send(getWelcomerText, {
-                                    simplified: true,
-                                    prebuffer: true,
-                                    image: renderedBanner
-                                })
+                            if (ch.type === ChannelType.GuildText && ch.type === ChannelType.PublicThread) {
+                                client.responseLibs(ch, true)
+                                    .send(getWelcomerText, {
+                                        simplified: true,
+                                        prebuffer: true,
+                                        image: renderedBanner
+                                    })
+                            }
                         }
                     }
                 } else {
@@ -88,12 +92,14 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                     //  Handle if target channel is invalid or cannot be found
                     if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                     const ch = guild.channels.cache.get(getTargetWelcomerChannel)
-                    client.responseLibs(ch, true)
-                        .send(getWelcomerText, {
-                            simplified: true,
-                            prebuffer: true,
-                            image: renderedBanner
-                        })
+                    if (ch.type === ChannelType.GuildText || ch.type === ChannelType.PublicThread) {
+                        client.responseLibs(ch, true)
+                            .send(getWelcomerText, {
+                                simplified: true,
+                                prebuffer: true,
+                                image: renderedBanner
+                            })
+                    }
                 }
                 /**
                 *  -------------------------------------------------------

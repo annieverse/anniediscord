@@ -3,7 +3,8 @@ const {
 } = require(`discord.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
-module.exports = async (client, interaction) => {    
+const errorRelay = require(`../utils/errorHandler.js`)
+module.exports = async (client, interaction) => {
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     const locale = client.getTargetLocales(userData.lang)
@@ -23,33 +24,25 @@ module.exports = async (client, interaction) => {
             let command = client.application_commands.get(interaction.commandName)
             // Ignore non-registered commands
             if (!command) return
-            // try {
-                command.autocomplete(client, interaction)
-            // } catch (error) {
-            //     client.logger.error(error)
-            // }
+            command.autocomplete(client, interaction)
         } else if (interaction.type === InteractionType.MessageComponent) {
             const modal = client.modals.get(interaction.customId)
             if (!modal) return new Error(`There is no code for this modal yet`)
-            // try {
-                await modal.execute(interaction, client)
-            // } catch (error) {
-            //     client.logger.error(error)
-            // }
+            await modal.execute(interaction, client)
         }
     } catch (err) {
+        client.logger.error(err)
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: err.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
-        }).catch(err => client.logger.error(err))
+        }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         await reply.send(locale.ERROR_ON_PRODUCTION, {
             socket: { emoji: await client.getEmoji(`AnniePout`) },
             ephemeral: true
-        })
-        client.logger.error(err)
-        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } })
+        }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
     async function formatedErrorLog(c, { guildId, userId, providedArgs, error_message, targetCommand, levelZeroErrors }) {
         const guild = await c.fetchGuildPreview(guildId)

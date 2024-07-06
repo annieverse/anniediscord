@@ -3,6 +3,7 @@ const availablePermissions = require(`../config/permissions`)
 const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
 
 /**
  * Centralized Controller to handle incoming command request
@@ -90,19 +91,20 @@ module.exports = async (client = {}, message = {}) => {
         })
     }
     catch (e) {
+        client.logger.error(e)
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
-        }).catch(err => client.logger.error(err))
+        }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
             await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
-            })
+            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
         else if (e.code === 50013) {
@@ -110,15 +112,12 @@ module.exports = async (client = {}, message = {}) => {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
-            })
-                .catch(permErr => permErr)
+            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         } else {
-            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } })
+            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Report to support server
-
-        client.logger.error(e)
-        client.shard.broadcastEval(formatedErrorLog, { context: { guildId: message.guildId, authorId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(error => client.logger.error(error))
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
     async function formatedErrorLog(c, { guildId, authorId, providedArgs, error_message, targetCommand, levelZeroErrors }) {
         const guild = await c.fetchGuildPreview(guildId)
