@@ -174,7 +174,7 @@ class Response {
 
 		async function sendMessage() {
 			const noEmbed = Object.keys(embed.data).length === 0
-			const noEmbedDescription = embed.data.description === undefined
+			// const noEmbedDescription = embed.data.description === undefined
 			if (!RESPONSE_REF) return
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
@@ -185,7 +185,8 @@ class Response {
 
 			return RESPONSE_REF[RESPONSE_TYPE]({
 				content: noEmbed ? content : topNotch ? topNotch : null,
-				embeds: noEmbed ? null : noEmbedDescription ? null : [embed],
+				embeds: noEmbed ? null : [embed],
+				// embeds: noEmbed ? null : noEmbedDescription ? null : [embed],
 				files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
 				components: components ? components : null,
 				fetchReply: fetchReply,
