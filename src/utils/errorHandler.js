@@ -18,11 +18,39 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
 
     // Test if Client has the guild
     const lvl0ChanlId = `797521371889532988`
-    const lvl0ChanCacheTest = !client.channels.cache.has(lvl0ChanlId)
-    if (lvl0ChanCacheTest) await client.channels.fetch(lvl0ChanlId)
     const lvl1ChanlId = `848425166295269396`
+
+    const DiscordAPIError_ThreadId = `1259908155597389865`
+    const DiscordAPIError_50005_ThreadId = `1259907790483357736`
+    const DiscordAPIError_50013_ThreadId = `1259906787231010816`
+    const DiscordAPIError_50001_ThreadId = `1259907469853982750`
+    const lvl1_ThreadId = `1259906979522936953`
+
+    const DiscordAPIError_Thread_Test = !client.channels.cache.has(DiscordAPIError_ThreadId)
+    const DiscordAPIError_50005_Thread_Test = !client.channels.cache.has(DiscordAPIError_50005_ThreadId)
+    const DiscordAPIError_50013_Thread_Test = !client.channels.cache.has(DiscordAPIError_50013_ThreadId)
+    const DiscordAPIError_50001_Thread_Test = !client.channels.cache.has(DiscordAPIError_50001_ThreadId)
+    const lvl1_ThreadTest = !client.channels.cache.has(lvl1_ThreadId)
     const lvl1ChanCacheTest = !client.channels.cache.has(lvl1ChanlId)
+    const lvl0ChanCacheTest = !client.channels.cache.has(lvl0ChanlId)
+
     if (lvl1ChanCacheTest) await client.channels.fetch(lvl1ChanlId)
+    if (lvl0ChanCacheTest) await client.channels.fetch(lvl0ChanlId)
+
+    if (DiscordAPIError_Thread_Test) await client.channels.fetch(DiscordAPIError_ThreadId)
+    if (DiscordAPIError_50005_Thread_Test) await client.channels.fetch(DiscordAPIError_50005_ThreadId)
+    if (DiscordAPIError_50013_Thread_Test) await client.channels.fetch(DiscordAPIError_50013_ThreadId)
+    if (DiscordAPIError_50001_Thread_Test) await client.channels.fetch(DiscordAPIError_50001_ThreadId)
+    if (lvl1_ThreadTest) await client.channels.fetch(lvl1_ThreadId)
+
+    // Filtered error channels
+    const DiscordAPIError_Thread = client.channels.cache.get(DiscordAPIError_ThreadId)
+    const DiscordAPIError_50005_Thread = client.channels.cache.get(DiscordAPIError_50005_Thread_Test)
+    const DiscordAPIError_50013_Thread = client.channels.cache.get(DiscordAPIError_50013_Thread_Test)
+    const DiscordAPIError_50001_Thread = client.channels.cache.get(DiscordAPIError_50001_Thread_Test)
+    const lvl1_Thread = client.channels.cache.get(lvl1_ThreadId)
+
+    // Old all error channels
     const lvl0Channel = client.channels.cache.get(lvl0ChanlId)
     const lvl1Channel = client.channels.cache.get(lvl1ChanlId)
 
@@ -63,13 +91,44 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
         ]
     }
 
-
     const errorToSend = normalError ? ERROR_MESSAGE_RAW.NORMAL : ERROR_MESSAGE_RAW.CMD
 
     const ERROR_MESSAGE = {
         content: errorToSend.join(`\n`)
     }
+    /**
+     * Unknown Channel > DiscordAPIError[10003]: Unknown Channel
+     * Cannot edit a message authored by another user > DiscordAPIError[50005]: Cannot edit a message authored by another user
+     */
+
     // Determine what channel to send to.
-    return lvl0Test ? lvl1Channel.send(ERROR_MESSAGE) : lvl0Channel.send(ERROR_MESSAGE)
+    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE) : lvl0Channel.send(ERROR_MESSAGE)
+
+    // Send to filtered channels
+    let channelToSendTo = null
+
+    const DiscordAPIError_50001 = `Missing Access`
+    const DiscordAPIError_50013 = `Missing Permissions`
+    const DiscordAPIError_50005 = `Cannot edit a message authored by another user`
+
+    switch (error_message) {
+        case DiscordAPIError_50001:
+            channelToSendTo = DiscordAPIError_50001_Thread
+            break
+        case DiscordAPIError_50013:
+            channelToSendTo = DiscordAPIError_50013_Thread
+            break
+        case DiscordAPIError_50005:
+            channelToSendTo = DiscordAPIError_50005_Thread
+            break
+        default:
+            if (error_stack && error_stack.includes(`DiscordAPIError`)){
+                channelToSendTo = DiscordAPIError_Thread
+            } else {
+                channelToSendTo = lvl1_Thread
+            }
+            break
+    }
+    return channelToSendTo.send(ERROR_MESSAGE)
 }
 module.exports = errorRelay

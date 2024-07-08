@@ -59,11 +59,10 @@ module.exports = async function guildMemberAdd(client, member) {
         } else {
             //  Handle if target channel is invalid or cannot be found
             try {
-                const channelFetch = await guild.channels.fetch(getTargetWelcomerChannel)
-                if (!channelFetch) return
-                if (channelFetch.type != ChannelType.GuildText && channelFetch.type != ChannelType.PublicThread) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                 if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                 const ch = guild.channels.cache.get(getTargetWelcomerChannel)
+                if (!ch) return
+                if (ch.type != ChannelType.GuildText && ch.type != ChannelType.PublicThread) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                 client.responseLibs(ch, true).send(getWelcomerText, {
                     simplified: true,
                     prebuffer: true,
@@ -72,7 +71,8 @@ module.exports = async function guildMemberAdd(client, member) {
             } catch (error) {
                 client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} \n> Attempted Channel: ${getTargetWelcomerChannel} \n> error: ${error} \n> ${error.stack}`)
                 client.logger.error(error)
-                return client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                return
             }
         }
         /**
