@@ -23,31 +23,31 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     const DiscordAPIError_ThreadId = `1259908155597389865`
     const DiscordAPIError_50005_ThreadId = `1259907790483357736`
     const DiscordAPIError_50013_ThreadId = `1259906787231010816`
-    const DiscordAPIError_50001_ThreadId = `1259907469853982750`
+    const DiscordAPIError_50001_ThreadId = `1259907469853982750` 
     const lvl1_ThreadId = `1259906979522936953`
 
-    const DiscordAPIError_Thread_Test = !client.channels.cache.has(DiscordAPIError_ThreadId)
-    const DiscordAPIError_50005_Thread_Test = !client.channels.cache.has(DiscordAPIError_50005_ThreadId)
-    const DiscordAPIError_50013_Thread_Test = !client.channels.cache.has(DiscordAPIError_50013_ThreadId)
-    const DiscordAPIError_50001_Thread_Test = !client.channels.cache.has(DiscordAPIError_50001_ThreadId)
-    const lvl1_ThreadTest = !client.channels.cache.has(lvl1_ThreadId)
-    const lvl1ChanCacheTest = !client.channels.cache.has(lvl1ChanlId)
-    const lvl0ChanCacheTest = !client.channels.cache.has(lvl0ChanlId)
+    const DiscordAPIError_Thread_Test = client.channels.cache.has(DiscordAPIError_ThreadId)
+    const DiscordAPIError_50005_Thread_Test = client.channels.cache.has(DiscordAPIError_50005_ThreadId)
+    const DiscordAPIError_50013_Thread_Test = client.channels.cache.has(DiscordAPIError_50013_ThreadId)
+    const DiscordAPIError_50001_Thread_Test = client.channels.cache.has(DiscordAPIError_50001_ThreadId)
+    const lvl1_ThreadTest = client.channels.cache.has(lvl1_ThreadId)
+    const lvl1ChanCacheTest = client.channels.cache.has(lvl1ChanlId)
+    const lvl0ChanCacheTest = client.channels.cache.has(lvl0ChanlId)
 
-    if (lvl1ChanCacheTest) await client.channels.fetch(lvl1ChanlId)
-    if (lvl0ChanCacheTest) await client.channels.fetch(lvl0ChanlId)
+    if (!lvl1ChanCacheTest) await client.channels.fetch(lvl1ChanlId)
+    if (!lvl0ChanCacheTest) await client.channels.fetch(lvl0ChanlId)
 
-    if (DiscordAPIError_Thread_Test) await client.channels.fetch(DiscordAPIError_ThreadId)
-    if (DiscordAPIError_50005_Thread_Test) await client.channels.fetch(DiscordAPIError_50005_ThreadId)
-    if (DiscordAPIError_50013_Thread_Test) await client.channels.fetch(DiscordAPIError_50013_ThreadId)
-    if (DiscordAPIError_50001_Thread_Test) await client.channels.fetch(DiscordAPIError_50001_ThreadId)
-    if (lvl1_ThreadTest) await client.channels.fetch(lvl1_ThreadId)
+    if (!DiscordAPIError_Thread_Test) await client.channels.fetch(DiscordAPIError_ThreadId)
+    if (!DiscordAPIError_50005_Thread_Test) await client.channels.fetch(DiscordAPIError_50005_ThreadId)
+    if (!DiscordAPIError_50013_Thread_Test) await client.channels.fetch(DiscordAPIError_50013_ThreadId)
+    if (!DiscordAPIError_50001_Thread_Test) await client.channels.fetch(DiscordAPIError_50001_ThreadId)
+    if (!lvl1_ThreadTest) await client.channels.fetch(lvl1_ThreadId)
 
     // Filtered error channels
     const DiscordAPIError_Thread = client.channels.cache.get(DiscordAPIError_ThreadId)
-    const DiscordAPIError_50005_Thread = client.channels.cache.get(DiscordAPIError_50005_Thread_Test)
-    const DiscordAPIError_50013_Thread = client.channels.cache.get(DiscordAPIError_50013_Thread_Test)
-    const DiscordAPIError_50001_Thread = client.channels.cache.get(DiscordAPIError_50001_Thread_Test)
+    const DiscordAPIError_50005_Thread = client.channels.cache.get(DiscordAPIError_50005_ThreadId)
+    const DiscordAPIError_50013_Thread = client.channels.cache.get(DiscordAPIError_50013_ThreadId)
+    const DiscordAPIError_50001_Thread = client.channels.cache.get(DiscordAPIError_50001_ThreadId)
     const lvl1_Thread = client.channels.cache.get(lvl1_ThreadId)
 
     // Old all error channels
@@ -102,7 +102,7 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
      */
 
     // Determine what channel to send to.
-    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE) : lvl0Channel.send(ERROR_MESSAGE)
+    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error)) : lvl0Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
 
     // Send to filtered channels
     let channelToSendTo = null
@@ -129,6 +129,6 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
             }
             break
     }
-    return channelToSendTo.send(ERROR_MESSAGE)
+    return channelToSendTo.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
 }
 module.exports = errorRelay

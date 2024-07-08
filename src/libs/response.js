@@ -190,7 +190,7 @@ class Response {
 				components: components ? components : null,
 				fetchReply: fetchReply,
 				ephemeral: ephemeral
-			})
+			}) // Add catch statement? 
 		}
 
 		async function createEmbed() {
