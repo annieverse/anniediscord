@@ -6,7 +6,6 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
     if (!newMember) return
     if (newMember.partial) return
     if (oldMember.partial) return
-    await newMember.fetch()
     if (!newMember.guild.configs) return
     //  Import configs
 
