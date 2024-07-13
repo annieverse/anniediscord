@@ -78,6 +78,8 @@ class Response {
 	 * @param {Boolean} plugins.feedback  beta feature, **not used often**
 	 * @param {Boolean} plugins.fetchReply Application command option to grab reference
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
+	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
+	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
 	 * @param {Object | String} plugins.field message field target (GuildChannel/DM).
 	 * @param {String | Number} plugins.deleteIn as countdown before the message get deleted. In seconds.
 	 * @param {Array | String | Object} plugins.components Array of components like buttons
@@ -115,7 +117,9 @@ class Response {
 		let file = plugins.file || null
 		let fetchReply = plugins.fetchReply || true
 		let ephemeral = plugins.ephemeral || false
-		
+		let messageToReplyTo = plugins.messageToReplyTo || null
+		let replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
+
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
@@ -126,8 +130,8 @@ class Response {
 			if(!SendMessages) return
 		}
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
-		const RESPONSE_REF = directMessage ? `send` : isSlash ? this.message : field
-		const RESPONSE_TYPE = directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
+		const RESPONSE_REF =  messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? this.message : field
+		const RESPONSE_TYPE = replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
 		const embed = new EmbedBuilder()
 
 		/**
@@ -183,15 +187,10 @@ class Response {
 
 		async function sendMessage() {
 			const noEmbed = Object.keys(embed.data).length === 0
-			// const noEmbedDescription = embed.data.description === undefined
 			if (!RESPONSE_REF) return
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
 
-			// console.log(this.message)
-			// console.log(this.message.guild.members.me.permissionsIn(field))
-			// console.log(this.message.guild.members.me.permissionsIn(field).has('SEND_MESSAGES'))
-			// if () return
 			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
@@ -199,12 +198,11 @@ class Response {
 			return RESPONSE_REF[RESPONSE_TYPE]({
 				content: noEmbed ? content : topNotch ? topNotch : null,
 				embeds: noEmbed ? null : [embed],
-				// embeds: noEmbed ? null : noEmbedDescription ? null : [embed],
 				files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
 				components: components ? components : null,
 				fetchReply: fetchReply,
 				ephemeral: ephemeral
-			}) // Add catch statement? 
+			}) // Add catch statement? Unknown if it is needed
 		}
 
 		async function createEmbed() {

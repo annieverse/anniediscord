@@ -58,11 +58,11 @@ module.exports = {
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = isSlash ? await messageRef.fetchReply().catch(error=>client.logger.error(error)) : await messageRef.fetch().catch(error=>client.logger.error(error))
+			const message = isSlash ? await messageRef.fetchReply() : await quest.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true })
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: true, messageToReplyTo: quest })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
