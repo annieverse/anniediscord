@@ -1,7 +1,7 @@
 "use strict"
 const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
-const { Collection, ChannelType } = require(`discord.js`)
+const { Collection, ChannelType, PermissionFlagsBits} = require(`discord.js`)
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!newMember) return
     if (newMember.partial) return
@@ -55,7 +55,7 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                     let channelsWithText = new Collection(additionalChannels.map((obj) => [obj.channel, obj.text]))
 
                     for (const [channel, text] of channelsWithText) {
-                        if (newMember.permissionsIn(channel).has(`ViewChannel`)) {
+                        if (newMember.permissionsIn(channel).has(PermissionFlagsBits.ViewChannel)) {
                             //  Handle if target channel is invalid or cannot be found
                             if (!guild.channels.cache.has(channel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                             getWelcomerText = parseWelcomerText(text, guild, newMember)
@@ -108,11 +108,15 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                 //  Skip role assignment if no roles are registered
                 const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
                 if (welcomerRolesList.value.length <= 0) return
-
+                if (!newMember.manageable) return
+                if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return
                 for (let i = 0; i < welcomerRolesList.value.length; i++) {
                     const roleId = welcomerRolesList.value[i]
                     //  Handle if role cannot be found due to deleted/invalid
                     if (!guild.roles.cache.has(roleId)) continue
+                    const role = guild.roles.cache.get(roleId)
+                    if (role.managed) continue
+                    if (!role.editable) continue
                     newMember.roles.add(roleId)
                 }
             }
