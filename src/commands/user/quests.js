@@ -17,15 +17,15 @@ module.exports = {
 	messageCommand: true,
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
-    server_specific: false,
-	async run(client, reply, messageRef, locale){
+	server_specific: false,
+	async run(client, reply, messageRef, locale) {
 		const user = messageRef.member.user
 		const sessionID = `QUEST_SESSION_${user.id}@${messageRef.guild.id}`
-		
+
 		const questSession = new Quest(client, reply)
 		await questSession.start(sessionID, user, locale, messageRef)
-		if (questSession.getSessionActive) return 
-		if (!questSession.getQuestAvailable) return 
+		if (questSession.getSessionActive) return
+		if (!questSession.getQuestAvailable) return
 		const isSlash = messageRef.applicationId === null || messageRef.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
@@ -62,7 +62,7 @@ module.exports = {
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: true, messageToReplyTo: quest })
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: isSlash ? false : true, messageToReplyTo: isSlash ? null : quest })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
@@ -107,7 +107,7 @@ module.exports = {
 
 			const message = await i.fetchReply()
 			//  Handle if the answer is incorrect
-			if (questSession.getAnswerIsCorrect===false) {
+			if (questSession.getAnswerIsCorrect === false) {
 				answerAttempt++
 				if (answerAttempt > 10) {
 					message.edit({ components: [] })
