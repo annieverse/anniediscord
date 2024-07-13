@@ -1,4 +1,5 @@
 module.exports = function guildBanAdd(client, guild, user) {
+    if (!client.isReady()) return
     if (!guild.configs) return
     const logs = guild.configs.get(`LOGS_MODULE`).value 
     if (!logs) return 

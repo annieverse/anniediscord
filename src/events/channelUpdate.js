@@ -1,4 +1,5 @@
 module.exports = function channelUpdate(client, oldChannel, newChannel) { 
+    if (!client.isReady()) return
     if (newChannel.type === `dm`) return
     if (!newChannel.guild.configs) return
     const logs = newChannel.guild.configs.get(`LOGS_MODULE`).value 

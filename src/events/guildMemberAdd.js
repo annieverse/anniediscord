@@ -2,11 +2,11 @@ const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
-const {ChannelType} = require(`discord.js`)
+const {ChannelType, PermissionFlagsBits} = require(`discord.js`)
 
 module.exports = async function guildMemberAdd(client, member) {
+    if (!client.isReady()) return
     if (member.partial) return
-    await member.fetch()
     if (!member.guild.configs) return
     //  Import configs
     let instance = `[EVENTS@GUILD_MEMBER_ADD]`
@@ -83,12 +83,17 @@ module.exports = async function guildMemberAdd(client, member) {
         //  Skip role assignment if no roles are registered
         const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
         if (welcomerRolesList.value.length <= 0) return
+        if (!member.manageable) return
+        if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return
         for (let i = 0; i < welcomerRolesList.value.length; i++) {
+            // If the user still needs to complete the discord membership gate for this guild
+            if (member.pending) return
             const roleId = welcomerRolesList.value[i]
             //  Handle if role cannot be found due to deleted/invalid
             if (!guild.roles.cache.has(roleId)) continue
-            // If the user still needs to complete the discord membership gate for this guild
-            if (member.pending) return
+            const role = guild.roles.cache.get(roleId)
+            if (role.managed) continue
+            if (!role.editable) continue
             member.roles.add(roleId)
         }
     }

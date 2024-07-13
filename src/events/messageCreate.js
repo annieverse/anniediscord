@@ -7,6 +7,7 @@ const commandController = require(`../controllers/commands`)
  * @since 4.0.1
  */
 module.exports = (client, message) => {
+    if (!client.isReady()) return
     //  Ignore if its from a bot user
     if (message.author.bot) return 
     //  Reject further flow if message is dm-typed.

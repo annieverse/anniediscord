@@ -74,7 +74,7 @@ module.exports = {
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     /**
      * Define the command's options. This is what is used as an argument for the command (Application commands only).
-     * @required for ONLY ApplicationCommands
+     * @Optional for ONLY ApplicationCommands
      * @type {Array}
      */
     options: [{
@@ -89,6 +89,18 @@ module.exports = {
      * @type {ApplicationCommandType}
      */
     type: ApplicationCommandType.ChatInput,
+    /**
+     * Use 'server_specific' to define if the command is bound to a specific server
+     * @required
+     * @type {boolean}
+     */ 
+    server_specific: false,
+    /**
+     * Use 'server_specific' to define if the command is bound to a specific server
+     * @required if 'server_specific' is set to true
+     * @type {Array} guild id strings
+     */ 
+    servers: [],
     /**
      * Any other properties you want to add to the command.
      */

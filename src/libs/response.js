@@ -8,6 +8,7 @@ const {
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
+const {PermissionFlagsBits} = require(`discord.js`)
 
 /** 
  * Annie's response message system.
@@ -114,8 +115,16 @@ class Response {
 		let file = plugins.file || null
 		let fetchReply = plugins.fetchReply || true
 		let ephemeral = plugins.ephemeral || false
-
+		
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+
+		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
+		if (!isSlash){
+			const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
+			if (!ViewChannel) return
+			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
+			if(!SendMessages) return
+		}
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = directMessage ? `send` : isSlash ? this.message : field
 		const RESPONSE_TYPE = directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
@@ -179,6 +188,10 @@ class Response {
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
 
+			// console.log(this.message)
+			// console.log(this.message.guild.members.me.permissionsIn(field))
+			// console.log(this.message.guild.members.me.permissionsIn(field).has('SEND_MESSAGES'))
+			// if () return
 			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
