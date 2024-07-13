@@ -1,6 +1,6 @@
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
-const { AttachmentBuilder } = require(`discord.js`) 
+const { AttachmentBuilder, PermissionFlagsBits } = require(`discord.js`) 
 const defaultConfigs = require(`../config/customConfig.js`)
 
 /**
@@ -92,6 +92,7 @@ class Experience {
      * @return {void}
 	 */
 	async updateRank(level=0){
+        if (!this.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return // Make sure bot has correct permissions to add role
         let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
         const userRankLevel = closestBelow(registeredRanks.map(r => r.LEVEL), level) 
@@ -100,8 +101,12 @@ class Experience {
         const expectedTargetRole = registeredRanks.find(r => parseInt(r.LEVEL) === userRankLevel)
         if (!expectedTargetRole) return
         //  Ensure that role is exist in the server/guild.
+        if (!this.guild.roles.cache.has(expectedTargetRole.ROLE)) return // See if the role exists on guild
         const userRankRole = this.guild.roles.cache.get(expectedTargetRole.ROLE)
         if (!userRankRole) return
+        // Double check if the role is allowed to be assigned to a user
+        if (userRankRole.managed) return
+        if (!userRankRole.editable) return
         //  Assign new rank role 
         try {
             await this.user.roles.add(userRankRole)

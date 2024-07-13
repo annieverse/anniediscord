@@ -115,7 +115,6 @@ class Quest {
 
     cancelSession() {
         return this.client.db.databaseUtils.delCache(this.#sessionId)
-        // return this.client.db.redis.del(this.#sessionId)
     }
 
     testAnswer(a) {

@@ -64,14 +64,23 @@ module.exports = {
         const ac = rawObject.acReward
         if (!interaction.guild.members.cache.has(user.id)) await interaction.guild.members.fetch({ user: user.id, force: false, cache: true })
 
-        if (rawObject.roles.length > 0) {
-            roles = rawObject.roles.map(a => JSON.parse(a.id))
-            for (const id of roles) {
-                // Ignore the role if the user already has the role
-                if (interaction.guild.members.cache.get(user.id).roles.cache.has(id)) continue
-                interaction.guild.members.addRole({ user: user.id, role: id })
+        if (interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+            // Make sure bot has correct permissions to add role
+            if (rawObject.roles.length > 0) {
+                roles = rawObject.roles.map(a => JSON.parse(a.id))
+                for (const id of roles) {
+                    // Ignore the role if the user already has the role
+                    if (interaction.guild.members.cache.get(user.id).roles.cache.has(id)) continue
+                    // Ignore if bot is unable to edit role
+                    const role = interaction.guild.roles.cache.get(id)
+                    if (role.managed) continue
+                    if (!role.editable) continue
+
+                    interaction.guild.members.addRole({ user: user.id, role: id })
+                }
             }
         }
+
         if (rawObject.item.length > 0) {
             const rawItems = rawObject.item
             for (const i of rawItems) {

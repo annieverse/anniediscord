@@ -1,4 +1,5 @@
 const ms = require(`ms`)
+const {PermissionFlagsBits} = require(`discord.js`)
 /**
  * @typedef {object} ItemManipulation
  * @property {string} itemId
@@ -108,22 +109,29 @@ class itemEffects {
      */
     
     /**
+     * @deprecated 7/13/2024 Please remove all references or update to new style Please ask Pan for more information if needed
      * Giving out role
      * @param {object} roleIds
-     * return {void}
+     * @return {void}
      */
-    addRole(roleIds) {
-        roleIds = JSON.parse(roleIds)
+    addRole(roleId) {
+        if (!this.message.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return // Make sure bot has correct permissions to add role
+        roleId = JSON.parse(roleId)
         //  Skip addition if user already has the role
-        if (this.message.member.roles.cache.has(roleIds)) return
-        this.message.member.roles.add(roleIds)
+        if (this.message.member.roles.cache.has(roleId)) return
+        const role = this.message.member.roles.cache.get(roleId)
+        // Double check if the role is allowed to be assigned to a user
+        if (role.managed) return
+        if (!role.editable) return
+        this.message.member.roles.add(roleId)
         .catch(e => this.client.logger.error(`${this.instanceId} <ADD_ROLE_FAIL> ${e.stack}`))
     }
 
     /**
+     * @deprecated 7/13/2024 Please remove all references or update to new style Please ask Pan for more information if needed
      * Extract/revoke out role
      * @param {object} roleIds
-     * return {void}
+     * @return {void}
      */
     removeRole(roleIds) {
         roleIds = JSON.parse(roleIds)
