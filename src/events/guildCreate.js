@@ -1,5 +1,6 @@
 const dataCleaner = require(`../libs/dataCleanup.js`)
 module.exports = async function guildCreate(client, guild) {
+    if (!client.isReady()) return
     client.db.guildUtils.registerGuild(guild)
     client.registerGuildConfigurations(guild.id)
     //  Limit logging utility to support server only

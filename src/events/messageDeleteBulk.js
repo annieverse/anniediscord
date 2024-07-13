@@ -1,4 +1,5 @@
 module.exports = function messageDeleteBulk(client, messages, channel) {
+    if (!client.isReady()) return
     if (!channel) return
     if (!channel.guild) return
     const cfg = client.guilds.cache.get(channel.guild.id).configs

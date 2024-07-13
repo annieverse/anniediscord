@@ -1,4 +1,5 @@
 module.exports = function messageUpdate(client, oldMessage, newMessage) {
+    if (!client.isReady()) return
     //  Ignore DM interface
     if (oldMessage.channel.type === `dm`) return 
     if (!oldMessage.guild.configs) return

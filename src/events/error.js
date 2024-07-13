@@ -1,6 +1,7 @@
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 module.exports = function error(client, e) {
+    if (!client.isReady()) return
     // if (!client.dev) return // Should return any errors to support server if they arnt caught by other handlers
     //  Report to support server
     client.logger.error(`Ops, something went wrong > ${e}\n${e.stack}`)

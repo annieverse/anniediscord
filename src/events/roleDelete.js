@@ -1,4 +1,5 @@
 module.exports = async function roleDelete(client, role) {
+    if (!client.isReady()) return
     if (!role.guild.configs) return
     const logs = role.guild.configs.get(`LOGS_MODULE`).value 
     if (logs) {

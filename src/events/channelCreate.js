@@ -1,4 +1,5 @@
 module.exports = function channelCreate(client, channel) {
+    if (!client.isReady()) return
     if (channel.type === `dm`) return
     if (!channel.guild.configs) return
     const logs = channel.guild.configs.get(`LOGS_MODULE`).value 

@@ -1,4 +1,5 @@
 module.exports = function roleUpdate(client, oldRole, newRole) {
+    if (!client.isReady()) return
     if (!newRole.guild.configs) return
 
     const logs = newRole.guild.configs.get(`LOGS_MODULE`).value 

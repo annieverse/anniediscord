@@ -5,8 +5,8 @@ const levelZeroErrors = require(`../utils/errorLevels.js`)
 const {ChannelType, PermissionFlagsBits} = require(`discord.js`)
 
 module.exports = async function guildMemberAdd(client, member) {
+    if (!client.isReady()) return
     if (member.partial) return
-    await member.fetch()
     if (!member.guild.configs) return
     //  Import configs
     let instance = `[EVENTS@GUILD_MEMBER_ADD]`

@@ -1,4 +1,5 @@
 module.exports = function messageDelete(client, message) {
+    if (!client.isReady()) return
     //  Ignore DM interface
     if (message.channel.type === `dm`) return 
     if (!message.guild.configs) return
