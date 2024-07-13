@@ -11,6 +11,7 @@ module.exports = function commandsLoader({ path = `./src/commands/` }) {
     const MESSAGE_COMMANDS = new Collection()
     const APPLICATION_COMMANDS = new Collection()
     const GUILDONLY_COMMANDS = new Collection()
+    const ALL_COMMANDS = new Collection()
     /**
      * Recursively pull available categories in command's root directory
      * @example user/system/social/shop/etc
@@ -44,6 +45,7 @@ module.exports = function commandsLoader({ path = `./src/commands/` }) {
             if (metadata.includes(`help`)) continue
             //  Group labeling
             src.group = dir
+            ALL_COMMANDS.set(src.name, src)
             if (isApplicationCommand(src)) APPLICATION_COMMANDS.set(src.name, src)
             if (isMessageCommand(src)) MESSAGE_COMMANDS.set(src.name, src)
             if (isApplicationGuildOnlyCommand(src)) {
@@ -64,5 +66,5 @@ module.exports = function commandsLoader({ path = `./src/commands/` }) {
         }
     }
 
-    return { MESSAGE_COMMANDS, APPLICATION_COMMANDS, GUILDONLY_COMMANDS }
+    return { MESSAGE_COMMANDS, APPLICATION_COMMANDS, GUILDONLY_COMMANDS, ALL_COMMANDS }
 }
