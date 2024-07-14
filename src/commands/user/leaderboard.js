@@ -118,12 +118,20 @@ module.exports = {
                     simplified: true
                 })
                 const author = validUsers.filter(key => key.id === messageRef.member.id)[0]
-                const footer = author ? locale.LEADERBOARD.AUTHOR_RANK : locale.LEADERBOARD.UNRANKED
+                const subAuthor = {}
+                if (!author) {
+                    const authorRanking = lbData.findIndex(function (user) { return user.id === messageRef.member.id })
+                    subAuthor.exists = authorRanking === -1 ? false : true
+                    subAuthor.rank = authorRanking + 1
+                    subAuthor.points = lbData[authorRanking]?.points
+                }
+
+                const footer = author || subAuthor.exists ? locale.LEADERBOARD.AUTHOR_RANK : locale.LEADERBOARD.UNRANKED
                 await reply.send(footer, {
                     simplified: true,
                     socket: {
-                        rank: validUsers.indexOf(author) + 1,
-                        points: author ? commanifier(author.points) : 0,
+                        rank: author ? validUsers.indexOf(author) + 1 : subAuthor?.rank,
+                        points: author ? commanifier(author.points) : subAuthor?.points,
                         emoji: selectedGroupIdentifier,
                     }
                 })
