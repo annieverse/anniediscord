@@ -8,8 +8,9 @@ const {
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
-const {PermissionFlagsBits} = require(`discord.js`)
-
+const { PermissionFlagsBits } = require(`discord.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 /** 
  * Annie's response message system.
  * @abstract
@@ -39,16 +40,16 @@ class Response {
 				message.channel : null
 
 		/**
-		 * Determine if the message is a Slash command.
-		 * @deprecated
-		 */
-		this.isSlash = message.applicationId === null ? true : false
-
-		/**
 		 * The metadata of locale to be used
 		 * @type {object|null}
 		 */
 		this.localeMetadata = localeMetadata
+
+		/**
+		 * Extract client property
+		 * @type {object}
+		 */
+		this.client = message.client
 	}
 
 	/**
@@ -80,6 +81,7 @@ class Response {
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
 	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
+	 * @param {Boolean} plugins.sendAnyway Send to channel reguardless of other options
 	 * @param {Object | String} plugins.field message field target (GuildChannel/DM).
 	 * @param {String | Number} plugins.deleteIn as countdown before the message get deleted. In seconds.
 	 * @param {Array | String | Object} plugins.components Array of components like buttons
@@ -119,21 +121,21 @@ class Response {
 		let ephemeral = plugins.ephemeral || false
 		let messageToReplyTo = plugins.messageToReplyTo || null
 		let replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
+		let sendAnyway = plugins.sendAnyway || false
 
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!isSlash){
+		if (!isSlash) {
 			const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
 			if (!ViewChannel) return
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
-			if(!SendMessages) return
+			if (!SendMessages) return
 		}
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
-		const RESPONSE_REF =  messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? this.message : field
-		const RESPONSE_TYPE = replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
+		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
+		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
 		const embed = new EmbedBuilder()
-
 		/**
 		 * Format Components to correct data type
 		 */
@@ -162,7 +164,7 @@ class Response {
 		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 
 		//  Returns simple message w/o embed
-		if (simplified) return await sendMessage()
+		if (simplified) return await sendMessage.call(this)
 
 		//  Add notch/chin
 		if (notch) content = `\u200C\n${content}\n\u200C`
@@ -173,9 +175,9 @@ class Response {
 
 		if (raw) return embed
 
-		let sent = await sendMessage()
+		let sent = await sendMessage.call(this)
 
-		if (file) sent = await sendMessage()
+		if (file) sent = await sendMessage.call(this)
 
 		if (!deleteIn) return sent
 		sent
@@ -202,6 +204,9 @@ class Response {
 				components: components ? components : null,
 				fetchReply: fetchReply,
 				ephemeral: ephemeral
+			}).catch(e => {
+				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
+				this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}) // Add catch statement? Unknown if it is needed
 		}
 
