@@ -7,6 +7,8 @@ const { ApplicationCommandType } = require(`discord.js`)
  */
 module.exports = {
     name: `facegen`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`facegen`, `anigen`, `waifugen`, `wfgen`, `fcgen`, `waifu`, `generatewaifu`],
     description: `AI-Generated Anime Face provided by Gwern@TWDNE`,
     usage: `facegen`,

@@ -14,6 +14,8 @@ const {
      */
 module.exports = {
     name: `setlevelupmessage`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setlevelupmsg`, `setlvlupmsg`, `setlvlupmessage`, `setlevelupmessage`],
     description: `Enable or disable level-up message module for this guild`,
     usage: `setlvlupmsg <Enable/Disable>`,

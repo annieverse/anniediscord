@@ -12,6 +12,8 @@ const {
  */
 module.exports = {
     name: `setlogs`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setlogs`, `setlog`, `setlogging`],
     description: `Customize Logging-System for your guild`,
     usage: `setlog`,

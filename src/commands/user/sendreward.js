@@ -7,6 +7,8 @@ const customReward = require(`../../libs/customRewards`)
  */
 module.exports = {
     name: `sendreward`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [],
     description: `Send a package made from 'makereward' to a user`,
     usage: `sendreward <user>`,

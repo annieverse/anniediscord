@@ -9,6 +9,8 @@ const { ApplicationCommandType } = require(`discord.js`)
      */
 module.exports = {
     name: `serverinfo`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`guildinfo`, `infoguild`, `serverinfo`, `infoserver`, `aboutserver`],
     description: `Displays info about the server`,
     usage: `serverinfo`,

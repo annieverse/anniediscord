@@ -12,6 +12,8 @@ const {
  */
 module.exports = {
     name: `setbio`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setdescrip`, `sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
     description: `Set your profile bio/description`,
     usage: `setbio <Message>`,

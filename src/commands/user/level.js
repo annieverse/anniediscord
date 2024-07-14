@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `level`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`lvl`, `lv`],
     description: `Display your current exp, level and rank.`,
     usage: `level <User>(Optional)`,

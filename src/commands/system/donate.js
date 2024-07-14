@@ -7,6 +7,8 @@ const { ApplicationCommandType } = require(`discord.js`)
  */
 module.exports = {
     name: `donate`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [],
     description: `Provides link to our donate link if you wish to support us further`,
     usage: `donate`,

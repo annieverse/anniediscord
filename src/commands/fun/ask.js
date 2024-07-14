@@ -6,6 +6,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `ask`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`8ball`],
     description: `You can ask any question and Annie will answer you.`,
     usage: `ask <Message>`,

@@ -11,6 +11,8 @@ module.exports = {
      * @type {string}
      */
     name: `retrievedata`,
+    name_localizations:{},
+    description_localizations:{},
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required

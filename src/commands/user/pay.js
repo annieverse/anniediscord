@@ -11,6 +11,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `pay`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`pay`, `transfer`, `transfers`, `share`, `give`],
     description: `Share artcoins with your friends!`,
     usage: `pay <User>`,

@@ -8,6 +8,8 @@ const User = require(`../../libs/user`)
  */
 module.exports = {
     name: `pat`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [],
     description: `Displays a random gif of a pat.`,
     usage: `pat <User>(Optional)`,

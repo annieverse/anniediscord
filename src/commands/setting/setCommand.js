@@ -12,6 +12,8 @@ const {
      */
 module.exports = {
     name: `setcommand`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setcommand`, `setcommands`, `setcmd`],
     description: `Set a specific channel for Annie's command usage.`,
     usage: `setcommand <channel/info/reset>`,

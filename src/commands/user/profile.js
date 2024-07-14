@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
      */
 module.exports = {
     name: `profile`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`profile`, `p`, `prof`],
     description: `Displaying user's profile card!`,
     usage: `profile <User>(Optional)`,

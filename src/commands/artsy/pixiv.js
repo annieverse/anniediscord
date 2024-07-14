@@ -17,6 +17,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `pixiv`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`pix`, `pxv`, `pixiv`],
     description: `Fetching image from pixiv.`,
     usage: `pixiv <SearchKeyword>(Optional)`,

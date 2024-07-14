@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `relationship`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`rel`, `rtship`, `relation`, `relations`, `relationship`],
     description: `Display user's relationship trees`,
     usage: `relationship <user>(Optional)`,

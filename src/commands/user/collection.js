@@ -7,6 +7,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `collection`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`cardcollection`, `mycard`, `card`, `cards`, `cc`],
     description: `View yours or someones collected cards`,
     usage: `collection`,

@@ -18,6 +18,8 @@ const {
  */
 module.exports = {
     name: `setcover`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
     description: `Setting up your own custom background! upload or share the image link you want to use.`,
     usage: `setcover <Attachment/URL>`,

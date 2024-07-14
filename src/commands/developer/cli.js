@@ -8,6 +8,8 @@ const cmd = require(`node-cmd`)
      */
 module.exports = {
     name: `cli`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`cmd`, `cli`],
     description: `Running terminal command`,
     usage: `cli <[CommandStatement]> --flag`,

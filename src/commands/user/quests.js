@@ -8,6 +8,8 @@ const Quest = require(`../../libs/quests`)
  */
 module.exports = {
 	name: `quests`,
+    name_localizations:{},
+    description_localizations:{},
 	aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`, `q`],
 	description: `Displaying quest that you can complete and wins artcoins! the quest will be available once every 2 hours`,
 	usage: `quest`,

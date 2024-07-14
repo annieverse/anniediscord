@@ -7,6 +7,8 @@ const Confirmator = require(`../../libs/confirmator`)
      */
 module.exports = {
         name: `mail`,
+        name_localizations:{},
+        description_localizations:{},
         aliases: [`mail`, `dm`],
         description: `Allows developer to send a private message to reachable user`,
         usage: `<user> <message>`,

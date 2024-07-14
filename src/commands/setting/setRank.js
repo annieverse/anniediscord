@@ -16,6 +16,8 @@ const {
      */
 module.exports = {
     name: `setrank`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setranks`, `setrank`, `setRanks`, `setrnk`],
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
