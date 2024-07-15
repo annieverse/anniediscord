@@ -468,10 +468,11 @@ module.exports = {
     async enable(client, reply, message, locale, prefix) {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }

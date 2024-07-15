@@ -44,10 +44,11 @@ module.exports = {
         const userData = await userLib.requestMetadata(messageRef.member, 2, locale)
         const now = moment()
         const lastGiveAt = await client.db.systemUtils.toLocaltime(userData.reputations.last_giving_at)
+		const localed = lastGiveAt == `now` ? moment().toISOString() : lastGiveAt
         //  Returns if user's last reps give still under 23 hours.
         if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.GIVE_REPUTATION.IN_COOLDOWN, {
             thumbnail: userData.master.displayAvatarURL(),
-            socket: { time: moment(lastGiveAt).add(...this.cooldown).fromNow() },
+            socket: { time: moment(localed).add(...this.cooldown).fromNow() },
         })
         const targetUser = user
         //	Handle if user is trying to rep themselves

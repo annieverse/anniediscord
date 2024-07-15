@@ -74,11 +74,12 @@ module.exports = {
         const fn = `[shopLog.enable()]`
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
-            let localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SHOP_LOG.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }
