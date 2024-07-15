@@ -126,12 +126,7 @@ class Experience {
         console.log(registeredRanks)
         const nonCurrentRankRoles = registeredRanks
             //  Added double condition to ensure the current role is filtered from result set.
-            .filter(r => {
-                console.log(validRole(r.ROLE) && (r.ROLE !== userRankRole.id) || (r.LEVEL !== userRankLevel))
-                console.log(validRole(r.ROLE) )
-                console.log((r.ROLE !== userRankRole.id) || (r.LEVEL !== userRankLevel))
-                return validRole(r.ROLE) && (r.ROLE !== userRankRole.id) || (r.LEVEL !== userRankLevel)
-            })
+            .filter(r => validRole(r.ROLE) && (r.ROLE !== userRankRole.id) || (r.LEVEL !== userRankLevel))
             .map(r => r.ROLE)
         console.log(nonCurrentRankRoles)
 
