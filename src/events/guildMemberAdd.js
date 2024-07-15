@@ -3,6 +3,7 @@ const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const {ChannelType, PermissionFlagsBits} = require(`discord.js`)
+const roleCompare = require(`../utils/roleCompare.js`)
 
 module.exports = async function guildMemberAdd(client, member) {
     if (!client.isReady()) return
@@ -94,7 +95,8 @@ module.exports = async function guildMemberAdd(client, member) {
             const role = guild.roles.cache.get(roleId)
             if (role.managed) continue
             if (!role.editable) continue
-            member.roles.add(roleId)
+            const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
+            if (roleCompare(role, botsHighestRole)) member.roles.add(roleId)
         }
     }
 }
