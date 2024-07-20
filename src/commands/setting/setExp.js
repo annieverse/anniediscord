@@ -159,11 +159,12 @@ module.exports = {
             if (!this.primaryConfig.setByUserId) return await reply.send(locale.SETEXP.ALREADY_ENABLED_BY_DEFAULT, {
                 socket: { emoji: await client.getEmoji(`692428843058724994`) }
             })
-            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETEXP.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }

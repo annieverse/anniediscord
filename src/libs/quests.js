@@ -183,13 +183,14 @@ class Quest {
         const now = moment()
         const cooldown = [2, `hours`]
         const lastClaimAt = await this.client.db.systemUtils.toLocaltime(this.#userData.quests.updated_at)
+		const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
         //  Handle if user's quest queue still in cooldown
-        if (now.diff(lastClaimAt, cooldown[1]) < cooldown[0]) {
+        if (now.diff(localed, cooldown[1]) < cooldown[0]) {
             await this.reply.send(this.#locale.QUEST.COOLDOWN, {
                 topNotch: `**Shall we do something else first?** ${await this.client.getEmoji(`692428969667985458`)}`,
                 thumbnail: this.#user.displayAvatarURL(),
                 socket: {
-                    time: moment(lastClaimAt).add(...cooldown).fromNow(),
+                    time: moment(localed).add(...cooldown).fromNow(),
                     prefix: this.client.prefix
                 },
             })

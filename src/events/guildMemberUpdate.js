@@ -2,6 +2,8 @@
 const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits} = require(`discord.js`)
+const roleCompare = require(`../utils/roleCompare.js`)
+
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return
     if (!newMember) return
@@ -118,7 +120,10 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                     const role = guild.roles.cache.get(roleId)
                     if (role.managed) continue
                     if (!role.editable) continue
-                    newMember.roles.add(roleId)
+                    
+                    const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
+                    if (roleCompare(role, botsHighestRole)) newMember.roles.add(roleId)
+                    
                 }
             }
         }

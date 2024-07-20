@@ -5,7 +5,7 @@
  * @return {object|null}
  */
 const findRole = (target, guild) => {
-    const fn = `[Pistachio.findRole()]`
+    const fn = `[findRole()]`
     if (!target) throw new TypeError(`${fn} parameter "target" must be filled with target role id/name/mention.`)
     try {
         const rolePattern = /^(?:<@&?)?([0-9]+)>?$/
