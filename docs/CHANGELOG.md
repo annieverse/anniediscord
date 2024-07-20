@@ -1,3 +1,10 @@
+## [9.9.5](https://github.com/annieverse/anniediscord/compare/v9.9.4...v9.9.5) (2024-07-20)
+
+
+### Bug Fixes
+
+* **say:** unknown interaction ([591641c](https://github.com/annieverse/anniediscord/commit/591641ce408e4e1ac136c630c5fb72bbfe81d0da))
+
 ## [9.9.4](https://github.com/annieverse/anniediscord/compare/v9.9.3...v9.9.4) (2024-07-05)
 
 
