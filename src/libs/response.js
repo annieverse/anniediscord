@@ -131,7 +131,13 @@ class Response {
 			if (!ViewChannel) return
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
 			if (!SendMessages) return
+			const SendMessagesInThread = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessagesInThreads)
+			if (!SendMessagesInThread) return
 		}
+		// Check for file permission
+		const hasFileUploadPerm = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.AttachFiles)
+
+
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
 		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
@@ -192,7 +198,8 @@ class Response {
 			if (!RESPONSE_REF) return
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
-
+			if (!hasFileUploadPerm) return
+			
 			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
