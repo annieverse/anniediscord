@@ -243,7 +243,7 @@ module.exports = {
             }
         })
         const confirmation = await reply.send(locale.SETLEVELUPMESSAGE.TEXT_CONFIRMATION)
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             client.db.guildUtils.updateGuildConfiguration({

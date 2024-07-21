@@ -115,7 +115,12 @@ module.exports = async (client = {}, message = {}) => {
                 default:
                     break
             }
-            if (sessionId != null && await await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+
+            // Command specific cache
+            if (sessionId != null && await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+            // Secondary cache from confirmator
+            sessionId = `confirmator_${message.author.id}_${message.guild.id}`
+            if (await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
         }
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
@@ -142,6 +147,6 @@ module.exports = async (client = {}, message = {}) => {
             await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Report to support server
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

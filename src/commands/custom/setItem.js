@@ -139,7 +139,7 @@ module.exports = {
         
         const confirmation = await reply.send(`Are you sure you want to set \`${item.name}\` as the item for leaderboard?`)
         
-        const c = new Confirmator(messageRef, reply)
+        const c = new Confirmator(messageRef, reply, locale)
         c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             const configId = `CUSTOM_LB_ITEM`

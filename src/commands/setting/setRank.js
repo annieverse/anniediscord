@@ -360,7 +360,7 @@ module.exports = {
         if (this.subConfig.value.length <= 0) return await reply.send(locale.SETRANK.RESET_NULL_RANKS)
             //  Confirmation before performing the action
         const confirmation = await reply.send(``, { header: locale.SETRANK.RESET_CONFIRMATION })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Reset values

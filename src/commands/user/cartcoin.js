@@ -82,7 +82,7 @@ module.exports = {
                 gainedExp: commanifier(totalGainedExp)
             }
         })
-        const c = new Confirmator(messageRef, reply)
+        const c = new Confirmator(messageRef, reply, locale)
         c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             await messageRef.fetchReply()

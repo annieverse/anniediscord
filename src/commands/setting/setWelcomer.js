@@ -597,7 +597,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },
@@ -705,7 +705,7 @@ module.exports = {
             image: await new GUI(message.member, client, `welcomer`).build(),
             prebuffer: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.deleteGuildConfiguration(`WELCOMER_IMAGE`, message.guild.id)
@@ -778,7 +778,7 @@ module.exports = {
             image: await new GUI(message.member, client, id).build(),
             prebuffer: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.updateGuildConfiguration({
@@ -834,7 +834,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },
@@ -869,7 +869,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
         c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
     },

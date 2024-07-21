@@ -146,7 +146,7 @@ module.exports = {
                 amount: commanifier(amount)
             }
         })
-        const c = new Confirmator(messageRef, reply)
+        const c = new Confirmator(messageRef, reply, locale)
         c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Handle if the amount to send is lower than total owned item
