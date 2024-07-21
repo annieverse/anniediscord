@@ -1,3 +1,10 @@
+## [9.9.7](https://github.com/annieverse/anniediscord/compare/v9.9.6...v9.9.7) (2024-07-21)
+
+
+### Bug Fixes
+
+* **confirmations:** doubling actions ([2630b2e](https://github.com/annieverse/anniediscord/commit/2630b2e82b645e883b68c0696be0dab829b640d1))
+
 ## [9.9.6](https://github.com/annieverse/anniediscord/compare/v9.9.5...v9.9.6) (2024-07-21)
 
 
