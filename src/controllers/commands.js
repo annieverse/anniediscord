@@ -92,6 +92,32 @@ module.exports = async (client = {}, message = {}) => {
     }
     catch (e) {
         client.logger.error(e)
+        const internalError = e.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        // Handle cache(s)
+        if (internalError) {
+            let sessionId = null
+            switch (command.name) {
+                case `makereward`:
+                    sessionId = `REWARD_REGISTER:${message.guild.id}@${message.member.id}`
+                    break
+                case `setshop`:
+                    sessionId = `SHOP_REGISTER:${message.guild.id}@${message.member.id}`
+                    break
+                case `cartcoin`:
+                    sessionId = `${message.member.id}-${message.guild.id}-cartcoin`
+                    break
+                case `gacha`:
+                    sessionId = `GACHA_SESSION:${message.guild.id}@${message.member.id}`
+                    break
+                case `quests`:
+                    sessionId = `QUEST_SESSION_${message.member.id}@${message.guild.id}`
+                    break
+                default:
+                    break
+            }
+            if (sessionId != null && await await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+        }
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
@@ -107,7 +133,7 @@ module.exports = async (client = {}, message = {}) => {
             }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
-        else if (e.code === 50013) {
+        else if (e.code === 50013 || internalError) {
             await reply.send(locale.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
