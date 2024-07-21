@@ -94,7 +94,6 @@ module.exports = async (client = {}, message = {}) => {
         client.logger.error(e)
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
-        // Handle cache(s)
         if (internalError) {
             let sessionId = null
             switch (command.name) {
