@@ -105,7 +105,7 @@ module.exports = async (client = {}, message = {}) => {
                     sessionId = `SHOP_REGISTER:${message.guild.id}@${message.member.id}`
                     break
                 case `cartcoin`:
-                    sessionId = `${message.member.id}-${interaction.guild.id}-cartcoin`
+                    sessionId = `${message.member.id}-${message.guild.id}-cartcoin`
                     break
                 case `gacha`:
                     sessionId = `GACHA_SESSION:${message.guild.id}@${message.member.id}`
