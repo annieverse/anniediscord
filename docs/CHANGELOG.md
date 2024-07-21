@@ -1,3 +1,10 @@
+## [9.9.6](https://github.com/annieverse/anniediscord/compare/v9.9.5...v9.9.6) (2024-07-21)
+
+
+### Bug Fixes
+
+* **errors:** Handle discord permissions ([fa5550f](https://github.com/annieverse/anniediscord/commit/fa5550f4d23cda5db5b9bdc648d254cab52ab3eb))
+
 ## [9.9.5](https://github.com/annieverse/anniediscord/compare/v9.9.4...v9.9.5) (2024-07-20)
 
 
