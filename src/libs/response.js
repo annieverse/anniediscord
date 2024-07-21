@@ -128,11 +128,13 @@ class Response {
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
 		if (!isSlash) {
 			const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
-			if (!ViewChannel) return
+			if (!ViewChannel) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "ViewChannel" permission`)
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
-			if (!SendMessages) return
+			if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
 			const SendMessagesInThread = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessagesInThreads)
-			if (!SendMessagesInThread) return
+			if (!SendMessagesInThread) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessagesInThreads" permission`)
+			const embedLinks = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.EmbedLinks)
+			if (!embedLinks) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "EmbedLinks" permission`)
 		}
 		// Check for file permission
 		const hasFileUploadPerm = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.AttachFiles)
@@ -198,9 +200,9 @@ class Response {
 			if (!RESPONSE_REF) return
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
-			if (!hasFileUploadPerm) return
+			if (!hasFileUploadPerm && file) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
 			
-			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
+			if (hasFileUploadPerm && file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
 

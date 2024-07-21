@@ -52,6 +52,31 @@ module.exports = async (client, interaction, command) => {
         })
     } catch (err) {
         client.logger.error(err)
+        const internalError = err.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        if (internalError) {
+            let sessionId = null
+            switch (command.name) {
+                case `makereward`:
+                    sessionId = `REWARD_REGISTER:${interaction.guildId}@${interaction.member.id}`
+                    break
+                case `setshop`:
+                    sessionId = `SHOP_REGISTER:${interaction.guildId}@${interaction.member.id}`
+                    break
+                case `cartcoin`:
+                    sessionId = `${interaction.member.id}-${interaction.guildId}-cartcoin`
+                    break
+                case `gacha`:
+                    sessionId = `GACHA_SESSION:${interaction.guildId}@${interaction.member.id}`
+                    break
+                case `quests`:
+                    sessionId = `QUEST_SESSION_${interaction.member.id}@${interaction.guildId}`
+                    break
+                default:
+                    break
+            }
+            if (sessionId != null && await await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+        }
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: err.stack,
@@ -68,7 +93,7 @@ module.exports = async (client, interaction, command) => {
             }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
-        else if (err.code === 50013) {
+        else if (err.code === 50013 || internalError) {
             await reply.send(locale.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
@@ -83,6 +108,6 @@ module.exports = async (client, interaction, command) => {
             }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Report to support server
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`,error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }
