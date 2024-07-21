@@ -85,8 +85,6 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            await messageRef.fetchReply()
-
             //  Returns if user's artcoins is below the amount of going to be used
             if (userBalance < amountToUse) {
                 client.db.databaseUtils.delCache(cacheId)
