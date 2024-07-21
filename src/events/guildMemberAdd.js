@@ -70,6 +70,8 @@ module.exports = async function guildMemberAdd(client, member) {
                     image: renderedBanner
                 })
             } catch (error) {
+                const internalError = error.message.startsWith(`[Internal Error]`)
+                if (internalError) return
                 client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} \n> Attempted Channel: ${getTargetWelcomerChannel} \n> error: ${error} \n> ${error.stack}`)
                 client.logger.error(error)
                 client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
