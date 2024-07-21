@@ -4,7 +4,8 @@ const {
 	AttachmentBuilder,
 	ActionRowBuilder,
 	ButtonBuilder,
-	ButtonStyle
+	ButtonStyle,
+	ChannelType
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -127,12 +128,17 @@ class Response {
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
 		if (!isSlash) {
+			if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
+				const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
+				if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
+			} else {
+				const SendMessagesInThread = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessagesInThreads)
+				if (!SendMessagesInThread) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessagesInThreads" permission`)
+			}
 			const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
 			if (!ViewChannel) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "ViewChannel" permission`)
-			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
-			if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
-			const SendMessagesInThread = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessagesInThreads)
-			if (!SendMessagesInThread) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessagesInThreads" permission`)
+
+
 			const embedLinks = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.EmbedLinks)
 			if (!embedLinks) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "EmbedLinks" permission`)
 		}
@@ -201,7 +207,7 @@ class Response {
 			if (!RESPONSE_TYPE) return
 			if (!RESPONSE_REF[RESPONSE_TYPE]) return
 			if (!hasFileUploadPerm && file) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
-			
+
 			if (hasFileUploadPerm && file) return RESPONSE_REF[RESPONSE_TYPE]({
 				files: [file]
 			})
