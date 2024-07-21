@@ -143,7 +143,7 @@ module.exports = {
 
         if (allUsers) {
             const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\`(s) for all users?`)
-            const c = new Confirmator(messageRef, reply)
+            const c = new Confirmator(messageRef, reply, locale)
             c.setup(messageRef.member.id, confirmation)
             c.onAccept(async () => {
                 client.db.guildUtils.editInventoryOfWholeGuild({
@@ -156,7 +156,7 @@ module.exports = {
             })
         } else {
             const confirmation = await reply.send(`Are you sure you want to remove \`${amount}\` \`${item.name}\`(s) for ${user}?`)
-            const c = new Confirmator(messageRef, reply)
+            const c = new Confirmator(messageRef, reply, locale)
             c.setup(messageRef.member.id, confirmation)
             c.onAccept(async () => {
                 client.db.databaseUtils.updateInventory({

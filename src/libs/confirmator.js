@@ -10,12 +10,11 @@ const {
  * @class
  */
 module.exports = class Confirmator {
-    constructor(message, reply) {
-        /**
-         * Used emoji for reject button.
-         * @type {string}
-         */
-        this.cancelButtonId = `794593423575351307`
+
+    sessionId
+    #previousSessionActive = false
+
+    constructor(message, reply, locale) {
         /**
          * Target message instance
          * @type {Message}
@@ -26,6 +25,27 @@ module.exports = class Confirmator {
          * @type {external:Response}
          */
         this.reply = reply
+        /**
+         * Locale obj
+         * @type {object}
+         */
+        this.locale = locale
+    }
+
+    set setSessionId(s) {
+        this.sessionId = s
+    }
+
+    get getSessionId() {
+        return this.sessionId
+    }
+
+    set setPreviousSessionActive(s) {
+        this.#previousSessionActive = s
+    }
+
+    get getPreviousSessionActive() {
+        return this.#previousSessionActive 
     }
 
     /**
@@ -34,20 +54,29 @@ module.exports = class Confirmator {
      * @param {Message} [targetMessage=this.message] Target to attach the event to.
      * @return {void}
      */
-    setup(targetUserId = this.message.author.id, targetMessage = this.message) {
+    async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
         this.message = targetMessage
+        this.setSessionId = `confirmator_${this.message.author.id}_${this.message.guild.id}`
+        const sessionActive = await this.message.client.db.databaseUtils.doesCacheExist(this.getSessionId)
+        if (sessionActive) {
+            this.setPreviousSessionActive = true
+            this.message.delete()
+            return await this.reply.send(this.locale.SESSION_STILL_RUNNING, { socket: { emoji: await this.message.client.getEmoji(`692428748838010970`) }, ephemeral: true })
+        }
+        // Session up for 2 minutes
+        this.message.client.db.databaseUtils.setCache(this.getSessionId, `1`, { EX: 60 * 2 })
         let row = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
-                .setCustomId(`confirm`)
-                .setLabel(`Confirm`)
-                .setStyle(ButtonStyle.Success),
+                    .setCustomId(`confirm`)
+                    .setLabel(`Confirm`)
+                    .setStyle(ButtonStyle.Success),
             )
             .addComponents(
                 new ButtonBuilder()
-                .setCustomId(`cancel`)
-                .setLabel(`Cancel`)
-                .setStyle(ButtonStyle.Danger)
+                    .setCustomId(`cancel`)
+                    .setLabel(`Cancel`)
+                    .setStyle(ButtonStyle.Danger)
             )
         targetMessage.edit({
             components: [row]
@@ -68,6 +97,7 @@ module.exports = class Confirmator {
      */
     onAccept(fn = null) {
         if (!fn) throw new TypeError(`parameter 'fn' must be a valid callback function`)
+        if (this.getPreviousSessionActive) return 
         if (!this.activeInstance) throw new Error(`there are no active instance to listen to`)
         this.onEnd()
         this.onIgnore()
@@ -117,6 +147,7 @@ module.exports = class Confirmator {
             components: []
         })
         this.activeInstance = null
+        this.message.client.db.databaseUtils.delCache(this.getSessionId)
     }
 
     onEnd() {

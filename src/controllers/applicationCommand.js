@@ -72,10 +72,18 @@ module.exports = async (client, interaction, command) => {
                 case `quests`:
                     sessionId = `QUEST_SESSION_${interaction.member.id}@${interaction.guildId}`
                     break
+                case `pay`:
+                    sessionId = `PAY:${interaction.guildId}@${interaction.member.id}`
+                    break
                 default:
                     break
             }
-            if (sessionId != null && await await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+
+            // Command specific cache
+            if (sessionId != null && await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
+            // Secondary cache from confirmator
+            sessionId = `confirmator_${interaction.member.id}_${interaction.guildId}`
+            if (await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
         }
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {

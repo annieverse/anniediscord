@@ -427,6 +427,7 @@
         "THEMSELVES": "**{{user}}** is patting themselves... </3",
         "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
     },
+    "SESSION_STILL_RUNNING":"**Your session still active!** {{emoji}}",
     "PAY": {
         "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **2% tax fee** for each transaction you made.",
         "LVL_TOO_LOW": "You need to be atleast **LV {{level}}** to use this feature.",
@@ -438,7 +439,8 @@
         "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
         "SUCCESSFUL": "**{{target}}** has received your artcoins!♡",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**",
-        "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction."
+        "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction.",
+        "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}"
     },
     "PIXIV": {
         "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Showing the most recommended work for you ...*",

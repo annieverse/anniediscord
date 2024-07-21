@@ -107,7 +107,7 @@ module.exports = {
                 artcoinsEmoji: await client.getEmoji(`758720612087627787`)
             }
         })
-        const c = new Confirmator(messageRef, reply, true)
+        const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Prevent user from selling over the amount of their owned fragments

@@ -253,7 +253,7 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             expLib.updateRank(newData.level)
@@ -314,7 +314,7 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             expLib.execute(amountToAdd)
@@ -355,7 +355,7 @@ module.exports = {
                 user: targetUser.master.username
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             expLib.updateRank(0)

@@ -292,7 +292,7 @@ module.exports = {
                 response: response
             }
         })
-        const c = new Confirmator(message, reply, slashCommand)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Register
@@ -374,7 +374,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428578683617331`,)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Wipeout ARs

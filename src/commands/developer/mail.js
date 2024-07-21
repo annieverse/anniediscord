@@ -22,7 +22,7 @@ module.exports = {
             const mailContent = arg.replace(target.usedKeyword + ` `, ``) // Trim additioanl whitespace
             if (!mailContent.length) return reply.send(`Where's the message? ${await client.getEmoji(`AnnieThinking`)}`)
 		const confirmation = await reply.send(`I'm going to send **${target.master}** the following message.\n\`\`\`\n${mailContent}\n\`\`\``)
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.author.id, confirmation)
  		return c.onAccept(async () => {
             try {

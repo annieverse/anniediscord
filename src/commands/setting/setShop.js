@@ -830,7 +830,7 @@ module.exports = {
                         thumbnail: message.author.displayAvatarURL()
                     })
                     dataDisplay.delete()
-                    const c = new Confirmator(message, reply)
+                    const c = new Confirmator(message, reply, locale)
                     await c.setup(m.author.id, confirmation)
                     c.onAccept(async () => {
                         completed = true
@@ -876,7 +876,7 @@ module.exports = {
             image: `banner_setshop`,
             prebuffer: false
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
@@ -920,7 +920,7 @@ module.exports = {
             image: buffer,
             prebuffer: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.updateGuildConfiguration({
@@ -1001,7 +1001,7 @@ module.exports = {
                 item: item.name
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.shop.removeGuildShopItem(item.item_id)

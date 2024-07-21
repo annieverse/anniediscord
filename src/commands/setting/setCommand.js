@@ -162,7 +162,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428785571856404`)
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async() => {
             //  Reset configuration

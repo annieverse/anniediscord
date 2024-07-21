@@ -72,7 +72,7 @@ module.exports = {
                 footer: await effectLib.displayItemBuffs(targetItem.item_id) || locale.USE.CONFIRMATION_TIPS
             }
         })
-        const c = new Confirmator(messageRef, reply, true)
+        const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Deduct item from user's inventory.
