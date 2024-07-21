@@ -83,7 +83,7 @@ module.exports = {
             }
         })
         const c = new Confirmator(messageRef, reply, locale)
-        c.setup(messageRef.member.id, confirmation)
+        await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             await messageRef.fetchReply()
 

@@ -75,7 +75,7 @@ module.exports = {
         })
 
         const c = new Confirmator(messageRef, reply, locale)
-        c.setup(messageRef.member.id, suggestToBuy)
+        await c.setup(messageRef.member.id, suggestToBuy)
         //  Timeout in 30 seconds
         client.db.databaseUtils.setCache(instanceId,`1`,{EX:30})
         c.onAccept(async () => {
