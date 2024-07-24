@@ -50,6 +50,7 @@ module.exports = {
 			},
 			components: row
 		})
+		if (!quest) return
 		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === user.id
 		const buttonCollector = quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0
