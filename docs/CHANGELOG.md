@@ -1,3 +1,10 @@
+## [9.9.8](https://github.com/annieverse/anniediscord/compare/v9.9.7...v9.9.8) (2024-07-24)
+
+
+### Bug Fixes
+
+* **itemEffect:** role adding ([d24d4bf](https://github.com/annieverse/anniediscord/commit/d24d4bf1b8d6a4403c8656e9d3e64cec84a1d404))
+
 ## [9.9.7](https://github.com/annieverse/anniediscord/compare/v9.9.6...v9.9.7) (2024-07-21)
 
 
