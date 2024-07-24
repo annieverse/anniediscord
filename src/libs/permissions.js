@@ -32,6 +32,7 @@ module.exports = (message={}, userId=``) => {
         }
     }
     
+    if (!Object.prototype.hasOwnProperty.call(member, `permissions`)) return fallbackPrivillege
     //  Server admin
     if (member.permissions.has(`Administrator`)) return {
         level: 3,

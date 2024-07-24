@@ -20,7 +20,7 @@ module.exports = {
 	server_specific: false,
 	async run(client, reply, messageRef, locale) {
 		const user = messageRef.member.user
-		const sessionID = `QUEST_SESSION_${user.id}@${messageRef.guild.id}`
+		const sessionID = `QUEST_SESSION:${user.id}@${messageRef.guild.id}`
 
 		const questSession = new Quest(client, reply)
 		await questSession.start(sessionID, user, locale, messageRef)
@@ -50,6 +50,7 @@ module.exports = {
 			},
 			components: row
 		})
+		if (!quest) return
 		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === user.id
 		const buttonCollector = quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0

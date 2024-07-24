@@ -1,3 +1,4 @@
+"use strict"
 const levelZeroErrors = [
     `Missing Access`,
     `Missing Permissions`,

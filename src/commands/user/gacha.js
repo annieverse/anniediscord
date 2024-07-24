@@ -49,7 +49,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`781504248868634627`) }
         })
         //  Direct roll if user already has the tickets.
-        const instanceId = `GACHA_SESSION:${messageRef.guild.id}@${messageRef.member.id}`
+        const instanceId = `GACHA_SESSION:${messageRef.member.id}@${messageRef.guild.id}`
         if (userData.inventory.lucky_ticket >= amountToOpen) return this.startsRoll(client, reply, messageRef, amountToOpen, locale, instanceId, userData)
         const userCurrentCurrency = userData.inventory.artcoins
         const amountToPay = 120 * amountToOpen

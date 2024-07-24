@@ -206,7 +206,7 @@ module.exports = {
             ownedByGuildId: interaction.guild.id,
             usable: 1
         }
-        const sessionId = `SHOP_REGISTER:${interaction.guild.id}@${interaction.member.id}`
+        const sessionId = `SHOP_REGISTER:${interaction.member.id}@${interaction.guild.id}`
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
@@ -566,7 +566,7 @@ module.exports = {
             ownedByGuildId: message.guild.id,
             usable: 1
         }
-        const sessionId = `SHOP_REGISTER:${message.guild.id}@${message.author.id}`
+        const sessionId = `SHOP_REGISTER:${message.author.id}@${message.guild.id}`
         
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
         client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})

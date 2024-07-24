@@ -3,6 +3,8 @@ const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits} = require(`discord.js`)
 const roleCompare = require(`../utils/roleCompare.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return
@@ -118,11 +120,15 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                     //  Handle if role cannot be found due to deleted/invalid
                     if (!guild.roles.cache.has(roleId)) continue
                     const role = guild.roles.cache.get(roleId)
+                    if (!role) continue
                     if (role.managed) continue
                     if (!role.editable) continue
                     
                     const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
-                    if (roleCompare(role, botsHighestRole)) newMember.roles.add(roleId)
+                    if (roleCompare(role, botsHighestRole)) newMember.roles.add(roleId).catch(error=>{
+                        client.logger.error(error)
+                        client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    })
                     
                 }
             }

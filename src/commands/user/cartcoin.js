@@ -56,7 +56,7 @@ module.exports = {
         return await this.run(client, reply, interaction, arg, locale)
     },
     async run(client, reply, messageRef, arg, locale,) {
-        const cacheId = `${messageRef.member.id}-${messageRef.guildId}-cartcoin`
+        const cacheId = `CARTCOIN:${messageRef.member.id}@${messageRef.guildId}`
         if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
             return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS,{ephemeral:true})
         }
