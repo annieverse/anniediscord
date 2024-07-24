@@ -6,6 +6,7 @@ const {
 const { InteractionType } = require(`discord.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
+const cacheReset = require(`../utils/cacheReset.js`)
 module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
@@ -54,37 +55,7 @@ module.exports = async (client, interaction, command) => {
         client.logger.error(err)
         const internalError = err.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
-        if (internalError) {
-            let sessionId = null
-            switch (command.name) {
-                case `makereward`:
-                    sessionId = `REWARD_REGISTER:${interaction.guildId}@${interaction.member.id}`
-                    break
-                case `setshop`:
-                    sessionId = `SHOP_REGISTER:${interaction.guildId}@${interaction.member.id}`
-                    break
-                case `cartcoin`:
-                    sessionId = `${interaction.member.id}-${interaction.guildId}-cartcoin`
-                    break
-                case `gacha`:
-                    sessionId = `GACHA_SESSION:${interaction.guildId}@${interaction.member.id}`
-                    break
-                case `quests`:
-                    sessionId = `QUEST_SESSION_${interaction.member.id}@${interaction.guildId}`
-                    break
-                case `pay`:
-                    sessionId = `PAY:${interaction.guildId}@${interaction.member.id}`
-                    break
-                default:
-                    break
-            }
-
-            // Command specific cache
-            if (sessionId != null && await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
-            // Secondary cache from confirmator
-            sessionId = `confirmator_${interaction.member.id}_${interaction.guildId}`
-            if (await client.db.databaseUtils.doesCacheExist(sessionId)) client.db.databaseUtils.delCache(sessionId)
-        }
+        if (internalError) cacheReset(client, command.name, interaction.member.id, interaction.guildId)
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: err.stack,
@@ -116,6 +87,7 @@ module.exports = async (client, interaction, command) => {
             }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         }
         //  Report to support server
+        if (internalError) return
         client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }
