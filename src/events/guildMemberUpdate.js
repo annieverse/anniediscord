@@ -3,6 +3,8 @@ const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits} = require(`discord.js`)
 const roleCompare = require(`../utils/roleCompare.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return

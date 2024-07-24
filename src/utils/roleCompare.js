@@ -1,3 +1,4 @@
+"use strict"
 /**
  * Return if roleOne is under higher role
  * @param {role} roleOne 

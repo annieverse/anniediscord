@@ -1,3 +1,4 @@
+"use strict"
 /**
 * Reset redis cache for specific user incase of error
 * @return {void}

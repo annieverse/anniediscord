@@ -1,4 +1,4 @@
-
+"use strict"
 const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs, levelZeroErrors }) => {
     /**
      * 1 = normal
