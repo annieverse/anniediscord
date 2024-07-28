@@ -1,3 +1,10 @@
+## [9.9.9](https://github.com/annieverse/anniediscord/compare/v9.9.8...v9.9.9) (2024-07-28)
+
+
+### Bug Fixes
+
+* **permissions:** return false positive ([8660e38](https://github.com/annieverse/anniediscord/commit/8660e387c8d650f4d424c4589d153eff0e6afc3d))
+
 ## [9.9.8](https://github.com/annieverse/anniediscord/compare/v9.9.7...v9.9.8) (2024-07-24)
 
 
