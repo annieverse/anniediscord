@@ -29,7 +29,6 @@ module.exports = {
     hugGenLink: `https://purrbot.site/api/img/sfw/hug/gif`,
     async execute(client, reply, message, arg, locale) {
         const target = arg ? (await (new User(client, message)).lookFor(arg))?.master : null
-        console.log(target)
         const user = message.author
         return await this.run(target, user, reply, locale)
     },
