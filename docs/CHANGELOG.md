@@ -1,3 +1,12 @@
+## [9.9.10](https://github.com/annieverse/anniediscord/compare/v9.9.9...v9.9.10) (2024-07-31)
+
+
+### Bug Fixes
+
+* **cartcoin:** level not staying ([eb7060e](https://github.com/annieverse/anniediscord/commit/eb7060ebbff12f420c7d87406f45e9bdffcef521))
+* **hug:** invalid user ([d3cf91e](https://github.com/annieverse/anniediscord/commit/d3cf91e7a33151f8e1275077081ea04eb75e4730))
+* **unknown interactions:** option added to defer ([3d82492](https://github.com/annieverse/anniediscord/commit/3d824925aedd309178fa19e66b4057d749f450eb))
+
 ## [9.9.9](https://github.com/annieverse/anniediscord/compare/v9.9.8...v9.9.9) (2024-07-28)
 
 
