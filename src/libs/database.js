@@ -551,7 +551,7 @@ class UserUtils extends DatabaseUtils {
 		//  Refresh cache
 		this.delCache(`EXP_${userId}@${guildId}`)
 		// this.redis.del(`EXP_${userId}@${guildId}`)
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
