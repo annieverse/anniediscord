@@ -525,6 +525,7 @@ class UserUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`updateUserExp`)
 		if (!amount && amount != 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
 		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
+		amount = Math.floor(amount)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
