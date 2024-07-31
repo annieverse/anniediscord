@@ -4,7 +4,8 @@ const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
     PermissionFlagsBits,
-    InteractionType
+    InteractionType,
+    ChannelType
 } = require(`discord.js`)
 /**
  * Customize Logging-System for your guild
@@ -37,7 +38,8 @@ module.exports = {
             name: `set`,
             description: `Set a specific channel for Annie's logs.`,
             required: true,
-            type: ApplicationCommandOptionType.Channel
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
         }]
     }],
     type: ApplicationCommandType.ChatInput,
@@ -100,7 +102,7 @@ module.exports = {
         const fn = `[setLogs.enable()]`
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
-            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETLOGS.ALREADY_ENABLED, {
                 socket: {
@@ -156,7 +158,7 @@ module.exports = {
             socket: { prefix: prefix, emoji: await client.getEmoji(`692428927620087850`) }
         })
         //  Do channel searching by three possible conditions
-        const searchChannel = message.type != InteractionType.ApplicationCommand ? message.mentions.channels.first() || 
+        const searchChannel = message.type != InteractionType.ApplicationCommand ? message.mentions.channels.first() ||
             message.guild.channels.cache.get(this.args[1]) ||
             message.guild.channels.cache.find(channel => channel.name === this.args[1].toLowerCase()) : this.args[1]
         //  Handle if target channel couldn't be found

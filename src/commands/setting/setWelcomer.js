@@ -13,7 +13,8 @@ const { Collection } = require(`discord.js`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    ChannelType
 } = require(`discord.js`)
 /**
  * Manage welcomer module for your guild.
@@ -50,7 +51,8 @@ module.exports = {
             name: `set`,
             description: `The channel to set for Annie's logs.`,
             required: true,
-            type: ApplicationCommandOptionType.Channel
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
         }]
     }, {
         name: `text`,
@@ -122,6 +124,7 @@ module.exports = {
                 description: `Channel name`,
                 required: true,
                 type: ApplicationCommandOptionType.Channel,
+                channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
             }, {
                 name: `text`,
                 description: `Set text for welcome message in this channel.`,
@@ -137,6 +140,7 @@ module.exports = {
                 description: `Channel name`,
                 required: true,
                 type: ApplicationCommandOptionType.Channel,
+                channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
             }]
         }, {
             name: `list`,
