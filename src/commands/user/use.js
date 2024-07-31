@@ -32,15 +32,18 @@ module.exports = {
         return await this.run(client, reply, message, arg, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+
+        await interaction.deferReply({ ephemeral: true })
         let arg = options.getString(`item`)
         return await this.run(client, reply, interaction, arg, locale)
     },
-    async run(client, reply, messageRef, arg, locale){
-        const data = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2,locale)
+    async run(client, reply, messageRef, arg, locale) {
+        const data = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2, locale)
         if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
-            }
+            },
+            editReply: true
         })
         //  Finding the closest target item.
         const searchStringResult = stringSimilarity.findBestMatch(arg.toLowerCase(), data.inventory.raw.map(i => i.name.toLowerCase()))
@@ -54,23 +57,28 @@ module.exports = {
         if (!targetItem) return await reply.send(locale.USE.INVALID_ITEM, {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)
-            }
+            },
+            editReply: true
         })
-        if (targetItem.quantity <= 0) return await reply.send(locale.USE.INSUFFICIENT)
+        if (targetItem.quantity <= 0) return await reply.send(locale.USE.INSUFFICIENT, {
+            editReply: true
+        })
         //  Handle non-usable item
         if (targetItem.usable === 0) return await reply.send(locale.USE.UNUSABLE, {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
-            }
+            },
+            editReply: true
         })
-        const effectLib = new ItemEffects(client, messageRef,locale)
+        const effectLib = new ItemEffects(client, messageRef, locale)
         //  Usage confirmation
         const confirmation = await reply.send(locale.USE.CONFIRMATION, {
             thumbnail: messageRef.member.displayAvatarURL(),
             socket: {
                 item: targetItem.name,
                 footer: await effectLib.displayItemBuffs(targetItem.item_id) || locale.USE.CONFIRMATION_TIPS
-            }
+            },
+            editReply: true
         })
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)

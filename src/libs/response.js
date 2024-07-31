@@ -83,6 +83,7 @@ class Response {
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
 	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
 	 * @param {Boolean} plugins.sendAnyway Send to channel reguardless of other options
+	 * @param {Boolean} plugins.editReply Toggle if it should be edit instead of followup
 	 * @param {Object | String} plugins.field message field target (GuildChannel/DM).
 	 * @param {String | Number} plugins.deleteIn as countdown before the message get deleted. In seconds.
 	 * @param {Array | String | Object} plugins.components Array of components like buttons
@@ -123,6 +124,7 @@ class Response {
 		const messageToReplyTo = plugins.messageToReplyTo || null
 		const replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
 		const sendAnyway = plugins.sendAnyway || false
+		const editReply = plugins.editReply || false
 
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 
@@ -147,7 +149,7 @@ class Response {
 
 		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
 		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
-		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
+		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
 		const embed = new EmbedBuilder()
 		/**
 		 * Format Components to correct data type
@@ -202,10 +204,10 @@ class Response {
 
 		async function sendMessage() {
 			const noEmbed = Object.keys(embed.data).length === 0
-			try {			
-				if (!RESPONSE_REF) throw new Error(`[Internal Error] Variable not populated`) 
-				if (!RESPONSE_TYPE) throw new Error(`[Internal Error] Variable not populated`)  
-				if (!RESPONSE_REF[RESPONSE_TYPE]) throw new Error(`[Internal Error] Variable not populated`) 
+			try {
+				if (!RESPONSE_REF) throw new Error(`[Internal Error] Variable not populated`)
+				if (!RESPONSE_TYPE) throw new Error(`[Internal Error] Variable not populated`)
+				if (!RESPONSE_REF[RESPONSE_TYPE]) throw new Error(`[Internal Error] Variable not populated`)
 				if (!hasFileUploadPerm && file) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
 				if (!hasFileUploadPerm && image) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
 
