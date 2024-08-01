@@ -1,3 +1,10 @@
+## [9.9.11](https://github.com/annieverse/anniediscord/compare/v9.9.10...v9.9.11) (2024-08-01)
+
+
+### Bug Fixes
+
+* **welcomer:** preview failing ([a60ce59](https://github.com/annieverse/anniediscord/commit/a60ce59eff4bd2c9fec714465f71cc27a46a4cce))
+
 ## [9.9.10](https://github.com/annieverse/anniediscord/compare/v9.9.9...v9.9.10) (2024-07-31)
 
 
