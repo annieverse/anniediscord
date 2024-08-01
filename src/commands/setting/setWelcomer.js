@@ -603,7 +603,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /**
@@ -840,7 +840,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /**
@@ -875,7 +875,7 @@ module.exports = {
         })
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /** 
