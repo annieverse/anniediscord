@@ -35,8 +35,8 @@ module.exports = async (client = {}, message = {}) => {
     try {
         checkPerm = reply.checkPermissions(message.channel)
         if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
-    } catch (error) {
-        const internalError = error.message.startsWith(`[Internal Error]`)
+    } catch (e) {
+        const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
         return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
@@ -85,7 +85,7 @@ module.exports = async (client = {}, message = {}) => {
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)) === 0) {
         return await reply.send(locale.USER.REGISTRATION_ON_PROCESS).catch(e => {
-            const internalError = error.message.startsWith(`[Internal Error]`)
+            const internalError = e.message.startsWith(`[Internal Error]`)
             // Handle cache(s)
             if (internalError) return
             return client.logger.error(e)
