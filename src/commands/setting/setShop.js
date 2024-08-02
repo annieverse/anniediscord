@@ -74,7 +74,7 @@ module.exports = {
                 required: true,
                 type: ApplicationCommandOptionType.String
             }]
-        },{
+        }, {
             name: `reset`,
             description: `Set the shop's image`,
             type: ApplicationCommandOptionType.Subcommand
@@ -141,6 +141,7 @@ module.exports = {
      */
     actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
+
         if (!arg) return await reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,
             header: `Hi, ${message.author.username}!`,
@@ -160,6 +161,10 @@ module.exports = {
         return this[args[0].toLowerCase()](client, reply, message, arg, locale, prefix, args)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+
+        const checkPerm = reply.checkPermissions(interaction.channel)
+        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+
         let args = null
         if (options.getSubcommand() === `open`) {
             args = [`open`]
@@ -173,7 +178,7 @@ module.exports = {
         if (options.getSubcommandGroup() === `image`) {
             if (options.getSubcommand() === `attachment`) {
                 args = [`image`, options.getAttachment(`set`).url]
-            }else if (options.getSubcommand() === `url`) {
+            } else if (options.getSubcommand() === `url`) {
                 args = [`image`, options.getString(`set`)]
             } else if (options.getSubcommand() === `reset`) {
                 args = [`imagereset`]
@@ -208,7 +213,7 @@ module.exports = {
         }
         const sessionId = `SHOP_REGISTER:${interaction.member.id}@${interaction.guild.id}`
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})
+        client.db.databaseUtils.setCache(sessionId, `1`, { EX: 60 * 3 })
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
         let item_name = args[1]
@@ -567,9 +572,9 @@ module.exports = {
             usable: 1
         }
         const sessionId = `SHOP_REGISTER:${message.author.id}@${message.guild.id}`
-        
+
         if (await client.db.databaseUtils.doesCacheExist(sessionId)) return await reply.send(locale.SETSHOP.ADD_SESSION_STILL_ACTIVE)
-        client.db.databaseUtils.setCache(sessionId,`1`,{EX:60 * 3})
+        client.db.databaseUtils.setCache(sessionId, `1`, { EX: 60 * 3 })
         //  Skip one phase ahead if user unintentionally added item name right after casting the 'add' action.
 
         let phaseJump = false
@@ -880,7 +885,7 @@ module.exports = {
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.deleteGuildConfiguration(`SHOP_IMAGE`, message.guild.id)
-            fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error)=>{
+            fs.unlink(`./src/assets/customShop/${customBanner}.png`, (error) => {
                 if (error) client.logger.warn(`[setShop.js][Removing Image from filetree] ${error.stack}`)
             })
             await reply.send(locale.SETSHOP.IMAGE_SUCCESSFULLY_APPLIED, {
@@ -915,7 +920,7 @@ module.exports = {
         const id = uuidv4()
         const response = await superagent.get(url)
         const buffer = response.body
-        
+
         const confirmation = await reply.send(locale.SETSHOP.CONFIRMATION_IMAGE, {
             image: buffer,
             prebuffer: true

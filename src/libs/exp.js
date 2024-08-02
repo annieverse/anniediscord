@@ -2,7 +2,7 @@ const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
 const { AttachmentBuilder, PermissionFlagsBits } = require(`discord.js`)
 const defaultConfigs = require(`../config/customConfig.js`)
-const roleCompare = require(`../utils/roleCompare.js`)
+const { roleLower } = require(`../utils/roleCompare.js`)
 /**
  * @typedef {object} MemberExperience
  * @property {number} [level] calculated level from given current exp
@@ -93,16 +93,6 @@ class Experience {
      */
     async updateRank(level = 0) {
         if (!this.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return // Make sure bot has correct permissions to add role
-        // /**
-        //  * Return if roleOne is under higher role
-        //  * @param {role} roleOne 
-        //  * @param {role} highRole 
-        //  * @returns {boolean}
-        //  */
-        // const roleCompare = (roleOne,highRole)=>{
-        //     const roleCompare = roleOne.comparePositionTo(highRole)
-        //     return roleCompare >= 1 ? false : true
-        // }
 
         let registeredRanks = this.guild.configs.get(`RANKS_LIST`).value
         if (registeredRanks.length <= 0) return
@@ -121,7 +111,7 @@ class Experience {
         const botsHighestRole = this.guild.members.me.roles.highest // Highest role the bot has
         //  Assign new rank role 
         try {
-            if (roleCompare(userRankRole, botsHighestRole)) await this.user.roles.add(userRankRole)
+            if (roleLower(userRankRole, botsHighestRole, this.guild)) await this.user.roles.add(userRankRole)
         }
         catch (e) {
             this.client.logger.error(`${this.instanceId} <FAIL> role assign > ${e.message}`)
@@ -130,14 +120,14 @@ class Experience {
         //  Remove non-current rank roles if RANKS_STACK is disabled 
         const nonCurrentRankRoles = registeredRanks
             //  Added double condition to ensure the current role is filtered from result set.
-            .filter(r =>(roleCompare(this.guild.roles.cache.get(r.ROLE), botsHighestRole)) && (r.ROLE !== userRankRole.id) && (r.LEVEL !== userRankLevel) && r.ROLE != this.guild.members.me.roles.guild.roles.everyone)
+            .filter(r => (roleLower(this.guild.roles.cache.get(r.ROLE), botsHighestRole, this.guild)) && (r.ROLE !== userRankRole.id) && (r.LEVEL !== userRankLevel) && r.ROLE != this.guild.members.me.roles.guild.roles.everyone)
             .map(r => r.ROLE)
 
         try {
             await this.user.roles.remove(nonCurrentRankRoles)
             //  Doble check in case of role disaopearance accident
             if (!this.user.roles.cache.has(userRankRole.id)) {
-                if (roleCompare(userRankRole, botsHighestRole)) this.user.roles.add(userRankRole)
+                if (roleLower(userRankRole, botsHighestRole, this.guild)) this.user.roles.add(userRankRole)
             }
         }
         catch (e) {
