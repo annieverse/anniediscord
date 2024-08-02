@@ -1,3 +1,10 @@
+## [9.9.12](https://github.com/annieverse/anniediscord/compare/v9.9.11...v9.9.12) (2024-08-02)
+
+
+### Bug Fixes
+
+* **perms:** Wrong permissions ([8c663a3](https://github.com/annieverse/anniediscord/commit/8c663a3c507733f19f15b8a54bfcaefbd3ad3a55))
+
 ## [9.9.11](https://github.com/annieverse/anniediscord/compare/v9.9.10...v9.9.11) (2024-08-01)
 
 
