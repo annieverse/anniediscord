@@ -14,8 +14,16 @@ module.exports = async (client, interaction, command) => {
     const reply = client.responseLibs(interaction, false, locale)
 
     // Check Bot's permissions before procceding
-    const checkPerm = reply.checkPermissions(interaction.channel)
-    if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+    let checkPerm = false
+    try {
+        checkPerm = reply.checkPermissions(interaction.channel)
+        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+    } catch (error) {
+        const internalError = error.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        if (internalError) return
+        return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+    }
 
     const options = interaction.options
     const targetCommand = interaction.commandName

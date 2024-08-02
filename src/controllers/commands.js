@@ -31,8 +31,17 @@ module.exports = async (client = {}, message = {}) => {
     const reply = client.responseLibs(message, false, locale)
 
     // Check Bot's permissions before procceding
-    const checkPerm = reply.checkPermissions(message.channel)
-    if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+    let checkPerm = false
+    try {
+        checkPerm = reply.checkPermissions(message.channel)
+        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+    } catch (error) {
+        const internalError = error.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        if (internalError) return
+        return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+    }
+
 
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
@@ -75,7 +84,12 @@ module.exports = async (client = {}, message = {}) => {
     client.cooldowns.set(instanceId, Date.now())
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)) === 0) {
-        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)
+        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS).catch(e => {
+            const internalError = error.message.startsWith(`[Internal Error]`)
+            // Handle cache(s)
+            if (internalError) return
+            return client.logger.error(e)
+        })
     }
     try {
         const initTime = process.hrtime()
