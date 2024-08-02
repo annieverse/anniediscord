@@ -142,9 +142,6 @@ module.exports = {
     actions: [`open`, `close`, `text`, `image`, `add`, `delete`, `edit`],
     async execute(client, reply, message, arg, locale, prefix) {
 
-        const checkPerm = reply.checkPermissions(message.channel)
-        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
-
         if (!arg) return await reply.send(locale.SETSHOP.GUIDE, {
             image: `banner_setshop`,
             header: `Hi, ${message.author.username}!`,

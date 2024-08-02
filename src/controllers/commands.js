@@ -28,7 +28,12 @@ module.exports = async (client = {}, message = {}) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
     const locale = client.getTargetLocales(userData.lang)
-    let reply = client.responseLibs(message, false, locale)
+    const reply = client.responseLibs(message, false, locale)
+
+    // Check Bot's permissions before procceding
+    const checkPerm = reply.checkPermissions(message.channel)
+    if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
@@ -108,7 +113,7 @@ module.exports = async (client = {}, message = {}) => {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
-            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            }).catch(err => client.logger.error(`[ERROR_UNSUPPORTED_FILE_TYPE] Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
         else if (e.code === 50013 || internalError) {
@@ -116,9 +121,9 @@ module.exports = async (client = {}, message = {}) => {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
-            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            }).catch(err => client.logger.error(`[ERROR_MISSING_PERMISSION] Unable to send message to channel > ${err}`))
         } else {
-            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to send message to channel > ${err}`))
         }
         //  Report to support server
         if (internalError) return
