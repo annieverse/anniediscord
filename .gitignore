@@ -38,3 +38,6 @@ logs
 
 # Logs
 .logs
+/docs/jsdoc
+jsdoc.json
+jsconfig.json
