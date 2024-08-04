@@ -4,6 +4,7 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  * Command's Class description
  * ONLY for Avarik Saga
  * @author Andrew
+ * @module 
  */
 module.exports = {
     /**
@@ -63,7 +64,7 @@ module.exports = {
         name: `remove`, // Must be all lowercase
         description: `Remove your address`,
         type: ApplicationCommandOptionType.Subcommand
-    },{
+    }, {
         name: `address`, // Must be all lowercase
         description: `Your address you would like to link`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -73,7 +74,7 @@ module.exports = {
             required: true,
             type: ApplicationCommandOptionType.String
         }]
-        }, 
+    },
     ],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
@@ -92,7 +93,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`, `882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`/* , `1242130891363454996` */],
     /**
      * Any other properties you want to add to the command.
      */
@@ -104,8 +105,7 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        return this.run(client, reply, message, locale, arg)
-        // ... Your command ran here.
+        return
     },
     /**
      * The executed function upon command invocation.
@@ -116,17 +116,28 @@ module.exports = {
      */
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `remove`) return this.delete(client, reply, interaction)
-        if (options.getSubcommand() === `address`){
+        if (options.getSubcommand() === `address`) {
             const arg = options.getString(`set`)
             return this.run(client, reply, interaction, arg)
         }
     },
     async run(client, reply, messageRef, arg) {
-        client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
-        return await reply.send(`Your address has been set`,{ephemeral: true})
+        if (messageRef.guild.id == `1242130891363454996`) {
+            client.db.custom.customWalletAdd(messageRef.member.user.id, arg, messageRef.guild.id)
+        } else {
+            client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
+        }
+
+        return await reply.send(`Your address has been set`, { ephemeral: true })
     },
     async delete(client, reply, messageRef) {
-        client.db.custom.deleteWalletAddress(messageRef.member.user.id)
-        return await reply.send(`Your address has been removed`,{ephemeral: true})
+        if (messageRef.guild.id == `1242130891363454996`) {
+            const res = client.db.custom.customWalletDelete(messageRef.member.user.id, messageRef.guild.id)
+            // Add role if exists
+        } else {
+            client.db.custom.deleteWalletAddress(messageRef.member.user.id)
+        }
+
+        return await reply.send(`Your address has been removed`, { ephemeral: true })
     }
 }

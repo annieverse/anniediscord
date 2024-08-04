@@ -1,7 +1,8 @@
 "use strict"
-const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Command's Class description
+ * ONLY for Avarik Saga
  * @author Andrew
  * @module 
  */
@@ -11,7 +12,7 @@ module.exports = {
      * @required
      * @type {string}
      */
-    name: `retrievedata`,
+    name: `prefilldata`,
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required
@@ -23,13 +24,13 @@ module.exports = {
      * @required
      * @type {string}
      */
-    description: `Create a csv file.`,
+    description: `Add records to database`,
     /**
      * Define how to use the command. Include optional arguments/flags if needed
      * @required
      * @type {string}
      */
-    usage: `retrievedata`,
+    usage: `prefilldata`,
     /**
      * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
      * @required
@@ -55,13 +56,6 @@ module.exports = {
      */
     messageCommand: false,
     /**
-     * Use 'PermissionFlagsBits' to define the command's Permission level. (Most of the time you will not need to define this)
-     * By seeting this property only users with the same or higher permission level will be able to use and see the command.
-     * @Optional Only if applicationCommand is true and you need specific permissions
-     * @type {PermissionFlagsBits}
-     */
-    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
-    /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
      * @required Only if applicationCommand is true
      * @type {ApplicationCommandType}
@@ -78,7 +72,8 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`, `882552960771555359`],
+    servers: [`577121315480272908`/* , `1242130891363454996` */],
+    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     /**
      * Any other properties you want to add to the command.
      */
@@ -90,8 +85,7 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        return this.run(client, reply, message, locale)
-        // ... Your command ran here.
+        return
     },
     /**
      * The executed function upon command invocation.
@@ -101,25 +95,9 @@ module.exports = {
      * @type {function}
      */
     async Iexecute(client, reply, interaction, options, locale) {
-        return this.run(client, reply, interaction, locale)
+        return this.run(client, reply, interaction)
     },
-    async run(client, reply, messageRef, locale) {
-        const itemConfigId = `CUSTOM_LB_ITEM`
-        if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
-        const itemId = messageRef.guild.configs.get(itemConfigId).value
-        const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
-        if (!item) return await reply.send(`Please run \`setitem\` first.`)
-        const filename = `${messageRef.guild.id}_${item.name}_data.csv`
-        const filepath = `./.logs/${filename}`
-
-        await client.db.databaseUtils.exportData({ itemId: itemId, guildId: messageRef.guild.id, filepath: filepath })
-
-        return await messageRef.channel.send({
-            files: [{
-                attachment: filepath,
-                name: filename
-            }],
-            content: `Here is the data from the database`
-        })
-    }
+    async run(client, reply, messageRef) {
+        return await reply.send(`Here is your data.`, { ephemeral: true })
+    },
 }

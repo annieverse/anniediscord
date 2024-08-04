@@ -1,7 +1,8 @@
 "use strict"
-const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Command's Class description
+ * ONLY for custom communities
  * @author Andrew
  * @module 
  */
@@ -11,7 +12,7 @@ module.exports = {
      * @required
      * @type {string}
      */
-    name: `retrievedata`,
+    name: `addcustomrole`,
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required
@@ -23,13 +24,13 @@ module.exports = {
      * @required
      * @type {string}
      */
-    description: `Create a csv file.`,
+    description: `Configure role to give based on other function`,
     /**
      * Define how to use the command. Include optional arguments/flags if needed
      * @required
      * @type {string}
      */
-    usage: `retrievedata`,
+    usage: `addcustomrole <role>`,
     /**
      * Define the minimum permission level to use the command. Refer to ./src/config/permissions.js for more info
      * @required
@@ -55,12 +56,26 @@ module.exports = {
      */
     messageCommand: false,
     /**
-     * Use 'PermissionFlagsBits' to define the command's Permission level. (Most of the time you will not need to define this)
-     * By seeting this property only users with the same or higher permission level will be able to use and see the command.
-     * @Optional Only if applicationCommand is true and you need specific permissions
-     * @type {PermissionFlagsBits}
+     * Define the command's options. This is what is used as an argument for the command (Application commands only).
+     * @required for ONLY ApplicationCommands
+     * @type {Array}
      */
-    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
+    options: [{
+        name: `remove`, // Must be all lowercase
+        description: `remove role`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `set`, // Must be all lowercase
+        description: `set role to give`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `role`,
+            description: `select the role.`,
+            required: true,
+            type: ApplicationCommandOptionType.Role
+        }]
+    },
+    ],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
      * @required Only if applicationCommand is true
@@ -78,7 +93,14 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`, `882552960771555359`],
+    servers: [`577121315480272908`/* , `1242130891363454996` */],
+
+    /**
+     * Current instance's config code
+     * @type {string}
+     */
+    primaryConfigID: `CUSTOM_ROLE`,
+    default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     /**
      * Any other properties you want to add to the command.
      */
@@ -86,12 +108,15 @@ module.exports = {
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
      * [client, reply, message, arg, locale]
+     * @param {import("../../annie")} client 
+     * @param {import("../../libs/response")} reply 
+     * @param {import("../../../node_modules/discord.js/typings/index").Message} message 
+     * @param {string} arg 
+     * @param {*} locale 
      * @required Only for MessageCommands
-     * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        return this.run(client, reply, message, locale)
-        // ... Your command ran here.
+        return
     },
     /**
      * The executed function upon command invocation.
@@ -101,25 +126,33 @@ module.exports = {
      * @type {function}
      */
     async Iexecute(client, reply, interaction, options, locale) {
-        return this.run(client, reply, interaction, locale)
+        if (options.getSubcommand() === `remove`) return this.delete(client, reply, interaction)
+        if (options.getSubcommand() === `set`) {
+            const arg = options.getRole(`role`)
+            this.guildConfigurations = interaction.guild.configs
+            return this.run(client, reply, interaction, arg)
+        }
     },
-    async run(client, reply, messageRef, locale) {
-        const itemConfigId = `CUSTOM_LB_ITEM`
-        if (!messageRef.guild.configs.get(itemConfigId)) return await reply.send(`Please run \`setitem\` first.`)
-        const itemId = messageRef.guild.configs.get(itemConfigId).value
-        const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
-        if (!item) return await reply.send(`Please run \`setitem\` first.`)
-        const filename = `${messageRef.guild.id}_${item.name}_data.csv`
-        const filepath = `./.logs/${filename}`
-
-        await client.db.databaseUtils.exportData({ itemId: itemId, guildId: messageRef.guild.id, filepath: filepath })
-
-        return await messageRef.channel.send({
-            files: [{
-                attachment: filepath,
-                name: filename
-            }],
-            content: `Here is the data from the database`
+    async run(client, reply, messageRef, arg) {
+        client.db.guildUtils.updateGuildConfiguration({
+            configCode: this.primaryConfigID,
+            customizedParameter: arg.id,
+            guild: messageRef.guild,
+            setByUserId: messageRef.member.id,
+            cacheTo: this.guildConfigurations
         })
+        return await reply.send(`Role has been set to ${arg}`, { ephemeral: true })
+    },
+    async delete(client, reply, messageRef) {
+
+        client.db.guildUtils.updateGuildConfiguration({
+            configCode: this.primaryConfigID,
+            customizedParameter: ``,
+            guild: messageRef.guild,
+            setByUserId: messageRef.member.id,
+            cacheTo: this.guildConfigurations
+        })
+
+        return await reply.send(`Role has been reset`, { ephemeral: true })
     }
 }
