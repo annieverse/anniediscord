@@ -1,5 +1,6 @@
 "use strict"
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
+const testRole = require(`../../utils/testRole.js`)
 /**
  * Command's Class description
  * ONLY for custom communities
@@ -108,11 +109,6 @@ module.exports = {
      * The executed function upon command invocation.
      * The standard provided prarameters are writen in sequence below
      * [client, reply, message, arg, locale]
-     * @param {import("../../annie")} client 
-     * @param {import("../../libs/response")} reply 
-     * @param {import("../../../node_modules/discord.js/typings/index").Message} message 
-     * @param {string} arg 
-     * @param {*} locale 
      * @required Only for MessageCommands
      */
     async execute(client, reply, message, arg, locale) {
@@ -134,9 +130,14 @@ module.exports = {
         }
     },
     async run(client, reply, messageRef, arg) {
+
+        const customRole = messageRef.guild.configs.get(`CUSTOM_ROLE`).value
+        if (customRole == arg.id) return await reply.send(`Role is already set to that role`, { ephemeral: true })
+        const test = testRole(client, arg, messageRef.guild, messageRef.member)
+        if (!test) return await reply.send(`Role is out of my reach so i can not add`, { ephemeral: true })
         client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
-            customizedParameter: arg.id,
+            customizedParameter: test.roleId,
             guild: messageRef.guild,
             setByUserId: messageRef.member.id,
             cacheTo: this.guildConfigurations
@@ -144,7 +145,6 @@ module.exports = {
         return await reply.send(`Role has been set to ${arg}`, { ephemeral: true })
     },
     async delete(client, reply, messageRef) {
-
         client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: ``,

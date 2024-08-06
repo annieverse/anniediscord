@@ -1,8 +1,9 @@
 'use strict'
 const {
     ActionRowBuilder,
-    SelectMenuBuilder
+    StringSelectMenuBuilder
 } = require(`discord.js`)
+const chunkOptions = require(`../utils/chunkArray`)
 
 class rewardPackageStruct {
 
@@ -40,19 +41,10 @@ class rewardPackageStruct {
         if (maxValues < 0) maxValues = 1
         const rows = []
 
-        function chunkOptions(array) {
-            const chunkSize = 10
-            const chunks = []
-            for (let i = 0; i < array.length; i += chunkSize) {
-                const chunk = array.slice(i, i + chunkSize)
-                chunks.push(chunk)
-            }
-            return chunks
-        }
+        const chunkedOptions = chunkOptions(options, 10)
 
-        const chunkedOptions = chunkOptions(options)
         for (let index = 0; index < chunkedOptions.length; index++) {
-            let selectMenu = new SelectMenuBuilder()
+            let selectMenu = new StringSelectMenuBuilder()
                 .setCustomId(`select_menu_${index}`)
                 .setMinValues(0)
                 .setMaxValues(maxValues)

@@ -1,5 +1,6 @@
 "use strict"
-const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
+const chunkOptions = require(`../../utils/chunkArray`)
 /**
  * Command's Class description
  * ONLY for Avarik Saga
@@ -62,17 +63,6 @@ module.exports = {
      */
     type: ApplicationCommandType.ChatInput,
     /**
-     * Define the command's options. This is what is used as an argument for the command (Application commands only).
-     * @required for ONLY ApplicationCommands
-     * @type {Array}
-     */
-    options: [{
-        name: `value`, // Must be all lowercase
-        description: `value to add`,
-        type: ApplicationCommandOptionType.String
-    }
-    ],
-    /**
      * Define if the command is to be used in specific servers
      * @required
      * @type {boolean}
@@ -106,10 +96,24 @@ module.exports = {
      * @type {function}
      */
     async Iexecute(client, reply, interaction, options, locale) {
-        const arg = client.options.getString(`value`)
-        return this.run(client, reply, interaction, arg)
+        return this.run(client, reply, interaction)
     },
     async run(client, reply, messageRef) {
-        return await reply.send(`Here is your data.`, { ephemeral: true })
+        const formatedData = []
+        const results = await client.db.custom.retrieveData(messageRef.guild.id)
+        results.forEach(element => {
+            const user = !element.user_id ? `Unknown User/UnClaimed` : messageRef.guild.members.resolve(element.user_id)
+            const wallet = element.wallet
+            formatedData.push(`- ${user}: \`${wallet}\``)
+        })
+
+        const dataToDisplay = chunkOptions(formatedData, 10)
+        const formatedDataToDisplay = []
+        dataToDisplay.forEach(element => formatedDataToDisplay.push(element.join(`\n`)))
+        return await reply.send(formatedDataToDisplay, {
+            paging: true,
+            header: `All entries for ${messageRef.guild.name}`,
+            ephemeral: true
+        })
     },
 }
