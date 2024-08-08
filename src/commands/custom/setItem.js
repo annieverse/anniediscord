@@ -5,7 +5,8 @@ const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 /**
  * Command's Class description
- * @author yourname
+ * @author Andrew
+ * @module 
  */
 module.exports = {
     /**
@@ -91,7 +92,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`,`882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`],
     /**
      * Any other properties you want to add to the command.
      */
@@ -123,7 +124,7 @@ module.exports = {
         const availableItems = await client.db.shop.getItem(null, messageRef.guild.id)
         // End phase if there are no items available
         if (!availableItems.length) {
-            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, {  ephemeral: true })
+            return await reply.send(`Sorry you dont have any items for me to set try adding one with /setshop add.`, { ephemeral: true })
         }
         //  Find best match
         const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
@@ -136,9 +137,9 @@ module.exports = {
             availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
 
         if (!item) return await reply.send(`I'm sorry no item under that name or Id, please try again`)
-        
+
         const confirmation = await reply.send(`Are you sure you want to set \`${item.name}\` as the item for leaderboard?`)
-        
+
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {

@@ -5,7 +5,8 @@ const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 /**
  * Command's Class description
- * @author yourname
+ * @author Andrew
+ * @module 
  */
 module.exports = {
     /**
@@ -102,7 +103,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`,`882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`],
     /**
      * Any other properties you want to add to the command.
      */
@@ -136,7 +137,7 @@ module.exports = {
         const itemId = messageRef.guild.configs.get(itemConfigId).value
         const item = await client.db.shop.getItem(Number(itemId), messageRef.guild.id)
         if (!item) return await reply.send(`Please run \`setitem\` first.`)
-            
+
         const amount = args[0]
         const allUsers = args[1]
         const user = args[2]
