@@ -51,20 +51,22 @@ module.exports = {
 		const isSelf = userLib.isSelf(user.id)
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(targetUserData.dailies.updated_at)
+		const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
+		
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
-		if (now.diff(lastClaimAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
+		if (now.diff(localed, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: user.displayAvatarURL(),
 			topNotch: isSelf ?
 				`**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` :
 				`**${user.username} already claimed their dailies!** ${await client.getEmoji(`692428748838010970`)}`,
 			socket: {
-				time: moment(lastClaimAt).add(...this.cooldown).fromNow(),
+				time: moment(localed).add(...this.cooldown).fromNow(),
 				user: user.username,
 				prefix: client.prefix
 			}
 		})
 		//  If user hasn't claimed their dailies over 2 days, the current total streak will be reset to zero.
-		let totalStreak = now.diff(lastClaimAt, `days`) >= 2 ? 0 : targetUserData.dailies.total_streak + 1
+		let totalStreak = now.diff(localed, `days`) >= 2 ? 0 : targetUserData.dailies.total_streak + 1
 		//  If user has a poppy card, ignore streak expiring check.
 		const hasPoppy = targetUserData.inventory.poppy_card
 		if (hasPoppy) totalStreak = targetUserData.dailies.total_streak + 1

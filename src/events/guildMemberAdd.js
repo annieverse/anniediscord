@@ -2,7 +2,8 @@ const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
-const {ChannelType, PermissionFlagsBits} = require(`discord.js`)
+const { ChannelType, PermissionFlagsBits } = require(`discord.js`)
+const { roleLower } = require(`../utils/roleCompare.js`)
 
 module.exports = async function guildMemberAdd(client, member) {
     if (!client.isReady()) return
@@ -59,19 +60,28 @@ module.exports = async function guildMemberAdd(client, member) {
         } else {
             //  Handle if target channel is invalid or cannot be found
             try {
-                if (!guild.channels.cache.has(getTargetWelcomerChannel)) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+                if (!guild.channels.cache.has(getTargetWelcomerChannel)) throw new Error(`[Internal Error] invalid target channel`)
                 const ch = guild.channels.cache.get(getTargetWelcomerChannel)
-                if (!ch) return
-                if (ch.type != ChannelType.GuildText && ch.type != ChannelType.PublicThread) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+                if (!ch) throw new Error(`[Internal Error] invalid target channel`)
+                if (ch.type != ChannelType.GuildText && ch.type != ChannelType.PublicThread) throw new Error(`[Internal Error] invalid target channel`)
                 client.responseLibs(ch, true).send(getWelcomerText, {
                     simplified: true,
                     prebuffer: true,
                     image: renderedBanner
+                }).catch(error => {
+                    const internalError = error.message.startsWith(`[Internal Error]`)
+                    if (internalError) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
+                    client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} \n> Attempted Channel: ${getTargetWelcomerChannel} \n> error: ${error} \n> ${error.stack}`)
+                    client.logger.error(error)
+                    client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    return
                 })
             } catch (error) {
+                const internalError = error.message.startsWith(`[Internal Error]`)
+                if (internalError) return client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id}`)
                 client.logger.warn(`${instance} failed to send welcomer message due to invalid target channel in GUILD_ID:${guild.id} \n> Attempted Channel: ${getTargetWelcomerChannel} \n> error: ${error} \n> ${error.stack}`)
                 client.logger.error(error)
-                client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`,errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
                 return
             }
         }
@@ -82,6 +92,7 @@ module.exports = async function guildMemberAdd(client, member) {
          */
         //  Skip role assignment if no roles are registered
         const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
+        const rolesToAdd = []
         if (welcomerRolesList.value.length <= 0) return
         if (!member.manageable) return
         if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return
@@ -89,12 +100,21 @@ module.exports = async function guildMemberAdd(client, member) {
             // If the user still needs to complete the discord membership gate for this guild
             if (member.pending) return
             const roleId = welcomerRolesList.value[i]
+            if (typeof roleId != `string`) continue
             //  Handle if role cannot be found due to deleted/invalid
             if (!guild.roles.cache.has(roleId)) continue
             const role = guild.roles.cache.get(roleId)
+            if (!role) continue
             if (role.managed) continue
             if (!role.editable) continue
-            member.roles.add(roleId)
+
+            const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
+            if (roleLower(role.id, botsHighestRole, guild)) rolesToAdd.push(role.id)
+
         }
+        member.roles.add(rolesToAdd).catch(error => {
+            client.logger.error(error)
+            client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`[rolesToAdd] Unable to send message to channel > ${err}`))
+        })
     }
 }

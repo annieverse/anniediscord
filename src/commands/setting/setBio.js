@@ -64,7 +64,7 @@ module.exports = {
             image: img.png()
         })
         rendering.delete()
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
             client.db.userUtils.setUserBio(arg, message.author.id)
@@ -93,7 +93,7 @@ module.exports = {
             image: img.png()
         })
         rendering.delete()
-        const c = new Confirmator(interaction, reply, true)
+        const c = new Confirmator(interaction, reply, locale)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
             client.db.userUtils.setUserBio(newBio, interaction.member.id)

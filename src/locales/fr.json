@@ -218,7 +218,7 @@
   "ERROR": "Oops, quelque chose s'est mal passé.\n```diff\n- {{error}}\n```",
   "ERROR_ON_PRODUCTION": "**Oops, je viens de prendre un coup ...** {{emoji}}\n╰ Désolé pour ce désagrément; je le transmettrai à mes développeurs.",
   "ERROR_ON_DEV": "Hmm, ça ne fonctionne pas comme prévu. {{emoji}}\n```diff\n- {{error}}\n```",
-  "ERROR_MISSING_PERMISSION": "**Ouch, ai-je la permission?**\n╰ Mes permissions de rôle semblent incorrectes, pouvez-vous les vérifier pour moi ? {{emoji}}",
+  "ERROR_MISSING_PERMISSION": "**Ouch, ai-je la permission?**\n╰ Mes permissions de rôle semblent incorrectes, pouvez-vous les vérifier pour moi ? [FAQ](<https://discord.com/channels/577121315480272908/814741342881185802/1074060930423455764>) {{emoji}}",
   "ERROR_UNSUPPORTED_FILE_TYPE": "**Aw, snap !** {{emoji}}\n╰ Veuillez utiliser un lien d'image valide ou une pièce jointe d'image !",
   "REPORTING_ERROR": "Hé, mon contrôleur de commandes a échoué lors de l'analyse de la demande de l'utilisateur. J'ai généré les journaux ci-dessous pour vous aider à résoudre le problème. {{emoji}}\n─────────────────☆～:;\n**Horodatage de l'accident ::**\n╰─{{timestamp}}\n**Utilisateur affecté ::**\n╰─{{user}}\n**Commande affectée ::**\n╰─{{command}}\n─────────────────☆～:;,\nCi-dessous se trouve la réponse imprimée lors de l'accident.\n```diff\n- {{error}}\n```",
   "LOCALIZATION_ERROR": "**J'ai rencontré une erreur de localisation. T_T\nVeuillez m'aider à signaler cela à mes développeurs afin que je puisse mieux vous servir !**",
@@ -422,6 +422,7 @@
       "Comme c'est adorable !"
     ]
   },
+  "SESSION_STILL_RUNNING": "**Your session still active!** {{emoji}}",
   "PAT": {
     "INVALID_TARGET": "Qui est-ce ? Un fantôme ? {{emoji}}",
     "THEMSELVES": "**{{user}}** se caresse... </3",
@@ -438,7 +439,8 @@
     "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **Solde de {{user}}** ?\ntapez `y` pour confirmer votre transaction.",
     "SUCCESSFUL": "**{{target}}** a reçu vos artcoins !♡",
     "TARGET_NOTIFICATION": "**{0}** vous a envoyé {1}**{2}**",
-    "EXCEEDING_LIMIT": "Vous ne pouvez transférer que **{{limit}}** au maximum par transaction."
+    "EXCEEDING_LIMIT": "Vous ne pouvez transférer que **{{limit}}** au maximum par transaction.",
+    "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}"
   },
   "PIXIV": {
     "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Affichage de l'œuvre la plus recommandée pour vous...*",

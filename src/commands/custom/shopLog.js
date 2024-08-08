@@ -1,6 +1,6 @@
 "use strict"
 const moment = require(`moment`)
-const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType, PermissionFlagsBits } = require(`discord.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType, PermissionFlagsBits, ChannelType } = require(`discord.js`)
 /**
  * Displays your server leaderboard!
  * @author klerikdust
@@ -34,7 +34,8 @@ module.exports = {
             name: `set`,
             description: `Set a specific channel for Annie's shop logs.`,
             required: true,
-            type: ApplicationCommandOptionType.Channel
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
         }]
     }
     ],
@@ -76,11 +77,12 @@ module.exports = {
         const fn = `[shopLog.enable()]`
         //  Handle if module is already enabled
         if (this.primaryConfig.value) {
-            let localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SHOP_LOG.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }

@@ -1,3 +1,61 @@
+## [9.9.12](https://github.com/annieverse/anniediscord/compare/v9.9.11...v9.9.12) (2024-08-02)
+
+
+### Bug Fixes
+
+* **perms:** Wrong permissions ([8c663a3](https://github.com/annieverse/anniediscord/commit/8c663a3c507733f19f15b8a54bfcaefbd3ad3a55))
+
+## [9.9.11](https://github.com/annieverse/anniediscord/compare/v9.9.10...v9.9.11) (2024-08-01)
+
+
+### Bug Fixes
+
+* **welcomer:** preview failing ([a60ce59](https://github.com/annieverse/anniediscord/commit/a60ce59eff4bd2c9fec714465f71cc27a46a4cce))
+
+## [9.9.10](https://github.com/annieverse/anniediscord/compare/v9.9.9...v9.9.10) (2024-07-31)
+
+
+### Bug Fixes
+
+* **cartcoin:** level not staying ([eb7060e](https://github.com/annieverse/anniediscord/commit/eb7060ebbff12f420c7d87406f45e9bdffcef521))
+* **hug:** invalid user ([d3cf91e](https://github.com/annieverse/anniediscord/commit/d3cf91e7a33151f8e1275077081ea04eb75e4730))
+* **unknown interactions:** option added to defer ([3d82492](https://github.com/annieverse/anniediscord/commit/3d824925aedd309178fa19e66b4057d749f450eb))
+
+## [9.9.9](https://github.com/annieverse/anniediscord/compare/v9.9.8...v9.9.9) (2024-07-28)
+
+
+### Bug Fixes
+
+* **permissions:** return false positive ([8660e38](https://github.com/annieverse/anniediscord/commit/8660e387c8d650f4d424c4589d153eff0e6afc3d))
+
+## [9.9.8](https://github.com/annieverse/anniediscord/compare/v9.9.7...v9.9.8) (2024-07-24)
+
+
+### Bug Fixes
+
+* **itemEffect:** role adding ([d24d4bf](https://github.com/annieverse/anniediscord/commit/d24d4bf1b8d6a4403c8656e9d3e64cec84a1d404))
+
+## [9.9.7](https://github.com/annieverse/anniediscord/compare/v9.9.6...v9.9.7) (2024-07-21)
+
+
+### Bug Fixes
+
+* **confirmations:** doubling actions ([2630b2e](https://github.com/annieverse/anniediscord/commit/2630b2e82b645e883b68c0696be0dab829b640d1))
+
+## [9.9.6](https://github.com/annieverse/anniediscord/compare/v9.9.5...v9.9.6) (2024-07-21)
+
+
+### Bug Fixes
+
+* **errors:** Handle discord permissions ([fa5550f](https://github.com/annieverse/anniediscord/commit/fa5550f4d23cda5db5b9bdc648d254cab52ab3eb))
+
+## [9.9.5](https://github.com/annieverse/anniediscord/compare/v9.9.4...v9.9.5) (2024-07-20)
+
+
+### Bug Fixes
+
+* **say:** unknown interaction ([591641c](https://github.com/annieverse/anniediscord/commit/591641ce408e4e1ac136c630c5fb72bbfe81d0da))
+
 ## [9.9.4](https://github.com/annieverse/anniediscord/compare/v9.9.3...v9.9.4) (2024-07-05)
 
 

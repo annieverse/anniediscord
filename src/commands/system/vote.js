@@ -20,20 +20,24 @@ module.exports = {
     page: `https://top.gg/bot/501461775821176832`,
     async execute(client, reply, message, arg, locale) {
         const user = message.author
-        return await this.run(client,reply,locale,user)
+        return await this.run(client, reply, locale, user)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        await interaction.deferReply({ ephemeral: true })
         const guildMember = interaction.member.user
-        return await this.run(client,reply,locale,guildMember)
+        return await this.run(client, reply, locale, guildMember)
     },
-    async run(client,reply,locale,user){
-        if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE)
+    async run(client, reply, locale, user) {
+        if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE, {
+            editReply: true
+        })
         const voted = await client.dblApi.hasVoted(user.id)
         if (voted) return await reply.send(locale.VOTE.IS_COOLDOWN, {
             socket: {
                 page: `[write a review](${this.page})`,
                 emoji: await client.getEmoji(`692428785571856404`)
-            }
+            },
+            editReply: true
         })
         return await reply.send(locale.VOTE.READY, {
             header: `Hi, ${user.username}`,
@@ -41,7 +45,8 @@ module.exports = {
             socket: {
                 emoji: await client.getEmoji(`692428927620087850`),
                 url: `[Discord Bot List](${this.page}/vote)`
-            }
+            },
+            editReply: true
         })
     }
 }

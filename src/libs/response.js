@@ -4,12 +4,14 @@ const {
 	AttachmentBuilder,
 	ActionRowBuilder,
 	ButtonBuilder,
-	ButtonStyle
+	ButtonStyle,
+	ChannelType
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
-const {PermissionFlagsBits} = require(`discord.js`)
-
+const { PermissionFlagsBits } = require(`discord.js`)
+const errorRelay = require(`../utils/errorHandler.js`)
+const levelZeroErrors = require(`../utils/errorLevels.js`)
 /** 
  * Annie's response message system.
  * @abstract
@@ -39,16 +41,16 @@ class Response {
 				message.channel : null
 
 		/**
-		 * Determine if the message is a Slash command.
-		 * @deprecated
-		 */
-		this.isSlash = message.applicationId === null ? true : false
-
-		/**
 		 * The metadata of locale to be used
 		 * @type {object|null}
 		 */
 		this.localeMetadata = localeMetadata
+
+		/**
+		 * Extract client property
+		 * @type {object}
+		 */
+		this.client = message.client
 	}
 
 	/**
@@ -80,6 +82,8 @@ class Response {
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
 	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
+	 * @param {Boolean} plugins.sendAnyway Send to channel reguardless of other options
+	 * @param {Boolean} plugins.editReply Toggle if it should be edit instead of followup
 	 * @param {Object | String} plugins.field message field target (GuildChannel/DM).
 	 * @param {String | Number} plugins.deleteIn as countdown before the message get deleted. In seconds.
 	 * @param {Array | String | Object} plugins.components Array of components like buttons
@@ -90,50 +94,53 @@ class Response {
 	 * @return {void}
 	 */
 	async send(content = ``, plugins = {}) {
-		let socket = plugins.socket || []
+		const socket = plugins.socket || []
 		let color = plugins.color || palette.crimson
-		let url = plugins.url || null
-		let image = plugins.image || null
-		let imageGif = plugins.imageGif || null
-		let field = plugins.field || this.targetField
-		let simplified = plugins.simplified || false
-		let thumbnail = plugins.thumbnail || null
-		let notch = plugins.notch || false
-		let prebuffer = plugins.prebuffer || false
-		let header = plugins.header || null
-		let footer = plugins.footer || null
-		let customHeader = plugins.customHeader || null
-		let deleteIn = plugins.deleteIn || null
-		let timestamp = plugins.timestamp || null
-		let paging = plugins.paging || null
-		let status = plugins.status || null
-		let cardPreviews = plugins.cardPreviews || null
-		let topNotch = plugins.topNotch || null
-		let raw = plugins.raw || false
-		let timestampAsFooter = plugins.timestampAsFooter || false
-		let directMessage = plugins.dm || false
-		let feedback = plugins.feedback || false
+		const url = plugins.url || null
+		const image = plugins.image || null
+		const imageGif = plugins.imageGif || null
+		const field = plugins.field || this.targetField
+		const simplified = plugins.simplified || false
+		const thumbnail = plugins.thumbnail || null
+		const notch = plugins.notch || false
+		const prebuffer = plugins.prebuffer || false
+		const header = plugins.header || null
+		const footer = plugins.footer || null
+		const customHeader = plugins.customHeader || null
+		const deleteIn = plugins.deleteIn || null
+		const timestamp = plugins.timestamp || null
+		const paging = plugins.paging || null
+		const status = plugins.status || null
+		const cardPreviews = plugins.cardPreviews || null
+		const topNotch = plugins.topNotch || null
+		const raw = plugins.raw || false
+		const timestampAsFooter = plugins.timestampAsFooter || false
+		const directMessage = plugins.dm || false
+		const feedback = plugins.feedback || false
 		let components = plugins.components || null
 		let file = plugins.file || null
-		let fetchReply = plugins.fetchReply || true
-		let ephemeral = plugins.ephemeral || false
-		let messageToReplyTo = plugins.messageToReplyTo || null
-		let replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
+		const fetchReply = plugins.fetchReply || true
+		const ephemeral = plugins.ephemeral || false
+		const messageToReplyTo = plugins.messageToReplyTo || null
+		const replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
+		const sendAnyway = plugins.sendAnyway || false
+		const editReply = plugins.editReply || false
 
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!isSlash){
-			const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
-			if (!ViewChannel) return
-			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
-			if(!SendMessages) return
+		if (!isSlash) {
+			const checkPerm = this.checkPermissions(field)
+			if (!checkPerm) return
 		}
-		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
-		const RESPONSE_REF =  messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? this.message : field
-		const RESPONSE_TYPE = replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? `followUp` : `reply` : `send`
-		const embed = new EmbedBuilder()
+		// Check for file permission
+		const hasFileUploadPerm = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.AttachFiles)
 
+
+		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
+		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
+		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
+		const embed = new EmbedBuilder()
 		/**
 		 * Format Components to correct data type
 		 */
@@ -162,7 +169,7 @@ class Response {
 		if ([`success`, `warn`, `fail`].includes(status)) color = status === `success` ? `#ffc9e2` : `crimson`
 
 		//  Returns simple message w/o embed
-		if (simplified) return await sendMessage()
+		if (simplified) return await sendMessage.call(this)
 
 		//  Add notch/chin
 		if (notch) content = `\u200C\n${content}\n\u200C`
@@ -173,9 +180,9 @@ class Response {
 
 		if (raw) return embed
 
-		let sent = await sendMessage()
+		let sent = await sendMessage.call(this)
 
-		if (file) sent = await sendMessage()
+		if (file) sent = await sendMessage.call(this)
 
 		if (!deleteIn) return sent
 		sent
@@ -187,22 +194,29 @@ class Response {
 
 		async function sendMessage() {
 			const noEmbed = Object.keys(embed.data).length === 0
-			if (!RESPONSE_REF) return
-			if (!RESPONSE_TYPE) return
-			if (!RESPONSE_REF[RESPONSE_TYPE]) return
+			try {
+				if (!RESPONSE_REF) throw new Error(`[Internal Error] Variable not populated`)
+				if (!RESPONSE_TYPE) throw new Error(`[Internal Error] Variable not populated`)
+				if (!RESPONSE_REF[RESPONSE_TYPE]) throw new Error(`[Internal Error] Variable not populated`)
+				if (!hasFileUploadPerm && file) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
+				if (!hasFileUploadPerm && image) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "AttachFiles" permission`)
 
-			if (file) return RESPONSE_REF[RESPONSE_TYPE]({
-				files: [file]
-			})
-
-			return RESPONSE_REF[RESPONSE_TYPE]({
-				content: noEmbed ? content : topNotch ? topNotch : null,
-				embeds: noEmbed ? null : [embed],
-				files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
-				components: components ? components : null,
-				fetchReply: fetchReply,
-				ephemeral: ephemeral
-			}) // Add catch statement? Unknown if it is needed
+				if (hasFileUploadPerm && file) return RESPONSE_REF[RESPONSE_TYPE]({
+					files: [file]
+				})
+				return RESPONSE_REF[RESPONSE_TYPE]({
+					content: noEmbed ? content : topNotch ? topNotch : null,
+					embeds: noEmbed ? null : [embed],
+					files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
+					components: components ? components : null,
+					fetchReply: fetchReply,
+					ephemeral: ephemeral
+				})
+			} catch (e) {
+				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
+				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
+				this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+			}
 		}
 
 		async function createEmbed() {
@@ -269,6 +283,29 @@ class Response {
 				file.description = plugins.file.fileDescription
 			}
 		}
+	}
+
+	/**
+	 * Return true if no errors are present
+	 * @param {import("discord.js").Channel} field 
+	 * @returns {Error | Boolean}
+	 */
+	checkPermissions(field) {
+		if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
+			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
+			if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
+		} else {
+			const SendMessagesInThread = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessagesInThreads)
+			if (!SendMessagesInThread) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessagesInThreads" permission`)
+		}
+
+		const ViewChannel = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.ViewChannel)
+		if (!ViewChannel) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "ViewChannel" permission`)
+
+		const embedLinks = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.EmbedLinks)
+		if (!embedLinks) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "EmbedLinks" permission`)
+
+		return true
 	}
 
 	/**

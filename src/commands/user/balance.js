@@ -41,11 +41,13 @@ module.exports = {
     },
     async run(user,client,reply,messageRef,locale){
         const targetUserBalance = await client.db.userUtils.getUserBalance(user.id, messageRef.guild.id)
+        const negBal = targetUserBalance<0
+        if (negBal) client.db.databaseUtils.updateInventory({ itemId: 52, value: 0, userId: user.id, guildId: messageRef.guild.id })
         return await reply.send(locale.DISPLAY_BALANCE, {
             thumbnail: user.displayAvatarURL(),
             socket: {
                 emoji: await client.getEmoji(`758720612087627787`),
-                amount: commanifier(targetUserBalance),
+                amount: negBal? 0 : commanifier(targetUserBalance),
                 tips: user.id === messageRef.member.id ? `Use **\`${client.prefix}pay\`** to share with friends!` : ` `
             }
         })

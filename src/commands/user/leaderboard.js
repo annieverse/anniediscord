@@ -66,12 +66,14 @@ module.exports = {
         return await this.run(client, reply, message, locale, arg)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        await interaction.deferReply()
         let arg = options.getString(`leaderboard`)
         return await this.run(client, reply, interaction, locale, arg)
     },
     async run(client, reply, messageRef, locale, arg) {
         if (!this.wholeKeywords().includes(arg.toLowerCase())) return await reply.send(locale.LEADERBOARD.INVALID_CATEGORY, {
-            socket: { emoji: await client.getEmoji(`692428969667985458`) }
+            socket: { emoji: await client.getEmoji(`692428969667985458`) },
+            editReply: true
         })
         //  Store key of selected group
         const selectedGroupParent = this.keywords.filter(v => v.includes(arg.toLowerCase()))[0]
@@ -83,7 +85,8 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`),
                 user: messageRef.member.id
             },
-            simplified: true
+            simplified: true,
+            editReply: true
         })
             .then(async load => {
                 //  Fetch points data and eliminates zero values if present.

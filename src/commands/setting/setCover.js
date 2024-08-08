@@ -168,7 +168,7 @@ module.exports = {
             }
         })
         fetching.delete()
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
             await client.db.covers.detachCovers(message.author.id, message.guild.id)
@@ -307,7 +307,7 @@ module.exports = {
             }
         })
         fetching.delete()
-        const c = new Confirmator(interaction, reply, true)
+        const c = new Confirmator(interaction, reply, locale)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
             await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)
@@ -360,7 +360,7 @@ module.exports = {
             }
         })
         fetching.delete()
-        const c = new Confirmator(interaction, reply, true)
+        const c = new Confirmator(interaction, reply, locale)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
             await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)

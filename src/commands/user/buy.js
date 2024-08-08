@@ -102,7 +102,7 @@ module.exports = {
                     item: item.name
                 }
             })
-            const c = new Confirmator(message, reply, true)
+            const c = new Confirmator(message, reply, locale)
             await c.setup(user.id, confirmation)
             c.onAccept(async () => {
                 if (message.applicationId != null) await message.fetchReply()

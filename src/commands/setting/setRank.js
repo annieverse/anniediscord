@@ -152,11 +152,12 @@ module.exports = {
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) this.firstTimer = true
             //  Handle if custom ranks already enabled before the action.
         if (this.primaryConfig.value) {
-            let localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETRANK.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }
@@ -198,13 +199,14 @@ module.exports = {
             //  Handle if the role is already registered
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
         if (getRegisteredRank.length >= 1) {
-            const localizeTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)            
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED, {
                 header: locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED_HEADER,
                 socket: {
                     level: getRegisteredRank[0].LEVEL,
                     user: await client.getUsername(this.subConfig.setByUserId),
-                    date: moment(localizeTime).fromNow(),
+                    date: moment(localed).fromNow(),
                     prefix: prefix,
                     role: getRole.name.toLowerCase()
                 },
@@ -288,7 +290,8 @@ module.exports = {
             })
         }
         //  Handle if the main module is disabled for the few times
-        const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+        const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+        const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
         if (!this.primaryConfig.value && this.primaryConfig.setByUserId) {
             return await reply.send(locale.SETRANK.INFO_DISABLED_BY_USER, {
                 thumbnail: message.guild.iconURL(),
@@ -297,7 +300,7 @@ module.exports = {
                     emoji: await client.getEmoji(`751020535865016420`),
                     prefix: prefix,
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow(),
+                    date: moment(localed).fromNow(),
                     guild: message.guild.name
                 }
             })
@@ -316,6 +319,8 @@ module.exports = {
         }
         //  Otherwise, display info like usual
         const localizeSubConfigTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
+        const localedSub = localizeSubConfigTime == `now` ? moment().toISOString() : localizeSubConfigTime
+        
         return await reply.send(locale.SETRANK.INFO_ENABLED, {
             status: `success`,
             thumbnail: message.guild.iconURL(),
@@ -326,7 +331,7 @@ module.exports = {
                 guild: message.guild.name,
                 list: await this._prettifyList(this.subConfig.value, client, message, locale)
             },
-            footer: `Updated by ${await client.getUsername(this.subConfig.setByUserId)}, ${moment(localizeSubConfigTime).fromNow()}`
+            footer: `Updated by ${await client.getUsername(this.subConfig.setByUserId)}, ${moment(localedSub).fromNow()}`
         })
     },
 
@@ -357,7 +362,7 @@ module.exports = {
         if (this.subConfig.value.length <= 0) return await reply.send(locale.SETRANK.RESET_NULL_RANKS)
             //  Confirmation before performing the action
         const confirmation = await reply.send(``, { header: locale.SETRANK.RESET_CONFIRMATION })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             //  Reset values

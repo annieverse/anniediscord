@@ -4,12 +4,13 @@ const Confirmator = require(`../../libs/confirmator`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    ChannelType
 } = require(`discord.js`)
-    /**
-     * Set a specific channel for Annie's command usage..
-     * @author klerikdust
-     */
+/**
+ * Set a specific channel for Annie's command usage..
+ * @author klerikdust
+ */
 module.exports = {
     name: `setcommand`,
     name_localizations:{},
@@ -31,34 +32,40 @@ module.exports = {
             name: `set`,
             description: `Set a specific channel for Annie's command usage.`,
             required: true,
-            type: ApplicationCommandOptionType.Channel
-        },{
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+        }, {
             name: `additional_channel_1`,
             description: `Set a specific channel for Annie's command usage.`,
             required: false,
-            type: ApplicationCommandOptionType.Channel
-        },{
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+        }, {
             name: `additional_channel_2`,
             description: `Set a specific channel for Annie's command usage.`,
             required: false,
-            type: ApplicationCommandOptionType.Channel
-        },{
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+        }, {
             name: `additional_channel_3`,
             description: `Set a specific channel for Annie's command usage.`,
             required: false,
-            type: ApplicationCommandOptionType.Channel
-        },{
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+        }, {
             name: `additional_channel_4`,
             description: `Set a specific channel for Annie's command usage.`,
             required: false,
-            type: ApplicationCommandOptionType.Channel
-        },{
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
+        }, {
             name: `additional_channel_5`,
             description: `Set a specific channel for Annie's command usage.`,
             required: false,
-            type: ApplicationCommandOptionType.Channel
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
         }]
-    },{
+    }, {
         name: `reset`,
         description: `Action to perform.`,
         type: ApplicationCommandOptionType.Subcommand
@@ -68,7 +75,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         const actions = [`channel`, `reset`]
         const currentCommandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
-            //  Handle if user doesn't specify the new bio/description
+        //  Handle if user doesn't specify the new bio/description
         if (!arg) return await reply.send(locale.SETCOMMAND.GUIDE, {
             header: `Hi, ${message.author.username}!`,
             image: `banner_setcommand`,
@@ -107,11 +114,11 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieMad2`)
             }
         })
-        
+
         const specifiedChannels = message.type == 0 ? this.args.slice(1) : this.args
         const thinkingEmoji = await client.getEmoji(`692428969667985458`)
         const madEmoji = await client.getEmoji(`692428748838010970`)
-            //  Iterate over multi channel registering
+        //  Iterate over multi channel registering
         for (let i = 0; i < specifiedChannels.length; i++) {
             const ch = specifiedChannels[i].toLowerCase().replace(/[^0-9a-z-A-Z ]/g, ``)
             const targetNewChannel = message.guild.channels.cache.get(ch) ||
@@ -164,9 +171,9 @@ module.exports = {
                 emoji: await client.getEmoji(`692428785571856404`)
             }
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
-        c.onAccept(async() => {
+        c.onAccept(async () => {
             //  Reset configuration
             client.db.guildUtils.updateGuildConfiguration({
                 configCode: this.configId,

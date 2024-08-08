@@ -58,7 +58,7 @@ module.exports = {
         return await this.run(client, reply, interaction, arg, locale)
     },
     async run(client, reply, messageRef, arg, locale,) {
-        const cacheId = `${messageRef.member.id}-${messageRef.guildId}-cartcoin`
+        const cacheId = `CARTCOIN:${messageRef.member.id}@${messageRef.guildId}`
         if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
             return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS,{ephemeral:true})
         }
@@ -84,11 +84,9 @@ module.exports = {
                 gainedExp: commanifier(totalGainedExp)
             }
         })
-        const c = new Confirmator(messageRef, reply)
-        c.setup(messageRef.member.id, confirmation)
+        const c = new Confirmator(messageRef, reply, locale)
+        await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            await messageRef.fetchReply()
-
             //  Returns if user's artcoins is below the amount of going to be used
             if (userBalance < amountToUse) {
                 client.db.databaseUtils.delCache(cacheId)

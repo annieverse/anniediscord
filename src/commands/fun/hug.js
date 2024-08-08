@@ -30,7 +30,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     hugGenLink: `https://purrbot.site/api/img/sfw/hug/gif`,
     async execute(client, reply, message, arg, locale) {
-        const target = arg ? (await (new User(client, message)).lookFor(arg)).master : null
+        const target = arg ? (await (new User(client, message)).lookFor(arg))?.master : null
         const user = message.author
         return await this.run(target, user, reply, locale)
     },

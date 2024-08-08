@@ -27,14 +27,17 @@ module.exports = {
                 emoji: await client.getEmoji(`AnnieNyaa`)
             }
         })
-        return await this.run(arg, message)
+        return await this.run(arg, message, reply)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        return await this.run(options.getString(`message`), interaction)
+        return await this.run(options.getString(`message`), interaction,reply)
     },
-    async run(msg, messageRef) {
-        messageRef.type != 0 ? messageRef.deferReply() : null
-        messageRef.type != 0 ? messageRef.deleteReply() : messageRef.delete()
-        return messageRef.channel.send(msg)
+    async run(msg, messageRef, reply) {
+        const isSlash = messageRef.applicationId === null || messageRef.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+        isSlash ? reply.send(`Message sent :P`,{ephemeral:true}) : null
+        return reply.send(msg,{
+            field: messageRef.channel,
+            sendAnyway: true
+        })
     }
 }

@@ -88,7 +88,7 @@ module.exports = {
             if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
             const targetUserData = await userLib.requestMetadata(targetUser.master, 2,locale)
                 //  Handle delete action	
-            const c = new Confirmator(message, reply)
+            const c = new Confirmator(message, reply, locale)
             if (useRemoveAction) {
                 if (!userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
                     socket: {
@@ -184,7 +184,7 @@ module.exports = {
             if (userLib.isSelf(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.SET_TO_SELF, { socket: { emoji: await client.getEmoji(`751016612248682546`) } })
             const targetUserData = await userLib.requestMetadata(targetUser.master, 2,locale)
                 //  Handle delete action	
-            const c = new Confirmator(interaction, reply, true)
+            const c = new Confirmator(interaction, reply, locale)
             if (useRemoveAction) {
                 if (!userRels.includes(targetUser.master.id)) return await reply.send(locale.RELATIONSHIP.TARGET_NOT_PART_OF, {
                     socket: {

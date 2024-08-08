@@ -252,6 +252,15 @@ class DatabaseUtils {
 		if (!guildId && !distributeMultiAccounts) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
 		let res
+
+		// UPDATE user_inventories
+		// SET quantity = (
+		// 	CASE WHEN quantity ${operation} $value<0 THEN 0
+		// 			ELSE quantity ${operation} $value
+		// 	END),
+		// 	updated_at = CURRENT_TIMESTAMP
+		// 	WHERE item_id = $itemId AND guild_id = $guildId`
+
 		if (distributeMultiAccounts) {
 			res = {
 				//	Insert if no data entry exists.
@@ -268,7 +277,9 @@ class DatabaseUtils {
 				update: await this._query(`
 					UPDATE user_inventories
 					SET 
-						quantity = quantity ${operation} $value,
+						quantity = (CASE WHEN quantity ${operation} $value<0 THEN 0
+									ELSE quantity ${operation} $value
+						END),
 						updated_at = CURRENT_TIMESTAMP
 					WHERE item_id = $itemId AND user_id = $userId`
 					, `run`
@@ -293,7 +304,9 @@ class DatabaseUtils {
 				update: await this._query(`
 					UPDATE user_inventories
 					SET 
-						quantity = quantity ${operation} $value,
+						quantity = (CASE WHEN quantity ${operation} $value<0 THEN 0
+									ELSE quantity ${operation} $value
+						END),
 						updated_at = CURRENT_TIMESTAMP
 						WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId`
 					, `run`
@@ -512,6 +525,7 @@ class UserUtils extends DatabaseUtils {
 		const fn = this.formatFunctionLog(`updateUserExp`)
 		if (!amount && amount != 0) throw new TypeError(`${fn} parameter "amount" cannot be blank.`)
 		if (typeof (amount) != `number`) throw new TypeError(`${fn} parameter "amount" must be a number.`)
+		amount = Math.floor(amount)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
 		if (operation != `+` && operation != `-`) throw new RangeError(`${fn} parameter "operation" can only be "+" or "-"`)
@@ -538,7 +552,7 @@ class UserUtils extends DatabaseUtils {
 		//  Refresh cache
 		this.delCache(`EXP_${userId}@${guildId}`)
 		// this.redis.del(`EXP_${userId}@${guildId}`)
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
@@ -1494,10 +1508,10 @@ class GuildUtils extends DatabaseUtils {
 						END),
 						updated_at = CURRENT_TIMESTAMP
 						WHERE item_id = $itemId AND guild_id = $guildId`
-				, `run`
-				, { value: value, itemId: itemId, guildId: guildId }
-				, `${fn} Updating all user inventories`
-			)
+			, `run`
+			, { value: value, itemId: itemId, guildId: guildId }
+			, `${fn} Updating all user inventories`
+		)
 
 		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
 		return true
@@ -2281,7 +2295,7 @@ class Shop extends DatabaseUtils {
 		if (!param) throw new TypeError(`${fn} parameter "param" cannot be blank.`)
 		const validColumns = [`item_id`, `guild_id`, `quantity`, `price`]
 		if (!validColumns.includes(targetProperty)) throw new TypeError(`${fn} parameter "targetProperty" must be one for the following: ${validColumns.join(`, `)}`)
-		
+
 		await this._query(`
             UPDATE shop
             SET ${targetProperty} = $param
@@ -2575,12 +2589,12 @@ class Quests extends DatabaseUtils {
 		)
 	}
 }
-class Custom extends DatabaseUtils{
-	constructor(client){
+class Custom extends DatabaseUtils {
+	constructor(client) {
 		super(client)
 	}
 
-	async setWalletAddress(userId, wallet){
+	async setWalletAddress(userId, wallet) {
 		const fn = this.formatFunctionLog(`setWalletAddress`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!wallet) throw new TypeError(`${fn} parameter "wallet" cannot be blank.`)
@@ -2597,24 +2611,24 @@ class Custom extends DatabaseUtils{
 				UPDATE avarik_saga
 				SET wallet = $wallet
 				WHERE user_id = $userId`
-				,`run`
-				,{ userId: userId, wallet: wallet}
-				,`${fn} Updating wallet address for ${userId}`)
+				, `run`
+				, { userId: userId, wallet: wallet }
+				, `${fn} Updating wallet address for ${userId}`)
 		}
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
 		logger.database(`${fn} ${stmtType} Avarik Saga Wallet link with user`)
 		return true
 	}
 
-	async deleteWalletAddress(userId){
+	async deleteWalletAddress(userId) {
 		const fn = this.formatFunctionLog(`deleteWalletAddress`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		return await this._query(`
 				DELETE FROM avarik_saga
 				WHERE user_id = $userId`
-				,`run`
-				,{ userId: userId}
-				,`${fn} Deleting wallet address for ${userId}`)
+			, `run`
+			, { userId: userId }
+			, `${fn} Deleting wallet address for ${userId}`)
 	}
 }
 /* class Template extends DatabaseUtils{

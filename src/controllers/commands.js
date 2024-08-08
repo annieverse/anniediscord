@@ -4,6 +4,7 @@ const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
+const cacheReset = require(`../utils/cacheReset.js`)
 
 /**
  * Centralized Controller to handle incoming command request
@@ -27,7 +28,21 @@ module.exports = async (client = {}, message = {}) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
     const locale = client.getTargetLocales(userData.lang)
-    let reply = client.responseLibs(message, false, locale)
+    const reply = client.responseLibs(message, false, locale)
+
+    // Check Bot's permissions before procceding
+    let checkPerm = false
+    try {
+        checkPerm = reply.checkPermissions(message.channel)
+        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+    } catch (e) {
+        const internalError = e.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        if (internalError) return
+        return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+    }
+
+
     // Handle non-command-allowed channels
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
@@ -69,7 +84,12 @@ module.exports = async (client = {}, message = {}) => {
     client.cooldowns.set(instanceId, Date.now())
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)) === 0) {
-        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS)
+        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS).catch(e => {
+            const internalError = e.message.startsWith(`[Internal Error]`)
+            // Handle cache(s)
+            if (internalError) return
+            return client.logger.error(e)
+        })
     }
     try {
         const initTime = process.hrtime()
@@ -92,6 +112,9 @@ module.exports = async (client = {}, message = {}) => {
     }
     catch (e) {
         client.logger.error(e)
+        const internalError = e.message.startsWith(`[Internal Error]`)
+        // Handle cache(s)
+        if (internalError) cacheReset(client, command.name, message.author.id, message.guild.id)
         if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
             socket: {
                 error: e.stack,
@@ -104,19 +127,20 @@ module.exports = async (client = {}, message = {}) => {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
-            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            }).catch(err => client.logger.error(`[ERROR_UNSUPPORTED_FILE_TYPE] Unable to send message to channel > ${err}`))
         }
         //  Missing-permission error
-        else if (e.code === 50013) {
+        else if (e.code === 50013 || internalError) {
             await reply.send(locale.ERROR_MISSING_PERMISSION, {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
-            }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            }).catch(err => client.logger.error(`[ERROR_MISSING_PERMISSION] Unable to send message to channel > ${err}`))
         } else {
-            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to send message to channel > ${err}`))
         }
         //  Report to support server
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors:levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        if (internalError) return
+        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

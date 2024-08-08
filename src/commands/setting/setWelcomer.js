@@ -13,7 +13,8 @@ const { Collection } = require(`discord.js`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    ChannelType
 } = require(`discord.js`)
 /**
  * Manage welcomer module for your guild.
@@ -52,7 +53,8 @@ module.exports = {
             name: `set`,
             description: `The channel to set for Annie's logs.`,
             required: true,
-            type: ApplicationCommandOptionType.Channel
+            type: ApplicationCommandOptionType.Channel,
+            channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
         }]
     }, {
         name: `text`,
@@ -124,6 +126,7 @@ module.exports = {
                 description: `Channel name`,
                 required: true,
                 type: ApplicationCommandOptionType.Channel,
+                channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
             }, {
                 name: `text`,
                 description: `Set text for welcome message in this channel.`,
@@ -139,6 +142,7 @@ module.exports = {
                 description: `Channel name`,
                 required: true,
                 type: ApplicationCommandOptionType.Channel,
+                channel_types: [ChannelType.GuildText, ChannelType.PublicThread, ChannelType.PrivateThread]
             }]
         }, {
             name: `list`,
@@ -470,10 +474,11 @@ module.exports = {
     async enable(client, reply, message, locale, prefix) {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
+            const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.SETWELCOMER.ALREADY_ENABLED, {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
-                    date: moment(localizeTime).fromNow()
+                    date: moment(localed).fromNow()
                 }
             })
         }
@@ -598,9 +603,9 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /**
@@ -706,7 +711,7 @@ module.exports = {
             image: await new GUI(message.member, client, `welcomer`).build(),
             prebuffer: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.deleteGuildConfiguration(`WELCOMER_IMAGE`, message.guild.id)
@@ -779,7 +784,7 @@ module.exports = {
             image: await new GUI(message.member, client, id).build(),
             prebuffer: true
         })
-        const c = new Confirmator(message, reply, message.type == 0 ? false : true)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
             client.db.guildUtils.updateGuildConfiguration({
@@ -835,9 +840,9 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /**
@@ -870,9 +875,9 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        const c = new Confirmator(message, reply)
+        const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, tipsToPreview)
-        c.onAccept(() => this.preview(client, reply, message, null, locale, prefix))
+        c.onAccept(() => this.preview(client, reply, message, locale, prefix))
     },
 
     /** 
