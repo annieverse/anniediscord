@@ -94,7 +94,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`, `882552960771555359`/* , `1242130891363454996` */],
+    servers: [`577121315480272908`, `882552960771555359`, `1242130891363454996`],
     /**
      * Any other properties you want to add to the command.
      */

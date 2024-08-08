@@ -94,7 +94,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`/* , `1242130891363454996` */],
+    servers: [`577121315480272908`, `1242130891363454996`],
 
     /**
      * Current instance's config code

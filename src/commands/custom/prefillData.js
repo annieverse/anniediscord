@@ -72,7 +72,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`/* , `1242130891363454996` */],
+    servers: [`577121315480272908`, `1242130891363454996`],
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
     /**
     * Define the command's options. This is what is used as an argument for the command (Application commands only).
