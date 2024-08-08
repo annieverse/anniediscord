@@ -12,6 +12,8 @@ const { ApplicationCommandType } = require(`discord.js`)
  */
 module.exports = {
     name: `stats`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`stats`, `botinfo`, `annieinfo`, `info`, `anniestatus`],
     description: `Gives info about the current Annie's Statistic.`,
     usage: `stats`,

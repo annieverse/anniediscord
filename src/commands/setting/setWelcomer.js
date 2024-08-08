@@ -22,6 +22,8 @@ const {
  */
 module.exports = {
     name: `setwelcomer`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setwelcomer`, `setwelcome`, `setwlcm`],
     description: `Manage welcomer module for your guild.`,
     usage: `setWelcomer`,

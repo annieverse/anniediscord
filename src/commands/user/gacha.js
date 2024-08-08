@@ -12,6 +12,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `gacha`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`gch`, `gacha`, `reroll`],
     description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
     usage: `gacha <Amount>`,

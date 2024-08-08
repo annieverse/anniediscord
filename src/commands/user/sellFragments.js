@@ -14,6 +14,8 @@ const {
  */
 module.exports = {
     name: `sellfragments`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`sellfrag`, `sellfragments`, `sellfrags`, `sellfragment`],
     description: `Exchange all your unused fragments into artcoins!`,
     usage: `sellfragments <amount/all>`,

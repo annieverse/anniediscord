@@ -13,6 +13,8 @@ const {
  */
 module.exports = {
     name: `autorespond`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
     description: `Create a set of autoresponder!`,
     usage: `ar`,

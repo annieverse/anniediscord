@@ -17,6 +17,8 @@ const {
      */
 module.exports = {
     name: `setexp`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setexp`, `setexperience`, `setxp`],
     description: `Configure the exp for your member and the server.`,
     usage: `setexp`,

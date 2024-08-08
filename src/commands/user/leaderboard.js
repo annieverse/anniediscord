@@ -9,6 +9,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `leaderboard`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`rank`, `leaderboard`, `rank`, `ranking`, `lb`, `leaderboards`],
     description: `Displaying your server leaderboard!`,
     usage: `leaderboard`,

@@ -6,6 +6,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBit
  */
 module.exports = {
     name: `say`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [],
     description: `Talk through Annie!`,
     usage: `say <Message>`,

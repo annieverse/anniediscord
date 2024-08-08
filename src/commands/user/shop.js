@@ -10,6 +10,8 @@ const {
  */
 module.exports = {
     name: `shop`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`shops`, `marketplace`, `market`],
     description: `Buy purchasable items in server's shop!`,
     usage: `shop`,

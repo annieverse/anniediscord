@@ -9,6 +9,8 @@ const {
  */
 module.exports = {
     name: `setgender`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setgender`, `setgenders`, `setgndr`],
     description: `Define your gender`,
     usage: `setgender <F/M>`,

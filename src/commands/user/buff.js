@@ -7,6 +7,8 @@ const ms = require(`ms`)
  */
 module.exports = {
     name: `buff`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`buffs`, `buff`, `activebuff`],
     description: `Displaying your currently active buffs`,
     usage: `buff`,

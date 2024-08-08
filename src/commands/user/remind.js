@@ -7,6 +7,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `remind`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`remind`, `rmd`, `reminds`, `reminder`, `remindme`],
     description: `Never forget things. Ask Annie to reminds you anytime!`,
     usage: `remind <message> <time>`,

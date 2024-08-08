@@ -3,7 +3,8 @@ const assert = require(`assert`)
 class commandStructureChecker {
 
     // Declare private variables
-    #baseLevel = [`name`, `aliases`, `description`, `usage`, `permissionLevel`, `multiUser`, `applicationCommand`, `messageCommand`, `server_specific`]
+    #baseLevel = [`name`, `aliases`, `description`, `usage`, `permissionLevel`, `multiUser`, `applicationCommand`, `messageCommand`, `server_specific`,`name_localizations`,`description_localizations`]
+    #langSupported = [`en-US`,`fr`] // https://discord.com/developers/docs/reference#locales
     #errorMessage
     #commandLoaderPath = `../../src/commands/loader.js`
     #commandFiles
@@ -37,6 +38,9 @@ class commandStructureChecker {
         return this.#errorMessage
     }
 
+    get #getLangSupported(){
+        return this.#langSupported
+    }
     /**
      * Return a Boolean if a object has a property or not
      * @param {object} object 
@@ -53,9 +57,22 @@ class commandStructureChecker {
                 const baseKey = this.#getBaseLevel[index];
                 const result = this.#hasProp(value, baseKey)
                 if (!result) {
-                    this.#setErrorMessage = `${value?.name} has an error, The file is missing ${baseKey} from its properties`
+                    this.#setErrorMessage = `Command file "${value?.name}" has an error, The file is missing ${baseKey} from its properties`
+                    return false
+                } else if (baseKey === `name_localizations` || baseKey === `description_localizations`){
+                    const langs = this.#getLangSupported
+                    var errorMsg = ``
+                    for (const l of langs) {
+                        if (!this.#hasProp(value, l)) {
+                            errorMsg += `Needs Lang ${l} added\n`
+                        } else if (baseKey === `name_localizations` && value?.[baseKey] != value?.[baseKey].toLowerCase()) {
+                            errorMsg += `Lang ${l} > Needs to be all lowercased`
+                        }               
+                    }
+                    this.#setErrorMessage = `Command file "${value?.name}" has an error(s), The key: ${baseKey} >\n${errorMsg}`
                     return false
                 }
+
                 if (value?.name != value?.name.toLowerCase()){
                     this.#setErrorMessage = `Command file "${value?.name}" has an error, The key: ${baseKey} > Needs to be all lowercased`
                     return false
@@ -140,7 +157,7 @@ class commandStructureChecker {
 
     check(obj, k, value) {
         if (!this.#hasProp(obj, k)) {
-            this.#setErrorMessage = `${value?.name} has an error, The file is missing additional key: ${k}`
+            this.#setErrorMessage = `Command file "${value?.name}" has an error, The file is missing additional key: ${k}`
             return false
         }
         if (k === `name`) {
@@ -148,6 +165,18 @@ class commandStructureChecker {
                 this.#setErrorMessage = `Command file "${value?.name}" has an error, The key: ${k} > Needs to be all lowercased`
                 return false
             }
+        } else if (k === `name_localizations` || k === `description_localizations`){
+            const langs = this.#getLangSupported
+            var errorMsg = ``
+            for (const l of langs) {
+                if (!this.#hasProp(value, l)) {
+                    errorMsg += `Needs Lang ${l} added\n`
+                } else if (baseKey === `name_localizations` && value?.[k] != value?.[k].toLowerCase()) {
+                    errorMsg += `Lang ${l} > Needs to be all lowercased`
+                }               
+            }
+            this.#setErrorMessage = `Command file "${value?.name}" has an error(s), The key: ${k} >\n${errorMsg}`
+            return false
         }
         return true
     }
@@ -189,8 +218,18 @@ describe(`Commands`, () => {
                 const errorMsg = commandTester.getErrorMessage
                 assert.strictEqual(result, true, errorMsg)
             })
+            it(`should return true for property: name_localizations`, () => {
+                const result = commandTester.checkAppCmdsOpt(`name_localizations`)
+                const errorMsg = commandTester.getErrorMessage
+                assert.strictEqual(result, true, errorMsg)
+            })
             it(`should return true for property: description`, () => {
                 const result = commandTester.checkAppCmdsOpt(`description`)
+                const errorMsg = commandTester.getErrorMessage
+                assert.strictEqual(result, true, errorMsg)
+            })
+            it(`should return true for property: description_localizations`, () => {
+                const result = commandTester.checkAppCmdsOpt(`description_localizations`)
                 const errorMsg = commandTester.getErrorMessage
                 assert.strictEqual(result, true, errorMsg)
             })

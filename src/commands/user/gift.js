@@ -12,6 +12,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `gift`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`gifts`, `giveitem`, `senditem`, `praise`],
     description: `Send gifts to your friends! They will receive 1 reputation point for each gift you send.`,
     usage: `gift <User>`,

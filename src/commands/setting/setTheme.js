@@ -10,6 +10,8 @@ const {
      */
 module.exports = {
     name: `settheme`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
     description: `Switch your profile theme to Light or Dark.`,
     usage: `theme <Light/Dark>`,

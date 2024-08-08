@@ -11,6 +11,8 @@ const User = require(`../../libs/user`)
  */
 module.exports = {
     name: `hug`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`hugs`, `hug`],
     description: `Displays a random gif of a hug.`,
     usage: `hug <User>(Optional)`,

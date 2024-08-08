@@ -9,6 +9,8 @@ const {
  */
 module.exports = {
   name: `setlanguage`,
+  name_localizations:{},
+  description_localizations:{},
   aliases: [`setlang`, `setlanguage`, `setlocale`],
   description: `User's language switcher`,
   usage: `setlang <language name/code>`,

@@ -23,6 +23,8 @@ const {
  */
 module.exports = {
     name: `setshop`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`setshop`, `setshops`],
     description: `Create, restock & sell items for your server members!`,
     usage: `setShop`,

@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType, P
 module.exports = {
     name: `shoplog`,
     aliases: [],
+    name_localizations:{},
+    description_localizations:{},
     description: `Displaying your server leaderboard for selected item!`,
     usage: `shopLog enable`,
     permissionLevel: 2,

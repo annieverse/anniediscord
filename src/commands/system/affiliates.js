@@ -6,6 +6,8 @@ const { ApplicationCommandType } = require(`discord.js`)
      */
 module.exports = {
         name: `affiliates`,
+        name_localizations:{},
+        description_localizations:{},
         aliases: [`affiliate`, `affiliates`, `affil`],
         description: `List of servers that supporting the development of Annie.`,
         usage: `affiliate`,

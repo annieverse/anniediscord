@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `rep`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`reps`, `reputation`, `reputations`, `reputationpoint`, `praise`, `commend`],
     description: `Gives a reputation point to a user. Once a day.`,
     usage: `rep <User>`,

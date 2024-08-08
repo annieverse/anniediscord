@@ -14,6 +14,8 @@ const {
      */
 module.exports = {
         name: `setrelationship`,
+        name_localizations:{},
+        description_localizations:{},
         aliases: [`setrel`, `setrelationship`, `setrelations`, `setrelation`, `addrelationship`, `setrelationship`, `addrel`],
         description: `Assign your friend into your relationship trees!`,
         usage: `setrelationship`,

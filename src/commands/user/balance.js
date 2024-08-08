@@ -8,6 +8,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
      */
 module.exports = {
     name: `balance`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`bal`, `money`, `credit`, `ball`, `ac`, `artcoin`, `artcoins`],
     description: `Displaying user's current balance`,
     usage: `balance`,

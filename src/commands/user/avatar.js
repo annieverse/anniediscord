@@ -9,6 +9,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `avatar`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`ava`, `pfp`],
     description: `Display user's avatar`,
     usage: `avatar <user>`,

@@ -12,6 +12,8 @@ const {
  */
 module.exports = {
 	name: `daily`,
+    name_localizations:{},
+    description_localizations:{},
 	aliases: [`dly`, `daili`, `dail`, `dayly`, `attendance`, `dliy`],
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,

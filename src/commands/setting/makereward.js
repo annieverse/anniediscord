@@ -21,6 +21,8 @@ const {
  */
 module.exports = {
     name: `makereward`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`mr`],
     description: `make a custom reward package`,
     usage: `makereward`,

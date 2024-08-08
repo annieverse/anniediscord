@@ -12,6 +12,8 @@ const {
  */
 module.exports = {
     name: `buy`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`purchase`, `buyy`],
     description: `Buy any purchasable items from server shop!`,
     usage: `buy <ItemID/ItemName>`,

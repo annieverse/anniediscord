@@ -13,6 +13,8 @@ const {
  */
 module.exports = {
     name: `use`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`use`, `uses`, `eat`, `drink`, `open`, `consume`],
     description: `Consume an item and gain certain effect`,
     usage: `use <item>`,

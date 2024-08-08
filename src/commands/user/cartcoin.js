@@ -10,6 +10,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `cartcoin`,
+    name_localizations:{},
+    description_localizations:{},
     aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`, `artcoinconvert`, `convertartcoin`],
     description: `Converts Artcoins into EXP at the rate of 1:8`,
     usage: `cartcoin <Amount>`,
