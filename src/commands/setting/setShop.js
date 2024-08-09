@@ -699,7 +699,7 @@ module.exports = {
                     if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                         deleteIn: 5
                     })
-                    metadata.stocks = input
+                    metadata.stocks = input == `~` ? 9223372036854775807n : input
                     dataDisplay.edit({
                         content: locale.SETSHOP.ADD_TRADABILITY,
                         embeds: [await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`)]

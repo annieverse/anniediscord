@@ -291,6 +291,7 @@ class Response {
 	 * @returns {Error | Boolean}
 	 */
 	checkPermissions(field) {
+		if (!this.message.guild.members) throw new Error(`[Internal Error] Can't read members property`)
 		if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
 			if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
