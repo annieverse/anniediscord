@@ -18,6 +18,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     options: [
         {
             name: `all`,
@@ -58,7 +59,7 @@ module.exports = {
     async run(client, reply, messageRef, arg, locale,) {
         const cacheId = `CARTCOIN:${messageRef.member.id}@${messageRef.guildId}`
         if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
-            return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS,{ephemeral:true})
+            return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS, { ephemeral: true })
         }
         client.db.databaseUtils.setCache(cacheId, `1`, { EX: 60 * 30 })
         const userBalance = await client.db.userUtils.getUserBalance(messageRef.member.id, messageRef.guildId)

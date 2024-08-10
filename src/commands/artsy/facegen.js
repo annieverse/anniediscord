@@ -15,6 +15,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     type: ApplicationCommandType.ChatInput,
+    contexts: [0],
     server_specific: false,
     async execute(client, reply, message, arg, locale) {
         return await this.getRandomId(client, reply, message, locale)

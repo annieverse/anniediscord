@@ -61,6 +61,7 @@ module.exports = {
      * @type {PermissionFlagsBits}
      */
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
+    contexts: [0],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
      * @required Only if applicationCommand is true

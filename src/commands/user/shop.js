@@ -18,10 +18,11 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     type: ApplicationCommandType.ChatInput,
-    async run(client, reply, messageRef, locale){
+    async run(client, reply, messageRef, locale) {
         const guildShop = await client.db.shop.getGuildShop(messageRef.guild.id)
-        
+
         if (!guildShop.length) {
             await reply.send(locale.SHOP.NO_ITEMS)
             return await reply.send(locale.SHOP.SETUP_TIPS, {
@@ -29,7 +30,7 @@ module.exports = {
                 socket: {
                     prefix: `/`
                 },
-                followUp:true
+                followUp: true
             })
         }
         //  Handle shop closure
@@ -59,7 +60,7 @@ module.exports = {
         //  Displaying shop
         const customBanner = messageRef.guild.configs.get(`SHOP_IMAGE`).value
         await reply.send(res, {
-            image: customBanner ? await loadAsset(customBanner, {assetsPath:`./src/assets/customShop`}) : `banner_setshop`,
+            image: customBanner ? await loadAsset(customBanner, { assetsPath: `./src/assets/customShop` }) : `banner_setshop`,
             prebuffer: customBanner ? true : false,
             paging: true,
             header: `${messageRef.guild.name}'s Shop!`,
@@ -80,6 +81,6 @@ module.exports = {
         return await this.run(client, reply, message, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        return await this.run(client, reply, interaction, locale)        
+        return await this.run(client, reply, interaction, locale)
     }
 }

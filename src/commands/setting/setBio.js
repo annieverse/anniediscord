@@ -20,6 +20,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     options: [{
         name: `bio`,
         description: `Set your profile bio/description`,
@@ -44,7 +45,7 @@ module.exports = {
                 chars: arg.length - this.charactersLimit
             }
         })
-        let userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
+        let userData = await (new User(client, message)).requestMetadata(message.author, 2, locale)
         userData.main.bio = arg
         const rendering = await reply.send(locale.SETBIO.RENDERING, {
             simplified: true,
@@ -52,7 +53,7 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         })
-        const betaFeature = Math.floor(Math.random()*100) > 50
+        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, {
             width: 320,
             height: 360
@@ -73,7 +74,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let newBio = options.getString(`bio`)
-        let userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2,locale)
+        let userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2, locale)
         userData.main.bio = newBio
         const rendering = await reply.send(locale.SETBIO.RENDERING, {
             simplified: true,
@@ -81,7 +82,7 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         })
-        const betaFeature = Math.floor(Math.random()*100) > 50
+        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, {
             width: 320,
             height: 360

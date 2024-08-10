@@ -16,10 +16,11 @@ module.exports = {
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
 	permissionLevel: 0,
+	contexts: [0],
 	multiUser: false,
 	applicationCommand: true,
 	messageCommand: true,
-    server_specific: false,
+	server_specific: false,
 	options: [{
 		name: `user`,
 		description: `User you wish to claim daily of`,
@@ -50,7 +51,7 @@ module.exports = {
 		const now = moment()
 		const lastClaimAt = await client.db.systemUtils.toLocaltime(targetUserData.dailies.updated_at)
 		const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
-		
+
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
 		if (now.diff(localed, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
 			thumbnail: user.displayAvatarURL(),

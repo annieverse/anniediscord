@@ -17,6 +17,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     options: [{
         name: `leaderboard`,
         description: `Displays the leaderboard of the selected option`,

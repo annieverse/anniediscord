@@ -12,6 +12,7 @@ module.exports = {
     server_specific: false,
     permissionLevel: 0,
     multiUser: false,
+    contexts: [0],
     applicationCommand: true,
     messageCommand: false,
     type: ApplicationCommandType.Message,

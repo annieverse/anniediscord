@@ -14,6 +14,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    contexts: [0],
     server_specific: false,
     options: [{
         name: `message`,
@@ -64,7 +65,7 @@ module.exports = {
         const context = client.reminders.getContext(reminderMessage, reminderTimeAmount, reminderTimeUnit, interaction.member.id)
         return await this.run(client, reply, locale, context)
     },
-    async run(client, reply, locale, context){
+    async run(client, reply, locale, context) {
         if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),

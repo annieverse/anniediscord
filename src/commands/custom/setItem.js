@@ -64,6 +64,7 @@ module.exports = {
      * @type {PermissionFlagsBits}
      */
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
+    contexts: [0],
     /**
      * Define the command's options. This is what is used as an argument for the command (Application commands only).
      * @required for ONLY ApplicationCommands

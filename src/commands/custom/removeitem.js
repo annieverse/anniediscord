@@ -92,6 +92,7 @@ module.exports = {
      * @type {ApplicationCommandType}
      */
     type: ApplicationCommandType.ChatInput,
+    contexts: [0],
     /**
      * Define if the command is to be used in specific servers
      * @required

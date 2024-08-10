@@ -49,6 +49,7 @@ module.exports = {
     }
     ],
     type: ApplicationCommandType.ChatInput,
+    contexts: [0],
     /**
      *  Prettify result from `this.author.inventory.row` into a readable list.
      *  @param {array} [inventory=[]] returned result from filtered `this.author.inventory.raw`
@@ -129,7 +130,7 @@ module.exports = {
         })
         //  Handle if can't parse the desired user's gift amount
         const amount = args[2]
-        if (!amount || amount<1) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
+        if (!amount || amount < 1) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
             socket: {
                 gift: gift.name,
                 example: `e.g. **\`${prefix}gift ${targetUser.username} 10 ${gift.name.toLowerCase()}\`**`
@@ -142,7 +143,7 @@ module.exports = {
             image: await new giftGUI(targetUserData, gift, amount).build(),
             socket: {
                 user: targetUser.username,
-                gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${gift.name}`,
+                gift: `${await client.getEmoji(gift.alias, `634111906625617960`)} ${gift.name}`,
                 amount: commanifier(amount)
             }
         })
@@ -164,7 +165,7 @@ module.exports = {
                 customHeader: [`${targetUser.username} ${locale.GIFT.HEADER}`, targetUser.displayAvatarURL()],
                 socket: {
                     user: targetUser.username,
-                    gift: `${await client.getEmoji(gift.alias,`634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`
+                    gift: `${await client.getEmoji(gift.alias, `634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`
                 }
             })
         })

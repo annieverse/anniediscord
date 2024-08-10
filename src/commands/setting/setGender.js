@@ -17,6 +17,7 @@ module.exports = {
     applicationCommand: true,
     server_specific: false,
     messageCommand: true,
+    contexts: [0],
     options: [{
         name: `gender`,
         description: `Choose between our available options`,
@@ -52,7 +53,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const userGender = await client.db.userUtils.getUserGender(interaction.member.id)    
+        const userGender = await client.db.userUtils.getUserGender(interaction.member.id)
         const key = options.getString(`gender`)
         if (!key) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,

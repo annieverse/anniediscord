@@ -10,6 +10,7 @@ module.exports = {
     description: `You can ask any question and Annie will answer you.`,
     usage: `ask <Message>`,
     permissionLevel: 0,
+    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,

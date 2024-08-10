@@ -16,7 +16,9 @@ module.exports = async (client, interaction, command) => {
     // Check Bot's permissions before procceding
     let checkPerm = false
     try {
-        checkPerm = reply.checkPermissions(interaction.channel)
+        if (!interaction.channel.isDMBased()) {
+            checkPerm = reply.checkPermissions(interaction.channel)
+        }
         if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
     } catch (e) {
         const internalError = e.message.startsWith(`[Internal Error]`)

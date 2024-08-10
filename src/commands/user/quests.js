@@ -15,6 +15,7 @@ module.exports = {
 	multiUser: false,
 	applicationCommand: true,
 	messageCommand: true,
+	contexts: [0],
 	type: ApplicationCommandType.ChatInput,
 	cooldown: [2, `hours`],
 	server_specific: false,

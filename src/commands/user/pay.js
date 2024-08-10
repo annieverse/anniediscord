@@ -45,6 +45,7 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     tax: 0.02,
     requirementLevel: 3,
+    contexts: [0],
     maxAllowed: 999999,
     async userCheck(client, message, locale, arg, target) {
         const userLib = new User(client, message)
@@ -72,7 +73,7 @@ module.exports = {
         //  Parse amount of tax to be deducted from the transaction
         const amountOfTax = amount * this.tax
         const total = Math.round(amount - amountOfTax)
-        return {senderAmount: amount, amountToSend:total}
+        return { senderAmount: amount, amountToSend: total }
     },
     async execute(client, reply, message, arg, locale) {
         if (!arg) return await reply.send(locale.PAY.SHORT_GUIDE, {
@@ -82,7 +83,7 @@ module.exports = {
         })
         const amountToCheck = arg.split(` `).splice(-1).join(``)
         // const amountToCheck = 5
-        return await this.run(client, reply, message, locale, {a:amountToCheck, u:arg})
+        return await this.run(client, reply, message, locale, { a: amountToCheck, u: arg })
 
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -93,9 +94,9 @@ module.exports = {
         })
         const amountToSend = options.getInteger(`amount`)
         const targetUser = options.getUser(`user`)
-        return await this.run(client, reply, interaction, locale, {a:amountToSend, u:targetUser.username})
+        return await this.run(client, reply, interaction, locale, { a: amountToSend, u: targetUser.username })
     },
-    async run(client, reply, messageRef, locale, {a:amount, u:user}) {
+    async run(client, reply, messageRef, locale, { a: amount, u: user }) {
         const sender = await this.userCheck(client, messageRef, locale, null, `sender`)
         if (!sender) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
         const reciever = await this.userCheck(client, messageRef, locale, user, `reciever`)

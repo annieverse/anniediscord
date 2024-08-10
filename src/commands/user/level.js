@@ -16,6 +16,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     options: [{
         name: `user`,
         description: `Display the level of the specified user`,
