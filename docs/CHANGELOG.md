@@ -1,3 +1,10 @@
+## [9.9.13](https://github.com/annieverse/anniediscord/compare/v9.9.12...v9.9.13) (2024-08-10)
+
+
+### Bug Fixes
+
+* **setshop:** fail to set stock ([7fed1ba](https://github.com/annieverse/anniediscord/commit/7fed1baf1df7370c4ec1c99f174643a803d08d2d))
+
 ## [9.9.12](https://github.com/annieverse/anniediscord/compare/v9.9.11...v9.9.12) (2024-08-02)
 
 
