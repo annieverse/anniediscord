@@ -17,14 +17,21 @@ const testRole = (client, roleObj, guildObj, member) => {
     if (!member) throw Error(`The parameter "member" is mission from function testRole().`)
 
     if (!member.manageable) return { result: false }
+    // console.log(`roleObj`)
+    // console.log(roleObj)
+
     const gId = client.guilds.resolveId(guildObj)
     const g = client.guilds.cache.get(gId)
     if (!g.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return { result: false }
     if (!g) return { result: false }
     const roleId = g.roles.resolveId(roleObj)
+    // console.log(`roleId`)
+    // console.log(roleId)
     if (!g.roles.cache.has(roleId)) return { result: false }
     const role = g.roles.cache.get(roleId)
     if (!role) return { result: false }
+    // console.log(`role`)
+    // console.log(role)
     if (role.managed) return { result: false }
     if (!role.editable) return { result: false }
 
