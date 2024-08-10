@@ -91,7 +91,7 @@ module.exports = function applicationCommandLoader({
     }
 
     if (guildOnly) {
-        // return (async () => await loadGuildOnly())()
+        return (async () => await loadGuildOnly())()
     } else {
         return (async () => await load())()
     }
@@ -101,45 +101,45 @@ module.exports = function applicationCommandLoader({
             formatDescriptions(item)
             formatNames(item)
         })
-        console.log(commands)
-        // try {
-        //     logger.info(`[load] Started refreshing application (/) commands.`)
-        //     if (process.env.NODE_ENV === `production` || process.env.NODE_ENV === `production_beta`) {
-        //         await rest.put(
-        //             Routes.applicationCommands(NODE_ENVIRONMENT_CLIENT_ID), {
-        //             body: commands
-        //         },
-        //         )
-        //     } else {
-        //         const BOTID = process.env.NODE_DEV_ID
-        //         if (process.env.NODE_DEV_CLIENT === `PAN`) {
-        //             /**
-        //              * For Pan's local bot use only
-        //              */
-        //             // test botv1: 514688969355821077
-        //             // test botv2: 1254197982132310167
-        //             // Annie support server
-        //             await rest.put(
-        //                 Routes.applicationCommands(BOTID), {
-        //                 body: commands
-        //             },
-        //             )
 
-        //         } else if (process.env.NODE_DEV_CLIENT === `NAPH`) {
-        //             /**
-        //              * For Naph's local bot use only
-        //              */
-        //             await rest.put(
-        //                 Routes.applicationGuildCommands(`581546189925646350`, `577121315480272908`), {
-        //                 body: commands
-        //             },
-        //             )
-        //         }
-        //     }
-        //     logger.info(`[load] Successfully reloaded application (/) commands. ${commands.size} Commands`)
-        // } catch (error) {
-        //     logger.error(error)
-        // }
+        try {
+            logger.info(`[load] Started refreshing application (/) commands.`)
+            if (process.env.NODE_ENV === `production` || process.env.NODE_ENV === `production_beta`) {
+                await rest.put(
+                    Routes.applicationCommands(NODE_ENVIRONMENT_CLIENT_ID), {
+                    body: commands
+                },
+                )
+            } else {
+                const BOTID = process.env.NODE_DEV_ID
+                if (process.env.NODE_DEV_CLIENT === `PAN`) {
+                    /**
+                     * For Pan's local bot use only
+                     */
+                    // test botv1: 514688969355821077
+                    // test botv2: 1254197982132310167
+                    // Annie support server
+                    await rest.put(
+                        Routes.applicationCommands(BOTID), {
+                        body: commands
+                    },
+                    )
+
+                } else if (process.env.NODE_DEV_CLIENT === `NAPH`) {
+                    /**
+                     * For Naph's local bot use only
+                     */
+                    await rest.put(
+                        Routes.applicationGuildCommands(`581546189925646350`, `577121315480272908`), {
+                        body: commands
+                    },
+                    )
+                }
+            }
+            logger.info(`[load] Successfully reloaded application (/) commands. ${commands.size} Commands`)
+        } catch (error) {
+            logger.error(error)
+        }
     }
 
     async function loadGuildOnly() {
