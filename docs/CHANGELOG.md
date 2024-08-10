@@ -1,3 +1,10 @@
+## [9.9.15](https://github.com/annieverse/anniediscord/compare/v9.9.14...v9.9.15) (2024-08-10)
+
+
+### Bug Fixes
+
+* **testRole:** test for guild owner ([344ac40](https://github.com/annieverse/anniediscord/commit/344ac40f811832c4687b23badecf148b90ff9aa4))
+
 ## [9.9.14](https://github.com/annieverse/anniediscord/compare/v9.9.13...v9.9.14) (2024-08-10)
 
 
