@@ -1,3 +1,10 @@
+## [9.9.14](https://github.com/annieverse/anniediscord/compare/v9.9.13...v9.9.14) (2024-08-10)
+
+
+### Bug Fixes
+
+* **viewData:** handle empty page ([ab0f224](https://github.com/annieverse/anniediscord/commit/ab0f224dc55b5a02bc0c83baab8cd1921de417d3))
+
 ## [9.9.13](https://github.com/annieverse/anniediscord/compare/v9.9.12...v9.9.13) (2024-08-10)
 
 
