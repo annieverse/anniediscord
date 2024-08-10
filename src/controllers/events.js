@@ -10,13 +10,13 @@ module.exports = function eventsController(annie) {
     annie.on(Events.Error, (e) => reqEvent(`error`)(annie, e))
     annie.on(Events.Debug, l => annie.logger.debug(l))
     annie.on(Events.Warn, l => annie.logger.warn(l))
-    annie.on(Events.MessageCreate, (message) => reqEvent(`messageCreate`)(annie, message))
-    annie.on(Events.GuildCreate, (guild) => reqEvent(`guildCreate`)(annie, guild))
-    annie.on(Events.GuildDelete, (guild) => reqEvent(`guildDelete`)(annie, guild))
     annie.on(Events.InteractionCreate, (interaction) => reqEvent(`interactionCreate`)(annie, interaction))
     annie.once(Events.ShardReady, (id, unavailableGuilds) => reqEvent(`shardReady`)(annie, id, unavailableGuilds))
     //  Events below this point is only available in the production
     if (annie.dev) return
+    annie.on(Events.MessageCreate, (message) => reqEvent(`messageCreate`)(annie, message))
+    annie.on(Events.GuildCreate, (guild) => reqEvent(`guildCreate`)(annie, guild))
+    annie.on(Events.GuildDelete, (guild) => reqEvent(`guildDelete`)(annie, guild))
     annie.on(Events.ShardError, (error) => annie.logger.error(error))
     annie.on(Events.MessageDelete, (message) => reqEvent(`messageDelete`)(annie, message))
     annie.on(Events.MessageBulkDelete, (messages, channel) => reqEvent(`messageDeleteBulk`)(annie, messages, channel))
