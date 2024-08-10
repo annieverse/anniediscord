@@ -110,7 +110,7 @@ module.exports = {
         const dataToDisplay = chunkOptions(formatedData, 10)
         const formatedDataToDisplay = []
         dataToDisplay.forEach(element => formatedDataToDisplay.push(element.join(`\n`)))
-        return await reply.send(formatedDataToDisplay, {
+        return await reply.send(formatedDataToDisplay.length < 1 ? [`Sorry but no entries so far`] : formatedDataToDisplay, {
             paging: true,
             header: `All entries for ${messageRef.guild.name}`,
             ephemeral: true

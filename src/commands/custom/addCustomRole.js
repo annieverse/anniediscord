@@ -130,11 +130,11 @@ module.exports = {
         }
     },
     async run(client, reply, messageRef, arg) {
-
         const customRole = messageRef.guild.configs.get(`CUSTOM_ROLE`).value
         if (customRole == arg.id) return await reply.send(`Role is already set to that role`, { ephemeral: true })
         const test = testRole(client, arg, messageRef.guild, messageRef.member)
-        if (!test) return await reply.send(`Role is out of my reach so i can not add`, { ephemeral: true })
+        if (!test.result) return await reply.send(`Role is out of my reach so i can not add`, { ephemeral: true })
+        if (!test.roleId) return await reply.send(`There was an error, please check the role position.`, { ephemeral: true })
         client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
             customizedParameter: test.roleId,
