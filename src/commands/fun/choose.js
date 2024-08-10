@@ -11,6 +11,7 @@ module.exports = {
     description: `I'll try to pick any options you give!`,
     usage: `choose <options>`,
     permissionLevel: 0,
+    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,

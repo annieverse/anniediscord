@@ -15,6 +15,7 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    contexts: [0],
     messageCommand: true,
     server_specific: false,
     options: [

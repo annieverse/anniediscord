@@ -13,6 +13,7 @@ module.exports = {
     applicationCommand: false,
     messageCommand: true,
     server_specific: false,
+    contexts: [0],
     prefixImmune: true,
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return await reply.send(locale.SETPREFIX.CURRENT_SET, {

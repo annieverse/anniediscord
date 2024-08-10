@@ -63,7 +63,7 @@ module.exports = {
         name: `remove`, // Must be all lowercase
         description: `Remove your address`,
         type: ApplicationCommandOptionType.Subcommand
-    },{
+    }, {
         name: `address`, // Must be all lowercase
         description: `Your address you would like to link`,
         type: ApplicationCommandOptionType.Subcommand,
@@ -73,7 +73,7 @@ module.exports = {
             required: true,
             type: ApplicationCommandOptionType.String
         }]
-        }, 
+    },
     ],
     /**
      * Use 'ApplicationCommandType' to define the command's type. (Most of the time it will always be 'ChatInput')
@@ -81,6 +81,7 @@ module.exports = {
      * @type {ApplicationCommandType}
      */
     type: ApplicationCommandType.ChatInput,
+    contexts: [0],
     /**
      * Define if the command is to be used in specific servers
      * @required
@@ -116,17 +117,17 @@ module.exports = {
      */
     async Iexecute(client, reply, interaction, options, locale) {
         if (options.getSubcommand() === `remove`) return this.delete(client, reply, interaction)
-        if (options.getSubcommand() === `address`){
+        if (options.getSubcommand() === `address`) {
             const arg = options.getString(`set`)
             return this.run(client, reply, interaction, arg)
         }
     },
     async run(client, reply, messageRef, arg) {
         client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
-        return await reply.send(`Your address has been set`,{ephemeral: true})
+        return await reply.send(`Your address has been set`, { ephemeral: true })
     },
     async delete(client, reply, messageRef) {
         client.db.custom.deleteWalletAddress(messageRef.member.user.id)
-        return await reply.send(`Your address has been removed`,{ephemeral: true})
+        return await reply.send(`Your address has been removed`, { ephemeral: true })
     }
 }

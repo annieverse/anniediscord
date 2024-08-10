@@ -12,6 +12,7 @@ module.exports = {
     description: `Gives a reputation point to a user. Once a day.`,
     usage: `rep <User>`,
     permissionLevel: 0,
+    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
@@ -28,7 +29,7 @@ module.exports = {
         //	Displays short-guide if user doesn't specify any parameter
         if (!arg) return await reply.send(locale.GIVE_REPUTATION.SHORT_GUIDE, {
             socket: { emoji: await client.getEmoji(`692429004417794058`), prefix: client.prefix }
-        })        
+        })
         const userLib = new User(client, message)
         const targetUser = await userLib.lookFor(arg)
         //	Handle if target user is invalid    
@@ -44,7 +45,7 @@ module.exports = {
         const userData = await userLib.requestMetadata(messageRef.member, 2, locale)
         const now = moment()
         const lastGiveAt = await client.db.systemUtils.toLocaltime(userData.reputations.last_giving_at)
-		const localed = lastGiveAt == `now` ? moment().toISOString() : lastGiveAt
+        const localed = lastGiveAt == `now` ? moment().toISOString() : lastGiveAt
         //  Returns if user's last reps give still under 23 hours.
         if (now.diff(lastGiveAt, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.GIVE_REPUTATION.IN_COOLDOWN, {
             thumbnail: userData.master.displayAvatarURL(),

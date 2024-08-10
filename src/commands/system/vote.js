@@ -13,6 +13,7 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
+    contexts: [0],
     server_specific: false,
     type: ApplicationCommandType.ChatInput,
     page: `https://top.gg/bot/501461775821176832`,

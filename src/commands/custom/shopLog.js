@@ -15,6 +15,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: false,
     server_specific: true,
+    contexts: [0],
     servers: [`577121315480272908`, `882552960771555359`],
     options: [{
         name: `enable`,

@@ -135,6 +135,7 @@ module.exports = {
         }]
     }],
     type: ApplicationCommandType.ChatInput,
+    contexts: [0],
     /**
      * An array of the available options for welcomer module
      * @type {array}

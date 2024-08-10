@@ -15,9 +15,10 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
+    contexts: [0],
     messageCommand: false,
     server_specific: true,
-    servers: [`577121315480272908`,`882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         return await this.run(client, reply, message, locale)

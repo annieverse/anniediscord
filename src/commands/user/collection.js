@@ -15,6 +15,7 @@ module.exports = {
     messageCommand: true,
     applicationCommand: true,
     server_specific: false,
+    contexts: [0],
     options: [
         {
             name: `user`,

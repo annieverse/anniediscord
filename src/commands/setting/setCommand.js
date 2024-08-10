@@ -68,6 +68,7 @@ module.exports = {
         description: `Action to perform.`,
         type: ApplicationCommandOptionType.Subcommand
     }],
+    contexts: [0],
     type: ApplicationCommandType.ChatInput,
     configId: `COMMAND_CHANNELS`,
     async execute(client, reply, message, arg, locale, prefix) {

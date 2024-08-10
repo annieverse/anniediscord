@@ -35,57 +35,58 @@ module.exports = {
             { name: `help`, value: `help` }
         ]
     }, */{
-        name: `enable`,
-        description: `Enable the autorespond module`,
-        type: ApplicationCommandOptionType.Subcommand
-    },{
-        name: `info`,
-        description: `View currently configured ARs`,
-        type: ApplicationCommandOptionType.Subcommand
-    },{
-        name: `reset`,
-        description: `Reset the autorespond module`,
-        type: ApplicationCommandOptionType.Subcommand
-    },{
-        name: `disable`,
-        description: `Disable the autorespond module`,
-        type: ApplicationCommandOptionType.Subcommand
-    },{
-        name: `help`,
-        description: `View a brief help overview for the autoresponder module`,
-        type: ApplicationCommandOptionType.Subcommand
-    },{
-        name: `delete`,
-        description: `Delete an AR`,
-        type: ApplicationCommandOptionType.Subcommand,
-        options: [{
-            name: `id_trigger`,
-            description: `Delete an AR`,
-            required: true,
-            type: ApplicationCommandOptionType.String
-        }]
-    }, {
-        name: `add`,
-        description: `Add an AR`,
-        type: ApplicationCommandOptionType.Subcommand,
-        options: [{
-            name: `id_trigger`,
-            description: `Name of AR to add`,
-            required: true,
-            type: ApplicationCommandOptionType.String
+            name: `enable`,
+            description: `Enable the autorespond module`,
+            type: ApplicationCommandOptionType.Subcommand
         }, {
-            name: `response`,
-            description: `What to respond with`,
-            required: true,
-            type: ApplicationCommandOptionType.String
-        }]
-    }],
+            name: `info`,
+            description: `View currently configured ARs`,
+            type: ApplicationCommandOptionType.Subcommand
+        }, {
+            name: `reset`,
+            description: `Reset the autorespond module`,
+            type: ApplicationCommandOptionType.Subcommand
+        }, {
+            name: `disable`,
+            description: `Disable the autorespond module`,
+            type: ApplicationCommandOptionType.Subcommand
+        }, {
+            name: `help`,
+            description: `View a brief help overview for the autoresponder module`,
+            type: ApplicationCommandOptionType.Subcommand
+        }, {
+            name: `delete`,
+            description: `Delete an AR`,
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [{
+                name: `id_trigger`,
+                description: `Delete an AR`,
+                required: true,
+                type: ApplicationCommandOptionType.String
+            }]
+        }, {
+            name: `add`,
+            description: `Add an AR`,
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [{
+                name: `id_trigger`,
+                description: `Name of AR to add`,
+                required: true,
+                type: ApplicationCommandOptionType.String
+            }, {
+                name: `response`,
+                description: `What to respond with`,
+                required: true,
+                type: ApplicationCommandOptionType.String
+            }]
+        }],
     type: ApplicationCommandType.ChatInput,
     /**
      * Maximum characters for the trigger.
      * @type {number}
      */
     triggerCharLimit: 156,
+    contexts: [0],
 
     /**
      * Maximum characters for the response.
@@ -138,7 +139,7 @@ module.exports = {
         if (options.getSubcommand() === `reset`) this.args = [`reset`]
         if (options.getSubcommand() === `enable`) this.args = [`enable`]
         if (options.getSubcommand() === `disable`) this.args = [`disable`]
-        
+
         this.guildConfigurations = interaction.guild.configs
         this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
         if (options.getSubcommand() === `help`) return await reply.send(locale.AUTORESPONDER.GUIDE, {
@@ -173,7 +174,7 @@ module.exports = {
     async enable(client, reply, message, arg, locale) {
         //  Handle if module already enabled
         if (this.primaryConfig.value) {
-            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)            
+            const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
             return await reply.send(locale.AUTORESPONDER.ALREADY_ENABLED, {
                 socket: {
@@ -240,7 +241,7 @@ module.exports = {
                 prefix: prefix
             }
         })
-        const localizedTime = await client.db.systemUtils.toLocaltime(ars[0].registered_at)            
+        const localizedTime = await client.db.systemUtils.toLocaltime(ars[0].registered_at)
         const localed = localizedTime == `now` ? moment().toISOString() : localizedTime
         const author = await client.users.fetch(ars[0].user_id)
         return await reply.send(this._parseRegisteredAutoResponders(ars, false, {
@@ -305,7 +306,7 @@ module.exports = {
             //  Finalize
             await await reply.send(locale.AUTORESPONDER.REGISTER_SUCCESSFUL, {
                 socket: { emoji: await client.getEmoji(`789212493096026143`) },
-                followUp:true
+                followUp: true
             })
             await await reply.send(locale.AUTORESPONDER.REGISTER_FOOTER_TIP, {
                 simplified: true,
@@ -313,7 +314,7 @@ module.exports = {
                     trigger: trigger,
                     emoji: await client.getEmoji(`692428692999241771`)
                 },
-                followUp:true
+                followUp: true
             })
         })
     },

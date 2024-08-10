@@ -63,9 +63,10 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     uploadCost: 1000,
+    contexts: [0],
     FileTypesNotAllowed: [`.apng`, `.avif`, `.gif`, `.webp`],
     async execute(client, reply, message, arg, locale, prefix) {
-        const userData = await (new User(client, message)).requestMetadata(message.author, 2,locale)
+        const userData = await (new User(client, message)).requestMetadata(message.author, 2, locale)
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
         const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
@@ -90,7 +91,7 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await superagent.get(url).catch(async (error) =>{
+            const response = await superagent.get(url).catch(async (error) => {
                 client.logger.error(`[setCover.js][Superagent] > ${error}`)
                 await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                     socket: {
@@ -100,7 +101,7 @@ module.exports = {
                 })
                 return null
             })
-            if (response===null) return
+            if (response === null) return
             const buffer = response.body
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
@@ -153,7 +154,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random()*100) > 50
+        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
         const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
         const confirmation = await reply.send(confirmationMessage, {
@@ -202,7 +203,7 @@ module.exports = {
         if (options.getSubcommand() == `reset`) {
             return this.reset(client, reply, interaction, options, locale)
         }
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2,locale)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2, locale)
         const OLD_COVER = userData.usedCover
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
@@ -229,7 +230,7 @@ module.exports = {
         const id = uuidv4()
         if (isValidUpload) {
             if (!url) return await reply.send(`Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: ${this.FileTypesNotAllowed.join(`, `)}`)
-            const response = await superagent.get(url).catch(async (error) =>{
+            const response = await superagent.get(url).catch(async (error) => {
                 client.logger.error(`[setCover.js][Superagent] > ${error}`)
                 await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
                     socket: {
@@ -239,7 +240,7 @@ module.exports = {
                 })
                 return null
             })
-            if (response===null) return
+            if (response === null) return
             const buffer = response.body
             fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
@@ -292,7 +293,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random()*100) > 50
+        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
         const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
         const confirmation = await reply.send(confirmationMessage, {
@@ -309,11 +310,11 @@ module.exports = {
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
             await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)
-            if (OLD_COVER.isSelfUpload){
-                fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error)=>{
+            if (OLD_COVER.isSelfUpload) {
+                fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error) => {
                     if (error) client.logger.warn(`[setCover.js][Removing Image from filetree] ${error.stack}`)
                 })
-            }            
+            }
             if (this.cover.isSelfUpload) {
                 client.db.covers.applySelfUploadCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
                 client.db.databaseUtils.updateInventory({ itemId: 52, value: this.uploadCost, operation: `-`, userId: interaction.member.id, guildId: interaction.guild.id })
@@ -334,7 +335,7 @@ module.exports = {
     async reset(client, reply, interaction, options, locale) {
         this.cover = await client.db.shop.getItem(`defaultcover1`)
         // if (this.cover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
-        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2,locale)
+        const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2, locale)
         if (userData.usedCover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
         const OLD_COVER = userData.usedCover
         userData.usedCover = this.cover
@@ -346,7 +347,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random()*100) > 50
+        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
         const confirmation = await reply.send(locale.SETCOVER[`PREVIEW_CONFIRMATION`], {
             prebuffer: true,
@@ -364,7 +365,7 @@ module.exports = {
             await client.db.covers.detachCovers(interaction.member.id, interaction.guild.id)
             client.db.covers.deleteSelfUploadCover(interaction.member.id, interaction.guild.id)
             client.db.covers.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
-            fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error)=>{
+            fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error) => {
                 if (error) client.logger.warn(`[setCover.js][Removing Image from filetree] ${error.stack}`)
             })
             await reply.send(locale.SETCOVER[`SUCCESSFUL`], {

@@ -58,6 +58,7 @@ module.exports = {
      * @type {string}
      */
     subConfigID: `LOGS_CHANNEL`,
+    contexts: [0],
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
         if (!arg) return await reply.send(locale.SETLOGS.GUIDE, {
