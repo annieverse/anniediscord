@@ -5,7 +5,8 @@ const stringSimilarity = require(`string-similarity`)
 const Confirmator = require(`../../libs/confirmator`)
 /**
  * Command's Class description
- * @author yourname
+ * @author Andrew
+ * @module 
  */
 module.exports = {
     /**

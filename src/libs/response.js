@@ -331,6 +331,7 @@ class Response {
 
 	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews) {
 		let page = 0
+		if (ephemeral) ephemeral = false
 		const embeddedPages = await this._registerPages(content, plugins)
 		return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? components ? {
 			embeds: [embeddedPages[0]],

@@ -6,6 +6,7 @@ const { ApplicationCommandType } = require(`discord.js`)
 /**
  * Displays your server leaderboard!
  * @author klerikdust
+ * @module 
  */
 module.exports = {
     name: `rankings`,

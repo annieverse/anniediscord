@@ -1,9 +1,11 @@
 "use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const testRole = require(`../../utils/testRole`)
 /**
  * Command's Class description
  * ONLY for Avarik Saga
  * @author Andrew
+ * @module 
  */
 module.exports = {
     /**
@@ -93,7 +95,7 @@ module.exports = {
      * @required ONLY if "server_specific" is set to true.
      * @type {Array}
      */
-    servers: [`577121315480272908`, `882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`, `1242130891363454996`],
     /**
      * Any other properties you want to add to the command.
      */
@@ -105,8 +107,7 @@ module.exports = {
      * @type {function}
      */
     async execute(client, reply, message, arg, locale) {
-        return this.run(client, reply, message, locale, arg)
-        // ... Your command ran here.
+        return
     },
     /**
      * The executed function upon command invocation.
@@ -123,11 +124,64 @@ module.exports = {
         }
     },
     async run(client, reply, messageRef, arg) {
-        client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
+        const grimHeadServer = messageRef.guild.id === `1242130891363454996`
+        const annieSupportServer = messageRef.guild.id === `577121315480272908`
+        if (grimHeadServer || annieSupportServer) {
+            const result = await this.addGrimHeadProjectWallet(client, messageRef, arg)
+            if (result === 1) return await reply.send(`Your address has not been verified or changed, please try a different address`, { ephemeral: true })
+            if (result === 2) return await reply.send(`Your address has been verified/changed but no role added yet`, { ephemeral: true })
+            if (result === 3) return await reply.send(`Role is gone or is not able to be removed`, { ephemeral: true })
+            if (result === 4) return await reply.send(`Your address has been verified/changed and role has been added`, { ephemeral: true })
+            if (result === 6) return await reply.send(`Your address has been verified/changed and you have the role already.`, { ephemeral: true })
+            if (result === 5) return await reply.send(`Your address has been claimed already, please try a different one. If you believe this is a mistake or need to update the record, please let a Moderator know.`, { ephemeral: true })
+        } else {
+            // this.addAvarikSagaWallet(client, messageRef, arg)
+        }
         return await reply.send(`Your address has been set`, { ephemeral: true })
     },
-    async delete(client, reply, messageRef) {
-        client.db.custom.deleteWalletAddress(messageRef.member.user.id)
+    async delete(client, reply, messageRef, arg) {
+        if (messageRef.guild.id === `1242130891363454996` || messageRef.guild.id === `577121315480272908`) {
+            const result = this.removeGrimHeadProjectWallet(client, messageRef, arg)
+            if (result === 1) return await reply.send(`Wallet has been deleted but, Role is gone or is not able to be removed`, { ephemeral: true })
+            if (result === 2) return await reply.send(`Wallet has been deleted and role has been removed`, { ephemeral: true })
+        } else {
+            // this.removeAvarikSagaWallet(client, messageRef)
+        }
+
         return await reply.send(`Your address has been removed`, { ephemeral: true })
+    },
+    async addGrimHeadProjectWallet(client, messageRef, arg) {
+        const res = await client.db.custom.verifyData(arg, messageRef.guild.id)
+        const results = [`FOUND_RECORD`, `NO_RECORD`, `INSERT`]
+        if (!results.includes(res) || res === `NO_RECORD`) return 1
+
+        const claimed = await client.db.custom.claimDataEntry(messageRef.member.user.id, arg, messageRef.guild.id)
+        if (!results.includes(claimed) || res === `NO_CHANGES`) return 5
+        const customRole = messageRef.guild.configs.get(`CUSTOM_ROLE`).value
+        if (customRole == ``) return 2
+        const test = testRole(client, customRole, messageRef.guild, messageRef.member)
+        if (!test.result) return 3
+        try {
+            if (messageRef.member.roles.cache.has(test.roleId)) return 6
+            await messageRef.member.roles.add(test.roleId)
+        } catch (error) {
+            return 2
+        }
+        return 4
+    },
+    async removeGrimHeadProjectWallet(client, messageRef) {
+        await client.db.custom.customWalletDelete(messageRef.member.user.id, messageRef.guild.id)
+        const customRole = messageRef.guild.configs.get(`CUSTOM_ROLE`).value
+        if (customRole == ``) return 1
+        const test = testRole(client, customRole, messageRef.guild, messageRef.member)
+        if (!test.result) return 1
+        messageRef.member.roles.remove(test.role)
+        return 2
+    },
+    async addAvarikSagaWallet(client, messageRef, arg) {
+        return client.db.custom.setWalletAddress(messageRef.member.user.id, arg)
+    },
+    async removeAvarikSagaWallet(client, messageRef) {
+        return client.db.custom.deleteWalletAddress(messageRef.member.user.id)
     }
 }

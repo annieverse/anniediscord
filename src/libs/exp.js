@@ -127,7 +127,7 @@ class Experience {
             await this.user.roles.remove(nonCurrentRankRoles)
             //  Doble check in case of role disaopearance accident
             if (!this.user.roles.cache.has(userRankRole.id)) {
-                if (roleLower(userRankRole, botsHighestRole, this.guild)) this.user.roles.add(userRankRole)
+                if (roleLower(userRankRole, botsHighestRole, this.guild)) await this.user.roles.add(userRankRole)
             }
         }
         catch (e) {
