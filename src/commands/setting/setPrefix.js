@@ -5,8 +5,6 @@
  */
 module.exports = {
     name: `setprefix`,
-    name_localizations:{},
-    description_localizations:{},
     aliases: [`setprefix`, `setpr`, `setpref`, `setprfx`, `setprefixs`],
     description: `Customize prefix per guild setting`,
     usage: `setprefix <NewPrefix>`,

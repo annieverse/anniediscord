@@ -9,8 +9,12 @@ const {
  */
 module.exports = {
   name: `setlanguage`,
-  name_localizations:{},
-  description_localizations:{},
+  name_localizations: {
+    fr: ``
+  },
+  description_localizations: {
+    fr: ``
+  },
   aliases: [`setlang`, `setlanguage`, `setlocale`],
   description: `User's language switcher`,
   usage: `setlang <language name/code>`,
@@ -22,6 +26,12 @@ module.exports = {
   options: [{
     name: `language`,
     description: `Available Annie's languages you can set`,
+    name_localizations: {
+      fr: ``
+    },
+    description_localizations: {
+      fr: ``
+    },
     type: ApplicationCommandOptionType.String,
     required: true,
     autocomplete: true

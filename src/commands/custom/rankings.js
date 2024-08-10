@@ -9,8 +9,12 @@ const { ApplicationCommandType } = require(`discord.js`)
  */
 module.exports = {
     name: `rankings`,
-    name_localizations:{},
-    description_localizations:{},
+    name_localizations: {
+        fr: `classements`
+    },
+    description_localizations: {
+        fr: `Affichage du classement de votre serveur pour l'élément sélectionné !`
+    },
     aliases: [],
     description: `Displaying your server leaderboard for selected item!`,
     usage: `rankings`,
@@ -19,7 +23,7 @@ module.exports = {
     applicationCommand: true,
     messageCommand: false,
     server_specific: true,
-    servers: [`577121315480272908`,`882552960771555359`],
+    servers: [`577121315480272908`, `882552960771555359`],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         return await this.run(client, reply, message, locale)

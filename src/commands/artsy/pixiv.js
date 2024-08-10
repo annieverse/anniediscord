@@ -17,8 +17,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `pixiv`,
-    name_localizations:{},
-    description_localizations:{},
+    name_localizations: {
+        fr: `pixiv`
+    },
+    description_localizations: {
+        fr: `Récupération de l'image depuis pixiv.`
+    },
     aliases: [`pix`, `pxv`, `pixiv`],
     description: `Fetching image from pixiv.`,
     usage: `pixiv <SearchKeyword>(Optional)`,
@@ -29,11 +33,18 @@ module.exports = {
     server_specific: false,
     options: [{
         name: `tag`,
+        name_localizations: {
+            fr: `étiqueter`
+        },
         description: `Search by tag`,
+        description_localizations: {
+            fr: `Rechercher par balise`
+        },
         required: true,
         type: ApplicationCommandOptionType.String
     }],
     type: ApplicationCommandType.ChatInput,
+    /** Make sure to add the other supported lang for each forbidden words */
     forbiddenKeywords: [
         `lewd`,
         `r18`,
@@ -51,7 +62,20 @@ module.exports = {
         `boob`,
         `nipple`,
         `handjob`,
-        `sex`
+        `sex`,
+        `obscène`,
+        `porno`,
+        `queue`,
+        `cul`,
+        `vagin`,
+        `anale`,
+        `pipe`,
+        `velue`,
+        `velu`,
+        `seins`,
+        `mamelon`,
+        `branlette`,
+        `sexe`
     ],
     cachePath: `./.pixivcaches/`,
     async fetchPixivResult(client, reply, arg, locale) {

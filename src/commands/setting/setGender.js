@@ -9,8 +9,12 @@ const {
  */
 module.exports = {
     name: `setgender`,
-    name_localizations:{},
-    description_localizations:{},
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`setgender`, `setgenders`, `setgndr`],
     description: `Define your gender`,
     usage: `setgender <F/M>`,
@@ -22,6 +26,12 @@ module.exports = {
     options: [{
         name: `gender`,
         description: `Choose between our available options`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.String,
         choices: [{ name: `male`, value: `male` }, { name: `female`, value: `female` }, { name: `neutral`, value: `neutral` }]
     }],
@@ -54,7 +64,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const userGender = await client.db.userUtils.getUserGender(interaction.member.id)    
+        const userGender = await client.db.userUtils.getUserGender(interaction.member.id)
         const key = options.getString(`gender`)
         if (!key) return await reply.send(locale.SETGENDER.GUIDE, {
             image: `banner_setgender`,

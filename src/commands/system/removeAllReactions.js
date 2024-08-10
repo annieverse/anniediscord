@@ -6,8 +6,12 @@ const { ApplicationCommandType, PermissionFlagsBits } = require(`discord.js`)
  */
 module.exports = {
     name: `removeallreactions`,
-    name_localizations:{},
-    description_localizations:{},
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [],
     description: `Remove all reactions on a message`,
     usage: `removeallreactions`,

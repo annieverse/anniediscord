@@ -9,8 +9,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `leaderboard`,
-    name_localizations:{},
-    description_localizations:{},
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`rank`, `leaderboard`, `rank`, `ranking`, `lb`, `leaderboards`],
     description: `Displaying your server leaderboard!`,
     usage: `leaderboard`,
@@ -22,6 +26,12 @@ module.exports = {
     options: [{
         name: `leaderboard`,
         description: `Displays the leaderboard of the selected option`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: true,
         type: ApplicationCommandOptionType.String,
         choices: [

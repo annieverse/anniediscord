@@ -7,8 +7,6 @@ const getBotInviteUrl = require(`../../utils/botInvite.js`)
  */
 module.exports = {
 	name: `help`,
-    name_localizations:{},
-    description_localizations:{},
 	aliases: [`help`, `help`, `cmdhelp`],
 	description: `Displaying all the available commands. Complete with the usage.`,
 	usage: `help <Category/CommandName>(Optional)`,
@@ -16,7 +14,7 @@ module.exports = {
 	multiUser: false,
 	applicationCommand: false,
 	messageCommand: true,
-    server_specific: false,
+	server_specific: false,
 	commandpediaButton: `📖`,
 	ignoreGroups: [`developer`],
 	async execute(client, reply, message, arg, locale, prefix) {
