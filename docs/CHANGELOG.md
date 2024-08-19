@@ -1,3 +1,10 @@
+## [9.9.16](https://github.com/annieverse/anniediscord/compare/v9.9.15...v9.9.16) (2024-08-19)
+
+
+### Bug Fixes
+
+* **use:** button for confirmation not showing up ([4b8397d](https://github.com/annieverse/anniediscord/commit/4b8397d55f445a2fc7c78c5718763453324b4e12))
+
 ## [9.9.15](https://github.com/annieverse/anniediscord/compare/v9.9.14...v9.9.15) (2024-08-10)
 
 
