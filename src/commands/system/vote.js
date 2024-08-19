@@ -22,7 +22,7 @@ module.exports = {
         return await this.run(client, reply, locale, user)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        await interaction.deferReply({ ephemeral: true })
+        await interaction.deferReply()
         const guildMember = interaction.member.user
         return await this.run(client, reply, locale, guildMember)
     },
