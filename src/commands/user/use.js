@@ -34,7 +34,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
 
-        await interaction.deferReply({ ephemeral: true })
+        await interaction.deferReply()
         let arg = options.getString(`item`)
         return await this.run(client, reply, interaction, arg, locale)
     },
