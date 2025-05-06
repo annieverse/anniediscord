@@ -30,6 +30,8 @@ module.exports = {
         if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE, {
             editReply: true
         })
+        //  For tracking down bugs
+        client.logger.info(`[VOTE] parameter breakdown: ${JSON.stringify(user)}`)
         const voted = await client.dblApi.hasVoted(user.id)
         if (voted) return await reply.send(locale.VOTE.IS_COOLDOWN, {
             socket: {
