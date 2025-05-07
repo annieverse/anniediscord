@@ -953,6 +953,7 @@
     },
     "VOTE": {
         "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details.",
+        "SUGGEST_TO_REGISTER": "if this is your first time, link your discord account to the site so that you can give me a vote !! {{emoji}}",
         "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰ While we at it, why not **{{page}}** about me first? {{emoji}}",
         "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
     }
