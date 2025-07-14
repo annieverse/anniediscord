@@ -1,4 +1,3 @@
-const { ShardingManager, WebhookClient } = require(`discord.js`)
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
 const { masterLogger:logger }  = require(`../pino.config.js`)
@@ -36,6 +35,7 @@ module.exports = function masterShard() {
 		logger.info(`Directory './src/assets' exists`)
 		makeDirs()
 	}
+	const { ShardingManager } = require(`discord.js`)
 	const manager = new ShardingManager(`./src/annie.js`, {
 		respawn: process.env.NODE_ENV !== `production` || process.env.NODE_ENV !== `production_beta` ? false : true,
 		token: process.env.BOT_TOKEN,
@@ -91,6 +91,7 @@ module.exports = function masterShard() {
 					user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
 						.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
 					c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
+					const { WebhookClient } = require(`discord.js`)
 					const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
 					if (voteWebhook) {
 						voteWebhook.send({
