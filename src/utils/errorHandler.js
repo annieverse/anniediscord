@@ -1,4 +1,5 @@
 "use strict"
+const wh = process.env.ERROR_WEBHOOK_URL ? new WebhookClient({ url: process.env.ERROR_WEBHOOK_URL }) : null
 const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs, levelZeroErrors }) => {
     /**
      * 1 = normal
@@ -23,7 +24,7 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     const DiscordAPIError_ThreadId = `1259908155597389865`
     const DiscordAPIError_50005_ThreadId = `1259907790483357736`
     const DiscordAPIError_50013_ThreadId = `1259906787231010816`
-    const DiscordAPIError_50001_ThreadId = `1259907469853982750` 
+    const DiscordAPIError_50001_ThreadId = `1259907469853982750`
     const lvl1_ThreadId = `1259906979522936953`
 
     const DiscordAPIError_Thread_Test = client.channels.cache.has(DiscordAPIError_ThreadId)
@@ -102,7 +103,7 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
      */
 
     // Determine what channel to send to.
-    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error)) : lvl0Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
+    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE).catch(error => client.logger.error(error)) : lvl0Channel.send(ERROR_MESSAGE).catch(error => client.logger.error(error))
 
     // Send to filtered channels
     let channelToSendTo = null
@@ -122,13 +123,19 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
             channelToSendTo = DiscordAPIError_50005_Thread
             break
         default:
-            if (error_stack && error_stack.includes(`DiscordAPIError`)){
+            if (error_stack && error_stack.includes(`DiscordAPIError`)) {
                 channelToSendTo = DiscordAPIError_Thread
             } else {
                 channelToSendTo = lvl1_Thread
             }
             break
     }
-    return channelToSendTo.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
+    //  When dev err wh is available
+    if (wh) {
+        wh.send({
+            content: ERROR_MESSAGE,
+        })
+    }
+    return channelToSendTo.send(ERROR_MESSAGE).catch(error => client.logger.error(error))
 }
 module.exports = errorRelay
