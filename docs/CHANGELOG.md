@@ -1,3 +1,10 @@
+## [9.10.2](https://github.com/annieverse/anniediscord/compare/v9.10.1...v9.10.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **localization:** sync fr. ([afe22d6](https://github.com/annieverse/anniediscord/commit/afe22d61f14d3786154a21aa89d0826ce70ba714))
+
 ## [9.9.16](https://github.com/annieverse/anniediscord/compare/v9.9.15...v9.9.16) (2024-08-19)
 
 
