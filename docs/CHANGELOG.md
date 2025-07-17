@@ -1,3 +1,15 @@
+# [9.11.0](https://github.com/annieverse/anniediscord/compare/v9.10.2...v9.11.0) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** revise message structure for vote wh. ([10779e2](https://github.com/annieverse/anniediscord/commit/10779e27c31589a238f7566f691ae72e208ae191))
+
+
+### Features
+
+* **bfd:** push stats to bfd platform. ([312dcd9](https://github.com/annieverse/anniediscord/commit/312dcd9f466d959422d6e2838f8b0de32f1bee6d))
+
 ## [9.10.2](https://github.com/annieverse/anniediscord/compare/v9.10.1...v9.10.2) (2025-07-17)
 
 
