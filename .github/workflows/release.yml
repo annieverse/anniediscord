@@ -28,7 +28,7 @@ jobs:
         run: npm run unit-test
           
   tag:
-    name: Release Tag
+    name: Versioning
     runs-on: ubuntu-latest
     needs: [build]
     steps:
