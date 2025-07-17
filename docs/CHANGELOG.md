@@ -1,3 +1,10 @@
+## [9.11.2](https://github.com/annieverse/anniediscord/compare/v9.11.1...v9.11.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** error webhook handler. ([1eb9672](https://github.com/annieverse/anniediscord/commit/1eb967224fa270c3ea6972b9929dd9ed4f7f4944))
+
 ## [9.11.1](https://github.com/annieverse/anniediscord/compare/v9.11.0...v9.11.1) (2025-07-17)
 
 
