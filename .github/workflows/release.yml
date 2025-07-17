@@ -23,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm ci
       - name: Codestyle Test
-        run: npm test
+        run: npm run lint:check
       - name: Unit Test
         run: npm run unit-test
           
