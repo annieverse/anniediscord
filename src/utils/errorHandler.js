@@ -1,6 +1,4 @@
 "use strict"
-const { WebhookClient } = require(`discord.js`)
-const wh = process.env.ERROR_WEBHOOK_URL ? new WebhookClient({ url: process.env.ERROR_WEBHOOK_URL }) : null
 const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs, levelZeroErrors }) => {
     /**
      * 1 = normal
@@ -102,7 +100,9 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
      * Unknown Channel > DiscordAPIError[10003]: Unknown Channel
      * Cannot edit a message authored by another user > DiscordAPIError[50005]: Cannot edit a message authored by another user
      */
-
+    //  Experiment on firing up only via webhook when available
+    if (client.errorWebhook) return client.errorWebhook.send(ERROR_MESSAGE)
+    
     // Determine what channel to send to.
     lvl0Test ? lvl1Channel.send(ERROR_MESSAGE).catch(error => client.logger.error(error)) : lvl0Channel.send(ERROR_MESSAGE).catch(error => client.logger.error(error))
 
@@ -130,12 +130,6 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
                 channelToSendTo = lvl1_Thread
             }
             break
-    }
-    //  When dev err wh is available
-    if (wh) {
-        wh.send({
-            content: ERROR_MESSAGE,
-        })
     }
     return channelToSendTo.send(ERROR_MESSAGE).catch(error => client.logger.error(error))
 }

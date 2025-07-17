@@ -1,6 +1,7 @@
 const Topgg = require(`@top-gg/sdk`)
 const Reminder = require(`../libs/reminder`)
 const dataCleaner = require(`../libs/dataCleanup.js`)
+const { WebhookClient } = require(`discord.js`)
 /**
  * Ready event.
  * @param {Client} annie Current bot/worker instance.
@@ -29,4 +30,6 @@ module.exports = function ready(annie) {
     annie.logger.info(`successfully logged in (${annie.getBenchmark(process.hrtime(annie.startupInit))})`)
     //  Registering vote api into client property.
     annie.registerNode(new Topgg.Api(process.env.DBLTOKEN), `dblApi`)
+    //  Registering error webhook into client property.
+    if (process.env.ERROR_WEBHOOK_URL) annie.registerNode(new WebhookClient({ url: process.env.ERROR_WEBHOOK_URL }), `errorWebhook`)
 }
