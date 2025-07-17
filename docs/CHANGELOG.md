@@ -1,3 +1,10 @@
+## [9.11.1](https://github.com/annieverse/anniediscord/compare/v9.11.0...v9.11.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* **setlang:** hotfix no arg. ([250a788](https://github.com/annieverse/anniediscord/commit/250a78868cb20858c4c9d4a21ef468dcd4b28203))
+
 # [9.11.0](https://github.com/annieverse/anniediscord/compare/v9.10.2...v9.11.0) (2025-07-17)
 
 
