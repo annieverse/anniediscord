@@ -24,7 +24,8 @@ module.exports = async (client, interaction, command) => {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
-        return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        // return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
     const options = interaction.options
@@ -108,6 +109,8 @@ module.exports = async (client, interaction, command) => {
         }
         //  Report to support server
         if (internalError) return
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
+
+        // client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
     }
 }

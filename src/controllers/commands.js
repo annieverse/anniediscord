@@ -41,7 +41,8 @@ module.exports = async (client = {}, message = {}) => {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
-        return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        // return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
 
@@ -143,6 +144,7 @@ module.exports = async (client = {}, message = {}) => {
         }
         //  Report to support server
         if (internalError) return
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        // client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

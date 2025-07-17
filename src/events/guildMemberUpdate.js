@@ -131,7 +131,8 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                 }
                 newMember.roles.add(rolesToAdd).catch(error => {
                     client.logger.error(error)
-                    client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    errorRelay(client, { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    // client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
                 })
             }
         }
