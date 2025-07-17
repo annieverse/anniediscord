@@ -95,7 +95,7 @@ module.exports = function masterShard() {
 					const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
 					if (voteWebhook) {
 						voteWebhook.send({
-							content: `Received vote from <@${userId}> (${userId})`,
+							content: `Received vote from **${user.username}** (ID:${userId})`,
 							allowedMentions: { users: [userId] }
 						})
 					}
