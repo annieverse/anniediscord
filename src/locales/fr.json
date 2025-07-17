@@ -952,6 +952,7 @@
   },
   "VOTE": {
     "UNAVAILABLE": "**Je m'excuse,** mon état actuel ne prend pas encore en charge le service de vote. Veuillez contacter mes développeurs pour plus de détails.",
+    "SUGGEST_TO_REGISTER": "Si c’est ta première fois, lie ton compte Discord au site pour pouvoir me donner un vote !! {{emoji}}",
     "IS_COOLDOWN": "**Salut, ton prochain vote est encore en attente !**\n╰ Pendant que nous y sommes, pourquoi ne pas **{{page}}** à mon sujet d'abord ? {{emoji}}",
     "READY": "╭*:;,．★ ～☆*────────────────╮\n**Pouvez-vous prendre une minute pour me voter sur {{url}} ?**\n Ne vous inquiétez pas pour la récompense ! J'ai déjà préparé quelque chose de spécial pour vous♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nN'oubliez pas, vous pouvez voter toutes les **12 heures.**"
   },
