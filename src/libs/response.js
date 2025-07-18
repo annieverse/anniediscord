@@ -215,7 +215,8 @@ class Response {
 			} catch (e) {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
 				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
-				this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				// this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 		}
 
