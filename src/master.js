@@ -79,8 +79,6 @@ module.exports = function masterShard() {
 		logger.info(`USER_ID:${userId} just voted!`)
 		function sendReward(c, { userId }) {
 			c.users.fetch(userId).then(async user => {
-				//  Only perform on SHARD_ID:0
-				if (c.shard.ids[0] === 0) {
 					c.db.databaseUtils.updateInventory({
 						itemId: 52,
 						userId: userId,
@@ -99,7 +97,6 @@ module.exports = function masterShard() {
 							allowedMentions: { users: [userId] }
 						})
 					}
-				}
 			})
 				.catch(e => {
 					c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
