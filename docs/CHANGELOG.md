@@ -1,3 +1,10 @@
+## [10.0.1](https://github.com/annieverse/anniediscord/compare/v10.0.0...v10.0.1) (2025-07-18)
+
+
+### Bug Fixes
+
+* **setCartcoin:** slash cmd. ([156a3ce](https://github.com/annieverse/anniediscord/commit/156a3ce63e3ded396f1462d6944926006d9fc0f2))
+
 # [10.0.0](https://github.com/annieverse/anniediscord/compare/v9.11.2...v10.0.0) (2025-07-18)
 
 
