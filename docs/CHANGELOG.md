@@ -1,3 +1,21 @@
+# [10.0.0](https://github.com/annieverse/anniediscord/compare/v9.11.2...v10.0.0) (2025-07-18)
+
+
+### Bug Fixes
+
+* **vote:** shard filtering ([63901f8](https://github.com/annieverse/anniediscord/commit/63901f8d84aea568cd7e1fe272e235c6499cdb80))
+
+
+### Features
+
+* **collection:** depreciating cmd ([4b44a0b](https://github.com/annieverse/anniediscord/commit/4b44a0ba62da46cda2410827c9ddfe362aa1cc5e))
+* **setcartcoin:** allows user to toggle the cartcoins feature in the server. ([cd66775](https://github.com/annieverse/anniediscord/commit/cd66775fdd609aade1720ac3df81942e2aba2c8c))
+
+
+### BREAKING CHANGES
+
+* **collection:** collection command is no longer supported
+
 ## [9.11.2](https://github.com/annieverse/anniediscord/compare/v9.11.1...v9.11.2) (2025-07-17)
 
 
