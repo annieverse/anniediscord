@@ -41,6 +41,11 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     artcoinsRatio: 8,
     async execute(client, reply, message, arg, locale) {
+        if (message.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale.CARTCOIN.DISABLED, {
+            socket: {
+                emoji: await client.getEmoji(`AnniePout`)
+            }
+        })
         //  Returns as guide if user doesn't specify any parameters
         if (!arg) return await reply.send(locale.CARTCOIN.SHORT_GUIDE, {
             image: `banner_cartcoins`,
@@ -53,6 +58,11 @@ module.exports = {
         return await this.run(client, reply, message, arg, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        if (interaction.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale.CARTCOIN.DISABLED, {
+            socket: {
+                emoji: await client.getEmoji(`AnniePout`)
+            }
+        })
         let arg = options.getSubcommand() == `all` ? `all` : `${options.getInteger(`how_many`)}`
         return await this.run(client, reply, interaction, arg, locale)
     },

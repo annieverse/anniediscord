@@ -627,7 +627,18 @@ module.exports = {
             customizable: true,
             allowedTypes: [`string`],
             value: ``
-        }
+        },
+        {
+            /**
+             *  Toggle Annie's artcoins conversion feature
+             *  @type {boolean}
+             */
+            name: `CARTCOIN_MODULE`,
+            description: `Toggle Annie's artcoins conversion feature`,
+            customizable: true,
+            allowedTypes: [`boolean`],
+            value: 1
+        },
         ]
     }
 }

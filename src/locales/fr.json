@@ -98,6 +98,7 @@
   },
   "CARTCOIN": {
     "SHORT_GUIDE": "**Commencez à convertir vos artcoins en EXP en tapant\n`{{prefix}}cartcoin <montant/tout>`** {{emoji}}",
+    "DISABLED": "**la conversion des artcoins est désactivée sur ce serveur.** {{emoji}}\n╰─ demande à tes admins ou au propriétaire du serveur de la réactiver.",
     "INSUFFICIENT_AMOUNT": "Eehh- vous n'avez actuellement que **{{amount}}** artcoins. Allez travailler plus dur! {{emoji}}",
     "INVALID_AMOUNT": "Vous devez mettre au moins **8 artcoins**, *baka!* {{emoji}}",
     "SUCCESSFUL": "Youpi! **{{artcoins}}** ont été convertis en **{{exp}}** avec succès!",
@@ -594,6 +595,14 @@
     "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nChoisissez votre langue préférée et je commencerai à parler dans cette langue pour chaque invocation de commande ~\nLangues disponibles :: {{languages}}\n**`par exemple {{prefix}}setlang en`**\n╰──────────☆～*:;,．*╯\nActuellement défini sur {{currentLanguage}}.",
     "INVALID_LANG": "Eh, je n'ai pas encore appris cette langue !\nVeuillez choisir l'une des suivantes :: {{languages}}",
     "SUCCESSFUL": "**D'accord! ma langue a été mise à jour♡**\nDésormais, je parlerai en {{language}} !"
+  },
+  "SETCARTCOIN": {
+    "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nle leveling est trop facile ? tu peux maintenant activer ou désactiver la conversion d'artcoin sur ton serveur !♡\n**`ex. {{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\ncette fonctionnalité est actuellement {{status}} sur le serveur.",
+    "INVALID_ACTION": "tu peux seulement utiliser enable ou disable ici !\n╰─**`ex. {{prefix}}setcartcoin disable`**",
+    "SUCCESSFULLY_ENABLED": "**okaa!♡** {{emoji}}\n╰─ activée sur le serveur !",
+    "SUCCESSFULLY_DISABLED": "**d’accord!♡** {{emoji}}\n╰─ désactivée sur le serveur !",
+    "ENABLED": "activée",
+    "DISABLED": "désactivée"
   },
   "SETLEVELUPMESSAGE": {
     "GUIDE": "Utilisez l'une des actions suivantes pour activer ou désactiver le module de message de montée de niveau dans cette guilde. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> En activant ce module, votre guilde recevra un message de montée de niveau chaque fois qu'un membre atteint un nouveau niveau (évidemment).\n\n**`{{prefix}}setlvlupmsg channel #canalcible`**\n> Certains d'entre vous préfèrent que le message soit envoyé dans un endroit propre, afin que votre expérience de discussion reste ininterrompue. Heureusement, vous pouvez définir un canal personnalisé à cet effet !\n__ex. {{prefix}}setlvlupmsg channel #pain__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Personnalisez votre message de montée de niveau avec des citations cool ! Ce système fonctionne de manière similaire à SetWelcomer, vous pouvez donc ajouter {{user}} dans le message pour mentionner l'utilisateur ayant monté de niveau.\n__ex. {{prefix}}setlvlupmsg text Waouh, {{user}} a atteint un nouveau niveau !__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Vous en avez assez des messages de montée de niveau agaçants ? Il est temps de les désactiver.\n\n╰──────────☆～*:;,．*╯",
