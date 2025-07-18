@@ -21,12 +21,17 @@ module.exports = {
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     type: ApplicationCommandType.ChatInput,
     contexts: [0],
-    options: [{
-        name: `toggle`,
-        description: `enable or disable the artcoin conversion feature`,
-        type: ApplicationCommandOptionType.String,
-        choices: [{ name: `enable`, value: `enable` }, { name: `disable`, value: `disable` }]
-    }],
+    options: [
+      {
+        name: `enable`,
+        description: `Enable the artcoin conversion feature`,
+        type: ApplicationCommandOptionType.Subcommand,
+      }, {
+        name: `disable`,
+        description: `Disable the artcoin conversion feature`,
+        type: ApplicationCommandOptionType.Subcommand,
+      }
+    ],
     async execute(client, reply, message, arg, locale, prefix) {
         if (!arg) return reply.send(locale.SETCARTCOIN.GUIDE, {
             image: `banner_cartcoins`,
@@ -65,7 +70,7 @@ module.exports = {
         })
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        const toggle = options.toggle.value === `enable` ? 1 : options.toggle.value === `disable` ? 0 : null
+        const toggle = options.getSubcommand() === `open` ? 1 : options.getSubcommand() === `disable` ? 0 : null
         if (toggle === null) return reply.send(locale.SETCARTCOIN.INVALID_ACTION, {
             socket: {
                 prefix: interaction.guild.configs.get(`PREFIX`).value
