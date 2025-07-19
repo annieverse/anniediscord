@@ -73,7 +73,7 @@ module.exports = function masterShard() {
 	})
 
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
-	server.post(`/dblwebhook`, wh.listener(async (vote) => {
+	server.post(`/dblwebhook`, wh.listener(vote => {
 		logger.info(`USER_ID:${userId} just voted!`)
 		const userId = vote.user
 
@@ -85,9 +85,8 @@ module.exports = function masterShard() {
 				content: `Received vote from <@${userId}> (${userId})`,
 				allowedMentions: { users: [userId] }
 			})
-		}
-
-		async function fetchVoter(c, { userId }) {
+		}		
+		const fetchVoter = async (c, { userId }) => {
 
 			// 	1. Distribute reward as early as possible
 			//  Ensuring the voter guaranteed to receive the reward
@@ -115,9 +114,7 @@ module.exports = function masterShard() {
 				return false
 			}
 		}
-
-		const result = (await manager.broadcastEval(fetchVoter, { context: { userId: userId } }))[0]
-		if (!result) return
+		manager.broadcastEval(fetchVoter, { context: { userId: userId } })
 	}))
 	const port = process.env.PORT || 3000
 	server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
