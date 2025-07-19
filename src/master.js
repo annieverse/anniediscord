@@ -109,7 +109,7 @@ module.exports = function masterShard() {
 			return true
 		}
 
-		const result = (await client.shard.broadcastEval(fetchUser, { context: { userId: userId } }))[0]
+		const result = (await manager.broadcastEval(fetchUser, { context: { userId: userId } }))[0]
 		if (!result) return
 	}))
 	const port = process.env.PORT || 3000
