@@ -1,5 +1,5 @@
 "use strict"
-const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle } = require(`discord.js`)
+const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, MessageFlags } = require(`discord.js`)
 const Quest = require(`../../libs/quests`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
@@ -56,11 +56,11 @@ module.exports = {
 		const buttonCollector = quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0
 		buttonCollector.on(`ignore`, async (i) => {
-			i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+			i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = isSlash ? await messageRef.fetchReply() : await quest.fetch()
+			const message = isSlash ? await messageRef.withResponse() : await quest.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
@@ -107,7 +107,7 @@ module.exports = {
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
 			questSession.testAnswer(answer)
 
-			const message = await i.fetchReply()
+			const message = await i.withResponse()
 			//  Handle if the answer is incorrect
 			if (questSession.getAnswerIsCorrect === false) {
 				answerAttempt++
