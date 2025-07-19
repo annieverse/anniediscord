@@ -1,3 +1,10 @@
+## [10.0.3](https://github.com/annieverse/anniediscord/compare/v10.0.2...v10.0.3) (2025-07-19)
+
+
+### Bug Fixes
+
+* **vote:** improved shard lookup. ([ef626e3](https://github.com/annieverse/anniediscord/commit/ef626e36f0eb680052f1f8588585a4d54f7c9903))
+
 ## [10.0.2](https://github.com/annieverse/anniediscord/compare/v10.0.1...v10.0.2) (2025-07-19)
 
 
