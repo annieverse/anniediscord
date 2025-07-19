@@ -16,8 +16,8 @@
   },
   "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {
-    "node": ">=20.13.1",
-    "npm": "^10.5.2"
+    "node": ">=24.4.1",
+    "npm": "^11.4.2"
   },
   "contributors": [
     "Naph (https://github.com/klerikdust)",
@@ -58,7 +58,7 @@
     "pg": "^8.12.0",
     "pg-copy-streams": "^6.0.6",
     "pino": "^9.4.0",
-    "pixiv-api-client": "^0.27.0",
+    "pixiv-api-client": "^0.24.0",
     "pixiv-img": "^1.0.0",
     "redis": "^4.7.0",
     "string-similarity": "^4.0.2",
