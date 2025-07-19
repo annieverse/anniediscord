@@ -77,6 +77,7 @@ module.exports = function masterShard() {
 		logger.info(`USER_ID:${userId} just voted!`)
 		const userId = vote.user
 
+		//  Attempt to fire webhook for dev notification
 		const { WebhookClient } = require(`discord.js`)
 		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
 		if (voteWebhook) {
@@ -86,12 +87,10 @@ module.exports = function masterShard() {
 			})
 		}
 
-		async function fetchUser(c, { userId }) {
-			let user = null
-			if (c.users.cache.has(userId)) user = c.users.cache.get(userId)
-			user = c.users.fetch(userId)
+		async function fetchVoter(c, { userId }) {
 
-			// Update currency across all records reguardless
+			// 	1. Distribute reward as early as possible
+			//  Ensuring the voter guaranteed to receive the reward
 			c.db.databaseUtils.updateInventory({
 				itemId: 52,
 				userId: userId,
@@ -99,17 +98,25 @@ module.exports = function masterShard() {
 				distributeMultiAccounts: true
 			})
 
-			if (!user) return false
+			//  2. Fetch user via cache if available, otherwise fetch via API
+			//  If user is not found, return false
+			try {
+				const user = c.users.cache.get(userId) || await c.users.fetch(userId)
+				if (!user) return false
+				// 3. Attempt to send message to user
+				const artcoinsEmoji = await c.getEmoji(`artcoins`, `577121315480272908`)
+				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
+					.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} > ${e.message}`))
+				c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
+				return true
 
-			// Attempt to send message to user
-			const artcoinsEmoji = await c.getEmoji(`artcoins`, `577121315480272908`)
-			user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
-				.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} > ${e.message}`))
-			c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
-			return true
+			} catch (e) {
+				c.logger.warn(`FAIL to voter's object > USER_ID:${userId} > ${e.message}`)
+				return false
+			}
 		}
 
-		const result = (await manager.broadcastEval(fetchUser, { context: { userId: userId } }))[0]
+		const result = (await manager.broadcastEval(fetchVoter, { context: { userId: userId } }))[0]
 		if (!result) return
 	}))
 	const port = process.env.PORT || 3000
