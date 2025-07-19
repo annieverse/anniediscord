@@ -3,7 +3,8 @@ const {
     ComponentType,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle,
+    MessageFlags
 } = require(`discord.js`)
 /**
  * Manages transaction confirmation thru reaction.
@@ -45,7 +46,7 @@ module.exports = class Confirmator {
     }
 
     get getPreviousSessionActive() {
-        return this.#previousSessionActive 
+        return this.#previousSessionActive
     }
 
     /**
@@ -97,7 +98,7 @@ module.exports = class Confirmator {
      */
     onAccept(fn = null) {
         if (!fn) throw new TypeError(`parameter 'fn' must be a valid callback function`)
-        if (this.getPreviousSessionActive) return 
+        if (this.getPreviousSessionActive) return
         if (!this.activeInstance) throw new Error(`there are no active instance to listen to`)
         this.onEnd()
         this.onIgnore()
@@ -109,7 +110,7 @@ module.exports = class Confirmator {
                     components: []
                 })
                 // Fetch the original message in order respond to it again
-                await interact.fetchReply()
+                await interact.withResponse()
 
                 // send the final response
                 return await this.reply.send(this.reply.localeMetadata.ACTION_CANCELLED, {
@@ -159,7 +160,7 @@ module.exports = class Confirmator {
     onIgnore() {
         this.activeInstance.on(`ignore`, (obj) => {
             if (obj.me) return
-            obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, ephemeral: true })
+            obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, flags: MessageFlags.Ephemeral })
         })
     }
 }

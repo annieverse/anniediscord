@@ -5,7 +5,8 @@ const {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	ChannelType
+	ChannelType,
+	MessageFlags
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -78,7 +79,7 @@ class Response {
 	 * @param {Boolean} plugins.timestampAsFooter Toggle `true` to include the message timestamp in the footer of embed.
 	 * @param {Boolean} plugins.directMessage Indicate if the message is a DM
 	 * @param {Boolean} plugins.feedback  beta feature, **not used often**
-	 * @param {Boolean} plugins.fetchReply Application command option to grab reference
+	 * @param {Boolean} plugins.withResponse Application command option to grab reference
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
 	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
@@ -119,7 +120,7 @@ class Response {
 		const feedback = plugins.feedback || false
 		let components = plugins.components || null
 		let file = plugins.file || null
-		const fetchReply = plugins.fetchReply || true
+		const withResponse = plugins.withResponse || true
 		const ephemeral = plugins.ephemeral || false
 		const messageToReplyTo = plugins.messageToReplyTo || null
 		const replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
@@ -157,7 +158,7 @@ class Response {
 		betaFeedback()
 
 		//  Handle message with paging property enabled
-		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews)
+		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, isSlash, cardPreviews)
 
 		//  Replace content with error message if content is a faulty value
 		if (typeof content != `string`) content = this.localeMetadata.LOCALIZATION_ERROR
@@ -209,8 +210,8 @@ class Response {
 					embeds: noEmbed ? null : [embed],
 					files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
 					components: components ? components : null,
-					fetchReply: fetchReply,
-					ephemeral: ephemeral
+					withResponse: withResponse,
+					flags: ephemeral ? MessageFlags.Ephemeral : null
 				})
 			} catch (e) {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
@@ -330,7 +331,7 @@ class Response {
 		return content
 	}
 
-	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews) {
+	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, isSlash, cardPreviews) {
 		let page = 0
 		if (ephemeral) ephemeral = false
 		const embeddedPages = await this._registerPages(content, plugins)
@@ -338,24 +339,24 @@ class Response {
 			embeds: [embeddedPages[0]],
 			files: [embeddedPages[0].file],
 			components: components,
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : {
 			embeds: [embeddedPages[0]],
 			files: [embeddedPages[0].file],
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : components ? {
 			embeds: [embeddedPages[0]],
 			files: [],
 			components: components,
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : {
 			embeds: [embeddedPages[0]],
 			files: [],
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		}).then(async (msg) => {
 			this.ref = this.message.user
 			//  Buttons

@@ -31,6 +31,7 @@ module.exports = {
         return await this.run(target, user, reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
+        await interaction.deferReply()
         const target = options.getUser(`user`)
         const user = interaction.member.user
         return await this.run(target, user, reply, locale)

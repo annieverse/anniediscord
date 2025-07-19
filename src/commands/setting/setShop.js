@@ -14,7 +14,7 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder
+    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, MessageFlags
 } = require(`discord.js`)
 
 /**
@@ -276,7 +276,7 @@ module.exports = {
         }
 
         let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`) + Object.values(responseMessageContent).slice(-1), {
-            fetchReply: true,
+            withResponse: true,
             footer: `Hitting finish before entering stock will defualt stock to unlimited, if not set already and buffs to no buffs added, if not set already.`,
             components: row
         })
@@ -292,20 +292,20 @@ module.exports = {
          */
         async function joinFunction() {
             let finalizedResponseMessageContent = Object.values(responseMessageContent).join(`\n`)
-            let message = await interaction.fetchReply()
+            let message = await interaction.withResponse()
             return await message.edit({
                 embeds: [await reply.send(finalizedResponseMessageContent, { raw: true })]
             })
         }
         buttonCollector.on(`ignore`, async (i) => {
-            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
         })
         buttonCollector.on(`end`, async (collected, reason) => {
             client.db.databaseUtils.delCache(sessionId)
             // client.db.redis.del(sessionId)
             if (completed) return
             if (reason != `shop adding item has been cancelled` && reason != `time`) return
-            const message = await interaction.fetchReply()
+            const message = await interaction.withResponse()
             try {
                 message.edit({
                     content: `Shop register interface has been closed.`, components: [], embeds: []
@@ -330,7 +330,7 @@ module.exports = {
                 client.db.shop.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
                 //  Register effect if there's any
                 if (buffs.length > 0) buffs.map(b => client.db.shop.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
-                const message = await interaction.fetchReply()
+                const message = await interaction.withResponse()
                 message.edit({
                     embeds: [await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
                         raw: true,
@@ -407,7 +407,7 @@ module.exports = {
                 if (!rawAnswer) return
                 rawAnswer.deferUpdate()
                 const answer = rawAnswer.fields.getTextInputValue(`buffsAnswerInput`).toLowerCase()
-                const message = await i.fetchReply()
+                const message = await i.withResponse()
                 const params = answer.split(` `)
                 if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return await reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
                     deleteIn: 5
@@ -1104,7 +1104,7 @@ module.exports = {
             time: editItemListenerTimer
         })
         editItemListener.on(`ignore`, async (i) => {
-            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
         })
         editItemListener.on(`end`, async (collected, reason) => {
             const msg = await guide.fetch()

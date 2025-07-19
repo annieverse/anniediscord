@@ -12,7 +12,8 @@ const {
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle,
-    PermissionFlagsBits
+    PermissionFlagsBits,
+    MessageFlags
 } = require(`discord.js`)
 
 /**
@@ -203,13 +204,13 @@ module.exports = {
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
-                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
             })
 
             // What to do when the collector times out or gets called by .stop()
             buttonCollector.on(`end`, async (collected, reason) => {
                 if (reason != `time`) return confirmOrCancel()
-                const message = await interaction.fetchReply()
+                const message = await interaction.withResponse()
                 try {
                     message.edit({ components: [] })
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
@@ -346,7 +347,7 @@ module.exports = {
 
                     // Send a message to the users if they try to use the command when they didn't iniate it
                     roleListener.on(`ignore`, async (i) => {
-                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
                     })
 
                     // What to do when the collector for the role confirmation ends.
@@ -416,13 +417,13 @@ module.exports = {
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
-                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
             })
 
             // What to do when the collector for adding an item ends
             buttonCollector.on(`end`, async (collected, reason) => {
                 if (reason != `time`) return confirmOrCancel()
-                const message = await interaction.fetchReply()
+                const message = await interaction.withResponse()
                 try {
                     message.edit({ components: [] })
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled\n${e}`))
@@ -575,7 +576,7 @@ module.exports = {
 
                     // Send a message to the users if they try to use the command when they didn't iniate it
                     itemListener.on(`ignore`, async (i) => {
-                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
                     })
 
                     // What to do when the item collector ends

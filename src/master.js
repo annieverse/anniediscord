@@ -1,6 +1,6 @@
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
-const { masterLogger:logger }  = require(`../pino.config.js`)
+const { masterLogger: logger } = require(`../pino.config.js`)
 const { Webhook } = require(`@top-gg/sdk`)
 const fs = require(`fs`)
 
@@ -53,56 +53,71 @@ module.exports = function masterShard() {
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
-	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection)=>{
+	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection) => {
 		try {
 			const m = collection.get(0).manager
 			const fetchServers = await m.fetchClientValues(`guilds.cache.size`)
 			const serverCount = fetchServers.reduce((prev, val) => prev + val, 0)
 			const shardCount = m.totalShards
-			m.broadcastEval((c,{serverCount,shardCount})=>{
+			m.broadcastEval((c, { serverCount, shardCount }) => {
 				if (!c.isReady()) return
 				if (c.dev) return
 				c.dblApi.postStats({
 					serverCount: serverCount,
 					shardCount: shardCount
 				})
-			}, {context:{serverCount:serverCount,shardCount:shardCount} })
+			}, { context: { serverCount: serverCount, shardCount: shardCount } })
 		} catch (error) {
 			logger.error(`[master.js] > ${error}`)
 		}
 	})
 
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
-	//  Send shard count to DBL webhook.
-	server.post(`/dblwebhook`, wh.listener((vote) => {
-		const userId = vote.user
+	server.post(`/dblwebhook`, wh.listener(async (vote) => {
 		logger.info(`USER_ID:${userId} just voted!`)
-		function sendReward(c, { userId }) {
-			c.users.fetch(userId).then(async user => {
-					c.db.databaseUtils.updateInventory({
-						itemId: 52,
-						userId: userId,
-						value: 5000,
-						distributeMultiAccounts: true
-					})
-					const artcoinsEmoji = await c.getEmoji(`artcoins`,`577121315480272908`)
-					user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
-						.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} > ${e.message}`))
-					c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
-					const { WebhookClient } = require(`discord.js`)
-					const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
-					if (voteWebhook) {
-						voteWebhook.send({
-							content: `Received vote from **${user.username}** (ID:${userId})`,
-							allowedMentions: { users: [userId] }
-						})
-					}
+		const userId = vote.user
+
+		//  Attempt to fire webhook for dev notification
+		const { WebhookClient } = require(`discord.js`)
+		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
+		if (voteWebhook) {
+			voteWebhook.send({
+				content: `Received vote from <@${userId}> (${userId})`,
+				allowedMentions: { users: [userId] }
 			})
-				.catch(e => {
-					c.logger.warn(`FAIL to find USER_ID:${userId} on SHARD_ID:${c.shard.ids[0]} so no reward given > ${e.message}`)
-				})
 		}
-		manager.broadcastEval(sendReward, { context: { userId: userId } })
+
+		async function fetchVoter(c, { userId }) {
+
+			// 	1. Distribute reward as early as possible
+			//  Ensuring the voter guaranteed to receive the reward
+			c.db.databaseUtils.updateInventory({
+				itemId: 52,
+				userId: userId,
+				value: 5000,
+				distributeMultiAccounts: true
+			})
+
+			//  2. Fetch user via cache if available, otherwise fetch via API
+			//  If user is not found, return false
+			try {
+				const user = c.users.cache.get(userId) || await c.users.fetch(userId)
+				if (!user) return false
+				// 3. Attempt to send message to user
+				const artcoinsEmoji = await c.getEmoji(`artcoins`, `577121315480272908`)
+				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
+					.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} > ${e.message}`))
+				c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
+				return true
+
+			} catch (e) {
+				c.logger.warn(`FAIL to voter's object > USER_ID:${userId} > ${e.message}`)
+				return false
+			}
+		}
+
+		const result = (await manager.broadcastEval(fetchVoter, { context: { userId: userId } }))[0]
+		if (!result) return
 	}))
 	const port = process.env.PORT || 3000
 	server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
