@@ -1,3 +1,10 @@
+## [10.0.2](https://github.com/annieverse/anniediscord/compare/v10.0.1...v10.0.2) (2025-07-19)
+
+
+### Bug Fixes
+
+* **vote:** var and port adjustment. ([c900a83](https://github.com/annieverse/anniediscord/commit/c900a83a9426c3081f3bd4ef1dcca5276b7ff822))
+
 ## [10.0.1](https://github.com/annieverse/anniediscord/compare/v10.0.0...v10.0.1) (2025-07-18)
 
 
