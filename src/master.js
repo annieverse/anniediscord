@@ -77,7 +77,8 @@ module.exports = function masterShard() {
 		const userId = vote.user
 		logger.info(`USER_ID:${userId} just voted!`)
 
-		//  Attempt to fire webhook for dev notification
+
+		//  1. Attempt to fire webhook for dev notification
 		const { WebhookClient } = require(`discord.js`)
 		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
 		if (voteWebhook) {
@@ -85,36 +86,47 @@ module.exports = function masterShard() {
 				content: `Received vote from <@${userId}> (${userId})`,
 				allowedMentions: { users: [userId] }
 			})
-		}		
-		const fetchVoter = async (c, { userId }) => {
-
-			// 	1. Distribute reward as early as possible
-			//  Ensuring the voter guaranteed to receive the reward
-			c.db.databaseUtils.updateInventory({
-				itemId: 52,
-				userId: userId,
-				value: 5000,
-				distributeMultiAccounts: true
-			})
-
-			//  2. Fetch user via cache if available, otherwise fetch via API
-			//  If user is not found, return false
-			try {
-				const user = c.users.cache.get(userId) || await c.users.fetch(userId)
-				if (!user) return false
-				// 3. Attempt to send message to user
-				const artcoinsEmoji = await c.getEmoji(`artcoins`, `577121315480272908`)
-				user.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
-					.catch(e => c.logger.warn(`FAIL to DM USER_ID:${userId} > ${e.message}`))
-				c.logger.info(`Vote reward successfully sent to USER_ID:${userId}`)
-				return true
-
-			} catch (e) {
-				c.logger.warn(`FAIL to voter's object > USER_ID:${userId} > ${e.message}`)
-				return false
-			}
 		}
-		manager.broadcastEval(fetchVoter, { context: { userId: userId } })
+
+
+		//  2. Find in the shard where the voter (user) is reachable
+		lookupReachableShard().then(shard => { 
+			//  Skip reward for voter who aren't reachable in any shard
+			if (shard === undefined) return logger.warn(`USER_ID:${userId} is not reachable in any shard. Skipping reward distribution.`)
+			manager.shard.broadcastEval(async (client, { userId }) => {
+				const user = await client.users.fetch(userId)
+				// 	3. Distribute reward as early as possible
+				//  Ensuring the voter guaranteed to receive the reward first
+				client.db.databaseUtils.updateInventory({
+					itemId: 52,
+					userId: userId,
+					value: 5000,
+					distributeMultiAccounts: true
+				})
+				// 4. Attempt to notify the voter (user)
+				// Regarding the vote reward.
+				// If the DM is locked, omit process.
+				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
+				user
+					.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
+					.then(() => client.logger.info(`[VOTE_REWARD_NOTIFICATION] successfully sent to USER_ID:${userId}`))
+					.catch(e => client.logger.warn(`[VOTE_REWARD_NOTIFICATION] failed to notify USER_ID:${userId} > ${e.message}`))
+				client.logger.info(`[VOTE_REWARD] Successfully sent to USER_ID:${userId}`)
+			}, { context: { userId }, shard: shard })
+		})
+
+
+		// Lookup for the shard where the voter (user) is reachable
+		async function lookupReachableShard() {
+			//  Pool of shard IDs where the voter (user) is reachable. Null values if unreachable in the shard.
+			const shards = await manager.broadcastEval(async (client, { userId }) => {
+				const user = client.users.cache.get(userId) || await client.users.fetch(userId).catch(() => null)
+				if (user) return client.shard.ids[0]
+				return null
+			}, { context: { userId } })
+			// Get the first non-null shard ID from the pool
+			return shards.find(id => id !== null)
+		}
 	}))
 	const port = process.env.PORT || 3000
 	server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
