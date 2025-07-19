@@ -73,10 +73,18 @@ module.exports = function masterShard() {
 	})
 
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
-	//  Send shard count to DBL webhook.
 	server.post(`/dblwebhook`, wh.listener(async (vote) => {
 		logger.info(`USER_ID:${userId} just voted!`)
 		const userId = vote.user
+
+		const { WebhookClient } = require(`discord.js`)
+		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
+		if (voteWebhook) {
+			voteWebhook.send({
+				content: `Received vote from <@${userId}> (${userId})`,
+				allowedMentions: { users: [userId] }
+			})
+		}
 
 		async function fetchUser(c, { userId }) {
 			let user = null
@@ -103,15 +111,6 @@ module.exports = function masterShard() {
 
 		const result = (await client.shard.broadcastEval(fetchUser, { context: { userId: userId } }))[0]
 		if (!result) return
-
-		const { WebhookClient } = require(`discord.js`)
-		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
-		if (voteWebhook) {
-			voteWebhook.send({
-				content: `Received vote from <@${userId}> (${userId})`,
-				allowedMentions: { users: [userId] }
-			})
-		}
 	}))
 	const port = process.env.PORT || 3000
 	server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
