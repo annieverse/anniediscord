@@ -94,7 +94,6 @@ module.exports = function masterShard() {
 			//  Skip reward for voter who aren't reachable in any shard
 			if (shard === undefined) return logger.warn(`USER_ID:${userId} is not reachable in any shard. Skipping reward distribution.`)
 			manager.shard.broadcastEval(async (client, { userId }) => {
-				const user = await client.users.fetch(userId)
 				// 	3. Distribute reward as early as possible
 				//  Ensuring the voter guaranteed to receive the reward first
 				client.db.databaseUtils.updateInventory({
@@ -107,6 +106,7 @@ module.exports = function masterShard() {
 				// Regarding the vote reward.
 				// If the DM is locked, omit process.
 				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
+				const user = await client.users.fetch(userId)
 				user
 					.send(`**Thanks for the voting, ${user.username}!** I've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!`)
 					.then(() => client.logger.info(`[VOTE_REWARD_NOTIFICATION] successfully sent to USER_ID:${userId}`))
