@@ -1,3 +1,61 @@
+## [10.0.1](https://github.com/annieverse/anniediscord/compare/v10.0.0...v10.0.1) (2025-07-18)
+
+
+### Bug Fixes
+
+* **setCartcoin:** slash cmd. ([156a3ce](https://github.com/annieverse/anniediscord/commit/156a3ce63e3ded396f1462d6944926006d9fc0f2))
+
+# [10.0.0](https://github.com/annieverse/anniediscord/compare/v9.11.2...v10.0.0) (2025-07-18)
+
+
+### Bug Fixes
+
+* **vote:** shard filtering ([63901f8](https://github.com/annieverse/anniediscord/commit/63901f8d84aea568cd7e1fe272e235c6499cdb80))
+
+
+### Features
+
+* **collection:** depreciating cmd ([4b44a0b](https://github.com/annieverse/anniediscord/commit/4b44a0ba62da46cda2410827c9ddfe362aa1cc5e))
+* **setcartcoin:** allows user to toggle the cartcoins feature in the server. ([cd66775](https://github.com/annieverse/anniediscord/commit/cd66775fdd609aade1720ac3df81942e2aba2c8c))
+
+
+### BREAKING CHANGES
+
+* **collection:** collection command is no longer supported
+
+## [9.11.2](https://github.com/annieverse/anniediscord/compare/v9.11.1...v9.11.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** error webhook handler. ([1eb9672](https://github.com/annieverse/anniediscord/commit/1eb967224fa270c3ea6972b9929dd9ed4f7f4944))
+
+## [9.11.1](https://github.com/annieverse/anniediscord/compare/v9.11.0...v9.11.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* **setlang:** hotfix no arg. ([250a788](https://github.com/annieverse/anniediscord/commit/250a78868cb20858c4c9d4a21ef468dcd4b28203))
+
+# [9.11.0](https://github.com/annieverse/anniediscord/compare/v9.10.2...v9.11.0) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** revise message structure for vote wh. ([10779e2](https://github.com/annieverse/anniediscord/commit/10779e27c31589a238f7566f691ae72e208ae191))
+
+
+### Features
+
+* **bfd:** push stats to bfd platform. ([312dcd9](https://github.com/annieverse/anniediscord/commit/312dcd9f466d959422d6e2838f8b0de32f1bee6d))
+
+## [9.10.2](https://github.com/annieverse/anniediscord/compare/v9.10.1...v9.10.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **localization:** sync fr. ([afe22d6](https://github.com/annieverse/anniediscord/commit/afe22d61f14d3786154a21aa89d0826ce70ba714))
+
 ## [9.9.16](https://github.com/annieverse/anniediscord/compare/v9.9.15...v9.9.16) (2024-08-19)
 
 

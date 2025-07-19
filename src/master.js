@@ -76,7 +76,6 @@ module.exports = function masterShard() {
 	//  Send shard count to DBL webhook.
 	server.post(`/dblwebhook`, wh.listener(async (vote) => {
 		logger.info(`USER_ID:${userId} just voted!`)
-
 		const userId = vote.user
 
 		async function fetchUser(c, { userId }) {
