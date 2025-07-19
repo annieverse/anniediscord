@@ -74,8 +74,8 @@ module.exports = function masterShard() {
 
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
 	server.post(`/dblwebhook`, wh.listener(vote => {
-		logger.info(`USER_ID:${userId} just voted!`)
 		const userId = vote.user
+		logger.info(`USER_ID:${userId} just voted!`)
 
 		//  Attempt to fire webhook for dev notification
 		const { WebhookClient } = require(`discord.js`)
