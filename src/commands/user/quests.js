@@ -60,7 +60,7 @@ module.exports = {
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = isSlash ? messageRef.message : await quest.fetch()
+			const message = isSlash ? await messageRef.withResponse() : await quest.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
@@ -107,7 +107,7 @@ module.exports = {
 			const answer = rawAnswer.fields.getTextInputValue(`questAnswerInput`).toLowerCase()
 			questSession.testAnswer(answer)
 
-			const message = i.message
+			const message = i.withResponse()
 			//  Handle if the answer is incorrect
 			if (questSession.getAnswerIsCorrect === false) {
 				answerAttempt++
