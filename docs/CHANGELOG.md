@@ -1,3 +1,10 @@
+## [10.0.4](https://github.com/annieverse/anniediscord/compare/v10.0.3...v10.0.4) (2025-07-20)
+
+
+### Bug Fixes
+
+* **quest:** test patch button interaction. ([e82266c](https://github.com/annieverse/anniediscord/commit/e82266cfef43e4686b29b29fe1a8d2b21cae9e28))
+
 ## [10.0.3](https://github.com/annieverse/anniediscord/compare/v10.0.2...v10.0.3) (2025-07-19)
 
 
