@@ -104,7 +104,7 @@ module.exports = {
         const c = new Confirmator(message, reply, locale)
         await c.setup(user.id, confirmation)
         c.onAccept(async () => {
-            if (message.applicationId != null) await message.withResponse()
+            if (message.applicationId != null) await message.fetchReply()
             const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
             //  Handle if user does not have sufficient artcoins
             if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {

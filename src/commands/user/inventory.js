@@ -2,6 +2,7 @@
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
+const isSlash = require("../../utils/isSlash")
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Views all items in your inventory
@@ -82,7 +83,7 @@ module.exports = {
                         emoji: await client.getEmoji(`848521358236319796`)
                     }
                 })
-                return loading.delete()
+                return isSlash(loading) ? loading.resource.message.delete() : loading.delete()
             })
     }
 }

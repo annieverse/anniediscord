@@ -126,6 +126,8 @@ class Response {
 		const replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
 		const sendAnyway = plugins.sendAnyway || false
 		const editReply = plugins.editReply || false
+		//		this.message.type = https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
+		//		this.message.commandType = https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
 
 		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 
@@ -359,6 +361,7 @@ class Response {
 			flags: ephemeral ? MessageFlags.Ephemeral : null
 		}).then(async (msg) => {
 			this.ref = this.message.user
+			msg = isSlash ? msg.resource.message : msg
 			//  Buttons
 			if (embeddedPages.length > 1) {
 				await msg.react(`⏪`)
