@@ -13,6 +13,16 @@ module.exports = async (client, interaction, command) => {
     const locale = client.getTargetLocales(userData.lang)
     const reply = client.responseLibs(interaction, false, locale)
 
+    // 2025/07/20 :: Temporarily disable slash-based commands due to framework issues.
+    // Comment out after things are back normal.
+    if (process.env.NODE_ENV === `production`) {
+        const fallbackPrefix = interaction.guild.configs.get(`PREFIX`).value
+        await reply.send(`**I'm sorry!** due to recent bug, any slash-based **\`/\`** commands are temporarily disabled until a patch fix is released. In the meantime; you can continue using the features with the default prefix **\`${fallbackPrefix}\`** for all the commands. ${await client.getEmoji(`AnnieCry`)}`)
+        .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
+        return reply.send(`You can try again with **\`${fallbackPrefix}${interaction.commandName}\`**`, { simplified: true })
+        .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
+    }
+
     // Check Bot's permissions before procceding
     let checkPerm = false
     try {
