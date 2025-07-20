@@ -93,7 +93,7 @@ module.exports = function masterShard() {
 		lookupReachableShard().then(shard => { 
 			//  Skip reward for voter who aren't reachable in any shard
 			if (shard === undefined) return logger.warn(`USER_ID:${userId} is not reachable in any shard. Skipping reward distribution.`)
-			manager.broadcastEval(async (client, { userId }) => {
+			manager.shard.broadcastEval(async (client, { userId }) => {
 				// 	3. Distribute reward as early as possible
 				//  Ensuring the voter guaranteed to receive the reward first
 				client.db.databaseUtils.updateInventory({
