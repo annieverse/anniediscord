@@ -1,3 +1,10 @@
+## [10.0.6](https://github.com/annieverse/anniediscord/compare/v10.0.5...v10.0.6) (2025-07-20)
+
+
+### Bug Fixes
+
+* **master:** manager ref ([2ff48a0](https://github.com/annieverse/anniediscord/commit/2ff48a0b78d2b17aabd21f7f7b5971dcc6d09329))
+
 ## [10.0.5](https://github.com/annieverse/anniediscord/compare/v10.0.4...v10.0.5) (2025-07-20)
 
 
