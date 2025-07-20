@@ -17,9 +17,9 @@ module.exports = async (client, interaction, command) => {
     // Comment out after things are back normal.
     if (process.env.NODE_ENV === `production`) {
         const fallbackPrefix = interaction.guild.configs.get(`PREFIX`).value
-        await reply.send(`**I'm sorry!** due to recent bug, any slash-based **\`/\`** commands are temporarily disabled until a patch fix is released. In the meantime; you can continue using the features with the default prefix **\`${fallbackPrefix}\`** for all the commands. ${await client.getEmoji(`AnnieCry`)}`)
+        await reply.send(`**I'm sorry!** due to recent bug, any slash-based **\`/\`** commands got temporarily disabled until a patch fix is released. In the meantime; you can continue using the features with the default prefix **\`${fallbackPrefix}\`** instead. ${await client.getEmoji(`AnnieCry`)}\n**[Annie's Support Server](https://discord.gg/HjPHCyG346)**`)
         .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
-        return reply.send(`You can try again with **\`${fallbackPrefix}${interaction.commandName}\`**`, { simplified: true })
+        return reply.send(`${await client.getEmoji(`AnnieHeartPeek`)} now try again with **\`${fallbackPrefix}${interaction.commandName}\`**`, { simplified: true })
         .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
     }
 
