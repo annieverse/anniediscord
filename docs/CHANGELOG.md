@@ -1,3 +1,10 @@
+## [10.0.5](https://github.com/annieverse/anniediscord/compare/v10.0.4...v10.0.5) (2025-07-20)
+
+
+### Reverts
+
+* Revert "chore(vote): refs." ([68ebdef](https://github.com/annieverse/anniediscord/commit/68ebdefa4d823c821001b4b891a3dc27cc434c54))
+
 ## [10.0.4](https://github.com/annieverse/anniediscord/compare/v10.0.3...v10.0.4) (2025-07-20)
 
 
