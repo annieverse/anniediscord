@@ -292,7 +292,7 @@ module.exports = {
          */
         async function joinFunction() {
             let finalizedResponseMessageContent = Object.values(responseMessageContent).join(`\n`)
-            let message = await interaction.withResponse()
+            let message = await interaction.fetchReply()
             return await message.edit({
                 embeds: [await reply.send(finalizedResponseMessageContent, { raw: true })]
             })
@@ -305,7 +305,7 @@ module.exports = {
             // client.db.redis.del(sessionId)
             if (completed) return
             if (reason != `shop adding item has been cancelled` && reason != `time`) return
-            const message = await interaction.withResponse()
+            const message = await interaction.fetchReply()
             try {
                 message.edit({
                     content: `Shop register interface has been closed.`, components: [], embeds: []
@@ -330,7 +330,7 @@ module.exports = {
                 client.db.shop.registerGuildShopItem(item.item_id, metadata.ownedByGuildId, metadata.stocks, metadata.price)
                 //  Register effect if there's any
                 if (buffs.length > 0) buffs.map(b => client.db.shop.registerItemEffects(item.item_id, metadata.ownedByGuildId, b.type, b.params))
-                const message = await interaction.withResponse()
+                const message = await interaction.fetchReply()
                 message.edit({
                     embeds: [await reply.send(locale.SETSHOP.ADD_SUCCESSFUL, {
                         raw: true,
@@ -407,7 +407,7 @@ module.exports = {
                 if (!rawAnswer) return
                 rawAnswer.deferUpdate()
                 const answer = rawAnswer.fields.getTextInputValue(`buffsAnswerInput`).toLowerCase()
-                const message = await i.withResponse()
+                const message = await i.fetchReply()
                 const params = answer.split(` `)
                 if (![`addrole`, `removerole`, `additem`, `removeitem`, `expboost`, `acboost`].includes(params[0])) return await reply.send(locale.SETSHOP.ADD_BUFF_OUT_OF_RANGE, {
                     deleteIn: 5

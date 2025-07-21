@@ -15,6 +15,7 @@ module.exports = async (client, interaction, command) => {
 
     // 2025/07/20 :: Temporarily disable slash-based commands due to framework issues.
     // Comment out after things are back normal.
+    /**
     if (process.env.NODE_ENV === `production`) {
         const fallbackPrefix = interaction.guild.configs.get(`PREFIX`).value
         await reply.send(`**I'm sorry!** due to recent bug, any slash-based **\`/\`** commands got temporarily disabled until a patch fix is released. In the meantime; you can continue using the features with the default prefix **\`${fallbackPrefix}\`** instead. ${await client.getEmoji(`AnnieCry`)}\n**[Annie's Support Server](https://discord.gg/HjPHCyG346)**`)
@@ -22,6 +23,7 @@ module.exports = async (client, interaction, command) => {
         return reply.send(`${await client.getEmoji(`AnnieHeartPeek`)} now try again with **\`${fallbackPrefix}${interaction.commandName}\`**`, { simplified: true })
         .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
     }
+    */
 
     // Check Bot's permissions before procceding
     let checkPerm = false

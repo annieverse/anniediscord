@@ -31,6 +31,8 @@ module.exports = class Confirmator {
          * @type {object}
          */
         this.locale = locale
+
+        this.isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
     }
 
     set setSessionId(s) {
@@ -56,7 +58,7 @@ module.exports = class Confirmator {
      * @return {void}
      */
     async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
-        this.message = targetMessage
+        this.message = this.isSlash ? targetMessage.resource.message : targetMessage
         this.setSessionId = `CONFIRMATOR:${this.message.author.id}_${this.message.guild.id}`
         const sessionActive = await this.message.client.db.databaseUtils.doesCacheExist(this.getSessionId)
         if (sessionActive) {
@@ -79,11 +81,11 @@ module.exports = class Confirmator {
                     .setLabel(`Cancel`)
                     .setStyle(ButtonStyle.Danger)
             )
-        targetMessage.edit({
+        this.message.edit({
             components: [row]
         })
         const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === targetUserId
-        this.activeInstance = targetMessage.createMessageComponentCollector({
+        this.activeInstance = this.message.createMessageComponentCollector({
             filter,
             componentType: ComponentType.Button,
             time: 60 * 1000
@@ -110,7 +112,7 @@ module.exports = class Confirmator {
                     components: []
                 })
                 // Fetch the original message in order respond to it again
-                await interact.withResponse()
+                await interact.fetchReply()
 
                 // send the final response
                 return await this.reply.send(this.reply.localeMetadata.ACTION_CANCELLED, {
