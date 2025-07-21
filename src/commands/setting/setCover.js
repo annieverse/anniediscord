@@ -12,7 +12,7 @@ const {
     ApplicationCommandType,
     ApplicationCommandOptionType
 } = require(`discord.js`)
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 /**
  * Setting up your own custom background! upload or share the image link you want to use.
  * @author klerikdust

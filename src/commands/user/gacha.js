@@ -5,7 +5,7 @@ const GUI = require(`../../ui/prebuild/gacha`)
 const closestBelow = require(`../../utils/closestBelow`)
 const trueInt = require(`../../utils/trueInt`)
 const random = require(`../../utils/random`)
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Opens a Lucky Ticket and wins various exclusive rewards!

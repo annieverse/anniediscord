@@ -1,7 +1,7 @@
 "use strict"
 const User = require(`../../libs/user`)
 const GUI = require((`../../ui/prebuild/relationship`))
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Display user's relationship trees

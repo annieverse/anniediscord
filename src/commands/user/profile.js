@@ -2,7 +2,7 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 /**
  * Displaying user's profile card!
  * @author klerikdust

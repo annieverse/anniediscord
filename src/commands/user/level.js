@@ -2,7 +2,7 @@
 const GUI = require(`../../ui/prebuild/level`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 /**
  * Display your current exp, level and rank.
  * @author klerikdust

@@ -2,7 +2,7 @@
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
-const isSlash = require("../../utils/isSlash")
+const isSlash = require(`../../utils/isSlash`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Views all items in your inventory

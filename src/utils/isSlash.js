@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 "use strict"
 /**
  * Decides if Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
