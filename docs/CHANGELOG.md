@@ -1,3 +1,10 @@
+## [10.0.8](https://github.com/annieverse/anniediscord/compare/v10.0.7...v10.0.8) (2025-07-22)
+
+
+### Bug Fixes
+
+* **setwelcomer:** preview ([3461d86](https://github.com/annieverse/anniediscord/commit/3461d8680851cab6dfb885f01548241563cc614a))
+
 ## [10.0.7](https://github.com/annieverse/anniediscord/compare/v10.0.6...v10.0.7) (2025-07-21)
 
 
