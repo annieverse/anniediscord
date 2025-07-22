@@ -120,35 +120,34 @@ module.exports = function masterShard() {
         // or you *must* broadcast. Let's stick with broadcastEval as per your previous structure.
         // Instead of lookupReachableShard, we will run this on a specific shard.
         // For simplicity, let's just pick shard 0 to execute the logic:
-        const shardIdToExecuteOn = 0 // Or any logic to pick an available shard
         const results = await manager.broadcastEval(async (client, { userId }) => {
+					// Check if this is the designated shard to perform the actions
+					// This ensures the database update and DM sending happen only once
+					const currentShardId = client.shard.ids[0]
+					if (currentShardId !== 0) return null // Skip if not the target shard
+					logger.info(`[VOTE_ENDPOINT_BROADCAST_EVAL]: performing on ${getCustomShardId(currentShardId)} for USER_ID:${userId}`)
 
-            // Check if this is the designated shard to perform the actions
-            // This ensures the database update and DM sending happen only once
-            if (client.shard.ids[0] !== this.shardIdToExecuteOn) return null // Skip if not the target shard
-						logger.info(`[VOTE_ENDPOINT_BROADCAST_EVAL]: performing on ${this.getCustomShardId(client.shard.ids[0])} for USER_ID:${userId}`)
+					// 3. Distribute reward
+					client.db.databaseUtils.updateInventory({
+							itemId: 52,
+							userId: userId,
+							value: 5000,
+							distributeMultiAccounts: true
+					})
+					.then(() => client.logger.info(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: successfully sent to USER_ID:${userId}`))
+					.catch((error) => client.logger.warn(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: failed to distribute reward to USER_ID:${userId} > ${error.message}`))
 
-            // 3. Distribute reward
-            client.db.databaseUtils.updateInventory({
-                itemId: 52,
-                userId: userId,
-                value: 5000,
-                distributeMultiAccounts: true
-            })
-						.then(() => client.logger.info(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: successfully sent to USER_ID:${userId}`))
-						.catch((error) => client.logger.warn(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: failed to distribute reward to USER_ID:${userId} > ${error.message}`))
-
-            // 4. Attempt to notify the voter (user)
-            const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
-            const user = await client.users.fetch(userId) // Fetches user from Discord API. Regardless of the shard, this still works.
-            try {
-                await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
-                client.logger.info(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] successfully sent to USER_ID:${userId}`)
-            } catch (e) {
-                client.logger.warn(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] failed to notify USER_ID:${userId} > ${e.message}`)
-            }
-            return { success: true, userId: userId } // Indicate successful processing
-        }, { context: { userId, shard: shardIdToExecuteOn } })
+					// 4. Attempt to notify the voter (user)
+					const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
+					const user = await client.users.fetch(userId) // Fetches user from Discord API. Regardless of the shard, this still works.
+					try {
+							await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
+							client.logger.info(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] successfully sent to USER_ID:${userId}`)
+					} catch (e) {
+							client.logger.warn(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] failed to notify USER_ID:${userId} > ${e.message}`)
+					}
+					return { success: true, userId: userId } // Indicate successful processing
+        	}, { context: { userId } })
         if (!results.some(r => r && r.success)) return logger.warn(`[VOTE_ENDPOINT_END] failed to finalize the vote reward distribution due to no success indicator.`)
     } 
 		catch (error) {
