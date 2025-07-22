@@ -125,7 +125,7 @@ module.exports = function masterShard() {
 					// This ensures the database update and DM sending happen only once
 					const currentShardId = client.shard.ids[0]
 					if (currentShardId !== 0) return null // Skip if not the target shard
-					logger.info(`[VOTE_ENDPOINT_BROADCAST_EVAL]: performing on ${getCustomShardId(currentShardId)} for USER_ID:${userId}`)
+					client.logger.info(`[VOTE_ENDPOINT_BROADCAST_EVAL]: performing on ${getCustomShardId(currentShardId)} for USER_ID:${userId}`)
 
 					// 3. Distribute reward
 					client.db.databaseUtils.updateInventory({
