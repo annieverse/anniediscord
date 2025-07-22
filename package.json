@@ -1,6 +1,6 @@
 {
   "name": "anniediscord",
-  "version": "10.0.6",
+  "version": "10.0.7",
   "description": "An artsy bot — bring the best aesthetic vibe, to your community.",
   "main": "index.js",
   "private": false,
@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@discordjs/rest": "^2.4.0",
-    "@napi-rs/canvas": "^0.1.56",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
@@ -43,7 +42,7 @@
     "axios": "^1.7.7",
     "bfd-api-redux": "^1.2.4-beta",
     "buffer-image-size": "^0.6.4",
-    "canvas": "^2.11.2",
+    "canvas": "^3.1.2",
     "canvas-constructor": "^7.0.2",
     "color": "^4.1.0",
     "contrast-color": "^1.0.1",

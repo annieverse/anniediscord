@@ -1,3 +1,11 @@
+## [10.0.7](https://github.com/annieverse/anniediscord/compare/v10.0.6...v10.0.7) (2025-07-21)
+
+
+### Bug Fixes
+
+* **build:** multiple commands ([e6df1c5](https://github.com/annieverse/anniediscord/commit/e6df1c58a3aa8f5dc5326cbd7050262a20f66828))
+* **slash:** patched slash interaction. ([0dcfd52](https://github.com/annieverse/anniediscord/commit/0dcfd528f9ede96af8af2923ec64ce47c9821535))
+
 ## [10.0.6](https://github.com/annieverse/anniediscord/compare/v10.0.5...v10.0.6) (2025-07-20)
 
 

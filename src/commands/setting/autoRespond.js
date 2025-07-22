@@ -22,64 +22,52 @@ module.exports = {
     messageCommand: true,
     server_specific: false,
     default_member_permissions: PermissionFlagsBits.ManageRoles.toString(),
-    options: [/* {
-        name: `action`,
-        description: `Action to perform.`,
-        required: true,
-        type: ApplicationCommandOptionType.String,
-        choices: [
-            { name: `enable`, value: `enable` },
-            { name: `info`, value: `info` },
-            { name: `reset`, value: `reset` },
-            { name: `disable`, value: `disable` },
-            { name: `help`, value: `help` }
-        ]
-    }, */{
-            name: `enable`,
-            description: `Enable the autorespond module`,
-            type: ApplicationCommandOptionType.Subcommand
-        }, {
-            name: `info`,
-            description: `View currently configured ARs`,
-            type: ApplicationCommandOptionType.Subcommand
-        }, {
-            name: `reset`,
-            description: `Reset the autorespond module`,
-            type: ApplicationCommandOptionType.Subcommand
-        }, {
-            name: `disable`,
-            description: `Disable the autorespond module`,
-            type: ApplicationCommandOptionType.Subcommand
-        }, {
-            name: `help`,
-            description: `View a brief help overview for the autoresponder module`,
-            type: ApplicationCommandOptionType.Subcommand
-        }, {
-            name: `delete`,
+    options: [{
+        name: `enable`,
+        description: `Enable the autorespond module`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `info`,
+        description: `View currently configured ARs`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `reset`,
+        description: `Reset the autorespond module`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `disable`,
+        description: `Disable the autorespond module`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `help`,
+        description: `View a brief help overview for the autoresponder module`,
+        type: ApplicationCommandOptionType.Subcommand
+    }, {
+        name: `delete`,
+        description: `Delete an AR`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `id_trigger`,
             description: `Delete an AR`,
-            type: ApplicationCommandOptionType.Subcommand,
-            options: [{
-                name: `id_trigger`,
-                description: `Delete an AR`,
-                required: true,
-                type: ApplicationCommandOptionType.String
-            }]
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }]
+    }, {
+        name: `add`,
+        description: `Add an AR`,
+        type: ApplicationCommandOptionType.Subcommand,
+        options: [{
+            name: `id_trigger`,
+            description: `Name of AR to add`,
+            required: true,
+            type: ApplicationCommandOptionType.String
         }, {
-            name: `add`,
-            description: `Add an AR`,
-            type: ApplicationCommandOptionType.Subcommand,
-            options: [{
-                name: `id_trigger`,
-                description: `Name of AR to add`,
-                required: true,
-                type: ApplicationCommandOptionType.String
-            }, {
-                name: `response`,
-                description: `What to respond with`,
-                required: true,
-                type: ApplicationCommandOptionType.String
-            }]
-        }],
+            name: `response`,
+            description: `What to respond with`,
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }]
+    }],
     type: ApplicationCommandType.ChatInput,
     /**
      * Maximum characters for the trigger.
