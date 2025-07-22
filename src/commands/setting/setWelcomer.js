@@ -628,7 +628,8 @@ module.exports = {
             followUp: message.deferred || message.replied ? true : false
         })
         const img = await new GUI(message.member, client).build()
-        renderingMsg.delete()
+        const isSlash = renderingMsg.resource.message === null ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+        isSlash ? renderingMsg.resource.message.delete() : renderingMsg.delete()
         return await reply.send(this._parseWelcomeText(message), {
             simplified: true,
             prebuffer: true,
