@@ -1,6 +1,6 @@
 "use strict"
 const category = require(`../../config/commandCategories`)
-const { isSlash, isInteractionCallbackResponse } = require("../../utils/appCmdHelp.js")
+const { isSlash, isInteractionCallbackResponse } = require(`../../utils/appCmdHelp.js`)
 const getBotInviteUrl = require(`../../utils/botInvite.js`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
