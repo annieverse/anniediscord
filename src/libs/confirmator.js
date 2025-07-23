@@ -6,6 +6,7 @@ const {
     ButtonStyle,
     MessageFlags
 } = require(`discord.js`)
+const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp`)
 /**
  * Manages transaction confirmation thru reaction.
  * @class
@@ -32,7 +33,11 @@ module.exports = class Confirmator {
          */
         this.locale = locale
 
-        this.isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+        /**
+         * Boolean for if message is a application command or a regular message
+         * @type {boolean}
+         */
+        this.isSlash = isSlash(this.message)
     }
 
     set setSessionId(s) {
@@ -58,7 +63,8 @@ module.exports = class Confirmator {
      * @return {void}
      */
     async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
-        this.message = this.isSlash ? targetMessage.resource.message : targetMessage
+        this.isCB = isInteractionCallbackResponse(targetMessage)
+        this.message = this.isCB ? targetMessage.resource.message : targetMessage
         this.setSessionId = `CONFIRMATOR:${this.message.author.id}_${this.message.guild.id}`
         const sessionActive = await this.message.client.db.databaseUtils.doesCacheExist(this.getSessionId)
         if (sessionActive) {

@@ -551,7 +551,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`EXP_${userId}@${guildId}`)
-		// this.redis.del(`EXP_${userId}@${guildId}`)
 		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
@@ -587,7 +586,6 @@ class UserUtils extends DatabaseUtils {
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
 		const cache = await this.getCache(key)
-		// const cache = await this.redis.get(key)
 		if (cache) return JSON.parse(cache)
 		//  Otherwise fetch from db and store it to cache for later use.
 		const query = async () => this._query(`
@@ -634,7 +632,6 @@ class UserUtils extends DatabaseUtils {
 		).then(() => logger.database(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
 		this.delCache(key)
-		// this.redis.del(key)
 	}
 
 	/**
@@ -801,7 +798,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`DAILIES_${userId}@${guildId}`)
-		// this.redis.del(`DAILIES_${userId}@${guildId}`)
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
@@ -2490,7 +2486,6 @@ class Quests extends DatabaseUtils {
 		const cacheId = `CACHED_QUESTS_POOL`
 
 		const cache = await this.getCache(cacheId)
-		// const cache = await this.redis.get(cacheId)
 		if (cache !== null) return JSON.parse(cache)
 		const res = await this._query(`
 			SELECT *

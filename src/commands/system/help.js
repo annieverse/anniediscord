@@ -1,6 +1,8 @@
 "use strict"
 const category = require(`../../config/commandCategories`)
+const { isSlash, isInteractionCallbackResponse } = require("../../utils/appCmdHelp.js")
 const getBotInviteUrl = require(`../../utils/botInvite.js`)
+const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * 	Displaying all the available commands. Complete with the usage.
  * 	@author klerikdust
@@ -12,45 +14,81 @@ module.exports = {
 	usage: `help <Category/CommandName>(Optional)`,
 	permissionLevel: 0,
 	multiUser: false,
-	applicationCommand: false,
+	applicationCommand: true,
+	options: [
+		{
+			name: `search`,
+			description: `query the commands by name`,
+			type: ApplicationCommandOptionType.Subcommand,
+			options: [{
+				name: `command`,
+				description: `command name you would like to search`,
+				type: ApplicationCommandOptionType.String,
+				required: true
+			}]
+		}, {
+			name: `commands`,
+			description: `Show all commands available`,
+			type: ApplicationCommandOptionType.Subcommand
+		}
+	],
+	type: ApplicationCommandType.ChatInput,
 	messageCommand: true,
 	server_specific: false,
 	commandpediaButton: `📖`,
 	contexts: [0],
 	ignoreGroups: [`developer`],
+	async Iexecute(client, reply, interaction, options, locale) {
+		const subCommand = interaction.options.getSubcommand()
+		if (subCommand == `commands`) {
+			return await this.noArg(client, reply, interaction, locale, `/`)
+		} else if (subCommand == `search`) {
+			const cmd = interaction.options.getString(`command`)
+			return await this.suppliedArg(client, reply, locale, cmd, `/`)
+		}
+	},
 	async execute(client, reply, message, arg, locale, prefix) {
-		const cmds = this.getCommandStructures(client)
 		//  Displaying the help center if user doesn't specify any arg
 		if (!arg) {
-			// Display 5 most used commands suggestions
-			return await reply.send(locale.HELP.LANDING, {
-				socket: {
-					emoji: await client.getEmoji(`692428988177449070`),
-					prefix: prefix
-				},
-				header: `Hi, ${message.author.username}!`,
-				thumbnail: client.user.displayAvatarURL()
-			})
-				.then(response => {
-					response.react(this.commandpediaButton)
-					const filter = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === message.author.id)
-					const bookEmojiCollector = response.createReactionCollector({ filter, time: 300000, max: 1 })
-					//  Display Commandpedia layout once user pressed the :book: button
-					bookEmojiCollector.on(`collect`, async () => {
-						response.delete()
-						await reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
-							socket: {
-								prefix: prefix,
-								serverLink: `[Join Support Server](${client.supportServer})`,
-								botInviteLink: `[Invite Annie](${getBotInviteUrl(client)})`,
-								commandList: this.prettifyCommandpedia(cmds)
-							},
-							image: `commandpedia`,
-							customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
-						})
+			return await this.noArg(client, reply, message, locale, prefix)
+		}
+		return await this.suppliedArg(client, reply, locale, arg, prefix)
+	},
+	async noArg(client, reply, messageRef, locale, prefix) {
+		const cmds = this.getCommandStructures(client)
+
+		messageRef = isSlash(messageRef) ? messageRef.member.user : messageRef.author
+		// Display 5 most used commands suggestions
+		return await reply.send(locale.HELP.LANDING, {
+			socket: {
+				emoji: await client.getEmoji(`692428988177449070`),
+				prefix: prefix
+			},
+			header: `Hi, ${messageRef.username}!`,
+			thumbnail: client.user.displayAvatarURL()
+		})
+			.then(response => {
+				response = isInteractionCallbackResponse(response) ? response.resource.message : response
+				response.react(this.commandpediaButton)
+				const filter = (reaction, user) => (reaction.emoji.name === this.commandpediaButton) && (user.id === messageRef.id)
+				const bookEmojiCollector = response.createReactionCollector({ filter, time: 300000, max: 1 })
+				//  Display Commandpedia layout once user pressed the :book: button
+				bookEmojiCollector.on(`collect`, async () => {
+					response.delete()
+					await reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
+						socket: {
+							prefix: prefix,
+							serverLink: `[Join Support Server](${client.supportServer})`,
+							botInviteLink: `[Invite Annie](${getBotInviteUrl(client)})`,
+							commandList: this.prettifyCommandpedia(cmds)
+						},
+						image: `commandpedia`,
+						customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
 					})
 				})
-		}
+			})
+	},
+	async suppliedArg(client, reply, locale, arg, prefix) {
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const { isCategory, res } = await this.findCommandByKeyword(arg, client.message_commands.filter(node => !this.ignoreGroups.includes(node.group)))
 		if (!res) return await reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
@@ -72,7 +110,6 @@ module.exports = {
 		const footer = `\`\`\`javascript\nUSAGE: ${prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
 		return await reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
 	},
-
 	/**
 	 * Finding command by a category, name or alias.
 	 * @param {String} [keyword=``] user input

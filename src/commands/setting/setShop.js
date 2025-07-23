@@ -226,7 +226,6 @@ module.exports = {
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === name.toLowerCase()).length > 0) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: name
@@ -302,7 +301,6 @@ module.exports = {
         })
         buttonCollector.on(`end`, async (collected, reason) => {
             client.db.databaseUtils.delCache(sessionId)
-            // client.db.redis.del(sessionId)
             if (completed) return
             if (reason != `shop adding item has been cancelled` && reason != `time`) return
             const message = await interaction.fetchReply()
@@ -586,7 +584,6 @@ module.exports = {
             const nameLimit = 20
             if (secondArg.length >= nameLimit) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                     socket: {
                         limit: nameLimit
@@ -596,7 +593,6 @@ module.exports = {
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: secondArg
@@ -862,7 +858,6 @@ module.exports = {
         })
         pool.on(`end`, async () => {
             client.db.databaseUtils.delCache(sessionId)
-            // client.db.redis.del(sessionId)
             if (completed) return
             dataDisplay.delete()
             await reply.send(`Shop register interface has been closed.`, {

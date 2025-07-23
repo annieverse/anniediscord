@@ -2,7 +2,7 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
-const isSlash = require(`../../utils/isSlash`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Displaying user's profile card!
  * @author klerikdust
@@ -45,7 +45,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const image = (await new GUI(user, client).build()).png()
-        isSlash(fetching) ? fetching.resource.message.delete() : fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         // Followup tips for newcomer
         return reply.send(locale.COMMAND.TITLE + (!user.usedCover.isSelfUpload ? `\n` + locale.PROFILECARD.NEWCOMER_TIPS : ``), {
             socket: {

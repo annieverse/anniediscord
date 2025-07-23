@@ -1,6 +1,7 @@
 "use strict"
 const { ApplicationCommandType, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, MessageFlags } = require(`discord.js`)
 const Quest = require(`../../libs/quests`)
+const { isSlash, isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Displaying list of quests that you can accomplish and wins artcoins! 
  * You can take quest every 2 hours.
@@ -27,7 +28,6 @@ module.exports = {
 		await questSession.start(sessionID, user, locale, messageRef)
 		if (questSession.getSessionActive) return
 		if (!questSession.getQuestAvailable) return
-		const isSlash = messageRef.applicationId === null || messageRef.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
 		const buttonCustomId = `${questSession.getSessionId}answer`
 		const row = new ActionRowBuilder()
 			.addComponents(
@@ -53,18 +53,18 @@ module.exports = {
 		})
 		if (!quest) return
 		const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancelQuest`) && interaction.user.id === user.id
-		const buttonCollector = isSlash ? quest.resource.message.createMessageComponentCollector({ filter, time: 30000 }) : quest.createMessageComponentCollector({ filter, time: 30000 })
+		const buttonCollector = isInteractionCallbackResponse(quest) ? quest.resource.message.createMessageComponentCollector({ filter, time: 30000 }) : quest.createMessageComponentCollector({ filter, time: 30000 })
 		let answerAttempt = 0
 		buttonCollector.on(`ignore`, async (i) => {
 			i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
 		})
 		buttonCollector.on(`end`, async (collected, reason) => {
 			if (reason != `time`) return
-			const message = isSlash ? await messageRef.fetchReply() : await quest.fetch()
+			const message = isSlash(messageRef) ? await messageRef.fetchReply() : await quest.fetch()
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: isSlash ? false : true, messageToReplyTo: isSlash ? null : quest })
+				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: isSlash(messageRef) ? false : true, messageToReplyTo: isSlash(messageRef) ? null : quest })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}

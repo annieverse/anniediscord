@@ -5,7 +5,7 @@ const inventoryGUI = require(`../../ui/prebuild/inventory`)
 const giftGUI = require(`../../ui/prebuild/gift`)
 const stringSimilarity = require(`string-similarity`)
 const commanifier = require(`../../utils/commanifier`)
-const isSlash = require(`../../utils/isSlash`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Send gifts to your friends! They will receive 1 reputation point for each gift you send.
@@ -114,7 +114,7 @@ module.exports = {
                     items: await this.displayGifts(availableGifts, client)
                 }
             })
-            return isSlash(loading) ? loading.resource.message.delete() : loading.delete()
+            return isInteractionCallbackResponse(loading) ? loading.resource.message.delete() : loading.delete()
         }
         const targetUser = args[0]
         // Invalid target

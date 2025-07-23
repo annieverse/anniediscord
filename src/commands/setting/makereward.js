@@ -414,7 +414,6 @@ module.exports = {
                     message.edit({ components: [] })
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled -7\n${e}`))
                     client.db.databaseUtils.delCache(sessionID)
-                    // client.db.redis.del(sessionID)
                     await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
