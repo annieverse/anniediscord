@@ -310,7 +310,12 @@ module.exports = {
             }
         })
         // WELCOMER_ONBOARDWAIT
-        if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+        try {
+            if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+        } catch (error) {
+            client.logger.error(`[setWelcomer.js] Onboarding error > \n${error}`)
+            return await reply.send(`Please try again a little later.`)
+        }
         const currentSelection = this.guildConfigurations.get(this.selectedModule).value === 0 ? false : this.guildConfigurations.get(this.selectedModule).value === 1 ? true : false
         const changeSelection = typeof (this.args[1]) === `string` ? this.args[1].toLowerCase() === `true` ? 1 : this.args[1].toLowerCase() === `false` ? 0 : 0 : this.args[1]
         const valueToAddToDB = changeSelection ? 1 : 0
