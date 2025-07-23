@@ -13,6 +13,7 @@ const GUI = require(`../ui/prebuild/cardCollection`)
 const { PermissionFlagsBits } = require(`discord.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
+const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp.js`)
 /** 
  * Annie's response message system.
  * @abstract
@@ -129,10 +130,10 @@ class Response {
 		//		this.message.type = https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
 		//		this.message.commandType = https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
 
-		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+		const _isSlash = isSlash(this.message)
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!isSlash) {
+		if (!_isSlash) {
 			const checkPerm = this.checkPermissions(field)
 			if (!checkPerm) return
 		}
@@ -140,9 +141,9 @@ class Response {
 		const hasFileUploadPerm = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.AttachFiles)
 
 
-		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
-		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
-		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
+		const followUp = _isSlash ? this.message.deferred || this.message.replied ? true : false : false
+		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : _isSlash ? sendAnyway ? field : this.message : field
+		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : _isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
 		const embed = new EmbedBuilder()
 		/**
 		 * Format Components to correct data type
@@ -333,7 +334,7 @@ class Response {
 		return content
 	}
 
-	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, isSlash, cardPreviews) {
+	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews) {
 		let page = 0
 		if (ephemeral) ephemeral = false
 		const embeddedPages = await this._registerPages(content, plugins)
@@ -361,20 +362,20 @@ class Response {
 			flags: ephemeral ? MessageFlags.Ephemeral : null
 		}).then(async (msg) => {
 			this.ref = this.message.user
-			msg = isSlash ? msg.resource.message : msg
+			msg = isInteractionCallbackResponse(msg) ? msg.resource.message : msg
 			//  Buttons
 			if (embeddedPages.length > 1) {
 				await msg.react(`⏪`)
 				await msg.react(`⏩`)
 			}
 			// Filters - These make sure the varibles are correct before running a part of code
-			let filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
+			let filter = (reaction, user) => _isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
 			//  Timeout limit for page buttons
 			const backwards = msg.createReactionCollector({
 				filter,
 				time: 300000
 			})
-			filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
+			filter = (reaction, user) => _isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 			const forwards = msg.createReactionCollector({
 				filter,
 				time: 300000
@@ -382,13 +383,13 @@ class Response {
 			//  Add preview button if cardPreviews is enabled
 			if (cardPreviews) {
 				await msg.react(`👀`)
-				let filter = (reaction, user) => isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
+				let filter = (reaction, user) => _isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
 				let preview = msg.createReactionCollector(filter, {
 					time: 300000
 				})
 				let previewedPages = []
 				preview.on(`collect`, async (r) => {
-					r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+					r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 					if (previewedPages.includes(page)) return
 					previewedPages.push(page)
 					let loading = await RESPONSE_REF[RESPONSE_TYPE]({
@@ -403,7 +404,7 @@ class Response {
 			}
 			//	Left navigation
 			backwards.on(`collect`, r => {
-				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 				page--
 				if (embeddedPages[page]) {
 					msg.edit(embeddedPages[page].file ? {
@@ -426,7 +427,7 @@ class Response {
 			})
 			//	Right navigation
 			forwards.on(`collect`, r => {
-				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 				page++
 				if (embeddedPages[page]) {
 					msg.edit(embeddedPages[page].file ? {

@@ -16,6 +16,7 @@ const {
     PermissionFlagsBits,
     ChannelType
 } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Manage welcomer module for your guild.
  * @author klerikdust
@@ -628,8 +629,7 @@ module.exports = {
             followUp: message.deferred || message.replied ? true : false
         })
         const img = await new GUI(message.member, client).build()
-        const isSlash = renderingMsg.resource.message === null ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
-        isSlash ? renderingMsg.resource.message.delete() : renderingMsg.delete()
+        isInteractionCallbackResponse(renderingMsg) ? renderingMsg.resource.message.delete() : renderingMsg.delete()
         return await reply.send(this._parseWelcomeText(message), {
             simplified: true,
             prebuffer: true,

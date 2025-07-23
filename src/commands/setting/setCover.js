@@ -12,7 +12,7 @@ const {
     ApplicationCommandType,
     ApplicationCommandOptionType
 } = require(`discord.js`)
-const isSlash = require(`../../utils/isSlash`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Setting up your own custom background! upload or share the image link you want to use.
  * @author klerikdust
@@ -167,7 +167,7 @@ module.exports = {
                 emoji: await client.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
             }
         })
-        isSlash(fetching) ? fetching.resource.message.delete() : fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.author.id, confirmation)
         c.onAccept(async () => {
@@ -306,7 +306,7 @@ module.exports = {
                 emoji: await client.getEmoji(this.cover.isSelfUpload ? `758720612087627787` : `692428927620087850`)
             }
         })
-        isSlash(fetching) ? fetching.resource.message.delete() : fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         const c = new Confirmator(interaction, reply, locale)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
@@ -359,7 +359,7 @@ module.exports = {
                 emoji: await client.getEmoji(`692428927620087850`)
             }
         })
-        isSlash(fetching) ? fetching.resource.message.delete() : fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         const c = new Confirmator(interaction, reply, locale)
         await c.setup(interaction.member.id, confirmation)
         c.onAccept(async () => {
