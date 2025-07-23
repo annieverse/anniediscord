@@ -13,8 +13,6 @@ module.exports = function eventsController(annie) {
     annie.on(Events.InteractionCreate, (interaction) => reqEvent(`interactionCreate`)(annie, interaction))
     annie.once(Events.ShardReady, (id, unavailableGuilds) => reqEvent(`shardReady`)(annie, id, unavailableGuilds))
     //  Events below this point is only available in the production
-    annie.on(Events.MessageCreate, (message) => reqEvent(`messageCreate`)(annie, message))
-
     if (annie.dev) return
     annie.on(Events.MessageCreate, (message) => reqEvent(`messageCreate`)(annie, message))
     annie.on(Events.GuildCreate, (guild) => reqEvent(`guildCreate`)(annie, guild))

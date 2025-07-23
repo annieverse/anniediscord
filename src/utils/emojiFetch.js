@@ -10,7 +10,6 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
     const cacheId = `EMOJI_CACHE_${emojiKeyword}`
     //  Check on own client first.
     const onCache = await client.db.databaseUtils.getCache(cacheId)
-    // const onCache = await client.db.redis.get(cacheId)
     if (onCache) {
         //  Use cache for faster response
         return onCache
@@ -25,8 +24,8 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
         await guild.emojis.fetch() // prevent Caching issues
         const findingEmoji = findEmojiFromServer(guild, emojiKeyword)
         if (!findingEmoji) return `(???)`
-        const emoji = guild.emojis.resolve(findingEmoji.id) 
-        client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
+        const emoji = guild.emojis.resolve(findingEmoji.id)
+        client.db.databaseUtils.setCache(cacheId, emoji.toString(), { EX: (60 * 60) * 12 })
         return emoji
     }
 
@@ -41,10 +40,10 @@ const emojiFetch = async (emojiKeyword, client, serverId) => {
     const FoundEmoji = await findingEmoji
     if (FoundEmoji === `(???)`) return `(???)`
     const guild = await client.guilds.fetch(FoundEmoji.guildId)
-    const emoji = guild.emojis.resolve(FoundEmoji.id) 
-    client.db.databaseUtils.setCache(cacheId,emoji.toString(),{EX:(60*60)*12})
+    const emoji = guild.emojis.resolve(FoundEmoji.id)
+    client.db.databaseUtils.setCache(cacheId, emoji.toString(), { EX: (60 * 60) * 12 })
     return emoji
-                
+
 }
 
 module.exports = emojiFetch

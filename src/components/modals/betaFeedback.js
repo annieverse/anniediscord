@@ -36,7 +36,6 @@ module.exports = {
             modalResponse = await interaction.awaitModalSubmit({ filter, time: 60000 })
         } catch (error) {
             client.db.databaseUtils.delCache(sessionID)
-            // client.db.redis.del(sessionID)
             client.logger.error(`Error has been handled\n${error}`)
         }
         if (!modalResponse) return // exit if modal is cancelled
