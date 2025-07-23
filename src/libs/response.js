@@ -161,7 +161,7 @@ class Response {
 		betaFeedback()
 
 		//  Handle message with paging property enabled
-		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, isSlash, cardPreviews)
+		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews)
 
 		//  Replace content with error message if content is a faulty value
 		if (typeof content != `string`) content = this.localeMetadata.LOCALIZATION_ERROR
