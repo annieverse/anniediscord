@@ -1,3 +1,15 @@
+# [10.1.0](https://github.com/annieverse/anniediscord/compare/v10.0.8...v10.1.0) (2025-07-23)
+
+
+### Bug Fixes
+
+* **application commands:** refs errors ([003730d](https://github.com/annieverse/anniediscord/commit/003730d629768032b0d3c6c5c5114011f4cb8b68))
+
+
+### Features
+
+* **help:** command convert ([fb02034](https://github.com/annieverse/anniediscord/commit/fb02034e40d081b07589ac9b095f67037936ab00))
+
 ## [10.0.8](https://github.com/annieverse/anniediscord/compare/v10.0.7...v10.0.8) (2025-07-22)
 
 
