@@ -22,7 +22,6 @@ module.exports = {
     messageCommand: true,
     amountToOpenRanges: [1, 10],
     server_specific: false,
-    contexts: [0],
     options: [{
         name: `amount`,
         description: `Amount of tickets to open`,

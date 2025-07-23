@@ -15,7 +15,6 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
-    contexts: [0],
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [
         { name: `message`, description: `Type your message to be said by annie`, required: true, type: ApplicationCommandOptionType.String }

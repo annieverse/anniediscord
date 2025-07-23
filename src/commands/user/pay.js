@@ -45,7 +45,6 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     tax: 0.02,
     requirementLevel: 3,
-    contexts: [0],
     maxAllowed: 999999,
     async userCheck(client, message, locale, arg, target) {
         const userLib = new User(client, message)

@@ -41,7 +41,6 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     server_specific: false,
-    contexts: [0],
     rate: 5,
     minimumToSell: 5,
     async execute(client, reply, message, arg, locale) {

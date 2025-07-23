@@ -14,7 +14,6 @@ module.exports = {
     usage: `serverinfo`,
     permissionLevel: 0,
     multiUser: false,
-    contexts: [0],
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,

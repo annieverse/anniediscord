@@ -29,7 +29,6 @@ module.exports = {
         autocomplete: true
     }],
     type: ApplicationCommandType.ChatInput,
-    contexts: [0],
     async autocomplete(client, interaction) {
         /**
          * Fill choices with the available packages found in DB

@@ -74,7 +74,6 @@ module.exports = {
      * @type {number}
      */
     triggerCharLimit: 156,
-    contexts: [0],
 
     /**
      * Maximum characters for the response.

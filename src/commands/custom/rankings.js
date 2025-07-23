@@ -16,7 +16,6 @@ module.exports = {
     permissionLevel: 0,
     multiUser: false,
     applicationCommand: true,
-    contexts: [0],
     messageCommand: false,
     server_specific: true,
     servers: [`577121315480272908`, `882552960771555359`],

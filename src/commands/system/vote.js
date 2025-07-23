@@ -13,7 +13,6 @@ module.exports = {
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
-    contexts: [0],
     server_specific: false,
     type: ApplicationCommandType.ChatInput,
     page: `https://top.gg/bot/501461775821176832`,
@@ -31,7 +30,7 @@ module.exports = {
         if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE, {
             editReply: true
         })
-        
+
         //  Vote site banner
         const redirectToVoteSite = async () => {
             return reply.send(locale.VOTE.READY, {

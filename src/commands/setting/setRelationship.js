@@ -57,7 +57,6 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     limit: 7,
-    contexts: [0],
     async execute(client, reply, message, arg, locale, prefix) {
         const availableRelationships = await client.db.relationships.getAvailableRelationships()
         //  Handle if user doesn't provide any argument

@@ -15,7 +15,6 @@ module.exports = {
     applicationCommand: true,
     server_specific: false,
     messageCommand: true,
-    contexts: [0],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         return await this.run(client, reply, message, locale)

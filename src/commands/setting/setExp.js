@@ -92,7 +92,6 @@ module.exports = {
      * @type {string}
      */
     primaryConfigID: `EXP_MODULE`,
-    contexts: [0],
     /**
      * Soft limit exp addition
      * type {number}

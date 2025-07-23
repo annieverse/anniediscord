@@ -15,7 +15,6 @@ module.exports = {
     description: `Displays a random gif of a hug.`,
     usage: `hug <User>(Optional)`,
     permissionLevel: 0,
-    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,
