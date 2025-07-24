@@ -18,7 +18,6 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
-    contexts: [0],
     options: [{
         name: `theme`,
         description: `choose your theme`,

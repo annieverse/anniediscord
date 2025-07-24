@@ -12,7 +12,6 @@ module.exports = {
     description: `Gives a reputation point to a user. Once a day.`,
     usage: `rep <User>`,
     permissionLevel: 0,
-    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,

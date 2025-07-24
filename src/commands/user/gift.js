@@ -50,7 +50,6 @@ module.exports = {
     }
     ],
     type: ApplicationCommandType.ChatInput,
-    contexts: [0],
     /**
      *  Prettify result from `this.author.inventory.row` into a readable list.
      *  @param {array} [inventory=[]] returned result from filtered `this.author.inventory.raw`

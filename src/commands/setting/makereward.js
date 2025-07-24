@@ -78,7 +78,6 @@ module.exports = {
         description: `delete a package`,
         type: ApplicationCommandOptionType.Subcommand
     }],
-    contexts: [0],
     type: ApplicationCommandType.ChatInput,
     async Iexecute(client, reply, interaction, options, locale) {
         // Test if the delete sub command was executed

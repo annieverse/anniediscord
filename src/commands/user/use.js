@@ -21,7 +21,6 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
-    contexts: [0],
     options: [{
         name: `item`,
         description: `The item you want to use`,

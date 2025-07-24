@@ -16,7 +16,6 @@ module.exports = {
     description: `Buy any purchasable items from server shop!`,
     usage: `buy <ItemID/ItemName>`,
     permissionLevel: 0,
-    contexts: [0],
     multiUser: false,
     applicationCommand: true,
     messageCommand: true,

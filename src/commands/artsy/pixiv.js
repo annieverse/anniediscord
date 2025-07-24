@@ -25,7 +25,6 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
-    contexts: [0],
     options: [{
         name: `tag`,
         description: `Search by tag`,

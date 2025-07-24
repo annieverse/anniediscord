@@ -17,7 +17,6 @@ module.exports = {
     applicationCommand: true,
     server_specific: false,
     messageCommand: true,
-    contexts: [0],
     options: [{
         name: `gender`,
         description: `Choose between our available options`,

@@ -16,7 +16,6 @@ module.exports = {
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
 	permissionLevel: 0,
-	contexts: [0],
 	multiUser: false,
 	applicationCommand: true,
 	messageCommand: true,

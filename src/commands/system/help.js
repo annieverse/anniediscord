@@ -36,8 +36,7 @@ module.exports = {
 	messageCommand: true,
 	server_specific: false,
 	commandpediaButton: `📖`,
-	contexts: [0],
-	ignoreGroups: [`developer`],
+	ignoreGroups: [`developer`, `custom`],
 	async Iexecute(client, reply, interaction, options, locale) {
 		const subCommand = interaction.options.getSubcommand()
 		if (subCommand == `commands`) {
@@ -182,7 +181,8 @@ module.exports = {
 			fun: `Wanna have fun with your friends?!`,
 			setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
 			system: `Miscellaneous commands to check the state of Annie.`,
-			user: `Everything you need are in here. Well-refined, just for you.`
+			user: `Everything you need are in here. Well-refined, just for you.`,
+			custom: `Special functionality for specific server(s).`
 		}
 		return descriptions[category]
 	}

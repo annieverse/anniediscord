@@ -17,7 +17,6 @@ module.exports = {
     usage: `stats`,
     permissionLevel: 0,
     multiUser: false,
-    contexts: [0],
     server_specific: false,
     applicationCommand: true,
     messageCommand: true,

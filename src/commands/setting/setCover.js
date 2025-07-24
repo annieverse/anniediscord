@@ -64,7 +64,6 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     uploadCost: 1000,
-    contexts: [0],
     FileTypesNotAllowed: [`.apng`, `.avif`, `.gif`, `.webp`],
     async execute(client, reply, message, arg, locale, prefix) {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2, locale)

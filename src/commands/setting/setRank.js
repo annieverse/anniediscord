@@ -72,7 +72,6 @@ module.exports = {
         }]
     }],
     type: ApplicationCommandType.ChatInput,
-    contexts: [0],
     /**
      * List of available actions for the current command
      * @type {array}
