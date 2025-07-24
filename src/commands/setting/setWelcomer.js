@@ -252,7 +252,15 @@ module.exports = {
             this.args = [this.action, `reset`]
         }
         if (options.getSubcommandGroup() === `image`) {
+            // validFileTypes: [`JPEG`,`PNG`,`GIF`,`SVG`,`TIFF`,`BMP`],
+            await interaction.deferReply()
             if (options.getSubcommand() === `attachment`) {
+                const mediaType = options.getAttachment(`set`).contentType
+                if (mediaType && !mediaType.startsWith(`image/`)) return await reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+                    socket: {
+                        emoji: await client.getEmoji(`692428969667985458`)
+                    }
+                })
                 this.action = `image`
                 this.args = [this.action, options.getAttachment(`set`).url]
             } else if (options.getSubcommand() === `url`) {
@@ -310,7 +318,12 @@ module.exports = {
             }
         })
         // WELCOMER_ONBOARDWAIT
-        if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+        try {
+            if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+        } catch (error) {
+            client.logger.error(`[setWelcomer.js] Onboarding error > \n${error}`)
+            return await reply.send(`Please try again a little later.`)
+        }
         const currentSelection = this.guildConfigurations.get(this.selectedModule).value === 0 ? false : this.guildConfigurations.get(this.selectedModule).value === 1 ? true : false
         const changeSelection = typeof (this.args[1]) === `string` ? this.args[1].toLowerCase() === `true` ? 1 : this.args[1].toLowerCase() === `false` ? 0 : 0 : this.args[1]
         const valueToAddToDB = changeSelection ? 1 : 0
@@ -753,9 +766,25 @@ module.exports = {
                 emoji: await client.getEmoji(`692428969667985458`)
             }
         })
-        const id = uuidv4()
-        const response = await superagent.get(url)
-        const buffer = response.body
+        let id, response, buffer, mediaType
+        try {
+            id = uuidv4()
+            response = await superagent.get(url)
+            buffer = response.body
+            mediaType = response.headers[`content-type`]
+
+        } catch (error) {
+            return await reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+                socket: {
+                    emoji: await client.getEmoji(`692428969667985458`)
+                }
+            })
+        }
+        if (mediaType && !mediaType.startsWith(`image/`)) return await reply.send(locale.SETWELCOMER.IMAGE_INVALID_UPLOAD, {
+            socket: {
+                emoji: await client.getEmoji(`692428969667985458`)
+            }
+        })
         try {
             await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
         } catch (error) {
@@ -895,7 +924,11 @@ module.exports = {
                 url: imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? this.args[1] : null
             }
         }
-        const hasAttachment = message.attachments.first() ? true : false
+        let hasAttachment = message.attachments.first() ? true : false
+        if (hasAttachment) {
+            const mediaType = message.attachments.first().contentType
+            if (mediaType && !mediaType.startsWith(`image/`)) hasAttachment = false
+        }
         const imageArgs = this.args.slice(1).join(` `)
         const hasImageURL = imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? true : false
         return {
