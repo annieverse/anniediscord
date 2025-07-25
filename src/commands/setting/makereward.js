@@ -15,6 +15,7 @@ const {
     PermissionFlagsBits,
     MessageFlags
 } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 
 /**
  * Output bot's latency
@@ -197,7 +198,7 @@ module.exports = {
             const member = interaction.user.id
             const filter = interaction => [roleButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
             // const filter = interaction => (interaction.customId === roleButtonCustomId || interaction.customId === cancelButtonCustomId || interaction.customId === finishedButtonCustomId) && interaction.user.id === member
-            const buttonCollector = role_adding.createMessageComponentCollector({ filter, time: 30000 })
+            const buttonCollector = isInteractionCallbackResponse(role_adding) ? role_adding.resource.message.createMessageComponentCollector({ filter, time: 30000 }) : role_adding.createMessageComponentCollector({ filter, time: 30000 })
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
@@ -314,7 +315,11 @@ module.exports = {
                         components: [roleConfirmationRow]
                     })
                     const rolefilter = roleInteraction => [`confirm`, `cancel`].some(id => id === roleInteraction.customId) && roleInteraction.user.id === member
-                    roleListener = confirmationRole.createMessageComponentCollector({
+                    roleListener = isInteractionCallbackResponse(confirmationRole) ? confirmationRole.resource.message.createMessageComponentCollector({
+                        rolefilter,
+                        componentType: ComponentType.Button,
+                        time: 60 * 1000
+                    }) : confirmationRole.createMessageComponentCollector({
                         rolefilter,
                         componentType: ComponentType.Button,
                         time: 60 * 1000
@@ -397,8 +402,7 @@ module.exports = {
             const item_adding = await reply.send(`Time to add any items if you wish.`, { components: row })
             const member = interaction.user.id
             const filter = interaction => [itemButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
-            // const filter = interaction => (interaction.customId === buttonCustomId || interaction.customId === `cancel` || interaction.customId === `finished`) && interaction.user.id === member
-            const buttonCollector = item_adding.createMessageComponentCollector({ filter, time: 30000 })
+            const buttonCollector = isInteractionCallbackResponse(item_adding) ? item_adding.resource.message.createMessageComponentCollector({ filter, time: 30000 }) : item_adding.createMessageComponentCollector({ filter, time: 30000 })
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
@@ -510,7 +514,11 @@ module.exports = {
                         components: [itemConfirmationRow]
                     })
                     const itemfilter = iteminteraction => [`confirm`, `cancel`].some(id => id === iteminteraction.customId) && iteminteraction.user.id === member
-                    const itemListener = confirmationItem.createMessageComponentCollector({
+                    const itemListener = isInteractionCallbackResponse(confirmationItem) ? confirmationItem.resource.message.createMessageComponentCollector({
+                        itemfilter,
+                        componentType: ComponentType.Button,
+                        time: 60 * 1000
+                    }) : confirmationItem.createMessageComponentCollector({
                         itemfilter,
                         componentType: ComponentType.Button,
                         time: 60 * 1000
@@ -588,7 +596,11 @@ module.exports = {
                 components: [confirmationRow]
             })
             const filter = i => [`confirm`, `cancel`].some(id => id === i.customId) && i.user.id === interaction.member.id
-            const confirmOrCancelListener = trackingMessage.resource.message.createMessageComponentCollector({
+            const confirmOrCancelListener = isInteractionCallbackResponse(trackingMessage) ? trackingMessage.resource.message.createMessageComponentCollector({
+                filter,
+                componentType: ComponentType.Button,
+                time: 60 * 1000
+            }) : trackingMessage.createMessageComponentCollector({
                 filter,
                 componentType: ComponentType.Button,
                 time: 60 * 1000
@@ -798,7 +810,11 @@ module.exports = {
             components: [confirmationRow]
         })
         const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === interaction.member.id
-        const confirmOrCancelListener = confirmationMessage.createMessageComponentCollector({
+        const confirmOrCancelListener = isInteractionCallbackResponse(confirmationMessage) ? confirmationMessage.resource.message.createMessageComponentCollector({
+            filter,
+            componentType: ComponentType.Button,
+            time: 60 * 1000
+        }) : confirmationMessage.createMessageComponentCollector({
             filter,
             componentType: ComponentType.Button,
             time: 60 * 1000
