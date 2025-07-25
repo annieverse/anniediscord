@@ -12,6 +12,12 @@ module.exports = {
      * @type {string}
      */
     name: `retrievedata`,
+    name_localizations: {
+        fr: `récupérer des données
+`},
+    description_localizations: {
+        fr: `Créez un fichier csv.`
+    },
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required

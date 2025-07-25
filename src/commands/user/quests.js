@@ -9,6 +9,12 @@ const { isSlash, isInteractionCallbackResponse } = require(`../../utils/appCmdHe
  */
 module.exports = {
 	name: `quests`,
+	name_localizations: {
+		fr: ``
+	},
+	description_localizations: {
+		fr: ``
+	},
 	aliases: [`quest`, `quests`, `qst`, `artquests`, `artquest`, `q`],
 	description: `Displaying quest that you can complete and wins artcoins! the quest will be available once every 2 hours`,
 	usage: `quest`,

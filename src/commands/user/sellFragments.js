@@ -14,6 +14,12 @@ const {
  */
 module.exports = {
     name: `sellfragments`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`sellfrag`, `sellfragments`, `sellfrags`, `sellfragment`],
     description: `Exchange all your unused fragments into artcoins!`,
     usage: `sellfragments <amount/all>`,
@@ -24,15 +30,33 @@ module.exports = {
     options: [{
         name: `all`,
         description: `Sell all your fragments`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     },
     {
         name: `specific`,
         description: `The amount of fragments you want to sell`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `amount`,
             description: `The amount of fragments you want to sell`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.Integer,
             min_value: 5,
@@ -58,6 +82,7 @@ module.exports = {
         })
         const amountToSell = arg.startsWith(`all`) ? `all` : trueInt(arg)
         return this.run(client, reply, message, locale, amountToSell)
+
 
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -86,6 +111,7 @@ module.exports = {
         })
         //  Handle if user specified an invalid amount        
         const amountToSell = amount === `all` ? userData.inventory.fragments : amount
+        if (!amountToSell && amountToSell <= userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         if (!amountToSell && amountToSell <= userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         //  Handle if user's specified amount is lower than the minimum sell 
         if (amountToSell < this.minimumToSell) return await reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {

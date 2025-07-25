@@ -10,6 +10,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `cartcoin`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`convertac`, `acconvert`, `cartcoin`, `cartcoins`, `artcoinconvert`, `convertartcoin`],
     description: `Converts Artcoins into EXP at the rate of 1:8`,
     usage: `cartcoin <Amount>`,
@@ -22,15 +28,33 @@ module.exports = {
         {
             name: `all`,
             description: `Convert all of your Artcoins`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Subcommand,
         },
         {
             name: `amount`,
             description: `choose the amount of Artcoins you want to convert`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Subcommand,
             options: [{
                 name: `how_many`,
                 description: `How many Artcoins you wish to convert`,
+                name_localizations: {
+                    fr: ``
+                },
+                description_localizations: {
+                    fr: ``
+                },
                 requied: true,
                 type: ApplicationCommandOptionType.Integer,
                 min_value: 8

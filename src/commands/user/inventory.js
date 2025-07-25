@@ -10,6 +10,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `inventory`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`inventory`, `inv`, `bag`, `invent`, `inven`],
     description: `Views all items in user's inventory`,
     usage: `inventory <User>(Optional)`,
@@ -21,6 +27,12 @@ module.exports = {
     options: [{
         name: `user`,
         description: `User you wish to view inventory of`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: false,
         type: ApplicationCommandOptionType.User
     }],

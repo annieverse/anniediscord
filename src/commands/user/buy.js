@@ -12,6 +12,12 @@ const {
  */
 module.exports = {
     name: `buy`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`purchase`, `buyy`],
     description: `Buy any purchasable items from server shop!`,
     usage: `buy <ItemID/ItemName>`,
@@ -23,6 +29,12 @@ module.exports = {
     options: [{
         name: `item`,
         description: `Item id or name you wish to buy`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: true,
         type: ApplicationCommandOptionType.String
     }],

@@ -10,6 +10,12 @@ const { ApplicationCommandType } = require(`discord.js`)
  */
 module.exports = {
     name: `rankings`,
+    name_localizations: {
+        fr: `classements`
+    },
+    description_localizations: {
+        fr: `Affichage du classement de votre serveur pour l'élément sélectionné !`
+    },
     aliases: [],
     description: `Displaying your server leaderboard for selected item!`,
     usage: `rankings`,

@@ -16,6 +16,12 @@ const {
  */
 module.exports = {
     name: `setrank`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`setranks`, `setrank`, `setRanks`, `setrnk`],
     description: `Customize role-rank system in the guild`,
     usage: `setranks`,
@@ -28,45 +34,105 @@ module.exports = {
     options: [{
         name: `enable`,
         description: `Enable the role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }, {
         name: `disable`,
         description: `Disable the role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }, {
         name: `reset`,
         description: `Reset the role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }, {
         name: `stack`,
         description: `Stack the roles for role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }, {
         name: `info`,
         description: `Show the current role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }, {
         name: `delete`,
         description: `Delete a role from the role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `role`,
             description: `The role to delete`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Role,
             required: true,
         }]
     }, {
         name: `add`,
         description: `Add a role from the role-rank system`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `role`,
             description: `The role to add`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Role,
             required: true,
         }, {
             name: `level`,
             description: `The level of the role`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Integer,
             required: true,
         }]

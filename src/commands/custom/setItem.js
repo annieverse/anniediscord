@@ -15,6 +15,12 @@ module.exports = {
      * @type {string}
      */
     name: `setitem`,
+    name_localizations: {
+        fr: `article défini`
+    },
+    description_localizations: {
+        fr: `Définissez l'élément que vous souhaitez utiliser pour le classement.`
+    },
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required
@@ -72,6 +78,12 @@ module.exports = {
     options: [{
         name: `item`, // Must be all lowercase
         description: `The item name or Id`,
+        name_localizations: {
+            fr: `article`
+        },
+        description_localizations: {
+            fr: `Le nom ou l'identifiant de l'élément`
+        },
         required: true,
         type: ApplicationCommandOptionType.String
     }],

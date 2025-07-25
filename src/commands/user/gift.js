@@ -13,6 +13,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `gift`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`gifts`, `giveitem`, `senditem`, `praise`],
     description: `Send gifts to your friends! They will receive 1 reputation point for each gift you send.`,
     usage: `gift <User>`,
@@ -24,28 +30,58 @@ module.exports = {
     options: [{
         name: `send`,
         description: `Send a gift to a user`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `user`,
             description: `User you wish to send gift to`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.User
         },
         {
             name: `amount`,
             description: `Amount of gifts you wish to send`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.Integer,
             min_value: 1
         }, {
             name: `item`,
             description: `Item you wish to send`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]
     }, {
         name: `how`,
         description: `how to use the gift command`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
     }
     ],

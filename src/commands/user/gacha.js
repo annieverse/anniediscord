@@ -13,6 +13,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `gacha`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`gch`, `gacha`, `reroll`],
     description: `Opens a Lucky Ticket and wins various rewards such as card collection and cosmetic items!`,
     usage: `gacha <Amount>`,
@@ -25,6 +31,12 @@ module.exports = {
     options: [{
         name: `amount`,
         description: `Amount of tickets to open`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: true,
         type: ApplicationCommandOptionType.Integer,
         choices: [{ name: `one`, value: 1 }, { name: `ten`, value: 10 }, { name: `1`, value: 1 }, { name: `10`, value: 10 }]

@@ -14,6 +14,12 @@ module.exports = {
      * @type {string}
      */
     name: `setwallet`,
+    name_localizations: {
+        fr: `définir le portefeuille`
+    },
+    description_localizations: {
+        fr: `Associer le portefeuille à votre utilisateur`
+    },
     /**
      * Define accepted aliases. User will be able to call the command with these alternative names.
      * @required
@@ -64,14 +70,32 @@ module.exports = {
     options: [{
         name: `remove`, // Must be all lowercase
         description: `Remove your address`,
+        name_localizations: {
+            fr: `retirer`
+        },
+        description_localizations: {
+            fr: `Supprimez votre adresse`
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `address`, // Must be all lowercase
         description: `Your address you would like to link`,
+        name_localizations: {
+            fr: `adresse`
+        },
+        description_localizations: {
+            fr: `Votre adresse à laquelle vous souhaitez lier`
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `set`,
             description: `Set a wallet address.`,
+            name_localizations: {
+                fr: `ensemble`
+            },
+            description_localizations: {
+                fr: `Définissez une adresse de portefeuille.`
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]

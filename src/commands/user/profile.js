@@ -9,6 +9,12 @@ const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
  */
 module.exports = {
     name: `profile`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`profile`, `p`, `prof`],
     description: `Displaying user's profile card!`,
     usage: `profile <User>(Optional)`,
@@ -20,6 +26,12 @@ module.exports = {
     options: [{
         name: `user`,
         description: `Display the profile of the specified user`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: false,
         type: ApplicationCommandOptionType.User
     }],
@@ -28,6 +40,7 @@ module.exports = {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        //  Normalize structure
         //  Normalize structure
         targetUser = targetUser.master || targetUser
         const userData = await userLib.requestMetadata(targetUser, 2, locale)

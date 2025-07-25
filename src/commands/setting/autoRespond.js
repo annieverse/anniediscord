@@ -13,6 +13,12 @@ const {
  */
 module.exports = {
     name: `autorespond`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`autorespond`, `ar`, `autoresponse`, `autorespons`],
     description: `Create a set of autoresponder!`,
     usage: `ar`,
@@ -25,45 +31,105 @@ module.exports = {
     options: [{
         name: `enable`,
         description: `Enable the autorespond module`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `info`,
         description: `View currently configured ARs`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `reset`,
         description: `Reset the autorespond module`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `disable`,
         description: `Disable the autorespond module`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `help`,
         description: `View a brief help overview for the autoresponder module`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }, {
         name: `delete`,
         description: `Delete an AR`,
         type: ApplicationCommandOptionType.Subcommand,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         options: [{
             name: `id_trigger`,
             description: `Delete an AR`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]
     }, {
         name: `add`,
         description: `Add an AR`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `id_trigger`,
             description: `Name of AR to add`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }, {
             name: `response`,
             description: `What to respond with`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]

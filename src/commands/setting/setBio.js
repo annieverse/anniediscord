@@ -12,6 +12,12 @@ const {
  */
 module.exports = {
     name: `setbio`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`setdescrip`, `sd`, `sb`, `setbio`, `setdesc`, `setdescription`, `setprofiledescription`, `setprofiledesc`],
     description: `Set your profile bio/description`,
     usage: `setbio <Message>`,
@@ -23,6 +29,12 @@ module.exports = {
     options: [{
         name: `bio`,
         description: `Set your profile bio/description`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         required: true,
         type: ApplicationCommandOptionType.String,
         max_length: 156

@@ -27,9 +27,67 @@ module.exports = function applicationCommandLoader({
 
     const CLEARCMD = false // USED ONLY IN DEVELOPMENT
 
+    function formatNames(command) {
+        /**
+         * Recursively go thru and format descriptions.
+         * @param {Object} command 
+         */
+        function recursiveFormatName(command) {
+            /**
+             * format and return the string
+             * @param {string} string 
+             * @returns {string}
+             */
+            function format(string) {
+                return string != string.toLowerCase() ? string.toLowerCase() : string
+            }
+
+            for (var e in command) {
+                if (e === `name_localizations`) {
+                    for (var l in command[e]) {
+                        command[e][l] = command[e][l] === `` ? command.name : command[e][l]
+                        command[e][l] = format(command[e]?.[l])
+                    }
+                } else if (e === `options`) {
+                    recursiveFormatName(command?.[e])
+                } else { continue }
+            }
+        }
+        return recursiveFormatName(command)
+    }
+
+
+
     function formatDescriptions(command) {
         if (command.type === 3) return command.description = null
-        return command.description.length >= 100 ? command.description = `${command.description.substring(0, 90)}...` : command.description
+        /**
+         * Recursively go thru and format descriptions.
+         * @param {Object} command 
+         */
+        function recursiveFormatDesc(command) {
+            /**
+             * format and return the string
+             * @param {string} string 
+             * @returns {string}
+             */
+            function format(string) {
+                return string.length >= 100 ? `${string.substring(0, 90)}...` : string
+            }
+            for (var e in command) {
+                if (e === `description_localizations`) {
+                    for (var l in command[e]) {
+                        command[e][l] = command[e][l] === `` ? command.description : command[e][l]
+                        command[e][l] = format(command[e][l])
+                    }
+                } else if (e === `description`) {
+                    command.description = format(command.description)
+                } else if (e === `options`) {
+                    recursiveFormatDesc(command?.[e])
+                } else { continue }
+            }
+        }
+        return recursiveFormatDesc(command)
+        // return command.description.length >= 100 ? command.description = `${command.description.substring(0, 90)}...` : command.description
     }
 
     if (guildOnly) {
@@ -41,6 +99,7 @@ module.exports = function applicationCommandLoader({
     async function load() {
         commands.forEach(item => {
             formatDescriptions(item)
+            formatNames(item)
         })
 
         try {
@@ -106,7 +165,7 @@ module.exports = function applicationCommandLoader({
                     // test botv1: 514688969355821077
                     // test botv2: 1254197982132310167
                     // Annie support server        
-                    const allowedServersForDev = [`577121315480272908`, `597171669550759936`, `1242130891363454996`] // [Annie support server, Pan's test server, Grim head project]
+                    const allowedServersForDev = [`577121315480272908`, `597171669550759936`] // [Annie support server, Pan's test server]
                     for (const [serverId, commandObj] of commands.entries()) {
                         commandObj.forEach(item => {
                             formatDescriptions(item)

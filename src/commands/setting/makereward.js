@@ -22,6 +22,12 @@ const {
  */
 module.exports = {
     name: `makereward`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`mr`],
     description: `make a custom reward package`,
     usage: `makereward`,
@@ -34,15 +40,33 @@ module.exports = {
     options: [{
         name: `create`,
         description: `make a new reward package`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `package_name`,
             description: `What to call the reward package`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }, {
             name: `ac`,
             description: `how much ac to give as reward`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: false,
             type: ApplicationCommandOptionType.Integer,
             min_value: 0,
@@ -50,6 +74,12 @@ module.exports = {
         }, {
             name: `roles`,
             description: `how many roles do you want to give`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: false,
             type: ApplicationCommandOptionType.Integer,
             min_value: 0,
@@ -57,6 +87,12 @@ module.exports = {
         }, {
             name: `items`,
             description: `how many roles do you want to give`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: false,
             type: ApplicationCommandOptionType.Integer,
             min_value: 0,
@@ -65,10 +101,22 @@ module.exports = {
     }, {
         name: `delete`,
         description: `delete a package`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `package_name`,
             description: `the name of the package name`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.String,
             required: true,
             autocomplete: true
@@ -76,6 +124,12 @@ module.exports = {
     }, {
         name: `list`,
         description: `delete a package`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }],
     type: ApplicationCommandType.ChatInput,

@@ -10,6 +10,12 @@ const {
  */
 module.exports = {
     name: `settheme`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`theme`, `themeswitch`, `switchtheme`, `settheme`],
     description: `Switch your profile theme to Light or Dark.`,
     usage: `theme <Light/Dark>`,
@@ -21,6 +27,12 @@ module.exports = {
     options: [{
         name: `theme`,
         description: `choose your theme`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.String,
         required: true,
         choices: [{ name: `light`, value: `light` }, { name: `dark`, value: `dark` }]

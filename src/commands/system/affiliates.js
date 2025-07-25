@@ -4,8 +4,18 @@ const { ApplicationCommandType } = require(`discord.js`)
  * List of servers that supporting the development of Annie.
  * @author klerikdust
  */
+/**
+ * List of servers that supporting the development of Annie.
+ * @author klerikdust
+ */
 module.exports = {
     name: `affiliates`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`affiliate`, `affiliates`, `affil`],
     description: `List of servers that supporting the development of Annie.`,
     usage: `affiliate`,

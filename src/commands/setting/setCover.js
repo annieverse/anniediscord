@@ -19,6 +19,12 @@ const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
  */
 module.exports = {
     name: `setcover`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`setcover`, `setcovers`, `setcvr`, `setbg`, `setbackground`],
     description: `Setting up your own custom background! upload or share the image link you want to use.`,
     usage: `setcover <Attachment/URL>`,
@@ -30,36 +36,78 @@ module.exports = {
     options: [{
         name: `attachment`,
         description: `upload a custom image via attachment.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `set`,
             description: `the attachment to set as the background.`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.Attachment
         }]
     }, {
         name: `url`,
         description: `upload a custom image via URL.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `set`,
             description: `the url of the image you want to use.`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]
     }, {
         name: `cover_id`,
         description: `upload a cover via the cover id; brought from the shop.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `set`,
             description: `the cover id`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String
         }]
     }, {
         name: `reset`,
         description: `reset the background to the default one.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand
     }],
     type: ApplicationCommandType.ChatInput,

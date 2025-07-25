@@ -12,8 +12,18 @@ const {
  * Assign your friend into your relationship trees!
  * @author klerikdust
  */
+/**
+ * Assign your friend into your relationship trees!
+ * @author klerikdust
+ */
 module.exports = {
     name: `setrelationship`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`setrel`, `setrelationship`, `setrelations`, `setrelation`, `addrelationship`, `setrelationship`, `addrel`],
     description: `Assign your friend into your relationship trees!`,
     usage: `setrelationship`,
@@ -25,25 +35,55 @@ module.exports = {
     options: [{
         name: `remove`,
         description: `Action to perform.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `user`,
             description: `Remove a user from your relationship trees.`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.User
         }]
     }, {
         name: `add`,
         description: `Action to perform.`,
+        name_localizations: {
+            fr: ``
+        },
+        description_localizations: {
+            fr: ``
+        },
         type: ApplicationCommandOptionType.Subcommand,
         options: [{
             name: `user`,
             description: `Add a user to your relationship trees.`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.User
         }, {
             name: `relationship`,
             description: `Type of relationship.`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             required: true,
             type: ApplicationCommandOptionType.String,
             choices: [{ name: `parent`, value: `parent` },
@@ -268,6 +308,24 @@ module.exports = {
         }
         return res
     },
+    /**
+     * Fetching user's object for given list of ID.
+     * @param {object} ids
+     * @param {object} client Current client instance.
+     * @return {object}
+     */
+    async fetchLocalPool(ids, client) {
+        let res = []
+        for (let i = 0; i < ids.length; i++) {
+            try {
+                res.push(await client.users.fetch(ids[i]))
+            } catch (e) {
+                //  Fallback incase users aren't in range.
+                res.push({ id: ids[i], name: `Unreachable` })
+            }
+        }
+        return res
+    },
 
     /**
      * Properly arrange returned list from `db.relationships.getAvailableRelationships`
@@ -280,6 +338,5 @@ module.exports = {
             const rel = list[i]
             str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
         }
-        return str
     }
 }

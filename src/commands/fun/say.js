@@ -7,6 +7,12 @@ const { isSlash } = require(`../../utils/appCmdHelp`)
  */
 module.exports = {
     name: `say`,
+    name_localizations: {
+        fr: `dire`
+    },
+    description_localizations: {
+        fr: `Parlez à travers Annie !`
+    },
     aliases: [],
     description: `Talk through Annie!`,
     usage: `say <Message>`,
@@ -17,7 +23,18 @@ module.exports = {
     server_specific: false,
     default_member_permissions: PermissionFlagsBits.Administrator.toString(),
     options: [
-        { name: `message`, description: `Type your message to be said by annie`, required: true, type: ApplicationCommandOptionType.String }
+        {
+            name: `message`,
+            description: `Type your message to be said by annie`,
+            name_localizations: {
+                fr: `message`
+            },
+            description_localizations: {
+                fr: `Tapez votre message pour qu'il soit dit par Annie`
+            },
+            required: true,
+            type: ApplicationCommandOptionType.String
+        }
     ],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {

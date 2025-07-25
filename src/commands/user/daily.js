@@ -12,6 +12,12 @@ const {
  */
 module.exports = {
 	name: `daily`,
+	name_localizations: {
+		fr: ``
+	},
+	description_localizations: {
+		fr: ``
+	},
 	aliases: [`dly`, `daili`, `dail`, `dayly`, `attendance`, `dliy`],
 	description: `Claims free artcoins everyday. You can also help claiming your friend's dailies!`,
 	usage: `daily <User>(Optional)`,
@@ -23,6 +29,12 @@ module.exports = {
 	options: [{
 		name: `user`,
 		description: `User you wish to claim daily of`,
+		name_localizations: {
+			fr: ``
+		},
+		description_localizations: {
+			fr: ``
+		},
 		required: false,
 		type: ApplicationCommandOptionType.User
 	}],

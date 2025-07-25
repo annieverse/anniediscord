@@ -11,6 +11,12 @@ const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discor
  */
 module.exports = {
     name: `pay`,
+    name_localizations: {
+        fr: ``
+    },
+    description_localizations: {
+        fr: ``
+    },
     aliases: [`pay`, `transfer`, `transfers`, `share`, `give`],
     description: `Share artcoins with your friends!`,
     usage: `pay <User>`,
@@ -23,15 +29,33 @@ module.exports = {
         {
             name: `pay`,
             description: `Pay a user`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Subcommand,
             options: [{
                 name: `user`,
                 description: `The user you want to pay`,
+                name_localizations: {
+                    fr: ``
+                },
+                description_localizations: {
+                    fr: ``
+                },
                 required: true,
                 type: ApplicationCommandOptionType.User
             }, {
                 name: `amount`,
                 description: `The amount of artcoins you want to pay`,
+                name_localizations: {
+                    fr: ``
+                },
+                description_localizations: {
+                    fr: ``
+                },
                 required: true,
                 type: ApplicationCommandOptionType.Integer,
                 min_value: 1,
@@ -40,6 +64,12 @@ module.exports = {
         }, {
             name: `how`,
             description: `How to pay a user`,
+            name_localizations: {
+                fr: ``
+            },
+            description_localizations: {
+                fr: ``
+            },
             type: ApplicationCommandOptionType.Subcommand
         }],
     type: ApplicationCommandType.ChatInput,
