@@ -43,6 +43,7 @@ module.exports = async (client, interaction) => {
             socket: { emoji: await client.getEmoji(`AnniePout`) },
             ephemeral: true
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        // client.shard.broadcastEval(errorRelay, { context: { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

@@ -2,6 +2,7 @@
 const GUI = require(`../../ui/prebuild/level`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Display your current exp, level and rank.
  * @author klerikdust
@@ -79,7 +80,7 @@ module.exports = {
                     }
                 })
 
-                return loading.delete()
+                return isInteractionCallbackResponse(loading) ? loading.resource.message.delete() : loading.delete()
             })
     }
 }

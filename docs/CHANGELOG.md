@@ -1,3 +1,151 @@
+# [10.1.0](https://github.com/annieverse/anniediscord/compare/v10.0.8...v10.1.0) (2025-07-23)
+
+
+### Bug Fixes
+
+* **application commands:** refs errors ([003730d](https://github.com/annieverse/anniediscord/commit/003730d629768032b0d3c6c5c5114011f4cb8b68))
+
+
+### Features
+
+* **help:** command convert ([fb02034](https://github.com/annieverse/anniediscord/commit/fb02034e40d081b07589ac9b095f67037936ab00))
+
+## [10.0.8](https://github.com/annieverse/anniediscord/compare/v10.0.7...v10.0.8) (2025-07-22)
+
+
+### Bug Fixes
+
+* **setwelcomer:** preview ([3461d86](https://github.com/annieverse/anniediscord/commit/3461d8680851cab6dfb885f01548241563cc614a))
+
+## [10.0.7](https://github.com/annieverse/anniediscord/compare/v10.0.6...v10.0.7) (2025-07-21)
+
+
+### Bug Fixes
+
+* **build:** multiple commands ([e6df1c5](https://github.com/annieverse/anniediscord/commit/e6df1c58a3aa8f5dc5326cbd7050262a20f66828))
+* **slash:** patched slash interaction. ([0dcfd52](https://github.com/annieverse/anniediscord/commit/0dcfd528f9ede96af8af2923ec64ce47c9821535))
+
+## [10.0.6](https://github.com/annieverse/anniediscord/compare/v10.0.5...v10.0.6) (2025-07-20)
+
+
+### Bug Fixes
+
+* **master:** manager ref ([2ff48a0](https://github.com/annieverse/anniediscord/commit/2ff48a0b78d2b17aabd21f7f7b5971dcc6d09329))
+
+## [10.0.5](https://github.com/annieverse/anniediscord/compare/v10.0.4...v10.0.5) (2025-07-20)
+
+
+### Reverts
+
+* Revert "chore(vote): refs." ([68ebdef](https://github.com/annieverse/anniediscord/commit/68ebdefa4d823c821001b4b891a3dc27cc434c54))
+
+## [10.0.4](https://github.com/annieverse/anniediscord/compare/v10.0.3...v10.0.4) (2025-07-20)
+
+
+### Bug Fixes
+
+* **quest:** test patch button interaction. ([e82266c](https://github.com/annieverse/anniediscord/commit/e82266cfef43e4686b29b29fe1a8d2b21cae9e28))
+
+## [10.0.3](https://github.com/annieverse/anniediscord/compare/v10.0.2...v10.0.3) (2025-07-19)
+
+
+### Bug Fixes
+
+* **vote:** improved shard lookup. ([ef626e3](https://github.com/annieverse/anniediscord/commit/ef626e36f0eb680052f1f8588585a4d54f7c9903))
+
+## [10.0.2](https://github.com/annieverse/anniediscord/compare/v10.0.1...v10.0.2) (2025-07-19)
+
+
+### Bug Fixes
+
+* **vote:** var and port adjustment. ([c900a83](https://github.com/annieverse/anniediscord/commit/c900a83a9426c3081f3bd4ef1dcca5276b7ff822))
+
+## [10.0.1](https://github.com/annieverse/anniediscord/compare/v10.0.0...v10.0.1) (2025-07-18)
+
+
+### Bug Fixes
+
+* **setCartcoin:** slash cmd. ([156a3ce](https://github.com/annieverse/anniediscord/commit/156a3ce63e3ded396f1462d6944926006d9fc0f2))
+
+# [10.0.0](https://github.com/annieverse/anniediscord/compare/v9.11.2...v10.0.0) (2025-07-18)
+
+
+### Bug Fixes
+
+* **vote:** shard filtering ([63901f8](https://github.com/annieverse/anniediscord/commit/63901f8d84aea568cd7e1fe272e235c6499cdb80))
+
+
+### Features
+
+* **collection:** depreciating cmd ([4b44a0b](https://github.com/annieverse/anniediscord/commit/4b44a0ba62da46cda2410827c9ddfe362aa1cc5e))
+* **setcartcoin:** allows user to toggle the cartcoins feature in the server. ([cd66775](https://github.com/annieverse/anniediscord/commit/cd66775fdd609aade1720ac3df81942e2aba2c8c))
+
+
+### BREAKING CHANGES
+
+* **collection:** collection command is no longer supported
+
+## [9.11.2](https://github.com/annieverse/anniediscord/compare/v9.11.1...v9.11.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** error webhook handler. ([1eb9672](https://github.com/annieverse/anniediscord/commit/1eb967224fa270c3ea6972b9929dd9ed4f7f4944))
+
+## [9.11.1](https://github.com/annieverse/anniediscord/compare/v9.11.0...v9.11.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* **setlang:** hotfix no arg. ([250a788](https://github.com/annieverse/anniediscord/commit/250a78868cb20858c4c9d4a21ef468dcd4b28203))
+
+# [9.11.0](https://github.com/annieverse/anniediscord/compare/v9.10.2...v9.11.0) (2025-07-17)
+
+
+### Bug Fixes
+
+* **webhook:** revise message structure for vote wh. ([10779e2](https://github.com/annieverse/anniediscord/commit/10779e27c31589a238f7566f691ae72e208ae191))
+
+
+### Features
+
+* **bfd:** push stats to bfd platform. ([312dcd9](https://github.com/annieverse/anniediscord/commit/312dcd9f466d959422d6e2838f8b0de32f1bee6d))
+
+## [9.10.2](https://github.com/annieverse/anniediscord/compare/v9.10.1...v9.10.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* **localization:** sync fr. ([afe22d6](https://github.com/annieverse/anniediscord/commit/afe22d61f14d3786154a21aa89d0826ce70ba714))
+
+## [9.9.16](https://github.com/annieverse/anniediscord/compare/v9.9.15...v9.9.16) (2024-08-19)
+
+
+### Bug Fixes
+
+* **use:** button for confirmation not showing up ([4b8397d](https://github.com/annieverse/anniediscord/commit/4b8397d55f445a2fc7c78c5718763453324b4e12))
+
+## [9.9.15](https://github.com/annieverse/anniediscord/compare/v9.9.14...v9.9.15) (2024-08-10)
+
+
+### Bug Fixes
+
+* **testRole:** test for guild owner ([344ac40](https://github.com/annieverse/anniediscord/commit/344ac40f811832c4687b23badecf148b90ff9aa4))
+
+## [9.9.14](https://github.com/annieverse/anniediscord/compare/v9.9.13...v9.9.14) (2024-08-10)
+
+
+### Bug Fixes
+
+* **viewData:** handle empty page ([ab0f224](https://github.com/annieverse/anniediscord/commit/ab0f224dc55b5a02bc0c83baab8cd1921de417d3))
+
+## [9.9.13](https://github.com/annieverse/anniediscord/compare/v9.9.12...v9.9.13) (2024-08-10)
+
+
+### Bug Fixes
+
+* **setshop:** fail to set stock ([7fed1ba](https://github.com/annieverse/anniediscord/commit/7fed1baf1df7370c4ec1c99f174643a803d08d2d))
+
 ## [9.9.12](https://github.com/annieverse/anniediscord/compare/v9.9.11...v9.9.12) (2024-08-02)
 
 

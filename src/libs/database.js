@@ -551,7 +551,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`EXP_${userId}@${guildId}`)
-		// this.redis.del(`EXP_${userId}@${guildId}`)
 		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
@@ -587,7 +586,6 @@ class UserUtils extends DatabaseUtils {
 		const key = `EXP_${userId}@${guildId}`
 		//  Retrieve from cache if available
 		const cache = await this.getCache(key)
-		// const cache = await this.redis.get(key)
 		if (cache) return JSON.parse(cache)
 		//  Otherwise fetch from db and store it to cache for later use.
 		const query = async () => this._query(`
@@ -634,7 +632,6 @@ class UserUtils extends DatabaseUtils {
 		).then(() => logger.database(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
 		this.delCache(key)
-		// this.redis.del(key)
 	}
 
 	/**
@@ -801,7 +798,6 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`DAILIES_${userId}@${guildId}`)
-		// this.redis.del(`DAILIES_${userId}@${guildId}`)
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
 		logger.database(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
@@ -2490,7 +2486,6 @@ class Quests extends DatabaseUtils {
 		const cacheId = `CACHED_QUESTS_POOL`
 
 		const cache = await this.getCache(cacheId)
-		// const cache = await this.redis.get(cacheId)
 		if (cache !== null) return JSON.parse(cache)
 		const res = await this._query(`
 			SELECT *
@@ -2593,7 +2588,12 @@ class Custom extends DatabaseUtils {
 	constructor(client) {
 		super(client)
 	}
-
+	/**
+	 * Save wallet id with user id to database for avarik saga community
+	 * @param {string} userId 
+	 * @param {string} wallet 
+	 * @returns 
+	 */
 	async setWalletAddress(userId, wallet) {
 		const fn = this.formatFunctionLog(`setWalletAddress`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
@@ -2619,7 +2619,11 @@ class Custom extends DatabaseUtils {
 		logger.database(`${fn} ${stmtType} Avarik Saga Wallet link with user`)
 		return true
 	}
-
+	/**
+	 * Remove data entry from database for avarik saga community
+	 * @param {string} userId 
+	 * @returns 
+	 */
 	async deleteWalletAddress(userId) {
 		const fn = this.formatFunctionLog(`deleteWalletAddress`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
@@ -2629,6 +2633,190 @@ class Custom extends DatabaseUtils {
 			, `run`
 			, { userId: userId }
 			, `${fn} Deleting wallet address for ${userId}`)
+	}
+
+	/**
+	 * Remove data entry from database for any community
+	 * @param {string} userId 
+	 * @returns 
+	 */
+	async customWalletDelete(userId, guildId) {
+		const fn = this.formatFunctionLog(`deleteWalletAddress`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		return await this._query(`
+			DELETE FROM custom_wallet
+			WHERE user_id = $userId AND guild_id = $guildId`
+			, `run`
+			, { userId: userId, guildId: guildId }
+			, `${fn} Deleting wallet address for ${userId} in guild: ${guildId}`)
+	}
+
+	/**
+	 * Save wallet id with user id to database for any community
+	 * @async
+	 * @param {string} userId 
+	 * @param {string} value 
+	 * @param {string} guildId 
+	 * @returns {Promise.<stmtType:string>}
+	 */
+	async customWalletAdd(userId, value, guildId) {
+		const fn = this.formatFunctionLog(`customWalletAdd`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		const res = {
+			insert: await this._query(`
+					INSERT INTO custom_wallet(user_id, wallet)
+					SELECT $userId, $wallet
+					WHERE NOT EXISTS (SELECT 1 FROM custom_wallet WHERE user_id = $userId AND guild_id = $guildId)`
+				, `run`
+				, { userId: userId, wallet: value, guildId: guildId }
+				, `${fn} Linking wallet address for ${userId}`
+			),
+			update: await this._query(`
+					UPDATE custom_wallet
+					SET wallet = $wallet
+					WHERE user_id = $userId AND guild_id = $guildId`
+				, `run`
+				, { userId: userId, wallet: value, guildId: guildId }
+				, `${fn} Updating wallet address for ${userId}`)
+		}
+		const stmtType = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
+		logger.database(`${fn} ${stmtType} Custom value for ${guildId} added for user: ${userId}`)
+		return stmtType
+	}
+	/**
+	 * 
+	 * @async
+	 * @param {string} value 
+	 * @param {string} guildId 
+	 * @returns {Promise.<stmtType:string>}
+	 */
+	async verifyData(value, guildId) {
+		const fn = this.formatFunctionLog(`verifyData`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+
+		const res = await this._query(`SELECT 1 FROM custom_wallet WHERE wallet = $wallet AND guild_id = $guildId`
+			, `get`
+			, { wallet: value, guildId: guildId }
+			, `${fn} verifing wallet address for ${guildId}`)
+		const stmtType = res?.[`?column?`] && res != null ? `FOUND_RECORD` : `NO_RECORD`
+		return stmtType
+	}
+	/**
+	 * 
+	 * @async
+	 * @param {string} userId 
+	 * @param {string} value 
+	 * @param {string} guildId 
+	 * @returns {Promise.<stmtType:string>}
+	 * @returns 
+	 */
+	async claimDataEntry(userId, value, guildId) {
+		const fn = this.formatFunctionLog(`claimDataEntry`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+
+		const res = await this._query(`UPDATE custom_wallet SET user_id = $userId WHERE wallet = $wallet AND guild_id = $guildId AND user_id IS NULL`
+			, `run`
+			, { userId: userId, wallet: value, guildId: guildId }
+			, `${fn} verifing wallet address for ${userId}`)
+		const stmtType = res?.changes ? `INSERT` : `NO_CHANGES`
+		logger.database(`${fn} ${stmtType} Custom value for ${guildId} added for user: ${userId}`)
+		return stmtType
+	}
+
+	/**
+	 * 
+	 * @async
+	 * @param {string} value 
+	 * @param {string} guildId 
+	 * @returns {Promise.<stmtType:string>}
+	 */
+	async prefillData(value, guildId) {
+		const fn = this.formatFunctionLog(`prefillData`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+
+		const res = await this._query(`
+					INSERT INTO custom_wallet(wallet, guild_id)
+					SELECT $wallet, $guildId
+					WHERE NOT EXISTS (SELECT 1 FROM custom_wallet WHERE wallet = $wallet AND guild_id = $guildId)`
+			, `run`
+			, { wallet: value, guildId: guildId }
+			, `${fn} Linking wallet address for ${guildId}`
+		)
+		const stmtType = res?.changes ? `INSERT` : `NO_CHANGES`
+		return stmtType
+	}
+	/**
+	 * 
+	 * @async
+	 * @param {string} value 
+	 * @param {string} guildId 
+	 * @returns {Promise.<stmtType:string>}
+	 */
+	async removeData(value, guildId) {
+		const fn = this.formatFunctionLog(`removeData`)
+		if (!value) throw new TypeError(`${fn} parameter "value" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+
+		const res = await this._query(`
+					DELETE FROM custom_wallet
+					WHERE wallet = $wallet AND guild_id = $guildId`
+			, `run`
+			, { wallet: value, guildId: guildId }
+			, `${fn} Linking wallet address for ${guildId}`
+		)
+		const stmtType = res?.changes ? `DELETE` : `NO_CHANGES`
+		return stmtType
+	}
+
+	/**
+	 * 
+	 * @async
+	 * @param {string} guildId 
+	 * @param {string} valueToSearchBy 
+	 * @param {string} valueToReplaceWith 
+	 * @returns {Promise.<stmtType:string>}
+	 */
+	async modifyData(guildId, valueToSearchBy, valueToReplaceWith) {
+		const fn = this.formatFunctionLog(`modifyData`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (!valueToReplaceWith) throw new TypeError(`${fn} parameter "valueToReplaceWith" cannot be blank.`)
+		if (!valueToSearchBy) throw new TypeError(`${fn} parameter "valueToSearchBy" cannot be blank.`)
+		const res = await this._query(`
+					UPDATE custom_wallet
+					SET wallet = $walletReplace
+					WHERE user_id = $userId OR wallet = $wallet AND guild_id = $guildId`
+			, `run`
+			, { userId: valueToSearchBy, wallet: valueToSearchBy, walletReplace: valueToReplaceWith, guildId: guildId }
+			, `${fn} Updating wallet address for value matching ${valueToSearchBy}`)
+		const stmtType = res?.changes ? `UPDATE` : `NO_CHANGES`
+		logger.database(`${fn} ${stmtType} Custom value for ${guildId} with value: ${valueToSearchBy}`)
+		return stmtType
+	}
+
+	/**
+	 * 
+	 * @async
+	 * @param {string} guildId
+	 * @returns {Promise.<{user_id: String, wallet: String}[]>}
+	 */
+	async retrieveData(guildId) {
+		const fn = this.formatFunctionLog(`retrieveData`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		const res = await this._query(`
+					SELECT user_id, wallet
+					FROM custom_wallet
+					WHERE guild_id = $guildId`
+			, `all`
+			, { guildId: guildId }
+			, `${fn} retreiving all wallet address for guild ${guildId}`)
+		return res
 	}
 }
 /* class Template extends DatabaseUtils{

@@ -14,7 +14,7 @@ const trueInt = require(`../../utils/trueInt`)
 const {
     ApplicationCommandType,
     ApplicationCommandOptionType,
-    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder
+    PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, MessageFlags
 } = require(`discord.js`)
 
 /**
@@ -351,7 +351,6 @@ module.exports = {
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === name.toLowerCase()).length > 0) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: name
@@ -401,7 +400,7 @@ module.exports = {
         }
 
         let response = await reply.send(Object.values(responseMessageContent).slice(0, -1).join(`\n`) + Object.values(responseMessageContent).slice(-1), {
-            fetchReply: true,
+            withResponse: true,
             footer: `Hitting finish before entering stock will defualt stock to unlimited, if not set already and buffs to no buffs added, if not set already.`,
             components: row
         })
@@ -423,11 +422,10 @@ module.exports = {
             })
         }
         buttonCollector.on(`ignore`, async (i) => {
-            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
         })
         buttonCollector.on(`end`, async (collected, reason) => {
             client.db.databaseUtils.delCache(sessionId)
-            // client.db.redis.del(sessionId)
             if (completed) return
             if (reason != `shop adding item has been cancelled` && reason != `time`) return
             const message = await interaction.fetchReply()
@@ -711,7 +709,6 @@ module.exports = {
             const nameLimit = 20
             if (secondArg.length >= nameLimit) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_OVERLIMIT, {
                     socket: {
                         limit: nameLimit
@@ -721,7 +718,6 @@ module.exports = {
             const guildItems = await client.db.shop.getItem(null, message.guild.id)
             if (guildItems.filter(i => i.name.toLowerCase() === secondArg.toLowerCase()).length > 0) {
                 client.db.databaseUtils.delCache(sessionId)
-                // client.db.redis.del(sessionId)
                 return await reply.send(locale.SETSHOP.ADD_NAME_DUPLICATE, {
                     socket: {
                         item: secondArg
@@ -825,7 +821,7 @@ module.exports = {
                     if (!trueInt(input) && (input !== `~`)) return await reply.send(locale.SETSHOP.ADD_STOCK_INVALID, {
                         deleteIn: 5
                     })
-                    metadata.stocks = input
+                    metadata.stocks = input == `~` ? 9223372036854775807n : input
                     dataDisplay.edit({
                         content: locale.SETSHOP.ADD_TRADABILITY,
                         embeds: [await joinFunction(`\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`)]
@@ -987,7 +983,6 @@ module.exports = {
         })
         pool.on(`end`, async () => {
             client.db.databaseUtils.delCache(sessionId)
-            // client.db.redis.del(sessionId)
             if (completed) return
             dataDisplay.delete()
             await reply.send(`Shop register interface has been closed.`, {
@@ -1229,7 +1224,7 @@ module.exports = {
             time: editItemListenerTimer
         })
         editItemListener.on(`ignore`, async (i) => {
-            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, ephemeral: true })
+            i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
         })
         editItemListener.on(`end`, async (collected, reason) => {
             const msg = await guide.fetch()

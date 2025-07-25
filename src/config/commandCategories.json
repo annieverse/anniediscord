@@ -5,5 +5,6 @@
     "MODERATION": "This is the list of my server-management tools that will help getting your server's chores done.",
     "SETTING": "This is the list of configuration commands that allows you to edit my behaviours in this server. I can also help configuring your profile if you wish.",
     "SYSTEM": "This is the list of my system commands that its purpose to check and monitor my resource status.",
-    "USER": "This is the list of my user commands and well .. generally, the most commands you will use are in this category."
+    "USER": "This is the list of my user commands and well .. generally, the most commands you will use are in this category.",
+    "CUSTOM": "This is the list of my custom commands, special functionality for specific server(s)."
 }

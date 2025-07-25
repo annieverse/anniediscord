@@ -13,16 +13,31 @@ module.exports = async (client, interaction, command) => {
     const locale = client.getTargetLocales(userData.lang)
     const reply = client.responseLibs(interaction, false, locale)
 
+    // 2025/07/20 :: Temporarily disable slash-based commands due to framework issues.
+    // Comment out after things are back normal.
+    /**
+    if (process.env.NODE_ENV === `production`) {
+        const fallbackPrefix = interaction.guild.configs.get(`PREFIX`).value
+        await reply.send(`**I'm sorry!** due to recent bug, any slash-based **\`/\`** commands got temporarily disabled until a patch fix is released. In the meantime; you can continue using the features with the default prefix **\`${fallbackPrefix}\`** instead. ${await client.getEmoji(`AnnieCry`)}\n**[Annie's Support Server](https://discord.gg/HjPHCyG346)**`)
+        .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
+        return reply.send(`${await client.getEmoji(`AnnieHeartPeek`)} now try again with **\`${fallbackPrefix}${interaction.commandName}\`**`, { simplified: true })
+        .catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to notify user regarding slash-based commands unavailability. > ${err}`))
+    }
+    */
+
     // Check Bot's permissions before procceding
     let checkPerm = false
     try {
-        checkPerm = reply.checkPermissions(interaction.channel)
+        if (!interaction.channel.isDMBased()) {
+            checkPerm = reply.checkPermissions(interaction.channel)
+        }
         if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
     } catch (e) {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
-        return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        // return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
     const options = interaction.options
@@ -106,6 +121,8 @@ module.exports = async (client, interaction, command) => {
         }
         //  Report to support server
         if (internalError) return
-        client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
+        return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
+
+        // client.shard.broadcastEval(errorRelay, { context: { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
     }
 }

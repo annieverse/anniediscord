@@ -4,6 +4,7 @@ const { ApplicationCommandType, ApplicationCommandOptionType, InteractionType, P
 /**
  * Displays your server leaderboard!
  * @author klerikdust
+ * @module 
  */
 module.exports = {
     name: `shoplog`,

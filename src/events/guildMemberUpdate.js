@@ -1,7 +1,7 @@
 "use strict"
 const Banner = require(`../ui/prebuild/welcomer`)
 const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
-const { Collection, ChannelType, PermissionFlagsBits } = require(`discord.js`)
+const { Collection, ChannelType, PermissionFlagsBits, GuildMemberFlags } = require(`discord.js`)
 const { roleLower } = require(`../utils/roleCompare.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
@@ -31,8 +31,12 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
     if (configs.get(`WELCOMER_MODULE`).value) {
         if (!newMember.pending) {
             // Check if onboarding is enabled
-            if (!configs.get(`WELCOMER_ONBOARDWAIT`).value) return
-            if (!(await newMember.guild.fetchOnboarding()).enabled) return
+            try {
+                if ((await newMember.guild.fetchOnboarding()).enabled && !newMember.flags.has(GuildMemberFlags.CompletedOnboarding)) return
+            } catch (error) {
+                client.logger.error(error)
+                return errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            }
 
             //  Prepare welcomer target channel
             let getTargetWelcomerChannel = configs.get(`WELCOMER_CHANNEL`).value
@@ -131,7 +135,8 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                 }
                 newMember.roles.add(rolesToAdd).catch(error => {
                     client.logger.error(error)
-                    client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                    // client.shard.broadcastEval(errorRelay, { context: { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
                 })
             }
         }

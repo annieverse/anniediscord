@@ -42,7 +42,7 @@ module.exports = {
       image: `banner_setlanguage`,
       socket: {
         prefix: message.guild.configs.get(`PREFIX`).value,
-        languages: `<${client.availableLocales.join(`/`)}>`,
+        languages: `en, fr`,
         currentLanguage: locale.lang
       }
     })

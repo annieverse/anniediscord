@@ -180,10 +180,12 @@ class Quest {
     }
 
     async #checkIfQuestAvailable() {
+        if (this.client.dev) return true
+
         const now = moment()
         const cooldown = [2, `hours`]
         const lastClaimAt = await this.client.db.systemUtils.toLocaltime(this.#userData.quests.updated_at)
-		const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
+        const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
         //  Handle if user's quest queue still in cooldown
         if (now.diff(localed, cooldown[1]) < cooldown[0]) {
             await this.reply.send(this.#locale.QUEST.COOLDOWN, {

@@ -3,8 +3,10 @@ const {
     ComponentType,
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle
+    ButtonStyle,
+    MessageFlags
 } = require(`discord.js`)
+const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp`)
 /**
  * Manages transaction confirmation thru reaction.
  * @class
@@ -30,6 +32,12 @@ module.exports = class Confirmator {
          * @type {object}
          */
         this.locale = locale
+
+        /**
+         * Boolean for if message is a application command or a regular message
+         * @type {boolean}
+         */
+        this.isSlash = isSlash(this.message)
     }
 
     set setSessionId(s) {
@@ -45,7 +53,7 @@ module.exports = class Confirmator {
     }
 
     get getPreviousSessionActive() {
-        return this.#previousSessionActive 
+        return this.#previousSessionActive
     }
 
     /**
@@ -55,7 +63,8 @@ module.exports = class Confirmator {
      * @return {void}
      */
     async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
-        this.message = targetMessage
+        this.isCB = isInteractionCallbackResponse(targetMessage)
+        this.message = this.isCB ? targetMessage.resource.message : targetMessage
         this.setSessionId = `CONFIRMATOR:${this.message.author.id}_${this.message.guild.id}`
         const sessionActive = await this.message.client.db.databaseUtils.doesCacheExist(this.getSessionId)
         if (sessionActive) {
@@ -78,11 +87,11 @@ module.exports = class Confirmator {
                     .setLabel(`Cancel`)
                     .setStyle(ButtonStyle.Danger)
             )
-        targetMessage.edit({
+        this.message.edit({
             components: [row]
         })
         const filter = i => (i.customId === `confirm` || i.customId === `cancel`) && i.user.id === targetUserId
-        this.activeInstance = targetMessage.createMessageComponentCollector({
+        this.activeInstance = this.message.createMessageComponentCollector({
             filter,
             componentType: ComponentType.Button,
             time: 60 * 1000
@@ -97,7 +106,7 @@ module.exports = class Confirmator {
      */
     onAccept(fn = null) {
         if (!fn) throw new TypeError(`parameter 'fn' must be a valid callback function`)
-        if (this.getPreviousSessionActive) return 
+        if (this.getPreviousSessionActive) return
         if (!this.activeInstance) throw new Error(`there are no active instance to listen to`)
         this.onEnd()
         this.onIgnore()
@@ -159,7 +168,7 @@ module.exports = class Confirmator {
     onIgnore() {
         this.activeInstance.on(`ignore`, (obj) => {
             if (obj.me) return
-            obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, ephemeral: true })
+            obj.reply({ content: `I'm sorry but you are not the intended user that may interact with this button.`, flags: MessageFlags.Ephemeral })
         })
     }
 }

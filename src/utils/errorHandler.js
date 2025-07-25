@@ -1,59 +1,33 @@
 "use strict"
 const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs, levelZeroErrors }) => {
     /**
-     * 1 = normal
-     * 2 = text command
-     * 3 = application command
+     * normal -> happens in a file like annie.js
+     * txtcmd -> happens in relation to a command being ran and being a "text" command; for ex. >ping
+     * appcmd -> happens in relation to a command being ran and being a "slash" (application) command; for ex. /ping
      */
     if (![`normal`, `txtcmd`, `appcmd`].includes(errorType)) return client.logger.error(`[errorRelay.js] errorType must equal normal, txtcmd, or appcmd > entered type: ${errorType}`)
     if (!fileName) return client.logger.error(`[errorRelay.js] fileName must be populated`)
     if (!error_message) return client.logger.error(`[errorRelay.js] error_message must be populated > ${fileName}`)
     if (!errorType) return client.logger.error(`[errorRelay.js] errorType must be populated > ${fileName}`)
     if (!levelZeroErrors) return client.logger.error(`[errorRelay.js] levelZeroErrors must be populated  > ${fileName}`)
+
+    // Common Discord Errors
+    const DiscordAPIError_50001 = `Missing Access`
+    const DiscordAPIError_50013 = `Missing Permissions`
+    const DiscordAPIError_50005 = `Cannot edit a message authored by another user`
+
+    // Blacklist errors/Ignore errors
+    const IgnoreErrorFilter = [DiscordAPIError_50013, DiscordAPIError_50001]
+    if (IgnoreErrorFilter.includes(error_message)) return
+
     // Create a Date Object to get current time
     const date = new Date()
-
-    // Test incoming error againts filter to send to apporiate channnel
-    const lvl0Test = levelZeroErrors.includes(error_message)
-
-    // Test if Client has the guild
-    const lvl0ChanlId = `797521371889532988`
-    const lvl1ChanlId = `848425166295269396`
 
     const DiscordAPIError_ThreadId = `1259908155597389865`
     const DiscordAPIError_50005_ThreadId = `1259907790483357736`
     const DiscordAPIError_50013_ThreadId = `1259906787231010816`
-    const DiscordAPIError_50001_ThreadId = `1259907469853982750` 
+    const DiscordAPIError_50001_ThreadId = `1259907469853982750`
     const lvl1_ThreadId = `1259906979522936953`
-
-    const DiscordAPIError_Thread_Test = client.channels.cache.has(DiscordAPIError_ThreadId)
-    const DiscordAPIError_50005_Thread_Test = client.channels.cache.has(DiscordAPIError_50005_ThreadId)
-    const DiscordAPIError_50013_Thread_Test = client.channels.cache.has(DiscordAPIError_50013_ThreadId)
-    const DiscordAPIError_50001_Thread_Test = client.channels.cache.has(DiscordAPIError_50001_ThreadId)
-    const lvl1_ThreadTest = client.channels.cache.has(lvl1_ThreadId)
-    const lvl1ChanCacheTest = client.channels.cache.has(lvl1ChanlId)
-    const lvl0ChanCacheTest = client.channels.cache.has(lvl0ChanlId)
-
-    if (!lvl1ChanCacheTest) await client.channels.fetch(lvl1ChanlId)
-    if (!lvl0ChanCacheTest) await client.channels.fetch(lvl0ChanlId)
-
-    if (!DiscordAPIError_Thread_Test) await client.channels.fetch(DiscordAPIError_ThreadId)
-    if (!DiscordAPIError_50005_Thread_Test) await client.channels.fetch(DiscordAPIError_50005_ThreadId)
-    if (!DiscordAPIError_50013_Thread_Test) await client.channels.fetch(DiscordAPIError_50013_ThreadId)
-    if (!DiscordAPIError_50001_Thread_Test) await client.channels.fetch(DiscordAPIError_50001_ThreadId)
-    if (!lvl1_ThreadTest) await client.channels.fetch(lvl1_ThreadId)
-
-    // Filtered error channels
-    const DiscordAPIError_Thread = client.channels.cache.get(DiscordAPIError_ThreadId)
-    const DiscordAPIError_50005_Thread = client.channels.cache.get(DiscordAPIError_50005_ThreadId)
-    const DiscordAPIError_50013_Thread = client.channels.cache.get(DiscordAPIError_50013_ThreadId)
-    const DiscordAPIError_50001_Thread = client.channels.cache.get(DiscordAPIError_50001_ThreadId)
-    const lvl1_Thread = client.channels.cache.get(lvl1_ThreadId)
-
-    // Old all error channels
-    const lvl0Channel = client.channels.cache.get(lvl0ChanlId)
-    const lvl1Channel = client.channels.cache.get(lvl1ChanlId)
-
 
     const cmdError = [`txtcmd`, `appcmd`].includes(errorType)
     const normalError = errorType == `normal`
@@ -81,7 +55,7 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
             `─────────────────☆～:;`,
             `**FILE OCCURANCE: ${fileName}**`,
             `**GUILD_ID:** ${guild.id} - ${guild.name}`,
-            `**AFFECTED_USER:** ${user.id} - @${user.username}#${user.discriminator}`,
+            `**AFFECTED_USER:** ${user.id} - @${user.username}`,
             `**AFFECTED_CMD:** ${targetCommand}`,
             `**ARGUMENTS ${errorType == `appcmd` ? `(Raw data)` : ``}:** ${providedArguments}`,
             `**TIMESTAMP:** ${date}`,
@@ -96,39 +70,57 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     const ERROR_MESSAGE = {
         content: errorToSend.join(`\n`)
     }
+
     /**
-     * Unknown Channel > DiscordAPIError[10003]: Unknown Channel
-     * Cannot edit a message authored by another user > DiscordAPIError[50005]: Cannot edit a message authored by another user
+     * construct partial params to use based on incoming error
+     * threadId: the thread channel id
+     * username: custom name to use for webhook username, if none provided defaults to original
      */
+    const ERROR_PARAMS = {
+        DiscordAPIError_50001: {
+            threadId: DiscordAPIError_50001_ThreadId,
+            username: `Missing access`
+        },
+        DiscordAPIError_50013: {
+            threadId: DiscordAPIError_50013_ThreadId,
+            username: `Missing Permissions`
+        },
+        DiscordAPIError_50005: {
+            threadId: DiscordAPIError_50005_ThreadId,
+            username: `DiscordAPIError_50005`
+        },
+        DiscordAPIError: {
+            threadId: DiscordAPIError_ThreadId,
+            username: `DiscordAPIError`
+        },
+        Other: {
+            threadId: lvl1_ThreadId,
+            username: `System Error Reports`
+        }
+    }
 
-    // Determine what channel to send to.
-    lvl0Test ? lvl1Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error)) : lvl0Channel.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
+    // Default object to use
+    let constructedErrorMsg = { ...ERROR_MESSAGE, ...ERROR_PARAMS.Other }
 
-    // Send to filtered channels
-    let channelToSendTo = null
-
-    const DiscordAPIError_50001 = `Missing Access`
-    const DiscordAPIError_50013 = `Missing Permissions`
-    const DiscordAPIError_50005 = `Cannot edit a message authored by another user`
-
+    // Test incoming error againts filter to send to apporiate channnel
+    // Filter error to forum thread(s)
     switch (error_message) {
         case DiscordAPIError_50001:
-            channelToSendTo = DiscordAPIError_50001_Thread
+            constructedErrorMsg = { ...ERROR_MESSAGE, ...ERROR_PARAMS.DiscordAPIError_50001 }
             break
         case DiscordAPIError_50013:
-            channelToSendTo = DiscordAPIError_50013_Thread
+            constructedErrorMsg = { ...ERROR_MESSAGE, ...ERROR_PARAMS.DiscordAPIError_50013 }
             break
         case DiscordAPIError_50005:
-            channelToSendTo = DiscordAPIError_50005_Thread
+            constructedErrorMsg = { ...ERROR_MESSAGE, ...ERROR_PARAMS.DiscordAPIError_50005 }
             break
         default:
-            if (error_stack && error_stack.includes(`DiscordAPIError`)){
-                channelToSendTo = DiscordAPIError_Thread
-            } else {
-                channelToSendTo = lvl1_Thread
+            if (error_stack && error_stack.includes(`DiscordAPIError`)) {
+                constructedErrorMsg = { ...ERROR_MESSAGE, ...ERROR_PARAMS.DiscordAPIError }
             }
             break
     }
-    return channelToSendTo.send(ERROR_MESSAGE).catch(error=>client.logger.error(error))
+    if (client.errorWebhook) return client.errorWebhook.send(constructedErrorMsg)
+    return
 }
 module.exports = errorRelay

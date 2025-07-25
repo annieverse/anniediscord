@@ -1,5 +1,6 @@
 "use strict"
 const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require(`discord.js`)
+const { isSlash } = require(`../../utils/appCmdHelp`)
 /**
  * Talk through bot.
  * @author klerikdust
@@ -48,8 +49,10 @@ module.exports = {
         return await this.run(options.getString(`message`), interaction, reply)
     },
     async run(msg, messageRef, reply) {
-        const isSlash = messageRef.applicationId === null || messageRef.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
-        isSlash ? reply.send(`Message sent :P`, { ephemeral: true }) : null
+        const _isSlash = isSlash(messageRef)
+        if (_isSlash) {
+            reply.send(`Message sent :P`, { ephemeral: true })
+        }
         return reply.send(msg, {
             field: messageRef.channel,
             sendAnyway: true

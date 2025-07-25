@@ -83,6 +83,7 @@ module.exports = {
         const amountToSell = arg.startsWith(`all`) ? `all` : trueInt(arg)
         return this.run(client, reply, message, locale, amountToSell)
 
+
     },
     async Iexecute(client, reply, interaction, options, locale) {
         let arg = options.getInteger(`amount`)
@@ -110,6 +111,7 @@ module.exports = {
         })
         //  Handle if user specified an invalid amount        
         const amountToSell = amount === `all` ? userData.inventory.fragments : amount
+        if (!amountToSell && amountToSell <= userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         if (!amountToSell && amountToSell <= userData.inventory.fragments) return await reply.send(locale.SELLFRAGMENTS.INVALID_AMOUNT)
         //  Handle if user's specified amount is lower than the minimum sell 
         if (amountToSell < this.minimumToSell) return await reply.send(locale.SELLFRAGMENTS.AMOUNT_TOO_LOW, {

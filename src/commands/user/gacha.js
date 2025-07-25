@@ -5,6 +5,7 @@ const GUI = require(`../../ui/prebuild/gacha`)
 const closestBelow = require(`../../utils/closestBelow`)
 const trueInt = require(`../../utils/trueInt`)
 const random = require(`../../utils/random`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Opens a Lucky Ticket and wins various exclusive rewards!
@@ -128,7 +129,6 @@ module.exports = {
             await client.db.databaseUtils.updateInventory({ itemId: item.item_id, value: item.quantity, userId: message.member.user.id, guildId: message.guild.id })
         }
         client.db.databaseUtils.delCache(instanceId)
-        // client.db.redis.del(instanceId)
         //  Displaying result
         await reply.send(locale.GACHA.HEADER, {
             prebuffer: true,
@@ -138,7 +138,7 @@ module.exports = {
                 items: this.displayDetailedLoots(client, loots)
             }
         })
-        return message.type == 0 ? fetching.delete() : null
+        return message.type == 0 ? isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete() : null
     },
 
     /**

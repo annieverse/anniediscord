@@ -5,13 +5,15 @@ const {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	ChannelType
+	ChannelType,
+	MessageFlags
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const { PermissionFlagsBits } = require(`discord.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const levelZeroErrors = require(`../utils/errorLevels.js`)
+const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp.js`)
 /** 
  * Annie's response message system.
  * @abstract
@@ -78,7 +80,7 @@ class Response {
 	 * @param {Boolean} plugins.timestampAsFooter Toggle `true` to include the message timestamp in the footer of embed.
 	 * @param {Boolean} plugins.directMessage Indicate if the message is a DM
 	 * @param {Boolean} plugins.feedback  beta feature, **not used often**
-	 * @param {Boolean} plugins.fetchReply Application command option to grab reference
+	 * @param {Boolean} plugins.withResponse Application command option to grab reference
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
 	 * @param {Boolean} plugins.messageToReplyTo required for [plugins.replyAnyway] to work
@@ -119,17 +121,19 @@ class Response {
 		const feedback = plugins.feedback || false
 		let components = plugins.components || null
 		let file = plugins.file || null
-		const fetchReply = plugins.fetchReply || true
+		const withResponse = plugins.withResponse || true
 		const ephemeral = plugins.ephemeral || false
 		const messageToReplyTo = plugins.messageToReplyTo || null
 		const replyAnyway = messageToReplyTo ? plugins.replyAnyway || false : false
 		const sendAnyway = plugins.sendAnyway || false
 		const editReply = plugins.editReply || false
+		//		this.message.type = https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type
+		//		this.message.commandType = https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
 
-		const isSlash = this.message.applicationId === null || this.message.applicationId === undefined ? false : true // Not a application command <Message> : Is a application command <ChatInputCommandInteraction>
+		const _isSlash = isSlash(this.message)
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!isSlash) {
+		if (!_isSlash) {
 			const checkPerm = this.checkPermissions(field)
 			if (!checkPerm) return
 		}
@@ -137,9 +141,9 @@ class Response {
 		const hasFileUploadPerm = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.AttachFiles)
 
 
-		const followUp = isSlash ? this.message.deferred || this.message.replied ? true : false : false
-		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : isSlash ? sendAnyway ? field : this.message : field
-		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
+		const followUp = _isSlash ? this.message.deferred || this.message.replied ? true : false : false
+		const RESPONSE_REF = messageToReplyTo ? messageToReplyTo : directMessage ? `send` : _isSlash ? sendAnyway ? field : this.message : field
+		const RESPONSE_TYPE = sendAnyway ? `send` : replyAnyway ? `reply` : directMessage ? `send` : _isSlash ? followUp ? editReply ? `editReply` : `followUp` : `reply` : `send`
 		const embed = new EmbedBuilder()
 		/**
 		 * Format Components to correct data type
@@ -157,7 +161,7 @@ class Response {
 		betaFeedback()
 
 		//  Handle message with paging property enabled
-		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews)
+		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews)
 
 		//  Replace content with error message if content is a faulty value
 		if (typeof content != `string`) content = this.localeMetadata.LOCALIZATION_ERROR
@@ -209,13 +213,14 @@ class Response {
 					embeds: noEmbed ? null : [embed],
 					files: embed.file ? [embed.file] : image ? [new AttachmentBuilder(prebuffer ? image : await loadAsset(image))] : null,
 					components: components ? components : null,
-					fetchReply: fetchReply,
-					ephemeral: ephemeral
+					withResponse: withResponse,
+					flags: ephemeral ? MessageFlags.Ephemeral : null
 				})
 			} catch (e) {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
 				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
-				this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				// this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 		}
 
@@ -291,6 +296,7 @@ class Response {
 	 * @returns {Error | Boolean}
 	 */
 	checkPermissions(field) {
+		if (!this.message.guild.members) throw new Error(`[Internal Error] Can't read members property`)
 		if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
 			if (!SendMessages) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions > Missing "SendMessages" permission`)
@@ -328,46 +334,48 @@ class Response {
 		return content
 	}
 
-	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, fetchReply, ephemeral, isSlash, cardPreviews) {
+	async pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews) {
 		let page = 0
+		if (ephemeral) ephemeral = false
 		const embeddedPages = await this._registerPages(content, plugins)
 		return RESPONSE_REF[RESPONSE_TYPE](embeddedPages[0].file ? components ? {
 			embeds: [embeddedPages[0]],
 			files: [embeddedPages[0].file],
 			components: components,
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : {
 			embeds: [embeddedPages[0]],
 			files: [embeddedPages[0].file],
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : components ? {
 			embeds: [embeddedPages[0]],
 			files: [],
 			components: components,
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		} : {
 			embeds: [embeddedPages[0]],
 			files: [],
-			fetchReply: fetchReply,
-			ephemeral: ephemeral
+			withResponse: withResponse,
+			flags: ephemeral ? MessageFlags.Ephemeral : null
 		}).then(async (msg) => {
 			this.ref = this.message.user
+			msg = isInteractionCallbackResponse(msg) ? msg.resource.message : msg
 			//  Buttons
 			if (embeddedPages.length > 1) {
 				await msg.react(`⏪`)
 				await msg.react(`⏩`)
 			}
 			// Filters - These make sure the varibles are correct before running a part of code
-			let filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
+			let filter = (reaction, user) => _isSlash ? reaction.emoji.name === `⏪` && user.id === this.ref.id : reaction.emoji.name === `⏪` && user.id === this.message.author.id
 			//  Timeout limit for page buttons
 			const backwards = msg.createReactionCollector({
 				filter,
 				time: 300000
 			})
-			filter = (reaction, user) => isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
+			filter = (reaction, user) => _isSlash ? reaction.emoji.name === `⏩` && user.id === this.ref.id : reaction.emoji.name === `⏩` && user.id === this.message.author.id
 			const forwards = msg.createReactionCollector({
 				filter,
 				time: 300000
@@ -375,13 +383,13 @@ class Response {
 			//  Add preview button if cardPreviews is enabled
 			if (cardPreviews) {
 				await msg.react(`👀`)
-				let filter = (reaction, user) => isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
+				let filter = (reaction, user) => _isSlash ? reaction.emoji.name === `👀` && user.id === this.ref.id : reaction.emoji.name === `👀` && user.id === this.message.author.id
 				let preview = msg.createReactionCollector(filter, {
 					time: 300000
 				})
 				let previewedPages = []
 				preview.on(`collect`, async (r) => {
-					r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+					r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 					if (previewedPages.includes(page)) return
 					previewedPages.push(page)
 					let loading = await RESPONSE_REF[RESPONSE_TYPE]({
@@ -396,7 +404,7 @@ class Response {
 			}
 			//	Left navigation
 			backwards.on(`collect`, r => {
-				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 				page--
 				if (embeddedPages[page]) {
 					msg.edit(embeddedPages[page].file ? {
@@ -419,7 +427,7 @@ class Response {
 			})
 			//	Right navigation
 			forwards.on(`collect`, r => {
-				r.users.remove(isSlash ? this.ref.id : this.message.author.id)
+				r.users.remove(_isSlash ? this.ref.id : this.message.author.id)
 				page++
 				if (embeddedPages[page]) {
 					msg.edit(embeddedPages[page].file ? {

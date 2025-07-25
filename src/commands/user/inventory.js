@@ -2,6 +2,7 @@
 const GUI = require(`../../ui/prebuild/ownerHeader`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Views all items in your inventory
@@ -93,7 +94,7 @@ module.exports = {
                         emoji: await client.getEmoji(`848521358236319796`)
                     }
                 })
-                return loading.delete()
+                return isInteractionCallbackResponse(loading) ? loading.resource.message.delete() : loading.delete()
             })
     }
 }

@@ -98,6 +98,7 @@
     },
     "CARTCOIN": {
         "SHORT_GUIDE": "**Start converting your artcoins into EXP by typing\n`{{prefix}}cartcoin <amount/all>`** {{emoji}}",
+        "DISABLED": "**the artcoins conversion is disabled in this server.** {{emoji}}\n╰─ ask your admins or server owner to enable it back.",
         "INSUFFICIENT_AMOUNT": "Eehh- right now you only have **{{amount}}** artcoins. Go grind harder! {{emoji}}",
         "INVALID_AMOUNT": "You need to put atleast **8 artcoins**, *baka!* {{emoji}}",
         "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!",
@@ -316,7 +317,7 @@
     "HELP": {
         "LANDING": "Are you looking for a quick start?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Check how much exp you get after those hours of chit-chatting. I can see how talkative you are just from this. ;)\n\n**`{{prefix}}bal`**\n> Have you ever wondered, how many artcoins you are currently have in your account right now? This is important thing to do in order to impress your friend, tehee.\n\n**`{{prefix}}daily`**\n> Did you hear 'freebies'? yes, I reward you free 250 artcoins for every 23 hours! So, make sure to not skip it, okay!?\n\n**`{{prefix}}leaderboard`**\n> Curious who got the highest exp, artcoins and fame points in your server? Now it's time to take your throne.\n\n**`{{prefix}}profile`**\n> Here you will be able to see your current rank, level, artcoins and fame points at a glance. It may be plain at first, but hey; we'll decorate it together!\n╰──────────☆～*:;,．*╯\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
         "COMMANDPEDIA": {
-            "HEADER": "{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <command>` to get information about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}}",
+            "HEADER": "{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <command>` (/help search <command>) to get information about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}}\n-# To see Application (slash) commands please use the built in help menu of Discord. In the message bar type '/' then select Annie and you can scroll through all the available commands.",
             "USAGE_EXAMPLES": "Use **{{prefix}}help <name/category>** to get information about a command or category."
         },
         "UNABLE_TO_FIND_COMMAND": "**Wait, what was that?**\n╰─ I don't remember if I ever have this type of command. {{emoji}}"
@@ -594,6 +595,14 @@
         "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nPick one of your favorite language and I'll start speaking in that language for every of your command invocations ~\nAvailable languages :: {{languages}}\n**`e.g. {{prefix}}setlang en`**\n╰──────────☆～*:;,．*╯\nCurrently set to {{currentLanguage}}.",
         "INVALID_LANG": "Eh, I haven't learned that language yet!\nPlease pick one from the followings :: {{languages}}",
         "SUCCESSFUL": "**Okay! my language has been updated♡**\nFrom now on, I'll speak in {{language}}!"
+    },
+    "SETCARTCOIN": {
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nthe leveling feels too easy? now you are able to toggle artcoin conversion feature in your server!♡\n**`e.g. {{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\nthis feature is currently {{status}} in the server.",
+        "INVALID_ACTION": "you can only use either enable or disable for this one!\n╰─**`e.g. {{prefix}}setcartcoin disable`**",
+        "SUCCESSFULLY_ENABLED": "**okaa!♡** {{emoji}}\n╰─ enabled for the server!",
+        "SUCCESSFULLY_DISABLED": "**alright!♡** {{emoji}}\n╰─ disabled in the server!",
+        "ENABLED": "enabled",
+        "DISABLED": "disabled"
     },
     "SETLEVELUPMESSAGE": {
         "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n**`{{prefix}}setlvlupmsg channel #targetchannel`**\n> Some of you may want it to be sent in a tidy place- so your chatting experience stays uninterrupted. Luckily, you can set a custom-channel for it!\n__e.g. {{prefix}}setlvlupmsg channel #bread__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Let's personalize your level-up message with some cool citations! this system works similar to SetWelcomer, so you can add {{user}} in the message to mention the leveled up user.\n__e.g. {{prefix}}setlvlupmsg text whoa, {{user}} got new level!__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰──────────☆～*:;,．*╯",
@@ -953,6 +962,7 @@
     },
     "VOTE": {
         "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details.",
+        "SUGGEST_TO_REGISTER": "if this is your first time, link your discord account to the site so that you can give me a vote !! {{emoji}}",
         "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰ While we at it, why not **{{page}}** about me first? {{emoji}}",
         "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
     }

@@ -12,6 +12,10 @@ const {
  * Assign your friend into your relationship trees!
  * @author klerikdust
  */
+/**
+ * Assign your friend into your relationship trees!
+ * @author klerikdust
+ */
 module.exports = {
     name: `setrelationship`,
     name_localizations: {
@@ -304,6 +308,24 @@ module.exports = {
         }
         return res
     },
+    /**
+     * Fetching user's object for given list of ID.
+     * @param {object} ids
+     * @param {object} client Current client instance.
+     * @return {object}
+     */
+    async fetchLocalPool(ids, client) {
+        let res = []
+        for (let i = 0; i < ids.length; i++) {
+            try {
+                res.push(await client.users.fetch(ids[i]))
+            } catch (e) {
+                //  Fallback incase users aren't in range.
+                res.push({ id: ids[i], name: `Unreachable` })
+            }
+        }
+        return res
+    },
 
     /**
      * Properly arrange returned list from `db.relationships.getAvailableRelationships`
@@ -315,7 +337,17 @@ module.exports = {
         for (let i = 0; i < list.length; i++) {
             const rel = list[i]
             str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
+            /**
+             * Properly arrange returned list from `db.relationships.getAvailableRelationships`
+             * @param {array} [list=[]] db.relationships.getAvailableRelationships
+             * @returns {string}
+             */
+            prettifyList(list) {
+                let str = ``
+                for (let i = 0; i < list.length; i++) {
+                    const rel = list[i]
+                    str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
+                }
+                return str
+            }
         }
-        return str
-    }
-}

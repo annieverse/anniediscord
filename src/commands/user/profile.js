@@ -2,6 +2,7 @@
 const GUI = require(`../../ui/prebuild/profile`)
 const User = require(`../../libs/user`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Displaying user's profile card!
  * @author klerikdust
@@ -40,6 +41,7 @@ module.exports = {
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
         if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
         //  Normalize structure
+        //  Normalize structure
         targetUser = targetUser.master || targetUser
         const userData = await userLib.requestMetadata(targetUser, 2, locale)
         return await this.run(client, reply, locale, userData)
@@ -55,7 +57,7 @@ module.exports = {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const image = (await new GUI(user, client).build()).png()
-        fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         // Followup tips for newcomer
         return reply.send(locale.COMMAND.TITLE + (!user.usedCover.isSelfUpload ? `\n` + locale.PROFILECARD.NEWCOMER_TIPS : ``), {
             socket: {

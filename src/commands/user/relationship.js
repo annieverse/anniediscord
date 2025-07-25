@@ -1,6 +1,7 @@
 "use strict"
 const User = require(`../../libs/user`)
 const GUI = require((`../../ui/prebuild/relationship`))
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
 /**
  * Display user's relationship trees
@@ -63,7 +64,7 @@ module.exports = {
             },
             image: await new GUI(targetUserData, client, userData).build()
         })
-        fetching.delete()
+        isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         if (userLib.isSelf(targetUser.id)) return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
             simplified: true,
             socket: {
