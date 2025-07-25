@@ -60,7 +60,6 @@ class Database {
 		this.shop = new Shop(this)
 		this.covers = new Covers(this)
 		this.relationships = new Relationships(this)
-		this.custom = new Custom(this)
 	}
 
 	/**
