@@ -4,6 +4,7 @@ const {
     StringSelectMenuBuilder
 } = require(`discord.js`)
 const chunkOptions = require(`../utils/chunkArray`)
+const { isInteractionCallbackResponse } = require(`../utils/appCmdHelp`)
 
 class rewardPackageStruct {
 
@@ -59,7 +60,10 @@ class rewardPackageStruct {
         this.message = targetMessage
         this.skipEdit = false
         const filter = (interaction) => interaction.user.id === targetUserId
-        this.activeInstance = targetMessage.createMessageComponentCollector({
+        this.activeInstance = isInteractionCallbackResponse(targetMessage) ? targetMessage.resource.message.createMessageComponentCollector({
+            filter,
+            time: 300000
+        }) : targetMessage.createMessageComponentCollector({
             filter,
             time: 300000
         })

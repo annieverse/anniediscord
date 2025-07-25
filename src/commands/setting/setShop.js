@@ -16,6 +16,7 @@ const {
     ApplicationCommandOptionType,
     PermissionFlagsBits, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, MessageFlags
 } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 
 /**
  * Create, restock & sell items for your server members!
@@ -280,8 +281,9 @@ module.exports = {
         })
 
         const member = interaction.user.id
+
         const messageComponentFilter = i => (i.customId === stockButtonId || i.customId === buffsButtonId || i.customId === cancelButtonId || i.customId === finishedButtonId) && i.user.id === member
-        const buttonCollector = response.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
+        const buttonCollector = isInteractionCallbackResponse(response) ? response.resource.message.createMessageComponentCollector({ messageComponentFilter, time: 30000 }) : response.createMessageComponentCollector({ messageComponentFilter, time: 30000 })
         let buffOptions = []
 
         /**
@@ -1093,7 +1095,10 @@ module.exports = {
         const member = isApplicationCommand ? message.author.id : message.user.id
         const filter = (i) => (i.customId === selectMenuId || i.customId === doneCancelButtonId) && i.user.id === member
         const editItemListenerTimer = 30000
-        const editItemListener = guide.createMessageComponentCollector({
+        const editItemListener = isInteractionCallbackResponse(guide) ? guide.resource.message.createMessageComponentCollector({
+            filter,
+            time: editItemListenerTimer
+        }) : guide.createMessageComponentCollector({
             filter,
             time: editItemListenerTimer
         })
