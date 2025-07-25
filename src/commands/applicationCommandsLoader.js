@@ -106,7 +106,7 @@ module.exports = function applicationCommandLoader({
                     // test botv1: 514688969355821077
                     // test botv2: 1254197982132310167
                     // Annie support server        
-                    const allowedServersForDev = [`577121315480272908`, `597171669550759936`, `1242130891363454996`] // [Annie support server, Pan's test server, Grim head project]
+                    const allowedServersForDev = [`577121315480272908`, `597171669550759936`] // [Annie support server, Pan's test server]
                     for (const [serverId, commandObj] of commands.entries()) {
                         commandObj.forEach(item => {
                             formatDescriptions(item)
