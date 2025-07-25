@@ -337,17 +337,6 @@ module.exports = {
         for (let i = 0; i < list.length; i++) {
             const rel = list[i]
             str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
-            /**
-             * Properly arrange returned list from `db.relationships.getAvailableRelationships`
-             * @param {array} [list=[]] db.relationships.getAvailableRelationships
-             * @returns {string}
-             */
-            prettifyList(list) {
-                let str = ``
-                for (let i = 0; i < list.length; i++) {
-                    const rel = list[i]
-                    str += `╰☆～(${rel.relationship_id}) **${rel.name.split(` `).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(` `)}**\n`
-                }
-                return str
-            }
         }
+    }
+}

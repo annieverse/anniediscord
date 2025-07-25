@@ -184,11 +184,6 @@ module.exports = {
             start: `The package you are creating is named ${packageName}`
         }
 
-        // Create the cooldown for the command so a user cant start two instances of the command
-        const sessionID = `REWARD_REGISTER:${interaction.member.id}@${interaction.guild.id}`
-        if (await client.db.databaseUtils.doesCacheExist(sessionID)) return await reply.send({ content: `I'm sorry but you have a create package session still active please wait a few before trying again`, ephemeral: true })
-        client.db.databaseUtils.setCache(sessionID, `1`, { EX: 60 * 3 })
-
         // Set up and send the message that will be updated as choices are made.
         let trackingMessage = await reply.send(trackingMessageContent.start, {
             simplified: true
