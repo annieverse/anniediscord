@@ -96,7 +96,7 @@ module.exports = {
         this.guildConfigurations = message.guild.configs
         this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
         //  Handle if user doesn't specify any parameter.
-        if (!arg) return await reply.send(locale.AUTORESPONDER.GUIDE, {
+        if (!arg) return await reply.send(locale(`AUTORESPONDER.GUIDE`), {
             image: `banner_autoresponder`,
             header: `Hi, ${message.author.username}!`,
             socket: {
@@ -109,7 +109,7 @@ module.exports = {
         })
         //  Handle if the used action is invalid
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.availableActions.includes(this.selectedAction)) return await reply.send(locale.AUTORESPONDER.INVALID_ACTION, {
+        if (!this.availableActions.includes(this.selectedAction)) return await reply.send(locale(`AUTORESPONDER.INVALID_ACTION`), {
             socket: {
                 actions: this._parseAvailableActions(),
                 emoji: await client.getEmoji(`692428969667985458`)
@@ -129,7 +129,7 @@ module.exports = {
 
         this.guildConfigurations = interaction.guild.configs
         this.primaryConfig = this.guildConfigurations.get(`AR_MODULE`)
-        if (options.getSubcommand() === `help`) return await reply.send(locale.AUTORESPONDER.GUIDE, {
+        if (options.getSubcommand() === `help`) return await reply.send(locale(`AUTORESPONDER.GUIDE`), {
             image: `banner_autoresponder`,
             header: `Hi, ${interaction.user.username}!`,
             socket: {
@@ -144,7 +144,7 @@ module.exports = {
         const arg = this.args.join(` `)
         //  Handle if the used action is invalid
         this.selectedAction = this.args[0].toLowerCase()
-        if (!this.availableActions.includes(this.selectedAction)) return await reply.send(locale.AUTORESPONDER.INVALID_ACTION, {
+        if (!this.availableActions.includes(this.selectedAction)) return await reply.send(locale(`AUTORESPONDER.INVALID_ACTION`), {
             socket: {
                 actions: this._parseAvailableActions(),
                 emoji: await client.getEmoji(`692428969667985458`)
@@ -163,7 +163,7 @@ module.exports = {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
-            return await reply.send(locale.AUTORESPONDER.ALREADY_ENABLED, {
+            return await reply.send(locale(`AUTORESPONDER.ALREADY_ENABLED`), {
                 socket: {
                     emoji: await client.getEmoji(`692428969667985458`),
                     user: await client.getUsername(this.primaryConfig.setByUserId),
@@ -179,7 +179,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_ENABLED, {
+        return await reply.send(locale(`AUTORESPONDER.SUCCESSFULLY_ENABLED`), {
             socket: { emoji: await client.getEmoji(`789212493096026143`) },
             status: `success`
         })
@@ -192,7 +192,7 @@ module.exports = {
     async disable(client, reply, message, arg, locale, prefix) {
         //  Handle if module already disabled
         if (!this.primaryConfig.value) {
-            return await reply.send(locale.AUTORESPONDER.ALREADY_DISABLED, {
+            return await reply.send(locale(`AUTORESPONDER.ALREADY_DISABLED`), {
                 socket: {
                     prefix: prefix,
                     emoji: await client.getEmoji(`692428578683617331`)
@@ -207,7 +207,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DISABLED, {
+        return await reply.send(locale(`AUTORESPONDER.SUCCESSFULLY_DISABLED`), {
             socket: { emoji: await client.getEmoji(`692428927620087850`) },
             status: `success`
         })
@@ -222,7 +222,7 @@ module.exports = {
         //  Fetch registered ARs.
         const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
         //  Handle if there are no registered ARs.
-        if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
+        if (ars.length <= 0) return await reply.send(locale(`AUTORESPONDER.EMPTY`), {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
                 prefix: prefix
@@ -250,14 +250,14 @@ module.exports = {
      */
     async add(client, reply, message, arg, locale, prefix, slashCommand = false) {
         //  Handle if user didn't put any additional parameters
-        if (!this.args[1]) return await reply.send(locale.AUTORESPONDER.REGISTER_NO_PARAM, {
+        if (!this.args[1]) return await reply.send(locale(`AUTORESPONDER.REGISTER_NO_PARAM`), {
             socket: { prefix: prefix }
         })
         const msg = this.args.slice(1).join(` `)
         const splittedContext = msg.split(` - `)
         const trigger = splittedContext[0]
         //  Handle if user hasn't included separator for trigger and separator
-        if (!msg.includes(`-`)) return await reply.send(locale.AUTORESPONDER.REGISTER_MISSING_SEPARATOR, {
+        if (!msg.includes(`-`)) return await reply.send(locale(`AUTORESPONDER.REGISTER_MISSING_SEPARATOR`), {
             socket: {
                 prefix: prefix,
                 trigger: trigger
@@ -265,7 +265,7 @@ module.exports = {
         })
         //  Handle if response is empty
         const response = splittedContext[1]
-        if (!response) return await reply.send(locale.AUTORESPONDER.REGISTER_EMPTY_RESPONSE, {
+        if (!response) return await reply.send(locale(`AUTORESPONDER.REGISTER_EMPTY_RESPONSE`), {
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`692428969667985458`),
@@ -273,7 +273,7 @@ module.exports = {
             }
         })
         //  Display AR confirmation
-        const confirmation = await await reply.send(locale.AUTORESPONDER.REGISTER_CONFIRMATION, {
+        const confirmation = await await reply.send(locale(`AUTORESPONDER.REGISTER_CONFIRMATION`), {
             thumbnail: message.member.displayAvatarURL(),
             socket: {
                 trigger: trigger,
@@ -291,11 +291,11 @@ module.exports = {
                 response: response
             })
             //  Finalize
-            await await reply.send(locale.AUTORESPONDER.REGISTER_SUCCESSFUL, {
+            await await reply.send(locale(`AUTORESPONDER.REGISTER_SUCCESSFUL`), {
                 socket: { emoji: await client.getEmoji(`789212493096026143`) },
                 followUp: true
             })
-            await await reply.send(locale.AUTORESPONDER.REGISTER_FOOTER_TIP, {
+            await await reply.send(locale(`AUTORESPONDER.REGISTER_FOOTER_TIP`), {
                 simplified: true,
                 socket: {
                     trigger: trigger,
@@ -313,7 +313,7 @@ module.exports = {
     async delete(client, reply, message, arg, locale, prefix, slashCommand = false) {
         //  Handle if guild does not have any ARs to be deleted
         const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
-        if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
+        if (ars.length <= 0) return await reply.send(locale(`AUTORESPONDER.EMPTY`), {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
                 prefix: prefix
@@ -321,7 +321,7 @@ module.exports = {
         })
         //  Handle if user doesn't provide the keyword.
         const keyword = this.args.slice(1).join(` `)
-        if (!keyword.length) return await reply.send(locale.AUTORESPONDER.DELETE_MISSING_KEYWORD, {
+        if (!keyword.length) return await reply.send(locale(`AUTORESPONDER.DELETE_MISSING_KEYWORD`), {
             socket: {
                 guild: message.guild.name,
                 prefix: prefix,
@@ -330,13 +330,13 @@ module.exports = {
         })
         //  Handle if target AR to be deleted does not exists.
         let targetAR = ars.filter(ar => (ar.ar_id === parseInt(keyword)) || (ar.trigger === keyword))
-        if (!targetAR.length) return await reply.send(locale.AUTORESPONDER.DELETE_TARGET_INVALID, {
+        if (!targetAR.length) return await reply.send(locale(`AUTORESPONDER.DELETE_TARGET_INVALID`), {
             socket: { emoji: await client.getEmoji(`692428807193493657`) }
         })
         //  Performs deletion
         targetAR = targetAR[0]
         client.db.autoResponder.deleteAutoResponder(targetAR.ar_id, message.guild.id)
-        return await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_DELETED, {
+        return await reply.send(locale(`AUTORESPONDER.SUCCESSFULLY_DELETED`), {
             socket: { emoji: await client.getEmoji(`789212493096026143`) },
             status: `success`
         })
@@ -349,14 +349,14 @@ module.exports = {
     async reset(client, reply, message, arg, locale, prefix) {
         //  Handle if guild does not have any ARs to be deleted
         const ars = await client.db.autoResponder.getAutoResponders(message.guild.id)
-        if (ars.length <= 0) return await reply.send(locale.AUTORESPONDER.EMPTY, {
+        if (ars.length <= 0) return await reply.send(locale(`AUTORESPONDER.EMPTY`), {
             socket: {
                 emoji: await client.getEmoji(`692428969667985458`),
                 prefix: prefix
             }
         })
         //  Reset confirmation
-        const confirmation = await await reply.send(locale.AUTORESPONDER.RESET_CONFIRMATION, {
+        const confirmation = await await reply.send(locale(`AUTORESPONDER.RESET_CONFIRMATION`), {
             socket: {
                 totalArs: ars.length,
                 emoji: await client.getEmoji(`692428578683617331`,)
@@ -367,7 +367,7 @@ module.exports = {
         c.onAccept(async () => {
             //  Wipeout ARs
             client.db.autoResponder.clearAutoResponders(message.guild.id)
-            await reply.send(locale.AUTORESPONDER.SUCCESSFULLY_RESET, {
+            await reply.send(locale(`AUTORESPONDER.SUCCESSFULLY_RESET`), {
                 socket: { totalArs: ars.length }
             })
         })

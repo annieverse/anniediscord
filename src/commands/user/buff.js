@@ -24,7 +24,7 @@ module.exports = {
     },
     async run(client, reply, guildMember, locale) {
         const buffs = await client.db.durationalBuffs.getSavedUserDurationalBuffs(guildMember.id)
-        if (!buffs.length) return await reply.send(locale.BUFF.NO_ACTIVE_BUFFS, {
+        if (!buffs.length) return await reply.send(locale(`BUFF.NO_ACTIVE_BUFFS`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)
             }

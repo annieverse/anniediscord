@@ -30,10 +30,10 @@ module.exports = {
 
         const targetUserData = await userLib.requestMetadata(targetUser, 2, locale)
         //  Handle if user doesn't have any relationships
-        if (!targetUserData.relationships.length) return await reply.send(locale.RELATIONSHIP.IS_EMPTY, {
+        if (!targetUserData.relationships.length) return await reply.send(locale(`RELATIONSHIP.IS_EMPTY`), {
             socket: { prefix: `/` }
         })
-        const fetching = await reply.send(locale.COMMAND.FETCHING, {
+        const fetching = await reply.send(locale(`COMMAND.FETCHING`), {
             simplified: true,
             socket: {
                 command: `relationship`,
@@ -42,7 +42,7 @@ module.exports = {
             }
         })
         let userData = userLib.isSelf(targetUser.id) ? targetUserData : await userLib.requestMetadata(messageRef.member.user, 2, locale)
-        await reply.send(locale.COMMAND.TITLE, {
+        await reply.send(locale(`COMMAND.TITLE`), {
             simplified: true,
             prebuffer: true,
             socket: {
@@ -53,7 +53,7 @@ module.exports = {
             image: await new GUI(targetUserData, client, userData).build()
         })
         isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
-        if (userLib.isSelf(targetUser.id)) return await reply.send(locale.RELATIONSHIP.TIPS_AUTHOR_ON_CHECK, {
+        if (userLib.isSelf(targetUser.id)) return await reply.send(locale(`RELATIONSHIP.TIPS_AUTHOR_ON_CHECK`), {
             simplified: true,
             socket: {
                 prefix: `/`,
@@ -65,7 +65,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         //  Normalize structure
         targetUser = targetUser.master || targetUser
 

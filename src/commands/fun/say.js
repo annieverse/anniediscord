@@ -21,7 +21,7 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return await reply.send(locale.SAY.SHORT_GUIDE, {
+        if (!arg) return await reply.send(locale(`SAY.SHORT_GUIDE`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieNyaa`)
             }

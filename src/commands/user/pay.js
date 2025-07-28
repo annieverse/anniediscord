@@ -75,7 +75,7 @@ module.exports = {
         return { senderAmount: amount, amountToSend: total }
     },
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return await reply.send(locale.PAY.SHORT_GUIDE, {
+        if (!arg) return await reply.send(locale(`PAY.SHORT_GUIDE`), {
             header: `Hi, ${message.author.username}`,
             image: `banner_pay`,
             socket: { prefix: client.prefix }
@@ -86,7 +86,7 @@ module.exports = {
 
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        if (options.getSubcommand() == `how`) return await reply.send(locale.PAY.SHORT_GUIDE, {
+        if (options.getSubcommand() == `how`) return await reply.send(locale(`PAY.SHORT_GUIDE`), {
             header: `Hi, ${interaction.member.user.username}`,
             image: `banner_pay`,
             socket: { prefix: `/` }
@@ -97,20 +97,20 @@ module.exports = {
     },
     async run(client, reply, messageRef, locale, { a: amount, u: user }) {
         const sender = await this.userCheck(client, messageRef, locale, null, `sender`)
-        if (!sender) return await reply.send(locale.PAY.LVL_TOO_LOW, { socket: { level: this.requirementLevel } })
+        if (!sender) return await reply.send(locale(`PAY.LVL_TOO_LOW`), { socket: { level: this.requirementLevel } })
         const reciever = await this.userCheck(client, messageRef, locale, user, `reciever`)
-        if (reciever == 3) return await reply.send(locale.USER.IS_INVALID)
-        if (reciever == 4) return await reply.send(locale.PAY.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+        if (reciever == 3) return await reply.send(locale(`USER.IS_INVALID`))
+        if (reciever == 4) return await reply.send(locale(`PAY.SELF_TARGETING`), { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
 
         //  Parse amount of artcoins to be send
         const amountToCheck = amount
         const atc = this.amountCheck(amountToCheck)
-        if (atc == 1) return await reply.send(locale.PAY.INVALID_AMOUNT)
-        if (atc == 2) return await reply.send(locale.PAY.INVALID_NUMBER)
-        if (atc == 3) return await reply.send(locale.PAY.EXCEEDING_LIMIT, { socket: { limit: commanifier(this.maxAllowed) } })
+        if (atc == 1) return await reply.send(locale(`PAY.INVALID_AMOUNT`))
+        if (atc == 2) return await reply.send(locale(`PAY.INVALID_NUMBER`))
+        if (atc == 3) return await reply.send(locale(`PAY.EXCEEDING_LIMIT`), { socket: { limit: commanifier(this.maxAllowed) } })
 
         //  Render confirmation
-        const confirmation = await reply.send(locale.PAY.USER_CONFIRMATION, {
+        const confirmation = await reply.send(locale(`PAY.USER_CONFIRMATION`), {
             prebuffer: true,
             image: await new GUI(reciever, atc.amountToSend).build(),
             socket: {
@@ -124,7 +124,7 @@ module.exports = {
         c.onAccept(async () => {
             // Redundant check
             //  Handle if user trying to send artcoins above the amount they had
-            if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale.PAY.INSUFFICIENT_BALANCE)
+            if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale(`PAY.INSUFFICIENT_BALANCE`))
             //  Send artcoins to target user
             client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.amountToSend, userId: reciever.master.id, guildId: messageRef.guild.id })
             //  Deduct artcoins from sender's balance

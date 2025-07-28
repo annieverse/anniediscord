@@ -19,14 +19,14 @@ module.exports = {
     ],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return await reply.send(locale.ASK.SHORT_GUIDE)
+        if (!arg) return await reply.send(locale(`ASK.SHORT_GUIDE`))
         return await this.run(reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         return await this.run(reply, locale)
     },
     async run(reply, locale) {
-        const pool = locale.ASK.ANSWERS
+        const pool = locale(`ASK.ANSWERS`)
         return await reply.send(pool[Math.floor(Math.random() * pool.length)])
     }
 }

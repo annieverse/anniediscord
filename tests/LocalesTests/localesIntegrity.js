@@ -6,6 +6,8 @@ class Locales {
     // Declare private variables
     #localesPool
     #errorMessage
+    #lang
+    #fallback = `en`
 
     constructor() {
         this.#setLocalesPool = `./src/locales/`
@@ -89,21 +91,113 @@ class Locales {
         return true
     }
 
+
+
+    #findLocale(obj, source) {
+        function traverseAndFlatten(currentNode, target, flattenedKey) {
+            for (var key in currentNode) {
+                if (currentNode.hasOwnProperty(key)) {
+                    var newKey;
+                    if (flattenedKey === undefined) {
+                        newKey = key;
+                    } else {
+                        newKey = flattenedKey + '.' + key;
+                    }
+
+                    var value = currentNode[key];
+                    if (typeof value === "object") {
+                        traverseAndFlatten(value, target, newKey);
+                    } else {
+                        target[newKey] = value;
+                    }
+                }
+            }
+        }
+
+        function flatten(obj) {
+            var flattenedObject = {};
+            traverseAndFlatten(obj, flattenedObject);
+            return Object.keys(flattenedObject)
+        }
+
+        const masterFlattened = flatten(source);
+        const pools = this.#localesPool
+        console.log(pools)
+        const fallback = this.#fallback
+
+        function findLoc(lang, l) {
+            masterFlattened.sort()
+            lang.sort()
+            let locale = undefined
+            for (const key of lang) {
+                try {
+                    locale = pools.get(l).get(key) || pools.get(fallback).get(key)
+                } catch (error) {
+                    console.log(error)
+                    return key
+                }
+                // console.log(locale)
+                if (locale == undefined) {
+                    return key
+                }
+            }
+            return true
+        }
+
+
+        const langs = Object.keys(obj);
+        for (const lang of langs) {
+            let test = flatten(obj[lang])
+            let testCase = test.sort().join(`,`) === masterFlattened.sort().join(`,`)
+            if (!testCase) {
+                let missingFallback = findLoc(test, lang)
+                console.log(`missingFallback`)
+                console.log(missingFallback)
+                if (missingFallback != true && missingFallback != false) this.#setErrorMessage = `${lang} has an error, The locale "${missingFallback}" is missing a fallback.`
+                return false
+            }
+        }
+        return true
+
+
+
+
+    }
+
     compareLocales() {
         const masterLang = this.#localesPool.en
         const langs = this.#localesPool
         const result = this.#objectsHaveSameKeys(langs, masterLang)
+        return true
+    }
+
+    hasFallback() {
+        const masterLang = this.#localesPool.en
+        const langs = this.#localesPool
+        const result = this.#findLocale(langs, masterLang)
         return result
     }
 }
 
-describe(`Localization`,()=>{
+describe(`Localization`, () => {
+    const testLocale = new Locales()
     describe('compare locales to "en" locale', () => {
         it('should return true', () => {
-            const testLocale = new Locales()
             const result = testLocale.compareLocales()
             const errorMsg = testLocale.getErrorMessage
             assert.strictEqual(result, true, errorMsg)
         })
     })
+    describe('If lang is missing "en" locale should have a fallback', () => {
+        it('should return true', () => {
+
+            const result = testLocale.hasFallback()
+            const errorMsg = testLocale.getErrorMessage
+            assert.strictEqual(result, true, errorMsg)
+        })
+    })
+    /**
+     * Add Test for if a lang is missing a value from "en", it should fallback to it.
+     * Add test for ig a lang is in another lang file but is missing from "en"
+     */
 })

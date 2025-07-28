@@ -26,7 +26,7 @@ module.exports = {
         return commanifier(Math.floor(client.ws.ping))
     },
     async run(client, reply, locale) {
-        return await reply.send(locale.REQUEST_PING, {
+        return await reply.send(locale(`REQUEST_PING`), {
             status: `success`,
             socket: {
                 ping: this.getPing(client),

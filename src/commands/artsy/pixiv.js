@@ -55,7 +55,7 @@ module.exports = {
     async fetchPixivResult(client, reply, arg, locale) {
         //  Logging in to get access to the Pixiv API
         await pixiv.refreshAccessToken(process.env.PIXIV_REFRESH_TOKEN)
-        reply.send(locale.PIXIV[arg ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`], {
+        reply.send(locale(`PIXIV${[arg ? `DISPLAY_CUSTOM_SEARCH` : `DISPLAY_RECOMMENDED_WORK`]}`), {
             socket: {
                 keyword: arg,
                 emoji: await client.getEmoji(`790994076257353779`)
@@ -69,13 +69,13 @@ module.exports = {
             //  Handle if no returned result from the query
             if (!data) {
                 loadmsg.delete()
-                return await reply.send(locale.PIXIV.NO_RESULT)
+                return await reply.send(locale(`PIXIV.NO_RESULT`))
             }
             const img = await this.getImage(data.image_urls.medium, data.id)
             //  Handle if no returned result from given img path
             if (!img) {
                 loadmsg.delete()
-                return await reply.send(locale.PIXIV.FAIL_TO_LOAD)
+                return await reply.send(locale(`PIXIV.FAIL_TO_LOAD`))
             }
             loadmsg.delete()
             return await reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {

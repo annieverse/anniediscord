@@ -53,7 +53,7 @@ module.exports = {
     },
     async execute(client, reply, message, arg, locale) {
         //  Returns a guide if no parameter was specified.
-        if (!arg) return await reply.send(locale.LEADERBOARD.GUIDE, {
+        if (!arg) return await reply.send(locale(`LEADERBOARD.GUIDE`), {
             header: `Hi, ${message.author.username}!`,
             image: `banner_leaderboard`,
             socket: {
@@ -69,7 +69,7 @@ module.exports = {
         return await this.run(client, reply, interaction, locale, arg)
     },
     async run(client, reply, messageRef, locale, arg) {
-        if (!this.wholeKeywords().includes(arg.toLowerCase())) return await reply.send(locale.LEADERBOARD.INVALID_CATEGORY, {
+        if (!this.wholeKeywords().includes(arg.toLowerCase())) return await reply.send(locale(`LEADERBOARD.INVALID_CATEGORY`), {
             socket: { emoji: await client.getEmoji(`692428969667985458`) },
             editReply: true
         })
@@ -77,7 +77,7 @@ module.exports = {
         const selectedGroupParent = this.keywords.filter(v => v.includes(arg.toLowerCase()))[0]
         const selectedGroup = selectedGroupParent[0]
         const selectedGroupIdentifier = selectedGroupParent[1]
-        return await reply.send(locale.COMMAND.FETCHING, {
+        return await reply.send(locale(`COMMAND.FETCHING`), {
             socket: {
                 command: `${selectedGroup} leaderboard`,
                 emoji: await client.getEmoji(`790994076257353779`),
@@ -104,7 +104,7 @@ module.exports = {
                 //  Handle if no returned leaderboard data
                 if (!validUsers.length) {
                     load.delete()
-                    return await reply.send(locale.LEADERBOARD.NO_DATA, {
+                    return await reply.send(locale(`LEADERBOARD.NO_DATA`), {
                         color: `golden`,
                         socket: {
                             category: selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1),
@@ -121,7 +121,7 @@ module.exports = {
                     simplified: true
                 })
                 const author = validUsers.filter(key => key.id === messageRef.member.id)[0]
-                const footer = author ? locale.LEADERBOARD.AUTHOR_RANK : locale.LEADERBOARD.UNRANKED
+                const footer = author ? locale(`LEADERBOARD.AUTHOR_RANK`) : locale(`LEADERBOARD.UNRANKED`)
                 await reply.send(footer, {
                     simplified: true,
                     socket: {

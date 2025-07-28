@@ -58,7 +58,7 @@ module.exports = {
 
 		messageRef = isSlash(messageRef) ? messageRef.member.user : messageRef.author
 		// Display 5 most used commands suggestions
-		return await reply.send(locale.HELP.LANDING, {
+		return await reply.send(locale(`HELP.LANDING`), {
 			socket: {
 				emoji: await client.getEmoji(`692428988177449070`),
 				prefix: prefix
@@ -74,7 +74,7 @@ module.exports = {
 				//  Display Commandpedia layout once user pressed the :book: button
 				bookEmojiCollector.on(`collect`, async () => {
 					response.delete()
-					await reply.send(locale.HELP.COMMANDPEDIA.HEADER, {
+					await reply.send(locale(`HELP.COMMANDPEDIA.HEADER`), {
 						socket: {
 							prefix: prefix,
 							serverLink: `[Join Support Server](${client.supportServer})`,
@@ -90,7 +90,7 @@ module.exports = {
 	async suppliedArg(client, reply, locale, arg, prefix) {
 		//  Display command's properties based on given keyword (if match. Otherwise, return)
 		const { isCategory, res } = await this.findCommandByKeyword(arg, client.message_commands.filter(node => !this.ignoreGroups.includes(node.group)))
-		if (!res) return await reply.send(locale.HELP.UNABLE_TO_FIND_COMMAND, {
+		if (!res) return await reply.send(locale(`HELP.UNABLE_TO_FIND_COMMAND`), {
 			socket: {
 				emoji: await client.getEmoji(`692428969667985458`)
 			}

@@ -69,7 +69,7 @@ module.exports = {
         const userData = await (new User(client, message)).requestMetadata(message.author, 2, locale)
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
+        const displayOwnedCovers = locale(`SETCOVER.OWNED_COVERS`) + this.prettifyList(ownedCovers)
         const { isValidUpload, url } = this.getUserSelfUploadCover(arg, message)
         if (!arg && !isValidUpload) {
             const FOOTER = userData.usedCover.isDefault ?
@@ -77,7 +77,7 @@ module.exports = {
                 userData.usedCover.isSelfUpload ?
                     `DISPLAY_USED_SELF_COVER` :
                     `DISPLAY_USED_REGULAR_COVER`
-            return await reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER[${FOOTER}]`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
@@ -93,7 +93,7 @@ module.exports = {
         if (isValidUpload) {
             const response = await superagent.get(url).catch(async (error) => {
                 client.logger.error(`[setCover.js][Superagent] > ${error}`)
-                await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+                await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
                     socket: {
                         emoji: await client.getEmoji(`692428843058724994`)
                     },
@@ -111,7 +111,7 @@ module.exports = {
                 name: `My Upload`
             }
             //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
+            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
                 socket: {
                     emoji: await client.getEmoji(`758720612087627787`),
                     requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
@@ -125,7 +125,7 @@ module.exports = {
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
-            if (!ownedCovers.length) return await reply.send(locale.SETCOVER.NO_EQUIPPABLE_COVER)
+            if (!ownedCovers.length) return await reply.send(locale(`SETCOVER.NO_EQUIPPABLE_COVER`))
             const searchStringResult = stringSimilarity.findBestMatch(arg, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
                 //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
@@ -136,9 +136,9 @@ module.exports = {
                     //  Finally if no item's name/ID are match, then return null
                     : null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return await reply.send(locale.SETCOVER.ITEM_DOESNT_EXISTS, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
+            if (!this.cover) return await reply.send(locale(`SETCOVER.ITEM_DOESNT_EXISTS`), { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
             //  Handle if user tries to use cover that currently being used.
-            if (userData.usedCover.item_id === this.cover.item_id) return await reply.send(locale.SETCOVER.ALREADY_USED, {
+            if (userData.usedCover.item_id === this.cover.item_id) return await reply.send(locale(`SETCOVER.ALREADY_USED`), {
                 socket: {
                     emoji: await client.getEmoji(`692428748838010970`),
                     cover: this.cover.name
@@ -146,7 +146,7 @@ module.exports = {
             })
         }
         userData.usedCover = this.cover
-        const fetching = await reply.send(locale.SETCOVER.FETCHING, {
+        const fetching = await reply.send(locale(`SETCOVER.FETCHING`), {
             socket: {
                 itemId: this.cover.item_id,
                 userId: message.author.id,
@@ -156,7 +156,7 @@ module.exports = {
         //  Rendering preview for user to see
         const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
-        const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
+        const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
             image: img.png(),
@@ -180,7 +180,7 @@ module.exports = {
                 client.db.covers.applyCover(this.cover.item_id, message.author.id, message.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            await reply.send(locale.SETCOVER[successMessage], {
+            await reply.send(locale(`SETCOVER[${successMessage}]`), {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)
@@ -207,7 +207,7 @@ module.exports = {
         const OLD_COVER = userData.usedCover
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = locale.SETCOVER.OWNED_COVERS + this.prettifyList(ownedCovers)
+        const displayOwnedCovers = locale(`SETCOVER.OWNED_COVERS `) + this.prettifyList(ownedCovers)
         const { isValidUpload, url } = this.getUserSelfUploadCover(arg, interaction)
         if (!arg && !isValidUpload) {
             const FOOTER = userData.usedCover.isDefault ?
@@ -215,7 +215,7 @@ module.exports = {
                 userData.usedCover.isSelfUpload ?
                     `DISPLAY_USED_SELF_COVER` :
                     `DISPLAY_USED_REGULAR_COVER`
-            return await reply.send(`${locale.SETCOVER.GUIDE}\n${locale.SETCOVER[FOOTER]}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER[${FOOTER}]`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${interaction.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
@@ -232,7 +232,7 @@ module.exports = {
             if (!url) return await reply.send(`Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: ${this.FileTypesNotAllowed.join(`, `)}`)
             const response = await superagent.get(url).catch(async (error) => {
                 client.logger.error(`[setCover.js][Superagent] > ${error}`)
-                await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+                await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
                     socket: {
                         emoji: await client.getEmoji(`692428843058724994`)
                     },
@@ -250,7 +250,7 @@ module.exports = {
                 name: `My Upload`
             }
             //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale.SETCOVER.UPLOAD_INSUFFICIENT_COST, {
+            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
                 socket: {
                     emoji: await client.getEmoji(`758720612087627787`),
                     requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
@@ -264,7 +264,7 @@ module.exports = {
         //  Otherwise, handle like the usual way
         else {
             //  Handle if user doesn't have any equippable cover
-            if (!ownedCovers.length) return await reply.send(locale.SETCOVER.NO_EQUIPPABLE_COVER)
+            if (!ownedCovers.length) return await reply.send(locale(`SETCOVER.NO_EQUIPPABLE_COVER`))
             const searchStringResult = stringSimilarity.findBestMatch(arg, ownedCovers.map(i => i.name))
             this.cover = searchStringResult.bestMatch.rating >= 0.4
                 //  If searchstring successfully found the cover from the given string keyword with the accuracy of >= 40%, then pull based on given result.
@@ -275,9 +275,9 @@ module.exports = {
                     //  Finally if no item's name/ID are match, then return null
                     : null
             //  Handle if dynamic search string doesn't give any result
-            if (!this.cover) return await reply.send(locale.SETCOVER.ITEM_DOESNT_EXISTS, { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
+            if (!this.cover) return await reply.send(locale(`SETCOVER.ITEM_DOESNT_EXISTS`), { socket: { emoji: await client.getEmoji(`692428969667985458`) } })
             //  Handle if user tries to use cover that currently being used.
-            if (userData.usedCover.item_id === this.cover.item_id) return await reply.send(locale.SETCOVER.ALREADY_USED, {
+            if (userData.usedCover.item_id === this.cover.item_id) return await reply.send(locale(`SETCOVER.ALREADY_USED`), {
                 socket: {
                     emoji: await client.getEmoji(`692428748838010970`),
                     cover: this.cover.name
@@ -285,7 +285,7 @@ module.exports = {
             })
         }
         userData.usedCover = this.cover
-        const fetching = await reply.send(locale.SETCOVER.FETCHING, {
+        const fetching = await reply.send(locale(`SETCOVER.FETCHING`), {
             socket: {
                 itemId: this.cover.item_id,
                 userId: interaction.member.id,
@@ -295,7 +295,7 @@ module.exports = {
         //  Rendering preview for user to see
         const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
-        const confirmationMessage = locale.SETCOVER[this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`]
+        const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
             image: img.png(),
@@ -324,7 +324,7 @@ module.exports = {
                 client.db.covers.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            await reply.send(locale.SETCOVER[successMessage], {
+            await reply.send(locale(`SETCOVER[${successMessage}]`), {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)
@@ -334,12 +334,11 @@ module.exports = {
     },
     async reset(client, reply, interaction, options, locale) {
         this.cover = await client.db.shop.getItem(`defaultcover1`)
-        // if (this.cover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
         const userData = await (new User(client, interaction)).requestMetadata(interaction.member, 2, locale)
-        if (userData.usedCover.alias === `defaultcover1`) return await reply.send(locale.SETCOVER.DEFAULT_ALREADY)
+        if (userData.usedCover.alias === `defaultcover1`) return await reply.send(locale(`SETCOVER.DEFAULT_ALREADY`))
         const OLD_COVER = userData.usedCover
         userData.usedCover = this.cover
-        const fetching = await reply.send(locale.SETCOVER.FETCHING, {
+        const fetching = await reply.send(locale(`SETCOVER.FETCHING`), {
             socket: {
                 itemId: this.cover.item_id,
                 userId: interaction.member.id,
@@ -349,7 +348,7 @@ module.exports = {
         //  Rendering preview for user to see
         const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
-        const confirmation = await reply.send(locale.SETCOVER[`PREVIEW_CONFIRMATION`], {
+        const confirmation = await reply.send(locale(`SETCOVER[PREVIEW_CONFIRMATION]`), {
             prebuffer: true,
             image: img.png(),
             socket: {
@@ -368,7 +367,7 @@ module.exports = {
             fs.unlink(`./src/assets/selfupload/${OLD_COVER.alias}.png`, (error) => {
                 if (error) client.logger.warn(`[setCover.js][Removing Image from filetree] ${error.stack}`)
             })
-            await reply.send(locale.SETCOVER[`SUCCESSFUL`], {
+            await reply.send(locale(`SETCOVER[SUCCESSFUL]`), {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)

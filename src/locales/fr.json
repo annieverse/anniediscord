@@ -37,6 +37,9 @@
   "AVATAR": {
     "INITIAL": "*Dis cheese... ♡*"
   },
+  "TESTSSS": {
+    "TEST": "I SHOULD FAIL"
+  },
   "AUTORESPONDER": {
     "GUIDE": "Ceci est votre centre de contrôle pour gérer les répondeurs automatiques dans **{{guild}}!** Pour commencer, vérifiez les actions disponibles ci-dessous. {{emoji}}\n{{statusEmoji}} Le module AR est actuellement **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> Première utilisation de mon module AR ? Alors ne cherchez pas plus loin, activez le module avant de faire quoi que ce soit d'autre !\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Ajoutons un nouveau AR ! Remplissez le <trigger> avec le message que vous voulez que j'écoute et <response> comme ma réponse à celui-ci !\n__ex. {{prefix}}ar add bienvenue - passez un bon moment !__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Vous vous ennuyez avec le AR ? alors il est temps de le supprimer ! remplissez l'<id/trigger> avec le AR que vous souhaitez supprimer. ex. __{{prefix}}ar delete bienvenue__\n\n**`{{prefix}}ar info`**\n> Vous avez du mal à vous rappeler tous les AR que vous venez d'enregistrer ? Vérifions-les grâce à cette action !\n\n**`{{prefix}}ar reset`**\n> Combien de AR avez-vous déjà créés ? trop de ? oh bien... redémarrer à partir de zéro sera une meilleure option je pense.\n\n**`{{prefix}}ar disable`**\n> Les AR ne sont plus amusants ? oh, ne vous inquiétez pas alors. Vous pouvez désactiver l'ensemble des AR à tout moment !\n\n╰──────────☆～*:;,．*╯",
     "INVALID_ACTION": "**Eeh, quelle action était-ce ??** {{emoji}}\n╰─Je n'accepte que {{actions}}.",
