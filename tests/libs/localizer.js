@@ -22,7 +22,6 @@ const mockLocales = {
 
 describe(`Localizer Library`, () => {
   let sandbox
-  let readdirStub
   let requireStub
 
   beforeEach(() => {
