@@ -59,16 +59,33 @@ class Localization {
     return this.#availableLocales
   }
 
-  findLocale(key) {
-    let locale = undefined
-    try {
-      locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error)
-      // eslint-disable-next-line no-console
-      return console.error(`The specified key is not an available language path.\nKey supplied and tried > ${key}`)
+  #traverseAndFlatten(currentNode, target, flattenedKey) {
+    for (var key in currentNode) {
+      if (Object.prototype.hasOwnProperty.call(currentNode, key)) {
+        var newKey
+        if (flattenedKey === undefined) {
+          newKey = key
+        } else {
+          newKey = flattenedKey + `.` + key
+        }
+
+        var value = currentNode[key]
+        if (typeof value === `object`) {
+          this.#traverseAndFlatten(value, target, newKey)
+        } else {
+          target[newKey] = value
+        }
+      }
     }
+  }
+  #flatten(obj) {
+    var flattenedObject = {}
+    this.#traverseAndFlatten(obj, flattenedObject)
+    return flattenedObject
+  }
+
+  findLocale(key) {
+    let locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
     // eslint-disable-next-line no-console
     if (locale == undefined) return console.error(`The specified key is not an available language path.\nKey supplied and tried > ${key}`)
     return locale
@@ -91,8 +108,9 @@ class Localization {
     if (!locales.length) throw Error(`${fn} can't find any locales in '${path}'`)
     return locales.forEach(file => {
       const localeCode = file.replace(/.json/, ``)
-      let localeJson = require(`../locales/${file}`)
-      this.#localesPool.set(localeCode, new Collection(Object.entries(localeJson)))
+      let localeJSON = require(`../locales/${file}`)
+      let flattenJSON = this.#flatten(localeJSON)
+      this.#localesPool.set(localeCode, new Collection(Object.entries(flattenJSON)))
     })
   }
 
