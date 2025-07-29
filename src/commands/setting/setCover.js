@@ -229,7 +229,7 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            if (!url) return await reply.send(`Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: ${this.FileTypesNotAllowed.join(`, `)}`)
+            if (!url) return await reply.send(locale(`SETCOVER.INVALID_FILE_TYPE`), { socket: { type: this.FileTypesNotAllowed.join(`, `) } })
             const response = await superagent.get(url).catch(async (error) => {
                 client.logger.error(`[setCover.js][Superagent] > ${error}`)
                 await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {

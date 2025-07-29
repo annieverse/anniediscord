@@ -115,7 +115,11 @@ module.exports = {
                 const userData = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2, locale)
                 const img = await new GUI(userData, validUsers, client, messageRef.guild).build()
                 load.delete()
-                await reply.send(`:trophy: **| ${selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1)} Leaders**\n${messageRef.guild.name}'s Ranking`, {
+                await reply.send(locale(`LEADERBOARD.HEADER`), {
+                    socket: {
+                        leaders: selectedGroup.charAt(0).toUpperCase() + selectedGroup.slice(1),
+                        guildName: messageRef.guild.name
+                    },
                     prebuffer: true,
                     image: img.png(),
                     simplified: true

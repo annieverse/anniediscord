@@ -67,7 +67,7 @@ module.exports = {
         c.onAccept(async () => {
             client.db.userUtils.setUserBio(arg, message.author.id)
             return await reply.send(``, {
-                customHeader: [`Yay! your new profile's bio has been set!♡`, message.author.displayAvatarURL()]
+                customHeader: [locale(`SETBIO.SET`), message.author.displayAvatarURL()]
             })
         })
     },
@@ -96,7 +96,7 @@ module.exports = {
         c.onAccept(async () => {
             client.db.userUtils.setUserBio(newBio, interaction.member.id)
             return await reply.send(``, {
-                customHeader: [`Yay! your new profile's bio has been set!♡`, interaction.member.displayAvatarURL()]
+                customHeader: [locale(`SETBIO.SET`), interaction.member.displayAvatarURL()]
             })
         })
     }

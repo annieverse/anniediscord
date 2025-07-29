@@ -34,7 +34,7 @@ module.exports = {
     async run(msg, messageRef, reply) {
         const _isSlash = isSlash(messageRef)
         if (_isSlash) {
-            reply.send(`Message sent :P`, { ephemeral: true })
+            reply.send(locale(`SAY.SENT`), { ephemeral: true })
         }
         return reply.send(msg, {
             field: messageRef.channel,

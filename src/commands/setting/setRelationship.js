@@ -105,7 +105,7 @@ module.exports = {
                 client.db.relationships.removeUserRelationship(message.author.id, targetUser.master.id)
                 client.db.relationships.removeUserRelationship(targetUser.master.id, message.author.id)
                 return await reply.send(``, {
-                    customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()]
+                    customHeader: [`${targetUser.master.username} ${locale(`RELATIONSHIP.NOT_WITH`)}`, targetUser.master.displayAvatarURL()]
                 })
             })
         }
@@ -145,7 +145,7 @@ module.exports = {
             const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
             client.db.relationships.setUserRelationship(message.author.id, targetUser.master.id, parseInt(authorRelationship.relationship_id), message.guildId)
             client.db.relationships.setUserRelationship(targetUser.master.id, message.author.id, parseInt(relationship.relationship_id), message.guildId)
-            await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
+            await reply.send(``, { customHeader: [`${targetUser.master.username} ${locale(`RELATIONSHIP.ACCEPTED`)}`, targetUser.master.displayAvatarURL()] })
             return await reply.send(locale(`RELATIONSHIP.TIPS_AUTHOR_ON_CHECK`), {
                 simplified: true,
                 socket: {
@@ -201,7 +201,7 @@ module.exports = {
                 client.db.relationships.removeUserRelationship(interaction.member.id, targetUser.master.id)
                 client.db.relationships.removeUserRelationship(targetUser.master.id, interaction.member.id)
                 return await reply.send(``, {
-                    customHeader: [`${targetUser.master.username} is no longer with you.`, targetUser.master.displayAvatarURL()]
+                    customHeader: [`${targetUser.master.username} ${locale(`RELATIONSHIP.NOT_WITH`)}`, targetUser.master.displayAvatarURL()]
                 })
             })
         }
@@ -239,7 +239,7 @@ module.exports = {
             const authorRelationship = await client.db.relationships.getRelationship(authorRelationshipStatus)
             client.db.relationships.setUserRelationship(interaction.member.id, targetUser.master.id, parseInt(authorRelationship.relationship_id), interaction.guildId)
             client.db.relationships.setUserRelationship(targetUser.master.id, interaction.member.id, parseInt(relationship.relationship_id), interaction.guildId)
-            await reply.send(``, { customHeader: [`${targetUser.master.username} has accepted your relationship request!`, targetUser.master.displayAvatarURL()] })
+            await reply.send(``, { customHeader: [`${targetUser.master.username} ${locale(`RELATIONSHIP.ACCEPTED`)}`, targetUser.master.displayAvatarURL()] })
             return await reply.send(locale(`RELATIONSHIP.TIPS_AUTHOR_ON_CHECK`), {
                 simplified: true,
                 socket: {

@@ -37,10 +37,18 @@ module.exports = {
       }
     )
       .then(() => {
-        return reply.send(`infinitybots.gg stats has been refreshed in ${client.getBenchmark(initTime)}`)
+        return reply.send(locale(`INFINITY.REFRESHED`), {
+          socket: {
+            benchmark: client.getBenchmark(initTime)
+          }
+        })
       })
       .catch(error => {
-        return reply.send(`Error occured while refreshing infinitybots.gg stats.\n\`\`\`\n${error.message}\n\`\`\``)
+        return reply.send(locale(`INFINITY.REFRESHED`), {
+          socket: {
+            benchmark: error.message
+          }
+        })
       })
   }
 }

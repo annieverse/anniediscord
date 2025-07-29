@@ -10,9 +10,9 @@ const cacheReset = require(`../utils/cacheReset.js`)
 module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    client.Localization.lang = userData.lang
+    client.localization.lang = userData.lang
     // const locale = client.getTargetLocales(userData.lang)
-    const locale = (key) => client.Localization.findLocale(key)
+    const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, false, locale)
 
     // 2025/07/20 :: Temporarily disable slash-based commands due to framework issues.
@@ -48,7 +48,7 @@ module.exports = async (client, interaction, command) => {
     const userPermission = getUserPermission(interaction, interaction.user.id)
     if (command.permissionLevel > userPermission.level) return await reply.send(``, {
         customHeader: [
-            `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
+            `${locale(`USER_PERMS.START`)}${command.permissionLevel} (${availablePermissions[command.permissionLevel].name} ${locale(`USER_PERMS.END`)}`,
             interaction.user.displayAvatarURL()
         ]
     })
@@ -88,12 +88,12 @@ module.exports = async (client, interaction, command) => {
         })
     } catch (err) {
         client.logger.error(err)
-        const internalError = err.message.startsWith(`[Internal Error]`)
+        const internalError = err.message != undefined ? err.message.startsWith(`[Internal Error]`) : false
         // Handle cache(s)
         if (internalError) cacheReset(client, command.name, interaction.member.id, interaction.guildId)
         if (client.dev) return await reply.send(locale(`ERROR_ON_DEV`), {
             socket: {
-                error: err.stack,
+                error: err.stack || JSON.stringify(err),
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))

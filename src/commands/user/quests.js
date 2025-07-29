@@ -63,7 +63,7 @@ module.exports = {
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: isSlash(messageRef) ? false : true, messageToReplyTo: isSlash(messageRef) ? null : quest })
+				await reply.send(locale(`QUEST.EXPIRED`), { ephemeral: true, replyAnyway: isSlash(messageRef) ? false : true, messageToReplyTo: isSlash(messageRef) ? null : quest })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}

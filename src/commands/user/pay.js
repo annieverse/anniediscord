@@ -131,7 +131,7 @@ module.exports = {
             client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.senderAmount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
             // client.db.databaseUtils.delCache(sessionId)
             await reply.send(``, {
-                customHeader: [`${reciever.master.username} has received your artcoins!♡`, reciever.master.displayAvatarURL()],
+                customHeader: [`${reciever.master.username} ${locale(`PAY.RECEIVED`)}`, reciever.master.displayAvatarURL()],
                 socket: { target: reciever.master.username }
             })
         })

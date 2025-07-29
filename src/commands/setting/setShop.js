@@ -392,7 +392,7 @@ module.exports = {
                 responseMessageContent[`stock`] = `\n╰☆～**Stocks ::** ${input === `~` ? `unlimited` : commanifier(input)}`
                 await joinFunction()
             } else if (i.customId === buffsButtonId) {
-                if (buffOptions.length >= 3) return await reply.send(`Sorry no more buffs can be added`, {
+                if (buffOptions.length >= 3) return await reply.send(locale(`SETSHOP.NO_MORE_BUFFS`), {
                     deleteIn: 5
                 })
                 await i.showModal(modalBuffs)
@@ -605,7 +605,10 @@ module.exports = {
             dataDisplay = await message.channel.send({
                 content: locale(`SETSHOP.ADD_DESCRIPTION`),
                 embeds: [
-                    await reply.send(`\n╰☆～**Name ::** ${secondArg}`, {
+                    await reply.send(locale(`SETSHOP.NAME_EMBED`), {
+                        socket: {
+                            arg: secondArg
+                        },
                         raw: true
                     })
                 ]
@@ -658,7 +661,8 @@ module.exports = {
                     //  The reason why this line doesn't use joinFunction() is to omit the 'ADD_NAME_FOOTER' string from the embed.
                     dataDisplay.edit({
                         content: locale(`SETSHOP.ADD_DESCRIPTION`),
-                        embeds: [await reply.send(`\n╰☆～**Name ::** ${input}`, {
+                        embeds: [await reply.send(locale(`SETSHOP.NAME_EMBED`), {
+                            socket: { arg: input },
                             raw: true
                         })]
                     })
@@ -861,7 +865,7 @@ module.exports = {
             client.db.databaseUtils.delCache(sessionId)
             if (completed) return
             dataDisplay.delete()
-            await reply.send(`Shop register interface has been closed.`, {
+            await reply.send(locale(`SETSHOP.INTERFACE_CLOSED`), {
                 simplified: true
             })
         })

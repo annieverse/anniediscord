@@ -1,5 +1,9 @@
 {
     "lang": "en",
+    "USER_PERMS": {
+        "START": "You need LV",
+        "END": ") privilege to use this command."
+    },
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "GUIDE": "You are authorized to use the **Artcoins Generator**.",
@@ -57,6 +61,14 @@
         "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Is there any ARs you want to delete?**\nStart by typing **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nBelow are the registered ARs in {{guild}}.\n{{list}}",
         "DELETE_TARGET_INVALID": "**Is that AR even exists??** {{emoji}}\n╰─Make sure to check the registered ARs first!",
         "SUCCESSFULLY_DELETED": "**Aye, successfully deleted!♡** {{emoji}}\n╰─I'm no longer listening to that AR."
+    },
+    "BDF": {
+        "REFRESHED": "BFD stats has been refreshed in {{benchmark}}",
+        "ERROR": "Error occured while refreshing BFD stats.\n```\n{{error}}\n```"
+    },
+    "INFINITY": {
+        "REFRESHED": "infinitybots.gg stats has been refreshed in {{benchmark}}",
+        "ERROR": "Error occured while refreshing infinitybots.gg stats.\n```\n{{error}}\n```"
     },
     "BUFF": {
         "NO_ACTIVE_BUFFS": "You don't have any active buffs at the moment! {{emoji}}",
@@ -208,6 +220,10 @@
         "SHORT_GUIDE": "You can start distributing event rewards by typing `>sendreward <user>`",
         "INVALID_REWARD": "Sorry, i can't find any package for that rank."
     },
+    "SENDREWARD": {
+        "RECEIVED": "{{user}} has recieved the package {{packageName}}",
+        "NO_PACKS": "I'm sorry but you dont have any packages made, you can make one with `/makereward create`"
+    },
     "DM": {
         "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
         "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",
@@ -340,7 +356,8 @@
         "INVALID_CATEGORY": "**Sorry- but there's no leaderboard for that category, yet.** {{emoji}}",
         "NO_DATA": "No ranking data found yet for **{{category}} Leaderboard.** Come back later!",
         "AUTHOR_RANK": "You are currently **#{{rank}}** with total **{{points}}** {{emoji}}",
-        "UNRANKED": "You are unranked."
+        "UNRANKED": "You are unranked.",
+        "HEADER": ":trophy: **| {{leaders}} Leaders**\n{{guildName}}'s Ranking"
     },
     "LEVELCARD": {
         "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
@@ -394,10 +411,23 @@
         "NO_ITEM_SUPPLIED": "Sorry, but you didnt give an item to display\n",
         "NO_ITEMS": "I'm sorry but you dont have any {0}"
     },
+    "USERDATA": {
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "INVALID_OPTION": "I'm sorry that is not a vaild option",
+        "INVALID_USE_SELF": "I'm sorry but you can not do this command on yourself",
+        "PROMPT": "You may choose to retrieve any data by a specific table or one of my predifined groupings, by typing them after this message (1 per command)\nGroupings:\nAll\n${{data}}",
+        "SUCCESSFUL_GROUP": "Here is the data from `{{input}}` group for user with id: {{user}}",
+        "SUCCESSFUL_TABLE": "Here is the data from `{{input}}` table for user with id: {{user}}",
+        "SUCCESSFUL_ALL": "Here is the all data for user with id: {{user}}",
+        "DELETE": "All data tied to user:{{user}} has been deleted",
+        "AVAILABLE_OPTIONS": "I'm sorry but my only options are to tables, retrieve, or remove."
+    },
     "MAIL": {
         "INVALID_USER": "Sorry, i couldn't find that user.",
+        "INVALID_CONTENT_LENGTH": "`Where's the message? {{emoji}}",
         "PROMPT": "Message will be send to **{{user}}**. Now please type the content of the message.",
-        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{{user}}**.",
+        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{{user}}** with the folling message\n{{content}}.",
+        "CONFIRMATION": "I'll try to send to **{{user}}** with the folling message\n{{content}}.",
         "UNSUCCESSFUL": "Aw, sadly the user seems locked their direct message. {{emoji}}",
         "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!"
     },
@@ -441,13 +471,18 @@
         "SUCCESSFUL": "**{{target}}** has received your artcoins!♡",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**",
         "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction.",
-        "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}"
+        "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}",
+        "RECEIVED": "has received your artcoins!♡"
     },
     "PIXIV": {
         "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Showing the most recommended work for you ...*",
         "DISPLAY_CUSTOM_SEARCH": "{{emoji}} *Looking for '{{keyword}}' ...*",
         "NO_RESULT": "Sorry! i can't find anything with that keyword.",
-        "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!"
+        "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!",
+        "MADE_WITH": {
+            "TOOLS": "**Made with {{tools}}**\n{{tags}}",
+            "NONE": "{{tools}}\n{{tags}}"
+        }
     },
     "EAT_POWERCAPSULE": {
         "MISSING_ARG": "Please don't forget to specify the amount you want to use next time.",
@@ -498,7 +533,8 @@
             "Magnificent",
             "Astounding"
         ],
-        "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}"
+        "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}",
+        "EXPIRED": "Your quest time has expired, no worries though just excute the quest command again to pick up where you left off"
     },
     "RECYCLE": {
         "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
@@ -542,7 +578,9 @@
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
         "TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
         "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}\nIf you dont idenify as male/female/neutral, disregard this message, as we will use the neutral terminology",
-        "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}"
+        "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}",
+        "NOT_WITH": "is no longer with you.",
+        "ACCEPTED": "has accepted your relationship request!"
     },
     "REMINDER": {
         "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
@@ -581,7 +619,8 @@
         "MISSING_ARGS": "Please use this command like: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
-        "SHORT_GUIDE": "Please include the message that you want me to read! {{emoji}}"
+        "SHORT_GUIDE": "Please include the message that you want me to read! {{emoji}}",
+        "SENT": "Message sent :)"
     },
     "SELLFRAGMENTS": {
         "GUIDE": "I know you are probably tired looking at your collected fragments sitting there in your inventory doing nothing. But fortunately, with this command it will allows you to sell those fragments for a few amount of artcoins! interested to try? follow the format below. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\ne.g. __{{prefix}}sellfrag 10__ or __{{prefix}}sellfrag all__\n\n> Keep in mind, the conversion rate is **{{rate}}**, so you need to have at least {{emojiFragment}}**{{min}} Fragments** in order to use this command!",
@@ -628,7 +667,8 @@
         "MISSING_ARG": "╭*:;,．★ ～☆*────────────────╮\n**Wants to set a unique profile bio?♡**\nLet's type **`{{prefix}}setbio <yourMessageHere!>`**\n╰──────────☆～*:;,．*╯\nKeep in mind that you can only write **156 characters** at maximum.",
         "EXCEEDING_LIMIT": "**I've trouble fitting this into my small pocket!～** {{emoji}}\n╰─Can you reduce it by {{chars}} characters?",
         "RENDERING": "{{emoji}}`rendering the new bio for you...`",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**"
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**",
+        "SET": "Yay! your new profile's bio has been set!♡"
     },
     "SETCOMMAND": {
         "MISSING_TARGET_CHANNEL": "Don't forget to specify the channel, okay? {{emoji}}",
@@ -656,7 +696,8 @@
         "OWNED_COVERS": "If you wish to switch- checkout your owned covers below.\n",
         "SUGGEST_TO_UPLOAD": "Let's upload/buy one to make your profile more unique!♡ {{emoji}}",
         "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover.",
-        "DEFAULT_ALREADY": "Sorry, you use the default cover already."
+        "DEFAULT_ALREADY": "Sorry, you use the default cover already.",
+        "INVALID_FILE_TYPE": "Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: {{types}}"
     },
     "SETEXP": {
         "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Migrated from other bots? tired of grinding the exp? or probably just wanna have fun with a quick level jump? worry not, you can add some exp to yourself or other member.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> I know that some people are probably annoying and we want punish them for that behavior. With this action, you'll be able to decrease someone's exp or even yourself!\n\n**`{{prefix}}setexp reset <user>`**\n> Tired of being a high-leveled user? oh well, it can't be helped. This action allows you to turn yours or someone's exp account into a fresh slate.\n\n╰──────────☆～*:;,．*╯",
@@ -677,7 +718,9 @@
         "MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?\nBelow is the preview of their updated level card.",
         "MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
         "MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
-        "RESET_CONFIRMATION": "Reset {{user}}'s exp account?"
+        "RESET_CONFIRMATION": "Reset {{user}}'s exp account?",
+        "UPDATED": "exp has been updated!♡",
+        "WIPED": "exp has been wiped out!♡"
     },
     "SETGUILDBIO": {
         "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
@@ -870,8 +913,12 @@
         "ADD_CONFIRMATION": "Shall we create this item?",
         "ADD_SUCCESSFUL": "**Yay! item has been created!** {{emoji}}\n╰─ Now you can check it in the **`{{prefix}}shop`** command.",
         "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result.",
-        "IMAGE_NOT_RESETABLE": "Your shop uses the default banner already."
+        "IMAGE_NOT_RESETABLE": "Your shop uses the default banner already.",
+        "NO_MORE_BUFFS": "Sorry no more buffs can be added",
+        "NAME_EMBED": "\n╰☆～**Name ::** {{arg}}",
+        "INTERFACE_CLOSED": "Shop register interface has been closed."
     },
+    "REMOVEALLREACTIONS": "I have removed all possible reactions from message with id: {{id}}",
     "SHOP": {
         "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
         "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}",

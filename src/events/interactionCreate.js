@@ -9,8 +9,8 @@ module.exports = async (client, interaction) => {
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     // const locale = client.getTargetLocales(userData.lang)
-    client.Localization.lang = userData.lang
-    const locale = (key) => client.Localization.findLocale(key)
+    client.localization.lang = userData.lang
+    const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, true, locale)
     try {
         if (client.guildonly_commands.has(interaction.guildId)) {

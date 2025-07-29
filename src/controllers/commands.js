@@ -28,8 +28,8 @@ module.exports = async (client = {}, message = {}) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
     // const locale = client.getTargetLocales(userData.lang)
-    client.Localization.lang = userData.lang
-    const locale = (key) => client.Localization.findLocale(key)
+    client.localization.lang = userData.lang
+    const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(message, false, locale)
 
     // Check Bot's permissions before procceding
@@ -68,7 +68,7 @@ module.exports = async (client = {}, message = {}) => {
     if (command.permissionLevel > userPermission.level) return await reply.send(``,
         {
             customHeader: [
-                `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
+                `${locale(`USER_PERMS.START`)}${command.permissionLevel} (${availablePermissions[command.permissionLevel].name} ${locale(`USER_PERMS.END`)}`,
                 message.author.displayAvatarURL()
             ]
         }
