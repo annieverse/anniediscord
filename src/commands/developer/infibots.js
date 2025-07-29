@@ -15,7 +15,7 @@ module.exports = {
   messageCommand: true,
   server_specific: true,
   servers: [`577121315480272908`],
-  async execute(client, reply) {
+  async execute(client, reply, locale) {
     const initTime = process.hrtime()
     const servers = (await client.shard.fetchClientValues(`guilds.cache.size`)).reduce((acc, guildCount) => acc + guildCount, 0)
     const shards = client.shard.count
