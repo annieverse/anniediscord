@@ -87,11 +87,11 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
         },
         DiscordAPIError_50005: {
             threadId: DiscordAPIError_50005_ThreadId,
-            username: `DiscordAPIError_50005`
+            username: `APIError_50005`
         },
         DiscordAPIError: {
             threadId: DiscordAPIError_ThreadId,
-            username: `DiscordAPIError`
+            username: `APIError`
         },
         Other: {
             threadId: lvl1_ThreadId,
