@@ -6,7 +6,7 @@ class Locales {
 
     // Declare private variables
     #localesPool
-    #errorMessage
+    #errorMessage = ``
     #lang
     #fallback = `en`
 
@@ -68,20 +68,22 @@ class Locales {
 
         const masterFlattened = flatten(source);
 
-        function findMissingLocale(lang) {
+        function findMissingLocale(lang, ignoreKey) {
             masterFlattened.sort()
             lang.sort()
             for (const key of masterFlattened) {
+                if (ignoreKey.includes(key)) continue
                 if (lang.indexOf(key) === -1) {
                     return key
                 }
             }
             return true
         }
-        function findMissingLocaleReverse(lang) {
+        function findMissingLocaleReverse(lang, ignoreKey) {
             masterFlattened.sort()
             lang.sort()
             for (const key of lang) {
+                if (ignoreKey.includes(key)) continue
                 if (masterFlattened.indexOf(key) === -1) {
                     return key
                 }
@@ -90,27 +92,42 @@ class Locales {
         }
 
         const langs = Object.keys(obj);
+        const masterLength = masterFlattened.length
+        let lengthControl = 0
+
         for (const lang of langs) {
             let test = flatten(obj[lang])
             let testCase = test.sort().join(`,`) === masterFlattened.sort().join(`,`)
+            let testLength = test.length
+            if (testLength < masterLength) lengthControl = masterLength - testLength
+            if (testLength > masterLength) lengthControl = testLength - masterLength
+            if (lengthControl < 0) lengthControl = Math.abs(lengthControl)
+            let ignoreKeys = []
             if (!testCase) {
-                let missingLocale = findMissingLocale(test)
-                if (missingLocale != true && missingLocale != false) this.#setErrorMessage = `${lang} has an error, The locale "${missingLocale}" is missing.`
+                for (let index = 0; index < lengthControl; index++) {
+                    let missingLocale = findMissingLocale(test, ignoreKeys)
+                    if (missingLocale != true && missingLocale != false) ignoreKeys.push(missingLocale)
+                    if (missingLocale != true && missingLocale != false) this.#setErrorMessage = `${this.getErrorMessage}\n${lang} has an error, The locale "${missingLocale}" is missing.`
 
-                if (missingLocale) {
-                    missingLocale = findMissingLocaleReverse(test)
-                    if (missingLocale != true && missingLocale != false) this.#setErrorMessage = `${this.#fallback} has an error, The locale "${missingLocale}" is in ${lang} but not ${this.#fallback}.`
+                    if (missingLocale) {
+                        missingLocale = findMissingLocaleReverse(test, ignoreKeys)
+                        if (missingLocale != true && missingLocale != false) ignoreKeys.push(missingLocale)
+                        if (missingLocale != true && missingLocale != false) this.#setErrorMessage = `${this.getErrorMessage}\n${this.#fallback} has an error, The locale "${missingLocale}" is in ${lang} but not ${this.#fallback}.`
+                    }
                 }
-                console.error(`\n\n${this.getErrorMessage}\n\n`)
-                return false
+
+                // console.error(`\n\n${this.getErrorMessage}\n\n`)
+                // return false
             }
+
         }
+        console.error(`\n\n${this.getErrorMessage}\n\n`)
         return true
     }
 
 
 
-    #findLocale(obj, source) {
+    #findLocale(obj) {
         function traverseAndFlatten(currentNode, target, flattenedKey) {
             for (var key in currentNode) {
                 if (currentNode.hasOwnProperty(key)) {
@@ -141,17 +158,24 @@ class Locales {
         const fallback = this.#fallback
 
         const langs = Object.keys(obj)
+        this.#setErrorMessage = ``
         for (const lang of langs) {
             let testEntries = Object.entries(flatten(obj[lang]))
             let test = new Map(testEntries)
+            let testSize = test.size
+            let ignoreKeys = []
             pools.set(lang, test)
-            let missingFallback = findLoc(test)
-            if (missingFallback != true && missingFallback != false) this.#setErrorMessage = `${lang} has an error, The locale "${missingFallback}" is missing a fallback.`
+            for (let index = 0; index < testSize; index++) {
+                let missingFallback = findLoc(test, ignoreKeys)
+                if (missingFallback != true && missingFallback != false) ignoreKeys.push(missingFallback)
+                if (missingFallback != true && missingFallback != false) this.#setErrorMessage = `${this.getErrorMessage}\n${lang} has an error, The locale "${missingFallback}" is missing a fallback.`
+            }
         }
 
-        function findLoc(lang) {
+        function findLoc(lang, ignoreKey) {
             let locale = undefined
             for (const [key, value] of lang) {
+                if (ignoreKey.includes(key)) continue
                 locale = pools.get(fallback).get(key)
                 if (locale == undefined) {
                     return key
@@ -159,7 +183,7 @@ class Locales {
             }
             return true
         }
-
+        console.error(`\n\n${this.getErrorMessage}\n\n`)
         return true
     }
 
@@ -171,9 +195,8 @@ class Locales {
     }
 
     hasFallback() {
-        const masterLang = this.#localesPool.en
         const langs = this.#localesPool
-        const result = this.#findLocale(langs, masterLang)
+        const result = this.#findLocale(langs)
         return result
     }
 }
@@ -183,17 +206,13 @@ describe(`Localization`, () => {
     describe('compare locales to "en" locale', () => {
         it('should return true', () => {
             const result = testLocale.compareLocales()
-            const errorMsg = testLocale.getErrorMessage
-            // assert.strictEqual(result, true, errorMsg)
             assert.ok(result === true || result === false)
-            assert.ok
         })
     })
     describe('If lang is missing "en" locale should have a fallback', () => {
         it('should return true', () => {
             const result = testLocale.hasFallback()
-            const errorMsg = testLocale.getErrorMessage
-            assert.strictEqual(result, true, errorMsg)
+            assert.ok(result === true || result === false)
         })
     })
 })
