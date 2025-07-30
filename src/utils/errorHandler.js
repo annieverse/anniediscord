@@ -19,6 +19,8 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     // Blacklist errors/Ignore errors
     const IgnoreErrorFilter = [DiscordAPIError_50013, DiscordAPIError_50001]
     if (IgnoreErrorFilter.includes(error_message)) return
+    const internalError = `[Internal Error]`
+    if (error_message.includes(internalError)) return
 
     // Create a Date Object to get current time
     const date = new Date()
