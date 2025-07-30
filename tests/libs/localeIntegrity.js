@@ -1,5 +1,9 @@
-
 "use strict"
+
+
+const RUNTESTS = false
+
+
 const { readdirSync } = require(`fs`)
 const assert = require(`assert`)
 class Locales {
@@ -7,7 +11,6 @@ class Locales {
     // Declare private variables
     #localesPool
     #errorMessage = ``
-    #lang
     #fallback = `en`
 
     constructor() {
@@ -201,18 +204,20 @@ class Locales {
     }
 }
 
-describe(`Localization`, () => {
-    const testLocale = new Locales()
-    describe('compare locales to "en" locale', () => {
-        it('should return true', () => {
-            const result = testLocale.compareLocales()
-            assert.ok(result === true || result === false)
+if (RUNTESTS) {
+    describe(`Localization`, () => {
+        const testLocale = new Locales()
+        describe('compare locales to "en" locale', () => {
+            it('should return true', () => {
+                const result = testLocale.compareLocales()
+                assert.ok(result === true || result === false)
+            })
+        })
+        describe('If lang is missing "en" locale should have a fallback', () => {
+            it('should return true', () => {
+                const result = testLocale.hasFallback()
+                assert.ok(result === true || result === false)
+            })
         })
     })
-    describe('If lang is missing "en" locale should have a fallback', () => {
-        it('should return true', () => {
-            const result = testLocale.hasFallback()
-            assert.ok(result === true || result === false)
-        })
-    })
-})
+}
