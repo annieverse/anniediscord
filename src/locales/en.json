@@ -1,244 +1,239 @@
 {
-    "lang": "en",
-    "USER_PERMS": {
-        "START": "You need LV",
-        "END": ") privilege to use this command."
-    },
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
-        "GUIDE": "You are authorized to use the **Artcoins Generator**.",
-        "SUCCESSFUL": "Successfully refilled!",
-        "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
         "CONFIRMATION_SEQ_1": "You are going to refill **{{user}}'s Artcoins.** Now please specify the amount you want to generate.",
         "CONFIRMATION_SEQ_2": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance** ?\nPlease type `y` to confirm",
-        "NO_NEGATIVE_INPUT": "Please put a valid amount."
+        "GUIDE": "You are authorized to use the **Artcoins Generator**.",
+        "NEGATIVE_VALUES": "Sorry, you can't put negative value.",
+        "NO_NEGATIVE_INPUT": "Please put a valid amount.",
+        "SUCCESSFUL": "Successfully refilled!"
     },
     "ADDROLE": {
-        "MISSING_ARG": "Uhm, can you specify the user please.",
         "CONFIRMATION_SEQ_1": "Alright, I'll assign a new role to **{{user}}.** Now please specify the role name.",
         "CONFIRMATION_SEQ_2": "**{{role}} Role** 🡆 **{{user}}** ?\nPlease type `y` to confirm",
-        "NO_ROLE_FOUND": "Sorry, I couldn't find that role. Can you type it again?",
         "HAS_ROLE_ALREADY": "Sorry, but **{{user}}** has that role already.",
+        "MISSING_ARG": "Uhm, can you specify the user please.",
+        "NO_ROLE_FOUND": "Sorry, I couldn't find that role. Can you type it again?",
         "ROLE_ADDED": "Successfully assigned the role!"
     },
     "AFFILIATES": {
-        "EMPTY": "Ops, there are no registered affiliates at the moment!",
         "DISPLAY": "**Hi, {{user}}!** here you can see all the servers that has been supporting the development of Annie.\n{{list}}",
+        "EMPTY": "Ops, there are no registered affiliates at the moment!",
         "HEADER": "Annie's Affiliated Servers"
     },
     "ASK": {
         "ANSWERS": [
-            "Yes.",
-            "No.",
+            "Definitely!",
             "I don't know.",
-            "You",
-            "Well, probably.",
+            "No.",
             "Not sure.",
-            "Definitely!"
+            "Well, probably.",
+            "Yes.",
+            "You"
         ],
         "SHORT_GUIDE": "Feel free to ask me anything!"
+    },
+    "AUTORESPONDER": {
+        "ALREADY_DISABLED": "**Wait, AR module isn't even enabled!** {{emoji}}\n╰─Go type **`{{prefix}}ar enable`** to enable it!",
+        "ALREADY_ENABLED": "The AR module has been enabled by **{{user}}**, **{{time}}.** {{emoji}}",
+        "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Is there any ARs you want to delete?**\nStart by typing **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nBelow are the registered ARs in {{guild}}.\n{{list}}",
+        "DELETE_TARGET_INVALID": "**Is that AR even exists??** {{emoji}}\n╰─Make sure to check the registered ARs first!",
+        "DISPLAY": "Currently there are total of **{{ars}}** registered ARs in **{{guild}}** where the latest one was added by {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
+        "EMPTY": "**Oops, empty ARs.** {{emoji}}\n╰─Try create some with **`{{prefix}}ar add <trigger> - <response>`**",
+        "GUIDE": "This is your control center to manage autoresponders in **{{guild}}!** To get started, check the available actions below. {{emoji}}\n{{statusEmoji}} The AR module currently is **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> First-time using my AR module? then look no further, enable the module before doing everything else!\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Let's add a new AR! fill the <trigger> with message you want me to listen and <response> as my response to it!\n__e.g. {{prefix}}ar add welcome - enjoy your stay!__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Got bored with the AR? then it's time to delete it! fill the <id/trigger> with the AR you want to delete.\ne.g. __{{prefix}}ar delete welcome__\n\n**`{{prefix}}ar info`**\n> Having hard time remembering all the ARs you just registered? let's check them through this action!\n\n**`{{prefix}}ar reset`**\n> How many ARs you've created already?! too many? oh well... restarting from scratch will be a better option I think.\n\n**`{{prefix}}ar disable`**\n> ARs aren't fun anymore? aw, don't worry then. You can disable the entire ARs anytime!\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "**Eeh, what action was that??** {{emoji}}\n╰─I only accept {{actions}}.",
+        "REGISTER_CONFIRMATION": "So, are we going for this AR?\n╭*:;,．★ ～☆*──────────╮\n**What you just sent** → {{trigger}}\n**I'll respond with** → {{response}}\n╰──────────☆～*:;,．*╯\nIf this is what you wanted, kindly react to the green button to confirm it.",
+        "REGISTER_EMPTY_RESPONSE": "**What's my response supposed to be?** {{emoji}}\n╰─try type **`{{prefix}}ar add {{trigger}} <myResponseHere>`**",
+        "REGISTER_FOOTER_TIP": "Now try type **`{{trigger}}`** {{emoji}}",
+        "REGISTER_MISSING_SEPARATOR": "**Oops, you were missing the separator.**\ne.g **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
+        "REGISTER_NO_PARAM": "**Don't forget to follow the format!♡**\ne.g **`{{prefix}}ar add I'm kawaii - no way, I'm more kawaii.`**",
+        "REGISTER_SUCCESSFUL": "**Yay! I've learned new AR!♡** {{emoji}}\n╰─Keep in mind, there's 15s cooldown for each AR to avoid spam.",
+        "RESET_CONFIRMATION": "╭*:;,．★ ～☆*──────────╮\n**Reset ARs from this server?** {{emoji}}\nThis action is irreversible and **{{totalArs}}** ARs will be deleted once you pressed the green button.\n╰──────────☆～*:;,．*╯",
+        "SUCCESSFULLY_DELETED": "**Aye, successfully deleted!♡** {{emoji}}\n╰─I'm no longer listening to that AR.",
+        "SUCCESSFULLY_DISABLED": "**Alright, it's done!♡** {{emoji}}\n╰─The AR module has successfully disabled!",
+        "SUCCESSFULLY_ENABLED": "**Yay! AR successfully enabled!♡** {{emoji}}\n╰─Now it's time to create some cute autoresponders!",
+        "SUCCESSFULLY_RESET": "**Baibai my precious ARs!!**\n╰─{{totalArs}} autoresponders successfully deleted from this server!"
     },
     "AVATAR": {
         "INITIAL": "*Say cheese... ♡*"
     },
-    "AUTORESPONDER": {
-        "GUIDE": "This is your control center to manage autoresponders in **{{guild}}!** To get started, check the available actions below. {{emoji}}\n{{statusEmoji}} The AR module currently is **{{status}}**.\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}ar enable`**\n> First-time using my AR module? then look no further, enable the module before doing everything else!\n\n**`{{prefix}}ar add <trigger> - <response>`**\n> Let's add a new AR! fill the <trigger> with message you want me to listen and <response> as my response to it!\n__e.g. {{prefix}}ar add welcome - enjoy your stay!__\n\n**`{{prefix}}ar delete <id/trigger>`**\n> Got bored with the AR? then it's time to delete it! fill the <id/trigger> with the AR you want to delete.\ne.g. __{{prefix}}ar delete welcome__\n\n**`{{prefix}}ar info`**\n> Having hard time remembering all the ARs you just registered? let's check them through this action!\n\n**`{{prefix}}ar reset`**\n> How many ARs you've created already?! too many? oh well... restarting from scratch will be a better option I think.\n\n**`{{prefix}}ar disable`**\n> ARs aren't fun anymore? aw, don't worry then. You can disable the entire ARs anytime!\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "**Eeh, what action was that??** {{emoji}}\n╰─I only accept {{actions}}.",
-        "ALREADY_ENABLED": "The AR module has been enabled by **{{user}}**, **{{time}}.** {{emoji}}",
-        "SUCCESSFULLY_ENABLED": "**Yay! AR successfully enabled!♡** {{emoji}}\n╰─Now it's time to create some cute autoresponders!",
-        "ALREADY_DISABLED": "**Wait, AR module isn't even enabled!** {{emoji}}\n╰─Go type **`{{prefix}}ar enable`** to enable it!",
-        "SUCCESSFULLY_DISABLED": "**Alright, it's done!♡** {{emoji}}\n╰─The AR module has successfully disabled!",
-        "EMPTY": "**Oops, empty ARs.** {{emoji}}\n╰─Try create some with **`{{prefix}}ar add <trigger> - <response>`**",
-        "DISPLAY": "Currently there are total of **{{ars}}** registered ARs in **{{guild}}** where the latest one was added by {{user}}, {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n{{list}}\n╰──────────☆～*:;,．*╯",
-        "REGISTER_NO_PARAM": "**Don't forget to follow the format!♡**\ne.g **`{{prefix}}ar add I'm kawaii - no way, I'm more kawaii.`**",
-        "REGISTER_MISSING_SEPARATOR": "**Oops, you were missing the separator.**\ne.g **`{{prefix}}ar add {{trigger}} - <myResponseHere>`**",
-        "REGISTER_EMPTY_RESPONSE": "**What's my response supposed to be?** {{emoji}}\n╰─try type **`{{prefix}}ar add {{trigger}} <myResponseHere>`**",
-        "REGISTER_CONFIRMATION": "So, are we going for this AR?\n╭*:;,．★ ～☆*──────────╮\n**What you just sent** → {{trigger}}\n**I'll respond with** → {{response}}\n╰──────────☆～*:;,．*╯\nIf this is what you wanted, kindly react to the green button to confirm it.",
-        "REGISTER_SUCCESSFUL": "**Yay! I've learned new AR!♡** {{emoji}}\n╰─Keep in mind, there's 15s cooldown for each AR to avoid spam.",
-        "REGISTER_FOOTER_TIP": "Now try type **`{{trigger}}`** {{emoji}}",
-        "RESET_CONFIRMATION": "╭*:;,．★ ～☆*──────────╮\n**Reset ARs from this server?** {{emoji}}\nThis action is irreversible and **{{totalArs}}** ARs will be deleted once you pressed the green button.\n╰──────────☆～*:;,．*╯",
-        "SUCCESSFULLY_RESET": "**Baibai my precious ARs!!**\n╰─{{totalArs}} autoresponders successfully deleted from this server!",
-        "DELETE_MISSING_KEYWORD": "╭*:;,．★ ～☆*──────────╮\n**Is there any ARs you want to delete?**\nStart by typing **`{{prefix}}ar delete <ID/triggerName>`**\n╰──────────☆～*:;,．*╯\nBelow are the registered ARs in {{guild}}.\n{{list}}",
-        "DELETE_TARGET_INVALID": "**Is that AR even exists??** {{emoji}}\n╰─Make sure to check the registered ARs first!",
-        "SUCCESSFULLY_DELETED": "**Aye, successfully deleted!♡** {{emoji}}\n╰─I'm no longer listening to that AR."
-    },
-    "BDF": {
-        "REFRESHED": "BFD stats has been refreshed in {{benchmark}}",
-        "ERROR": "Error occured while refreshing BFD stats.\n```\n{{error}}\n```"
-    },
-    "INFINITY": {
-        "REFRESHED": "infinitybots.gg stats has been refreshed in {{benchmark}}",
-        "ERROR": "Error occured while refreshing infinitybots.gg stats.\n```\n{{error}}\n```"
-    },
-    "BUFF": {
-        "NO_ACTIVE_BUFFS": "You don't have any active buffs at the moment! {{emoji}}",
-        "DISPLAY": "**Hey, {{user}}!♡** below is your currently active buffs. Go chit-chat while they last!\n{{list}}"
-    },
     "BADGECARD": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "FETCHING": "`Fetching {0}'s badge data . .`",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Badge card for {0}**",
-        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
-        "FETCHING": "`Fetching {0}'s badge data . .`"
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature."
     },
     "BAN": {
         "MISSING_ARG": "Hi, you are authorized to use the command. Please specify the user you want me to ban next time!",
+        "SUCCESSFUL": "Bai bai **{{user}}!** I've sent them to the void.",
         "TARGET_DOESNT_EXISTS": "Eh? where are they? do they even exist?",
-        "TARGET_HAS_ADMIN_PRIVILEGE": "Hard to say, but I can't ban a user with admin privilege. :(",
-        "SUCCESSFUL": "Bai bai **{{user}}!** I've sent them to the void."
+        "TARGET_HAS_ADMIN_PRIVILEGE": "Hard to say, but I can't ban a user with admin privilege. :("
     },
-    "BUY": {
-        "SHORT_GUIDE": "Checkout what you can buy in our `{{prefix}}shop` !",
-        "INSUFFICIENT_BALANCE": "You need {{emoji}}**{{amount}}** more to complete the purchase.",
-        "INVALID_ITEM": "I cannot find any item by that name/ID...",
-        "INVALID_ITEM_TIPS": "Perhaps check the **`{{prefix}}shop`** first? {{emoji}}",
-        "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
-        "NO_DUPLICATE": "You are already own that {{itemType}}",
-        "OUT_OF_STOCK": "Oops, **'{{item}}'** is out of stock at the moment. Ask the server's owner/admin to restock the supply! {{emoji}}",
-        "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰ Now type **`{{prefix}}inventory`** to see the item.",
-        "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
-        "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
-        "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
-        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this {{itemType}} item? then, please react to the button to confirm the purchase.",
-        "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** isn't available to purchase in this guild. Ask your administrator or guild owner to set it up.",
-        "NON_PURCHASABLE_ITEM": "Sorry, you cannot buy this item.",
-        "QUICKAPPLY_COVER": "Do you wish to apply it to your profile card as well?",
-        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nShall we buy\n**{{item}}** for {{emoji}}**{{price}}**?\n╰────────☆～*:;,．*╯\nComplete the purchase\nby reacting to the green button",
-        "PAYMENT_UNSUPPORTED": "Currently the payment method for this item is not supported. Sorry for this inconvenience!"
+    "BDF": {
+        "ERROR": "Error occured while refreshing BFD stats.\n```\n{{error}}\n```",
+        "REFRESHED": "BFD stats has been refreshed in {{benchmark}}"
     },
     "BOOSTER": {
         "EXP_EXPIRED": "Hello **{0}**, your **{1}** EXP Ticket has expired today. "
     },
+    "BUFF": {
+        "DISPLAY": "**Hey, {{user}}!♡** below is your currently active buffs. Go chit-chat while they last!\n{{list}}",
+        "NO_ACTIVE_BUFFS": "You don't have any active buffs at the moment! {{emoji}}"
+    },
+    "BUY": {
+        "CHECKOUT_LOADING": "`Process to checkout in shortly...`",
+        "CHECKOUT_PREVIEW": "**{{total}} - {{item}}**\nYou are going to buy this {{itemType}} item? then, please react to the button to confirm the purchase.",
+        "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nShall we buy\n**{{item}}** for {{emoji}}**{{price}}**?\n╰────────☆～*:;,．*╯\nComplete the purchase\nby reacting to the green button",
+        "EMPTY_SHOP": "There are nothing you can buy in our shop right now. Come back later!",
+        "INSUFFICIENT_BALANCE": "You need {{emoji}}**{{amount}}** more to complete the purchase.",
+        "INVALID_ITEM": "I cannot find any item by that name/ID...",
+        "INVALID_ITEM_AMOUNT": "Please input the correct amount you want. {{emoji}}",
+        "INVALID_ITEM_TIPS": "Perhaps check the **`{{prefix}}shop`** first? {{emoji}}",
+        "ITEM_AMOUNT": "How many **{{item}}** you want to buy?",
+        "ITEM_NOTAVAILABLE_IN_THE_GUILD": "**{{item}}** isn't available to purchase in this guild. Ask your administrator or guild owner to set it up.",
+        "NO_DUPLICATE": "You are already own that {{itemType}}",
+        "NON_PURCHASABLE_ITEM": "Sorry, you cannot buy this item.",
+        "OUT_OF_STOCK": "Oops, **'{{item}}'** is out of stock at the moment. Ask the server's owner/admin to restock the supply! {{emoji}}",
+        "PAYMENT_UNSUPPORTED": "Currently the payment method for this item is not supported. Sorry for this inconvenience!",
+        "QUICKAPPLY_COVER": "Do you wish to apply it to your profile card as well?",
+        "SHORT_GUIDE": "Checkout what you can buy in our `{{prefix}}shop` !",
+        "SUCCESSFUL": "**{{user}} has bought {{item}}!♡**\n╰ Now type **`{{prefix}}inventory`** to see the item."
+    },
+    "CARDCOLLECTION_AUTHOR_EMPTY": "**Aw, your card collection is empty and *full of dust*.** {{emoji}}",
+    "CARDCOLLECTION_EMPTY_TIPS": "Have some artcoins to spare? let's gacha!",
+    "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection. {{emoji}}",
     "CARTCOIN": {
-        "SHORT_GUIDE": "**Start converting your artcoins into EXP by typing\n`{{prefix}}cartcoin <amount/all>`** {{emoji}}",
+        "ALREADY_IN_PROGRESS": "Sorry, you already look like you are trying to do this.",
+        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion.",
         "DISABLED": "**the artcoins conversion is disabled in this server.** {{emoji}}\n╰─ ask your admins or server owner to enable it back.",
         "INSUFFICIENT_AMOUNT": "Eehh- right now you only have **{{amount}}** artcoins. Go grind harder! {{emoji}}",
         "INVALID_AMOUNT": "You need to put atleast **8 artcoins**, *baka!* {{emoji}}",
-        "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!",
-        "CONFIRMATION": "{{emoji}}**{{amount}}** 🡆 **{{gainedExp}} EXP** ?\nPress the button to confirm the conversion.",
-        "ALREADY_IN_PROGRESS": "Sorry, you already look like you are trying to do this."
-    },
-    "CATEXP": {
-        "UNAVAILABLE": "You don't have any exp to claim.",
-        "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
-        "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}"
+        "SHORT_GUIDE": "**Start converting your artcoins into EXP by typing\n`{{prefix}}cartcoin <amount/all>`** {{emoji}}",
+        "SUCCESSFUL": "Yay! successfully converted **{{artcoins}}** into **{{exp}}**!"
     },
     "CAT": {
         "RESPONSES": [
-            "Nyaa~",
-            "Paw paw!",
+            "*fluffy~*",
             ":cat:",
-            "*fluffy~*"
+            "Nyaa~",
+            "Paw paw!"
         ]
+    },
+    "CATEXP": {
+        "DISPLAY": "**{0} EXP** is available to claim.\nType `claim` to use the exp.",
+        "SUCCESSFUL": "Yummy! **{0}(+{1})** EXP has been updated. Make sure to pat your cat!{2}",
+        "UNAVAILABLE": "You don't have any exp to claim."
     },
     "CHECKOUT": {
         "CANCEL": "Transaction cancelled.",
-        "SUCCESSFUL": "Purchase successful!",
+        "ERROR": "Uhh, something went wrong.",
         "METADATA": "{2}**{3}** 🡆 **{0} {1}** ?\nPlease type `y` to confirm your purchase.",
-        "ERROR": "Uhh, something went wrong."
+        "SUCCESSFUL": "Purchase successful!"
     },
-    "USER": {
-        "IS_INVALID": "**Sorry- I'm unable to find that user.**",
-        "REGISTRATION_ON_PROCESS": "Try this command again in a few seconds!♡"
-    },
-    "COMMAND": {
-        "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
-        "TITLE": "{{emoji}} **| {{user}}'s {{command}}**",
-        "STILL_COOLDOWN": "**Can we relax for a bit, {{user}}?** {{emoji}}\n╰ You have {{timeLeft}}s left till your next command.",
-        "DISABLED": "I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back."
-    },
-    "CARDCOLLECTION_AUTHOR_EMPTY": "**Aw, your card collection is empty and *full of dust*.** {{emoji}}",
-    "CARDCOLLECTION_OTHERUSER_EMPTY": "**{{user}}** doesn't have any card collection. {{emoji}}",
-    "CARDCOLLECTION_EMPTY_TIPS": "Have some artcoins to spare? let's gacha!",
     "CHOOSE": {
+        "EMOTIONS": [
+            "AnnieCry",
+            "AnnieDab",
+            "AnnieLewd",
+            "AnniePogg",
+            "AnnieSmile"
+        ],
         "GUIDE": "I'll try to pick any options you give!",
         "INVALID_OPTIONS": "Ehh, give me multiple options to choose!",
         "THINKING": [
             "Hmm..",
-            "I will choose...",
-            "How about.."
-        ],
-        "EMOTIONS": [
-            "AnnieDab",
-            "AnnieCry",
-            "AnniePogg",
-            "AnnieSmile",
-            "AnnieLewd"
+            "How about..",
+            "I will choose..."
         ]
-    },
-    "COMPLAINT": {
-        "UNAUTHORIZED": "Sorry, your authority level doesn't meet the requirement to use the complaint system.",
-        "GUIDE": "You are authorized to use **Complaint System**\n\nThis feature used to track bad behavior caused by member in the server.",
-        "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
-        "NULL_RECORD": "User with ID **{1}** doesn't have any complaint record yet. Please type + <reason> to add new complaint.",
-        "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** complaints were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new complaint. Or `-` to remove the most recent complaint.",
-        "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
-        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed."
-    },
-    "CONFIGURATIONS": {
-        "HEADER": "**Hi, {{user}}!** {{emoji}}\n\n This is your control center of managing my configurations for this guild.\nBelow are the available modules:\n",
-        "FOOTER_GUIDE": "Type **{{prefix}}config <ModuleName>** to start configuring the selected module.",
-        "INVALID_MODULE": "Sorry, I couldn't find any module with that name.",
-        "GUIDE_FOR_SETRANKS": "Please use **{{prefix}}setranks** to modify this module.",
-        "GUIDE_FOR_SETBOOSTERCOLORS": "Please use **{{prefix}}setboostercolors** to modify this module.",
-        "GUIDE_FOR_WELCOMETEXT": "**Now please type the new welcomer message!**",
-        "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Use {{guild}} to display the guild name and {{user}} to display the joined user. To reset setting, type reset.",
-        "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",
-        "SUCCESSFUL": "The **{{module}}** module for this guild has been successfully updated!",
-        "REJECTED": "Sorry, but the selected value was rejected.",
-        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet.",
-        "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{{format}}"
-    },
-    "CRAFT": {
-        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
-        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",
-        "DUPLICATES": "You can't craft duplicates!",
-        "INSUFFICIENT_MATERIALS": "Missing materials.",
-        "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
-    },
-    "DAILIES": {
-        "AUTHOR_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯\nUse **`{{prefix}}vote`** to get 5,000 artcoins!",
-        "OTHERS_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nTheir dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯",
-        "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHi, {{user}}! here is your\n**{{amount}} artcoins!**\n╰────────☆～*:;,．*╯\n{{praise}}",
-        "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
-        "THANKS_HELP": "Thanks for the help!",
-        "STREAK_INCREASING": "Keep it up!",
-        "TO_REMIND": "Don't wanna lose streak? use my new **`{{prefix}}remind`** command!"
     },
     "CLI": {
         "GUIDE": "The pattern is similar to my dbkits, so make sure to input the cli command inside a square brackets.",
         "MISSING_STMT": "Please write the command statement inside **[]** brackets."
     },
+    "COMMAND": {
+        "DISABLED": "I can't perform this command! because **{{command}}** seems got disabled in this guild. Try ask your admin to enable it back.",
+        "FETCHING": "{{emoji}} `requesting {{command}} interface for ID {{user}}...`",
+        "STILL_COOLDOWN": "**Can we relax for a bit, {{user}}?** {{emoji}}\n╰ You have {{timeLeft}}s left till your next command.",
+        "TITLE": "{{emoji}} **| {{user}}'s {{command}}**"
+    },
+    "COMPLAINT": {
+        "DISPLAY_RECORD": "Here's what i found for user **{1}**\n\nTotal **{2}** complaints were recorded.\nThe recent one was added by **{3}**\n\nLook below for detailed logs.\n{4}\n\nType `+ <reason>` to add new complaint. Or `-` to remove the most recent complaint.",
+        "ENTRY_DELETE": "Thankyou **${opt[0]}**! recent report for **{2}** has been removed.",
+        "ENTRY_REGISTER": "Thankyou **{1}**! your report for **{2}** has been registered.",
+        "GUIDE": "You are authorized to use **Complaint System**\n\nThis feature used to track bad behavior caused by member in the server.",
+        "INVALID_TARGET": "User with keyword **{1}** cannot be found.",
+        "NULL_RECORD": "User with ID **{1}** doesn't have any complaint record yet. Please type + <reason> to add new complaint.",
+        "UNAUTHORIZED": "Sorry, your authority level doesn't meet the requirement to use the complaint system."
+    },
+    "CONFIGURATIONS": {
+        "CONFIRMATION": "Please supply what you would like the value to change **{{module}}** to. To reset setting type reset.",
+        "FOOTER_GUIDE": "Type **{{prefix}}config <ModuleName>** to start configuring the selected module.",
+        "GUIDE_FOR_SETBOOSTERCOLORS": "Please use **{{prefix}}setboostercolors** to modify this module.",
+        "GUIDE_FOR_SETRANKS": "Please use **{{prefix}}setranks** to modify this module.",
+        "GUIDE_FOR_WELCOMETEXT": "**Now please type the new welcomer message!**",
+        "GUIDE_FOR_WELCOMETEXT_FOOTER": "Tips: Use {{guild}} to display the guild name and {{user}} to display the joined user. To reset setting, type reset.",
+        "HEADER": "**Hi, {{user}}!** {{emoji}}\n\n This is your control center of managing my configurations for this guild.\nBelow are the available modules:\n",
+        "INVALID_MODULE": "Sorry, I couldn't find any module with that name.",
+        "NONE_TO_REMOVE": "Sorry, but the selected value was rejected due to not existing yet.",
+        "REJECTED": "Sorry, but the selected value was rejected.",
+        "SUCCESSFUL": "The **{{module}}** module for this guild has been successfully updated!",
+        "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{{format}}"
+    },
+    "CRAFT": {
+        "CONFIRMATION": "🔨 🡆 {0} **1x {1}** ?\nPlease type `y` to proceed the crafting.",
+        "DUPLICATES": "You can't craft duplicates!",
+        "INSUFFICIENT_MATERIALS": "Missing materials.",
+        "LVL_TOO_LOW": "Sorry, you need to be atleast lv **5** to use crafting feature.",
+        "SUCCESSFUL": "**{0}** has successfully crafted {1}**{2}** !"
+    },
+    "DAILIES": {
+        "AUTHOR_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯\nUse **`{{prefix}}vote`** to get 5,000 artcoins!",
+        "CLAIMED": "╭*:;,．★ ～☆*────────╮\nHi, {{user}}! here is your\n**{{amount}} artcoins!**\n╰────────☆～*:;,．*╯\n{{praise}}",
+        "OTHERS_IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nTheir dailies will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*╯",
+        "STREAK_INCREASING": "Keep it up!",
+        "STREAKS": "{{user}} also have reached **{{streaks}}** days of streak. {{extension}}",
+        "THANKS_HELP": "Thanks for the help!",
+        "TO_REMIND": "Don't wanna lose streak? use my new **`{{prefix}}remind`** command!"
+    },
     "DBKITS": {
         "AUTHORIZED": "Good evening, **{{user}}**. You can access my db query module.",
-        "MISSING_STMT": "Make sure to write the statement inside **[]** brackets.",
-        "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query."
+        "MISSING_FLAG": "Hey, you forgot the flag code. Try one of these,.\n\n`--get` Pulling single row.\n`--all` Pulling multiple rows\n`--run` Executing update-like query.",
+        "MISSING_STMT": "Make sure to write the statement inside **[]** brackets."
     },
     "DISPLAY_BALANCE": "╭:;,．★ ～☆──────╮\nOwned Artcoins\n{{emoji}} **{{amount}}**\n╰──────☆～:;,．╯\n{{tips}}",
     "DISTREWARD": {
         "CONFIRMATION": "🎁 🡆 **{0}'s Inventory** ?\nPlease type the reward ranking",
-        "SUCCESSFUL": "**{0}** has successfully received **{1}** package!",
+        "INVALID_REWARD": "Sorry, i can't find any package for that rank.",
         "SHORT_GUIDE": "You can start distributing event rewards by typing `>sendreward <user>`",
-        "INVALID_REWARD": "Sorry, i can't find any package for that rank."
-    },
-    "SENDREWARD": {
-        "RECEIVED": "{{user}} has recieved the package {{packageName}}",
-        "NO_PACKS": "I'm sorry but you dont have any packages made, you can make one with `/makereward create`"
+        "SUCCESSFUL": "**{0}** has successfully received **{1}** package!"
     },
     "DM": {
-        "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that.",
+        "COOLING_DOWN": "You can make changes again in 5 seconds.",
+        "ERROR": "Something went wrong ..",
         "NOTIFICATION_DISABLED": "Your setting has been saved. You won't receive any notification again in the future.",
         "NOTIFICATION_ENABLED": "Your setting has been saved. I'll keep you posted with your post engagements!",
-        "ERROR": "Something went wrong ..",
-        "COOLING_DOWN": "You can make changes again in 5 seconds."
+        "UNAVAILABLE_OPTION": "Sorry, I can't find any configuration for that."
     },
     "DONATE": "Please ask in our support server how you can support us.",
+    "EAT_POWERCAPSULE": {
+        "CONFIRMATION": "{{emoji}} **{{powerCapsuleAmount}} 🡆 {{gainedExp}} EXP ?**\nPlease type `y` to confirm the action.",
+        "INSUFFICIENT_AMOUNT": "You only have {{emoji}} **{{amount}} Power Capsules.**",
+        "INVALID_AMOUNT": "That doesn't seem to be a correct value. :/",
+        "MISSING_ARG": "Please don't forget to specify the amount you want to use next time.",
+        "SHORT_GUIDE": "You can use your power capsules and gain the exp by typing `>eat <amount>`.",
+        "SUCCESSFUL": "Successfully eating **{{amount}} Power Capsules!**",
+        "UNAVAILABLE": "You don't have any power capsules left."
+    },
+    "ERR": {
+        "MISSING_ARG": "Please don't forget to specify the amount of power capsules that you want to use.",
+        "NEGATIVE_INPUT": "You can't use negative values.",
+        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!"
+    },
     "ERROR": "Ops, something went wrong.\n```diff\n- {{error}}\n```",
-    "ERROR_ON_PRODUCTION": "**Oops, I just got hit by something ...** {{emoji}}\n╰ Sorry for this inconvenience; I'll forward it to my developers.",
-    "ERROR_ON_DEV": "Hmm, does not working as expected. {{emoji}}\n```diff\n- {{error}}\n```",
     "ERROR_MISSING_PERMISSION": "**Ouch, do I have the permission?**\n╰ My role permission seems not right, can you check it for me? [FAQ](<https://discord.com/channels/577121315480272908/814741342881185802/1074060930423455764>) {{emoji}} ",
+    "ERROR_ON_DEV": "Hmm, does not working as expected. {{emoji}}\n```diff\n- {{error}}\n```",
+    "ERROR_ON_PRODUCTION": "**Oops, I just got hit by something ...** {{emoji}}\n╰ Sorry for this inconvenience; I'll forward it to my developers.",
     "ERROR_UNSUPPORTED_FILE_TYPE": "**Aw, snap!** {{emoji}}\n╰ Please use a valid image link or image attachment!",
-    "REPORTING_ERROR": "Hey, my command controller was failing while parsing user's request. I've generated the logs below to help you troubleshooting it. {{emoji}}\n─────────────────☆～:;\n**Accident Timestamp::**\n╰─{{timestamp}}\n**Affected User::**\n╰─{{user}}\n**Affected Command::**\n╰─{{command}}\n─────────────────☆～:;,\nBelow is the printed response during accident.\n```diff\n- {{error}}\n```",
-    "LOCALIZATION_ERROR": "**I've encountered localization error. T_T\nPlease help me reporting this to my developers so I can serve you better!**",
     "EVAL": {
         "UNKNOWN_AUTHOR": "**<!> You are not authorized to access this feature.**"
     },
@@ -246,118 +241,159 @@
         "END": "Okay! the rest **{0}** participants ticket has been taken down.",
         "END_NOPARTICIPANTLEFT": "All participants have successfully participated in the event! Goodjob **{0}**!"
     },
-    "EVENT_SUBMISSION": {
-        "DEFAULT": "**{0}** has submitted some work! {1}",
-        "FOXIE_ENVELOPE": "Yay, **{0}** has submitted some work! {1}\nGive them some love!"
-    },
     "EVENT_MANAGER": {
         "PUBLIC_SHORT_GUIDE": "You can look up a event by doing\n`lookup <event>`\n`lookup-all`",
         "SHORT_GUIDE": "You can add,remove,update,end a event by doing\n`add`\n`remove <Event Name>`\n`update `\n`end <Event Name>`\n`lookup <event>`\n`lookup-all`",
         "WRONG_FORMAT": "You have given me the wrong format please format your entry like this:\n{0}"
     },
-    "EVJOIN": {
-        "ALREADY_HAS": "**{{user}}** you have unused ticket, go submit your art now!",
-        "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event. Go take your dailies if you haven't yet!",
-        "SUCCESSFUL": "**{{user}}** has joined the event.\n{{foxieMessage}}{{emoji}}",
-        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing.",
-        "ROLE_NOT_SET_UP": "I'm sorry but it seems your event role on this server is not set up."
+    "EVENT_SUBMISSION": {
+        "DEFAULT": "**{0}** has submitted some work! {1}",
+        "FOXIE_ENVELOPE": "Yay, **{0}** has submitted some work! {1}\nGive them some love!"
     },
     "EVENTMANAGER_UNAUTHORIZED_ACCESS": "You are not authorized to use event manager feature.",
     "EVENTMEMBER_UNAUTHORIZED_ACCESS": "You are not authorized to use event member feature.",
+    "EVJOIN": {
+        "ALREADY_HAS": "**{{user}}** you have unused ticket, go submit your art now!",
+        "FOXIES_BLESSING": "No charge will be applied with Foxie's Blessing.",
+        "INSUFFICIENT_BALANCE": "You don't have enough artcoins to participate in the current event. Go take your dailies if you haven't yet!",
+        "ROLE_NOT_SET_UP": "I'm sorry but it seems your event role on this server is not set up.",
+        "SUCCESSFUL": "**{{user}}** has joined the event.\n{{foxieMessage}}{{emoji}}"
+    },
     "EXEC_CODE": "Command executed in **{{time}}**\n```json\n{{result}}\n```",
+    "FACEGEN": {
+        "FETCHING": "{{emoji}} `Generating a fresh anime-face you've never seen before ...`",
+        "HEADER": "AI-Generated Character provided by [Gwern@TWDNE](https://www.gwern.net/index)"
+    },
     "FEATURED": {
         "FIRST_LIKE": "**{reactor}** liked your post.",
         "LIKED": "**{{reactor}}** and **{{amount}} others** liked your post.",
         "SUCCESSFUL": "Congratulations, **{{0}}**!\nyour post in {{channel}} has been featured!"
     },
-    "FACEGEN": {
-        "FETCHING": "{{emoji}} `Generating a fresh anime-face you've never seen before ...`",
-        "HEADER": "AI-Generated Character provided by [Gwern@TWDNE](https://www.gwern.net/index)"
-    },
     "FLIPCOIN": {
         "RESPONSES": [
+            "As I expected! landed on **{{result}}!**",
             "Landed on **{{result}}!** Yay!",
             "The coin has landed on **{{result}}.**",
-            "Whoa! **{{result}}!**",
-            "As I expected! landed on **{{result}}!**"
+            "Whoa! **{{result}}!**"
         ]
     },
     "FOX": {
         "RESPONSES": [
-            "Fluffy~",
             ":fox:",
+            "Awooo",
             "Don't get too close, i might bite you.",
-            "Awooo"
+            "Fluffy~"
         ]
     },
     "GACHA": {
-        "OPENING_WORDS": [
-            "{{emoji}} *{{user}} is opening their fortune!*",
-            "{{emoji}} *{{user}} is opening the gate to sea of despair*",
-            "{{emoji}} *{{user}}, may the RNG bless you*",
-            "{{emoji}} *{{user}}, do you know what's lying behind this box?*"
-        ],
-        "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
-        "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** boxes at once.",
         "AMOUNT_OUTOFRANGE": "You can only do **1** or **10** pulls, *baka*. {{emoji}}",
-        "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Annie's Pandora Box!**",
-        "SUGGEST_TO_BUY": "Interested in buying **{{amount}}pcs of Annie's Pandora Box**?",
-        "UPON_PURCHASE_WARN": "The box will be automatically opened upon purchase",
         "HEADER": "And earned the following items::\n{{items}}",
+        "INSUFFICIENT_TICKET": "{{emoji}} Ops, you don't have enough **Annie's Pandora Box!**",
+        "INVALID_AMOUNT": "{{emoji}} I'm only able to open either **1** or **10** boxes at once.",
+        "OPENING_WORDS": [
+            "{{emoji}} *{{user}} is opening the gate to sea of despair*",
+            "{{emoji}} *{{user}} is opening their fortune!*",
+            "{{emoji}} *{{user}}, do you know what's lying behind this box?*",
+            "{{emoji}} *{{user}}, may the RNG bless you*"
+        ],
         "SESSION_STILL_ACTIVE": "Heii, you can only open one gacha session at a time!",
-        "SUGGEST_TO_GRIND": "You don't even have enough artcoins to purchase the box! But don't worry, you can do some **`{{prefix}}quest`**, **`{{prefix}}daily`** or **`{{prefix}}vote`** to gain more artcoins. {{emoji}}"
+        "SUGGEST_TO_BUY": "Interested in buying **{{amount}}pcs of Annie's Pandora Box**?",
+        "SUGGEST_TO_GRIND": "You don't even have enough artcoins to purchase the box! But don't worry, you can do some **`{{prefix}}quest`**, **`{{prefix}}daily`** or **`{{prefix}}vote`** to gain more artcoins. {{emoji}}",
+        "UNAVAILABLE_REWARDS": "Aw, currently I don't have anything to offer in the gacha. Please come back later!",
+        "UPON_PURCHASE_WARN": "The box will be automatically opened upon purchase"
     },
-    "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GENERATE_AFFILIATE_INVITE": "Don't forget to check my affiliated server too! {{emoji}}\n{{affiliateLink}}",
     "GENERATE_BOT_INVITE": "You seem to be interested with me. [Let's add me to your server!]({{botInviteLink}})!",
+    "GENERATE_SERVER_INVITE": "Have a visit to my home! {{emoji}}\n{{serverLink}}",
     "GETLOG": {
-        "NULL": "Sorry **{{user}}** ... I can't find any saved logs in my directory. {{emoji}}",
-        "UNAUTHORIZED": "Sorry, you are not authorized to access this field.",
         "ERR": "Ops, something went wrong,..",
-        "RETURNING": "Hi **{{user}}**!, here's my system log. {{emoji}}"
+        "NULL": "Sorry **{{user}}** ... I can't find any saved logs in my directory. {{emoji}}",
+        "RETURNING": "Hi **{{user}}**!, here's my system log. {{emoji}}",
+        "UNAUTHORIZED": "Sorry, you are not authorized to access this field."
     },
     "GIFT": {
-        "SHORT_GUIDE": "╭*:;,．★ ～☆*──────────────╮\n**Who's gonna receive the gift from you, today?♡**\ne.g. **`{{prefix}}gift @crush 10 {{referenceItem}}`**\n╰────────────☆～*:;,．*╯\n～*Below are the gifts that you able to send!\n{{items}}",
-        "SELF_TARGETING": "**Boo, you can't gift yourself.** {{emoji}}",
-        "INSUFFICIENT_AMOUNT": "You only have **{{gift}}**, *baka*. {{emoji}}",
-        "MISSING_ITEM": "Don't forget to specify the gift you want to send!\n{{example}}",
-        "INVALID_AMOUNT": "Please type the amount you want to send!\n{{example}}",
-        "DISPLAYGIFT_HEADER": "Your gifts",
-        "SUCCESSFUL": "╭*:;,．★ ～☆*───────╮\n{{user}} has received\n**{{gift}}**\n╰─────☆～*:;,．*╯\nThanks for the gift!♡♡",
-        "UNAVAILABLE": "**Aw, you don't have any gifts at the moment!**\nBut don't worry- you can attain them from **`{{prefix}}gacha`** and my **`{{prefix}}shop`**!♡ {{emoji}}",
-        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
-        "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
         "CONFIRMATION": "Gift **{{user}}** with **{{gift}}**?\n─────────────────☆～:;,．\nOnce reacted, the gift will be turned into {{amount}}+ rep points for them.",
-        "HEADER": "has received your gifts!♡"
+        "DISPLAYGIFT_HEADER": "Your gifts",
+        "GUIDE_TO_PICK_GIFT": "Type `<amount> <giftname>` to start sending the gift.",
+        "HEADER": "has received your gifts!♡",
+        "INSUFFICIENT_AMOUNT": "You only have **{{gift}}**, *baka*. {{emoji}}",
+        "INVALID_AMOUNT": "Please type the amount you want to send!\n{{example}}",
+        "MISSING_ITEM": "Don't forget to specify the gift you want to send!\n{{example}}",
+        "RENDERING_AVAILABLE_GIFTS": "{{emoji}} **`collecting your gifts..`**",
+        "SELF_TARGETING": "**Boo, you can't gift yourself.** {{emoji}}",
+        "SHORT_GUIDE": "╭*:;,．★ ～☆*──────────────╮\n**Who's gonna receive the gift from you, today?♡**\ne.g. **`{{prefix}}gift @crush 10 {{referenceItem}}`**\n╰────────────☆～*:;,．*╯\n～*Below are the gifts that you able to send!\n{{items}}",
+        "SUCCESSFUL": "╭*:;,．★ ～☆*───────╮\n{{user}} has received\n**{{gift}}**\n╰─────☆～*:;,．*╯\nThanks for the gift!♡♡",
+        "UNAVAILABLE": "**Aw, you don't have any gifts at the moment!**\nBut don't worry- you can attain them from **`{{prefix}}gacha`** and my **`{{prefix}}shop`**!♡ {{emoji}}"
+    },
+    "GIVE_REPUTATION": {
+        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour rep will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
+        "SELF_TARGETING": "You can't rep yourself, *baka*. {{emoji}}",
+        "SHORT_GUIDE": "**Go rep someone you admire!** {{emoji}}\ne.g. **`{{prefix}}rep @friend`**",
+        "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} has received\n**+1 reputation point!**\n╰────────☆～*:;,．*╯\nHow generous~♡"
     },
     "HELP": {
-        "LANDING": "Are you looking for a quick start?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Check how much exp you get after those hours of chit-chatting. I can see how talkative you are just from this. ;)\n\n**`{{prefix}}bal`**\n> Have you ever wondered, how many artcoins you are currently have in your account right now? This is important thing to do in order to impress your friend, tehee.\n\n**`{{prefix}}daily`**\n> Did you hear 'freebies'? yes, I reward you free 250 artcoins for every 23 hours! So, make sure to not skip it, okay!?\n\n**`{{prefix}}leaderboard`**\n> Curious who got the highest exp, artcoins and fame points in your server? Now it's time to take your throne.\n\n**`{{prefix}}profile`**\n> Here you will be able to see your current rank, level, artcoins and fame points at a glance. It may be plain at first, but hey; we'll decorate it together!\n╰──────────☆～*:;,．*╯\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
+        "CATEGORY": "{{category}}`\n**here's the list!**\n{{commands}}",
+        "CATEGORY_DESC": {
+            "ARTSY": "My artsy stuffs that will assist your creative process!",
+            "CUSTOM": "Special functionality for specific server(s).",
+            "FUN": "Wanna have fun with your friends?!",
+            "SETTING": "Configurations modules that you may need to set up your guild and your custom profile!",
+            "SYSTEM": "Miscellaneous commands to check the state of Annie.",
+            "USER": "Everything you need are in here. Well-refined, just for you."
+        },
+        "CATEGORY_HEADER": {
+            "END": " commands!",
+            "START": "the "
+        },
+        "CATEGORY_HEADER_DESC": {
+            "ARTSY": "This is the list of my artsy command that its purpose to help furnishing your art ideas and entertaining you while getting artblock.",
+            "CUSTOM": "This is the list of my custom commands, special functionality for specific server(s).",
+            "DEVELOPER": "This is the list of my developer-only interface. They are merely boring tools~",
+            "FUN": "This is the list of my commands that helps keeping you and your friends entertained! The commands maybe not much as others, but I'll do my best.",
+            "MODERATION": "This is the list of my server-management tools that will help getting your server's chores done.",
+            "SETTING": "This is the list of configuration commands that allows you to edit my behaviours in this server. I can also help configuring your profile if you wish.",
+            "SYSTEM": "This is the list of my system commands that its purpose to check and monitor my resource status.",
+            "USER": "This is the list of my user commands and well .. generally, the most commands you will use are in this category."
+        },
         "COMMANDPEDIA": {
             "HEADER": "{{commandList}}\n**Can't find what you're looking for?**\ndon't worry! go type `{{prefix}}help <command>` (/help search <command>) to get information about the command\n\nOr for further assistance, try ask couple of questions in my support server and my developers will answer them right away!\n{{serverLink}} | {{botInviteLink}}\n-# To see Application (slash) commands please use the built in help menu of Discord. In the message bar type '/' then select Annie and you can scroll through all the available commands.",
             "USAGE_EXAMPLES": "Use **{{prefix}}help <name/category>** to get information about a command or category."
         },
-        "UNABLE_TO_FIND_COMMAND": "**Wait, what was that?**\n╰─ I don't remember if I ever have this type of command. {{emoji}}"
+        "LANDING": "Are you looking for a quick start?{{emoji}}\n╭*:;,．★ ～☆*────────╮\n**`{{prefix}}level`**\n> Check how much exp you get after those hours of chit-chatting. I can see how talkative you are just from this. ;)\n\n**`{{prefix}}bal`**\n> Have you ever wondered, how many artcoins you are currently have in your account right now? This is important thing to do in order to impress your friend, tehee.\n\n**`{{prefix}}daily`**\n> Did you hear 'freebies'? yes, I reward you free 250 artcoins for every 23 hours! So, make sure to not skip it, okay!?\n\n**`{{prefix}}leaderboard`**\n> Curious who got the highest exp, artcoins and fame points in your server? Now it's time to take your throne.\n\n**`{{prefix}}profile`**\n> Here you will be able to see your current rank, level, artcoins and fame points at a glance. It may be plain at first, but hey; we'll decorate it together!\n╰──────────☆～*:;,．*╯\nFor comprehensive list, take a look at Commandpedia by pressing the :book: button on this message.",
+        "UNABLE_TO_FIND_COMMAND": "**Wait, what was that?**\n╰─ I don't remember if I ever have this type of command. {{emoji}}",
+        "USAGE_FOOTER": "```javascript\nUSAGE: {{prefix}}{{usage}}\nPERM_LVL: {{permLvl}} or equivalent to {{permName}} privileges```"
     },
     "HUG": {
         "INVALID_TARGET": "Are you trying to hug a thin air? {{emoji}}",
-        "THEMSELVES": "**{{user}}** is hugging a thin air. :<",
-        "OTHER_USER": "**{{user}}** is hugging **{{targetUser}}** <3"
+        "OTHER_USER": "**{{user}}** is hugging **{{targetUser}}** <3",
+        "THEMSELVES": "**{{user}}** is hugging a thin air. :<"
+    },
+    "INFINITY": {
+        "ERROR": "Error occured while refreshing infinitybots.gg stats.\n```\n{{error}}\n```",
+        "REFRESHED": "infinitybots.gg stats has been refreshed in {{benchmark}}"
+    },
+    "INTERNAL_SYSTEM": {
+        "COMMANDS_REGISTERED": "Commands have successfully registered",
+        "DATABASE_CONNECTED": "Database successfully connected"
     },
     "INVALID_USER": "Sorry, I couldn't find that user.",
     "INVENTORY": {
-        "FETCHING": "{{emoji}} *Tidying up the inventory bag...*",
-        "AUTHOR_TIPS": "Use the item by typing **`{{prefix}}use <id/name>`** {{emoji}}",
         "AUTHOR_EMPTY": "You don't have any items in your bag.",
+        "AUTHOR_TIPS": "Use the item by typing **`{{prefix}}use <id/name>`** {{emoji}}",
+        "FETCHING": "{{emoji}} *Tidying up the inventory bag...*",
         "OTHER_USER_EMPTY": "**{{user}}** don't have any items in their bag."
     },
+    "INVITE_ANNIE": "Invite Annie",
     "INVITE_LINK_SENT": "{{emoji}}  **I've sent the invite link to your DM!**",
+    "JOIN_SUPPORT_SERVER": "Join Support Server",
+    "lang": "en",
     "LEADERBOARD": {
+        "AUTHOR_RANK": "You are currently **#{{rank}}** with total **{{points}}** {{emoji}}",
         "GUIDE": "Did you know this guild has its own ranking leaderboard? check out the commands below! {{emoji}}\n\n**`{{prefix}}lb exp`**\n> List of user with highest experience points & level. Their hours of chit-chatting do really pay off.\n\n**`{{prefix}}lb bal`**\n> List of rich users with the highest balance account. They are either coming from rich family or dedicating their time on grinding coins.\n\n**`{{prefix}}lb fame`**\n> List of most-loved users with highest popularity of fame points. They are way too fabulous for my taste.",
+        "HEADER": ":trophy: **| {{leaders}} Leaders**\n{{guildName}}'s Ranking",
         "INVALID_CATEGORY": "**Sorry- but there's no leaderboard for that category, yet.** {{emoji}}",
         "NO_DATA": "No ranking data found yet for **{{category}} Leaderboard.** Come back later!",
-        "AUTHOR_RANK": "You are currently **#{{rank}}** with total **{{points}}** {{emoji}}",
-        "UNRANKED": "You are unranked.",
-        "HEADER": ":trophy: **| {{leaders}} Leaders**\n{{guildName}}'s Ranking"
+        "UNRANKED": "You are unranked."
     },
     "LEVELCARD": {
         "HEADER": "<:Annie_Smug:523686816545636352> **| Level card for {0}**",
@@ -365,39 +401,94 @@
     },
     "LEVELUP": {
         "DEFAULT_RESPONSES": [
-            "**GG, {{user}}!♡**",
             "**Amazing {{user}}!♡**",
             "**Congratulation, {{user}}!♡**",
+            "**GG, {{user}}!♡**",
             "**Nice, {{user}}!♡**",
             "**uwu {{user}} just hit another level♡**"
         ],
-        "REGULAR": "**{{user}}** has leveled up to **LV{{gainedLevel}}**!\nhere's your {{emoji}} **{{gainedReward}}** reward. ",
-        "JUMPING": "**{{user}}** has leveled up to **LV{{gainedLevel}}**, awesome!\n here's your {{emoji}} **{{gainedReward}}** reward. "
+        "JUMPING": "**{{user}}** has leveled up to **LV{{gainedLevel}}**, awesome!\n here's your {{emoji}} **{{gainedReward}}** reward. ",
+        "REGULAR": "**{{user}}** has leveled up to **LV{{gainedLevel}}**!\nhere's your {{emoji}} **{{gainedReward}}** reward. "
     },
+    "LOCALIZATION_ERROR": "**I've encountered localization error. T_T\nPlease help me reporting this to my developers so I can serve you better!**",
     "LOGS": {
+        "CHANNEL_CREATE": "Yay! another channel for me to hangout in! {{emoji}}",
+        "CHANNEL_DELETE": "Oops, I saw this channel named **#{{channel}}** just got deleted. Check out the audit log to see who did it. {{emoji}}",
+        "CHANNEL_UPDATE": "Hi- I noticed this channel called **#{{oldChannel}}** just got updated into **{{newChannel}}!** it looks pretty cool now! {{emoji}}",
+        "EMOJI_CREATE": "Hey! a new emoji in the making!",
+        "EMOJI_DELETE": "Ops, I saw an emoji named **{{emoji}}** just got removed from the guild. You can try check the guild's audit log to see who did it.",
+        "EMOJI_UPDATE": "Hi- this old emoji called **{{oldEmoji}}** just got updated into **{{newEmoji}}!**",
+        "GUILD_BAN_ADD": "It's been a good time, **{{user}}**. But I had to do my job. {{emoji}}",
+        "GUILD_BAN_REMOVE": "You know, the moment your ban got revoked.. it meant we still care about you! so, be grateful **{{user}}**! {{emoji}}",
+        "GUILD_DELETE": "They have kicked me from their home ... {{emoji}}",
+        "GUILD_MEMBER_ADD": "Let's welcome our new friend, **{{user}}**! I hope we can get along really well. {{emoji}}",
+        "GUILD_MEMBER_REMOVE": "It was great to know you, **{{user}}**. I wish we could spend our time together a little bit longer, but what we can do? we can't deny our fate. {{emoji}}",
+        "GUILD_UPDATE_NAME": "We just changed our house name from **{{oldGuild}}** to **{{newGuild}}.** Hopefully this will be a good start! {{emoji}}",
+        "GUILD_UPDATE_REGION": "Let's see what do they have in this region. {{emoji}}",
         "GUILDCREATE": {
             "AFTER_INVITATION": "**Hi, thanks for inviting me to your guild!** {{emoji}}\nTo get you started, type **`{{prefix}}help`** in your server to see all my available commands.\n\nFor further informations, you can try ask it directly to my developers at link below.\n[Join my Support Server!]({{supportServer}}) ",
             "INTERNAL_LOG": "Hm?! I got invited to **{{guildCode}}**! I hope I don't disappoint them this time. {{emoji}}"
         },
         "MESSAGE_DELETE": "Hi! I just saw one message got deleted by **{{user}}** in this channel called as **{{channel}}**. If I could remember, the content was something like this:\n\n> {{content}}",
-        "MESSAGE_UPDATE": "Hi- I just saw a message got edited by **{{user}}** in **{{channel}}** channel. If you want to see the difference, take a look below. {{emoji}}\n\n**Here is the old message:**\n> {{oldMessage}}\n\n**Compared to the new one:**\n> {{newMessage}}",
         "MESSAGE_DELETE_BULK": "Hi hi! I saw **{{messages}} messages** got bulk deleted in **{{channel}}.**",
-        "ROLE_DELETE": "Hi! I just saw a role called **{{role}}** got deleted. If you want to know who did it, go check the audit logs of this guild! {{emoji}}",
+        "MESSAGE_UPDATE": "Hi- I just saw a message got edited by **{{user}}** in **{{channel}}** channel. If you want to see the difference, take a look below. {{emoji}}\n\n**Here is the old message:**\n> {{oldMessage}}\n\n**Compared to the new one:**\n> {{newMessage}}",
         "ROLE_CREATE": "Hi! I noticed a new role in the making! {{emoji}}",
-        "ROLE_UPDATE": "Hey hey! **{{oldRole}}** just got updated into **{{newRole}}!** looks fancy isn't?! it also using **{{color}}** as it's color.",
-        "EMOJI_DELETE": "Ops, I saw an emoji named **{{emoji}}** just got removed from the guild. You can try check the guild's audit log to see who did it.",
-        "EMOJI_CREATE": "Hey! a new emoji in the making!",
-        "EMOJI_UPDATE": "Hi- this old emoji called **{{oldEmoji}}** just got updated into **{{newEmoji}}!**",
-        "CHANNEL_DELETE": "Oops, I saw this channel named **#{{channel}}** just got deleted. Check out the audit log to see who did it. {{emoji}}",
-        "CHANNEL_CREATE": "Yay! another channel for me to hangout in! {{emoji}}",
-        "CHANNEL_UPDATE": "Hi- I noticed this channel called **#{{oldChannel}}** just got updated into **{{newChannel}}!** it looks pretty cool now! {{emoji}}",
-        "GUILD_BAN_ADD": "It's been a good time, **{{user}}**. But I had to do my job. {{emoji}}",
-        "GUILD_BAN_REMOVE": "You know, the moment your ban got revoked.. it meant we still care about you! so, be grateful **{{user}}**! {{emoji}}",
-        "GUILD_UPDATE_NAME": "We just changed our house name from **{{oldGuild}}** to **{{newGuild}}.** Hopefully this will be a good start! {{emoji}}",
-        "GUILD_UPDATE_REGION": "Let's see what do they have in this region. {{emoji}}",
-        "GUILD_MEMBER_ADD": "Let's welcome our new friend, **{{user}}**! I hope we can get along really well. {{emoji}}",
-        "GUILD_MEMBER_REMOVE": "It was great to know you, **{{user}}**. I wish we could spend our time together a little bit longer, but what we can do? we can't deny our fate. {{emoji}}",
-        "GUILD_DELETE": "They have kicked me from their home ... {{emoji}}"
+        "ROLE_DELETE": "Hi! I just saw a role called **{{role}}** got deleted. If you want to know who did it, go check the audit logs of this guild! {{emoji}}",
+        "ROLE_UPDATE": "Hey hey! **{{oldRole}}** just got updated into **{{newRole}}!** looks fancy isn't?! it also using **{{color}}** as it's color."
+    },
+    "MAIL": {
+        "CONFIRMATION": "I'll try to send to **{{user}}** with the folling message\n{{content}}.",
+        "INVALID_CONTENT_LENGTH": "`Where's the message? {{emoji}}",
+        "INVALID_USER": "Sorry, i couldn't find that user.",
+        "PROMPT": "Message will be send to **{{user}}**. Now please type the content of the message.",
+        "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!",
+        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{{user}}** with the folling message\n{{content}}.",
+        "UNSUCCESSFUL": "Aw, sadly the user seems locked their direct message. {{emoji}}"
+    },
+    "MAKEREWARD": {
+        "AC_SET_TO": "AC amount set to",
+        "ADD_ITEMS": "Time to add any items if you wish.",
+        "ADD_ROLES": "Time to add any roles if you wish.",
+        "CONFIRM": "Yes thats it",
+        "DELETE_CONFIRM": "Please confirm the deletion of package: {{packageName}}",
+        "DELETE_FAIL": "Your package has not been deleted",
+        "DELETE_SUCCESS": "Your package has been deleted",
+        "IGNORE": "I'm sorry but only the user who sent this message may interact with it.",
+        "ITEM_ADD_ANOTHER": "Please Hit the Item button to add another item",
+        "ITEM_ADD_TRY": "Please Hit the Item button to try again",
+        "ITEM_CANCEL": "No thats not the item",
+        "ITEM_CREATION_TITLE": "Item creation",
+        "ITEM_FOUND": "The item I found was: {{itemName}}, is this correct?",
+        "ITEM_NAME": "What is the item's name?",
+        "ITEM_QUANTITY": "What quantity should be given?",
+        "ITEMS_SELECTED": "items selected",
+        "LIST_PKG_HEADER": "Custom reward packages for",
+        "MAX_PACKAGES": "I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.",
+        "NAME_EXISTS": "I'm sorry but you have a package with that name already",
+        "NAN_QUANTITY": "I'm sorry the quantity you typed in was not a number I will default the amount to 1",
+        "NO_ITEMS_ADDED": "No items have been added",
+        "NO_ITEMS_ATTEMPT_START": "No item was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your",
+        "NO_ITEMS_AVAIL": "Sorry you dont have any items for me to give try adding one with /setshop add.",
+        "NO_ITEMS_MENU": "(0/0) items selected, There are no items available to add",
+        "NO_PACKAGES": "I'm sorry you dont seem to have any packages. try to make one with /makereward create",
+        "NO_ROLES": "Sorry you dont have any roles for me to give try moving my role higher.",
+        "NO_ROLES_ADDED": "No roles have been added",
+        "NO_ROLES_ATTEMPT_START": "No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your",
+        "NO_ROLES_MENU": "(0/0) roles selected, There are no roles available to add",
+        "NO_ROLES_OR_ITEMS_ATTEMPT_END": "attempt.",
+        "OTHER_OPTION": "Sorry must pick one of the other options",
+        "ROLE_ATTEMPT": "please finish the current attempt role first then proceed.",
+        "ROLE_CANCEL": "No thats not the role",
+        "ROLE_FOUND": "The role I found was: {{roleName}}, is this correct?",
+        "ROLE_ID_NAME": "What is the role's name or id?",
+        "ROLE_TRY_AGAIN": "Please Hit the role button to try again",
+        "ROLES_SELECTED": "roles selected",
+        "SESSION_STILL_ACTIVE": "I'm sorry but you have a create package session still active please wait a few before trying again",
+        "SUBMIT_CANCEL": "The package has not been added, please run the command again if you wish to add a package.",
+        "SUCCESSFUL": "Your package has been added, you can view the packages with '/makereward list'",
+        "TIME_EXPIRED": "Your time has expired, no worries though just excute the makereward command again to add a package",
+        "TRACK_MSG_START": "The package you are creating is named",
+        "TRANSACTION_CANCEL": "Please hit the button to confirm the transaction or cancel to stop the transaction"
     },
     "MANAGE_PROFILE": {
         "ALREADY_DIPLAYED": "Sorry, but you are Already displaying that {0}",
@@ -405,208 +496,168 @@
         "DONT_OWN_ITEM": "Sorry but you do not own this {0}, {1}",
         "INVALID_SLOT": "Sorry but that {0} slot is not availiable, {1}",
         "ITEM_UPDATED": "Your {0} has been updated to: {1}",
-        "MENU": "{0}\n\nPlease type the name of the {1} you would like to change to.\nEnter \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
         "MAIN_MENU": "Please repsond with {0} \n Or \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
+        "MENU": "{0}\n\nPlease type the name of the {1} you would like to change to.\nEnter \"cancel\" or \"exit\" or \"quit\" to quit the selection menu",
         "MENU_CLOSED": "Selection menu closed.",
         "NO_ITEM_SUPPLIED": "Sorry, but you didnt give an item to display\n",
         "NO_ITEMS": "I'm sorry but you dont have any {0}"
     },
-    "USERDATA": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
-        "INVALID_OPTION": "I'm sorry that is not a vaild option",
-        "INVALID_USE_SELF": "I'm sorry but you can not do this command on yourself",
-        "PROMPT": "You may choose to retrieve any data by a specific table or one of my predifined groupings, by typing them after this message (1 per command)\nGroupings:\nAll\n${{data}}",
-        "SUCCESSFUL_GROUP": "Here is the data from `{{input}}` group for user with id: {{user}}",
-        "SUCCESSFUL_TABLE": "Here is the data from `{{input}}` table for user with id: {{user}}",
-        "SUCCESSFUL_ALL": "Here is the all data for user with id: {{user}}",
-        "DELETE": "All data tied to user:{{user}} has been deleted",
-        "AVAILABLE_OPTIONS": "I'm sorry but my only options are to tables, retrieve, or remove."
-    },
-    "MAIL": {
-        "INVALID_USER": "Sorry, i couldn't find that user.",
-        "INVALID_CONTENT_LENGTH": "`Where's the message? {{emoji}}",
-        "PROMPT": "Message will be send to **{{user}}**. Now please type the content of the message.",
-        "SUCCESSFUL": "Gotcha! message has been successfully sent to **{{user}}** with the folling message\n{{content}}.",
-        "CONFIRMATION": "I'll try to send to **{{user}}** with the folling message\n{{content}}.",
-        "UNSUCCESSFUL": "Aw, sadly the user seems locked their direct message. {{emoji}}",
-        "SHORT_GUIDE": "Wanna use my mail service? don't forget to include the user next time!"
-    },
     "MUTE": {
+        "DURATION": "Okay, now please type the mute duration.",
+        "INVALID_DATE": "I'm not sure if that's correct date. :0",
         "MISSING_ARG": "You are authorized to use the **Mute System**. Please specify the target user next time!",
         "SUCCESSFUL": "Successfully muted **{{user}}** for **{{duration}}**! {{emoji}}",
-        "INVALID_DATE": "I'm not sure if that's correct date. :0",
-        "DURATION": "Okay, now please type the mute duration.",
         "USER_HAS_ROLE": "I'm sorry, {{user}}, is already muted currently."
     },
     "NON_COMMAND_CHANNEL": "**No, {{user}}.** You can't use my command here. {{emoji}}",
-    "UNMUTE": {
-        "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
-        "SUCCESSFUL": "Successfully unmuted **{{user}}**",
-        "NO_MUTE_ROLE": "I'm sorry but no mute role could be found.",
-        "USER_DOESNT_HAVE_ROLE": "I'm sorry, {{user}}, is not muted currently."
-    },
     "PANDA": {
         "RESPONSES": [
             ":panda:",
-            "So cute!",
+            "How adorable!",
             "Look at this lazy blob!",
-            "How adorable!"
+            "So cute!"
         ]
     },
     "PAT": {
         "INVALID_TARGET": "Who's that? a ghost? {{emoji}}",
-        "THEMSELVES": "**{{user}}** is patting themselves... </3",
-        "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!"
+        "OTHER_USER": "**{{user}}** is patting **{{targetUser}}**, how adorable!",
+        "THEMSELVES": "**{{user}}** is patting themselves... </3"
     },
-    "SESSION_STILL_RUNNING": "**Your session still active!** {{emoji}}",
     "PAY": {
-        "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **2% tax fee** for each transaction you made.",
-        "LVL_TOO_LOW": "You need to be atleast **LV {{level}}** to use this feature.",
-        "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
-        "USER_CONFIRMATION": "Transfering **{{amount}} (2% tax included)** to **{{user}}'s** account?\n─────────────────☆～:;,．\nReact to the button to confirm the transaction.",
+        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
+        "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction.",
+        "INSUFFICIENT_BALANCE": "You don't have enough balance to continue this transaction.",
         "INVALID_AMOUNT": "Don't forget to specify the amount you want to send!",
         "INVALID_NUMBER": "Please input a valid amount you want to send.",
-        "INSUFFICIENT_BALANCE": "You don't have enough balance to continue this transaction.",
-        "CONFIRMATION": "{{emoji}}**+{{amount}}** 🡆 **{{user}}'s Balance**?\ntype `y` to confirm your transaction.",
+        "LVL_TOO_LOW": "You need to be atleast **LV {{level}}** to use this feature.",
+        "RECEIVED": "has received your artcoins!♡",
+        "SELF_TARGETING": "You can't pay yourself, baka. {{emoji}}",
+        "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}",
+        "SHORT_GUIDE": "This **Pay System** allows you to share your artcoins with other user! you can start by simply typing `{{prefix}}pay <user> <amount>`\n\nKeep in mind, there's **2% tax fee** for each transaction you made.",
         "SUCCESSFUL": "**{{target}}** has received your artcoins!♡",
         "TARGET_NOTIFICATION": "**{0}** has sent you {1}**{2}**",
-        "EXCEEDING_LIMIT": "You can only transfer **{{limit}}** at maximum per transaction.",
-        "SESSION_STILL_RUNNING": "**Your pay session still active!** {{emoji}}",
-        "RECEIVED": "has received your artcoins!♡"
+        "USER_CONFIRMATION": "Transfering **{{amount}} (2% tax included)** to **{{user}}'s** account?\n─────────────────☆～:;,．\nReact to the button to confirm the transaction."
     },
     "PIXIV": {
-        "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Showing the most recommended work for you ...*",
         "DISPLAY_CUSTOM_SEARCH": "{{emoji}} *Looking for '{{keyword}}' ...*",
-        "NO_RESULT": "Sorry! i can't find anything with that keyword.",
+        "DISPLAY_RECOMMENDED_WORK": "{{emoji}} *Showing the most recommended work for you ...*",
         "FAIL_TO_LOAD": "Ops, something went wrong. Please try again with different keyword!",
         "MADE_WITH": {
-            "TOOLS": "**Made with {{tools}}**\n{{tags}}",
-            "NONE": "{{tools}}\n{{tags}}"
-        }
-    },
-    "EAT_POWERCAPSULE": {
-        "MISSING_ARG": "Please don't forget to specify the amount you want to use next time.",
-        "INVALID_AMOUNT": "That doesn't seem to be a correct value. :/",
-        "SHORT_GUIDE": "You can use your power capsules and gain the exp by typing `>eat <amount>`.",
-        "INSUFFICIENT_AMOUNT": "You only have {{emoji}} **{{amount}} Power Capsules.**",
-        "SUCCESSFUL": "Successfully eating **{{amount}} Power Capsules!**",
-        "CONFIRMATION": "{{emoji}} **{{powerCapsuleAmount}} 🡆 {{gainedExp}} EXP ?**\nPlease type `y` to confirm the action.",
-        "UNAVAILABLE": "You don't have any power capsules left."
-    },
-    "PROFILECARD": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
-        "FETCHING": "{{emoji}} *Hold on- your profile card still in build ...*",
-        "NEWCOMER_TIPS": "Friendly reminder, you can spice up your card with **`setcover`** command!",
-        "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**"
+            "NONE": "{{tools}}\n{{tags}}",
+            "TOOLS": "**Made with {{tools}}**\n{{tags}}"
+        },
+        "NO_RESULT": "Sorry! i can't find anything with that keyword."
     },
     "PORTFOLIOCARD": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "FETCHING": "`Fetching {0}'s portfolio data . .`",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Portfolio card for {0}**",
-        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
-        "FETCHING": "`Fetching {0}'s portfolio data . .`"
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature."
     },
     "POST": {
         "IS_EMPTY": "Hmm, **{{user}}** hasn't post anything since the first time i came here. {{emoji}}"
     },
+    "PROFILECARD": {
+        "FETCHING": "{{emoji}} *Hold on- your profile card still in build ...*",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Profile card for {0}**",
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "NEWCOMER_TIPS": "Friendly reminder, you can spice up your card with **`setcover`** command!"
+    },
     "PRUNE": {
-        "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
-        "INVALID_AMOUNT": "Please put a valid number.",
         "EXCEEDING_LIMIT": "Sorry, I can't delete more than **100** messages at once!",
+        "INVALID_AMOUNT": "Please put a valid number.",
+        "SHORT_GUIDE": "You are authorized to use bulk messages deletion feature. Please add the amount to delete next time.",
         "SUCCESSFUL": "Yay! **{{amount}}** messages have been successfully deleted! {{emoji}}"
     },
     "QUEST": {
-        "DISPLAY": "\n\n╭*:;,．★ ～☆*────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
-        "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰ You've completed it and received {{reward}}!",
-        "INCORRECT_ANSWER": "Boo, incorrect answer!",
-        "FOOTER": "Type one correct answer to complete the quest.",
-        "FETCHING": "{{emoji}} `Looking into the quest board...`",
-        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour next quest will be available\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nClaim your **`{{prefix}}daily`** if you haven't yet!",
-        "EMPTY": "Sorry, no quests are available to take at the moment!",
         "CANCEL": "Alright, quest has been cancelled.",
+        "COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour next quest will be available\n:clock1: **{{time}}**\n╰────────☆～:;,．╯\nClaim your **`{{prefix}}daily`** if you haven't yet!",
+        "DISPLAY": "\n\n╭*:;,．★ ～☆*────────────╮\n\n**__{{questTitle}}__**\n{{description}}\n**Rewards: {{reward}}**\n\n╰────────────☆～*:;,．*╯",
+        "EMPTY": "Sorry, no quests are available to take at the moment!",
+        "EXPIRED": "Your quest time has expired, no worries though just excute the quest command again to pick up where you left off",
+        "FETCHING": "{{emoji}} `Looking into the quest board...`",
+        "FOOTER": "Type one correct answer to complete the quest.",
+        "INCORRECT_ANSWER": "Boo, incorrect answer!",
         "PRAISE": [
+            "Astounding",
             "Awesome",
-            "Nice",
             "GG",
             "Genius",
             "Goodjob",
             "Impressive",
             "Magnificent",
-            "Astounding"
+            "Nice"
         ],
         "SESSION_STILL_RUNNING": "**Your quest session still active!** {{emoji}}",
-        "EXPIRED": "Your quest time has expired, no worries though just excute the quest command again to pick up where you left off"
+        "SUCCESSFUL": "**{{praise}}, {{user}}!♡**\n╰ You've completed it and received {{reward}}!"
     },
     "RECYCLE": {
         "CONFIRMATION": "Are you sure you want to convert {0}, at the ratio of 1:{1} resulting in {2} {3}",
         "CONVERSATION_COMPLETED": "You have converted {0}, {1}, into {2} {3}",
-        "NOT_ENOUGH_ITEMS": "I'm sorry, but you don't have enough {0} to recycle.",
-        "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
         "HAS_NO_ITEMS_TO_RECYCLE": "I'm sorry, but you don't have any items to recycle",
         "INVALID_FORMAT": "Please use proper format so i can parse your request.",
+        "NOT_ENOUGH_ITEMS": "I'm sorry, but you don't have enough {0} to recycle.",
+        "STILL_HAS_CARDS_TO_CRAFT": "I'm sorry, but you still have some cards to get",
         "TRANSACTION_CLOSED": "Transaction closed."
     },
     "REDEEM": {
-        "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
-        "INVALID_AMOUNT": "Please put a valid amount.",
-        "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
         "CANCELLED": "Transaction cancelled.",
-        "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory.",
         "COLLECTOR_FORTUNE": "Ara ara, redeem successful! {0}**{1}(+{2}) Lucky Tickets** have been added into your inventory.\nGained tickets are doubled with Rany's Blessing.",
-        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase."
-    },
-    "RELATIONSHIPCARD": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
-        "HEADER": "<:Annie_Smug:523686816545636352> **| Relationship card for {0}**",
-        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
-        "FETCHING": "`Fetching {0}'s badge data . .`"
+        "CONFIRMATION": "{0}**{1}** 🡆 {2}**{3} Lucky Tickets** ?\nPlease type `y` to confirm your purchase.",
+        "INSUFFICIENT_BALANCE": "You need more {0}**+{1}** to continue the transaction.",
+        "INVALID_AMOUNT": "Please put a valid amount.",
+        "SHORT_GUIDE": "You can redeem Lucky Tickets by typing `>redeem <amount/all>`",
+        "SUCCESSFUL": "Redeem successful! {0}**{1} Lucky Tickets** have been added into your inventory."
     },
     "RELATIONSHIP": {
-        "GUIDE": "╭*:;,．★ ～☆*──────────────╮\nStart assigning a unique relationship status with your friends!\ne.g. **`{{prefix}}setrel @napu couple`**\nOr perhaps if you want to remove them from your relationship, simply type **`{{prefix}}setrel remove @user`**\n╰────────────☆～*:;,．*╯\nBelow are the available relationship status that you can use:\n{{list}}",
-        "SET_TO_SELF": "You can't add a relationship to yourself, *baka.* {{emoji}}",
+        "ACCEPTED": "has accepted your relationship request!",
         "ALREADY_REGISTERED": "**{{user}}** is already registered as your **{{role}}**",
-        "UNAVAILABLE": "There is no assignable relationship at the moment.",
-        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** now is \n{{user}}'s {{role}}!",
-        "SUCCESSFULLY_REMOVED": "Your relationship with **{{user}}** has been removed.",
-        "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
-        "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
         "CHANGE_DELETE_GUIDE": "Type `delete` to remove or `change <relationshipName>` to change your current relationship with them.",
-        "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
-        "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
+        "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}",
+        "GUIDE": "╭*:;,．★ ～☆*──────────────╮\nStart assigning a unique relationship status with your friends!\ne.g. **`{{prefix}}setrel @napu couple`**\nOr perhaps if you want to remove them from your relationship, simply type **`{{prefix}}setrel remove @user`**\n╰────────────☆～*:;,．*╯\nBelow are the available relationship status that you can use:\n{{list}}",
         "HIT_LIMIT": "For best presentation, you can only have up to **7 relationships.** {{emoji}}",
         "HIT_LIMIT_OTHERS": "**So unfortunate.** {{user}} already hitting their max relationships. Go ask them to break one of their relationship first. </3",
+        "IS_EMPTY": "**～Wanna set up a new relationship tree?♡**\nstart by typing **`{{prefix}}setrelationship`**",
         "MISSING_GENDER": "Don't forget to set your gender first!\ne.g. **`{{prefix}}setgender <male/female/neutral>`**",
+        "NOT_WITH": "is no longer with you.",
+        "SELECTION": "You are going to add **{{user}}** to your relationship tree. Now choose the suitable role for them!\n\n{{list}}",
+        "SELECTION_GUIDE": "Type the relationship `ID/Name` to start assigning.",
+        "SET_TO_SELF": "You can't add a relationship to yourself, *baka.* {{emoji}}",
+        "SUCCESSFULLY_REGISTERED": "**{{assignedUser}}** now is \n{{user}}'s {{role}}!",
+        "SUCCESSFULLY_REMOVED": "Your relationship with **{{user}}** has been removed.",
         "TARGET_CONFIRMATION": "Okay, you are going to ask **{{user}}** to be your **{{relationship}}**?\n─────────────────☆～:;,．\nPlease wait for **{{mention}}** to accept this request.",
         "TARGET_NOT_PART_OF": "**Wait, what?** {{user}} isn't even in your relationship. Geez. {{emoji}}",
         "TIPS_AUTHOR_ON_CHECK": "Ask them to use **`{{prefix}}setgender`** to get gender-specific for your relationship tree! {{emoji}}\nIf you dont idenify as male/female/neutral, disregard this message, as we will use the neutral terminology",
-        "DELETE_CONFIRMATION": "Are you sure you want to perform this action? You know, this action is irreversible and you have to ask their consent again if you want to get back into relationship. Think twice! {{emoji}}",
-        "NOT_WITH": "is no longer with you.",
-        "ACCEPTED": "has accepted your relationship request!"
+        "TYPE_DOESNT_EXIST": "**Sorry- that relationship doesnt exist.** {{emoji}}",
+        "UNAVAILABLE": "There is no assignable relationship at the moment."
+    },
+    "RELATIONSHIPCARD": {
+        "FETCHING": "`Fetching {0}'s badge data . .`",
+        "HEADER": "<:Annie_Smug:523686816545636352> **| Relationship card for {0}**",
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature."
     },
     "REMINDER": {
         "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
         "INVALID_DATE": "**Oops, tell me when to remind!** {{emoji}}\n╰─ should be like **`{{prefix}}remind to sleep in 8 hours`**",
         "SUCCESSFUL": "**Annie, at your service!♡** {{emoji}}\n╰─ I will remind you that {{time}}!"
     },
-    "GIVE_REPUTATION": {
-        "IN_COOLDOWN": "╭*:;,．★ ～☆*────────╮\nYour rep will be available\n:clock1: **{{time}}**\n╰────────☆～*:;,．*",
-        "SHORT_GUIDE": "**Go rep someone you admire!** {{emoji}}\ne.g. **`{{prefix}}rep @friend`**",
-        "SELF_TARGETING": "You can't rep yourself, *baka*. {{emoji}}",
-        "SUCCESSFUL": "╭*:;,．★ ～☆*────────╮\n{{user}} has received\n**+1 reputation point!**\n╰────────☆～*:;,．*╯\nHow generous~♡"
-    },
-    "REQUEST_PING": "**Pong!** {{emoji}}\n╰ received in {{ping}} ms!",
-    "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
-    "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
     "REMOVE_STICKER": {
         "NO_CHANGES": "Sorry, it seems you haven't equipped any sticker.",
         "SUCCESSFUL": "Your profile sticker has been unequipped."
     },
+    "REMOVEALLREACTIONS": "I have removed all possible reactions from message with id: {{id}}",
     "REMOVEROLE": {
+        "DOESNT_HAVE_THE_ROLE": "**{{user}}** doesn't even have that role .. don't tease me please. {{emoji}}",
         "MISSING_ARG": "You are authorized to use **Remove Role System**, please don't forget to specify the target user next time!",
         "NO_ROLE_FOUND": "Sorry, I'm unable to find the role you are looking for. Type it again with different name.",
         "ROLE_SELECTION": "Now please type the role name you want me to remove from **{{user}}**",
-        "DOESNT_HAVE_THE_ROLE": "**{{user}}** doesn't even have that role .. don't tease me please. {{emoji}}",
         "SUCCESSFUL": "Successfully removed **{{role}}** from **{{user}}.**"
     },
+    "REPORTING_ERROR": "Hey, my command controller was failing while parsing user's request. I've generated the logs below to help you troubleshooting it. {{emoji}}\n─────────────────☆～:;\n**Accident Timestamp::**\n╰─{{timestamp}}\n**Affected User::**\n╰─{{user}}\n**Affected Command::**\n╰─{{command}}\n─────────────────☆～:;,\nBelow is the printed response during accident.\n```diff\n- {{error}}\n```",
+    "REQUEST_PING": "**Pong!** {{emoji}}\n╰ received in {{ping}} ms!",
+    "RESET_EXP": "**{0}'s** experience metadata has been refreshed.",
+    "RESET_INVENTORY": "**{0}'s** inventory metadata has been wiped out.",
     "ROLE": {
         "ERR": {
             "WRONG": {
@@ -619,398 +670,423 @@
         "MISSING_ARGS": "Please use this command like: {{prefix}}rd d6 or {{prefix}}rd 2d6\n {{prefix}}rd <amount of dice to roll>d<amount of sides on the dice>"
     },
     "SAY": {
-        "SHORT_GUIDE": "Please include the message that you want me to read! {{emoji}}",
-        "SENT": "Message sent :)"
+        "SENT": "Message sent :)",
+        "SHORT_GUIDE": "Please include the message that you want me to read! {{emoji}}"
     },
     "SELLFRAGMENTS": {
-        "GUIDE": "I know you are probably tired looking at your collected fragments sitting there in your inventory doing nothing. But fortunately, with this command it will allows you to sell those fragments for a few amount of artcoins! interested to try? follow the format below. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\ne.g. __{{prefix}}sellfrag 10__ or __{{prefix}}sellfrag all__\n\n> Keep in mind, the conversion rate is **{{rate}}**, so you need to have at least {{emojiFragment}}**{{min}} Fragments** in order to use this command!",
-        "EMPTY_FRAGMENTS": "Oops, what you are trying to do? you don't even have any fragments to sell. {{emoji}}",
-        "INVALID_AMOUNT": "Please type a proper number or `all` to sell all your available fragments.",
         "AMOUNT_TOO_LOW": "You need to put at least {{emoji}}**{{amount}} Fragments** to sell.",
         "CONFIRMATION": "You are going to sell {{fragmentsEmoji}}**{{fragmentsAmount}}** for {{artcoinsEmoji}}**{{artcoinsAmount}}**. Shall we continue? ",
+        "EMPTY_FRAGMENTS": "Oops, what you are trying to do? you don't even have any fragments to sell. {{emoji}}",
+        "GUIDE": "I know you are probably tired looking at your collected fragments sitting there in your inventory doing nothing. But fortunately, with this command it will allows you to sell those fragments for a few amount of artcoins! interested to try? follow the format below. {{emoji}}\n\n`{{prefix}}sellfrag <amount/all>`\ne.g. __{{prefix}}sellfrag 10__ or __{{prefix}}sellfrag all__\n\n> Keep in mind, the conversion rate is **{{rate}}**, so you need to have at least {{emojiFragment}}**{{min}} Fragments** in order to use this command!",
+        "INVALID_AMOUNT": "Please type a proper number or `all` to sell all your available fragments.",
         "SUCCESSFUL": "**Fragments sold!**"
+    },
+    "SENDREWARD": {
+        "NO_PACKS": "I'm sorry but you dont have any packages made, you can make one with `/makereward create`",
+        "RECEIVED": "{{user}} has recieved the package {{packageName}}"
+    },
+    "SERVER_BOOST": {
+        "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
+    },
+    "SERVER_REMOTE": {
+        "AUTHORIZED": "**{0}**, you are authorized to control my server remotely. {1}",
+        "CURRENTLY_LIVE": "Currently is running in production state.",
+        "CURRENTLY_MT": "Currently is running in development state.",
+        "GUIDE": "These are the available parameter [-live, -mt, -rs].",
+        "PROCESSING": "**Server will restart in {0} seconds...**"
+    },
+    "SERVERINFO": "A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! ",
+    "SESSION_STILL_RUNNING": "**Your session still active!** {{emoji}}",
+    "SETBIO": {
+        "EXCEEDING_LIMIT": "**I've trouble fitting this into my small pocket!～** {{emoji}}\n╰─Can you reduce it by {{chars}} characters?",
+        "MISSING_ARG": "╭*:;,．★ ～☆*────────────────╮\n**Wants to set a unique profile bio?♡**\nLet's type **`{{prefix}}setbio <yourMessageHere!>`**\n╰──────────☆～*:;,．*╯\nKeep in mind that you can only write **156 characters** at maximum.",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**",
+        "RENDERING": "{{emoji}}`rendering the new bio for you...`",
+        "SET": "Yay! your new profile's bio has been set!♡"
+    },
+    "SETCARTCOIN": {
+        "DISABLED": "disabled",
+        "ENABLED": "enabled",
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nthe leveling feels too easy? now you are able to toggle artcoin conversion feature in your server!♡\n**`e.g. {{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\nthis feature is currently {{status}} in the server.",
+        "INVALID_ACTION": "you can only use either enable or disable for this one!\n╰─**`e.g. {{prefix}}setcartcoin disable`**",
+        "SUCCESSFULLY_DISABLED": "**alright!♡** {{emoji}}\n╰─ disabled in the server!",
+        "SUCCESSFULLY_ENABLED": "**okaa!♡** {{emoji}}\n╰─ enabled for the server!"
+    },
+    "SETCOMMAND": {
+        "CHANNEL_ALREADY_REGISTERED": "**Eh?** you can't register the same channel twice! {{emoji}}",
+        "CHANNEL_POOL_ALREADY_EMPTY": "Hey, there's nothing to reset! {{emoji}}",
+        "GUIDE": "Here you can define which command channels that I should only listen to! {{channelStatus}}\n╭*:;,．★ ～☆*────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Here you can add a new channel as my only channel. If you haven't setting up anything previously, I'll listen to every visible channels! You can also add multiple channels at a time by separating it with comma.\n__e.g. {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Planning to remake the server channels? worry not, you can revert the command channels to default. This will ensure that I'm able to listen to every visible channel!\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "**Hmm, what was that?** the only available actions in SetCommand are **`channel`** and **`reset`**, so make sure you typed the correct one!",
+        "INVALID_NEW_CHANNEL": "Hold on, is {{channel}} even a channel? {{emoji}}",
+        "MISSING_TARGET_CHANNEL": "Don't forget to specify the channel, okay? {{emoji}}",
+        "RESET_CONFIRMATION": "Keep in mind, {{totalChannels}} command channels will no longer put in effect and all the visible channels will be available to me. Make sure you are aware with this action, okay? {{emoji}}",
+        "RESET_SUCCESSFUL": "**Alright, done!** {{emoji}}\n╰ My command usage is no longer restricted.",
+        "UPDATE_CHANNEL_SUCCESSFUL": "**Okai, perfect!** {{emoji}}\n╰ {{channel}} channels have been added as my command channel!"
+    },
+    "SETCOVER": {
+        "ALREADY_USED": "You're currently using **{{cover}}** as your profile cover, *baka.* {{emoji}}",
+        "DEFAULT_ALREADY": "Sorry, you use the default cover already.",
+        "DISPLAY_USED_REGULAR_COVER": "You are currently using **{{cover}}** as your profile cover.",
+        "DISPLAY_USED_SELF_COVER": "You are currently using self-uploaded cover.",
+        "FETCHING": "{{emoji}} *Stay sit! I'm rendering the preview for you ...*",
+        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Let's decorate your profile cover!♡**\nstarts with **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",
+        "INVALID_FILE_TYPE": "Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: {{types}}",
+        "ITEM_DOESNT_EXISTS": "**Is that cover even exist?** {{emoji}}",
+        "NO_EQUIPPABLE_COVER": "**Sorry- It seems you don't have any equippable covers at the moment.**",
+        "OWNED_COVERS": "If you wish to switch- checkout your owned covers below.\n",
+        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nApply **{{cover}}** as your profile background?\n╰──────────☆～*:;,．*╯\nIf yes, please react to the green button to start applying it! {{emoji}}",
+        "PREVIEW_SELF_UPLOAD": "╭*:;,．★ ～☆*────────────╮\nUpload this one as your profile background?\n╰──────────☆～*:;,．*╯\nKeep in mind, {{emoji}}**{{uploadCost}}** will be deducted from your inventory after you uploaded this.♡",
+        "SUCCESSFUL": "{{emoji}} **{{cover}}** successfully equipped!♡",
+        "SUCCESSFUL_ON_SELF_UPLOAD": "**Yey! everything went smooth!♡**\n╰─You've successfully uploaded your own cover!",
+        "SUGGEST_TO_UPLOAD": "Let's upload/buy one to make your profile more unique!♡ {{emoji}}",
+        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover."
+    },
+    "SETEXP": {
+        "ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?\nBelow is the preview of their updated level card.",
+        "ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",
+        "ALREADY_DISABLED": "**The EXP Module hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setexp enable`**",
+        "ALREADY_ENABLED": "The EXP Module has already enabled by **{{user}}, {{date}}**",
+        "ALREADY_ENABLED_BY_DEFAULT": "Baka! I've already enabled this module by default! {{emoji}}",
+        "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Migrated from other bots? tired of grinding the exp? or probably just wanna have fun with a quick level jump? worry not, you can add some exp to yourself or other member.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> I know that some people are probably annoying and we want punish them for that behavior. With this action, you'll be able to decrease someone's exp or even yourself!\n\n**`{{prefix}}setexp reset <user>`**\n> Tired of being a high-leveled user? oh well, it can't be helped. This action allows you to turn yours or someone's exp account into a fresh slate.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Sorry! but I only accept the following actions `{{actions}}`",
+        "INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
+        "INVALID_AMOUNT_TO_MINUS": "Hmm, what even is that. You have to specify a valid number for the subtraction!\ne.g. **`{{prefix}}setexp minus @{{user}} 50`**",
+        "MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?\nBelow is the preview of their updated level card.",
+        "MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
+        "MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**",
+        "MISSING_AMOUNT_ON_MINUS": "Hey, don't forget to specify the exp!\ne.g. **`{{prefix}}setexp minus @{{user}} 100`**",
+        "MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
+        "MISSING_USER_ON_MINUS": "Who's should I subtract the exp from?\ne.g. **`{{prefix}}setexp minus @napu 100`**",
+        "MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
+        "RESET_CONFIRMATION": "Reset {{user}}'s exp account?",
+        "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future.",
+        "SUCCESSFULLY_ENABLED": "Yay! **EXP Leveling Module** has been enabled in this guild! your members will start gaining experience points soon.",
+        "UPDATED": "exp has been updated!♡",
+        "WIPED": "exp has been wiped out!♡"
+    },
+    "SETGENDER": {
+        "ALREADY_SET": "You've set yourself as {{gender}}.",
+        "GUIDE": "╭*:;,．★ ～☆*──────────╮\nLets set your gender to unlock more features!\ne.g. **`{{prefix}}setgender <male/female/neutral >`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
+        "HASNT_SET": "You haven't set one yet since the first time we met; Or you wished to be refered to with neutral genders.",
+        "INVALID": "**Woops,** you can only set as neutral, female, or male! {{emoji}}",
+        "SUCCESSFUL": "**Perfection!** {{emoji}}\n╰ Your gender status has been updated!"
+    },
+    "SETGUILDBIO": {
+        "CONFIRMATION": "Are you sure you want to set bio for this guild to:\n`{{newBio}}`?\n\n Type `y` to confirm the action.",
+        "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
+        "GUILD_UNREGISTERED": "Due to system failure, this guild hasn't been registered yet. Please contact my developer to help registering your guild.",
+        "MISSING_ARG": "If you wish to set a new bio for your guild, please type the new bio next to the command! `{{prefix}}setguildbio <newbio>`",
+        "SUCCESSFUL": "The bio for this guild has been successfully updated!"
     },
     "SETLANGUAGE": {
         "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nPick one of your favorite language and I'll start speaking in that language for every of your command invocations ~\nAvailable languages :: {{languages}}\n**`e.g. {{prefix}}setlang en`**\n╰──────────☆～*:;,．*╯\nCurrently set to {{currentLanguage}}.",
         "INVALID_LANG": "Eh, I haven't learned that language yet!\nPlease pick one from the followings :: {{languages}}",
         "SUCCESSFUL": "**Okay! my language has been updated♡**\nFrom now on, I'll speak in {{language}}!"
     },
-    "SETCARTCOIN": {
-        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\nthe leveling feels too easy? now you are able to toggle artcoin conversion feature in your server!♡\n**`e.g. {{prefix}}setcartcoin <enable/disable>`**\n╰──────────☆～*:;,．*╯\nthis feature is currently {{status}} in the server.",
-        "INVALID_ACTION": "you can only use either enable or disable for this one!\n╰─**`e.g. {{prefix}}setcartcoin disable`**",
-        "SUCCESSFULLY_ENABLED": "**okaa!♡** {{emoji}}\n╰─ enabled for the server!",
-        "SUCCESSFULLY_DISABLED": "**alright!♡** {{emoji}}\n╰─ disabled in the server!",
-        "ENABLED": "enabled",
-        "DISABLED": "disabled"
-    },
     "SETLEVELUPMESSAGE": {
-        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n**`{{prefix}}setlvlupmsg channel #targetchannel`**\n> Some of you may want it to be sent in a tidy place- so your chatting experience stays uninterrupted. Luckily, you can set a custom-channel for it!\n__e.g. {{prefix}}setlvlupmsg channel #bread__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Let's personalize your level-up message with some cool citations! this system works similar to SetWelcomer, so you can add {{user}} in the message to mention the leveled up user.\n__e.g. {{prefix}}setlvlupmsg text whoa, {{user}} got new level!__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "Sorry, I only accept **`enable`**, **`disable`**, and **`channel`** action in this module.",
-        "ALREADY_ENABLED": "The Level Up Message already enabled by **{{user}}, {{date}}**",
         "ALREADY_DISABLED": "**The Level Up Message hasn't been enabled yet in this guild-♡**\n╰─To enable, type **`{{prefix}}setlvlupmsg enable`**",
-        "SUCCESSFULLY_ENABLED": "Yay! **Level-up Message Module** has been successfully enabled in this guild!",
-        "SUCCESSFULLY_DISABLED": "Done! **Level-up Message Module** has been successfully disabled!\nthis guild won't receive any level-up message again in the future.",
+        "ALREADY_ENABLED": "The Level Up Message already enabled by **{{user}}, {{date}}**",
         "DISPLAY_REGISTERED_CHANNEL": "**Currently I'm sending it to {{channel}}♡**\n╰─If you wish to switch the channel, kindly type\n╰─**`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
         "DISPLAY_UNREACHABLE_CHANNEL": "**I think the previously registered channel was deleted...**\n╰─Want to update it? type **`{{prefix}}setlvlupmsg channel #yournewchannel!`**",
-        "SUCCESSFULLY_RESET_CHANNEL": "**Aye aye, the configuration has been reset to default!**{{emoji}}\n╰─Now the level-up message will be sent to any channels!",
-        "MISSING_CHANNEL_PARAMETER": "**Currently I'm sending it to any channels!♡**\n╰─If you wish to use custom channel, type the format below\n╰─**`{{prefix}}setlvlupmsg channel #channelname`**",
+        "GUIDE": "Use one of the following action to enable or disable levelup-message module in this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlvlupmsg enable`**\n> By enabling this module, your guild will receive levelup message whenever someone is leveling up (obviously).\n\n**`{{prefix}}setlvlupmsg channel #targetchannel`**\n> Some of you may want it to be sent in a tidy place- so your chatting experience stays uninterrupted. Luckily, you can set a custom-channel for it!\n__e.g. {{prefix}}setlvlupmsg channel #bread__\n\n**`{{prefix}}setlvlupmsg text <message>`**\n> Let's personalize your level-up message with some cool citations! this system works similar to SetWelcomer, so you can add {{user}} in the message to mention the leveled up user.\n__e.g. {{prefix}}setlvlupmsg text whoa, {{user}} got new level!__\n\n**`{{prefix}}setlvlupmsg disable`**\n> Getting tired of annoying level-up message? then it's time to disable it.\n\n╰──────────☆～*:;,．*╯",
+        "INVALID_ACTION": "Sorry, I only accept **`enable`**, **`disable`**, and **`channel`** action in this module.",
         "INVALID_CHANNEL": "**Oopsie- this doesn't seem to be a valid channel ...** {{emoji}}",
-        "SUCCESSFULLY_SET_CHANNEL": "**Okay, everything set up!**{{emoji}}\n╰─The next level-up will be sent to {{channel}}!",
+        "MISSING_CHANNEL_PARAMETER": "**Currently I'm sending it to any channels!♡**\n╰─If you wish to use custom channel, type the format below\n╰─**`{{prefix}}setlvlupmsg channel #channelname`**",
         "MISSING_TEXT_PARAMETER": "**Any custom text you want to display?** you can personalize the text in level-up message in this server by typing **`{{prefix}}setlvlupmsg text <message>`**",
-        "TEXT_CONFIRMATION": "Above is the preview of this server's level-up message once new text has been applied. Should we apply it?",
-        "SUCCESSFULLY_UPDATE_TEXT": "**Lookin' fresh!** {{emoji}}\n╰ The level-up message's text has successfully updated!"
-    },
-    "SERVER_BOOST": {
-        "SHORT_GUIDE": "Availible commands are:\n {0} boost **discontinued** - to see just the number of boosts the server has\n {1} level **discontinued**- to see what boost tier the server is at\n {2} members - to see who are our boosters :)"
-    },
-    "SETBIO": {
-        "MISSING_ARG": "╭*:;,．★ ～☆*────────────────╮\n**Wants to set a unique profile bio?♡**\nLet's type **`{{prefix}}setbio <yourMessageHere!>`**\n╰──────────☆～*:;,．*╯\nKeep in mind that you can only write **156 characters** at maximum.",
-        "EXCEEDING_LIMIT": "**I've trouble fitting this into my small pocket!～** {{emoji}}\n╰─Can you reduce it by {{chars}} characters?",
-        "RENDERING": "{{emoji}}`rendering the new bio for you...`",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nI've rendered the live card for you, so you can see if it fits you or not♡\n╰──────────☆～*:;,．*╯\n**Shall we go with this?**",
-        "SET": "Yay! your new profile's bio has been set!♡"
-    },
-    "SETCOMMAND": {
-        "MISSING_TARGET_CHANNEL": "Don't forget to specify the channel, okay? {{emoji}}",
-        "GUIDE": "Here you can define which command channels that I should only listen to! {{channelStatus}}\n╭*:;,．★ ～☆*────────────╮\n\n**`{{prefix}}setcommand channel <channels>`**\n> Here you can add a new channel as my only channel. If you haven't setting up anything previously, I'll listen to every visible channels! You can also add multiple channels at a time by separating it with comma.\n__e.g. {{prefix}}setcommand channel #general__\n\n**`{{prefix}}setcommand reset`**\n> Planning to remake the server channels? worry not, you can revert the command channels to default. This will ensure that I'm able to listen to every visible channel!\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "**Hmm, what was that?** the only available actions in SetCommand are **`channel`** and **`reset`**, so make sure you typed the correct one!",
-        "INVALID_NEW_CHANNEL": "Hold on, is {{channel}} even a channel? {{emoji}}",
-        "CHANNEL_ALREADY_REGISTERED": "**Eh?** you can't register the same channel twice! {{emoji}}",
-        "CHANNEL_POOL_ALREADY_EMPTY": "Hey, there's nothing to reset! {{emoji}}",
-        "RESET_CONFIRMATION": "Keep in mind, {{totalChannels}} command channels will no longer put in effect and all the visible channels will be available to me. Make sure you are aware with this action, okay? {{emoji}}",
-        "RESET_SUCCESSFUL": "**Alright, done!** {{emoji}}\n╰ My command usage is no longer restricted.",
-        "UPDATE_CHANNEL_SUCCESSFUL": "**Okai, perfect!** {{emoji}}\n╰ {{channel}} channels have been added as my command channel!"
-    },
-    "SETCOVER": {
-        "GUIDE": "╭*:;,．★ ～☆*────────────────╮\n**Let's decorate your profile cover!♡**\nstarts with **`{{prefix}}setcover <attachment/imageURL/coverID>`**\n╰──────────☆～*:;,．*╯",
-        "NO_EQUIPPABLE_COVER": "**Sorry- It seems you don't have any equippable covers at the moment.**",
-        "ITEM_DOESNT_EXISTS": "**Is that cover even exist?** {{emoji}}",
-        "PREVIEW_CONFIRMATION": "╭*:;,．★ ～☆*────────────╮\nApply **{{cover}}** as your profile background?\n╰──────────☆～*:;,．*╯\nIf yes, please react to the green button to start applying it! {{emoji}}",
-        "PREVIEW_SELF_UPLOAD": "╭*:;,．★ ～☆*────────────╮\nUpload this one as your profile background?\n╰──────────☆～*:;,．*╯\nKeep in mind, {{emoji}}**{{uploadCost}}** will be deducted from your inventory after you uploaded this.♡",
-        "FETCHING": "{{emoji}} *Stay sit! I'm rendering the preview for you ...*",
-        "SUCCESSFUL": "{{emoji}} **{{cover}}** successfully equipped!♡",
-        "SUCCESSFUL_ON_SELF_UPLOAD": "**Yey! everything went smooth!♡**\n╰─You've successfully uploaded your own cover!",
-        "ALREADY_USED": "You're currently using **{{cover}}** as your profile cover, *baka.* {{emoji}}",
-        "DISPLAY_USED_SELF_COVER": "You are currently using self-uploaded cover.",
-        "DISPLAY_USED_REGULAR_COVER": "You are currently using **{{cover}}** as your profile cover.",
-        "OWNED_COVERS": "If you wish to switch- checkout your owned covers below.\n",
-        "SUGGEST_TO_UPLOAD": "Let's upload/buy one to make your profile more unique!♡ {{emoji}}",
-        "UPLOAD_INSUFFICIENT_COST": "**Sowwy- insufficient artcoins...** </3\n╰─You need {{emoji}}**`{{requiredLeft}}`** left to upload your own cover.",
-        "DEFAULT_ALREADY": "Sorry, you use the default cover already.",
-        "INVALID_FILE_TYPE": "Im sorry but the file type is not supported at this time.\n**Unsupported** file extensions: {{types}}"
-    },
-    "SETEXP": {
-        "GUIDE": "This is your main control center for configuring the **EXP Leveling Module**. Below are the available actions you can use. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setexp enable`**\n> By default, this module is automatically enabled after I got invited to this guild. But in case you've disabled it, you can enable the module again through this action.\n\n**`{{prefix}}setexp disable`**\n> Tired of getting in a level competition with your friend? you can disable the module anytime through this action.\n\n**`{{prefix}}setexp add <user> <amount>`**\n> Migrated from other bots? tired of grinding the exp? or probably just wanna have fun with a quick level jump? worry not, you can add some exp to yourself or other member.\n\n**`{{prefix}}setexp minus <user> <amount>`**\n> I know that some people are probably annoying and we want punish them for that behavior. With this action, you'll be able to decrease someone's exp or even yourself!\n\n**`{{prefix}}setexp reset <user>`**\n> Tired of being a high-leveled user? oh well, it can't be helped. This action allows you to turn yours or someone's exp account into a fresh slate.\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "Sorry! but I only accept the following actions `{{actions}}`",
-        "ALREADY_ENABLED": "The EXP Module has already enabled by **{{user}}, {{date}}**",
-        "ALREADY_ENABLED_BY_DEFAULT": "Baka! I've already enabled this module by default! {{emoji}}",
-        "SUCCESSFULLY_ENABLED": "Yay! **EXP Leveling Module** has been enabled in this guild! your members will start gaining experience points soon.",
-        "ALREADY_DISABLED": "**The EXP Module hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setexp enable`**",
-        "SUCCESSFULLY_DISABLED": "Done! **EXP Leveling Module** has been disabled! your member won't getting experience points through chat activity again in the future.",
-        "MISSING_USER_ON_ADD": "Don't forget to specify the user that will receive the exp!\ne.g. **`{{prefix}}setexp add @napu 500`**",
-        "MISSING_AMOUNT_ON_ADD": "Hm? what's the amount of exp should I give?\ne.g. **`{{prefix}}setexp add @{{user}} 500`**",
-        "ADD_CONFIRMATION": "Should I perform the exp addition for {{user}}?\nBelow is the preview of their updated level card.",
-        "INVALID_AMOUNT_TO_ADD": "**Oops**, please specify a valid number of exp you want me to add.\ne.g. **`{{prefix}}setexp add @{{user}} 150`**",
-        "ADD_OVERLIMIT": "**I apologize!** due to system spam prevention; you can't add exp above the soft limit. You can only add up to {{amount}} exp at once. {{emoji}}",
-        "MISSING_USER_ON_MINUS": "Who's should I subtract the exp from?\ne.g. **`{{prefix}}setexp minus @napu 100`**",
-        "MISSING_AMOUNT_ON_MINUS": "Hey, don't forget to specify the exp!\ne.g. **`{{prefix}}setexp minus @{{user}} 100`**",
-        "INVALID_AMOUNT_TO_MINUS": "Hmm, what even is that. You have to specify a valid number for the subtraction!\ne.g. **`{{prefix}}setexp minus @{{user}} 50`**",
-        "MINUS_CONFIRMATION": "Are you sure you want to decrease {{user}}'s exp?\nBelow is the preview of their updated level card.",
-        "MINUS_OVERLIMIT": "**Stop right there.** You cannot set {{user}}'s exp to below zero, *baka*. {{emoji}}",
-        "MISSING_USER_ON_RESET": "Hm,.. whose exp should I reset? don't forget to specify the user, okay!? {{emoji}}",
-        "RESET_CONFIRMATION": "Reset {{user}}'s exp account?",
-        "UPDATED": "exp has been updated!♡",
-        "WIPED": "exp has been wiped out!♡"
-    },
-    "SETGUILDBIO": {
-        "EXCEEDING_LIMIT": "I'm sorry but that bio is too long, please keep it under **300 characters!**",
-        "MISSING_ARG": "If you wish to set a new bio for your guild, please type the new bio next to the command! `{{prefix}}setguildbio <newbio>`",
-        "GUILD_UNREGISTERED": "Due to system failure, this guild hasn't been registered yet. Please contact my developer to help registering your guild.",
-        "CONFIRMATION": "Are you sure you want to set bio for this guild to:\n`{{newBio}}`?\n\n Type `y` to confirm the action.",
-        "SUCCESSFUL": "The bio for this guild has been successfully updated!"
+        "SUCCESSFULLY_DISABLED": "Done! **Level-up Message Module** has been successfully disabled!\nthis guild won't receive any level-up message again in the future.",
+        "SUCCESSFULLY_ENABLED": "Yay! **Level-up Message Module** has been successfully enabled in this guild!",
+        "SUCCESSFULLY_RESET_CHANNEL": "**Aye aye, the configuration has been reset to default!**{{emoji}}\n╰─Now the level-up message will be sent to any channels!",
+        "SUCCESSFULLY_SET_CHANNEL": "**Okay, everything set up!**{{emoji}}\n╰─The next level-up will be sent to {{channel}}!",
+        "SUCCESSFULLY_UPDATE_TEXT": "**Lookin' fresh!** {{emoji}}\n╰ The level-up message's text has successfully updated!",
+        "TEXT_CONFIRMATION": "Above is the preview of this server's level-up message once new text has been applied. Should we apply it?"
     },
     "SETLOGS": {
+        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setlogs enable`**",
+        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
         "GUIDE": "This is your control center for configuring the **Logs System**. Check out what are the available actions for this module:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setlog enable`**\n> This action will enable activity-logging feature in your guild once you enable it and for the types of logs you will receive, are following the default preset.\n\n**`{{prefix}}setlogs channel <targetChannel>`**\n> This action defines which channel should Annie send the logs in and make sure Annie has an access to that channel as well!\ne.g. __{{prefix}}setlogs channel #logs__\n\n**`{{prefix}}setlogs disable`**\n> I know you are probably feeling annoyed getting all the useless logs from me, that's why this action exists.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sowwy! please only use one of these actions `{{actions}}`",
-        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}setlogs enable`**",
-        "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
-        "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
-        "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!",
-        "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}setlog enable`",
+        "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}",
         "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}setlog channel #mylogs`**",
-        "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}"
-    },
-    "SERVERINFO": "A guild with their preferred language as `{{preferredLocale}}`\nOwned by **{{guildOwner}}**\n\n**• When the guild was found?**\nIt's exactly {{createdAt}}.\nand I saw you were joining to this server {{joinedAt}}.\n\n**• How many members do we have?**\nI can smell {{userSize}} hoomans are currently living in this guild and the rest {{botSize}} creatures are my friend. x)\n\n**• Hmm, what about the channels and roles?**\nHah! they have {{channelSize}} channels and {{roleSize}} roles!\nIs that what you are looking for?\nWait, they also have {{systemChannel}} as their main channel.\n\nOkay, that's all I know! ",
-    "SETSOCIALMEDIA": {
-        "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
-        "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
-        "SUCCESSFUL": "Yay! your **{{account}}** account has been linked!",
-        "ALREADY_REGISTERED": "You are already have **{{account}}** account registered. {{emoji}}"
-    },
-    "SETPROFILE": {
-        "EQUIPPED_ITEMS": "**{{item}}** is currently equipped as your profile {{type}}.",
-        "NO_EQUIPPED_ITEMS": "**You don't have any {{type}} equipped at the moment.**",
-        "UNEQUIPPED_ITEMS": "And these are your available {{type}}:",
-        "NON_PROFILEDECORATION": "Sorry, that's not a customizable profile decoration.",
-        "EQUIPPING_GUIDE": "Reply with `equip <{{type}}ID>` if you wish to change it.",
-        "UNEQUIPPING_GUIDE": "Reply with `unequip <{{type}}ID>` to unequip your current {{type}}.",
-        "GUIDE": "Please include the item type you want to customize like **covers, badges, stickers or something else.**",
-        "INVALID_ITEM": "That doesn't looks like a valid item.. or you don't have it in your inventory.",
-        "SUCCESSFUL": "**{{item}}** {{itemType}} has been successfully {{actionType}}!",
-        "INVALID_ACTION": "Please only use either `equip` or `unequip`.",
-        "EQUIPPING_NOTHING": "Hey, there are nothing available to equip, baka. {{emoji}}",
-        "UNEQUIPPING_NOTHING": "What are you trying to unequip? {{emoji}}",
-        "MISSING_TARGET_ITEM": "Please don't forget to include the item id.",
-        "DEPRECATE_COVER_ACTION": "{{emoji}} This option is no longer available to use. Please use `{{prefix}}setcover` instead."
+        "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}setlog enable`",
+        "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
+        "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
+        "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!"
     },
     "SETPREFIX": {
         "CURRENT_SET": "╭*:;,．★ ～☆*──────────╮\nThe prefix for **{{guild}}** is currently set as **`{{prefix}}`**\nIf you wish to change it, kindly type the command followed by new prefix!\n╰──────────☆～*:;,．*╯\nFor your safety, both custom and default prefix can be used in this command♡",
-        "SUCCESSFUL": "**Feels like new!** {{emoji}}\n╰ My prefix has been set to **`{{prefix}}`**",
-        "FOLLOW_UP": "Now try type **`{{prefix}}ping`**"
+        "FOLLOW_UP": "Now try type **`{{prefix}}ping`**",
+        "SUCCESSFUL": "**Feels like new!** {{emoji}}\n╰ My prefix has been set to **`{{prefix}}`**"
     },
-    "SETGENDER": {
-        "GUIDE": "╭*:;,．★ ～☆*──────────╮\nLets set your gender to unlock more features!\ne.g. **`{{prefix}}setgender <male/female/neutral >`**\n╰──────────☆～*:;,．*╯\n{{currentGender}}",
-        "HASNT_SET": "You haven't set one yet since the first time we met; Or you wished to be refered to with neutral genders.",
-        "ALREADY_SET": "You've set yourself as {{gender}}.",
-        "INVALID": "**Woops,** you can only set as neutral, female, or male! {{emoji}}",
-        "SUCCESSFUL": "**Perfection!** {{emoji}}\n╰ Your gender status has been updated!"
+    "SETPROFILE": {
+        "DEPRECATE_COVER_ACTION": "{{emoji}} This option is no longer available to use. Please use `{{prefix}}setcover` instead.",
+        "EQUIPPED_ITEMS": "**{{item}}** is currently equipped as your profile {{type}}.",
+        "EQUIPPING_GUIDE": "Reply with `equip <{{type}}ID>` if you wish to change it.",
+        "EQUIPPING_NOTHING": "Hey, there are nothing available to equip, baka. {{emoji}}",
+        "GUIDE": "Please include the item type you want to customize like **covers, badges, stickers or something else.**",
+        "INVALID_ACTION": "Please only use either `equip` or `unequip`.",
+        "INVALID_ITEM": "That doesn't looks like a valid item.. or you don't have it in your inventory.",
+        "MISSING_TARGET_ITEM": "Please don't forget to include the item id.",
+        "NO_EQUIPPED_ITEMS": "**You don't have any {{type}} equipped at the moment.**",
+        "NON_PROFILEDECORATION": "Sorry, that's not a customizable profile decoration.",
+        "SUCCESSFUL": "**{{item}}** {{itemType}} has been successfully {{actionType}}!",
+        "UNEQUIPPED_ITEMS": "And these are your available {{type}}:",
+        "UNEQUIPPING_GUIDE": "Reply with `unequip <{{type}}ID>` to unequip your current {{type}}.",
+        "UNEQUIPPING_NOTHING": "What are you trying to unequip? {{emoji}}"
     },
     "SETRANK": {
-        "GUIDE": "This is your control center for configuring custom role-ranking system in the guild! now use the following actions to begin the configuration. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setrank enable`**\n> If you are new to rank configuration, try use this action first and I'll guide you until the rest part.\n\n**`{{prefix}}setrank add <role> <requiredLevel>`**\n> This action registers the given role into the role-rank system and let you define the required level in order to get it.\ne.g. __{{prefix}}setrank add @Kawaii 15__\n\n**`{{prefix}}setrank delete <role>`**\n> This action deletes the specified role from the rank system of this guild and make sure to have at least two registered role-rank before deleting it.\ne.g. __{{prefix}}setrank delete @Kawaii__\n\n**`{{prefix}}setrank info`**\n> This action displays the current configurations of role-rank system in the guild.\n\n**`{{prefix}}setrank stack`**\n> Have you ever imagined keeping all your hard grinded roles? Now it is possible to stack them! just run this command once and it will be automatically toggled.\n\n**`{{prefix}}setrank reset`**\n> This action wipes out all the existing role-rank configuration in the guild and it'll use the default one. It's a good thing to-do if you want to start from scratch again.\n\n**`{{prefix}}setrank disable`**\n> This action disables the role-rank system in the guild. Although, your previous configuration won't be deleted and you can enable it again anytime.\n\n╰──────────☆～*:;,．*╯",
-        "ADD_MISSING_ARG": "Don't forget to include the role name and the required level for it!\ne.g. __{{prefix}}setrank add @Kawaii 10__",
-        "ADD_MISSING_TARGET_ROLE": "**Include the role and the required level to get it♡**\ne.g. **`{{prefix}}setrank add @cupcake 10`**",
-        "INVALID_ROLE": "**Sorry- I couldn't find that role.** {{emoji}}",
-        "ADD_ROLE_ALREADY_REGISTERED_HEADER": "Can't register this role.",
-        "ADD_ROLE_ALREADY_REGISTERED": "Sorry, but this role has been registered as **LV{{level}}** rank by **{{user}}**, **{{date}}**! If you wish to delete the configuration for this rank, you can type **`{{prefix}}setrank delete {{role}}`** instead.",
-        "ADD_MISSING_REQUIRED_LEVEL": "**Don't forget to include the required level!♡**\ne.g. **`{{prefix}}setrank add {{role}} 15`**",
         "ADD_INVALID_REQUIRED_LEVEL": "Please only put a valid number (in the range of 1 ~ 999)!",
+        "ADD_MISSING_ARG": "Don't forget to include the role name and the required level for it!\ne.g. __{{prefix}}setrank add @Kawaii 10__",
+        "ADD_MISSING_REQUIRED_LEVEL": "**Don't forget to include the required level!♡**\ne.g. **`{{prefix}}setrank add {{role}} 15`**",
+        "ADD_MISSING_TARGET_ROLE": "**Include the role and the required level to get it♡**\ne.g. **`{{prefix}}setrank add @cupcake 10`**",
+        "ADD_ROLE_ALREADY_REGISTERED": "Sorry, but this role has been registered as **LV{{level}}** rank by **{{user}}**, **{{date}}**! If you wish to delete the configuration for this rank, you can type **`{{prefix}}setrank delete {{role}}`** instead.",
+        "ADD_ROLE_ALREADY_REGISTERED_HEADER": "Can't register this role.",
+        "ALREADY_DISABLED": "**The Custom Rank has not been enabled yet♡**\nTo enable, type **`{{prefix}}setrank enable`**",
+        "ALREADY_ENABLED": "This module has been enabled by **{{user}}, {{date}}**",
         "DELETE_MISSING_TARGET_ROLE": "**Don't forget to include the role!♡** {{emoji}}",
         "DELETE_UNREGISTERED_ROLE": "Eh, what are you trying to delete? this rank-role isn't even registered!",
-        "INVALID_ACTION": "Sorry, but I don't recognize that action. :(",
-        "ALREADY_ENABLED": "This module has been enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "**The Custom Rank has not been enabled yet♡**\nTo enable, type **`{{prefix}}setrank enable`**",
+        "FIRST_TIMER_TIP": "Want to register your first rank-role? let's type `{{prefix}}setrank add <role> <requiredLevel>` !",
+        "GUIDE": "This is your control center for configuring custom role-ranking system in the guild! now use the following actions to begin the configuration. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setrank enable`**\n> If you are new to rank configuration, try use this action first and I'll guide you until the rest part.\n\n**`{{prefix}}setrank add <role> <requiredLevel>`**\n> This action registers the given role into the role-rank system and let you define the required level in order to get it.\ne.g. __{{prefix}}setrank add @Kawaii 15__\n\n**`{{prefix}}setrank delete <role>`**\n> This action deletes the specified role from the rank system of this guild and make sure to have at least two registered role-rank before deleting it.\ne.g. __{{prefix}}setrank delete @Kawaii__\n\n**`{{prefix}}setrank info`**\n> This action displays the current configurations of role-rank system in the guild.\n\n**`{{prefix}}setrank stack`**\n> Have you ever imagined keeping all your hard grinded roles? Now it is possible to stack them! just run this command once and it will be automatically toggled.\n\n**`{{prefix}}setrank reset`**\n> This action wipes out all the existing role-rank configuration in the guild and it'll use the default one. It's a good thing to-do if you want to start from scratch again.\n\n**`{{prefix}}setrank disable`**\n> This action disables the role-rank system in the guild. Although, your previous configuration won't be deleted and you can enable it again anytime.\n\n╰──────────☆～*:;,．*╯",
         "HEADER_INFO": "Custom Rank Module",
-        "RESET_NULL_RANKS": "Sorry! It's not like I dont wanna do it ... but this guild doesn't have any registered ranks for me to reset-",
+        "INFO_DISABLED_BY_USER": "This module got {{emoji}} **disabled** by **{{user}}, {{date}}**. If you want to enable it back, you can do so by typing `{{prefix}}setrank enable`",
+        "INFO_DISABLED_FIRST_TIME": "This module status is {{emoji}} **disabled** in {{guild}}! if you wish to setup a Custom Rank Module in this guild, feel free to start by typing `{{prefix}}setrank enable`",
+        "INFO_ENABLED": "Oh, this module status is {{emoji}} **enabled** in {{guild}}! currently there are total of **{{rankSize}}** available ranks here which you can take a look at the complete list below:\n{{list}}",
+        "INFO_ENABLED_ZERO_RANKS": "This module status is {{emoji}} **enabled** in {{guild}}, but unfortunately they seem haven't setting up the rank-role yet. So, make sure to setup it by typing:\n`{{prefix}}setrank add <role> <requiredLevel>`",
+        "INVALID_ACTION": "Sorry, but I don't recognize that action. :(",
+        "INVALID_ROLE": "**Sorry- I couldn't find that role.** {{emoji}}",
+        "RESET_ANIMATION": "{{emoji}} `deleting all custom ranks in {{guild}} ...`",
         "RESET_CONFIRMATION": "This will delete all custom ranks in the guild, are you sure you want to perform this action?",
         "RESET_CONFIRMATION_WARN": "The effect cannot be undone once you pressed the green button.",
-        "RESET_ANIMATION": "{{emoji}} `deleting all custom ranks in {{guild}} ...`",
-        "SUCCESSFULLY_RESET": "**Done! Custom Ranks Configurations in this guild are successfully deleted!**",
-        "FIRST_TIMER_TIP": "Want to register your first rank-role? let's type `{{prefix}}setrank add <role> <requiredLevel>` !",
-        "INFO_DISABLED_FIRST_TIME": "This module status is {{emoji}} **disabled** in {{guild}}! if you wish to setup a Custom Rank Module in this guild, feel free to start by typing `{{prefix}}setrank enable`",
-        "INFO_DISABLED_BY_USER": "This module got {{emoji}} **disabled** by **{{user}}, {{date}}**. If you want to enable it back, you can do so by typing `{{prefix}}setrank enable`",
-        "INFO_ENABLED_ZERO_RANKS": "This module status is {{emoji}} **enabled** in {{guild}}, but unfortunately they seem haven't setting up the rank-role yet. So, make sure to setup it by typing:\n`{{prefix}}setrank add <role> <requiredLevel>`",
-        "INFO_ENABLED": "Oh, this module status is {{emoji}} **enabled** in {{guild}}! currently there are total of **{{rankSize}}** available ranks here which you can take a look at the complete list below:\n{{list}}",
-        "SUCCESSFULLY_ADDED_HEADER": "New rank has been added!",
-        "SUCCESSFULLY_ADDED": "Your member will start getting the **{{role}}** role once they reached **LV{{level}}**.\nIf there's member who already surpassed the required level, then they will get it once they leveled up.",
-        "SUCCESSFULLY_DELETED_HEADER": "The rank has been deleted!",
-        "SUCCESSFULLY_DELETED": "**{{role}}** has been successfully removed from the rank-role configurations of this guild. Keep in mind, the existing member may still have the role attached if you don't delete it manually.",
-        "SUCCESSFULLY_ENABLED": "Yay! **Custom Rank Module** has been successfully enabled in this guild!",
-        "SUCCESSFULLY_DISABLED": "Done! **Custom Rank Module** has been successfully disabled in this guild!",
+        "RESET_NULL_RANKS": "Sorry! It's not like I dont wanna do it ... but this guild doesn't have any registered ranks for me to reset-",
         "ROLE_TOO_HIGH": "Uhh, **{{role}}** is unreachable and too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
         "STACK_DISABLE": "**Roles no longer stacked! ♡**\n╰ Your member now will keep one rank role at a time.",
-        "STACK_ENABLE": "**Aye, roles paradise! ♡**\n╰ Your member now will keep their previous rank roles."
-    },
-    "SETWELCOMER": {
-        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles! By any chance if you assigned wrong roles by mistake, you can always do 'reset' option.\n(For registering) e.g. __{{prefix}}setwelcomer role @muffins @cupcake__\n(For reset) e.g. __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the welcomer. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Toggle this option if you want more clean, simple & plain welcomer message without any image!\n\n**`{{prefix}}setwelcomer userimage`**\n> Tired of choosing a suitable welcomer image? toggle this option to display user's image as the welcomer background!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Was the light mode too light for you? we all do. That's why I provided a dark theme, tehee.\n\n**{{prefix}}setwelcomer multiple add <channel>**\n> To add addition channel. **Must do `{{prefix}}setwelcomer` channel first**\n\n{{prefix}}setwelcomer multiple remove <channel>**\n> To remove addition channel.\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
-        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
-        "ALREADY_ENABLED": "The Welcomer already enabled by **{{user}}, {{date}}**",
-        "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
-        "ALREADY_DISABLED": "**Welcomer hasn't been enabled yet in this guild.**\nTo enable it, use **`{{prefix}}setwelcomer enable`**",
-        "SUCCESSFULLY_DISABLED": "**Welcomer Module** has been successfully disabled in this guild!",
-        "EMPTY_CHANNEL_PARAMETER": "**Don't forget to specify the channel name!**\ne.g. **`{{prefix}}setwelcomer channel #general`**",
-        "EMPTY_ROLE_PARAMETER": "Don't forget to specify the role!\ne.g. `{{prefix}}setwelcome role @bunny`",
-        "INVALID_CHANNEL": "**Sorry- I'm unable to find that channel.** {{emoji}}",
-        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
-        "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
-        "ROLE_SUCCESSFULLY_RESET": "**Alright, done!** assigned roles in welcomer have been removed♡",
-        "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
-        "ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in one of these {{channels}} whenever they joined to this guild!",
-        "ADDITIONAL_CHANNELS": "Here are all of your available channels that are registered\n{{channels}}",
-        "ADDITIONAL_CHANNEL_FAIL_REGISTERED": "Looks like the channel you are trying to add is already registered",
-        "ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED": "Looks like the channel you are trying to add is not registered yet, or is your main welcome channel",
-        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
-        "EMPTY_IMAGE_PARAMETER": "Don't forget to write what default image option you would like to use!\neg. `{{prefix}}setwelcomer defaultimage user pfp`",
-        "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
-        "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}",
-        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
-        "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
-        "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
-        "INVALID_DEFAULT_IMAGE_OPTION": "Only values accepted are `regular` or `user pfp`",
-        "DEFAULT_IMAGE_SUCCESSFULLY_REGISTERED": "Yay! this guild's default welcomer image has been updated!",
-        "DEFAULT_IMAGE_ALREADY_REGISTERED": "Hey there, it looks like you have already set this as your option for the welcomer defualt image.",
-        "NOIMAGE_SUCCESSFULLY_ENABLED": "**Alright!♡** my welcomer is no longer displaying image. Just a plain text!",
-        "NOIMAGE_SUCCESSFULLY_DISABLED": "**Okay!♡** I turned on the welcomer's image.",
-        "USERIMAGE_SUCCESSFULLY_ENABLED": "**Done!** now user's profile picture will be displayed as the welcomer background.",
-        "USERIMAGE_SUCCESSFULLY_DISABLED": "**Okay!** now welcomer message will use the most recent set background.",
-        "CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
-        "THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
-        "THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
-        "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!",
-        "NO_DEFAULT_CHANNEL": "Please complete set main welcome channel and main welcome text first.",
-        "ONBOARDWAIT_CONFIRM": "**Onboarding wait** has been successfully {{setting}} in this guild!"
+        "STACK_ENABLE": "**Aye, roles paradise! ♡**\n╰ Your member now will keep their previous rank roles.",
+        "SUCCESSFULLY_ADDED": "Your member will start getting the **{{role}}** role once they reached **LV{{level}}**.\nIf there's member who already surpassed the required level, then they will get it once they leveled up.",
+        "SUCCESSFULLY_ADDED_HEADER": "New rank has been added!",
+        "SUCCESSFULLY_DELETED": "**{{role}}** has been successfully removed from the rank-role configurations of this guild. Keep in mind, the existing member may still have the role attached if you don't delete it manually.",
+        "SUCCESSFULLY_DELETED_HEADER": "The rank has been deleted!",
+        "SUCCESSFULLY_DISABLED": "Done! **Custom Rank Module** has been successfully disabled in this guild!",
+        "SUCCESSFULLY_ENABLED": "Yay! **Custom Rank Module** has been successfully enabled in this guild!",
+        "SUCCESSFULLY_RESET": "**Done! Custom Ranks Configurations in this guild are successfully deleted!**"
     },
     "SETSHOP": {
-        "GUIDE": "Ready to create a customized virtual items that your member able to buy? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Don't forget to open up the shop first, before applying anything else!\n\n**`{{prefix}}setshop text <message>`**\n> Create a short, yet unique shop's header of your server! Use {{user}} to mention the user.\ne.g. __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Your registered item doesn't seem to attract that much? I guess its time to delete them.\n\n**`{{prefix}}setshop add <itemName>`**\n> Nothing as good as creating your own item for your server! Put a unique name, set price, add effects, and profit.\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Missing some details on your recently registered item?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> To enhance the personalization even further, try upload a unique banner for your server's shop!\n\n**`{{prefix}}setshop close`**\n> Got something in mind? wanna set a shopping day for your member? you can close the shop first and open it again whenever you are ready.\n\n╰──────────☆～*:;,．*╯",
-        "EDIT_GUIDE": "**Which metadata of the '{{item}}' item you want to change?**\n♡ Select **`name`** to change its name.\n♡ Select **`description`** to change its description\n♡ Select **`price`** to change its selling price.\n♡ Select **`stock`** To update its stock. You can also use **`~`** to set an unlimited stock.\n♡ Select **`response`** to change Annie's response when someone used the item. Include **`{{user}}`** for mentioning the user and **`{{item}}`** for mentioning the item name.\nAnd lastly, Hit **`done`** once you are satisfied with the new changes.",
-        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
-        "ALREADY_ENABLED": "The shop already opened by **{{user}}, {{date}}**",
-        "SUCCESSFULLY_ENABLED": "The shop now is opened!",
-        "EDIT_MISSING_PARAM": "Don't forget to include the required data!",
+        "ADD_BUFF": "**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Type **`done`** for finishing the registration.\n♡ Type **`addrole <roles>`** to get specified roles once used.\n♡ Type **`removerole <roles>`** to remove specified roles from user once used.\n♡ Type **`additem <amount> <itemName/itemId>`** to receive specified items once used.\n♡ Type **`removeitem <amount> <itemName/itemId>`** to remove specified items from user's inventory.\n♡ Type **`expboost <percentage> <duration>`** To give exp boost to the user for specified amount of time.\n♡ Type **`acboost <percentage> <duration>`** to give artcoins boost to the user for specified amount of time.",
+        "ADD_BUFF_INVALID_DURATION": "Don't' forget to specify the duration, okay? It can be **`2 minutes`, `5 hours`, or even **`7 days`**!",
+        "ADD_BUFF_INVALID_ITEM_AMOUNT": "Please write a proper amount of the item!",
+        "ADD_BUFF_INVALID_MULTIPLIER": "Please write a proper multiplier for the booster. As example, **`100%`** or **`50%`**.",
+        "ADD_BUFF_INVALID_ROLE": "Wait, is that role even exists in this server?",
+        "ADD_BUFF_INVALID_TARGET_ITEM": "Is this item even exists? I don't remember I have this one.",
+        "ADD_BUFF_MISSING_ROLE": "Don't forget to write/mention the roles!",
+        "ADD_BUFF_OUT_OF_RANGE": "Ehh,. I didn't recognize that type of buff. Please only use the ones that I've mentioned above.",
+        "ADD_BUFF_TOO_HIGH_ROLE": "Argh that role is too high,. Please move it down so I can grab them.",
+        "ADD_CONFIRMATION": "Shall we create this item?",
+        "ADD_DESCRIPTION": "**What's the item description will be?**",
+        "ADD_DESCRIPTION_OVERLIMIT": "Please keep the item's description as short as **{{limit}} characters**!",
+        "ADD_MESSAGE_UPON_USE": "**What's the message that going to be displayed upon item use?**\nAdd **`{{user}}`** socket to mention the user and **`{{item}}`** to mention the used item. Or type **`~`** if you don't want to specify any custom message.",
+        "ADD_MESSAGE_UPON_USE_OVERLIMIT": "Keep the message as short as **{{limit}} characters**!",
+        "ADD_MISSING_NAME": "Don't forget to specify the item's name, okay?",
+        "ADD_NAME": "**What's the item name will be?**",
+        "ADD_NAME_DUPLICATE": "**'{{item}}'** already exists in this server. You can't use this name to create duplicate item!",
+        "ADD_NAME_FOOTER": "The item's information will be gradually updated in this embed.",
+        "ADD_NAME_OVERLIMIT": "You can only write **{{limit}} characters** for the item's name!",
+        "ADD_OVERLIMIT_NAME": "You can't put item's name longer than **20 characters**! please type again with shorter name.",
+        "ADD_PRICE": "**How much would it costs?**",
+        "ADD_PRICE_INVALID": "Please write a proper number for the item's price!",
+        "ADD_SESSION_STILL_ACTIVE": "Please wait for a moment before registering item again.",
+        "ADD_STOCK": "**How many stocks will it be available?**\nType **`~`** for unlimited stocks, or type any number for limited stocks.",
+        "ADD_STOCK_INVALID": "**For the stock, please pick **`~`** or a number.",
+        "ADD_SUCCESSFUL": "**Yay! item has been created!** {{emoji}}\n╰─ Now you can check it in the **`{{prefix}}shop`** command.",
+        "ADD_TRADABILITY": "**Is this item tradable? (y/n)**",
+        "ADD_TRADABILITY_INVALID": "Please only fill with either **`y`** or **`n`**.",
         "ALREADY_DISABLED": "The shop hasn't been opened yet in this server.**\nTo enable it, use **`{{prefix}}setshop enable`**",
-        "SUCCESSFULLY_DISABLED": "Shop has been successfully closed.",
-        "EDIT_NAME_SUCCESSFUL": "**'{{oldItem}}'** item name has been changed to **'{{newItem}}'**!",
+        "ALREADY_ENABLED": "The shop already opened by **{{user}}, {{date}}**",
+        "CONFIRMATION_IMAGE": "**Apply the following image as shop's banner?**",
+        "DELETE_CONFIRMATION": "Are you sure want to delete this '{{item}}' item? Keep in mind that you won't be able to use '{{item}}' as item name in the future as long as there still some members who own it.",
+        "DELETE_EMPTY_ITEMS": "Ehh, this server doesn't even have any custom items.",
+        "DELETE_MISSING_TARGET": "Don't forget to specify the item, okay? {{emoji}}",
+        "DELETE_SUCCESSFUL": "**{{item}}** item has been removed from the shop!",
         "EDIT_DESC_SUCCESSFUL": "**'{{item}}'** description has been updated!",
+        "EDIT_GUIDE": "**Which metadata of the '{{item}}' item you want to change?**\n♡ Select **`name`** to change its name.\n♡ Select **`description`** to change its description\n♡ Select **`price`** to change its selling price.\n♡ Select **`stock`** To update its stock. You can also use **`~`** to set an unlimited stock.\n♡ Select **`response`** to change Annie's response when someone used the item. Include **`{{user}}`** for mentioning the user and **`{{item}}`** for mentioning the item name.\nAnd lastly, Hit **`done`** once you are satisfied with the new changes.",
+        "EDIT_MISSING_PARAM": "Don't forget to include the required data!",
+        "EDIT_MSGUPONUSE_OVERLIMIT": "My response message cannot exceed **{{limit}} characters**!",
+        "EDIT_MSGUPONUSE_SUCCESSFUL": "**'{{item}}'** response message has been updated!",
+        "EDIT_NAME_SUCCESSFUL": "**'{{oldItem}}'** item name has been changed to **'{{newItem}}'**!",
         "EDIT_PRICE_INVALID": "Please type a valid number!",
         "EDIT_PRICE_OVERLIMIT": "Keep in mind, you cannot exceed **{{limit}}** artcoins in price.",
         "EDIT_PRICE_SUCCESSFUL": "**'{{item}}'** price has been updated!",
         "EDIT_STOCK_OVERLIMIT": "Hey, you can't restock **{{limit}}** items at a time!",
         "EDIT_STOCK_SUCCESSFUL": "**'{{item}}'** supply has been updated!",
-        "EDIT_MSGUPONUSE_OVERLIMIT": "My response message cannot exceed **{{limit}} characters**!",
-        "EDIT_MSGUPONUSE_SUCCESSFUL": "**'{{item}}'** response message has been updated!",
         "EDIT_TIMEOUT": "Editing interface for **'{{item}}'** item has been closed due to inactivity.",
         "EMPTY_ROLE_PARAMETER": "Need to update",
-        "ADD_MISSING_NAME": "Don't forget to specify the item's name, okay?",
-        "ADD_OVERLIMIT_NAME": "You can't put item's name longer than **20 characters**! please type again with shorter name.",
-        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
-        "ROLE_SUCCESSFULLY_REGISTERED": "Need to update",
         "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the shop!\ne.g. `{{prefix}}setshop text welcomer to our shop, {{user}}!`",
-        "TEXT_SUCCESSFULLY_REGISTERED": "**Text updated!** {{emoji}}\n╰ Type **`{{prefix}}shop`** to see how it looks like.",
-        "DELETE_EMPTY_ITEMS": "Ehh, this server doesn't even have any custom items.",
-        "DELETE_MISSING_TARGET": "Don't forget to specify the item, okay? {{emoji}}",
-        "DELETE_CONFIRMATION": "Are you sure want to delete this '{{item}}' item? Keep in mind that you won't be able to use '{{item}}' as item name in the future as long as there still some members who own it.",
-        "DELETE_SUCCESSFUL": "**{{item}}** item has been removed from the shop!",
-        "ITEM_DOESNT_EXISTS": "I can't find any item called **'{{item}}'** in this server..",
-        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
-        "IMAGE_MISSING_ATTACHMENT": "Interested in using custom image for the shop banner?\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
+        "GUIDE": "Ready to create a customized virtual items that your member able to buy? {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setshop open`**\n> Don't forget to open up the shop first, before applying anything else!\n\n**`{{prefix}}setshop text <message>`**\n> Create a short, yet unique shop's header of your server! Use {{user}} to mention the user.\ne.g. __{{prefix}}setshop text Welcome to our shop, {{user}}!__\n\n**`{{prefix}}setshop delete <itemId/itemName>`**\n> Your registered item doesn't seem to attract that much? I guess its time to delete them.\n\n**`{{prefix}}setshop add <itemName>`**\n> Nothing as good as creating your own item for your server! Put a unique name, set price, add effects, and profit.\n\n**`{{prefix}}setshop edit <itemId/itemName>`**\n> Missing some details on your recently registered item?\n\n**`{{prefix}}setshop image <attachment/url>`**\n> To enhance the personalization even further, try upload a unique banner for your server's shop!\n\n**`{{prefix}}setshop close`**\n> Got something in mind? wanna set a shopping day for your member? you can close the shop first and open it again whenever you are ready.\n\n╰──────────☆～*:;,．*╯",
         "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
-        "CONFIRMATION_IMAGE": "**Apply the following image as shop's banner?**",
-        "ADD_SESSION_STILL_ACTIVE": "Please wait for a moment before registering item again.",
-        "ADD_NAME": "**What's the item name will be?**",
-        "ADD_NAME_FOOTER": "The item's information will be gradually updated in this embed.",
-        "ADD_NAME_OVERLIMIT": "You can only write **{{limit}} characters** for the item's name!",
-        "ADD_NAME_DUPLICATE": "**'{{item}}'** already exists in this server. You can't use this name to create duplicate item!",
-        "ADD_DESCRIPTION": "**What's the item description will be?**",
-        "ADD_DESCRIPTION_OVERLIMIT": "Please keep the item's description as short as **{{limit}} characters**!",
-        "ADD_PRICE": "**How much would it costs?**",
-        "ADD_PRICE_INVALID": "Please write a proper number for the item's price!",
-        "ADD_STOCK": "**How many stocks will it be available?**\nType **`~`** for unlimited stocks, or type any number for limited stocks.",
-        "ADD_STOCK_INVALID": "**For the stock, please pick **`~`** or a number.",
-        "ADD_TRADABILITY": "**Is this item tradable? (y/n)**",
-        "ADD_TRADABILITY_INVALID": "Please only fill with either **`y`** or **`n`**.",
-        "ADD_MESSAGE_UPON_USE": "**What's the message that going to be displayed upon item use?**\nAdd **`{{user}}`** socket to mention the user and **`{{item}}`** to mention the used item. Or type **`~`** if you don't want to specify any custom message.",
-        "ADD_MESSAGE_UPON_USE_OVERLIMIT": "Keep the message as short as **{{limit}} characters**!",
-        "ADD_BUFF": "**Will it grants any bonus effect once used? (You can add up to 3 bonus effects per item)**\n♡ Type **`done`** for finishing the registration.\n♡ Type **`addrole <roles>`** to get specified roles once used.\n♡ Type **`removerole <roles>`** to remove specified roles from user once used.\n♡ Type **`additem <amount> <itemName/itemId>`** to receive specified items once used.\n♡ Type **`removeitem <amount> <itemName/itemId>`** to remove specified items from user's inventory.\n♡ Type **`expboost <percentage> <duration>`** To give exp boost to the user for specified amount of time.\n♡ Type **`acboost <percentage> <duration>`** to give artcoins boost to the user for specified amount of time.",
-        "ADD_BUFF_OUT_OF_RANGE": "Ehh,. I didn't recognize that type of buff. Please only use the ones that I've mentioned above.",
-        "ADD_BUFF_MISSING_ROLE": "Don't forget to write/mention the roles!",
-        "ADD_BUFF_INVALID_ROLE": "Wait, is that role even exists in this server?",
-        "ADD_BUFF_TOO_HIGH_ROLE": "Argh that role is too high,. Please move it down so I can grab them.",
-        "ADD_BUFF_INVALID_ITEM_AMOUNT": "Please write a proper amount of the item!",
-        "ADD_BUFF_INVALID_TARGET_ITEM": "Is this item even exists? I don't remember I have this one.",
-        "ADD_BUFF_INVALID_MULTIPLIER": "Please write a proper multiplier for the booster. As example, **`100%`** or **`50%`**.",
-        "ADD_BUFF_INVALID_DURATION": "Don't' forget to specify the duration, okay? It can be **`2 minutes`, `5 hours`, or even **`7 days`**!",
-        "ADD_CONFIRMATION": "Shall we create this item?",
-        "ADD_SUCCESSFUL": "**Yay! item has been created!** {{emoji}}\n╰─ Now you can check it in the **`{{prefix}}shop`** command.",
-        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result.",
+        "IMAGE_MISSING_ATTACHMENT": "Interested in using custom image for the shop banner?\ne.g. **`{{prefix}}setshop image <attachment/url>`**",
         "IMAGE_NOT_RESETABLE": "Your shop uses the default banner already.",
-        "NO_MORE_BUFFS": "Sorry no more buffs can be added",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Banner updated!** {{emoji}}\n╰ Try type **`{{prefix}}shop`** to see the result.",
+        "INTERFACE_CLOSED": "Shop register interface has been closed.",
+        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
+        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
+        "ITEM_DOESNT_EXISTS": "I can't find any item called **'{{item}}'** in this server..",
         "NAME_EMBED": "\n╰☆～**Name ::** {{arg}}",
-        "INTERFACE_CLOSED": "Shop register interface has been closed."
+        "NO_MORE_BUFFS": "Sorry no more buffs can be added",
+        "ROLE_SUCCESSFULLY_REGISTERED": "Need to update",
+        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
+        "SUCCESSFULLY_DISABLED": "Shop has been successfully closed.",
+        "SUCCESSFULLY_ENABLED": "The shop now is opened!",
+        "TEXT_SUCCESSFULLY_REGISTERED": "**Text updated!** {{emoji}}\n╰ Type **`{{prefix}}shop`** to see how it looks like."
     },
-    "REMOVEALLREACTIONS": "I have removed all possible reactions from message with id: {{id}}",
+    "SETSOCIALMEDIA": {
+        "ALREADY_REGISTERED": "You are already have **{{account}}** account registered. {{emoji}}",
+        "MISSING_ARG": "Aw, you missed something. Yes, account url! please include it next time!",
+        "SOURCE_UNSUPPORTED": "Right now you can only set **{{list}}** profile links. To have your site added, kindly request in {{supportServer}}",
+        "SUCCESSFUL": "Yay! your **{{account}}** account has been linked!"
+    },
+    "SETWELCOMER": {
+        "ADDITIONAL_CHANNEL_FAIL_NOT_REGISTERED": "Looks like the channel you are trying to add is not registered yet, or is your main welcome channel",
+        "ADDITIONAL_CHANNEL_FAIL_REGISTERED": "Looks like the channel you are trying to add is already registered",
+        "ADDITIONAL_CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in one of these {{channels}} whenever they joined to this guild!",
+        "ADDITIONAL_CHANNELS": "Here are all of your available channels that are registered\n{{channels}}",
+        "ALREADY_DISABLED": "**Welcomer hasn't been enabled yet in this guild.**\nTo enable it, use **`{{prefix}}setwelcomer enable`**",
+        "ALREADY_ENABLED": "The Welcomer already enabled by **{{user}}, {{date}}**",
+        "CHANNEL_SUCCESSFULLY_REGISTERED": "Alright! I'll greet user in {{channel}} whenever they joined to this guild!",
+        "CONFIRMATION_IMAGE": "Apply the following image as welcomer's background?",
+        "DEFAULT_IMAGE_ALREADY_REGISTERED": "Hey there, it looks like you have already set this as your option for the welcomer defualt image.",
+        "DEFAULT_IMAGE_SUCCESSFULLY_REGISTERED": "Yay! this guild's default welcomer image has been updated!",
+        "EMPTY_CHANNEL_PARAMETER": "**Don't forget to specify the channel name!**\ne.g. **`{{prefix}}setwelcomer channel #general`**",
+        "EMPTY_IMAGE_PARAMETER": "Don't forget to write what default image option you would like to use!\neg. `{{prefix}}setwelcomer defaultimage user pfp`",
+        "EMPTY_ROLE_PARAMETER": "Don't forget to specify the role!\ne.g. `{{prefix}}setwelcome role @bunny`",
+        "EMPTY_TEXT_PARAMETER": "Don't forget to write the message you want to display in the welcomer!\neg. `{{prefix}}setwelcomer text welcome to our guild!`",
+        "GUIDE": "Use one of the following action to start setup welcomer module for this guild. {{emoji}}\n\n╭*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}setwelcomer enable`**\n> One first step you might want to try to make sure this module is enabled in the guild.\n\n**`{{prefix}}setwelcomer channel <targetChannel>`**\n> Set the target channel where you want the welcomer message to be sent in.\ne.g. __{{prefix}}setwelcomer channel #general__\n\n**`{{prefix}}setwelcomer text <message>`**\n> You can make a unique customized welcomer message for this guild. Include {{guild}} or {{user}} for socketing.\ne.g. __{{prefix}}setwelcomer text Hi, cuttie {{user}}!__\n\n**`{{prefix}}setwelcomer role <roles>`**\n> Let's reward them for joining this cute server with some sweet roles! By any chance if you assigned wrong roles by mistake, you can always do 'reset' option.\n(For registering) e.g. __{{prefix}}setwelcomer role @muffins @cupcake__\n(For reset) e.g. __{{prefix}}setwelcomer role reset__\n\n**`{{prefix}}setwelcomer image <attachment/url>`**\n> Nothing as good as having a personalized background for your cafe! now you can use a custom image for the welcomer. The format is pretty much the same as how you use SetCover.\n\n**`{{prefix}}setwelcomer noimage`**\n> Toggle this option if you want more clean, simple & plain welcomer message without any image!\n\n**`{{prefix}}setwelcomer userimage`**\n> Tired of choosing a suitable welcomer image? toggle this option to display user's image as the welcomer background!\n\n**`{{prefix}}setwelcomer theme <dark/light>`**\n> Was the light mode too light for you? we all do. That's why I provided a dark theme, tehee.\n\n**{{prefix}}setwelcomer multiple add <channel>**\n> To add addition channel. **Must do `{{prefix}}setwelcomer` channel first**\n\n{{prefix}}setwelcomer multiple remove <channel>**\n> To remove addition channel.\n\n**`{{prefix}}setwelcomer preview`**\n> Wanna see how's your welcomer looks like before your comrades see it?\n\n**`{{prefix}}setwelcomer disable`**\n> Tired of spammy welcomer message? you can disable this module anytime.\n\n╰──────────☆～*:;,．*╯",
+        "IMAGE_INVALID_UPLOAD": "Hmm, it doesn't seem like a valid image. Can you upload as an attachment or specify the image url instead? {{emoji}}",
+        "IMAGE_MISSING_ATTACHMENT": "Let's use a custom image for the welcomer! {{emoji}}\ne.g. **`{{prefix}}setwelcomer image <attachment/url>`**",
+        "IMAGE_SUCCESSFULLY_APPLIED": "**Yay, all perfect!** {{emoji}}\n╰─ A custom image for welcomer has been applied!",
+        "INVALID_ACTION": "Sorry- I only recognize the following actions\n**`{{availableActions}}`**",
+        "INVALID_CHANNEL": "**Sorry- I'm unable to find that channel.** {{emoji}}",
+        "INVALID_DEFAULT_IMAGE_OPTION": "Only values accepted are `regular` or `user pfp`",
+        "INVALID_ROLE": "Sorry, I can't find any role with that name.",
+        "NO_DEFAULT_CHANNEL": "Please complete set main welcome channel and main welcome text first.",
+        "NOIMAGE_SUCCESSFULLY_DISABLED": "**Okay!♡** I turned on the welcomer's image.",
+        "NOIMAGE_SUCCESSFULLY_ENABLED": "**Alright!♡** my welcomer is no longer displaying image. Just a plain text!",
+        "ONBOARDWAIT": {
+            "ALREADY_CONFIGURED": "Module is already configured",
+            "NOT_ENABLED": "Onboarding must be turned on first",
+            "TRY_AGAIN": "Please try again a little later."
+        },
+        "ONBOARDWAIT_CONFIRM": "**Onboarding wait** has been successfully {{setting}} in this guild!",
+        "ROLE_SUCCESSFULLY_REGISTERED": "Okay! I'll start assigning **{{role}}** role to our future guild members!",
+        "ROLE_SUCCESSFULLY_RESET": "**Alright, done!** assigned roles in welcomer have been removed♡",
+        "ROLE_TOO_HIGH": "Aw, I can't reach **{{role}}** role. It's too high! can you move it under **{{annieRole}}** role first? {{emoji}}",
+        "SUCCESSFULLY_DISABLED": "**Welcomer Module** has been successfully disabled in this guild!",
+        "SUCCESSFULLY_ENABLED": "**Welcomer Module** has been successfully enabled in this guild!",
+        "TEXT_SUCCESSFULLY_REGISTERED": "Yay! this guild's welcomer message has been updated!",
+        "THEME_INVALID": "**What, is that a theme?** Please only use either **`light`** or **`dark`**.",
+        "THEME_MISSING_NAME": "Let's switch over the welcomer's theme!\ne.g. **`{{prefix}}setwelcomer theme <light/dark>`**",
+        "THEME_SUCCESSFULLY_UPDATED": "**Alright, {{user}}!** {{emoji}}\n╰─ The welcomer's theme has been set to {{theme}}!",
+        "TIPS_TO_PREVIEW": "Wanna see how is it looks like? {{emoji}}",
+        "USERIMAGE_SUCCESSFULLY_DISABLED": "**Okay!** now welcomer message will use the most recent set background.",
+        "USERIMAGE_SUCCESSFULLY_ENABLED": "**Done!** now user's profile picture will be displayed as the welcomer background."
+    },
     "SHOP": {
-        "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}",
-        "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}",
-        "FOOTER": "Type **{{prefix}}buy <name/ID>** to purchase the item!",
-        "RETRIEVING": "{{emoji}} `retrieving all the purchasable {{itemType}} ...`",
-        "TEMPORARILY_CLOSED": "**H-hi! the shop gets temporarily closed until further notice.**\n╰─Sorry for this inconvenience! {{emoji}}",
-        "NO_ITEMS": "**Nothing to buy!** this server hasn't set their own shop yet.",
-        "SETUP_TIPS": "Try ask the server owner/admin to setup one with **`{{prefix}}setshop`** command!♡",
-        "CLOSED": "Aw, the shop still closed! please comeback next time!",
         "BUY_TIPS": "Type **`{{prefix}}buy <item>`** to purchase it! {{emoji}}",
-        "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**"
+        "CLOSED": "Aw, the shop still closed! please comeback next time!",
+        "FOOTER": "Type **{{prefix}}buy <name/ID>** to purchase the item!",
+        "GATEWAY_SELECTION": "╭*:;,．★ ～☆*────────────────╮\n**Welcome to my marketplace!**\nwhat do you want to buy today? or specifically, which shop do you want to visit? {{emoji}}\n╰──────────☆～*:;,．*╯\n\n☆～(1) **Cover's Shop**\n\n☆～(2) **Gift's Shop**\n☆～(3) **Material's Shop**\n☆～(4) **Badges's Shop**",
+        "INVALID_TYPE": "Sorry, i don't recognize that type of item... {{emoji}}",
+        "NO_ITEMS": "**Nothing to buy!** this server hasn't set their own shop yet.",
+        "RETRIEVING": "{{emoji}} `retrieving all the purchasable {{itemType}} ...`",
+        "SETUP_TIPS": "Try ask the server owner/admin to setup one with **`{{prefix}}setshop`** command!♡",
+        "TEMPORARILY_CLOSED": "**H-hi! the shop gets temporarily closed until further notice.**\n╰─Sorry for this inconvenience! {{emoji}}",
+        "UNAVAILABLE": "Our shop is currently closed, we don't have any items to sell at the moment. {{emoji}}"
     },
     "SHOP_LOG": {
+        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}shoplog enable`**",
+        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
         "GUIDE": "This is your control center for configuring the **Shop Log System**. Check out what are the available actions for this module:\n\n*:;,．★ ～☆*──────────╮\n\n**`{{prefix}}shoplog enable`**\n> This action will enable activity-logging feature in your guild once you enable it and for the types of logs you will receive, are following the default preset.\n\n**`{{prefix}}shoplog channel <targetChannel>`**\n> This action defines which channel should Annie send the logs in and make sure Annie has an access to that channel as well!\ne.g. __{{prefix}}shoplog channel #logs__\n\n**`{{prefix}}shoplog disable`**\n> I know you are probably feeling annoyed getting all the useless logs from me, that's why this action exists.\n\n╰──────────☆～*:;,．*╯",
         "INVALID_ACTION": "Sowwy! please only use one of these actions `{{actions}}`",
-        "ALREADY_ENABLED": "This module has already enabled by **{{user}}, {{date}}**",
-        "ALREADY_DISABLED": "**This logs hasn't been enabled yet♡**\nTo enable, type **`{{prefix}}shoplog enable`**",
-        "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
-        "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
-        "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!",
-        "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}shoplog enable`",
-        "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}shoplog channel #mylogs`**",
         "INVALID_CHANNEL": "**Hmm, this doesn't seems like a valid channel.**\nCan you try other channel instead? {{emoji}}",
-        "ITEM_BOUGHT": "{{user}}`{{userId}}` just bought {{itemName}}`{{itemId}}`"
+        "ITEM_BOUGHT": "{{user}}`{{userId}}` just bought {{itemName}}`{{itemId}}`",
+        "MISSING_CHANNEL": "**Don't forget to include the target logs channel, okay?♡** {{emoji}}\ne.g. **`{{prefix}}shoplog channel #mylogs`**",
+        "SHOULD_BE_ENABLED": "Hey! you haven't enabled the **Logs Module** yet!\ngo enable it by typing `{{prefix}}shoplog enable`",
+        "SUCCESSFULLY_DISABLED": "Done! **Logs Module** has been successfully disabled!",
+        "SUCCESSFULLY_ENABLED": "Yay! **Logs Module** has been successfully enabled!",
+        "SUCCESSFULLY_UPDATING_CHANNEL": "Alright! I'll start sending logs to {{channel}} soon!"
     },
     "STATCARD": {
-        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "FETCHING": "`Fetching {0}'s stat data . .`",
         "HEADER": "<:Annie_Smug:523686816545636352> **| Stat card for {0}**",
-        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature.",
-        "FETCHING": "`Fetching {0}'s stat data . .`"
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature."
+    },
+    "STRIKE": {
+        "DISPLAY_RECORD": "Here's what I found for **{{user}}**\n\nTotal **{{recordsLength}}** strikes were recorded.\nThe recent one was added by **{{reportedBy}}**\n\n{{list}}\n\nType `+ <reason>` to add new strike.",
+        "ENTRY_REGISTER": "Thankyou! your report for **{{user}}** has been registered.",
+        "GUIDE": "You are authorized to use the **Strike System.**\n\nThis feature used to track bad behavior caused by member in the server and automatically give them penalty action such as mute, kick or even ban.",
+        "NULL_RECORD": "**{{user}}** doesn't have any strike record yet. Please type `+ <reason>` to add new strike."
     },
     "SWITCH_THEME": {
-        "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**.",
+        "ALREADY_THAT_THEME": "You are currently using this theme, *baka.* {{emoji}}",
         "MISSING_KEYWORD": "**Please specify the theme you want to use!~♡**\ne.g. **`{{prefix}}theme dark`**",
-        "SET_NIGHTMODE": "Yay! successfully set to **Night Mode!**",
-        "SET_LIGHTMODE": "Yay! successfully set to **Light Mode!**",
         "NO_MATCHING_KEYWORD": "**Sorry- i can't find any theme with that name.** {{emoji}}",
         "NO_THEME_OWNED": "Sorry but it seems you dont own this item, you can visit the shop to buy it though.",
-        "ALREADY_THAT_THEME": "You are currently using this theme, *baka.* {{emoji}}",
-        "NO_THEMES_OWNED": "Sorry but it seems you dont own any themes"
+        "NO_THEMES_OWNED": "Sorry but it seems you dont own any themes",
+        "SET_LIGHTMODE": "Yay! successfully set to **Light Mode!**",
+        "SET_NIGHTMODE": "Yay! successfully set to **Night Mode!**",
+        "UNAVAILABLE": "This feature is only available to **Server Booster / Donator**."
     },
     "SYS_NOTIFICATION": {
         "FIVESTAR_PULL": "{0} has pulled {1} **{2}(★★★★★)** from the Lucky Ticket! :tada:"
     },
     "SYSTEM_STATS": {
         "DISPLAY": "**Hewoo there!♡*** you are currently looking at my node statistic. These data can be useful addition when you are reporting bugs to the developers!\n╭*:;,．★ ～☆*───────╮\n**•Who's my caretaker?**\n> Say hello to Naph and Pan! these are the guys who have been generously taking care of me and teaching me new stuff. I was developed purely for personal-project; but I'd really appreciate any kind of donation!\n───────\n**• Am I the real, Annie?**\n> Well yes, but actually no. What you see right now is one my replica named **{{shard}}**.\n───────\n**• Hmm, am I lagging?**\n> Maybe? at the moment my latency is {{ping}} ms. But don't mind the numbers, I'll try my best to serve you!\n───────\n**• How long I've been up?**\n> Around {{uptime}} I think? with total of {{memory}} used memory. Yeah, sorry about that. I sleep quite often.\n───────\n**• How many guilds I've been serving in?**\n> In the current version (v{{version}}) there are total of {{servers}} servers who have been actively using my service. {{totalCommands}} commands were also ran inside these servers! I know the numbers may be not that high,.. but this is a huge milestone for me. {{emoji}}\n╰────────☆～*:;,．*╯",
-        "NO_DATA_FOUND": "I can't find any data associated with **{{selectedMetric}}** field. {{emoji}}",
-        "INVALID_DATE": "Invalid parameter, baka. Try type `7` as the parameter to get aggregated data for this week.",
+        "HEADER": "The State of Annie",
         "INSIGHT": "I can see **{{percentage}}%** from previous **last {{days}} days** datapoint. {{emoji}}",
-        "HEADER": "The State of Annie"
-    },
-    "INTERNAL_SYSTEM": {
-        "DATABASE_CONNECTED": "Database successfully connected",
-        "COMMANDS_REGISTERED": "Commands have successfully registered"
-    },
-    "SERVER_REMOTE": {
-        "AUTHORIZED": "**{0}**, you are authorized to control my server remotely. {1}",
-        "PROCESSING": "**Server will restart in {0} seconds...**",
-        "GUIDE": "These are the available parameter [-live, -mt, -rs].",
-        "CURRENTLY_MT": "Currently is running in development state.",
-        "CURRENTLY_LIVE": "Currently is running in production state."
-    },
-    "STRIKE": {
-        "GUIDE": "You are authorized to use the **Strike System.**\n\nThis feature used to track bad behavior caused by member in the server and automatically give them penalty action such as mute, kick or even ban.",
-        "NULL_RECORD": "**{{user}}** doesn't have any strike record yet. Please type `+ <reason>` to add new strike.",
-        "DISPLAY_RECORD": "Here's what I found for **{{user}}**\n\nTotal **{{recordsLength}}** strikes were recorded.\nThe recent one was added by **{{reportedBy}}**\n\n{{list}}\n\nType `+ <reason>` to add new strike.",
-        "ENTRY_REGISTER": "Thankyou! your report for **{{user}}** has been registered."
-    },
-    "ERR": {
-        "UNABLE_TO_FIND_USER": "Sorry, I couldn't find that user!",
-        "NEGATIVE_INPUT": "You can't use negative values.",
-        "MISSING_ARG": "Please don't forget to specify the amount of power capsules that you want to use."
+        "INVALID_DATE": "Invalid parameter, baka. Try type `7` as the parameter to get aggregated data for this week.",
+        "NO_DATA_FOUND": "I can't find any data associated with **{{selectedMetric}}** field. {{emoji}}"
     },
     "UNAUTHORIZED_ACCESS": "You are not authorized to use administrator-level feature.",
+    "UNMUTE": {
+        "MISSING_ARG": "You are authorized to use the **Unmute System**. Please specify the target user next time!",
+        "NO_MUTE_ROLE": "I'm sorry but no mute role could be found.",
+        "SUCCESSFUL": "Successfully unmuted **{{user}}**",
+        "USER_DOESNT_HAVE_ROLE": "I'm sorry, {{user}}, is not muted currently."
+    },
     "USE": {
-        "NO_ITEMS": "Ehh, you don't have any items to use! {{emoji}}",
-        "INVALID_ITEM": "Is that item even exists? *hmm..* {{emoji}}",
-        "INSUFFICIENT": "Oops, it seems you don't have the item.",
         "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nDo you want to use **{{item}}**?\n╰────────☆～*:;,．*╯\n{{footer}}",
         "CONFIRMATION_TIPS": "Please react to the\n green button to proceed.",
-        "UNUSABLE": "Stop right there, this item cannot be used! {{emoji}}",
-        "SUCCESSFUL": "{{user}} has used {{item}}!♡"
+        "INSUFFICIENT": "Oops, it seems you don't have the item.",
+        "INVALID_ITEM": "Is that item even exists? *hmm..* {{emoji}}",
+        "NO_ITEMS": "Ehh, you don't have any items to use! {{emoji}}",
+        "SUCCESSFUL": "{{user}} has used {{item}}!♡",
+        "UNUSABLE": "Stop right there, this item cannot be used! {{emoji}}"
+    },
+    "USER": {
+        "IS_INVALID": "**Sorry- I'm unable to find that user.**",
+        "REGISTRATION_ON_PROCESS": "Try this command again in a few seconds!♡"
+    },
+    "USER_PERMS": {
+        "END": ") privilege to use this command.",
+        "START": "You need LV"
+    },
+    "USERDATA": {
+        "AVAILABLE_OPTIONS": "I'm sorry but my only options are to tables, retrieve, or remove.",
+        "DELETE": "All data tied to user:{{user}} has been deleted",
+        "INVALID_OPTION": "I'm sorry that is not a vaild option",
+        "INVALID_USE_SELF": "I'm sorry but you can not do this command on yourself",
+        "INVALID_USER": "Sorry, I couldn't find that user.",
+        "PROMPT": "You may choose to retrieve any data by a specific table or one of my predifined groupings, by typing them after this message (1 per command)\nGroupings:\nAll\n${{data}}",
+        "SUCCESSFUL_ALL": "Here is the all data for user with id: {{user}}",
+        "SUCCESSFUL_GROUP": "Here is the data from `{{input}}` group for user with id: {{user}}",
+        "SUCCESSFUL_TABLE": "Here is the data from `{{input}}` table for user with id: {{user}}"
     },
     "VERIFICATION_REQUEST": {
         "MODS_UNAVAILABLE": "Hello **{0}**, our moderators are currently not around. So please be patience! I'll try to wake them up. {1}",
-        "NOTIFY_AVAILABLE_MODS": "Hey, hey! we got new verification request!\n{0}",
-        "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!"
+        "NOTIFY_ALL_MODS": "{0} Wake up! {1} we have new {2} request!",
+        "NOTIFY_AVAILABLE_MODS": "Hey, hey! we got new verification request!\n{0}"
     },
     "VOTE": {
-        "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details.",
-        "SUGGEST_TO_REGISTER": "if this is your first time, link your discord account to the site so that you can give me a vote !! {{emoji}}",
         "IS_COOLDOWN": "**Hi, your next vote still in cooldown!**\n╰ While we at it, why not **{{page}}** about me first? {{emoji}}",
-        "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**"
+        "READY": "╭*:;,．★ ～☆*────────────────╮\n**Can you lend a minute to vote me at {{url}}?**\n Don't worry about the reward! I've already prepared something special for you♡ {{emoji}}\n╰──────────☆～*:;,．*╯\nRemember, your vote will be available for every **12 hours.**",
+        "SUGGEST_TO_REGISTER": "if this is your first time, link your discord account to the site so that you can give me a vote !! {{emoji}}",
+        "UNAVAILABLE": "**I apologize,** my current state doesn't support vote service yet. Please contact my developers for further details."
     }
 }

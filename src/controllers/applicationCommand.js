@@ -39,7 +39,6 @@ module.exports = async (client, interaction, command) => {
         // Handle cache(s)
         if (internalError) return
         return errorRelay(client, { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        // return client.shard.broadcastEval(errorRelay, { context: { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
     const options = interaction.options

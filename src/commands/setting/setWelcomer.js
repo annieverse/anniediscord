@@ -318,15 +318,15 @@ module.exports = {
         })
         // WELCOMER_ONBOARDWAIT
         try {
-            if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(`Onboarding must be turned on first`)
+            if (!(await message.guild.fetchOnboarding()).enabled) return await reply.send(locale(`SETWELCOMER.ONBOARDWAIT.ALREADY_CONFIGURED`))
         } catch (error) {
             client.logger.error(`[setWelcomer.js] Onboarding error > \n${error}`)
-            return await reply.send(`Please try again a little later.`)
+            return await reply.send(locale(`SETWELCOMER.ONBOARDWAIT.TRY_AGAIN`))
         }
         const currentSelection = this.guildConfigurations.get(this.selectedModule).value === 0 ? false : this.guildConfigurations.get(this.selectedModule).value === 1 ? true : false
         const changeSelection = typeof (this.args[1]) === `string` ? this.args[1].toLowerCase() === `true` ? 1 : this.args[1].toLowerCase() === `false` ? 0 : 0 : this.args[1]
         const valueToAddToDB = changeSelection ? 1 : 0
-        if (currentSelection === changeSelection) return await reply.send(`Module is already configured`)
+        if (currentSelection === changeSelection) return await reply.send(locale(`SETWELCOMER.ONBOARDWAIT.ALREADY_CONFIGURED`))
 
         client.db.guildUtils.updateGuildConfiguration({
             configCode: this.selectedModule,
@@ -718,7 +718,7 @@ module.exports = {
      */
     async imagereset(client, reply, message, locale, prefix) {
         const welcomerImage = message.guild.configs.get(`WELCOMER_IMAGE`).value
-        if (welcomerImage === `welcomer` || !welcomerImage) return await reply.send(`You use the default configuration already.`)
+        if (welcomerImage === `welcomer` || !welcomerImage) return await reply.send(locale(`SETWELCOMER.DEFAULT_IMAGE_ALREADY_REGISTERED`))
         const confirmation = await reply.send(locale(`SETWELCOMER.CONFIRMATION_IMAGE`), {
             image: await new GUI(message.member, client, `welcomer`).build(),
             prebuffer: true
@@ -788,7 +788,11 @@ module.exports = {
             await fs.writeFileSync(`./src/assets/customWelcomer/${id}.png`, buffer)
         } catch (error) {
             client.logger.error(error)
-            return reply.send(`im sorry but that link/attachment is not supported. Please try again with a link/attachment of the image itself.`)
+            return reply.send(locale(`SETWELCOMER.IMAGE_INVALID_UPLOAD`), {
+                socket: {
+                    emoji: await client.getEmoji(`692428969667985458`)
+                }
+            })
         }
         if (this.guildConfigurations.get(`WELCOMER_NOIMAGE`).value) {
             await client.db.guildUtils.updateGuildConfiguration({

@@ -1,5 +1,4 @@
 "use strict"
-const category = require(`../../config/commandCategories`)
 const { isSlash, isInteractionCallbackResponse } = require(`../../utils/appCmdHelp.js`)
 const getBotInviteUrl = require(`../../utils/botInvite.js`)
 const { ApplicationCommandType, ApplicationCommandOptionType } = require(`discord.js`)
@@ -77,9 +76,9 @@ module.exports = {
 					await reply.send(locale(`HELP.COMMANDPEDIA.HEADER`), {
 						socket: {
 							prefix: prefix,
-							serverLink: `[Join Support Server](${client.supportServer})`,
-							botInviteLink: `[Invite Annie](${getBotInviteUrl(client)})`,
-							commandList: this.prettifyCommandpedia(cmds)
+							serverLink: `[${locale(`JOIN_SUPPORT_SERVER`)}](${client.supportServer})`,
+							botInviteLink: `[${locale(`INVITE_ANNIE`)}](${getBotInviteUrl(client)})`,
+							commandList: this.prettifyCommandpedia(cmds, locale)
 						},
 						image: `commandpedia`,
 						customHeader: [`Commandpedia`, client.user.displayAvatarURL()]
@@ -98,16 +97,27 @@ module.exports = {
 		//  Handle helpCategory display
 		if (isCategory) {
 			const commands = client.message_commands.filter(node => node.group === res).map(node => `\`${node.name}\``)
-			return await reply.send(category[res.toUpperCase()] + `\n**here's the list!**\n${commands.join(`, `)}`, {
-				header: `the ${res} commands!`,
+			return await reply.send(locale(`HELP.CATEGORY`), {
+				socket: {
+					category: locale(`HELP.CATEGORY_HEADER_DESC.${res.toUpperCase()}`),
+					commands: commands.join(`, `)
+				},
+				header: `${locale(`HELP.CATEGORY_HEADER.START`)}${res}${locale(`HELP.CATEGORY_HEADER.END`)}`,
 				thumbnail: client.user.displayAvatarURL()
 			})
 		}
 		const perm = this.getPermissionProperties(res.permissionLevel, client)
 		const cmdName = res.name.charAt(0).toUpperCase() + res.name.slice(1)
 		const cmdDesc = `"${res.description.charAt(0).toUpperCase() + res.description.slice(1)}"`
-		const footer = `\`\`\`javascript\nUSAGE: ${prefix}${res.usage}\nPERM_LVL: ${perm.level} or equivalent to ${perm.name} privileges\`\`\``
-		return await reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`)
+		const footer = locale(`HELP.USAGE_FOOTER`)
+		return await reply.send(`**${cmdName}**\n${cmdDesc}\n${footer}`, {
+			socket: {
+				prefix: prefix,
+				usage: res.usage,
+				permLvl: perm.level,
+				permName: perm.name
+			}
+		})
 	},
 	/**
 	 * Finding command by a category, name or alias.
@@ -161,29 +171,12 @@ module.exports = {
 	 * @param {Object} [obj={}] returned result from [this.getCommandStructures()]
 	 * @returns {String}
 	 */
-	prettifyCommandpedia(obj = []) {
+	prettifyCommandpedia(obj = [], locale) {
 		let str = ``
 		for (let group in obj) {
 			const cmdNames = obj[group].map(el => `\`${el.name.toLowerCase()}\``)
-			str += `**${group}**\n*${this._getCategoryDescription(group)}*\n${cmdNames.join(`, `)}\n\n`
+			str += `**${group}**\n*${locale(`HELP.CATEGORY_DESC.${group.toUpperCase()}`)}*\n${cmdNames.join(`, `)}\n\n`
 		}
 		return str
 	},
-
-	/**
-	 * Pull category's description
-	 * @param {string} [category]
-	 * @return {string}
-	 */
-	_getCategoryDescription(category = ``) {
-		const descriptions = {
-			artsy: `My artsy stuffs that will assist your creative process!`,
-			fun: `Wanna have fun with your friends?!`,
-			setting: `Configurations modules that you may need to set up your guild and your custom profile!`,
-			system: `Miscellaneous commands to check the state of Annie.`,
-			user: `Everything you need are in here. Well-refined, just for you.`,
-			custom: `Special functionality for specific server(s).`
-		}
-		return descriptions[category]
-	}
 }

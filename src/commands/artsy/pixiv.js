@@ -78,11 +78,6 @@ module.exports = {
                 return await reply.send(locale(`PIXIV.FAIL_TO_LOAD`))
             }
             loadmsg.delete()
-            // return await reply.send(`${this.getTools(data.tools)}\n${this.getHashtags(data.tags)}`, {
-            //     customHeader: [`by ${data.user.name}`, client.user.displayAvatarURL()],
-            //     image: img,
-            //     prebuffer: true
-            // })
             const tools = this.getTools(data.tools)
             const toolText = tools === `` ? `TOOLS` : `NONE`
             const hashTags = this.getHashtags(data.tags)
