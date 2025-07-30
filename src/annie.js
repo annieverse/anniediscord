@@ -198,7 +198,6 @@ class Annie extends Discord.Client {
             this.logger.error(err)
             if (!this.isReady()) return
             errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: err.message, error_stack: err.stack, levelZeroErrors: levelZeroErrors }).catch(error => this.logger.error(error))
-            // this.shard.broadcastEval(errorRelay, { context: { fileName: `annie.js`, errorType: `normal`,error_message: err.message, error_stack: err.stack,levelZeroErrors:levelZeroErrors } }).catch(error => this.logger.error(error))
         })
 
         try {

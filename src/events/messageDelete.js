@@ -1,13 +1,13 @@
+const errorRelay = require(`../utils/errorHandler`)
+const levelZeroErrors = require(`../utils/errorLevels`)
+
 module.exports = async function messageDelete(client, message) {
-    console.log(`message`)
-    console.log(message)
     if (!client.isReady()) return
     if (message.partial) {
         try {
-            await message.fetch(); // Fetch the full message data
+            await message.fetch()
         } catch (error) {
-            console.error('Could not fetch partial message:', error);
-            return; // Exit if fetching fails
+            return errorRelay(this, { fileName: `messageDelete.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(error => client.logger.error(error))
         }
     }
     //  Ignore DM interface
