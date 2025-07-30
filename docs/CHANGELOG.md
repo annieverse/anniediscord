@@ -1,3 +1,10 @@
+## [10.1.1](https://github.com/annieverse/anniediscord/compare/v10.1.0...v10.1.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* **messageDelete:** fail to capture ([9e8ca6d](https://github.com/annieverse/anniediscord/commit/9e8ca6dcee1e44993ed699274e856f31af6af430))
+
 # [10.1.0](https://github.com/annieverse/anniediscord/compare/v10.0.8...v10.1.0) (2025-07-23)
 
 
