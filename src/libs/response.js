@@ -131,9 +131,10 @@ class Response {
 		//		this.message.commandType = https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
 
 		const _isSlash = isSlash(this.message)
+		const _CB = isInteractionCallbackResponse(this.message)
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!_isSlash) {
+		if (!_isSlash && !_CB) {
 			let checkPerm
 			try {
 				checkPerm = this.checkPermissions(field)
