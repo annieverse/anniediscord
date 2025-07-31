@@ -1,7 +1,5 @@
-/* eslint-disable no-prototype-builtins */
 "use strict"
-
-const { CommandInteraction, InteractionCallbackResponse } = require("discord.js")
+const { CommandInteraction, InteractionCallbackResponse } = require(`discord.js`)
 
 /**
  * Decides if InteractionCallbackResponse
