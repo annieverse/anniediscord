@@ -6,7 +6,8 @@ const {
 	ButtonBuilder,
 	ButtonStyle,
 	ChannelType,
-	MessageFlags
+	MessageFlags,
+	User
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -132,12 +133,13 @@ class Response {
 
 		const _isSlash = isSlash(this.message)
 		const _CB = isInteractionCallbackResponse(this.message)
+		const userObject = this.message instanceof User
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
 		if (!_isSlash && !_CB) {
 			let checkPerm
 			try {
-				checkPerm = this.checkPermissions(field)
+				checkPerm = this.checkPermissions(field, userObject)
 			}
 			catch (error) {
 				const internalError = `[Internal Error]`
@@ -303,7 +305,8 @@ class Response {
 	 * @param {import("discord.js").Channel} field 
 	 * @returns {Error | Boolean}
 	 */
-	checkPermissions(field) {
+	checkPermissions(field, userObject) {
+		if (userObject) return true
 		if (!this.message.guild.members) throw new Error(`[Internal Error] Can't read members property`)
 		if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)
