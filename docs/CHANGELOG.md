@@ -1,3 +1,10 @@
+## [10.1.2](https://github.com/annieverse/anniediscord/compare/v10.1.1...v10.1.2) (2025-08-02)
+
+
+### Bug Fixes
+
+* **guildMemberAdd:** fail send to user ([444baee](https://github.com/annieverse/anniediscord/commit/444baeee73e414353e74a76726b2a3090cb52fc9))
+
 ## [10.1.1](https://github.com/annieverse/anniediscord/compare/v10.1.0...v10.1.1) (2025-07-30)
 
 
