@@ -58,6 +58,7 @@ module.exports = {
         let rewardSchema = new customReward(packageName)
         let rewardraw = await client.db.customRewardUtils.getRewardByName(interaction.guild.id, packageName)
         let reward = rewardraw[0]
+        if (!reward) return await reply.send(`I'm sorry but I could not find the package \`${packageName}\``, { ephemeral: true })
         let rawObject = rewardSchema.unpack(reward.reward)
         let roles = []
         const items = new Collection()
