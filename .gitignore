@@ -41,3 +41,6 @@ logs
 /docs/jsdoc
 jsdoc.json
 jsconfig.json
+
+# LLM configuration
+.cursorrules

@@ -6,7 +6,9 @@ const {
 	ButtonBuilder,
 	ButtonStyle,
 	ChannelType,
-	MessageFlags
+	MessageFlags,
+	User,
+	GuildMember
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -131,10 +133,20 @@ class Response {
 		//		this.message.commandType = https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
 
 		const _isSlash = isSlash(this.message)
+		const _CB = isInteractionCallbackResponse(this.message)
+		const userObject = this.message instanceof User || this.message instanceof GuildMember
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
-		if (!_isSlash) {
-			const checkPerm = this.checkPermissions(field)
+		if (!_isSlash && !_CB) {
+			let checkPerm
+			try {
+				checkPerm = this.checkPermissions(field, userObject)
+			}
+			catch (error) {
+				const internalError = `[Internal Error]`
+				if (error.message.includes(internalError)) return
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: error.stack, error_message: error.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+			}
 			if (!checkPerm) return
 		}
 		// Check for file permission
@@ -220,7 +232,6 @@ class Response {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
 				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
 				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
-				// this.client.shard.broadcastEval(errorRelay, { context: { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors } }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 		}
 
@@ -295,7 +306,8 @@ class Response {
 	 * @param {import("discord.js").Channel} field 
 	 * @returns {Error | Boolean}
 	 */
-	checkPermissions(field) {
+	checkPermissions(field, userObject) {
+		if (userObject) return true
 		if (!this.message.guild.members) throw new Error(`[Internal Error] Can't read members property`)
 		if (field?.type != ChannelType.PublicThread && field?.type != ChannelType.PrivateThread) {
 			const SendMessages = this.message.guild.members.me.permissionsIn(field).has(PermissionFlagsBits.SendMessages)

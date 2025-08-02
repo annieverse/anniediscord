@@ -1,5 +1,6 @@
-/* eslint-disable no-prototype-builtins */
 "use strict"
+const { CommandInteraction, InteractionCallbackResponse } = require(`discord.js`)
+
 /**
  * Decides if InteractionCallbackResponse
  * @param {Object} instance 
@@ -9,7 +10,7 @@
  * @returns 
  */
 const isInteractionCallbackResponse = (instance) => {
-    return instance.hasOwnProperty(`resource`)
+    return instance instanceof InteractionCallbackResponse
 }
 
 /**
@@ -20,6 +21,6 @@ const isInteractionCallbackResponse = (instance) => {
  * @link https://discord.js.org/docs/packages/discord.js/14.21.0/Message:Class
  */
 const isSlash = (instance) => {
-    return instance.applicationId === null || instance.applicationId === undefined ? false : true // 
+    return instance instanceof CommandInteraction
 }
 module.exports = { isInteractionCallbackResponse, isSlash }
