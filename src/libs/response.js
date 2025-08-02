@@ -7,7 +7,8 @@ const {
 	ButtonStyle,
 	ChannelType,
 	MessageFlags,
-	User
+	User,
+	GuildMember
 } = require(`discord.js`)
 const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
@@ -133,7 +134,7 @@ class Response {
 
 		const _isSlash = isSlash(this.message)
 		const _CB = isInteractionCallbackResponse(this.message)
-		const userObject = this.message instanceof User
+		const userObject = this.message instanceof User || this.message instanceof GuildMember
 
 		// If object to send is coming from a regular message object, check if bot has correct perms to send otherwise return and dont send anything.
 		if (!_isSlash && !_CB) {
