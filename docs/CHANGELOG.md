@@ -1,3 +1,10 @@
+## [10.1.3](https://github.com/annieverse/anniediscord/compare/v10.1.2...v10.1.3) (2025-08-02)
+
+
+### Bug Fixes
+
+* **sendreward:** fail to find package ([e942a39](https://github.com/annieverse/anniediscord/commit/e942a3982706d05d6d56352d0347102b8079ad9c))
+
 ## [10.1.2](https://github.com/annieverse/anniediscord/compare/v10.1.1...v10.1.2) (2025-08-02)
 
 
