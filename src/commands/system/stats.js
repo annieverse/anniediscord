@@ -38,8 +38,8 @@ module.exports = {
             client.db.databaseUtils.setCache(key, size.toString(), { EX: (60 * 60) * 12 })
             return size
         }
-        return await reply.send(locale.SYSTEM_STATS.DISPLAY, {
-            header: locale.SYSTEM_STATS.HEADER,
+        return await reply.send(locale(`SYSTEM_STATS.DISPLAY`), {
+            header: locale(`SYSTEM_STATS.HEADER`),
             thumbnail: client.user.displayAvatarURL(),
             socket: {
                 shard: shardName[messageRef.guild.shard.id],

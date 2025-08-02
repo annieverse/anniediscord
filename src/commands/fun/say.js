@@ -20,21 +20,21 @@ module.exports = {
         { name: `message`, description: `Type your message to be said by annie`, required: true, type: ApplicationCommandOptionType.String }
     ],
     type: ApplicationCommandType.ChatInput,
-    async execute(client, reply, message, arg, locale) {
-        if (!arg) return await reply.send(locale.SAY.SHORT_GUIDE, {
+    async execute(client, reply, locale, message, arg) {
+        if (!arg) return await reply.send(locale(`SAY.SHORT_GUIDE`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieNyaa`)
             }
         })
-        return await this.run(arg, message, reply)
+        return await this.run(arg, message, reply, locale)
     },
-    async Iexecute(client, reply, interaction, options, locale) {
-        return await this.run(options.getString(`message`), interaction, reply)
+    async Iexecute(client, reply, locale, interaction, options) {
+        return await this.run(options.getString(`message`), interaction, reply, locale)
     },
-    async run(msg, messageRef, reply) {
+    async run(msg, messageRef, reply, locale) {
         const _isSlash = isSlash(messageRef)
         if (_isSlash) {
-            reply.send(`Message sent :P`, { ephemeral: true })
+            reply.send(locale(`SAY.SENT`), { ephemeral: true })
         }
         return reply.send(msg, {
             field: messageRef.channel,

@@ -27,7 +27,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         //  Normalize structure
         targetUser = targetUser.master || targetUser
         const userData = await userLib.requestMetadata(targetUser, 2, locale)
@@ -40,13 +40,13 @@ module.exports = {
         return await this.run(client, reply, locale, userData)
     },
     async run(client, reply, locale, user) {
-        const fetching = await reply.send(locale.PROFILECARD.FETCHING, {
+        const fetching = await reply.send(locale(`PROFILECARD.FETCHING`), {
             socket: { emoji: await client.getEmoji(`790994076257353779`) }
         })
         const image = (await new GUI(user, client).build()).png()
         isInteractionCallbackResponse(fetching) ? fetching.resource.message.delete() : fetching.delete()
         // Followup tips for newcomer
-        return reply.send(locale.COMMAND.TITLE + (!user.usedCover.isSelfUpload ? `\n` + locale.PROFILECARD.NEWCOMER_TIPS : ``), {
+        return reply.send(locale(`COMMAND.TITLE`) + (!user.usedCover.isSelfUpload ? `\n` + locale(`PROFILECARD.NEWCOMER_TIPS`) : ``), {
             socket: {
                 user: user.master.username,
                 emoji: await client.getEmoji(`692428927620087850`),

@@ -89,7 +89,7 @@ module.exports = {
     subConfigID: `RANKS_LIST`,
     async execute(client, reply, message, arg, locale, prefix) {
         //  Handle if user doesn't specify any arg
-        if (!arg) return await reply.send(locale.SETRANK.GUIDE, {
+        if (!arg) return await reply.send(locale(`SETRANK.GUIDE`), {
             header: `Hi, ${message.author.usernam}!`,
             image: `banner_setranks`,
             socket: {
@@ -99,7 +99,7 @@ module.exports = {
         })
         this.args = arg.split(` `)
         //  Handle if selected action doesn't exists
-        if (!this.actions.includes(this.args[0])) return await reply.send(locale.SETRANK.INVALID_ACTION)
+        if (!this.actions.includes(this.args[0])) return await reply.send(locale(`SETRANK.INVALID_ACTION`))
         //  Otherwise, run the action.
         this.guildConfigurations = message.guild.configs
         this.action = this.args[0]
@@ -152,7 +152,7 @@ module.exports = {
         if (this.primaryConfig.value) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
             const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
-            return await reply.send(locale.SETRANK.ALREADY_ENABLED, {
+            return await reply.send(locale(`SETRANK.ALREADY_ENABLED`), {
                 socket: {
                     user: await client.getUsername(this.primaryConfig.setByUserId),
                     date: moment(localed).fromNow()
@@ -167,9 +167,9 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        await reply.send(locale.SETRANK.SUCCESSFULLY_ENABLED, { status: `success` })
+        await reply.send(locale(`SETRANK.SUCCESSFULLY_ENABLED`), { status: `success` })
         //  Spawn tip if user is a first timer
-        if (this.firstTimer) return await reply.send(locale.SETRANK.FIRST_TIMER_TIP, {
+        if (this.firstTimer) return await reply.send(locale(`SETRANK.FIRST_TIMER_TIP`), {
             simplified: true,
             socket: { prefix: prefix }
         })
@@ -180,14 +180,14 @@ module.exports = {
      * @return {void}
      */
     async add(client, reply, message, arg, locale, prefix) {
-        if (!this.args[1]) return await reply.send(locale.SETRANK.ADD_MISSING_TARGET_ROLE, {
+        if (!this.args[1]) return await reply.send(locale(`SETRANK.ADD_MISSING_TARGET_ROLE`), {
             socket: { prefix: prefix }
         })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1], message.guild)
-        if (!getRole) return await reply.send(locale.SETRANK.INVALID_ROLE, { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
+        if (!getRole) return await reply.send(locale(`SETRANK.INVALID_ROLE`), { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
         //  Handle if target role is too high
-        if (getRole.position > this.annieRole.position) return await reply.send(locale.SETRANK.ROLE_TOO_HIGH, {
+        if (getRole.position > this.annieRole.position) return await reply.send(locale(`SETRANK.ROLE_TOO_HIGH`), {
             socket: {
                 role: getRole,
                 annieRole: this.annieRole.name,
@@ -199,8 +199,8 @@ module.exports = {
         if (getRegisteredRank.length >= 1) {
             const localizeTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
             const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
-            return await reply.send(locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED, {
-                header: locale.SETRANK.ADD_ROLE_ALREADY_REGISTERED_HEADER,
+            return await reply.send(locale(`SETRANK.ADD_ROLE_ALREADY_REGISTERED`), {
+                header: locale(`SETRANK.ADD_ROLE_ALREADY_REGISTERED_HEADER`),
                 socket: {
                     level: getRegisteredRank[0].LEVEL,
                     user: await client.getUsername(this.subConfig.setByUserId),
@@ -211,7 +211,7 @@ module.exports = {
             })
         }
         //  Handle if user doesn't specify the target required level
-        if (!this.args[2]) return await reply.send(locale.SETRANK.ADD_MISSING_REQUIRED_LEVEL, {
+        if (!this.args[2]) return await reply.send(locale(`SETRANK.ADD_MISSING_REQUIRED_LEVEL`), {
             socket: {
                 prefix: prefix,
                 role: getRole.name.toLowerCase()
@@ -219,7 +219,7 @@ module.exports = {
         })
         //  Handle if the specified required level is a faulty value/non-parseable number
         const getRequiredLevel = trueInt(this.args[2])
-        if (!getRequiredLevel) return await reply.send(locale.SETRANK.ADD_INVALID_REQUIRED_LEVEL)
+        if (!getRequiredLevel) return await reply.send(locale(`SETRANK.ADD_INVALID_REQUIRED_LEVEL`))
         //  Update configs
         this.subConfig.value.push({
             "ROLE": getRole.id,
@@ -232,9 +232,9 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.SETRANK.SUCCESSFULLY_ADDED, {
+        return await reply.send(locale(`SETRANK.SUCCESSFULLY_ADDED`), {
             status: `success`,
-            header: locale.SETRANK.SUCCESSFULLY_ADDED_HEADER,
+            header: locale(`SETRANK.SUCCESSFULLY_ADDED_HEADER`),
             socket: {
                 role: getRole.name,
                 level: getRequiredLevel
@@ -247,13 +247,13 @@ module.exports = {
      * @return {void}
      */
     async delete(client, reply, message, arg, locale) {
-        if (!this.args[1]) return await reply.send(locale.SETRANK.DELETE_MISSING_TARGET_ROLE, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
+        if (!this.args[1]) return await reply.send(locale(`SETRANK.DELETE_MISSING_TARGET_ROLE`), { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
         //  Handle if target role doesn't exists
         const getRole = findRole(this.args[1], message.guild)
-        if (!getRole) return await reply.send(locale.SETRANK.INVALID_ROLE, { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
+        if (!getRole) return await reply.send(locale(`SETRANK.INVALID_ROLE`), { socket: { emoji: await client.getEmoji(`692428578683617331`) } })
         //  Handle if the role hasn't been registered in the first place
         const getRegisteredRank = this.subConfig.value.filter(node => node.ROLE === getRole.id)
-        if (getRegisteredRank.length <= 0) return await reply.send(locale.SETRANK.DELETE_UNREGISTERED_ROLE, { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
+        if (getRegisteredRank.length <= 0) return await reply.send(locale(`SETRANK.DELETE_UNREGISTERED_ROLE`), { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
         //  Delete rank from the guild's configurations entry
         this.subConfig.value = this.subConfig.value.filter(node => node.ROLE !== getRole.id)
         client.db.guildUtils.updateGuildConfiguration({
@@ -263,8 +263,8 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.SETRANK.SUCCESSFULLY_DELETED, {
-            header: locale.SETRANK.SUCCESSFULLY_DELETED_HEADER,
+        return await reply.send(locale(`SETRANK.SUCCESSFULLY_DELETED`), {
+            header: locale(`SETRANK.SUCCESSFULLY_DELETED_HEADER`),
             status: `success`,
             socket: { role: getRole.name }
         })
@@ -277,9 +277,9 @@ module.exports = {
     async info(client, reply, message, arg, locale, prefix) {
         //  Handle if the main module is disabled in the guild for the first time
         if (!this.primaryConfig.value && !this.primaryConfig.setByUserId) {
-            return await reply.send(locale.SETRANK.INFO_DISABLED_FIRST_TIME, {
+            return await reply.send(locale(`SETRANK.INFO_DISABLED_FIRST_TIME`), {
                 thumbnail: message.guild.iconURL(),
-                header: locale.SETRANK.HEADER_INFO,
+                header: locale(`SETRANK.HEADER_INFO`),
                 socket: {
                     emoj: await client.getEmoji(`751020535865016420`),
                     prefix: prefix,
@@ -291,9 +291,9 @@ module.exports = {
         const localizeTime = await client.db.systemUtils.toLocaltime(this.primaryConfig.updatedAt)
         const localed = localizeTime == `now` ? moment().toISOString() : localizeTime
         if (!this.primaryConfig.value && this.primaryConfig.setByUserId) {
-            return await reply.send(locale.SETRANK.INFO_DISABLED_BY_USER, {
+            return await reply.send(locale(`SETRANK.INFO_DISABLED_BY_USER`), {
                 thumbnail: message.guild.iconURL(),
-                header: locale.SETRANK.HEADER_INFO,
+                header: locale(`SETRANK.HEADER_INFO`),
                 socket: {
                     emoji: await client.getEmoji(`751020535865016420`),
                     prefix: prefix,
@@ -305,9 +305,9 @@ module.exports = {
         }
         //  Handle if the main module is enabled, but the guild hasn't setting up the ranks yet.
         if (this.primaryConfig.value && (this.subConfig.value.length <= 0)) {
-            return await reply.send(locale.SETRANK.INFO_ENABLED_ZERO_RANKS, {
+            return await reply.send(locale(`SETRANK.INFO_ENABLED_ZERO_RANKS`), {
                 thumbnail: message.guild.iconURL(),
-                header: locale.SETRANK.HEADER_INFO,
+                header: locale(`SETRANK.HEADER_INFO`),
                 socket: {
                     emoji: await client.getEmoji(`751016612248682546`),
                     prefix: prefix,
@@ -319,10 +319,10 @@ module.exports = {
         const localizeSubConfigTime = await client.db.systemUtils.toLocaltime(this.subConfig.updatedAt)
         const localedSub = localizeSubConfigTime == `now` ? moment().toISOString() : localizeSubConfigTime
 
-        return await reply.send(locale.SETRANK.INFO_ENABLED, {
+        return await reply.send(locale(`SETRANK.INFO_ENABLED`), {
             status: `success`,
             thumbnail: message.guild.iconURL(),
-            header: locale.SETRANK.HEADER_INFO,
+            header: locale(`SETRANK.HEADER_INFO`),
             socket: {
                 emoji: await client.getEmoji(`751016612248682546`),
                 rankSize: this.subConfig.value.length,
@@ -347,7 +347,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.SETRANK[wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`], { status: `success` })
+        return await reply.send(locale(`SETRANK[${wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`}]`), { status: `success` })
     },
 
     /**
@@ -357,9 +357,9 @@ module.exports = {
     async reset(client, reply, message, arg, locale) {
         let timestamp = await client.db.guildUtils.getCurrentTimestamp()
         //  Handle if guild doesn't have any registered rank.
-        if (this.subConfig.value.length <= 0) return await reply.send(locale.SETRANK.RESET_NULL_RANKS)
+        if (this.subConfig.value.length <= 0) return await reply.send(locale(`SETRANK.RESET_NULL_RANKS`))
         //  Confirmation before performing the action
-        const confirmation = await reply.send(``, { header: locale.SETRANK.RESET_CONFIRMATION })
+        const confirmation = await reply.send(``, { header: locale(`SETRANK.RESET_CONFIRMATION`) })
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.member.id, confirmation)
         c.onAccept(async () => {
@@ -371,7 +371,7 @@ module.exports = {
             this.subConfig.updatedAt = timestamp
             this.subConfig.value = []
             client.db.guildUtils.deleteGuildConfiguration(this.subConfigID, message.guild.id)
-            return await reply.send(locale.SETRANK.SUCCESSFULLY_RESET, { status: `success` })
+            return await reply.send(locale(`SETRANK.SUCCESSFULLY_RESET`), { status: `success` })
         })
     },
 
@@ -381,7 +381,7 @@ module.exports = {
      */
     async disable(client, reply, message, arg, locale, prefix) {
         //  Handle if the guild already has disabled the configuration
-        if (!this.primaryConfig.value) return await reply.send(locale.SETRANK.ALREADY_DISABLED, { socket: { prefix: prefix } })
+        if (!this.primaryConfig.value) return await reply.send(locale(`SETRANK.ALREADY_DISABLED`), { socket: { prefix: prefix } })
         //  Otherwise, update the configuration. Both in the cache and database.
         client.db.guildUtils.updateGuildConfiguration({
             configCode: this.primaryConfigID,
@@ -390,7 +390,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale.SETRANK.SUCCESSFULLY_DISABLED, { status: `success` })
+        return await reply.send(locale(`SETRANK.SUCCESSFULLY_DISABLED`), { status: `success` })
     },
 
     /**

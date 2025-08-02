@@ -23,7 +23,7 @@ module.exports = {
         return await this.run(reply, locale)
     },
     async run(reply, locale) {
-        return await reply.send(locale.DONATE)
+        return await reply.send(locale(`DONATE`))
     }
 
 }

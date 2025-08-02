@@ -29,7 +29,7 @@ module.exports = {
     async execute(client, reply, message, arg, locale, prefix) {
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         //  Normalize structure
         targetUser = targetUser.master || targetUser
         return await this.run(client, reply, message, locale, targetUser)
@@ -40,12 +40,12 @@ module.exports = {
     async run(client, reply, messageRef, locale, user) {
         const itemsFilter = item => (item.quantity > 0) && (item.in_use === 0) && !this.ignoreItems.includes(item.type_name)
         const userLib = new User(client, messageRef)
-        if (!user) return await reply.send(locale.USER.IS_INVALID)
+        if (!user) return await reply.send(locale(`USER.IS_INVALID`))
         let targetUserData = await userLib.requestMetadata(user, 2, locale)
         //  Handle if couldn't fetch the inventory
-        const INVALID_INVENTORY = userLib.isSelf(user.id) ? locale.INVENTORY.AUTHOR_EMPTY : locale.INVENTORY.OTHER_USER_EMPTY
+        const INVALID_INVENTORY = userLib.isSelf(user.id) ? locale(`INVENTORY.AUTHOR_EMPTY`) : locale(`INVENTORY.OTHER_USER_EMPTY`)
         if (targetUserData.inventory.raw.length <= 0) return await reply.send(INVALID_INVENTORY, { socket: { user: user.username } })
-        reply.send(locale.INVENTORY.FETCHING, { socket: { emoji: await client.getEmoji(`AAUloading`) } })
+        reply.send(locale(`INVENTORY.FETCHING`), { socket: { emoji: await client.getEmoji(`AAUloading`) } })
             .then(async loading => {
                 //  Remove faulty values and sort order by rarity
                 const filteredInventory = targetUserData.inventory.raw.filter(itemsFilter).sort((a, b) => a.rarity_id - b.rarity_id).reverse()
@@ -75,7 +75,7 @@ module.exports = {
                     paging: true,
                     customHeader: [`${user.username}'s Inventory!`, user.displayAvatarURL()]
                 })
-                if (userLib.isSelf(user.id)) await reply.send(locale.INVENTORY.AUTHOR_TIPS, {
+                if (userLib.isSelf(user.id)) await reply.send(locale(`INVENTORY.AUTHOR_TIPS`), {
                     simplified: true,
                     socket: {
                         prefix: `/`,

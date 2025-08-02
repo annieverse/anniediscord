@@ -23,7 +23,7 @@ module.exports = {
     }],
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
-        if (!arg) return await reply.send(locale.CHOOSE.GUIDE)
+        if (!arg) return await reply.send(locale(`CHOOSE.GUIDE`))
         return await this.run(arg, client, reply, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
@@ -32,8 +32,8 @@ module.exports = {
     async run(options, client, reply, locale) {
         //  Handle if Annie can't parse options from user's input.
         const opts = this._tokenizedOptions(options)
-        if (!opts) return await reply.send(locale.CHOOSE.INVALID_OPTIONS)
-        return await reply.send(`${random(locale.CHOOSE.THINKING)} **${random(opts)}!** ${await client.getEmoji(random(locale.CHOOSE.EMOTIONS))}`)
+        if (!opts) return await reply.send(locale(`CHOOSE.INVALID_OPTIONS`))
+        return await reply.send(`${random(locale(`CHOOSE.THINKING`))} **${random(opts)}!** ${await client.getEmoji(random(locale(`CHOOSE.EMOTIONS`)))}`)
     },
 
     /**

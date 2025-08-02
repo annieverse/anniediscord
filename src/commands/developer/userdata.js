@@ -80,13 +80,13 @@ module.exports = {
             const userLib = new User(client, message)
             // Check if user is using on themselves
             if (userLib.isSelf(argu[1])) {
-                await reply.send(`I'm sorry but you can not do this command on yourself`)
+                await reply.send(locale(`USERDATA.INVALID_USE_SELF`))
                 return false
             }
             const userDataParent = await client.db.userUtils.getUser(argu[1].trim())
             // Check if user exists
             if (userDataParent === null) {
-                await reply.send(`I'm sorry but I dont have a user with that id in my storage`)
+                await reply.send(locale(`USERDATA.INVALID_USER`))
                 return false
             }
             return true
@@ -173,7 +173,9 @@ module.exports = {
             max: 1,
             time: 120000
         })
-        await reply.send(`You may choose to retrieve any data by a specific table or one of my predifined groupings, by typing them after this message (1 per command)\nGroupings:\nAll\n${availableGroups.join(`\n`)}`)
+        await reply.send(locale(`USERDATA.PROMPT`), {
+            socket: { data: availableGroups.join(`\n`) }
+        })
         collector.on(`collect`, async msg => {
             let input = msg.content.toLowerCase()
             if (availableGroups.includes(input)) {
@@ -199,7 +201,11 @@ module.exports = {
                     res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 }
                 file.end()
-                await reply.send(`Here is the data from \`${input}\` group for user with id: ${userId}`, {
+                await reply.send(locale(`USERDATA.SUCCESSFUL_GROUP`), {
+                    socket: {
+                        input: input,
+                        user: userId
+                    },
                     file: filepath,
                     fileName: filename,
                     fileDescription: `user requested data`
@@ -237,7 +243,11 @@ module.exports = {
                 file.write(`\n${border}The follow data is from ${input}\n${border}\n`)
                 res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 file.end()
-                await reply.send(`Here is the data from \`${input}\` table for user with id: ${userId}`, {
+                await reply.send(locale(`USERDATA.SUCCESSFUL_TABLE`), {
+                    socket: {
+                        input: input,
+                        user: userId
+                    },
                     file: filepath,
                     fileName: filename,
                     fileDescription: `user requested data`
@@ -274,7 +284,10 @@ module.exports = {
                     res.forEach(function (v) { file.write(JSON.stringify(v, null, 4) + `\n`) })
                 }
                 file.end()
-                await reply.send(`Here is the all data for user with id: ${userId}`, {
+                await reply.send(locale(`USERDATA.SUCCESSFUL_ALL`), {
+                    socket: {
+                        user: userId
+                    },
                     file: filepath,
                     fileName: filename,
                     fileDescription: `user requested data`
@@ -289,7 +302,7 @@ module.exports = {
                     }
                 }, 60000)
             } else {
-                return await reply.send(`I'm sorry that is not a vaild option`)
+                return await reply.send(locale(`USERDATA.INVALID_OPTION`))
             }
         })
     },
@@ -306,11 +319,13 @@ module.exports = {
             , `run`
             , { userId: userId }
             , `[userdata.js] Deleting user ${userId}`)
-        await reply.send(`All data tied to user:${userId} has been deleted`)
+        await reply.send(locale(`USERDATA.DELETE`), {
+            socket: { user: userId }
+        })
         return
     },
     async defaultAction(client, reply, message, argu, locale) {
-        return await reply.send(`I'm sorry but my only options are to tables, retrieve, or remove.`)
+        return await reply.send(locale(`USERDATA.AVAILABLE_OPTIONS`))
     },
     formatTables(tables) {
         function chunkify(a, n) {

@@ -33,7 +33,7 @@ module.exports = {
 	async execute(client, reply, message, arg, locale) {
 		const userLib = new User(client, message)
 		let targetUser = arg ? await userLib.lookFor(arg) : message.author
-		if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+		if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
 		//  Normalize structure
 		targetUser = targetUser.master || targetUser
 		return await this.claimDaily(client, message, reply, locale, targetUser)
@@ -52,7 +52,7 @@ module.exports = {
 		const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
 
 		//	Returns if user next dailies still in cooldown (refer to property `this.cooldown` in the constructor)
-		if (now.diff(localed, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale.DAILIES[isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`], {
+		if (now.diff(localed, this.cooldown[1]) < this.cooldown[0]) return await reply.send(locale(`DAILIES[${isSelf ? `AUTHOR_IN_COOLDOWN` : `OTHERS_IN_COOLDOWN`}]`), {
 			thumbnail: user.displayAvatarURL(),
 			topNotch: isSelf ?
 				`**Are you craving for artcoins?** ${await client.getEmoji(`692428578683617331`)}` :
@@ -76,7 +76,7 @@ module.exports = {
 			userId: messageRef.member.id,
 			guildId: messageRef.guild.id
 		})
-		await reply.send(locale.DAILIES.CLAIMED, {
+		await reply.send(locale(`DAILIES.CLAIMED`), {
 			status: `success`,
 			thumbnail: user.displayAvatarURL(),
 			topNotch: totalStreak ? `**__${totalStreak} Days Chain!__**` : ` `,
@@ -86,7 +86,7 @@ module.exports = {
 				praise: totalStreak ? `*Keep the streaks up!~♡*` : `*Comeback tomorrow~♡*`
 			}
 		})
-		return await reply.send(locale.DAILIES.TO_REMIND, {
+		return await reply.send(locale(`DAILIES.TO_REMIND`), {
 			simplified: true,
 			socket: {
 				prefix: client.prefix

@@ -26,12 +26,12 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     async execute(client, reply, message, arg, locale) {
         //  Handle if the EXP module isn't enabled in current guild
-        if (!message.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale.COMMAND.DISABLED, {
+        if (!message.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale(`COMMAND.DISABLED`), {
             socket: { command: `EXP Module` },
         })
         const userLib = new User(client, message)
         let targetUser = arg ? await userLib.lookFor(arg) : message.author
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         //  Normalize structure
         targetUser = targetUser.master || targetUser
         return await this.run(client, reply, message, locale, targetUser)
@@ -39,7 +39,7 @@ module.exports = {
     },
     async Iexecute(client, reply, interaction, options, locale) {
         //  Handle if the EXP module isn't enabled in current guild
-        if (!interaction.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale.COMMAND.DISABLED, {
+        if (!interaction.guild.configs.get(`EXP_MODULE`).value) return await reply.send(locale(`COMMAND.DISABLED`), {
             socket: { command: `EXP Module` },
         })
         const targetUser = options.getUser(`user`) || interaction.member.user
@@ -48,7 +48,7 @@ module.exports = {
     async run(client, reply, messageRef, locale, user) {
         const userLib = new User(client, messageRef)
         const userData = await userLib.requestMetadata(user, 2, locale)
-        return reply.send(locale.COMMAND.FETCHING, {
+        return reply.send(locale(`COMMAND.FETCHING`), {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`790994076257353779`),
@@ -57,7 +57,7 @@ module.exports = {
             }
         })
             .then(async loading => {
-                await reply.send(locale.COMMAND.TITLE, {
+                await reply.send(locale(`COMMAND.TITLE`), {
                     simplified: true,
                     prebuffer: true,
                     image: await new GUI(userData).build(),

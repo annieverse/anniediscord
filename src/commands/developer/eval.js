@@ -1,6 +1,4 @@
 "use strict"
- 
- 
 /**
  * 	Evaluate line of code on air
  * 	@author klerikdust
@@ -21,14 +19,14 @@ module.exports = {
         try {
             let evaled = await eval(arg)
             if (typeof evaled !== `string`) evaled = require(`util`).inspect(evaled)
-            return reply.send(locale.EXEC_CODE, {
+            return reply.send(locale(`EXEC_CODE`), {
                 socket: {
                     time: client.getBenchmark(initTime),
                     result: evaled.slice(0, 2000)
                 }
             })
         } catch (err) {
-            return reply.send(locale.ERROR, { socket: { error: err } })
+            return reply.send(locale(`ERROR`), { socket: { error: err } })
         }
     }
 }

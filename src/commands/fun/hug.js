@@ -40,12 +40,12 @@ module.exports = {
     },
     async run(targetUser, user, reply, locale) {
         const { body } = await superagent.get(this.hugGenLink)
-        return !targetUser ? await reply.send(locale.HUG.THEMSELVES, {
+        return !targetUser ? await reply.send(locale(`HUG.THEMSELVES`), {
             socket: {
                 user: user.username
             },
             imageGif: body.link
-        }) : await reply.send(locale.HUG.OTHER_USER, {
+        }) : await reply.send(locale(`HUG.OTHER_USER`), {
             socket: {
                 user: user.username,
                 targetUser: targetUser.username

@@ -27,13 +27,13 @@ module.exports = {
     },
     async run(client, reply, locale, user) {
         // Check if the API available
-        if (!client.dblApi) return await reply.send(locale.VOTE.UNAVAILABLE, {
+        if (!client.dblApi) return await reply.send(locale(`VOTE.UNAVAILABLE`), {
             editReply: true
         })
 
         //  Vote site banner
         const redirectToVoteSite = async () => {
-            return reply.send(locale.VOTE.READY, {
+            return reply.send(locale(`VOTE.READY`), {
                 header: `Hi, ${user.username}`,
                 image: `banner_votes`,
                 socket: {
@@ -48,7 +48,7 @@ module.exports = {
         // This will be expected on causing 404 crash, so handle this in advance.
         try {
             const voted = await client.dblApi.hasVoted(user.id)
-            if (voted) return await reply.send(locale.VOTE.IS_COOLDOWN, {
+            if (voted) return await reply.send(locale(`VOTE.IS_COOLDOWN`), {
                 socket: {
                     page: `[write a review](${this.page})`,
                     emoji: await client.getEmoji(`692428785571856404`)
@@ -62,7 +62,7 @@ module.exports = {
             //  Suggest the user to link their discord account to the API site
             //  So that they can access the vote system and not getting this suggestion again in the future
             if (err.message === `404 Not Found`) {
-                return reply.send(locale.VOTE.SUGGEST_TO_REGISTER, {
+                return reply.send(locale(`VOTE.SUGGEST_TO_REGISTER`), {
                     socket: {
                         emoji: await client.getEmoji(`848521456543203349`)
                     },

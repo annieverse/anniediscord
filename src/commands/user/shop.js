@@ -23,8 +23,8 @@ module.exports = {
         const guildShop = await client.db.shop.getGuildShop(messageRef.guild.id)
 
         if (!guildShop.length) {
-            await reply.send(locale.SHOP.NO_ITEMS)
-            return await reply.send(locale.SHOP.SETUP_TIPS, {
+            await reply.send(locale(`SHOP.NO_ITEMS`))
+            return await reply.send(locale(`SHOP.SETUP_TIPS`), {
                 simplified: true,
                 socket: {
                     prefix: `/`
@@ -33,7 +33,7 @@ module.exports = {
             })
         }
         //  Handle shop closure
-        if (!messageRef.guild.configs.get(`SHOP_MODULE`).value) return await reply.send(locale.SHOP.CLOSED)
+        if (!messageRef.guild.configs.get(`SHOP_MODULE`).value) return await reply.send(locale(`SHOP.CLOSED`))
         let res = []
         let str = ``
         let breakpoint = 0
@@ -68,7 +68,7 @@ module.exports = {
                 user: `**${messageRef.member.user.username}**`
             }
         })
-        return await reply.send(locale.SHOP.BUY_TIPS, {
+        return await reply.send(locale(`SHOP.BUY_TIPS`), {
             simplified: true,
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`),

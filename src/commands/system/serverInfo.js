@@ -53,7 +53,7 @@ module.exports = {
     async run(client, reply, messageRef, locale) {
         const { userSize, botSize, guildOwner, preferredLocale, name, createdAt, joinedAt, systemChannel, channelSize, roleSize, iconURL } = await this.getStats(client, messageRef)
 
-        return await reply.send(locale.SERVERINFO, {
+        return await reply.send(locale(`SERVERINFO`), {
             socket: {
                 userSize: commanifier(userSize),
                 botSize: commanifier(botSize),

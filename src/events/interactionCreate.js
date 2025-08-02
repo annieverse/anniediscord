@@ -8,7 +8,9 @@ module.exports = async (client, interaction) => {
     if (!client.isReady()) return
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
-    const locale = client.getTargetLocales(userData.lang)
+    // const locale = client.getTargetLocales(userData.lang)
+    client.localization.lang = userData.lang
+    const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, true, locale)
     try {
         if (client.guildonly_commands.has(interaction.guildId)) {
@@ -33,17 +35,16 @@ module.exports = async (client, interaction) => {
         }
     } catch (err) {
         client.logger.error(err)
-        if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
+        if (client.dev) return await reply.send(locale(`ERROR_ON_DEV`), {
             socket: {
                 error: err.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
             }
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        await reply.send(locale.ERROR_ON_PRODUCTION, {
+        await reply.send(locale(`ERROR_ON_PRODUCTION`), {
             socket: { emoji: await client.getEmoji(`AnniePout`) },
             ephemeral: true
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        // client.shard.broadcastEval(errorRelay, { context: { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

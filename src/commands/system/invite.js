@@ -26,7 +26,7 @@ module.exports = {
         try {
             //  Attempt to send through DM.
             await this.sendInvites(messageRef.member.user)
-            return await reply.send(locale.INVITE_LINK_SENT, { status: `success`, socket: { emoji: `:e_mail:` } })
+            return await reply.send(locale(`INVITE_LINK_SENT`), { status: `success`, socket: { emoji: `:e_mail:` } })
         } catch (error) {
             // Send to channel if failed send attempt to dm
             return this.sendInvites(messageRef.channel, client, reply, locale)
@@ -43,12 +43,12 @@ module.exports = {
      * @returns {void}
      */
     async sendInvites(targetChannel = {}, client, reply, locale, dm = false) {
-        await reply.send(locale.GENERATE_BOT_INVITE, {
+        await reply.send(locale(`GENERATE_BOT_INVITE`), {
             socket: { botInviteLink: getBotInviteUrl(client) },
             field: targetChannel,
             dm: dm
         })
-        return await reply.send(locale.GENERATE_SERVER_INVITE, {
+        return await reply.send(locale(`GENERATE_SERVER_INVITE`), {
             simplified: true,
             socket: {
                 serverLink: client.supportServer,

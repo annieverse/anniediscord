@@ -70,7 +70,7 @@ module.exports = class Confirmator {
         if (sessionActive) {
             this.setPreviousSessionActive = true
             this.message.delete()
-            return await this.reply.send(this.locale.SESSION_STILL_RUNNING, { socket: { emoji: await this.message.client.getEmoji(`692428748838010970`) }, ephemeral: true })
+            return await this.reply.send(this.locale(`SESSION_STILL_RUNNING`), { socket: { emoji: await this.message.client.getEmoji(`692428748838010970`) }, ephemeral: true })
         }
         // Session up for 2 minutes
         this.message.client.db.databaseUtils.setCache(this.getSessionId, `1`, { EX: 60 * 2 })

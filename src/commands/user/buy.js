@@ -47,8 +47,8 @@ module.exports = {
         const guildShop = await client.db.shop.getGuildShop(guild.id)
         const availableItems = await client.db.shop.getItem(null, guild.id)
         if (!guildShop.length || !availableItems.length) {
-            await reply.send(locale.SHOP.NO_ITEMS)
-            return await reply.send(locale.SHOP.SETUP_TIPS, {
+            await reply.send(locale(`SHOP.NO_ITEMS`))
+            return await reply.send(locale(`SHOP.SETUP_TIPS`), {
                 simplified: true,
                 socket: {
                     prefix: prefix
@@ -56,7 +56,7 @@ module.exports = {
             })
         }
         //  Handle shop closure
-        if (!guild.configs.get(`SHOP_MODULE`).value) return await reply.send(locale.SHOP.CLOSED)
+        if (!guild.configs.get(`SHOP_MODULE`).value) return await reply.send(locale(`SHOP.CLOSED`))
         //  Find best match
         const searchStringResult = stringSimilarity.findBestMatch(arg, availableItems.map(i => i.name.toLowerCase()))
         const item = searchStringResult.bestMatch.rating >= 0.5
@@ -67,8 +67,8 @@ module.exports = {
             :
             availableItems.find(i => parseInt(i.item_id) === parseInt(arg))
         if (!item) {
-            await reply.send(locale.BUY.INVALID_ITEM)
-            return await reply.send(locale.BUY.INVALID_ITEM_TIPS, {
+            await reply.send(locale(`BUY.INVALID_ITEM`))
+            return await reply.send(locale(`BUY.INVALID_ITEM_TIPS`), {
                 simplified: true,
                 socket: {
                     prefix: prefix,
@@ -79,7 +79,7 @@ module.exports = {
         const shopMetadata = guildShop.find(i => i.item_id === item.item_id)
         const unlimitedSupply = shopMetadata.quantity === `~` || shopMetadata.quantity === 9223372036854775807n
         //  Handle if item is out of stock
-        if (!unlimitedSupply && (shopMetadata.quantity <= 0)) return await reply.send(locale.BUY.OUT_OF_STOCK, {
+        if (!unlimitedSupply && (shopMetadata.quantity <= 0)) return await reply.send(locale(`BUY.OUT_OF_STOCK`), {
             socket: {
                 item: item.name,
                 emoji: await client.getEmoji(`692428908540461137`)
@@ -92,7 +92,7 @@ module.exports = {
     },
     async confirmOrDeny(slashCommand, message, client, locale, reply, shopMetadata, item, user, guild, prefix) {
 
-        const confirmation = await reply.send(locale.BUY.CONFIRMATION, {
+        const confirmation = await reply.send(locale(`BUY.CONFIRMATION`), {
             thumbnail: user.displayAvatarURL(),
             socket: {
                 emoji: await client.getEmoji(`758720612087627787`),
@@ -106,7 +106,7 @@ module.exports = {
             if (message.applicationId != null) await message.fetchReply()
             const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
             //  Handle if user does not have sufficient artcoins
-            if (shopMetadata.price > balance) return await reply.send(locale.BUY.INSUFFICIENT_BALANCE, {
+            if (shopMetadata.price > balance) return await reply.send(locale(`BUY.INSUFFICIENT_BALANCE`), {
                 socket: {
                     amount: commanifier(shopMetadata.price - balance),
                     emoji: await client.getEmoji(`758720612087627787`)
@@ -136,7 +136,7 @@ module.exports = {
             if (guild.configs.get(`CUSTOM_SHOP_LOG_MODULE`).value && guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value) {
                 const channelId = guild.configs.get(`CUSTOM_SHOP_LOG_CHANNEL`).value
                 const channel = await guild.channels.fetch(channelId)
-                await reply.send(locale.SHOP_LOG.ITEM_BOUGHT, {
+                await reply.send(locale(`SHOP_LOG.ITEM_BOUGHT`), {
                     status: `success`,
                     socket: {
                         user: user.user.username,
@@ -148,7 +148,7 @@ module.exports = {
                 })
             }
 
-            return await reply.send(locale.BUY.SUCCESSFUL, {
+            return await reply.send(locale(`BUY.SUCCESSFUL`), {
                 status: `success`,
                 socket: {
                     user: user.user.username,

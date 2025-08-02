@@ -18,10 +18,14 @@ module.exports = {
     servers: [`577121315480272908`],
     async execute(client, reply, message, arg, locale) {
         const target = await (new User(client, message)).lookFor(arg)
-        if (!target) return reply.send(`Sadly, the user is unreachable`)
+        if (!target) return reply.send(locale(`MAIL.INVALID_USER`))
         const mailContent = arg.replace(target.usedKeyword + ` `, ``) // Trim additioanl whitespace
-        if (!mailContent.length) return reply.send(`Where's the message? ${await client.getEmoji(`AnnieThinking`)}`)
-        const confirmation = await reply.send(`I'm going to send **${target.master}** the following message.\n\`\`\`\n${mailContent}\n\`\`\``)
+        if (!mailContent.length) return reply.send(locale(`MAIL.INVALID_CONTENT_LENGTH`), {
+            socket: { emoji: await client.getEmoji(`AnnieThinking`) }
+        })
+        const confirmation = await reply.send(locale(`MAIL.CONFIRMATION`), {
+            socket: { user: target.master, content: mailContent }
+        })
         const c = new Confirmator(message, reply, locale)
         await c.setup(message.author.id, confirmation)
         return c.onAccept(async () => {
@@ -30,10 +34,14 @@ module.exports = {
                     field: target.master,
                     footer: `Sent by Annie's developer`
                 })
-                return reply.send(`The mail is successfully sent!`)
+                return reply.send(locale(`MAIL.SUCCESSFUL`), {
+                    socket: { user: target.master, content: mailContent }
+                })
             }
             catch (e) {
-                return reply.send(`Unfortunately I can't forward the email due to locked DM.`)
+                return reply.send(locale(`MAIL.UNSUCCESSFUL`), {
+                    socket: { emoji: await client.getEmoji(`AnnieRip`) }
+                })
             }
         })
     }

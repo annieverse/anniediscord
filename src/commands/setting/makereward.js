@@ -88,11 +88,11 @@ module.exports = {
         if (options.getSubcommand() === `list`) return this.listPackages(client, reply, interaction, options, locale)
 
         // Test if any other parameter was entered and if it wasn't exit the commands and let the user know
-        if (!options.getInteger(`roles`) && !options.getInteger(`items`) && !options.getInteger(`ac`)) return await reply.send(`Sorry must pick one of the other options`)
+        if (!options.getInteger(`roles`) && !options.getInteger(`items`) && !options.getInteger(`ac`)) return await reply.send(locale(`MAKEREWARD.OTHER_OPTION`))
 
         // Create the cooldown for the command so a user cant start two instances of the command
         const sessionID = `REWARD_REGISTER:${interaction.member.id}@${interaction.guild.id}`
-        if (await client.db.databaseUtils.doesCacheExist(sessionID)) return await reply.send(`I'm sorry but you have a create package session still active please wait a few before trying again`, { ephemeral: true })
+        if (await client.db.databaseUtils.doesCacheExist(sessionID)) return await reply.send(locale(`MAKEREWARD.SESSION_STILL_ACTIVE`), { ephemeral: true })
         client.db.databaseUtils.setCache(sessionID, `1`, { EX: 60 * 3 })
 
         // Set the name for the package
@@ -100,7 +100,7 @@ module.exports = {
 
         // Get all currently available packages for the guild to test against, so there are none with duplicate names.
         const packages = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
-        if (packages.length >= 25) return await reply.send(`I'm sorry but you have reached the max amount of packages. Please delete one if you wish to make another one.`)
+        if (packages.length >= 25) return await reply.send(locale(`MAKEREWARD.MAX_PACKAGES`))
 
         const packages_collection = new Collection()
 
@@ -108,7 +108,7 @@ module.exports = {
         packages.forEach(element => {
             packages_collection.set(element.reward_name, rewardSchema.unpack(element.reward))
         })
-        if (packages_collection.has(packageName)) return await reply.send(`I'm sorry but you have a package with that name already`)
+        if (packages_collection.has(packageName)) return await reply.send(locale(`MAKEREWARD.NAME_EXISTS`))
 
         // Set up varibles to hold the values we want to add to the schema
         let roles = []
@@ -121,14 +121,13 @@ module.exports = {
         let phase = 0
         let endPhase = 0
         let addingRole = false
-        let addingItem = false
 
         let roleListener = null
 
         // This varible is to keep track of messages that the user will see
         // Needs to be empty so we can add values only when we want them to show
         let trackingMessageContent = {
-            start: `The package you are creating is named ${packageName}`
+            start: `${locale(`MAKEREWARD.TRACK_MSG_START`)} ${packageName}`
         }
 
         // Set up and send the message that will be updated as choices are made.
@@ -139,7 +138,7 @@ module.exports = {
         // Check if the input for amount of ac was given and if yes set the amount and update the tracking message
         if (options.getInteger(`ac`)) {
             acAmount = options.getInteger(`ac`)
-            updateTrackerMessage(`ac`, `AC amount set to ${acAmount}`)
+            updateTrackerMessage(`ac`, `${locale(`MAKEREWARD.AC_SET_TO`)} ${acAmount}`)
             // Check that no other options were inputed and send to completion method
             if (!options.getInteger(`roles`) && !options.getInteger(`items`)) return confirmOrCancel()
         }
@@ -147,18 +146,18 @@ module.exports = {
         // Test if the option for amount of roles was entered otherwise test if the option for amount of items was entered
         if (options.getInteger(`roles`)) {
             roleAmount = options.getInteger(`roles`) // how many roles maximum should there be
-            updateTrackerMessage(`roles`, `(0/${roleAmount}) roles selected`)
+            updateTrackerMessage(`roles`, `(0/${roleAmount}) ${locale(`MAKEREWARD.ROLES_SELECTED`)}`)
             if (options.getInteger(`items`)) {
                 endPhase = 1
                 itemAmount = options.getInteger(`items`)
-                updateTrackerMessage(`items`, `(0/${itemAmount}) items selected`)
+                updateTrackerMessage(`items`, `(0/${itemAmount}) ${locale(`MAKEREWARD.ITEMS_SELECTED`)}`)
             }
             phaseOne()
         } else if (options.getInteger(`items`)) {
             phase = 1 // Set the starting phase to skip the role method.
             endPhase = 1
             itemAmount = options.getInteger(`items`) // how many items maximum should there be
-            updateTrackerMessage(`items`, `(0/${itemAmount}) items selected`)
+            updateTrackerMessage(`items`, `(0/${itemAmount}) ${locale(`MAKEREWARD.ITEMS_SELECTED`)}`)
             phaseTwo()
         }
 
@@ -167,12 +166,12 @@ module.exports = {
             // End phase if there are no roles available
             if (!roleOptions.size || roleOptions.size === 0) {
                 roles = []
-                updateTrackerMessage(`roles`, `(0/0) roles selected, There are no roles available to add`)
-                await await reply.send(`Sorry you dont have any roles for me to give try moving my role higher.`, { ephemeral: true })
+                updateTrackerMessage(`roles`, locale(`MAKEREWARD.NO_ROLES_MENU`))
+                await await reply.send(locale(`MAKEREWARD.NO_ROLES`), { ephemeral: true })
                 phase++
                 // Test to see if we need to go to item select, if not go to the confirmation method
                 if (endPhase === phase) return phaseTwo()
-                updateTrackerMessage(`footer`, `Please hit the button to confirm the transaction or cancel to stop the transaction`)
+                updateTrackerMessage(`footer`, locale(`MAKEREWARD.TRANSACTION_CANCEL`))
                 return confirmOrCancel()
             }
 
@@ -194,7 +193,7 @@ module.exports = {
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
-            const role_adding = await reply.send(`Time to add any roles if you wish.`, { components: row })
+            const role_adding = await reply.send(locale(`MAKEREWARD.ADD_ROLES`), { components: row })
             const member = interaction.user.id
             const filter = interaction => [roleButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
             // const filter = interaction => (interaction.customId === roleButtonCustomId || interaction.customId === cancelButtonCustomId || interaction.customId === finishedButtonCustomId) && interaction.user.id === member
@@ -202,7 +201,7 @@ module.exports = {
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
-                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
+                i.reply({ content: locale(`MAKEREWARD.IGNORE`), flags: MessageFlags.Ephemeral })
             })
 
             // What to do when the collector times out or gets called by .stop()
@@ -214,7 +213,7 @@ module.exports = {
                     message.edit({ components: [] })
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled -1.1\n${e}`))
                     client.db.databaseUtils.delCache(sessionID)
-                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true })
+                    await reply.send(locale(`MAKEREWARD.TIME_EXPIRED`), { ephemeral: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -223,7 +222,7 @@ module.exports = {
 
             buttonCollector.on(`collect`, async i => {
                 if (i.customId === cancelButtonCustomId) {
-                    updateTrackerMessage(`footer`, `No roles have been added`)
+                    updateTrackerMessage(`footer`, locale(`MAKEREWARD.NO_ROLES_ADDED`))
                     roles = []
                     role_adding.delete().catch(e => client.logger.warn(`Error has been handled -2\n${e}`))
                     return buttonCollector.stop()
@@ -233,7 +232,7 @@ module.exports = {
                     return buttonCollector.stop()
                 }
 
-                if (addingRole) return i.reply(`please finish the current attempt role first then proceed.`)
+                if (addingRole) return i.reply(locale(`MAKEREWARD.ROLE_ATTEMPT`))
 
                 addingRole = true
                 const finializedSelection = []
@@ -244,7 +243,7 @@ module.exports = {
                 const roleInput = new TextInputBuilder()
                     .setCustomId(`roleInput`)
                     // The label is the prompt the user sees for this input
-                    .setLabel(`What is the role's name or id?`)
+                    .setLabel(locale(`MAKEREWARD.ROLE_ID_NAME`))
                     // Short means only a single line of text
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -288,9 +287,9 @@ module.exports = {
                 }
                 if (!has_role) {
                     roleTry++
-                    updateTrackerMessage(`footer`, `No role was found, try again please. After the third try it will automatically set to your current roles made or set to zero roles. This is your ${roleTry} attempt.`)
+                    updateTrackerMessage(`footer`, `${locale(`MAKEREWARD.NO_ROLES_ATTEMPT_START`)} ${roleTry} ${locale(`MAKEREWARD.NO_ROLES_OR_ITEMS_ATTEMPT_END`)}`)
                     if (roleTry > 3) {
-                        updateTrackerMessage(`items`, `(${finializedSelection.length}/${roleAmount}) items selected ${formatSelectedItem(items)}`)
+                        updateTrackerMessage(`items`, `(${finializedSelection.length}/${roleAmount}) ${locale(`MAKEREWARD.ITEMS_SELECTED`)} ${formatSelectedItem(items)}`)
                         buttonCollector.stop()
                     }
                 } else {
@@ -302,16 +301,17 @@ module.exports = {
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId(`confirm`)
-                                .setLabel(`Yes thats it`)
+                                .setLabel(locale(`MAKEREWARD.ROLE_OR_ITEM_CONFIRM`))
                                 .setStyle(ButtonStyle.Success),
                         )
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId(`cancel`)
-                                .setLabel(`No thats not the role`)
+                                .setLabel(locale(`MAKEREWARD.ROLE_CANCEL`))
                                 .setStyle(ButtonStyle.Danger)
                         )
-                    const confirmationRole = await reply.send(`The role i found was: ${role.name}, is this correct`, {
+                    const confirmationRole = await reply.send(locale(`MAKEREWARD.ROLE_FOUND`), {
+                        socket: { roleName: role.name },
                         components: [roleConfirmationRow]
                     })
                     const rolefilter = roleInteraction => [`confirm`, `cancel`].some(id => id === roleInteraction.customId) && roleInteraction.user.id === member
@@ -338,16 +338,16 @@ module.exports = {
                         if (button.customId === `confirm`) {
                             if (finializedSelection.length === roleAmount) return rolesHitMax() // Check before to avoid possibly duplicating record
                             finializedSelection.push(role.id)
-                            updateTrackerMessage(`roles`, `(${finializedSelection.length}/${roleAmount}) roles selected ${formatSelectedRoles(roleOptions)}`)
+                            updateTrackerMessage(`roles`, `(${finializedSelection.length}/${roleAmount}) ${locale(`MAKEREWARD.ROLES_SELECTED`)} ${formatSelectedRoles(roleOptions)}`)
                             if (finializedSelection.length === roleAmount) return rolesHitMax() // Check again to end the phase
                         } else {
-                            updateTrackerMessage(`footer`, `Please Hit the role button to try again`)
+                            updateTrackerMessage(`footer`, locale(`MAKEREWARD.ROLE_TRY_AGAIN`))
                         }
                     })
 
                     // Send a message to the users if they try to use the command when they didn't iniate it
                     roleListener.on(`ignore`, async (i) => {
-                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
+                        i.reply({ content: locale(`MAKEREWARD.IGNORE`), flags: MessageFlags.Ephemeral })
                     })
 
                     // What to do when the collector for the role confirmation ends.
@@ -375,8 +375,8 @@ module.exports = {
             // End phase if there are no items available
             if (!availableItems.length) {
                 items = []
-                updateTrackerMessage(`items`, `(0/0) items selected, There are no items available to add`)
-                return await reply.send(`Sorry you dont have any items for me to give try adding one with /setshop add.`, { ephemeral: true })
+                updateTrackerMessage(`items`, locale(`MAKEREWARD.NO_ITEMS_MENU`))
+                return await reply.send(locale(`MAKEREWARD.NO_ITEMS_AVAIL`), { ephemeral: true })
             }
 
             // Create the buttons and collector for adding an item
@@ -399,14 +399,14 @@ module.exports = {
                         .setLabel(`Cancel`)
                         .setStyle(ButtonStyle.Danger)
                 )
-            const item_adding = await reply.send(`Time to add any items if you wish.`, { components: row })
+            const item_adding = await reply.send(locale(`MAKEREWARD.ADD_ITEMS`), { components: row })
             const member = interaction.user.id
             const filter = interaction => [itemButtonCustomId, cancelButtonCustomId, finishedButtonCustomId].some(id => id === interaction.customId) && interaction.user.id === member
             const buttonCollector = isInteractionCallbackResponse(item_adding) ? item_adding.resource.message.createMessageComponentCollector({ filter, time: 30000 }) : item_adding.createMessageComponentCollector({ filter, time: 30000 })
 
             // Send a message to the users if they try to use the command when they didn't iniate it
             buttonCollector.on(`ignore`, async (i) => {
-                i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
+                i.reply({ content: locale(`MAKEREWARD.IGNORE`), flags: MessageFlags.Ephemeral })
             })
 
             // What to do when the collector for adding an item ends
@@ -417,7 +417,7 @@ module.exports = {
                     message.edit({ components: [] })
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled -7\n${e}`))
                     client.db.databaseUtils.delCache(sessionID)
-                    await reply.send(`Your time has expired, no worries though just excute the makereward command again to add a package`, { ephemeral: true })
+                    await reply.send(locale(`MAKEREWARD.TIME_EXPIRED`), { ephemeral: true })
                 } catch (error) {
                     client.logger.error(`[makereward.js]\n${error}`)
                 }
@@ -426,7 +426,7 @@ module.exports = {
 
             buttonCollector.on(`collect`, async i => {
                 if (i.customId === cancelButtonCustomId) {
-                    updateTrackerMessage(`footer`, `No items have been added`)
+                    updateTrackerMessage(`footer`, locale(`MAKEREWARD.NO_ITEMS_ADDED`))
                     items = []
                     item_adding.delete().catch(e => client.logger.warn(`Error has been handled -8\n${e}`))
                     return buttonCollector.stop()
@@ -437,18 +437,18 @@ module.exports = {
                 const modalId = `${sessionID}_${i.id}_${interaction.member.id}`
                 const modal = new ModalBuilder()
                     .setCustomId(modalId)
-                    .setTitle(`Item creation`)
+                    .setTitle(locale(`MAKEREWARD.ITEM_CREATION_TITLE`))
                 const itemNameInput = new TextInputBuilder()
                     .setCustomId(`itemNameInput`)
                     // The label is the prompt the user sees for this input
-                    .setLabel(`What is the item's name?`)
+                    .setLabel(locale(`MAKEREWARD.ITEM_NAME`))
                     // Short means only a single line of text
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
                 const itemQuantityInput = new TextInputBuilder()
                     .setCustomId(`itemQuantityInput`)
                     // The label is the prompt the user sees for this input
-                    .setLabel(`What quantity should be given?`)
+                    .setLabel(locale(`MAKEREWARD.ITEM_QUANTITY`))
                     // Short means only a single line of text
                     .setStyle(TextInputStyle.Short)
                     .setRequired(true)
@@ -489,10 +489,10 @@ module.exports = {
                     availableItems.find(i => parseInt(i.item_id) === parseInt(answerName))
                 if (!item) {
                     itemTry++
-                    updateTrackerMessage(`footer`, `No item was found, try again please. After the third try it will automatically set to your current items made or set to zero items. This is your ${itemTry} attempt.`)
+                    updateTrackerMessage(`footer`, `${locale(`MAKEREWARD.NO_ITEMS_ATTEMPT_START`)} ${itemTry} ${locale(`MAKEREWARD.NO_ROLES_OR_ITEMS_ATTEMPT_END`)}`)
 
                     if (itemTry > 3) {
-                        updateTrackerMessage(`items`, `(${items.length}/${items.length}) items selected ${formatSelectedItem(items)}`)
+                        updateTrackerMessage(`items`, `(${items.length}/${items.length}) ${locale(`MAKEREWARD.ITEMS_SELECTED`)} ${formatSelectedItem(items)}`)
                         buttonCollector.stop()
                     }
                 } else {
@@ -501,16 +501,17 @@ module.exports = {
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId(`confirm`)
-                                .setLabel(`Yes thats it`)
+                                .setLabel(locale(`MAKEREWARD.ROLE_OR_ITEM_CONFIRM`))
                                 .setStyle(ButtonStyle.Success),
                         )
                         .addComponents(
                             new ButtonBuilder()
                                 .setCustomId(`cancel`)
-                                .setLabel(`No thats not the item`)
+                                .setLabel(locale(`MAKEREWARD.ITEM_CANCEL`))
                                 .setStyle(ButtonStyle.Danger)
                         )
-                    const confirmationItem = await reply.send(`The item i found was: ${item.name}, is this correct`, {
+                    const confirmationItem = await reply.send(locale(`MAKEREWARD.ITEM_FOUND`), {
+                        socket: { itemName: item.name },
                         components: [itemConfirmationRow]
                     })
                     const itemfilter = iteminteraction => [`confirm`, `cancel`].some(id => id === iteminteraction.customId) && iteminteraction.user.id === member
@@ -526,7 +527,7 @@ module.exports = {
 
                     itemListener.on(`collect`, async button => {
                         function itemsHitMax() {
-                            updateTrackerMessage(`footer`, `Please hit the button to confirm the transaction or cancel to stop the transaction`)
+                            updateTrackerMessage(`footer`, locale(`MAKEREWARD.TRANSACTION_CANCEL`))
                             item_adding.delete().catch(e => client.logger.warn(`Error has been handled -10\n${e}`))
                             itemListener.stop()
                             return buttonCollector.stop()
@@ -543,7 +544,7 @@ module.exports = {
                                 quantity = testQuantity
                             } else {
                                 // Assign the quantity as 1 if the quantity entered wasnt an integer or is a negative integer
-                                await reply.send(`I'm sorry the quantity you typed in was not a number I will default the amount to 1`, {
+                                await reply.send(locale(`MAKEREWARD.NAN_QUANTITY`), {
                                     deleteIn: 5000,
                                     ephemeral: true
                                 })
@@ -551,18 +552,18 @@ module.exports = {
 
                             items.push([JSON.stringify(item), quantity])
                             itemNames.push(item.name)
-                            updateTrackerMessage(`items`, `(${items.length}/${itemAmount}) items selected ${formatSelectedItem(items)}`)
+                            updateTrackerMessage(`items`, `(${items.length}/${itemAmount}) ${locale(`MAKEREWARD.ITEMS_SELECTED`)} ${formatSelectedItem(items)}`)
                             if (items.length === itemAmount) return itemsHitMax() // Check again to end the phase 
-                            updateTrackerMessage(`footer`, `Please Hit the Item button to add another item`)
+                            updateTrackerMessage(`footer`, locale(`MAKEREWARD.ITEM_ADD_ANOTHER`))
                             itemListener.stop()
                         } else {
-                            updateTrackerMessage(`footer`, `Please Hit the Item button to try again`)
+                            updateTrackerMessage(`footer`, locale(`MAKEREWARD.ITEM_ADD_TRY`))
                         }
                     })
 
                     // Send a message to the users if they try to use the command when they didn't iniate it
                     itemListener.on(`ignore`, async (i) => {
-                        i.reply({ content: `I'm sorry but only the user who sent this message may interact with it.`, flags: MessageFlags.Ephemeral })
+                        i.reply({ content: locale(`MAKEREWARD.IGNORE`), flags: MessageFlags.Ephemeral })
                     })
 
                     // What to do when the item collector ends
@@ -628,11 +629,11 @@ module.exports = {
                         item: dataItem
                     }
                     const pack = rewardSchema.pack(data) // The package is saved as a string that will be read when getting unpacked and turned back into an object.
-                    updateTrackerMessage(`footer`, `Your package has been added, you can view the packages with '/makereward list'`)
+                    updateTrackerMessage(`footer`, locale(`MAKEREWARD.SUCCESSFUL`))
                     client.db.customRewardUtils.recordReward(interaction.guild.id, interaction.user.id, pack, packageName)
                     confirmOrCancelListener.stop()
                 } else {
-                    updateTrackerMessage(`footer`, `The package has not been added, please run the command again if you wish to add a package.`)
+                    updateTrackerMessage(`footer`, locale(`MAKEREWARD.SUBMIT_CANCEL`))
                     confirmOrCancelListener.stop()
                 }
 
@@ -718,7 +719,7 @@ module.exports = {
     },
     async listPackages(client, reply, interaction, options, locale) {
         const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
-        if (packages_raw.length < 1) return await reply.send(`I'm sorry you dont seem to have any packages. try to make one with /makereward create`)
+        if (packages_raw.length < 1) return await reply.send(locale(`MAKEREWARD.NO_PACKAGES`))
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
             let rewardSchema = new customReward(element.reward_name)
@@ -765,7 +766,7 @@ module.exports = {
 
         return await reply.send(packages, {
             paging: true,
-            header: `Custom reward packages for ${interaction.guild.name}`
+            header: `${locale(`MAKEREWARD.LIST_PKG_HEADER`)} ${interaction.guild.name}`
         })
     },
     async autocomplete(client, interaction) {
@@ -775,7 +776,7 @@ module.exports = {
         if (interaction.options.getSubcommand() !== `delete`) return
         const focusedValue = interaction.options.getFocused()
         const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
-        if (packages_raw.length < 1) return await interaction.respond(`I'm sorry you dont have any packages made currently`)
+        if (packages_raw.length < 1) return await interaction.respond(client.localization.findLocale(`MAKEREWARD.NO_PACKAGES`))
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
             let rewardSchema = new customReward(element.reward_name)
@@ -804,7 +805,7 @@ module.exports = {
                     .setLabel(`Cancel`)
                     .setStyle(ButtonStyle.Danger)
             )
-        let confirmationMessage = await reply.send(`Please confirm the deletion of package: ${packageName}`)
+        let confirmationMessage = await reply.send(locale(`MAKEREWARD.DELETE_CONFIRM`), { socket: { packageName: packageName } })
         let confirmationMessageContent = `_ _`
         confirmationMessage.edit({
             components: [confirmationRow]
@@ -823,11 +824,11 @@ module.exports = {
             await xyx.deferUpdate()
             let whatButtonWasPressed = xyx.customId
             if (whatButtonWasPressed === `confirm`) {
-                confirmationMessageContent = `Your package has been deleted`
+                confirmationMessageContent = locale(`MAKEREWARD.DELETE_SUCCESS`)
                 client.db.customRewardUtils.deleteReward(interaction.guild.id, packageName)
                 confirmOrCancelListener.stop()
             } else {
-                confirmationMessageContent = `Your package has not been deleted`
+                confirmationMessageContent = locale(`MAKEREWARD.DELETE_FAIL`)
                 confirmOrCancelListener.stop()
             }
 

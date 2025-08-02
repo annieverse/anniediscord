@@ -34,18 +34,18 @@ class Quest {
         this.#nextQuestId = id
         if (!this.#nextQuestId) {
             this.#nextQuestId = this.#generateNextQuestId()
-            this.client.db.quests.updateUserNextActiveQuest(this.#user.id, this.#messageRef.guild.id, this.#nextQuestId, this.#locale.lang)
+            this.client.db.quests.updateUserNextActiveQuest(this.#user.id, this.#messageRef.guild.id, this.#nextQuestId, this.#locale(`lang`))
         }
         this.#setActiveQuest = this.#nextQuestId
     }
 
     set #setActiveQuest(a) {
-        if (!this.#questlocalePool[this.#locale.lang].length) {
+        if (!this.#questlocalePool[this.#locale(`lang`)].length) {
             this.#activeQuest = this.#questlocalePool.en.find(node => node.quest_id === a)
         } else {
             let attemptedQuest
             try {
-                attemptedQuest = this.#questlocalePool[this.#locale.lang].find(node => node.quest_id === a)
+                attemptedQuest = this.#questlocalePool[this.#locale(`lang`)].find(node => node.quest_id === a)
             } catch (error) {
                 attemptedQuest = this.#questlocalePool.en.find(node => node.quest_id === a)
             }
@@ -130,8 +130,8 @@ class Quest {
     updateRewards() {
         //  Update reward, user quest data and store activity to quest_log activity
         this.client.db.databaseUtils.updateInventory({ itemId: 52, value: this.#questReward, guildId: this.#messageRef.guild.id, userId: this.#user.id })
-        this.client.db.quests.updateUserQuest(this.#user.id, this.#messageRef.guild.id, this.#newNextQuestId, this.#locale.lang)
-        this.client.db.quests.recordQuestActivity(this.#nextQuestId, this.#user.id, this.#messageRef.guild.id, this.#userAnswer, this.#locale.lang)
+        this.client.db.quests.updateUserQuest(this.#user.id, this.#messageRef.guild.id, this.#newNextQuestId, this.#locale(`lang`))
+        this.client.db.quests.recordQuestActivity(this.#nextQuestId, this.#user.id, this.#messageRef.guild.id, this.#userAnswer, this.#locale(`lang`))
         this.cancelSession()
     }
 
@@ -144,7 +144,7 @@ class Quest {
     async #fetchQuests() {
         const q = await this.client.db.quests.getAllQuests()
         if (!q.length) {
-            await this.reply.send(this.#locale.QUEST.EMPTY)
+            await this.reply.send(this.#locale(`QUEST.EMPTY`))
             return false
         }
         return this.#quests = q
@@ -155,9 +155,9 @@ class Quest {
         let questlocale = {}
         questlocale.en = this.#quests.filter(q => q.lang == `en`)
         try {
-            if (this.#locale.lang != `en`) questlocale[this.#locale.lang] = this.#quests.filter(q => q.lang == this.#locale.lang)
+            if (this.#locale(`lang`) != `en`) questlocale[this.#locale(`lang`)] = this.#quests.filter(q => q.lang == this.#locale(`lang`))
         } catch (error) {
-            this.client.logger.warn(`[quests.js] Could not load "${this.#locale.lang}" lang for quests`)
+            this.client.logger.warn(`[quests.js] Could not load "${this.#locale(`lang`)}" lang for quests`)
         }
         return this.#questlocalePool = questlocale
     }
@@ -171,7 +171,7 @@ class Quest {
         if (this.client.dev) return false
 
         if (await this.client.db.databaseUtils.doesCacheExist(this.#sessionId)) {
-            await this.reply.send(this.#locale.QUEST.SESSION_STILL_RUNNING, { socket: { emoji: await this.client.getEmoji(`692428748838010970`) } })
+            await this.reply.send(this.#locale(`QUEST.SESSION_STILL_RUNNING`), { socket: { emoji: await this.client.getEmoji(`692428748838010970`) } })
             return true
         }
         //  Session up for 2 minutes
@@ -188,7 +188,7 @@ class Quest {
         const localed = lastClaimAt == `now` ? moment().toISOString() : lastClaimAt
         //  Handle if user's quest queue still in cooldown
         if (now.diff(localed, cooldown[1]) < cooldown[0]) {
-            await this.reply.send(this.#locale.QUEST.COOLDOWN, {
+            await this.reply.send(this.#locale(`QUEST.COOLDOWN`), {
                 topNotch: `**Shall we do something else first?** ${await this.client.getEmoji(`692428969667985458`)}`,
                 thumbnail: this.#user.displayAvatarURL(),
                 socket: {

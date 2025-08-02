@@ -32,18 +32,18 @@ module.exports = {
     }
   ],
   async execute(client, reply, message, arg, locale, prefix) {
-    if (!arg) return reply.send(locale.SETCARTCOIN.GUIDE, {
+    if (!arg) return reply.send(locale(`SETCARTCOIN.GUIDE`), {
       image: `banner_cartcoins`,
       socket: {
         prefix: message.guild.configs.get(`PREFIX`).value,
         status: message.guild.configs.get(`CARTCOIN_MODULE`).value === null
           || message.guild.configs.get(`CARTCOIN_MODULE`).value === 1
-          ? locale.SETCARTCOIN.ENABLED
-          : locale.SETCARTCOIN.DISABLED
+          ? locale(`SETCARTCOIN.ENABLED`)
+          : locale(`SETCARTCOIN.DISABLED`)
       }
     })
     const toggle = arg === `enable` ? 1 : arg === `disable` ? 0 : null
-    if (toggle === null) return reply.send(locale.SETCARTCOIN.INVALID_ACTION, {
+    if (toggle === null) return reply.send(locale(`SETCARTCOIN.INVALID_ACTION`), {
       socket: {
         prefix: prefix
       }
@@ -55,13 +55,13 @@ module.exports = {
       setByUserId: message.author.id,
       cacheTo: message.guild.configs
     })
-    if (toggle === 1) return reply.send(locale.SETCARTCOIN.SUCCESSFULLY_ENABLED, {
+    if (toggle === 1) return reply.send(locale(`SETCARTCOIN.SUCCESSFULLY_ENABLED`), {
       status: `success`,
       socket: {
         emoji: await client.getEmoji(`789212493096026143`)
       }
     })
-    return reply.send(locale.SETCARTCOIN.SUCCESSFULLY_DISABLED, {
+    return reply.send(locale(`SETCARTCOIN.SUCCESSFULLY_DISABLED`), {
       status: `success`,
       socket: {
         emoji: await client.getEmoji(`789212493096026143`)
@@ -70,7 +70,7 @@ module.exports = {
   },
   async Iexecute(client, reply, interaction, options, locale) {
     const toggle = options.getSubcommand() === `open` ? 1 : options.getSubcommand() === `disable` ? 0 : null
-    if (toggle === null) return reply.send(locale.SETCARTCOIN.INVALID_ACTION, {
+    if (toggle === null) return reply.send(locale(`SETCARTCOIN.INVALID_ACTION`), {
       socket: {
         prefix: interaction.guild.configs.get(`PREFIX`).value
       }
@@ -82,13 +82,13 @@ module.exports = {
       setByUserId: interaction.member.user.id,
       cacheTo: interaction.guild.configs
     })
-    if (toggle === 1) return reply.send(locale.SETCARTCOIN.SUCCESSFULLY_ENABLED, {
+    if (toggle === 1) return reply.send(locale(`SETCARTCOIN.SUCCESSFULLY_ENABLED`), {
       status: `success`,
       socket: {
         emoji: await client.getEmoji(`789212493096026143`)
       }
     })
-    return reply.send(locale.SETCARTCOIN.SUCCESSFULLY_DISABLED, {
+    return reply.send(locale(`SETCARTCOIN.SUCCESSFULLY_DISABLED`), {
       status: `success`,
       socket: {
         emoji: await client.getEmoji(`789212493096026143`)
