@@ -1,12 +1,18 @@
 const autoResponderController = require(`../controllers/autoResponder`)
 const getNumberInRange = require(`../utils/getNumberInRange`)
 const commandController = require(`../controllers/commands`)
+const { Message } = require(`discord.js`)
 /**
  * Centralized Controller for handling incoming messages.
  * Mainly used to handle incoming message from user and calculate the possible actions
  * @since 4.0.1
  */
-module.exports = (client, message) => {
+/**
+ * 
+ * @param {Message} message 
+ * @event messageCreate
+ */
+const messageHandler = (client, message) => {
     if (!client.isReady()) return
     //  Ignore if its from a bot user
     if (message.author.bot) return
@@ -75,3 +81,4 @@ module.exports = (client, message) => {
                 })
         })
 }
+module.exports = { messageHandler }
