@@ -71,7 +71,12 @@ class Localization {
 
         var value = currentNode[key]
         if (typeof value === `object`) {
-          this.#traverseAndFlatten(value, target, newKey)
+          if (Array.isArray(value)) {
+            //  If value is an array, stop and set the key as an array
+            target[newKey] = value
+          } else {
+            this.#traverseAndFlatten(value, target, newKey)
+          }
         } else {
           target[newKey] = value
         }
@@ -81,6 +86,7 @@ class Localization {
   #flatten(obj) {
     var flattenedObject = {}
     this.#traverseAndFlatten(obj, flattenedObject)
+    console.log(`Flattened object:`, flattenedObject)
     return flattenedObject
   }
 
