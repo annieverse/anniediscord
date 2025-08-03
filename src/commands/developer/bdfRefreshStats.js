@@ -23,14 +23,14 @@ module.exports = {
         const totalServers = results.reduce((acc, count) => acc + count, 0)
         bfdApi.setServers(totalServers)
           .then(() => {
-            return reply.send(locale(`BDF.REFRESHED`), {
+            return reply.send(locale(`BFD.REFRESHED`), {
               socket: {
                 benchmark: client.getBenchmark(initTime)
               }
             })
           })
           .catch(error => {
-            return reply.send(locale(`BDF.ERROR`), {
+            return reply.send(locale(`BFD.ERROR`), {
               socket: {
                 error: error.message
               }

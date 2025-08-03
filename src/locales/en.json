@@ -69,7 +69,7 @@
         "TARGET_DOESNT_EXISTS": "Eh? where are they? do they even exist?",
         "TARGET_HAS_ADMIN_PRIVILEGE": "Hard to say, but I can't ban a user with admin privilege. :("
     },
-    "BDF": {
+    "BFD": {
         "ERROR": "Error occured while refreshing BFD stats.\n```\n{{error}}\n```",
         "REFRESHED": "BFD stats has been refreshed in {{benchmark}}"
     },
