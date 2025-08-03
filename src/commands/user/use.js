@@ -39,7 +39,7 @@ module.exports = {
     },
     async run(client, reply, messageRef, arg, locale) {
         const data = await (new User(client, messageRef)).requestMetadata(messageRef.member.user, 2, locale)
-        if (!data.inventory.raw.length) return await reply.send(locale.USE.NO_ITEMS, {
+        if (!data.inventory.raw.length) return await reply.send(locale(`USE.NO_ITEMS`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             },
@@ -54,17 +54,17 @@ module.exports = {
             //  Fallback search by ID
             :
             data.inventory.raw.find(i => parseInt(i.item_id) === parseInt(arg))
-        if (!targetItem) return await reply.send(locale.USE.INVALID_ITEM, {
+        if (!targetItem) return await reply.send(locale(`USE.INVALID_ITEM`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieThinking`)
             },
             editReply: true
         })
-        if (targetItem.quantity <= 0) return await reply.send(locale.USE.INSUFFICIENT, {
+        if (targetItem.quantity <= 0) return await reply.send(locale(`USE.INSUFFICIENT`), {
             editReply: true
         })
         //  Handle non-usable item
-        if (targetItem.usable === 0) return await reply.send(locale.USE.UNUSABLE, {
+        if (targetItem.usable === 0) return await reply.send(locale(`USE.UNUSABLE`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`)
             },
@@ -72,11 +72,11 @@ module.exports = {
         })
         const effectLib = new ItemEffects(client, messageRef, locale)
         //  Usage confirmation
-        const confirmation = await reply.send(locale.USE.CONFIRMATION, {
+        const confirmation = await reply.send(locale(`USE.CONFIRMATION`), {
             thumbnail: messageRef.member.displayAvatarURL(),
             socket: {
                 item: targetItem.name,
-                footer: await effectLib.displayItemBuffs(targetItem.item_id) || locale.USE.CONFIRMATION_TIPS
+                footer: await effectLib.displayItemBuffs(targetItem.item_id) || locale(`USE.CONFIRMATION_TIPS`)
             },
             editReply: true
         })
@@ -94,7 +94,7 @@ module.exports = {
             //  Applying effect if there's any.
             effectLib.applyItemEffects(targetItem.item_id)
             //  Displaying custom message upon use (if there's any).
-            const displayedMsg = targetItem.response_on_use === `~` ? locale.USE.SUCCESSFUL : targetItem.response_on_use
+            const displayedMsg = targetItem.response_on_use === `~` ? locale(`USE.SUCCESSFUL`) : targetItem.response_on_use
             return await reply.send(displayedMsg, {
                 status: `success`,
                 socket: {

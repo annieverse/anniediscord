@@ -26,9 +26,9 @@ module.exports = {
     async run(client, reply, user, locale) {
         const affiliateList = await client.db.guildUtils.getAffiliates()
         //  Handle if there are no registered affiliates
-        if (!affiliateList.length) return await reply.send(locale.AFFILIATES.EMPTY)
-        return await reply.send(locale.AFFILIATES.DISPLAY, {
-            header: locale.AFFILIATES.HEADER,
+        if (!affiliateList.length) return await reply.send(locale(`AFFILIATES.EMPTY`))
+        return await reply.send(locale(`AFFILIATES.DISPLAY`), {
+            header: locale(`AFFILIATES.HEADER`),
             thumbnail: client.user.displayAvatarURL(),
             socket: {
                 list: await this._prettifyList(affiliateList, client),

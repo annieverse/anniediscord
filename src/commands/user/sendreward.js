@@ -53,7 +53,7 @@ module.exports = {
         const packageName = options.getString(`package_name`)
 
         // handle if no packages are availble
-        if (packageName === `none`) return await reply.send(`I'm sorry but you dont have any packages made, you can make one with \`/makereward create\``)
+        if (packageName === `none`) return await reply.send(locale(`SENDREWARD.NO_PACKS`))
 
         let rewardSchema = new customReward(packageName)
         let rewardraw = await client.db.customRewardUtils.getRewardByName(interaction.guild.id, packageName)
@@ -106,6 +106,6 @@ module.exports = {
             })
         }
 
-        await reply.send(`${user} has recieved the package ${packageName}`, { ephemeral: true })
+        await reply.send(locale(`SENDREWARD.RECEIVED`), { socket: { user: user, packageName: packageName }, ephemeral: true })
     }
 }

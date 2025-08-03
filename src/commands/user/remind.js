@@ -45,7 +45,7 @@ module.exports = {
         //  Displays guide and user's active reminders
         if (!arg) {
             const userReminders = await client.reminders.getReminders(message.author.id)
-            return await reply.send(locale.REMINDER.HOME, {
+            return await reply.send(locale(`REMINDER.HOME`), {
                 image: `banner_reminder`,
                 socket: {
                     prefix: client.prefix,
@@ -65,14 +65,14 @@ module.exports = {
         return await this.run(client, reply, locale, context)
     },
     async run(client, reply, locale, context) {
-        if (!context.isValidReminder) return await reply.send(locale.REMINDER.INVALID_DATE, {
+        if (!context.isValidReminder) return await reply.send(locale(`REMINDER.INVALID_DATE`), {
             socket: {
                 emoji: await client.getEmoji(`790338393015713812`),
                 prefix: client.prefix
             }
         })
         client.reminders.register(context)
-        return await reply.send(locale.REMINDER.SUCCESSFUL, {
+        return await reply.send(locale(`REMINDER.SUCCESSFUL`), {
             status: `success`,
             socket: {
                 emoji: await client.getEmoji(`789212493096026143`),

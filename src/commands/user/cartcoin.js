@@ -40,13 +40,13 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     artcoinsRatio: 8,
     async execute(client, reply, message, arg, locale) {
-        if (message.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale.CARTCOIN.DISABLED, {
+        if (message.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale(`CARTCOIN.DISABLED`), {
             socket: {
                 emoji: await client.getEmoji(`AnniePout`)
             }
         })
         //  Returns as guide if user doesn't specify any parameters
-        if (!arg) return await reply.send(locale.CARTCOIN.SHORT_GUIDE, {
+        if (!arg) return await reply.send(locale(`CARTCOIN.SHORT_GUIDE`), {
             image: `banner_cartcoins`,
             socket: {
                 emoji: await client.getEmoji(`692428692999241771`),
@@ -57,7 +57,7 @@ module.exports = {
         return await this.run(client, reply, message, arg, locale)
     },
     async Iexecute(client, reply, interaction, options, locale) {
-        if (interaction.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale.CARTCOIN.DISABLED, {
+        if (interaction.guild.configs.get(`CARTCOIN_MODULE`).value === 0) return await reply.send(locale(`CARTCOIN.DISABLED`), {
             socket: {
                 emoji: await client.getEmoji(`AnniePout`)
             }
@@ -68,7 +68,7 @@ module.exports = {
     async run(client, reply, messageRef, arg, locale,) {
         const cacheId = `CARTCOIN:${messageRef.member.id}@${messageRef.guildId}`
         if (await client.db.databaseUtils.doesCacheExist(cacheId)) {
-            return await reply.send(locale.CARTCOIN.ALREADY_IN_PROGRESS, { ephemeral: true })
+            return await reply.send(locale(`CARTCOIN.ALREADY_IN_PROGRESS`), { ephemeral: true })
         }
         client.db.databaseUtils.setCache(cacheId, `1`, { EX: 60 * 30 })
         const userBalance = await client.db.userUtils.getUserBalance(messageRef.member.id, messageRef.guildId)
@@ -76,14 +76,14 @@ module.exports = {
         //  Returns if user amount input is below the acceptable threeshold
         if (!amountToUse || amountToUse < this.artcoinsRatio) {
             client.db.databaseUtils.delCache(cacheId)
-            return await reply.send(locale.CARTCOIN.INVALID_AMOUNT, {
+            return await reply.send(locale(`CARTCOIN.INVALID_AMOUNT`), {
                 socket: {
                     emoji: await client.getEmoji(`692428748838010970`)
                 }
             })
         }
         const totalGainedExp = amountToUse / this.artcoinsRatio
-        const confirmation = await reply.send(locale.CARTCOIN.CONFIRMATION, {
+        const confirmation = await reply.send(locale(`CARTCOIN.CONFIRMATION`), {
             thumbnail: messageRef.member.displayAvatarURL(),
             notch: true,
             socket: {
@@ -98,7 +98,7 @@ module.exports = {
             //  Returns if user's artcoins is below the amount of going to be used
             if (userBalance < amountToUse) {
                 client.db.databaseUtils.delCache(cacheId)
-                return await reply.send(locale.CARTCOIN.INSUFFICIENT_AMOUNT, {
+                return await reply.send(locale(`CARTCOIN.INSUFFICIENT_AMOUNT`), {
                     socket: {
                         amount: `${await client.getEmoji(`758720612087627787`)}${commanifier(userBalance)}`,
                         emoji: await client.getEmoji(`790338393015713812`)
@@ -115,7 +115,7 @@ module.exports = {
             })
             client.experienceLibs(messageRef.member, messageRef.guild, messageRef.channel, locale).execute(totalGainedExp)
             client.db.databaseUtils.delCache(cacheId)
-            return await reply.send(locale.CARTCOIN.SUCCESSFUL, {
+            return await reply.send(locale(`CARTCOIN.SUCCESSFUL`), {
                 status: `success`,
                 socket: {
                     artcoins: `${await client.getEmoji(`758720612087627787`)} ${commanifier(amountToUse)}`,

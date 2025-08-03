@@ -39,9 +39,9 @@ module.exports = {
 					.setLabel(`Cancel`)
 					.setStyle(ButtonStyle.Secondary)
 			)
-		const quest = await reply.send(locale.QUEST.DISPLAY, {
+		const quest = await reply.send(locale(`QUEST.DISPLAY`), {
 			header: `${user.username} is taking a quest!`,
-			footer: locale.QUEST.FOOTER + `\nIf your answer keeps failing try the English version of the answer\n10 tries total`,
+			footer: locale(`QUEST.FOOTER`) + `\nIf your answer keeps failing try the English version of the answer\n10 tries total`,
 			thumbnail: user.displayAvatarURL(),
 			socket: {
 				questTitle: questSession.getQuestTitle,
@@ -63,7 +63,7 @@ module.exports = {
 			try {
 				message.edit({ components: [] })
 				questSession.cancelSession()
-				await reply.send(`Your quest time has expired, no worries though just excute the quest command again to pick up where you left off`, { ephemeral: true, replyAnyway: isSlash(messageRef) ? false : true, messageToReplyTo: isSlash(messageRef) ? null : quest })
+				await reply.send(locale(`QUEST.EXPIRED`), { ephemeral: true, replyAnyway: isSlash(messageRef) ? false : true, messageToReplyTo: isSlash(messageRef) ? null : quest })
 			} catch (error) {
 				client.logger.error(`[Quests.js]\n${error}`)
 			}
@@ -71,7 +71,7 @@ module.exports = {
 		buttonCollector.on(`collect`, async i => {
 			// Handle if user asked to cancel the quest
 			if (i.customId === `cancelQuest`) {
-				i.update({ embeds: [await reply.send(locale.QUEST.CANCEL, { raw: true })], components: [] })
+				i.update({ embeds: [await reply.send(locale(`QUEST.CANCEL`), { raw: true })], components: [] })
 				questSession.cancelSession()
 				return buttonCollector.stop()
 			}
@@ -115,14 +115,14 @@ module.exports = {
 					return buttonCollector.stop()
 				}
 				buttonCollector.resetTimer({ time: 30000 })
-				return await reply.send(locale.QUEST.INCORRECT_ANSWER, { deleteIn: 3 })
+				return await reply.send(locale(`QUEST.INCORRECT_ANSWER`), { deleteIn: 3 })
 			}
 			buttonCollector.stop()
 			questSession.updateRewards()
 			message.edit({ components: [] })
-			return await reply.send(locale.QUEST.SUCCESSFUL, {
+			return await reply.send(locale(`QUEST.SUCCESSFUL`), {
 				socket: {
-					praise: locale.QUEST.PRAISE[Math.floor(Math.random() * locale.QUEST.PRAISE.length)],
+					praise: locale(`QUEST.PRAISE[${Math.floor(Math.random() * locale(`QUEST.PRAISE`).length)}]`),
 					user: user.username,
 					reward: questSession.getQuestFormattedReward
 				}

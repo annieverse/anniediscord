@@ -72,9 +72,9 @@ module.exports = {
         const userLib = new User(client, message)
         const targetUser = await userLib.lookFor(arg)
         // Invalid target
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         // Returns if user trying to gift themselves.
-        if (userLib.isSelf(targetUser.id)) return await reply.send(locale.GIFT.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
+        if (userLib.isSelf(targetUser.id)) return await reply.send(locale(`GIFT.SELF_TARGETING`), { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
         //  Handle if the specified gift cannot be found
         const item = arg.replace(targetUser.usedKeyword + ` `, ``) // Trim additional whitespace
         const amount = item.replace(/\D/g, ``)
@@ -91,7 +91,7 @@ module.exports = {
         let userData = await userLib.requestMetadata(messageRef.member.user, 2, locale)
         const availableGifts = userData.inventory.raw.filter(itemFilter)
         //  Handle if user don't have any gifts to send
-        if (!availableGifts.length) return await reply.send(locale.GIFT.UNAVAILABLE, {
+        if (!availableGifts.length) return await reply.send(locale(`GIFT.UNAVAILABLE`), {
             socket: {
                 prefix: prefix,
                 emoji: await client.getEmoji(`692428927620087850`)
@@ -100,11 +100,11 @@ module.exports = {
         userData.inventory.raw = availableGifts
         // Handle if user doesn't specify anything
         if (!args) {
-            const loading = await reply.send(locale.GIFT.RENDERING_AVAILABLE_GIFTS, {
+            const loading = await reply.send(locale(`GIFT.RENDERING_AVAILABLE_GIFTS`), {
                 simplified: true,
                 socket: { emoji: await client.getEmoji(`790994076257353779`) }
             })
-            await reply.send(locale.GIFT.SHORT_GUIDE, {
+            await reply.send(locale(`GIFT.SHORT_GUIDE`), {
                 prebuffer: true,
                 image: (await new inventoryGUI(userData, client).build()).png(),
                 socket: {
@@ -117,20 +117,20 @@ module.exports = {
         }
         const targetUser = args[0]
         // Invalid target
-        if (!targetUser) return await reply.send(locale.USER.IS_INVALID)
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         // Returns if user trying to gift themselves.
-        if (userLib.isSelf(targetUser.id)) return await reply.send(locale.GIFT.SELF_TARGETING, { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
+        if (userLib.isSelf(targetUser.id)) return await reply.send(locale(`GIFT.SELF_TARGETING`), { socket: { emoji: await client.getEmoji(`790338393015713812`) } })
         //  Handle if the specified gift cannot be found
         let arg = args[1]
         arg = arg.replace(` `, ``) // Trim additional whitespace
         let searchStringResult = stringSimilarity.findBestMatch(arg, availableGifts.map(i => i.name))
         const gift = searchStringResult.bestMatch.rating >= 0.2 ? availableGifts.filter(i => i.name === searchStringResult.bestMatch.target)[0] : null
-        if (!gift) return await reply.send(locale.GIFT.MISSING_ITEM, {
+        if (!gift) return await reply.send(locale(`GIFT.MISSING_ITEM`), {
             socket: { example: `e.g. **\`${prefix}gift ${targetUser.username} 10 ${availableGifts[0].name.toLowerCase()}\`**` }
         })
         //  Handle if can't parse the desired user's gift amount
         const amount = args[2]
-        if (!amount || amount < 1) return await reply.send(locale.GIFT.INVALID_AMOUNT, {
+        if (!amount || amount < 1) return await reply.send(locale(`GIFT.INVALID_AMOUNT`), {
             socket: {
                 gift: gift.name,
                 example: `e.g. **\`${prefix}gift ${targetUser.username} 10 ${gift.name.toLowerCase()}\`**`
@@ -138,7 +138,7 @@ module.exports = {
         })
         //  Render confirmation
         const targetUserData = await userLib.requestMetadata(targetUser, 2, locale)
-        const confirmation = await reply.send(locale.GIFT.CONFIRMATION, {
+        const confirmation = await reply.send(locale(`GIFT.CONFIRMATION`), {
             prebuffer: true,
             image: await new giftGUI(targetUserData, gift, amount).build(),
             socket: {
@@ -151,7 +151,7 @@ module.exports = {
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
             //  Handle if the amount to send is lower than total owned item
-            if (gift.quantity < amount) return await reply.send(locale.GIFT.INSUFFICIENT_AMOUNT, {
+            if (gift.quantity < amount) return await reply.send(locale(`GIFT.INSUFFICIENT_AMOUNT`), {
                 socket: {
                     gift: `${await client.getEmoji(gift.alias)} ${commanifier(gift.quantity)}x ${gift.name}`,
                     emoji: await client.getEmoji(`692428613122785281`)
@@ -162,7 +162,7 @@ module.exports = {
             //  Deduct gifts from sender
             client.db.databaseUtils.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
             return await reply.send(``, {
-                customHeader: [`${targetUser.username} ${locale.GIFT.HEADER}`, targetUser.displayAvatarURL()],
+                customHeader: [`${targetUser.username} ${locale(`GIFT.HEADER`)}`, targetUser.displayAvatarURL()],
                 socket: {
                     user: targetUser.username,
                     gift: `${await client.getEmoji(gift.alias, `634111906625617960`)} ${commanifier(amount)}x ${gift.name}!`

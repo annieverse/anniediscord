@@ -27,7 +27,9 @@ module.exports = async (client = {}, message = {}) => {
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    const locale = client.getTargetLocales(userData.lang)
+    // const locale = client.getTargetLocales(userData.lang)
+    client.localization.lang = userData.lang
+    const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(message, false, locale)
 
     // Check Bot's permissions before procceding
@@ -36,7 +38,7 @@ module.exports = async (client = {}, message = {}) => {
         if (!message.channel.isDMBased()) {
             checkPerm = reply.checkPermissions(message.channel)
         }
-        if (!checkPerm) return await reply.send(locale.ERROR_MISSING_PERMISSION)
+        if (!checkPerm) return await reply.send(locale(`ERROR_MISSING_PERMISSION`))
     } catch (e) {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
@@ -50,7 +52,7 @@ module.exports = async (client = {}, message = {}) => {
     const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
     if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
         if (!commandChannels.includes(message.channel.id)) {
-            await reply.send(locale.NON_COMMAND_CHANNEL, {
+            await reply.send(locale(`NON_COMMAND_CHANNEL`), {
                 deleteIn: 5,
                 socket: {
                     user: message.author.username,
@@ -66,7 +68,7 @@ module.exports = async (client = {}, message = {}) => {
     if (command.permissionLevel > userPermission.level) return await reply.send(``,
         {
             customHeader: [
-                `You need LV${command.permissionLevel} (${availablePermissions[command.permissionLevel].name}) privilege to use this command.`,
+                `${locale(`USER_PERMS.START`)}${command.permissionLevel} (${availablePermissions[command.permissionLevel].name} ${locale(`USER_PERMS.END`)}`,
                 message.author.displayAvatarURL()
             ]
         }
@@ -76,7 +78,7 @@ module.exports = async (client = {}, message = {}) => {
     if (client.cooldowns.has(instanceId)) {
         const userCooldown = client.cooldowns.get(instanceId)
         const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return await reply.send(locale.COMMAND.STILL_COOLDOWN, {
+        if (diff > 0) return await reply.send(locale(`COMMAND.STILL_COOLDOWN`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieYandereAnim`),
                 user: message.author.username,
@@ -87,7 +89,7 @@ module.exports = async (client = {}, message = {}) => {
     client.cooldowns.set(instanceId, Date.now())
     // Prevent user with uncomplete data to proceed the command.
     if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)) === 0) {
-        return await reply.send(locale.USER.REGISTRATION_ON_PROCESS).catch(e => {
+        return await reply.send(locale(`USER.REGISTRATION_ON_PROCESS`)).catch(e => {
             const internalError = e.message.startsWith(`[Internal Error]`)
             // Handle cache(s)
             if (internalError) return
@@ -118,7 +120,7 @@ module.exports = async (client = {}, message = {}) => {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) cacheReset(client, command.name, message.author.id, message.guild.id)
-        if (client.dev) return await reply.send(locale.ERROR_ON_DEV, {
+        if (client.dev) return await reply.send(locale(`ERROR_ON_DEV`), {
             socket: {
                 error: e.stack,
                 emoji: await client.getEmoji(`AnnieThinking`)
@@ -126,7 +128,7 @@ module.exports = async (client = {}, message = {}) => {
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
         //  Unsupported image type from buffer-image-size package
         if ([`unsupported file type: undefined`, `Unsupported image type`].includes(e.message)) {
-            await reply.send(locale.ERROR_UNSUPPORTED_FILE_TYPE, {
+            await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
                 socket: {
                     emoji: await client.getEmoji(`692428843058724994`)
                 }
@@ -134,17 +136,16 @@ module.exports = async (client = {}, message = {}) => {
         }
         //  Missing-permission error
         else if (e.code === 50013 || internalError) {
-            await reply.send(locale.ERROR_MISSING_PERMISSION, {
+            await reply.send(locale(`ERROR_MISSING_PERMISSION`), {
                 socket: {
                     emoji: await client.getEmoji(`AnnieCry`)
                 }
             }).catch(err => client.logger.error(`[ERROR_MISSING_PERMISSION] Unable to send message to channel > ${err}`))
         } else {
-            await reply.send(locale.ERROR_ON_PRODUCTION, { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to send message to channel > ${err}`))
+            await reply.send(locale(`ERROR_ON_PRODUCTION`), { socket: { emoji: await client.getEmoji(`AnniePout`) } }).catch(err => client.logger.error(`[ERROR_ON_PRODUCTION] Unable to send message to channel > ${err}`))
         }
         //  Report to support server
         if (internalError) return
         return errorRelay(client, { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        // client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }
