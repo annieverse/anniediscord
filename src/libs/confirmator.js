@@ -16,7 +16,7 @@ module.exports = class Confirmator {
     sessionId
     #previousSessionActive = false
 
-    constructor(message, reply, locale) {
+    constructor (message, reply, locale) {
         /**
          * Target message instance
          * @type {Message}
@@ -121,7 +121,7 @@ module.exports = class Confirmator {
                 await interact.fetchReply()
 
                 // send the final response
-                return await this.reply.send(this.reply.localeMetadata.ACTION_CANCELLED, {
+                return await this.reply.send(this.locale(`ACTION_CANCELLED`), {
                     socket: {
                         emoji: await this.message.client.getEmoji(`781954016271138857`)
                     }
