@@ -51,6 +51,7 @@ module.exports = {
             socket: { time: moment(localed).add(...this.cooldown).fromNow() },
         })
         const targetUser = user
+        if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
         //	Handle if user is trying to rep themselves
         if (userLib.isSelf(targetUser.id)) return await reply.send(locale(`GIVE_REPUTATION.SELF_TARGETING`), { socket: { emoji: await client.getEmoji(`692428748838010970`) } })
         client.db.userUtils.updateUserReputation(1, targetUser.id, messageRef.member.id, messageRef.guild.id)
