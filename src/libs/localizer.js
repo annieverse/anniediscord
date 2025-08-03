@@ -86,7 +86,6 @@ class Localization {
   #flatten(obj) {
     var flattenedObject = {}
     this.#traverseAndFlatten(obj, flattenedObject)
-    console.log(`Flattened object:`, flattenedObject)
     return flattenedObject
   }
 
