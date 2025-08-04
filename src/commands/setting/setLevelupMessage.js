@@ -177,7 +177,7 @@ module.exports = {
             //  Handle if no channel parameter has been inputted
             const { isExists, res } = this._getChannel(customLevelUpMessageChannel, message)
             const displayingExistingData = isExists ? `DISPLAY_REGISTERED_CHANNEL` : `DISPLAY_UNREACHABLE_CHANNEL`
-            if (!this.args[1]) return await reply.send(locale(`SETLEVELUPMESSAGE[${displayingExistingData}]`), {
+            if (!this.args[1]) return await reply.send(locale(`SETLEVELUPMESSAGE.${displayingExistingData}`), {
                 socket: {
                     prefix: prefix,
                     channel: res || customLevelUpMessageChannel
