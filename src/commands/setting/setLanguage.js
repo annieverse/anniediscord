@@ -64,6 +64,7 @@ module.exports = {
     )
   },
   async run(client, reply, messageRef, arg, locale) {
+    console.log(locale(`SETLANGUAGE.SUCCESSFUL`))
     const availableLocales = Object.values(client.localization.availableLocales)
     const targetLocale = arg.toLowerCase()
     if (!availableLocales.includes(targetLocale)) {
@@ -73,7 +74,7 @@ module.exports = {
         }
       })
     }
-    locale = client.getTargetLocales(targetLocale)
+    //locale = client.getTargetLocales(targetLocale)
     await client.db.userUtils.updateUserLocale(targetLocale, messageRef.member.id)
     return reply.send(locale(`SETLANGUAGE.SUCCESSFUL`), {
       status: `success`,
