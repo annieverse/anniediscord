@@ -64,7 +64,6 @@ module.exports = {
     )
   },
   async run(client, reply, messageRef, arg, locale) {
-    console.log(locale(`SETLANGUAGE.SUCCESSFUL`))
     const availableLocales = Object.values(client.localization.availableLocales)
     const targetLocale = arg.toLowerCase()
     if (!availableLocales.includes(targetLocale)) {
