@@ -1,7 +1,7 @@
 const { expect } = require(`chai`)
 const sinon = require(`sinon`)
 const fs = require(`fs`)
-const { getTargetLocales, Localization } = require(`../../src/libs/localizer`)
+const { Localization } = require(`../../src/libs/localizer`)
 
 // Mock locale content
 const mockLocales = {
@@ -27,10 +27,10 @@ describe(`Localizer Library`, () => {
   beforeEach(() => {
     // Create a sinon sandbox for test isolation
     sandbox = sinon.createSandbox()
-    
+
     // Stub fs.readdirSync
     readdirStub = sandbox.stub(fs, `readdirSync`).returns([`en.json`, `fr.json`])
-    
+
     // Stub require for locale files
     requireStub = sandbox.stub(require(`module`), `_load`)
     requireStub.withArgs(`../locales/en.json`).returns(mockLocales[`en.json`])
@@ -40,32 +40,6 @@ describe(`Localizer Library`, () => {
 
   afterEach(() => {
     sandbox.restore()
-  })
-
-  describe(`getTargetLocales`, () => {
-    it(`should return locales for target language when available`, () => {
-      const locales = getTargetLocales(`fr`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong !** {{emoji}}\n╰ reçu en {{ping}} ms !`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Veuillez inclure le message que vous souhaitez que je lise ! {{emoji}}`)
-    })
-
-    it(`should fallback to default language when target language not available (enforced)`, () => {
-      const locales = getTargetLocales(`uwu`, `en`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Please include the message that you want me to read! {{emoji}}`)
-    })
-
-    it(`should fallback to default language when target language not available (by default)`, () => {
-      const locales = getTargetLocales(`uwu`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Please include the message that you want me to read! {{emoji}}`)
-    })
-
-    it(`should handle case-insensitive language codes`, () => {
-      const locales = getTargetLocales(`FR`, `en`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong !** {{emoji}}\n╰ reçu en {{ping}} ms !`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Veuillez inclure le message que vous souhaitez que je lise ! {{emoji}}`)
-    })
   })
 
   describe(`Localization Class`, () => {

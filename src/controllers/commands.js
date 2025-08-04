@@ -27,7 +27,6 @@ module.exports = async (client = {}, message = {}) => {
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    // const locale = client.getTargetLocales(userData.lang)
     client.localization.lang = userData.lang
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(message, false, locale)

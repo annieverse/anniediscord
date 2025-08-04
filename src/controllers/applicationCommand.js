@@ -11,7 +11,6 @@ module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     client.localization.lang = userData.lang
-    // const locale = client.getTargetLocales(userData.lang)
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, false, locale)
 
