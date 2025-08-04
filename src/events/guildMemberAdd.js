@@ -40,8 +40,9 @@ module.exports = async function guildMemberAdd(client, member) {
      */
     if (configs.get(`WELCOMER_MODULE`).value) {
         try {
-            if ((await member.guild.fetchOnboarding()).enabled && configs.get(`WELCOMER_ONBOARDWAIT`).value) return
-            if ((await member.guild.fetchOnboarding()).enabled && !member.flags.has(GuildMemberFlags.CompletedOnboarding)) return
+            const onboardingEnabled = (await member.guild.fetchOnboarding()).enabled
+            if (onboardingEnabled && configs.get(`WELCOMER_ONBOARDWAIT`).value) return
+            if (onboardingEnabled && !member.flags.has(GuildMemberFlags.CompletedOnboarding)) return
         } catch (error) {
             client.logger.error(error)
             return errorRelay(client, { fileName: `guildMemberAdd.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
