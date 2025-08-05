@@ -64,6 +64,7 @@ Suggest modern JavaScript/TypeScript features
 Consider Discord API rate limits in implementations
 Provide complete, working code examples
 Include relevant imports and dependencies
+Always use backticks for string-type value. Except for JSON.
 
 
 ### Error Handling
