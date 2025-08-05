@@ -12,7 +12,10 @@
     "start-beta": "pm2 start index.js --name \"production_beta\" && echo \"Started production_beta\"",
     "dev": "nodemon index.js | npx pino-pretty && echo \"Started dev\"",
     "test": "npm run lint:check && npm run unit-test && echo 'Tests finished.'",
-    "loadAppCmds": "node ./loadCommands.js | npx pino-pretty"
+    "loadAppCmds": "node ./loadCommands.js | npx pino-pretty",
+    "jest-test": "jest",
+    "jest-test:watch": "jest --watch",
+    "jest-test:coverage": "jest --coverage"
   },
   "homepage": "https://github.com/annieverse/anniediscord#readme",
   "engines": {
@@ -68,6 +71,7 @@
   "devDependencies": {
     "chai": "^5.1.1",
     "dotenv": "^16.4.5",
+    "jest": "^30.0.5",
     "mocha": "^11.7.1",
     "nodemon": "^3.1.7",
     "pino-pretty": "^13.0.0",
