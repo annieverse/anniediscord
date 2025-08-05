@@ -1,7 +1,7 @@
 const { expect } = require(`chai`)
 const sinon = require(`sinon`)
 const fs = require(`fs`)
-const { getTargetLocales, Localization } = require(`../../src/libs/localizer`)
+const { Localization } = require(`../../src/libs/localizer`)
 
 // Mock locale content
 const mockLocales = {
@@ -27,10 +27,10 @@ describe(`Localizer Library`, () => {
   beforeEach(() => {
     // Create a sinon sandbox for test isolation
     sandbox = sinon.createSandbox()
-    
+
     // Stub fs.readdirSync
     readdirStub = sandbox.stub(fs, `readdirSync`).returns([`en.json`, `fr.json`])
-    
+
     // Stub require for locale files
     requireStub = sandbox.stub(require(`module`), `_load`)
     requireStub.withArgs(`../locales/en.json`).returns(mockLocales[`en.json`])
@@ -40,32 +40,6 @@ describe(`Localizer Library`, () => {
 
   afterEach(() => {
     sandbox.restore()
-  })
-
-  describe(`getTargetLocales`, () => {
-    it(`should return locales for target language when available`, () => {
-      const locales = getTargetLocales(`fr`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong !** {{emoji}}\n╰ reçu en {{ping}} ms !`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Veuillez inclure le message que vous souhaitez que je lise ! {{emoji}}`)
-    })
-
-    it(`should fallback to default language when target language not available (enforced)`, () => {
-      const locales = getTargetLocales(`uwu`, `en`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Please include the message that you want me to read! {{emoji}}`)
-    })
-
-    it(`should fallback to default language when target language not available (by default)`, () => {
-      const locales = getTargetLocales(`uwu`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Please include the message that you want me to read! {{emoji}}`)
-    })
-
-    it(`should handle case-insensitive language codes`, () => {
-      const locales = getTargetLocales(`FR`, `en`)
-      expect(locales).to.have.property(`REQUEST_PING`, `**Pong !** {{emoji}}\n╰ reçu en {{ping}} ms !`)
-      expect(locales).to.have.nested.property(`SAY.SHORT_GUIDE`, `Veuillez inclure le message que vous souhaitez que je lise ! {{emoji}}`)
-    })
   })
 
   describe(`Localization Class`, () => {
@@ -105,9 +79,24 @@ describe(`Localizer Library`, () => {
       localizer.lang = `fr`
       localizer.findLocale(`THIS.KEY._DOES_NOT_EXIST`)
       expect(consoleErrorSpy.calledOnce).to.be.true
-      expect(consoleErrorSpy.args[0][0]).to.equal(
-        `The specified key is not an available language path.\nKey supplied and tried > THIS.KEY._DOES_NOT_EXIST`
-      )
+      /**
+       * Explanation of the regex:
+       * ^: Matches the beginning of the string.
+       * (Mon|Tue|Wed|Thu|Fri|Sat|Sun): Matches the three-letter abbreviation for the day of the week.
+       * \s: Matches a single whitespace character.
+       * (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec): Matches the three-letter abbreviation for the month.
+       * \s: Matches a single whitespace character.
+       * (\d{2}): Matches the two-digit day of the month.
+       * \s: Matches a single whitespace character.
+       * (\d{4}): Matches the four-digit year.
+       * \s: Matches a single whitespace character.
+       * (\d{2}:\d{2}:\d{2}): Matches the time in HH:MM:SS format.
+       * \sGMT[+-]\d{4}: Matches " GMT" followed by a plus or minus sign and a four-digit offset (e.g., "+0500").
+       * \s\(.+\): Matches a space, an opening parenthesis, any character (except newline) one or more times, and a closing parenthesis, representing the timezone name (e.g., "(Coordinated Universal Time)").
+       */
+      const dateRegex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2})\s(\d{4})\s(\d{2}:\d{2}:\d{2})\sGMT[+-]\d{4}\s\(.+\)/
+      const expectedMessage = ` | The specified key is not an available language path.\nKey supplied and tried > THIS.KEY._DOES_NOT_EXIST`
+      expect(consoleErrorSpy.args[0][0]).to.match(dateRegex).and.to.include(expectedMessage)
     })
 
     it(`should fallback to 'en' version when key not found in other language`, () => {

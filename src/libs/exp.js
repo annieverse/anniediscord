@@ -1,6 +1,6 @@
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
-const { AttachmentBuilder, PermissionFlagsBits } = require(`discord.js`)
+const { AttachmentBuilder, PermissionFlagsBits, GuildChannel } = require(`discord.js`)
 const defaultConfigs = require(`../config/customConfig.js`)
 const { roleLower } = require(`../utils/roleCompare.js`)
 /**
@@ -19,7 +19,7 @@ const { roleLower } = require(`../utils/roleCompare.js`)
 class Experience {
     //  For the 'user' parameter it is recommended to use GuildMember object instead of raw user.
     //  'channel' parameter as the target channel when user leveled up.
-    constructor(client, user, guild, channel, locale) {
+    constructor (client, user, guild, channel, locale) {
         /**
          * Current bot client instance.
          * @type {Client}
@@ -165,6 +165,8 @@ class Experience {
         if (customLevelUpMessageChannel) {
             const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
             if (!targetChannel) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
+            if (!(targetChannel instanceof GuildChannel)) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
+            if (!(targetChannel.isSendable())) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
             return targetChannel.send(messageComponents)
                 .catch(e => this.client.logger.error(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
         }

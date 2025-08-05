@@ -63,7 +63,6 @@ module.exports = (client, message) => {
 
             // const locale = client.locales.en
             const userData = await client.db.userUtils.getUserLocale(message.author.id)
-            // const locale = client.getTargetLocales(userData.lang)
             client.localization.lang = userData.lang
             const locale = (key) => client.localization.findLocale(key)
 

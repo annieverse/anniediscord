@@ -20,7 +20,7 @@ module.exports = {
         { name: `message`, description: `Type your message to be said by annie`, required: true, type: ApplicationCommandOptionType.String }
     ],
     type: ApplicationCommandType.ChatInput,
-    async execute(client, reply, locale, message, arg) {
+    async execute(client, reply, message, arg, locale) {
         if (!arg) return await reply.send(locale(`SAY.SHORT_GUIDE`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieNyaa`)
@@ -28,7 +28,7 @@ module.exports = {
         })
         return await this.run(arg, message, reply, locale)
     },
-    async Iexecute(client, reply, locale, interaction, options) {
+    async Iexecute(client, reply, interaction, options, locale) {
         return await this.run(options.getString(`message`), interaction, reply, locale)
     },
     async run(msg, messageRef, reply, locale) {

@@ -81,7 +81,6 @@ class Response {
 	 * @param {Boolean} plugins.raw Toggle `true` to return the message's composition without sending it to the target field.
 	 * @param {Boolean} plugins.timestampAsFooter Toggle `true` to include the message timestamp in the footer of embed.
 	 * @param {Boolean} plugins.directMessage Indicate if the message is a DM
-	 * @param {Boolean} plugins.feedback  beta feature, **not used often**
 	 * @param {Boolean} plugins.withResponse Application command option to grab reference
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
@@ -120,7 +119,6 @@ class Response {
 		const raw = plugins.raw || false
 		const timestampAsFooter = plugins.timestampAsFooter || false
 		const directMessage = plugins.dm || false
-		const feedback = plugins.feedback || false
 		let components = plugins.components || null
 		let file = plugins.file || null
 		const withResponse = plugins.withResponse || true
@@ -166,11 +164,6 @@ class Response {
 		 * Create file object if supplied data
 		 */
 		constructFileProp()
-
-		/**
-		 * Add feedback button to message if enabled
-		 */
-		betaFeedback()
 
 		//  Handle message with paging property enabled
 		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews)
@@ -276,18 +269,6 @@ class Response {
 		function formatComponents() {
 			const isComponentArray = Array.isArray(components)
 			if (components && !isComponentArray) components = [components]
-		}
-
-		function betaFeedback() {
-			const row = new ActionRowBuilder()
-				.addComponents(
-					new ButtonBuilder()
-						.setCustomId(`betaFeedback`)
-						.setLabel(`Beta Feature Feedback`)
-						.setStyle(ButtonStyle.Secondary)
-				)
-
-			if (feedback) return !components ? components = [row] : components.push(row)
 		}
 
 		function constructFileProp() {
