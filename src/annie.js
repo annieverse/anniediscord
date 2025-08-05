@@ -19,7 +19,7 @@ const levelZeroErrors = require(`../src/utils/errorLevels.js`)
 const errorRelay = require(`../src/utils/errorHandler.js`)
 
 class Annie extends Discord.Client {
-    constructor(intents) {
+    constructor (intents) {
         super({
             intents: intents, presence: { status: `idle`, activities: [{ name: `Shard preparing ...`, type: Discord.ActivityType.Watching }] }, makeCache: Discord.Options.cacheWithLimits({
                 PresenceManager: 0,
@@ -132,6 +132,8 @@ class Annie extends Discord.Client {
          */
         this.experienceLibs = (user, guild, channel, locale) => new Experience(this, user, guild, channel, locale)
 
+        this.localization = new Localization()
+
         /**
          * Response/Message Wrapper.
          * @param {Message} message Resolvable message instance
@@ -139,7 +141,7 @@ class Annie extends Discord.Client {
          * @param {object} [localeMetadata=null] For Logging purpose
          * @return {external:Response}
          */
-        this.responseLibs = (message, channelAsInstance = false, localeMetadata = null) => new Response(message, channelAsInstance, localeMetadata)
+        this.responseLibs = (message, channelAsInstance = false, localeMetadata = this.localization.findLocale) => new Response(message, channelAsInstance, localeMetadata)
 
         /**
          * The default function for calculating task performance in milliseconds.
@@ -208,7 +210,7 @@ class Annie extends Discord.Client {
             this.registerNode(APPLICATION_COMMANDS, `application_commands`)
             this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
             this.registerNode(getTargetLocales, `getTargetLocales`)
-            this.registerNode(new Localization(), `localization`)
+            // this.registerNode(new Localization(), `localization`)
             require(`./controllers/events`)(this)
             this.login(process.env.BOT_TOKEN)
         } catch (e) {

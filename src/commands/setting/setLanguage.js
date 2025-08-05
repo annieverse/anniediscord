@@ -73,7 +73,7 @@ module.exports = {
         }
       })
     }
-    locale = client.getTargetLocales(targetLocale)
+    //locale = client.getTargetLocales(targetLocale)
     await client.db.userUtils.updateUserLocale(targetLocale, messageRef.member.id)
     return reply.send(locale(`SETLANGUAGE.SUCCESSFUL`), {
       status: `success`,

@@ -28,7 +28,7 @@ class Response {
 	 * @param {object} [localeMetadata=null] For testing purposes. Optional
 	 * 'message' parameter is replaced with 'channel' object.
 	 */
-	constructor(message = {}, channelAsInstance = false, localeMetadata = null) {
+	constructor (message = {}, channelAsInstance = false, localeMetadata = null) {
 		/**
 		 * Target's message instance.
 		 * @type {object}
@@ -176,7 +176,7 @@ class Response {
 		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews)
 
 		//  Replace content with error message if content is a faulty value
-		if (typeof content != `string`) content = this.localeMetadata.LOCALIZATION_ERROR
+		if (typeof content != `string`) content = this.localeMetadata(`LOCALIZATION_ERROR`)
 
 		//  Find all the available {{}} socket in the string.
 		content = this.socketing(content, socket)

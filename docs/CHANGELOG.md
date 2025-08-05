@@ -1,3 +1,10 @@
+## [10.1.4](https://github.com/annieverse/anniediscord/compare/v10.1.3...v10.1.4) (2025-08-04)
+
+
+### Bug Fixes
+
+* **setLanguage:** hotfix crash. ([d6c91c7](https://github.com/annieverse/anniediscord/commit/d6c91c7f9f1d0b4a43cf0591471675a3f0617207))
+
 ## [10.1.3](https://github.com/annieverse/anniediscord/compare/v10.1.2...v10.1.3) (2025-08-02)
 
 
