@@ -44,7 +44,7 @@
     "buffer-image-size": "^0.6.4",
     "canvas": "^3.1.2",
     "canvas-constructor": "^7.0.2",
-    "color": "^4.1.0",
+    "color": "^5.0.0",
     "contrast-color": "^1.0.1",
     "cron-job-manager": "^2.1.4",
     "cross-env": "^7.0.3",
