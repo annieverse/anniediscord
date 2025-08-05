@@ -1,3 +1,16 @@
+## [10.1.5](https://github.com/annieverse/anniediscord/compare/v10.1.4...v10.1.5) (2025-08-05)
+
+
+### Bug Fixes
+
+* **daily:** wrong locale string ([a57c291](https://github.com/annieverse/anniediscord/commit/a57c2911988b126724e3ebf8747d1a4ada560c3d))
+* **locale:** remove getTargetLocales ([e6ca0fe](https://github.com/annieverse/anniediscord/commit/e6ca0fefa122afcc57597d9650efdfb60e77a24c))
+* **rep:** invalid user target ([2507ba3](https://github.com/annieverse/anniediscord/commit/2507ba394aefcde6f28c6f7902a31c5752635b7b))
+* **say:** params mixed ([3e11814](https://github.com/annieverse/anniediscord/commit/3e1181474cd48ae9b316b57b42dcb0a8aa155e06))
+* **setbio:** fail during set ([53dede8](https://github.com/annieverse/anniediscord/commit/53dede8f61238a4266b724734f242709e7a39ede))
+* **setgender:** invalid locale string ([ad02811](https://github.com/annieverse/anniediscord/commit/ad028110ae66fae5860308d668887fbc0412babe))
+* **welcomer:** fail to send ([73a63c4](https://github.com/annieverse/anniediscord/commit/73a63c4fca0e625cf5f10d65418dfaaf706996e3))
+
 ## [10.1.4](https://github.com/annieverse/anniediscord/compare/v10.1.3...v10.1.4) (2025-08-04)
 
 
