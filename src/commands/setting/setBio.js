@@ -6,6 +6,7 @@ const {
     ApplicationCommandType,
     ApplicationCommandOptionType
 } = require(`discord.js`)
+const { isInteractionCallbackResponse } = require("../../utils/appCmdHelp")
 /**
  * Set user's profile bio/description
  * @author klerikdust
@@ -44,7 +45,14 @@ module.exports = {
                 chars: arg.length - this.charactersLimit
             }
         })
-        let userData = await (new User(client, message)).requestMetadata(message.author, 2, locale)
+        return await this.run(client, reply, message, arg, locale)
+    },
+    async Iexecute(client, reply, interaction, options, locale) {
+        let newBio = options.getString(`bio`)
+        return await this.run(client, reply, interaction, newBio, locale)
+    },
+    async run(client, reply, instance, arg, locale) {
+        let userData = await (new User(client, instance)).requestMetadata(instance.member.user, 2, locale)
         userData.main.bio = arg
         const rendering = await reply.send(locale(`SETBIO.RENDERING`), {
             simplified: true,
@@ -52,51 +60,21 @@ module.exports = {
                 emoji: await client.getEmoji(`790994076257353779`)
             }
         })
-        const betaFeature = Math.floor(Math.random() * 100) > 50
         let img = await new GUI(userData, client, {
             width: 320,
             height: 360
-        }).build(betaFeature)
+        }).build()
         const confirmation = await reply.send(locale(`SETBIO.PREVIEW_CONFIRMATION`), {
             prebuffer: true,
             image: img.png()
         })
-        rendering.delete()
-        const c = new Confirmator(message, reply, locale)
-        await c.setup(message.author.id, confirmation)
+        isInteractionCallbackResponse(rendering) ? rendering.resource.message.delete() : rendering.delete()
+        const c = new Confirmator(instance, reply, locale)
+        await c.setup(instance.member.id, confirmation)
         c.onAccept(async () => {
-            client.db.userUtils.setUserBio(arg, message.author.id)
+            client.db.userUtils.setUserBio(arg, instance.member.id)
             return await reply.send(``, {
-                customHeader: [locale(`SETBIO.SET`), message.author.displayAvatarURL()]
-            })
-        })
-    },
-    async Iexecute(client, reply, interaction, options, locale) {
-        let newBio = options.getString(`bio`)
-        let userData = await (new User(client, interaction)).requestMetadata(interaction.member.user, 2, locale)
-        userData.main.bio = newBio
-        const rendering = await reply.send(locale(`SETBIO.RENDERING`), {
-            simplified: true,
-            socket: {
-                emoji: await client.getEmoji(`790994076257353779`)
-            }
-        })
-        const betaFeature = Math.floor(Math.random() * 100) > 50
-        let img = await new GUI(userData, client, {
-            width: 320,
-            height: 360
-        }).build(betaFeature)
-        const confirmation = await reply.send(locale(`SETBIO.PREVIEW_CONFIRMATION`), {
-            prebuffer: true,
-            image: img.png()
-        })
-        rendering.delete()
-        const c = new Confirmator(interaction, reply, locale)
-        await c.setup(interaction.member.id, confirmation)
-        c.onAccept(async () => {
-            client.db.userUtils.setUserBio(newBio, interaction.member.id)
-            return await reply.send(``, {
-                customHeader: [locale(`SETBIO.SET`), interaction.member.displayAvatarURL()]
+                customHeader: [locale(`SETBIO.SET`), instance.member.displayAvatarURL()]
             })
         })
     }
