@@ -206,7 +206,6 @@ class Annie extends Discord.Client {
             this.registerNode(new Database().connect(), `db`)
             const { MESSAGE_COMMANDS, APPLICATION_COMMANDS, GUILDONLY_COMMANDS } = commandsLoader({ logger: this.logger })
             this.registerNode(MESSAGE_COMMANDS, `message_commands`)
-            require(`./controllers/handleComponents`)({ logger: this.logger, client: this })
             this.registerNode(APPLICATION_COMMANDS, `application_commands`)
             this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
             require(`./controllers/events`)(this)
