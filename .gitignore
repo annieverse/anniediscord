@@ -46,4 +46,4 @@ jsconfig.json
 .cursorrules
 
 # Jest configuration
-coverage
+coverage/
