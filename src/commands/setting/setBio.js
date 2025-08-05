@@ -6,7 +6,7 @@ const {
     ApplicationCommandType,
     ApplicationCommandOptionType
 } = require(`discord.js`)
-const { isInteractionCallbackResponse } = require("../../utils/appCmdHelp")
+const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
 /**
  * Set user's profile bio/description
  * @author klerikdust
