@@ -1,9 +1,11 @@
 const autoResponderController = require(`../controllers/autoResponder`)
 const getNumberInRange = require(`../utils/getNumberInRange`)
 const commandController = require(`../controllers/commands`)
+const { Message } = require("discord.js")
 /**
  * Centralized Controller for handling incoming messages.
  * Mainly used to handle incoming message from user and calculate the possible actions
+ * @param {Message} message Message object from Discord.js
  * @since 4.0.1
  */
 module.exports = (client, message) => {
@@ -68,6 +70,7 @@ module.exports = (client, message) => {
 
             client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
                 .then(list => {
+                    if (!message.guild.members.cache.has(message.author.id)) message.guild.members.fetch(message.author.id)
                     const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
                     client.experienceLibs(message.member, message.guild, message.channel, locale)
                         .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
