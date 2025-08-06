@@ -23,7 +23,7 @@ const pino = require(`pino`)
  */
 
 // Determine if running in production or development
-const isProduction = process.env.NODE_ENV === `development`;
+const isDevelopment = process.env.NODE_ENV === `development`;
 
 
 /** 
@@ -31,25 +31,28 @@ const isProduction = process.env.NODE_ENV === `development`;
  * Dont use 10, 20, 30, 40, 50, 60
  */
 const levels = {
-    database: isProduction ? 31 : 29 // Any number between info (30) and warn (40) will work the same
+    database: isDevelopment ? 31 : 29 // Any number between info (30) and warn (40) will work the same
     // database: 31 // Any number between info (30) and warn (40) will work the same
 }
+let errorTransport = undefined
+if (!isDevelopment) {
+    errorTransport = pino.transport({
+        targets: [{
+            target: 'pino/file',
+            options: {
+                destination: '~/.pm2/logs/prod-error.log',
+            },
+            level: 'error'
+        }, {
+            target: 'pino/file',
+            options: {
+                destination: '~/.pm2/logs/prod-out.log',
+            }
+        }],
+        levels: levels
+    })
+}
 
-const errorTransport = pino.transport({
-    targets: [{
-        target: 'pino/file',
-        options: {
-            destination: '~/.pm2/logs/prod-error.log',
-        },
-        level: 'error'
-    }, {
-        target: 'pino/file',
-        options: {
-            destination: '~/.pm2/logs/prod-out.log',
-        }
-    }],
-    levels: levels
-})
 
 const defaultOptions = {
     formatters: {
@@ -63,8 +66,8 @@ const defaultOptions = {
         }
     },
     name: `MASTER_SHARD`,
-    level: isProduction ? `debug` : `info`, // debug and trace messages will be suppressed
-    transport: isProduction ? { target: 'pino-pretty' } : errorTransport, // Use pino-pretty only in development
+    level: isDevelopment ? `debug` : `info`, // debug and trace messages will be suppressed
+    transport: isDevelopment ? undefined : errorTransport, // Use pino-pretty only in development
     customLevels: levels,
     timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
 }
