@@ -67,23 +67,22 @@ const defaultOptions = {
     },
     name: `MASTER_SHARD`,
     level: isDevelopment ? `debug` : `info`, // debug and trace messages will be suppressed
-    transport: isDevelopment ? undefined : errorTransport, // Use pino-pretty only in development
     customLevels: levels,
     timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
 }
 
 defaultOptions.name = `MASTER_SHARD`
-const masterLogger = pino(defaultOptions)
+const masterLogger = pino(defaultOptions, errorTransport)
 
 defaultOptions.name = `DATABASE`
-const databaseLogger = pino(defaultOptions)
+const databaseLogger = pino(defaultOptions, errorTransport)
 
 defaultOptions.name = `LOCALIZER`
-const localizerLogger = pino(defaultOptions)
+const localizerLogger = pino(defaultOptions, errorTransport)
 
 const shardLogger = (name) => {
     defaultOptions.name = name
-    return pino(defaultOptions)
+    return pino(defaultOptions, errorTransport)
 }
 
 module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger }
