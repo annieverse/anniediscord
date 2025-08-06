@@ -31,8 +31,8 @@ module.exports = function masterShard() {
 		if (fs.existsSync(`./src/assets/customWelcomer`)) logger.info(`Directory './src/assets/customWelcomer' exists`)
 		if (!fs.existsSync(`./src/assets/selfupload`)) fs.mkdirSync(`./src/assets/selfupload`)
 		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(`Directory './src/assets/selfupload' exists`)
-		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
-		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
+		if (!fs.existsSync(`./logs`)) fs.mkdirSync(`./logs`)
+		if (fs.existsSync(`./logs`)) logger.info(`Directory './logs' exists`)
 	}
 	if (fs.existsSync(`./src/assets`)) {
 		makeDirs()
