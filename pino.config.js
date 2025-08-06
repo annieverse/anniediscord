@@ -35,6 +35,22 @@ const levels = {
     // database: 31 // Any number between info (30) and warn (40) will work the same
 }
 
+const errorTransport = pino.transport({
+    targets: [{
+        target: 'pino/file',
+        options: {
+            destination: '~/.pm2/logs/prod-error.log',
+        },
+        level: 'error'
+    }, {
+        target: 'pino/file',
+        options: {
+            destination: '~/.pm2/logs/prod-out.log',
+        }
+    }],
+    levels: levels
+})
+
 const defaultOptions = {
     formatters: {
         bindings: (bindings) => {
@@ -48,7 +64,7 @@ const defaultOptions = {
     },
     name: `MASTER_SHARD`,
     level: isProduction ? `debug` : `info`, // debug and trace messages will be suppressed
-    transport: isProduction ? { target: 'pino-pretty' } : undefined, // Use pino-pretty only in development
+    transport: isProduction ? { target: 'pino-pretty' } : errorTransport, // Use pino-pretty only in development
     customLevels: levels,
     timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
 }
