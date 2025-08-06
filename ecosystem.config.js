@@ -3,9 +3,11 @@ module.exports = {
   apps: [{
     name: "prod",
     script: "./index.js",
-    error_file: "~/.pm2/logs/prod-error.log",
-    out_file: "~/.pm2/logs/prod-out.log",
+    // Disable PM2 file logging since Pino handles it in production
+    out_file: "/dev/null",
+    error_file: "/dev/null",
     namespace: "prod",
-    combined_logs: true
+    combined_logs: true,
+    log_type: "json"
   }]
 }
