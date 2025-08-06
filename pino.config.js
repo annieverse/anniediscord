@@ -34,25 +34,6 @@ const levels = {
     database: isDevelopment ? 31 : 29 // Any number between info (30) and warn (40) will work the same
     // database: 31 // Any number between info (30) and warn (40) will work the same
 }
-let errorTransport = undefined
-if (!isDevelopment) {
-    errorTransport = pino.transport({
-        targets: [{
-            target: 'pino/file',
-            options: {
-                destination: '~/.pm2/logs/prod-error.log',
-            },
-            level: 'error'
-        }, {
-            target: 'pino/file',
-            options: {
-                destination: '~/.pm2/logs/prod-out.log',
-            }
-        }],
-        levels: levels
-    })
-}
-
 
 const defaultOptions = {
     formatters: {
@@ -72,17 +53,17 @@ const defaultOptions = {
 }
 
 defaultOptions.name = `MASTER_SHARD`
-const masterLogger = pino(defaultOptions, errorTransport)
+const masterLogger = pino(defaultOptions)
 
 defaultOptions.name = `DATABASE`
-const databaseLogger = pino(defaultOptions, errorTransport)
+const databaseLogger = pino(defaultOptions)
 
 defaultOptions.name = `LOCALIZER`
-const localizerLogger = pino(defaultOptions, errorTransport)
+const localizerLogger = pino(defaultOptions)
 
 const shardLogger = (name) => {
     defaultOptions.name = name
-    return pino(defaultOptions, errorTransport)
+    return pino(defaultOptions)
 }
 
 module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger }
