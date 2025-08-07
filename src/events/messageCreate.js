@@ -1,7 +1,7 @@
 const autoResponderController = require(`../controllers/autoResponder`)
 const getNumberInRange = require(`../utils/getNumberInRange`)
 const commandController = require(`../controllers/commands`)
-const { Message } = require("discord.js")
+const { Message } = require(`discord.js`)
 /**
  * Centralized Controller for handling incoming messages.
  * Mainly used to handle incoming message from user and calculate the possible actions

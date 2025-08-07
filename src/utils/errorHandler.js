@@ -48,16 +48,16 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     }
 
     if (cmdError) {
-        const guild = await client.fetchGuildPreview(guildId)
-        const user = await client.users.fetch(userId)
+        const guild = guildId === `DM/Unknown` ? null : await client.fetchGuildPreview(guildId)
+        const user = userId === `Unknown` ? null : await client.users.fetch(userId)
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
 
         // Command
         ERROR_MESSAGE_RAW.CMD = [
             `─────────────────☆～:;`,
             `**FILE OCCURANCE: ${fileName}**`,
-            `**GUILD_ID:** ${guild.id} - ${guild.name}`,
-            `**AFFECTED_USER:** ${user.id} - @${user.username}`,
+            `**GUILD_ID:** ${guild ? guild.id : `Unknown guild`} - ${guild ? guild.name : `Unknown guild`}`,
+            `**AFFECTED_USER:** ${user ? user.id : `Unknown user`} - @${user ? user.username : `Unknown user`}`,
             `**AFFECTED_CMD:** ${targetCommand}`,
             `**ARGUMENTS ${errorType == `appcmd` ? `(Raw data)` : ``}:** ${providedArguments}`,
             `**TIMESTAMP:** ${date}`,
