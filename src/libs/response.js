@@ -1,3 +1,4 @@
+"use strict"
 const palette = require(`../ui/colors/default`)
 const {
 	EmbedBuilder,
@@ -14,7 +15,6 @@ const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const { PermissionFlagsBits } = require(`discord.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp.js`)
 /** 
  * Annie's response message system.
@@ -143,7 +143,9 @@ class Response {
 			catch (error) {
 				const internalError = `[Internal Error]`
 				if (error.message.includes(internalError)) return
-				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: error.stack, error_message: error.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				const errorMsg = error.message || `Unknown Error`
+				const errorStack = error.stack || `Unknown Error Stack`
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: errorStack, error_message: errorMsg }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 			if (!checkPerm) return
 		}
@@ -224,7 +226,9 @@ class Response {
 			} catch (e) {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
 				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
-				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				const errorMsg = e.message || `Unknown Error`
+				const errorStack = e.stack || `Unknown Error Stack`
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: errorStack, error_message: errorMsg }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 		}
 

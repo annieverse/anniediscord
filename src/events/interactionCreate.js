@@ -1,7 +1,7 @@
+"use strict"
 const {
     InteractionType
 } = require(`discord.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 const applicationCommand = require(`../controllers/applicationCommand`)
 const errorRelay = require(`../utils/errorHandler.js`)
 module.exports = async (client, interaction) => {
@@ -45,6 +45,6 @@ module.exports = async (client, interaction) => {
         const data = interaction.options.data || []
         const targetCommand = interaction.commandName || `Unknown`
         const errorMsg = err.message || `Unknown Error`
-        errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: guildId, userId: userId, providedArgs: JSON.stringify(data), error_message: errorMsg, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: guildId, userId: userId, providedArgs: JSON.stringify(data), error_message: errorMsg, targetCommand: targetCommand }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

@@ -4,7 +4,6 @@ const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits, GuildMemberFlags } = require(`discord.js`)
 const { roleLower } = require(`../utils/roleCompare.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return
@@ -36,7 +35,9 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                 if (onboardingEnabled && !newMember.flags.has(GuildMemberFlags.CompletedOnboarding)) return
             } catch (error) {
                 client.logger.error(error)
-                return errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                const errorMsg = error.message || `Unknown Error`
+                const errorStack = error.stack || `Unknown Error Stack`
+                return errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
             }
 
             //  Prepare welcomer target channel
@@ -145,7 +146,9 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
             }
             newMember.roles.add(rolesToAdd).catch(error => {
                 client.logger.error(error)
-                errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                const errorMsg = error.message || `Unknown Error`
+                const errorStack = error.stack || `Unknown Error Stack`
+                errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
             })
         }
     }
