@@ -154,8 +154,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random() * 100) > 50
-        let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
+        let img = await new GUI(userData, client, { width: 320, height: 310 }).build()
         const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
@@ -293,8 +292,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random() * 100) > 50
-        let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
+        let img = await new GUI(userData, client, { width: 320, height: 310 }).build()
         const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
@@ -346,8 +344,7 @@ module.exports = {
             }
         })
         //  Rendering preview for user to see
-        const betaFeature = Math.floor(Math.random() * 100) > 50
-        let img = await new GUI(userData, client, { width: 320, height: 310 }).build(betaFeature)
+        let img = await new GUI(userData, client, { width: 320, height: 310 }).build()
         const confirmation = await reply.send(locale(`SETCOVER[PREVIEW_CONFIRMATION]`), {
             prebuffer: true,
             image: img.png(),

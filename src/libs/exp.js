@@ -1,6 +1,6 @@
 const GUI = require(`../ui/prebuild/levelUpMessage`)
 const closestBelow = require(`../utils/closestBelow`)
-const { AttachmentBuilder, PermissionFlagsBits, GuildChannel } = require(`discord.js`)
+const { AttachmentBuilder, PermissionFlagsBits, GuildChannel, GuildMember, Guild, TextChannel } = require(`discord.js`)
 const defaultConfigs = require(`../config/customConfig.js`)
 const { roleLower } = require(`../utils/roleCompare.js`)
 /**

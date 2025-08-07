@@ -27,10 +27,6 @@ module.exports = async (client, interaction) => {
             // Ignore non-registered commands
             if (!command) return
             command.autocomplete(client, interaction)
-        } else if (interaction.type === InteractionType.MessageComponent) {
-            const modal = client.modals.get(interaction.customId)
-            if (!modal) return new Error(`There is no code for this modal yet`)
-            await modal.execute(interaction, client)
         }
     } catch (err) {
         client.logger.error(err)
@@ -44,6 +40,11 @@ module.exports = async (client, interaction) => {
             socket: { emoji: await client.getEmoji(`AnniePout`) },
             ephemeral: true
         }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), error_message: err.message, targetCommand: interaction.commandName, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        const guildId = interaction.guildId || `DM/Unknown`
+        const userId = interaction.user.id || `Unknown`
+        const data = interaction.options.data || []
+        const targetCommand = interaction.commandName || `Unknown`
+        const errorMsg = err.message || `Unknown Error`
+        errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: guildId, userId: userId, providedArgs: JSON.stringify(data), error_message: errorMsg, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }
