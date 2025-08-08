@@ -1,3 +1,10 @@
+## [10.1.6](https://github.com/annieverse/anniediscord/compare/v10.1.5...v10.1.6) (2025-08-08)
+
+
+### Bug Fixes
+
+* **welcomer:** role adding after onboarding ([fee78c9](https://github.com/annieverse/anniediscord/commit/fee78c9db79c56e3afb269a3accaa8548e84ce3f))
+
 ## [10.1.5](https://github.com/annieverse/anniediscord/compare/v10.1.4...v10.1.5) (2025-08-05)
 
 
