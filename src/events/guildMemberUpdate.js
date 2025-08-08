@@ -4,7 +4,6 @@ const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits, GuildMemberFlags } = require(`discord.js`)
 const { roleLower } = require(`../utils/roleCompare.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return
@@ -36,7 +35,9 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                 if (onboardingEnabled && !newMember.flags.has(GuildMemberFlags.CompletedOnboarding)) return
             } catch (error) {
                 client.logger.error(error)
-                return errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+                const errorMsg = error.message || `Unknown Error`
+                const errorStack = error.stack || `Unknown Error Stack`
+                return errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
             }
 
             //  Prepare welcomer target channel
@@ -118,35 +119,37 @@ module.exports = async function guildMemberUpdate(client, oldMember, newMember) 
                             })
                     }
                 }
-                /**
+            }
+            /**
                 *  -------------------------------------------------------
                 *  WELCOMER'S AUTOROLE MODULE
                 *  -------------------------------------------------------
                 */
-                //  Skip role assignment if no roles are registered
-                const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
-                const rolesToAdd = []
-                if (welcomerRolesList.value.length <= 0) return
-                if (!newMember.manageable) return
-                if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return
-                for (let i = 0; i < welcomerRolesList.value.length; i++) {
-                    const roleId = welcomerRolesList.value[i]
-                    if (typeof roleId != `string`) continue
-                    //  Handle if role cannot be found due to deleted/invalid
-                    if (!guild.roles.cache.has(roleId)) continue
-                    const role = guild.roles.cache.get(roleId)
-                    if (!role) continue
-                    if (role.managed) continue
-                    if (!role.editable) continue
+            //  Skip role assignment if no roles are registered
+            const welcomerRolesList = configs.get(`WELCOMER_ROLES`)
+            const rolesToAdd = []
+            if (welcomerRolesList.value.length <= 0) return
+            if (!newMember.manageable) return
+            if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) return
+            for (let i = 0; i < welcomerRolesList.value.length; i++) {
+                const roleId = welcomerRolesList.value[i]
+                if (typeof roleId != `string`) continue
+                //  Handle if role cannot be found due to deleted/invalid
+                if (!guild.roles.cache.has(roleId)) continue
+                const role = guild.roles.cache.get(roleId)
+                if (!role) continue
+                if (role.managed) continue
+                if (!role.editable) continue
 
-                    const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
-                    if (roleLower(role.id, botsHighestRole, guild)) rolesToAdd.push(role.id)
-                }
-                newMember.roles.add(rolesToAdd).catch(error => {
-                    client.logger.error(error)
-                    errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-                })
+                const botsHighestRole = guild.members.me.roles.highest // Highest role the bot has
+                if (roleLower(role.id, botsHighestRole, guild)) rolesToAdd.push(role.id)
             }
+            newMember.roles.add(rolesToAdd).catch(error => {
+                client.logger.error(error)
+                const errorMsg = error.message || `Unknown Error`
+                const errorStack = error.stack || `Unknown Error Stack`
+                errorRelay(client, { fileName: `guildMemberUpdate.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+            })
         }
     }
 }

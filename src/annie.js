@@ -15,7 +15,6 @@ const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
 const { shardLogger } = require(`../pino.config.js`)
-const levelZeroErrors = require(`../src/utils/errorLevels.js`)
 const errorRelay = require(`../src/utils/errorHandler.js`)
 
 class Annie extends Discord.Client {
@@ -199,7 +198,10 @@ class Annie extends Discord.Client {
             this.logger.warn(`unhandledRejection > ${err}`)
             this.logger.error(err)
             if (!this.isReady()) return
-            errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: err.message, error_stack: err.stack, levelZeroErrors: levelZeroErrors }).catch(error => this.logger.error(error))
+
+            const errorMsg = err.message || `Unknown Error`
+            const errorStack = err.stack || `Unknown Error Stack`
+            errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(error => this.logger.error(error))
         })
 
         try {
