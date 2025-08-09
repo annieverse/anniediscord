@@ -25,7 +25,7 @@ class Quest {
     #answerIsCorrect
     #questlocalePool
 
-    constructor(client, reply) {
+    constructor (client, reply) {
         this.client = client
         this.reply = reply
     }

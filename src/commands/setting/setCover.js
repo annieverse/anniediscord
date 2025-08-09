@@ -206,7 +206,7 @@ module.exports = {
         const OLD_COVER = userData.usedCover
         //  Handle if user doesn't specify any arg
         const ownedCovers = userData.inventory.raw.filter(item => item.type_id === 1 && item.in_use === 0)
-        const displayOwnedCovers = locale(`SETCOVER.OWNED_COVERS `) + this.prettifyList(ownedCovers)
+        const displayOwnedCovers = locale(`SETCOVER.OWNED_COVERS`) + this.prettifyList(ownedCovers)
         const { isValidUpload, url } = this.getUserSelfUploadCover(arg, interaction)
         if (!arg && !isValidUpload) {
             const FOOTER = userData.usedCover.isDefault ?

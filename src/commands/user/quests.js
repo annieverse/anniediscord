@@ -122,7 +122,7 @@ module.exports = {
 			message.edit({ components: [] })
 			return await reply.send(locale(`QUEST.SUCCESSFUL`), {
 				socket: {
-					praise: locale(`QUEST.PRAISE[${Math.floor(Math.random() * locale(`QUEST.PRAISE`).length)}]`),
+					praise: locale(`QUEST.PRAISE`)[Math.floor(Math.random() * locale(`QUEST.PRAISE`).length)],
 					user: user.username,
 					reward: questSession.getQuestFormattedReward
 				}
