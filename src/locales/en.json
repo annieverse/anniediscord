@@ -1,4 +1,5 @@
 {
+    "LOCALE_NOT_FOUND": "I seem to have forgotten what I wanted to say, please report this to my developers.",
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "CONFIRMATION_SEQ_1": "You are going to refill **{{user}}'s Artcoins.** Now please specify the amount you want to generate.",

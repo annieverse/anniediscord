@@ -347,7 +347,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        return await reply.send(locale(`SETRANK[${wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`}]`), { status: `success` })
+        return await reply.send(locale(`SETRANK.${wasEnabled ? `STACK_DISABLE` : `STACK_ENABLE`}`), { status: `success` })
     },
 
     /**

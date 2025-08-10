@@ -77,7 +77,7 @@ module.exports = {
                 userData.usedCover.isSelfUpload ?
                     `DISPLAY_USED_SELF_COVER` :
                     `DISPLAY_USED_REGULAR_COVER`
-            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER[${FOOTER}]`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER.${FOOTER}`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${message.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
@@ -155,7 +155,7 @@ module.exports = {
         })
         //  Rendering preview for user to see
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build()
-        const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
+        const confirmationMessage = locale(`SETCOVER.${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
             image: img.png(),
@@ -179,7 +179,7 @@ module.exports = {
                 client.db.covers.applyCover(this.cover.item_id, message.author.id, message.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            await reply.send(locale(`SETCOVER[${successMessage}]`), {
+            await reply.send(locale(`SETCOVER.${successMessage}`), {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)
@@ -214,7 +214,7 @@ module.exports = {
                 userData.usedCover.isSelfUpload ?
                     `DISPLAY_USED_SELF_COVER` :
                     `DISPLAY_USED_REGULAR_COVER`
-            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER[${FOOTER}]`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
+            return await reply.send(`${locale(`SETCOVER.GUIDE`)}\n${locale(`SETCOVER.${FOOTER}`)}\n${ownedCovers.length > 0 ? displayOwnedCovers : ``}`, {
                 header: `Hi, ${interaction.author.username}!`,
                 image: `banner_setbackground`,
                 socket: {
@@ -293,7 +293,7 @@ module.exports = {
         })
         //  Rendering preview for user to see
         let img = await new GUI(userData, client, { width: 320, height: 310 }).build()
-        const confirmationMessage = locale(`SETCOVER[${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}]`)
+        const confirmationMessage = locale(`SETCOVER.${this.cover.isSelfUpload ? `PREVIEW_SELF_UPLOAD` : `PREVIEW_CONFIRMATION`}`)
         const confirmation = await reply.send(confirmationMessage, {
             prebuffer: true,
             image: img.png(),
@@ -322,7 +322,7 @@ module.exports = {
                 client.db.covers.applyCover(this.cover.item_id, interaction.member.id, interaction.guild.id)
             }
             const successMessage = this.cover.isSelfUpload ? `SUCCESSFUL_ON_SELF_UPLOAD` : `SUCCESSFUL`
-            await reply.send(locale(`SETCOVER[${successMessage}]`), {
+            await reply.send(locale(`SETCOVER.${successMessage}`), {
                 socket: {
                     cover: this.cover.name,
                     emoji: await client.getEmoji(this.cover.alias)

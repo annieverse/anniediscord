@@ -62,9 +62,25 @@ class Localization {
   findLocale(key) {
     let locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
     const DATE = new Date()
-    // eslint-disable-next-line no-console
-    if (locale == undefined) return console.error(`${DATE} | The specified key is not an available language path.\nKey supplied and tried > ${key}`)
-    return locale
+    try {
+      if (locale == undefined) {
+        // eslint-disable-next-line no-console
+        console.error(`${DATE} | The specified key is not an available language path.\nKey supplied and tried > ${key}`)
+        throw new Error(`[LOCALIZER] The specified key '${key}' is not available in the current locale '${this.#lang}' or fallback '${this.#fallback}'.`)
+      }
+      return locale
+    } catch (e) {
+      const DATE = new Date()
+      const locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
+      // eslint-disable-next-line no-console
+      console.error(`${DATE} | [LOCALIZER] Error while trying to find locale for key '${key}'`, e)
+      if (locale == undefined && key === `LOCALE_NOT_FOUND`) {
+        // If the key is not found, return a placeholder error message
+        return
+      }
+      // If the key is not found, return placeholder error message
+      return this.findLocale(`LOCALE_NOT_FOUND`)
+    }
   }
 
 
