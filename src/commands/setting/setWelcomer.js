@@ -866,7 +866,7 @@ module.exports = {
                 cacheTo: this.guildConfigurations
             })
         }
-        await reply.send(locale(`SETWELCOMER[${settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`}]`), {
+        await reply.send(locale(`SETWELCOMER.${settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`}`), {
             status: `success`
         })
         const tipsToPreview = await reply.send(locale(`SETWELCOMER.TIPS_TO_PREVIEW`), {
@@ -901,7 +901,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        await reply.send(locale(`SETWELCOMER[${settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`}]`), {
+        await reply.send(locale(`SETWELCOMER.${settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`}`), {
             status: `success`
         })
         const tipsToPreview = await reply.send(locale(`SETWELCOMER.TIPS_TO_PREVIEW`), {
