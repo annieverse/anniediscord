@@ -70,7 +70,6 @@ class Localization {
       }
       return locale
     } catch (e) {
-      const locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
       // eslint-disable-next-line no-console
       console.error(`${DATE} | [LOCALIZER] Error while trying to find locale for key '${key}'`, e)
       if (locale == undefined || key === `LOCALE_NOT_FOUND`) {
