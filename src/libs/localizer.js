@@ -74,10 +74,12 @@ class Localization {
       console.error(`${DATE} | [LOCALIZER] Error while trying to find locale for key '${key}'`, e)
       if (locale == undefined || key === `LOCALE_NOT_FOUND`) {
         // If the key is not found, return a placeholder error message
-        return
+        return "Locale not found";
       }
       // If the key is not found, return placeholder error message
-      return this.findLocale(`LOCALE_NOT_FOUND`)
+      // Prevent infinite recursion: if LOCALE_NOT_FOUND is missing, return hardcoded error
+      const fallbackLocale = this.#localesPool.get(this.#lang)?.get("LOCALE_NOT_FOUND") || this.#localesPool.get(this.#fallback)?.get("LOCALE_NOT_FOUND");
+      return fallbackLocale || "Locale not found";
     }
   }
 
