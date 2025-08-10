@@ -1,3 +1,16 @@
+## [10.1.7](https://github.com/annieverse/anniediscord/compare/v10.1.6...v10.1.7) (2025-08-10)
+
+
+### Bug Fixes
+
+* **messageCreate:** try catch block for asynchronous fetch ([aebddbf](https://github.com/annieverse/anniediscord/commit/aebddbf47ba0050229a25a3ce02a062ca0b12eb2))
+* **quests:** failed locale ([5fde6ff](https://github.com/annieverse/anniediscord/commit/5fde6ffcc882ded881aed2e264746f6763c33c85))
+
+
+### Performance Improvements
+
+* **quests:** initialized single arr local. ([052b556](https://github.com/annieverse/anniediscord/commit/052b55601dff36ee080ca6b1cfd66b05a4531554))
+
 ## [10.1.6](https://github.com/annieverse/anniediscord/compare/v10.1.5...v10.1.6) (2025-08-08)
 
 
