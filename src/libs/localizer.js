@@ -65,7 +65,8 @@ class Localization {
    * @return {string}
    */
   #placeholderFallback() {
-    return `**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;`
+    const key = `LOCALE_NOT_FOUND`
+    return this.#localesPool.get(`en`)?.get(key) || key
   }
 
   /**

@@ -4,7 +4,7 @@ const fs = require(`fs`)
 // Mock locale content
 const mockLocales = {
   'en.json': {
-    "LOCALE_NOT_FOUND": "I seem to have forgotten what I wanted to say, please report this to my developers.",
+    "LOCALE_NOT_FOUND": "**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;",
     "REQUEST_PING": `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`,
     "SAY": {
       "SHORT_GUIDE": `Please include the message that you want me to read! {{emoji}}`
@@ -86,9 +86,8 @@ describe(`Localizer Library`, () => {
       expect(localizer.lang).to.equal(`fr`)
     })
 
-    it(`should prevent non-string locale key to lookup, then return placeholderFallback message`, () => {
+    it(`should prevent non-string locale key as the lookup parameter, return placeholder fallback`, () => {
       localizer.lang = `en`
-      // Test with null
       const nonStringKey = localizer.findLocale(null)
       expect(logger.error.calledOnce).to.be.true
       expect(logger.error.firstCall.args[0]).to.deep.equal({
@@ -96,7 +95,7 @@ describe(`Localizer Library`, () => {
         type: `object`,
         key: null
       })
-      expect(nonStringKey).to.equal(`**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;`)
+      expect(nonStringKey).to.equal(mockLocales[`en.json`]['LOCALE_NOT_FOUND'])
     })
 
     it(`should find locale by key (1-level deep) with current language`, () => {
