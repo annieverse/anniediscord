@@ -1,7 +1,7 @@
 "use strict"
 const { Collection } = require(`discord.js`)
 const { readdirSync } = require(`fs`)
-
+const { localizerLogger:logger } = require(`../../pino.config`)
 class Localization {
 
   #lang
@@ -59,30 +59,40 @@ class Localization {
     return flattenedObject
   }
 
-  findLocale(key) {
-    let locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
-    const DATE = new Date()
-    try {
-      if (locale == undefined) {
-        // eslint-disable-next-line no-console
-        console.error(`${DATE} | The specified key is not an available language path.\nKey supplied and tried > ${key}`)
-        throw new Error(`[LOCALIZER] The specified key '${key}' is not available in the current locale '${this.#lang}' or fallback '${this.#fallback}'.`)
-      }
-      return locale
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(`${DATE} | [LOCALIZER] Error while trying to find locale for key '${key}'`, e)
-      if (locale == undefined || key === `LOCALE_NOT_FOUND`) {
-        // If the key is not found, return a placeholder error message
-        return "Locale not found";
-      }
-      // If the key is not found, return placeholder error message
-      // Prevent infinite recursion: if LOCALE_NOT_FOUND is missing, return hardcoded error
-      const fallbackLocale = this.#localesPool.get(this.#lang)?.get("LOCALE_NOT_FOUND") || this.#localesPool.get(this.#fallback)?.get("LOCALE_NOT_FOUND");
-      return fallbackLocale || "Locale not found";
-    }
+  /**
+   * Placeholder message for final fallback.
+   * @private
+   * @return {string}
+   */
+  #placeholderFallback() {
+    return `**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;`
   }
 
+  /**
+   * Lookup target localized message.
+   * @param {string=``} key target locale key (e.g. REQUEST_PING)
+   * @return {string}
+   */
+  findLocale(key=``) {
+    // 1. Target locale key validation
+    if (!key || typeof key !== `string`) {
+      logger.error({ action: `invalid_locale_key`, type: typeof key, key })
+      return this.#placeholderFallback()
+    }
+
+    // 2. Look up the target locale first.
+    let locale = this.#localesPool.get(this.#lang)?.get(key)
+    if (locale) return locale
+
+    // 3. If not found, try fallback variant of the locale.
+    logger.warn({ action: `origin_locale_missing`, lang: this.#lang, key })
+    locale = this.#localesPool.get(this.#fallback)?.get(key)
+    if (locale) return locale
+
+    // 4. If none of them exist, last-resort to use placeholder fallback (100% availability)
+    logger.warn({ action: `fallback_locale_missing`, lang: this.#fallback, key })
+    return this.#placeholderFallback()
+  }
 
   loadLocales() {
     this.#createLocalesPool(this.#path)
