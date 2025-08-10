@@ -74,7 +74,7 @@ class Localization {
    * @param {string=``} key target locale key (e.g. REQUEST_PING)
    * @return {string}
    */
-  findLocale(key=``) {
+  findLocale(key=undefined) {
     // 1. Target locale key validation
     if (!key || typeof key !== `string`) {
       logger.error({ action: `invalid_locale_key`, type: typeof key, key })
