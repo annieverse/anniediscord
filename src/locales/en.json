@@ -1,4 +1,5 @@
 {
+    "LOCALE_NOT_FOUND": "**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;",
     "ACTION_CANCELLED": "**Alright!** action has been cancelled!♡ {{emoji}}",
     "ADDAC": {
         "CONFIRMATION_SEQ_1": "You are going to refill **{{user}}'s Artcoins.** Now please specify the amount you want to generate.",

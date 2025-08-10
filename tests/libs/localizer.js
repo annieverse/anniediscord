@@ -1,11 +1,10 @@
 const { expect } = require(`chai`)
 const sinon = require(`sinon`)
 const fs = require(`fs`)
-const { Localization } = require(`../../src/libs/localizer`)
-
 // Mock locale content
 const mockLocales = {
   'en.json': {
+    "LOCALE_NOT_FOUND": "**i'm sorry !!** there seems to be an issue with the availability of my localized message. kindly help reporting this to my developers [in the support server.](https://discord.gg/HjPHCyG346) ; ;",
     "REQUEST_PING": `**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`,
     "SAY": {
       "SHORT_GUIDE": `Please include the message that you want me to read! {{emoji}}`
@@ -20,22 +19,48 @@ const mockLocales = {
   }
 }
 
+const logger = {
+  error: sinon.stub(),
+  warn: sinon.stub(),
+  info: sinon.stub(),
+  debug: sinon.stub()
+}
+
+const Module = require(`module`)
+const originalRequire = Module.prototype.require
+Module.prototype.require = function(...args) {
+  if (args[0] === `../../pino.config`) {
+    return { localizerLogger: logger }
+  }
+  
+  // Handle locale JSON files
+  if (args[0].endsWith(`en.json`)) {
+    return mockLocales[`en.json`]
+  }
+  if (args[0].endsWith(`fr.json`)) {
+    return mockLocales[`fr.json`]
+  }
+  
+  return originalRequire.apply(this, args)
+}
+
+const { Localization } = require(`../../src/libs/localizer`)
 describe(`Localizer Library`, () => {
   let sandbox
   let requireStub
+  let readdirStub
 
   beforeEach(() => {
     // Create a sinon sandbox for test isolation
     sandbox = sinon.createSandbox()
 
-    // Stub fs.readdirSync
-    readdirStub = sandbox.stub(fs, `readdirSync`).returns([`en.json`, `fr.json`])
+    logger.error.resetHistory()
+    logger.warn.resetHistory()
+    logger.info.resetHistory()
+    logger.debug.resetHistory()
 
-    // Stub require for locale files
-    requireStub = sandbox.stub(require(`module`), `_load`)
-    requireStub.withArgs(`../locales/en.json`).returns(mockLocales[`en.json`])
-    requireStub.withArgs(`../locales/fr.json`).returns(mockLocales[`fr.json`])
-    requireStub.callThrough()
+    // Stub fs.readdirSync
+    sandbox.stub(fs, `readdirSync`).returns([`en.json`, `fr.json`])
   })
 
   afterEach(() => {
@@ -44,12 +69,10 @@ describe(`Localizer Library`, () => {
 
   describe(`Localization Class`, () => {
     let localizer
-    let consoleErrorSpy
 
-    beforeEach(() => {
-      consoleErrorSpy = sandbox.spy(console, `error`)
+    beforeEach(() => 
       localizer = new Localization()
-    })
+    )
 
     it(`should initialize with correct available locales ids`, () => {
       expect(localizer.availableLocales).to.deep.equal({
@@ -63,6 +86,18 @@ describe(`Localizer Library`, () => {
       expect(localizer.lang).to.equal(`fr`)
     })
 
+    it(`should prevent non-string locale key as the lookup parameter, return placeholder fallback`, () => {
+      localizer.lang = `en`
+      const nonStringKey = localizer.findLocale(null)
+      expect(logger.error.calledOnce).to.be.true
+      expect(logger.error.firstCall.args[0]).to.deep.equal({
+        action: `invalid_locale_key`,
+        type: `object`,
+        key: null
+      })
+      expect(nonStringKey).to.equal(mockLocales[`en.json`]['LOCALE_NOT_FOUND'])
+    })
+
     it(`should find locale by key (1-level deep) with current language`, () => {
       localizer.lang = `en`
       const msg = localizer.findLocale(`REQUEST_PING`)
@@ -74,42 +109,28 @@ describe(`Localizer Library`, () => {
       const msg = localizer.findLocale(`SAY.SHORT_GUIDE`)
       expect(msg).to.equal(`Please include the message that you want me to read! {{emoji}}`)
     })
-
-    it(`should log error when key is not found in both fallback and current languages`, () => {
+    
+    it(`should log error when key is not found in target origin and fallback language`, () => {
       localizer.lang = `fr`
+      localizer.fallback = `en`
       localizer.findLocale(`THIS.KEY._DOES_NOT_EXIST`)
-      expect(consoleErrorSpy.calledOnce).to.be.true
-      /**
-       * Explanation of the regex:
-       * ^: Matches the beginning of the string.
-       * (Mon|Tue|Wed|Thu|Fri|Sat|Sun): Matches the three-letter abbreviation for the day of the week.
-       * \s: Matches a single whitespace character.
-       * (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec): Matches the three-letter abbreviation for the month.
-       * \s: Matches a single whitespace character.
-       * (\d{2}): Matches the two-digit day of the month.
-       * \s: Matches a single whitespace character.
-       * (\d{4}): Matches the four-digit year.
-       * \s: Matches a single whitespace character.
-       * (\d{2}:\d{2}:\d{2}): Matches the time in HH:MM:SS format.
-       * \sGMT[+-]\d{4}: Matches " GMT" followed by a plus or minus sign and a four-digit offset (e.g., "+0500").
-       * \s\(.+\): Matches a space, an opening parenthesis, any character (except newline) one or more times, and a closing parenthesis, representing the timezone name (e.g., "(Coordinated Universal Time)").
-       */
-      const dateRegex = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s(\d{2})\s(\d{4})\s(\d{2}:\d{2}:\d{2})\sGMT[+-]\d{4}\s\(.+\)/
-      const expectedMessage = ` | The specified key is not an available language path.\nKey supplied and tried > THIS.KEY._DOES_NOT_EXIST`
-      expect(consoleErrorSpy.args[0][0]).to.match(dateRegex).and.to.include(expectedMessage)
+      expect(logger.warn.callCount).to.equal(2)
+      expect(logger.warn.firstCall.args[0]).to.deep.equal({
+        action: `origin_locale_missing`,
+        lang: `fr`,
+        key: `THIS.KEY._DOES_NOT_EXIST`
+      })
+      expect(logger.warn.secondCall.args[0]).to.deep.equal({
+        action: `fallback_locale_missing`,
+        lang: `en`,
+        key: `THIS.KEY._DOES_NOT_EXIST`
+      })
     })
 
     it(`should fallback to 'en' version when key not found in other language`, () => {
       localizer.lang = `fr`
       const msg = localizer.findLocale(`EN_EXCLUSIVE`)
       expect(msg).to.equal(`This is an exclusive message for English only!`)
-    })
-
-    it(`should properly initialize pool for each locale`, () => {
-      localizer.lang = `en`
-      const msg = localizer.findLocale(`REQUEST_PING`)
-      expect(msg).to.equal(`**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
-      expect(localizer.findLocale(`REQUEST_PING`)).to.equal(`**Pong!** {{emoji}}\n╰ received in {{ping}} ms!`)
     })
   })
 })

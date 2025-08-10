@@ -1,7 +1,7 @@
 "use strict"
 const { Collection } = require(`discord.js`)
 const { readdirSync } = require(`fs`)
-
+const { localizerLogger:logger } = require(`../../pino.config`)
 class Localization {
 
   #lang
@@ -59,14 +59,41 @@ class Localization {
     return flattenedObject
   }
 
-  findLocale(key) {
-    let locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
-    const DATE = new Date()
-    // eslint-disable-next-line no-console
-    if (locale == undefined) return console.error(`${DATE} | The specified key is not an available language path.\nKey supplied and tried > ${key}`)
-    return locale
+  /**
+   * Placeholder message for final fallback.
+   * @private
+   * @return {string}
+   */
+  #placeholderFallback() {
+    const key = `LOCALE_NOT_FOUND`
+    return this.#localesPool.get(`en`)?.get(key) || key
   }
 
+  /**
+   * Lookup target localized message.
+   * @param {string=``} key target locale key (e.g. REQUEST_PING)
+   * @return {string}
+   */
+  findLocale(key=undefined) {
+    // 1. Target locale key validation
+    if (!key || typeof key !== `string`) {
+      logger.error({ action: `invalid_locale_key`, type: typeof key, key })
+      return this.#placeholderFallback()
+    }
+
+    // 2. Look up the target locale first.
+    let locale = this.#localesPool.get(this.#lang)?.get(key)
+    if (locale) return locale
+
+    // 3. If not found, try fallback variant of the locale.
+    logger.warn({ action: `origin_locale_missing`, lang: this.#lang, key })
+    locale = this.#localesPool.get(this.#fallback)?.get(key)
+    if (locale) return locale
+
+    // 4. If none of them exist, last-resort to use placeholder fallback (100% availability)
+    logger.warn({ action: `fallback_locale_missing`, lang: this.#fallback, key })
+    return this.#placeholderFallback()
+  }
 
   loadLocales() {
     this.#createLocalesPool(this.#path)
