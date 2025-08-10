@@ -120,9 +120,10 @@ module.exports = {
 			buttonCollector.stop()
 			questSession.updateRewards()
 			message.edit({ components: [] })
+			const p = locale(`QUEST.PRAISE`)
 			return await reply.send(locale(`QUEST.SUCCESSFUL`), {
 				socket: {
-					praise: locale(`QUEST.PRAISE[${Math.floor(Math.random() * locale(`QUEST.PRAISE`).length)}]`),
+					praise: p[Math.floor(Math.random() * p.length)],
 					user: user.username,
 					reward: questSession.getQuestFormattedReward
 				}
