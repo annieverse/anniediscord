@@ -29,7 +29,7 @@ It uses PostgreSQL as the primary database to store user and discord server-spec
 
 ## Coding Standards
 
-- Avoid and never use semicolons at the end of each statements
+- Avoid and never use semicolons at the end of each statement
 - Use backticks ` for string-typed value
 - Preferably always use async-await and try-catch block for promises
 - Use camelCase for function, variables and method name
