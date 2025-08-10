@@ -71,7 +71,7 @@ module.exports = (client, message) => {
             client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
                 .then(list => {
                     try {
-                        if (!message.guild.members.cache.has(message.author.id)) message.guild.members.fetch(message.author.id)
+                        if (!message.guild.members.cache.has(message.author.id)) await message.guild.members.fetch(message.author.id)
                         if (!message.member || !message.member.id) return
                         if (!message.guild || !message.guild.id) return
                     } catch (error) { client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`) }
