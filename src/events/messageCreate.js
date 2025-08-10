@@ -69,7 +69,7 @@ module.exports = (client, message) => {
             const locale = (key) => client.localization.findLocale(key)
 
             client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
-                .then(list => {
+                .then(async list => {
                     try {
                         if (!message.guild.members.cache.has(message.author.id)) await message.guild.members.fetch(message.author.id)
                         if (!message.member || !message.member.id) return
