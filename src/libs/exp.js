@@ -219,7 +219,7 @@ class Experience {
                     })
                     return this._sendToDefaultChannel(messageComponents)
                 }
-                //  3. Prevent channel that can't be send the message into.
+                //  3. Prevent channel that can't have messages sent to it.
                 if (!targetChannel.isSendable()) {
                     this.client.logger.warn({
                         action: `custom_levelup_channel_not_sendable`,
