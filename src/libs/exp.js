@@ -154,30 +154,23 @@ class Experience {
      * @return {boolean} 
      */
     async _sendToDefaultChannel(messageComponents) {
+        let logInfo = {
+            userId: this.user.id,
+            guildId: this.guild.id,
+            channelId: this.targetLevelUpChannel?.id
+        }
         try {
-            if (!this.targetLevelUpChannel || !this.targetLevelUpChannel.isSendable()) {
-                this.client.logger.warn({
-                    action: `default_levelup_channel_invalid`,
-                    guildId: this.guild.id
-                })
-                return false
-            }
-
+            if (!this.targetLevelUpChannel) throw new Error(`default_levelup_channel_invalid`)
+            if (!(this.targetLevelUpChannel instanceof GuildChannel)) throw new Error(`default_levelup_channel_not_guildchannel`)
+            if (!this.targetLevelUpChannel.isSendable()) throw new Error(`default_levelup_channel_unsendable`)
             await this.targetLevelUpChannel.send(messageComponents)
-            this.client.logger.debug({
-                action: `default_levelup_channel_successful`,
-                channelId: this.targetLevelUpChannel.id,
-                guildId: this.guild.id
-            })
+            logInfo.action = `default_levelup_channel_successful`
+            this.client.logger.debug(logInfo)
             return true
 
         } catch (err) {
-            this.client.logger.warn({
-                action: `default_levelup_channel_failed`,
-                guildId: this.guild.id,
-                channelId: this.targetLevelUpChannel?.id,
-                error: err.message
-            })
+            logInfo.action = err.message
+            this.client.logger.warn(logInfo)
             return false
         }
     }
@@ -186,7 +179,7 @@ class Experience {
      *  Sending level-up message and reward to the user.
      *  @author {klerikdust}
      *  @param {number} [newLevel=0] New level to be displayed in the message.
-     *  return {Message|void}
+     *  @return {boolean}
      */
     async levelUpPerks(newLevel = 0) {
         //  Prepare and parse contents for level-up message
@@ -195,59 +188,34 @@ class Experience {
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
         const displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
         const messageComponents = { content: displayedText, files: [new AttachmentBuilder(img, `LEVELUP_${this.user.id}.jpg`)] }
-        //  Send to custom channel if provided
         const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {
-            //  Falling back to default channel if the requirements are fails to met.
+            let logInfo = {
+                userId: this.user.id,
+                guildId: this.guild.id,
+                channelId: customLevelUpMessageChannel
+            }
             try {
                 const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
-                //  1. Prevent unreachable custom channel
-                if (!targetChannel) {
-                    this.client.logger.warn({
-                        action: `custom_levelup_channel_invalid`,
-                        guildId: this.guild.id,
-                        channelId: customLevelUpMessageChannel
-                    })
-                    return this._sendToDefaultChannel(messageComponents)
-                }
-                //  2. Prevent non-GuildChannel type, as we can't send the message other than this.
-                if (!(targetChannel instanceof GuildChannel)) {
-                    this.client.logger.warn({
-                        action: `custom_levelup_channel_not_guildchannel`,
-                        guildId: this.guild.id,
-                        channelId: customLevelUpMessageChannel
-                    })
-                    return this._sendToDefaultChannel(messageComponents)
-                }
-                //  3. Prevent channel that can't have messages sent to it.
-                if (!targetChannel.isSendable()) {
-                    this.client.logger.warn({
-                        action: `custom_levelup_channel_not_sendable`,
-                        guildId: this.guild.id,
-                        channelId: customLevelUpMessageChannel
-                    })
-                    return this._sendToDefaultChannel(messageComponents)
-                }
+                if (!targetChannel) throw new Error(`custom_levelup_channel_invalid`)
+                if (!(targetChannel instanceof GuildChannel)) throw new Error(`custom_levelup_channel_not_guildchannel`)
+                if (!targetChannel.isSendable()) throw new Error(`custom_levelup_channel_unsendable`)
                 await targetChannel.send(messageComponents)
-                return this.client.logger.debug({
-                    action: `custom_levelup_channel_successful`,
-                    guildId: this.guild.id,
-                    channelId: customLevelUpMessageChannel
-                })
-            } catch (err) {
-                this.client.logger.error({
-                    action: `custom_levelup_channel_failed`,
-                    guildId: this.guild.id,
-                    channelId: customLevelUpMessageChannel,
-                    error: err.message
-                })
-                return this._sendToDefaultChannel(messageComponents)
+                logInfo.action = `custom_levelup_channel_successful`,
+                this.client.logger.debug(logInfo)
+                return true
+            } 
+            catch (err) {
+                await this._sendToDefaultChannel(messageComponents)
+                logInfo.action = err.message
+                this.client.logger.warn(logInfo)
+                return true
             }
-
         }
-        //  Otherwise, send message to the channel where user got leveled-up.
+        //  Falling back to default channel if the requirements are fails to met or no custom channel available.
         else {
-            return this._sendToDefaultChannel(messageComponents)
+            await this._sendToDefaultChannel(messageComponents)
+            return false
         }
     }
 
