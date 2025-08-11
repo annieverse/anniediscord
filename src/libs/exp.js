@@ -214,8 +214,7 @@ class Experience {
         }
         //  Falling back to default channel if the requirements are fails to met or no custom channel available.
         else {
-            await this._sendToDefaultChannel(messageComponents)
-            return false
+            return await this._sendToDefaultChannel(messageComponents)
         }
     }
 
