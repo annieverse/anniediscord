@@ -201,7 +201,7 @@ class Experience {
                 if (!(targetChannel instanceof GuildChannel)) throw new Error(`custom_levelup_channel_not_guildchannel`)
                 if (!targetChannel.isSendable()) throw new Error(`custom_levelup_channel_unsendable`)
                 await targetChannel.send(messageComponents)
-                logInfo.action = `custom_levelup_channel_successful`,
+                logInfo.action = `custom_levelup_channel_successful`
                 this.client.logger.debug(logInfo)
                 return true
             } 
