@@ -1,3 +1,10 @@
+## [10.1.8](https://github.com/annieverse/anniediscord/compare/v10.1.7...v10.1.8) (2025-08-10)
+
+
+### Bug Fixes
+
+* **locales:** invalid locale with no fallback ([8e30737](https://github.com/annieverse/anniediscord/commit/8e3073795b453810cfbe51897241db95262106bf))
+
 ## [10.1.7](https://github.com/annieverse/anniediscord/compare/v10.1.6...v10.1.7) (2025-08-10)
 
 
