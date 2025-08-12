@@ -148,31 +148,74 @@ class Experience {
     }
 
     /**
+     * Sending out to fallback/default channel
+     * @author {klerikdust}
+     * @param {object} [messageComponents] Struct of the message to be sent.
+     * @return {boolean} 
+     */
+    async _sendToDefaultChannel(messageComponents) {
+        let logInfo = {
+            userId: this.user.id,
+            guildId: this.guild.id,
+            channelId: this.targetLevelUpChannel?.id
+        }
+        try {
+            if (!this.targetLevelUpChannel) throw new Error(`default_levelup_channel_invalid`)
+            if (!(this.targetLevelUpChannel instanceof GuildChannel)) throw new Error(`default_levelup_channel_not_guildchannel`)
+            if (!this.targetLevelUpChannel.isSendable()) throw new Error(`default_levelup_channel_unsendable`)
+            await this.targetLevelUpChannel.send(messageComponents)
+            logInfo.action = `default_levelup_channel_successful`
+            this.client.logger.debug(logInfo)
+            return true
+
+        } catch (err) {
+            logInfo.action = err.message
+            this.client.logger.warn(logInfo)
+            return false
+        }
+    }
+
+    /**
      *  Sending level-up message and reward to the user.
      *  @author {klerikdust}
      *  @param {number} [newLevel=0] New level to be displayed in the message.
-     *  return {Message|void}
+     *  @return {boolean}
      */
     async levelUpPerks(newLevel = 0) {
-        //  Parsing content for level-up message
+        //  Prepare and parse contents for level-up message
         const img = await new GUI(await this._getMinimalUserMetadata(), newLevel).build()
         const defaultText = this.locale(`LEVELUP.DEFAULT_RESPONSES`)
         const savedText = this.guild.configs.get(`LEVEL_UP_TEXT`).value
-        let displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
+        const displayedText = this._parseLevelUpContent(savedText || defaultText[Math.floor(Math.random() * defaultText.length)])
         const messageComponents = { content: displayedText, files: [new AttachmentBuilder(img, `LEVELUP_${this.user.id}.jpg`)] }
-        //  Send to custom channel if provided
         const customLevelUpMessageChannel = this.guild.configs.get(`LEVEL_UP_MESSAGE_CHANNEL`).value
         if (customLevelUpMessageChannel) {
-            const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
-            if (!targetChannel) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
-            if (!(targetChannel instanceof GuildChannel)) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
-            if (!(targetChannel.isSendable())) return this.client.logger.error(`${this.instanceId} <FAIL> invalid level up message channel`)
-            return targetChannel.send(messageComponents)
-                .catch(e => this.client.logger.error(`${this.instanceId} <FAIL> send levelup msg in custom channel > ${e.message}`))
+            let logInfo = {
+                userId: this.user.id,
+                guildId: this.guild.id,
+                channelId: customLevelUpMessageChannel
+            }
+            try {
+                const targetChannel = this.guild.channels.cache.get(customLevelUpMessageChannel)
+                if (!targetChannel) throw new Error(`custom_levelup_channel_invalid`)
+                if (!(targetChannel instanceof GuildChannel)) throw new Error(`custom_levelup_channel_not_guildchannel`)
+                if (!targetChannel.isSendable()) throw new Error(`custom_levelup_channel_unsendable`)
+                await targetChannel.send(messageComponents)
+                logInfo.action = `custom_levelup_channel_successful`
+                this.client.logger.debug(logInfo)
+                return true
+            } 
+            catch (err) {
+                await this._sendToDefaultChannel(messageComponents)
+                logInfo.action = err.message
+                this.client.logger.warn(logInfo)
+                return true
+            }
         }
-        //  Otherwise, send message to the channel where user got leveled-up.
-        return this.targetLevelUpChannel.send(messageComponents)
-            .catch(e => this.client.logger.error(`${this.instanceId} <FAIL> send levelup msg in regular channel > ${e.message}`))
+        //  Falling back to default channel if the requirements are fails to met or no custom channel available.
+        else {
+            return await this._sendToDefaultChannel(messageComponents)
+        }
     }
 
     /**

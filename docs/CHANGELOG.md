@@ -1,3 +1,17 @@
+## [10.1.10](https://github.com/annieverse/anniediscord/compare/v10.1.9...v10.1.10) (2025-08-11)
+
+
+### Bug Fixes
+
+* **levelup:** better guardrails with fallbacks. ([1c510df](https://github.com/annieverse/anniediscord/commit/1c510df042f5ea0a758849a427f1d5bcbcd16434))
+
+## [10.1.9](https://github.com/annieverse/anniediscord/compare/v10.1.8...v10.1.9) (2025-08-11)
+
+
+### Bug Fixes
+
+* **setshop:** callback response ([59b018e](https://github.com/annieverse/anniediscord/commit/59b018e723f4067ed261a51fe9503228fca21bec))
+
 ## [10.1.8](https://github.com/annieverse/anniediscord/compare/v10.1.7...v10.1.8) (2025-08-10)
 
 
