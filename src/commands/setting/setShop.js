@@ -1085,9 +1085,7 @@ module.exports = {
             .setOptions(selectMenuOptions)
         const selectMenuActionRow = new ActionRowBuilder().addComponents(selectMenu)
         const buttonActionRow = new ActionRowBuilder().addComponents(doneCancelButton)
-
-        let guide = null
-        guide = await reply.send(locale(`SETSHOP.EDIT_GUIDE`), {
+        const guideBase = await reply.send(locale(`SETSHOP.EDIT_GUIDE`), {
             simplified: true,
             socket: {
                 item: item.name,
@@ -1096,8 +1094,7 @@ module.exports = {
             },
             components: [selectMenuActionRow, buttonActionRow]
         })
-
-        guide = isInteractionCallbackResponse(guide) ? guide.resource.message : guide
+        const guide = isInteractionCallbackResponse(guideBase) ? guideBase.resource.message : guideBase
         const member = isApplicationCommand ? message.author.id : message.user.id
         const filter = (i) => (i.customId === selectMenuId || i.customId === doneCancelButtonId) && i.user.id === member
         const editItemListenerTimer = 30000
