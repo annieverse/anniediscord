@@ -48,7 +48,6 @@
     "contrast-color": "^1.0.1",
     "cron-job-manager": "^2.1.4",
     "cross-env": "^10.0.0",
-    "csv-stringify": "^6.5.1",
     "discord.js": "^14.16.3",
     "eslint": "^9.33.0",
     "express": "^5.1.0",
