@@ -25,6 +25,7 @@ logs
 # VIM files
 *.swp
 .launch.sh
+launch.sh
 .update-launch.sh
 
 # MacOS development
