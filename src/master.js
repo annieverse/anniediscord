@@ -1,6 +1,7 @@
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
 const { masterLogger: logger } = require(`../pino.config.js`)
+const { createStandardLog } = require(`./utils/standardLogger`)
 const fs = require(`fs`)
 
 /**
@@ -14,10 +15,19 @@ const getCustomShardId = (id) => {
 
 module.exports = function masterShard() {
 	// Intentionally log a error when bot starts up.
-	logger.error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`)
+	logger.error(createStandardLog(`master_shard_startup`, {
+		context: `The bot was started/restarted on ${new Date()}. This is expected, and not an error.`
+	}))
 
 	process.on(`unhandledRejection`, (reason, promise) => {
-		logger.warn(`\nUnhandled Rejection at:`, promise, `reason:`, reason)
+		// Legacy format preserved in context
+		logger.warn(createStandardLog(`unhandled_rejection`, {
+			context: {
+				legacy_message: `\nUnhandled Rejection at: ${promise} reason: ${reason}`,
+				promise: promise,
+				reason: reason
+			}
+		}))
 		logger.error(promise, reason)
 	})
 	process.on(`uncaughtException`, err => {

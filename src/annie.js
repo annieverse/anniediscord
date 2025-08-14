@@ -184,6 +184,17 @@ class Annie extends Discord.Client {
          * @type {object}
          */
         this.cronManager = new CronManager()
+        
+        // Set up automatic log cleanup if file streaming is enabled
+        if (process.env.STREAM_LOGS_TO_FILES === `1`) {
+            try {
+                const { setupLogCleanupCron } = require(`./utils/logCleanup`)
+                setupLogCleanupCron(this.cronManager)
+            } catch (error) {
+                this.logger.warn(`Failed to setup log cleanup cron: ${error.message}`)
+            }
+        }
+        
         this.prepareLogin()
     }
 

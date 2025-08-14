@@ -1,4 +1,6 @@
 const pino = require(`pino`)
+const fs = require(`fs`)
+const path = require(`path`)
 
 /**
  * logger.fatal('fatal'); highest level     level: 60
@@ -22,9 +24,16 @@ const pino = require(`pino`)
  * Debug (debug): messages helpful for debugging.
  */
 
-// Determine if running in production or development
-const isDevelopment = process.env.NODE_ENV === `development`;
+// Environment configuration
+const isDevelopment = process.env.NODE_ENV === `development`
+const shouldStreamToFiles = process.env.STREAM_LOGS_TO_FILES === `1`
+const logLevel = process.env.LOGS_LEVEL || (isDevelopment ? `debug` : `info`)
 
+// Ensure logs directory exists if streaming to files
+const logsDir = path.join(process.cwd(), `.logs`)
+if (shouldStreamToFiles && !fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true })
+}
 
 /** 
  * Custom levels
@@ -32,38 +41,78 @@ const isDevelopment = process.env.NODE_ENV === `development`;
  */
 const levels = {
     database: isDevelopment ? 31 : 29 // Any number between info (30) and warn (40) will work the same
-    // database: 31 // Any number between info (30) and warn (40) will work the same
 }
 
-const defaultOptions = {
-    formatters: {
-        bindings: (bindings) => {
-            return { name: bindings.name }
-        },
-        level: (label) => {
-            return {
-                level: label  // Show the label instead of a number
+/**
+ * Creates file stream destination with log rotation
+ * @param {string} loggerName - Name of the logger for filename
+ * @returns {object} Pino destination stream
+ */
+function createFileDestination(loggerName) {
+    if (!shouldStreamToFiles) {
+        return undefined
+    }
+
+    try {
+        const logFile = path.join(logsDir, `${loggerName.toLowerCase()}.log`)
+        
+        // Use pino.destination for basic file output first
+        // We can add rotation later if needed
+        return pino.destination({
+            dest: logFile,
+            sync: false
+        })
+    } catch (error) {
+        console.error(`Failed to create file destination for ${loggerName}:`, error.message)
+        return undefined
+    }
+}
+
+/**
+ * Creates logger options with standardized configuration
+ * @param {string} loggerName - Name of the logger
+ * @returns {object} Pino logger options or array with destination
+ */
+function createLoggerOptions(loggerName) {
+    const baseOptions = {
+        formatters: {
+            bindings: (bindings) => {
+                return { name: bindings.name }
+            },
+            level: (label) => {
+                return {
+                    level: label  // Show the label instead of a number
+                }
             }
-        }
-    },
-    name: `MASTER_SHARD`,
-    level: isDevelopment ? `debug` : `info`, // debug and trace messages will be suppressed
-    customLevels: levels,
-    timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
+        },
+        name: loggerName,
+        level: logLevel,
+        customLevels: levels,
+        timestamp: pino.stdTimeFunctions.isoTime
+    }
+
+    // Add file destination if enabled
+    const fileDestination = createFileDestination(loggerName)
+    if (fileDestination) {
+        return [baseOptions, fileDestination]
+    }
+
+    return baseOptions
 }
 
-defaultOptions.name = `MASTER_SHARD`
-const masterLogger = pino(defaultOptions)
+// Create loggers with enhanced configuration
+const masterLoggerArgs = createLoggerOptions(`MASTER_SHARD`)
+const masterLogger = Array.isArray(masterLoggerArgs) ? pino(...masterLoggerArgs) : pino(masterLoggerArgs)
 
-defaultOptions.name = `DATABASE`
-const databaseLogger = pino(defaultOptions)
+const databaseLoggerArgs = createLoggerOptions(`DATABASE`)
+const databaseLogger = Array.isArray(databaseLoggerArgs) ? pino(...databaseLoggerArgs) : pino(databaseLoggerArgs)
 
-defaultOptions.name = `LOCALIZER`
-const localizerLogger = pino(defaultOptions)
+const localizerLoggerArgs = createLoggerOptions(`LOCALIZER`)
+const localizerLogger = Array.isArray(localizerLoggerArgs) ? pino(...localizerLoggerArgs) : pino(localizerLoggerArgs)
 
 const shardLogger = (name) => {
-    defaultOptions.name = name
-    return pino(defaultOptions)
+    const shardLoggerArgs = createLoggerOptions(name)
+    return Array.isArray(shardLoggerArgs) ? pino(...shardLoggerArgs) : pino(shardLoggerArgs)
 }
 
 module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger }
