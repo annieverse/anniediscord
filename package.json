@@ -69,6 +69,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "chai": "^5.1.1",
     "dotenv": "^16.4.5",
     "jest": "^30.0.5",
