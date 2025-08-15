@@ -1,7 +1,24 @@
-const { GuildMember, Role, TextChannel, Client, User } = require(`discord.js`);
-const { get } = require("superagent");
+const { GuildMember, Role, TextChannel, Client, User, Message } = require(`discord.js`);
+const error = require("../src/events/error");
 
-// Guild Member Mock
+const getDbMock = () => ({
+    databaseUtils: {
+        validateUserEntry: jest.fn(() => Promise.resolve()),
+        updateInventory: jest.fn(() => Promise.resolve()),
+        doesCacheExist: jest.fn(() => Promise.resolve(false)),
+        setCache: jest.fn(() => Promise.resolve()),
+    },
+    guildUtils: {
+        registerGuild: jest.fn(() => Promise.resolve()),
+    },
+    redis: {
+        sMembers: jest.fn(() => Promise.resolve([])),
+    },
+    userUtils: {
+        getUserLocale: jest.fn(() => Promise.resolve({ lang: "en" })),
+    }
+});
+
 /**
  * 
  * @returns {User}
@@ -25,7 +42,7 @@ const getUserMock = () => ({
         cache: jest.fn(() => getRoleMock()),
     },
     guild: {
-        id: "123456789012345678",
+        id: "123456789012345679",
         roles: {
             cache: { get: jest.fn(() => getRoleMock()) },
         },
@@ -48,8 +65,7 @@ const getUserMock = () => ({
  * 
  * @returns {GuildMember}
  */
-const getGuildMemberMock = () =>
-({
+const getGuildMemberMock = () => ({
     roles: {
         add: jest.fn(),
         cache: {
@@ -75,10 +91,9 @@ const getGuildMemberMock = () =>
  * 
  * @returns {TextChannel}
  */
-const getTextChannelMock = () =>
-({
+const getTextChannelMock = () => ({
     send: jest.fn(),
-    isDMBased: jest.fn(),
+    isDMBased: jest.fn(() => false),
 })
 
 // Role Mock
@@ -99,12 +114,19 @@ const getMessageMock = () => ({
     channel: getTextChannelMock(),
     content: "",
     author: {
+        id: "123456789012345678",
         bot: false,
     },
     guild: {
         configs: {
             get: jest.fn((key) => ({
-                value: key === 'PREFIX' ? '!' : key === 'AR_MODULE' ? true : key === 'EXP_MODULE' ? true : 100,
+                value: ({
+                    PREFIX: "!",
+                    AR_MODULE: false,
+                    EXP_MODULE: true,
+                    CHAT_CURRENCY: `10`,
+                    CHAT_EXP: `5`
+                })[key]
             })),
             id: '123456789012345678',
         },
@@ -128,8 +150,8 @@ const getMessageMock = () => ({
     mentions: {
         users: {
             get: jest.fn(() => getUserMock()),
-            has: jest.fn(() => true),
-        },
+            has: jest.fn(() => false),
+        }
     }
 })
 
@@ -138,29 +160,19 @@ const getMessageMock = () => ({
  * @returns {Client}
  */
 const getClientMock = () => ({
-    isReady: jest.fn(),
-    db: {
-        databaseUtils: {
-            validateUserEntry: jest.fn(() => Promise.resolve()),
-            updateInventory: jest.fn(() => Promise.resolve()),
-            doesCacheExist: jest.fn(() => Promise.resolve(false)),
-            setCache: jest.fn(() => Promise.resolve()),
-        },
-        guildUtils: {
-            registerGuild: jest.fn(() => Promise.resolve()),
-        },
-        redis: {
-            sMembers: jest.fn(() => Promise.resolve([])),
-        },
+    isReady: jest.fn(() => true),
+    db: getDbMock(),
+    cooldowns: {
+        has: jest.fn(() => false),
+        set: jest.fn(),
+        delete: jest.fn(),
+        get: jest.fn(() => 0),
     },
-    responseLibs: jest.fn(() => ({
-        send: jest.fn(),
-    })),
-    cooldowns: new Map(),
     prefix: "!",
     logger: {
         debug: jest.fn(),
         warn: jest.fn(),
+        error: jest.fn(),
     },
     dev: false,
     user: {
@@ -201,7 +213,14 @@ const getClientMock = () => ({
     shard: {
         ids: [0],
         count: 1,
-    }
+    },
+    localization: {
+        lang: "en",
+        findLocale: jest.fn()
+    },
+    experienceLibs: jest.fn(() => ({
+        execute: jest.fn()
+    }))
 })
 
 module.exports = { getGuildMemberMock, getTextChannelMock, getRoleMock, getMessageMock, getClientMock, getUserMock };
