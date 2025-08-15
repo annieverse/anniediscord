@@ -1,6 +1,7 @@
 const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
 const { masterLogger: logger } = require(`../pino.config.js`)
+const { wrapLegacyLog } = require(`./utils/structuredLogger`)
 const fs = require(`fs`)
 
 /**
@@ -14,31 +15,34 @@ const getCustomShardId = (id) => {
 
 module.exports = function masterShard() {
 	// Intentionally log a error when bot starts up.
-	logger.error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`)
+	const startupMessage = `\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`
+	logger.error(wrapLegacyLog(`master_shard_startup`, startupMessage))
 
 	process.on(`unhandledRejection`, (reason, promise) => {
-		logger.warn(`\nUnhandled Rejection at:`, promise, `reason:`, reason)
-		logger.error(promise, reason)
+		const rejectionLog = `\nUnhandled Rejection at: ${promise} reason: ${reason}`
+		logger.warn(wrapLegacyLog(`unhandled_rejection_detected`, rejectionLog))
+		logger.error(wrapLegacyLog(`unhandled_rejection_details`, { promise, reason }))
 	})
 	process.on(`uncaughtException`, err => {
-		logger.warn(`\nUnhandled Exception: `, err)
-		logger.error(err)
+		const exceptionLog = `\nUnhandled Exception: ${err}`
+		logger.warn(wrapLegacyLog(`uncaught_exception_detected`, exceptionLog))
+		logger.error(wrapLegacyLog(`uncaught_exception_details`, err))
 	})
 	function makeDirs() {
 		if (!fs.existsSync(`./src/assets/customShop`)) fs.mkdirSync(`./src/assets/customShop`,)
-		if (fs.existsSync(`./src/assets/customShop`)) logger.info(`Directory './src/assets/customShop' exists`)
+		if (fs.existsSync(`./src/assets/customShop`)) logger.info(wrapLegacyLog(`directory_exists_check`, `Directory './src/assets/customShop' exists`))
 		if (!fs.existsSync(`./src/assets/customWelcomer`)) fs.mkdirSync(`./src/assets/customWelcomer`)
-		if (fs.existsSync(`./src/assets/customWelcomer`)) logger.info(`Directory './src/assets/customWelcomer' exists`)
+		if (fs.existsSync(`./src/assets/customWelcomer`)) logger.info(wrapLegacyLog(`directory_exists_check`, `Directory './src/assets/customWelcomer' exists`))
 		if (!fs.existsSync(`./src/assets/selfupload`)) fs.mkdirSync(`./src/assets/selfupload`)
-		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(`Directory './src/assets/selfupload' exists`)
+		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(wrapLegacyLog(`directory_exists_check`, `Directory './src/assets/selfupload' exists`))
 		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
-		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
+		if (fs.existsSync(`./.logs`)) logger.info(wrapLegacyLog(`directory_exists_check`, `Directory './.logs`))
 	}
 	if (fs.existsSync(`./src/assets`)) {
 		makeDirs()
 	} else {
 		fs.mkdirSync(`./src/assets`)
-		logger.info(`Directory './src/assets' exists`)
+		logger.info(wrapLegacyLog(`directory_creation`, `Directory './src/assets' exists`))
 		makeDirs()
 	}
 	const { ShardingManager } = require(`discord.js`)
