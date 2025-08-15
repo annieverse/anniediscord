@@ -53,9 +53,26 @@ module.exports = function masterShard() {
 		const id = getCustomShardId(shard.id)
 		shard.on(`spawn`, () => logger.info(`${id} <SPAWNED>`))
 		shard.on(`death`, () => logger.error(`${id} <DIED>`))
-		shard.on(`disconnect`, () => logger.warn(`${id} <DISCONNECTED>`))
+		shard.on(`disconnect`, () => {
+			logger.warn(`${id} <DISCONNECTED>`)
+			// Log WebSocket disconnection for debugging
+			if (shard.worker && shard.worker.killed) {
+				logger.warn(`${id} Worker process was killed, likely due to connection issues`)
+			}
+		})
 		shard.on(`ready`, () => logger.info(`${id} <READY>`))
-		shard.on(`reconnecting`, () => logger.warn(`${id} <RECONNECTING>`))
+		shard.on(`reconnecting`, () => {
+			logger.warn(`${id} <RECONNECTING>`)
+			// Log reconnection attempts for WebSocket issues
+			logger.info(`${id} Attempting to reconnect to Discord gateway`)
+		})
+		shard.on(`error`, (error) => {
+			logger.error(`${id} <ERROR>: ${error.message}`)
+			// Specifically handle WebSocket handshake timeouts
+			if (error.message && error.message.includes(`handshake has timed out`)) {
+				logger.warn(`${id} WebSocket handshake timeout detected. This may resolve with retry logic.`)
+			}
+		})
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.

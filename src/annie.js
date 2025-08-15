@@ -20,7 +20,9 @@ const errorRelay = require(`../src/utils/errorHandler.js`)
 class Annie extends Discord.Client {
     constructor (intents) {
         super({
-            intents: intents, presence: { status: `idle`, activities: [{ name: `Shard preparing ...`, type: Discord.ActivityType.Watching }] }, makeCache: Discord.Options.cacheWithLimits({
+            intents: intents, 
+            presence: { status: `idle`, activities: [{ name: `Shard preparing ...`, type: Discord.ActivityType.Watching }] }, 
+            makeCache: Discord.Options.cacheWithLimits({
                 PresenceManager: 0,
                 GuildBanManager: 0,
                 GuildInviteManager: 0,
@@ -42,7 +44,13 @@ class Annie extends Discord.Client {
                  * The following managers are not supported
                  * GuildManager, ChannelManager, GuildChannelManager, RoleManager, and PermissionOverwriteManager
                  */
-            })
+            }),
+            ws: {
+                timeout: 60000, // 60 seconds timeout for WebSocket operations
+                handshakeTimeout: 30000, // 30 seconds for handshake completion
+                compress: false, // Disable compression to reduce overhead
+                large_threshold: 1000 // Reduce large guild threshold
+            }
         })
         this.startupInit = process.hrtime()
 
@@ -195,6 +203,14 @@ class Annie extends Discord.Client {
      */
     prepareLogin() {
         process.on(`unhandledRejection`, err => {
+            // Handle WebSocket timeout errors specifically
+            if (err.message && err.message.includes(`handshake has timed out`)) {
+                this.logger.error(`WebSocket handshake timeout detected. This may be due to network connectivity issues or Discord API latency.`)
+                this.logger.warn(`WebSocket timeout error details:`, err)
+                // Don't exit the process for WebSocket timeouts, let Discord.js handle reconnection
+                return
+            }
+
             this.logger.warn(`unhandledRejection > ${err}`)
             this.logger.error(err)
             if (!this.isReady()) return
@@ -211,10 +227,39 @@ class Annie extends Discord.Client {
             this.registerNode(APPLICATION_COMMANDS, `application_commands`)
             this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
             require(`./controllers/events`)(this)
-            this.login(process.env.BOT_TOKEN)
+            
+            // Attempt login with retry logic for WebSocket timeouts
+            this.attemptLogin()
         } catch (e) {
             this.logger.error(`Client has failed to start > ${e.stack}`)
             process.exit()
+        }
+    }
+
+    /**
+     * Attempt login with retry logic for WebSocket timeout issues
+     * @returns {void}
+     */
+    async attemptLogin(retryCount = 0) {
+        const maxRetries = 3
+        const retryDelay = 5000 // 5 seconds
+
+        try {
+            await this.login(process.env.BOT_TOKEN)
+            this.logger.info(`Successfully logged in to Discord`)
+        } catch (error) {
+            if (error.message && error.message.includes(`handshake has timed out`) && retryCount < maxRetries) {
+                this.logger.warn(`WebSocket handshake timeout (attempt ${retryCount + 1}/${maxRetries}). Retrying in ${retryDelay/1000} seconds...`)
+                setTimeout(() => {
+                    this.attemptLogin(retryCount + 1)
+                }, retryDelay)
+            } else if (retryCount >= maxRetries) {
+                this.logger.error(`Failed to login after ${maxRetries} attempts due to repeated WebSocket timeouts`)
+                process.exit(1)
+            } else {
+                this.logger.error(`Login failed with unexpected error: ${error.message}`)
+                throw error
+            }
         }
     }
 
