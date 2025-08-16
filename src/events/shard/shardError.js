@@ -1,4 +1,4 @@
-const e = require(`express`)
+"use strict"
 const errorRelay = require(`../../utils/errorHandler`)
 
 module.exports = function shardError(annie, error, shardId) {
