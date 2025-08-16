@@ -68,7 +68,7 @@ module.exports = function masterShard() {
 				logger.warn(`${id} WebSocket handshake timeout detected. This may resolve with retry logic.`)
 			}
 		})
-		shard.on(ShardEvents.Message, (message) => logger.error(`<Shard Message> ${message}`))
+		shard.on(ShardEvents.Message, (message) => logger.info(`<Shard Message> ${message}`))
 		shard.on(ShardEvents.Ready, () => logger.info(`${id} <READY>`))
 		shard.on(ShardEvents.Reconnecting, () => {
 			logger.warn(`${id} <RECONNECTING>`)
