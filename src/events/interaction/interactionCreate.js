@@ -2,8 +2,8 @@
 const {
     InteractionType
 } = require(`discord.js`)
-const applicationCommand = require(`../controllers/applicationCommand`)
-const errorRelay = require(`../utils/errorHandler.js`)
+const applicationCommand = require(`../../controllers/applicationCommand`)
+const errorRelay = require(`../../utils/errorHandler.js`)
 module.exports = async (client, interaction) => {
     if (!client.isReady()) return
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)

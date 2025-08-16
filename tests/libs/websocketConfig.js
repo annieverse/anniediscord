@@ -10,7 +10,7 @@ describe(`WebSocket Configuration`, () => {
             // Read the annie.js file and check for WebSocket configuration
             const annieFilePath = path.join(__dirname, `../../src/annie.js`)
             const annieFileContent = fs.readFileSync(annieFilePath, `utf8`)
-            
+
             // Check if WebSocket options are configured
             expect(annieFileContent).to.include(`ws: {`)
             expect(annieFileContent).to.include(`timeout: 60000`)
@@ -22,7 +22,7 @@ describe(`WebSocket Configuration`, () => {
         it(`should have attemptLogin method defined`, () => {
             const annieFilePath = path.join(__dirname, `../../src/annie.js`)
             const annieFileContent = fs.readFileSync(annieFilePath, `utf8`)
-            
+
             // Check if attemptLogin method exists
             expect(annieFileContent).to.include(`async attemptLogin(retryCount = 0)`)
             expect(annieFileContent).to.include(`handshake has timed out`)
@@ -48,9 +48,9 @@ describe(`WebSocket Configuration`, () => {
         })
 
         it(`should have WebSocket error handling in error.js`, () => {
-            const errorFilePath = path.join(__dirname, `../../src/events/error.js`)
+            const errorFilePath = path.join(__dirname, `../../src/events/base/error.js`)
             const errorFileContent = fs.readFileSync(errorFilePath, `utf8`)
-            
+
             // Check if WebSocket timeout handling exists
             expect(errorFileContent).to.include(`handshake has timed out`)
             expect(errorFileContent).to.include(`WebSocket handshake timeout`)
