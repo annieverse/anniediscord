@@ -26,6 +26,7 @@ logs
 *.swp
 .launch.sh
 .update-launch.sh
+.deploy.sh
 
 # MacOS development
 *.DS_Store
