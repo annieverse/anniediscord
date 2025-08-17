@@ -187,7 +187,6 @@ describe("Message Handler", () => {
         const testValue = ["2.5"];
         client.db.redis.sMembers.mockResolvedValue(testValue);
         const accumulatedExpMultiplier = testValue.length > 0 ? 1 + testValue.reduce((p, c) => p + parseFloat(c), 0) : 1;
-        console.log("Accumulated EXP Multiplier:", accumulatedExpMultiplier);
         await messageHandler(client, message);
         await new Promise(process.nextTick);
         expect(client.db.userUtils.getUserLocale).toHaveBeenCalledWith(message.author.id);
