@@ -50,7 +50,6 @@ const messageHandler = async (client, message) => {
     if (startsWithPrefix && possibleCmd) return commandController(client, message)
 
 
-
     //  Automatically executing chat points when no other module requirements are met
     const cooldown = 60 // in seconds
     const gainingId = `POINTS_${message.author.id}@${message.guild.id}`
