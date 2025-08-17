@@ -1,4 +1,4 @@
-const dataCleaner = require(`../libs/dataCleanup.js`)
+const dataCleaner = require(`../../libs/dataCleanup.js`)
 module.exports = async function guildCreate(client, guild) {
     if (!client.isReady()) return
     client.db.guildUtils.registerGuild(guild)
