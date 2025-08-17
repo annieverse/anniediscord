@@ -1,6 +1,6 @@
-const autoResponderController = require(`../controllers/autoResponder`)
-const getNumberInRange = require(`../utils/getNumberInRange`)
-const commandController = require(`../controllers/commands`)
+const autoResponderController = require(`../../controllers/autoResponder`)
+const getNumberInRange = require(`../../utils/getNumberInRange`)
+const commandController = require(`../../controllers/commands`)
 const { Message } = require(`discord.js`)
 /**
  * Centralized Controller for handling incoming messages.

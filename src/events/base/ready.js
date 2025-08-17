@@ -1,6 +1,6 @@
 const Topgg = require(`@top-gg/sdk`)
-const Reminder = require(`../libs/reminder`)
-const dataCleaner = require(`../libs/dataCleanup.js`)
+const Reminder = require(`../../libs/reminder`)
+const dataCleaner = require(`../../libs/dataCleanup.js`)
 const { WebhookClient } = require(`discord.js`)
 /**
  * Ready event.
@@ -14,14 +14,14 @@ module.exports = function ready(annie) {
     let last_shard = (annie.shard.ids)[(annie.shard.ids).length - 1]
     if (current_shard == last_shard) {
         cleaner.getGuildsMarkedForDeletion()
-        setTimeout(async ()=> await cleaner.deleteBulkGuilds(),1000) 
+        setTimeout(async () => await cleaner.deleteBulkGuilds(), 1000)
     }
     annie.registerNode(new Reminder(annie), `reminders`)
     annie.registerGuildConfigurations()
     annie.registerGuildAutoResponders()
     annie.registerUserDurationalBuffs()
     annie.logger.info(`<DEPLOYED> (${annie.getBenchmark(annie.startupInit)})`)
-    if (annie.dev) return annie.user.setPresence({status: `dnd` })
+    if (annie.dev) return annie.user.setPresence({ status: `dnd` })
     /**
      * 	--------------------------------------------------
      * 	Configuration for Production

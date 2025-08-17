@@ -2,7 +2,6 @@ const shardName = require(`./config/shardName.json`)
 const express = require(`express`)
 const { masterLogger: logger } = require(`../pino.config.js`)
 const fs = require(`fs`)
-
 /**
  *  Parse shard name for given shard id.
  *  @param {number} id
@@ -41,7 +40,7 @@ module.exports = function masterShard() {
 		logger.info(`Directory './src/assets' exists`)
 		makeDirs()
 	}
-	const { ShardingManager } = require(`discord.js`)
+	const { ShardingManager, ShardEvents } = require(`discord.js`)
 	const manager = new ShardingManager(`./src/annie.js`, {
 		respawn: process.env.NODE_ENV !== `production` || process.env.NODE_ENV !== `production_beta` ? false : true,
 		token: process.env.BOT_TOKEN,
@@ -51,20 +50,16 @@ module.exports = function masterShard() {
 	const server = express()
 	manager.on(`shardCreate`, shard => {
 		const id = getCustomShardId(shard.id)
-		shard.on(`spawn`, () => logger.info(`${id} <SPAWNED>`))
-		shard.on(`death`, () => logger.error(`${id} <DIED>`))
-		shard.on(`disconnect`, () => {
+		shard.on(ShardEvents.Death, (p) => {
+			logger.error(`${id} <DIED>`)
+			logger.error(p)
+		})
+		shard.on(ShardEvents.Disconnect, () => {
 			logger.warn(`${id} <DISCONNECTED>`)
 			// Log WebSocket disconnection for debugging
 			if (shard.worker && shard.worker.killed) {
 				logger.warn(`${id} Worker process was killed, likely due to connection issues`)
 			}
-		})
-		shard.on(`ready`, () => logger.info(`${id} <READY>`))
-		shard.on(`reconnecting`, () => {
-			logger.warn(`${id} <RECONNECTING>`)
-			// Log reconnection attempts for WebSocket issues
-			logger.info(`${id} Attempting to reconnect to Discord gateway`)
 		})
 		shard.on(`error`, (error) => {
 			logger.error(`${id} <ERROR>: ${error.message}`)
@@ -73,6 +68,16 @@ module.exports = function masterShard() {
 				logger.warn(`${id} WebSocket handshake timeout detected. This may resolve with retry logic.`)
 			}
 		})
+		shard.on(ShardEvents.Message, (message) => logger.info(`<Shard Message> ${message}`))
+		shard.on(ShardEvents.Ready, () => logger.info(`${id} <READY>`))
+		shard.on(ShardEvents.Reconnecting, () => {
+			logger.warn(`${id} <RECONNECTING>`)
+			// Log reconnection attempts for WebSocket issues
+			logger.info(`${id} Attempting to reconnect to Discord gateway`)
+		})
+		shard.on(ShardEvents.Resume, () => logger.info(`${id} <RESUMED>`))
+		shard.on(ShardEvents.Spawn, () => logger.info(`${id} <SPAWNED>`))
+
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
