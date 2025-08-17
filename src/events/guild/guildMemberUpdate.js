@@ -1,9 +1,9 @@
 "use strict"
-const Banner = require(`../ui/prebuild/welcomer`)
-const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
+const Banner = require(`../../ui/prebuild/welcomer`)
+const { parseWelcomerText } = require(`../../utils/welcomerFunctions.js`)
 const { Collection, ChannelType, PermissionFlagsBits, GuildMemberFlags } = require(`discord.js`)
-const { roleLower } = require(`../utils/roleCompare.js`)
-const errorRelay = require(`../utils/errorHandler.js`)
+const { roleLower } = require(`../../utils/roleCompare.js`)
+const errorRelay = require(`../../utils/errorHandler.js`)
 
 module.exports = async function guildMemberUpdate(client, oldMember, newMember) {
     if (!client.isReady()) return

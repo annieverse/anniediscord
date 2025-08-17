@@ -1,10 +1,10 @@
 "use strict"
-const errorRelay = require(`../utils/errorHandler.js`)
+const errorRelay = require(`../../utils/errorHandler.js`)
 const { WebhookClient } = require(`discord.js`)
 const wh = process.env.ERROR_WEBHOOK_URL ? new WebhookClient({ url: process.env.ERROR_WEBHOOK_URL }) : null
 module.exports = function error(client, e) {
     if (!client.isReady()) return
-    
+
     // Handle WebSocket handshake timeout errors specifically
     if (e.message && e.message.includes(`handshake has timed out`)) {
         client.logger.warn(`WebSocket handshake timeout error intercepted in error handler`)
@@ -13,7 +13,7 @@ module.exports = function error(client, e) {
         // that should be handled by retry logic
         return
     }
-    
+
     // if (!client.dev) return // Should return any errors to support server if they arnt caught by other handlers
     //  Report to support server
     client.logger.error(`Ops, something went wrong > ${e}\n${e.stack}`)
