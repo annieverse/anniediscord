@@ -47,7 +47,7 @@ const messageHandler = async (client, message) => {
     if (message.guild.configs.get(`AR_MODULE`).value) autoResponderController(client, message)
     //  Check if message is identified as command.
     const startsWithPrefix = (message.content.startsWith(prefix) || message.content.startsWith(client.prefix))
-    const possibleCmd = ((message.content.length >= prefix.length) || (message.content.length >= client.prefix.length))
+    const possibleCmd = ((message.content.length > prefix.length) || (message.content.length > client.prefix.length))
     if (startsWithPrefix && possibleCmd) return commandController(client, message)
 
 
@@ -81,12 +81,15 @@ const messageHandler = async (client, message) => {
 
     client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(async list => {
-            try {
-                if (!message.guild.members.cache.has(message.author.id)) await message.guild.members.fetch(message.author.id)
-                if (!message.member || !message.member.id) return
-                if (!message.guild || !message.guild.id) return
-            } catch (error) { client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`) }
-
+            if (!message.member || !message.member.id) {
+                try {
+                    if (!message.guild.members.cache.has(message.author.id)) await message.guild.members.fetch(message.author.id)
+                } catch (error) {
+                    client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`)
+                }
+            }
+            if (!message.member || !message.member.id) return
+            if (!message.guild || !message.guild.id) return
             const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.experienceLibs(message.member, message.guild, message.channel, locale)
                 .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)

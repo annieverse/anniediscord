@@ -152,6 +152,9 @@ const getMessageMock = () => ({
             get: jest.fn(() => getUserMock()),
             has: jest.fn(() => false),
         }
+    },
+    member: {
+        id: "123456789255684"
     }
 })
 
