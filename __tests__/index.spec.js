@@ -7,7 +7,7 @@ jest.mock('../src/utils/getNumberInRange', () => jest.fn());
 const autoResponderController = require('../src/controllers/autoResponder');
 const commandController = require('../src/controllers/commands');
 const getNumberInRange = require('../src/utils/getNumberInRange');
-const { messageHandler } = require("../src/events/messageCreate.js");
+const { messageHandler } = require("../src/events/message/messageCreate.js");
 const { getMessageMock, getClientMock } = require("../__mocks__/index.js");
 const { Message } = require("discord.js");
 

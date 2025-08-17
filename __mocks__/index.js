@@ -1,5 +1,5 @@
 const { GuildMember, Role, TextChannel, Client, User, Message } = require(`discord.js`);
-const error = require("../src/events/error");
+const error = require("../src/events/base/error");
 
 const getDbMock = () => ({
     databaseUtils: {
