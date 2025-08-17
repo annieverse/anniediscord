@@ -81,7 +81,6 @@ const messageHandler = async (client, message) => {
     client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
         .then(list => {
             const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
-            // console.log(`Accumulated EXP Multiplier-accumulatedExpMultiplier: ${accumulatedExpMultiplier}`)
             client.experienceLibs(message.member, message.guild, message.channel, locale)
                 .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
         })
