@@ -1,5 +1,5 @@
 "use strict"
-const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs, levelZeroErrors }) => {
+const errorRelay = async (client, { fileName, error_message, error_stack, errorType, guildId, userId, targetCommand, providedArgs }) => {
     /**
      * normal -> happens in a file like annie.js
      * txtcmd -> happens in relation to a command being ran and being a "text" command; for ex. >ping
@@ -9,7 +9,6 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     if (!fileName) return client.logger.error(`[errorRelay.js] fileName must be populated`)
     if (!error_message) return client.logger.error(`[errorRelay.js] error_message must be populated > ${fileName}`)
     if (!errorType) return client.logger.error(`[errorRelay.js] errorType must be populated > ${fileName}`)
-    if (!levelZeroErrors) return client.logger.error(`[errorRelay.js] levelZeroErrors must be populated  > ${fileName}`)
 
     // Common Discord Errors
     const DiscordAPIError_50001 = `Missing Access`
@@ -20,6 +19,7 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     const IgnoreErrorFilter = [DiscordAPIError_50013, DiscordAPIError_50001]
     if (IgnoreErrorFilter.includes(error_message)) return
     const internalError = `[Internal Error]`
+
     if (error_message.includes(internalError)) return
 
     // Create a Date Object to get current time
@@ -48,16 +48,16 @@ const errorRelay = async (client, { fileName, error_message, error_stack, errorT
     }
 
     if (cmdError) {
-        const guild = await client.fetchGuildPreview(guildId)
-        const user = await client.users.fetch(userId)
+        const guild = guildId === `DM/Unknown` ? null : await client.fetchGuildPreview(guildId)
+        const user = userId === `Unknown` ? null : await client.users.fetch(userId)
         const providedArguments = providedArgs.length > 0 ? `\`${providedArgs}\`` : `No arguments provided`
 
         // Command
         ERROR_MESSAGE_RAW.CMD = [
             `─────────────────☆～:;`,
             `**FILE OCCURANCE: ${fileName}**`,
-            `**GUILD_ID:** ${guild.id} - ${guild.name}`,
-            `**AFFECTED_USER:** ${user.id} - @${user.username}`,
+            `**GUILD_ID:** ${guild ? guild.id : `Unknown guild`} - ${guild ? guild.name : `Unknown guild`}`,
+            `**AFFECTED_USER:** ${user ? user.id : `Unknown user`} - @${user ? user.username : `Unknown user`}`,
             `**AFFECTED_CMD:** ${targetCommand}`,
             `**ARGUMENTS ${errorType == `appcmd` ? `(Raw data)` : ``}:** ${providedArguments}`,
             `**TIMESTAMP:** ${date}`,

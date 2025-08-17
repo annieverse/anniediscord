@@ -1,3 +1,4 @@
+"use strict"
 const palette = require(`../ui/colors/default`)
 const {
 	EmbedBuilder,
@@ -14,7 +15,6 @@ const loadAsset = require(`../utils/loadAsset`)
 const GUI = require(`../ui/prebuild/cardCollection`)
 const { PermissionFlagsBits } = require(`discord.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 const { isSlash, isInteractionCallbackResponse } = require(`../utils/appCmdHelp.js`)
 /** 
  * Annie's response message system.
@@ -81,7 +81,6 @@ class Response {
 	 * @param {Boolean} plugins.raw Toggle `true` to return the message's composition without sending it to the target field.
 	 * @param {Boolean} plugins.timestampAsFooter Toggle `true` to include the message timestamp in the footer of embed.
 	 * @param {Boolean} plugins.directMessage Indicate if the message is a DM
-	 * @param {Boolean} plugins.feedback  beta feature, **not used often**
 	 * @param {Boolean} plugins.withResponse Application command option to grab reference
 	 * @param {Boolean} plugins.ephemeral Application command option to hide message from public
 	 * @param {Boolean} plugins.replyAnyway Reply to a message reguardless of other options
@@ -120,7 +119,6 @@ class Response {
 		const raw = plugins.raw || false
 		const timestampAsFooter = plugins.timestampAsFooter || false
 		const directMessage = plugins.dm || false
-		const feedback = plugins.feedback || false
 		let components = plugins.components || null
 		let file = plugins.file || null
 		const withResponse = plugins.withResponse || true
@@ -145,7 +143,9 @@ class Response {
 			catch (error) {
 				const internalError = `[Internal Error]`
 				if (error.message.includes(internalError)) return
-				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: error.stack, error_message: error.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				const errorMsg = error.message || `Unknown Error`
+				const errorStack = error.stack || `Unknown Error Stack`
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: errorStack, error_message: errorMsg }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 			if (!checkPerm) return
 		}
@@ -166,11 +166,6 @@ class Response {
 		 * Create file object if supplied data
 		 */
 		constructFileProp()
-
-		/**
-		 * Add feedback button to message if enabled
-		 */
-		betaFeedback()
 
 		//  Handle message with paging property enabled
 		if (paging) return await this.pageModule(content, plugins, RESPONSE_REF, RESPONSE_TYPE, components, withResponse, ephemeral, _isSlash, cardPreviews)
@@ -231,7 +226,9 @@ class Response {
 			} catch (e) {
 				if (e.message.startsWith(`[Internal Error]`)) throw new Error(`[Internal Error] DiscordAPIError: Missing Permissions or Variable is null`)
 				this.client.logger.error(`[response.js] An error has occured > ${e} >\n${e.stack}`)
-				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: e.stack, error_message: e.message, levelZeroErrors: levelZeroErrors }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
+				const errorMsg = e.message || `Unknown Error`
+				const errorStack = e.stack || `Unknown Error Stack`
+				errorRelay(this.client, { fileName: `response.js`, errorType: `normal`, error_stack: errorStack, error_message: errorMsg }).catch(err => this.client.logger.error(`Unable to send message to channel > ${err}`))
 			}
 		}
 
@@ -276,18 +273,6 @@ class Response {
 		function formatComponents() {
 			const isComponentArray = Array.isArray(components)
 			if (components && !isComponentArray) components = [components]
-		}
-
-		function betaFeedback() {
-			const row = new ActionRowBuilder()
-				.addComponents(
-					new ButtonBuilder()
-						.setCustomId(`betaFeedback`)
-						.setLabel(`Beta Feature Feedback`)
-						.setStyle(ButtonStyle.Secondary)
-				)
-
-			if (feedback) return !components ? components = [row] : components.push(row)
 		}
 
 		function constructFileProp() {

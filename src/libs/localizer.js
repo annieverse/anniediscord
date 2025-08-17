@@ -1,37 +1,7 @@
 "use strict"
 const { Collection } = require(`discord.js`)
 const { readdirSync } = require(`fs`)
-
-/* Get target lang pools if available, if not - fallback to 'en'
-* @param {string} [targetLang] Target language
-* @param {string} [fallbackLang=`en`] Language to be used when target lang unexists
-* @returns {object}
-*/
-const getTargetLocales = (targetLang, fallbackLang = `en`) => {
-  /**
-   * Retrieve available locales in the target directory
-   * @param {string} [path=`./src/locales`] the target locale directory path
-   * @return {object}
-   */
-  const LocalesPool = (path = `./src/locales/`) => {
-    const fn = `[LOCALIZER]`
-    const src = readdirSync(path)
-    const locales = src.filter(loc => loc.endsWith(`json`))
-    if (!locales.length) throw Error(`${fn} can't find any locales in '${path}'`)
-    let localesPool = {}
-    locales.forEach(file => {
-      const localeCode = file.replace(/.json/, ``)
-      localesPool[localeCode] = require(`../locales/${file}`)
-    })
-    return localesPool
-  }
-  const locales = LocalesPool()
-  const TLang = targetLang.toLowerCase()
-  const FBLang = fallbackLang.toLowerCase()
-  if (!locales[TLang]) return locales[FBLang]
-  return locales[TLang]
-}
-
+const { localizerLogger:logger } = require(`../../pino.config`)
 class Localization {
 
   #lang
@@ -43,7 +13,7 @@ class Localization {
     "french": `fr`
   }
 
-  constructor() {
+  constructor () {
     this.loadLocales()
   }
 
@@ -89,13 +59,41 @@ class Localization {
     return flattenedObject
   }
 
-  findLocale(key) {
-    let locale = this.#localesPool.get(this.#lang).get(key) || this.#localesPool.get(this.#fallback).get(key)
-    // eslint-disable-next-line no-console
-    if (locale == undefined) return console.error(`The specified key is not an available language path.\nKey supplied and tried > ${key}`)
-    return locale
+  /**
+   * Placeholder message for final fallback.
+   * @private
+   * @return {string}
+   */
+  #placeholderFallback() {
+    const key = `LOCALE_NOT_FOUND`
+    return this.#localesPool.get(`en`)?.get(key) || key
   }
 
+  /**
+   * Lookup target localized message.
+   * @param {string=``} key target locale key (e.g. REQUEST_PING)
+   * @return {string}
+   */
+  findLocale(key=undefined) {
+    // 1. Target locale key validation
+    if (!key || typeof key !== `string`) {
+      logger.error({ action: `invalid_locale_key`, type: typeof key, key })
+      return this.#placeholderFallback()
+    }
+
+    // 2. Look up the target locale first.
+    let locale = this.#localesPool.get(this.#lang)?.get(key)
+    if (locale) return locale
+
+    // 3. If not found, try fallback variant of the locale.
+    logger.warn({ action: `origin_locale_missing`, lang: this.#lang, key })
+    locale = this.#localesPool.get(this.#fallback)?.get(key)
+    if (locale) return locale
+
+    // 4. If none of them exist, last-resort to use placeholder fallback (100% availability)
+    logger.warn({ action: `fallback_locale_missing`, lang: this.#fallback, key })
+    return this.#placeholderFallback()
+  }
 
   loadLocales() {
     this.#createLocalesPool(this.#path)
@@ -121,4 +119,4 @@ class Localization {
 
 }
 
-module.exports = { getTargetLocales, Localization }
+module.exports = { Localization }

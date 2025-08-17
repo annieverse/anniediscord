@@ -33,7 +33,7 @@ module.exports = {
         const targetUser = await userLib.lookFor(arg)
         //	Handle if target user is invalid    
         if (!targetUser) return await reply.send(locale(`USER.IS_INVALID`))
-        return await this.run(client, reply, message, locale, targetUser, userLib)
+        return await this.run(client, reply, message, locale, targetUser.master, userLib)
     },
     async Iexecute(client, reply, interaction, options, locale) {
         const targetUser = options.getUser(`user`)

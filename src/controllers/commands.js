@@ -1,8 +1,8 @@
+"use strict"
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
 const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const cacheReset = require(`../utils/cacheReset.js`)
 
@@ -27,7 +27,6 @@ module.exports = async (client = {}, message = {}) => {
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(message.author.id)
-    // const locale = client.getTargetLocales(userData.lang)
     client.localization.lang = userData.lang
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(message, false, locale)
@@ -43,8 +42,9 @@ module.exports = async (client = {}, message = {}) => {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
-        return errorRelay(client, { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
-        // return client.shard.broadcastEval(errorRelay, { context: { fileName: `commands.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors } }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        const errorMsg = e.message || `Unknown Error`
+        const errorStack = e.stack || `Unknown Error Stack`
+        return errorRelay(client, { fileName: `commands.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
 
@@ -146,6 +146,10 @@ module.exports = async (client = {}, message = {}) => {
         }
         //  Report to support server
         if (internalError) return
-        return errorRelay(client, { fileName: `commands.js`, errorType: `txtcmd`, guildId: message.guildId, userId: message.author.id, providedArgs: arg, error_message: e.message, targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+        const guildId = message.guildId || `DM/Unknown`
+        const userId = message.author.id || `Unknown`
+        const targetCommandTEST = targetCommand || `Unknown`
+        const errorMsg = e.message || `Unknown Error`
+        return errorRelay(client, { fileName: `commands.js`, errorType: `txtcmd`, guildId: guildId, userId: userId, providedArgs: arg, error_message: errorMsg, targetCommand: targetCommandTEST }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }

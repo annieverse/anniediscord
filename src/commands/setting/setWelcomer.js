@@ -352,9 +352,12 @@ module.exports = {
 
         if (!PARENT_CONFIG_CHANNEL) return await reply.send(locale(`SETWELCOMER.NO_DEFAULT_CHANNEL`))
         const channels_raw = !this.guildConfigurations.get(this.selectedModule) ? [] : this.guildConfigurations.get(this.selectedModule).value
+        const singleChannel = `<#${PARENT_CONFIG_CHANNEL.value}>`
+        const multipleChannelsTest = channels_raw.length === 0
+        const multipleChannels = `<#${PARENT_CONFIG_CHANNEL.value}>, ${(channels_raw.map(x => `<#${x.channel}>`)).join(`, `)}`
         return await reply.send(locale(`SETWELCOMER.ADDITIONAL_CHANNELS`), {
             socket: {
-                channels: `<#${PARENT_CONFIG_CHANNEL.value}>, ${(channels_raw.map(x => `<#${x.channel}>`)).join(`, `)}`
+                channels: multipleChannelsTest ? singleChannel : multipleChannels
             }
         })
     },
@@ -863,7 +866,7 @@ module.exports = {
                 cacheTo: this.guildConfigurations
             })
         }
-        await reply.send(locale(`SETWELCOMER[${settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`}]`), {
+        await reply.send(locale(`SETWELCOMER.${settingValue ? `USERIMAGE_SUCCESSFULLY_ENABLED` : `USERIMAGE_SUCCESSFULLY_DISABLED`}`), {
             status: `success`
         })
         const tipsToPreview = await reply.send(locale(`SETWELCOMER.TIPS_TO_PREVIEW`), {
@@ -898,7 +901,7 @@ module.exports = {
             setByUserId: message.member.id,
             cacheTo: this.guildConfigurations
         })
-        await reply.send(locale(`SETWELCOMER[${settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`}]`), {
+        await reply.send(locale(`SETWELCOMER.${settingValue ? `NOIMAGE_SUCCESSFULLY_ENABLED` : `NOIMAGE_SUCCESSFULLY_DISABLED`}`), {
             status: `success`
         })
         const tipsToPreview = await reply.send(locale(`SETWELCOMER.TIPS_TO_PREVIEW`), {

@@ -1,5 +1,5 @@
-const errorRelay = require(`../utils/errorHandler`)
-const levelZeroErrors = require(`../utils/errorLevels`)
+"use strict"
+const errorRelay = require(`../../utils/errorHandler`)
 
 module.exports = async function messageDelete(client, message) {
     if (!client.isReady()) return
@@ -7,7 +7,9 @@ module.exports = async function messageDelete(client, message) {
         try {
             await message.fetch()
         } catch (error) {
-            return errorRelay(this, { fileName: `messageDelete.js`, errorType: `normal`, error_message: error.message, error_stack: error.stack, levelZeroErrors: levelZeroErrors }).catch(error => client.logger.error(error))
+            const errorMsg = error.message || `Unknown Error`
+            const errorStack = error.stack || `Unknown Error Stack`
+            return errorRelay(this, { fileName: `messageDelete.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(error => client.logger.error(error))
         }
     }
     //  Ignore DM interface

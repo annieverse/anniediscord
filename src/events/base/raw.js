@@ -1,9 +1,12 @@
+/**
+ * @deprecated
+ */
 module.exports = (bot, packet) => {
-    if (!bot.isReady()) return
+	if (!bot.isReady()) return
 
 	// We don't want this to run on unrelated packets
 	if (![`MESSAGE_REACTION_ADD`, `MESSAGE_REACTION_REMOVE`].includes(packet.t)) return
-    
+
 	// Grab the channel to check the message from
 	const channel = bot.channels.cache.get(packet.d.channel_id)
 	// There's no need to emit if the message is cached, because the event will fire anyway for that

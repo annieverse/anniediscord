@@ -1,116 +1,132 @@
-# GitHub Copilot Instructions
+# Project Overview
 
-## Project Overview
-This is a Discord bot named "Annie" built using the Discord.js as the core framework.
+This is a discord bot with name of "Annie". Primarily built using discord.js as the core framework.
+The bot is a half multi-purpose with commands and features such as server economy (using Artcoins as currency), level ranking system, server shop, custom items, custom server welcomer messages and many others.
+It uses PostgreSQL as the primary database to store user and discord server-specific configurations data, as well using Redis for caching static data that rarely updated in PostgreSQL. Also primarily using Redis to handle the cooling-down time for each user after using commands; as a way to rate-limit the usage.
 
-## Technology Stack
+# Commit Message Guidelines
 
-- Framework: Discord.js v14+
-- Runtime: Node.js
-- Language: JavaScript/TypeScript
-- Database: PostgreSQL as primary db and Redis as cache db.
-- Additional Libraries: 
-    "@discordjs/rest": "^2.4.0",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.0",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.0",
-    "@top-gg/sdk": "^3.1.5",
-    "axios": "^1.7.7",
-    "bfd-api-redux": "^1.2.4-beta",
-    "buffer-image-size": "^0.6.4",
-    "canvas": "^3.1.2",
-    "canvas-constructor": "^7.0.2",
-    "color": "^4.1.0",
-    "contrast-color": "^1.0.1",
-    "cron-job-manager": "^2.1.4",
-    "cross-env": "^7.0.3",
-    "csv-stringify": "^6.5.1",
-    "discord.js": "^14.16.3",
-    "eslint": "^9.11.1",
-    "express": "^5.1.0",
-    "fs-nextra": "^0.5.1",
-    "knex": "^3.1.0",
-    "node-cmd": "^5.0.0",
-    "pg": "^8.12.0",
-    "pg-copy-streams": "^6.0.6",
-    "pino": "^9.4.0",
-    "pixiv-api-client": "^0.24.0",
-    "pixiv-img": "^1.0.0",
-    "redis": "^4.7.0",
-    "string-similarity": "^4.0.2",
-    "superagent": "^10.2.3",
-    "uuid": "^11.1.0
-    "chai": "^5.1.1",
-    "dotenv": "^16.4.5",
-    "mocha": "^11.7.1",
-    "nodemon": "^3.1.7",
-    "pino-pretty": "^13.0.0",
-    "sinon": "^19.0.2"
+All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-## Coding Standards & Conventions
-### General Guidelines
+```
+<type>[optional scope]: <description>
 
-Use modern JavaScript/TypeScript features (ES6+, primarily async/await)
-Follow consistent naming conventions (camelCase for variables/functions, PascalCase for classes, and UPPER_CASE for static variables)
-Write descriptive variable and function names
-Add JSDoc comments for functions and classes whenever possible
-Handle errors gracefully with try-catch blocks
-Use the pino's wrapper (client.logger) instead of console.log
-Prioritize Discord.js v14+ syntax and patterns
-Always include proper error handling in suggestions
-Suggest modern JavaScript/TypeScript features
-Consider Discord API rate limits in implementations
-Provide complete, working code examples
-Include relevant imports and dependencies
-Always use backticks for string-type value. Except for JSON.
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types:**
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- refactor: A code change that neither fixes a bug nor adds a feature
+- perf: A code change that improves performance
+- test: Adding missing tests or correcting existing tests
+- build: Changes that affect the build system or external dependencies
+- ci: Changes to CI configuration files and scripts
+- chore: Other changes that don’t modify src or test files
+- revert: Reverts a previous commit
+
+**Examples:**
+```
+feat(commands): add new shop command
+
+fix(utils): handle null values in currency parser
+
+docs(readme): update installation instructions
+
+chore: update dependencies
+
+refactor(events): simplify event handler logic
+
+revert: feat(commands): add new shop command
+```
+
+**Additional Guidelines:**
+- Use the imperative mood in the description ("add" not "added" or "adds")
+- Scope is optional but recommended for clarity (e.g., `feat(commands): ...`)
+- Separate body and footer with a blank line
+- Footer can include references to issues or breaking changes
 
 
-### Error Handling
+## Linking Issues or Pull Requests
 
-Always wrap Discord API calls in try-catch blocks
-Provide user-friendly error messages
-Log errors for debugging purposes
-Use ephemeral replies for error messages when possible
+To reference or close a GitHub issue or pull request, add a footer to your commit message after a blank line. Use keywords like `Closes`, `Fixes`, or `Refs` followed by the issue or PR number (e.g., `#123`). This will automatically link (and, for `Closes`/`Fixes`, close) the referenced issue or PR when the commit is merged.
 
-### Performance
+**Examples:**
 
-Use efficient database queries
-Implement caching where appropriate
-Avoid unnecessary API calls
-Use bulk operations for multiple database operations
+```
+fix(utils): handle null values in currency parser
 
-### Security
+This fixes a bug where null values caused a crash in the currency parser.
 
-Validate all user inputs
-Use environment variables for sensitive data
+Closes #123
+```
 
-### Database Operations
+```
+feat(commands): add new shop command
 
-Use async/await for database operations
-Implement proper connection handling
-Use transactions for multiple related operations
-Handle connection errors gracefully
+Implements the shop feature for server economy.
 
-### Middleware/Guards
+Refs #456
+```
 
-Always use permission checks
-Take care of cooldown systems
-Validate command prerequisites
+You can list multiple references if needed:
 
-### Testing Guidelines
+```
+fix: resolve multiple bugs
 
-Write unit tests for utility functions
-Test command responses and error handling
-Mock Discord.js objects for testing
-Test database operations with test databases
+Fixes #12, closes #34, refs #56
+```
 
+## Folder Structure
 
-### Common Issues to Avoid
+- `/src`: Contains the source code for the bot and whole features
+  - `/commands`: Discord slash and message commands
+  - `/events`: Discord.js event handlers
+  - `/libs`: Core utilities and services
+  - `/utils`: Helper functions and tools
+- `/tests`: Contains the unit-tests and integration-tests of Annie's features
+- `/docs`: Contains legal documentation for the Annie's project
+- `/assets`: Contains all the user-uploaded images such as user's profile cover, welcomer, and other small internal UI assets. Labeled with UUID
+- `/logs`: Contains the logs rotation generated by Pino framework. Stored as .json
 
-Don't use message.channel.send() in slash command responses
-Always handle Promise rejections
-Don't store sensitive data in code
-Avoid hardcoding server/channel IDs
-Don't exceed Discord API rate limit
+## Libraries and Frameworks
+
+- Discord.js v14+ for the primary core framework in building the bot
+- Node.js and Express for the server backend
+- PostgreSQL for the primary data storage
+- Redis for the caching storage
+- Canvas for generating and displaying feature with custom UI such as profile and level card
+- UUID for labeling unique files
+- Chai, Mocha, and Sinon for unit and integration testing suite
+- Pino for structured logging
+
+## Coding Standards
+
+- Avoid and never use semicolons at the end of each statement
+- Use backticks ` for string-typed values
+- Preferably always use async-await and try-catch block for promises
+- Use camelCase for function, variables and method name
+- Use UPPER_CASE for localization keys
+- Use snake_case for labeling logger actions (e.g. `action_failed`)
+- All functions should include JSDoc comments for parameters and return types
+- Use structured logging with Pino instead of console.log/error
+- Prefer const/let over var, use const by default
+- Command files should export objects with standard properties: name, description, execute, etc.
+
+## Error Handling
+
+- Always use try-catch blocks for async operations
+- Log errors with structured JSON data using Pino
+- Provide graceful fallbacks for user-facing features
+- Use appropriate HTTP status codes for API endpoints
+
+## Testing Guidelines
+
+- Write unit tests for all utility functions
+- Mock external dependencies (Discord.js, PostgreSQL, Redis)
+- Test both success and error scenarios
+- Use descriptive test names that explain the expected behavior

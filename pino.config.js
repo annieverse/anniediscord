@@ -22,12 +22,16 @@ const pino = require(`pino`)
  * Debug (debug): messages helpful for debugging.
  */
 
+// Determine if running in production or development
+const isDevelopment = process.env.NODE_ENV === `development`;
+
+
 /** 
  * Custom levels
  * Dont use 10, 20, 30, 40, 50, 60
  */
 const levels = {
-    database: process.env.NODE_ENV === `development` ? 31 : 29 // Any number between info (30) and warn (40) will work the same
+    database: isDevelopment ? 31 : 29 // Any number between info (30) and warn (40) will work the same
     // database: 31 // Any number between info (30) and warn (40) will work the same
 }
 
@@ -43,7 +47,7 @@ const defaultOptions = {
         }
     },
     name: `MASTER_SHARD`,
-    level: `info`, // debug and trace messages will be suppressed
+    level: isDevelopment ? `debug` : `info`, // debug and trace messages will be suppressed
     customLevels: levels,
     timestamp: () => `,"timestamp":"${new Date(Date.now()).toISOString()}"`
 }

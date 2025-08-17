@@ -1,10 +1,11 @@
-const autoResponderController = require(`../controllers/autoResponder`)
-const getNumberInRange = require(`../utils/getNumberInRange`)
-const commandController = require(`../controllers/commands`)
+const autoResponderController = require(`../../controllers/autoResponder`)
+const getNumberInRange = require(`../../utils/getNumberInRange`)
+const commandController = require(`../../controllers/commands`)
 const { Message } = require(`discord.js`)
 /**
  * Centralized Controller for handling incoming messages.
  * Mainly used to handle incoming message from user and calculate the possible actions
+ * @param {Message} message Message object from Discord.js
  * @since 4.0.1
  */
 /**
@@ -79,7 +80,13 @@ const messageHandler = async (client, message) => {
     const locale = (key) => client.localization.findLocale(key)
 
     client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
-        .then(list => {
+        .then(async list => {
+            try {
+                if (!message.guild.members.cache.has(message.author.id)) await message.guild.members.fetch(message.author.id)
+                if (!message.member || !message.member.id) return
+                if (!message.guild || !message.guild.id) return
+            } catch (error) { client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`) }
+
             const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
             client.experienceLibs(message.member, message.guild, message.channel, locale)
                 .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)

@@ -1,3 +1,57 @@
+## [10.1.10](https://github.com/annieverse/anniediscord/compare/v10.1.9...v10.1.10) (2025-08-11)
+
+
+### Bug Fixes
+
+* **levelup:** better guardrails with fallbacks. ([1c510df](https://github.com/annieverse/anniediscord/commit/1c510df042f5ea0a758849a427f1d5bcbcd16434))
+
+## [10.1.9](https://github.com/annieverse/anniediscord/compare/v10.1.8...v10.1.9) (2025-08-11)
+
+
+### Bug Fixes
+
+* **setshop:** callback response ([59b018e](https://github.com/annieverse/anniediscord/commit/59b018e723f4067ed261a51fe9503228fca21bec))
+
+## [10.1.8](https://github.com/annieverse/anniediscord/compare/v10.1.7...v10.1.8) (2025-08-10)
+
+
+### Bug Fixes
+
+* **locales:** invalid locale with no fallback ([8e30737](https://github.com/annieverse/anniediscord/commit/8e3073795b453810cfbe51897241db95262106bf))
+
+## [10.1.7](https://github.com/annieverse/anniediscord/compare/v10.1.6...v10.1.7) (2025-08-10)
+
+
+### Bug Fixes
+
+* **messageCreate:** try catch block for asynchronous fetch ([aebddbf](https://github.com/annieverse/anniediscord/commit/aebddbf47ba0050229a25a3ce02a062ca0b12eb2))
+* **quests:** failed locale ([5fde6ff](https://github.com/annieverse/anniediscord/commit/5fde6ffcc882ded881aed2e264746f6763c33c85))
+
+
+### Performance Improvements
+
+* **quests:** initialized single arr local. ([052b556](https://github.com/annieverse/anniediscord/commit/052b55601dff36ee080ca6b1cfd66b05a4531554))
+
+## [10.1.6](https://github.com/annieverse/anniediscord/compare/v10.1.5...v10.1.6) (2025-08-08)
+
+
+### Bug Fixes
+
+* **welcomer:** role adding after onboarding ([fee78c9](https://github.com/annieverse/anniediscord/commit/fee78c9db79c56e3afb269a3accaa8548e84ce3f))
+
+## [10.1.5](https://github.com/annieverse/anniediscord/compare/v10.1.4...v10.1.5) (2025-08-05)
+
+
+### Bug Fixes
+
+* **daily:** wrong locale string ([a57c291](https://github.com/annieverse/anniediscord/commit/a57c2911988b126724e3ebf8747d1a4ada560c3d))
+* **locale:** remove getTargetLocales ([e6ca0fe](https://github.com/annieverse/anniediscord/commit/e6ca0fefa122afcc57597d9650efdfb60e77a24c))
+* **rep:** invalid user target ([2507ba3](https://github.com/annieverse/anniediscord/commit/2507ba394aefcde6f28c6f7902a31c5752635b7b))
+* **say:** params mixed ([3e11814](https://github.com/annieverse/anniediscord/commit/3e1181474cd48ae9b316b57b42dcb0a8aa155e06))
+* **setbio:** fail during set ([53dede8](https://github.com/annieverse/anniediscord/commit/53dede8f61238a4266b724734f242709e7a39ede))
+* **setgender:** invalid locale string ([ad02811](https://github.com/annieverse/anniediscord/commit/ad028110ae66fae5860308d668887fbc0412babe))
+* **welcomer:** fail to send ([73a63c4](https://github.com/annieverse/anniediscord/commit/73a63c4fca0e625cf5f10d65418dfaaf706996e3))
+
 ## [10.1.4](https://github.com/annieverse/anniediscord/compare/v10.1.3...v10.1.4) (2025-08-04)
 
 

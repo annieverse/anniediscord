@@ -1,17 +1,16 @@
+"use strict"
 const availablePermissions = require(`../config/permissions`)
 const getUserPermission = require(`../libs/permissions`)
 const {
     cooldown
 } = require(`../config/commands`)
 const { InteractionType } = require(`discord.js`)
-const levelZeroErrors = require(`../utils/errorLevels.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const cacheReset = require(`../utils/cacheReset.js`)
 module.exports = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     client.localization.lang = userData.lang
-    // const locale = client.getTargetLocales(userData.lang)
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, false, locale)
 
@@ -38,7 +37,10 @@ module.exports = async (client, interaction, command) => {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
         if (internalError) return
-        return errorRelay(client, { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: e.message, error_stack: e.stack, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
+
+        const errorMsg = e.message || `Unknown Error`
+        const errorStack = e.stack || `Unknown Error Stack`
+        return errorRelay(client, { fileName: `ApplicationCommand.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 
     const options = interaction.options
@@ -122,6 +124,12 @@ module.exports = async (client, interaction, command) => {
         }
         //  Report to support server
         if (internalError) return
-        return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: err.message, guildId: interaction.guildId, userId: interaction.user.id, providedArgs: JSON.stringify(interaction.options.data), targetCommand: targetCommand, levelZeroErrors: levelZeroErrors }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
+
+        const guildId = interaction.guildId || `DM/Unknown`
+        const userId = interaction.user.id || `Unknown`
+        const targetCommandTEST = targetCommand || `Unknown`
+        const errorMsg = err.message || `Unknown Error`
+        const args = interaction.options.data || []
+        return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: errorMsg, guildId: guildId, userId: userId, providedArgs: JSON.stringify(args), targetCommand: targetCommandTEST }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
     }
 }
