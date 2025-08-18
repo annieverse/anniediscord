@@ -8,8 +8,9 @@ const autoResponderController = require('../src/controllers/autoResponder');
 const commandController = require('../src/controllers/commands');
 const getNumberInRange = require('../src/utils/getNumberInRange');
 const { messageHandler } = require("../src/events/message/messageCreate.js");
-const { getMessageMock, getClientMock } = require("../__mocks__/index.js");
-const { Message } = require("discord.js");
+const { interactionCreateHandler } = require("../src/events/interaction/interactionCreate.js");
+const { getMessageMock, getClientMock, getInteractionMock } = require("../__mocks__/index.js");
+const { Message, Client, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, PrimaryEntryPointCommandInteraction, AnySelectMenuInteraction, ButtonInteraction, AutocompleteInteraction, ModalSubmitInteraction } = require("discord.js");
 
 describe("Message Handler", () => {
     /**
@@ -24,14 +25,6 @@ describe("Message Handler", () => {
     const sendMock = jest.fn();
     const executeMock = jest.fn();
 
-
-    function createMessageMock(overrides = {}) {
-        return {
-            ...getMessageMock(),
-            ...overrides,
-        }
-    }
-
     /**
      * Make the parameters state reset once on every test scope.
      * This way we avoid accidental global mutation by always redefining the state.
@@ -43,6 +36,9 @@ describe("Message Handler", () => {
          * @type {Message}
          */
         message = getMessageMock();
+        /**
+         * @type {Client}
+         */
         client = getClientMock();
         client.responseLibs = jest.fn(() => ({
             send: sendMock
@@ -221,6 +217,16 @@ describe("Message Handler", () => {
             await messageHandler(client, message);
             expect(client.cooldowns.set).toHaveBeenCalled();
         });
+        it("should calculate diff when cooldown exists", async () => {
+            const cooldownId = `POINTS_${message.author.id}@${message.guild.id}`;
+            // Simulate cooldown: set the last timestamp to 30 seconds ago
+            const past = Date.now() - 30 * 1000;
+            client.cooldowns.has = jest.fn((id) => id === cooldownId);
+            client.cooldowns.get = jest.fn(() => past);
+
+            await messageHandler(client, message);
+            expect(client.cooldowns.set).not.toHaveBeenCalled();
+        });
     })
 
     describe("Test(s) for AC module", () => {
@@ -359,7 +365,7 @@ describe("Message Handler", () => {
 
         it("should add EXP if properties exist", async () => {
             client.db.userUtils.getUserLocale.mockResolvedValue({ lang: "en" });
-            const testValue = [2.5];
+            const testValue = [2.5, 1.0];
             client.db.redis.sMembers.mockResolvedValue(testValue);
             message.guild.members.cache.get.mockReturnValue(true);
             await messageHandler(client, message);
@@ -378,5 +384,85 @@ describe("Message Handler", () => {
             await new Promise(process.nextTick);
             expect(client.experienceLibs).not.toHaveBeenCalled();
         });
+
+        it("should call locale passthru via experienceLibs", async () => {
+            client.localization.findLocale = jest.fn();
+            client.db.userUtils.getUserLocale.mockResolvedValue({ lang: "en" });
+            client.db.redis.sMembers.mockResolvedValue([1]);
+            message.guild.members.cache.get.mockReturnValue(true);
+            client.experienceLibs = jest.fn((member, guild, channel, locale) => ({
+                execute: jest.fn(() => {
+                    if (locale) locale("TEST_KEY");
+                })
+            }));
+
+            await messageHandler(client, message);
+            await new Promise(process.nextTick);
+
+            expect(client.localization.findLocale).toHaveBeenCalledWith("TEST_KEY");
+        });
     })
 });
+
+describe("Application Command Handler", () => {
+
+    /**
+     * @type {Client}
+     */
+    let client
+    /**
+     * @type {ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction | PrimaryEntryPointCommandInteraction | AnySelectMenuInteraction | ButtonInteraction | AutocompleteInteraction | ModalSubmitInteraction}
+     */
+    let interaction = getInteractionMock();
+
+    interaction = getInteractionMock();
+    const sendMock = jest.fn();
+    const executeMock = jest.fn();
+
+    /**
+     * Make the parameters state reset once on every test scope.
+     * This way we avoid accidental global mutation by always redefining the state.
+     * Stateless and stays within local-scope.
+     */
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        /**
+         * @type {ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction | PrimaryEntryPointCommandInteraction | AnySelectMenuInteraction | ButtonInteraction | AutocompleteInteraction | ModalSubmitInteraction}
+         */
+        interaction = getInteractionMock();
+
+        /**
+         * @type {Client}
+         */
+        client = getClientMock();
+        client.responseLibs = jest.fn(() => ({
+            send: sendMock
+        }));
+        client.experienceLibs = jest.fn(() => ({
+            execute: executeMock
+        }));
+    });
+
+    describe("Early return tests", () => {
+        it("should return if client is not ready", async () => {
+            client.isReady.mockReturnValue(false);
+            const handler = await interactionCreateHandler(client, interaction);
+            expect(client.isReady).toHaveBeenCalledTimes(1);
+            expect(client.isReady).toHaveReturnedWith(false);
+            expect(handler).toBeUndefined();
+        });
+
+        it("should not return if client is ready", async () => {
+            client.isReady.mockReturnValue(true);
+            const handler = await interactionCreateHandler(client, interaction);
+            expect(client.isReady).toHaveBeenCalledTimes(1);
+            expect(client.isReady).toHaveReturnedWith(true);
+        });
+    })
+
+    describe("Set up params", () => {
+
+    })
+
+})

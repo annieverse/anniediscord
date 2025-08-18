@@ -1,4 +1,4 @@
-const { GuildMember, Role, TextChannel, Client, User, Message } = require(`discord.js`);
+const { GuildMember, Role, TextChannel, Client, User, Message, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, PrimaryEntryPointCommandInteraction, AnySelectMenuInteraction, ButtonInteraction, AutocompleteInteraction, ModalSubmitInteraction } = require(`discord.js`);
 const error = require("../src/events/base/error");
 
 const getDbMock = () => ({
@@ -165,6 +165,7 @@ const getMessageMock = () => ({
 const getClientMock = () => ({
     isReady: jest.fn(() => true),
     db: getDbMock(),
+    getEmoji: jest.fn(),
     cooldowns: {
         has: jest.fn(() => false),
         set: jest.fn(),
@@ -226,4 +227,25 @@ const getClientMock = () => ({
     }))
 })
 
-module.exports = { getGuildMemberMock, getTextChannelMock, getRoleMock, getMessageMock, getClientMock, getUserMock };
+/**
+ * 
+ * @returns {ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction | PrimaryEntryPointCommandInteraction | AnySelectMenuInteraction | ButtonInteraction | AutocompleteInteraction | ModalSubmitInteraction}
+ */
+const getInteractionMock = () => ({
+    commandName: "ping",
+    guild: {
+        roles: {
+            cache: {
+                get: jest.fn(),
+            },
+        },
+        channels: {
+            cache: {
+                get: jest.fn(),
+            },
+        },
+    },
+    user: getUserMock()
+})
+
+module.exports = { getGuildMemberMock, getTextChannelMock, getRoleMock, getMessageMock, getClientMock, getUserMock, getInteractionMock };

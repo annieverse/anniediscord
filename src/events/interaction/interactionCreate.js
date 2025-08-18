@@ -4,7 +4,7 @@ const {
 } = require(`discord.js`)
 const applicationCommand = require(`../../controllers/applicationCommand`)
 const errorRelay = require(`../../utils/errorHandler.js`)
-module.exports = async (client, interaction) => {
+const interactionCreateHandler = async (client, interaction) => {
     if (!client.isReady()) return
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
@@ -48,3 +48,4 @@ module.exports = async (client, interaction) => {
         errorRelay(client, { fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: guildId, userId: userId, providedArgs: JSON.stringify(data), error_message: errorMsg, targetCommand: targetCommand }).catch(err => client.logger.error(`Unable to send message to channel > ${err}`))
     }
 }
+module.exports = { interactionCreateHandler }
