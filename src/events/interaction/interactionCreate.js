@@ -1,7 +1,5 @@
 "use strict"
-const {
-    InteractionType
-} = require(`discord.js`)
+const { InteractionType } = require(`discord.js`)
 const applicationCommand = require(`../../controllers/applicationCommand`)
 const errorRelay = require(`../../utils/errorHandler.js`)
 const interactionCreateHandler = async (client, interaction) => {

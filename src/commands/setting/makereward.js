@@ -776,7 +776,7 @@ module.exports = {
         if (interaction.options.getSubcommand() !== `delete`) return
         const focusedValue = interaction.options.getFocused()
         const packages_raw = await client.db.customRewardUtils.getCustomRewards(interaction.guild.id)
-        if (packages_raw.length < 1) return await interaction.respond(client.localization.findLocale(`MAKEREWARD.NO_PACKAGES`))
+        if (packages_raw.length < 1) return await interaction.respond([{ name: `No Packages Available`, value: `none` }])
         const packages_collection = new Collection()
         packages_raw.forEach(element => {
             let rewardSchema = new customReward(element.reward_name)
@@ -792,6 +792,8 @@ module.exports = {
     async deletePackage(client, reply, interaction, options, locale) {
         const packageName = (options.getString(`package_name`)).toLowerCase()
 
+        if (packageName === `none`) return await reply.send(locale(`MAKEREWARD.NO_PACKAGES`), { ephemeral: true })
+
         let confirmationRow = new ActionRowBuilder()
             .addComponents(
                 new ButtonBuilder()
@@ -806,6 +808,7 @@ module.exports = {
                     .setStyle(ButtonStyle.Danger)
             )
         let confirmationMessage = await reply.send(locale(`MAKEREWARD.DELETE_CONFIRM`), { socket: { packageName: packageName } })
+        confirmationMessage = isInteractionCallbackResponse(confirmationMessage) ? confirmationMessage.resource.message : confirmationMessage
         let confirmationMessageContent = `_ _`
         confirmationMessage.edit({
             components: [confirmationRow]

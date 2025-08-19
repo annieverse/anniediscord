@@ -1,3 +1,10 @@
+## [10.1.11](https://github.com/annieverse/anniediscord/compare/v10.1.10...v10.1.11) (2025-08-19)
+
+
+### Bug Fixes
+
+* **makereward:** wrong error ([ff2783e](https://github.com/annieverse/anniediscord/commit/ff2783e20edbc51c72f6aff40e6cb6e1c5d3d497))
+
 ## [10.1.10](https://github.com/annieverse/anniediscord/compare/v10.1.9...v10.1.10) (2025-08-11)
 
 
