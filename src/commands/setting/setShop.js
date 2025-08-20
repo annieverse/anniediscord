@@ -469,10 +469,9 @@ module.exports = {
                     if (!multiplier) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_MULTIPLIER`), {
                         deleteIn: 5
                     })
-                    const duration = ms(params.slice(2).join(` `))
-                    if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
-                        deleteIn: 5
-                    })
+                    const durationString = params.slice(2).join(` `)
+                    const duration = durationString ? ms(durationString) : null
+                    if (!durationString || !duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), { deleteIn: 5 })
                     const isExpBuff = params[0] === `expboost`
                     buffs.push({
                         type: isExpBuff ? 5 : 6,
@@ -804,10 +803,9 @@ module.exports = {
                             if (!multiplier) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_MULTIPLIER`), {
                                 deleteIn: 5
                             })
-                            const duration = ms(params.slice(2).join(` `))
-                            if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
-                                deleteIn: 5
-                            })
+                            const durationString = params.slice(2).join(` `)
+                            const duration = durationString ? ms(durationString) : null
+                            if (!durationString || !duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), { deleteIn: 5 })
                             const isExpBuff = params[0] === `expboost`
                             buffs.push({
                                 type: isExpBuff ? 5 : 6,
