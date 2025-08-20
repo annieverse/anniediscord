@@ -1,3 +1,11 @@
+## [10.1.12](https://github.com/annieverse/anniediscord/compare/v10.1.11...v10.1.12) (2025-08-20)
+
+
+### Bug Fixes
+
+* add validation for buff duration parameters before ms() call ([5e4a1e7](https://github.com/annieverse/anniediscord/commit/5e4a1e72c2c1e7c8b81fd8c8877d244774b5916d))
+* **setshop:** validate durationString before calling ms() function ([eae893d](https://github.com/annieverse/anniediscord/commit/eae893dbddb89bd2a1cad46f701137cd47751aeb))
+
 ## [10.1.11](https://github.com/annieverse/anniediscord/compare/v10.1.10...v10.1.11) (2025-08-19)
 
 
