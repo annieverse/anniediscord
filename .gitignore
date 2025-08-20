@@ -25,8 +25,8 @@ logs
 # VIM files
 *.swp
 .launch.sh
-launch.sh
 .update-launch.sh
+.deploy.sh
 
 # MacOS development
 *.DS_Store
@@ -46,5 +46,5 @@ jsconfig.json
 # LLM configuration
 .cursorrules
 
-#jest
+# Jest configuration
 coverage/

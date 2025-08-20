@@ -7,7 +7,7 @@ const {
 const { InteractionType } = require(`discord.js`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const cacheReset = require(`../utils/cacheReset.js`)
-module.exports = async (client, interaction, command) => {
+const appCmdHandler = async (client, interaction, command) => {
     // Handle localization
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     client.localization.lang = userData.lang
@@ -133,3 +133,4 @@ module.exports = async (client, interaction, command) => {
         return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: errorMsg, guildId: guildId, userId: userId, providedArgs: JSON.stringify(args), targetCommand: targetCommandTEST }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
     }
 }
+module.exports = appCmdHandler
