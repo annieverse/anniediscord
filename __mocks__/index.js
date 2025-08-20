@@ -1,5 +1,22 @@
-const { GuildMember, Role, TextChannel, Client, User, Message, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, PrimaryEntryPointCommandInteraction, AnySelectMenuInteraction, ButtonInteraction, AutocompleteInteraction, ModalSubmitInteraction } = require(`discord.js`);
-const error = require("../src/events/base/error");
+const {
+    GuildMember,
+    Role,
+    TextChannel,
+    Client,
+    User,
+    Message,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction,
+    PrimaryEntryPointCommandInteraction,
+    AnySelectMenuInteraction,
+    ButtonInteraction,
+    AutocompleteInteraction,
+    ModalSubmitInteraction,
+    ApplicationCommandType,
+    ApplicationCommandOptionType
+} = require(`discord.js`);
+const { get } = require("superagent");
+const { concat } = require("../eslint.config");
 
 const getDbMock = () => ({
     databaseUtils: {
@@ -158,6 +175,67 @@ const getMessageMock = () => ({
     }
 })
 
+const application_commands = new Map();
+const guildonly_commands = new Map();
+application_commands.set("setlanguage", {
+    name: `setlanguage`,
+    aliases: [`setlang`, `setlanguage`, `setlocale`],
+    description: `User's language switcher`,
+    usage: `setlang <language name/code>`,
+    permissionLevel: 0,
+    multiUser: false,
+    applicationCommand: true,
+    messageCommand: true,
+    server_specific: false,
+    options: [{
+        name: `language`,
+        description: `Available Annie's languages you can set`,
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        autocomplete: true
+    }],
+    type: ApplicationCommandType.ChatInput,
+    execute: jest.fn(),
+    Iexecute: jest.fn(),
+    run: jest.fn()
+})
+
+application_commands.set("ping", {
+    name: `ping`,
+    aliases: [`pong`, `p1ng`, `poing`],
+    description: `Output bot's latency`,
+    usage: `ping`,
+    permissionLevel: 0,
+    server_specific: false,
+    multiUser: false,
+    applicationCommand: true,
+    messageCommand: true,
+    type: ApplicationCommandType.ChatInput,
+    execute: jest.fn(),
+    Iexecute: jest.fn(),
+    run: jest.fn()
+})
+
+const appCmdMock = {
+    "userdownload": {
+        name: `userdownload`,
+        aliases: [`ud`, `userdl`],
+        description: `Download user data`,
+        usage: `userdownload`,
+        permissionLevel: 0,
+        server_specific: true,
+        multiUser: false,
+        applicationCommand: true,
+        messageCommand: true,
+        type: ApplicationCommandType.ChatInput,
+        execute: jest.fn(),
+        Iexecute: jest.fn(),
+        run: jest.fn()
+    }
+}
+
+guildonly_commands.set(appCmdMock)
+
 /**
  * 
  * @returns {Client}
@@ -224,7 +302,18 @@ const getClientMock = () => ({
     },
     experienceLibs: jest.fn(() => ({
         execute: jest.fn()
-    }))
+    })),
+    application_commands: {
+        get: jest.fn(() => application_commands),
+        has: jest.fn(() => true),
+        set: jest.fn(),
+        concat: jest.fn()
+    },
+    guildonly_commands: {
+        get: jest.fn(() => guildonly_commands),
+        has: jest.fn(() => false),
+        set: jest.fn()
+    }
 })
 
 /**
@@ -232,20 +321,25 @@ const getClientMock = () => ({
  * @returns {ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction | PrimaryEntryPointCommandInteraction | AnySelectMenuInteraction | ButtonInteraction | AutocompleteInteraction | ModalSubmitInteraction}
  */
 const getInteractionMock = () => ({
-    commandName: "ping",
-    guild: {
-        roles: {
-            cache: {
-                get: jest.fn(),
-            },
-        },
-        channels: {
-            cache: {
-                get: jest.fn(),
-            },
-        },
-    },
-    user: getUserMock()
+    type: 2,
+    id: '1407541489474605136',
+    applicationId: '514688969355821077',
+    channelId: '689157608153546819',
+    guildId: '577121315480272908',
+    user: getUserMock(),
+    member: getGuildMemberMock(),
+    attachmentSizeLimit: 524288000,
+    commandId: '1254194836043595926',
+    commandName: 'ping',
+    commandType: 1,
+    commandGuildId: null,
+    deferred: false,
+    replied: false,
+    ephemeral: null,
+    options: {
+        data: []
+    }
+
 })
 
-module.exports = { getGuildMemberMock, getTextChannelMock, getRoleMock, getMessageMock, getClientMock, getUserMock, getInteractionMock };
+module.exports = { getGuildMemberMock, getTextChannelMock, getRoleMock, getMessageMock, getClientMock, getUserMock, getInteractionMock, appCmdMock };

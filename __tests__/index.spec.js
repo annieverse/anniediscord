@@ -1,16 +1,31 @@
 // Mock autoResponderController and commandController before importing messageHandler
 jest.mock('../src/controllers/autoResponder', () => jest.fn());
 jest.mock('../src/controllers/commands', () => jest.fn());
+jest.mock('../src/controllers/applicationCommand', () => jest.fn());
 jest.mock('../src/utils/getNumberInRange', () => jest.fn());
+jest.mock('../src/utils/errorHandler', () => jest.fn(() => Promise.resolve()));
 
 // Import the controller after mocking
 const autoResponderController = require('../src/controllers/autoResponder');
+const applicationCommand = require('../src/controllers/applicationCommand');
 const commandController = require('../src/controllers/commands');
 const getNumberInRange = require('../src/utils/getNumberInRange');
-const { messageHandler } = require("../src/events/message/messageCreate.js");
-const { interactionCreateHandler } = require("../src/events/interaction/interactionCreate.js");
-const { getMessageMock, getClientMock, getInteractionMock } = require("../__mocks__/index.js");
-const { Message, Client, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, UserContextMenuCommandInteraction, PrimaryEntryPointCommandInteraction, AnySelectMenuInteraction, ButtonInteraction, AutocompleteInteraction, ModalSubmitInteraction } = require("discord.js");
+const errorRelay = require('../src/utils/errorHandler.js');
+const messageHandler = require("../src/events/message/messageCreate.js");
+const interactionCreateHandler = require("../src/events/interaction/interactionCreate.js");
+const { getMessageMock, getClientMock, getInteractionMock, appCmdMock } = require("../__mocks__/index.js");
+const { Message,
+    Client,
+    ChatInputCommandInteraction,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction,
+    PrimaryEntryPointCommandInteraction,
+    AnySelectMenuInteraction,
+    ButtonInteraction,
+    AutocompleteInteraction,
+    ModalSubmitInteraction,
+    InteractionType
+} = require("discord.js");
 
 describe("Message Handler", () => {
     /**
@@ -22,7 +37,7 @@ describe("Message Handler", () => {
      */
     let client
 
-    const sendMock = jest.fn();
+    const sendMock = jest.fn(() => Promise.resolve());
     const executeMock = jest.fn();
 
     /**
@@ -416,7 +431,7 @@ describe("Application Command Handler", () => {
     let interaction = getInteractionMock();
 
     interaction = getInteractionMock();
-    const sendMock = jest.fn();
+    const sendMock = jest.fn(() => Promise.resolve());
     const executeMock = jest.fn();
 
     /**
@@ -454,15 +469,206 @@ describe("Application Command Handler", () => {
         });
 
         it("should not return if client is ready", async () => {
-            client.isReady.mockReturnValue(true);
-            const handler = await interactionCreateHandler(client, interaction);
+            await interactionCreateHandler(client, interaction);
             expect(client.isReady).toHaveBeenCalledTimes(1);
             expect(client.isReady).toHaveReturnedWith(true);
+            expect(client.db.databaseUtils.validateUserEntry).toHaveBeenCalled();
         });
     })
 
     describe("Set up params", () => {
+        it("should set up localization and locale function", async () => {
+            const userDataMock = { lang: "en" };
+            client.db.userUtils.getUserLocale.mockResolvedValue(userDataMock);
+            await interactionCreateHandler(client, interaction);
+            expect(client.localization.lang).toBe(userDataMock.lang);
+            expect(client.localization.findLocale).toBeDefined();
+        });
 
+        it("should set up reply function", async () => {
+            await interactionCreateHandler(client, interaction);
+            expect(client.responseLibs).toHaveBeenCalledWith(interaction, true, expect.any(Function));
+        });
     })
 
+    describe("Command handling tests", () => {
+        it("should concat guildonly commands and get the command for ApplicationCommand", async () => {
+            interaction.type = InteractionType.ApplicationCommand
+            interaction.commandName = "guildcmd"
+            interaction.guildId = "guild123"
+
+            // Mock the guildonly_commands map
+            client.guildonly_commands.has = jest.fn(id => id === "guild123")
+            const guildOnlyCmds = [{ name: "guildcmd" }]
+            client.guildonly_commands.get = jest.fn(() => guildOnlyCmds)
+
+            // Mock application_commands as a Map with concat and get
+            const appCmds = new Map()
+            appCmds.get = jest.fn(() => ({ name: "guildcmd" }))
+            appCmds.concat = jest.fn(() => appCmds) // concat returns the updated map
+
+            client.application_commands = appCmds
+
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.guildonly_commands.has).toHaveBeenCalledWith("guild123")
+            expect(client.guildonly_commands.get).toHaveBeenCalledWith("guild123")
+            expect(appCmds.concat).toHaveBeenCalledWith(guildOnlyCmds)
+            expect(appCmds.get).toHaveBeenCalledWith("guildcmd")
+        })
+
+        it("should handle application commands", async () => {
+            interaction.type = InteractionType.ApplicationCommand; // ApplicationCommand
+            interaction.commandName = "ping";
+            client.application_commands.get.mockReturnValue({});
+
+            await interactionCreateHandler(client, interaction);
+
+            expect(client.application_commands.get).toHaveBeenCalledWith(interaction.commandName);
+            expect(applicationCommand).toHaveBeenCalledWith(client, interaction, expect.any(Object));
+        });
+
+        it("should ignore non-registered commands", async () => {
+            interaction.type = InteractionType.ApplicationCommand; // ApplicationCommand
+            interaction.commandName = "nonExistentCommand";
+            client.application_commands.get.mockReturnValue(undefined);
+
+            await interactionCreateHandler(client, interaction);
+
+            expect(client.application_commands.get).toHaveBeenCalledWith(interaction.commandName);
+            expect(applicationCommand).not.toHaveBeenCalled();
+        });
+
+        it("should handle autocomplete interactions", async () => {
+            interaction.type = InteractionType.ApplicationCommandAutocomplete; // ApplicationCommandAutocomplete
+            interaction.commandName = "setlanguage";
+            client.application_commands.get.mockReturnValue({ autocomplete: jest.fn() });
+
+            await interactionCreateHandler(client, interaction);
+
+            expect(client.application_commands.get).toHaveBeenCalledWith(interaction.commandName);
+            expect(client.application_commands.get(interaction.commandName).autocomplete).toHaveBeenCalledWith(client, interaction);
+        });
+
+
+        it("should ignore non-registered autocomplete interactions", async () => {
+            interaction.type = InteractionType.ApplicationCommandAutocomplete; // ApplicationCommandAutocomplete
+            interaction.commandName = "nonExistentCommand";
+            client.application_commands.get.mockReturnValue(undefined);
+
+            const handler = await interactionCreateHandler(client, interaction);
+
+            expect(client.application_commands.get).toHaveBeenCalledWith(interaction.commandName);
+            expect(handler).toBeUndefined();
+        });
+    });
+
+    describe("Should properly handle errors", () => {
+        it("should handle errors and send dev error message if client.dev is true", async () => {
+            client.dev = true
+            client.logger.error = jest.fn()
+            client.getEmoji = jest.fn(() => Promise.resolve(`AnnieThinking`))
+            client.localization.findLocale.mockReturnValue(`ERROR_ON_DEV`)
+            errorRelay.mockResolvedValue()
+            // Force error in try block
+            client.application_commands.get = jest.fn(() => { throw new Error("Test error") })
+
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.logger.error).toHaveBeenCalledWith(expect.any(Error))
+            expect(sendMock).toHaveBeenCalledWith("ERROR_ON_DEV", expect.objectContaining({
+                socket: expect.objectContaining({ emoji: `AnnieThinking` })
+            }))
+            expect(errorRelay).not.toHaveBeenCalledWith()
+        })
+        it("should log error if reply.send fails in dev mode", async () => {
+            client.dev = true
+            const error = new Error("send failed")
+            client.logger.error = jest.fn()
+            client.getEmoji = jest.fn(() => Promise.resolve(`AnnieThinking`))
+            client.localization.findLocale = jest.fn(() => `ERROR_ON_DEV`)
+            // Make reply.send reject
+            const sendMock = jest.fn(() => Promise.reject(error))
+            const reply = { send: sendMock }
+            client.responseLibs = jest.fn(() => reply)
+            // Force error in try block
+            client.application_commands.get = jest.fn(() => { throw new Error("Test error") })
+
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.logger.error).toHaveBeenCalledWith(expect.any(Error)) // original error
+            expect(client.logger.error).toHaveBeenCalledWith(
+                expect.stringContaining("Unable to send message to channel >")
+            ) // error from .catch
+        })
+
+        it("should handle errors and send production error message if client.dev is false", async () => {
+            client.dev = false
+            client.logger.error = jest.fn()
+            client.getEmoji = jest.fn(() => Promise.resolve(`:pout:`))
+            client.localization.findLocale.mockReturnValue(`ERROR_ON_PRODUCTION`)
+            errorRelay.mockResolvedValue()
+            // Force error in try block
+            client.application_commands.get = jest.fn(() => { throw new Error("Test error") })
+
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.logger.error).toHaveBeenCalledWith(expect.any(Error))
+            expect(sendMock).toHaveBeenCalledWith("ERROR_ON_PRODUCTION", expect.objectContaining({
+                socket: expect.objectContaining({ emoji: `:pout:` }),
+                ephemeral: true
+            }))
+            expect(errorRelay).toHaveBeenCalledWith(
+                expect.any(Object),
+                expect.objectContaining({ fileName: `interactionCreate.js`, errorType: `appcmd` })
+            )
+        })
+        it("should log error if reply.send fails in production mode", async () => {
+            client.dev = false
+            const error = new Error("send failed")
+            client.logger.error = jest.fn()
+            client.getEmoji = jest.fn(() => Promise.resolve(`:pout:`))
+            client.localization.findLocale = jest.fn(() => `ERROR_ON_PRODUCTION`)
+            // Make reply.send resolve for dev, reject for prod
+            const sendMock = jest.fn()
+            sendMock.mockRejectedValueOnce(error) // prod branch fails
+            const reply = { send: sendMock }
+            client.responseLibs = jest.fn(() => reply)
+            // Force error in try block
+            client.application_commands.get = jest.fn(() => { throw new Error("Test error") })
+
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.logger.error).toHaveBeenCalledWith(expect.any(Error)) // original error
+            expect(client.logger.error).toHaveBeenCalledWith(
+                expect.stringContaining("Unable to send message to channel >")
+            ) // error from .catch
+        })
+
+        it("should handle errors and send production error message if client.dev is false with fallbacks", async () => {
+            client.dev = false
+            client.logger.error = jest.fn()
+            client.getEmoji = jest.fn(() => Promise.resolve(`:pout:`))
+            client.localization.findLocale.mockReturnValue(`ERROR_ON_PRODUCTION`)
+            errorRelay.mockResolvedValue()
+            // Force error in try block
+            client.application_commands.get = jest.fn(() => { throw new Error(undefined) })
+
+            interaction.guildId = undefined
+            interaction.user.id = undefined
+            interaction.options.data = undefined
+            interaction.commandName = undefined
+            await interactionCreateHandler(client, interaction)
+
+            expect(client.logger.error).toHaveBeenCalledWith(expect.any(Error))
+            expect(sendMock).toHaveBeenCalledWith("ERROR_ON_PRODUCTION", expect.objectContaining({
+                socket: expect.objectContaining({ emoji: `:pout:` }),
+                ephemeral: true
+            }))
+            expect(errorRelay).toHaveBeenCalledWith(
+                expect.any(Object),
+                expect.objectContaining({ fileName: `interactionCreate.js`, errorType: `appcmd`, guildId: `DM/Unknown`, userId: `Unknown`, providedArgs: `[]`, error_message: `Unknown Error`, targetCommand: `Unknown` })
+            )
+        })
+    })
 })

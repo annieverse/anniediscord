@@ -133,4 +133,4 @@ const appCmdHandler = async (client, interaction, command) => {
         return errorRelay(client, { fileName: `applicationCommand.js`, errorType: `appcmd`, error_message: errorMsg, guildId: guildId, userId: userId, providedArgs: JSON.stringify(args), targetCommand: targetCommandTEST }).catch(err => client.logger.error(`[Other] Unable to send message to channel > ${err}`))
     }
 }
-module.exports = { appCmdHandler }
+module.exports = appCmdHandler

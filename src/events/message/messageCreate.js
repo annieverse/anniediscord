@@ -96,4 +96,4 @@ const messageHandler = async (client, message) => {
         })
 
 }
-module.exports = { messageHandler }
+module.exports = messageHandler 
