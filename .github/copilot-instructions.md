@@ -50,6 +50,10 @@ revert: feat(commands): add new shop command
 - Separate body and footer with a blank line
 - Footer can include references to issues or breaking changes
 
+**Scope Guidelines:**
+- Use command name/filename for changes specific to one command (e.g., `fix(setshop):`, `feat(profile):`)
+- Use broader categories for changes across multiple files (e.g., `fix(commands):`, `feat(utils):`)
+- Leave scope empty for very broad fixes (e.g., `fix():`, `chore():`)
 
 ## Linking Issues or Pull Requests
 
@@ -103,6 +107,10 @@ Fixes #12, closes #34, refs #56
 - UUID for labeling unique files
 - Chai, Mocha, and Sinon for unit and integration testing suite
 - Pino for structured logging
+
+## package versions
+- Node: 24.4.1
+- NPM: 11.4.2
 
 ## Coding Standards
 
