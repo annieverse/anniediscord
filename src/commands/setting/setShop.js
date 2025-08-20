@@ -470,8 +470,11 @@ module.exports = {
                         deleteIn: 5
                     })
                     const durationString = params.slice(2).join(` `)
+                    if (!durationString) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                        deleteIn: 5
+                    })
                     const duration = ms(durationString)
-                    if (!durationString || !duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                    if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
                         deleteIn: 5
                     })
                     const isExpBuff = params[0] === `expboost`
@@ -806,8 +809,11 @@ module.exports = {
                                 deleteIn: 5
                             })
                             const durationString = params.slice(2).join(` `)
+                            if (!durationString) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                                deleteIn: 5
+                            })
                             const duration = ms(durationString)
-                            if (!durationString || !duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                            if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
                                 deleteIn: 5
                             })
                             const isExpBuff = params[0] === `expboost`
