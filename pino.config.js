@@ -2,6 +2,7 @@ const pino = require(`pino`)
 const fs = require(`fs`)
 const path = require(`path`)
 const { scheduleLogCleanup } = require(`./src/utils/logRotation`)
+const { createStructuredLog, validateStructuredLog } = require(`./src/utils/structuredLogger`)
 
 /**
  * logger.fatal('fatal'); highest level     level: 60
@@ -88,6 +89,77 @@ function createTransport(loggerName) {
     }
 }
 
+/**
+ * Creates a logger wrapper that accepts both legacy string messages and new structured objects
+ * @param {Object} pinoLogger - The base pino logger instance
+ * @returns {Object} Wrapped logger with enhanced functionality
+ */
+function createEnhancedLogger(pinoLogger) {
+    const enhancedLogger = {}
+    
+    // Create wrapper methods for each log level
+    const logLevels = ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'database']
+    
+    logLevels.forEach(level => {
+        /**
+         * Enhanced logging method that accepts both strings and objects
+         * @param {string|Object} message - Log message (DEPRECATED: use object format) or structured log object
+         * @param {...any} args - Additional arguments for string format (legacy)
+         * @deprecated String format is deprecated. Use structured object format instead.
+         */
+        enhancedLogger[level] = function(message, ...args) {
+            // Handle object format (new structured logging)
+            if (typeof message === 'object' && message !== null) {
+                try {
+                    validateStructuredLog(message)
+                    // Object is valid, log it directly
+                    pinoLogger[level](message)
+                } catch (error) {
+                    // Object validation failed, create a structured log with error context
+                    const errorLog = createStructuredLog({
+                        action: 'logger_validation_failed',
+                        context: {
+                            originalMessage: message,
+                            validationError: error.message
+                        }
+                    })
+                    pinoLogger.error(errorLog)
+                }
+                return
+            }
+            
+            // Handle string format (legacy - deprecated)
+            if (typeof message === 'string') {
+                // Create structured log for legacy string message
+                const legacyLog = createStructuredLog({
+                    action: 'legacy_log_message',
+                    context: args.length > 0 ? { message, args } : message
+                })
+                pinoLogger[level](legacyLog)
+                return
+            }
+            
+            // Handle other types (fallback)
+            const fallbackLog = createStructuredLog({
+                action: 'unsupported_log_format',
+                context: { message, args }
+            })
+            pinoLogger[level](fallbackLog)
+        }
+    })
+    
+    // Pass through other pino methods and properties
+    Object.keys(pinoLogger).forEach(key => {
+        if (!enhancedLogger[key] && typeof pinoLogger[key] === 'function') {
+            enhancedLogger[key] = pinoLogger[key].bind(pinoLogger)
+        } else if (!enhancedLogger[key]) {
+            enhancedLogger[key] = pinoLogger[key]
+        }
+    })
+    
+    return enhancedLogger
+}
+
 const defaultOptions = {
     formatters: {
         bindings: (bindings) => {
@@ -105,23 +177,27 @@ const defaultOptions = {
     timestamp: pino.stdTimeFunctions.isoTime
 }
 
-// Create logger instances with transport configuration
+// Create logger instances with transport configuration and enhanced functionality
 defaultOptions.name = `MASTER_SHARD`
 const masterTransport = createTransport(`MASTER_SHARD`)
-const masterLogger = masterTransport ? pino(defaultOptions, pino.transport(masterTransport)) : pino(defaultOptions)
+const baseMasterLogger = masterTransport ? pino(defaultOptions, pino.transport(masterTransport)) : pino(defaultOptions)
+const masterLogger = createEnhancedLogger(baseMasterLogger)
 
 defaultOptions.name = `DATABASE`
 const databaseTransport = createTransport(`DATABASE`)
-const databaseLogger = databaseTransport ? pino(defaultOptions, pino.transport(databaseTransport)) : pino(defaultOptions)
+const baseDatabaseLogger = databaseTransport ? pino(defaultOptions, pino.transport(databaseTransport)) : pino(defaultOptions)
+const databaseLogger = createEnhancedLogger(baseDatabaseLogger)
 
 defaultOptions.name = `LOCALIZER`
 const localizerTransport = createTransport(`LOCALIZER`)
-const localizerLogger = localizerTransport ? pino(defaultOptions, pino.transport(localizerTransport)) : pino(defaultOptions)
+const baseLocalizerLogger = localizerTransport ? pino(defaultOptions, pino.transport(localizerTransport)) : pino(defaultOptions)
+const localizerLogger = createEnhancedLogger(baseLocalizerLogger)
 
 const shardLogger = (name) => {
     defaultOptions.name = name
     const shardTransport = createTransport(name)
-    return shardTransport ? pino(defaultOptions, pino.transport(shardTransport)) : pino(defaultOptions)
+    const baseShardLogger = shardTransport ? pino(defaultOptions, pino.transport(shardTransport)) : pino(defaultOptions)
+    return createEnhancedLogger(baseShardLogger)
 }
 
 // Initialize log rotation with master logger after loggers are created
@@ -129,4 +205,4 @@ if (shouldStreamToFiles) {
     scheduleLogCleanup(24, logsDir, 7, masterLogger) // Check every 24 hours, clean files older than 7 days
 }
 
-module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger }
+module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger, createEnhancedLogger }

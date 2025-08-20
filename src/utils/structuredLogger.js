@@ -40,18 +40,28 @@ function createStructuredLog(options) {
 }
 
 /**
- * Wraps legacy log messages into the new structured format
- * @param {string} action - The action being performed
- * @param {*} legacyMessage - The original log message/data
- * @param {Object} [additionalOptions] - Additional structured log options
- * @returns {Object} Structured log entry with legacy data in context
+ * Validates that a log object has the required properties for structured logging
+ * @param {Object} logObj - The log object to validate
+ * @returns {boolean} True if valid, throws error if invalid
  */
-function wrapLegacyLog(action, legacyMessage, additionalOptions = {}) {
-    return createStructuredLog({
-        action,
-        context: legacyMessage,
-        ...additionalOptions
-    })
+function validateStructuredLog(logObj) {
+    if (typeof logObj !== `object` || logObj === null) {
+        throw new Error(`Log object must be a valid object`)
+    }
+    
+    if (!logObj.action || typeof logObj.action !== `string`) {
+        throw new Error(`Log object must have a valid "action" property (string)`)
+    }
+    
+    if (!logObj.requestId || typeof logObj.requestId !== `string`) {
+        throw new Error(`Log object must have a valid "requestId" property (string)`)
+    }
+    
+    if (!logObj.timestamp || typeof logObj.timestamp !== `string`) {
+        throw new Error(`Log object must have a valid "timestamp" property (string)`)
+    }
+    
+    return true
 }
 
-module.exports = { createStructuredLog, wrapLegacyLog }
+module.exports = { createStructuredLog, validateStructuredLog }

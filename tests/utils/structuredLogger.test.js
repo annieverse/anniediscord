@@ -1,5 +1,5 @@
 const { expect } = require(`chai`)
-const { createStructuredLog, wrapLegacyLog } = require(`../../src/utils/structuredLogger`)
+const { createStructuredLog, validateStructuredLog } = require(`../../src/utils/structuredLogger`)
 
 describe(`structuredLogger`, () => {
     describe(`createStructuredLog`, () => {
@@ -54,39 +54,72 @@ describe(`structuredLogger`, () => {
         })
     })
 
-    describe(`wrapLegacyLog`, () => {
-        it(`should wrap legacy string message into structured format`, () => {
-            const action = `legacy_action_converted`
-            const legacyMessage = `This is a legacy log message`
-            const result = wrapLegacyLog(action, legacyMessage)
-
-            expect(result).to.have.property(`requestId`)
-            expect(result).to.have.property(`action`, action)
-            expect(result).to.have.property(`timestamp`)
-            expect(result).to.have.property(`context`, legacyMessage)
-        })
-
-        it(`should wrap legacy object into structured format`, () => {
-            const action = `database_error_occurred`
-            const legacyData = { error: `Connection failed`, code: 500 }
-            const result = wrapLegacyLog(action, legacyData)
-
-            expect(result.context).to.deep.equal(legacyData)
-        })
-
-        it(`should include additional options in wrapped log`, () => {
-            const action = `wrapped_action`
-            const legacyMessage = `Legacy message`
-            const additionalOptions = {
-                userId: `123456`,
-                guildId: `789012`
+    describe(`validateStructuredLog`, () => {
+        it(`should validate a properly structured log object`, () => {
+            const validLog = {
+                requestId: `test-request-id`,
+                action: `test_action`,
+                timestamp: new Date().toISOString(),
+                userId: `123456789`
             }
 
-            const result = wrapLegacyLog(action, legacyMessage, additionalOptions)
+            expect(() => validateStructuredLog(validLog)).to.not.throw()
+        })
 
-            expect(result.context).to.equal(legacyMessage)
-            expect(result.userId).to.equal(additionalOptions.userId)
-            expect(result.guildId).to.equal(additionalOptions.guildId)
+        it(`should throw error for missing action property`, () => {
+            const invalidLog = {
+                requestId: `test-request-id`,
+                timestamp: new Date().toISOString()
+            }
+
+            expect(() => validateStructuredLog(invalidLog)).to.throw(`Log object must have a valid "action" property (string)`)
+        })
+
+        it(`should throw error for missing requestId property`, () => {
+            const invalidLog = {
+                action: `test_action`,
+                timestamp: new Date().toISOString()
+            }
+
+            expect(() => validateStructuredLog(invalidLog)).to.throw(`Log object must have a valid "requestId" property (string)`)
+        })
+
+        it(`should throw error for missing timestamp property`, () => {
+            const invalidLog = {
+                requestId: `test-request-id`,
+                action: `test_action`
+            }
+
+            expect(() => validateStructuredLog(invalidLog)).to.throw(`Log object must have a valid "timestamp" property (string)`)
+        })
+
+        it(`should throw error for non-object input`, () => {
+            expect(() => validateStructuredLog(`not an object`)).to.throw(`Log object must be a valid object`)
+            expect(() => validateStructuredLog(null)).to.throw(`Log object must be a valid object`)
+            expect(() => validateStructuredLog(123)).to.throw(`Log object must be a valid object`)
+        })
+
+        it(`should throw error for invalid property types`, () => {
+            const invalidLog1 = {
+                requestId: 123,
+                action: `test_action`,
+                timestamp: new Date().toISOString()
+            }
+            expect(() => validateStructuredLog(invalidLog1)).to.throw(`Log object must have a valid "requestId" property (string)`)
+
+            const invalidLog2 = {
+                requestId: `test-request-id`,
+                action: 123,
+                timestamp: new Date().toISOString()
+            }
+            expect(() => validateStructuredLog(invalidLog2)).to.throw(`Log object must have a valid "action" property (string)`)
+
+            const invalidLog3 = {
+                requestId: `test-request-id`,
+                action: `test_action`,
+                timestamp: 123
+            }
+            expect(() => validateStructuredLog(invalidLog3)).to.throw(`Log object must have a valid "timestamp" property (string)`)
         })
     })
 })
