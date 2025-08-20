@@ -469,7 +469,11 @@ module.exports = {
                     if (!multiplier) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_MULTIPLIER`), {
                         deleteIn: 5
                     })
-                    const duration = ms(params.slice(2).join(` `))
+                    const durationString = params.slice(2).join(` `)
+                    if (!durationString) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                        deleteIn: 5
+                    })
+                    const duration = ms(durationString)
                     if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
                         deleteIn: 5
                     })
@@ -804,7 +808,11 @@ module.exports = {
                             if (!multiplier) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_MULTIPLIER`), {
                                 deleteIn: 5
                             })
-                            const duration = ms(params.slice(2).join(` `))
+                            const durationString = params.slice(2).join(` `)
+                            if (!durationString) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
+                                deleteIn: 5
+                            })
+                            const duration = ms(durationString)
                             if (!duration) return await reply.send(locale(`SETSHOP.ADD_BUFF_INVALID_DURATION`), {
                                 deleteIn: 5
                             })
