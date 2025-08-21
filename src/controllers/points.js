@@ -1,4 +1,3 @@
-const Experience = require(`../libs/exp`)
 const Currency = require(`../libs/currency`)
 
 /**
@@ -26,7 +25,13 @@ class PointController {
      */
 	async run() {
         if (await this.bot.isCooldown(this.moduleID)) return
-		if (this.isExpActive) new Experience(this.client).execute()
+		if (this.isExpActive) {
+            try {
+                this.bot.experienceLibs(this.message.member, this.message.guild, this.message.channel, (key) => this.bot.localization.findLocale(key)).execute()
+            } catch (error) {
+                this.bot.logger.error(`Error in PointController Experience execution: ${error.message}`)
+            }
+        }
         if (this.isCurrencyActive) new Currency(this.client).execute()
         this.bot.setCooldown(this.moduleID, this.bot.points.cooldown)
 	}
