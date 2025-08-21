@@ -1,3 +1,11 @@
+## [10.1.13](https://github.com/annieverse/anniediscord/compare/v10.1.12...v10.1.13) (2025-08-21)
+
+
+### Bug Fixes
+
+* **exp:** add null checks and fix parameter issues in Experience constructor ([d095b9e](https://github.com/annieverse/anniediscord/commit/d095b9e5f395176af5deae263ea43a08b28d3930))
+* **exp:** plan to add null checks for guild and user in Experience constructor ([e53017d](https://github.com/annieverse/anniediscord/commit/e53017d3f51303c52af203f267a0d6a23c21d64e))
+
 ## [10.1.12](https://github.com/annieverse/anniediscord/compare/v10.1.11...v10.1.12) (2025-08-20)
 
 
