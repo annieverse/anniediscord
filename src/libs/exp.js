@@ -25,6 +25,18 @@ class Experience {
          * @type {Client}
          */
         this.client = client
+        
+        // Add null checks to prevent "Cannot read properties of null (reading 'id')" error
+        if (!user || !user.id) {
+            this.client?.logger?.error(`[EXP_LIBS] Invalid user parameter: user is null or missing id property`)
+            throw new TypeError(`Experience constructor requires a valid user with id property`)
+        }
+        
+        if (!guild || !guild.id) {
+            this.client?.logger?.error(`[EXP_LIBS] Invalid guild parameter: guild is null or missing id property`)
+            throw new TypeError(`Experience constructor requires a valid guild with id property`)
+        }
+        
         /**
          * Entailed user for current instance.
          * @type {GuildMember}
