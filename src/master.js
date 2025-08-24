@@ -13,14 +13,17 @@ const getCustomShardId = (id) => {
 
 module.exports = function masterShard() {
 	// Intentionally log a error when bot starts up.
-	logger.error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`)
+	const startupMessage = `\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`
+	logger.error(startupMessage)
 
 	process.on(`unhandledRejection`, (reason, promise) => {
-		logger.warn(`\nUnhandled Rejection at:`, promise, `reason:`, reason)
-		logger.error(promise, reason)
+		const rejectionLog = `\nUnhandled Rejection at: ${promise} reason: ${reason}`
+		logger.warn(rejectionLog)
+		logger.error({ promise, reason })
 	})
 	process.on(`uncaughtException`, err => {
-		logger.warn(`\nUnhandled Exception: `, err)
+		const exceptionLog = `\nUnhandled Exception: ${err}`
+		logger.warn(exceptionLog)
 		logger.error(err)
 	})
 	function makeDirs() {
@@ -31,7 +34,7 @@ module.exports = function masterShard() {
 		if (!fs.existsSync(`./src/assets/selfupload`)) fs.mkdirSync(`./src/assets/selfupload`)
 		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(`Directory './src/assets/selfupload' exists`)
 		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
-		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
+		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs'`)
 	}
 	if (fs.existsSync(`./src/assets`)) {
 		makeDirs()
