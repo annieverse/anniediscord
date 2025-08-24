@@ -1,3 +1,10 @@
+## [10.1.14](https://github.com/annieverse/anniediscord/compare/v10.1.13...v10.1.14) (2025-08-24)
+
+
+### Bug Fixes
+
+* **semantic-release:** release not creating ([dc1bd92](https://github.com/annieverse/anniediscord/commit/dc1bd92b7778778f613eb1caf4704acc7d164a31))
+
 ## [10.1.13](https://github.com/annieverse/anniediscord/compare/v10.1.12...v10.1.13) (2025-08-21)
 
 
