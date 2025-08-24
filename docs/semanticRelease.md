@@ -1,5 +1,9 @@
 # Plugins
 
+Local reference guide for customizing semantic-release
+
+## [Documentation](https://semantic-release.gitbook.io/semantic-release/extending/plugins-list)
+
 ## Official plugins
 
 * [@semantic-release/commit-analyzer](https://github.com/semantic-release/commit-analyzer)
@@ -41,8 +45,3 @@
   * `verifyConditions`: Verify the presence of the `ATOM_ACCESS_TOKEN` environment variable and the [`apm`](https://github.com/atom/apm) CLI
   * `prepare`: Update the `package.json` version with [`npm version`](https://docs.npmjs.com/cli/version)
   * `publish`: Publish the [Atom package](https://flight-manual.atom.io/hacking-atom/sections/publishing)
-
-## [Documentation](https://semantic-release.gitbook.io/semantic-release/extending/plugins-list)
-
-
-@semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/git @semantic-release/release-notes-generator
