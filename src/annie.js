@@ -20,8 +20,8 @@ const errorRelay = require(`../src/utils/errorHandler.js`)
 class Annie extends Discord.Client {
     constructor (intents) {
         super({
-            intents: intents, 
-            presence: { status: `idle`, activities: [{ name: `Shard preparing ...`, type: Discord.ActivityType.Watching }] }, 
+            intents: intents,
+            presence: { status: `idle`, activities: [{ name: `Shard preparing ...`, type: Discord.ActivityType.Watching }] },
             makeCache: Discord.Options.cacheWithLimits({
                 PresenceManager: 0,
                 GuildBanManager: 0,
@@ -227,7 +227,7 @@ class Annie extends Discord.Client {
             this.registerNode(APPLICATION_COMMANDS, `application_commands`)
             this.registerNode(GUILDONLY_COMMANDS, `guildonly_commands`)
             require(`./controllers/events`)(this)
-            
+
             // Attempt login with retry logic for WebSocket timeouts
             this.attemptLogin()
         } catch (e) {
@@ -249,7 +249,7 @@ class Annie extends Discord.Client {
             this.logger.info(`Successfully logged in to Discord`)
         } catch (error) {
             if (error.message && error.message.includes(`handshake has timed out`) && retryCount < maxRetries) {
-                this.logger.warn(`WebSocket handshake timeout (attempt ${retryCount + 1}/${maxRetries}). Retrying in ${retryDelay/1000} seconds...`)
+                this.logger.warn(`WebSocket handshake timeout (attempt ${retryCount + 1}/${maxRetries}). Retrying in ${retryDelay / 1000} seconds...`)
                 setTimeout(() => {
                     this.attemptLogin(retryCount + 1)
                 }, retryDelay)
@@ -302,6 +302,7 @@ class Annie extends Discord.Client {
      * @return {void}
      */
     async registerUserDurationalBuffs() {
+        if (!this.db?.redis?.isReady) return
         this.db.durationalBuffs.getSavedDurationalBuffs().then(async src => {
             if (!src.length) return
             let count = 0
