@@ -1,3 +1,10 @@
+## [10.1.15](https://github.com/annieverse/anniediscord/compare/v10.1.14...v10.1.15) (2025-08-26)
+
+
+### Bug Fixes
+
+* **redis:** ready on buff ([1144caf](https://github.com/annieverse/anniediscord/commit/1144caf524955049651aef2c5f8eca9d753818a9))
+
 ## [10.1.14](https://github.com/annieverse/anniediscord/compare/v10.1.13...v10.1.14) (2025-08-24)
 
 
