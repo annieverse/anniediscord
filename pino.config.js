@@ -49,15 +49,14 @@ const levels = {
 }
 
 /**
- * Create transport configuration based on environment
+ * Create transport configuration based on environment  
  */
-function createTransport(loggerName) {
+function createTransport() {
     const transports = []
 
     if (shouldStreamToFiles) {
-        // File streaming with daily rotation
-        const logFileName = `${loggerName.toLowerCase().replace(/[^a-z0-9]/g, '_')}.json`
-        const logFilePath = path.join(logsDir, logFileName)
+        // Single file for all logs since we're using child loggers
+        const logFilePath = path.join(logsDir, `annie.json`)
         
         transports.push({
             target: `pino/file`,
@@ -148,11 +147,17 @@ function createEnhancedLogger(pinoLogger) {
         }
     })
     
-    // Pass through other pino methods and properties
+    // Special handling for .child() method to return an enhanced child logger
+    enhancedLogger.child = function(bindings, options) {
+        const childLogger = pinoLogger.child(bindings, options)
+        return createEnhancedLogger(childLogger)
+    }
+    
+    // Pass through other pino methods and properties (excluding .child() since we handle it above)
     Object.keys(pinoLogger).forEach(key => {
-        if (!enhancedLogger[key] && typeof pinoLogger[key] === 'function') {
+        if (!enhancedLogger[key] && key !== 'child' && typeof pinoLogger[key] === 'function') {
             enhancedLogger[key] = pinoLogger[key].bind(pinoLogger)
-        } else if (!enhancedLogger[key]) {
+        } else if (!enhancedLogger[key] && key !== 'child') {
             enhancedLogger[key] = pinoLogger[key]
         }
     })
@@ -160,7 +165,8 @@ function createEnhancedLogger(pinoLogger) {
     return enhancedLogger
 }
 
-const defaultOptions = {
+// Base logger configuration
+const baseOptions = {
     formatters: {
         bindings: (bindings) => {
             return { name: bindings.name }
@@ -171,38 +177,34 @@ const defaultOptions = {
             }
         }
     },
-    name: `MASTER_SHARD`,
+    name: `ANNIE_BOT`,
     level: logLevel,
     customLevels: levels,
     timestamp: pino.stdTimeFunctions.isoTime
 }
 
-// Create logger instances with transport configuration and enhanced functionality
-defaultOptions.name = `MASTER_SHARD`
-const masterTransport = createTransport(`MASTER_SHARD`)
-const baseMasterLogger = masterTransport ? pino(defaultOptions, pino.transport(masterTransport)) : pino(defaultOptions)
-const masterLogger = createEnhancedLogger(baseMasterLogger)
+// Create base logger with main transport
+const mainTransport = createTransport()
+const baseLogger = mainTransport ? pino(baseOptions, pino.transport(mainTransport)) : pino(baseOptions)
+const rootLogger = createEnhancedLogger(baseLogger)
 
-defaultOptions.name = `DATABASE`
-const databaseTransport = createTransport(`DATABASE`)
-const baseDatabaseLogger = databaseTransport ? pino(defaultOptions, pino.transport(databaseTransport)) : pino(defaultOptions)
-const databaseLogger = createEnhancedLogger(baseDatabaseLogger)
+// Create child loggers using .child() for different modules
+const masterLogger = rootLogger.child({ module: `MASTER_SHARD` })
+const databaseLogger = rootLogger.child({ module: `DATABASE` })
+const localizerLogger = rootLogger.child({ module: `LOCALIZER` })
 
-defaultOptions.name = `LOCALIZER`
-const localizerTransport = createTransport(`LOCALIZER`)
-const baseLocalizerLogger = localizerTransport ? pino(defaultOptions, pino.transport(localizerTransport)) : pino(defaultOptions)
-const localizerLogger = createEnhancedLogger(baseLocalizerLogger)
-
+/**
+ * Creates a shard-specific logger using .child()
+ * @param {string} name - Shard identifier (e.g., 'SHARD_ID:0', 'SHARD_ID:1/ShardName')
+ * @returns {Object} Enhanced child logger for the specific shard
+ */
 const shardLogger = (name) => {
-    defaultOptions.name = name
-    const shardTransport = createTransport(name)
-    const baseShardLogger = shardTransport ? pino(defaultOptions, pino.transport(shardTransport)) : pino(defaultOptions)
-    return createEnhancedLogger(baseShardLogger)
+    return rootLogger.child({ module: name })
 }
 
-// Initialize log rotation with master logger after loggers are created
+// Initialize log rotation with root logger after loggers are created
 if (shouldStreamToFiles) {
-    scheduleLogCleanup(24, logsDir, 7, masterLogger) // Check every 24 hours, clean files older than 7 days
+    scheduleLogCleanup(24, logsDir, 7, rootLogger) // Check every 24 hours, clean files older than 7 days
 }
 
-module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger, createEnhancedLogger }
+module.exports = { databaseLogger, masterLogger, localizerLogger, shardLogger, rootLogger, createEnhancedLogger }
