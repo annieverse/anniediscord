@@ -940,7 +940,7 @@ module.exports = {
         if (hasAttachment) {
             const mediaType = message.attachments.first().contentType
             const hasSupportedType = this.supportedMediaTypes.some(type => mediaType.includes(type))
-            if (mediaType && !mediaType.startsWith(`image/`) || !hasSupportedType) hasAttachment = false
+            if (mediaType && (!mediaType.startsWith(`image/`) || !hasSupportedType)) hasAttachment = false
         }
         const imageArgs = this.args.slice(1).join(` `)
         const hasImageURL = imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? true : false
