@@ -261,7 +261,7 @@ module.exports = {
             if (options.getSubcommand() === `attachment`) {
                 const mediaType = options.getAttachment(`set`).contentType
                 const hasSupportedType = this.supportedMediaTypes.some(type => mediaType.includes(type))
-                if (mediaType && !mediaType.startsWith(`image/`) || !hasSupportedType) return await reply.send(locale(`SETWELCOMER.IMAGE_INVALID_UPLOAD`), {
+                if (mediaType && (!mediaType.startsWith(`image/`) || !hasSupportedType)) return await reply.send(locale(`SETWELCOMER.IMAGE_INVALID_UPLOAD`), {
                     socket: {
                         emoji: await client.getEmoji(`692428969667985458`)
                     }
