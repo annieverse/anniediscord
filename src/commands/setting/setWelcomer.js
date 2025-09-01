@@ -939,7 +939,12 @@ module.exports = {
         let hasAttachment = message.attachments.first() ? true : false
         if (hasAttachment) {
             const mediaType = message.attachments.first().contentType
-            const hasSupportedType = mediaType ? this.supportedMediaTypes.some(type => mediaType.includes(type)) : false
+            const hasSupportedType = mediaType
+                ? this.supportedMediaTypes.some(type => {
+                    const parts = mediaType.split('/');
+                    return parts.length === 2 && parts[1] === type;
+                })
+                : false
             if (mediaType && (!mediaType.startsWith(`image/`) || !hasSupportedType)) hasAttachment = false
         }
         const imageArgs = this.args.slice(1).join(` `)
