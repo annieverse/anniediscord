@@ -199,6 +199,8 @@ class Response {
 		sent
 
 		return setTimeout(() => {
+			if (!sent) return
+			if (!sent.deletable) return
 			sent.delete()
 		}, deleteIn * 1000)
 
