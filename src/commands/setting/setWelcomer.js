@@ -180,6 +180,11 @@ module.exports = {
      * @type {array}
      */
     actions: [`enable`, `disable`, `channel`, `text`, `role`, `image`, `userimage`, `noimage`, `theme`, `preview`, `multipleadd`, `multipleremove`, `multiplelist`, `onboardwait`],
+    /**
+     * An array of the supported media types for the welcomer module
+     * @type {array}
+     */
+    supportedMediaTypes: [`jpeg`, `png`, `gif`, `svg`, `tiff`, `bmp`],
 
     /**
      * Reference key to welcomer sub-modules config code.
@@ -255,7 +260,8 @@ module.exports = {
             await interaction.deferReply()
             if (options.getSubcommand() === `attachment`) {
                 const mediaType = options.getAttachment(`set`).contentType
-                if (mediaType && !mediaType.startsWith(`image/`)) return await reply.send(locale(`SETWELCOMER.IMAGE_INVALID_UPLOAD`), {
+                const hasSupportedType = this.supportedMediaTypes.some(type => mediaType.includes(type))
+                if (mediaType && (!mediaType.startsWith(`image/`) || !hasSupportedType)) return await reply.send(locale(`SETWELCOMER.IMAGE_INVALID_UPLOAD`), {
                     socket: {
                         emoji: await client.getEmoji(`692428969667985458`)
                     }
@@ -933,7 +939,13 @@ module.exports = {
         let hasAttachment = message.attachments.first() ? true : false
         if (hasAttachment) {
             const mediaType = message.attachments.first().contentType
-            if (mediaType && !mediaType.startsWith(`image/`)) hasAttachment = false
+            const hasSupportedType = mediaType
+                ? this.supportedMediaTypes.some(type => {
+                    const parts = mediaType.split('/');
+                    return parts.length === 2 && parts[1] === type;
+                })
+                : false
+            if (mediaType && (!mediaType.startsWith(`image/`) || !hasSupportedType)) hasAttachment = false
         }
         const imageArgs = this.args.slice(1).join(` `)
         const hasImageURL = imageArgs.startsWith(`http`) && imageArgs.length >= 15 ? true : false

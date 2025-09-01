@@ -15,6 +15,7 @@ module.exports = function masterShard() {
 	// Intentionally log a error when bot starts up.
 	logger.error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`)
 
+	try { throw new Error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`) } catch (error) { logger.error(error) }
 	process.on(`unhandledRejection`, (reason, promise) => {
 		logger.warn(`\nUnhandled Rejection at:`, promise, `reason:`, reason)
 		logger.error(promise, reason)
