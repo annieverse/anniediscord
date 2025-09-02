@@ -60,7 +60,7 @@ module.exports = function masterShard() {
 				shardLogger.warn({ action: `shard_handshake_timeout` })
 			}
 		})
-		shard.on(ShardEvents.Message, (message) => shardLogger.info({ action: `shard_message`, msg: message }))
+		shard.on(ShardEvents.Message, (message) => shardLogger.debug({ action: `shard_message`, msg: message }))
 		shard.on(ShardEvents.Ready, () => shardLogger.info({ action: `shard_ready` }))
 		shard.on(ShardEvents.Reconnecting, () => {
 			shardLogger.warn({ action: `shard_reconnecting` })
