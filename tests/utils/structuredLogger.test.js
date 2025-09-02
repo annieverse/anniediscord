@@ -1,5 +1,6 @@
 const { expect } = require(`chai`)
 const { createStructuredLog, validateStructuredLog } = require(`../../src/utils/structuredLogger`)
+const { rootLogger } = require(`../../pino.config.js`)
 
 describe(`structuredLogger`, () => {
     describe(`createStructuredLog`, () => {
@@ -120,6 +121,23 @@ describe(`structuredLogger`, () => {
                 timestamp: 123
             }
             expect(() => validateStructuredLog(invalidLog3)).to.throw(`Log object must have a valid "timestamp" property (string)`)
+        })
+    })
+
+    describe(`child logger functionality`, () => {
+        it(`should create child loggers with module context`, () => {
+            const childLogger = rootLogger.child({ module: `TEST_MODULE` })
+            expect(childLogger).to.have.property(`info`)
+            expect(childLogger).to.have.property(`child`)
+            expect(typeof childLogger.info).to.equal(`function`)
+            expect(typeof childLogger.child).to.equal(`function`)
+        })
+
+        it(`should create nested child loggers`, () => {
+            const parentChild = rootLogger.child({ module: `PARENT` })
+            const nestedChild = parentChild.child({ submodule: `NESTED` })
+            expect(nestedChild).to.have.property(`info`)
+            expect(typeof nestedChild.info).to.equal(`function`)
         })
     })
 })
