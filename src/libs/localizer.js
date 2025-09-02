@@ -1,7 +1,8 @@
 "use strict"
 const { Collection } = require(`discord.js`)
 const { readdirSync } = require(`fs`)
-const { localizerLogger:logger } = require(`../../pino.config`)
+const createLogger = require(`../../pino.config`)
+const logger = createLogger.child({ module: `localizer` })
 class Localization {
 
   #lang
