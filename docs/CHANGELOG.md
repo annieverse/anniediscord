@@ -1,3 +1,10 @@
+## [10.1.16](https://github.com/annieverse/anniediscord/compare/v10.1.15...v10.1.16) (2025-09-02)
+
+
+### Bug Fixes
+
+* **database:** resolve Redis race condition in validateUserEntry ([4a08d95](https://github.com/annieverse/anniediscord/commit/4a08d95dc27b5cac73048b1a61f2c544db0ce046))
+
 ## [10.1.15](https://github.com/annieverse/anniediscord/compare/v10.1.14...v10.1.15) (2025-08-26)
 
 
