@@ -11,7 +11,7 @@ const path = require(`path`)
  * @example logger.info({ action: `user_receive_exp`, userId, exp })  <-- v2 structure
  * @example logger.info({ action: `user_receive_exp`, msg: `someone just got exp`, userId, exp })  <-- v2 with additional msg context
  *
- * A few new properties that are recommended to be included in the new v2 logger:
+ * A few new properties that are recommended to be included in the new v2 logger (NOT MANDATORY):
  * @property action {string} Can be used as a way to shortly describe what process being ran in the style of REST API
  * @property requestId {string} The unique identifier for the process being logged. Standardize to use v7 UUID.
  * @property durationMs {string} The duration of the process being logged in milliseconds. Mostly for benchmarking; low priority.
