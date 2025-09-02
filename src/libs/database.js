@@ -34,7 +34,7 @@ class Database {
 		this.client
 			.connect()
 			.then(() => {
-				logger.database(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
+				logger.debug(`PostgreSQL server connected on PORT:${process.env.PG_PORT}.`)
 			})
 			.catch(err => {
 				logger.error(`PostgreSQL server fails to connect >> ${err.message}`)
@@ -73,7 +73,7 @@ class Database {
 			process.exit()
 		})
 		redisClient.on(`connect`, async () => {
-			logger.database(`REDIS <CONNECTED>`)
+			logger.debug(`REDIS <CONNECTED>`)
 		})
 		await redisClient.connect()
 		this.redis = redisClient
@@ -155,7 +155,7 @@ class DatabaseUtils {
 			const [parsedStatement, parsedParameters] = this._convertNamedParamsToPositionalParams(stmt, supplies)
 			let result = await this.client.query(parsedStatement, parsedParameters)
 			if (!result) return null
-			if (log) logger.database(log)
+			if (log) logger.debug(log)
 			if (type === `all`) return result.rows
 
 			//  Run type
@@ -233,7 +233,7 @@ class DatabaseUtils {
 	 * @return {boolean}
 	 */
 	delCache(key = ``) {
-		logger.database(`[Redis.delCache] cleared cache in key '${key}'.`)
+		logger.debug(`[Redis.delCache] cleared cache in key '${key}'.`)
 		// Note: delCache is synchronous by design in original code, so we can't await here
 		// But we should ensure Redis is ready first
 		if (!this.redis || !this.redis.isReady) {
@@ -277,7 +277,7 @@ class DatabaseUtils {
 			, { userId: userId, userName: userName }
 			, `${fn} Validating user ${userName}(${userId})`
 		)
-		if (res.changes) logger.database(`USER_ID:${userId} registered`)
+		if (res.changes) logger.debug(`USER_ID:${userId} registered`)
 		await this._ensureRedisReady()
 		this.redis.sAdd(key, userId)
 	}
@@ -358,7 +358,7 @@ class DatabaseUtils {
 			}
 		}
 
-		logger.database(`${fn} (${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.debug(`${fn} (${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
 		return true
 	}
 
@@ -573,7 +573,7 @@ class UserUtils extends DatabaseUtils {
 		//  Refresh cache
 		this.delCache(`EXP_${userId}@${guildId}`)
 		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
-		logger.database(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
+		logger.debug(`${fn}[${type}](${operation}) (EXP:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -650,7 +650,7 @@ class UserUtils extends DatabaseUtils {
 				AND guild_id = $guildId`
 			, `run`
 			, { userId: userId, guildId: guildId }
-		).then(() => logger.database(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
+		).then(() => logger.debug(`${fn} updated ${key} on database. (${getBenchmark(dbTime)})`))
 		//  Refresh cache by deleting it
 		this.delCache(key)
 	}
@@ -747,7 +747,7 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache 
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
-		logger.database(`${fn}[${type}](${operation}) (REPS:${amount} | EXP_ID:${userId}@${guildId}`)
+		logger.debug(`${fn}[${type}](${operation}) (REPS:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -820,7 +820,7 @@ class UserUtils extends DatabaseUtils {
 		//  Refresh cache
 		this.delCache(`DAILIES_${userId}@${guildId}`)
 		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
-		logger.database(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
+		logger.debug(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
 
 	/**
@@ -1028,7 +1028,7 @@ class UserUtils extends DatabaseUtils {
 			, { userId: userId }
 			, `${fn} resetting gender preference for USER_ID:${userId}`
 		)
-		logger.database(`${fn} UPDATE (GENDER: neutral)(USER_ID:${userId}`)
+		logger.debug(`${fn} UPDATE (GENDER: neutral)(USER_ID:${userId}`)
 	}
 
 	/**
@@ -1064,7 +1064,7 @@ class UserUtils extends DatabaseUtils {
 			)
 		}
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.database(`${fn} ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
+		logger.debug(`${fn} ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
 	}
 
 	/**
@@ -1462,14 +1462,14 @@ class GuildUtils extends DatabaseUtils {
 		}
 
 		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
+		logger.debug(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
 		//  Cache result if provided 
 		if (cacheTo) {
 			const targetConfig = cacheTo.get(configCode)
 			targetConfig.value = customizedParameter
 			targetConfig.setByUserId = setByUserId
 			targetConfig.updatedAt = await this.getCurrentTimestamp()
-			logger.database(`${fn} cached ${configCode}@${guild.id}`)
+			logger.debug(`${fn} cached ${configCode}@${guild.id}`)
 		}
 		this.umarkForDeletion(guild.id)
 		return true
@@ -1506,7 +1506,7 @@ class GuildUtils extends DatabaseUtils {
 			, `${fn}Performing config(${configCode}) deletion for GUILD_ID:${guildId}`
 		)
 		const type = res.changes ? `DELETED` : `NO_CHANGES`
-		logger.database(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
+		logger.debug(`${fn} ${type} (CONFIG_CODE:${configCode})(GUILD_ID:${guildId})`)
 		this.umarkForDeletion(guildId)
 		return true
 	}
@@ -1530,7 +1530,7 @@ class GuildUtils extends DatabaseUtils {
 			, `${fn} Updating all user inventories`
 		)
 
-		logger.database(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
+		logger.debug(`${fn} (${operation}) (ITEM_ID:${itemId})(QTY:${operation}${value})`)
 		return true
 	}
 }
@@ -1630,7 +1630,7 @@ class Relationships extends DatabaseUtils {
 		}
 
 		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
-		logger.database(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
+		logger.debug(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
 		return true
 	}
 }
@@ -1899,7 +1899,7 @@ class DurationalBuffs extends DatabaseUtils {
 			, `${fn} Delete durational buff`
 		)
 			.then(res => {
-				if (res.changes > 0) logger.database(`${fn} BUFF_ID:${buffId} has finished and omited.`)
+				if (res.changes > 0) logger.debug(`${fn} BUFF_ID:${buffId} has finished and omited.`)
 			})
 	}
 
