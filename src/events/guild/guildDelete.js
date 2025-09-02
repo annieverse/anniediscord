@@ -1,4 +1,4 @@
-const dataCleaner = require(`../libs/dataCleanup.js`)
+const dataCleaner = require(`../../libs/dataCleanup.js`)
 module.exports = function guildDelete(client, guild) {
     if (!client.isReady()) return
     //  Perform logging to support server

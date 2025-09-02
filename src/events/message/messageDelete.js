@@ -1,5 +1,5 @@
 "use strict"
-const errorRelay = require(`../utils/errorHandler`)
+const errorRelay = require(`../../utils/errorHandler`)
 
 module.exports = async function messageDelete(client, message) {
     if (!client.isReady()) return

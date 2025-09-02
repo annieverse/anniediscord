@@ -1,5 +1,5 @@
 # Terms of Service
-##### Last updated and effective: 10 May 2024
+##### Last updated and effective: 12 August 2025
 
 ## Usage Agreement
 By inviting the Discord Bot Annie#3070 (Unique discord user ID 501461775821176832. Hereby referred to as "bot") to a Discord Server ("server"), or by using its features, you agree to the below-listed Terms of Service ("terms") and Privacy Policy ("policy"). The policy is located [here](https://github.com/annieverse/anniediscord/blob/master/docs/privacypolicy.md).

@@ -1,9 +1,9 @@
 "use strict"
-const Banner = require(`../ui/prebuild/welcomer`)
-const { parseWelcomerText } = require(`../utils/welcomerFunctions.js`)
-const errorRelay = require(`../utils/errorHandler.js`)
+const Banner = require(`../../ui/prebuild/welcomer`)
+const { parseWelcomerText } = require(`../../utils/welcomerFunctions.js`)
+const errorRelay = require(`../../utils/errorHandler.js`)
 const { ChannelType, PermissionFlagsBits, GuildMemberFlags } = require(`discord.js`)
-const { roleLower } = require(`../utils/roleCompare.js`)
+const { roleLower } = require(`../../utils/roleCompare.js`)
 
 module.exports = async function guildMemberAdd(client, member) {
     if (!client.isReady()) return
@@ -70,6 +70,7 @@ module.exports = async function guildMemberAdd(client, member) {
         } else {
             //  Handle if target channel is invalid or cannot be found
             try {
+                if (client.channels.resolveId(getTargetWelcomerChannel) == null) throw new Error(`[Internal Error] invalid target channel`)
                 if (!guild.channels.cache.has(getTargetWelcomerChannel)) throw new Error(`[Internal Error] invalid target channel`)
                 const ch = guild.channels.cache.get(getTargetWelcomerChannel)
                 if (!ch) throw new Error(`[Internal Error] invalid target channel`)

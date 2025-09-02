@@ -16,7 +16,7 @@ class Database {
 	/**
 	 * @param {Client} client sql instance that is going to be used
 	 */
-	constructor(client = {}) {
+	constructor (client = {}) {
 		this.client = client
 	}
 	/**
@@ -82,7 +82,7 @@ class Database {
 }
 
 class DatabaseUtils {
-	constructor(obj) {
+	constructor (obj) {
 		this.client = obj.client
 		this.redis = obj.redis
 		this.fnClass = `DatabaseUtils`
@@ -397,7 +397,7 @@ class DatabaseUtils {
 }
 
 class Reminders extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `Reminders`
 	}
@@ -486,7 +486,7 @@ class Reminders extends DatabaseUtils {
 
 class UserUtils extends DatabaseUtils {
 
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `UserUtils`
 	}
@@ -1195,7 +1195,7 @@ class UserUtils extends DatabaseUtils {
 
 class SystemUtils extends DatabaseUtils {
 
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `SystemUtils`
 	}
@@ -1260,7 +1260,7 @@ class SystemUtils extends DatabaseUtils {
 }
 
 class GuildUtils extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `GuildUtils`
 	}
@@ -1493,7 +1493,7 @@ class GuildUtils extends DatabaseUtils {
 }
 
 class Relationships extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `Relationships`
 	}
@@ -1593,7 +1593,7 @@ class Relationships extends DatabaseUtils {
 }
 
 class AutoResponder extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `AutoResponder`
 	}
@@ -1739,7 +1739,7 @@ class AutoResponder extends DatabaseUtils {
 }
 
 class DurationalBuffs extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `DurationalBuffs`
 	}
@@ -1894,7 +1894,7 @@ class DurationalBuffs extends DatabaseUtils {
 }
 
 class CustomRewards extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `CustomRewards`
 	}
@@ -1966,7 +1966,7 @@ class CustomRewards extends DatabaseUtils {
 }
 
 class Covers extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `Covers`
 	}
@@ -2087,7 +2087,7 @@ class Covers extends DatabaseUtils {
 }
 
 class Shop extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `Shop`
 	}
@@ -2430,7 +2430,7 @@ class Shop extends DatabaseUtils {
 }
 
 class Quests extends DatabaseUtils {
-	constructor(client) {
+	constructor (client) {
 		super(client)
 		this.fnClass = `Quests`
 	}

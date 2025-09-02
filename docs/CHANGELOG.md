@@ -1,3 +1,40 @@
+## [10.1.15](https://github.com/annieverse/anniediscord/compare/v10.1.14...v10.1.15) (2025-08-26)
+
+
+### Bug Fixes
+
+* **redis:** ready on buff ([1144caf](https://github.com/annieverse/anniediscord/commit/1144caf524955049651aef2c5f8eca9d753818a9))
+
+## [10.1.14](https://github.com/annieverse/anniediscord/compare/v10.1.13...v10.1.14) (2025-08-24)
+
+
+### Bug Fixes
+
+* **semantic-release:** release not creating ([dc1bd92](https://github.com/annieverse/anniediscord/commit/dc1bd92b7778778f613eb1caf4704acc7d164a31))
+
+## [10.1.13](https://github.com/annieverse/anniediscord/compare/v10.1.12...v10.1.13) (2025-08-21)
+
+
+### Bug Fixes
+
+* **exp:** add null checks and fix parameter issues in Experience constructor ([d095b9e](https://github.com/annieverse/anniediscord/commit/d095b9e5f395176af5deae263ea43a08b28d3930))
+* **exp:** plan to add null checks for guild and user in Experience constructor ([e53017d](https://github.com/annieverse/anniediscord/commit/e53017d3f51303c52af203f267a0d6a23c21d64e))
+
+## [10.1.12](https://github.com/annieverse/anniediscord/compare/v10.1.11...v10.1.12) (2025-08-20)
+
+
+### Bug Fixes
+
+* add validation for buff duration parameters before ms() call ([5e4a1e7](https://github.com/annieverse/anniediscord/commit/5e4a1e72c2c1e7c8b81fd8c8877d244774b5916d))
+* **setshop:** validate durationString before calling ms() function ([eae893d](https://github.com/annieverse/anniediscord/commit/eae893dbddb89bd2a1cad46f701137cd47751aeb))
+
+## [10.1.11](https://github.com/annieverse/anniediscord/compare/v10.1.10...v10.1.11) (2025-08-19)
+
+
+### Bug Fixes
+
+* **makereward:** wrong error ([ff2783e](https://github.com/annieverse/anniediscord/commit/ff2783e20edbc51c72f6aff40e6cb6e1c5d3d497))
+
 ## [10.1.10](https://github.com/annieverse/anniediscord/compare/v10.1.9...v10.1.10) (2025-08-11)
 
 

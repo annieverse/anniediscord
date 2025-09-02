@@ -1,6 +1,6 @@
-const autoResponderController = require(`../controllers/autoResponder`)
-const getNumberInRange = require(`../utils/getNumberInRange`)
-const commandController = require(`../controllers/commands`)
+const autoResponderController = require(`../../controllers/autoResponder`)
+const getNumberInRange = require(`../../utils/getNumberInRange`)
+const commandController = require(`../../controllers/commands`)
 const { Message } = require(`discord.js`)
 /**
  * Centralized Controller for handling incoming messages.
@@ -77,8 +77,12 @@ module.exports = (client, message) => {
                     } catch (error) { client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`) }
 
                     const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
-                    client.experienceLibs(message.member, message.guild, message.channel, locale)
-                        .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
+                    try {
+                        client.experienceLibs(message.member, message.guild, message.channel, locale)
+                            .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
+                    } catch (error) {
+                        client.logger.error(`Error creating Experience instance: ${error.message}`)
+                    }
                 })
         })
 }

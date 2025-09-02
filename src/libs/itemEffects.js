@@ -200,7 +200,7 @@ class itemEffects {
      */
     addExp(exp) {
         if (typeof exp !== `number`) exp = parseInt(exp)
-        this.client.experienceLibs(this.message, this.message.guild, this.message.channel, this.locale).execute()
+        this.client.experienceLibs(this.message.member, this.message.guild, this.message.channel, this.locale).execute()
     }
 
     /**
