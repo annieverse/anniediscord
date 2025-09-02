@@ -42,34 +42,33 @@ module.exports = function masterShard() {
 
 	const server = express()
 	manager.on(`shardCreate`, shard => {
-		const id = getCustomShardId(shard.id)
+		const shardLogger = createLogger.child({ shard: shard.id })
 		shard.on(ShardEvents.Death, (p) => {
-			logger.error(`${id} <DIED>`)
-			logger.error(p)
+			shardLogger.error({ action: `shard_died`, msg: p })
 		})
 		shard.on(ShardEvents.Disconnect, () => {
-			logger.warn(`${id} <DISCONNECTED>`)
+			shardLogger.warn({ action: `shard_disconnected` })
 			// Log WebSocket disconnection for debugging
 			if (shard.worker && shard.worker.killed) {
-				logger.warn(`${id} Worker process was killed, likely due to connection issues`)
+				shardLogger.warn({ action: `shard_worker_killed` })
 			}
 		})
 		shard.on(`error`, (error) => {
-			logger.error(`${id} <ERROR>: ${error.message}`)
+			shardLogger.error({ action: `shard_error`, msg: error })
 			// Specifically handle WebSocket handshake timeouts
 			if (error.message && error.message.includes(`handshake has timed out`)) {
-				logger.warn(`${id} WebSocket handshake timeout detected. This may resolve with retry logic.`)
+				shardLogger.warn({ action: `shard_handshake_timeout` })
 			}
 		})
-		shard.on(ShardEvents.Message, (message) => logger.info(`<Shard Message> ${JSON.stringify(message, null, 2)}`))
-		shard.on(ShardEvents.Ready, () => logger.info(`${id} <READY>`))
+		shard.on(ShardEvents.Message, (message) => shardLogger.info({ action: `shard_message`, msg: message }))
+		shard.on(ShardEvents.Ready, () => shardLogger.info({ action: `shard_ready` }))
 		shard.on(ShardEvents.Reconnecting, () => {
-			logger.warn(`${id} <RECONNECTING>`)
+			shardLogger.warn({ action: `shard_reconnecting` })
 			// Log reconnection attempts for WebSocket issues
-			logger.info(`${id} Attempting to reconnect to Discord gateway`)
+			shardLogger.info({ action: `shard_reconnecting_attempt`, msg: `Attempting to reconnect to Discord gateway` })
 		})
-		shard.on(ShardEvents.Resume, () => logger.info(`${id} <RESUMED>`))
-		shard.on(ShardEvents.Spawn, () => logger.info(`${id} <SPAWNED>`))
+		shard.on(ShardEvents.Resume, () => shardLogger.info({ action: `shard_resumed` }))
+		shard.on(ShardEvents.Spawn, () => shardLogger.info({ action: `shard_spawned` }))
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
