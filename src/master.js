@@ -42,7 +42,7 @@ module.exports = function masterShard() {
 
 	const server = express()
 	manager.on(`shardCreate`, shard => {
-		const shardLogger = createLogger.child({ shard: shard.id })
+		const shardLogger = createLogger.child({ shard: getCustomShardId(shard.id) })
 		shard.on(ShardEvents.Death, (p) => {
 			shardLogger.error({ action: `shard_died`, msg: p })
 		})
