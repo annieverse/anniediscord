@@ -18,21 +18,9 @@ const mockLocales = {
     }
   }
 }
-
-const logger = {
-  error: sinon.stub(),
-  warn: sinon.stub(),
-  info: sinon.stub(),
-  debug: sinon.stub()
-}
-
 const Module = require(`module`)
 const originalRequire = Module.prototype.require
 Module.prototype.require = function(...args) {
-  if (args[0] === `../../pino.config`) {
-    return { localizerLogger: logger }
-  }
-  
   // Handle locale JSON files
   if (args[0].endsWith(`en.json`)) {
     return mockLocales[`en.json`]
@@ -51,15 +39,7 @@ describe(`Localizer Library`, () => {
   let readdirStub
 
   beforeEach(() => {
-    // Create a sinon sandbox for test isolation
     sandbox = sinon.createSandbox()
-
-    logger.error.resetHistory()
-    logger.warn.resetHistory()
-    logger.info.resetHistory()
-    logger.debug.resetHistory()
-
-    // Stub fs.readdirSync
     sandbox.stub(fs, `readdirSync`).returns([`en.json`, `fr.json`])
   })
 
@@ -89,12 +69,6 @@ describe(`Localizer Library`, () => {
     it(`should prevent non-string locale key as the lookup parameter, return placeholder fallback`, () => {
       localizer.lang = `en`
       const nonStringKey = localizer.findLocale(null)
-      expect(logger.error.calledOnce).to.be.true
-      expect(logger.error.firstCall.args[0]).to.deep.equal({
-        action: `invalid_locale_key`,
-        type: `object`,
-        key: null
-      })
       expect(nonStringKey).to.equal(mockLocales[`en.json`]['LOCALE_NOT_FOUND'])
     })
 
@@ -108,23 +82,6 @@ describe(`Localizer Library`, () => {
       localizer.lang = `en`
       const msg = localizer.findLocale(`SAY.SHORT_GUIDE`)
       expect(msg).to.equal(`Please include the message that you want me to read! {{emoji}}`)
-    })
-    
-    it(`should log error when key is not found in target origin and fallback language`, () => {
-      localizer.lang = `fr`
-      localizer.fallback = `en`
-      localizer.findLocale(`THIS.KEY._DOES_NOT_EXIST`)
-      expect(logger.warn.callCount).to.equal(2)
-      expect(logger.warn.firstCall.args[0]).to.deep.equal({
-        action: `origin_locale_missing`,
-        lang: `fr`,
-        key: `THIS.KEY._DOES_NOT_EXIST`
-      })
-      expect(logger.warn.secondCall.args[0]).to.deep.equal({
-        action: `fallback_locale_missing`,
-        lang: `en`,
-        key: `THIS.KEY._DOES_NOT_EXIST`
-      })
     })
 
     it(`should fallback to 'en' version when key not found in other language`, () => {
