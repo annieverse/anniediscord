@@ -1,0 +1,13 @@
+{
+  "ignore": [
+    "logs/*",
+    "assets/*",
+    ".git",
+    "node_modules/*"
+  ],
+  "watch": [
+    "*.js"
+  ],
+  "verbose": true,
+  "ext": "js,json"
+}

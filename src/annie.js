@@ -14,8 +14,9 @@ const superagent = require(`superagent`)
 const shardName = require(`./config/shardName`)
 const Response = require(`./libs/response`)
 const CronManager = require(`cron-job-manager`)
-const { shardLogger } = require(`../pino.config.js`)
+const createLogger = require(`../pino.config.js`)
 const errorRelay = require(`../src/utils/errorHandler.js`)
+const shardIdParser = require(`./utils/shardIdParser`)
 
 class Annie extends Discord.Client {
     constructor (intents) {
@@ -159,7 +160,9 @@ class Annie extends Discord.Client {
          * The default function for handling logging tasks.
          * @type {Pino}
          */
-        this.logger = shardLogger(`SHARD_ID:${this.shardId}/${shardName[this.shardId]}`)
+        this.logger = createLogger.child({
+            shard: shardIdParser(this.shardId)
+        })
 
         /**
          * Stores Annie's Support Server invite link.
@@ -195,13 +198,15 @@ class Annie extends Discord.Client {
      */
     prepareLogin() {
         process.on(`unhandledRejection`, err => {
-            this.logger.warn(`unhandledRejection > ${err}`)
-            this.logger.error(err)
+            this.logger.error({
+                action: `UNHANDLED_REJECTION`,
+                msg: err.message
+            })
             if (!this.isReady()) return
 
             const errorMsg = err.message || `Unknown Error`
             const errorStack = err.stack || `Unknown Error Stack`
-            errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(error => this.logger.error(error))
+            errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(error => this.logger.error({ action: `ERROR_RELAY_FAILED`, msg: error.message }))
         })
 
         try {
@@ -213,7 +218,10 @@ class Annie extends Discord.Client {
             require(`./controllers/events`)(this)
             this.login(process.env.BOT_TOKEN)
         } catch (e) {
-            this.logger.error(`Client has failed to start > ${e.stack}`)
+            this.logger.error({
+                action: `CLIENT_START_FAILED`,
+                msg: e.stack
+            })
             process.exit()
         }
     }
@@ -249,7 +257,7 @@ class Annie extends Discord.Client {
                 guild.configs.set(cfg.name, cfg)
             }
         }
-        this.logger.info(`[SHARD_ID:${this.shard.ids[0]}@GUILD_CONF] confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
+        this.logger.info(`confs from ${getGuilds.length} guilds have been registered (${getBenchmark(initTime)})`)
     }
 
     /**
