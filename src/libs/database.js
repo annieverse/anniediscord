@@ -67,17 +67,16 @@ class Database {
 	 * @return {void}
 	 */
 	async connectRedis() {
-		const redisClient = await Redis.createClient()
-		redisClient.connect()
-		redisClient.sMembers
+		const redisClient = Redis.createClient()
 		redisClient.on(`error`, err => {
 			logger.error(`REDIS <ERROR> ${err.message}`)
 			process.exit()
 		})
 		redisClient.on(`connect`, async () => {
 			logger.database(`REDIS <CONNECTED>`)
-			this.redis = redisClient
 		})
+		await redisClient.connect()
+		this.redis = redisClient
 	}
 }
 
@@ -86,6 +85,33 @@ class DatabaseUtils {
 		this.client = obj.client
 		this.redis = obj.redis
 		this.fnClass = `DatabaseUtils`
+		this._redisReady = false
+		this._redisReadyPromise = null
+	}
+
+	/**
+	 * Ensure Redis connection is ready before use
+	 * @returns {Promise<void>}
+	 * @private
+	 */
+	async _ensureRedisReady() {
+		if (this._redisReady) return
+		
+		if (!this._redisReadyPromise) {
+			this._redisReadyPromise = new Promise((resolve) => {
+				const checkRedis = () => {
+					if (this.redis && this.redis.isReady) {
+						this._redisReady = true
+						resolve()
+					} else {
+						setTimeout(checkRedis, 10)
+					}
+				}
+				checkRedis()
+			})
+		}
+		
+		return this._redisReadyPromise
 	}
 
 	/**
@@ -156,6 +182,7 @@ class DatabaseUtils {
 	 * @return {boolean}
 	 */
 	async doesCacheExist(key = ``) {
+		await this._ensureRedisReady()
 		return await this.redis.exists(key)
 	}
 
@@ -165,6 +192,7 @@ class DatabaseUtils {
 	 * @return {Promise}
 	 */
 	async getCache(key = ``) {
+		await this._ensureRedisReady()
 		return await this.redis.get(key)
 	}
 
@@ -190,6 +218,12 @@ class DatabaseUtils {
 		 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, GETSET, it is possible that in future versions of Redis these commands will be deprecated and finally removed.
 		 */
 		if (typeof (value) != `string` && !Buffer.isBuffer(value)) return logger.error(`\n\nREDIS VALUE HAS WRONG TYPE; VALUE NOT SET\n\n`)
+		// Note: setCache is synchronous by design in original code, so we can't await here
+		// But we should ensure Redis is ready first
+		if (!this.redis || !this.redis.isReady) {
+			logger.error(`Redis not ready in setCache for key: ${key}`)
+			return null
+		}
 		return this.redis.set(key, value, options)
 	}
 
@@ -200,6 +234,12 @@ class DatabaseUtils {
 	 */
 	delCache(key = ``) {
 		logger.database(`[Redis.delCache] cleared cache in key '${key}'.`)
+		// Note: delCache is synchronous by design in original code, so we can't await here
+		// But we should ensure Redis is ready first
+		if (!this.redis || !this.redis.isReady) {
+			logger.error(`Redis not ready in delCache for key: ${key}`)
+			return false
+		}
 		return this.redis.del(key)
 	}
 
@@ -222,6 +262,8 @@ class DatabaseUtils {
 		const fn = this.formatFunctionLog(`validateUserEntry`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!userName) throw new TypeError(`${fn} parameter "userName" cannot be blank.`)
+		//  Ensure Redis is ready before using it
+		await this._ensureRedisReady()
 		//  Check on cache
 		const key = `VALIDATED_USERID`
 		const onCache = await this.redis.sIsMember(key, userId)
@@ -236,6 +278,7 @@ class DatabaseUtils {
 			, `${fn} Validating user ${userName}(${userId})`
 		)
 		if (res.changes) logger.database(`USER_ID:${userId} registered`)
+		await this._ensureRedisReady()
 		this.redis.sAdd(key, userId)
 	}
 
