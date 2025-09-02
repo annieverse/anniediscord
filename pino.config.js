@@ -3,6 +3,30 @@ const fs = require(`fs`)
 const path = require(`path`)
 
 /**
+ * Logger v2 structure.
+ * You can still use the legacy-way of logging by passing the string immediately as the first parameter
+ * Which is what half of our logs in the codebase are still using this and stays untouched unless we needed
+ * more context thru new structure.
+ * @example logger.info(`User <@123> just got 10 exp.`)  <-- legacy, but still works.
+ * @example logger.info({ action: `user_receive_exp`, userId, exp })  <-- v2 structure
+ * @example logger.info({ action: `user_receive_exp`, msg: `someone just got exp`, userId, exp })  <-- v2 with additional msg context
+ *
+ * A few new properties that are recommended to be included in the new v2 logger:
+ * @property action {string} Can be used as a way to shortly describe what process being ran in the style of REST API
+ * @property requestId {string} The unique identifier for the process being logged. Standardize to use v7 UUID.
+ * @property durationMs {string} The duration of the process being logged in milliseconds. Mostly for benchmarking; low priority.
+ *
+ * Q: How do to enable streaming the logs to file?
+ * A: Use STREAM_LOG_TO_FILE=1 (1 to enable, blank/0 for disable) in environment variable.
+ *
+ * Q: How do I add custom fields to my logs?
+ * A: You can add custom fields by including them in the log object, e.g. logger.info({ userId, action: 'user_login' })
+ *
+ * Q: How do I change the log level?
+ * A: You can change the log level by setting the LOG_LEVEL environment variable, e.g. LOG_LEVEL=debug
+ */
+
+/**
  * Build file destination (optional)
  * @returns {import('stream').Writable|undefined}
  */
