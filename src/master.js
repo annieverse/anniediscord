@@ -1,27 +1,20 @@
-const shardName = require(`./config/shardName.json`)
+const getCustomShardId = require(`./utils/shardIdParser`)
 const express = require(`express`)
-const { masterLogger: logger } = require(`../pino.config.js`)
+const createLogger = require(`../pino.config.js`)
 const fs = require(`fs`)
-/**
- *  Parse shard name for given shard id.
- *  @param {number} id
- *  @return {string}
- */
-const getCustomShardId = (id) => {
-	return `[SHARD_ID:${id}/${shardName[id]}]`
-}
-
 module.exports = function masterShard() {
-	// Intentionally log a error when bot starts up.
-	logger.error(`\n[MASTER_SHARD] > The bot was started/restarted on ${new Date()}.\nThis is expected, and not an error.\n`)
-
-	process.on(`unhandledRejection`, (reason, promise) => {
-		logger.warn(`\nUnhandled Rejection at:`, promise, `reason:`, reason)
-		logger.error(promise, reason)
+	const logger = createLogger.child({ shard: `MASTER_SHARD` })
+	process.on(`unhandledRejection`, (reason) => {
+		logger.error({ 
+			action: `UNHANDLED_REJECTION`,
+			msg: reason
+		})
 	})
 	process.on(`uncaughtException`, err => {
-		logger.warn(`\nUnhandled Exception: `, err)
-		logger.error(err)
+		logger.error({ 
+			action: `UNCAUGHT_EXCEPTION`,
+			msg: err
+		})
 	})
 	function makeDirs() {
 		if (!fs.existsSync(`./src/assets/customShop`)) fs.mkdirSync(`./src/assets/customShop`,)
@@ -31,7 +24,7 @@ module.exports = function masterShard() {
 		if (!fs.existsSync(`./src/assets/selfupload`)) fs.mkdirSync(`./src/assets/selfupload`)
 		if (fs.existsSync(`./src/assets/selfupload`)) logger.info(`Directory './src/assets/selfupload' exists`)
 		if (!fs.existsSync(`./.logs`)) fs.mkdirSync(`./.logs`)
-		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs`)
+		if (fs.existsSync(`./.logs`)) logger.info(`Directory './.logs'`)
 	}
 	if (fs.existsSync(`./src/assets`)) {
 		makeDirs()
@@ -49,35 +42,33 @@ module.exports = function masterShard() {
 
 	const server = express()
 	manager.on(`shardCreate`, shard => {
-		const id = getCustomShardId(shard.id)
+		const shardLogger = createLogger.child({ shard: shard.id })
 		shard.on(ShardEvents.Death, (p) => {
-			logger.error(`${id} <DIED>`)
-			logger.error(p)
+			shardLogger.error({ action: `shard_died`, msg: p })
 		})
 		shard.on(ShardEvents.Disconnect, () => {
-			logger.warn(`${id} <DISCONNECTED>`)
+			shardLogger.warn({ action: `shard_disconnected` })
 			// Log WebSocket disconnection for debugging
 			if (shard.worker && shard.worker.killed) {
-				logger.warn(`${id} Worker process was killed, likely due to connection issues`)
+				shardLogger.warn({ action: `shard_worker_killed` })
 			}
 		})
 		shard.on(`error`, (error) => {
-			logger.error(`${id} <ERROR>: ${error.message}`)
+			shardLogger.error({ action: `shard_error`, msg: error })
 			// Specifically handle WebSocket handshake timeouts
 			if (error.message && error.message.includes(`handshake has timed out`)) {
-				logger.warn(`${id} WebSocket handshake timeout detected. This may resolve with retry logic.`)
+				shardLogger.warn({ action: `shard_handshake_timeout` })
 			}
 		})
-		shard.on(ShardEvents.Message, (message) => logger.info(`<Shard Message> ${JSON.stringify(message, null, 2)}`))
-		shard.on(ShardEvents.Ready, () => logger.info(`${id} <READY>`))
+		shard.on(ShardEvents.Message, (message) => shardLogger.info({ action: `shard_message`, msg: message }))
+		shard.on(ShardEvents.Ready, () => shardLogger.info({ action: `shard_ready` }))
 		shard.on(ShardEvents.Reconnecting, () => {
-			logger.warn(`${id} <RECONNECTING>`)
+			shardLogger.warn({ action: `shard_reconnecting` })
 			// Log reconnection attempts for WebSocket issues
-			logger.info(`${id} Attempting to reconnect to Discord gateway`)
+			shardLogger.info({ action: `shard_reconnecting_attempt`, msg: `Attempting to reconnect to Discord gateway` })
 		})
-		shard.on(ShardEvents.Resume, () => logger.info(`${id} <RESUMED>`))
-		shard.on(ShardEvents.Spawn, () => logger.info(`${id} <SPAWNED>`))
-
+		shard.on(ShardEvents.Resume, () => shardLogger.info({ action: `shard_resumed` }))
+		shard.on(ShardEvents.Spawn, () => shardLogger.info({ action: `shard_spawned` }))
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
@@ -94,9 +85,9 @@ module.exports = function masterShard() {
 					serverCount: serverCount,
 					shardCount: shardCount
 				})
-			}, { context: { serverCount: serverCount, shardCount: shardCount } })
+			}, { msg: { serverCount: serverCount, shardCount: shardCount } })
 		} catch (error) {
-			logger.error(`[master.js] > ${error}`)
+			logger.error({ action: `sequential_shards_spawn_error`, msg: error })
 		}
 	})
 
@@ -104,8 +95,10 @@ module.exports = function masterShard() {
 	const { Webhook } = require(`@top-gg/sdk`)
 	const wh = new Webhook(process.env.DBLWEBHOOK_AUTH)
 	server.post(`/dblwebhook`, wh.listener(async vote => {
-		logger.info(`[VOTE_ENDPOINT_BEGIN]: new vote ${JSON.stringify(vote)}`)
+		const { v7: uuidv7 } = require(`uuid`)
 		const userId = vote.user
+		const voteLogger = logger.child({ requestId: uuidv7(), userId })
+		voteLogger.info({ action: `topgg_vote_endpoint_new` })
 		// 1. Attempt to fire webhook for dev notification
 		const { WebhookClient } = require(`discord.js`)
 		const voteWebhook = process.env.VOTE_WEBHOOK_URL ? new WebhookClient({ url: process.env.VOTE_WEBHOOK_URL }) : null
@@ -115,11 +108,11 @@ module.exports = function masterShard() {
 					content: `Received vote from ${userId} with RAW:${JSON.stringify(vote)}`
 				})
 			} catch (error) {
-				logger.error(`[VOTE_ENDPOINT_WEBHOOK_NOTIFICATION]: failed to send vote notification webhook > ${error.message}`)
+				voteLogger.error({ action: `topgg_vote_endpoint_webhook_notification_failed`, msg: error })
 			}
 		}
 		else {
-			logger.warn(`[VOTE_ENDPOINT_WEBHOOK_NOTIFICATION]: webhook client unavailable > TargetURL:${process.env.VOTE_WEBHOOK_URL}`)
+			voteLogger.warn({ action: `topgg_vote_endpoint_webhook_unavailable`, targetUrl: process.env.VOTE_WEBHOOK_URL })
 		}
 
 		// 2. Distribute reward and notify user on a single, available shard.
@@ -154,8 +147,8 @@ module.exports = function masterShard() {
 				// This ensures the database update and DM sending happen only once
 				const currentShardId = client.shard.ids[0]
 				if (currentShardId !== 0) return null // Skip if not the target shard
-				client.logger.info(`[VOTE_ENDPOINT_BROADCAST_EVAL]: performing on SHARD_ID:${currentShardId} for USER_ID:${userId}`)
-
+				const voteRewardLogger = voteLogger.child({ shard: getCustomShardId(currentShardId) })
+				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward` })
 				// 3. Distribute reward
 				client.db.databaseUtils.updateInventory({
 					itemId: 52,
@@ -163,26 +156,26 @@ module.exports = function masterShard() {
 					value: 5000,
 					distributeMultiAccounts: true
 				})
-					.then(() => client.logger.info(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: successfully sent to USER_ID:${userId}`))
-					.catch((error) => client.logger.warn(`[VOTE_ENDPOINT_DISTRIBUTE_REWARD]: failed to distribute reward to USER_ID:${userId} > ${error.message}`))
+					.then(() => voteRewardLogger.info({ action: `topgg_vote_endpoint_distribute_reward_success` }))
+					.catch((error) => voteRewardLogger.warn({ action: `topgg_vote_endpoint_distribute_reward_failed`, msg: error }))
 
 				// 4. Attempt to notify the voter (user)
 				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
 				const user = await client.users.fetch(userId) // Fetches user from Discord API. Regardless of the shard, this still works.
 				try {
-					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent ${artcoinsEmoji}**5,000** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
-					client.logger.info(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] successfully sent to USER_ID:${userId}`)
+					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent <${artcoinsEmoji}>**5,000** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
+					voteRewardLogger.info({ action: `topgg_vote_endpoint_reward_notification_success` })
 				} catch (e) {
-					client.logger.warn(`[VOTE_ENDPOINT_REWARD_NOTIFICATION] failed to notify USER_ID:${userId} > ${e.message}`)
+					voteRewardLogger.warn({ action: `topgg_vote_endpoint_reward_notification_failed`, msg: e })
 				}
 				return { success: true, userId: userId } // Indicate successful processing
-			}, { context: { userId } })
-			if (!results.some(r => r && r.success)) return logger.warn(`[VOTE_ENDPOINT_END] failed to finalize the vote reward distribution due to no success indicator.`)
+			}, { msg: { userId } })
+			if (!results.some(r => r && r.success)) return voteLogger.warn({ action: `topgg_vote_endpoint_end`, msg:`no success indicator` })
 		}
 		catch (error) {
-			logger.error(`[VOTE_ENDPOINT_ERROR]: encountered error during vote reward processing for USER_ID:${userId} > ${error.message}`)
+			voteLogger.error({ action: `topgg_vote_endpoint_error`, msg: error })
 		}
 	}))
 	const port = process.env.PORT || 3000
-	server.listen(port, () => logger.info(`<LISTEN> PORT:${port}`))
+	server.listen(port, () => logger.info({ action: `LISTENING_TO_PORT`, port }))
 }
