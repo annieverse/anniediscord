@@ -4,9 +4,9 @@ types.setTypeParser(20, function (val) {
 	return parseInt(val, 10)
 })
 const Redis = require(`redis`)
-const { databaseLogger: logger } = require(`../../pino.config.js`)
+const createLogger = require(`../../pino.config.js`)
+const logger = createLogger.child({ module: `database` })
 const getBenchmark = require(`../utils/getBenchmark`)
-const { pipeline } = require(`node:stream/promises`)
 
 /**
  * Centralized Class for handling various database tasks 
