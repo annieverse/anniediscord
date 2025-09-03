@@ -94,13 +94,13 @@ module.exports = function masterShard() {
 	// Top.gg webhook listener for vote reward system
 	const { Webhook } = require(`@top-gg/sdk`)
 	// Use real webhook in production, mock in development
-	const wh = process.env.NODE_ENV === 'development'
+	const wh = process.env.NODE_ENV === `development`
 		? {
 			listener: (callback) => async (req, res) => {
 			// In dev mode, either use the request body or generate mock vote data
 			const mockVoteData = { user: `230034968515051520`, vote: true }
 			await callback(req.body || mockVoteData)
-			res.status(200).send('dummy response')
+			res.status(200).send(`dummy response`)
 			}
 		}
 		: new Webhook(process.env.DBLWEBHOOK_AUTH)
