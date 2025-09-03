@@ -81,13 +81,10 @@ module.exports = function masterShard() {
 			m.broadcastEval((c, { serverCount, shardCount }) => {
 				if (!c.isReady()) return
 				if (c.dev) return
-				c.dblApi.postStats({
-					serverCount: serverCount,
-					shardCount: shardCount
-				})
-			}, { msg: { serverCount: serverCount, shardCount: shardCount } })
+				c.dblApi.postStats({ serverCount, shardCount })
+			}, { context: { serverCount, shardCount } })
 		} catch (error) {
-			logger.error({ action: `sequential_shards_spawn_error`, msg: error })
+			logger.error({ action: `sequential_shards_spawn_error`, msg: error.message })
 		}
 	})
 
