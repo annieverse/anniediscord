@@ -1,3 +1,11 @@
+## [10.1.17](https://github.com/annieverse/anniediscord/compare/v10.1.16...v10.1.17) (2025-09-03)
+
+
+### Bug Fixes
+
+* **master:** server counts. ([1fbb236](https://github.com/annieverse/anniediscord/commit/1fbb236a11587701bda635aed150253f039c6297))
+* **vote:** properties access. ([2807f83](https://github.com/annieverse/anniediscord/commit/2807f836c054f85881b4de80a4d39814b9837f42))
+
 ## [10.1.16](https://github.com/annieverse/anniediscord/compare/v10.1.15...v10.1.16) (2025-09-02)
 
 
