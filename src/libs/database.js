@@ -288,6 +288,7 @@ class DatabaseUtils {
 	 * @returns {boolean}
 	 */
 	async updateInventory({ itemId, value = 0, operation = `+`, distributeMultiAccounts = false, userId, guildId }) {
+		const startTime = process.hrtime()
 		const fn = this.formatFunctionLog(`updateInventory`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
 		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
@@ -357,8 +358,15 @@ class DatabaseUtils {
 				)
 			}
 		}
-
-		logger.debug(`${fn} (${distributeMultiAccounts ? `distributeMultiAccounts` : ``})(${operation}) (ITEM_ID:${itemId})(QTY:${value}) | USER_ID ${userId}`)
+		logger.debug({
+			action: `update_user_inventory`,
+			userId: userId,
+			durationMs: getBenchmark(startTime),
+			distributeMultiAccounts: distributeMultiAccounts,
+			operation: operation,
+			itemId: itemId,
+			value: value,
+		})
 		return true
 	}
 
