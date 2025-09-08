@@ -57,7 +57,7 @@
     "redis": "^5.8.1",
     "string-similarity": "^4.0.2",
     "superagent": "^10.2.3",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
