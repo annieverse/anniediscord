@@ -127,20 +127,19 @@ module.exports = function masterShard() {
 		// 2. Check if it's weekend to apply bonus multiplier
 		let weekendMultiplier = 1
 		try {
-			// Get weekend status from one of the shards (shard 0) to avoid multiple API calls
-			const isWeekendResult = await manager.broadcastEval(async (client) => {
+			// Get weekend status from shard 0
+			const isWeekend = await manager.broadcastEval(async (client) => {
 				const currentShardId = client.shard.ids[0]
 				if (currentShardId !== 0) return null // Only check on shard 0
-				if (!client.dblApi) return null // Skip if dblApi not available
+				if (!client.dblApi) return false // Default to false if dblApi not available
 				try {
 					return await client.dblApi.isWeekend()
 				} catch (error) {
 					client.logger.warn({ action: `topgg_vote_endpoint_weekend_check_failed`, msg: error.message })
 					return false // Default to false if weekend check fails
 				}
-			})
+			}, { shard: 0 })
 			
-			const isWeekend = isWeekendResult.find(result => result !== null) || false
 			if (isWeekend) {
 				weekendMultiplier = parseInt(process.env.VOTE_WEEKEND_MULTIPLIER) || 3
 				voteLogger.info({ action: `topgg_vote_endpoint_weekend_bonus_applied`, multiplier: weekendMultiplier })
