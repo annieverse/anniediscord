@@ -124,7 +124,37 @@ module.exports = function masterShard() {
 			voteLogger.warn({ action: `topgg_vote_endpoint_webhook_unavailable`, targetUrl: process.env.VOTE_WEBHOOK_URL })
 		}
 
-		// 2. Distribute reward and notify user on a single, available shard.
+		// 2. Check if it's weekend to apply bonus multiplier
+		let weekendMultiplier = 1
+		try {
+			// Get weekend status from one of the shards (shard 0) to avoid multiple API calls
+			const isWeekendResult = await manager.broadcastEval(async (client) => {
+				const currentShardId = client.shard.ids[0]
+				if (currentShardId !== 0) return null // Only check on shard 0
+				if (!client.dblApi) return null // Skip if dblApi not available
+				try {
+					return await client.dblApi.isWeekend()
+				} catch (error) {
+					client.logger.warn({ action: `topgg_vote_endpoint_weekend_check_failed`, msg: error.message })
+					return false // Default to false if weekend check fails
+				}
+			})
+			
+			const isWeekend = isWeekendResult.find(result => result !== null) || false
+			if (isWeekend) {
+				weekendMultiplier = parseInt(process.env.VOTE_WEEKEND_MULTIPLIER) || 3
+				voteLogger.info({ action: `topgg_vote_endpoint_weekend_bonus_applied`, multiplier: weekendMultiplier })
+			}
+		} catch (error) {
+			voteLogger.warn({ action: `topgg_vote_endpoint_weekend_check_error`, msg: error.message })
+			// Continue with default multiplier if weekend check fails
+		}
+
+		// 3. Calculate final reward amount
+		const baseReward = 5000
+		const finalReward = baseReward * weekendMultiplier
+
+		// 4. Distribute reward and notify user on a single, available shard.
 		// We don't need to find a specific "reachable" shard for the user.
 		// Any shard can perform the database update and send a DM.
 		// For simplicity and efficiency, let's pick the first available shard (shard 0 usually, but any shard can do).
@@ -151,34 +181,34 @@ module.exports = function masterShard() {
 			// or you *must* broadcast. Let's stick with broadcastEval as per your previous structure.
 			// Instead of lookupReachableShard, we will run this on a specific shard.
 			// For simplicity, let's just pick shard 0 to execute the logic:
-			const results = await manager.broadcastEval(async (client, { userId, requestId }) => {
+			const results = await manager.broadcastEval(async (client, { userId, requestId, finalReward }) => {
 				// Check if this is the designated shard to perform the actions
 				// This ensures the database update and DM sending happen only once
 				const currentShardId = client.shard.ids[0]
 				if (currentShardId !== 0) return null // Skip if not the target shard
 				const voteRewardLogger = client.logger.child({ requestId })
-				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward` })
-				// 3. Distribute reward
+				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward`, reward: finalReward })
+				// 5. Distribute reward
 				client.db.databaseUtils.updateInventory({
 					itemId: 52,
 					userId: userId,
-					value: 5000,
+					value: finalReward,
 					distributeMultiAccounts: true
 				})
 					.then(() => voteRewardLogger.info({ action: `topgg_vote_endpoint_distribute_reward_success` }))
 					.catch((error) => voteRewardLogger.warn({ action: `topgg_vote_endpoint_distribute_reward_failed`, msg: error.message }))
 
-				// 4. Attempt to notify the voter (user)
+				// 6. Attempt to notify the voter (user)
 				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
 				const user = await client.users.fetch(userId) // Fetches user from Discord API. Regardless of the shard, this still works.
 				try {
-					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent <${artcoinsEmoji}>**5,000** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
+					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent <${artcoinsEmoji}>**${finalReward.toLocaleString()}** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
 					voteRewardLogger.info({ action: `topgg_vote_endpoint_reward_notification_success` })
 				} catch (e) {
 					voteRewardLogger.warn({ action: `topgg_vote_endpoint_reward_notification_failed`, msg: e.message })
 				}
 				return { success: true, userId: userId } // Indicate successful processing
-			}, { context: { userId, requestId } })
+			}, { context: { userId, requestId, finalReward } })
 			if (!results.some(r => r && r.success)) return voteLogger.warn({ action: `topgg_vote_endpoint_end`, msg:`no success indicator` })
 		}
 		catch (error) {
