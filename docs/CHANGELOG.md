@@ -1,3 +1,11 @@
+# [10.2.0](https://github.com/annieverse/anniediscord/compare/v10.1.17...v10.2.0) (2025-09-16)
+
+
+### Features
+
+* **vote:** implement weekend bonus multiplier system ([84f139e](https://github.com/annieverse/anniediscord/commit/84f139e3991cc4f71eb860ae77dc08747d110c0b))
+* **vote:** plan weekend bonus multiplier implementation ([588b34a](https://github.com/annieverse/anniediscord/commit/588b34a7d0ce7b691d9ab90840bcef0b0c3df828))
+
 ## [10.1.17](https://github.com/annieverse/anniediscord/compare/v10.1.16...v10.1.17) (2025-09-03)
 
 
