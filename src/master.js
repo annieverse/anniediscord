@@ -123,36 +123,7 @@ module.exports = function masterShard() {
 		else {
 			voteLogger.warn({ action: `topgg_vote_endpoint_webhook_unavailable`, targetUrl: process.env.VOTE_WEBHOOK_URL })
 		}
-
-		// 2. Check if it's weekend to apply bonus multiplier
-		let weekendMultiplier = 1
-		try {
-			// Get weekend status from shard 0
-			const isWeekend = await manager.broadcastEval(async (client) => {
-				const currentShardId = client.shard.ids[0]
-				if (currentShardId !== 0) return null // Only check on shard 0
-				if (!client.dblApi) return false // Default to false if dblApi not available
-				try {
-					return await client.dblApi.isWeekend()
-				} catch (error) {
-					client.logger.warn({ action: `topgg_vote_endpoint_weekend_check_failed`, msg: error.message })
-					return false // Default to false if weekend check fails
-				}
-			}, { shard: 0 })
-			
-			if (isWeekend) {
-				weekendMultiplier = parseInt(process.env.VOTE_WEEKEND_MULTIPLIER) || 3
-				voteLogger.info({ action: `topgg_vote_endpoint_weekend_bonus_applied`, multiplier: weekendMultiplier })
-			}
-		} catch (error) {
-			voteLogger.warn({ action: `topgg_vote_endpoint_weekend_check_error`, msg: error.message })
-			// Continue with default multiplier if weekend check fails
-		}
-
-		// 3. Calculate final reward amount
-		const baseReward = 5000
-		const finalReward = baseReward * weekendMultiplier
-
+		const reward = 5000 * (vote.isWeekend ? 3 : 1)
 		// 4. Distribute reward and notify user on a single, available shard.
 		// We don't need to find a specific "reachable" shard for the user.
 		// Any shard can perform the database update and send a DM.
@@ -180,18 +151,18 @@ module.exports = function masterShard() {
 			// or you *must* broadcast. Let's stick with broadcastEval as per your previous structure.
 			// Instead of lookupReachableShard, we will run this on a specific shard.
 			// For simplicity, let's just pick shard 0 to execute the logic:
-			const results = await manager.broadcastEval(async (client, { userId, requestId, finalReward }) => {
+			const results = await manager.broadcastEval(async (client, { userId, requestId, reward }) => {
 				// Check if this is the designated shard to perform the actions
 				// This ensures the database update and DM sending happen only once
 				const currentShardId = client.shard.ids[0]
 				if (currentShardId !== 0) return null // Skip if not the target shard
 				const voteRewardLogger = client.logger.child({ requestId })
-				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward`, reward: finalReward })
+				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward`, reward: reward })
 				// 5. Distribute reward
 				client.db.databaseUtils.updateInventory({
 					itemId: 52,
 					userId: userId,
-					value: finalReward,
+					value: reward,
 					distributeMultiAccounts: true
 				})
 					.then(() => voteRewardLogger.info({ action: `topgg_vote_endpoint_distribute_reward_success` }))
@@ -201,13 +172,13 @@ module.exports = function masterShard() {
 				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
 				const user = await client.users.fetch(userId) // Fetches user from Discord API. Regardless of the shard, this still works.
 				try {
-					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent <${artcoinsEmoji}>**${finalReward.toLocaleString()}** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
+					await user.send(`**⋆. thankyouu for the voting, ${user.username}!** i've sent <${artcoinsEmoji}>**${reward.toLocaleString()}** to your inventory as the reward!\nif you wish to support the development further, feel free to drop by in my support server!\nhttps://discord.gg/HjPHCyG346`)
 					voteRewardLogger.info({ action: `topgg_vote_endpoint_reward_notification_success` })
 				} catch (e) {
 					voteRewardLogger.warn({ action: `topgg_vote_endpoint_reward_notification_failed`, msg: e.message })
 				}
 				return { success: true, userId: userId } // Indicate successful processing
-			}, { context: { userId, requestId, finalReward } })
+			}, { context: { userId, requestId, reward } })
 			if (!results.some(r => r && r.success)) return voteLogger.warn({ action: `topgg_vote_endpoint_end`, msg:`no success indicator` })
 		}
 		catch (error) {
