@@ -42,7 +42,7 @@
     "color": "^4.1.0",
     "contrast-color": "^1.0.1",
     "cron-job-manager": "^2.1.4",
-    "cross-env": "^10.0.0",
+    "cross-env": "^10.1.0",
     "discord.js": "^14.22.1",
     "eslint": "^9.34.0",
     "express": "^5.1.0",
