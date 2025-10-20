@@ -67,7 +67,7 @@
     "mocha": "^11.7.1",
     "nodemon": "^3.1.7",
     "pino-pretty": "^13.1.1",
-    "semantic-release": "^24.2.7",
+    "semantic-release": "^25.0.1",
     "sinon": "^21.0.0"
   }
 }
