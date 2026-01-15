@@ -219,7 +219,7 @@ class itemEffects {
         //  If there are multiple buffs that has same ref_id, multiplier and item name
         //  The oldest instance/entry will be updated with the newest duration.
         let isMultiInstance = false
-        const userDurationalBuffs = await this.client.db.durationalBuffs.getSavedUserDurationalBuffs(this.message.member.id)
+        const userDurationalBuffs = await this.client.db.durationalBuffs.getSavedUserDurationalBuffs(this.message.member.id, this.message.guild.id)
         if (userDurationalBuffs.filter(b => (b.name.toLowerCase() === name.toLowerCase())
             && (b.multiplier === multiplier)
             && (b.type === buffType)).length > 0) isMultiInstance = true

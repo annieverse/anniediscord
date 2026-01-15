@@ -123,4 +123,114 @@ describe('Database Redis Connection', () => {
             expect(delResult).to.be.false
         })
     })
+
+    describe('Durational Buffs', () => {
+        it('should filter buffs by guild when guildId is provided', async () => {
+            const mockQuery = sinon.stub()
+            const userId = '123456789'
+            const guildId = '987654321'
+            
+            mockQuery.resolves([
+                { buff_id: 1, user_id: userId, guild_id: guildId, name: 'Test Buff', type: 'ARTCOINS', multiplier: 2 }
+            ])
+
+            const durationalBuffs = {
+                fnClass: 'DurationalBuffs',
+                _query: mockQuery,
+                formatFunctionLog: (fn) => `[DurationalBuffs.${fn}]`,
+                
+                getSavedUserDurationalBuffs(userId, guildId = null) {
+                    const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
+                    if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+                    
+                    if (guildId) {
+                        return this._query(`
+                            SELECT *
+                            FROM user_durational_buffs
+                            WHERE user_id = $userId AND guild_id = $guildId`
+                            , `all`
+                            , { userId: userId, guildId: guildId }
+                            , `${fn} fetch durational buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
+                        )
+                    }
+                    
+                    return this._query(`
+                        SELECT *
+                        FROM user_durational_buffs
+                        WHERE user_id = $userId`
+                        , `all`
+                        , { userId: userId }
+                        , `${fn} fetch durational buffs for USER_ID:${userId}`
+                    )
+                }
+            }
+
+            const result = await durationalBuffs.getSavedUserDurationalBuffs(userId, guildId)
+            
+            expect(result).to.have.lengthOf(1)
+            expect(mockQuery.calledOnce).to.be.true
+            expect(mockQuery.firstCall.args[2]).to.deep.equal({ userId, guildId })
+        })
+
+        it('should fetch all user buffs when guildId is not provided', async () => {
+            const mockQuery = sinon.stub()
+            const userId = '123456789'
+            
+            mockQuery.resolves([
+                { buff_id: 1, user_id: userId, guild_id: '111', name: 'Buff 1', type: 'ARTCOINS', multiplier: 2 },
+                { buff_id: 2, user_id: userId, guild_id: '222', name: 'Buff 2', type: 'EXP', multiplier: 1.5 }
+            ])
+
+            const durationalBuffs = {
+                fnClass: 'DurationalBuffs',
+                _query: mockQuery,
+                formatFunctionLog: (fn) => `[DurationalBuffs.${fn}]`,
+                
+                getSavedUserDurationalBuffs(userId, guildId = null) {
+                    const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
+                    if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+                    
+                    if (guildId) {
+                        return this._query(`
+                            SELECT *
+                            FROM user_durational_buffs
+                            WHERE user_id = $userId AND guild_id = $guildId`
+                            , `all`
+                            , { userId: userId, guildId: guildId }
+                            , `${fn} fetch durational buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
+                        )
+                    }
+                    
+                    return this._query(`
+                        SELECT *
+                        FROM user_durational_buffs
+                        WHERE user_id = $userId`
+                        , `all`
+                        , { userId: userId }
+                        , `${fn} fetch durational buffs for USER_ID:${userId}`
+                    )
+                }
+            }
+
+            const result = await durationalBuffs.getSavedUserDurationalBuffs(userId)
+            
+            expect(result).to.have.lengthOf(2)
+            expect(mockQuery.calledOnce).to.be.true
+            expect(mockQuery.firstCall.args[2]).to.deep.equal({ userId })
+        })
+
+        it('should throw error when userId is not provided', () => {
+            const durationalBuffs = {
+                fnClass: 'DurationalBuffs',
+                formatFunctionLog: (fn) => `[DurationalBuffs.${fn}]`,
+                
+                getSavedUserDurationalBuffs(userId, guildId = null) {
+                    const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
+                    if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+                }
+            }
+
+            expect(() => durationalBuffs.getSavedUserDurationalBuffs()).to.throw(TypeError)
+        })
+    })
 })
