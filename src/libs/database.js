@@ -1811,7 +1811,7 @@ class DurationalBuffs extends DatabaseUtils {
 				WHERE user_id = $userId AND guild_id = $guildId`
 				, `all`
 				, { userId: userId, guildId: guildId }
-				, `${fn} fetch durantional buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
+				, `${fn} fetch durational buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
 			)
 		}
 		
@@ -1821,7 +1821,7 @@ class DurationalBuffs extends DatabaseUtils {
             WHERE user_id = $userId`
 			, `all`
 			, { userId: userId }
-			, `${fn} fetch durantional buffs for USER_ID:${userId}`
+			, `${fn} fetch durational buffs for USER_ID:${userId}`
 		)
 	}
 
