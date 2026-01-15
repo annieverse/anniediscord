@@ -1,3 +1,11 @@
+## [10.2.2](https://github.com/annieverse/anniediscord/compare/v10.2.1...v10.2.2) (2026-01-15)
+
+
+### Bug Fixes
+
+* **loadAppCmds:** update logger path. ([601539b](https://github.com/annieverse/anniediscord/commit/601539bf1fe23c27bbc5142acf4da6f5ff41216b))
+* **setShop:** text-based crashing during buff registration. ([0984913](https://github.com/annieverse/anniediscord/commit/0984913cffd23afe23838d43d85406fe72c4467c))
+
 ## [10.2.1](https://github.com/annieverse/anniediscord/compare/v10.2.0...v10.2.1) (2026-01-15)
 
 
