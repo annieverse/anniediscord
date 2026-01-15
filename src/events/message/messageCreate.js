@@ -52,7 +52,7 @@ module.exports = (client, message) => {
             const chatCurrencyBase = message.guild.configs.get(`CHAT_CURRENCY`).value
             client.db.redis.sMembers(`ARTCOINS_BUFF:${message.guild.id}@${message.author.id}`)
                 .then(list => {
-                    const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
+                    const accumulatedCurrencyMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c), 0) : 1
                     client.db.databaseUtils.updateInventory({
                         itemId: 52,
                         value: getNumberInRange(chatCurrencyBase) * accumulatedCurrencyMultiplier,
@@ -76,7 +76,7 @@ module.exports = (client, message) => {
                         if (!message.guild || !message.guild.id) return
                     } catch (error) { client.logger.error(`Error fetching member data for EXP calculation: ${error.message}`) }
 
-                    const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c)) : 1
+                    const accumulatedExpMultiplier = list.length > 0 ? 1 + list.reduce((p, c) => p + parseFloat(c), 0) : 1
                     try {
                         client.experienceLibs(message.member, message.guild, message.channel, locale)
                             .execute(getNumberInRange(chatExpBase) * accumulatedExpMultiplier)
