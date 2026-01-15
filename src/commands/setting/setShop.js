@@ -99,7 +99,7 @@ module.exports = {
             description: `Add an item`,
             required: true,
             type: ApplicationCommandOptionType.String,
-            max_length: 20
+            max_length: 30
         }, {
             name: `item_price`,
             description: `Add an item`,
@@ -132,7 +132,7 @@ module.exports = {
             description: `Edit an item`,
             required: true,
             type: ApplicationCommandOptionType.String,
-            max_length: 20
+            max_length: 30
         }]
     }],
     type: ApplicationCommandType.ChatInput,
@@ -581,8 +581,8 @@ module.exports = {
         if (args[1]) {
             const secondArg = args.slice(1).join(` `)
             phaseJump = true
-            const nameLimit = 20
-            if (secondArg.length >= nameLimit) {
+            const nameLimit = 30
+            if (secondArg.length > nameLimit) {
                 client.db.databaseUtils.delCache(sessionId)
                 return await reply.send(locale(`SETSHOP.ADD_NAME_OVERLIMIT`), {
                     socket: {
@@ -642,8 +642,8 @@ module.exports = {
             switch (phase) {
                 //  Name
                 case 0:
-                    const nameLimit = 20
-                    if (input.length >= nameLimit) return await reply.send(locale(`SETSHOP.ADD_NAME_OVERLIMIT`), {
+                    const nameLimit = 30
+                    if (input.length > nameLimit) return await reply.send(locale(`SETSHOP.ADD_NAME_OVERLIMIT`), {
                         deleteIn: 5,
                         socket: {
                             limit: nameLimit
@@ -1135,7 +1135,7 @@ module.exports = {
                         .setStyle(TextInputStyle.Short)
                         .setRequired(true)
                         .setMinLength(1)
-                        .setMaxLength(20)
+                        .setMaxLength(30)
                     const nameActionRow = new ActionRowBuilder().addComponents(nameAnswerInput)
                     modalEdit.addComponents(nameActionRow)
                     name(modalEdit, i)
@@ -1217,8 +1217,8 @@ module.exports = {
             const rawAnswer = await getModalResponse(modal, interaction)
             if (!rawAnswer) return
             const params = rawAnswer.fields.getTextInputValue(`answerInput`)
-            const nameLimit = 20
-            if (params.length >= nameLimit) return await reply.send(locale(`SETSHOP.ADD_NAME_OVERLIMIT`), {
+            const nameLimit = 30
+            if (params.length > nameLimit) return await reply.send(locale(`SETSHOP.ADD_NAME_OVERLIMIT`), {
                 deleteIn: 5,
                 socket: {
                     limit: nameLimit
