@@ -1,3 +1,10 @@
+## [10.2.1](https://github.com/annieverse/anniediscord/compare/v10.2.0...v10.2.1) (2026-01-15)
+
+
+### Bug Fixes
+
+* **setShop:** raise upper limit for item name registration. ([8aa5d78](https://github.com/annieverse/anniediscord/commit/8aa5d78f0a074cb071b5b102b2f63035c855c0f8))
+
 # [10.2.0](https://github.com/annieverse/anniediscord/compare/v10.1.17...v10.2.0) (2025-09-16)
 
 
