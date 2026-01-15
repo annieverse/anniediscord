@@ -1,3 +1,10 @@
+## [10.2.3](https://github.com/annieverse/anniediscord/compare/v10.2.2...v10.2.3) (2026-01-15)
+
+
+### Bug Fixes
+
+* **points:** buff algorithm ([a35594e](https://github.com/annieverse/anniediscord/commit/a35594eb02b0bed66e4ddef23ce23e8923ab69c9))
+
 ## [10.2.2](https://github.com/annieverse/anniediscord/compare/v10.2.1...v10.2.2) (2026-01-15)
 
 
