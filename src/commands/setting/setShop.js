@@ -744,7 +744,7 @@ module.exports = {
                             deleteIn: 5
                         })
                         //  Role update buff
-                        const clientRole = message.guild.me.roles.highest
+                        const clientRole = message.guild.members.me.roles.highest
                         if ([`addrole`, `removerole`].includes(params[0])) {
                             let res = []
                             let roleNames = ``
