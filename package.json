@@ -34,7 +34,7 @@
   "dependencies": {
     "@discordjs/rest": "^2.6.0",
     "@top-gg/sdk": "^3.1.5",
-    "axios": "^1.11.0",
+    "axios": "^1.13.0",
     "bfd-api-redux": "^1.2.4-beta",
     "buffer-image-size": "^0.6.4",
     "canvas": "^3.2.0",
