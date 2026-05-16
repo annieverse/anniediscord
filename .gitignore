@@ -46,5 +46,8 @@ jsconfig.json
 # LLM configuration
 .cursorrules
 
+# Internal bug log
+BUGS.md
+
 #jest
 coverage/
