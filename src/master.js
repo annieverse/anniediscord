@@ -41,6 +41,7 @@ module.exports = function masterShard() {
 	})
 
 	const server = express()
+	require(`./api`)(server)
 	manager.on(`shardCreate`, shard => {
 		const shardLogger = createLogger.child({ shard: getCustomShardId(shard.id) })
 		shard.on(ShardEvents.Death, (p) => {
