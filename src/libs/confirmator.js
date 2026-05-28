@@ -65,7 +65,7 @@ module.exports = class Confirmator {
     async setup(targetUserId = this.message.author.id, targetMessage = this.message) {
         this.isCB = isInteractionCallbackResponse(targetMessage)
         this.message = this.isCB ? targetMessage.resource.message : targetMessage
-        this.setSessionId = `CONFIRMATOR:${this.message.author.id}_${this.message.guild.id}`
+        this.setSessionId = `CONFIRMATOR:${targetUserId}_${this.message.guild.id}`
         const sessionActive = await this.message.client.db.databaseUtils.doesCacheExist(this.getSessionId)
         if (sessionActive) {
             this.setPreviousSessionActive = true
