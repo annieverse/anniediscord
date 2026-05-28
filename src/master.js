@@ -160,14 +160,19 @@ module.exports = function masterShard() {
 				const voteRewardLogger = client.logger.child({ requestId })
 				voteRewardLogger.info({ action: `topgg_vote_endpoint_processing_reward`, reward: reward })
 				// 5. Distribute reward
-				client.db.databaseUtils.updateInventory({
-					itemId: 52,
-					userId: userId,
-					value: reward,
-					distributeMultiAccounts: true
-				})
-					.then(() => voteRewardLogger.info({ action: `topgg_vote_endpoint_distribute_reward_success` }))
-					.catch((error) => voteRewardLogger.warn({ action: `topgg_vote_endpoint_distribute_reward_failed`, msg: error.message }))
+				try {
+					await client.db.databaseUtils.updateInventory({
+						itemId: 52,
+						userId: userId,
+						value: reward,
+						distributeMultiAccounts: true
+					})
+					voteRewardLogger.info({ action: `topgg_vote_endpoint_distribute_reward_success` })
+				} catch (error) {
+					const msg = error && error.message ? error.message : String(error)
+					voteRewardLogger.warn({ action: `topgg_vote_endpoint_distribute_reward_failed`, msg })
+					return { success: false, userId: userId, error: msg }
+				}
 
 				// 6. Attempt to notify the voter (user)
 				const artcoinsEmoji = await client.getEmoji(`artcoins`, `577121315480272908`)
