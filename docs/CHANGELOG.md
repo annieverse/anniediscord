@@ -1,3 +1,20 @@
+# [10.3.0](https://github.com/annieverse/anniediscord/compare/v10.2.3...v10.3.0) (2026-05-28)
+
+
+### Bug Fixes
+
+* **assets:** prune stale self-upload covers on startup ([feb0195](https://github.com/annieverse/anniediscord/commit/feb0195a0fe4c4ac313989446e1c62aa09f2bfd0))
+* **commands:** gate cooldowns before async checks ([9cbf191](https://github.com/annieverse/anniediscord/commit/9cbf19191e04c634da24e0cf3517d945f7343d25))
+* **confirmator:** scope sessions by target user ([4a074d1](https://github.com/annieverse/anniediscord/commit/4a074d124b71fc42370e0ce22a91d3b308d4b65f))
+* **setcover:** validate self-upload images ([9e293a6](https://github.com/annieverse/anniediscord/commit/9e293a652c28a2cbad2dfbc84d31a4b11919af67))
+* **sharding:** enable shard respawn in production ([1ea4d67](https://github.com/annieverse/anniediscord/commit/1ea4d670382d52a53729bb7f599a07047dc367d0))
+* **vote:** await topgg reward writes ([e956275](https://github.com/annieverse/anniediscord/commit/e9562759b10b3d90bf491429ce6402953db8e0f5))
+
+
+### Features
+
+* **api:** added backend api boilerplate. ([57459f7](https://github.com/annieverse/anniediscord/commit/57459f733c8e5dbf13ed55ed4703273cf7b892a3))
+
 ## [10.2.3](https://github.com/annieverse/anniediscord/compare/v10.2.2...v10.2.3) (2026-01-15)
 
 
