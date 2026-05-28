@@ -35,7 +35,7 @@ module.exports = function masterShard() {
 	}
 	const { ShardingManager, ShardEvents } = require(`discord.js`)
 	const manager = new ShardingManager(`./src/annie.js`, {
-		respawn: process.env.NODE_ENV !== `production` || process.env.NODE_ENV !== `production_beta` ? false : true,
+		respawn: [`production`, `production_beta`].includes(process.env.NODE_ENV),
 		token: process.env.BOT_TOKEN,
 		execArgv: [`--trace-warnings`],
 	})
