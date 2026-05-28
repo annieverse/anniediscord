@@ -2,7 +2,8 @@ const getCustomShardId = require(`./utils/shardIdParser`)
 const express = require(`express`)
 const createLogger = require(`../pino.config.js`)
 const fs = require(`fs`)
-module.exports = function masterShard() {
+const pruneSelfUploadCovers = require(`./utils/pruneSelfUploadCovers.js`)
+module.exports = async function masterShard() {
 	const logger = createLogger.child({ shard: `MASTER_SHARD` })
 	process.on(`unhandledRejection`, (reason) => {
 		logger.error({ 
@@ -33,6 +34,7 @@ module.exports = function masterShard() {
 		logger.info(`Directory './src/assets' exists`)
 		makeDirs()
 	}
+	await pruneSelfUploadCovers({ logger })
 	const { ShardingManager, ShardEvents } = require(`discord.js`)
 	const manager = new ShardingManager(`./src/annie.js`, {
 		respawn: [`production`, `production_beta`].includes(process.env.NODE_ENV),
