@@ -5,16 +5,48 @@ const fs = require(`fs`)
 const pruneSelfUploadCovers = require(`./utils/pruneSelfUploadCovers.js`)
 module.exports = async function masterShard() {
 	const logger = createLogger.child({ shard: `MASTER_SHARD` })
+	let initialSpawnComplete = false
+
+	async function unlockShardRuntimeEvents(manager, action = `manager_spawn_complete`) {
+		const results = await manager.broadcastEval((client, { action }) => {
+			const metadata = { source: action, shardIds: client.shard.ids }
+			if (typeof client.unlockEventProcessing === `function`) {
+				const unlocked = client.unlockEventProcessing(metadata)
+				return {
+					shardIds: client.shard.ids,
+					unlocked,
+					eventProcessingLocked: client.eventProcessingLocked,
+					managerSpawnComplete: client.managerSpawnComplete,
+					readyTasksComplete: client.readyTasksComplete
+				}
+			}
+			client.managerSpawnComplete = true
+			client.eventProcessingLocked = false
+			client.eventProcessingLockReason = null
+			return {
+				shardIds: client.shard.ids,
+				unlocked: true,
+				eventProcessingLocked: false,
+				managerSpawnComplete: true,
+				readyTasksComplete: client.readyTasksComplete
+			}
+		}, { context: { action } })
+		logger.info({ action: `runtime_event_processing_unlock_broadcast`, trigger: action, results })
+		return results
+	}
+
 	process.on(`unhandledRejection`, (reason) => {
+		const msg = reason && reason.message ? reason.message : String(reason)
 		logger.error({ 
 			action: `UNHANDLED_REJECTION`,
-			msg: reason.message
+			msg
 		})
 	})
 	process.on(`uncaughtException`, err => {
+		const msg = err && err.message ? err.message : String(err)
 		logger.error({ 
 			action: `UNCAUGHT_EXCEPTION`,
-			msg: err.message
+			msg
 		})
 	})
 	function makeDirs() {
@@ -64,7 +96,16 @@ module.exports = async function masterShard() {
 			}
 		})
 		shard.on(ShardEvents.Message, (message) => shardLogger.trace({ action: `shard_message`, msg: message }))
-		shard.on(ShardEvents.Ready, () => shardLogger.info({ action: `shard_ready` }))
+		shard.on(ShardEvents.Ready, () => {
+			shardLogger.info({ action: `shard_ready` })
+			if (!initialSpawnComplete) return
+			unlockShardRuntimeEvents(manager, `shard_ready_after_initial_spawn`)
+				.catch(error => logger.error({
+					action: `runtime_event_processing_unlock_after_respawn_failed`,
+					shardId: shard.id,
+					msg: error && error.message ? error.message : String(error)
+				}))
+		})
 		shard.on(ShardEvents.Reconnecting, () => {
 			shardLogger.warn({ action: `shard_reconnecting` })
 			// Log reconnection attempts for WebSocket issues
@@ -76,6 +117,15 @@ module.exports = async function masterShard() {
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
 	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection) => {
+		initialSpawnComplete = true
+		try {
+			await unlockShardRuntimeEvents(manager, `initial_spawn_complete`)
+		} catch (error) {
+			logger.error({
+				action: `runtime_event_processing_unlock_failed`,
+				msg: error && error.message ? error.message : String(error)
+			})
+		}
 		try {
 			const m = collection.get(0).manager
 			const fetchServers = await m.fetchClientValues(`guilds.cache.size`)
@@ -89,6 +139,12 @@ module.exports = async function masterShard() {
 		} catch (error) {
 			logger.error({ action: `sequential_shards_spawn_error`, msg: error.message })
 		}
+	}).catch(error => {
+		logger.error({
+			action: `sequential_shards_spawn_failed`,
+			msg: error && error.message ? error.message : String(error),
+			stack: error && error.stack ? error.stack : null
+		})
 	})
 
 	// Top.gg webhook listener for vote reward system

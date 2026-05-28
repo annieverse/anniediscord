@@ -17,6 +17,7 @@ const CronManager = require(`cron-job-manager`)
 const createLogger = require(`../pino.config.js`)
 const errorRelay = require(`../src/utils/errorHandler.js`)
 const shardIdParser = require(`./utils/shardIdParser`)
+const runtimeEventGate = require(`./utils/runtimeEventGate`)
 
 class Annie extends Discord.Client {
     constructor (intents) {
@@ -191,6 +192,13 @@ class Annie extends Discord.Client {
         this.cooldowns = new Discord.Collection()
 
         /**
+         * Runtime event gate. Shards are ready before the whole manager has
+         * finished sequential spawning, so user-facing events stay blocked
+         * until master explicitly unlocks them.
+         */
+        runtimeEventGate.initialize(this)
+
+        /**
          * Cron instance
          * @type {object}
          */
@@ -206,20 +214,21 @@ class Annie extends Discord.Client {
      */
     prepareLogin() {
         process.on(`unhandledRejection`, err => {
+            const errorMessage = err && err.message ? err.message : String(err)
             // Handle WebSocket timeout errors specifically
-            if (err.message && err.message.includes(`handshake has timed out`)) {
+            if (errorMessage.includes(`handshake has timed out`)) {
                 this.logger.error(`WebSocket handshake timeout detected. This may be due to network connectivity issues or Discord API latency.`)
                 this.logger.warn(`WebSocket timeout error details:`, err)
                 // Don't exit the process for WebSocket timeouts, let Discord.js handle reconnection
                 return
             }
 
-            this.logger.warn(`unhandledRejection > ${err}`)
+            this.logger.warn(`unhandledRejection > ${errorMessage}`)
             this.logger.error(err)
             if (!this.isReady()) return
 
-            const errorMsg = err.message || `Unknown Error`
-            const errorStack = err.stack || `Unknown Error Stack`
+            const errorMsg = errorMessage || `Unknown Error`
+            const errorStack = err && err.stack ? err.stack : `Unknown Error Stack`
             errorRelay(this, { fileName: `annie.js`, errorType: `normal`, error_message: errorMsg, error_stack: errorStack }).catch(error => this.logger.error({ action: `ERROR_RELAY_FAILED`, msg: error.message }))
         })
 
@@ -267,6 +276,51 @@ class Annie extends Discord.Client {
                 throw error
             }
         }
+    }
+
+    /**
+     * Keep runtime events locked until startup dependencies are ready.
+     * @param {string} reason lock reason.
+     * @returns {void}
+     */
+    lockEventProcessing(reason = `startup_in_progress`) {
+        runtimeEventGate.lock(this, reason)
+    }
+
+    /**
+     * Mark this shard's local ready bootstrap as completed.
+     * @param {object} [metadata={}] additional log context.
+     * @returns {boolean}
+     */
+    markReadyTasksComplete(metadata = {}) {
+        return runtimeEventGate.markReadyTasksComplete(this, metadata)
+    }
+
+    /**
+     * Mark the master manager's initial spawn cycle as completed.
+     * @param {object} [metadata={}] additional log context.
+     * @returns {boolean}
+     */
+    markManagerSpawnComplete(metadata = {}) {
+        return runtimeEventGate.markManagerSpawnComplete(this, metadata)
+    }
+
+    /**
+     * Backward-compatible alias used by master broadcastEval.
+     * @param {object} [metadata={}] additional log context.
+     * @returns {boolean}
+     */
+    unlockEventProcessing(metadata = {}) {
+        return this.markManagerSpawnComplete(metadata)
+    }
+
+    /**
+     * Decide if an external runtime event can be processed.
+     * @param {string} eventName event identifier.
+     * @returns {boolean}
+     */
+    shouldProcessRuntimeEvent(eventName = `unknown`) {
+        return runtimeEventGate.shouldProcess(this, eventName)
     }
 
     /**
