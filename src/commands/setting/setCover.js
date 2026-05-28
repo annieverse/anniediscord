@@ -4,6 +4,7 @@ const GUI = require(`../../ui/prebuild/profile`)
 const fs = require(`fs`)
 const superagent = require(`superagent`)
 const stringSimilarity = require(`string-similarity`)
+const sizeOfBuffer = require(`buffer-image-size`)
 const { v4: uuidv4 } = require(`uuid`)
 const commanifier = require(`../../utils/commanifier`)
 const User = require(`../../libs/user`)
@@ -13,6 +14,9 @@ const {
     ApplicationCommandOptionType
 } = require(`discord.js`)
 const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
+
+const SELF_UPLOAD_MAX_BYTES = 10 * 1024 * 1024
+
 /**
  * Setting up your own custom background! upload or share the image link you want to use.
  * @author klerikdust
@@ -27,6 +31,8 @@ module.exports = {
     applicationCommand: true,
     messageCommand: true,
     server_specific: false,
+    selfUploadMaxBytes: SELF_UPLOAD_MAX_BYTES,
+    FileContentTypesNotAllowed: [`image/apng`, `image/avif`, `image/gif`, `image/webp`],
     options: [{
         name: `attachment`,
         description: `upload a custom image via attachment.`,
@@ -91,18 +97,15 @@ module.exports = {
         //  Handle user self-upload cover
         const id = uuidv4()
         if (isValidUpload) {
-            const response = await superagent.get(url).catch(async (error) => {
-                client.logger.error(`[setCover.js][Superagent] > ${error}`)
-                await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
-                    socket: {
-                        emoji: await client.getEmoji(`692428843058724994`)
-                    },
-                    ephemeral: true
-                })
-                return null
+            if (!url) return await reply.send(locale(`SETCOVER.INVALID_FILE_TYPE`), { socket: { type: this.FileTypesNotAllowed.join(`, `) } })
+            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
+                socket: {
+                    emoji: await client.getEmoji(`758720612087627787`),
+                    requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
+                }
             })
-            if (response === null) return
-            const buffer = response.body
+            const buffer = await this.fetchUserSelfUploadCover(client, reply, locale, url)
+            if (!buffer) return
             await fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,
@@ -110,13 +113,6 @@ module.exports = {
                 alias: id,
                 name: `My Upload`
             }
-            //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
-                socket: {
-                    emoji: await client.getEmoji(`758720612087627787`),
-                    requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
-                }
-            })
         }
         //  Handle if user asked to use default cover
         else if (arg === `default`) {
@@ -229,18 +225,14 @@ module.exports = {
         const id = uuidv4()
         if (isValidUpload) {
             if (!url) return await reply.send(locale(`SETCOVER.INVALID_FILE_TYPE`), { socket: { type: this.FileTypesNotAllowed.join(`, `) } })
-            const response = await superagent.get(url).catch(async (error) => {
-                client.logger.error(`[setCover.js][Superagent] > ${error}`)
-                await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
-                    socket: {
-                        emoji: await client.getEmoji(`692428843058724994`)
-                    },
-                    ephemeral: true
-                })
-                return null
+            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
+                socket: {
+                    emoji: await client.getEmoji(`758720612087627787`),
+                    requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
+                }
             })
-            if (response === null) return
-            const buffer = response.body
+            const buffer = await this.fetchUserSelfUploadCover(client, reply, locale, url)
+            if (!buffer) return
             fs.writeFileSync(`./src/assets/selfupload/${id}.png`, buffer)
             this.cover = {
                 isSelfUpload: true,
@@ -248,13 +240,6 @@ module.exports = {
                 alias: id,
                 name: `My Upload`
             }
-            //  Handle if user doesn't have enough artcoins to upload a new cover
-            if (userData.inventory.artcoins < this.uploadCost) return await reply.send(locale(`SETCOVER.UPLOAD_INSUFFICIENT_COST`), {
-                socket: {
-                    emoji: await client.getEmoji(`758720612087627787`),
-                    requiredLeft: commanifier(this.uploadCost - userData.inventory.artcoins)
-                }
-            })
         }
         //  Handle if user asked to use default cover
         else if (arg === `default`) {
@@ -379,26 +364,83 @@ module.exports = {
      * @return {object}
      */
     getUserSelfUploadCover(arg, message) {
-        if (message.type == 0) {
-            const hasAttachment = message.attachments.first() ? true : false
-            const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 ? true : false
-            return {
-                isValidUpload: hasAttachment || hasImageURL ? true : false,
-                url: message.attachments.first()
-                    ? message.attachments.first().url
-                    : arg.startsWith(`http`) && arg.length >= 15
-                        ? arg
-                        : null
-            }
-        } else {
-            const hasAttachment = arg ? true : false
-            const hasImageURL = arg.startsWith(`http`) && arg.length >= 15 && !this.FileTypesNotAllowed.some(v => arg.endsWith(v)) ? true : false
-            return {
-                isValidUpload: hasAttachment || hasImageURL ? true : false,
-                url: hasImageURL ? arg : null
-            }
-        }
+        const source = typeof arg === `string` ? arg : ``
+        const attachment = message.type == 0 ? message.attachments.first() : null
+        const attachmentUrl = attachment ? attachment.url : null
+        const hasImageURL = source.startsWith(`http`) && source.length >= 15
+        const url = attachmentUrl || (hasImageURL ? source : null)
+        const isValidUpload = attachment || hasImageURL ? true : false
+        if (!isValidUpload) return { isValidUpload: false, url: null }
 
+        if (attachment?.contentType && !this.isAllowedSelfUploadContentType(attachment.contentType)) {
+            return { isValidUpload: true, url: null }
+        }
+        if (this.hasBlockedSelfUploadExtension(url)) {
+            return { isValidUpload: true, url: null }
+        }
+        return { isValidUpload: true, url }
+
+    },
+
+    async fetchUserSelfUploadCover(client, reply, locale, url) {
+        const response = await superagent.get(url)
+            .buffer(true)
+            .maxResponseSize(this.selfUploadMaxBytes)
+            .catch(async (error) => {
+                client.logger.error(`[setCover.js][Superagent] > ${error}`)
+                await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
+                    socket: {
+                        emoji: await client.getEmoji(`692428843058724994`)
+                    },
+                    ephemeral: true
+                })
+                return null
+            })
+        if (!response) return null
+        if (!this.isAllowedSelfUploadContentType(response.type)) {
+            await reply.send(locale(`SETCOVER.INVALID_FILE_TYPE`), { socket: { type: this.FileTypesNotAllowed.join(`, `) } })
+            return null
+        }
+        if (!Buffer.isBuffer(response.body)) {
+            await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
+                socket: {
+                    emoji: await client.getEmoji(`692428843058724994`)
+                },
+                ephemeral: true
+            })
+            return null
+        }
+        try {
+            sizeOfBuffer(response.body)
+        } catch (error) {
+            client.logger.warn(`[setCover.js][Image validation] > ${error}`)
+            await reply.send(locale(`ERROR_UNSUPPORTED_FILE_TYPE`), {
+                socket: {
+                    emoji: await client.getEmoji(`692428843058724994`)
+                },
+                ephemeral: true
+            })
+            return null
+        }
+        return response.body
+    },
+
+    isAllowedSelfUploadContentType(contentType = ``) {
+        const type = contentType.split(`;`)[0].trim().toLowerCase()
+        return type.startsWith(`image/`) && !this.FileContentTypesNotAllowed.includes(type)
+    },
+
+    hasBlockedSelfUploadExtension(url = ``) {
+        const pathname = this.getSelfUploadPathname(url)
+        return this.FileTypesNotAllowed.some(type => pathname.endsWith(type))
+    },
+
+    getSelfUploadPathname(url = ``) {
+        try {
+            return new URL(url).pathname.toLowerCase()
+        } catch (error) {
+            return url.split(`?`)[0].toLowerCase()
+        }
     },
 
     /**
