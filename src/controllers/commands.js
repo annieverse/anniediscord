@@ -1,10 +1,10 @@
 "use strict"
 const findCommandProperties = require(`../utils/findCommandProperties`)
 const availablePermissions = require(`../config/permissions`)
-const { cooldown } = require(`../config/commands`)
 const getUserPermission = require(`../libs/permissions`)
 const errorRelay = require(`../utils/errorHandler.js`)
 const cacheReset = require(`../utils/cacheReset.js`)
+const { readCommandCooldown, sendCommandCooldown, startCommandCooldown } = require(`../utils/commandCooldown.js`)
 
 /**
  * Centralized Controller to handle incoming command request
@@ -25,8 +25,24 @@ module.exports = async (client = {}, message = {}) => {
     const arg = message.content.slice(prefix.length + targetCommand.length + 1)
     // Ignore if user trying to use default prefix on a configured custom prefix against non-prefixImmune command
     if (message.content.startsWith(client.prefix) && (guildPrefix !== client.prefix) && !command.prefixImmune) return
+    const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
+    const commandChannelBlocked = (commandChannels.length > 0) && !command.name.startsWith(`setCommand`) && !commandChannels.includes(message.channel.id)
+    const userPermission = getUserPermission(message, message.author.id)
+    const hasCommandPermission = command.permissionLevel <= userPermission.level
+    let clearPendingCommandCooldown = null
+    if (!commandChannelBlocked && hasCommandPermission) {
+        const commandCooldown = readCommandCooldown(client, command.name, message.author.id, message.guild.id)
+        if (commandCooldown.active) return sendCommandCooldown(client, message, message.author.id, message.author.username, commandCooldown.diff)
+        clearPendingCommandCooldown = startCommandCooldown(client, commandCooldown.instanceId)
+    }
     // Handle localization
-    const userData = await client.db.userUtils.getUserLocale(message.author.id)
+    let userData
+    try {
+        userData = await client.db.userUtils.getUserLocale(message.author.id)
+    } catch (error) {
+        if (clearPendingCommandCooldown) clearPendingCommandCooldown()
+        throw error
+    }
     client.localization.lang = userData.lang
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(message, false, locale)
@@ -37,10 +53,14 @@ module.exports = async (client = {}, message = {}) => {
         if (!message.channel.isDMBased()) {
             checkPerm = reply.checkPermissions(message.channel)
         }
-        if (!checkPerm) return await reply.send(locale(`ERROR_MISSING_PERMISSION`))
+        if (!checkPerm) {
+            if (clearPendingCommandCooldown) clearPendingCommandCooldown()
+            return await reply.send(locale(`ERROR_MISSING_PERMISSION`))
+        }
     } catch (e) {
         const internalError = e.message.startsWith(`[Internal Error]`)
         // Handle cache(s)
+        if (clearPendingCommandCooldown) clearPendingCommandCooldown()
         if (internalError) return
         const errorMsg = e.message || `Unknown Error`
         const errorStack = e.stack || `Unknown Error Stack`
@@ -49,22 +69,18 @@ module.exports = async (client = {}, message = {}) => {
 
 
     // Handle non-command-allowed channels
-    const commandChannels = message.guild.configs.get(`COMMAND_CHANNELS`).value
-    if ((commandChannels.length > 0) && !command.name.startsWith(`setCommand`)) {
-        if (!commandChannels.includes(message.channel.id)) {
-            await reply.send(locale(`NON_COMMAND_CHANNEL`), {
-                deleteIn: 5,
-                socket: {
-                    user: message.author.username,
-                    emoji: await client.getEmoji(`790338393015713812`)
-                }
-            })
-            return message.delete()
-                .catch(e => e)
-        }
+    if (commandChannelBlocked) {
+        await reply.send(locale(`NON_COMMAND_CHANNEL`), {
+            deleteIn: 5,
+            socket: {
+                user: message.author.username,
+                emoji: await client.getEmoji(`790338393015713812`)
+            }
+        })
+        return message.delete()
+            .catch(e => e)
     }
     // Handle if user doesn't have enough permission level to use the command
-    const userPermission = getUserPermission(message, message.author.id)
     if (command.permissionLevel > userPermission.level) return await reply.send(``,
         {
             customHeader: [
@@ -73,22 +89,16 @@ module.exports = async (client = {}, message = {}) => {
             ]
         }
     )
-    // Handle cooldowns
-    const instanceId = `CMD_${command.name.toUpperCase()}_${message.author.id}@${message.guild.id}`
-    if (client.cooldowns.has(instanceId)) {
-        const userCooldown = client.cooldowns.get(instanceId)
-        const diff = cooldown - ((Date.now() - userCooldown) / 1000)
-        if (diff > 0) return await reply.send(locale(`COMMAND.STILL_COOLDOWN`), {
-            socket: {
-                emoji: await client.getEmoji(`AnnieYandereAnim`),
-                user: message.author.username,
-                timeLeft: diff.toFixed(1)
-            }
-        })
-    }
-    client.cooldowns.set(instanceId, Date.now())
     // Prevent user with uncomplete data to proceed the command.
-    if ((await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)) === 0) {
+    let userValidated
+    try {
+        userValidated = await client.db.redis.sIsMember(`VALIDATED_USERID`, message.author.id)
+    } catch (error) {
+        if (clearPendingCommandCooldown) clearPendingCommandCooldown()
+        throw error
+    }
+    if (userValidated === 0) {
+        if (clearPendingCommandCooldown) clearPendingCommandCooldown()
         return await reply.send(locale(`USER.REGISTRATION_ON_PROCESS`)).catch(e => {
             const internalError = e.message.startsWith(`[Internal Error]`)
             // Handle cache(s)
