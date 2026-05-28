@@ -1,3 +1,10 @@
+## [10.3.1](https://github.com/annieverse/anniediscord/compare/v10.3.0...v10.3.1) (2026-05-28)
+
+
+### Bug Fixes
+
+* **sharding:** gate events until startup completes ([f0bbaeb](https://github.com/annieverse/anniediscord/commit/f0bbaeb1b81c13962cd705ef2beb290b0412c0e8))
+
 # [10.3.0](https://github.com/annieverse/anniediscord/compare/v10.2.3...v10.3.0) (2026-05-28)
 
 
