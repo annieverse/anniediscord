@@ -3,7 +3,40 @@ const express = require(`express`)
 const createLogger = require(`../pino.config.js`)
 const fs = require(`fs`)
 const pruneSelfUploadCovers = require(`./utils/pruneSelfUploadCovers.js`)
-module.exports = async function masterShard() {
+const { Api: TopggApi, Webhook } = require(`@top-gg/sdk`)
+
+async function postTopggStats({
+	logger,
+	serverCount,
+	shardCount,
+	token = process.env.DBLTOKEN,
+	nodeEnv = process.env.NODE_ENV,
+	topggApi = null
+}) {
+	if (nodeEnv === `development`) {
+		logger.debug({ action: `topgg_stats_post_skipped`, reason: `development` })
+		return null
+	}
+	if (!Number.isFinite(serverCount) || serverCount <= 0) {
+		logger.warn({ action: `topgg_stats_post_skipped`, reason: `invalid_server_count`, serverCount })
+		return null
+	}
+	if (!Number.isFinite(shardCount) || shardCount < 0) {
+		logger.warn({ action: `topgg_stats_post_skipped`, reason: `invalid_shard_count`, shardCount })
+		return null
+	}
+	if (!token && !topggApi) {
+		logger.warn({ action: `topgg_stats_post_skipped`, reason: `missing_dbltoken` })
+		return null
+	}
+	const api = topggApi || new TopggApi(token)
+	const stats = { serverCount, shardCount }
+	const postedStats = await api.postStats(stats)
+	logger.info({ action: `topgg_stats_post_success`, serverCount, shardCount })
+	return postedStats
+}
+
+async function masterShard() {
 	const logger = createLogger.child({ shard: `MASTER_SHARD` })
 	let initialSpawnComplete = false
 
@@ -116,7 +149,7 @@ module.exports = async function masterShard() {
 	})
 	//  Spawn shard sequentially with 30 seconds interval. 
 	//  Will send timeout warn in 2 minutes.
-	manager.spawn(`auto`, 30000, 60000 * 2).then(async (collection) => {
+	manager.spawn(`auto`, 30000, 60000 * 2).then(async () => {
 		initialSpawnComplete = true
 		try {
 			await unlockShardRuntimeEvents(manager, `initial_spawn_complete`)
@@ -127,17 +160,16 @@ module.exports = async function masterShard() {
 			})
 		}
 		try {
-			const m = collection.get(0).manager
-			const fetchServers = await m.fetchClientValues(`guilds.cache.size`)
+			const fetchServers = await manager.fetchClientValues(`guilds.cache.size`)
 			const serverCount = fetchServers.reduce((prev, val) => prev + val, 0)
-			const shardCount = m.totalShards
-			m.broadcastEval((c, { serverCount, shardCount }) => {
-				if (!c.isReady()) return
-				if (c.dev) return
-				c.dblApi.postStats({ serverCount, shardCount })
-			}, { context: { serverCount, shardCount } })
+			const shardCount = Number.isFinite(manager.totalShards) ? manager.totalShards : fetchServers.length
+			await postTopggStats({ logger, serverCount, shardCount })
 		} catch (error) {
-			logger.error({ action: `sequential_shards_spawn_error`, msg: error.message })
+			logger.error({
+				action: `topgg_stats_post_failed`,
+				msg: error && error.message ? error.message : String(error),
+				stack: error && error.stack ? error.stack : null
+			})
 		}
 	}).catch(error => {
 		logger.error({
@@ -148,7 +180,6 @@ module.exports = async function masterShard() {
 	})
 
 	// Top.gg webhook listener for vote reward system
-	const { Webhook } = require(`@top-gg/sdk`)
 	// Use real webhook in production, mock in development
 	const wh = process.env.NODE_ENV === `development`
 		? {
@@ -252,3 +283,6 @@ module.exports = async function masterShard() {
 	const port = process.env.PORT || 3000
 	server.listen(port, () => logger.info({ action: `LISTENING_TO_PORT`, port }))
 }
+
+module.exports = masterShard
+module.exports.postTopggStats = postTopggStats
