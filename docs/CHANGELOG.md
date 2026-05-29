@@ -1,3 +1,10 @@
+## [10.3.2](https://github.com/annieverse/anniediscord/compare/v10.3.1...v10.3.2) (2026-05-29)
+
+
+### Bug Fixes
+
+* **postStats:** master shard poststats crash. ([f4c2114](https://github.com/annieverse/anniediscord/commit/f4c2114a76bbebbdb128047bab116835ed99a1ab))
+
 ## [10.3.1](https://github.com/annieverse/anniediscord/compare/v10.3.0...v10.3.1) (2026-05-28)
 
 
