@@ -11,7 +11,8 @@ class Localization {
   #localesPool = new Collection()
   #availableLocales = {
     "english": `en`,
-    "french": `fr`
+    "french": `fr`,
+    "indonesian": `id`
   }
 
   constructor () {
