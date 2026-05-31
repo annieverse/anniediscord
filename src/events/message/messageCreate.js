@@ -66,7 +66,7 @@ module.exports = (client, message) => {
             // const locale = client.locales.en
             const userData = await client.db.userUtils.getUserLocale(message.author.id)
             client.localization.lang = userData.lang
-            const locale = (key) => client.localization.findLocale(key)
+            const locale = (key) => client.localization.findLocale(key, userData.lang)
 
             client.db.redis.sMembers(`EXP_BUFF:${message.guild.id}@${message.author.id}`)
                 .then(async list => {

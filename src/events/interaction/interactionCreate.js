@@ -7,7 +7,7 @@ module.exports = async (client, interaction) => {
     await client.db.databaseUtils.validateUserEntry(interaction.user.id, interaction.user.username)
     const userData = await client.db.userUtils.getUserLocale(interaction.user.id)
     client.localization.lang = userData.lang
-    const locale = (key) => client.localization.findLocale(key)
+    const locale = (key) => client.localization.findLocale(key, userData.lang)
     const reply = client.responseLibs(interaction, true, locale)
     try {
         //  Build a per-interaction lookup so guild-only commands never leak into

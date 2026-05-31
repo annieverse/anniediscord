@@ -25,7 +25,7 @@ module.exports = async (client, interaction, command) => {
         throw error
     }
     client.localization.lang = userData.lang
-    const locale = (key) => client.localization.findLocale(key)
+    const locale = (key) => client.localization.findLocale(key, userData.lang)
     const reply = client.responseLibs(interaction, false, locale)
 
     // 2025/07/20 :: Temporarily disable slash-based commands due to framework issues.

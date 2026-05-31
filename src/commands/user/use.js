@@ -83,13 +83,17 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            //  Deduct item from user's inventory.
-            client.db.databaseUtils.updateInventory({
+            //  Atomic spend. Without this, a double-confirm could consume one
+            //  item but stack `applyItemEffects` twice. We gate the effect on
+            //  the spend actually succeeding.
+            const debit = await client.db.databaseUtils.spendInventory({
                 itemId: targetItem.item_id,
+                value: 1,
                 userId: messageRef.member.id,
-                guildId: messageRef.guild.id,
-                operation: `-`,
-                value: 1
+                guildId: messageRef.guild.id
+            })
+            if (!debit.ok) return await reply.send(locale(`USE.INSUFFICIENT`), {
+                editReply: true
             })
             //  Applying effect if there's any.
             effectLib.applyItemEffects(targetItem.item_id)

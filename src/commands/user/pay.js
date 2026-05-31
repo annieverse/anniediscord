@@ -67,12 +67,15 @@ module.exports = {
         if (!amount) return 1 // 1
         //  Handle if user isn't inputting valid amount to send
         if (!trueInt(amount)) return 2 // 2
+        //  Normalize once: the message path arrives here as a string, the slash
+        //  path as an int. spendInventory only accepts numbers, so coerce now.
+        const senderAmount = trueInt(amount)
         //  Handle if user inputted amount to send way above limit.
-        if (amount > this.maxAllowed) return 3 // 3
+        if (senderAmount > this.maxAllowed) return 3 // 3
         //  Parse amount of tax to be deducted from the transaction
-        const amountOfTax = amount * this.tax
-        const total = Math.round(amount - amountOfTax)
-        return { senderAmount: amount, amountToSend: total }
+        const amountOfTax = senderAmount * this.tax
+        const total = Math.round(senderAmount - amountOfTax)
+        return { senderAmount: senderAmount, amountToSend: total }
     },
     async execute(client, reply, message, arg, locale) {
         if (!arg) return await reply.send(locale(`PAY.SHORT_GUIDE`), {
@@ -122,13 +125,32 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            // Redundant check
-            //  Handle if user trying to send artcoins above the amount they had
-            if (sender.inventory.artcoins < atc.senderAmount) return await reply.send(locale(`PAY.INSUFFICIENT_BALANCE`))
-            //  Send artcoins to target user
-            client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.amountToSend, userId: reciever.master.id, guildId: messageRef.guild.id })
-            //  Deduct artcoins from sender's balance
-            client.db.databaseUtils.updateInventory({ itemId: 52, value: atc.senderAmount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
+            //  Atomic spend-then-credit in a single transaction. The conditional
+            //  UPDATE inside `spendInventory` makes the original snapshot check
+            //  irrelevant — concurrent /pay calls from the same user across
+            //  guilds can no longer both succeed against the same row.
+            try {
+                await client.db.databaseUtils.transaction(async () => {
+                    const debit = await client.db.databaseUtils.spendInventory({
+                        itemId: 52,
+                        value: atc.senderAmount,
+                        userId: messageRef.member.id,
+                        guildId: messageRef.guild.id
+                    })
+                    if (!debit.ok) throw new Error(`PAY_INSUFFICIENT_BALANCE`)
+                    await client.db.databaseUtils.updateInventory({
+                        itemId: 52,
+                        value: atc.amountToSend,
+                        userId: reciever.master.id,
+                        guildId: messageRef.guild.id
+                    })
+                })
+            } catch (err) {
+                if (err && err.message === `PAY_INSUFFICIENT_BALANCE`) {
+                    return await reply.send(locale(`PAY.INSUFFICIENT_BALANCE`))
+                }
+                throw err
+            }
             await reply.send(``, {
                 customHeader: [`${reciever.master.username} ${locale(`PAY.RECEIVED`)}`, reciever.master.displayAvatarURL()],
                 socket: { target: reciever.master.username }

@@ -150,8 +150,19 @@ module.exports = {
         const c = new Confirmator(messageRef, reply, locale)
         await c.setup(messageRef.member.id, confirmation)
         c.onAccept(async () => {
-            //  Handle if the amount to send is lower than total owned item
-            if (gift.quantity < amount) return await reply.send(locale(`GIFT.INSUFFICIENT_AMOUNT`), {
+            //  Spend first, atomically. The pre-confirm `gift.quantity` snapshot
+            //  was open to a double-confirm race; the conditional UPDATE inside
+            //  `spendInventory` is what actually gates over-spend.
+            //  Reputation credit is its own table, so no transaction wrapper is
+            //  needed — the spend either succeeds (then we credit) or fails
+            //  (then we surface the locale error and stop).
+            const debit = await client.db.databaseUtils.spendInventory({
+                itemId: gift.item_id,
+                value: parseInt(amount, 10),
+                userId: messageRef.member.id,
+                guildId: messageRef.guild.id
+            })
+            if (!debit.ok) return await reply.send(locale(`GIFT.INSUFFICIENT_AMOUNT`), {
                 socket: {
                     gift: `${await client.getEmoji(gift.alias)} ${commanifier(gift.quantity)}x ${gift.name}`,
                     emoji: await client.getEmoji(`692428613122785281`)
@@ -159,8 +170,6 @@ module.exports = {
             })
             //  Adds reputation point to target user
             client.db.userUtils.updateUserReputation(amount, targetUser.id, messageRef.member.id, messageRef.guild.id)
-            //  Deduct gifts from sender
-            client.db.databaseUtils.updateInventory({ itemId: gift.item_id, value: amount, operation: `-`, userId: messageRef.member.id, guildId: messageRef.guild.id })
             return await reply.send(``, {
                 customHeader: [`${targetUser.username} ${locale(`GIFT.HEADER`)}`, targetUser.displayAvatarURL()],
                 socket: {

@@ -46,7 +46,7 @@ function startCommandCooldown(client, instanceId) {
 async function sendCommandCooldown(client, target, userId, username, diff) {
 	const userData = await client.db.userUtils.getUserLocale(userId)
 	client.localization.lang = userData.lang
-	const locale = (key) => client.localization.findLocale(key)
+	const locale = (key) => client.localization.findLocale(key, userData.lang)
 	const reply = client.responseLibs(target, false, locale)
 	return reply.send(locale(`COMMAND.STILL_COOLDOWN`), {
 		socket: {

@@ -104,30 +104,38 @@ module.exports = {
         await c.setup(user.id, confirmation)
         c.onAccept(async () => {
             if (message.applicationId != null) await message.fetchReply()
-            const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
-            //  Handle if user does not have sufficient artcoins
-            if (shopMetadata.price > balance) return await reply.send(locale(`BUY.INSUFFICIENT_BALANCE`), {
-                socket: {
-                    amount: commanifier(shopMetadata.price - balance),
-                    emoji: await client.getEmoji(`758720612087627787`)
+            //  Atomic spend-then-credit. The conditional UPDATE inside
+            //  `spendInventory` replaces the prior read-then-spend pattern,
+            //  closing the window where two confirmations could both pass.
+            try {
+                await client.db.databaseUtils.transaction(async () => {
+                    const debit = await client.db.databaseUtils.spendInventory({
+                        itemId: 52,
+                        value: shopMetadata.price,
+                        userId: user.id,
+                        guildId: guild.id
+                    })
+                    if (!debit.ok) throw new Error(`BUY_INSUFFICIENT_BALANCE`)
+                    await client.db.databaseUtils.updateInventory({
+                        operation: `+`,
+                        userId: user.id,
+                        guildId: guild.id,
+                        itemId: item.item_id,
+                        value: 1
+                    })
+                })
+            } catch (err) {
+                if (err && err.message === `BUY_INSUFFICIENT_BALANCE`) {
+                    const balance = await client.db.userUtils.getUserBalance(user.id, guild.id)
+                    return await reply.send(locale(`BUY.INSUFFICIENT_BALANCE`), {
+                        socket: {
+                            amount: commanifier(shopMetadata.price - balance),
+                            emoji: await client.getEmoji(`758720612087627787`)
+                        }
+                    })
                 }
-            })
-            //  Deduct artcoins
-            client.db.databaseUtils.updateInventory({
-                operation: `-`,
-                userId: user.id,
-                guildId: guild.id,
-                itemId: 52,
-                value: shopMetadata.price
-            })
-            //  Send item
-            client.db.databaseUtils.updateInventory({
-                operation: `+`,
-                userId: user.id,
-                guildId: guild.id,
-                itemId: item.item_id,
-                value: 1
-            })
+                throw err
+            }
             //  Reduce available supply if supply wasn't set as unlimited.
             const unlimitedSupply = shopMetadata.quantity != `~` && shopMetadata.quantity != 9223372036854775807n
             if (unlimitedSupply) client.db.shop.subtractItemSupply(item.item_id, 1)

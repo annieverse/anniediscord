@@ -371,6 +371,74 @@ class DatabaseUtils {
 	}
 
 	/**
+	 * Atomic conditional debit against `user_inventories`. The `quantity >= $value`
+	 * predicate lives inside the same statement as the decrement, so two concurrent
+	 * spenders against the same row can never both succeed — Postgres serializes
+	 * the row update and only the first sees the predicate hold.
+	 *
+	 * Returns `{ ok: false }` for: insufficient balance, missing row, query error.
+	 * Callers MUST gate any credit/effect on `ok === true`.
+	 *
+	 * @param {object} params
+	 * @param {number|string} params.itemId
+	 * @param {number} params.value Amount to debit. Must be positive.
+	 * @param {string} params.userId
+	 * @param {string} params.guildId
+	 * @returns {Promise<{ok: boolean, remaining: number|null}>}
+	 */
+	async spendInventory({ itemId, value, userId, guildId } = {}) {
+		const fn = this.formatFunctionLog(`spendInventory`)
+		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (!itemId) throw new TypeError(`${fn} parameter "itemId" cannot be blank.`)
+		if (!guildId) throw new TypeError(`${fn} parameter "guildId" cannot be blank.`)
+		if (typeof value !== `number` || !Number.isFinite(value) || value <= 0) {
+			throw new RangeError(`${fn} parameter "value" must be a positive finite number, got ${value}`)
+		}
+		const res = await this._query(`
+			UPDATE user_inventories
+			SET quantity = quantity - $value, updated_at = CURRENT_TIMESTAMP
+			WHERE item_id = $itemId AND user_id = $userId AND guild_id = $guildId
+			  AND quantity >= $value`
+			, `run`
+			, { itemId: itemId, userId: userId, guildId: guildId, value: value }
+			, `${fn} Conditional debit`
+		)
+		// `_query` returns undefined on error (#18); treat that as failure rather than
+		// silently letting callers think the spend succeeded.
+		if (!res || res.rowCount === 0) return { ok: false, remaining: null }
+		const remaining = res.rows && res.rows[0] ? Number(res.rows[0].quantity) : null
+		return { ok: true, remaining: remaining }
+	}
+
+	/**
+	 * Wraps `fn` in a Postgres transaction (`BEGIN` / `COMMIT` / `ROLLBACK`).
+	 *
+	 * Important: this runs against the singleton `pg.Client` (`Database.client`),
+	 * so concurrent calls do NOT run in parallel — they serialize on the connection.
+	 * That is acceptable for short spend-then-credit pairs and is the same
+	 * concurrency profile every other call already lives with.
+	 *
+	 * `fn` MUST throw on logical failure (e.g. when `spendInventory` returns
+	 * `{ ok: false }`) for the rollback to fire. Returning a falsy value alone
+	 * is not enough.
+	 *
+	 * @param {function(): Promise<*>} fn
+	 * @returns {Promise<*>} resolves with whatever `fn` returns on commit
+	 */
+	async transaction(fn) {
+		if (typeof fn !== `function`) throw new TypeError(`${this.formatFunctionLog(`transaction`)} parameter "fn" must be a function`)
+		await this.client.query(`BEGIN`)
+		try {
+			const result = await fn()
+			await this.client.query(`COMMIT`)
+			return result
+		} catch (err) {
+			try { await this.client.query(`ROLLBACK`) } catch (_) { /* swallow rollback failure; original err is what matters */ }
+			throw err
+		}
+	}
+
+	/**
 	* Pull ID ranking based on given descendant column order.
 	* @param {string} [group] of target category
 	* @param {string} [guildId] of target guild
