@@ -1110,6 +1110,20 @@
         "NOT_PARTICIPANT": "Hanya kedua peserta trade yang bisa menggunakan tombol ini.",
         "INVENTORY_EMPTY": "Inventory {{user}} tidak punya item yang bisa di-trade di server ini."
     },
+    "TRADEHISTORY": {
+        "GUIDE": "Pakai `{{prefix}}tradehistory` untuk melihat trade terakhirmu, atau `{{prefix}}tradehistory @user` untuk melihat milik orang lain.",
+        "EMPTY": "{{user}} belum punya riwayat trade.",
+        "INTRO": "{{emoji}} **Trade terakhir {{user}}** (total {{size}})\n╭───────────────────────────╮\n",
+        "ENTRY_COMMITTED": "**#{{tradeId}}** · {{when}}\n  dengan {{partner}}\n  {{user}} memberi: {{sent}}\n  {{user}} menerima: {{received}}\n",
+        "ENTRY_FAILED": "**#{{tradeId}}** · {{when}} · *{{status}}*\n  dengan {{partner}}\n  alasan: {{reason}}\n",
+        "ENTRY_DIVIDER": "⸻⸻⸻⸻\n",
+        "PAGE_FOOTER": "╰───────────────────────────╯",
+        "OFFER_NONE": "*tidak ada*",
+        "OFFER_ITEM": "{{qty}}× #{{itemId}}",
+        "OFFER_ARTCOINS": "{{emoji}} {{amount}}",
+        "STATUS_FAILED": "gagal",
+        "STATUS_CANCELLED": "dibatalkan"
+    },
     "USE": {
         "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nApakah kamu ingin menggunakan **{{item}}**?\n╰────────☆～*:;,．*╯\n{{footer}}",
         "CONFIRMATION_TIPS": "Coba bereaksi terhadap\n tombol hijau untuk melanjutkan.",

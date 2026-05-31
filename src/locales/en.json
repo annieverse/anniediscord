@@ -1110,6 +1110,20 @@
         "NOT_PARTICIPANT": "Only the two trade participants can use these controls.",
         "INVENTORY_EMPTY": "{{user}}'s inventory has nothing tradeable in this server."
     },
+    "TRADEHISTORY": {
+        "GUIDE": "Use `{{prefix}}tradehistory` to see your recent trades, or `{{prefix}}tradehistory @user` to see someone else's.",
+        "EMPTY": "{{user}} has no trade history yet.",
+        "INTRO": "{{emoji}} **{{user}}'s recent trades** ({{size}} total)\n╭───────────────────────────╮\n",
+        "ENTRY_COMMITTED": "**#{{tradeId}}** · {{when}}\n  with {{partner}}\n  {{user}} sent: {{sent}}\n  {{user}} got: {{received}}\n",
+        "ENTRY_FAILED": "**#{{tradeId}}** · {{when}} · *{{status}}*\n  with {{partner}}\n  reason: {{reason}}\n",
+        "ENTRY_DIVIDER": "⸻⸻⸻⸻\n",
+        "PAGE_FOOTER": "╰───────────────────────────╯",
+        "OFFER_NONE": "*nothing*",
+        "OFFER_ITEM": "{{qty}}× #{{itemId}}",
+        "OFFER_ARTCOINS": "{{emoji}} {{amount}}",
+        "STATUS_FAILED": "failed",
+        "STATUS_CANCELLED": "cancelled"
+    },
     "USE": {
         "CONFIRMATION": "╭*:;,．★ ～☆*───────╮\nDo you want to use **{{item}}**?\n╰────────☆～*:;,．*╯\n{{footer}}",
         "CONFIRMATION_TIPS": "Please react to the\n green button to proceed.",
