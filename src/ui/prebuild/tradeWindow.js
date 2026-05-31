@@ -43,27 +43,36 @@ class UI {
             gradient: true,
             gradientHeight: 160
         })
-        //  Two avatars side by side. The card is 260px wide; centering one
-        //  avatar at radius 24 puts it at ~106. To split into two, push them
-        //  apart by ~32px each side of center. inline: true keeps the
-        //  reservedSpace cursor still so the second draw lands on the same
-        //  row instead of dropping below.
+        //  Two avatars side by side.
+        //
+        //  cards.js `addContent` has a quirk: when `justify: 'center'` is
+        //  passed for an avatar, the helper at addContent:422 returns
+        //  width/2 directly and IGNORES marginLeft. So if both draws use
+        //  justify:'center', they land at the same X and the second avatar
+        //  paints on top of the first — looks like only one avatar.
+        //
+        //  Workaround: pass explicit marginLeft and drop justify entirely.
+        //  With width=260 and 48×48 avatars (radius 24), centering both
+        //  with a small gap at the centerline lands the initiator at x=78
+        //  and the partner at x=134.
+        const cardCenter = 260 / 2
+        const avatarRadius = 24
+        const avatarSize = avatarRadius * 2
+        const halfGap = 4
         const initiatorAvatar = await urlToBuffer(this.initiator.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         const partnerAvatar = await urlToBuffer(this.partner.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         await card.addContent({
             avatar: initiatorAvatar,
-            justify: `center`,
             marginTop: 80,
-            marginLeft: -32,
-            avatarRadius: 24,
+            marginLeft: cardCenter - avatarSize - halfGap,
+            avatarRadius: avatarRadius,
             inline: true
         })
         await card.addContent({
             avatar: partnerAvatar,
-            justify: `center`,
             marginTop: 80,
-            marginLeft: 32,
-            avatarRadius: 24
+            marginLeft: cardCenter + halfGap,
+            avatarRadius: avatarRadius
         })
         card.ready()
         return card.getBuffer()
