@@ -10,18 +10,21 @@ module.exports = async (client, interaction) => {
     const locale = (key) => client.localization.findLocale(key)
     const reply = client.responseLibs(interaction, true, locale)
     try {
-        if (client.guildonly_commands.has(interaction.guildId)) {
-            let guildonlycommands = client.guildonly_commands.get(interaction.guildId)
-            client.application_commands = client.application_commands.concat([...guildonlycommands])
-        }
+        //  Build a per-interaction lookup so guild-only commands never leak into
+        //  the shard-global `client.application_commands` singleton. Reassigning the
+        //  singleton (the old behavior) accumulated every guild's guild-only commands
+        //  process-wide, contaminating later lookups across guilds.
+        const lookup = client.guildonly_commands.has(interaction.guildId)
+            ? client.application_commands.concat([...client.guildonly_commands.get(interaction.guildId)])
+            : client.application_commands
         if (interaction.type === InteractionType.ApplicationCommand) {
-            let command = client.application_commands.get(interaction.commandName)
+            let command = lookup.get(interaction.commandName)
             // Ignore non-registered commands
             if (!command) return
 
             applicationCommand(client, interaction, command)
         } else if (interaction.type === InteractionType.ApplicationCommandAutocomplete) {
-            let command = client.application_commands.get(interaction.commandName)
+            let command = lookup.get(interaction.commandName)
             // Ignore non-registered commands
             if (!command) return
             command.autocomplete(client, interaction)
