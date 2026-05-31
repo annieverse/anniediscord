@@ -133,11 +133,11 @@
     },
     "CHOOSE": {
         "EMOTIONS": [
-            "AnnieMenangis",
+            "AnnieCry",
             "AnnieDab",
             "AnnieLewd",
             "AnniePogg",
-            "AnnieSenyum"
+            "AnnieSmile"
         ],
         "GUIDE": "Aku akan mencoba memilih opsi apa pun yang kamu berikan!",
         "INVALID_OPTIONS": "Ehh, beri aku banyak pilihan untuk dipilih!",
@@ -154,7 +154,7 @@
     "COMMAND": {
         "DISABLED": "Aku tidak dapat menjalankan perintah ini! karena **{{command}}** sepertinya dinonaktifkan di guild ini. Coba minta admin kamu untuk mengaktifkannya kembali.",
         "FETCHING": "{{emoji}} `meminta antarmuka {{command}} untuk ID {{user}}...`",
-        "STILL_COOLDOWN": "**Bisakah kita bersantai sebentar, {{user}}?** {{emoji}}\n╰ Kamu memiliki sisa {{timeLeft}} hingga perintah berikutnya.",
+        "STILL_COOLDOWN": "**Bisakah kita bersantai sebentar, {{user}}?** {{emoji}}\n╰ Kamu memiliki sisa {{timeLeft}} detik hingga perintah berikutnya.",
         "TITLE": "{{emoji}}**| {{user}} {{command}}**"
     },
     "COMPLAINT": {
