@@ -53,7 +53,8 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
     REQUEST_TIMEOUT_MS: 30 * 1000,
     IDLE_TIMEOUT_MS: 5 * 60 * 1000,
-    FINAL_TIMEOUT_MS: 15 * 1000,
+    FINAL_TIMEOUT_MS: 10 * 1000,
+    FINAL_TIMEOUT_NOTICE_DELETE_SECONDS: 10,
     ARTCOINS_EMOJI_ID: `758720612087627787`,
 
     async execute(client, reply, message, arg, locale) {
@@ -253,10 +254,7 @@ module.exports = {
             filter: i => i.user.id === initiator.id || i.user.id === target.id
         })
 
-        let finalCommitTimer = null
-        const clearFinalTimer = () => {
-            if (finalCommitTimer) { clearTimeout(finalCommitTimer); finalCommitTimer = null }
-        }
+        let finalConfirmMessage = null
 
         const refreshUi = async (interaction) => {
             const { embed, attachment } = await renderArtifacts()
@@ -274,7 +272,10 @@ module.exports = {
 
         await new Promise(resolve => {
             const finishWith = async (statusKey, payload = {}) => {
-                clearFinalTimer()
+                if (finalConfirmMessage) {
+                    try { await finalConfirmMessage.delete() } catch (_) { /* already gone */ }
+                    finalConfirmMessage = null
+                }
                 try { await tradeMessage.edit({ components: [] }) } catch (_) { /* deleted */ }
                 if (statusKey) await reply.send(locale(statusKey), payload).catch(() => {})
                 collector.stop(`done`)
@@ -303,55 +304,62 @@ module.exports = {
                             return await finishWith(`TRADE.CANCELLED`)
 
                         case `trade:ready`: {
-                            const wasReadied = session.state === STATE.READIED
                             session.setReady(side, !session.snapshot().ready[side])
-                            if (session.state === STATE.READIED && !wasReadied) {
-                                //  Both ready now — open final-confirm window.
-                                clearFinalTimer()
-                                finalCommitTimer = setTimeout(async () => {
-                                    if (session.state !== STATE.READIED) return
-                                    //  Treat the timeout as both sides toggling
-                                    //  off; the session goes back to ACTIVE.
-                                    session.setReady(`a`, false)
-                                    session.setReady(`b`, false)
-                                    await refreshUi()
-                                    await reply.send(locale(`TRADE.FINAL_TIMEOUT`)).catch(() => {})
-                                }, this.FINAL_TIMEOUT_MS)
-                                await refreshUi(i)
-                                //  Run execute when both sides have toggled.
-                                //  We commit on the second ready click, not on
-                                //  a separate button — simpler UX, matches the
-                                //  design doc's `both Ready -> READIED -> exec`.
-                                const result = await session.execute()
-                                clearFinalTimer()
-                                if (result.ok) {
-                                    await finishWith(`TRADE.EXEC_SUCCESS`, {
-                                        socket: {
-                                            a: initiator.username,
-                                            b: target.username,
-                                            emoji: await client.getEmoji(`692428692999241771`)
-                                        }
-                                    })
-                                    //  Quick follow-up nudging the user
-                                    //  toward /tradehistory. Sent after
-                                    //  finishWith so it lands below the
-                                    //  success line in the channel.
-                                    await reply.send(locale(`TRADE.EXEC_SUCCESS_FOLLOWUP`), {
-                                        socket: { emoji: await client.getEmoji(`692428692999241771`) }
-                                    }).catch(() => {})
-                                    return
-                                }
-                                if (result.code === `INSUFFICIENT_ITEM` || result.code === `INSUFFICIENT_ARTCOINS`) {
-                                    //  Whoever's debit failed is in `result.detail`;
-                                    //  we name the side back to the user via session
-                                    //  ids — keeping it brief here.
-                                    return await finishWith(`TRADE.EXEC_FAILED_INSUFFICIENT`, {
-                                        socket: { user: result.detail || `someone` }
-                                    })
-                                }
-                                return await finishWith(`TRADE.EXEC_FAILED_GENERIC`)
+                            if (session.state !== STATE.READIED) {
+                                //  Either toggled to unlocked, or only one
+                                //  side is locked so far. Just refresh the UI.
+                                return await refreshUi(i)
                             }
-                            return await refreshUi(i)
+                            //  Both sides locked. Refresh the trade window so
+                            //  the lock indicators repaint, then drive the
+                            //  separate confirmation flow as its own message.
+                            await refreshUi(i)
+                            const result = await this.collectFinalConfirmation({
+                                client,
+                                reply,
+                                locale,
+                                messageRef,
+                                session,
+                                initiator,
+                                target,
+                                refreshUi,
+                                onConfirmMessage: (m) => { finalConfirmMessage = m }
+                            })
+                            if (result === `mutated`) {
+                                //  Offer changed mid-confirm; locks are already
+                                //  cleared by the lib. Trade window stays open.
+                                return
+                            }
+                            if (result === `timeout`) {
+                                //  Lib drops locks back; the trade window
+                                //  re-renders to reflect the unlock so users
+                                //  can re-lock or amend.
+                                session.setReady(`a`, false)
+                                session.setReady(`b`, false)
+                                await refreshUi()
+                                return
+                            }
+                            //  Both confirmed → execute.
+                            const exec = await session.execute()
+                            if (exec.ok) {
+                                await finishWith(`TRADE.EXEC_SUCCESS`, {
+                                    socket: {
+                                        a: initiator.username,
+                                        b: target.username,
+                                        emoji: await client.getEmoji(`692428692999241771`)
+                                    }
+                                })
+                                await reply.send(locale(`TRADE.EXEC_SUCCESS_FOLLOWUP`), {
+                                    socket: { emoji: await client.getEmoji(`692428692999241771`) }
+                                }).catch(() => {})
+                                return
+                            }
+                            if (exec.code === `INSUFFICIENT_ITEM` || exec.code === `INSUFFICIENT_ARTCOINS`) {
+                                return await finishWith(`TRADE.EXEC_FAILED_INSUFFICIENT`, {
+                                    socket: { user: exec.detail || `someone` }
+                                })
+                            }
+                            return await finishWith(`TRADE.EXEC_FAILED_GENERIC`)
                         }
 
                         case `trade:add`: {
@@ -554,7 +562,6 @@ module.exports = {
             })
 
             collector.on(`end`, async (_, reasonStr) => {
-                clearFinalTimer()
                 if (reasonStr === `done`) return  //  finishWith handled cleanup
                 if (session.state === STATE.COMMITTED || session.state === STATE.FAILED) return
                 session.cancel(`idle_timeout`)
@@ -563,6 +570,147 @@ module.exports = {
                 resolve()
             })
         })
+    },
+
+    /**
+     * Drive the final-confirm flow. After both sides hit Lock, we send a
+     * separate follow-up message with one or two Confirm buttons (one in
+     * self-trade, two — one per participant — otherwise) and run a 10s
+     * collector on it. Both sides must click for a normal trade; the
+     * BYPASS_SELF_TRADE path only needs one click.
+     *
+     * Resolves to one of:
+     *   `confirmed`  every required side clicked Confirm in time
+     *   `timeout`    the 10s window elapsed; caller releases the locks and
+     *                surfaces the timeout notice
+     *   `mutated`    a parallel offer mutation invalidated the locks while
+     *                we were waiting (the lib clears them automatically; we
+     *                detect by re-checking session state on each tick)
+     *
+     * @param {object} params
+     * @param {object} params.client
+     * @param {object} params.reply        Response wrapper for status messages.
+     * @param {Function} params.locale
+     * @param {object} params.messageRef   Original Discord message/interaction.
+     * @param {object} params.session      Active TradeSession.
+     * @param {object} params.initiator    Discord User of side A.
+     * @param {object} params.target       Discord User of side B.
+     * @param {Function} params.refreshUi  Re-render the trade window after timeout.
+     * @return {Promise<('confirmed'|'timeout'|'mutated')>}
+     */
+    async collectFinalConfirmation({ client, reply, locale, messageRef, session, initiator, target, refreshUi, onConfirmMessage }) {
+        const isSelfTrade = session.isSelfTrade
+        //  Self-trade only needs one click; normal trades need both
+        //  participants. We render one button labeled neutrally in self-trade
+        //  and two buttons (one per side) otherwise so each user has a
+        //  visibly-targeted control.
+        const row = new ActionRowBuilder()
+        if (isSelfTrade) {
+            row.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`trade:final:solo`)
+                    .setLabel(`Confirm`)
+                    .setStyle(ButtonStyle.Success)
+            )
+        } else {
+            row.addComponents(
+                new ButtonBuilder()
+                    .setCustomId(`trade:final:a`)
+                    .setLabel(`Confirm (${initiator.username})`)
+                    .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                    .setCustomId(`trade:final:b`)
+                    .setLabel(`Confirm (${target.username})`)
+                    .setStyle(ButtonStyle.Success)
+            )
+        }
+        const confirmMessage = await messageRef.channel.send({
+            content: locale(`TRADE.FINAL_PROMPT`),
+            components: [row]
+        })
+        //  Hand the message back to the caller so finishWith() can clean it
+        //  up on success/cancel paths without us touching session state.
+        if (onConfirmMessage) onConfirmMessage(confirmMessage)
+
+        const confirmCollector = confirmMessage.createMessageComponentCollector({
+            componentType: ComponentType.Button,
+            time: this.FINAL_TIMEOUT_MS,
+            filter: i => i.user.id === initiator.id || i.user.id === target.id
+        })
+
+        const confirmedSides = { a: false, b: false }
+        const result = await new Promise(resolve => {
+            confirmCollector.on(`collect`, async i => {
+                //  Re-check that the locks are still held — any mid-confirm
+                //  offer mutation drops them via the lib's #onOfferMutated.
+                if (session.state !== STATE.READIED) {
+                    confirmCollector.stop(`mutated`)
+                    return
+                }
+                if (isSelfTrade) {
+                    if (i.customId === `trade:final:solo`) {
+                        await i.update({ components: [] }).catch(() => {})
+                        confirmCollector.stop(`done`)
+                        resolve(`confirmed`)
+                        return
+                    }
+                    await i.reply({ content: locale(`TRADE.NOT_PARTICIPANT`), flags: MessageFlags.Ephemeral })
+                    return
+                }
+                //  Normal trade: side A's button only counts for A, B's only
+                //  for B. Participants clicking the wrong button get an
+                //  ephemeral nudge so they don't think their click was lost.
+                const expectedSide = i.user.id === initiator.id ? `a` : `b`
+                const wantedCustomId = `trade:final:${expectedSide}`
+                if (i.customId !== wantedCustomId) {
+                    return i.reply({ content: locale(`TRADE.NOT_PARTICIPANT`), flags: MessageFlags.Ephemeral })
+                }
+                if (confirmedSides[expectedSide]) {
+                    //  Already confirmed; second click from same side is a no-op.
+                    return i.deferUpdate().catch(() => {})
+                }
+                confirmedSides[expectedSide] = true
+                if (confirmedSides.a && confirmedSides.b) {
+                    await i.update({ components: [] }).catch(() => {})
+                    confirmCollector.stop(`done`)
+                    resolve(`confirmed`)
+                    return
+                }
+                //  First side has confirmed; let them know we're waiting on
+                //  the partner. ephemeral so it doesn't clutter the channel.
+                await i.reply({
+                    content: locale(`TRADE.FINAL_PROMPT_WAITING`),
+                    flags: MessageFlags.Ephemeral
+                }).catch(() => {})
+            })
+            confirmCollector.on(`end`, async (_collected, reasonStr) => {
+                if (reasonStr === `done`) return
+                if (reasonStr === `mutated`) {
+                    try { await confirmMessage.delete() } catch (_) { /* already gone */ }
+                    if (onConfirmMessage) onConfirmMessage(null)
+                    return resolve(`mutated`)
+                }
+                //  Timeout: delete the confirm message, surface the timeout
+                //  notice (auto-delete after the configured window per
+                //  spec), and let the caller unlock + re-render.
+                try { await confirmMessage.delete() } catch (_) { /* already gone */ }
+                if (onConfirmMessage) onConfirmMessage(null)
+                await reply.send(locale(`TRADE.FINAL_TIMEOUT`), {
+                    deleteIn: this.FINAL_TIMEOUT_NOTICE_DELETE_SECONDS
+                }).catch(() => {})
+                return resolve(`timeout`)
+            })
+        })
+        if (result === `confirmed`) {
+            //  Tear the confirm message down before execute() runs so the
+            //  buttons don't stay interactable while PG is mid-transaction.
+            try { await confirmMessage.delete() } catch (_) { /* already gone */ }
+            if (onConfirmMessage) onConfirmMessage(null)
+        }
+        //  Quiet lint about params we don't always exercise per branch.
+        void refreshUi
+        void client
+        return result
     },
 
     /**
