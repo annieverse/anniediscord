@@ -11,6 +11,7 @@ const {
     TextInputStyle,
     EmbedBuilder,
     StringSelectMenuBuilder,
+    AttachmentBuilder,
     ComponentType,
     MessageFlags
 } = require(`discord.js`)
@@ -19,6 +20,7 @@ const commanifier = require(`../../utils/commanifier`)
 const trueInt = require(`../../utils/trueInt`)
 const { TradeSession, TradeError, STATE, ARTCOINS_ITEM_ID, NON_LINE_ITEM_IDS } = require(`../../libs/trade`)
 const { isInteractionCallbackResponse } = require(`../../utils/appCmdHelp`)
+const TradeWindowGUI = require(`../../ui/prebuild/tradeWindow`)
 
 /**
  * Player-to-player trading. Two participants exchange items + artcoins inside
@@ -183,15 +185,52 @@ module.exports = {
     async runActiveSession(client, reply, locale, messageRef, session, initiator, target) {
         session.accept()
 
+        //  Fetch metadata for both users so the GUI banner can pick up the
+        //  initiator's saved theme + cover and pull avatars consistently.
+        //  This is the same `requestMetadata` shape the inventory and pay
+        //  commands use; cost is one round trip per user, paid once per
+        //  session, not per click. Note: requestMetadata swallows errors
+        //  and returns null on failure (see User.requestMetadata catch),
+        //  so we check for null rather than catching a throw.
+        const userLib = new User(client, messageRef)
+        let initiatorMeta, partnerMeta
+        try {
+            initiatorMeta = await userLib.requestMetadata(initiator, 2, locale)
+            partnerMeta = (initiator.id === target.id) ? initiatorMeta : await userLib.requestMetadata(target, 2, locale)
+        } catch (err) {
+            client.logger.warn({ action: `trade_metadata_fetch_failed`, msg: err && err.message })
+            session.cancel(`metadata_fetch_failed`)
+            return
+        }
+        if (!initiatorMeta || !partnerMeta) {
+            client.logger.warn({ action: `trade_metadata_fetch_failed`, msg: `requestMetadata returned null` })
+            session.cancel(`metadata_fetch_failed`)
+            return
+        }
+
         //  The dual-pane trade window doesn't fit Response.send's contract —
         //  Response builds its own embed from the `content` arg and ignores
         //  caller-supplied embeds. We need a custom embed (description +
         //  two inline fields), so send straight through the channel and let
         //  Response handle the simpler "send a flash message" calls below
         //  (cancel, success, etc.).
-        const tradeEmbed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
+        const renderArtifacts = async () => {
+            //  GUI is rebuilt on every render — cheap enough (a single canvas
+            //  draw, no DB calls) and avoids stale cover/theme if the user
+            //  changes either mid-trade. The attachment is referenced from
+            //  the embed via `attachment://trade.png`.
+            const buffer = await new TradeWindowGUI(initiatorMeta, partnerMeta).build()
+            const png = typeof buffer.png === `function` ? buffer.png() : buffer
+            const attachment = new AttachmentBuilder(png, { name: `trade.png` })
+            const embed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
+            embed.setImage(`attachment://trade.png`)
+            return { embed, attachment }
+        }
+
+        const initial = await renderArtifacts()
         const tradeMessage = await messageRef.channel.send({
-            embeds: [tradeEmbed],
+            embeds: [initial.embed],
+            files: [initial.attachment],
             components: this.buildButtonRows(session)
         })
         if (!tradeMessage) {
@@ -219,15 +258,16 @@ module.exports = {
         }
 
         const refreshUi = async (interaction) => {
-            const embed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
+            const { embed, attachment } = await renderArtifacts()
             //  Always reply via interaction.update so Discord doesn't surface
             //  "this interaction failed" — the collector also calls editReply
             //  on the parent message, which we use after non-interaction edits
             //  (timer-driven state changes).
+            const payload = { embeds: [embed], files: [attachment], components: this.buildButtonRows(session) }
             if (interaction) {
-                await interaction.update({ embeds: [embed], components: this.buildButtonRows(session) }).catch(() => {})
+                await interaction.update(payload).catch(() => {})
             } else {
-                await tradeMessage.edit({ embeds: [embed], components: this.buildButtonRows(session) }).catch(() => {})
+                await tradeMessage.edit(payload).catch(() => {})
             }
         }
 

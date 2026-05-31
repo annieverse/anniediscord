@@ -109,36 +109,50 @@ describe(`/trade run() early exits`, () => {
         process.env.NODE_ENV = `development`
         process.env.BYPASS_SELF_TRADE = `1`
         //  We can't drive the full Discord flow here without a real client,
-        //  but we can confirm the early-exit path doesn't trigger. We stub
-        //  the post-bypass calls so the flow short-circuits cleanly:
-        //  requireBothFree must run without throwing, and we never reach
-        //  the embed render.
+        //  but we can confirm the early-exit path doesn't trigger. Strategy:
+        //  fail metadata fetch on purpose so runActiveSession bails through
+        //  its own catch (logger.warn + session.cancel + releaseLocks). If
+        //  the bypass had failed, run() would have replied SELF_TRADE and
+        //  never touched the DB at all — caches.size would stay 0 with no
+        //  logger.warn call. We assert the lock was acquired and released,
+        //  AND that the metadata fetch was attempted.
         const caches = new Set()
+        const warnings = []
+        let metadataCallCount = 0
         const client = buildClient({
+            logger: { info() {}, warn(payload) { warnings.push(payload) }, error() {}, debug() {} },
             db: {
                 databaseUtils: {
                     async doesCacheExist(key) { return caches.has(key) },
                     async setCache(key) { caches.add(key) },
-                    async delCache(key) { caches.delete(key) }
+                    async delCache(key) { caches.delete(key) },
+                    async validateUserEntry() {}
+                },
+                userUtils: {
+                    async getUser() {
+                        metadataCallCount++
+                        throw new Error(`__metadata_probe__`)
+                    }
+                },
+                guildUtils: {
+                    async registerGuild() {}
                 }
             }
         })
-        //  Override reply.send so the moment runActiveSession tries to render
-        //  the embed, we throw a sentinel error and unwind. That tells us we
-        //  passed the gate without actually engaging the component collector.
-        const reply = {
-            send: async () => { throw new Error(`__reached_active__`) }
-        }
+        const reply = buildReply()
         const locale = key => key
         const messageRef = fakeMessageRef()
         const target = { id: `userA`, username: `Alice`, bot: false }
-        let caught
-        try { await tradeCommand.run(client, reply, messageRef, locale, target) } catch (e) { caught = e }
-        expect(caught, `should have reached the active-session render`).to.exist
-        expect(caught.message).to.equal(`__reached_active__`)
-        //  Only one lock should have been written (self-trade collapses both
-        //  to the same user id).
-        expect(caches.size).to.equal(0)  //  finally{} released it
+        await tradeCommand.run(client, reply, messageRef, locale, target)
+        //  The bypass was reached: run() got past the self-trade check, set
+        //  the lock, called requestMetadata (which threw), caught it, and
+        //  released the lock cleanly via finally.
+        expect(metadataCallCount, `metadata fetch should have been attempted`).to.equal(1)
+        expect(warnings.some(w => w && w.action === `trade_metadata_fetch_failed`)).to.equal(true)
+        expect(caches.size, `lock released by finally`).to.equal(0)
+        //  Crucially, no SELF_TRADE locale was sent — that's how we know the
+        //  bypass actually worked rather than the gate firing.
+        expect(reply.calls.find(c => c.content === `TRADE.SELF_TRADE`)).to.equal(undefined)
     })
 
     it(`refuses bot trade partners`, async () => {
