@@ -286,6 +286,37 @@ describe(`TradeSession state machine`, () => {
         expect(items).to.deep.equal([30, 31])
     })
 
+    it(`clears the partner's ready flag when only one side has readied (anti-sneak-edit)`, async () => {
+        //  This is the scam vector: A readies first, then B silently swaps in
+        //  a different item before readying. Without the always-clear rule,
+        //  A's "true" stays and the next B-ready would commit a trade A
+        //  never agreed to. The rule says: any offer mutation by anyone clears
+        //  every ready flag, no matter the prior state.
+        const seed = {
+            inventory: { 'userA@30@g1': 5, 'userB@40@g1': 5 },
+            items: {
+                30: { item_id: 30, bind: `y` },
+                40: { item_id: 40, bind: `y` }
+            }
+        }
+        const { session } = await buildActiveSession(seed)
+        await session.addItem(`a`, { itemId: 30, qty: 1 })
+        session.setReady(`a`, true)
+        expect(session.snapshot().ready).to.deep.equal({ a: true, b: false })
+        //  B mutates AFTER A readied. A's consent must be revoked.
+        await session.addItem(`b`, { itemId: 40, qty: 1 })
+        expect(session.snapshot().ready).to.deep.equal({ a: false, b: false })
+        expect(session.state).to.equal(STATE.ACTIVE)
+    })
+
+    it(`clears all ready flags on artcoin mutations too`, async () => {
+        const { session } = await buildActiveSession()
+        session.setReady(`a`, true)
+        expect(session.snapshot().ready.a).to.equal(true)
+        session.setArtcoins(`b`, 100)
+        expect(session.snapshot().ready).to.deep.equal({ a: false, b: false })
+    })
+
     it(`removeItem clamps to zero and triggers the ready-revoke rule`, async () => {
         const seed = {
             inventory: { 'userA@40@g1': 5 },

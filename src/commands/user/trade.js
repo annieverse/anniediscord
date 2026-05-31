@@ -293,69 +293,40 @@ module.exports = {
                             return await refreshUi(i)
                         }
 
-                        case `trade:setac`: {
-                            const modalId = `trade:setac:${i.id}`
-                            const input = new TextInputBuilder()
-                                .setCustomId(`amount`)
-                                .setLabel(locale(`TRADE.AC_MODAL_LABEL`))
-                                .setStyle(TextInputStyle.Short)
-                                .setRequired(true)
-                            const modal = new ModalBuilder()
-                                .setCustomId(modalId)
-                                .setTitle(locale(`TRADE.AC_MODAL_TITLE`))
-                                .addComponents(new ActionRowBuilder().addComponents(input))
-                            await i.showModal(modal)
-                            collector.resetTimer()
-                            const submission = await i.awaitModalSubmit({
-                                time: 60 * 1000,
-                                filter: s => s.customId === modalId
-                            }).catch(() => null)
-                            if (!submission) return
-                            const raw = submission.fields.getTextInputValue(`amount`).trim()
-                            const amount = trueInt(raw) || (raw === `0` ? 0 : NaN)
-                            if (!Number.isInteger(amount) || amount < 0) {
-                                await submission.reply({ content: locale(`TRADE.AC_INVALID`), flags: MessageFlags.Ephemeral })
-                                return
-                            }
-                            //  Friendly preflight against the user's actual balance.
-                            const balance = await client.db.userUtils.getUserBalance(
-                                side === `a` ? initiator.id : target.id,
-                                messageRef.guild.id
-                            )
-                            if (amount > balance) {
-                                await submission.reply({
-                                    content: locale(`TRADE.AC_INSUFFICIENT`),
-                                    flags: MessageFlags.Ephemeral
-                                })
-                                return
-                            }
-                            session.setArtcoins(side, amount)
-                            await submission.deferUpdate().catch(() => {})
-                            return await refreshUi()
-                        }
-
                         case `trade:add`: {
-                            //  Two-step flow: select item from inventory, then
-                            //  modal for qty. A single modal can't host a
-                            //  select menu (Discord limitation), so the
+                            //  Two-step flow: select what to add (artcoins or
+                            //  one of the user's tradeable items), then a
+                            //  modal for amount/qty. A single modal can't host
+                            //  a select menu (Discord limitation), so the
                             //  ephemeral select runs first.
                             const ownerId = side === `a` ? initiator.id : target.id
                             const candidates = await this.fetchTradeableInventory(client, messageRef.guild.id, ownerId)
-                            if (!candidates.length) {
-                                return i.reply({
-                                    content: locale(`TRADE.ADD_NO_TRADEABLE_ITEMS`),
-                                    flags: MessageFlags.Ephemeral
+                            //  Pull current AC balance to surface in the
+                            //  artcoins option's description and as the cap
+                            //  for the AC modal.
+                            const acBalance = await client.db.userUtils.getUserBalance(ownerId, messageRef.guild.id)
+                            const acAlreadyOffered = session.snapshot().offers[side].artcoins
+                            const maxAcAddable = Math.max(0, acBalance - acAlreadyOffered)
+                            //  AC option always appears (even at zero balance)
+                            //  so users find it where they expect; the modal
+                            //  caps amount to maxAcAddable.
+                            const options = [{
+                                label: locale(`TRADE.ADD_OPTION_ARTCOINS`),
+                                description: this.truncate(locale(`TRADE.ADD_OPTION_ARTCOINS_DESC`).replace(`{{balance}}`, acBalance), 100),
+                                value: `artcoins`
+                            }]
+                            for (const c of candidates.slice(0, 24)) {
+                                options.push({
+                                    label: this.truncate(c.name, 100),
+                                    description: this.truncate(`Owned: ${c.quantity}`, 100),
+                                    value: `item:${c.item_id}`
                                 })
                             }
                             const selectId = `trade:add:select:${i.id}`
                             const select = new StringSelectMenuBuilder()
                                 .setCustomId(selectId)
                                 .setPlaceholder(locale(`TRADE.ADD_SELECT_PLACEHOLDER`))
-                                .addOptions(candidates.slice(0, 25).map(c => ({
-                                    label: this.truncate(c.name, 100),
-                                    description: this.truncate(`Owned: ${c.quantity}`, 100),
-                                    value: String(c.item_id)
-                                })))
+                                .addOptions(options)
                             await i.reply({
                                 content: locale(`TRADE.ADD_SELECT_PROMPT`),
                                 components: [new ActionRowBuilder().addComponents(select)],
@@ -374,7 +345,32 @@ module.exports = {
                                 }).catch(() => {})
                                 return
                             }
-                            const chosenItemId = parseInt(selectInteraction.values[0], 10)
+
+                            //  Branch on what the user picked.
+                            if (selectInteraction.values[0] === `artcoins`) {
+                                const acResult = await this.collectAddArtcoins({
+                                    anchorInteraction: selectInteraction,
+                                    locale,
+                                    balance: acBalance,
+                                    maxAddable: maxAcAddable,
+                                    collector
+                                })
+                                if (acResult.timeout) {
+                                    await i.editReply({ content: locale(`TRADE.ADD_SELECT_TIMEOUT`), components: [] }).catch(() => {})
+                                    return
+                                }
+                                if (acResult.aborted) {
+                                    await i.editReply({ content: locale(`TRADE.ADD_TOO_MANY_RETRIES`), components: [] }).catch(() => {})
+                                    return
+                                }
+                                session.setArtcoins(side, acResult.amount)
+                                await acResult.submission.deferUpdate().catch(() => {})
+                                await i.deleteReply().catch(() => {})
+                                return await refreshUi()
+                            }
+
+                            //  Item branch.
+                            const chosenItemId = parseInt(selectInteraction.values[0].split(`:`)[1], 10)
                             const chosen = candidates.find(c => Number(c.item_id) === chosenItemId)
                             const owned = Number(chosen.quantity) || 0
                             //  Subtract whatever this side has already offered
@@ -582,6 +578,69 @@ module.exports = {
     },
 
     /**
+     * Drive the artcoins-amount loop for the Add flow. Same retry-with-
+     * inline-error shape as collectAddQuantity, just with a different
+     * cap (the user's current balance minus what they've already
+     * offered).
+     *
+     * Resolves to one of:
+     *   { submission, amount }   valid; caller should setArtcoins(side, amount)
+     *   { timeout: true }        modal closed / 60s elapsed
+     *   { aborted: true }        maxAttempts exhausted
+     *
+     * @param {object} params
+     * @param {import('discord.js').Interaction} params.anchorInteraction
+     * @param {Function} params.locale
+     * @param {number} params.balance      User's current AC balance.
+     * @param {number} params.maxAddable   balance minus already-offered AC.
+     * @param {object} params.collector    Parent button collector.
+     * @param {number} [params.maxAttempts=3]
+     */
+    async collectAddArtcoins({ anchorInteraction, locale, balance, maxAddable, collector, maxAttempts = 3 }) {
+        let nextInteraction = anchorInteraction
+        let attempt = 0
+        while (attempt < maxAttempts) {
+            attempt++
+            const titleBase = locale(`TRADE.AC_MODAL_TITLE`)
+            const title = attempt > 1
+                ? `${titleBase} · ${this.lastAcErrorLabel}`
+                : titleBase
+            const modalId = `trade:add:ac:${nextInteraction.id}`
+            const acInput = new TextInputBuilder()
+                .setCustomId(`amount`)
+                .setLabel(this.truncate(locale(`TRADE.AC_LABEL_WITH_BALANCE`).replace(`{{balance}}`, balance), 45))
+                .setPlaceholder(this.truncate(locale(`TRADE.AC_PLACEHOLDER`).replace(`{{max}}`, maxAddable), 100))
+                .setStyle(TextInputStyle.Short)
+                .setRequired(true)
+            const modal = new ModalBuilder()
+                .setCustomId(modalId)
+                .setTitle(this.truncate(title, 45))
+                .addComponents(new ActionRowBuilder().addComponents(acInput))
+            await nextInteraction.showModal(modal)
+            if (collector) collector.resetTimer()
+            const submission = await nextInteraction.awaitModalSubmit({
+                time: 60 * 1000,
+                filter: s => s.customId === modalId
+            }).catch(() => null)
+            if (!submission) return { timeout: true }
+            const raw = submission.fields.getTextInputValue(`amount`).trim()
+            const amount = trueInt(raw) || (raw === `0` ? 0 : NaN)
+            if (!Number.isInteger(amount) || amount < 0) {
+                this.lastAcErrorLabel = locale(`TRADE.AC_ERROR_INVALID`)
+                nextInteraction = submission
+                continue
+            }
+            if (amount > maxAddable) {
+                this.lastAcErrorLabel = locale(`TRADE.AC_ERROR_TOO_MANY`).replace(`{{max}}`, maxAddable)
+                nextInteraction = submission
+                continue
+            }
+            return { submission, amount }
+        }
+        return { aborted: true }
+    },
+
+    /**
      * Walk the user's inventory once, return only the entries that are
      * actually addable to a trade offer: positive quantity, not in_use, has
      * a row in `items` with bind starting with "y", and the item id is not
@@ -717,9 +776,8 @@ module.exports = {
      */
     buildButtonRows(session) {
         const buttons = [
-            new ButtonBuilder().setCustomId(`trade:add`).setLabel(`Add item`).setStyle(ButtonStyle.Primary),
-            new ButtonBuilder().setCustomId(`trade:remove`).setLabel(`Remove item`).setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId(`trade:setac`).setLabel(`Set artcoins`).setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder().setCustomId(`trade:add`).setLabel(`Add`).setStyle(ButtonStyle.Primary),
+            new ButtonBuilder().setCustomId(`trade:remove`).setLabel(`Remove`).setStyle(ButtonStyle.Secondary),
             new ButtonBuilder().setCustomId(`trade:ready`).setLabel(`Ready`).setStyle(ButtonStyle.Success),
             new ButtonBuilder().setCustomId(`trade:cancel`).setLabel(`Cancel`).setStyle(ButtonStyle.Danger)
         ]

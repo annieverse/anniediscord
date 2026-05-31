@@ -290,18 +290,20 @@ class TradeSession {
     }
 
     /**
-     * Drive the modify-while-locked rule: any offer mutation while READIED
-     * snaps both ready flags off and reverts to ACTIVE. The mutation itself
-     * still applies — that's what the user wanted; they just need to
-     * re-confirm.
+     * Drive the modify-while-locked rule: any offer mutation clears BOTH
+     * ready flags, regardless of which side mutated and regardless of how
+     * many sides had readied. This is the anti-sneak-edit guarantee — a
+     * consenting click before a change is no longer consent after it. The
+     * mutation itself still applies; the user(s) just have to re-confirm.
      * @private
      */
     #onOfferMutated() {
-        if (this.state === STATE.READIED) {
+        const wasAnyReady = this.ready[SIDE_A] || this.ready[SIDE_B]
+        if (wasAnyReady) {
             this.ready[SIDE_A] = false
             this.ready[SIDE_B] = false
-            this.state = STATE.ACTIVE
         }
+        if (this.state === STATE.READIED) this.state = STATE.ACTIVE
         this.lastTouchedAt = this.now()
     }
 
