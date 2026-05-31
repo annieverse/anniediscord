@@ -41,7 +41,7 @@ class UI {
             isSelfUpload: this.initiator.usedCover.isSelfUpload,
             minHeight: 120,
             gradient: true,
-            gradientHeight: 160
+            gradientHeight: 100
         })
         //  Two avatars on a 300px-wide canvas. Initiator centered at x=75
         //  (column-A midpoint), partner at x=225 (column-B midpoint).
@@ -54,7 +54,7 @@ class UI {
         //  width/2 and IGNORES marginLeft. We skip justify and pass
         //  explicit marginLeft so both draws land where we want.
         const avatarRadius = 24
-        const initiatorCenterX = 100
+        const initiatorCenterX = 120
         const partnerCenterX = 225
         const initiatorMarginLeft = initiatorCenterX - avatarRadius
         const partnerMarginLeft = partnerCenterX - avatarRadius
