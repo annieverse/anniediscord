@@ -63,9 +63,13 @@ function buildDb(seed = {}) {
             const sign = operation === `-` ? -1 : 1
             inventory.set(key, current + sign * value)
             return true
-        },
+        }
+    }
 
+    const userUtils = {
         async getUserInventory(userId, guildId) {
+            //  In production this method lives on UserUtils, not DatabaseUtils;
+            //  the trade lib's #fetchOwnedQuantity calls it from there.
             const rows = []
             for (const [key, qty] of inventory) {
                 const [u, i, g] = key.split(`@`)
@@ -93,7 +97,7 @@ function buildDb(seed = {}) {
     }
 
     return {
-        db: { databaseUtils, shop, trades },
+        db: { databaseUtils, userUtils, shop, trades },
         inventory,
         caches,
         tradeLog

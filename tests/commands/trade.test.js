@@ -185,7 +185,7 @@ describe(`/trade item resolvers`, () => {
     function clientWithInventory(inventory, items = {}) {
         return {
             db: {
-                databaseUtils: {
+                userUtils: {
                     async getUserInventory() { return inventory }
                 },
                 shop: {

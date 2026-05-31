@@ -473,7 +473,8 @@ module.exports = {
      * for the current guild. Used by the `add` flow.
      */
     async resolveItemForUser(client, guildId, userId, keyword) {
-        const inventory = await client.db.databaseUtils.getUserInventory(userId, guildId)
+        //  getUserInventory lives on UserUtils, not DatabaseUtils.
+        const inventory = await client.db.userUtils.getUserInventory(userId, guildId)
         if (!inventory || !inventory.length) return null
         const candidates = inventory.filter(row => row.quantity > 0 && (!row.in_use || Number(row.in_use) === 0))
         if (!candidates.length) return null

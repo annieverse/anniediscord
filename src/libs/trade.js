@@ -439,7 +439,8 @@ class TradeSession {
             return this.db.databaseUtils.getOwnedQuantity({ userId, itemId, guildId: this.guildId })
         }
         //  Fallback: walk the user's inventory once and read the line.
-        const inv = await this.db.databaseUtils.getUserInventory(userId, this.guildId)
+        //  getUserInventory lives on UserUtils, not DatabaseUtils.
+        const inv = await this.db.userUtils.getUserInventory(userId, this.guildId)
         if (!inv) return 0
         const line = inv.find(row => Number(row.item_id) === Number(itemId))
         if (!line) return 0
