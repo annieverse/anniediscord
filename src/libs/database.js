@@ -41,7 +41,13 @@ class Database {
 				process.exit()
 			})
 		this.client.on(`error`, (err) => {
-			logger.error(`Ouch snap! >> ${err.stack}`)
+			//  pg.Client emits 'error' with whatever was thrown — `_query`'s catch
+			//  forwards arbitrary values via `emit('error', e)`, and JS allows
+			//  `throw undefined`/strings/numbers. Type-guard before reading .stack
+			//  so the listener itself doesn't crash mid-log and pull the shard down
+			//  during startup (Reminders.initialize is the first consumer to hit it).
+			const stack = err && err.stack ? err.stack : String(err)
+			logger.error(`Ouch snap! >> ${stack}`)
 		})
 		this.connectRedis()
 		return this
