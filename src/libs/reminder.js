@@ -165,6 +165,85 @@ class Reminder {
         }
         return source
     }
+
+    /**
+     * Fetch the user's currently-active reminders, normalized and sorted by the soonest trigger.
+     * Reads straight from the database (the source of truth) so the parsed timestamps stay reliable.
+     * @param {string} [userId=``] the reminder's owner
+     * @return {array}
+     */
+    async getActiveReminders(userId = ``) {
+        const fn = `[Reminder.getActiveReminders]`
+        const reminders = await this.db.reminders.getUserReminders(userId)
+        if (!reminders || reminders.length <= 0) {
+            this.logger.debug(`${fn} no registered reminders for USER_ID:${userId}`)
+            return []
+        }
+        const now = new Date()
+        return reminders
+            .map(node => {
+                let remindAt
+                try {
+                    remindAt = typeof node.remind_at === `string` ? JSON.parse(node.remind_at) : node.remind_at
+                }
+                catch (e) {
+                    this.logger.warn(`${fn} failed to parse remind_at for UUID:${node.reminder_id} > ${e.message}`)
+                    remindAt = { timestamp: node.remind_at, milliseconds: 0 }
+                }
+                return {
+                    registeredAt: node.registered_at,
+                    id: node.reminder_id,
+                    userId: node.user_id,
+                    message: node.message,
+                    remindAt: {
+                        timestamp: new Date(remindAt.timestamp),
+                        milliseconds: remindAt.milliseconds
+                    }
+                }
+            })
+            .filter(node => node.remindAt.timestamp > now)
+            .sort((a, b) => a.remindAt.timestamp - b.remindAt.timestamp)
+    }
+
+    /**
+     * Deleting an active reminder across the shard pool, cache, and database.
+     * The cron job may live on a different shard than the one handling this request,
+     * so the stop is broadcasted to every shard.
+     * @param {string} [userId=``] the reminder's owner
+     * @param {string} [reminderId=``] the target reminder's id
+     * @return {boolean}
+     */
+    async deleteReminder(userId = ``, reminderId = ``) {
+        const fn = `[Reminder.deleteReminder]`
+        const cacheId = `REMINDERS@${userId}`
+        //  Stop the cron job on whichever shard currently holds it
+        try {
+            if (this.client.shard) {
+                await this.client.shard.broadcastEval((c, { id }) => {
+                    if (c.reminders && c.reminders.pool && c.reminders.pool.exists(id)) {
+                        c.reminders.pool.stop(id)
+                        c.reminders.pool.deleteJob(id)
+                        return true
+                    }
+                    return false
+                }, { context: { id: reminderId } })
+            }
+            else if (this.pool.exists(reminderId)) {
+                this.pool.stop(reminderId)
+                this.pool.deleteJob(reminderId)
+            }
+        }
+        catch (e) {
+            this.logger.warn(`${fn} failed to stop cron for ${reminderId} > ${e.message}`)
+        }
+        //  Invalidate cache
+        this.cache.del(cacheId)
+        //  Delete from database
+        await this.db.reminders.deleteUserReminder(reminderId)
+        this.logger.info(`${fn} deleted reminder UUID:${reminderId} for USER_ID:${userId}`)
+        return true
+    }
+
     /**
      * Parsing reminder's context from user message
      * @param {string} query

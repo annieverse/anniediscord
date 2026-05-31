@@ -548,9 +548,20 @@
     "LVL_TOO_LOW": "L'utilisateur doit être au moins de niveau **{0}** pour débloquer cette fonctionnalité."
   },
   "REMINDER": {
-    "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Vous avez quelque chose à vous rappeler ?♡**\nDemandez-moi comme ceci **`{{prefix}}rappelle-toi de faire un gâteau dans 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+    "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Vous avez quelque chose à vous rappeler ?♡**\nDemandez-moi comme ceci **`{{prefix}}rappelle-toi de faire un gâteau dans 3 minutes`**!\nConsultez votre liste avec **`{{prefix}}remind list`** ou effacez-en une avec **`{{prefix}}remind delete <id>`**.\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+    "HOME_NO_ACTIVE": "Pour l'instant, vous n'avez aucun rappel actif. {{emoji}}",
+    "HOME_HAS_ACTIVE": "Vous avez actuellement **{{size}}** rappel(s) actif(s) ! {{emoji}}",
     "INVALID_DATE": "**Oops, indiquez-moi quand vous voulez être rappelé !** {{emoji}}\n╰─ cela devrait ressembler à **`{{prefix}}rappelle-toi de dormir dans 8 heures`**",
-    "SUCCESSFUL": "**Annie, à votre service !♡** {{emoji}}\n╰─ Je vous rappellerai à {{time}} !"
+    "SUCCESSFUL": "**Annie, à votre service !♡** {{emoji}}\n╰─ Je vous rappellerai à {{time}} !",
+    "LIST_EMPTY": "**Rien à retenir pour le moment !** {{emoji}}\n╰─ Créez-en un avec **`{{prefix}}rappelle-toi de t'étirer dans 2 heures`** et je veillerai~♡",
+    "LIST_INTRO": "Vous avez actuellement **{{size}}** rappel(s) actif(s), et le plus proche vous alertera {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n",
+    "LIST_ENTRY": "[ID:{{id}}]** {{message}}**\n> ⏰ Se déclenche {{time}} ({{date}})",
+    "LIST_TIP": "**Vous avez fini de regarder ?♡** {{emoji}}\n╰─ Supprimez-en un à tout moment avec **`{{prefix}}remind delete <id>`**.",
+    "DELETE_EMPTY": "**Il n'y a rien que je puisse oublier !** {{emoji}}\n╰─ Vous n'avez aucun rappel actif pour le moment.",
+    "DELETE_MISSING_ID": "**Lequel dois-je laisser de côté ?** {{emoji}}\n╰─ Dites-moi comme ceci **`{{prefix}}remind delete <id>`**. Voici ce que vous avez :\n{{list}}",
+    "DELETE_NOT_FOUND": "**Hmm, je ne trouve pas ce rappel.** {{emoji}}\n╰─ Vérifiez l'id avec **`{{prefix}}remind list`** et réessayez, d'accord ?",
+    "DELETE_CONFIRMATION": "**Juste pour être sûre~♡** {{emoji}}\nDois-je vraiment oublier ce rappel ?\n╰─ **{{message}}**\n> ⏰ Se déclenche {{time}}",
+    "DELETE_SUCCESSFUL": "**Considérez que c'est oublié !♡** {{emoji}}\n╰─ Je ne vous embêterai plus avec celui-là."
   },
   "REMOVE_STICKER": {
     "NO_CHANGES": "Désolé, il semble que vous n'ayez pas équipé d'autocollant.",

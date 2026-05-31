@@ -639,9 +639,20 @@
         "LVL_TOO_LOW": "The user needs to be at least lv **{0}** to unlock this feature."
     },
     "REMINDER": {
-        "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+        "HOME": "╭*:;,．★ ～☆*────────────────╮\n**Got something to be reminded?♡**\nAsk me like **`{{prefix}}remind to bake a cake in 3 minutes`**!\nPeek at your list with **`{{prefix}}remind list`** or clear one with **`{{prefix}}remind delete <id>`**.\n╰──────────☆～*:;,．*╯\n{{activeReminders}}",
+        "HOME_NO_ACTIVE": "Currently you don't have any active reminders yet. {{emoji}}",
+        "HOME_HAS_ACTIVE": "Currently you have **{{size}}** active reminder(s)! {{emoji}}",
         "INVALID_DATE": "**Oops, tell me when to remind!** {{emoji}}\n╰─ should be like **`{{prefix}}remind to sleep in 8 hours`**",
-        "SUCCESSFUL": "**Annie, at your service!♡** {{emoji}}\n╰─ I will remind you that {{time}}!"
+        "SUCCESSFUL": "**Annie, at your service!♡** {{emoji}}\n╰─ I will remind you that {{time}}!",
+        "LIST_EMPTY": "**Nothing to remember just yet!** {{emoji}}\n╰─ Set one up with **`{{prefix}}remind to stretch in 2 hours`** and I'll keep watch~♡",
+        "LIST_INTRO": "Currently you have **{{size}}** active reminder(s), and the soonest one nudges you {{time}}. {{emoji}}\n╭*:;,．★ ～☆*────────╮\n",
+        "LIST_ENTRY": "[ID:{{id}}]** {{message}}**\n> ⏰ Triggers {{time}} ({{date}})",
+        "LIST_TIP": "**Done peeking?♡** {{emoji}}\n╰─ Remove any of them anytime with **`{{prefix}}remind delete <id>`**.",
+        "DELETE_EMPTY": "**There's nothing for me to forget!** {{emoji}}\n╰─ You don't have any active reminders right now.",
+        "DELETE_MISSING_ID": "**Which one should I let go of?** {{emoji}}\n╰─ Tell me like **`{{prefix}}remind delete <id>`**. Here's what you have:\n{{list}}",
+        "DELETE_NOT_FOUND": "**Hmm, I can't find that reminder.** {{emoji}}\n╰─ Double-check the id with **`{{prefix}}remind list`** and try again, okay?",
+        "DELETE_CONFIRMATION": "**Just to be sure~♡** {{emoji}}\nShould I really forget this reminder?\n╰─ **{{message}}**\n> ⏰ Triggers {{time}}",
+        "DELETE_SUCCESSFUL": "**Consider it forgotten!♡** {{emoji}}\n╰─ I won't nudge you about that one anymore."
     },
     "REMOVE_STICKER": {
         "NO_CHANGES": "Sorry, it seems you haven't equipped any sticker.",
