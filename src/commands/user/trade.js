@@ -203,6 +203,7 @@ module.exports = {
         //  Reads more naturally as a follow-up than as part of the main
         //  embed footer, where it tends to get ignored.
         await reply.send(locale(`TRADE.ACTIVE_HINT_FOLLOWUP`), {
+            simplified: true,
             socket: { emoji: await client.getEmoji(`692428692999241771`) }
         }).catch(() => {})
 
@@ -800,18 +801,31 @@ module.exports = {
     /**
      * Button row layout. Adds a Switch-side button only in self-trade mode
      * so a solo dev can flip which column the next click affects.
+     *
+     * The Lock button reads "Lock" by default — it's a verb the user is
+     * taking, not a status indicator. In self-trade we know which column the
+     * click will affect (the active side), so we surface "Lock A"/"Unlock A"
+     * (or B) to give one-user testing a clearer signal. In normal two-party
+     * trades both users share the same button label, so we keep it as the
+     * verb and let the per-side status in the embed carry the state.
      */
     buildButtonRows(session) {
+        let lockLabel = `Lock`
+        if (session && session.isSelfTrade) {
+            const sideTag = session.currentSide === `a` ? `A` : `B`
+            const sideLocked = session.snapshot().ready[session.currentSide]
+            lockLabel = sideLocked ? `Unlock ${sideTag}` : `Lock ${sideTag}`
+        }
         const buttons = [
             new ButtonBuilder().setCustomId(`trade:add`).setLabel(`Add`).setStyle(ButtonStyle.Primary),
             new ButtonBuilder().setCustomId(`trade:remove`).setLabel(`Remove`).setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId(`trade:ready`).setLabel(`Ready`).setStyle(ButtonStyle.Success),
+            new ButtonBuilder().setCustomId(`trade:ready`).setLabel(lockLabel).setStyle(ButtonStyle.Success),
             new ButtonBuilder().setCustomId(`trade:cancel`).setLabel(`Cancel`).setStyle(ButtonStyle.Danger)
         ]
         if (session && session.isSelfTrade) {
-            //  Discord caps a row at 5 buttons; we already have 5 above, so
-            //  the switch goes on a second row. Side label tells the user
-            //  which column the next click will modify.
+            //  Discord caps a row at 5 buttons; we already have 4 above plus
+            //  the switch on a second row. Side label tells the user which
+            //  column the next click will modify.
             const switchLabel = `Switch (now: ${session.currentSide === `a` ? `A` : `B`})`
             const switchRow = new ActionRowBuilder().addComponents(
                 new ButtonBuilder().setCustomId(`trade:switch`).setLabel(switchLabel).setStyle(ButtonStyle.Secondary)
