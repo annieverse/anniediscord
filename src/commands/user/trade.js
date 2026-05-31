@@ -182,13 +182,17 @@ module.exports = {
     async runActiveSession(client, reply, locale, messageRef, session, initiator, target) {
         session.accept()
 
+        //  The dual-pane trade window doesn't fit Response.send's contract —
+        //  Response builds its own embed from the `content` arg and ignores
+        //  caller-supplied embeds. We need a custom embed (description +
+        //  two inline fields), so send straight through the channel and let
+        //  Response handle the simpler "send a flash message" calls below
+        //  (cancel, success, etc.).
         const tradeEmbed = await this.renderEmbed(client, locale, messageRef, session, initiator, target)
-        const sent = await reply.send(``, {
+        const tradeMessage = await messageRef.channel.send({
             embeds: [tradeEmbed],
-            raw: false,
             components: this.buildButtonRows(session)
         })
-        const tradeMessage = isInteractionCallbackResponse(sent) ? sent.resource && sent.resource.message : sent
         if (!tradeMessage) {
             session.cancel(`render_failed`)
             return

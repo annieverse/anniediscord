@@ -55,7 +55,11 @@ describe(`/trade run() early exits`, () => {
     function fakeMessageRef() {
         return {
             guild: { id: `g1`, name: `Test Guild` },
-            member: { user: { id: `userA`, username: `Alice` } }
+            member: { user: { id: `userA`, username: `Alice` } },
+            //  runActiveSession sends the embed via channel.send directly
+            //  (Response.send doesn't handle caller-supplied embeds), so the
+            //  fake needs a channel object whose send hits our sentinel.
+            channel: { send: async () => { throw new Error(`__reached_active__`) } }
         }
     }
 
