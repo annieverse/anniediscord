@@ -23,7 +23,9 @@ module.exports = {
         return await this.run(client, reply, interaction.member, locale)
     },
     async run(client, reply, guildMember, locale) {
-        const buffs = await client.db.durationalBuffs.getSavedUserDurationalBuffs(guildMember.id)
+        //  Buffs are guild-local — pass guildMember.guild.id so users in
+        //  multiple servers don't see another server's buffs spilling in.
+        const buffs = await client.db.durationalBuffs.getSavedUserDurationalBuffs(guildMember.id, guildMember.guild.id)
         if (!buffs.length) return await reply.send(locale(`BUFF.NO_ACTIVE_BUFFS`), {
             socket: {
                 emoji: await client.getEmoji(`AnnieHeartPeek`)

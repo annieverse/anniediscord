@@ -1892,11 +1892,23 @@ class DurationalBuffs extends DatabaseUtils {
 	/**
 	 * Fetch all the saved user's durational buffs.
 	 * @param {string} userId If not provided, will fetch all the available buffs instead.
+	 * @param {string} [guildId] When passed, scope the result to the given guild — buffs are
+	 *   guild-local; without this, callers see every guild's buffs the user has across servers.
 	 * @return {object}
 	 */
-	getSavedUserDurationalBuffs(userId) {
+	getSavedUserDurationalBuffs(userId, guildId) {
 		const fn = this.formatFunctionLog(`getSavedUserDurationalBuffs`)
 		if (!userId) throw new TypeError(`${fn} parameter "userId" cannot be blank.`)
+		if (guildId) {
+			return this._query(`
+            SELECT *
+            FROM user_durational_buffs
+            WHERE user_id = $userId AND guild_id = $guildId`
+				, `all`
+				, { userId: userId, guildId: guildId }
+				, `${fn} fetch durantional buffs for USER_ID:${userId} in GUILD_ID:${guildId}`
+			)
+		}
 		return this._query(`
             SELECT *
             FROM user_durational_buffs
