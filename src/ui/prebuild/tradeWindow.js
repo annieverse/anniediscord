@@ -43,12 +43,11 @@ class UI {
             gradient: true,
             gradientHeight: 160
         })
-        //  Two avatars, evenly spaced across the card so the gap between
-        //  the avatars equals the gap from each avatar to its closest
-        //  edge. With three equal gaps and two avatars filling the
-        //  remaining space, gap = (cardWidth - 2 × avatarSize) / 3.
+        //  Two avatars, centered as a pair on the card. Inner gap stays
+        //  small (8px) so they read as a duo; total group width is
+        //  2*avatarSize + innerGap, padded equally on both sides.
         //
-        //  cards.js `addContent` has a quirk we work around here too: when
+        //  cards.js `addContent` has a quirk we work around here: when
         //  `justify: 'center'` is set on an avatar draw, the helper at
         //  addContent:422 returns width/2 directly and IGNORES marginLeft.
         //  We pass an explicit marginLeft (top-left x of the avatar box)
@@ -56,9 +55,11 @@ class UI {
         const cardWidth = 260
         const avatarRadius = 24
         const avatarSize = avatarRadius * 2
-        const gap = (cardWidth - (avatarSize * 2)) / 3
-        const initiatorMarginLeft = gap
-        const partnerMarginLeft = gap + avatarSize + gap
+        const innerGap = 8
+        const groupWidth = (avatarSize * 2) + innerGap
+        const groupLeft = (cardWidth - groupWidth) / 2
+        const initiatorMarginLeft = groupLeft
+        const partnerMarginLeft = groupLeft + avatarSize + innerGap
         const initiatorAvatar = await urlToBuffer(this.initiator.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         const partnerAvatar = await urlToBuffer(this.partner.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         await card.addContent({
