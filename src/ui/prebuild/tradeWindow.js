@@ -28,7 +28,7 @@ class UI {
 
     async build() {
         let card = await new Cards({
-            width: 260,
+            width: 300,
             height: 160,
             theme: this.initiator.usedTheme.alias,
             align: `center`
@@ -43,23 +43,21 @@ class UI {
             gradient: true,
             gradientHeight: 160
         })
-        //  Two avatars, centered as a pair on the card. Inner gap stays
-        //  small (8px) so they read as a duo; total group width is
-        //  2*avatarSize + innerGap, padded equally on both sides.
+        //  Two avatars on a 300px-wide canvas. Initiator centered at x=75
+        //  (column-A midpoint), partner at x=225 (column-B midpoint).
+        //  marginLeft passed to addContent is the top-left corner of the
+        //  avatar box, so we subtract the radius to land the centers on
+        //  the requested coordinates.
         //
-        //  cards.js `addContent` has a quirk we work around here: when
-        //  `justify: 'center'` is set on an avatar draw, the helper at
-        //  addContent:422 returns width/2 directly and IGNORES marginLeft.
-        //  We pass an explicit marginLeft (top-left x of the avatar box)
-        //  and skip justify so both draws land where we want.
-        const cardWidth = 260
+        //  cards.js `addContent` has a quirk: when `justify: 'center'` is
+        //  set on an avatar draw, the helper at addContent:422 returns
+        //  width/2 and IGNORES marginLeft. We skip justify and pass
+        //  explicit marginLeft so both draws land where we want.
         const avatarRadius = 24
-        const avatarSize = avatarRadius * 2
-        const innerGap = 8
-        const groupWidth = (avatarSize * 2) + innerGap
-        const groupLeft = (cardWidth - groupWidth) / 2
-        const initiatorMarginLeft = groupLeft
-        const partnerMarginLeft = groupLeft + avatarSize + innerGap
+        const initiatorCenterX = 75
+        const partnerCenterX = 225
+        const initiatorMarginLeft = initiatorCenterX - avatarRadius
+        const partnerMarginLeft = partnerCenterX - avatarRadius
         const initiatorAvatar = await urlToBuffer(this.initiator.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         const partnerAvatar = await urlToBuffer(this.partner.master.displayAvatarURL({ extension: `png`, forceStatic: true }))
         await card.addContent({
