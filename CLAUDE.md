@@ -20,10 +20,26 @@ npm run unit-test         # mocha tests/**/*.js
 npm run test              # lint + unit-test (the gate before committing)
 node ./node_modules/mocha/bin/mocha tests/libs/database.test.js   # single test file
 npm run loadAppCmds       # push slash command definitions to Discord (uses NODE_ENV + NODE_DEV_CLIENT)
+npm run db:migrate        # apply pending knex migrations to the DB in .env
+npm run db:status         # show pending vs completed migrations
+npm run db:rollback       # roll back the most recent migration batch
+npm run db:make <name>    # scaffold a new migration file under src/config/migrations
 npm start                 # pm2 production start (ecosystem.config.js)
 ```
 
 `npm run loadAppCmds` must be re-run any time you add, rename, or change the `options`/`description` of an application (slash) command — the bot itself does not register slash commands at startup. Behavior depends on `NODE_ENV` and, in dev, `NODE_DEV_CLIENT` (`PAN` or `NAPH`); see `src/commands/applicationCommandsLoader.js` for the per-developer routing.
+
+## Database schema
+
+Schema is owned by knex migrations under `src/config/migrations/`. The first migration (`00000000000000_initial.js`) creates every table the bot needs and is idempotent — its body is wrapped in `if (!exists)` checks, so running it against an already-bootstrapped DB is a no-op. New tables get their own timestamp-prefixed file via `npm run db:make <name>`.
+
+Workflow:
+- Apply outstanding migrations: `npm run db:migrate`. Always safe to re-run.
+- Check current state: `npm run db:status`. Lists completed and pending files.
+- Roll back the last batch: `npm run db:rollback`. Use sparingly — every migration must define a working `down`.
+- `src/config/db/schema.sql` is a `pg_dump` snapshot kept in sync with the migration set, useful as documentation and for fresh `psql -f` bootstraps; **don't hand-edit it as the source of truth** — write the migration first, run `db:migrate`, then refresh the dump if needed.
+
+If your DB was bootstrapped from `schema.sql` directly (no `knex_migrations` table yet), the first `db:migrate` will pick up `00000000000000_initial.js` as pending and re-run its idempotent guards. That's expected and harmless. After that one round trip, knex tracks future migrations normally.
 
 `.env` is required for everything (DB creds, `BOT_TOKEN`, `PIXIV_REFRESH_TOKEN`, top.gg keys, etc.) — see `.env.example`.
 
@@ -66,7 +82,7 @@ When you need bot-wide state, follow this same pattern instead of importing sing
 
 `src/libs/database.js` is one big file containing `Database` plus every sub-utility class (`DatabaseUtils`, `Quests`, `Reminders`, `GuildUtils`, `AutoResponder`, `DurationalBuffs`, `UserUtils`, `SystemUtils`, `CustomRewards`, `Shop`, `Covers`, `Relationships`). They are instantiated together in `db.initializeDb()` after Redis is up.
 
-- Postgres uses raw `pg.Client` (not a pool); `pg-copy-streams` is available for bulk loads. Schema lives in `src/config/db/schema.sql`. Knex is configured in `src/config/knexfile.js` for migrations under `src/config/migrations/` only — runtime queries do not go through Knex.
+- Postgres uses raw `pg.Client` (not a pool); `pg-copy-streams` is available for bulk loads. Schema is owned by knex migrations under `src/config/migrations/` (see the **Database schema** section above for the day-to-day workflow); `src/config/db/schema.sql` is a synced `pg_dump` snapshot used for fresh installs and documentation. Runtime queries do not go through knex — only schema changes do.
 - `pg`'s int8→string parser is overridden to `parseInt` at the top of the file.
 - Redis is the cooldown / cache / buff store. `DatabaseUtils._ensureRedisReady()` exists because of a real race-condition bug — when adding new utility classes that touch Redis, await it before the first call.
 
