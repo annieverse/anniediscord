@@ -51,7 +51,6 @@ function listCommands(commandsDir) {
             const filePath = path.join(groupDir, file)
             //  Use require to mirror the bot's loader; commands are CommonJS
             //  modules with a single object export.
-            // eslint-disable-next-line global-require
             const src = require(filePath)
             if (!src || typeof src !== `object`) continue
             //  Mirror the loader's deprecation gate.

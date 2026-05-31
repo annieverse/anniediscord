@@ -31,15 +31,25 @@ npm start                 # pm2 production start (ecosystem.config.js)
 
 ## Database schema
 
-Schema is owned by knex migrations under `src/config/migrations/`. The first migration (`00000000000000_initial.js`) creates every table the bot needs and is idempotent — its body is wrapped in `if (!exists)` checks, so running it against an already-bootstrapped DB is a no-op. New tables get their own timestamp-prefixed file via `npm run db:make <name>`.
+Schema is owned by knex migrations under `src/config/migrations/`. Source of truth is the migration set; `src/config/db/schema.sql` is a `pg_dump` snapshot kept synced with it for documentation and to seed the baseline migration.
 
-Workflow:
+**Fresh dev setup:** with a `.env` pointing at an empty PostgreSQL database, a single command bootstraps the schema:
+
+```bash
+npm run db:migrate
+```
+
+The baseline migration (`00000000000000_initial.js`) loads `schema.sql` verbatim — minus `OWNER TO annie` clauses and `pg_dump` SET pragmas, which would fail on a fresh dev box where neither the role nor the elevated session rights exist. Subsequent timestamped migrations apply on top. The result is a complete dev schema without production data.
+
+Day-to-day:
 - Apply outstanding migrations: `npm run db:migrate`. Always safe to re-run.
 - Check current state: `npm run db:status`. Lists completed and pending files.
-- Roll back the last batch: `npm run db:rollback`. Use sparingly — every migration must define a working `down`.
-- `src/config/db/schema.sql` is a `pg_dump` snapshot kept in sync with the migration set, useful as documentation and for fresh `psql -f` bootstraps; **don't hand-edit it as the source of truth** — write the migration first, run `db:migrate`, then refresh the dump if needed.
+- Roll back the last batch: `npm run db:rollback`. Use sparingly — every post-baseline migration must define a working `down`. The baseline itself refuses to roll back.
+- Scaffold a new migration: `npm run db:make <name>` — generates a timestamped file in the migrations directory.
 
-If your DB was bootstrapped from `schema.sql` directly (no `knex_migrations` table yet), the first `db:migrate` will pick up `00000000000000_initial.js` as pending and re-run its idempotent guards. That's expected and harmless. After that one round trip, knex tracks future migrations normally.
+After a migration adds, drops, or alters tables, refresh `schema.sql` so the snapshot stays useful (typical flow: `pg_dump --schema-only --no-owner --no-privileges <db> > src/config/db/schema.sql`). The snapshot is documentation; don't hand-edit it as the source of truth.
+
+If your DB was bootstrapped from `schema.sql` directly (no `knex_migrations` table yet), the first `db:migrate` short-circuits the baseline via `hasTable('users')` and only runs post-baseline migrations.
 
 `.env` is required for everything (DB creds, `BOT_TOKEN`, `PIXIV_REFRESH_TOKEN`, top.gg keys, etc.) — see `.env.example`.
 
