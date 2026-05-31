@@ -54,7 +54,7 @@ class UI {
         //  width/2 and IGNORES marginLeft. We skip justify and pass
         //  explicit marginLeft so both draws land where we want.
         const avatarRadius = 24
-        const initiatorCenterX = 75
+        const initiatorCenterX = 100
         const partnerCenterX = 225
         const initiatorMarginLeft = initiatorCenterX - avatarRadius
         const partnerMarginLeft = partnerCenterX - avatarRadius
