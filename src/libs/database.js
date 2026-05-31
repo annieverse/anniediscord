@@ -841,8 +841,8 @@ class UserUtils extends DatabaseUtils {
 				, `${fn} inserting reputations record if not exists for user (${userId})`
 			)
 		}
-		//  Refresh cache 
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		//  Refresh cache
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.debug(`${fn}[${type}](${operation}) (REPS:${amount} | EXP_ID:${userId}@${guildId}`)
 	}
 
@@ -915,7 +915,7 @@ class UserUtils extends DatabaseUtils {
 		}
 		//  Refresh cache
 		this.delCache(`DAILIES_${userId}@${guildId}`)
-		const type = res.insert.changes ? `INSERT` : res.update.changes ? `UPDATE` : `NO_CHANGES`
+		const type = res.insert?.changes ? `INSERT` : res.update?.changes ? `UPDATE` : `NO_CHANGES`
 		logger.debug(`[UPDATE_USER_DAILIES][${type}] (STREAK:${streak} | DAILIES_ID:${userId}@${guildId}`)
 	}
 
@@ -1159,7 +1159,7 @@ class UserUtils extends DatabaseUtils {
 				, `${fn} updating gender preference for USER_ID:${userId}`
 			)
 		}
-		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const stmtType = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${stmtType} (GENDER:${gender})(USER_ID:${userId}`)
 	}
 
@@ -1557,7 +1557,7 @@ class GuildUtils extends DatabaseUtils {
 			)
 		}
 
-		const type = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const type = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${type} (CONFIG_CODE:${configCode})(CUSTOMIZED_PARAMETER:${customizedParameter}) | (GUILD_ID:${guild.id})(USER_ID:${setByUserId})`)
 		//  Cache result if provided 
 		if (cacheTo) {
@@ -1725,7 +1725,7 @@ class Relationships extends DatabaseUtils {
 			)
 		}
 
-		const stmtType = res.update.changes ? `UPDATE` : res.insert.changes ? `INSERT` : `NO_CHANGES`
+		const stmtType = res.update?.changes ? `UPDATE` : res.insert?.changes ? `INSERT` : `NO_CHANGES`
 		logger.debug(`${fn} ${stmtType} (REL_ID:${relationshipId})(USER_A:${userA} WITH USER_B:${userB})`)
 		return true
 	}
